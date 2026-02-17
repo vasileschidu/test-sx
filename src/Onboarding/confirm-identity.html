@@ -1,0 +1,224 @@
+<!doctype html>
+<html class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style>
+    .sidebar-gradient {
+      background: linear-gradient(180deg, #1E326F 0%, #090C38 100%);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-gray-200 px-6 antialiased">
+
+  <!-- CONTAINER -->
+  <div class="mx-auto max-w-[1024px] w-full h-screen bg-white flex flex-row overflow-hidden">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar-gradient w-[325px] shrink-0 self-stretch flex flex-col p-[56px] gap-[35px]">
+
+      <!-- Logo -->
+      <button class="ml-auto flex items-center gap-2 p-2.5 rounded-lg bg-gray-900/25 hover:bg-gray-900/35">
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+          <path d="M18.6709 15.8289L15.1834 13.8033L8.12004 17.9137L18.5088 23.9562C18.666 24.0449 18.8625 23.9956 18.9558 23.8379C18.9853 23.7886 19 23.7295 19 23.6703L19 16.4007C19 16.1641 18.8772 15.9472 18.6709 15.8289Z" fill="white"/>
+          <path d="M18.6709 10.171C18.8772 10.0527 19 9.83584 19 9.59926L19 2.32958C19 2.27044 18.9853 2.2113 18.9558 2.16201C18.8674 2.0043 18.666 1.95501 18.5088 2.04372L6.92153 8.78112C6.81838 8.84026 6.75453 8.94869 6.74961 9.06697L6.74961 17.1006L18.6709 10.171Z" fill="white"/>
+        </svg>
+      </button>
+
+      <!-- Stepper Nav -->
+      <nav aria-label="Progress">
+        <ol role="list" class="space-y-6">
+
+          <!-- Current Step -->
+          <li>
+            <a href="#" aria-current="step" class="flex items-start">
+              <span aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                <span class="absolute size-4 rounded-full bg-white/20"></span>
+                <span class="relative block size-2 rounded-full bg-white"></span>
+              </span>
+              <span class="ml-3 text-sm font-medium text-white">Confirm Identity</span>
+            </a>
+          </li>
+
+          <!-- Upcoming Steps -->
+          <li>
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Confirm Business Details</p>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Review Documents</p>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Provide Signature</p>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Confirm Payment</p>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Create SMART Hub</p>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Complete</p>
+              </div>
+            </a>
+          </li>
+
+        </ol>
+      </nav>
+    </div>
+
+    <!-- RIGHT COLUMN (scrolls) -->
+    <div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
+
+      <!-- Inner wrapper: makes footer stick to bottom when content is short -->
+      <div class="min-h-screen flex flex-col">
+
+        <!-- Content area -->
+        <div class="flex-1 flex flex-col items-center px-10 pt-12 pb-8">
+
+         
+
+          <!-- Page Title -->
+          <div class="w-full max-w-[640px]">
+            <h1 class="text-3xl font-bold text-gray-900">Let's make sure it's you!</h1>
+            <p class="mt-2 text-sm text-gray-500">To collect your payment, please confirm the following.</p>
+
+            <!-- Form Card -->
+            <div class="mt-8 flex w-full max-w-[560px] flex-col gap-4 rounded-xl border border-gray-200 bg-white p-6">
+              <div>
+                <label for="invoice-number" class="block text-sm/6 font-medium text-gray-900">Invoice Number</label>
+                <div class="mt-2">
+                  <input id="invoice-number" type="text" name="invoice-number" placeholder="INV-2026-10458" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                </div>
+              </div>
+
+              <div>
+                <label for="vendor-id" class="block text-sm/6 font-medium text-gray-900">Your Vendor ID</label>
+                <div class="mt-2">
+                  <input id="vendor-id" type="text" name="vendor-id" placeholder="US-VND-483920" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Actions row (pushes toward bottom when page is short) -->
+          <div class="w-full max-w-[640px] mt-auto pt-10 pb-6">
+            <div class="flex items-center gap-6">
+
+              <button type="button" class="h-11 flex-1 rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">
+                Back
+              </button>
+
+              <button id="next-button" type="button" disabled class="inline-flex h-11 flex-1 items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">
+                Next
+                <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="-mr-0.5 size-5">
+                  <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.19L10.22 5.53a.75.75 0 1 1 1.06-1.06l5 5a.75.75 0 0 1 0 1.06l-5 5a.75.75 0 1 1-1.06-1.06l3.72-3.72H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
+                </svg>
+              </button>
+
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-center gap-1.5 py-5 px-6">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path d="M8.91309 1.125C11.4548 3.2985 15.5771 3.43066 15.5771 3.43066V9.22656C15.5767 12.7831 8.91309 16.875 8.91309 16.875C8.86421 16.8449 2.25042 12.77 2.25 9.22656V3.43066C2.25 3.43066 6.37134 3.29832 8.91309 1.125ZM7.2793 9.90918C7.2091 9.94947 7.16702 10.0229 7.16699 10.1035V12.5801C7.16699 12.6002 7.17163 12.6209 7.18164 12.6377C7.21173 12.6914 7.28048 12.708 7.33398 12.6777L11.2783 10.3828C11.3134 10.3627 11.3352 10.3254 11.3369 10.2852V7.54785L7.2793 9.90918ZM7.33398 5.21191C7.28052 5.18171 7.21343 5.19831 7.18164 5.25195C7.17161 5.26875 7.16699 5.28942 7.16699 5.30957V7.78613C7.16699 7.86667 7.2082 7.94112 7.27832 7.98145L8.46582 8.6709L10.8701 7.27051L7.33398 5.21191Z" fill="#0089CF"/>
+          </svg>
+          <span class="text-xs text-gray-700">
+            Powered by <span class="font-bold">Transcard</span>
+            <span class="mx-1">|</span>
+            <a href="#" class="text-gray-700 hover:underline">Terms of Use</a>
+            <span class="mx-0.5">&bull;</span>
+            <a href="#" class="text-gray-700 hover:underline">Privacy Policy</a>
+            <span class="mx-0.5">&bull;</span>
+            <a href="#" class="text-gray-700 hover:underline">E-Sign Consent</a>
+          </span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const invoiceInput = document.getElementById('invoice-number');
+    const vendorInput = document.getElementById('vendor-id');
+    const nextButton = document.getElementById('next-button');
+
+    function toUpperFreeForm(value) {
+      return value.toUpperCase();
+    }
+
+    function updateNextState() {
+      const ready = invoiceInput.value.trim() !== '' && vendorInput.value.trim() !== '';
+      nextButton.disabled = !ready;
+    }
+
+    invoiceInput.addEventListener('input', () => {
+      invoiceInput.value = toUpperFreeForm(invoiceInput.value);
+      updateNextState();
+    });
+
+    vendorInput.addEventListener('input', () => {
+      vendorInput.value = toUpperFreeForm(vendorInput.value);
+      updateNextState();
+    });
+
+    nextButton.addEventListener('click', () => {
+      if (!nextButton.disabled) {
+        window.location.href = 'confirm-business-details.html';
+      }
+    });
+    updateNextState();
+  </script>
+</body>
+</html>

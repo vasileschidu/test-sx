@@ -1,0 +1,591 @@
+<!doctype html>
+<html class="h-full">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Meow+Script&display=swap" rel="stylesheet">
+
+  <style>
+    .sidebar-gradient {
+      background: linear-gradient(180deg, #1E326F 0%, #090C38 100%);
+    }
+  </style>
+</head>
+
+<body class="min-h-screen bg-gray-200 px-6 antialiased">
+
+  <!-- CONTAINER -->
+  <div class="mx-auto max-w-[1024px] w-full h-screen bg-white flex flex-row overflow-hidden">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar-gradient w-[325px] shrink-0 self-stretch flex flex-col p-[56px] gap-[35px]">
+
+      <!-- Logo -->
+      <button class="ml-auto flex items-center gap-3 p-2.5 rounded-lg bg-gray-900/25 hover:bg-gray-900/35">
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+          <path
+            d="M18.6709 15.8289L15.1834 13.8033L8.12004 17.9137L18.5088 23.9562C18.666 24.0449 18.8625 23.9956 18.9558 23.8379C18.9853 23.7886 19 23.7295 19 23.6703L19 16.4007C19 16.1641 18.8772 15.9472 18.6709 15.8289Z"
+            fill="white" />
+          <path
+            d="M18.6709 10.171C18.8772 10.0527 19 9.83584 19 9.59926L19 2.32958C19 2.27044 18.9853 2.2113 18.9558 2.16201C18.8674 2.0043 18.666 1.95501 18.5088 2.04372L6.92153 8.78112C6.81838 8.84026 6.75453 8.94869 6.74961 9.06697L6.74961 17.1006L18.6709 10.171Z"
+            fill="white" />
+        </svg>
+      </button>
+
+      <!-- Stepper Nav -->
+      <nav aria-label="Progress">
+        <ol role="list" class="space-y-6">
+          <li>
+            <a href="confirm-identity.html" class="group">
+              <span class="flex items-start">
+                <span class="relative flex size-5 shrink-0 items-center justify-center">
+                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+                    class="size-full text-white group-hover:text-blue-300">
+                    <path
+                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                      clip-rule="evenodd" fill-rule="evenodd" />
+                  </svg>
+                </span>
+                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Confirm Identity</span>
+              </span>
+            </a>
+          </li>
+
+          <li>
+            <a href="confirm-identity.html" class="group">
+              <span class="flex items-start">
+                <span class="relative flex size-5 shrink-0 items-center justify-center">
+                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+                    class="size-full text-white group-hover:text-blue-300">
+                    <path
+                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                      clip-rule="evenodd" fill-rule="evenodd" />
+                  </svg>
+                </span>
+                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Confirm Business Details</span>
+              </span>
+            </a>
+          </li>
+
+          <li>
+            <a href="confirm-identity.html" class="group">
+              <span class="flex items-start">
+                <span class="relative flex size-5 shrink-0 items-center justify-center">
+                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+                    class="size-full text-white group-hover:text-blue-300">
+                    <path
+                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                      clip-rule="evenodd" fill-rule="evenodd" />
+                  </svg>
+                </span>
+                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Review Documents</span>
+              </span>
+            </a>
+          </li>
+
+          <li>
+            <a href="confirm-identity.html" class="group">
+              <span class="flex items-start">
+                <span class="relative flex size-5 shrink-0 items-center justify-center">
+                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
+                    class="size-full text-white group-hover:text-blue-300">
+                    <path
+                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                      clip-rule="evenodd" fill-rule="evenodd" />
+                  </svg>
+                </span>
+                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Provide Signature</span>
+              </span>
+            </a>
+          </li>
+
+
+          
+
+
+          <li>
+            <a href="#" aria-current="step" class="flex items-start">
+              <span aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                <span class="absolute size-4 rounded-full bg-white/20"></span>
+                <span class="relative block size-2 rounded-full bg-white"></span>
+              </span>
+              <span class="ml-3 text-sm font-medium text-white">Confirm Payment</span>
+            </a>
+          </li> 
+
+          
+
+          <li>
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Create an Account</p>
+              </div>
+            </a>
+          </li>
+
+          <li>
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Complete</p>
+              </div>
+            </a>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
+      <div class="min-h-screen flex flex-col">
+
+        <!-- Content area -->
+        <div class="flex-1 flex flex-col items-center px-10 pt-12 pb-8">
+
+
+          <!-- Payment Amount Card -->
+          <div
+            class="relative w-full overflow-hidden rounded-2xl bg-[linear-gradient(108deg,#3773FF_3.3%,#2254CA_99.23%)] shadow-[-3px_20px_25px_-5px_rgba(0,0,0,0.10),0_10px_10px_-5px_rgba(0,0,0,0.04)]">
+
+            <!-- CIRCLES (must be BEFORE content) -->
+            <!-- RIGHT circle (stick to bottom) -->
+
+
+
+
+            <!-- BOTTOM LEFT circle (stick to bottom) -->
+
+            <div class="pointer-events-none absolute z-0
+         w-[170px] h-[170px]
+         -right-[10px] -bottom-[40px]
+         rotate-[-105deg]
+         rounded-full
+         bg-[linear-gradient(180deg,rgba(2,28,73,0.13)_0%,rgba(2,28,73,0)_100%)]">
+            </div>
+
+            <div class="pointer-events-none absolute z-0
+         w-[120px] h-[120px]
+         left-[100px] -bottom-[40px]
+
+         rotate-[-105deg]
+         rounded-full
+         bg-[linear-gradient(180deg,rgba(2,28,73,0.13)_0%,rgba(2,28,73,0)_100%)]">
+            </div>
+
+            <div class="pointer-events-none absolute z-0
+         w-[200px] h-[200px]
+         left-[60px] -top-[110px]
+         rotate-[-105deg]
+         rounded-full
+         bg-[linear-gradient(180deg,rgba(2,28,73,0.13)_0%,rgba(2,28,73,0)_100%)]">
+            </div>
+
+
+
+
+            <!-- CONTENT (must be ABOVE circles) -->
+            <div class="relative z-10 flex flex-col items-center justify-center gap-2 px-8 py-10">
+              <p class="text-[#BFDBFE] text-[12px] font-medium leading-[16px] tracking-[0.6px] uppercase">PAYMENT AMOUNT
+              </p>
+
+              <div class="flex items-baseline">
+                <span class="text-white text-[48px] font-normal leading-[48px]">$3,526</span>
+                <span class="text-[#3B82F6] text-[48px] font-normal leading-[48px]">.00</span>
+              </div>
+
+              <div class="mt-2 inline-flex items-center gap-[6px] rounded-[512px] bg-[#1E40AF] px-[16px] py-[4px]">
+                <span
+                  class="text-[#60A5FA] text-[10px] font-medium leading-[16px] tracking-[0.7px] uppercase">FROM</span>
+                <span class="text-white text-[14px] font-normal leading-[20px]">Rad Roofing Ltd</span>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- 36px spacing -->
+          <div class="mt-9 flex w-full items-center gap-2 self-stretch ">
+
+            <button type="button"
+              class="flex-1 inline-flex items-center justify-center gap-x-1.5 rounded-full bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                class="size-5 text-blue-600">
+                <path fill-rule="evenodd"
+                  d="M4.848 2.771A49.144 49.144 0 0 1 12 2.25c2.43 0 4.817.178 7.152.52 1.978.292 3.348 2.024 3.348 3.97v6.02c0 1.946-1.37 3.678-3.348 3.97a48.901 48.901 0 0 1-3.476.383.39.39 0 0 0-.297.17l-2.755 4.133a.75.75 0 0 1-1.248 0l-2.755-4.133a.39.39 0 0 0-.297-.17 48.9 48.9 0 0 1-3.476-.384c-1.978-.29-3.348-2.024-3.348-3.97V6.741c0-1.946 1.37-3.68 3.348-3.97ZM6.75 8.25a.75.75 0 0 1 .75-.75h9a.75.75 0 0 1 0 1.5h-9a.75.75 0 0 1-.75-.75Zm.75 2.25a.75.75 0 0 0 0 1.5H12a.75.75 0 0 0 0-1.5H7.5Z"
+                  clip-rule="evenodd" />
+              </svg>
+
+              Message
+            </button>
+
+            <button type="button"
+              class="flex-1 inline-flex items-center justify-center gap-x-1.5 rounded-full bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                class="size-5 text-blue-600">
+                <path fill-rule="evenodd"
+                  d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z"
+                  clip-rule="evenodd" />
+              </svg>
+
+
+              Expiration
+            </button>
+
+            <button type="button"
+              class="flex-1 inline-flex items-center justify-center gap-x-1.5 rounded-full bg-gray-100 px-3 py-2 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                class="size-5 text-blue-600">
+                <path fill-rule="evenodd"
+                  d="M3 6.75A.75.75 0 0 1 3.75 6h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 6.75ZM3 12a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75A.75.75 0 0 1 3 12Zm0 5.25a.75.75 0 0 1 .75-.75h16.5a.75.75 0 0 1 0 1.5H3.75a.75.75 0 0 1-.75-.75Z"
+                  clip-rule="evenodd" />
+              </svg>
+
+
+              Full details
+            </button>
+
+
+          </div>
+
+          <div class="mt-9 w-full sm:px-0">
+            <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Choose your payment method</h3>
+            <p class="mt-1 max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">For this payment only, or you can save
+              as your default for future payments.</p>
+          </div>
+
+
+          <div class="mt-6 w-full space-y-2">
+
+            <!-- Option -->
+            <button type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition
+           hover:bg-gray-50
+         focus-visible:outline-none">
+
+              <div class="flex justify-between items-center">
+
+                <!-- LEFT SIDE -->
+                <div class="flex items-center gap-4">
+
+                  <!-- ICON CONTAINER -->
+                  <div class="flex w-8 h-8 items-center justify-center rounded-md bg-gray-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z"
+                        stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+
+                  <!-- TEXT -->
+                  <div>
+                    <p class="text-sm font-semibold text-gray-900">Accept Payer's Card</p>
+                    <p class="text-sm text-gray-500">No bank account details required, immediate</p>
+                  </div>
+
+                </div>
+
+                <!-- CHEVRON -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-400 transition-all duration-200 ease-out
+             group-hover:text-gray-600 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                    clip-rule="evenodd" />
+                </svg>
+
+              </div>
+
+            </button>
+
+            <!-- Option -->
+            <button type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition
+           hover:bg-gray-50
+         focus-visible:outline-none">
+
+              <div class="flex justify-between items-center">
+
+                <!-- LEFT SIDE -->
+                <div class="flex items-center gap-4">
+
+                  <!-- ICON CONTAINER -->
+                  <div class="flex w-8 h-8 items-center justify-center rounded-md bg-gray-50">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                      <path
+                        d="M12 21V12.75M15.75 21V12.75M8.25 21V12.75M3 9L12 3L21 9M19.5 21V10.3325C17.0563 9.94906 14.5514 9.75 12 9.75C9.44861 9.75 6.94372 9.94906 4.5 10.3325V21M3 21H21M12 6.75H12.0075V6.7575H12V6.75Z"
+                        stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </div>
+
+                  <!-- TEXT -->
+                  <div>
+                    <p class="text-sm font-semibold text-gray-900">Send to Bank Account</p>
+                    <p class="text-sm text-gray-500">Typically processed in 1-3 business days</p>
+                  </div>
+
+                </div>
+
+                <!-- CHEVRON -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-400 transition-all duration-200 ease-out
+             group-hover:text-gray-600 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                    clip-rule="evenodd" />
+                </svg>
+
+              </div>
+
+            </button>
+
+            <!-- Option -->
+            <button type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition hover:bg-gray-50
+        
+         focus-visible:outline-none">
+
+              <div class="flex justify-between items-center">
+
+                <!-- LEFT SIDE -->
+                <div class="flex-1 items-center gap-4">
+
+                  <!-- TEXT -->
+                  <div class="flex gap-2">
+                    <p class="text-xs font-semibold text-gray-900">Request a Paper Check</p>
+                    <p class="text-xs text-gray-500">(Slowest payment method, approximately 7-10 days)</p>
+                  </div>
+
+                </div>
+
+                <!-- CHEVRON -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-400 transition-all duration-200 ease-out
+             group-hover:text-gray-600 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd"
+                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                    clip-rule="evenodd" />
+                </svg>
+
+              </div>
+
+            </button>
+
+
+
+          </div>
+
+
+
+
+
+
+
+
+
+        </div>
+
+        <!-- Footer -->
+        <div class="flex items-center justify-center gap-1.5 py-5 px-6">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+            <path
+              d="M8.91309 1.125C11.4548 3.2985 15.5771 3.43066 15.5771 3.43066V9.22656C15.5767 12.7831 8.91309 16.875 8.91309 16.875C8.86421 16.8449 2.25042 12.77 2.25 9.22656V3.43066C2.25 3.43066 6.37134 3.29832 8.91309 1.125ZM7.2793 9.90918C7.2091 9.94947 7.16702 10.0229 7.16699 10.1035V12.5801C7.16699 12.6002 7.17163 12.6209 7.18164 12.6377C7.21173 12.6914 7.28048 12.708 7.33398 12.6777L11.2783 10.3828C11.3134 10.3627 11.3352 10.3254 11.3369 10.2852V7.54785L7.2793 9.90918ZM7.33398 5.21191C7.28052 5.18171 7.21343 5.19831 7.18164 5.25195C7.17161 5.26875 7.16699 5.28942 7.16699 5.30957V7.78613C7.16699 7.86667 7.2082 7.94112 7.27832 7.98145L8.46582 8.6709L10.8701 7.27051L7.33398 5.21191Z"
+              fill="#0089CF" />
+          </svg>
+          <span class="text-xs text-gray-700">
+            Powered by <span class="font-bold">Transcard</span>
+            <span class="mx-1">|</span>
+            <a href="#" class="text-gray-700 hover:underline">Terms of Use</a>
+            <span class="mx-0.5">&bull;</span>
+            <a href="#" class="text-gray-700 hover:underline">Privacy Policy</a>
+            <span class="mx-0.5">&bull;</span>
+            <a href="#" class="text-gray-700 hover:underline">E-Sign Consent</a>
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('signature-canvas');
+    const clearButton = document.getElementById('clear-signature');
+    const nextButton = document.getElementById('next-button');
+    const context = canvas.getContext('2d');
+
+    const tabDraw = document.getElementById('tab-draw');
+    const tabType = document.getElementById('tab-type');
+    const typeWrap = document.getElementById('type-input-wrap');
+    const fullNameInput = document.getElementById('fullName');
+
+    let isDrawing = false;
+    let hasSignature = false;
+    let mode = 'draw'; // 'draw' | 'type'
+
+    function setCanvasSize() {
+      const ratio = window.devicePixelRatio || 1;
+      const bounds = canvas.getBoundingClientRect();
+      canvas.width = Math.floor(bounds.width * ratio);
+      canvas.height = Math.floor(bounds.height * ratio);
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      context.lineCap = 'round';
+      context.lineJoin = 'round';
+      context.lineWidth = 2.5;
+      context.strokeStyle = '#111827';
+
+      // redraw typed name if in type mode
+      if (mode === 'type') drawTypedSignature(fullNameInput.value || '');
+    }
+
+    function updateNextButtonState() {
+      nextButton.disabled = !hasSignature;
+    }
+
+    function getPoint(event) {
+      const rect = canvas.getBoundingClientRect();
+      return { x: event.clientX - rect.left, y: event.clientY - rect.top };
+    }
+
+    function handlePointerDown(event) {
+      if (mode !== 'draw') return;
+      event.preventDefault();
+      isDrawing = true;
+      const point = getPoint(event);
+      context.beginPath();
+      context.moveTo(point.x, point.y);
+    }
+
+    function handlePointerMove(event) {
+      if (mode !== 'draw' || !isDrawing) return;
+      event.preventDefault();
+      const point = getPoint(event);
+      context.lineTo(point.x, point.y);
+      context.stroke();
+      if (!hasSignature) {
+        hasSignature = true;
+        updateNextButtonState();
+      }
+    }
+
+    function handlePointerUp() {
+      if (mode !== 'draw') return;
+      isDrawing = false;
+      context.closePath();
+    }
+
+    function clearCanvas() {
+      context.clearRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function drawTypedSignature(text) {
+      clearCanvas();
+
+      const safe = (text || '').trim();
+      if (!safe) {
+        hasSignature = false;
+        updateNextButtonState();
+        return;
+      }
+
+      // "script" vibe using common cursive stack
+      context.save();
+      context.fillStyle = '#111827';
+      context.textAlign = 'center';
+      context.textBaseline = 'middle';
+
+      // pick a font size that fits width
+      const maxWidth = canvas.getBoundingClientRect().width - 48; // padding-ish
+      let fontSize = 72;
+      const fontStack = "'Meow Script', cursive";
+
+      while (fontSize > 24) {
+        context.font = `${fontSize}px ${fontStack}`;
+        if (context.measureText(safe).width <= maxWidth) break;
+        fontSize -= 2;
+      }
+
+      const cx = canvas.getBoundingClientRect().width / 2;
+      const cy = canvas.getBoundingClientRect().height / 2;
+
+      context.fillText(safe, cx, cy);
+      context.restore();
+
+      hasSignature = true;
+      updateNextButtonState();
+    }
+
+    function setMode(nextMode) {
+      mode = nextMode;
+
+      // Tabs styling
+      if (mode === 'draw') {
+        tabDraw.className = "rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900";
+        tabDraw.setAttribute('aria-current', 'page');
+
+        tabType.className = "rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700";
+        tabType.removeAttribute('aria-current');
+
+        typeWrap.classList.add('hidden');
+
+        // enable drawing behavior
+        canvas.style.pointerEvents = 'auto';
+        // keep whatever was drawn before
+      } else {
+        tabType.className = "rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900";
+        tabType.setAttribute('aria-current', 'page');
+
+        tabDraw.className = "rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700";
+        tabDraw.removeAttribute('aria-current');
+
+        typeWrap.classList.remove('hidden');
+
+        // disable drawing interaction
+        canvas.style.pointerEvents = 'none';
+
+        drawTypedSignature(fullNameInput.value || '');
+      }
+    }
+
+    // Events
+    tabDraw.addEventListener('click', () => setMode('draw'));
+    tabType.addEventListener('click', () => setMode('type'));
+
+    fullNameInput?.addEventListener('input', (e) => {
+      if (mode !== 'type') return;
+      drawTypedSignature(e.target.value);
+    });
+
+    clearButton.addEventListener('click', () => {
+      clearCanvas();
+      hasSignature = false;
+      updateNextButtonState();
+      if (mode === 'type') {
+        fullNameInput.value = '';
+      }
+    });
+
+
+    canvas.addEventListener('pointerdown', handlePointerDown);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerup', handlePointerUp);
+    canvas.addEventListener('pointerleave', handlePointerUp);
+    canvas.addEventListener('pointercancel', handlePointerUp);
+
+    window.addEventListener('resize', setCanvasSize);
+
+
+    // init
+    setCanvasSize();
+    updateNextButtonState();
+    setMode('draw');
+
+    nextButton.addEventListener('click', () => {
+      if (!nextButton.disabled) {
+        window.location.href = 'signature.html';
+      }
+    });
+    updateNextState();
+  </script>
+
+</body>
+
+</html>

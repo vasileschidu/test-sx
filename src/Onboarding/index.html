@@ -1,0 +1,246 @@
+<!doctype html>
+<html class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+  <style>
+    .sidebar-gradient {
+      background: linear-gradient(180deg, #1E326F 0%, #090C38 100%);
+    }
+  </style>
+</head>
+<body class="h-full bg-gray-200 flex items-center justify-center px-6 overflow-hidden antialiased">
+
+  <!-- CONTAINER -->
+  <div class="max-w-[1024px] w-full h-full bg-white flex flex-row overflow-hidden">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar-gradient w-[325px] shrink-0 self-stretch flex flex-col p-[56px] gap-[35px]">
+
+      <!-- Logo -->
+      <button class="ml-auto flex items-center gap-2 p-2.5 rounded-lg bg-gray-900/25 hover:bg-gray-900/35">
+        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
+          <path d="M18.6709 15.8289L15.1834 13.8033L8.12004 17.9137L18.5088 23.9562C18.666 24.0449 18.8625 23.9956 18.9558 23.8379C18.9853 23.7886 19 23.7295 19 23.6703L19 16.4007C19 16.1641 18.8772 15.9472 18.6709 15.8289Z" fill="white"/>
+          <path d="M18.6709 10.171C18.8772 10.0527 19 9.83584 19 9.59926L19 2.32958C19 2.27044 18.9853 2.2113 18.9558 2.16201C18.8674 2.0043 18.666 1.95501 18.5088 2.04372L6.92153 8.78112C6.81838 8.84026 6.75453 8.94869 6.74961 9.06697L6.74961 17.1006L18.6709 10.171Z" fill="white"/>
+        </svg>
+      </button>
+
+      <!-- Stepper Nav -->
+      <nav aria-label="Progress">
+        <ol role="list" class="space-y-6">
+          <li>
+            <!-- Complete Step -->
+            <a href="confirm-identity.html" class="group">
+              <span class="flex items-start">
+                <span class="relative flex size-5 shrink-0 items-center justify-center">
+                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-full text-white group-hover:text-blue-300">
+                    <path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" />
+                  </svg>
+                </span>
+                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Confirm Identity</span>
+              </span>
+            </a>
+          </li>
+          <li>
+            <!-- Current Step -->
+            <a href="#" aria-current="step" class="flex items-start">
+              <span aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                <span class="absolute size-4 rounded-full bg-white/20"></span>
+                <span class="relative block size-2 rounded-full bg-white"></span>
+              </span>
+              <span class="ml-3 text-sm font-medium text-white">Confirm Business Details</span>
+            </a>
+          </li>
+          <li>
+            <!-- Upcoming Step -->
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Review Documents</p>
+              </div>
+            </a>
+          </li>
+          <li>
+            <!-- Upcoming Step -->
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Provide Signature</p>
+              </div>
+            </a>
+          </li>
+          <li>
+            <!-- Upcoming Step -->
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Confirm Payment</p>
+              </div>
+            </a>
+          </li>
+          <li>
+            <!-- Upcoming Step -->
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Create SMART Hub</p>
+              </div>
+            </a>
+          </li>
+          <li>
+            <!-- Upcoming Step -->
+            <a href="#" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Complete</p>
+              </div>
+            </a>
+          </li>
+        </ol>
+      </nav>
+    </div>
+
+    
+    <div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
+
+      <!-- Content area -->
+      <div class="flex-1 flex flex-col items-center px-10 pt-12 py-8">
+
+        <!-- SMART Exchange Logo -->
+        <div class="flex items-center gap-2 mb-8">
+          <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none">
+            <path d="M10.59 22.477C11.1456 22.8034 11.8456 22.4029 11.8456 21.7585L11.8456 12.8466C11.8456 12.4043 11.6119 11.9949 11.231 11.7701L4.59039 7.85088C4.03488 7.52301 3.3335 7.92348 3.3335 8.56854V18.2119L10.59 22.477Z" fill="#FFCD49"/>
+            <path opacity="0.8" d="M3.33374 18.2247V8.53113C3.33374 8.08698 3.56944 7.67618 3.95287 7.45201L14.733 1.14972C15.2886 0.824944 15.987 1.22562 15.987 1.86914V9.42062C15.987 10.3105 15.5139 11.1334 14.7448 11.5811L3.33374 18.2247Z" fill="url(#paint0_linear_32197_26805)"/>
+            <path d="M18.7929 6.86662C18.2374 6.5401 17.5374 6.94066 17.5374 7.58505V16.497C17.5374 16.9393 17.7711 17.3487 18.1519 17.5735L24.7926 21.4927C25.348 21.8206 26.0494 21.4201 26.0494 20.7751V11.1317L18.7929 6.86662Z" fill="#FFCD49"/>
+            <path opacity="0.8" d="M26.0492 11.1189V20.8125C26.0492 21.2566 25.8135 21.6675 25.4301 21.8916L14.6499 28.1938C14.0944 28.5187 13.396 28.1179 13.396 27.4744V19.923C13.396 19.033 13.8691 18.2103 14.6381 17.7625L26.0492 11.1189Z" fill="url(#paint1_linear_32197_26805)"/>
+            <defs>
+              <linearGradient id="paint0_linear_32197_26805" x1="3.33374" y1="18.9445" x2="15.987" y2="1.80945" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#FB9131"/>
+                <stop offset="1" stop-color="#FBC734"/>
+              </linearGradient>
+              <linearGradient id="paint1_linear_32197_26805" x1="26.0492" y1="10.399" x2="13.396" y2="27.5341" gradientUnits="userSpaceOnUse">
+                <stop stop-color="#FB9131"/>
+                <stop offset="1" stop-color="#FBC734"/>
+              </linearGradient>
+            </defs>
+          </svg>
+          <span class="text-lg font-semibold text-gray-900"><span class="font-bold">SMART</span> Exchange</span>
+        </div>
+
+        <!-- Welcome Card -->
+        <div class="sidebar-gradient w-full max-w-[480px] rounded-2xl p-10 flex flex-col gap-6 relative overflow-hidden">
+
+          <!-- Concentric circles background -->
+          <div class="absolute w-[1235.857px] h-[1235.857px] rounded-full bg-[rgba(47,104,237,0.10)] flex items-center justify-center" style="top: calc(0px - 617.929px); right: calc(0px - 617.929px);">
+            <div class="w-[783.714px] h-[783.714px] rounded-full bg-[rgba(47,104,237,0.10)] flex items-center justify-center">
+              <div class="w-[331.571px] h-[331.571px] rounded-full bg-[rgba(47,104,237,0.10)]"></div>
+            </div>
+          </div>
+
+          <!-- Greeting -->
+          <div class="relative z-10">
+            <p class="text-white/60 text-lg">Hi,</p>
+            <h1 class="text-white text-2xl font-bold mt-1">Big Kahuna Burger Ltd</h1>
+          </div>
+
+          <!-- Notification Card -->
+          <div class="relative z-10 bg-white/15 ring-[8px] ring-white/5 rounded-[10px] p-4">
+            <!-- Bell Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-white mb-2">
+              <path d="M5.85 3.5a.75.75 0 0 0-1.117-1 9.719 9.719 0 0 0-2.348 4.876.75.75 0 0 0 1.479.248A8.219 8.219 0 0 1 5.85 3.5ZM19.267 2.5a.75.75 0 1 0-1.118 1 8.22 8.22 0 0 1 1.987 4.124.75.75 0 0 0 1.48-.248A9.72 9.72 0 0 0 19.266 2.5Z" />
+              <path fill-rule="evenodd" d="M12 2.25A6.75 6.75 0 0 0 5.25 9v.75a8.217 8.217 0 0 1-2.119 5.52.75.75 0 0 0 .298 1.206c1.544.57 3.16.99 4.831 1.243a3.75 3.75 0 1 0 7.48 0 24.583 24.583 0 0 0 4.83-1.244.75.75 0 0 0 .298-1.205 8.217 8.217 0 0 1-2.118-5.52V9A6.75 6.75 0 0 0 12 2.25ZM9.75 17.898a18.566 18.566 0 0 0 4.5 0 2.25 2.25 0 0 1-4.5 0Z" clip-rule="evenodd" />
+            </svg>
+            <p class="text-white/80 text-sm">You have a payment of <span class="font-semibold text-white">$3,526.00</span> from <span class="font-semibold text-white">Rad Roofing Ltd</span>.</p>
+          </div>
+
+          <!-- Learn More -->
+          <button command="show-modal" commandfor="learn-more-dialog" type="button" class="relative z-10 rounded-md px-2.5 py-1.5 text-sm font-semibold text-white hover:bg-white/10 flex items-center gap-2 w-fit">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 text-white/70">
+              <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 0 1-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518 0 4.842a3.75 3.75 0 0 1-.837.552c-.676.37-1.028.768-1.028 1.152v.75a.75.75 0 0 1-1.5 0v-.75c0-1.279 1.06-1.99 1.625-2.3.287-.157.514-.35.657-.504.898-.786.898-2.027 0-2.813ZM12 18a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+            </svg>
+            Learn more
+          </button>
+
+          <!-- Get Started Button -->
+          <a href="confirm-identity.html" class="relative z-10 mt-10 inline-flex w-full items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+            Get Started
+            <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="-mr-0.5 size-5">
+              <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.19L10.22 5.53a.75.75 0 1 1 1.06-1.06l5 5a.75.75 0 0 1 0 1.06l-5 5a.75.75 0 1 1-1.06-1.06l3.72-3.72H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
+            </svg>
+          </a>
+
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="flex items-center justify-center gap-1.5 py-5 px-6">
+        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <path d="M8.91309 1.125C11.4548 3.2985 15.5771 3.43066 15.5771 3.43066V9.22656C15.5767 12.7831 8.91309 16.875 8.91309 16.875C8.86421 16.8449 2.25042 12.77 2.25 9.22656V3.43066C2.25 3.43066 6.37134 3.29832 8.91309 1.125ZM7.2793 9.90918C7.2091 9.94947 7.16702 10.0229 7.16699 10.1035V12.5801C7.16699 12.6002 7.17163 12.6209 7.18164 12.6377C7.21173 12.6914 7.28048 12.708 7.33398 12.6777L11.2783 10.3828C11.3134 10.3627 11.3352 10.3254 11.3369 10.2852V7.54785L7.2793 9.90918ZM7.33398 5.21191C7.28052 5.18171 7.21343 5.19831 7.18164 5.25195C7.17161 5.26875 7.16699 5.28942 7.16699 5.30957V7.78613C7.16699 7.86667 7.2082 7.94112 7.27832 7.98145L8.46582 8.6709L10.8701 7.27051L7.33398 5.21191Z" fill="#0089CF"/>
+        </svg>
+        <span class="text-xs text-gray-700">
+          Powered by <span class="font-bold">Transcard</span>
+          <span class="mx-1">|</span>
+          <a href="#" class="text-gray-700 hover:underline">Terms of Use</a>
+          <span class="mx-0.5">&bull;</span>
+          <a href="#" class="text-gray-700 hover:underline">Privacy Policy</a>
+          <span class="mx-0.5">&bull;</span>
+          <a href="#" class="text-gray-700 hover:underline">E-Sign Consent</a>
+        </span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Learn More Modal -->
+  <el-dialog>
+    <dialog id="learn-more-dialog" aria-labelledby="modal-title" class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+      <el-dialog-backdrop class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+
+      <div tabindex="0" class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-0">
+        <el-dialog-panel class="relative transform overflow-hidden rounded-2xl bg-white px-8 pb-8 pt-6 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:my-8 sm:w-full sm:max-w-lg antialiased data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+
+          <!-- Close button -->
+          <div class="absolute right-4 top-4">
+            <button command="close" commandfor="learn-more-dialog" type="button" class="rounded-md bg-white text-gray-400 hover:text-gray-500">
+              <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Info icon -->
+          <div class="mb-4">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-8 text-blue-600">
+              <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
+            </svg>
+          </div>
+
+          <!-- Content -->
+          <h3 class="text-xl font-bold text-gray-900 mb-4" id="modal-title">[buyerName] is enhancing the way they will be paying you</h3>
+
+          <div class="space-y-4 text-sm text-gray-500">
+            <p>[buyerName] has partnered with Transcard to transition to digital payment interactions and remove the legacy paper-based process.</p>
+            <p>With the new solution the speed of sending payments and documentation is greatly enhanced with improved tracking, reporting and reconciliation.</p>
+            <p>For more details on the changes we are making, you can contact <span class="font-semibold text-gray-900">[buyerName]</span> by emailing <span class="font-semibold text-gray-900">[buyerEmailAddress]</span> or calling <span class="font-semibold text-gray-900">[buyerPhoneNumber]</span>.</p>
+          </div>
+
+        </el-dialog-panel>
+      </div>
+    </dialog>
+  </el-dialog>
+
+</body>
+</html>
