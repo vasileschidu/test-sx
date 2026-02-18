@@ -1,421 +1,286 @@
 <!doctype html>
-<html class="h-full bg-white dark:bg-gray-900">
+<html class="h-full">
 
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SMART Exchange - Dashboard</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
     <!-- Tailwind -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-    <!-- Tailwind Plus Elements (for <el-dialog>, <el-dropdown>) -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+    <style type="text/tailwindcss">
+        @theme {
+            --color-gray-50: #F9FAFB;
+            --color-gray-100: #F3F4F6;
+            --color-gray-200: #E5E7EB;
+            --color-gray-300: #D1D5DB;
+            --color-gray-400: #9CA3AF;
+            --color-gray-500: #6B7280;
+            --color-gray-600: #4B5563;
+            --color-gray-700: #374151;
+            --color-gray-800: #1F2937;
+            --color-gray-900: #111827;
+            --color-blue-100: #DBEAFE;
+            --color-blue-700: #1E40AF;
+            --color-blue-800: #1E3A8A;
+        }
+    </style>
 </head>
 
-<body class="h-full">
-    <!-- Include this script tag or install `@tailwindplus/elements` via npm: -->
-    <!-- <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> -->
-    <!--
-  This example requires updating your template:
+<body class="h-full bg-gray-100 font-['Inter'] antialiased">
 
-  ```
-  <html class="h-full bg-white dark:bg-gray-900">
-  <body class="h-full">
-  ```
--->
+    <div class="flex h-screen">
 
-    <el-dialog>
-        <dialog id="sidebar" class="backdrop:bg-transparent lg:hidden">
-            <el-dialog-backdrop
-                class="fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0"></el-dialog-backdrop>
+        <!-- ===== SIDEBAR (360px with 24px padding = 312px inner) ===== -->
+        <aside class="flex w-[360px] shrink-0 flex-col border-r border-gray-200 bg-white">
 
-            <div tabindex="0" class="fixed inset-0 flex focus:outline-none">
-                <el-dialog-panel
-                    class="group/dialog-panel relative mr-16 flex w-full max-w-xs flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full">
-                    <div
-                        class="absolute top-0 left-full flex w-16 justify-center pt-5 duration-300 ease-in-out group-data-closed/dialog-panel:opacity-0">
-                        <button type="button" command="close" commandfor="sidebar" class="-m-2.5 p-2.5">
-                            <span class="sr-only">Close sidebar</span>
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                data-slot="icon" aria-hidden="true" class="size-6 text-white">
-                                <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+            <!-- Sidebar inner with 24px padding -->
+            <div class="flex flex-1 flex-col justify-between px-6 pt-6 pb-6">
+
+                <!-- Top section: Logo + Menu + Help -->
+                <div class="flex flex-col gap-9">
+
+                    <!-- Logo row -->
+                    <div class="flex items-center justify-between px-1">
+                        <!-- Logo placeholder (136x32) -->
+                        <div class="flex items-center gap-2">
+                            <div class="size-8 rounded-lg bg-gray-200"></div>
+                            <div class="h-3 w-[94px] rounded bg-gray-300"></div>
+                        </div>
+                        <!-- Collapse button (32x32) -->
+                        <button class="flex size-8 items-center justify-center rounded-md hover:bg-gray-100 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-400">
+                                <path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" />
                             </svg>
                         </button>
                     </div>
 
-                    <!-- Sidebar component, swap this element with another sidebar if you like -->
-                    <div
-                        class="relative flex grow flex-col gap-y-5 overflow-y-auto bg-white px-6 pb-4 dark:bg-gray-900 dark:ring dark:ring-white/10 dark:before:pointer-events-none dark:before:absolute dark:before:inset-0 dark:before:bg-black/10">
-                        <div class="relative flex h-16 shrink-0 items-center">
-                            <img src="/assets/img/SMART Hub.svg" alt="Your Company" class="h-8 w-auto dark:hidden" />
-                            <img src="/assets/img/SMART Hub.svg" alt="Your Company"
-                                class="h-8 w-auto not-dark:hidden" />
-                        </div>
-                        <nav class="relative flex flex-1 flex-col">
-                            <ul role="list" class="flex flex-1 flex-col gap-y-7">
-                                <li>
-                                    <ul role="list" class="-mx-2 space-y-1">
-                                        <li>
-                                            <!-- Current: "bg-gray-50 dark:bg-white/5 text-indigo-600 dark:text-white", Default: "text-gray-700 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5" -->
-                                            <a href="#"
-                                                class="group flex gap-x-3 rounded-md bg-gray-50 p-2 text-sm/6 font-semibold text-indigo-600 dark:bg-white/5 dark:text-white">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="1.5" data-slot="icon" aria-hidden="true"
-                                                    class="size-6 shrink-0 text-indigo-600 dark:text-white">
-                                                    <path
-                                                        d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
-                                                        stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                                Dashboard
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="1.5" data-slot="icon" aria-hidden="true"
-                                                    class="size-6 shrink-0 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-white">
-                                                    <path
-                                                        d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
-                                                        stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                                Team
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="1.5" data-slot="icon" aria-hidden="true"
-                                                    class="size-6 shrink-0 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-white">
-                                                    <path
-                                                        d="M2.25 12.75V12A2.25 2.25 0 0 1 4.5 9.75h15A2.25 2.25 0 0 1 21.75 12v.75m-8.69-6.44-2.12-2.12a1.5 1.5 0 0 0-1.061-.44H4.5A2.25 2.25 0 0 0 2.25 6v12a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9a2.25 2.25 0 0 0-2.25-2.25h-5.379a1.5 1.5 0 0 1-1.06-.44Z"
-                                                        stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                                Projects
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="1.5" data-slot="icon" aria-hidden="true"
-                                                    class="size-6 shrink-0 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-white">
-                                                    <path
-                                                        d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5"
-                                                        stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                                Calendar
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="1.5" data-slot="icon" aria-hidden="true"
-                                                    class="size-6 shrink-0 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-white">
-                                                    <path
-                                                        d="M15.75 17.25v3.375c0 .621-.504 1.125-1.125 1.125h-9.75a1.125 1.125 0 0 1-1.125-1.125V7.875c0-.621.504-1.125 1.125-1.125H6.75a9.06 9.06 0 0 1 1.5.124m7.5 10.376h3.375c.621 0 1.125-.504 1.125-1.125V11.25c0-4.46-3.243-8.161-7.5-8.876a9.06 9.06 0 0 0-1.5-.124H9.375c-.621 0-1.125.504-1.125 1.125v3.5m7.5 10.375H9.375a1.125 1.125 0 0 1-1.125-1.125v-9.25m12 6.625v-1.875a3.375 3.375 0 0 0-3.375-3.375h-1.5a1.125 1.125 0 0 1-1.125-1.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H9.75"
-                                                        stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                                Documents
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                                                    stroke-width="1.5" data-slot="icon" aria-hidden="true"
-                                                    class="size-6 shrink-0 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-white">
-                                                    <path d="M10.5 6a7.5 7.5 0 1 0 7.5 7.5h-7.5V6Z"
-                                                        stroke-linecap="round" stroke-linejoin="round" />
-                                                    <path d="M13.5 10.5H21A7.5 7.5 0 0 0 13.5 3v7.5Z"
-                                                        stroke-linecap="round" stroke-linejoin="round" />
-                                                </svg>
-                                                Reports
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li>
-                                    <div class="text-xs/6 font-semibold text-gray-400">Your teams</div>
-                                    <ul role="list" class="-mx-2 mt-2 space-y-1">
-                                        <li>
-                                            <!-- Current: "bg-gray-50 dark:bg-white/5 text-indigo-600 dark:text-white", Default: "text-gray-700 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5" -->
-                                            <a href="#"
-                                                class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white">
-                                                <span
-                                                    class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600 dark:border-white/10 dark:bg-white/5 dark:group-hover:border-white/20 dark:group-hover:text-white">H</span>
-                                                <span class="truncate">Heroicons</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white">
-                                                <span
-                                                    class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600 dark:border-white/10 dark:bg-white/5 dark:group-hover:border-white/20 dark:group-hover:text-white">T</span>
-                                                <span class="truncate">Tailwind Labs</span>
-                                            </a>
-                                        </li>
-                                        <li>
-                                            <a href="#"
-                                                class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white">
-                                                <span
-                                                    class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600 dark:border-white/10 dark:bg-white/5 dark:group-hover:border-white/20 dark:group-hover:text-white">W</span>
-                                                <span class="truncate">Workcation</span>
-                                            </a>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <li class="mt-auto">
-                                    <a href="#"
-                                        class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white">
-                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                            data-slot="icon" aria-hidden="true"
-                                            class="size-6 shrink-0 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-white">
-                                            <path
-                                                d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"
-                                                stroke-linecap="round" stroke-linejoin="round" />
-                                            <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" stroke-linecap="round"
-                                                stroke-linejoin="round" />
-                                        </svg>
-                                        Settings
-                                    </a>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
-                </el-dialog-panel>
-            </div>
-        </dialog>
-    </el-dialog>
+                    <!-- Menu items -->
+                    <nav class="flex flex-col">
 
-    <!-- Static sidebar for desktop -->
-    <div class="hidden bg-gray-900 lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
-        <!-- Sidebar component, swap this element with another sidebar if you like -->
-        <div
-            class="flex grow flex-col gap-y-5 overflow-y-auto border-r border-gray-200 bg-white px-6 pb-4 dark:border-white/10 dark:bg-black/10">
-            <div class="flex h-16 shrink-0 items-center justify-between">
-
-                <!-- Logo -->
-                <img src="/assets/img/SMART Hub.svg" alt="SMART Hub" class="h-8 w-auto" />
-
-                <!-- Collapse Button -->
-                <button type="button"
-                    class="flex items-center justify-center gap-1 p-[6px] rounded-md hover:bg-gray-100 transition"
-                    aria-label="Toggle sidebar">
-
-
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                        class="size-5 text-gray-400">
-                        <path fill-rule="evenodd"
-                            d="M7.72 12.53a.75.75 0 0 1 0-1.06l7.5-7.5a.75.75 0 1 1 1.06 1.06L9.31 12l6.97 6.97a.75.75 0 1 1-1.06 1.06l-7.5-7.5Z"
-                            clip-rule="evenodd" />
-                    </svg>
-
-                </button>
-
-            </div>
-
-            <nav class="flex flex-1 flex-col">
-                <ul role="list" class="flex flex-1 flex-col gap-y-7">
-                    <li>
-                        <ul role="list" class="-mx-2 space-y-0">
-
-                            <a href="#" class="group flex h-10 items-center gap-2 self-stretch rounded-md
-                                px-3 py-2 pl-2
-                                text-sm font-medium text-gray-600
-                                transition-colors
-                                hover:bg-gray-100">
-
-                                <!-- Icon -->
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor"
-                                    class="size-6 text-gray-500 group-hover:text-blue-600">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09L15.75 12l-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a3.375 3.375 0 0 0-2.455-2.456L14.25 6l1.036-.259a3.375 3.375 0 0 0 2.455-2.456L18 2.25l.259 1.035a3.375 3.375 0 0 0 2.456 2.456L21.75 6l-1.035.259a3.375 3.375 0 0 0-2.456 2.456ZM16.894 20.567 16.5 21.75l-.394-1.183a2.25 2.25 0 0 0-1.423-1.423L13.5 18.75l1.183-.394a2.25 2.25 0 0 0 1.423-1.423l.394-1.183.394 1.183a2.25 2.25 0 0 0 1.423 1.423l1.183.394-1.183.394a2.25 2.25 0 0 0-1.423 1.423Z" />
-                                </svg>
-                                <!-- Text -->
-                                <span>Insights</span>
-                            </a>
-
-                            <a href="#" class="group flex h-10 items-center gap-2 self-stretch rounded-md
-                                px-3 py-2 pl-2
-                                text-sm font-medium text-gray-600
-                                transition-colors
-                                hover:bg-gray-100">
-
-                                <!-- Icon -->
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor"
-                                    class="size-6 text-gray-500 group-hover:text-blue-600">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M7.5 21L3 16.5M3 16.5L7.5 12M3 16.5H16.5M16.5 3L21 7.5M21 7.5L16.5 12M21 7.5L7.5 7.5" />
-                                </svg>
-
-                                <!-- Text -->
-                                <span>AP/AR Payments</span>
-                            </a>
-
-                            <a href="#" class="group flex h-10 items-center gap-2 self-stretch rounded-md
-                                px-3 py-2 pl-2
-                                text-sm font-medium text-gray-600
-                                transition-colors
-                                hover:bg-gray-100">
-
-                                <!-- Icon -->
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor"
-                                    class="size-6 text-gray-500 group-hover:text-blue-600">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M8.75 0.75L9.08541 0.0791796C8.87426 -0.0263932 8.62574 -0.0263932 8.41459 0.0791796L8.75 0.75ZM16.75 4.75H17.5C17.5 4.46592 17.3395 4.20622 17.0854 4.07918L16.75 4.75ZM0.75 4.75L0.41459 4.07918C0.160502 4.20622 0 4.46592 0 4.75H0.75ZM16.75 14.75L17.0854 15.4208C17.3395 15.2938 17.5 15.0341 17.5 14.75H16.75ZM8.75 18.75L8.41459 19.4208C8.62574 19.5264 8.87426 19.5264 9.08541 19.4208L8.75 18.75ZM0.75 14.75H0C0 15.0341 0.160502 15.2938 0.41459 15.4208L0.75 14.75ZM5.77275 1.76866C5.4186 1.55384 4.95735 1.66679 4.74253 2.02095C4.52772 2.3751 4.64067 2.83635 4.99483 3.05117L5.38379 2.40991L5.77275 1.76866ZM12.6279 6.80396H13.3779V6.38169L13.0169 6.1627L12.6279 6.80396ZM11.8779 11.9897C11.8779 12.4039 12.2137 12.7397 12.6279 12.7397C13.0421 12.7397 13.3779 12.4039 13.3779 11.9897H12.6279H11.8779ZM3.67537 12.1873C3.30898 11.9941 2.85534 12.1345 2.66213 12.5009C2.46893 12.8673 2.60932 13.3209 2.97572 13.5141L3.32555 12.8507L3.67537 12.1873ZM4.09786 14.1228C4.46018 14.3235 4.91663 14.1926 5.11738 13.8303C5.31813 13.4679 5.18716 13.0115 4.82484 12.8107L4.46135 13.4668L4.09786 14.1228ZM8.75 0.75L8.41459 1.42082L16.4146 5.42082L16.75 4.75L17.0854 4.07918L9.08541 0.0791796L8.75 0.75ZM16.75 4.75L16.4146 4.07918L8.41459 8.07918L8.75 8.75L9.08541 9.42082L17.0854 5.42082L16.75 4.75ZM8.75 8.75L9.08541 8.07918L1.08541 4.07918L0.75 4.75L0.41459 5.42082L8.41459 9.42082L8.75 8.75ZM0.75 4.75L1.08541 5.42082L9.08541 1.42082L8.75 0.75L8.41459 0.0791796L0.41459 4.07918L0.75 4.75ZM16.75 14.75L16.4146 14.0792L8.41459 18.0792L8.75 18.75L9.08541 19.4208L17.0854 15.4208L16.75 14.75ZM8.75 18.75L9.08541 18.0792L1.08541 14.0792L0.75 14.75L0.41459 15.4208L8.41459 19.4208L8.75 18.75ZM0.75 14.75H1.5V4.75H0.75H0V14.75H0.75ZM16.75 14.75H17.5V4.75H16.75H16V14.75H16.75ZM8.75 8.75H8V18.75H8.75H9.5V8.75H8.75ZM5.38379 2.40991L4.99483 3.05117L12.239 7.44521L12.6279 6.80396L13.0169 6.1627L5.77275 1.76866L5.38379 2.40991ZM12.6279 6.80396H11.8779V11.9897H12.6279H13.3779V6.80396H12.6279ZM3.32555 12.8507L2.97572 13.5141C3.21812 13.6419 3.49824 13.7938 3.71923 13.9146C3.82941 13.9749 3.92425 14.027 3.9915 14.0641C4.02511 14.0826 4.05181 14.0973 4.07005 14.1074C4.07917 14.1125 4.08618 14.1163 4.09088 14.1189C4.09323 14.1202 4.095 14.1212 4.09617 14.1219C4.09676 14.1222 4.0972 14.1224 4.09748 14.1226C4.09762 14.1227 4.09772 14.1227 4.09779 14.1228C4.09782 14.1228 4.09784 14.1228 4.09785 14.1228C4.09786 14.1228 4.09786 14.1228 4.09787 14.1228C4.09787 14.1228 4.09786 14.1228 4.46135 13.4668C4.82484 12.8107 4.82483 12.8107 4.82482 12.8107C4.82482 12.8107 4.8248 12.8107 4.82479 12.8107C4.82477 12.8107 4.82473 12.8107 4.82468 12.8106C4.82459 12.8106 4.82446 12.8105 4.82429 12.8104C4.82396 12.8102 4.82346 12.81 4.82282 12.8096C4.82154 12.8089 4.81965 12.8079 4.81718 12.8065C4.81225 12.8038 4.805 12.7998 4.79563 12.7946C4.77688 12.7842 4.74962 12.7692 4.71541 12.7503C4.64699 12.7126 4.55064 12.6596 4.4387 12.5985C4.21546 12.4764 3.92768 12.3203 3.67537 12.1873L3.32555 12.8507Z" />
-                                </svg>
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                                    stroke-width="1.5" stroke="currentColor"
-                                    class="size-6 text-gray-500 group-hover:text-blue-600">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M7.5 21L3 16.5M3 16.5L7.5 12M3 16.5H16.5M16.5 3L21 7.5M21 7.5L16.5 12M21 7.5L7.5 7.5" />
-                                </svg>
-
-                                <!-- Text -->
-                                <span>SMART Exchange</span>
-                            </a>
-
-
-
-
-                        </ul>
-                    </li>
-                    <li>
-                        <div class="text-xs/6 font-semibold text-gray-400">Your teams</div>
-                        <ul role="list" class="-mx-2 mt-2 space-y-1">
-                            <li>
-                                <!-- Current: "bg-gray-50 dark:bg-white/5 text-indigo-600 dark:text-white", Default: "text-gray-700 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-white/5" -->
-                                <a href="#"
-                                    class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white">
-                                    <span
-                                        class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600 dark:border-white/10 dark:bg-white/5 dark:group-hover:border-white/20 dark:group-hover:text-white">H</span>
-                                    <span class="truncate">Heroicons</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white">
-                                    <span
-                                        class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600 dark:border-white/10 dark:bg-white/5 dark:group-hover:border-white/20 dark:group-hover:text-white">T</span>
-                                    <span class="truncate">Tailwind Labs</span>
-                                </a>
-                            </li>
-                            <li>
-                                <a href="#"
-                                    class="group flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white">
-                                    <span
-                                        class="flex size-6 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-[0.625rem] font-medium text-gray-400 group-hover:border-indigo-600 group-hover:text-indigo-600 dark:border-white/10 dark:bg-white/5 dark:group-hover:border-white/20 dark:group-hover:text-white">W</span>
-                                    <span class="truncate">Workcation</span>
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    <li class="mt-auto">
-                        <a href="#"
-                            class="group -mx-2 flex gap-x-3 rounded-md p-2 text-sm/6 font-semibold text-gray-700 hover:bg-gray-50 hover:text-indigo-600 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                data-slot="icon" aria-hidden="true"
-                                class="size-6 shrink-0 text-gray-400 group-hover:text-indigo-600 dark:group-hover:text-white">
-                                <path
-                                    d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"
-                                    stroke-linecap="round" stroke-linejoin="round" />
-                                <path d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" stroke-linecap="round"
-                                    stroke-linejoin="round" />
-                            </svg>
-                            Settings
+                        <!-- Insights -->
+                        <a href="#" class="group flex h-10 items-center justify-between rounded-lg px-3 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                            <span class="flex items-center gap-3">
+                                <!-- Icon placeholder 24x24 -->
+                                <span class="size-6 rounded bg-gray-200 shrink-0"></span>
+                                Insights
+                            </span>
+                            <span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">Badge</span>
                         </a>
-                    </li>
-                </ul>
-            </nav>
-        </div>
-    </div>
 
-    <div class="lg:pl-72">
-        <div
-            class="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-xs sm:gap-x-6 sm:px-6 lg:px-8 dark:border-white/10 dark:bg-gray-900 dark:shadow-none">
-            <button type="button" command="show-modal" commandfor="sidebar"
-                class="-m-2.5 p-2.5 text-gray-700 hover:text-gray-900 lg:hidden dark:text-gray-400 dark:hover:text-white">
-                <span class="sr-only">Open sidebar</span>
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon"
-                    aria-hidden="true" class="size-6">
-                    <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round"
-                        stroke-linejoin="round" />
-                </svg>
-            </button>
+                        <!-- AP/AR Payments -->
+                        <a href="#" class="group flex h-10 items-center justify-between rounded-lg px-3 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                            <span class="flex items-center gap-3">
+                                <span class="size-6 rounded bg-gray-200 shrink-0"></span>
+                                AP/AR Payments
+                            </span>
+                            <span class="inline-flex items-center rounded-md bg-blue-100 px-2 py-0.5 text-xs font-medium text-blue-700">Upgrade</span>
+                        </a>
 
-            <!-- Separator -->
-            <div aria-hidden="true" class="h-6 w-px bg-gray-200 lg:hidden dark:bg-white/10"></div>
+                        <!-- Separator -->
+                        <div class="my-0 h-px bg-gray-200"></div>
 
-            <div class="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
-                <form action="#" method="GET" class="grid flex-1 grid-cols-1">
-                    <input name="search" placeholder="Search" aria-label="Search"
-                        class="col-start-1 row-start-1 block size-full bg-white pl-8 text-base text-gray-900 outline-hidden placeholder:text-gray-400 sm:text-sm/6 dark:bg-gray-900 dark:text-white dark:placeholder:text-gray-500" />
-                    <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true"
-                        class="pointer-events-none col-start-1 row-start-1 size-5 self-center text-gray-400">
-                        <path
-                            d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
-                            clip-rule="evenodd" fill-rule="evenodd" />
-                    </svg>
-                </form>
-                <div class="flex items-center gap-x-4 lg:gap-x-6">
-                    <button type="button" class="-m-2.5 p-2.5 text-gray-400 hover:text-gray-500 dark:hover:text-white">
-                        <span class="sr-only">View notifications</span>
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" data-slot="icon"
-                            aria-hidden="true" class="size-6">
-                            <path
-                                d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
-                                stroke-linecap="round" stroke-linejoin="round" />
-                        </svg>
-                    </button>
+                        <!-- SMART Exchange (parent - expanded/active) -->
+                        <a href="#" class="group flex h-10 items-center justify-between rounded-lg px-3 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                            <span class="flex items-center gap-3">
+                                <span class="size-6 rounded bg-gray-200 shrink-0"></span>
+                                SMART Exchange
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-400">
+                                <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+
+                        <!-- Sub-items (indented) -->
+                        <div class="ml-9 flex flex-col">
+                            <a href="#" class="flex h-10 items-center justify-between rounded-lg px-3 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                                My Company Profile
+                                <span class="inline-flex items-center justify-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">5</span>
+                            </a>
+                            <!-- Active sub-item -->
+                            <a href="#" class="flex h-10 items-center justify-between rounded-lg bg-gray-100 px-3 text-base font-medium text-gray-900 transition-colors">
+                                Incoming Disbursements
+                                <span class="inline-flex items-center justify-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">5</span>
+                            </a>
+                            <a href="#" class="flex h-10 items-center justify-between rounded-lg px-3 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                                Payment Preferences
+                                <span class="inline-flex items-center justify-center rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-800">5</span>
+                            </a>
+                        </div>
+
+                        <!-- Separator -->
+                        <div class="my-0 h-px bg-gray-200"></div>
+
+                        <!-- SMART Exchange (flat) -->
+                        <a href="#" class="group flex h-10 items-center justify-between rounded-lg px-3 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                            <span class="flex items-center gap-3">
+                                <span class="size-6 rounded bg-gray-200 shrink-0"></span>
+                                SMART Exchange
+                            </span>
+                        </a>
+
+                        <!-- Payment Preferences -->
+                        <a href="#" class="group flex h-10 items-center justify-between rounded-lg px-3 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                            <span class="flex items-center gap-3">
+                                <span class="size-6 rounded bg-gray-200 shrink-0"></span>
+                                Payment Preferences
+                            </span>
+                        </a>
+
+                        <!-- Separator -->
+                        <div class="my-0 h-px bg-gray-200"></div>
+
+                        <!-- My Company Profile -->
+                        <a href="#" class="group flex h-10 items-center justify-between rounded-lg px-3 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                            <span class="flex items-center gap-3">
+                                <span class="size-6 rounded bg-gray-200 shrink-0"></span>
+                                My Company Profile
+                            </span>
+                        </a>
+
+                        <!-- Settings (expandable) -->
+                        <a href="#" class="group flex h-10 items-center justify-between rounded-lg px-3 text-base font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                            <span class="flex items-center gap-3">
+                                <span class="size-6 rounded bg-gray-200 shrink-0"></span>
+                                Settings
+                            </span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-400">
+                                <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                            </svg>
+                        </a>
+
+                    </nav>
+
+                    <!-- Help from Transcard -->
+                    <div class="flex flex-col gap-2">
+                        <div class="h-px bg-gray-200"></div>
+                        <button class="flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors">
+                            <!-- Icon placeholder -->
+                            <span class="size-5 rounded bg-gray-200 shrink-0"></span>
+                            Help from Transcard
+                        </button>
+                    </div>
+
+                </div>
+
+                <!-- Footer: Powered by Transcard -->
+                <div class="flex flex-col items-center gap-2 pt-4 pb-4">
+                    <!-- Powered by row -->
+                    <div class="flex items-center gap-1">
+                        <!-- Shield icon placeholder -->
+                        <span class="size-[18px] rounded-sm bg-gray-200 shrink-0"></span>
+                        <span class="text-xs font-medium text-gray-800">Powered by </span>
+                        <!-- Transcard logo placeholder -->
+                        <div class="h-3 w-16 rounded bg-gray-300"></div>
+                    </div>
+                    <!-- Links -->
+                    <div class="flex items-center gap-2 text-xs font-medium text-gray-700">
+                        <a href="#" class="hover:text-gray-900 transition-colors">Terms of Use</a>
+                        <span class="text-gray-300">|</span>
+                        <a href="#" class="hover:text-gray-900 transition-colors">Privacy Policy</a>
+                    </div>
+                </div>
+
+            </div>
+
+        </aside>
+
+        <!-- ===== MAIN AREA (1560px remaining) ===== -->
+        <div class="flex flex-1 flex-col min-w-0">
+
+            <!-- ===== TOP HEADER BAR (white, border-bottom, 145px) ===== -->
+            <header class="shrink-0 border-b border-gray-200 bg-white">
+                <div class="flex flex-col gap-4 px-6 pt-6 pb-4">
+
+                    <!-- Header row: Greeting + User/Notifications -->
+                    <div class="flex items-center justify-between">
+                        <!-- Greeting -->
+                        <div class="flex items-baseline gap-1.5">
+                            <h1 class="text-2xl font-bold text-gray-900">Hello,</h1>
+                            <h1 class="text-2xl font-bold text-gray-900">Johnny Anderson</h1>
+                        </div>
+
+                        <!-- Right side: Notifications + Business + User avatar -->
+                        <div class="flex items-center gap-4">
+                            <!-- User avatar (40x40) -->
+                            <div class="size-10 rounded-full bg-gray-200"></div>
+
+                            <!-- Business selector -->
+                            <button class="flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-base font-semibold text-gray-800 hover:bg-gray-50 transition-colors">
+                                Big Kahuna Burger Ltd
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-400">
+                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                </svg>
+                            </button>
+
+                            <!-- Notification bell (32x32) -->
+                            <button class="relative flex size-8 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors">
+                                <!-- Bell icon placeholder -->
+                                <span class="size-5 rounded bg-gray-200"></span>
+                                <!-- Badge -->
+                                <span class="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">6</span>
+                            </button>
+                        </div>
+                    </div>
 
                     <!-- Separator -->
-                    <div aria-hidden="true" class="hidden lg:block lg:h-6 lg:w-px lg:bg-gray-200 dark:lg:bg-white/10">
+                    <div class="h-px bg-gray-200"></div>
+
+                    <!-- Breadcrumbs row -->
+                    <div class="flex items-center gap-6">
+                        <!-- Page title -->
+                        <h2 class="text-xl font-semibold text-gray-900">SMART Exchange</h2>
+                        <!-- Separator -->
+                        <div class="h-5 w-px bg-gray-300"></div>
+                        <!-- Breadcrumb links -->
+                        <nav class="flex items-center gap-1">
+                            <!-- Home icon placeholder -->
+                            <span class="size-5 rounded bg-gray-200 shrink-0"></span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-300">
+                                <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                            </svg>
+                            <a href="#" class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">Payments</a>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-300">
+                                <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                            </svg>
+                            <a href="#" class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">Payment Preferences</a>
+                        </nav>
                     </div>
 
-                    <!-- Profile dropdown -->
-                    <el-dropdown class="relative">
-                        <button class="relative flex items-center">
-                            <span class="absolute -inset-1.5"></span>
-                            <span class="sr-only">Open user menu</span>
-                            <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                                alt=""
-                                class="size-8 rounded-full bg-gray-50 outline -outline-offset-1 outline-black/5 dark:bg-gray-800 dark:outline-white/10" />
-                            <span class="hidden lg:flex lg:items-center">
-                                <span aria-hidden="true"
-                                    class="ml-4 text-sm/6 font-semibold text-gray-900 dark:text-white">Tom Cook</span>
-                                <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true"
-                                    class="ml-2 size-5 text-gray-400 dark:text-gray-500">
-                                    <path
-                                        d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                                        clip-rule="evenodd" fill-rule="evenodd" />
-                                </svg>
-                            </span>
+                    <!-- Tab Toggle (255x44, bg gray-100, 4px padding, 7px gap) -->
+                    <div class="flex w-fit items-center gap-[7px] rounded-lg bg-gray-100 p-1">
+                        <!-- Active tab -->
+                        <button class="flex items-center gap-2 rounded-md bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition-colors">
+                            <span class="size-5 rounded bg-gray-200 shrink-0"></span>
+                            AP Dashboard
                         </button>
-                        <el-menu anchor="bottom end" popover
-                            class="w-32 origin-top-right rounded-md bg-white py-2 shadow-lg outline-1 outline-gray-900/5 transition transition-discrete [--anchor-gap:--spacing(2.5)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
-                            <a href="#"
-                                class="block px-3 py-1 text-sm/6 text-gray-900 focus:bg-gray-50 focus:outline-hidden dark:text-white dark:focus:bg-white/5">Your
-                                profile</a>
-                            <a href="#"
-                                class="block px-3 py-1 text-sm/6 text-gray-900 focus:bg-gray-50 focus:outline-hidden dark:text-white dark:focus:bg-white/5">Sign
-                                out</a>
-                        </el-menu>
-                    </el-dropdown>
+                        <!-- Inactive tab -->
+                        <button class="flex items-center gap-2 rounded-md px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors">
+                            <span class="size-5 rounded bg-gray-200 shrink-0"></span>
+                            AR Dashboard
+                        </button>
+                    </div>
+
                 </div>
-            </div>
+            </header>
+
+            <!-- ===== MAIN CONTENT AREA (bg gray-100, 24px padding, gap-20) ===== -->
+            <main class="flex-1 overflow-y-auto bg-gray-100 p-6">
+                <div class="flex flex-col gap-5">
+                    <!-- Content placeholder -->
+                    <div class="rounded-xl bg-white p-6 shadow-sm">
+                        <p class="text-sm text-gray-500">Dashboard content goes here...</p>
+                    </div>
+                </div>
+            </main>
+
         </div>
 
-        <main class="py-10">
-            <div class="px-4 sm:px-6 lg:px-8">
-                <!-- Your content -->
-            </div>
-        </main>
     </div>
 
 </body>
