@@ -50,7 +50,8 @@
                     </div>
 
                     <!-- Mobile sidebar content (mirrors desktop) -->
-                    <div class="flex grow flex-col justify-between overflow-y-auto bg-white dark:bg-gray-900 px-6 pt-6 pb-6">
+                    <div
+                        class="flex grow flex-col justify-between overflow-y-auto bg-white dark:bg-gray-900 px-6 pt-6 pb-6">
 
                         <div class="flex flex-col gap-9">
 
@@ -163,7 +164,8 @@
                                     data-smart-exchange-trigger onclick="toggleExpandableItem(this)">
                                     <span class="flex items-center gap-3">
                                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
-                                            aria-hidden="true" class="nav-icon size-6 shrink-0 text-gray-500 dark:text-gray-400">
+                                            aria-hidden="true"
+                                            class="nav-icon size-6 shrink-0 text-gray-500 dark:text-gray-400">
                                             <path
                                                 d="M16 9L12 11M16 9L8 5M16 9L20 7M16 9V14.2502M12 11L4 7M12 11V21M4 7L8 5M4 7V17L12 21M8 5L12 3L20 7M20 7V17L12 21M6.57555 15.1007C7.07025 15.3615 7.71135 15.7168 7.71135 15.7168"
                                                 stroke-linecap="round" />
@@ -600,7 +602,8 @@
                             Transcard Only
                         </span>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                            class="chevron-icon size-5 text-gray-500 transition-transform dark:text-gray-400" stroke-width="1.5">
+                            class="chevron-icon size-5 text-gray-500 transition-transform dark:text-gray-400"
+                            stroke-width="1.5">
                             <path fill-rule="evenodd"
                                 d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
                                 clip-rule="evenodd" />
@@ -728,7 +731,8 @@
     <div id="main-content-wrapper" class="lg:pl-[360px]">
 
         <!-- ===== TOP HEADER BAR (sticky) ===== -->
-        <div class="sticky top-0 z-40 border-b border-gray-200 bg-white shadow-xs dark:border-white/10 dark:bg-gray-900 dark:shadow-none">
+        <div
+            class="sticky top-0 z-40 border-b border-gray-200 bg-white shadow-xs dark:border-white/10 dark:bg-gray-900 dark:shadow-none">
 
             <div class="flex flex-col gap-4 px-4 pt-4 pb-4 sm:px-6 lg:px-6 lg:pt-6">
 
@@ -755,7 +759,6 @@
                     <!-- Right side: User + Business + Notification -->
                     <div class="flex items-center gap-3 sm:gap-4">
                         <!-- User avatar -->
-                        <div class="size-10 rounded-full bg-gray-200 dark:bg-gray-700"></div>
 
                         <!-- Business selector (hidden on small mobile) -->
                         <button
@@ -769,13 +772,43 @@
                             </svg>
                         </button>
 
-                        <!-- Notification bell -->
-                        <button
-                            class="relative flex size-8 items-center justify-center rounded-lg border border-gray-200 hover:bg-gray-50 transition-colors dark:border-white/10 dark:hover:bg-white/10">
-                            <span class="size-5 rounded bg-gray-200 dark:bg-gray-600"></span>
-                            <span
-                                class="absolute -top-1.5 -right-1.5 flex size-5 items-center justify-center rounded-full bg-red-500 text-[10px] font-medium text-white">6</span>
-                        </button>
+                        <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                            <button type="button"
+                                class="relative rounded-full p-1 text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 dark:text-gray-400 dark:hover:text-white dark:focus:outline-indigo-500">
+                                <span class="absolute -inset-1.5"></span>
+                                <span class="sr-only">View notifications</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    data-slot="icon" aria-hidden="true" class="size-6">
+                                    <path
+                                        d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+
+                            <!-- Profile dropdown -->
+                            <el-dropdown class="relative ml-3">
+                                <button
+                                    class="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-500">
+                                    <span class="absolute -inset-1.5"></span>
+                                    <span class="sr-only">Open user menu</span>
+                                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                        alt=""
+                                        class="size-8 rounded-full outline -outline-offset-1 outline-black/5 dark:outline-white/10" />
+                                </button>
+
+                                <el-menu anchor="bottom end" popover
+                                    class="w-48 origin-top-right rounded-md bg-white py-1 shadow-lg outline outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+                                    <a href="#"
+                                        class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:outline-hidden dark:text-gray-300 dark:focus:bg-gray-700">Your
+                                        profile</a>
+                                    <a href="#"
+                                        class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:outline-hidden dark:text-gray-300 dark:focus:bg-gray-700">Settings</a>
+                                    <a href="#"
+                                        class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:outline-hidden dark:text-gray-300 dark:focus:bg-gray-700">Sign
+                                        out</a>
+                                </el-menu>
+                            </el-dropdown>
+                        </div>
                     </div>
                 </div>
 
@@ -826,32 +859,48 @@
 
 
 
-            <div class="px-4 sm:px-4 lg:px-4">
-                <div class="flex flex-col gap-5">
+            <div class="px-4">
+                <div class="flex flex-col overflow-hidden gap-5">
 
                     <div class="rounded-xl bg-white shadow-sm dark:bg-gray-900">
 
                         <!-- ===== CARD HEADER ===== -->
-                        <div class="px-2 py-4 border-b border-gray-200 sm:px-6 lg:px-8 dark:border-white/10">
+                        <div class="px-4 py-3 border-b border-gray-200  dark:border-white/10">
                             <div class="sm:flex sm:items-center">
-                                <div class="sm:flex-auto">
+                                <div class="flex items-center gap-4 w-full">
                                     <h3 class="text-base font-semibold text-gray-900 dark:text-white">Payments</h3>
 
+                                    <button type="button"
+                                        class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                            class="size-4">
+                                            <path fill-rule="evenodd"
+                                                d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        Refresh
+                                    </button>
+
                                 </div>
-                                <div class="mt-4 sm:mt-0 sm:ml-16 sm:flex-none flex items-center gap-3">
+                                <div class="  sm:ml-16 sm:flex-none flex items-center gap-3">
                                     <!-- Search -->
-                                    <div class="relative">
-                                        <div
-                                            class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                            <svg class="size-4 text-gray-400 dark:text-gray-500" fill="none"
-                                                viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
+
+                                    <div>
+                                        <div class=" grid grid-cols-1">
+                                            <input id="email" type="email" name="email" placeholder="Search payments..."
+                                                class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pr-3 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:pl-9 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500" />
+
+                                            <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon"
+                                                aria-hidden="true"
+                                                class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4 dark:text-gray-500">
+                                                <path fill-rule="evenodd"
+                                                    d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" />
                                             </svg>
+
+
                                         </div>
-                                        <input type="text" placeholder="Search payments..."
-                                            class="block w-full rounded-md border-0 bg-white py-1.5 pl-9 pr-3 text-sm text-gray-900 shadow-xs ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:placeholder:text-gray-500 dark:focus:ring-indigo-500 sm:w-64" />
                                     </div>
+
                                     <!-- Filter -->
                                     <!-- Include this script tag or install `@tailwindplus/elements` via npm: -->
                                     <!-- <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script> -->
@@ -897,19 +946,15 @@
 
                                     <!-- Export -->
                                     <button
-                                        class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">
+                                        class=" inline-flex  justify-center gap-x-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">
                                         Export
-
-
-
-
                                     </button>
                                 </div>
                             </div>
                         </div>
 
                         <!-- ===== STATUS TABS ===== -->
-                        <div class="border-b border-gray-200 px-4 sm:px-6 lg:px-8 py-4 dark:border-white/10">
+                        <div class="border-b border-gray-200 px-4  py-4 dark:border-white/10">
 
                             <div class="grid grid-cols-1 sm:hidden">
                                 <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
@@ -945,11 +990,13 @@
                             </div>
                         </div>
 
-                        <div class="px-4 sm:px-6 lg:px-8">
+                        <!-- ===== TABLE ===== -->
+                        <div class="px-4">
                             <div class="mt-2 flow-root">
-                                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                                    <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                                        <table class="min-w-full divide-y divide-gray-300 dark:divide-white/15">
+                                <div class="relative">
+                                    <div data-table-scroll class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                                            <table id="exchanges-table" class="min-w-full border-separate border-spacing-0 divide-y divide-gray-300 dark:divide-white/15">
                                             <thead>
                                                 <tr>
                                                     <!-- Chevron -->
@@ -957,113 +1004,150 @@
                                                         <span class="sr-only">Expand</span>
                                                     </th>
                                                     <!-- Amount -->
-                                                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-                                                        <a href="#" class="group inline-flex">
+                                                    <th scope="col"
+                                                        class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
+                                                        <a href="#" class="group flex items-center gap-x-1.5">
                                                             Amount
-                                                            <span class="ml-2 flex-none rounded-sm bg-gray-100 text-gray-900 group-hover:bg-gray-200 dark:bg-gray-800 dark:text-white dark:group-hover:bg-gray-700">
-                                                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
-                                                                    <path fill-rule="evenodd" d="M14.77 12.79a.75.75 0 0 1-1.06-.02L10 8.832 6.29 12.77a.75.75 0 1 1-1.08-1.04l4.25-4.5a.75.75 0 0 1 1.08 0l4.25 4.5a.75.75 0 0 1-.02 1.06Z" clip-rule="evenodd" />
+                                                            <button type="button"
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 20 20" fill="currentColor"
+                                                                    class="size-4 ">
+                                                                    <path fill-rule="evenodd"
+                                                                        d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z"
+                                                                        clip-rule="evenodd" />
                                                                 </svg>
-                                                            </span>
+                                                            </button>
                                                         </a>
                                                     </th>
                                                     <!-- Vendor Entry -->
-                                                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-                                                        <a href="#" class="group inline-flex">
+                                                    <th scope="col"
+                                                        class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
+                                                        <a href="#" class="group flex items-center gap-x-1.5">
                                                             Vendor Entry
-                                                            <span class="invisible ml-2 flex-none rounded-sm text-gray-400 group-hover:visible group-focus:visible dark:text-gray-500">
-                                                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
-                                                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                                            <button type="button"
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 20 20" fill="currentColor"
+                                                                    class="size-4 ">
+                                                                    <path fill-rule="evenodd"
+                                                                        d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z"
+                                                                        clip-rule="evenodd" />
                                                                 </svg>
-                                                            </span>
+                                                            </button>
                                                         </a>
+
+
+
                                                     </th>
                                                     <!-- Invoice -->
-                                                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-                                                        <a href="#" class="group inline-flex">
+                                                    <th scope="col"
+                                                        class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
+                                                        <a href="#" class="group flex items-center gap-x-1.5">
                                                             Invoice #
-                                                            <span class="invisible ml-2 flex-none rounded-sm text-gray-400 group-hover:visible group-focus:visible dark:text-gray-500">
-                                                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
-                                                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                                            <button type="button"
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 20 20" fill="currentColor"
+                                                                    class="size-4 ">
+                                                                    <path fill-rule="evenodd"
+                                                                        d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z"
+                                                                        clip-rule="evenodd" />
                                                                 </svg>
-                                                            </span>
+                                                            </button>
                                                         </a>
+
+
                                                     </th>
                                                     <!-- Customer -->
-                                                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-                                                        <a href="#" class="group inline-flex">
+                                                    <th scope="col"
+                                                        class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
+
+                                                        <a href="#" class="group flex items-center gap-x-1.5">
                                                             Customer
-                                                            <span class="invisible ml-2 flex-none rounded-sm text-gray-400 group-hover:visible group-focus:visible dark:text-gray-500">
-                                                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
-                                                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                                            <button type="button"
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 20 20" fill="currentColor"
+                                                                    class="size-4 ">
+                                                                    <path fill-rule="evenodd"
+                                                                        d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z"
+                                                                        clip-rule="evenodd" />
                                                                 </svg>
-                                                            </span>
+                                                            </button>
                                                         </a>
+
+
                                                     </th>
                                                     <!-- Date Initiated -->
-                                                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-                                                        <a href="#" class="group inline-flex">
+                                                    <th scope="col"
+                                                        class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
+                                                        <a href="#" class="group flex items-center gap-x-1.5">
                                                             Date Initiated
-                                                            <span class="invisible ml-2 flex-none rounded-sm text-gray-400 group-hover:visible group-focus:visible dark:text-gray-500">
-                                                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
-                                                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                                            <button type="button"
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 20 20" fill="currentColor"
+                                                                    class="size-4 ">
+                                                                    <path fill-rule="evenodd"
+                                                                        d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z"
+                                                                        clip-rule="evenodd" />
                                                                 </svg>
-                                                            </span>
+                                                            </button>
                                                         </a>
+
                                                     </th>
                                                     <!-- Payment Method -->
-                                                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-                                                        <a href="#" class="group inline-flex">
+                                                    <th scope="col"
+                                                        class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
+                                                        <a href="#" class="group flex items-center gap-x-1.5">
                                                             Payment Method
-                                                            <span class="invisible ml-2 flex-none rounded-sm text-gray-400 group-hover:visible group-focus:visible dark:text-gray-500">
-                                                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
-                                                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                                            <button type="button"
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 20 20" fill="currentColor"
+                                                                    class="size-4 ">
+                                                                    <path fill-rule="evenodd"
+                                                                        d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z"
+                                                                        clip-rule="evenodd" />
                                                                 </svg>
-                                                            </span>
+                                                            </button>
                                                         </a>
+
+
                                                     </th>
                                                     <!-- Status -->
-                                                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-                                                        <a href="#" class="group inline-flex">
+                                                    <th scope="col"
+                                                        class="px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
+
+                                                        <a href="#" class="group flex items-center gap-x-1.5">
                                                             Status
-                                                            <span class="invisible ml-2 flex-none rounded-sm text-gray-400 group-hover:visible group-focus:visible dark:text-gray-500">
-                                                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
-                                                                    <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                                            <button type="button"
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 20 20" fill="currentColor"
+                                                                    class="size-4">
+                                                                    <path fill-rule="evenodd"
+                                                                        d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z"
+                                                                        clip-rule="evenodd" />
                                                                 </svg>
-                                                            </span>
+                                                                
+                                                            </button>
                                                         </a>
+
                                                     </th>
-                                                    <!-- Action -->
-                                                    <th scope="col" class="py-3.5 pr-4 pl-2 whitespace-nowrap sm:pr-0">
+                                                    <!-- Action (sticky right) -->
+                                                    <th data-action-column scope="col" class="sticky right-0 z-10 bg-white py-3.5 pr-4 pl-3 whitespace-nowrap w-24 min-w-24 dark:bg-gray-900 sm:pr-2">
                                                         <span class="sr-only">Action</span>
                                                     </th>
                                                 </tr>
                                             </thead>
-                                            <tbody class="divide-y divide-gray-200 bg-white dark:divide-white/10 dark:bg-gray-900">
-                                                <tr>
-                                                    <td class="py-2 pr-3 pl-4 whitespace-nowrap sm:pl-0">
-                                                        <button class="rounded-md  p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20">
-                                                            <svg class="size-4 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-                                                                <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />
-                                                            </svg>
-                                                        </button>
-                                                    </td>
-                                                    <td class="px-2 py-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white">$39,823.41 <span class="text-gray-500 dark:text-gray-400">USD</span></td>
-                                                    <td class="px-2 py-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white">Rad Roof</td>
-                                                    <td class="px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">TA6-D</td>
-                                                    <td class="px-2 py-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white">Rad Roofing Ltd</td>
-                                                    <td class="px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">Jun 28, 2024</td>
-                                                    <td class="px-2 py-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-gray-400">Card</td>
-                                                    <td class="px-2 py-2 whitespace-nowrap">
-                                                        <span class="inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 inset-ring inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20">Pending</span>
-                                                    </td>
-                                                    <td class="py-2 pr-4 pl-2 whitespace-nowrap text-right text-sm font-medium sm:pr-0">
-                                                        <button type="button" class="rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                            <!-- Table rows are rendered dynamically by exchanges-table.js -->
+                                            <!-- Data source: src/data/exchanges.json -->
+                                            </table>
+                                        </div>
                                     </div>
+                                    <div data-action-column-shadow aria-hidden="true" class="opacity-0"></div>
                                 </div>
                             </div>
                         </div>
@@ -1075,10 +1159,10 @@
                         <div
                             class="border-t border-gray-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-gray-900 sm:px-6 rounded-b-xl">
                             <div class="flex items-center justify-between">
-                                <div class="text-sm text-gray-500 dark:text-gray-400">
+                                <div data-pagination-info class="text-sm text-gray-500 dark:text-gray-400">
                                     Showing <span class="font-medium text-gray-900 dark:text-white">1</span> - <span
-                                        class="font-medium text-gray-900 dark:text-white">6</span> of <span
-                                        class="font-medium text-gray-900 dark:text-white">6</span> results
+                                        class="font-medium text-gray-900 dark:text-white">...</span> of <span
+                                        class="font-medium text-gray-900 dark:text-white">...</span> results
                                 </div>
                                 <div class="flex items-center gap-x-4">
                                     <div class="flex items-center gap-x-2 text-sm text-gray-500 dark:text-gray-400">
@@ -1122,6 +1206,8 @@
     </div>
 
 
+    <!-- Loads exchange data from JSON and renders table rows dynamically -->
+    <script src="../../../src/scripts/exchanges-table.js"></script>
 </body>
 
 </html>

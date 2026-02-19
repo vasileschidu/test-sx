@@ -1,0 +1,302 @@
+[
+  {
+    "amount": 39823.41,
+    "currency": "USD",
+    "vendorEntry": "Rad Roof",
+    "invoice": "TA6-D",
+    "customer": "Rad Roofing Ltd",
+    "dateInitiated": "2024-06-28",
+    "paymentMethod": "Card",
+    "status": "Pending",
+    "details": {
+      "payment": "Visa ending in 4242 — scheduled for Jul 5, 2024",
+      "vendor": "Rad Roofing Ltd — Contact: John Smith, john@radroofing.com",
+      "history": "Created Jun 28, 2024. Awaiting vendor confirmation."
+    }
+  },
+  {
+    "amount": 12450.00,
+    "currency": "USD",
+    "vendorEntry": "BluePrint Arc",
+    "invoice": "BP-1022",
+    "customer": "BluePrint Architecture Inc",
+    "dateInitiated": "2024-07-01",
+    "paymentMethod": "ACH",
+    "status": "Completed",
+    "details": {
+      "payment": "ACH transfer from Chase ****8891 — settled Jul 3, 2024",
+      "vendor": "BluePrint Architecture Inc — Contact: Sara Lee, sara@blueprint-arc.com",
+      "history": "Created Jul 1, 2024. Completed Jul 3, 2024."
+    }
+  },
+  {
+    "amount": 8730.50,
+    "currency": "EUR",
+    "vendorEntry": "GreenScape",
+    "invoice": "GS-443",
+    "customer": "GreenScape Gardens EU",
+    "dateInitiated": "2024-07-05",
+    "paymentMethod": "Wire",
+    "status": "Processing",
+    "details": {
+      "payment": "International wire to IBAN DE89 3704 — processing",
+      "vendor": "GreenScape Gardens EU — Contact: Hans Muller, hans@greenscape.eu",
+      "history": "Created Jul 5, 2024. Wire initiated Jul 6, 2024."
+    }
+  },
+  {
+    "amount": 55200.00,
+    "currency": "USD",
+    "vendorEntry": "TechNova",
+    "invoice": "TN-8817",
+    "customer": "TechNova Solutions LLC",
+    "dateInitiated": "2024-06-15",
+    "paymentMethod": "Card",
+    "status": "Completed",
+    "details": {
+      "payment": "Mastercard ending in 5511 — settled Jun 18, 2024",
+      "vendor": "TechNova Solutions LLC — Contact: Amy Chen, amy@technova.io",
+      "history": "Created Jun 15, 2024. Completed Jun 18, 2024."
+    }
+  },
+  {
+    "amount": 3150.75,
+    "currency": "GBP",
+    "vendorEntry": "ClearView",
+    "invoice": "CV-209",
+    "customer": "ClearView Windows UK",
+    "dateInitiated": "2024-07-10",
+    "paymentMethod": "ACH",
+    "status": "Failed",
+    "details": {
+      "payment": "ACH transfer failed — insufficient funds",
+      "vendor": "ClearView Windows UK — Contact: Tom Baker, tom@clearview.co.uk",
+      "history": "Created Jul 10, 2024. Failed Jul 11, 2024. Retry scheduled."
+    }
+  },
+  {
+    "amount": 21670.00,
+    "currency": "USD",
+    "vendorEntry": "SteelCore",
+    "invoice": "SC-5541",
+    "customer": "SteelCore Manufacturing",
+    "dateInitiated": "2024-06-20",
+    "paymentMethod": "Wire",
+    "status": "Completed",
+    "details": {
+      "payment": "Domestic wire from Wells Fargo ****3312 — settled Jun 22, 2024",
+      "vendor": "SteelCore Manufacturing — Contact: Mike Torres, mike@steelcore.com",
+      "history": "Created Jun 20, 2024. Completed Jun 22, 2024."
+    }
+  },
+  {
+    "amount": 6890.20,
+    "currency": "CAD",
+    "vendorEntry": "MapleTech",
+    "invoice": "MT-772",
+    "customer": "MapleTech Services CA",
+    "dateInitiated": "2024-07-12",
+    "paymentMethod": "Card",
+    "status": "Pending",
+    "details": {
+      "payment": "Visa ending in 9087 — scheduled for Jul 19, 2024",
+      "vendor": "MapleTech Services CA — Contact: Liam Tremblay, liam@mapletech.ca",
+      "history": "Created Jul 12, 2024. Awaiting vendor confirmation."
+    }
+  },
+  {
+    "amount": 102340.00,
+    "currency": "USD",
+    "vendorEntry": "Apex Build",
+    "invoice": "AB-3301",
+    "customer": "Apex Builders Group",
+    "dateInitiated": "2024-05-30",
+    "paymentMethod": "Wire",
+    "status": "Completed",
+    "details": {
+      "payment": "Domestic wire from BofA ****6654 — settled Jun 2, 2024",
+      "vendor": "Apex Builders Group — Contact: David Kim, david@apexbuild.com",
+      "history": "Created May 30, 2024. Completed Jun 2, 2024."
+    }
+  },
+  {
+    "amount": 475.99,
+    "currency": "USD",
+    "vendorEntry": "QuickPrint",
+    "invoice": "QP-118",
+    "customer": "QuickPrint Express",
+    "dateInitiated": "2024-07-14",
+    "paymentMethod": "Card",
+    "status": "Completed",
+    "details": {
+      "payment": "Amex ending in 1003 — settled Jul 14, 2024",
+      "vendor": "QuickPrint Express — Contact: Nina Patel, nina@quickprint.com",
+      "history": "Created Jul 14, 2024. Completed same day."
+    }
+  },
+  {
+    "amount": 18500.00,
+    "currency": "MXN",
+    "vendorEntry": "SolTec",
+    "invoice": "ST-660",
+    "customer": "SolTec Energía MX",
+    "dateInitiated": "2024-07-08",
+    "paymentMethod": "Wire",
+    "status": "Processing",
+    "details": {
+      "payment": "International wire to CLABE 0021 — processing",
+      "vendor": "SolTec Energía MX — Contact: Carlos Ruiz, carlos@soltec.mx",
+      "history": "Created Jul 8, 2024. Wire initiated Jul 9, 2024."
+    }
+  },
+  {
+    "amount": 29100.00,
+    "currency": "USD",
+    "vendorEntry": "NorthStar",
+    "invoice": "NS-4420",
+    "customer": "NorthStar Logistics",
+    "dateInitiated": "2024-06-25",
+    "paymentMethod": "ACH",
+    "status": "Completed",
+    "details": {
+      "payment": "ACH transfer from Capital One ****7743 — settled Jun 27, 2024",
+      "vendor": "NorthStar Logistics — Contact: Rachel Moore, rachel@northstar.com",
+      "history": "Created Jun 25, 2024. Completed Jun 27, 2024."
+    }
+  },
+  {
+    "amount": 7245.30,
+    "currency": "EUR",
+    "vendorEntry": "PixelForge",
+    "invoice": "PF-881",
+    "customer": "PixelForge Design Studio",
+    "dateInitiated": "2024-07-03",
+    "paymentMethod": "Card",
+    "status": "Pending",
+    "details": {
+      "payment": "Visa ending in 3356 — scheduled for Jul 10, 2024",
+      "vendor": "PixelForge Design Studio — Contact: Elena Rossi, elena@pixelforge.eu",
+      "history": "Created Jul 3, 2024. Awaiting payment processing."
+    }
+  },
+  {
+    "amount": 41000.00,
+    "currency": "USD",
+    "vendorEntry": "IronClad",
+    "invoice": "IC-2205",
+    "customer": "IronClad Security Inc",
+    "dateInitiated": "2024-06-18",
+    "paymentMethod": "Wire",
+    "status": "Completed",
+    "details": {
+      "payment": "Domestic wire from US Bank ****4490 — settled Jun 20, 2024",
+      "vendor": "IronClad Security Inc — Contact: James Bell, james@ironclad.com",
+      "history": "Created Jun 18, 2024. Completed Jun 20, 2024."
+    }
+  },
+  {
+    "amount": 1320.00,
+    "currency": "USD",
+    "vendorEntry": "FreshBrew",
+    "invoice": "FB-055",
+    "customer": "FreshBrew Coffee Co",
+    "dateInitiated": "2024-07-15",
+    "paymentMethod": "Card",
+    "status": "Completed",
+    "details": {
+      "payment": "Visa ending in 8821 — settled Jul 15, 2024",
+      "vendor": "FreshBrew Coffee Co — Contact: Olivia Grant, olivia@freshbrew.com",
+      "history": "Created Jul 15, 2024. Completed same day."
+    }
+  },
+  {
+    "amount": 63400.00,
+    "currency": "USD",
+    "vendorEntry": "VoltEdge",
+    "invoice": "VE-7103",
+    "customer": "VoltEdge Electrical",
+    "dateInitiated": "2024-06-10",
+    "paymentMethod": "ACH",
+    "status": "Completed",
+    "details": {
+      "payment": "ACH transfer from PNC ****5521 — settled Jun 13, 2024",
+      "vendor": "VoltEdge Electrical — Contact: Brian Foster, brian@voltedge.com",
+      "history": "Created Jun 10, 2024. Completed Jun 13, 2024."
+    }
+  },
+  {
+    "amount": 9870.00,
+    "currency": "AUD",
+    "vendorEntry": "CoralNet",
+    "invoice": "CN-391",
+    "customer": "CoralNet IT Solutions AU",
+    "dateInitiated": "2024-07-06",
+    "paymentMethod": "Wire",
+    "status": "Processing",
+    "details": {
+      "payment": "International wire to BSB 062-000 — processing",
+      "vendor": "CoralNet IT Solutions AU — Contact: Emma Walsh, emma@coralnet.au",
+      "history": "Created Jul 6, 2024. Wire initiated Jul 7, 2024."
+    }
+  },
+  {
+    "amount": 15780.00,
+    "currency": "USD",
+    "vendorEntry": "Summit HR",
+    "invoice": "SH-2290",
+    "customer": "Summit HR Consulting",
+    "dateInitiated": "2024-07-02",
+    "paymentMethod": "ACH",
+    "status": "Pending",
+    "details": {
+      "payment": "ACH transfer scheduled from TD Bank ****6610",
+      "vendor": "Summit HR Consulting — Contact: Karen White, karen@summithr.com",
+      "history": "Created Jul 2, 2024. Awaiting bank approval."
+    }
+  },
+  {
+    "amount": 88250.00,
+    "currency": "USD",
+    "vendorEntry": "Titan Infra",
+    "invoice": "TI-9044",
+    "customer": "Titan Infrastructure Corp",
+    "dateInitiated": "2024-06-05",
+    "paymentMethod": "Wire",
+    "status": "Completed",
+    "details": {
+      "payment": "Domestic wire from Citi ****2278 — settled Jun 8, 2024",
+      "vendor": "Titan Infrastructure Corp — Contact: Robert Hayes, robert@titaninfra.com",
+      "history": "Created Jun 5, 2024. Completed Jun 8, 2024."
+    }
+  },
+  {
+    "amount": 2640.50,
+    "currency": "USD",
+    "vendorEntry": "BrightSign",
+    "invoice": "BS-417",
+    "customer": "BrightSign Media",
+    "dateInitiated": "2024-07-11",
+    "paymentMethod": "Card",
+    "status": "Failed",
+    "details": {
+      "payment": "Mastercard ending in 6790 — declined by issuer",
+      "vendor": "BrightSign Media — Contact: Zoe Park, zoe@brightsign.com",
+      "history": "Created Jul 11, 2024. Payment declined Jul 11, 2024."
+    }
+  },
+  {
+    "amount": 34500.00,
+    "currency": "JPY",
+    "vendorEntry": "KazenTech",
+    "invoice": "KT-1187",
+    "customer": "KazenTech Ltd JP",
+    "dateInitiated": "2024-07-09",
+    "paymentMethod": "Wire",
+    "status": "Processing",
+    "details": {
+      "payment": "International wire to Mizuho ****8803 — processing",
+      "vendor": "KazenTech Ltd JP — Contact: Yuki Tanaka, yuki@kazentech.jp",
+      "history": "Created Jul 9, 2024. Wire initiated Jul 10, 2024."
+    }
+  }
+]
