@@ -8,7 +8,11 @@
 (function () {
   'use strict';
 
-  var JSON_PATH = '../../../src/data/exchanges.json';
+  var JSON_PATH_FALLBACKS = [
+    '../../../src/data/exchanges.json',
+    '/src/data/exchanges.json',
+    './src/data/exchanges.json',
+  ];
   var TABLE_ID = 'exchanges-table';
   var TABLE_SCROLL_SELECTOR = '[data-table-scroll]';
   var ACTION_COLUMN_SELECTOR = '[data-action-column]';
@@ -165,10 +169,10 @@
     );
   }
 
-  function buildDetailRowHTML(entry) {
+  function buildDetailRowHTML(entry, colCount) {
     return (
       '<tr data-detail class="hidden">' +
-        '<td colspan="9" class="' + CLASS_NAMES.detailCell + '">' +
+        '<td colspan="' + colCount + '" class="' + CLASS_NAMES.detailCell + '">' +
           '<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">' +
             '<div>' +
               '<h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Payment Details</h4>' +
@@ -188,11 +192,11 @@
     );
   }
 
-  function buildRowHTML(entry) {
+  function buildRowHTML(entry, colCount) {
     return (
       '<tbody class="' + CLASS_NAMES.tbody + '">' +
         buildMainRowHTML(entry) +
-        buildDetailRowHTML(entry) +
+        buildDetailRowHTML(entry, colCount) +
       '</tbody>'
     );
   }
@@ -267,29 +271,36 @@
     return syncShadowVisibility;
   }
 
+  function toggleRow(button) {
+    var mainRow = button.closest('tr[data-row]');
+    var detailRow = mainRow ? mainRow.nextElementSibling : null;
+    if (!mainRow || !detailRow) return;
+
+    var icon = button.querySelector('svg');
+    var isOpen = !detailRow.classList.contains('hidden');
+    var stickyCell = mainRow.querySelector('td.sticky');
+
+    if (isOpen) {
+      detailRow.classList.add('hidden');
+      if (icon) icon.style.transform = '';
+      mainRow.classList.remove('bg-gray-100', 'dark:bg-white/5');
+      if (stickyCell) stickyCell.classList.remove('!bg-gray-100', 'dark:!bg-gray-900');
+    } else {
+      detailRow.classList.remove('hidden');
+      if (icon) icon.style.transform = 'rotate(90deg)';
+      mainRow.classList.add('bg-gray-100', 'dark:bg-white/5');
+      if (stickyCell) stickyCell.classList.add('!bg-gray-100', 'dark:!bg-gray-900');
+    }
+  }
+
   function attachToggleListeners(table) {
-    table.querySelectorAll('[data-row-toggle]').forEach(function (button) {
-      button.addEventListener('click', function () {
-        var mainRow = button.closest('tr[data-row]');
-        var detailRow = mainRow ? mainRow.nextElementSibling : null;
-        if (!mainRow || !detailRow) return;
+    if (table.dataset.toggleBound === '1') return;
+    table.dataset.toggleBound = '1';
 
-        var icon = button.querySelector('svg');
-        var isOpen = !detailRow.classList.contains('hidden');
-        var stickyCell = mainRow.querySelector('td.sticky');
-
-        if (isOpen) {
-          detailRow.classList.add('hidden');
-          if (icon) icon.style.transform = '';
-          mainRow.classList.remove('bg-gray-100', 'dark:bg-white/5');
-          if (stickyCell) stickyCell.classList.remove('!bg-gray-100', 'dark:!bg-gray-900');
-        } else {
-          detailRow.classList.remove('hidden');
-          if (icon) icon.style.transform = 'rotate(90deg)';
-          mainRow.classList.add('bg-gray-100', 'dark:bg-white/5');
-          if (stickyCell) stickyCell.classList.add('!bg-gray-100', 'dark:!bg-gray-900');
-        }
-      });
+    table.addEventListener('click', function (event) {
+      var button = event.target.closest('[data-row-toggle]');
+      if (!button || !table.contains(button)) return;
+      toggleRow(button);
     });
   }
 
@@ -312,11 +323,12 @@
     });
 
     var html = '';
+    var colCount = getColumnCount(table);
     if (!entries.length) {
-      html = buildEmptyStateHTML(getColumnCount(table));
+      html = buildEmptyStateHTML(colCount);
     } else {
       entries.forEach(function (entry) {
-        html += buildRowHTML(entry);
+        html += buildRowHTML(entry, colCount);
       });
     }
 
@@ -324,29 +336,58 @@
     attachToggleListeners(table);
   }
 
-  function fetchExchangesData() {
-    return fetch(JSON_PATH)
-      .then(function (response) {
-        if (!response.ok) {
-          throw new Error('HTTP ' + response.status + ' while loading ' + JSON_PATH);
-        }
-        return response.json();
-      })
-      .then(function (payload) {
-        if (!Array.isArray(payload)) {
-          throw new Error('Expected JSON array in exchanges data');
-        }
+  function getJsonPathCandidates() {
+    var candidates = JSON_PATH_FALLBACKS.slice();
+    if (document.currentScript && document.currentScript.src) {
+      try {
+        candidates.unshift(new URL('../data/exchanges.json', document.currentScript.src).toString());
+      } catch (err) {
+        // Ignore URL parse errors and continue with fallback paths.
+      }
+    }
+    return Array.from(new Set(candidates));
+  }
 
-        return payload
-          .map(normalizeEntry)
-          .filter(function (entry) { return entry !== null; });
+  function fetchJsonFromPath(path) {
+    return fetch(path).then(function (response) {
+      if (!response.ok) {
+        throw new Error('HTTP ' + response.status + ' while loading ' + path);
+      }
+      return response.json();
+    });
+  }
+
+  function fetchExchangesData() {
+    var paths = getJsonPathCandidates();
+    var index = 0;
+
+    function tryNextPath() {
+      if (index >= paths.length) {
+        throw new Error('Failed to load exchanges data from all candidate paths');
+      }
+
+      var path = paths[index++];
+      return fetchJsonFromPath(path).catch(function () {
+        return tryNextPath();
       });
+    }
+
+    return tryNextPath().then(function (payload) {
+      if (!Array.isArray(payload)) {
+        throw new Error('Expected JSON array in exchanges data');
+      }
+
+      return payload
+        .map(normalizeEntry)
+        .filter(function (entry) { return entry !== null; });
+    });
   }
 
   function init() {
     var table = document.getElementById(TABLE_ID);
     if (!table) return;
 
+    attachToggleListeners(table);
     var refreshStickyActionShadow = initStickyActionShadow(table);
 
     fetchExchangesData()
