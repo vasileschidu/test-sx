@@ -1,3 +1,8 @@
+<!--
+  @file onboarding/index.html
+  @description Onboarding welcome page. Greets the user by business name and
+    provides a "Get Started" CTA to begin the payment collection flow.
+-->
 <!doctype html>
 <html class="h-full">
 <head>
@@ -8,11 +13,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-  <style>
-    .sidebar-gradient {
-      background: linear-gradient(180deg, #1E326F 0%, #090C38 100%);
-    }
-  </style>
 </head>
 <body class="h-full bg-gray-200 flex items-center justify-center px-6 overflow-hidden antialiased font-['Inter']">
 
@@ -20,7 +20,7 @@
   <div class="max-w-[1024px] w-full h-full bg-white flex flex-row overflow-hidden">
 
     <!-- LEFT SIDEBAR -->
-    <div class="sidebar-gradient w-[325px] shrink-0 self-stretch flex flex-col p-[56px] gap-[35px]">
+    <div class="bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex flex-col p-[56px] gap-[35px]">
 
       <!-- Logo -->
       <button class="ml-auto flex items-center gap-2 p-2.5 rounded-lg bg-gray-900/25 hover:bg-gray-900/35">
@@ -143,10 +143,10 @@
         </div>
 
         <!-- Welcome Card -->
-        <div class="sidebar-gradient w-full max-w-[480px] rounded-2xl p-10 flex flex-col gap-6 relative overflow-hidden">
+        <div class="bg-gradient-to-b from-[#1E326F] to-[#090C38] w-full max-w-[480px] rounded-2xl p-10 flex flex-col gap-6 relative overflow-hidden">
 
           <!-- Concentric circles background -->
-          <div class="absolute w-[1235.857px] h-[1235.857px] rounded-full bg-[rgba(47,104,237,0.10)] flex items-center justify-center" style="top: calc(0px - 617.929px); right: calc(0px - 617.929px);">
+          <div class="absolute -top-[617.929px] -right-[617.929px] w-[1235.857px] h-[1235.857px] rounded-full bg-[rgba(47,104,237,0.10)] flex items-center justify-center">
             <div class="w-[783.714px] h-[783.714px] rounded-full bg-[rgba(47,104,237,0.10)] flex items-center justify-center">
               <div class="w-[331.571px] h-[331.571px] rounded-full bg-[rgba(47,104,237,0.10)]"></div>
             </div>

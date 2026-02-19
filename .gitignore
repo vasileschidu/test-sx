@@ -1,1 +1,21 @@
+# OS files
 .DS_Store
+Thumbs.db
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# Build output
+dist/
+src/output.css
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo

@@ -1,3 +1,8 @@
+<!--
+  @file onboarding/confirm-business-details.html
+  @description Step 2 of onboarding. Displays business information on file
+    (name, address, TIN, contact details) with a toggle to reveal/mask the TIN.
+-->
 <!doctype html>
 <html class="h-full">
 
@@ -9,11 +14,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-  <style>
-    .sidebar-gradient {
-      background: linear-gradient(180deg, #1E326F 0%, #090C38 100%);
-    }
-  </style>
+  <script src="../../../src/scripts/confirm-business-details.js" defer></script>
 </head>
 
 <body class="min-h-screen bg-gray-200 px-6 antialiased font-['Inter']">
@@ -22,7 +23,7 @@
   <div class="mx-auto max-w-[1024px] w-full h-screen bg-white flex flex-row overflow-hidden">
 
     <!-- LEFT SIDEBAR -->
-    <div class="sidebar-gradient w-[325px] shrink-0 self-stretch flex flex-col p-[56px] gap-[35px]">
+    <div class="bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex flex-col p-[56px] gap-[35px]">
 
       <!-- Logo -->
       <button class="ml-auto flex items-center gap-2 p-2.5 rounded-lg bg-gray-900/25 hover:bg-gray-900/35">
@@ -296,25 +297,6 @@
     </div>
   </div>
 
-  <script>
-    const tinValue = document.getElementById('tin-value');
-    const tinToggle = document.getElementById('tin-toggle');
-    const tinEye = document.getElementById('tin-eye');
-    const tinEyeSlash = document.getElementById('tin-eye-slash');
-
-    const maskedTin = '\u2022\u2022\u2022\u2022\u2022 0001';
-    const fullTin = '98-7650001';
-
-    tinToggle.addEventListener('click', () => {
-      const showingMasked = tinValue.textContent === maskedTin;
-
-      tinValue.textContent = showingMasked ? fullTin : maskedTin;
-      tinToggle.setAttribute('aria-label', showingMasked ? 'Hide TIN' : 'Show TIN');
-      tinToggle.setAttribute('aria-pressed', showingMasked ? 'true' : 'false');
-      tinEye.classList.toggle('hidden', showingMasked);
-      tinEyeSlash.classList.toggle('hidden', !showingMasked);
-    });
-  </script>
 </body>
 
 </html>
