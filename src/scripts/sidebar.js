@@ -313,16 +313,16 @@ document.addEventListener('click', function (e) {
     }
 
     document.querySelectorAll('.nav-item.is-active').forEach(function (item) {
-        item.classList.remove('is-active', 'bg-gray-100', 'text-gray-900');
+        item.classList.remove('is-active', 'bg-gray-100', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
         item.querySelectorAll('svg.nav-icon').forEach(function (icon) {
-            icon.classList.remove('text-blue-600');
-            icon.classList.add('text-gray-500');
+            icon.classList.remove('text-blue-600', 'dark:text-blue-400');
+            icon.classList.add('text-gray-500', 'dark:text-gray-400');
         });
     });
 
-    navItem.classList.add('is-active', 'bg-gray-100', 'text-gray-900');
+    navItem.classList.add('is-active', 'bg-gray-100', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
     navItem.querySelectorAll('svg.nav-icon').forEach(function (icon) {
-        icon.classList.remove('text-gray-500');
-        icon.classList.add('text-blue-600');
+        icon.classList.remove('text-gray-500', 'dark:text-gray-400');
+        icon.classList.add('text-blue-600', 'dark:text-blue-400');
     });
 });

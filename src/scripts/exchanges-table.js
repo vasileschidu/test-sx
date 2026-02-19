@@ -132,7 +132,7 @@
     return (
       '<tr data-row class="' + CLASS_NAMES.row + '">' +
         '<td class="py-2 pr-3 pl-4 whitespace-nowrap sm:pl-0' + cb + '">' +
-          '<button data-row-toggle class="rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20">' +
+          '<button data-row-toggle class="rounded-md p-1 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">' +
             '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
               '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />' +
             '</svg>' +

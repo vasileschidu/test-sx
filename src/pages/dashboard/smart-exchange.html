@@ -57,7 +57,8 @@
 
                             <!-- Logo -->
                             <div class="flex items-center justify-between px-1">
-                                <img src="../../../assets/img/smart-hub.svg" alt="SMART Hub" class="h-8 w-auto" />
+                                <img src="../../../assets/img/smart-hub.svg" alt="SMART Hub" class="h-8 w-auto dark:hidden" />
+                                <img src="../../../assets/img/smart-hub-dark.svg" alt="SMART Hub" class="hidden h-8 w-auto dark:block" />
                             </div>
 
                             <!-- Nav -->
@@ -104,7 +105,8 @@
                                     class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
                                     <span class="flex items-center gap-3">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                            viewBox="0 0 24 24" fill="none">
+                                            viewBox="0 0 24 24" fill="none"
+                                            class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
                                             <path
                                                 d="M8.25 18.75C8.25 19.5784 7.57843 20.25 6.75 20.25C5.92157 20.25 5.25 19.5784 5.25 18.75M8.25 18.75C8.25 17.9216 7.57843 17.25 6.75 17.25C5.92157 17.25 5.25 17.9216 5.25 18.75M8.25 18.75H14.25M5.25 18.75H3.375C2.75368 18.75 2.25 18.2463 2.25 17.625V14.2504M19.5 18.75C19.5 19.5784 18.8284 20.25 18 20.25C17.1716 20.25 16.5 19.5784 16.5 18.75M19.5 18.75C19.5 17.9216 18.8284 17.25 18 17.25C17.1716 17.25 16.5 17.9216 16.5 18.75M19.5 18.75L20.625 18.75C21.2463 18.75 21.7537 18.2457 21.7154 17.6256C21.5054 14.218 20.3473 11.0669 18.5016 8.43284C18.1394 7.91592 17.5529 7.60774 16.9227 7.57315H14.25M16.5 18.75H14.25M14.25 7.57315V6.61479C14.25 6.0473 13.8275 5.56721 13.263 5.50863C11.6153 5.33764 9.94291 5.25 8.25 5.25C6.55709 5.25 4.88466 5.33764 3.23698 5.50863C2.67252 5.56721 2.25 6.0473 2.25 6.61479V14.2504M14.25 7.57315V14.2504M14.25 18.75V14.2504M14.25 14.2504H2.25"
                                                 stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
@@ -359,10 +361,10 @@
                                         fill="currentColor" />
                                 </svg>
                             </div>
-                            <div class="flex items-center gap-2 text-xs font-medium text-gray-700">
-                                <a href="#" class="hover:text-gray-900 transition-colors">Terms of Use</a>
-                                <span class="text-gray-300">|</span>
-                                <a href="#" class="hover:text-gray-900 transition-colors">Privacy Policy</a>
+                            <div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400">
+                                <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a>
+                                <span class="text-gray-300 dark:text-gray-600">|</span>
+                                <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a>
                             </div>
                         </div>
 
@@ -382,8 +384,12 @@
 
                 <!-- Logo row -->
                 <div id="desktop-logo-row" class="relative flex items-center justify-between px-1">
-                    <img id="desktop-logo-full" src="../../../assets/img/smart-hub.svg" alt="SMART Hub"
-                        class="h-8 w-auto" />
+                    <div id="desktop-logo-full">
+                        <img src="../../../assets/img/smart-hub.svg" alt="SMART Hub"
+                            class="h-8 w-auto dark:hidden" />
+                        <img src="../../../assets/img/smart-hub-dark.svg" alt="SMART Hub"
+                            class="hidden h-8 w-auto dark:block" />
+                    </div>
                     <img id="desktop-logo-mark" src="../../../assets/img/smart-hub-mark.svg" alt="SMART Hub"
                         class="hidden h-8 w-8 shrink-0" />
                 </div>
@@ -718,9 +724,9 @@
     </div>
 
     <button id="desktop-sidebar-toggle" type="button"
-        class="hidden lg:flex fixed top-[30px] left-[344px] z-[70] rounded-sm bg-white px-1 py-1 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 items-center justify-center">
+        class="hidden lg:flex fixed top-[30px] left-[344px] z-[70] rounded-sm bg-white px-1 py-1 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:shadow-none dark:inset-ring-gray-700 dark:hover:bg-gray-700 items-center justify-center transition-colors">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-            class="size-4 text-gray-700 transition-transform duration-200 ease-out" id="desktop-sidebar-toggle-icon">
+            class="size-4 text-gray-700 dark:text-gray-300 transition-transform duration-200 ease-out" id="desktop-sidebar-toggle-icon">
             <path fill-rule="evenodd"
                 d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
                 clip-rule="evenodd" />
@@ -751,10 +757,9 @@
                     </button>
 
                     <!-- Greeting -->
-                    <div class="flex flex-1 items-baseline gap-1.5">
-                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Hello,</h1>
-                        <h1 class="text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">Johnny Anderson</h1>
-                    </div>
+                    <h1 class="flex-1 truncate text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                        Hello, Johnny Anderson
+                    </h1>
 
                     <!-- Right side: User + Business + Notification -->
                     <div class="flex items-center gap-3 sm:gap-4">
@@ -816,7 +821,7 @@
                 <div class="h-px bg-gray-200 dark:bg-white/10"></div>
 
                 <!-- Breadcrumbs row -->
-                <div class="flex flex-wrap items-center gap- sm:gap-6">
+                <div class="flex flex-wrap items-center gap-3 sm:gap-6">
                     <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">SMART Exchange</h2>
                     <div class="hidden sm:block h-5 w-px bg-gray-300 dark:bg-gray-600"></div>
                     <nav class="hidden sm:flex items-center gap-2">
@@ -865,13 +870,13 @@
                     <div class="rounded-xl bg-white shadow-sm dark:bg-gray-900">
 
                         <!-- ===== CARD HEADER ===== -->
-                        <div class="px-4 py-3 border-b border-gray-200  dark:border-white/10">
-                            <div class="sm:flex sm:items-center">
-                                <div class="flex items-center gap-4 w-full">
-                                    <h3 class="text-base font-semibold text-gray-900 dark:text-white">Payments</h3>
+                        <div class="px-4 py-3 border-b border-gray-200 dark:border-white/10">
+                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <div class="flex items-center gap-4">
+                                    <h3 class="text-base font-semibold text-gray-900 dark:text-white whitespace-nowrap">Payments</h3>
 
                                     <button type="button"
-                                        class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                        class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:focus-visible:outline-blue-500 transition-colors">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                                             class="size-4">
                                             <path fill-rule="evenodd"
@@ -882,7 +887,7 @@
                                     </button>
 
                                 </div>
-                                <div class="  sm:ml-16 sm:flex-none flex items-center gap-3">
+                                <div class="flex items-center gap-3">
                                     <!-- Search -->
 
                                     <div>
@@ -1009,7 +1014,7 @@
                                                         <a href="#" class="group flex items-center gap-x-1.5">
                                                             Amount
                                                             <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     viewBox="0 0 20 20" fill="currentColor"
                                                                     class="size-4 ">
@@ -1026,7 +1031,7 @@
                                                         <a href="#" class="group flex items-center gap-x-1.5">
                                                             Vendor Entry
                                                             <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     viewBox="0 0 20 20" fill="currentColor"
                                                                     class="size-4 ">
@@ -1046,7 +1051,7 @@
                                                         <a href="#" class="group flex items-center gap-x-1.5">
                                                             Invoice #
                                                             <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     viewBox="0 0 20 20" fill="currentColor"
                                                                     class="size-4 ">
@@ -1066,7 +1071,7 @@
                                                         <a href="#" class="group flex items-center gap-x-1.5">
                                                             Customer
                                                             <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     viewBox="0 0 20 20" fill="currentColor"
                                                                     class="size-4 ">
@@ -1085,7 +1090,7 @@
                                                         <a href="#" class="group flex items-center gap-x-1.5">
                                                             Date Initiated
                                                             <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     viewBox="0 0 20 20" fill="currentColor"
                                                                     class="size-4 ">
@@ -1103,7 +1108,7 @@
                                                         <a href="#" class="group flex items-center gap-x-1.5">
                                                             Payment Method
                                                             <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     viewBox="0 0 20 20" fill="currentColor"
                                                                     class="size-4 ">
@@ -1123,7 +1128,7 @@
                                                         <a href="#" class="group flex items-center gap-x-1.5">
                                                             Status
                                                             <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700  hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
                                                                 <svg xmlns="http://www.w3.org/2000/svg"
                                                                     viewBox="0 0 20 20" fill="currentColor"
                                                                     class="size-4">

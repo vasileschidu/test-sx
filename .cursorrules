@@ -1,0 +1,327 @@
+# SMART Exchange Design System — Cursor Rules
+
+> This document defines the visual language for the SMART Exchange platform.
+> All styles MUST be implemented using pure Tailwind CSS utility classes — no custom CSS, no inline styles, no `<style>` blocks.
+
+---
+
+## General Principles
+
+- **Pure Tailwind only.** Every visual style must be expressed as Tailwind utility classes. No custom CSS files (except the Tailwind base imports in `global.css`), no `<style>` tags, no inline `style=""` attributes. If a value isn't available in the default Tailwind config, use arbitrary value syntax (e.g. `bg-[#1E326F]`, `w-[325px]`).
+- **Mobile-first responsive design.** Start with the smallest screen, layer up with `sm:` (640px) and `lg:` (1024px) breakpoints.
+- **Inter is the primary typeface.** Applied via `font-['Inter']`. Weights used: 300, 400, 500, 600, 700. Secondary font: Meow Script (signature display only).
+- **Minimal, clean aesthetic.** White/light gray backgrounds, subtle borders, restrained shadows, generous whitespace.
+- **Accessibility.** All interactive elements need `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600`. Use `sr-only` for screen-reader text. Proper `aria-label` on icon-only buttons.
+
+---
+
+## Color Palette
+
+| Token | Value | Usage |
+|---|---|---|
+| Primary Blue | `blue-600` / `#2563EB` | CTA buttons, links, focus rings, active states |
+| Blue Hover | `blue-500` / `#3B82F6` | Button hover states |
+| Blue Disabled | `blue-300` | Disabled buttons |
+| Dark Navy Start | `#1E326F` | Sidebar/hero gradient start |
+| Dark Navy End | `#090C38` | Sidebar/hero gradient end |
+| Accent Gradient | `#3773FF` → `#2254CA` (108deg) | Payment/feature cards |
+| Logo Gradient | `#FB9131` → `#FBC734` | SMART Hub logo accent |
+| White | `white` | Backgrounds, button text |
+| Gray 50 | `gray-50` / `#F9FAFB` | Subtle backgrounds, hover fills |
+| Gray 100 | `gray-100` / `#F3F4F6` | Active tab backgrounds, icon button fills |
+| Gray 200 | `gray-200` / `#E5E7EB` | Borders, dividers, outer backgrounds |
+| Gray 400 | `gray-400` | Placeholder text, muted icons |
+| Gray 500 | `gray-500` / `#6B7280` | Secondary body text |
+| Gray 700 | `gray-700` | Body text |
+| Gray 900 | `gray-900` / `#1F2937` | Headings, primary text |
+| Teal Brand | `#0089CF` | Transcard footer branding |
+| Danger Red | `red-600` | Destructive actions |
+| Warning Yellow | `yellow-300` | Alert/warning states |
+
+### Dark Mode (Dashboard only)
+
+Dark mode is toggled via the Tailwind `dark:` variant:
+- Backgrounds: `dark:bg-gray-900`, `dark:bg-gray-950`
+- Text: `dark:text-gray-100`, `dark:text-white`
+- Borders: `dark:border-white/10`
+- Hover: `dark:hover:bg-white/10`
+- Shadows: `dark:shadow-none`
+
+---
+
+## Spacing & Layout Constants
+
+- **Standard padding scale:** `px-3` (12), `px-3.5` (14), `px-4` (16), `px-6` (24)
+- **Standard gap scale:** `gap-2` (8), `gap-3` (12), `gap-4` (16), `gap-6` (24), `gap-9` (36)
+- **Button height:** `h-11` (44px)
+- **Responsive padding pattern:** `px-4 sm:px-6 lg:px-6`
+- **Content max-width (forms):** `max-w-[640px]`
+
+---
+
+## Border Radius Scale
+
+| Size | Class | Usage |
+|---|---|---|
+| 6px | `rounded-md` | Inputs, small buttons, nav items |
+| 8px | `rounded-lg` | Cards, dropdowns |
+| 12px | `rounded-xl` | Form cards, containers |
+| 16px | `rounded-2xl` | Hero cards, modals, signature canvas |
+| Full | `rounded-full` | Avatars, icon buttons, pill badges |
+| Pill | `rounded-[512px]` | Status badges |
+
+---
+
+## Shadow Scale
+
+| Name | Class | Usage |
+|---|---|---|
+| XS | `shadow-xs` | Buttons, cards, sticky headers |
+| Ring | `ring-1 ring-gray-200` | Subtle outline borders |
+| Elevated | `shadow-[-3px_20px_25px_-5px_rgba(0,0,0,0.10),0_10px_10px_-5px_rgba(0,0,0,0.04)]` | Feature/payment cards |
+
+---
+
+## Transitions & Animation
+
+- **Standard transition:** `transition-colors` or `transition-all`
+- **Fast (hover):** `duration-200`
+- **Normal (UI state):** `duration-300 ease-out`
+- **Slow (expand/collapse):** `duration-400 ease-in-out`
+- **Modal enter:** `data-enter:duration-300 data-enter:ease-out`
+- **Modal leave:** `data-leave:duration-200 data-leave:ease-in`
+- **Modal closed state:** `data-closed:translate-y-4 data-closed:opacity-0`
+- **Sidebar expand:** `max-h-0 opacity-0 pointer-events-none` → expanded with `transition-all duration-400 ease-in-out`
+
+---
+
+## Z-Index Strategy
+
+| Layer | Value | Element |
+|---|---|---|
+| Sticky header | `z-40` | Top nav bar |
+| Sidebar toggle | `z-[70]` | Collapse/expand button |
+| Mobile sidebar | `z-[70]` | Off-canvas drawer |
+| Modal backdrop | Default stacking | Dialog element |
+
+---
+
+## Shared Components
+
+### Primary Button (CTA)
+```
+bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white
+shadow-xs hover:bg-blue-500 rounded-md
+focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600
+disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300
+```
+
+### Secondary Button
+```
+bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900
+shadow-xs rounded-md inset-ring inset-ring-gray-300 hover:bg-gray-50
+```
+
+### Ghost Button (on dark backgrounds)
+```
+rounded-md px-2.5 py-1.5 text-sm font-semibold text-white hover:bg-white/10
+```
+
+### Rounded Action Button (pill)
+```
+rounded-full bg-gray-100 px-3 py-2 text-sm font-medium
+hover:bg-gray-200 flex items-center gap-2
+```
+
+### Text Input
+```
+block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900
+outline outline-1 -outline-offset-1 outline-gray-300
+placeholder:text-gray-400
+focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600
+sm:text-sm/6
+```
+
+### Label
+```
+block text-sm/6 font-medium text-gray-900
+```
+
+### Card
+```
+rounded-xl border border-gray-200 bg-white p-6
+```
+
+### Badge / Pill
+```
+rounded-[512px] px-[16px] py-[4px] text-[10px] font-medium uppercase
+```
+
+### Tab Button (active / inactive)
+```
+/* Active */
+rounded-md px-3 py-2 text-sm font-medium bg-gray-100 text-gray-900
+
+/* Inactive */
+rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700
+```
+
+---
+
+# ONBOARDING STYLE
+
+> Screens: Welcome, Confirm Identity, Confirm Business Details, Review Documents, Signature, Payment
+> Location: `src/pages/onboarding/`
+
+## Layout
+
+- **Container:** `h-screen` or `min-h-screen`, flex row
+- **Two-column split:**
+  - Left sidebar: `w-[325px] shrink-0` (fixed, does not scroll)
+  - Right content: `flex-1 flex flex-col min-h-0 overflow-y-auto`
+- **Outer background:** `bg-gray-200`
+- **Inner content area:** White card, `max-w-[640px]` centered
+
+## Onboarding Sidebar (Left Column)
+
+- **Background:** `bg-gradient-to-b from-[#1E326F] to-[#090C38]`
+- **Padding:** `p-[56px]`
+- **Gap between items:** `gap-[35px]`
+- **Text color:** `text-white`
+- **Logo:** Top area with SMART Hub branding and yellow gradient accent
+
+### Stepper Navigation
+
+- **Completed step:** White checkmark SVG inside a circle, clickable
+- **Current step:** Ring indicator — `ring-white/20` outer, `ring-white` inner dot, `aria-current="step"`
+- **Upcoming step:** Small dot `size-2 rounded-full`, muted `text-white/30`, hover brightens to `text-white`
+- **Connecting lines:** Implied by vertical gap and step ordering
+- **Transitions:** Smooth color transitions on hover
+
+## Welcome Screen (Hero)
+
+- **Hero card:** `bg-gradient-to-b from-[#1E326F] to-[#090C38] rounded-2xl p-10 relative overflow-hidden`
+- **Decorative circles:** Three concentric circles positioned absolutely with `bg-[rgba(47,104,237,0.10)]`, sizes descending (1235px → 783px → 331px), offset to top-right with negative positioning
+- **Greeting:** `text-2xl font-bold text-white` title, `text-white/60 text-lg` subtitle
+- **Notification card:** `bg-white/15 ring-[8px] ring-white/5 rounded-[10px] p-4 text-white/80 text-sm`
+- **Footer:** Transcard branding with `text-[#0089CF]`, legal links in muted text
+
+## Form Screens (Identity / Business Details)
+
+- **Form card:** `rounded-xl border border-gray-200 bg-white p-6`
+- **Field spacing:** `space-y-4` between fields
+- **Field groups:** Label → `mt-2` → Input
+- **Two-column fields:** `grid grid-cols-2 gap-4` where appropriate
+- **Action bar:** `flex items-center gap-6` with Back (secondary, `flex-1`) and Next (primary, `flex-1 h-11`)
+
+## Document Review Screen
+
+- **Document list container:** `divide-y divide-gray-100 rounded-md border border-gray-200`
+- **Document row:** `py-4 pr-5 pl-4`, flex layout, file icon `size-5 text-gray-400`, filename `truncate font-medium text-gray-900`, size `text-xs text-gray-400`
+- **Review link:** `text-blue-600` inline action
+- **PDF modal:** `sm:max-w-4xl rounded-2xl bg-white`, iframe `h-[60vh] rounded-md border border-gray-200`
+
+## Signature Screen
+
+- **Tab bar:** `space-x-4`, active `bg-gray-100 text-gray-900`, inactive `text-gray-500`
+- **Canvas area:** `h-[296px] w-full rounded-2xl border border-gray-200 bg-gray-50 p-4 relative`
+- **Clear button:** `absolute top-4 right-4`, secondary button style
+
+## Payment Screen
+
+- **Amount card:** `bg-[linear-gradient(108deg,#3773FF_3.3%,#2254CA_99.23%)] rounded-2xl px-8 py-10 text-white relative overflow-hidden`
+- **Decorative circles:** 3 absolute-positioned circles with `bg-[linear-gradient(180deg,rgba(2,28,73,0.13)_0%,rgba(2,28,73,0)_100%)]`, rotated `rotate-[-105deg]`
+- **Action pills:** 3-column `rounded-full bg-gray-100 px-3 py-2 hover:bg-gray-200`, icon `text-blue-600`
+- **Payment method rows:** `rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50`, left icon in `w-8 h-8 rounded-md bg-gray-50`, right chevron with hover translate
+
+---
+
+# DASHBOARD STYLE
+
+> Screens: SMART Exchange Dashboard (and future dashboard pages)
+> Location: `src/pages/dashboard/`
+
+## Layout
+
+- **Fixed sidebar + offset content:**
+  - Sidebar: `w-[360px]` fixed to left, full height, visible at `lg:` breakpoint
+  - Content: `lg:pl-[360px]` to offset for sidebar
+- **Mobile sidebar:** Off-canvas dialog, slides in from left with `data-closed:-translate-x-full`, backdrop `bg-gray-900/80`
+- **Sticky header:** `sticky top-0 z-40 border-b border-gray-200 bg-white shadow-xs`
+
+## Dashboard Sidebar
+
+- **Background:** `bg-white dark:bg-gray-900`
+- **Scrollable:** `overflow-y-auto`
+- **Section dividers:** `h-px bg-gray-200 dark:bg-white/10`
+- **Sidebar toggle button:** `fixed top-[30px] left-[344px] z-[70] rounded-sm bg-white px-1 py-1 hover:bg-gray-50 dark:bg-white/10`
+
+### Navigation Items
+
+```
+h-10 rounded-md px-2 text-base font-medium flex items-center gap-3
+text-gray-600 hover:bg-gray-100 hover:text-gray-900
+transition-colors cursor-pointer
+dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white
+```
+
+- **Nav icon:** `size-6 shrink-0 text-gray-500 group-hover:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400`
+- **Active state:** `bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white`
+- **Expandable submenu:** Chevron rotates, children at `ml-9`, expand via `max-h-0 opacity-0` → full height with `transition-all duration-400 ease-in-out`
+
+## Header Bar
+
+- **Layout:** `sticky top-0 z-40 px-4 pt-4 pb-4 sm:px-6 lg:px-6 lg:pt-6`
+- **Background:** `bg-white border-b border-gray-200 shadow-xs dark:bg-gray-900 dark:shadow-none dark:border-white/10`
+- **Hamburger (mobile):** `lg:hidden` with `size-6 text-gray-700`
+- **Greeting:** `text-xl sm:text-2xl font-bold text-gray-900 dark:text-white`
+- **Business selector:** `hidden sm:flex`, pill-style with chevron
+- **Notification bell:** `size-6` icon button with hover effects
+- **Profile avatar:** Circular `size-8 rounded-full`, dropdown on click
+
+## Dashboard Content Area
+
+- **Responsive padding:** `px-4 sm:px-6 lg:px-6`
+- **Card grid:** Standard card component with `rounded-xl border border-gray-200 bg-white p-6 dark:bg-gray-800 dark:border-white/10`
+- **Tables/lists:** `divide-y divide-gray-100 dark:divide-white/10`
+
+---
+
+# File Structure Reference
+
+```
+src/
+  pages/
+    onboarding/          # Onboarding flow screens
+      index.html           Welcome/landing
+      confirm-identity.html
+      confirm-business-details.html
+      review-documents.html
+      signature.html
+      paywall.html
+    dashboard/           # Dashboard screens
+      smart-exchange.html
+  styles/
+    global.css           # Tailwind @import directives only
+  scripts/
+    sidebar.js           # Dashboard sidebar logic
+    confirm-identity.js
+    confirm-business-details.js
+    review-documents.js
+    signature.js
+```
+
+---
+
+# Rules for Future Development
+
+1. **No custom CSS.** If you need a style, use Tailwind utilities or arbitrary values `[...]`. Never create CSS classes or write `<style>` blocks.
+2. **Follow the established palette.** Do not introduce new colors outside the defined palette without explicit approval.
+3. **Reuse component patterns.** Copy the exact class strings from this document for buttons, inputs, cards, etc. Consistency is non-negotiable.
+4. **Onboarding screens** always use the two-column sidebar + content layout with the navy gradient sidebar and stepper.
+5. **Dashboard screens** always use the fixed sidebar + offset content layout with sticky header.
+6. **Dark mode** is only implemented in the dashboard. Onboarding screens do not need dark mode support.
+7. **Responsive behavior:** Always design mobile-first. Sidebar collapses to off-canvas drawer below `lg:`. Use `sm:` and `lg:` breakpoints consistently.
+8. **Transitions:** Always add `transition-colors` or `transition-all` to interactive elements. Follow the duration scale defined above.
+9. **Accessibility:** Every interactive element must have visible focus states and appropriate aria attributes.
+10. **Typography:** Use Inter for everything. Respect the weight scale: 400 for body, 500 for medium emphasis, 600 for semibold labels/buttons, 700 for bold headings.
