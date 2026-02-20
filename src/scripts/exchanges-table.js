@@ -16,7 +16,6 @@
   var TABLE_ID = 'exchanges-table';
   var TABLE_SCROLL_SELECTOR = '[data-table-scroll]';
   var ACTION_COLUMN_SELECTOR = '[data-action-column]';
-  var ACTION_SHADOW_SELECTOR = '[data-action-column-shadow]';
   var PAGINATION_SELECTOR = '[data-pagination-info]';
 
   var STATUS_STYLES = {
@@ -229,18 +228,16 @@
     }
   }
 
-  function initStickyActionShadow(table) {
+  function initStickyAction(table) {
     var scroller = table.closest(TABLE_SCROLL_SELECTOR) || table.closest('.overflow-x-auto');
-    var shadow = document.querySelector(ACTION_SHADOW_SELECTOR);
-    if (!scroller || !shadow) return function () {};
+    if (!scroller) return function () {};
 
-    function syncShadowVisibility() {
+    function sync() {
       var maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
       var isOverflowing = maxScrollLeft > 0.5;
       var isDark = document.documentElement.classList.contains('dark');
       var actionColumns = table.querySelectorAll(ACTION_COLUMN_SELECTOR);
 
-      // Toggle sticky positioning based on whether the table overflows
       actionColumns.forEach(function (cell) {
         if (isOverflowing) {
           cell.classList.add('sticky', 'right-0', 'z-10');
@@ -249,16 +246,13 @@
         }
         applyActionDivider(cell, isOverflowing, isDark);
       });
-
-      // Hide the legacy gradient shadow div — box-shadow on cells handles it
-      shadow.style.display = 'none';
     }
 
-    scroller.addEventListener('scroll', syncShadowVisibility, { passive: true });
-    window.addEventListener('resize', syncShadowVisibility);
-    syncShadowVisibility();
+    scroller.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
+    sync();
 
-    return syncShadowVisibility;
+    return sync;
   }
 
   function toggleRow(button) {
@@ -378,19 +372,19 @@
     if (!table) return;
 
     attachToggleListeners(table);
-    var refreshStickyActionShadow = initStickyActionShadow(table);
+    var refreshStickyAction = initStickyAction(table);
 
     fetchExchangesData()
       .then(function (entries) {
         renderRows(table, entries);
         updatePagination(entries.length);
-        refreshStickyActionShadow();
+        refreshStickyAction();
       })
       .catch(function (error) {
         console.error('Failed to load exchanges data:', error);
         renderRows(table, []);
         updatePagination(0);
-        refreshStickyActionShadow();
+        refreshStickyAction();
       });
   }
 
