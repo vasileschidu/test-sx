@@ -55,7 +55,7 @@ document.body.appendChild(navTooltip);
  */
 function prepareDesktopNavLabels() {
     if (!desktopNav) return;
-    desktopNav.querySelectorAll(':scope > .nav-item > span').forEach(function (group) {
+    desktopNav.querySelectorAll(':scope > .nav-item > span, :scope > .nav-item > a, :scope > [data-smart-exchange-trigger] > a').forEach(function (group) {
         if (group.querySelector('.nav-label')) return;
 
         const textNodes = Array.from(group.childNodes).filter(function (node) {
@@ -140,14 +140,15 @@ function setDesktopSidebarCollapsed(collapsed) {
     if (desktopSidebarFooter) desktopSidebarFooter.classList.toggle('hidden', collapsed);
 
     if (desktopNav) {
-        desktopNav.querySelectorAll(':scope > .nav-item').forEach(function (item) {
+        desktopNav.querySelectorAll(':scope > .nav-item, :scope > [data-smart-exchange-trigger]').forEach(function (item) {
             item.classList.toggle('overflow-hidden', collapsed);
             item.classList.toggle('!justify-center', collapsed);
             item.classList.toggle('!px-0', collapsed);
 
-            const iconLabelGroup = item.querySelector(':scope > span');
+            const iconLabelGroup = item.querySelector(':scope > span, :scope > a');
             if (iconLabelGroup) {
                 iconLabelGroup.classList.toggle('w-6', collapsed);
+                iconLabelGroup.classList.toggle('!flex-none', collapsed);
                 iconLabelGroup.classList.toggle('overflow-hidden', collapsed);
                 iconLabelGroup.classList.toggle('gap-0', collapsed);
                 iconLabelGroup.classList.toggle('justify-center', collapsed);

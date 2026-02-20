@@ -19,14 +19,30 @@
       "vendorEntry": "Rad Roof",
       "invoice": "TA6-D",
       "customer": "Rad Roofing Ltd",
-      "dateInitiated": "2024-06-28",
+      "dateInitiated": "2024-06-26",
       "paymentMethod": "Card",
       "paymentMethodEnding": "44242",
-      "status": "Pending",
+      "status": "Failed",
       "details": {
-        "payment": "Visa ending in 4242 — scheduled for Jul 5, 2024",
-        "vendor": "Rad Roofing Ltd — Contact: John Smith, john@radroofing.com",
-        "history": "Created Jun 28, 2024. Awaiting vendor confirmation."
+        "notes": "Quarterly roofing maintenance payment for Q3 2024 covering commercial properties on Main St and Harbor Blvd.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "Rad Roofing Ltd",
+          "cardholderAddress": "3476 Orphan Road\nSuite 1010\nHayward, Wisconsin 54843\nUnited States",
+          "cardType": "Visa",
+          "cardNumber": "4242",
+          "expires": "12/2026",
+          "cvc": "•••"
+        },
+        "attachments": [
+          { "name": "invoice_TA6-D.pdf", "size": "2.4mb" },
+          { "name": "contract_radroofing_2024.pdf", "size": "1.8mb" }
+        ],
+        "activityLog": [
+          { "user": "John Smith", "action": "created the exchange", "date": "2024-06-26T10:40", "timeAgo": "5d ago", "type": "event" },
+          { "user": "John Smith", "action": "submitted for approval", "date": "2024-06-26T11:00", "timeAgo": "5d ago", "type": "event" },
+          { "user": "System", "action": "payment failed — card declined", "date": "2024-06-26T14:30", "timeAgo": "5d ago", "type": "failed" }
+        ]
       }
     },
     {
@@ -40,9 +56,24 @@
       "paymentMethodEnding": "5612",
       "status": "Pending",
       "details": {
-        "payment": "ACH transfer from Chase ****5612 — scheduled Jul 5, 2024",
-        "vendor": "BluePrint Architecture Inc — Contact: Sara Lee, sara@blueprint-arc.com",
-        "history": "Created Jul 1, 2024. Awaiting bank approval."
+        "notes": "Architectural design services for the downtown office renovation project, phase 2.",
+        "paymentInfo": {
+          "type": "ach",
+          "accountHolder": "BluePrint Architecture Inc",
+          "bankName": "Chase",
+          "routingNumber": "••••3892",
+          "accountNumber": "••••5612",
+          "accountType": "Checking"
+        },
+        "attachments": [
+          { "name": "invoice_BP-1022.pdf", "size": "1.2mb" },
+          { "name": "blueprints_phase2.pdf", "size": "8.5mb" }
+        ],
+        "activityLog": [
+          { "user": "Sara Lee", "action": "created the exchange", "date": "2024-07-01T09:00", "timeAgo": "11d ago", "type": "event" },
+          { "user": "Sara Lee", "action": "submitted for approval", "date": "2024-07-01T09:20", "timeAgo": "11d ago", "type": "event" },
+          { "user": "Mike Torres", "action": "commented", "comment": "Confirmed with bank — ACH transfer scheduled for Jul 5.", "date": "2024-07-02T14:00", "timeAgo": "10d ago", "type": "comment" }
+        ]
       }
     },
     {
@@ -56,9 +87,25 @@
       "paymentMethodEnding": "",
       "status": "Pending",
       "details": {
-        "payment": "SMART Exchange — pending conversion EUR to USD",
-        "vendor": "GreenScape Gardens EU — Contact: Hans Muller, hans@greenscape.eu",
-        "history": "Created Jul 5, 2024. Awaiting exchange rate confirmation."
+        "notes": "Landscaping services for EU headquarters. Requires EUR to USD conversion at settlement.",
+        "paymentInfo": {
+          "type": "smartExchange",
+          "exchangeId": "SX-90421",
+          "sourceCurrency": "EUR",
+          "targetCurrency": "USD",
+          "exchangeRate": "1 EUR = 1.08 USD",
+          "sourceAmount": "€8,730.50",
+          "targetAmount": "$9,428.94",
+          "settlementDate": "Jul 10, 2024"
+        },
+        "attachments": [
+          { "name": "invoice_GS-443.pdf", "size": "980kb" }
+        ],
+        "activityLog": [
+          { "user": "Hans Muller", "action": "created the exchange", "date": "2024-07-05T08:30", "timeAgo": "7d ago", "type": "event" },
+          { "user": "Hans Muller", "action": "submitted for FX conversion", "date": "2024-07-05T08:45", "timeAgo": "7d ago", "type": "event" },
+          { "user": "System", "action": "locked exchange rate at 1.08", "date": "2024-07-05T09:00", "timeAgo": "7d ago", "type": "event" }
+        ]
       }
     },
     {
@@ -72,9 +119,26 @@
       "paymentMethodEnding": "55511",
       "status": "Pending",
       "details": {
-        "payment": "Visa ending in 5511 — scheduled for Jun 20, 2024",
-        "vendor": "TechNova Solutions LLC — Contact: Amy Chen, amy@technova.io",
-        "history": "Created Jun 15, 2024. Awaiting payment processing."
+        "notes": "Annual software licensing and support package renewal for enterprise suite.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "TechNova Solutions LLC",
+          "cardholderAddress": "892 Innovation Blvd\nAustin, TX 78701\nUnited States",
+          "cardType": "Visa",
+          "cardNumber": "5511",
+          "expires": "03/2027",
+          "cvc": "•••"
+        },
+        "attachments": [
+          { "name": "invoice_TN-8817.pdf", "size": "1.5mb" },
+          { "name": "license_agreement_2024.pdf", "size": "3.2mb" }
+        ],
+        "activityLog": [
+          { "user": "Amy Chen", "action": "created the exchange", "date": "2024-06-15T11:00", "timeAgo": "27d ago", "type": "event" },
+          { "user": "Amy Chen", "action": "submitted for approval", "date": "2024-06-15T11:15", "timeAgo": "27d ago", "type": "event" },
+          { "user": "David Kim", "action": "commented", "comment": "Large amount — requires secondary approval from finance team.", "date": "2024-06-16T09:00", "timeAgo": "26d ago", "type": "comment" },
+          { "user": "Rachel Moore", "action": "approved the exchange", "date": "2024-06-17T10:30", "timeAgo": "25d ago", "type": "complete" }
+        ]
       }
     },
     {
@@ -88,9 +152,22 @@
       "paymentMethodEnding": "7821",
       "status": "Pending",
       "details": {
-        "payment": "ACH transfer scheduled from Barclays ****7821",
-        "vendor": "ClearView Windows UK — Contact: Tom Baker, tom@clearview.co.uk",
-        "history": "Created Jul 10, 2024. Awaiting bank approval."
+        "notes": "Window installation services for the Birmingham warehouse facility.",
+        "paymentInfo": {
+          "type": "ach",
+          "accountHolder": "ClearView Windows UK",
+          "bankName": "Barclays",
+          "routingNumber": "••••4510",
+          "accountNumber": "••••7821",
+          "accountType": "Business Current"
+        },
+        "attachments": [
+          { "name": "invoice_CV-209.pdf", "size": "1.1mb" }
+        ],
+        "activityLog": [
+          { "user": "Tom Baker", "action": "created the exchange", "date": "2024-07-10T14:00", "timeAgo": "2d ago", "type": "event" },
+          { "user": "Tom Baker", "action": "submitted for approval", "date": "2024-07-10T14:10", "timeAgo": "2d ago", "type": "event" }
+        ]
       }
     },
     {
@@ -104,9 +181,26 @@
       "paymentMethodEnding": "",
       "status": "Pending",
       "details": {
-        "payment": "SMART Exchange — pending settlement",
-        "vendor": "SteelCore Manufacturing — Contact: Mike Torres, mike@steelcore.com",
-        "history": "Created Jun 20, 2024. Awaiting exchange confirmation."
+        "notes": "Steel beam delivery for the Harbor Bridge project. Settlement via SMART Exchange platform.",
+        "paymentInfo": {
+          "type": "smartExchange",
+          "exchangeId": "SX-88310",
+          "sourceCurrency": "USD",
+          "targetCurrency": "USD",
+          "exchangeRate": "Direct settlement",
+          "sourceAmount": "$21,670.00",
+          "targetAmount": "$21,670.00",
+          "settlementDate": "Jun 25, 2024"
+        },
+        "attachments": [
+          { "name": "invoice_SC-5541.pdf", "size": "2.1mb" },
+          { "name": "delivery_manifest.pdf", "size": "4.3mb" }
+        ],
+        "activityLog": [
+          { "user": "Mike Torres", "action": "created the exchange", "date": "2024-06-20T08:00", "timeAgo": "22d ago", "type": "event" },
+          { "user": "Mike Torres", "action": "submitted for settlement", "date": "2024-06-20T08:30", "timeAgo": "22d ago", "type": "event" },
+          { "user": "System", "action": "settlement initiated", "date": "2024-06-20T09:00", "timeAgo": "22d ago", "type": "event" }
+        ]
       }
     },
     {
@@ -120,9 +214,23 @@
       "paymentMethodEnding": "90877",
       "status": "Pending",
       "details": {
-        "payment": "Visa ending in 9087 — scheduled for Jul 19, 2024",
-        "vendor": "MapleTech Services CA — Contact: Liam Tremblay, liam@mapletech.ca",
-        "history": "Created Jul 12, 2024. Awaiting vendor confirmation."
+        "notes": "IT consulting and cloud migration services for Q3 sprint.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "MapleTech Services CA",
+          "cardholderAddress": "215 King Street West\nToronto, ON M5V 1J5\nCanada",
+          "cardType": "Visa",
+          "cardNumber": "9087",
+          "expires": "08/2025",
+          "cvc": "•••"
+        },
+        "attachments": [
+          { "name": "invoice_MT-772.pdf", "size": "1.3mb" }
+        ],
+        "activityLog": [
+          { "user": "Liam Tremblay", "action": "created the exchange", "date": "2024-07-12T10:00", "timeAgo": "1d ago", "type": "event" },
+          { "user": "Liam Tremblay", "action": "submitted for approval", "date": "2024-07-12T10:15", "timeAgo": "1d ago", "type": "event" }
+        ]
       }
     },
     {
@@ -136,9 +244,25 @@
       "paymentMethodEnding": "6654",
       "status": "Pending",
       "details": {
-        "payment": "ACH transfer scheduled from BofA ****6654",
-        "vendor": "Apex Builders Group — Contact: David Kim, david@apexbuild.com",
-        "history": "Created May 30, 2024. Awaiting bank approval."
+        "notes": "General contractor payment for the Riverside Mall expansion project, milestone 3 of 5.",
+        "paymentInfo": {
+          "type": "ach",
+          "accountHolder": "Apex Builders Group",
+          "bankName": "Bank of America",
+          "routingNumber": "••••6201",
+          "accountNumber": "••••6654",
+          "accountType": "Checking"
+        },
+        "attachments": [
+          { "name": "invoice_AB-3301.pdf", "size": "3.1mb" },
+          { "name": "milestone3_completion_report.pdf", "size": "6.7mb" }
+        ],
+        "activityLog": [
+          { "user": "David Kim", "action": "created the exchange", "date": "2024-05-30T09:00", "timeAgo": "43d ago", "type": "event" },
+          { "user": "David Kim", "action": "submitted for approval", "date": "2024-05-30T09:30", "timeAgo": "43d ago", "type": "event" },
+          { "user": "Karen White", "action": "commented", "comment": "Verified milestone completion with project manager. Approved for payment.", "date": "2024-05-31T11:00", "timeAgo": "42d ago", "type": "comment" },
+          { "user": "Karen White", "action": "approved the exchange", "date": "2024-05-31T11:15", "timeAgo": "42d ago", "type": "complete" }
+        ]
       }
     },
     {
@@ -152,9 +276,24 @@
       "paymentMethodEnding": "",
       "status": "Pending",
       "details": {
-        "payment": "SMART Exchange — pending settlement",
-        "vendor": "QuickPrint Express — Contact: Nina Patel, nina@quickprint.com",
-        "history": "Created Jul 14, 2024. Awaiting exchange confirmation."
+        "notes": "Business card and brochure printing for the annual trade show.",
+        "paymentInfo": {
+          "type": "smartExchange",
+          "exchangeId": "SX-91002",
+          "sourceCurrency": "USD",
+          "targetCurrency": "USD",
+          "exchangeRate": "Direct settlement",
+          "sourceAmount": "$475.99",
+          "targetAmount": "$475.99",
+          "settlementDate": "Jul 18, 2024"
+        },
+        "attachments": [
+          { "name": "invoice_QP-118.pdf", "size": "540kb" }
+        ],
+        "activityLog": [
+          { "user": "Nina Patel", "action": "created the exchange", "date": "2024-07-14T15:00", "timeAgo": "1d ago", "type": "event" },
+          { "user": "Nina Patel", "action": "submitted for settlement", "date": "2024-07-14T15:10", "timeAgo": "1d ago", "type": "event" }
+        ]
       }
     },
     {
@@ -168,9 +307,25 @@
       "paymentMethodEnding": "33120",
       "status": "Pending",
       "details": {
-        "payment": "Visa ending in 3312 — scheduled for Jul 15, 2024",
-        "vendor": "SolTec Energía MX — Contact: Carlos Ruiz, carlos@soltec.mx",
-        "history": "Created Jul 8, 2024. Awaiting payment processing."
+        "notes": "Solar panel installation for the Guadalajara distribution center.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "SolTec Energía MX",
+          "cardholderAddress": "Av. Reforma 222\nCol. Juárez\nCDMX 06600\nMexico",
+          "cardType": "Visa",
+          "cardNumber": "3312",
+          "expires": "05/2026",
+          "cvc": "•••"
+        },
+        "attachments": [
+          { "name": "invoice_ST-660.pdf", "size": "1.7mb" },
+          { "name": "installation_plan.pdf", "size": "5.2mb" }
+        ],
+        "activityLog": [
+          { "user": "Carlos Ruiz", "action": "created the exchange", "date": "2024-07-08T12:00", "timeAgo": "4d ago", "type": "event" },
+          { "user": "Carlos Ruiz", "action": "submitted for approval", "date": "2024-07-08T12:20", "timeAgo": "4d ago", "type": "event" },
+          { "user": "System", "action": "payment scheduled for Jul 15", "date": "2024-07-08T13:00", "timeAgo": "4d ago", "type": "event" }
+        ]
       }
     },
     {
@@ -184,9 +339,24 @@
       "paymentMethodEnding": "7743",
       "status": "Pending",
       "details": {
-        "payment": "ACH transfer scheduled from Capital One ****7743",
-        "vendor": "NorthStar Logistics — Contact: Rachel Moore, rachel@northstar.com",
-        "history": "Created Jun 25, 2024. Awaiting bank approval."
+        "notes": "Freight and logistics services for cross-country shipment of construction materials.",
+        "paymentInfo": {
+          "type": "ach",
+          "accountHolder": "NorthStar Logistics",
+          "bankName": "Capital One",
+          "routingNumber": "••••8833",
+          "accountNumber": "••••7743",
+          "accountType": "Checking"
+        },
+        "attachments": [
+          { "name": "invoice_NS-4420.pdf", "size": "1.4mb" },
+          { "name": "shipping_manifest.pdf", "size": "2.8mb" }
+        ],
+        "activityLog": [
+          { "user": "Rachel Moore", "action": "created the exchange", "date": "2024-06-25T10:00", "timeAgo": "17d ago", "type": "event" },
+          { "user": "Rachel Moore", "action": "submitted for approval", "date": "2024-06-25T10:20", "timeAgo": "17d ago", "type": "event" },
+          { "user": "James Bell", "action": "approved the exchange", "date": "2024-06-26T08:30", "timeAgo": "16d ago", "type": "complete" }
+        ]
       }
     },
     {
@@ -200,9 +370,25 @@
       "paymentMethodEnding": "33566",
       "status": "Pending",
       "details": {
-        "payment": "Visa ending in 3356 — scheduled for Jul 10, 2024",
-        "vendor": "PixelForge Design Studio — Contact: Elena Rossi, elena@pixelforge.eu",
-        "history": "Created Jul 3, 2024. Awaiting payment processing."
+        "notes": "Brand identity redesign and marketing collateral for product launch.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "PixelForge Design Studio",
+          "cardholderAddress": "Via Roma 45\n20121 Milano\nItaly",
+          "cardType": "Visa",
+          "cardNumber": "3566",
+          "expires": "11/2025",
+          "cvc": "•••"
+        },
+        "attachments": [
+          { "name": "invoice_PF-881.pdf", "size": "1.0mb" },
+          { "name": "brand_guidelines_v2.pdf", "size": "12.4mb" }
+        ],
+        "activityLog": [
+          { "user": "Elena Rossi", "action": "created the exchange", "date": "2024-07-03T09:30", "timeAgo": "9d ago", "type": "event" },
+          { "user": "Elena Rossi", "action": "submitted for approval", "date": "2024-07-03T09:45", "timeAgo": "9d ago", "type": "event" },
+          { "user": "Elena Rossi", "action": "commented", "comment": "Final deliverables uploaded to shared drive. Ready for review.", "date": "2024-07-04T16:00", "timeAgo": "8d ago", "type": "comment" }
+        ]
       }
     },
     {
@@ -216,9 +402,27 @@
       "paymentMethodEnding": "",
       "status": "Pending",
       "details": {
-        "payment": "SMART Exchange — pending settlement",
-        "vendor": "IronClad Security Inc — Contact: James Bell, james@ironclad.com",
-        "history": "Created Jun 18, 2024. Awaiting exchange confirmation."
+        "notes": "Annual security system upgrade and monitoring contract for all office locations.",
+        "paymentInfo": {
+          "type": "smartExchange",
+          "exchangeId": "SX-87550",
+          "sourceCurrency": "USD",
+          "targetCurrency": "USD",
+          "exchangeRate": "Direct settlement",
+          "sourceAmount": "$41,000.00",
+          "targetAmount": "$41,000.00",
+          "settlementDate": "Jun 25, 2024"
+        },
+        "attachments": [
+          { "name": "invoice_IC-2205.pdf", "size": "2.0mb" },
+          { "name": "security_audit_report.pdf", "size": "4.8mb" }
+        ],
+        "activityLog": [
+          { "user": "James Bell", "action": "created the exchange", "date": "2024-06-18T11:00", "timeAgo": "24d ago", "type": "event" },
+          { "user": "James Bell", "action": "submitted for settlement", "date": "2024-06-18T11:30", "timeAgo": "24d ago", "type": "event" },
+          { "user": "Karen White", "action": "commented", "comment": "Verified contract terms. Approved for SMART Exchange settlement.", "date": "2024-06-19T09:00", "timeAgo": "23d ago", "type": "comment" },
+          { "user": "System", "action": "settlement initiated", "date": "2024-06-19T10:00", "timeAgo": "23d ago", "type": "event" }
+        ]
       }
     },
     {
@@ -232,9 +436,23 @@
       "paymentMethodEnding": "88211",
       "status": "Pending",
       "details": {
-        "payment": "Visa ending in 8821 — scheduled for Jul 16, 2024",
-        "vendor": "FreshBrew Coffee Co — Contact: Olivia Grant, olivia@freshbrew.com",
-        "history": "Created Jul 15, 2024. Awaiting payment processing."
+        "notes": "Monthly office coffee supply and equipment maintenance.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "FreshBrew Coffee Co",
+          "cardholderAddress": "78 Market Street\nPortland, OR 97204\nUnited States",
+          "cardType": "Visa",
+          "cardNumber": "8821",
+          "expires": "09/2026",
+          "cvc": "•••"
+        },
+        "attachments": [
+          { "name": "invoice_FB-055.pdf", "size": "680kb" }
+        ],
+        "activityLog": [
+          { "user": "Olivia Grant", "action": "created the exchange", "date": "2024-07-15T08:00", "timeAgo": "today", "type": "event" },
+          { "user": "Olivia Grant", "action": "submitted for approval", "date": "2024-07-15T08:10", "timeAgo": "today", "type": "event" }
+        ]
       }
     },
     {
@@ -248,9 +466,24 @@
       "paymentMethodEnding": "5521",
       "status": "Pending",
       "details": {
-        "payment": "ACH transfer scheduled from PNC ****5521",
-        "vendor": "VoltEdge Electrical — Contact: Brian Foster, brian@voltedge.com",
-        "history": "Created Jun 10, 2024. Awaiting bank approval."
+        "notes": "Electrical rewiring and panel upgrade for the main warehouse and adjacent offices.",
+        "paymentInfo": {
+          "type": "ach",
+          "accountHolder": "VoltEdge Electrical",
+          "bankName": "PNC Bank",
+          "routingNumber": "••••5512",
+          "accountNumber": "••••5521",
+          "accountType": "Checking"
+        },
+        "attachments": [
+          { "name": "invoice_VE-7103.pdf", "size": "2.3mb" },
+          { "name": "electrical_permits.pdf", "size": "1.6mb" }
+        ],
+        "activityLog": [
+          { "user": "Brian Foster", "action": "created the exchange", "date": "2024-06-10T09:00", "timeAgo": "32d ago", "type": "event" },
+          { "user": "Brian Foster", "action": "submitted for approval", "date": "2024-06-10T09:30", "timeAgo": "32d ago", "type": "event" },
+          { "user": "David Kim", "action": "approved the exchange", "date": "2024-06-11T10:00", "timeAgo": "31d ago", "type": "complete" }
+        ]
       }
     },
     {
@@ -264,9 +497,26 @@
       "paymentMethodEnding": "",
       "status": "Pending",
       "details": {
-        "payment": "SMART Exchange — pending conversion AUD to USD",
-        "vendor": "CoralNet IT Solutions AU — Contact: Emma Walsh, emma@coralnet.au",
-        "history": "Created Jul 6, 2024. Awaiting exchange rate confirmation."
+        "notes": "Network infrastructure setup for the Sydney satellite office. Requires AUD to USD conversion.",
+        "paymentInfo": {
+          "type": "smartExchange",
+          "exchangeId": "SX-90115",
+          "sourceCurrency": "AUD",
+          "targetCurrency": "USD",
+          "exchangeRate": "1 AUD = 0.66 USD",
+          "sourceAmount": "A$9,870.00",
+          "targetAmount": "$6,514.20",
+          "settlementDate": "Jul 12, 2024"
+        },
+        "attachments": [
+          { "name": "invoice_CN-391.pdf", "size": "1.1mb" },
+          { "name": "network_topology.pdf", "size": "3.4mb" }
+        ],
+        "activityLog": [
+          { "user": "Emma Walsh", "action": "created the exchange", "date": "2024-07-06T03:00", "timeAgo": "6d ago", "type": "event" },
+          { "user": "Emma Walsh", "action": "submitted for FX conversion", "date": "2024-07-06T03:15", "timeAgo": "6d ago", "type": "event" },
+          { "user": "System", "action": "locked exchange rate at 0.66", "date": "2024-07-06T04:00", "timeAgo": "6d ago", "type": "event" }
+        ]
       }
     },
     {
@@ -280,9 +530,24 @@
       "paymentMethodEnding": "6610",
       "status": "Pending",
       "details": {
-        "payment": "ACH transfer scheduled from TD Bank ****6610",
-        "vendor": "Summit HR Consulting — Contact: Karen White, karen@summithr.com",
-        "history": "Created Jul 2, 2024. Awaiting bank approval."
+        "notes": "HR consulting engagement for organizational restructuring and compliance audit.",
+        "paymentInfo": {
+          "type": "ach",
+          "accountHolder": "Summit HR Consulting",
+          "bankName": "TD Bank",
+          "routingNumber": "••••7790",
+          "accountNumber": "••••6610",
+          "accountType": "Business Checking"
+        },
+        "attachments": [
+          { "name": "invoice_SH-2290.pdf", "size": "1.5mb" },
+          { "name": "compliance_audit_summary.pdf", "size": "2.9mb" }
+        ],
+        "activityLog": [
+          { "user": "Karen White", "action": "created the exchange", "date": "2024-07-02T10:00", "timeAgo": "10d ago", "type": "event" },
+          { "user": "Karen White", "action": "submitted for approval", "date": "2024-07-02T10:20", "timeAgo": "10d ago", "type": "event" },
+          { "user": "Rachel Moore", "action": "approved the exchange", "date": "2024-07-03T09:00", "timeAgo": "9d ago", "type": "complete" }
+        ]
       }
     },
     {
@@ -296,9 +561,26 @@
       "paymentMethodEnding": "22788",
       "status": "Pending",
       "details": {
-        "payment": "Visa ending in 2278 — scheduled for Jun 12, 2024",
-        "vendor": "Titan Infrastructure Corp — Contact: Robert Hayes, robert@titaninfra.com",
-        "history": "Created Jun 5, 2024. Awaiting payment processing."
+        "notes": "Infrastructure development contract for the highway overpass project, payment 2 of 4.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "Titan Infrastructure Corp",
+          "cardholderAddress": "1500 Broadway\nSuite 2200\nNew York, NY 10036\nUnited States",
+          "cardType": "Visa",
+          "cardNumber": "2278",
+          "expires": "01/2027",
+          "cvc": "•••"
+        },
+        "attachments": [
+          { "name": "invoice_TI-9044.pdf", "size": "2.8mb" },
+          { "name": "progress_report_milestone2.pdf", "size": "9.1mb" }
+        ],
+        "activityLog": [
+          { "user": "Robert Hayes", "action": "created the exchange", "date": "2024-06-05T08:00", "timeAgo": "37d ago", "type": "event" },
+          { "user": "Robert Hayes", "action": "submitted for approval", "date": "2024-06-05T08:30", "timeAgo": "37d ago", "type": "event" },
+          { "user": "David Kim", "action": "commented", "comment": "High-value transaction. Escalated to finance director for secondary approval.", "date": "2024-06-06T09:00", "timeAgo": "36d ago", "type": "comment" },
+          { "user": "Sarah Johnson", "action": "approved the exchange", "date": "2024-06-07T14:00", "timeAgo": "35d ago", "type": "complete" }
+        ]
       }
     },
     {
@@ -312,9 +594,23 @@
       "paymentMethodEnding": "67900",
       "status": "Pending",
       "details": {
-        "payment": "Visa ending in 6790 — scheduled for Jul 18, 2024",
-        "vendor": "BrightSign Media — Contact: Zoe Park, zoe@brightsign.com",
-        "history": "Created Jul 11, 2024. Awaiting payment processing."
+        "notes": "Digital signage content creation and display hardware rental for corporate lobby.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "BrightSign Media",
+          "cardholderAddress": "340 Pine Avenue\nSan Francisco, CA 94108\nUnited States",
+          "cardType": "Visa",
+          "cardNumber": "6790",
+          "expires": "07/2026",
+          "cvc": "•••"
+        },
+        "attachments": [
+          { "name": "invoice_BS-417.pdf", "size": "890kb" }
+        ],
+        "activityLog": [
+          { "user": "Zoe Park", "action": "created the exchange", "date": "2024-07-11T13:00", "timeAgo": "1d ago", "type": "event" },
+          { "user": "Zoe Park", "action": "submitted for approval", "date": "2024-07-11T13:15", "timeAgo": "1d ago", "type": "event" }
+        ]
       }
     },
     {
@@ -328,9 +624,247 @@
       "paymentMethodEnding": "",
       "status": "Pending",
       "details": {
-        "payment": "SMART Exchange — pending conversion JPY to USD",
-        "vendor": "KazenTech Ltd JP — Contact: Yuki Tanaka, yuki@kazentech.jp",
-        "history": "Created Jul 9, 2024. Awaiting exchange rate confirmation."
+        "notes": "Precision robotics components for the manufacturing line upgrade. Requires JPY to USD conversion.",
+        "paymentInfo": {
+          "type": "smartExchange",
+          "exchangeId": "SX-90288",
+          "sourceCurrency": "JPY",
+          "targetCurrency": "USD",
+          "exchangeRate": "1 JPY = 0.0067 USD",
+          "sourceAmount": "¥34,500.00",
+          "targetAmount": "$231.15",
+          "settlementDate": "Jul 15, 2024"
+        },
+        "attachments": [
+          { "name": "invoice_KT-1187.pdf", "size": "1.6mb" },
+          { "name": "component_specs.pdf", "size": "7.3mb" }
+        ],
+        "activityLog": [
+          { "user": "Yuki Tanaka", "action": "created the exchange", "date": "2024-07-09T02:00", "timeAgo": "3d ago", "type": "event" },
+          { "user": "Yuki Tanaka", "action": "submitted for FX conversion", "date": "2024-07-09T02:15", "timeAgo": "3d ago", "type": "event" },
+          { "user": "System", "action": "locked exchange rate at 0.0067", "date": "2024-07-09T03:00", "timeAgo": "3d ago", "type": "event" },
+          { "user": "Amy Chen", "action": "commented", "comment": "Confirmed component delivery timeline with vendor. On track for Jul 20 arrival.", "date": "2024-07-10T10:00", "timeAgo": "2d ago", "type": "comment" }
+        ]
+      }
+    },
+    {
+      "amount": 47250.00,
+      "currency": "USD",
+      "vendorEntry": "Cardona Vent.",
+      "invoice": "KQ5-B",
+      "customer": "Cardona Ventures LLC",
+      "dateInitiated": "2024-06-28",
+      "paymentMethod": "Card",
+      "paymentMethodEnding": "11422",
+      "status": "Completed",
+      "details": {
+        "notes": "Consulting services for Q2 strategic planning and market expansion initiative.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "Cardona Ventures LLC",
+          "cardholderAddress": "500 Commerce Ave\nSuite 800\nChicago, IL 60601\nUnited States",
+          "cardType": "Visa",
+          "cardNumber": "1142",
+          "expires": "08/2026",
+          "cvc": "•••"
+        },
+        "attachments": [
+          { "name": "invoice_KQ5-B.pdf", "size": "1.8mb" }
+        ],
+        "activityLog": [
+          { "user": "Cardona Admin", "action": "created the exchange", "date": "2024-06-28T10:40", "timeAgo": "4d ago", "type": "event" },
+          { "user": "Cardona Admin", "action": "submitted for approval", "date": "2024-06-28T11:00", "timeAgo": "4d ago", "type": "event" },
+          { "user": "Sarah Johnson", "action": "approved the exchange", "date": "2024-06-29T09:00", "timeAgo": "3d ago", "type": "event" },
+          { "user": "System", "action": "payment processed successfully", "date": "2024-06-30T10:40", "timeAgo": "2d ago", "type": "complete" }
+        ]
+      }
+    },
+    {
+      "amount": 28150.00,
+      "currency": "USD",
+      "vendorEntry": "MarVel Ind.",
+      "invoice": "MV-3302",
+      "customer": "MarVel Industries Inc",
+      "dateInitiated": "2024-06-15",
+      "paymentMethod": "ACH",
+      "paymentMethodEnding": "4411",
+      "status": "Completed",
+      "details": {
+        "notes": "Manufacturing equipment lease payment for Q2 2024.",
+        "paymentInfo": {
+          "type": "ach",
+          "accountHolder": "MarVel Industries Inc",
+          "bankName": "Wells Fargo",
+          "routingNumber": "••••1190",
+          "accountNumber": "••••4411",
+          "accountType": "Business Checking"
+        },
+        "attachments": [
+          { "name": "invoice_MV-3302.pdf", "size": "1.4mb" }
+        ],
+        "activityLog": [
+          { "user": "Lisa Park", "action": "created the exchange", "date": "2024-06-15T09:00", "timeAgo": "17d ago", "type": "event" },
+          { "user": "Lisa Park", "action": "submitted for approval", "date": "2024-06-15T09:30", "timeAgo": "17d ago", "type": "event" },
+          { "user": "Michael Grant", "action": "approved the exchange", "date": "2024-06-16T10:00", "timeAgo": "16d ago", "type": "event" },
+          { "user": "System", "action": "ACH transfer completed", "date": "2024-06-17T14:00", "timeAgo": "15d ago", "type": "complete" }
+        ]
+      }
+    },
+    {
+      "amount": 15600.00,
+      "currency": "EUR",
+      "vendorEntry": "ZeroCarbon",
+      "invoice": "ZR-0091",
+      "customer": "ZeroCarbon Solutions EU",
+      "dateInitiated": "2024-06-10",
+      "paymentMethod": "SMART Exchange",
+      "paymentMethodEnding": "",
+      "status": "Completed",
+      "details": {
+        "notes": "Carbon credit certificates and sustainability audit for European operations.",
+        "paymentInfo": {
+          "type": "smartExchange",
+          "exchangeId": "SX-85220",
+          "sourceCurrency": "EUR",
+          "targetCurrency": "USD",
+          "exchangeRate": "1 EUR = 1.07 USD",
+          "sourceAmount": "€15,600.00",
+          "targetAmount": "$16,692.00",
+          "settlementDate": "Jun 14, 2024"
+        },
+        "attachments": [
+          { "name": "invoice_ZR-0091.pdf", "size": "1.0mb" },
+          { "name": "carbon_certificates.pdf", "size": "3.1mb" }
+        ],
+        "activityLog": [
+          { "user": "Hans Muller", "action": "created the exchange", "date": "2024-06-10T08:00", "timeAgo": "32d ago", "type": "event" },
+          { "user": "Hans Muller", "action": "submitted for FX conversion", "date": "2024-06-10T08:30", "timeAgo": "32d ago", "type": "event" },
+          { "user": "System", "action": "locked exchange rate at 1.07", "date": "2024-06-10T09:00", "timeAgo": "32d ago", "type": "event" },
+          { "user": "System", "action": "settlement completed", "date": "2024-06-14T11:00", "timeAgo": "28d ago", "type": "complete" }
+        ]
+      }
+    },
+    {
+      "amount": 9340.00,
+      "currency": "USD",
+      "vendorEntry": "Orion Tech",
+      "invoice": "OT-2210",
+      "customer": "Orion Technology Group",
+      "dateInitiated": "2024-07-01",
+      "paymentMethod": "Card",
+      "paymentMethodEnding": "66733",
+      "status": "Completed",
+      "details": {
+        "notes": "Software development tools and annual IDE licenses for the engineering team.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "Orion Technology Group",
+          "cardholderAddress": "2200 Tech Drive\nSeattle, WA 98101\nUnited States",
+          "cardType": "Visa",
+          "cardNumber": "6733",
+          "expires": "10/2025",
+          "cvc": "•••"
+        },
+        "attachments": [
+          { "name": "invoice_OT-2210.pdf", "size": "780kb" }
+        ],
+        "activityLog": [
+          { "user": "Chris Navarro", "action": "created the exchange", "date": "2024-07-01T14:00", "timeAgo": "11d ago", "type": "event" },
+          { "user": "Chris Navarro", "action": "submitted for approval", "date": "2024-07-01T14:15", "timeAgo": "11d ago", "type": "event" },
+          { "user": "System", "action": "payment processed successfully", "date": "2024-07-03T09:00", "timeAgo": "9d ago", "type": "complete" }
+        ]
+      }
+    },
+    {
+      "amount": 5825.00,
+      "currency": "USD",
+      "vendorEntry": "FlowTrack",
+      "invoice": "FT-8844",
+      "customer": "FlowTrack Analytics",
+      "dateInitiated": "2024-06-22",
+      "paymentMethod": "ACH",
+      "paymentMethodEnding": "9923",
+      "status": "Completed",
+      "details": {
+        "notes": "Data analytics platform subscription and integration services, Q2 2024.",
+        "paymentInfo": {
+          "type": "ach",
+          "accountHolder": "FlowTrack Analytics",
+          "bankName": "Citibank",
+          "routingNumber": "••••3301",
+          "accountNumber": "••••9923",
+          "accountType": "Checking"
+        },
+        "attachments": [
+          { "name": "invoice_FT-8844.pdf", "size": "920kb" }
+        ],
+        "activityLog": [
+          { "user": "Priya Sharma", "action": "created the exchange", "date": "2024-06-22T10:00", "timeAgo": "20d ago", "type": "event" },
+          { "user": "Priya Sharma", "action": "submitted for approval", "date": "2024-06-22T10:20", "timeAgo": "20d ago", "type": "event" },
+          { "user": "System", "action": "ACH transfer completed", "date": "2024-06-24T16:00", "timeAgo": "18d ago", "type": "complete" }
+        ]
+      }
+    },
+    {
+      "amount": 14200.00,
+      "currency": "USD",
+      "vendorEntry": "DynaxPro",
+      "invoice": "DX-1101",
+      "customer": "DynaxPro Corp",
+      "dateInitiated": "2024-07-05",
+      "paymentMethod": "Card",
+      "paymentMethodEnding": "77231",
+      "status": "Failed",
+      "details": {
+        "notes": "Industrial printing equipment servicing and parts replacement.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "DynaxPro Corp",
+          "cardholderAddress": "88 Factoryway\nDetroit, MI 48201\nUnited States",
+          "cardType": "Visa",
+          "cardNumber": "7723",
+          "expires": "04/2026",
+          "cvc": "•••"
+        },
+        "attachments": [
+          { "name": "invoice_DX-1101.pdf", "size": "1.2mb" }
+        ],
+        "activityLog": [
+          { "user": "Tom Baker", "action": "created the exchange", "date": "2024-07-05T09:00", "timeAgo": "7d ago", "type": "event" },
+          { "user": "Tom Baker", "action": "submitted for approval", "date": "2024-07-05T09:20", "timeAgo": "7d ago", "type": "event" },
+          { "user": "System", "action": "payment failed — card declined", "date": "2024-07-05T11:45", "timeAgo": "7d ago", "type": "failed" }
+        ]
+      }
+    },
+    {
+      "amount": 33600.00,
+      "currency": "USD",
+      "vendorEntry": "WestCargo",
+      "invoice": "WC-5503",
+      "customer": "WestCargo Freight LLC",
+      "dateInitiated": "2024-06-30",
+      "paymentMethod": "ACH",
+      "paymentMethodEnding": "2219",
+      "status": "Failed",
+      "details": {
+        "notes": "Freight transport services for cross-country product delivery, July batch.",
+        "paymentInfo": {
+          "type": "ach",
+          "accountHolder": "WestCargo Freight LLC",
+          "bankName": "US Bank",
+          "routingNumber": "••••4430",
+          "accountNumber": "••••2219",
+          "accountType": "Business Checking"
+        },
+        "attachments": [
+          { "name": "invoice_WC-5503.pdf", "size": "1.6mb" }
+        ],
+        "activityLog": [
+          { "user": "Mark Stevens", "action": "created the exchange", "date": "2024-06-30T08:00", "timeAgo": "12d ago", "type": "event" },
+          { "user": "Mark Stevens", "action": "submitted for approval", "date": "2024-06-30T08:30", "timeAgo": "12d ago", "type": "event" },
+          { "user": "Amy Chen", "action": "approved the exchange", "date": "2024-07-01T10:00", "timeAgo": "11d ago", "type": "event" },
+          { "user": "System", "action": "ACH transfer rejected — insufficient funds", "date": "2024-07-02T09:00", "timeAgo": "10d ago", "type": "failed" }
+        ]
       }
     }
   ]

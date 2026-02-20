@@ -18,6 +18,27 @@
   var TABLE_SCROLL_SELECTOR = '[data-table-scroll]';
   var ACTION_COLUMN_SELECTOR = '[data-action-column]';
   var PAGINATION_SELECTOR = '[data-pagination]';
+  var TAB_COUNT_SELECTOR = '[data-tab-count]';
+  var TAB_NAV_SELECTOR = 'nav[aria-label="Tabs"]';
+
+  var ACTIVE_TAB_LINK_CLASSES = ['bg-blue-100', 'text-blue-700', 'dark:bg-blue-500/20', 'dark:text-blue-300'];
+  var INACTIVE_TAB_LINK_CLASSES = ['text-gray-500', 'dark:text-gray-400'];
+  var ACTIVE_BADGE_CLASSES = [
+    'bg-blue-50',
+    'text-blue-700',
+    'inset-ring-blue-700/10',
+    'dark:bg-blue-400/10',
+    'dark:text-blue-400',
+    'dark:inset-ring-blue-400/30',
+  ];
+  var INACTIVE_BADGE_CLASSES = [
+    'bg-gray-50',
+    'text-gray-600',
+    'inset-ring-gray-500/10',
+    'dark:bg-gray-400/10',
+    'dark:text-gray-400',
+    'dark:inset-ring-gray-400/20',
+  ];
 
   var DEFAULT_PAGE_SIZE = 16;
   var PAGE_SIZE_OPTIONS = [10, 16, 25, 50];
@@ -28,7 +49,17 @@
     pageSize: DEFAULT_PAGE_SIZE,
     totalItems: 0,
     allEntries: [],
+    sourceEntries: [],
     columns: [],
+  };
+
+  // Maps tab key (from data-tab-count) to the status values shown in that tab.
+  // null means no filter — show all entries.
+  var TAB_STATUS_FILTER = {
+    ready: null,
+    pending: ['Pending', 'Processing'],
+    paid: ['Completed'],
+    exceptions: ['Failed'],
   };
 
   var STATUS_STYLES = {
@@ -48,7 +79,7 @@
     cellBorder: ' border-b border-gray-200 dark:border-white/10',
     actionCell:
       'bg-white py-2 pr-4 pl-3 whitespace-nowrap w-24 min-w-24 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2',
-    detailCell: 'bg-gray-50 dark:bg-gray-800/50 px-4 py-5 sm:px-8',
+    detailCell: 'bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10',
   };
 
   // ── SVG Icons ──
@@ -64,6 +95,13 @@
   var ICON_THREE_DOTS = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" /></svg>';
 
   var ICON_CHEVRON_DOWN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+
+  var ICON_COPY = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-400 dark:text-gray-500"><path d="M15.988 3.012A2.25 2.25 0 0 0 13.75 1h-3.5a2.25 2.25 0 0 0-2.238 2.012c-.875.092-1.6.686-1.884 1.488H11A3.75 3.75 0 0 1 14.75 8.25v4.872c.802-.284 1.396-1.009 1.488-1.884A2.25 2.25 0 0 0 18.25 9V5.25a2.25 2.25 0 0 0-2.262-2.238ZM13.25 9a2.25 2.25 0 0 0-2.25-2.25h-5A2.25 2.25 0 0 0 3.75 9v5A2.25 2.25 0 0 0 6 16.25h5A2.25 2.25 0 0 0 13.25 14V9Z" /></svg>';
+  var ICON_CHEVRON_RIGHT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+
+  var ICON_EYE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-blue-600"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" /></svg>';
+
+  var ICON_DOCUMENT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5 text-gray-400 dark:text-gray-500 shrink-0"><path fill-rule="evenodd" d="M4.5 2A1.5 1.5 0 0 0 3 3.5v13A1.5 1.5 0 0 0 4.5 18h11a1.5 1.5 0 0 0 1.5-1.5V7.621a1.5 1.5 0 0 0-.44-1.06l-4.12-4.122A1.5 1.5 0 0 0 11.378 2H4.5Zm2.25 8.5a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Zm0 3a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Z" clip-rule="evenodd" /></svg>';
 
   // ── Helpers ──
 
@@ -94,14 +132,46 @@
     return parsed.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
+  // Formats an ISO datetime string (e.g. "2024-06-30T10:40") as
+  // "June 30, 2024 10:40 AM (EST)" for activity log display.
+  function formatActivityDate(isoDateTime) {
+    if (!isoDateTime) return '';
+    var str = String(isoDateTime);
+    var tIdx = str.indexOf('T');
+    var datePart = tIdx !== -1 ? str.slice(0, tIdx) : str;
+    var timePart = tIdx !== -1 ? str.slice(tIdx + 1) : '';
+    var date = new Date(datePart + 'T00:00:00');
+    if (Number.isNaN(date.getTime())) return escapeHtml(str);
+    var dateStr = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    if (timePart) {
+      var tp = timePart.split(':');
+      var hour = parseInt(tp[0], 10);
+      var minute = tp[1] ? tp[1].slice(0, 2) : '00';
+      var ampm = hour >= 12 ? 'PM' : 'AM';
+      var hour12 = hour % 12 || 12;
+      return dateStr + ' ' + hour12 + ':' + minute + ' ' + ampm + ' (EST)';
+    }
+    return dateStr;
+  }
+
+  // Returns entries filtered to the given tab key using TAB_STATUS_FILTER.
+  function filterEntriesByTab(tabKey) {
+    var filter = TAB_STATUS_FILTER[tabKey];
+    if (!filter) return paginationState.sourceEntries.slice();
+    return paginationState.sourceEntries.filter(function (entry) {
+      return filter.indexOf(entry.status) !== -1;
+    });
+  }
+
   function normalizeDetails(details) {
     if (!details || typeof details !== 'object') {
-      return { payment: '', vendor: '', history: '' };
+      return { notes: '', paymentInfo: null, attachments: [], activityLog: [] };
     }
     return {
-      payment: typeof details.payment === 'string' ? details.payment : '',
-      vendor: typeof details.vendor === 'string' ? details.vendor : '',
-      history: typeof details.history === 'string' ? details.history : '',
+      notes: typeof details.notes === 'string' ? details.notes : '',
+      paymentInfo: details.paymentInfo && typeof details.paymentInfo === 'object' ? details.paymentInfo : null,
+      attachments: Array.isArray(details.attachments) ? details.attachments : [],
+      activityLog: Array.isArray(details.activityLog) ? details.activityLog : [],
     };
   }
 
@@ -220,7 +290,7 @@
   }
 
   function renderActionCell(entry) {
-    if (entry.paymentMethod === 'SMART Exchange') {
+    if (entry.paymentMethod === 'SMART Exchange' && entry.status === 'Pending') {
       return '<button type="button" class="rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>';
     }
 
@@ -283,24 +353,259 @@
     return html;
   }
 
+  // ── Detail Row: Section builders (Figma-matched layout) ──
+
+  var DETAIL_LABEL = 'w-[156px] shrink-0 p-4 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400';
+  var DETAIL_SEPARATOR = '<div class="border-t border-gray-200 dark:border-white/10"></div>';
+
+  function buildNotesSection(entry) {
+    if (!entry.details.notes) return '';
+    return (
+      '<div class="flex">' +
+        '<div class="' + DETAIL_LABEL + '">Notes</div>' +
+        '<div class="flex-1 p-4 text-sm font-medium text-gray-900 dark:text-white">' +
+          escapeHtml(entry.details.notes) +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function buildStatusSection(entry) {
+    var statusClass = STATUS_STYLES[entry.status] || STATUS_STYLES.Pending;
+    return (
+      '<div class="flex">' +
+        '<div class="' + DETAIL_LABEL + '">Status</div>' +
+        '<div class="flex-1 flex items-center p-4">' +
+          '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + statusClass + '">' +
+            escapeHtml(entry.status) +
+          '</span>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function buildAttachmentsSection(entry) {
+    var attachments = entry.details.attachments;
+    if (!attachments || !attachments.length) return '';
+
+    var badges = '';
+    attachments.forEach(function (att) {
+      badges +=
+        '<span class="inline-flex items-center gap-1.5 rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-800 dark:border-white/10 dark:bg-white/5 dark:text-gray-200">' +
+          ICON_DOCUMENT +
+          escapeHtml(att.name || '') +
+        '</span>';
+    });
+
+    return (
+      '<div class="flex">' +
+        '<div class="' + DETAIL_LABEL + '">Attachments</div>' +
+        '<div class="flex-1 p-4 flex flex-wrap items-center gap-2">' +
+          badges +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  // Payment info: each row is a 2-col layout (both flex-1, gap-6 = 24px)
+  function buildPaymentInfoRow(label, value, hasCopy) {
+    return (
+      '<div class="flex gap-6">' +
+        '<dt class="flex-1 text-sm font-medium text-gray-900 dark:text-gray-100">' + label + '</dt>' +
+        '<dd class="flex-1 flex items-center gap-6 text-sm text-gray-700 dark:text-gray-300">' +
+          value +
+          (hasCopy ? ('<button class="shrink-0 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">' + ICON_COPY + '</button>') : '') +
+        '</dd>' +
+      '</div>'
+    );
+  }
+
+  function buildPaymentInfoSection(entry) {
+    var info = entry.details.paymentInfo;
+    if (!info) return '';
+
+    var typeLabel = '';
+    var titleLabel = '';
+    var rows = '';
+
+    if (info.type === 'card') {
+      typeLabel = 'Card';
+      titleLabel = 'Card Details';
+
+      rows += buildPaymentInfoRow('Cardholder Name', escapeHtml(info.cardholderName || ''), false);
+
+      if (info.cardholderAddress) {
+        var addrHtml = escapeHtml(info.cardholderAddress).replace(/\n/g, '<br>');
+        rows += buildPaymentInfoRow('Cardholder Address', addrHtml, false);
+      }
+
+      rows +=
+        '<div class="flex gap-6">' +
+          '<dt class="flex-1 text-sm font-medium text-gray-900 dark:text-gray-100">Type</dt>' +
+          '<dd class="flex-1">' + ICON_VISA + '</dd>' +
+        '</div>';
+
+      rows += buildPaymentInfoRow('Card Number', '&bull;&bull;&bull;&bull; ' + escapeHtml(info.cardNumber || ''), true);
+      rows += buildPaymentInfoRow('Expires', escapeHtml(info.expires || ''), true);
+      rows += buildPaymentInfoRow('CVC2', '&bull;&bull;&bull;', true);
+
+    } else if (info.type === 'ach') {
+      typeLabel = 'ACH';
+      titleLabel = 'Bank Account Details';
+
+      rows += buildPaymentInfoRow('Account Holder', escapeHtml(info.accountHolder || ''), false);
+      rows += buildPaymentInfoRow('Bank Name', escapeHtml(info.bankName || ''), false);
+      rows += buildPaymentInfoRow('Routing Number', escapeHtml(info.routingNumber || ''), true);
+      rows += buildPaymentInfoRow('Account Number', escapeHtml(info.accountNumber || ''), true);
+      rows += buildPaymentInfoRow('Account Type', escapeHtml(info.accountType || ''), false);
+
+    } else if (info.type === 'smartExchange') {
+      typeLabel = 'SMART Exchange';
+      titleLabel = 'Exchange Details';
+
+      rows += buildPaymentInfoRow('Exchange ID', escapeHtml(info.exchangeId || ''), false);
+      rows += buildPaymentInfoRow('Exchange Rate', escapeHtml(info.exchangeRate || ''), false);
+      rows += buildPaymentInfoRow('Source Amount', escapeHtml(info.sourceAmount || ''), false);
+      rows += buildPaymentInfoRow('Target Amount', escapeHtml(info.targetAmount || ''), false);
+      rows += buildPaymentInfoRow('Settlement Date', escapeHtml(info.settlementDate || ''), false);
+    }
+
+    var revealLink = info.type === 'card'
+      ? '<a href="#" class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">' + ICON_EYE + ' Reveal Details</a>'
+      : '';
+
+    return (
+      '<div class="flex">' +
+        '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
+        // MoP container: p-4, gap-9 (36px) — matches Figma layout_MTB9A0
+        '<div class="flex-1 p-4 flex gap-9">' +
+          // Card/ACH/Exchange label: w-14 (56px) — matches Figma layout_LL9L0Z
+          '<div class="w-14 shrink-0 flex items-start gap-2">' +
+            '<span class="text-sm font-medium text-gray-800 dark:text-gray-200">' + typeLabel + '</span>' +
+          '</div>' +
+          // Chevron between label and column
+          ICON_CHEVRON_RIGHT +
+          // Detail column: w-[380px], gap-2 — matches Figma layout_UTWGTK
+          '<div class="flex flex-col gap-2 w-[380px]">' +
+            // Head: flex gap-6 (24px), both children fill — matches Figma layout_MFYG14
+            '<div class="flex gap-6">' +
+              '<div class="flex-1 text-sm font-medium text-gray-900 dark:text-white">' + titleLabel + '</div>' +
+              '<div class="flex-1 flex items-center">' + revealLink + '</div>' +
+            '</div>' +
+            // Separator — matches Figma Separator component
+            '<div class="border-t border-gray-200 dark:border-white/10"></div>' +
+            // Rows — each row is flex gap-6 with both children flex-1
+            '<dl class="flex flex-col gap-3">' +
+              rows +
+            '</dl>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  // Activity log — matches Figma Activity Log component (31822:55675)
+  function buildActivityLogItem(dotClasses, title, description, showLine) {
+    var lineHtml = showLine
+      ? '<div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">' +
+          '<div class="w-px bg-gray-200 dark:bg-white/10"></div>' +
+        '</div>'
+      : '';
+
+    return (
+      '<div class="relative flex gap-4">' +
+        lineHtml +
+        '<div class="relative flex size-6 flex-none items-center justify-center bg-white dark:bg-gray-900">' +
+          '<div class="size-1.5 rounded-full ' + dotClasses + '"></div>' +
+        '</div>' +
+        '<div class="flex flex-col gap-1 pb-6">' +
+          '<p class="text-base font-medium text-gray-900 dark:text-white">' + title + '</p>' +
+          '<p class="text-sm text-gray-700 dark:text-gray-300">' + description + '</p>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function buildActivityLogSection(entry) {
+    var invoice = escapeHtml(entry.invoice || '');
+    var log = entry.details.activityLog;
+    var items = '';
+
+    if (entry.status === 'Completed') {
+      // Find most recent complete event for processed timestamp
+      var completedEntry = null;
+      for (var ci = log.length - 1; ci >= 0; ci--) {
+        if (log[ci].type === 'complete') { completedEntry = log[ci]; break; }
+      }
+      var processedDate = completedEntry ? formatActivityDate(completedEntry.date) : '';
+      var initiatedDate = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
+
+      items += buildActivityLogItem(
+        'bg-green-100 ring-1 ring-green-700/60 dark:bg-green-400/10 dark:ring-green-400/20',
+        'Paid',
+        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been processed' + (processedDate ? ' on ' + processedDate : ''),
+        true
+      );
+      items += buildActivityLogItem(
+        'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
+        'Initiated',
+        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated' + (initiatedDate ? ' on ' + initiatedDate : ''),
+        false
+      );
+
+    } else if (entry.status === 'Failed') {
+      var initiatedDateF = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
+
+      items += buildActivityLogItem(
+        'bg-red-100 ring-1 ring-red-700/60 dark:bg-red-400/10 dark:ring-red-400/20',
+        'Payment Failed',
+        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has failed due to an error. Contact your customer to resolve it.',
+        true
+      );
+      items += buildActivityLogItem(
+        'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
+        'Initiated',
+        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated' + (initiatedDateF ? ' on ' + initiatedDateF : ''),
+        false
+      );
+
+    } else {
+      // Pending / Processing / default
+      items += buildActivityLogItem(
+        'bg-yellow-100 ring-1 ring-yellow-700/60 dark:bg-yellow-400/10 dark:ring-yellow-400/20',
+        'Pending Your Action',
+        'Please make sure to process your card.',
+        true
+      );
+      items += buildActivityLogItem(
+        'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
+        'Initiated',
+        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated',
+        false
+      );
+    }
+
+    return (
+      '<div class="flex">' +
+        '<div class="' + DETAIL_LABEL + '">Activity Log</div>' +
+        '<div class="flex-1 p-4">' +
+          items +
+        '</div>' +
+      '</div>'
+    );
+  }
+
   function buildDetailRowHTML(entry, colCount) {
     return (
       '<tr data-detail class="hidden">' +
         '<td colspan="' + colCount + '" class="' + CLASS_NAMES.detailCell + '">' +
-          '<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">' +
-            '<div>' +
-              '<h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Payment Details</h4>' +
-              '<p class="mt-2 text-sm text-gray-600 dark:text-gray-300">' + escapeHtml(entry.details.payment) + '</p>' +
-            '</div>' +
-            '<div>' +
-              '<h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Vendor Information</h4>' +
-              '<p class="mt-2 text-sm text-gray-600 dark:text-gray-300">' + escapeHtml(entry.details.vendor) + '</p>' +
-            '</div>' +
-            '<div>' +
-              '<h4 class="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">Transaction History</h4>' +
-              '<p class="mt-2 text-sm text-gray-600 dark:text-gray-300">' + escapeHtml(entry.details.history) + '</p>' +
-            '</div>' +
-          '</div>' +
+          buildNotesSection(entry) +
+          buildStatusSection(entry) +
+          buildAttachmentsSection(entry) +
+          DETAIL_SEPARATOR +
+          buildPaymentInfoSection(entry) +
+          DETAIL_SEPARATOR +
+          buildActivityLogSection(entry) +
         '</td>' +
       '</tr>'
     );
@@ -382,17 +687,20 @@
     var icon = button.querySelector('svg');
     var isOpen = !detailRow.classList.contains('hidden');
     var stickyCell = mainRow.querySelector('td.sticky');
+    var actionCell = mainRow.querySelector('[data-action-column]');
 
     if (isOpen) {
       detailRow.classList.add('hidden');
       if (icon) icon.style.transform = '';
       mainRow.classList.remove('bg-gray-100', 'dark:bg-white/5');
       if (stickyCell) stickyCell.classList.remove('!bg-gray-100', 'dark:!bg-gray-900');
+      if (actionCell) actionCell.classList.remove('!bg-gray-100', 'dark:!bg-gray-900');
     } else {
       detailRow.classList.remove('hidden');
       if (icon) icon.style.transform = 'rotate(90deg)';
       mainRow.classList.add('bg-gray-100', 'dark:bg-white/5');
       if (stickyCell) stickyCell.classList.add('!bg-gray-100', 'dark:!bg-gray-900');
+      if (actionCell) actionCell.classList.add('!bg-gray-100', 'dark:!bg-gray-900');
     }
   }
 
@@ -546,6 +854,104 @@
       '</div>';
 
     container.innerHTML = mobileHTML + desktopHTML;
+  }
+
+  function calculateTabCounts(entries) {
+    var counts = {
+      ready: entries.length,
+      pending: 0,
+      paid: 0,
+      exceptions: 0,
+    };
+
+    entries.forEach(function (entry) {
+      var status = String(entry.status || '');
+      if (status === 'Completed') {
+        counts.paid += 1;
+      } else if (status === 'Failed') {
+        counts.exceptions += 1;
+      } else if (status === 'Pending' || status === 'Processing') {
+        counts.pending += 1;
+      }
+    });
+
+    return counts;
+  }
+
+  function updateTabBadges(entries) {
+    var badges = document.querySelectorAll(TAB_COUNT_SELECTOR);
+    if (!badges.length) return;
+
+    var counts = calculateTabCounts(entries);
+    badges.forEach(function (badge) {
+      var key = badge.getAttribute('data-tab-count');
+      if (!Object.prototype.hasOwnProperty.call(counts, key)) return;
+      badge.textContent = String(counts[key]);
+    });
+  }
+
+  function setTabVisualState(tab, isActive) {
+    var badge = tab.querySelector(TAB_COUNT_SELECTOR);
+
+    if (isActive) {
+      tab.classList.add.apply(tab.classList, ACTIVE_TAB_LINK_CLASSES);
+      tab.classList.remove.apply(tab.classList, INACTIVE_TAB_LINK_CLASSES);
+      if (badge) {
+        badge.classList.add.apply(badge.classList, ACTIVE_BADGE_CLASSES);
+        badge.classList.remove.apply(badge.classList, INACTIVE_BADGE_CLASSES);
+      }
+    } else {
+      tab.classList.remove.apply(tab.classList, ACTIVE_TAB_LINK_CLASSES);
+      tab.classList.add.apply(tab.classList, INACTIVE_TAB_LINK_CLASSES);
+      if (badge) {
+        badge.classList.remove.apply(badge.classList, ACTIVE_BADGE_CLASSES);
+        badge.classList.add.apply(badge.classList, INACTIVE_BADGE_CLASSES);
+      }
+    }
+  }
+
+  function syncTabBadgeStyles(nav) {
+    var tabs = nav.querySelectorAll('a');
+    if (!tabs.length) return;
+
+    tabs.forEach(function (tab) {
+      var isActive = tab.getAttribute('aria-current') === 'page';
+      setTabVisualState(tab, isActive);
+    });
+  }
+
+  function initTabBadges() {
+    var nav = document.querySelector(TAB_NAV_SELECTOR);
+    if (!nav) return;
+
+    syncTabBadgeStyles(nav);
+
+    if (nav.dataset.tabBound === '1') return;
+    nav.dataset.tabBound = '1';
+
+    nav.addEventListener('click', function (event) {
+      var clicked = event.target.closest('a');
+      if (!clicked || !nav.contains(clicked)) return;
+
+      nav.querySelectorAll('a').forEach(function (tab) {
+        if (tab === clicked) {
+          tab.setAttribute('aria-current', 'page');
+        } else {
+          tab.removeAttribute('aria-current');
+        }
+      });
+
+      syncTabBadgeStyles(nav);
+
+      // Filter table to the selected tab
+      var tabCountEl = clicked.querySelector(TAB_COUNT_SELECTOR);
+      var tabKey = tabCountEl ? tabCountEl.getAttribute('data-tab-count') : 'ready';
+      var filtered = filterEntriesByTab(tabKey);
+      paginationState.allEntries = filtered;
+      paginationState.totalItems = filtered.length;
+      paginationState.currentPage = 1;
+      renderCurrentPage();
+    });
   }
 
   function attachPaginationListeners() {
@@ -725,11 +1131,14 @@
   function init() {
     var table = document.getElementById(TABLE_ID);
     if (!table) return;
+    initTabBadges();
 
     fetchExchangesData()
       .then(function (result) {
         var columns = result.columns;
         var entries = result.entries;
+        paginationState.sourceEntries = entries;
+        updateTabBadges(entries);
 
         if (columns) {
           renderTable(table, columns, entries);
@@ -742,6 +1151,7 @@
       })
       .catch(function (error) {
         console.error('Failed to load exchanges data:', error);
+        updateTabBadges([]);
       });
   }
 
