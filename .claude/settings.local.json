@@ -1,7 +1,17 @@
 {
   "permissions": {
     "allow": [
-      "Bash(npx tailwindcss:*)"
+      "Bash(npx tailwindcss:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(curl:*)",
+      "Bash(python3:*)",
+      "mcp__Framelink_Figma_MCP__get_figma_data",
+      "mcp__Framelink_Figma_MCP__download_figma_images",
+      "Bash(git rm:*)",
+      "Bash(gh api:*)",
+      "Bash(git ls-tree:*)"
     ]
   }
 }

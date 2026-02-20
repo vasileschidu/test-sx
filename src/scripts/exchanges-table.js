@@ -33,9 +33,9 @@
   var CLASS_NAMES = {
     tbody: 'bg-white dark:bg-gray-900',
     row: 'transition-colors duration-200',
-    cellBorder: ' border-b border-gray-300 dark:border-white/15',
+    cellBorder: ' border-b border-gray-200 dark:border-white/10',
     actionCell:
-      'sticky right-0 z-10 bg-white py-2 pr-4 pl-3 whitespace-nowrap w-24 min-w-24 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2',
+      'bg-white py-2 pr-4 pl-3 whitespace-nowrap w-24 min-w-24 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2',
     detailCell: 'bg-gray-50 dark:bg-gray-800/50 px-4 py-5 sm:px-8',
   };
 
@@ -132,7 +132,7 @@
     return (
       '<tr data-row class="' + CLASS_NAMES.row + '">' +
         '<td class="py-2 pr-3 pl-4 whitespace-nowrap sm:pl-0' + cb + '">' +
-          '<button data-row-toggle class="rounded-md p-1 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700">' +
+          '<button data-row-toggle class="rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20">' +
             '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
               '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />' +
             '</svg>' +
@@ -217,11 +217,15 @@
     if (isActive) {
       cell.style.borderLeftWidth = '1px';
       cell.style.borderLeftStyle = 'solid';
-      cell.style.borderLeftColor = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(209,213,219,1)';
+      cell.style.borderLeftColor = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.15)';
+      cell.style.boxShadow = isDark
+        ? '-10px 0 15px -3px rgba(0,0,0,0.3), -4px 0 6px -4px rgba(0,0,0,0.3)'
+        : '-10px 0 15px -3px rgba(0,0,0,0.1), -4px 0 6px -4px rgba(0,0,0,0.1)';
     } else {
       cell.style.borderLeftWidth = '0px';
       cell.style.borderLeftStyle = 'solid';
       cell.style.borderLeftColor = 'transparent';
+      cell.style.boxShadow = 'none';
     }
   }
 
@@ -230,38 +234,24 @@
     var shadow = document.querySelector(ACTION_SHADOW_SELECTOR);
     if (!scroller || !shadow) return function () {};
 
-    function getActionColumnOffset() {
-      var anchorCell = table.querySelector('tbody td[data-action-column]') || table.querySelector('thead th[data-action-column]');
-      if (!anchorCell) return 0;
-
-      var scrollerRect = scroller.getBoundingClientRect();
-      var anchorRect = anchorCell.getBoundingClientRect();
-      return Math.max(0, scrollerRect.right - anchorRect.left);
-    }
-
     function syncShadowVisibility() {
       var maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
-      var hasOverlap = maxScrollLeft > 0.5 && scroller.scrollLeft > 0;
+      var isOverflowing = maxScrollLeft > 0.5;
       var isDark = document.documentElement.classList.contains('dark');
-      var actionColumnOffset = getActionColumnOffset();
       var actionColumns = table.querySelectorAll(ACTION_COLUMN_SELECTOR);
 
-      shadow.style.position = 'absolute';
-      shadow.style.top = '0';
-      shadow.style.bottom = '0';
-      shadow.style.right = (actionColumnOffset > 0 ? actionColumnOffset : 96) + 'px';
-      shadow.style.width = '24px';
-      shadow.style.pointerEvents = 'none';
-      shadow.style.zIndex = '11';
-      shadow.style.transition = 'opacity 180ms ease';
-      shadow.style.background = isDark
-        ? 'linear-gradient(to right, rgba(0,0,0,0), rgba(0,0,0,0.45))'
-        : 'linear-gradient(to right, rgba(15,23,42,0), rgba(15,23,42,0.22))';
-      shadow.style.opacity = hasOverlap ? '1' : '0';
-
+      // Toggle sticky positioning based on whether the table overflows
       actionColumns.forEach(function (cell) {
-        applyActionDivider(cell, hasOverlap, isDark);
+        if (isOverflowing) {
+          cell.classList.add('sticky', 'right-0', 'z-10');
+        } else {
+          cell.classList.remove('sticky', 'right-0', 'z-10');
+        }
+        applyActionDivider(cell, isOverflowing, isDark);
       });
+
+      // Hide the legacy gradient shadow div — box-shadow on cells handles it
+      shadow.style.display = 'none';
     }
 
     scroller.addEventListener('scroll', syncShadowVisibility, { passive: true });
