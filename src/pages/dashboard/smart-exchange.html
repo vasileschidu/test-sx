@@ -860,13 +860,13 @@
         </div>
 
         <!-- ===== MAIN CONTENT AREA ===== -->
-        <main class="p-2 sm:p-2 lg:p-4">
+        <main class="w-full flex justify-center p-2 sm:p-2 lg:p-4">
 
 
 
-            <div class="flex flex-col 0 overflow-hidden gap-5">
+            <div class="flex w-full max-w-[1560px] flex-col 0  gap-5">
 
-                    <div class="rounded-xl border border-gray-200 dark:border-white/1 bg-white shadow-sm dark:bg-gray-900">
+                    <div class="rounded-xl border border-gray-200 dark:border-white/1 bg-white shadow-xs dark:bg-gray-900 overflow-clip mb-4">
 
                         <!-- ===== CARD HEADER ===== -->
                         <div class="px-4 py-3 border-b border-gray-200 dark:border-white/10">
@@ -999,153 +999,8 @@
                                     <div data-table-scroll class="overflow-x-auto">
                                         <div class="inline-block min-w-full align-middle">
                                             <table id="exchanges-table" class="min-w-full border-separate border-spacing-0 divide-y divide-gray-200 dark:divide-white/10">
-                                            <thead>
-                                                <tr>
-                                                    <!-- Chevron -->
-                                                    <th scope="col" class="border-b border-gray-200 dark:border-white/10 py-3.5 pr-3 pl-4 whitespace-nowrap sm:pl-0">
-                                                        <span class="sr-only">Expand</span>
-                                                    </th>
-                                                    <!-- Amount -->
-                                                    <th scope="col"
-                                                        class="border-b border-gray-200 dark:border-white/10 px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-                                                        <a href="#" class="group flex items-center gap-x-1.5">
-                                                            Amount
-                                                            <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
-                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                    viewBox="0 0 20 20" fill="currentColor"
-                                                                    class="size-4 ">
-                                                                    <path fill-rule="evenodd"
-                                                                        d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z"
-                                                                        clip-rule="evenodd" />
-                                                                </svg>
-                                                            </button>
-                                                        </a>
-                                                    </th>
-                                                    <!-- Vendor Entry -->
-                                                    <th scope="col"
-                                                        class="border-b border-gray-200 dark:border-white/10 px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-                                                        <a href="#" class="group flex items-center gap-x-1.5">
-                                                            Vendor Entry
-                                                            <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
-                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                    viewBox="0 0 20 20" fill="currentColor"
-                                                                    class="size-4 ">
-                                                                    <path fill-rule="evenodd"
-                                                                        d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z"
-                                                                        clip-rule="evenodd" />
-                                                                </svg>
-                                                            </button>
-                                                        </a>
-
-
-
-                                                    </th>
-                                                    <!-- Invoice -->
-                                                    <th scope="col"
-                                                        class="border-b border-gray-200 dark:border-white/10 px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-                                                        <a href="#" class="group flex items-center gap-x-1.5">
-                                                            Invoice #
-                                                            <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
-                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                    viewBox="0 0 20 20" fill="currentColor"
-                                                                    class="size-4 ">
-                                                                    <path fill-rule="evenodd"
-                                                                        d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z"
-                                                                        clip-rule="evenodd" />
-                                                                </svg>
-                                                            </button>
-                                                        </a>
-
-
-                                                    </th>
-                                                    <!-- Customer -->
-                                                    <th scope="col"
-                                                        class="border-b border-gray-200 dark:border-white/10 px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-
-                                                        <a href="#" class="group flex items-center gap-x-1.5">
-                                                            Customer
-                                                            <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
-                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                    viewBox="0 0 20 20" fill="currentColor"
-                                                                    class="size-4 ">
-                                                                    <path fill-rule="evenodd"
-                                                                        d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z"
-                                                                        clip-rule="evenodd" />
-                                                                </svg>
-                                                            </button>
-                                                        </a>
-
-
-                                                    </th>
-                                                    <!-- Date Initiated -->
-                                                    <th scope="col"
-                                                        class="border-b border-gray-200 dark:border-white/10 px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-                                                        <a href="#" class="group flex items-center gap-x-1.5">
-                                                            Date Initiated
-                                                            <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
-                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                    viewBox="0 0 20 20" fill="currentColor"
-                                                                    class="size-4 ">
-                                                                    <path fill-rule="evenodd"
-                                                                        d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z"
-                                                                        clip-rule="evenodd" />
-                                                                </svg>
-                                                            </button>
-                                                        </a>
-
-                                                    </th>
-                                                    <!-- Payment Method -->
-                                                    <th scope="col"
-                                                        class="border-b border-gray-200 dark:border-white/10 px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-                                                        <a href="#" class="group flex items-center gap-x-1.5">
-                                                            Payment Method
-                                                            <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
-                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                    viewBox="0 0 20 20" fill="currentColor"
-                                                                    class="size-4 ">
-                                                                    <path fill-rule="evenodd"
-                                                                        d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z"
-                                                                        clip-rule="evenodd" />
-                                                                </svg>
-                                                            </button>
-                                                        </a>
-
-
-                                                    </th>
-                                                    <!-- Status -->
-                                                    <th scope="col"
-                                                        class="border-b border-gray-200 dark:border-white/10 px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">
-
-                                                        <a href="#" class="group flex items-center gap-x-1.5">
-                                                            Status
-                                                            <button type="button"
-                                                                class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">
-                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                    viewBox="0 0 20 20" fill="currentColor"
-                                                                    class="size-4">
-                                                                    <path fill-rule="evenodd"
-                                                                        d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z"
-                                                                        clip-rule="evenodd" />
-                                                                </svg>
-                                                                
-                                                            </button>
-                                                        </a>
-
-                                                    </th>
-                                                    <!-- Action (sticky right) -->
-                                                    <th data-action-column scope="col" class="border-b border-gray-200 dark:border-white/10 bg-white py-3.5 pr-4 pl-3 whitespace-nowrap w-24 min-w-24 dark:bg-gray-900 sm:pr-2">
-                                                        <span class="sr-only">Action</span>
-                                                    </th>
-                                                </tr>
-                                            </thead>
-                                            <!-- Table rows are rendered dynamically by exchanges-table.js -->
-                                            <!-- Data source: src/data/exchanges.json -->
+                                            <!-- Table header and rows are rendered dynamically by exchanges-table.js -->
+                                            <!-- Config + data source: src/data/exchanges.json -->
                                             </table>
                                         </div>
                                     </div>
@@ -1154,47 +1009,9 @@
 
 
 
-                        <!-- ===== PAGINATION ===== -->
-                        <div
-                            class="border-t border-gray-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-gray-900 sm:px-6 rounded-b-xl">
-                            <div class="flex items-center justify-between">
-                                <div data-pagination-info class="text-sm text-gray-500 dark:text-gray-400">
-                                    Showing <span class="font-medium text-gray-900 dark:text-white">1</span> - <span
-                                        class="font-medium text-gray-900 dark:text-white">...</span> of <span
-                                        class="font-medium text-gray-900 dark:text-white">...</span> results
-                                </div>
-                                <div class="flex items-center gap-x-4">
-                                    <div class="flex items-center gap-x-2 text-sm text-gray-500 dark:text-gray-400">
-                                        <span>Rows per page:</span>
-                                        <select
-                                            class="rounded-md border-0 bg-transparent py-0 pl-2 pr-7 text-sm font-medium text-gray-900 focus:ring-2 focus:ring-indigo-600 dark:text-white dark:focus:ring-indigo-500">
-                                            <option>10</option>
-                                            <option>25</option>
-                                            <option>50</option>
-                                        </select>
-                                    </div>
-                                    <nav class="inline-flex -space-x-px rounded-md" aria-label="Pagination">
-                                        <button
-                                            class="inline-flex items-center rounded-l-md px-2 py-1.5 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:text-gray-500 dark:ring-white/10 dark:hover:bg-white/10"
-                                            disabled>
-                                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                                                stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="M15.75 19.5 8.25 12l7.5-7.5" />
-                                            </svg>
-                                        </button>
-                                        <button
-                                            class="inline-flex items-center rounded-r-md px-2 py-1.5 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:text-gray-500 dark:ring-white/10 dark:hover:bg-white/10"
-                                            disabled>
-                                            <svg class="size-4" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                                                stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round"
-                                                    d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-                                            </svg>
-                                        </button>
-                                    </nav>
-                                </div>
-                            </div>
+                        <!-- ===== PAGINATION (rendered by exchanges-table.js) ===== -->
+                        <div data-pagination
+                            class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:px-6 rounded-b-xl">
                         </div>
 
                     </div>
