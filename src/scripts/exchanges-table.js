@@ -291,7 +291,7 @@
 
   function renderActionCell(entry) {
     if (entry.paymentMethod === 'SMART Exchange' && entry.status === 'Pending') {
-      return '<button type="button" class="rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>';
+      return '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>';
     }
 
     // 3-dot dropdown for ACH / Card
@@ -1126,12 +1126,161 @@
     });
   }
 
+  // ── Get Paid Panel ──
+
+  function buildGetPaidActivityLog(log) {
+    if (!log || !log.length) {
+      return '<p class="text-sm text-gray-400 dark:text-gray-500">No activity recorded.</p>';
+    }
+    var html = '<div class="space-y-0">';
+    log.forEach(function (item, idx) {
+      var isLast = idx === log.length - 1;
+      var dotColor = item.type === 'complete'
+        ? 'bg-green-500 dark:bg-green-400'
+        : item.type === 'failed'
+          ? 'bg-red-500 dark:bg-red-400'
+          : item.type === 'comment'
+            ? 'bg-blue-400 dark:bg-blue-300'
+            : 'bg-gray-400 dark:bg-gray-500';
+      html += '<div class="relative flex gap-3">';
+      if (!isLast) {
+        html += '<div class="absolute top-0 bottom-0 left-0 flex w-5 justify-center pt-5">' +
+          '<div class="w-px bg-gray-200 dark:bg-white/10"></div>' +
+          '</div>';
+      }
+      html += '<div class="relative flex size-5 shrink-0 items-center justify-center mt-1">' +
+        '<div class="size-2 rounded-full ' + dotColor + '"></div>' +
+        '</div>';
+      html += '<div class="pb-5 min-w-0 flex-1">';
+      html += '<p class="text-sm font-medium text-gray-900 dark:text-white">' +
+        escapeHtml(item.user || '') +
+        ' <span class="font-normal text-gray-600 dark:text-gray-400">' + escapeHtml(item.action || '') + '</span>' +
+        '</p>';
+      if (item.comment) {
+        html += '<p class="mt-0.5 text-sm text-gray-700 dark:text-gray-300">' + escapeHtml(item.comment) + '</p>';
+      }
+      if (item.date) {
+        html += '<p class="mt-0.5 text-xs text-gray-400 dark:text-gray-500">' + escapeHtml(formatActivityDate(item.date)) + '</p>';
+      }
+      html += '</div>';
+      html += '</div>';
+    });
+    html += '</div>';
+    return html;
+  }
+
+  function buildGetPaidAttachments(attachments) {
+    if (!attachments || !attachments.length) {
+      return '<p class="text-sm text-gray-400 dark:text-gray-500">No documents attached.</p>';
+    }
+    var html = '';
+    attachments.forEach(function (att) {
+      html += '<div class="flex items-center justify-between py-2 border-b border-gray-100 dark:border-white/5 last:border-0">' +
+        '<div class="flex items-center gap-2 min-w-0">' +
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500">' +
+            '<path fill-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.243 4.243l6.998-7a1.5 1.5 0 0 0-2.121-2.121l-6.5 6.5a.75.75 0 0 0 1.061 1.06l6.5-6.499a3 3 0 0 1 4.242 4.243l-7 7a4.5 4.5 0 0 1-6.364-6.364l7-7a6 6 0 0 1 8.485 8.485l-5.5 5.5a.75.75 0 0 1-1.06-1.06l5.5-5.5a4.5 4.5 0 0 0-6.364-6.364Z" clip-rule="evenodd" />' +
+          '</svg>' +
+          '<div class="min-w-0">' +
+            '<p class="text-sm font-medium text-gray-900 dark:text-white truncate">' + escapeHtml(att.name || '') + '</p>' +
+            '<p class="text-xs text-gray-500 dark:text-gray-400">PDF &bull; ' + escapeHtml(att.size || '') + '</p>' +
+          '</div>' +
+        '</div>' +
+        '<a href="#" class="shrink-0 text-sm font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">Review</a>' +
+      '</div>';
+    });
+    return html;
+  }
+
+  function openGetPaidPanel(entry) {
+    var amountEl = document.getElementById('gp-amount');
+    var currencyEl = document.getElementById('gp-currency');
+    var dateEl = document.getElementById('gp-date');
+    var customerEl = document.getElementById('gp-customer');
+    var invoiceEl = document.getElementById('gp-invoice');
+    var copyBtn = document.getElementById('gp-invoice-copy');
+    var attachEl = document.getElementById('gp-attachments');
+    var activityEl = document.getElementById('gp-activity-content');
+
+    if (amountEl) amountEl.textContent = formatCurrency(entry.amount, entry.currency);
+    if (currencyEl) currencyEl.textContent = entry.currency;
+    if (dateEl) dateEl.textContent = formatDate(entry.dateInitiated);
+    if (customerEl) customerEl.textContent = entry.customer;
+    if (invoiceEl) invoiceEl.textContent = '#' + entry.invoice;
+
+    if (copyBtn) {
+      copyBtn.onclick = function () {
+        navigator.clipboard.writeText(entry.invoice).catch(function () {});
+      };
+    }
+
+    if (attachEl) attachEl.innerHTML = buildGetPaidAttachments(entry.details.attachments);
+    if (activityEl) activityEl.innerHTML = buildGetPaidActivityLog(entry.details.activityLog);
+
+    var panel = document.getElementById('get-paid-panel');
+    var tableSection = document.getElementById('table-section');
+    if (panel) panel.classList.remove('hidden');
+    if (tableSection) tableSection.classList.add('hidden');
+    window.scrollTo(0, 0);
+  }
+
+  function closeGetPaidPanel() {
+    var panel = document.getElementById('get-paid-panel');
+    var tableSection = document.getElementById('table-section');
+    if (panel) panel.classList.add('hidden');
+    if (tableSection) tableSection.classList.remove('hidden');
+  }
+
+  function initGetPaidPanel() {
+    // Back button
+    var backBtn = document.getElementById('get-paid-back');
+    if (backBtn) backBtn.addEventListener('click', closeGetPaidPanel);
+
+    // Receivable Summary toggle
+    var receivableToggle = document.getElementById('gp-receivable-toggle');
+    var receivableContent = document.getElementById('gp-receivable-content');
+    if (receivableToggle && receivableContent) {
+      receivableToggle.addEventListener('click', function () {
+        receivableContent.classList.toggle('hidden');
+        var icon = receivableToggle.querySelector('[data-collapse-icon]');
+        if (icon) icon.classList.toggle('rotate-180');
+      });
+    }
+
+    // Activity Log toggle
+    var activityToggle = document.getElementById('gp-activity-toggle');
+    var activityContent = document.getElementById('gp-activity-content');
+    if (activityToggle && activityContent) {
+      activityToggle.addEventListener('click', function () {
+        activityContent.classList.toggle('hidden');
+        var icon = activityToggle.querySelector('[data-collapse-icon]');
+        if (icon) icon.classList.toggle('rotate-180');
+      });
+    }
+
+    // "Get paid" button clicks (delegated — buttons are rendered dynamically)
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest('[data-get-paid-invoice]');
+      if (!btn) return;
+      e.preventDefault();
+      var invoice = btn.getAttribute('data-get-paid-invoice');
+      var entry = null;
+      for (var i = 0; i < paginationState.sourceEntries.length; i++) {
+        if (paginationState.sourceEntries[i].invoice === invoice) {
+          entry = paginationState.sourceEntries[i];
+          break;
+        }
+      }
+      if (entry) openGetPaidPanel(entry);
+    });
+  }
+
   // ── Init ──
 
   function init() {
     var table = document.getElementById(TABLE_ID);
     if (!table) return;
     initTabBadges();
+    initGetPaidPanel();
 
     fetchExchangesData()
       .then(function (result) {

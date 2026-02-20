@@ -868,7 +868,167 @@
 
             <div class="flex w-full max-w-[1560px] flex-col 0  gap-5">
 
-                    <div class="rounded-xl border border-gray-200 dark:border-white/1 bg-white shadow-xs dark:bg-gray-900 overflow-clip mb-4">
+                    <!-- ===== GET PAID PANEL ===== -->
+                    <div id="get-paid-panel" class="hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white shadow-xs dark:bg-gray-900 overflow-clip mb-4">
+
+                        <!-- Panel Header -->
+                        <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-200 dark:border-white/10">
+                            <button id="get-paid-back" type="button"
+                                class="flex items-center justify-center rounded-md p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10 transition-colors">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                                </svg>
+                                <span class="sr-only">Back</span>
+                            </button>
+                            <h2 class="text-base font-semibold text-gray-900 dark:text-white">Get Paid</h2>
+                            <div class="ml-auto">
+                                <button type="button"
+                                    class="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 transition-colors dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                                        <path fill-rule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z" clip-rule="evenodd" />
+                                    </svg>
+                                    Refresh
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Panel Body -->
+                        <div class="p-6 max-w-3xl space-y-6">
+
+                            <!-- Amount + Status -->
+                            <div>
+                                <div class="flex items-baseline gap-2">
+                                    <span id="gp-amount" class="text-2xl font-bold text-gray-900 dark:text-white"></span>
+                                    <span id="gp-currency" class="text-2xl text-gray-500 dark:text-gray-400"></span>
+                                </div>
+                                <div class="mt-3">
+                                    <span class="inline-flex items-center gap-1.5 rounded-md border border-yellow-300 bg-yellow-100 px-2.5 py-1 text-sm font-medium text-yellow-800 dark:border-yellow-400/20 dark:bg-yellow-400/10 dark:text-yellow-500">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-yellow-400 dark:text-yellow-500">
+                                            <path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd" />
+                                        </svg>
+                                        Pending Your Action
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Submit and Get Paid (disabled) -->
+                            <button type="button" disabled
+                                class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white opacity-40 cursor-not-allowed shadow-xs">
+                                Submit and Get Paid
+                            </button>
+
+                            <!-- Payment Info Box -->
+                            <div class="overflow-hidden rounded-md border border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
+                                <div class="flex items-center gap-4 px-4 py-3 border-b border-gray-200 dark:border-white/10">
+                                    <span class="w-32 shrink-0 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Date Initiated</span>
+                                    <span id="gp-date" class="text-sm font-medium text-gray-700 dark:text-gray-300"></span>
+                                </div>
+                                <div class="flex items-center gap-4 px-4 py-3 border-b border-gray-200 dark:border-white/10">
+                                    <span class="w-32 shrink-0 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Customer</span>
+                                    <span id="gp-customer" class="text-sm font-medium text-gray-700 dark:text-gray-300"></span>
+                                </div>
+                                <div class="flex items-center gap-4 px-4 py-3">
+                                    <span class="w-32 shrink-0 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">Invoice #</span>
+                                    <span id="gp-invoice" class="text-sm font-medium text-gray-700 dark:text-gray-300"></span>
+                                    <button id="gp-invoice-copy" type="button"
+                                        class="ml-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                                            <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+                                            <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <!-- Steps -->
+                            <div>
+                                <h3 class="text-lg font-medium text-gray-900 dark:text-white">Follow these easy steps to Get Paid:</h3>
+                                <div class="mt-4 border-t border-gray-200 dark:border-white/10 space-y-0">
+
+                                    <!-- Step 1: Review Documents -->
+                                    <div class="flex gap-3 py-4 border-b border-gray-200 dark:border-white/10">
+                                        <span class="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">1</span>
+                                        <div class="flex-1 min-w-0">
+                                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Review Documents</p>
+                                            <div id="gp-attachments" class="mt-3 space-y-1">
+                                                <!-- populated by JS -->
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Step 2: Signature -->
+                                    <div class="flex gap-3 py-4 border-b border-gray-200 dark:border-white/10">
+                                        <span class="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">2</span>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Signature</p>
+                                            <button type="button"
+                                                class="mt-3 inline-flex items-center gap-2 rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 transition-colors">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                                                    <path d="M13.586 3.586a2 2 0 1 1 2.828 2.828l-.793.793-2.828-2.828.793-.793ZM11.379 5.793 3 14.172V17h2.828l8.38-8.379-2.83-2.828Z" />
+                                                </svg>
+                                                Provide Signature
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Step 3: Select Payment Method -->
+                                    <div class="flex gap-3 py-4">
+                                        <span class="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">3</span>
+                                        <div class="flex-1">
+                                            <p class="text-sm font-semibold text-gray-700 dark:text-gray-300">Select Payment Method</p>
+                                            <div class="mt-3">
+                                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Method of Payment</label>
+                                                <div class="grid grid-cols-1">
+                                                    <select class="col-start-1 row-start-1 w-full appearance-none rounded-md border border-gray-300 bg-white py-2 pr-8 pl-3 text-sm text-gray-900 shadow-xs focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-white dark:*:bg-gray-800">
+                                                        <option value="" disabled selected class="text-gray-400">Select payment method</option>
+                                                        <option>SMART Exchange</option>
+                                                        <option>ACH Transfer</option>
+                                                        <option>Card</option>
+                                                    </select>
+                                                    <svg class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500" viewBox="0 0 20 20" fill="currentColor">
+                                                        <path fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Receivable Summary (collapsible, collapsed by default) -->
+                            <div class="border-t border-gray-200 dark:border-white/10">
+                                <button type="button" id="gp-receivable-toggle"
+                                    class="w-full flex items-center justify-between py-4 text-left">
+                                    <span class="text-lg font-medium text-gray-900 dark:text-white">Receivable Summary</span>
+                                    <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-400 dark:text-gray-500 transition-transform">
+                                        <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <div id="gp-receivable-content" class="hidden pb-4">
+                                    <p class="text-sm text-gray-500 dark:text-gray-400">No receivable details available.</p>
+                                </div>
+                            </div>
+
+                            <!-- Activity Log (expanded by default) -->
+                            <div class="border-t border-gray-200 dark:border-white/10">
+                                <button type="button" id="gp-activity-toggle"
+                                    class="w-full flex items-center justify-between py-4 text-left">
+                                    <span class="text-lg font-medium text-gray-900 dark:text-white">Activity Log</span>
+                                    <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-400 dark:text-gray-500 transition-transform rotate-180">
+                                        <path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <div id="gp-activity-content" class="pb-6">
+                                    <!-- populated by JS -->
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- ===== END GET PAID PANEL ===== -->
+
+                    <div id="table-section" class="rounded-xl border border-gray-200 dark:border-white/1 bg-white shadow-xs dark:bg-gray-900 overflow-clip mb-4">
 
                         <!-- ===== CARD HEADER ===== -->
                         <div class="px-4 py-3 border-b border-gray-200 dark:border-white/10">
