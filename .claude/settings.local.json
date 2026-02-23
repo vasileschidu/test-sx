@@ -11,7 +11,11 @@
       "mcp__Framelink_Figma_MCP__download_figma_images",
       "Bash(git rm:*)",
       "Bash(gh api:*)",
-      "Bash(git ls-tree:*)"
+      "Bash(git ls-tree:*)",
+      "Bash(node --input-type=module --eval \":*)",
+      "Bash(node -e:*)",
+      "WebFetch(domain:heroicons.com)",
+      "WebFetch(domain:raw.githubusercontent.com)"
     ]
   }
 }

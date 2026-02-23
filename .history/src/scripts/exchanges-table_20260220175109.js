@@ -43,35 +43,13 @@
   var DEFAULT_PAGE_SIZE = 16;
   var PAGE_SIZE_OPTIONS = [10, 16, 25, 50];
 
-  // Suppress history.pushState when responding to a popstate event
-  var _suppressUrlUpdate = false;
-
-  // My business info loaded from JSON (for bank account / check details)
-  var _myBusiness = null;
-
-  // MutationObserver for payment method select changes
-  var _pmcObserver = null;
-
-  // MutationObserver for bank account select changes
-  var _bankSelectObserver = null;
-
   // Pagination state
   var paginationState = {
     currentPage: 1,
     pageSize: DEFAULT_PAGE_SIZE,
     totalItems: 0,
     allEntries: [],
-    sourceEntries: [],
     columns: [],
-  };
-
-  // Maps tab key (from data-tab-count) to the status values shown in that tab.
-  // null means no filter — show all entries.
-  var TAB_STATUS_FILTER = {
-    ready: null,
-    pending: ['Pending', 'Processing'],
-    paid: ['Completed'],
-    exceptions: ['Failed'],
   };
 
   var STATUS_STYLES = {
@@ -142,37 +120,6 @@
     var parsed = new Date(String(isoDate) + 'T00:00:00');
     if (Number.isNaN(parsed.getTime())) return escapeHtml(isoDate || '');
     return parsed.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-  }
-
-  // Formats an ISO datetime string (e.g. "2024-06-30T10:40") as
-  // "June 30, 2024 10:40 AM (EST)" for activity log display.
-  function formatActivityDate(isoDateTime) {
-    if (!isoDateTime) return '';
-    var str = String(isoDateTime);
-    var tIdx = str.indexOf('T');
-    var datePart = tIdx !== -1 ? str.slice(0, tIdx) : str;
-    var timePart = tIdx !== -1 ? str.slice(tIdx + 1) : '';
-    var date = new Date(datePart + 'T00:00:00');
-    if (Number.isNaN(date.getTime())) return escapeHtml(str);
-    var dateStr = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
-    if (timePart) {
-      var tp = timePart.split(':');
-      var hour = parseInt(tp[0], 10);
-      var minute = tp[1] ? tp[1].slice(0, 2) : '00';
-      var ampm = hour >= 12 ? 'PM' : 'AM';
-      var hour12 = hour % 12 || 12;
-      return dateStr + ' ' + hour12 + ':' + minute + ' ' + ampm + ' (EST)';
-    }
-    return dateStr;
-  }
-
-  // Returns entries filtered to the given tab key using TAB_STATUS_FILTER.
-  function filterEntriesByTab(tabKey) {
-    var filter = TAB_STATUS_FILTER[tabKey];
-    if (!filter) return paginationState.sourceEntries.slice();
-    return paginationState.sourceEntries.filter(function (entry) {
-      return filter.indexOf(entry.status) !== -1;
-    });
   }
 
   function normalizeDetails(details) {
@@ -302,8 +249,8 @@
   }
 
   function renderActionCell(entry) {
-    if (entry.paymentMethod === 'SMART Exchange' && entry.status === 'Pending') {
-      return '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>';
+    if (entry.paymentMethod === 'SMART Exchange') {
+      return '<button type="button" class="rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>';
     }
 
     // 3-dot dropdown for ACH / Card
@@ -539,7 +486,23 @@
   }
 
   function buildActivityLogSection(entry) {
-    var items = buildEntryActivityLogItems(entry);
+    var invoice = escapeHtml(entry.invoice || '');
+    var items = '';
+
+    // Fixed steps for Pending status (this tab)
+    items += buildActivityLogItem(
+      'bg-yellow-100 ring-1 ring-yellow-700/60 dark:bg-yellow-400/10 dark:ring-yellow-400/20',
+      'Pending Your Action',
+      'Please make sure to process your card.',
+      true
+    );
+
+    items += buildActivityLogItem(
+      'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
+      'Initiated',
+      'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated',
+      false
+    );
 
     return (
       '<div class="flex">' +
@@ -549,68 +512,6 @@
         '</div>' +
       '</div>'
     );
-  }
-
-  function buildEntryActivityLogItems(entry) {
-    var invoice = escapeHtml(entry.invoice || '');
-    var log = entry.details.activityLog;
-    var items = '';
-
-    if (entry.status === 'Completed') {
-      // Find most recent complete event for processed timestamp
-      var completedEntry = null;
-      for (var ci = log.length - 1; ci >= 0; ci--) {
-        if (log[ci].type === 'complete') { completedEntry = log[ci]; break; }
-      }
-      var processedDate = completedEntry ? formatActivityDate(completedEntry.date) : '';
-      var initiatedDate = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
-
-      items += buildActivityLogItem(
-        'bg-green-100 ring-1 ring-green-700/60 dark:bg-green-400/10 dark:ring-green-400/20',
-        'Paid',
-        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been processed' + (processedDate ? ' on ' + processedDate : ''),
-        true
-      );
-      items += buildActivityLogItem(
-        'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
-        'Initiated',
-        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated' + (initiatedDate ? ' on ' + initiatedDate : ''),
-        false
-      );
-
-    } else if (entry.status === 'Failed') {
-      var initiatedDateF = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
-
-      items += buildActivityLogItem(
-        'bg-red-100 ring-1 ring-red-700/60 dark:bg-red-400/10 dark:ring-red-400/20',
-        'Payment Failed',
-        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has failed due to an error. Contact your customer to resolve it.',
-        true
-      );
-      items += buildActivityLogItem(
-        'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
-        'Initiated',
-        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated' + (initiatedDateF ? ' on ' + initiatedDateF : ''),
-        false
-      );
-
-    } else {
-      // Pending / Processing / default
-      items += buildActivityLogItem(
-        'bg-yellow-100 ring-1 ring-yellow-700/60 dark:bg-yellow-400/10 dark:ring-yellow-400/20',
-        'Pending Your Action',
-        'Please make sure to process your card.',
-        true
-      );
-      items += buildActivityLogItem(
-        'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
-        'Initiated',
-        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated',
-        false
-      );
-    }
-
-    return items;
   }
 
   function buildDetailRowHTML(entry, colCount) {
@@ -960,15 +861,6 @@
       });
 
       syncTabBadgeStyles(nav);
-
-      // Filter table to the selected tab
-      var tabCountEl = clicked.querySelector(TAB_COUNT_SELECTOR);
-      var tabKey = tabCountEl ? tabCountEl.getAttribute('data-tab-count') : 'ready';
-      var filtered = filterEntriesByTab(tabKey);
-      paginationState.allEntries = filtered;
-      paginationState.totalItems = filtered.length;
-      paginationState.currentPage = 1;
-      renderCurrentPage();
     });
   }
 
@@ -1140,616 +1032,8 @@
         .map(normalizeEntry)
         .filter(function (entry) { return entry !== null; });
 
-      return { columns: columns, entries: entries, myBusiness: payload.myBusiness || null };
+      return { columns: columns, entries: entries };
     });
-  }
-
-  // ── Get Paid Panel ──
-
-  function buildGetPaidActivityLog(entry) {
-    return buildEntryActivityLogItems(entry);
-  }
-
-  var SAMPLE_ATTACHMENTS = [
-    { name: 'Adjuster Report1', size: 'PDF · 1.3 MB' },
-    { name: 'Adjuster Report2', size: 'PDF · 980.5 KB' },
-  ];
-
-  var ATTACHMENT_ICON =
-    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500">' +
-      '<path fill-rule="evenodd" clip-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" />' +
-    '</svg>';
-
-  var CHECKBOX_STATUS_HTML =
-    '<div class="flex h-6 shrink-0 items-center">' +
-      '<div class="group grid size-4 grid-cols-1">' +
-        '<input type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
-        '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
-          '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
-        '</svg>' +
-      '</div>' +
-    '</div>';
-
-  var STEP_BADGE_NUMBER_CLASS =
-    'inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300';
-  var STEP_BADGE_COMPLETE_CLASS =
-    'inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-green-200 bg-green-50 text-green-600 dark:border-green-500/30 dark:bg-green-400/10 dark:text-green-400';
-  var STEP_BADGE_CHECK_ICON =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5" aria-hidden="true">' +
-      '<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />' +
-    '</svg>';
-
-  function setGetPaidStepBadge(stepNum, isComplete) {
-    var badge = document.getElementById('gp-step-' + stepNum + '-badge');
-    if (!badge) return;
-    if (isComplete) {
-      badge.className = STEP_BADGE_COMPLETE_CLASS;
-      badge.innerHTML = STEP_BADGE_CHECK_ICON;
-      badge.setAttribute('aria-label', 'Step ' + stepNum + ' complete');
-    } else {
-      badge.className = STEP_BADGE_NUMBER_CLASS;
-      badge.textContent = String(stepNum);
-      badge.setAttribute('aria-label', 'Step ' + stepNum);
-    }
-  }
-
-  function getSelectedOptionValue(sel) {
-    if (!sel) return '';
-    var selected = sel.querySelector('el-option[aria-selected="true"]');
-    return selected ? String(selected.getAttribute('value') || '') : '';
-  }
-
-  function updateGetPaidStepStates() {
-    // Step 1: all document review actions are complete
-    var openReviewBtns = document.querySelectorAll('#gp-attachments .gp-review-trigger:not(.hidden)');
-    var statusChecks = document.querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"] input[type="checkbox"]');
-    var step1Done = statusChecks.length > 0 && openReviewBtns.length === 0;
-
-    // Step 2: signature has been completed
-    var signedBadge = document.getElementById('gp-signed-badge');
-    var step2Done = !!(signedBadge && !signedBadge.classList.contains('hidden'));
-
-    // Step 3: payment method selected; bank account method also requires bank selection
-    var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
-    var paymentValue = getSelectedOptionValue(paymentSel);
-    var step3Done = false;
-    if (paymentValue) {
-      if (paymentValue === 'bank-account') {
-        var bankSel = document.getElementById('gp-bank-account-select');
-        step3Done = !!getSelectedOptionValue(bankSel);
-      } else {
-        step3Done = true;
-      }
-    }
-
-    setGetPaidStepBadge(1, step1Done);
-    setGetPaidStepBadge(2, step2Done);
-    setGetPaidStepBadge(3, step3Done);
-
-    var submitBtn = document.getElementById('gp-submit-btn');
-    if (submitBtn) {
-      var canSubmit = step1Done && step2Done && step3Done;
-      submitBtn.disabled = !canSubmit;
-      submitBtn.setAttribute('aria-disabled', canSubmit ? 'false' : 'true');
-    }
-  }
-
-  function buildAttachmentItem(att, idx) {
-    return (
-      '<li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm/6">' +
-        '<div class="flex w-0 flex-1 items-center">' +
-          ATTACHMENT_ICON +
-          '<div class="ml-4 flex min-w-0 flex-1 gap-2">' +
-            '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(att.name || '') + '</span>' +
-            '<span class="shrink-0 text-gray-400 dark:text-gray-500">' + escapeHtml(att.size || '') + '</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="ml-4 shrink-0 flex items-center">' +
-          '<button type="button" command="show-modal" commandfor="gp-review-dialog"' +
-            ' class="gp-review-trigger font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"' +
-            ' data-attach-idx="' + idx + '">Review</button>' +
-          '<div id="gp-attach-' + idx + '-status" class="hidden">' +
-            CHECKBOX_STATUS_HTML +
-          '</div>' +
-        '</div>' +
-      '</li>'
-    );
-  }
-
-  function buildGetPaidAttachments(attachments) {
-    var list = (attachments && attachments.length) ? attachments : SAMPLE_ATTACHMENTS;
-    var items = '';
-    list.forEach(function (att, idx) { items += buildAttachmentItem(att, idx); });
-    return '<ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200 dark:divide-white/5 dark:border-white/10">' + items + '</ul>';
-  }
-
-  function openGetPaidPanel(entry) {
-    var amountEl = document.getElementById('gp-amount');
-    var currencyEl = document.getElementById('gp-currency');
-    var dateEl = document.getElementById('gp-date');
-    var customerEl = document.getElementById('gp-customer');
-    var invoiceEl = document.getElementById('gp-invoice');
-    var copyBtn = document.getElementById('gp-invoice-copy');
-    var attachEl = document.getElementById('gp-attachments');
-    var activityEl = document.getElementById('gp-activity-content');
-
-    if (amountEl) amountEl.textContent = formatCurrency(entry.amount, entry.currency);
-    if (currencyEl) currencyEl.textContent = entry.currency;
-    if (dateEl) dateEl.textContent = formatDate(entry.dateInitiated);
-    if (customerEl) customerEl.textContent = entry.customer;
-    if (invoiceEl) invoiceEl.textContent = '#' + entry.invoice;
-
-    if (copyBtn) {
-      copyBtn.onclick = function () {
-        navigator.clipboard.writeText(entry.invoice).catch(function () {});
-      };
-    }
-
-    if (attachEl) attachEl.innerHTML = buildGetPaidAttachments(entry.details.attachments);
-    if (activityEl) activityEl.innerHTML = buildGetPaidActivityLog(entry);
-    var activityToggle = document.getElementById('gp-activity-toggle');
-    if (activityEl) activityEl.classList.add('hidden');
-    if (activityToggle) {
-      var activityIcon = activityToggle.querySelector('[data-collapse-icon]');
-      if (activityIcon) activityIcon.classList.remove('rotate-180');
-    }
-
-    // Reset signature state
-    var sigTrigger = document.getElementById('gp-signature-trigger');
-    var sigBadge = document.getElementById('gp-signed-badge');
-    if (sigTrigger) sigTrigger.classList.remove('hidden');
-    if (sigBadge) sigBadge.classList.add('hidden');
-
-    if (!_suppressUrlUpdate) {
-      history.pushState(
-        { view: 'get-paid', invoice: entry.invoice },
-        '',
-        location.pathname + '?view=get-paid&id=' + encodeURIComponent(entry.invoice)
-      );
-    }
-
-    var panel = document.getElementById('get-paid-panel');
-    var tableSection = document.getElementById('table-section');
-    if (panel) panel.classList.remove('hidden');
-    if (tableSection) tableSection.classList.add('hidden');
-    window.scrollTo(0, 0);
-
-    initPaymentMethodDetails(entry);
-    updateGetPaidStepStates();
-  }
-
-  function pmcSetText(id, value) {
-    var el = document.getElementById(id);
-    if (el) el.textContent = value || '';
-  }
-
-  function updatePaymentMethodDetails(value, entry) {
-    var wrapper = document.getElementById('gp-payment-method-details');
-    var cardPanel = document.getElementById('gp-pmc-payers-card');
-    var bankPanel = document.getElementById('gp-pmc-bank-account');
-    var checkPanel = document.getElementById('gp-pmc-paper-check');
-
-    if (cardPanel) cardPanel.classList.add('hidden');
-    if (bankPanel) bankPanel.classList.add('hidden');
-    if (checkPanel) checkPanel.classList.add('hidden');
-
-    if (value === 'payers-card') {
-      var payerCard = entry.details.paymentInfo && entry.details.paymentInfo.payerCard;
-      if (payerCard) {
-        pmcSetText('gp-pmc-card-name', payerCard.cardholderName);
-        pmcSetText('gp-pmc-card-address', payerCard.cardholderAddress);
-      }
-      if (cardPanel) cardPanel.classList.remove('hidden');
-    } else if (value === 'bank-account') {
-      if (bankPanel) bankPanel.classList.remove('hidden');
-      initBankAccountSelector();
-    } else if (value === 'paper-check') {
-      if (_myBusiness && _myBusiness.mailingAddress) {
-        var ma = _myBusiness.mailingAddress;
-        pmcSetText('gp-pmc-check-company', ma.name);
-        pmcSetText('gp-pmc-check-address', ma.address);
-      }
-      if (checkPanel) checkPanel.classList.remove('hidden');
-    }
-
-    if (wrapper) wrapper.classList.remove('hidden');
-  }
-
-  function updateBankDetails(bankId) {
-    var details = document.getElementById('gp-pmc-bank-details');
-    if (!details) return;
-
-    var accounts = _myBusiness && _myBusiness.bankAccounts;
-    if (!accounts) return;
-
-    var account = null;
-    for (var i = 0; i < accounts.length; i++) {
-      if (accounts[i].id === bankId) { account = accounts[i]; break; }
-    }
-    if (!account) return;
-
-    pmcSetText('gp-pmc-bank-name-val', account.name);
-    pmcSetText('gp-pmc-bank-acct', account.maskedAccount);
-    pmcSetText('gp-pmc-bank-routing', account.maskedRouting);
-    pmcSetText('gp-pmc-bank-address', account.address);
-
-    // Reset reveal button to hidden state
-    var btn = document.getElementById('gp-pmc-reveal-btn');
-    if (btn) {
-      btn.setAttribute('data-revealed', 'false');
-      var revealIcon = btn.querySelector('[data-icon="reveal"]');
-      var hideIcon = btn.querySelector('[data-icon="hide"]');
-      var revealText = document.getElementById('gp-pmc-reveal-text');
-      if (revealIcon) revealIcon.classList.remove('hidden');
-      if (hideIcon) hideIcon.classList.add('hidden');
-      if (revealText) revealText.textContent = 'Reveal Details';
-    }
-
-    details.classList.remove('hidden');
-    initRevealToggle(account);
-    updateGetPaidStepStates();
-  }
-
-  function initRevealToggle(account) {
-    var btn = document.getElementById('gp-pmc-reveal-btn');
-    if (!btn) return;
-
-    btn.onclick = function () {
-      var revealed = btn.getAttribute('data-revealed') === 'true';
-      revealed = !revealed;
-      btn.setAttribute('data-revealed', String(revealed));
-
-      var revealIcon = btn.querySelector('[data-icon="reveal"]');
-      var hideIcon = btn.querySelector('[data-icon="hide"]');
-      var revealText = document.getElementById('gp-pmc-reveal-text');
-
-      if (revealed) {
-        pmcSetText('gp-pmc-bank-acct', account.accountNumber);
-        pmcSetText('gp-pmc-bank-routing', account.routingNumber);
-        if (revealIcon) revealIcon.classList.add('hidden');
-        if (hideIcon) hideIcon.classList.remove('hidden');
-        if (revealText) revealText.textContent = 'Hide Details';
-      } else {
-        pmcSetText('gp-pmc-bank-acct', account.maskedAccount);
-        pmcSetText('gp-pmc-bank-routing', account.maskedRouting);
-        if (revealIcon) revealIcon.classList.remove('hidden');
-        if (hideIcon) hideIcon.classList.add('hidden');
-        if (revealText) revealText.textContent = 'Reveal Details';
-      }
-    };
-  }
-
-  function initBankAccountSelector() {
-    if (_bankSelectObserver) {
-      _bankSelectObserver.disconnect();
-      _bankSelectObserver = null;
-    }
-
-    var details = document.getElementById('gp-pmc-bank-details');
-    if (details) details.classList.add('hidden');
-
-    var sel = document.getElementById('gp-bank-account-select');
-    if (!sel) return;
-
-    // Reset to placeholder
-    sel.querySelectorAll('el-option').forEach(function (opt) {
-      opt.removeAttribute('aria-selected');
-    });
-    var selContent = sel.querySelector('el-selectedcontent');
-    if (selContent) {
-      selContent.innerHTML = '<span class="truncate text-gray-400 dark:text-gray-500">Select bank account</span>';
-    }
-
-    var observer = new MutationObserver(function () {
-      var selected = sel.querySelector('el-option[aria-selected="true"]');
-      if (selected) updateBankDetails(selected.getAttribute('value'));
-      updateGetPaidStepStates();
-    });
-    sel.querySelectorAll('el-option').forEach(function (opt) {
-      observer.observe(opt, { attributes: true, attributeFilter: ['aria-selected'] });
-    });
-    _bankSelectObserver = observer;
-    updateGetPaidStepStates();
-  }
-
-  function initPaymentMethodDetails(entry) {
-    if (_pmcObserver) {
-      _pmcObserver.disconnect();
-      _pmcObserver = null;
-    }
-    if (_bankSelectObserver) {
-      _bankSelectObserver.disconnect();
-      _bankSelectObserver = null;
-    }
-
-    var wrapper = document.getElementById('gp-payment-method-details');
-    if (wrapper) wrapper.classList.add('hidden');
-
-    var sel = document.querySelector('el-select[name="paymentMethod"]');
-    if (!sel) return;
-
-    // Reset select to placeholder state
-    sel.querySelectorAll('el-option').forEach(function (opt) {
-      opt.removeAttribute('aria-selected');
-    });
-    var selContent = sel.querySelector('el-selectedcontent');
-    if (selContent) {
-      selContent.innerHTML = '<span class="truncate text-gray-400 dark:text-gray-500">Select payment method</span>';
-    }
-
-    // Watch for aria-selected changes on options
-    var observer = new MutationObserver(function () {
-      var selected = sel.querySelector('el-option[aria-selected="true"]');
-      if (selected) updatePaymentMethodDetails(selected.getAttribute('value'), entry);
-      updateGetPaidStepStates();
-    });
-    sel.querySelectorAll('el-option').forEach(function (opt) {
-      observer.observe(opt, { attributes: true, attributeFilter: ['aria-selected'] });
-    });
-    _pmcObserver = observer;
-    updateGetPaidStepStates();
-  }
-
-  function closeGetPaidPanel() {
-    if (!_suppressUrlUpdate) {
-      history.pushState({}, '', location.pathname);
-    }
-    var panel = document.getElementById('get-paid-panel');
-    var tableSection = document.getElementById('table-section');
-    if (panel) panel.classList.add('hidden');
-    if (tableSection) tableSection.classList.remove('hidden');
-  }
-
-  function initGetPaidPanel() {
-    // Back button
-    var backBtn = document.getElementById('get-paid-back');
-    if (backBtn) backBtn.addEventListener('click', closeGetPaidPanel);
-
-    // Receivable Summary toggle
-    var receivableToggle = document.getElementById('gp-receivable-toggle');
-    var receivableContent = document.getElementById('gp-receivable-content');
-    if (receivableToggle && receivableContent) {
-      receivableToggle.addEventListener('click', function () {
-        receivableContent.classList.toggle('hidden');
-        var icon = receivableToggle.querySelector('[data-collapse-icon]');
-        if (icon) icon.classList.toggle('rotate-180');
-      });
-    }
-
-    // Activity Log toggle
-    var activityToggle = document.getElementById('gp-activity-toggle');
-    var activityContent = document.getElementById('gp-activity-content');
-    if (activityToggle && activityContent) {
-      activityToggle.addEventListener('click', function () {
-        activityContent.classList.toggle('hidden');
-        var icon = activityToggle.querySelector('[data-collapse-icon]');
-        if (icon) icon.classList.toggle('rotate-180');
-      });
-    }
-
-    // "Get paid" button clicks (delegated — buttons are rendered dynamically)
-    document.addEventListener('click', function (e) {
-      var btn = e.target.closest('[data-get-paid-invoice]');
-      if (!btn) return;
-      e.preventDefault();
-      var invoice = btn.getAttribute('data-get-paid-invoice');
-      var entry = null;
-      for (var i = 0; i < paginationState.sourceEntries.length; i++) {
-        if (paginationState.sourceEntries[i].invoice === invoice) {
-          entry = paginationState.sourceEntries[i];
-          break;
-        }
-      }
-      if (entry) openGetPaidPanel(entry);
-    });
-
-    // Browser back/forward — reopen or close panel based on URL
-    window.addEventListener('popstate', function () {
-      _suppressUrlUpdate = true;
-      var params = new URLSearchParams(location.search);
-      if (params.get('view') === 'get-paid') {
-        var invoiceId = params.get('id');
-        for (var i = 0; i < paginationState.sourceEntries.length; i++) {
-          if (paginationState.sourceEntries[i].invoice === invoiceId) {
-            openGetPaidPanel(paginationState.sourceEntries[i]);
-            break;
-          }
-        }
-      } else {
-        closeGetPaidPanel();
-      }
-      _suppressUrlUpdate = false;
-    });
-  }
-
-  // ── Review Modal ──
-
-  function initReviewModal() {
-    var markReadBtn = document.getElementById('gp-mark-read-btn');
-    if (!markReadBtn) return;
-
-    var activeAttachIdx = null;
-
-    document.addEventListener('click', function (e) {
-      var trigger = e.target.closest('.gp-review-trigger');
-      if (trigger) activeAttachIdx = trigger.getAttribute('data-attach-idx');
-    });
-
-    markReadBtn.addEventListener('click', function () {
-      if (activeAttachIdx === null) return;
-      var btn = document.querySelector('.gp-review-trigger[data-attach-idx="' + activeAttachIdx + '"]');
-      var status = document.getElementById('gp-attach-' + activeAttachIdx + '-status');
-      if (btn) btn.classList.add('hidden');
-      if (status) {
-        status.classList.remove('hidden');
-        var checkbox = status.querySelector('input[type="checkbox"]');
-        if (checkbox) checkbox.checked = true;
-      }
-      activeAttachIdx = null;
-      updateGetPaidStepStates();
-    });
-  }
-
-  // ── Signature Modal ──
-
-  function initSignatureModal() {
-    var canvas = document.getElementById('gp-signature-canvas');
-    if (!canvas) return;
-
-    var ctx = canvas.getContext('2d');
-    var clearBtn = document.getElementById('gp-clear-signature');
-    var signBtn = document.getElementById('gp-sign-btn');
-    var tabDraw = document.getElementById('gp-tab-draw');
-    var tabType = document.getElementById('gp-tab-type');
-    var typeWrap = document.getElementById('gp-type-input-wrap');
-    var fullNameInput = document.getElementById('gp-fullName');
-    var sigDialog = document.getElementById('gp-signature-dialog');
-
-    var isDrawing = false;
-    var hasSignature = false;
-    var sigMode = 'draw';
-
-    function getInkColor() {
-      return getComputedStyle(canvas).getPropertyValue('--gp-ink-color').trim() || '#111827';
-    }
-
-    function setCanvasSize() {
-      var ratio = window.devicePixelRatio || 1;
-      var bounds = canvas.getBoundingClientRect();
-      canvas.width = Math.floor(bounds.width * ratio);
-      canvas.height = Math.floor(bounds.height * ratio);
-      ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
-      ctx.lineWidth = 2.5;
-      ctx.strokeStyle = getInkColor();
-      if (sigMode === 'type' && fullNameInput) drawTypedSig(fullNameInput.value || '');
-    }
-
-    function updateSignBtn() {
-      if (signBtn) signBtn.disabled = !hasSignature;
-    }
-
-    function clearCanvas() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }
-
-    function getPoint(e) {
-      var rect = canvas.getBoundingClientRect();
-      return { x: e.clientX - rect.left, y: e.clientY - rect.top };
-    }
-
-    function drawTypedSig(text) {
-      clearCanvas();
-      var safe = (text || '').trim();
-      if (!safe) { hasSignature = false; updateSignBtn(); return; }
-      ctx.save();
-      ctx.fillStyle = getInkColor();
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      var maxWidth = canvas.getBoundingClientRect().width - 48;
-      var fontSize = 72;
-      while (fontSize > 24) {
-        ctx.font = fontSize + "px 'Meow Script', cursive";
-        if (ctx.measureText(safe).width <= maxWidth) break;
-        fontSize -= 2;
-      }
-      ctx.fillText(safe, canvas.getBoundingClientRect().width / 2, canvas.getBoundingClientRect().height / 2);
-      ctx.restore();
-      hasSignature = true;
-      updateSignBtn();
-    }
-
-    function setMode(nextMode) {
-      sigMode = nextMode;
-      if (sigMode === 'draw') {
-        if (tabDraw) { tabDraw.className = 'rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900 dark:bg-white/10 dark:text-white'; tabDraw.setAttribute('aria-current', 'page'); }
-        if (tabType) { tabType.className = 'rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'; tabType.removeAttribute('aria-current'); }
-        if (typeWrap) typeWrap.classList.add('hidden');
-        canvas.style.pointerEvents = 'auto';
-      } else {
-        if (tabType) { tabType.className = 'rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900 dark:bg-white/10 dark:text-white'; tabType.setAttribute('aria-current', 'page'); }
-        if (tabDraw) { tabDraw.className = 'rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'; tabDraw.removeAttribute('aria-current'); }
-        if (typeWrap) typeWrap.classList.remove('hidden');
-        canvas.style.pointerEvents = 'none';
-        drawTypedSig(fullNameInput ? fullNameInput.value || '' : '');
-      }
-    }
-
-    if (tabDraw) tabDraw.addEventListener('click', function () { setMode('draw'); });
-    if (tabType) tabType.addEventListener('click', function () { setMode('type'); });
-
-    if (fullNameInput) {
-      fullNameInput.addEventListener('input', function (e) {
-        if (sigMode !== 'type') return;
-        drawTypedSig(e.target.value);
-      });
-    }
-
-    if (clearBtn) {
-      clearBtn.addEventListener('click', function () {
-        clearCanvas();
-        hasSignature = false;
-        updateSignBtn();
-        if (sigMode === 'type' && fullNameInput) fullNameInput.value = '';
-      });
-    }
-
-    canvas.addEventListener('pointerdown', function (e) {
-      if (sigMode !== 'draw') return;
-      e.preventDefault(); isDrawing = true;
-      ctx.strokeStyle = getInkColor();
-      var p = getPoint(e); ctx.beginPath(); ctx.moveTo(p.x, p.y);
-    });
-    canvas.addEventListener('pointermove', function (e) {
-      if (sigMode !== 'draw' || !isDrawing) return;
-      e.preventDefault();
-      var p = getPoint(e); ctx.lineTo(p.x, p.y); ctx.stroke();
-      if (!hasSignature) { hasSignature = true; updateSignBtn(); }
-    });
-    canvas.addEventListener('pointerup', function () { if (sigMode === 'draw') { isDrawing = false; ctx.closePath(); } });
-    canvas.addEventListener('pointerleave', function () { if (sigMode === 'draw') { isDrawing = false; ctx.closePath(); } });
-    canvas.addEventListener('pointercancel', function () { if (sigMode === 'draw') { isDrawing = false; ctx.closePath(); } });
-
-    // Reset + resize canvas on open; reset only on close
-    function resetSigState() {
-      clearCanvas();
-      hasSignature = false;
-      if (fullNameInput) fullNameInput.value = '';
-      updateSignBtn();
-      setMode('draw');
-    }
-
-    if (sigDialog) {
-      new MutationObserver(function (mutations) {
-        mutations.forEach(function (m) {
-          if (m.attributeName !== 'open') return;
-          if (sigDialog.hasAttribute('open')) {
-            resetSigState();
-            setTimeout(setCanvasSize, 30);
-          } else {
-            resetSigState();
-          }
-        });
-      }).observe(sigDialog, { attributes: true });
-    }
-
-    if (signBtn) {
-      signBtn.addEventListener('click', function () {
-        if (signBtn.disabled) return;
-        if (sigDialog) sigDialog.close();
-        var trigger = document.getElementById('gp-signature-trigger');
-        var badge = document.getElementById('gp-signed-badge');
-        if (trigger) trigger.classList.add('hidden');
-        if (badge) badge.classList.remove('hidden');
-        clearCanvas(); hasSignature = false;
-        updateGetPaidStepStates();
-      });
-    }
-
-    setCanvasSize();
-    updateSignBtn();
-    setMode('draw');
   }
 
   // ── Init ──
@@ -1758,16 +1042,11 @@
     var table = document.getElementById(TABLE_ID);
     if (!table) return;
     initTabBadges();
-    initGetPaidPanel();
-    initReviewModal();
-    initSignatureModal();
 
     fetchExchangesData()
       .then(function (result) {
         var columns = result.columns;
         var entries = result.entries;
-        _myBusiness = result.myBusiness;
-        paginationState.sourceEntries = entries;
         updateTabBadges(entries);
 
         if (columns) {
@@ -1778,20 +1057,6 @@
 
         refreshStickyAction = initStickyAction(table);
         refreshStickyAction();
-
-        // Auto-open Get Paid panel if URL contains ?view=get-paid&id=...
-        var params = new URLSearchParams(location.search);
-        if (params.get('view') === 'get-paid') {
-          var invoiceId = params.get('id');
-          for (var j = 0; j < paginationState.sourceEntries.length; j++) {
-            if (paginationState.sourceEntries[j].invoice === invoiceId) {
-              _suppressUrlUpdate = true;
-              openGetPaidPanel(paginationState.sourceEntries[j]);
-              _suppressUrlUpdate = false;
-              break;
-            }
-          }
-        }
       })
       .catch(function (error) {
         console.error('Failed to load exchanges data:', error);

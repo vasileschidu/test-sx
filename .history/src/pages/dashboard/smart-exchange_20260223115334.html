@@ -878,14 +878,14 @@
 
 
 
-            <div class="flex w-full max-w-[1280px] flex-col 0 gap-5">
+            <div class="flex w-full max-w-[1560px] flex-col 0  gap-5">
 
                 <!-- ===== GET PAID PANEL ===== -->
                 <div id="get-paid-panel"
                     class="hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white shadow-xs dark:bg-gray-900 overflow-clip mb-4">
 
                     <!-- Panel Header -->
-                    <div class="flex items-center gap-3 px-4 py-4 sm:px-6 border-b border-gray-200 dark:border-white/10">
+                    <div class="flex items-center gap-3 px-6 py-4 border-b border-gray-200 dark:border-white/10">
                         <button id="get-paid-back" type="button"
                             class="flex items-center justify-center rounded-md p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -910,14 +910,14 @@
                         </div>
                     </div>
 
-                    <!-- Panel Body -->
-                    <div class="grid grid-cols-1 p-4 sm:p-6">
+                    <!-- Panel Body: 2-column grid -->
+                    <div class="grid grid-cols-1 gap-x-8 lg:grid-cols-3 p-6">
 
-                        <!-- Main content -->
-                        <div>
+                        <!-- LEFT: main content (2 of 3 cols) -->
+                        <div class="lg:col-span-2">
 
                             <!-- Amount + Badge + Button (single row) -->
-                            <div class="flex items-center justify-between gap-4 px-0">
+                            <div class="flex items-center justify-between gap-4 px-4 sm:px-0">
                                 <div class="flex items-center gap-3 flex-wrap">
                                     <div class="flex items-baseline gap-1.5">
                                         <span id="gp-amount"
@@ -928,8 +928,8 @@
                                         class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20">Pending
                                         Your Action</span>
                                 </div>
-                                <button id="gp-submit-btn" type="button" disabled
-                                    class="shrink-0 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-blue-600">
+                                <button type="button" disabled
+                                    class="shrink-0 rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white opacity-40 cursor-not-allowed shadow-xs">
                                     Submit and Get Paid
                                 </button>
                             </div>
@@ -980,27 +980,26 @@
                             </div>
 
                             <!-- Steps -->
-                            <div class="mt-6 px-0">
+                            <div class="mt-6 px-4 sm:px-0">
                                 <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Follow these easy
                                     steps to Get Paid:</h3>
                             </div>
-                            <div class="mt-2 border-t border-gray-200 dark:border-white/10">
-                                <dl class="divide-y divide-gray-200 dark:divide-white/10">
+                            <div class="mt-2 border-t border-gray-100 dark:border-white/10">
+                                <dl class="divide-y divide-gray-100 dark:divide-white/10">
 
                                     <!-- Step 1: Review Documents -->
-                                    <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+                                    <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                         <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
                                             <div class="flex items-center gap-2">
                                                 <span
-                                                    id="gp-step-1-badge"
                                                     class="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">1</span>
                                                 Review Documents
                                             </div>
                                         </dt>
                                         <dd class="mt-2 text-sm text-gray-900 sm:col-span-2 sm:mt-0 dark:text-white">
-                                            <div id="gp-attachments" class="w-full max-w-[400px]">
+                                            <div id="gp-attachments">
                                                 <ul role="list"
-                                                    class="divide-y divide-gray-200 rounded-md border border-gray-200 dark:divide-white/5 dark:border-white/10">
+                                                    class="divide-y divide-gray-100 rounded-md border border-gray-200 dark:divide-white/5 dark:border-white/10">
                                                     <li
                                                         class="flex items-center justify-between py-4 pr-5 pl-4 text-sm/6">
                                                         <div class="flex w-0 flex-1 items-center">
@@ -1087,11 +1086,10 @@
                                     </div>
 
                                     <!-- Step 2: Signature -->
-                                    <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+                                    <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                         <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
                                             <div class="flex items-center gap-2">
                                                 <span
-                                                    id="gp-step-2-badge"
                                                     class="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">2</span>
                                                 Signature
                                             </div>
@@ -1126,11 +1124,10 @@
                                     </div>
 
                                     <!-- Step 3: Select Payment Method -->
-                                    <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+                                    <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                         <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
                                             <div class="flex items-center gap-2">
                                                 <span
-                                                    id="gp-step-3-badge"
                                                     class="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">3</span>
                                                 Select Payment Method
                                             </div>
@@ -1139,7 +1136,7 @@
                                             <label
                                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Method
                                                 of Payment</label>
-                                            <el-select name="paymentMethod" class="mt-2 block w-full max-w-[512px]">
+                                            <el-select name="paymentMethod" class="mt-2 block">
                                                 <button type="button"
                                                     class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                     <el-selectedcontent
@@ -1154,7 +1151,7 @@
                                                     </svg>
                                                 </button>
                                                 <el-options anchor="bottom start" popover
-                                                    class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
+                                                    class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-100 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
                                                     <!-- Accept Payer's Card -->
                                                     <el-option value="payers-card"
                                                         class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:focus:bg-white/10">
@@ -1248,7 +1245,7 @@
                                             </el-select>
 
                                             <!-- Payment Method Details (shown after selection) -->
-                                            <div id="gp-payment-method-details" class="hidden mt-4 w-full max-w-[512px]">
+                                            <div id="gp-payment-method-details" class="hidden mt-4">
 
                                                 <!-- Accept Payer's Card -->
                                                 <div id="gp-pmc-payers-card" class="hidden">
@@ -1300,7 +1297,7 @@
                                                 <div id="gp-pmc-bank-account" class="hidden">
                                                     <!-- Bank account selector -->
                                                     <el-select name="bankAccountSelect" id="gp-bank-account-select"
-                                                        class="block w-full max-w-[512px]">
+                                                        class="block">
                                                         <button type="button"
                                                             class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                             <el-selectedcontent
@@ -1316,7 +1313,7 @@
                                                             </svg>
                                                         </button>
                                                         <el-options anchor="bottom start" popover
-                                                            class="w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
+                                                            class="w-(--button-width) overflow-auto divide-y divide-gray-100 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
                                                             <!-- Wells Fargo -->
                                                             <el-option value="wf-8419"
                                                                 class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:focus:bg-white/10">
@@ -1396,16 +1393,18 @@
                                                                 </span>
                                                             </el-option>
                                                             <!-- Add new bank account -->
-                                                            <button type="button"
-                                                                class="flex w-full cursor-pointer select-none items-center justify-center gap-1.5 py-3 pr-4 pl-3 text-sm font-medium text-blue-600 hover:bg-gray-100 hover:text-blue-500 focus:bg-gray-100 focus:outline-hidden dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300 dark:focus:bg-white/10">
-                                                                <svg xmlns="http://www.w3.org/2000/svg"
-                                                                    viewBox="0 0 20 20" fill="currentColor"
-                                                                    class="size-4">
-                                                                    <path
-                                                                        d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-                                                                </svg>
-                                                                Add new bank account
-                                                            </button>
+                                                            <div class="px-4 py-3">
+                                                                <button type="button"
+                                                                    class="flex items-center gap-1.5 text-sm font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                                        viewBox="0 0 20 20" fill="currentColor"
+                                                                        class="size-4">
+                                                                        <path
+                                                                            d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+                                                                    </svg>
+                                                                    Add new bank account
+                                                                </button>
+                                                            </div>
                                                         </el-options>
                                                     </el-select>
 
@@ -1503,10 +1502,19 @@
                                                                     </svg>
                                                                 </div>
                                                                 <span
-                                                                    class="text-sm font-normal text-gray-700 dark:text-gray-300">Set as default</span>
+                                                                    class="text-sm font-normal text-gray-700 dark:text-gray-300">Set
+                                                                    card as default for future payments</span>
                                                             </label>
 
-                                                            
+                                                            <label class="mt-4 flex items-center gap-3 cursor-pointer">
+                                                            <div class="group grid size-4 grid-cols-1">
+                                                                <input type="checkbox" checked class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
+                                                                <svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">
+                                                                    <path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />
+                                                                </svg>
+                                                            </div>
+                                                            <span class="text-sm font-normal text-gray-700 dark:text-gray-300">Set card as default for future payments</span>
+                                                        </label>
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1551,11 +1559,12 @@
 
                         </div>
 
-                        <!-- Summary + activity aligned with steps column -->
-                        <div class="mt-9 px-0">
+                        <!-- RIGHT: summary + activity (1 of 3 cols) -->
+                        <div
+                            class="lg:col-span-1 mt-8 lg:mt-0 lg:border-l lg:border-gray-100 dark:lg:border-white/10 lg:pl-6">
 
                             <!-- Receivable Summary (collapsible, collapsed by default) -->
-                            <div class="border-t border-gray-200 dark:border-white/10">
+                            <div class="border-t border-gray-100 dark:border-white/10">
                                 <button type="button" id="gp-receivable-toggle"
                                     class="w-full flex items-center justify-between py-4 text-left">
                                     <span class="text-base font-semibold text-gray-900 dark:text-white">Receivable
@@ -1574,21 +1583,21 @@
                                 </div>
                             </div>
 
-                            <!-- Activity Log (collapsed by default) -->
-                            <div class="border-t border-b border-gray-200 dark:border-white/10">
+                            <!-- Activity Log (expanded by default) -->
+                            <div class="border-t border-gray-100 dark:border-white/10">
                                 <button type="button" id="gp-activity-toggle"
                                     class="w-full flex items-center justify-between py-4 text-left">
                                     <span class="text-base font-semibold text-gray-900 dark:text-white">Activity
                                         Log</span>
                                     <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                         fill="currentColor"
-                                        class="size-5 text-gray-400 dark:text-gray-500 transition-transform">
+                                        class="size-5 text-gray-400 dark:text-gray-500 transition-transform rotate-180">
                                         <path fill-rule="evenodd"
                                             d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
                                             clip-rule="evenodd" />
                                     </svg>
                                 </button>
-                                <div id="gp-activity-content" class="hidden pb-6">
+                                <div id="gp-activity-content" class="pb-6">
                                     <!-- populated by JS -->
                                 </div>
                             </div>
@@ -1655,7 +1664,7 @@
                                     </button>
 
                                     <el-menu anchor="bottom end" popover
-                                        class="w-56 origin-top-right divide-y divide-gray-200 rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:divide-white/10 dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+                                        class="w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:divide-white/10 dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
                                         <div class="py-1">
                                             <a href="#"
                                                 class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Edit</a>

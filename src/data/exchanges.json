@@ -96,7 +96,11 @@
           "exchangeRate": "1 EUR = 1.08 USD",
           "sourceAmount": "€8,730.50",
           "targetAmount": "$9,428.94",
-          "settlementDate": "Jul 10, 2024"
+          "settlementDate": "Jul 10, 2024",
+          "payerCard": {
+            "cardholderName": "GreenScape Gardens EU",
+            "cardholderAddress": "14 Avenue des Fleurs\nParis, 75008\nFrance"
+          }
         },
         "attachments": [
           { "name": "invoice_GS-443.pdf", "size": "980kb" }
@@ -190,7 +194,11 @@
           "exchangeRate": "Direct settlement",
           "sourceAmount": "$21,670.00",
           "targetAmount": "$21,670.00",
-          "settlementDate": "Jun 25, 2024"
+          "settlementDate": "Jun 25, 2024",
+          "payerCard": {
+            "cardholderName": "SteelCore Manufacturing",
+            "cardholderAddress": "2800 Industrial Pkwy\nDetroit, MI 48210\nUnited States"
+          }
         },
         "attachments": [
           { "name": "invoice_SC-5541.pdf", "size": "2.1mb" },
@@ -285,7 +293,11 @@
           "exchangeRate": "Direct settlement",
           "sourceAmount": "$475.99",
           "targetAmount": "$475.99",
-          "settlementDate": "Jul 18, 2024"
+          "settlementDate": "Jul 18, 2024",
+          "payerCard": {
+            "cardholderName": "QuickPrint Express",
+            "cardholderAddress": "540 W Madison St\nSuite 220\nChicago, IL 60661\nUnited States"
+          }
         },
         "attachments": [
           { "name": "invoice_QP-118.pdf", "size": "540kb" }
@@ -411,7 +423,11 @@
           "exchangeRate": "Direct settlement",
           "sourceAmount": "$41,000.00",
           "targetAmount": "$41,000.00",
-          "settlementDate": "Jun 25, 2024"
+          "settlementDate": "Jun 25, 2024",
+          "payerCard": {
+            "cardholderName": "IronClad Security Inc",
+            "cardholderAddress": "350 Fifth Avenue\nSuite 4100\nNew York, NY 10118\nUnited States"
+          }
         },
         "attachments": [
           { "name": "invoice_IC-2205.pdf", "size": "2.0mb" },
@@ -506,7 +522,11 @@
           "exchangeRate": "1 AUD = 0.66 USD",
           "sourceAmount": "A$9,870.00",
           "targetAmount": "$6,514.20",
-          "settlementDate": "Jul 12, 2024"
+          "settlementDate": "Jul 12, 2024",
+          "payerCard": {
+            "cardholderName": "CoralNet IT Solutions AU",
+            "cardholderAddress": "Level 18, 1 Market St\nSydney NSW 2000\nAustralia"
+          }
         },
         "attachments": [
           { "name": "invoice_CN-391.pdf", "size": "1.1mb" },
@@ -633,7 +653,11 @@
           "exchangeRate": "1 JPY = 0.0067 USD",
           "sourceAmount": "¥34,500.00",
           "targetAmount": "$231.15",
-          "settlementDate": "Jul 15, 2024"
+          "settlementDate": "Jul 15, 2024",
+          "payerCard": {
+            "cardholderName": "KazenTech Ltd JP",
+            "cardholderAddress": "2-1-1 Nihonbashi\nChuo-ku, Tokyo 103-0027\nJapan"
+          }
         },
         "attachments": [
           { "name": "invoice_KT-1187.pdf", "size": "1.6mb" },
@@ -867,5 +891,35 @@
         ]
       }
     }
-  ]
+  ],
+  "myBusiness": {
+    "bankAccounts": [
+      {
+        "id": "wf-8419",
+        "displayName": "Wells Fargo Account",
+        "name": "Nexus Financial Group",
+        "bankName": "Wells Fargo",
+        "maskedAccount": "•••••••••••••8419",
+        "accountNumber": "000048390108419",
+        "maskedRouting": "•••••2847",
+        "routingNumber": "121002847",
+        "address": "1200 Market Street\nSuite 400\nSan Francisco, CA 94102\nUS"
+      },
+      {
+        "id": "citi-3674",
+        "displayName": "Citibank Account",
+        "name": "Nexus Financial Group",
+        "bankName": "Citibank",
+        "maskedAccount": "•••••••••••••3674",
+        "accountNumber": "000040198913674",
+        "maskedRouting": "•••••5193",
+        "routingNumber": "021000089",
+        "address": "388 Greenwich Street\nNew York, NY 10013\nUS"
+      }
+    ],
+    "mailingAddress": {
+      "name": "Nexus Financial Group",
+      "address": "1200 Market Street\nSuite 400\nSan Francisco, CA 94102\nUnited States"
+    }
+  }
 }
