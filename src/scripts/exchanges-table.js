@@ -54,6 +54,7 @@
 
   // MutationObserver for bank account select changes
   var _bankSelectObserver = null;
+  var _activeGetPaidEntry = null;
 
   // Pagination state
   var paginationState = {
@@ -1264,6 +1265,7 @@
   }
 
   function openGetPaidPanel(entry) {
+    _activeGetPaidEntry = entry;
     var amountEl = document.getElementById('gp-amount');
     var currencyEl = document.getElementById('gp-currency');
     var dateEl = document.getElementById('gp-date');
@@ -1491,6 +1493,7 @@
   }
 
   function closeGetPaidPanel() {
+    _activeGetPaidEntry = null;
     if (!_suppressUrlUpdate) {
       history.pushState({}, '', location.pathname);
     }
@@ -1524,6 +1527,42 @@
         activityContent.classList.toggle('hidden');
         var icon = activityToggle.querySelector('[data-collapse-icon]');
         if (icon) icon.classList.toggle('rotate-180');
+      });
+    }
+
+    var submitBtn = document.getElementById('gp-submit-btn');
+    if (submitBtn) {
+      submitBtn.addEventListener('click', function () {
+        if (submitBtn.disabled || !_activeGetPaidEntry) return;
+        var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
+        var paymentValue = getSelectedOptionValue(paymentSel);
+        if (paymentValue !== 'payers-card') return;
+
+        var txIdEl = document.getElementById('gp-submit-txid');
+        var amountEl = document.getElementById('gp-submit-amount');
+        var dateEl = document.getElementById('gp-submit-date');
+        var cardLast4El = document.getElementById('gp-submit-card-last4');
+
+        var txId = 'TXN-' + String(_activeGetPaidEntry.invoice || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase() + '-' + Date.now().toString().slice(-6);
+        var payerCard = _activeGetPaidEntry.details &&
+          _activeGetPaidEntry.details.paymentInfo &&
+          _activeGetPaidEntry.details.paymentInfo.payerCard;
+        var cardLast4 = _activeGetPaidEntry.paymentMethodEnding || '';
+        if (!cardLast4 && payerCard && payerCard.cardNumber) cardLast4 = String(payerCard.cardNumber).slice(-4);
+
+        if (txIdEl) txIdEl.textContent = txId;
+        if (amountEl) amountEl.textContent = formatCurrency(_activeGetPaidEntry.amount, _activeGetPaidEntry.currency);
+        if (dateEl) dateEl.textContent = formatDate(_activeGetPaidEntry.dateInitiated);
+        if (cardLast4El) cardLast4El.textContent = cardLast4 || '0000';
+
+        var formattedAmount = formatCurrency(_activeGetPaidEntry.amount, _activeGetPaidEntry.currency);
+        var vcAmountEl = document.getElementById('gp-vc-amount');
+        var vcPendingEl = document.getElementById('gp-vc-pending-amount');
+        if (vcAmountEl) vcAmountEl.textContent = formattedAmount;
+        if (vcPendingEl) vcPendingEl.textContent = formattedAmount;
+
+        var dialog = document.getElementById('gp-submit-success-dialog');
+        if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
       });
     }
 

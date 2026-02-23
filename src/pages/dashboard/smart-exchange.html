@@ -13,7 +13,8 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Meow+Script&display=swap"
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Meow+Script&family=Roboto+Mono:wght@400;700&display=swap"
         rel="stylesheet">
 
     <!-- Tailwind -->
@@ -885,7 +886,8 @@
                     class="hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white shadow-xs dark:bg-gray-900 overflow-clip mb-4">
 
                     <!-- Panel Header -->
-                    <div class="flex items-center gap-3 px-4 py-4 sm:px-6 border-b border-gray-200 dark:border-white/10">
+                    <div
+                        class="flex items-center gap-3 px-4 py-4 sm:px-6 border-b border-gray-200 dark:border-white/10">
                         <button id="get-paid-back" type="button"
                             class="flex items-center justify-center rounded-md p-1.5 text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10 transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
@@ -917,7 +919,8 @@
                         <div>
 
                             <!-- Amount + Badge + Button (single row) -->
-                            <div class="flex flex-col gap-3 px-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                            <div
+                                class="flex flex-col gap-3 px-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
                                 <div class="flex items-center gap-3 flex-wrap">
                                     <div class="flex items-baseline gap-1.5">
                                         <span id="gp-amount"
@@ -935,7 +938,8 @@
                             </div>
 
                             <!-- Payment Info: horizontal pill -->
-                            <div class="mt-6 flex flex-col items-stretch gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5 sm:flex-row sm:items-center sm:gap-6">
+                            <div
+                                class="mt-6 flex flex-col items-stretch gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5 sm:flex-row sm:items-center sm:gap-6">
 
                                 <!-- Date Initiated -->
                                 <div class="flex flex-col items-start gap-1">
@@ -991,8 +995,7 @@
                                     <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
                                         <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
                                             <div class="flex items-center gap-2">
-                                                <span
-                                                    id="gp-step-1-badge"
+                                                <span id="gp-step-1-badge"
                                                     class="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">1</span>
                                                 Review Documents
                                             </div>
@@ -1090,8 +1093,7 @@
                                     <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
                                         <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
                                             <div class="flex items-center gap-2">
-                                                <span
-                                                    id="gp-step-2-badge"
+                                                <span id="gp-step-2-badge"
                                                     class="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">2</span>
                                                 Signature
                                             </div>
@@ -1129,8 +1131,7 @@
                                     <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
                                         <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
                                             <div class="flex items-center gap-2">
-                                                <span
-                                                    id="gp-step-3-badge"
+                                                <span id="gp-step-3-badge"
                                                     class="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">3</span>
                                                 Select Payment Method
                                             </div>
@@ -1248,7 +1249,8 @@
                                             </el-select>
 
                                             <!-- Payment Method Details (shown after selection) -->
-                                            <div id="gp-payment-method-details" class="hidden mt-4 w-full max-w-[512px]">
+                                            <div id="gp-payment-method-details"
+                                                class="hidden mt-4 w-full max-w-[512px]">
 
                                                 <!-- Accept Payer's Card -->
                                                 <div id="gp-pmc-payers-card" class="hidden">
@@ -1503,10 +1505,11 @@
                                                                     </svg>
                                                                 </div>
                                                                 <span
-                                                                    class="text-sm font-normal text-gray-700 dark:text-gray-300">Set as default</span>
+                                                                    class="text-sm font-normal text-gray-700 dark:text-gray-300">Set
+                                                                    as default</span>
                                                             </label>
 
-                                                            
+
                                                         </div>
                                                     </div>
                                                 </div>
@@ -1868,8 +1871,331 @@
         </dialog>
     </el-dialog>
 
+    <!-- ===== GET PAID: SUBMIT SUCCESS MODAL ===== -->
+    <el-dialog>
+        <dialog id="gp-submit-success-dialog" aria-labelledby="gp-submit-success-title"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative flex w-full max-w-[512px] flex-col items-center transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="w-full px-5 py-7 sm:px-8 sm:py-8">
+                        <div
+                            class="mx-auto flex size-14 items-center justify-center rounded-full bg-green-500 text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                class="size-8">
+                                <path fill-rule="evenodd"
+                                    d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </div>
+
+                        <h3 id="gp-submit-success-title"
+                            class="mt-5 text-center text-lg font-semibold text-gray-900 dark:text-white">
+                            Successfully Submitted!</h3>
+
+                        <div class="mt-6 overflow-hidden rounded-xl border border-gray-200 dark:border-white/10">
+                            <div class="px-4 py-4 sm:px-6 sm:py-5">
+                                <p class="text-sm font-semibold text-gray-600 dark:text-gray-400">Amount</p>
+                                <p id="gp-submit-amount"
+                                    class="mt-1 text-[30px] leading-9 font-bold tracking-tight text-gray-900 dark:text-white">
+                                </p>
+                                <div
+                                    class="mt-5 inline-flex items-center gap-3 rounded-lg bg-gray-100 pr-2 dark:bg-white/5">
+                                    <div
+                                        class="flex h-[46px] w-[71px] flex-col items-end gap-0.5 rounded-md bg-gray-950 p-2 text-gray-200 font-['Roboto_Mono'] text-[10px] leading-3">
+                                        <svg class="h-4 w-8" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"
+                                            aria-hidden="true">
+                                            <path d="M0 0h32v32H0z" fill="#00579f"></path>
+                                            <g fill="#fff" fill-rule="nonzero">
+                                                <path
+                                                    d="M13.823 19.876H11.8l1.265-7.736h2.023zm7.334-7.546a5.036 5.036 0 0 0-1.814-.33c-1.998 0-3.405 1.053-3.414 2.56-.016 1.11 1.007 1.728 1.773 2.098.783.379 1.05.626 1.05.963-.009.518-.633.757-1.216.757-.808 0-1.24-.123-1.898-.411l-.267-.124-.283 1.737c.475.213 1.349.403 2.257.411 2.123 0 3.505-1.037 3.521-2.641.008-.881-.532-1.556-1.698-2.107-.708-.354-1.141-.593-1.141-.955.008-.33.366-.667 1.165-.667a3.471 3.471 0 0 1 1.507.297l.183.082zm2.69 4.806.807-2.165c-.008.017.167-.452.266-.74l.142.666s.383 1.852.466 2.239h-1.682zm2.497-4.996h-1.565c-.483 0-.85.14-1.058.642l-3.005 7.094h2.123l.425-1.16h2.597c.059.271.242 1.16.242 1.16h1.873zm-16.234 0-1.982 5.275-.216-1.07c-.366-1.234-1.515-2.575-2.797-3.242l1.815 6.765h2.14l3.18-7.728z">
+                                                </path>
+                                                <path
+                                                    d="M6.289 12.14H3.033L3 12.297c2.54.641 4.221 2.189 4.912 4.049l-.708-3.556c-.116-.494-.474-.633-.915-.65z">
+                                                </path>
+                                            </g>
+                                        </svg>
+                                        <div>•••• <span id="gp-submit-card-last4"></span></div>
+                                    </div>
+                                    <button type="button" command="show-modal" commandfor="gp-card-details-dialog"
+                                        class="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-white/20 dark:hover:text-white">
+                                        Reveal Card Details
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                            class="size-4">
+                                            <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                                            <path fill-rule="evenodd"
+                                                d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <div class="border-t border-gray-200 dark:border-white/10 px-4 py-4 sm:px-6">
+                                <dl class="space-y-3">
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <dt class="text-sm font-semibold text-gray-600 dark:text-gray-400">Transaction
+                                            ID</dt>
+                                        <dd id="gp-submit-txid"
+                                            class="text-right text-sm font-normal text-gray-900 dark:text-white"></dd>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <dt class="text-sm font-semibold text-gray-600 dark:text-gray-400">Payment date
+                                        </dt>
+                                        <dd id="gp-submit-date"
+                                            class="text-right text-sm font-normal text-gray-900 dark:text-white"></dd>
+                                    </div>
+                                </dl>
+                            </div>
+
+                            <div class="border-t border-gray-200 dark:border-white/10 px-4 py-4 sm:px-6">
+                                <button type="button"
+                                    class="inline-flex items-center gap-2 -ml-2.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300">
+                                    Download Details
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                        class="size-5">
+                                        <path
+                                            d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.19L6.28 7.97a.75.75 0 1 0-1.06 1.06l4.25 4.25a.75.75 0 0 0 1.06 0l4.25-4.25a.75.75 0 0 0-1.06-1.06l-2.97 2.97V2.75Z" />
+                                        <path
+                                            d="M3.5 13.75a.75.75 0 0 0-1.5 0v1.75A1.75 1.75 0 0 0 3.75 17.25h12.5A1.75 1.75 0 0 0 18 15.5v-1.75a.75.75 0 0 0-1.5 0v1.75a.25.25 0 0 1-.25.25H3.75a.25.25 0 0 1-.25-.25v-1.75Z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <button type="button" command="close" commandfor="gp-submit-success-dialog"
+                            class="mt-6 inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                            Done
+                        </button>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
+    <!-- ===== GET PAID: SMART CARD MODAL ===== -->
+    <el-dialog>
+        <dialog id="gp-card-details-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full max-w-[512px] transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+
+                    <!-- Close button -->
+                    <div class="flex items-center justify-end px-4 pt-4">
+                        <button type="button" command="close" commandfor="gp-card-details-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex flex-col items-center gap-4 px-6 pb-6">
+
+                        <!-- SMART Card -->
+                        <div class="relative h-[200px] w-[320px] flex-shrink-0 overflow-hidden rounded-xl bg-[#151A32] p-5 shadow-lg ring-[0.94px] ring-inset ring-white/20">
+                            <div class="flex h-full flex-col gap-2">
+                                <!-- Top: CVV pill -->
+                                <div class="flex items-center justify-end">
+                                    <div class="flex items-center rounded-full bg-white/20 px-2.5 py-0.5">
+                                        <span class="font-['Inter'] text-[11px] text-white">CVV : •••</span>
+                                    </div>
+                                </div>
+                                <!-- Middle: fixed 108px, content pushed to bottom -->
+                                <div class="flex h-[108px] flex-col justify-end gap-2">
+                                    <!-- Wireless row: amount + icon -->
+                                    <div class="flex items-end gap-2 self-stretch">
+                                        <p id="gp-vc-amount" class="flex-1 text-2xl font-bold text-white"></p>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="28" viewBox="0 0 19 28" fill="none" class="shrink-0" aria-hidden="true">
+                                            <path d="M1.63451 14.0121C1.63451 16.3874 0 16.4362 0 17.3061C0 17.7886 0.415193 18.1801 0.926639 18.1801C1.17182 18.1801 1.60287 17.9797 1.60287 17.9797C2.76417 17.003 3.51553 15.5899 3.51553 14.0121C3.51553 12.4514 2.78131 11.0119 1.60683 10.0167C1.60683 10.0167 0.805383 9.3695 0.216164 10.1419C-0.228056 10.7246 0.266249 11.2756 0.540427 11.5497C1.18896 12.1983 1.63451 13.059 1.63451 14.0121ZM6.37329 14.0121C6.37329 16.2925 5.37282 18.3304 3.77784 19.7843L3.79103 19.7948C3.67372 19.9412 3.60515 20.1217 3.60515 20.3195C3.60515 20.8032 4.02038 21.1947 4.53182 21.1947C4.78359 21.1947 5.01162 21.0998 5.17903 20.9456L5.18959 20.9548C7.07851 19.1779 8.25431 16.7196 8.25431 13.9883C8.25431 11.269 7.07851 8.81719 5.18959 7.04294L5.17771 7.05348C5.01162 6.90058 4.78359 6.80567 4.53182 6.80567C4.02038 6.80567 3.60515 7.19716 3.60515 7.68093C3.60515 7.87733 3.67372 8.05924 3.78971 8.20555L3.7818 8.21215C5.38732 9.68454 6.37329 11.7461 6.37329 14.0121ZM7.8681 5.0591C11.8964 9.08741 11.6275 13.9501 11.6275 13.9501C11.6275 18.2025 9.67792 21.0998 7.85359 22.9531C7.64927 23.1126 7.52009 23.3552 7.52009 23.6254C7.52009 24.1079 7.93531 24.4994 8.44676 24.4994C8.71566 24.4994 8.95691 24.3926 9.12563 24.2212C9.12563 24.2212 13.5085 20.4131 13.5085 14.0239C13.5085 7.48848 9.12563 3.77917 9.12563 3.77917C8.95559 3.60781 8.71434 3.49973 8.44676 3.49973C7.93531 3.49973 7.52009 3.89254 7.52009 4.37499C7.52009 4.6518 7.65588 4.89829 7.8681 5.0591ZM11.8384 1.52644C17.1071 6.68968 17.0623 13.1737 17.0623 14.0002C17.0623 14.0002 17.5803 20.6002 11.8437 26.4758C11.671 26.6524 11.5378 26.8672 11.5378 27.1246C11.5378 27.6081 11.9531 28 12.4645 28C12.7809 28 13.2396 27.6343 13.2396 27.6343C19.4745 21.3107 18.942 14.0002 18.942 14.0002C18.942 5.62065 13.2857 0.375671 13.2857 0.375671C13.1183 0.148949 12.7809 -1.90735e-06 12.4645 -1.90735e-06C11.9531 -1.90735e-06 11.5378 0.392813 11.5378 0.875259C11.5378 1.1323 11.6552 1.3643 11.8423 1.5238L11.8384 1.52644Z" fill="white"/>
+                                        </svg>
+                                    </div>
+                                    <!-- Card details: flex-col, justify-end, items-start, gap-2 -->
+                                    <div class="flex flex-col items-start justify-end gap-2 self-stretch">
+                                        <p id="gp-vc-card-number" class="font-['Inter'] text-lg font-normal leading-6 text-white">•••• 0000</p>
+                                        <div class="flex items-center gap-1 pl-14">
+                                            <p class="font-['Roboto_Mono'] text-[7px] font-bold uppercase leading-normal text-white">EXPIRATION<br>DATE</p>
+                                            <p id="gp-vc-expiry" class="ml-1 font-['Inter'] text-sm font-normal leading-5 text-white">12/26</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Bottom: name + Visa -->
+                                <div class="flex h-9 items-end gap-4 self-stretch">
+                                    <p id="gp-vc-name" class="flex-1 font-['Inter'] text-sm font-normal leading-5 uppercase text-white"></p>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="59" height="18" viewBox="0 0 59 18" fill="none" class="shrink-0" aria-label="Visa" role="img">
+                                        <path d="M49.0149 11.5661L50.911 6.68624C50.8879 6.73859 51.3015 5.67937 51.5423 5.02376L51.8689 6.53035L52.9693 11.5632H49.0117V11.5661H49.0149ZM11.5564 9.78621L12.0496 12.209L16.7013 0.317736H21.7424L14.2524 17.7318H9.22275L5.1113 2.98625C5.04534 2.74336 4.8883 2.53396 4.67367 2.40225C3.19221 1.6366 1.6228 1.05585 0 0.672661L0.0638636 0.305067H7.72453C8.76417 0.347157 9.60175 0.672659 9.88025 1.78224L11.5543 9.79564V9.78621H11.5564ZM23.6395 0.170012H28.399L25.4215 17.6176H20.6682L23.6395 0.164774V0.170012ZM54.8874 0.317736H51.2167C50.0744 0.317736 49.2138 0.631828 48.7155 1.76465L41.6568 17.7558H46.6509L47.6496 15.1331L53.7451 15.1397C53.8885 15.7531 54.3293 17.7558 54.3293 17.7558H58.7339L54.8874 0.317736ZM42.6954 0.737259C41.3312 0.239948 39.8885 -0.00985909 38.4353 0.000297546C33.7375 0.000297546 30.4197 2.36666 30.3956 5.76397C30.3663 8.25994 32.7534 9.66602 34.5594 10.5002C36.4125 11.3579 37.0313 11.8982 37.0261 12.6645C37.0145 13.8297 35.5456 14.3585 34.1804 14.3585C32.3042 14.3585 31.2792 14.0968 29.7025 13.4424L29.1183 13.1693L28.4524 17.0807C29.5947 17.5559 31.653 17.9644 33.7784 18C38.7734 18 42.0379 15.6473 42.0766 12.0331C42.1175 10.0385 40.8255 8.53309 38.1065 7.28825C36.4534 6.48009 35.4284 5.93986 35.4284 5.12113C35.4284 4.39558 36.3068 3.62093 38.1421 3.62093C39.3629 3.59151 40.5763 3.81975 41.7029 4.29287L42.1437 4.4896L42.8106 0.71035L42.6954 0.737259Z" fill="white"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Details section -->
+                        <div
+                            class="flex flex-col gap-2 self-stretch rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Pending
+                                    Payment</span>
+                                <span id="gp-vc-pending-amount"
+                                    class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder
+                                    Name</span>
+                                <span id="gp-vc-holder-name"
+                                    class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder
+                                    Address</span>
+                                <span
+                                    class="text-sm font-normal text-gray-700 whitespace-pre-line dark:text-gray-300">3476
+                                    Orphan Road
+                                    Suite 1010
+                                    Hayward, Wisconsin 54843
+                                    United States</span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch items-center">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Type</span>
+                                <span class="inline-flex w-fit items-center rounded bg-[#1a1f71] px-2 py-0.5">
+                                    <span
+                                        class="font-['Arial'] text-xs font-black italic tracking-tight text-white">VISA</span>
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Number</span>
+                                <button type="button" data-copy-id="gp-vc-full-number"
+                                    class="copy-btn -mx-1.5 -my-0.5 flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10">
+                                    <span id="gp-vc-full-number" class="text-sm font-normal">5444 1234 0000 5612</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500">
+                                        <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+                                        <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Expires</span>
+                                <button type="button" data-copy-id="gp-vc-full-expiry"
+                                    class="copy-btn -mx-1.5 -my-0.5 flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10">
+                                    <span id="gp-vc-full-expiry" class="text-sm font-normal">12/2026</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500">
+                                        <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+                                        <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">CVC2</span>
+                                <button type="button" data-copy-id="gp-vc-cvc2"
+                                    class="copy-btn -mx-1.5 -my-0.5 flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10">
+                                    <span id="gp-vc-cvc2" class="text-sm font-normal">999</span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500">
+                                        <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+                                        <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Info block -->
+                        <div
+                            class="flex flex-col gap-2 self-stretch rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">
+                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">How can you use the
+                                payer's card?</p>
+                            <p class="text-xs font-normal text-gray-500 dark:text-gray-400">The payer has provided their
+                                card to cover a specific amount. You are only authorized to charge the amount indicated.
+                                To process the payment, enter the card details into your card terminal.</p>
+                            <p class="text-xs font-normal text-gray-500 dark:text-gray-400">The card may also be used
+                                for future authorized payments. It can be securely stored under the Payment Preference
+                                tab in the SMART Exchange.</p>
+                        </div>
+
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
     <script src="../../../src/scripts/exchanges-table.js"></script>
+
+    <!-- Copy-to-clipboard with animated tooltip -->
+    <script>
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-copy-id]');
+            if (!btn) return;
+
+            var targetEl = document.getElementById(btn.getAttribute('data-copy-id'));
+            if (!targetEl) return;
+
+            var text = targetEl.textContent.trim();
+
+            (navigator.clipboard
+                ? navigator.clipboard.writeText(text)
+                : Promise.resolve(
+                    (function () {
+                        var ta = document.createElement('textarea');
+                        ta.value = text;
+                        ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+                        document.body.appendChild(ta);
+                        ta.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(ta);
+                    })()
+                )
+            ).then(function () {
+                var rect = btn.getBoundingClientRect();
+
+                // Remove any in-flight tooltip for this button
+                var existing = btn._copyTip;
+                if (existing) { clearTimeout(btn._copyTipTimer); existing.remove(); }
+
+                var tip = document.createElement('div');
+                tip.textContent = 'Data copied';
+                tip.style.cssText = [
+                    'position:fixed',
+                    'left:' + (rect.left + rect.width / 2) + 'px',
+                    'top:' + (rect.top - 6) + 'px',
+                    'transform:translate(-50%, calc(-100% + 4px))',
+                    'background:#111827',
+                    'color:#fff',
+                    'font-size:12px',
+                    'font-family:Inter,sans-serif',
+                    'line-height:1.5',
+                    'padding:3px 8px',
+                    'border-radius:6px',
+                    'pointer-events:none',
+                    'z-index:9999',
+                    'opacity:0',
+                    'transition:opacity 160ms ease-out,transform 160ms ease-out',
+                    'white-space:nowrap'
+                ].join(';');
+                document.body.appendChild(tip);
+                btn._copyTip = tip;
+
+                // Force reflow then animate in (rise 4px, fade in)
+                tip.getBoundingClientRect();
+                tip.style.transform = 'translate(-50%,-100%)';
+                tip.style.opacity = '1';
+
+                // After 1.6s: animate out (rise another 4px, fade out) then remove
+                btn._copyTipTimer = setTimeout(function () {
+                    tip.style.transform = 'translate(-50%,calc(-100% - 4px))';
+                    tip.style.opacity = '0';
+                    setTimeout(function () { tip.remove(); btn._copyTip = null; }, 180);
+                }, 1600);
+            });
+        });
+    </script>
 
 </body>
 
