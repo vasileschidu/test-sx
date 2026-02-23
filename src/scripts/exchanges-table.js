@@ -54,6 +54,9 @@
 
   // MutationObserver for bank account select changes
   var _bankSelectObserver = null;
+
+  // MutationObserver for check address select changes
+  var _checkSelectObserver = null;
   var _activeGetPaidEntry = null;
 
   // Pagination state
@@ -1346,12 +1349,8 @@
       if (bankPanel) bankPanel.classList.remove('hidden');
       initBankAccountSelector();
     } else if (value === 'paper-check') {
-      if (_myBusiness && _myBusiness.mailingAddress) {
-        var ma = _myBusiness.mailingAddress;
-        pmcSetText('gp-pmc-check-company', ma.name);
-        pmcSetText('gp-pmc-check-address', ma.address);
-      }
       if (checkPanel) checkPanel.classList.remove('hidden');
+      initCheckAddressSelector();
     }
 
     if (wrapper) wrapper.classList.remove('hidden');
@@ -1421,6 +1420,59 @@
     };
   }
 
+  function updateCheckDetails(addressId) {
+    var details = document.getElementById('gp-pmc-check-details');
+    if (!details) return;
+
+    var addresses = _myBusiness && _myBusiness.checkAddresses;
+    if (!addresses) return;
+
+    var addr = null;
+    for (var i = 0; i < addresses.length; i++) {
+      if (addresses[i].id === addressId) { addr = addresses[i]; break; }
+    }
+    if (!addr) return;
+
+    pmcSetText('gp-pmc-check-name', addr.name);
+    pmcSetText('gp-pmc-check-address', addr.address);
+
+    details.classList.remove('hidden');
+    updateGetPaidStepStates();
+  }
+
+  function initCheckAddressSelector() {
+    if (_checkSelectObserver) {
+      _checkSelectObserver.disconnect();
+      _checkSelectObserver = null;
+    }
+
+    var details = document.getElementById('gp-pmc-check-details');
+    if (details) details.classList.add('hidden');
+
+    var sel = document.getElementById('gp-check-address-select');
+    if (!sel) return;
+
+    // Reset to placeholder
+    sel.querySelectorAll('el-option').forEach(function (opt) {
+      opt.removeAttribute('aria-selected');
+    });
+    var selContent = sel.querySelector('el-selectedcontent');
+    if (selContent) {
+      selContent.innerHTML = '<span class="truncate text-gray-400 dark:text-gray-500">Select mailing address</span>';
+    }
+
+    var observer = new MutationObserver(function () {
+      var selected = sel.querySelector('el-option[aria-selected="true"]');
+      if (selected) updateCheckDetails(selected.getAttribute('value'));
+      updateGetPaidStepStates();
+    });
+    sel.querySelectorAll('el-option').forEach(function (opt) {
+      observer.observe(opt, { attributes: true, attributeFilter: ['aria-selected'] });
+    });
+    _checkSelectObserver = observer;
+    updateGetPaidStepStates();
+  }
+
   function initBankAccountSelector() {
     if (_bankSelectObserver) {
       _bankSelectObserver.disconnect();
@@ -1454,6 +1506,79 @@
     updateGetPaidStepStates();
   }
 
+  function initEditBankModal() {
+    var btn = document.getElementById('gp-edit-bank-btn');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var sel = document.getElementById('gp-bank-account-select');
+      var selectedOpt = sel && sel.querySelector('el-option[aria-selected="true"]');
+      var bankId = selectedOpt && selectedOpt.getAttribute('value');
+      var accounts = _myBusiness && _myBusiness.bankAccounts;
+      var account = null;
+      if (accounts && bankId) {
+        for (var i = 0; i < accounts.length; i++) {
+          if (accounts[i].id === bankId) { account = accounts[i]; break; }
+        }
+      }
+      if (!account) return;
+
+      var setVal = function (id, val) {
+        var el = document.getElementById(id);
+        if (el) el.value = val || '';
+      };
+      setVal('gp-edit-bank-name', account.name);
+      setVal('gp-edit-bank-routing', account.routingNumber);
+      setVal('gp-edit-bank-account', account.accountNumber);
+      setVal('gp-edit-bank-confirm', account.accountNumber);
+      setVal('gp-edit-bank-nickname', account.displayName);
+
+      var dialog = document.getElementById('gp-edit-bank-dialog');
+      if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
+    });
+  }
+
+  function initEditCheckModal() {
+    var btn = document.getElementById('gp-edit-check-btn');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var sel = document.getElementById('gp-check-address-select');
+      var selectedOpt = sel && sel.querySelector('el-option[aria-selected="true"]');
+      var addrId = selectedOpt && selectedOpt.getAttribute('value');
+      var addresses = _myBusiness && _myBusiness.checkAddresses;
+      var addr = null;
+      if (addresses && addrId) {
+        for (var i = 0; i < addresses.length; i++) {
+          if (addresses[i].id === addrId) { addr = addresses[i]; break; }
+        }
+      }
+      if (!addr) return;
+
+      // Parse multi-line address string
+      var lines = (addr.address || '').split('\n');
+      var line1 = lines[0] || '';
+      var line2 = lines.length > 3 ? lines[1] : '';
+      var cityStateLine = lines.length > 3 ? lines[2] : (lines[1] || '');
+      var cityStateMatch = cityStateLine.match(/^(.+),\s*([A-Z]{2})\s+(\S+)$/);
+      var city = cityStateMatch ? cityStateMatch[1] : cityStateLine;
+      var state = cityStateMatch ? cityStateMatch[2] : '';
+      var zip = cityStateMatch ? cityStateMatch[3] : '';
+
+      var setVal = function (id, val) {
+        var el = document.getElementById(id);
+        if (el) el.value = val || '';
+      };
+      setVal('gp-edit-check-nickname', addr.displayName);
+      setVal('gp-edit-check-line1', line1);
+      setVal('gp-edit-check-line2', line2);
+      setVal('gp-edit-check-city', city);
+      setVal('gp-edit-check-state', state);
+      setVal('gp-edit-check-zip', zip);
+
+      var dialog = document.getElementById('gp-edit-check-dialog');
+      if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
+    });
+  }
+
   function initPaymentMethodDetails(entry) {
     if (_pmcObserver) {
       _pmcObserver.disconnect();
@@ -1462,6 +1587,10 @@
     if (_bankSelectObserver) {
       _bankSelectObserver.disconnect();
       _bankSelectObserver = null;
+    }
+    if (_checkSelectObserver) {
+      _checkSelectObserver.disconnect();
+      _checkSelectObserver = null;
     }
 
     var wrapper = document.getElementById('gp-payment-method-details');
@@ -1504,6 +1633,10 @@
   }
 
   function initGetPaidPanel() {
+    // Edit modals
+    initEditBankModal();
+    initEditCheckModal();
+
     // Back button
     var backBtn = document.getElementById('get-paid-back');
     if (backBtn) backBtn.addEventListener('click', closeGetPaidPanel);
@@ -1536,12 +1669,21 @@
         if (submitBtn.disabled || !_activeGetPaidEntry) return;
         var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
         var paymentValue = getSelectedOptionValue(paymentSel);
-        if (paymentValue !== 'payers-card') return;
+        var validMethods = ['payers-card', 'bank-account', 'paper-check'];
+        if (validMethods.indexOf(paymentValue) === -1) return;
+
+        var methodLabels = { 'payers-card': "Payer's Card", 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
 
         var txIdEl = document.getElementById('gp-submit-txid');
         var amountEl = document.getElementById('gp-submit-amount');
         var dateEl = document.getElementById('gp-submit-date');
+        var methodEl = document.getElementById('gp-submit-method');
         var cardLast4El = document.getElementById('gp-submit-card-last4');
+        var cardSectionEl = document.getElementById('gp-submit-card-section');
+        var bankRowEl = document.getElementById('gp-submit-bank-row');
+        var bankNameEl = document.getElementById('gp-submit-bank-name');
+        var checkRowEl = document.getElementById('gp-submit-check-row');
+        var checkAddressEl = document.getElementById('gp-submit-check-address');
 
         var txId = 'TXN-' + String(_activeGetPaidEntry.invoice || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase() + '-' + Date.now().toString().slice(-6);
         var payerCard = _activeGetPaidEntry.details &&
@@ -1553,7 +1695,59 @@
         if (txIdEl) txIdEl.textContent = txId;
         if (amountEl) amountEl.textContent = formatCurrency(_activeGetPaidEntry.amount, _activeGetPaidEntry.currency);
         if (dateEl) dateEl.textContent = formatDate(_activeGetPaidEntry.dateInitiated);
+        if (methodEl) methodEl.textContent = methodLabels[paymentValue] || paymentValue;
         if (cardLast4El) cardLast4El.textContent = cardLast4 || '0000';
+
+        // Show card section only for payer's card
+        if (cardSectionEl) {
+          var showCard = paymentValue === 'payers-card';
+          cardSectionEl.classList.toggle('hidden', !showCard);
+          cardSectionEl.classList.toggle('inline-flex', showCard);
+        }
+
+        // Bank account row
+        if (bankRowEl && bankNameEl) {
+          if (paymentValue === 'bank-account') {
+            var bankSel = document.getElementById('gp-bank-account-select');
+            var selectedBank = bankSel && bankSel.querySelector('el-option[aria-selected="true"]');
+            var bankId = selectedBank && selectedBank.getAttribute('value');
+            var bankAccounts = _myBusiness && _myBusiness.bankAccounts;
+            var bankAccount = null;
+            if (bankAccounts && bankId) {
+              for (var bi = 0; bi < bankAccounts.length; bi++) {
+                if (bankAccounts[bi].id === bankId) { bankAccount = bankAccounts[bi]; break; }
+              }
+            }
+            bankNameEl.textContent = bankAccount ? bankAccount.displayName : '';
+            bankRowEl.classList.remove('hidden');
+            bankRowEl.classList.add('grid');
+          } else {
+            bankRowEl.classList.add('hidden');
+            bankRowEl.classList.remove('grid');
+          }
+        }
+
+        // Check address row
+        if (checkRowEl && checkAddressEl) {
+          if (paymentValue === 'paper-check') {
+            var checkSel = document.getElementById('gp-check-address-select');
+            var selectedCheck = checkSel && checkSel.querySelector('el-option[aria-selected="true"]');
+            var checkId = selectedCheck && selectedCheck.getAttribute('value');
+            var checkAddresses = _myBusiness && _myBusiness.checkAddresses;
+            var checkAddr = null;
+            if (checkAddresses && checkId) {
+              for (var ci = 0; ci < checkAddresses.length; ci++) {
+                if (checkAddresses[ci].id === checkId) { checkAddr = checkAddresses[ci]; break; }
+              }
+            }
+            checkAddressEl.textContent = checkAddr ? checkAddr.displayName : '';
+            checkRowEl.classList.remove('hidden');
+            checkRowEl.classList.add('grid');
+          } else {
+            checkRowEl.classList.add('hidden');
+            checkRowEl.classList.remove('grid');
+          }
+        }
 
         var formattedAmount = formatCurrency(_activeGetPaidEntry.amount, _activeGetPaidEntry.currency);
         var vcAmountEl = document.getElementById('gp-vc-amount');

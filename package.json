@@ -1,0 +1,15 @@
+{
+  "name": "test-sx",
+  "version": "1.0.0",
+  "description": "Static HTML prototype for the SMART Exchange payment platform, including a multi-step vendor onboarding flow and a dashboard with sidebar navigation and payments table.",
+  "main": "tailwind.config.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "flag-icons": "^7.5.0"
+  }
+}

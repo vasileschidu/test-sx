@@ -17,6 +17,9 @@
         href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Meow+Script&family=Roboto+Mono:wght@400;700&display=swap"
         rel="stylesheet">
 
+    <!-- Flag icons -->
+    <link rel="stylesheet" href="../../../node_modules/flag-icons/css/flag-icons.min.css">
+
     <!-- Tailwind -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
@@ -1420,7 +1423,7 @@
                                                                 <span
                                                                     class="text-sm font-semibold text-gray-900 dark:text-gray-100">Account
                                                                     Details</span>
-                                                                <button type="button"
+                                                                <button type="button" id="gp-edit-bank-btn"
                                                                     class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-200 transition-colors dark:text-gray-400 dark:hover:bg-white/10">
                                                                     Edit
                                                                     <svg xmlns="http://www.w3.org/2000/svg"
@@ -1516,30 +1519,152 @@
 
                                                 <!-- Request a Paper Check -->
                                                 <div id="gp-pmc-paper-check" class="hidden">
-                                                    <div class="flex flex-col items-start self-stretch">
-                                                        <!-- header -->
-                                                        <div
-                                                            class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
-                                                            <span
-                                                                class="text-sm font-semibold text-gray-900 dark:text-gray-100">Your
-                                                                Mailing Address on File</span>
-                                                        </div>
-                                                        <!-- body -->
-                                                        <div
-                                                            class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                                    <!-- Address selector -->
+                                                    <el-select name="checkAddressSelect" id="gp-check-address-select"
+                                                        class="block w-full max-w-[512px]">
+                                                        <button type="button"
+                                                            class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                            <el-selectedcontent
+                                                                class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-gray-900 dark:text-white"><span
+                                                                    class="truncate text-gray-400 dark:text-gray-500">Select
+                                                                    mailing address</span></el-selectedcontent>
+                                                            <svg viewBox="0 0 16 16" fill="currentColor"
+                                                                aria-hidden="true"
+                                                                class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
+                                                                <path
+                                                                    d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
+                                                                    clip-rule="evenodd" fill-rule="evenodd" />
+                                                            </svg>
+                                                        </button>
+                                                        <el-options anchor="bottom start" popover
+                                                            class="w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
+                                                            <!-- San Francisco Office -->
+                                                            <el-option value="addr-sf"
+                                                                class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:focus:bg-white/10">
+                                                                <div class="flex items-center gap-3">
+                                                                    <div
+                                                                        class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            width="20" height="20" viewBox="0 0 24 24"
+                                                                            fill="none" stroke="currentColor"
+                                                                            stroke-width="1.5" stroke-linecap="round"
+                                                                            stroke-linejoin="round">
+                                                                            <path d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                                                                        </svg>
+                                                                    </div>
+                                                                    <!-- dropdown: two lines -->
+                                                                    <div class="in-[el-selectedcontent]:hidden">
+                                                                        <span
+                                                                            class="block truncate font-normal group-aria-selected/option:font-semibold">San
+                                                                            Francisco Office</span>
+                                                                        <span
+                                                                            class="block text-sm text-gray-500 dark:text-gray-400">San
+                                                                            Francisco, CA</span>
+                                                                    </div>
+                                                                    <!-- selected: one line -->
+                                                                    <span
+                                                                        class="hidden in-[el-selectedcontent]:block truncate font-normal">San
+                                                                        Francisco Office</span>
+                                                                </div>
                                                                 <span
-                                                                    class="text-sm font-medium text-gray-900 dark:text-gray-100">Company
-                                                                    Name</span>
-                                                                <span id="gp-pmc-check-company"
-                                                                    class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                                                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-indigo-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">
+                                                                    <svg viewBox="0 0 20 20" fill="currentColor"
+                                                                        aria-hidden="true" class="size-5">
+                                                                        <path
+                                                                            d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
+                                                                            clip-rule="evenodd" fill-rule="evenodd" />
+                                                                    </svg>
+                                                                </span>
+                                                            </el-option>
+                                                            <!-- New York Office -->
+                                                            <el-option value="addr-ny"
+                                                                class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:focus:bg-white/10">
+                                                                <div class="flex items-center gap-3">
+                                                                    <div
+                                                                        class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            width="20" height="20" viewBox="0 0 24 24"
+                                                                            fill="none" stroke="currentColor"
+                                                                            stroke-width="1.5" stroke-linecap="round"
+                                                                            stroke-linejoin="round">
+                                                                            <path d="M3.75 21h16.5M4.5 3h15M5.25 3v18m13.5-18v18M9 6.75h1.5m-1.5 3h1.5m-1.5 3h1.5m3-6H15m-1.5 3H15m-1.5 3H15M9 21v-3.375c0-.621.504-1.125 1.125-1.125h3.75c.621 0 1.125.504 1.125 1.125V21" />
+                                                                        </svg>
+                                                                    </div>
+                                                                    <!-- dropdown: two lines -->
+                                                                    <div class="in-[el-selectedcontent]:hidden">
+                                                                        <span
+                                                                            class="block truncate font-normal group-aria-selected/option:font-semibold">New
+                                                                            York Office</span>
+                                                                        <span
+                                                                            class="block text-sm text-gray-500 dark:text-gray-400">New
+                                                                            York, NY</span>
+                                                                    </div>
+                                                                    <!-- selected: one line -->
+                                                                    <span
+                                                                        class="hidden in-[el-selectedcontent]:block truncate font-normal">New
+                                                                        York Office</span>
+                                                                </div>
                                                                 <span
-                                                                    class="text-sm font-medium text-gray-900 dark:text-gray-100">Mailing
+                                                                    class="absolute inset-y-0 right-0 flex items-center pr-3 text-indigo-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">
+                                                                    <svg viewBox="0 0 20 20" fill="currentColor"
+                                                                        aria-hidden="true" class="size-5">
+                                                                        <path
+                                                                            d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
+                                                                            clip-rule="evenodd" fill-rule="evenodd" />
+                                                                    </svg>
+                                                                </span>
+                                                            </el-option>
+                                                            <!-- Add new address -->
+                                                            <button type="button"
+                                                                class="flex w-full cursor-pointer select-none items-center justify-center gap-1.5 py-3 pr-4 pl-3 text-sm font-medium text-blue-600 hover:bg-gray-100 hover:text-blue-500 focus:bg-gray-100 focus:outline-hidden dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300 dark:focus:bg-white/10">
+                                                                <svg xmlns="http://www.w3.org/2000/svg"
+                                                                    viewBox="0 0 20 20" fill="currentColor"
+                                                                    class="size-4">
+                                                                    <path
+                                                                        d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+                                                                </svg>
+                                                                Add new address
+                                                            </button>
+                                                        </el-options>
+                                                    </el-select>
+
+                                                    <!-- Address details (shown after selecting an address) -->
+                                                    <div id="gp-pmc-check-details" class="hidden mt-4">
+                                                        <div class="flex flex-col items-start self-stretch">
+                                                            <!-- header -->
+                                                            <div
+                                                                class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
+                                                                <span
+                                                                    class="text-sm font-semibold text-gray-900 dark:text-gray-100">Mailing
                                                                     Address</span>
-                                                                <span id="gp-pmc-check-address"
-                                                                    class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line"></span>
+                                                                <button type="button" id="gp-edit-check-btn"
+                                                                    class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-200 transition-colors dark:text-gray-400 dark:hover:bg-white/10">
+                                                                    Edit
+                                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                                        viewBox="0 0 20 20" fill="currentColor"
+                                                                        class="size-3.5">
+                                                                        <path
+                                                                            d="M2.695 14.763l-1.262 3.154a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.885L17.5 5.5a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.885 1.343Z" />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                            <!-- body -->
+                                                            <div
+                                                                class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
+                                                                <div class="grid grid-cols-2 gap-4 self-stretch">
+                                                                    <span
+                                                                        class="text-sm font-medium text-gray-900 dark:text-gray-100">Recipient
+                                                                        Name</span>
+                                                                    <span id="gp-pmc-check-name"
+                                                                        class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
+                                                                </div>
+                                                                <div class="grid grid-cols-2 gap-4 self-stretch">
+                                                                    <span
+                                                                        class="text-sm font-medium text-gray-900 dark:text-gray-100">Mailing
+                                                                        Address</span>
+                                                                    <span id="gp-pmc-check-address"
+                                                                        class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line"></span>
+                                                                </div>
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1782,7 +1907,7 @@
             <div tabindex="0"
                 class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
-                    class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-900 dark:ring-1 dark:ring-white/10 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:w-full sm:max-w-4xl data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+                    class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-900 dark:ring-1 dark:ring-white/10 text-left shadow-xl transition-all w-full data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-4xl data-closed:sm:translate-y-0 data-closed:sm:scale-95">
                     <div class="border-b border-gray-200 dark:border-white/10 px-6 py-4">
                         <h3 id="gp-review-dialog-title" class="text-xl font-semibold text-gray-900 dark:text-white">
                             Review Document</h3>
@@ -1814,7 +1939,7 @@
             <div tabindex="0"
                 class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
-                    class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-900 dark:ring-1 dark:ring-white/10 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:w-full sm:max-w-2xl data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+                    class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-900 dark:ring-1 dark:ring-white/10 text-left shadow-xl transition-all w-full data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-2xl data-closed:sm:translate-y-0 data-closed:sm:scale-95">
                     <div
                         class="border-b border-gray-200 dark:border-white/10 px-6 py-4 flex items-center justify-between">
                         <h3 id="gp-signature-dialog-title" class="text-xl font-semibold text-gray-900 dark:text-white">
@@ -1899,8 +2024,8 @@
                                 <p id="gp-submit-amount"
                                     class="mt-1 text-[30px] leading-9 font-bold tracking-tight text-gray-900 dark:text-white">
                                 </p>
-                                <div
-                                    class="mt-5 inline-flex items-center gap-3 rounded-lg bg-gray-100 pr-2 dark:bg-white/5">
+                                <div id="gp-submit-card-section"
+                                    class="hidden mt-5 items-center gap-3 rounded-lg bg-gray-100 pr-2 dark:bg-white/5">
                                     <div
                                         class="flex h-[46px] w-[71px] flex-col items-end gap-0.5 rounded-md bg-gray-950 p-2 text-gray-200 font-['Roboto_Mono'] text-[10px] leading-3">
                                         <svg class="h-4 w-8" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"
@@ -1943,6 +2068,21 @@
                                         <dt class="text-sm font-semibold text-gray-600 dark:text-gray-400">Payment date
                                         </dt>
                                         <dd id="gp-submit-date"
+                                            class="text-right text-sm font-normal text-gray-900 dark:text-white"></dd>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <dt class="text-sm font-semibold text-gray-600 dark:text-gray-400">Payment method</dt>
+                                        <dd id="gp-submit-method"
+                                            class="text-right text-sm font-normal text-gray-900 dark:text-white"></dd>
+                                    </div>
+                                    <div id="gp-submit-bank-row" class="hidden grid-cols-2 gap-4">
+                                        <dt class="text-sm font-semibold text-gray-600 dark:text-gray-400">Bank account</dt>
+                                        <dd id="gp-submit-bank-name"
+                                            class="text-right text-sm font-normal text-gray-900 dark:text-white"></dd>
+                                    </div>
+                                    <div id="gp-submit-check-row" class="hidden grid-cols-2 gap-4">
+                                        <dt class="text-sm font-semibold text-gray-600 dark:text-gray-400">Send check to</dt>
+                                        <dd id="gp-submit-check-address"
                                             class="text-right text-sm font-normal text-gray-900 dark:text-white"></dd>
                                     </div>
                                 </dl>
@@ -2122,6 +2262,189 @@
         </dialog>
     </el-dialog>
 
+    <!-- ===== EDIT BANK ACCOUNT MODAL ===== -->
+    <el-dialog>
+        <dialog id="gp-edit-bank-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between border-b border-gray-200 dark:border-white/10 px-6 py-4">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Edit Bank Account</h3>
+                        <button type="button" command="close" commandfor="gp-edit-bank-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex flex-col gap-4 px-6 py-5">
+                        <div>
+                            <label for="gp-edit-bank-name" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Name on Account</label>
+                            <div class="mt-2">
+                                <input id="gp-edit-bank-name" type="text"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                            </div>
+                        </div>
+                        <div>
+                            <label for="gp-edit-bank-routing" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Routing Number</label>
+                            <div class="mt-2">
+                                <input id="gp-edit-bank-routing" type="text"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                            </div>
+                        </div>
+                        <div>
+                            <label for="gp-edit-bank-account" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Account Number</label>
+                            <div class="mt-2">
+                                <input id="gp-edit-bank-account" type="text"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                            </div>
+                        </div>
+                        <div>
+                            <label for="gp-edit-bank-confirm" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Confirm Account Number</label>
+                            <div class="mt-2">
+                                <input id="gp-edit-bank-confirm" type="text"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-baseline justify-between">
+                                <label for="gp-edit-bank-nickname" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Account Nickname</label>
+                                <span class="text-sm/6 text-gray-400 dark:text-gray-500">Optional</span>
+                            </div>
+                            <div class="mt-2">
+                                <input id="gp-edit-bank-nickname" type="text" placeholder="e.g. Primary Account"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Footer -->
+                    <div class="flex justify-end gap-3 border-t border-gray-200 dark:border-white/10 px-6 py-5">
+                        <button type="button" command="close" commandfor="gp-edit-bank-dialog"
+                            class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">
+                            Cancel
+                        </button>
+                        <button type="button" command="close" commandfor="gp-edit-bank-dialog"
+                            class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                            Save
+                        </button>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
+    <!-- ===== EDIT ADDRESS MODAL ===== -->
+    <el-dialog>
+        <dialog id="gp-edit-check-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <!-- Header -->
+                    <div class="flex items-center justify-between border-b border-gray-200 dark:border-white/10 px-6 py-4">
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Edit Address</h3>
+                        <button type="button" command="close" commandfor="gp-edit-check-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Content -->
+                    <div class="flex flex-col gap-4 px-6 py-5">
+                        <div>
+                            <label for="gp-edit-check-nickname" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Nickname</label>
+                            <div class="mt-2">
+                                <input id="gp-edit-check-nickname" type="text"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                            </div>
+                        </div>
+                        <div>
+                            <label for="gp-edit-check-line1" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 1</label>
+                            <div class="mt-2">
+                                <input id="gp-edit-check-line1" type="text"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                            </div>
+                        </div>
+                        <div>
+                            <div class="flex items-baseline justify-between">
+                                <label for="gp-edit-check-line2" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 2</label>
+                                <span class="text-sm/6 text-gray-400 dark:text-gray-500">Optional</span>
+                            </div>
+                            <div class="mt-2">
+                                <input id="gp-edit-check-line2" type="text" placeholder="Suite, floor, unit…"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                            </div>
+                        </div>
+                        <div>
+                            <label for="gp-edit-check-city" class="block text-sm/6 font-medium text-gray-900 dark:text-white">City</label>
+                            <div class="mt-2">
+                                <input id="gp-edit-check-city" type="text"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label for="gp-edit-check-state" class="block text-sm/6 font-medium text-gray-900 dark:text-white">State / Province</label>
+                                <div class="mt-2">
+                                    <input id="gp-edit-check-state" type="text"
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                </div>
+                            </div>
+                            <div>
+                                <label for="gp-edit-check-zip" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Zip / Postal Code</label>
+                                <div class="mt-2">
+                                    <input id="gp-edit-check-zip" type="text"
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="gp-edit-check-country" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Country</label>
+                            <div class="mt-2 grid grid-cols-1">
+                                <span id="gp-edit-check-country-flag" class="fi fi-us col-start-1 row-start-1 pointer-events-none z-10 self-center justify-self-start ml-3 rounded-sm"></span>
+                                <select id="gp-edit-check-country" name="gp-edit-check-country"
+                                    class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                    <option value="us" selected>United States</option>
+                                    <option value="ca">Canada</option>
+                                    <option value="mx">Mexico</option>
+                                    <option value="gb">United Kingdom</option>
+                                    <option value="au">Australia</option>
+                                    <option value="de">Germany</option>
+                                    <option value="fr">France</option>
+                                </select>
+                                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
+                                    class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
+                                    <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Footer -->
+                    <div class="flex justify-end gap-3 border-t border-gray-200 dark:border-white/10 px-6 py-5">
+                        <button type="button" command="close" commandfor="gp-edit-check-dialog"
+                            class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">
+                            Cancel
+                        </button>
+                        <button type="button" command="close" commandfor="gp-edit-check-dialog"
+                            class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                            Update
+                        </button>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
     <script src="../../../src/scripts/exchanges-table.js"></script>
 
@@ -2192,6 +2515,18 @@
                 }, 1600);
             });
         });
+    </script>
+
+    <!-- Country flag update for Edit Address modal -->
+    <script>
+        (function () {
+            var sel = document.getElementById('gp-edit-check-country');
+            var flag = document.getElementById('gp-edit-check-country-flag');
+            if (!sel || !flag) return;
+            sel.addEventListener('change', function () {
+                flag.className = 'fi fi-' + sel.value + ' col-start-1 row-start-1 pointer-events-none z-10 self-center justify-self-start ml-3 rounded-sm';
+            });
+        })();
     </script>
 
 </body>
