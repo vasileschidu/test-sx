@@ -15,7 +15,9 @@
       "Bash(node --input-type=module --eval \":*)",
       "Bash(node -e:*)",
       "WebFetch(domain:heroicons.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(npm init:*)",
+      "Bash(npm install:*)"
     ]
   }
 }

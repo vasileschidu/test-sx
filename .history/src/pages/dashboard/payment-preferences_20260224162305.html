@@ -1,0 +1,1438 @@
+<!--
+  @file dashboard/payment-preferences.html
+  @description Payment Preferences — sub-page of SMART Exchange.
+    Tabs: Payment Methods (active), Global Preferences, Advanced Settings.
+    Sections: Payers' Cards (STP + card list) and Payment Account Details
+    (bank accounts + address for checks).
+-->
+<!doctype html>
+<html class="h-full bg-gray-100 dark:bg-gray-950">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SMART Exchange - Payment Preferences</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Meow+Script&family=Roboto+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Flag icons -->
+    <link rel="stylesheet" href="../../../node_modules/flag-icons/css/flag-icons.min.css">
+
+    <!-- Tailwind -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- Tailwind Plus Elements -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+    <script src="../../../src/scripts/sidebar.js" defer></script>
+</head>
+
+<body class="h-full font-['Inter'] antialiased dark:text-gray-100">
+
+    <!-- ===== MOBILE SIDEBAR ===== -->
+    <el-dialog>
+        <dialog id="sidebar" class="backdrop:bg-transparent lg:hidden">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0">
+            </el-dialog-backdrop>
+            <div tabindex="0" class="fixed inset-0 flex focus:outline-none">
+                <el-dialog-panel
+                    class="group/dialog-panel relative mr-16 flex w-full max-w-[360px] flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full">
+                    <!-- Close button -->
+                    <div
+                        class="absolute top-0 left-full flex w-16 justify-center pt-5 duration-300 ease-in-out group-data-closed/dialog-panel:opacity-0">
+                        <button type="button" command="close" commandfor="sidebar" class="-m-2.5 p-2.5">
+                            <span class="sr-only">Close sidebar</span>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                aria-hidden="true" class="size-6 text-white">
+                                <path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- Mobile sidebar content -->
+                    <div
+                        class="flex grow flex-col justify-between overflow-y-auto bg-white dark:bg-gray-900 px-6 pt-6 pb-6">
+                        <div class="flex flex-col gap-9">
+                            <!-- Logo -->
+                            <div class="flex items-center justify-between px-1">
+                                <img src="../../../assets/img/smart-hub.svg" alt="SMART Hub"
+                                    class="h-8 w-auto dark:hidden" />
+                                <img src="../../../assets/img/smart-hub-dark.svg" alt="SMART Hub"
+                                    class="hidden h-8 w-auto dark:block" />
+                            </div>
+                            <!-- Shared Sidebar Menu Component: Mobile -->
+                            <!-- Nav -->
+                            <nav class="flex flex-col" data-nav="mobile">
+
+                                <!-- Insights -->
+                                <a href="#"
+                                    class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                                    <span class="flex items-center gap-3">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            aria-hidden="true"
+                                            class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                            <path
+                                                d="M9.8132 15.9038L9 18.75L8.1868 15.9038C7.75968 14.4089 6.59112 13.2403 5.09619 12.8132L2.25 12L5.09619 11.1868C6.59113 10.7597 7.75968 9.59112 8.1868 8.09619L9 5.25L9.8132 8.09619C10.2403 9.59113 11.4089 10.7597 12.9038 11.1868L15.75 12L12.9038 12.8132C11.4089 13.2403 10.2403 14.4089 9.8132 15.9038Z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path
+                                                d="M18.2589 8.71454L18 9.75L17.7411 8.71454C17.4388 7.50533 16.4947 6.56117 15.2855 6.25887L14.25 6L15.2855 5.74113C16.4947 5.43883 17.4388 4.49467 17.7411 3.28546L18 2.25L18.2589 3.28546C18.5612 4.49467 19.5053 5.43883 20.7145 5.74113L21.75 6L20.7145 6.25887C19.5053 6.56117 18.5612 7.50533 18.2589 8.71454Z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                            <path
+                                                d="M16.8942 20.5673L16.5 21.75L16.1058 20.5673C15.8818 19.8954 15.3546 19.3682 14.6827 19.1442L13.5 18.75L14.6827 18.3558C15.3546 18.1318 15.8818 17.6046 16.1058 16.9327L16.5 15.75L16.8942 16.9327C17.1182 17.6046 17.6454 18.1318 18.3173 18.3558L19.5 18.75L18.3173 19.1442C17.6454 19.3682 17.1182 19.8954 16.8942 20.5673Z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        Insights
+                                    </span>
+                                </a>
+
+                                <div class="my-1 h-px bg-gray-200 dark:bg-white/10"></div>
+
+                                <!-- AP Section -->
+                                <a href="#"
+                                    class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                                    <span class="flex items-center gap-3">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            aria-hidden="true"
+                                            class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                            <path
+                                                d="M19 19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711M10 13.8703H19M19 13.8703L16 16.8703M19 13.8703L16 10.8703"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        Bills/Payables
+                                    </span>
+                                </a>
+                                <a href="#"
+                                    class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                                    <span class="flex items-center gap-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                                            viewBox="0 0 24 24" fill="none"
+                                            class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                            <path
+                                                d="M8.25 18.75C8.25 19.5784 7.57843 20.25 6.75 20.25C5.92157 20.25 5.25 19.5784 5.25 18.75M8.25 18.75C8.25 17.9216 7.57843 17.25 6.75 17.25C5.92157 17.25 5.25 17.9216 5.25 18.75M8.25 18.75H14.25M5.25 18.75H3.375C2.75368 18.75 2.25 18.2463 2.25 17.625V14.2504M19.5 18.75C19.5 19.5784 18.8284 20.25 18 20.25C17.1716 20.25 16.5 19.5784 16.5 18.75M19.5 18.75C19.5 17.9216 18.8284 17.25 18 17.25C17.1716 17.25 16.5 17.9216 16.5 18.75M19.5 18.75L20.625 18.75C21.2463 18.75 21.7537 18.2457 21.7154 17.6256C21.5054 14.218 20.3473 11.0669 18.5016 8.43284C18.1394 7.91592 17.5529 7.60774 16.9227 7.57315H14.25M16.5 18.75H14.25M14.25 7.57315V6.61479C14.25 6.0473 13.8275 5.56721 13.263 5.50863C11.6153 5.33764 9.94291 5.25 8.25 5.25C6.55709 5.25 4.88466 5.33764 3.23698 5.50863C2.67252 5.56721 2.25 6.0473 2.25 6.61479V14.2504M14.25 7.57315V14.2504M14.25 18.75V14.2504M14.25 14.2504H2.25"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                        </svg>
+                                        Vendors
+                                    </span>
+                                </a>
+                                <a href="#"
+                                    class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                                    <span class="flex items-center gap-3">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            aria-hidden="true"
+                                            class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                            <path
+                                                d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        Card Manager
+                                    </span>
+                                </a>
+
+                                <div class="my-1 h-px bg-gray-200 dark:bg-white/10"></div>
+
+                                <!-- AR Section -->
+                                <a href="#"
+                                    class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                                    <span class="flex items-center gap-3">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            aria-hidden="true"
+                                            class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                            <path
+                                                d="M19 19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711M21 13.8703H12M12 13.8703L15 10.8703M12 13.8703L15 16.8703"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        Invoices/Receivables
+                                    </span>
+                                </a>
+                                <a href="#"
+                                    class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                                    <span class="flex items-center gap-3">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            aria-hidden="true"
+                                            class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                            <path
+                                                d="M20.25 14.1499V18.4C20.25 19.4944 19.4631 20.4359 18.3782 20.58C16.2915 20.857 14.1624 21 12 21C9.83757 21 7.70854 20.857 5.62185 20.58C4.5369 20.4359 3.75 19.4944 3.75 18.4V14.1499M20.25 14.1499C20.7219 13.7476 21 13.1389 21 12.4889V8.70569C21 7.62475 20.2321 6.69082 19.1631 6.53086C18.0377 6.36247 16.8995 6.23315 15.75 6.14432M20.25 14.1499C20.0564 14.315 19.8302 14.4453 19.5771 14.5294C17.1953 15.3212 14.6477 15.75 12 15.75C9.35229 15.75 6.80469 15.3212 4.42289 14.5294C4.16984 14.4452 3.94361 14.3149 3.75 14.1499M3.75 14.1499C3.27808 13.7476 3 13.1389 3 12.4889V8.70569C3 7.62475 3.7679 6.69082 4.83694 6.53086C5.96233 6.36247 7.10049 6.23315 8.25 6.14432M15.75 6.14432V5.25C15.75 4.00736 14.7426 3 13.5 3H10.5C9.25736 3 8.25 4.00736 8.25 5.25V6.14432M15.75 6.14432C14.5126 6.0487 13.262 6 12 6C10.738 6 9.48744 6.0487 8.25 6.14432M12 12.75H12.0075V12.7575H12V12.75Z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        Customers
+                                    </span>
+                                </a>
+
+                                <div class="my-1 h-px bg-gray-200 dark:bg-white/10"></div>
+
+                                <!-- SMART Exchange (expandable via chevron only) -->
+                                <div class="flex h-10 items-center gap-1" data-smart-exchange-trigger>
+                                    <a href="smart-exchange.html"
+                                        class="nav-item flex flex-1 h-full items-center gap-3 rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            aria-hidden="true"
+                                            class="nav-icon size-6 shrink-0 text-blue-600 dark:text-blue-400">
+                                            <path
+                                                d="M16 9L12 11M16 9L8 5M16 9L20 7M16 9V14.2502M12 11L4 7M12 11V21M4 7L8 5M4 7V17L12 21M8 5L12 3L20 7M20 7V17L12 21M6.57555 15.1007C7.07025 15.3615 7.71135 15.7168 7.71135 15.7168"
+                                                stroke-linecap="round" />
+                                        </svg>
+                                        SMART Exchange
+                                    </a>
+                                    <button type="button" data-chevron-toggle aria-label="Toggle SMART Exchange submenu"
+                                        onclick="toggleSmartExchangeSubmenu(this)"
+                                        class="flex size-8 items-center justify-center rounded-md text-gray-600 hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/30 transition-colors dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                            class="chevron-icon size-5 transition-transform rotate-180">
+                                            <path fill-rule="evenodd"
+                                                d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                    </button>
+                                </div>
+                                <div
+                                    class="nav-submenu ml-9 flex flex-col overflow-hidden max-h-96 opacity-100 pointer-events-auto transition-all duration-400 ease-in-out">
+                                    <a href="payment-preferences.html"
+                                        class="nav-item is-active flex h-10 items-center rounded-md px-3 text-base font-medium bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Payment Preferences</a>
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Label
+                                        Name</a>
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Label
+                                        Name</a>
+                                </div>
+
+                                <div class="my-1 h-px bg-gray-200 dark:bg-white/10"></div>
+
+                                <!-- My Company Profile -->
+                                <a href="#"
+                                    class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                                    <span class="flex items-center gap-3">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            aria-hidden="true"
+                                            class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                            <path
+                                                d="M1.75 20H5.875H6.90625M2.5 2H17.5M3.25 2V20M16.75 2V6.5V8.75M7 5.75H8.5M7 8.75H8.5M7 11.75H8.5M11.5 5.75H13M11.5 8.75H13M19.1554 21.6096C18.3185 20.5051 16.9926 19.7917 15.5 19.7917C14.0074 19.7917 12.6815 20.5051 11.8446 21.6096M19.1554 21.6096C20.2871 20.6022 21 19.1344 21 17.5C21 14.4624 18.5376 12 15.5 12C12.4624 12 10 14.4624 10 17.5C10 19.1344 10.7129 20.6022 11.8446 21.6096M19.1554 21.6096C18.1837 22.4745 16.9032 23 15.5 23C14.0968 23 12.8163 22.4745 11.8446 21.6096M17.3333 16.125C17.3333 17.1375 16.5125 17.9583 15.5 17.9583C14.4875 17.9583 13.6667 17.1375 13.6667 16.125C13.6667 15.1125 14.4875 14.2917 15.5 14.2917C16.5125 14.2917 17.3333 15.1125 17.3333 16.125Z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        My Company Profile
+                                    </span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                        class="size-5 text-gray-400 dark:text-gray-500">
+                                        <path fill-rule="evenodd"
+                                            d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </a>
+
+                                <!-- Settings (expandable) -->
+                                <button
+                                    class="nav-item group flex h-10 w-full items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white"
+                                    onclick="toggleExpandableItem(this)">
+                                    <span class="flex items-center gap-3">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            aria-hidden="true"
+                                            class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                            <path
+                                                d="M10.3426 3.94005C10.433 3.39759 10.9023 3 11.4523 3H12.5462C13.0962 3 13.5655 3.39759 13.6559 3.94005L13.8049 4.83386C13.8756 5.25813 14.1886 5.59838 14.5858 5.76332C14.9832 5.92832 15.4396 5.90629 15.7897 5.65617L16.5273 5.12933C16.9748 4.80969 17.5878 4.86042 17.9767 5.24929L18.7502 6.02284C19.1391 6.41171 19.1898 7.02472 18.8702 7.47223L18.3432 8.21007C18.0931 8.56012 18.0711 9.01633 18.236 9.41363C18.4009 9.81078 18.7411 10.1236 19.1652 10.1943L20.0592 10.3433C20.6017 10.4337 20.9993 10.9031 20.9993 11.453V12.547C20.9993 13.0969 20.6017 13.5663 20.0592 13.6567L19.1654 13.8056C18.7411 13.8764 18.4009 14.1893 18.236 14.5865C18.071 14.9839 18.093 15.4403 18.3431 15.7904L18.8698 16.5278C19.1895 16.9753 19.1388 17.5884 18.7499 17.9772L17.9763 18.7508C17.5875 19.1396 16.9745 19.1904 16.5269 18.8707L15.7893 18.3439C15.4393 18.0938 14.983 18.0718 14.5857 18.2367C14.1885 18.4016 13.8756 18.7418 13.8049 19.166L13.6559 20.0599C13.5655 20.6024 13.0962 21 12.5462 21H11.4523C10.9023 21 10.433 20.6024 10.3426 20.0599L10.1936 19.1661C10.1229 18.7419 9.80999 18.4016 9.41275 18.2367C9.01535 18.0717 8.55902 18.0937 8.20887 18.3438L7.47125 18.8707C7.02374 19.1904 6.41073 19.1396 6.02186 18.7507L5.24831 17.9772C4.85944 17.5883 4.80871 16.9753 5.12835 16.5278L5.65539 15.79C5.90543 15.4399 5.92747 14.9837 5.76252 14.5864C5.59764 14.1892 5.25746 13.8764 4.83329 13.8057L3.93932 13.6567C3.39686 13.5663 2.99927 13.0969 2.99927 12.547V11.453C2.99927 10.9031 3.39686 10.4337 3.93932 10.3433L4.83312 10.1944C5.2574 10.1236 5.59765 9.81071 5.76259 9.41347C5.92759 9.01605 5.90556 8.5597 5.65544 8.20954L5.12875 7.47216C4.8091 7.02465 4.85983 6.41164 5.2487 6.02277L6.02225 5.24922C6.41112 4.86036 7.02413 4.80962 7.47164 5.12927L8.20924 5.65613C8.55931 5.90618 9.01555 5.92822 9.41287 5.76326C9.81004 5.59837 10.1229 5.25819 10.1936 4.834L10.3426 3.94005Z"
+                                                stroke="currentColor" stroke-width="1.5" stroke-linecap="round"
+                                                stroke-linejoin="round" />
+                                            <path
+                                                d="M15 12C15 13.6569 13.6568 15 12 15C10.3431 15 8.99997 13.6569 8.99997 12C8.99997 10.3432 10.3431 9.00002 12 9.00002C13.6568 9.00002 15 10.3432 15 12Z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        Settings
+                                    </span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                        class="chevron-icon size-5 text-gray-400 transition-transform">
+                                        <path fill-rule="evenodd"
+                                            d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <div
+                                    class="nav-submenu ml-9 flex flex-col overflow-hidden max-h-0 opacity-0 pointer-events-none transition-all duration-400 ease-in-out">
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">User
+                                        Management</a>
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Label
+                                        Names</a>
+                                </div>
+
+                                <!-- Transcard Only (expandable) -->
+                                <button
+                                    class="nav-item group flex h-10 w-full items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white"
+                                    onclick="toggleExpandableItem(this)">
+                                    <span class="flex items-center gap-3">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            aria-hidden="true"
+                                            class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                            <path
+                                                d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+                                                stroke-linecap="round" stroke-linejoin="round" />
+                                        </svg>
+                                        Transcard Only
+                                    </span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                        class="chevron-icon size-5 text-gray-500 transition-transform dark:text-gray-400">
+                                        <path fill-rule="evenodd"
+                                            d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                            clip-rule="evenodd" />
+                                    </svg>
+                                </button>
+                                <div
+                                    class="nav-submenu ml-9 flex flex-col overflow-hidden max-h-0 opacity-0 pointer-events-none transition-all duration-400 ease-in-out">
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Businesses</a>
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">SMART
+                                        Exchange Recipients</a>
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Tenants</a>
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Connections</a>
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Connectors</a>
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Integrations</a>
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Message
+                                        Templates</a>
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Statement
+                                        Templates</a>
+                                    <a href="#"
+                                        class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Reports</a>
+                                </div>
+
+                            </nav>
+                        </div>
+                        <!-- Footer -->
+                        <div id="desktop-sidebar-footer" class="flex flex-col items-center gap-2 pt-4 pb-4">
+                            <div class="flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18"
+                                    fill="none">
+                                    <path
+                                        d="M8.91309 1.125C11.4548 3.2985 15.5771 3.43066 15.5771 3.43066V9.22656C15.5767 12.7831 8.91309 16.875 8.91309 16.875C8.86421 16.8449 2.25042 12.77 2.25 9.22656V3.43066C2.25 3.43066 6.37134 3.29832 8.91309 1.125ZM7.2793 9.90918C7.2091 9.94947 7.16702 10.0229 7.16699 10.1035V12.5801C7.16699 12.6002 7.17163 12.6209 7.18164 12.6377C7.21173 12.6914 7.28048 12.708 7.33398 12.6777L11.2783 10.3828C11.3134 10.3627 11.3352 10.3254 11.3369 10.2852V7.54785L7.2793 9.90918ZM7.33398 5.21191C7.28052 5.18171 7.21343 5.19831 7.18164 5.25195C7.17161 5.26875 7.16699 5.28942 7.16699 5.30957V7.78613C7.16699 7.86667 7.2082 7.94112 7.27832 7.98145L8.46582 8.6709L10.8701 7.27051L7.33398 5.21191Z"
+                                        fill="#0089CF" />
+                                </svg>
+                                <span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span>
+                                <span class="text-xs font-semibold text-gray-900 dark:text-white">TRANA</span>
+                            </div>
+                            <div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400">
+                                <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of
+                                    Use</a>
+                                <span class="text-gray-300 dark:text-gray-600">|</span>
+                                <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy
+                                    Policy</a>
+                            </div>
+                        </div>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
+    <!-- ===== DESKTOP SIDEBAR ===== -->
+    <div id="desktop-sidebar-shell" class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-[360px] lg:flex-col">
+        <div id="desktop-sidebar-panel"
+            class="flex grow flex-col justify-between overflow-y-auto border-r border-gray-200 bg-white px-6 pt-6 pb-6 dark:border-white/10 dark:bg-gray-900">
+            <div class="flex flex-col gap-9">
+                <!-- Logo row -->
+                <div id="desktop-logo-row" class="relative flex items-center justify-between px-1">
+                    <div id="desktop-logo-full">
+                        <img src="../../../assets/img/smart-hub.svg" alt="SMART Hub" class="h-8 w-auto dark:hidden" />
+                        <img src="../../../assets/img/smart-hub-dark.svg" alt="SMART Hub"
+                            class="hidden h-8 w-auto dark:block" />
+                    </div>
+                    <img id="desktop-logo-mark" src="../../../assets/img/smart-hub-mark.svg" alt="SMART Hub"
+                        class="hidden h-8 w-8 shrink-0" />
+                </div>
+                <!-- Shared Sidebar Menu Component: Desktop -->
+                <!-- Desktop nav -->
+                <nav class="flex flex-col" data-nav="desktop">
+
+                    <!-- Insights -->
+                    <a href="#"
+                        class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                        <span class="flex items-center gap-3">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                aria-hidden="true"
+                                class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                <path
+                                    d="M9.8132 15.9038L9 18.75L8.1868 15.9038C7.75968 14.4089 6.59112 13.2403 5.09619 12.8132L2.25 12L5.09619 11.1868C6.59113 10.7597 7.75968 9.59112 8.1868 8.09619L9 5.25L9.8132 8.09619C10.2403 9.59113 11.4089 10.7597 12.9038 11.1868L15.75 12L12.9038 12.8132C11.4089 13.2403 10.2403 14.4089 9.8132 15.9038Z"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path
+                                    d="M18.2589 8.71454L18 9.75L17.7411 8.71454C17.4388 7.50533 16.4947 6.56117 15.2855 6.25887L14.25 6L15.2855 5.74113C16.4947 5.43883 17.4388 4.49467 17.7411 3.28546L18 2.25L18.2589 3.28546C18.5612 4.49467 19.5053 5.43883 20.7145 5.74113L21.75 6L20.7145 6.25887C19.5053 6.56117 18.5612 7.50533 18.2589 8.71454Z"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path
+                                    d="M16.8942 20.5673L16.5 21.75L16.1058 20.5673C15.8818 19.8954 15.3546 19.3682 14.6827 19.1442L13.5 18.75L14.6827 18.3558C15.3546 18.1318 15.8818 17.6046 16.1058 16.9327L16.5 15.75L16.8942 16.9327C17.1182 17.6046 17.6454 18.1318 18.3173 18.3558L19.5 18.75L18.3173 19.1442C17.6454 19.3682 17.1182 19.8954 16.8942 20.5673Z"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            Insights
+                        </span>
+                    </a>
+
+                    <div class="my-1 h-px bg-gray-200 dark:bg-white/10"></div>
+
+                    <!-- AP Section -->
+                    <!-- Bills/Payables -->
+                    <a href="#"
+                        class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                        <span class="flex items-center gap-3">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                aria-hidden="true"
+                                class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                <path
+                                    d="M19 19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711M10 13.8703H19M19 13.8703L16 16.8703M19 13.8703L16 10.8703"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            Bills/Payables
+                        </span>
+                    </a>
+
+                    <!-- Vendors -->
+                    <a href="#"
+                        class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                        <span class="flex items-center gap-3">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                aria-hidden="true"
+                                class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                <path
+                                    d="M8.25 18.75C8.25 19.5784 7.57843 20.25 6.75 20.25C5.92157 20.25 5.25 19.5784 5.25 18.75M8.25 18.75C8.25 17.9216 7.57843 17.25 6.75 17.25C5.92157 17.25 5.25 17.9216 5.25 18.75M8.25 18.75H14.25M5.25 18.75H3.375C2.75368 18.75 2.25 18.2463 2.25 17.625V14.2504M19.5 18.75C19.5 19.5784 18.8284 20.25 18 20.25C17.1716 20.25 16.5 19.5784 16.5 18.75M19.5 18.75C19.5 17.9216 18.8284 17.25 18 17.25C17.1716 17.25 16.5 17.9216 16.5 18.75M19.5 18.75L20.625 18.75C21.2463 18.75 21.7537 18.2457 21.7154 17.6256C21.5054 14.218 20.3473 11.0669 18.5016 8.43284C18.1394 7.91592 17.5529 7.60774 16.9227 7.57315H14.25M16.5 18.75H14.25M14.25 7.57315V6.61479C14.25 6.0473 13.8275 5.56721 13.263 5.50863C11.6153 5.33764 9.94291 5.25 8.25 5.25C6.55709 5.25 4.88466 5.33764 3.23698 5.50863C2.67252 5.56721 2.25 6.0473 2.25 6.61479V14.2504M14.25 7.57315V14.2504M14.25 18.75V14.2504M14.25 14.2504H2.25"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            Vendors
+                        </span>
+                    </a>
+
+                    <!-- Card Manager -->
+                    <a href="#"
+                        class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                        <span class="flex items-center gap-3">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                aria-hidden="true"
+                                class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                <path
+                                    d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            Card Manager
+                        </span>
+                    </a>
+
+                    <div class="my-1 h-px bg-gray-200 dark:bg-white/10"></div>
+
+                    <!-- AR Section -->
+                    <!-- Invoices/Receivables -->
+                    <a href="#"
+                        class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                        <span class="flex items-center gap-3">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                aria-hidden="true"
+                                class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                <path
+                                    d="M19 19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711M21 13.8703H12M12 13.8703L15 10.8703M12 13.8703L15 16.8703"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            Invoices/Receivables
+                        </span>
+                    </a>
+
+                    <!-- Customers -->
+                    <a href="#"
+                        class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                        <span class="flex items-center gap-3">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                aria-hidden="true"
+                                class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                <path
+                                    d="M20.25 14.1499V18.4C20.25 19.4944 19.4631 20.4359 18.3782 20.58C16.2915 20.857 14.1624 21 12 21C9.83757 21 7.70854 20.857 5.62185 20.58C4.5369 20.4359 3.75 19.4944 3.75 18.4V14.1499M20.25 14.1499C20.7219 13.7476 21 13.1389 21 12.4889V8.70569C21 7.62475 20.2321 6.69082 19.1631 6.53086C18.0377 6.36247 16.8995 6.23315 15.75 6.14432M20.25 14.1499C20.0564 14.315 19.8302 14.4453 19.5771 14.5294C17.1953 15.3212 14.6477 15.75 12 15.75C9.35229 15.75 6.80469 15.3212 4.42289 14.5294C4.16984 14.4452 3.94361 14.3149 3.75 14.1499M3.75 14.1499C3.27808 13.7476 3 13.1389 3 12.4889V8.70569C3 7.62475 3.7679 6.69082 4.83694 6.53086C5.96233 6.36247 7.10049 6.23315 8.25 6.14432M15.75 6.14432V5.25C15.75 4.00736 14.7426 3 13.5 3H10.5C9.25736 3 8.25 4.00736 8.25 5.25V6.14432M15.75 6.14432C14.5126 6.0487 13.262 6 12 6C10.738 6 9.48744 6.0487 8.25 6.14432M12 12.75H12.0075V12.7575H12V12.75Z"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            Customers
+                        </span>
+                    </a>
+
+                    <div class="my-1 h-px bg-gray-200 dark:bg-white/10"></div>
+
+                    <!-- SMART Exchange (expandable via chevron only) -->
+                    <div class="flex h-10 items-center gap-1" data-smart-exchange-trigger>
+                        <a href="smart-exchange.html"
+                            class="nav-item flex flex-1 h-full items-center gap-3 rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                aria-hidden="true" class="nav-icon size-6 shrink-0 text-blue-600 dark:text-blue-400">
+                                <path
+                                    d="M16 9L12 11M16 9L8 5M16 9L20 7M16 9V14.2502M12 11L4 7M12 11V21M4 7L8 5M4 7V17L12 21M8 5L12 3L20 7M20 7V17L12 21M6.57555 15.1007C7.07025 15.3615 7.71135 15.7168 7.71135 15.7168"
+                                    stroke-linecap="round" />
+                            </svg>
+                            SMART Exchange
+                        </a>
+                        <button type="button" data-chevron-toggle aria-label="Toggle SMART Exchange submenu"
+                            onclick="toggleSmartExchangeSubmenu(this)"
+                            class="flex size-8 items-center justify-center rounded-md text-gray-600 hover:bg-gray-200 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/30 transition-colors dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-300">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                class="chevron-icon size-5 transition-transform rotate-180">
+                                <path fill-rule="evenodd"
+                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                    </div>
+                    <!-- SMART Exchange sub-items (hidden by default = collapsed) -->
+                    <div
+                        class="nav-submenu ml-9 flex flex-col overflow-hidden max-h-96 opacity-100 pointer-events-auto transition-all duration-400 ease-in-out">
+                                    <a href="payment-preferences.html"
+                            class="nav-item is-active flex h-10 items-center rounded-md px-3 text-base font-medium bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:bg-white/10 dark:text-white dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">Payment Preferences
+                        </a>
+
+                    </div>
+
+                    <div class="my-1 h-px bg-gray-200 dark:bg-white/10"></div>
+
+                    <!-- My Company Profile -->
+                    <a href="#"
+                        class="nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                        <span class="flex items-center gap-3">
+
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                aria-hidden="true"
+                                class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                <path
+                                    d="M1.75 20H5.875H6.90625M2.5 2H17.5M3.25 2V20M16.75 2V6.5V8.75M7 5.75H8.5M7 8.75H8.5M7 11.75H8.5M11.5 5.75H13M11.5 8.75H13M19.1554 21.6096C18.3185 20.5051 16.9926 19.7917 15.5 19.7917C14.0074 19.7917 12.6815 20.5051 11.8446 21.6096M19.1554 21.6096C20.2871 20.6022 21 19.1344 21 17.5C21 14.4624 18.5376 12 15.5 12C12.4624 12 10 14.4624 10 17.5C10 19.1344 10.7129 20.6022 11.8446 21.6096M19.1554 21.6096C18.1837 22.4745 16.9032 23 15.5 23C14.0968 23 12.8163 22.4745 11.8446 21.6096M17.3333 16.125C17.3333 17.1375 16.5125 17.9583 15.5 17.9583C14.4875 17.9583 13.6667 17.1375 13.6667 16.125C13.6667 15.1125 14.4875 14.2917 15.5 14.2917C16.5125 14.2917 17.3333 15.1125 17.3333 16.125Z"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            My Company Profile
+                        </span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            class="chevron-icon size-5 text-gray-500 transition-transform dark:text-gray-400">
+                            <path fill-rule="evenodd" clip-rule="evenodd"
+                                d="M5.21967 14.7803C5.51256 15.0732 5.98744 15.0732 6.28033 14.7803L13.5 7.56066V13.25C13.5 13.6642 13.8358 14 14.25 14C14.6642 14 15 13.6642 15 13.25V5.75C15 5.33579 14.6642 5 14.25 5H6.75C6.33579 5 6 5.33579 6 5.75C6 6.16421 6.33579 6.5 6.75 6.5H12.4393L5.21967 13.7197C4.92678 14.0126 4.92678 14.4874 5.21967 14.7803Z"
+                                clip-rule="evenodd" />
+                        </svg>
+
+                    </a>
+
+                    <!-- Settings (expandable, collapsed) -->
+                    <button
+                        class="nav-item group flex h-10 w-full items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white"
+                        onclick="toggleExpandableItem(this)">
+                        <span class="flex items-center gap-3">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                aria-hidden="true"
+                                class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                <path
+                                    d="M10.3426 3.94005C10.433 3.39759 10.9023 3 11.4523 3H12.5462C13.0962 3 13.5655 3.39759 13.6559 3.94005L13.8049 4.83386C13.8756 5.25813 14.1886 5.59838 14.5858 5.76332C14.9832 5.92832 15.4396 5.90629 15.7897 5.65617L16.5273 5.12933C16.9748 4.80969 17.5878 4.86042 17.9767 5.24929L18.7502 6.02284C19.1391 6.41171 19.1898 7.02472 18.8702 7.47223L18.3432 8.21007C18.0931 8.56012 18.0711 9.01633 18.236 9.41363C18.4009 9.81078 18.7411 10.1236 19.1652 10.1943L20.0592 10.3433C20.6017 10.4337 20.9993 10.9031 20.9993 11.453V12.547C20.9993 13.0969 20.6017 13.5663 20.0592 13.6567L19.1654 13.8056C18.7411 13.8764 18.4009 14.1893 18.236 14.5865C18.071 14.9839 18.093 15.4403 18.3431 15.7904L18.8698 16.5278C19.1895 16.9753 19.1388 17.5884 18.7499 17.9772L17.9763 18.7508C17.5875 19.1396 16.9745 19.1904 16.5269 18.8707L15.7893 18.3439C15.4393 18.0938 14.983 18.0718 14.5857 18.2367C14.1885 18.4016 13.8756 18.7418 13.8049 19.166L13.6559 20.0599C13.5655 20.6024 13.0962 21 12.5462 21H11.4523C10.9023 21 10.433 20.6024 10.3426 20.0599L10.1936 19.1661C10.1229 18.7419 9.80999 18.4016 9.41275 18.2367C9.01535 18.0717 8.55902 18.0937 8.20887 18.3438L7.47125 18.8707C7.02374 19.1904 6.41073 19.1396 6.02186 18.7507L5.24831 17.9772C4.85944 17.5883 4.80871 16.9753 5.12835 16.5278L5.65539 15.79C5.90543 15.4399 5.92747 14.9837 5.76252 14.5864C5.59764 14.1892 5.25746 13.8764 4.83329 13.8057L3.93932 13.6567C3.39686 13.5663 2.99927 13.0969 2.99927 12.547V11.453C2.99927 10.9031 3.39686 10.4337 3.93932 10.3433L4.83312 10.1944C5.2574 10.1236 5.59765 9.81071 5.76259 9.41347C5.92759 9.01605 5.90556 8.5597 5.65544 8.20954L5.12875 7.47216C4.8091 7.02465 4.85983 6.41164 5.2487 6.02277L6.02225 5.24922C6.41112 4.86036 7.02413 4.80962 7.47164 5.12927L8.20924 5.65613C8.55931 5.90618 9.01555 5.92822 9.41287 5.76326C9.81004 5.59837 10.1229 5.25819 10.1936 4.834L10.3426 3.94005Z"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                                <path
+                                    d="M15 12C15 13.6569 13.6568 15 12 15C10.3431 15 8.99997 13.6569 8.99997 12C8.99997 10.3432 10.3431 9.00002 12 9.00002C13.6568 9.00002 15 10.3432 15 12Z"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            Settings
+                        </span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            class="chevron-icon size-5 text-gray-500 transition-transform dark:text-gray-400">
+                            <path fill-rule="evenodd"
+                                d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <!-- Settings sub-items -->
+                    <div
+                        class="nav-submenu ml-9 flex flex-col overflow-hidden max-h-0 opacity-0 pointer-events-none transition-all duration-400 ease-in-out">
+                        <a href="#"
+                            class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                            User Management
+                        </a>
+
+                    </div>
+
+                    <!-- Transcard Only (expandable, collapsed) -->
+                    <button
+                        class="nav-item group flex h-10 w-full items-center justify-between rounded-md px-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white"
+                        onclick="toggleExpandableItem(this)">
+                        <span class="flex items-center gap-3">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                aria-hidden="true"
+                                class="nav-icon size-6 shrink-0 text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400">
+                                <path
+                                    d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z"
+                                    stroke-linecap="round" stroke-linejoin="round" />
+                            </svg>
+                            Transcard Only
+                        </span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            class="chevron-icon size-5 text-gray-500 transition-transform dark:text-gray-400"
+                            stroke-width="1.5">
+                            <path fill-rule="evenodd"
+                                d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                    </button>
+                    <!-- Transcard Only sub-items -->
+                    <div
+                        class="nav-submenu ml-9 flex flex-col overflow-hidden max-h-0 opacity-0 pointer-events-none transition-all duration-400 ease-in-out">
+                        <a href="#"
+                            class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                            Businesses
+                        </a>
+                        <a href="#"
+                            class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                            SMART Exchange Recipients
+                        </a>
+                        <a href="#"
+                            class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                            Tenants
+                        </a>
+                        <a href="#"
+                            class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                            Connections
+                        </a>
+                        <a href="#"
+                            class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                            Connectors
+                        </a>
+                        <a href="#"
+                            class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                            Integrations
+                        </a>
+                        <a href="#"
+                            class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                            Message Templates
+                        </a>
+                        <a href="#"
+                            class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                            Statement Templates
+                        </a>
+                        <a href="#"
+                            class="nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 focus-visible:outline-none transition-colors cursor-pointer dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white">
+                            Reports
+                        </a>
+                    </div>
+
+                </nav>
+
+                <!-- Help -->
+                <div id="desktop-sidebar-help"
+                    class="flex flex-col gap-1 rounded-lg bg-gray-50 px-3 py-3 dark:bg-white/5">
+                    <p class="text-xs font-semibold text-gray-700 dark:text-gray-300">Need help?</p>
+                    <p class="text-xs font-normal text-gray-500 dark:text-gray-400">Check our docs or contact support.
+                    </p>
+                    <div class="mt-1 flex items-center gap-2">
+                        <a href="#"
+                            class="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">Documentation</a>
+                        <span class="text-gray-300 dark:text-gray-600">·</span>
+                        <a href="#"
+                            class="text-xs font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300 transition-colors">Support</a>
+                    </div>
+                </div>
+            </div>
+            <!-- Footer -->
+            <div id="desktop-sidebar-footer" class="flex flex-col items-center gap-2 pt-4 pb-4">
+                <div class="flex items-center gap-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                        <path
+                            d="M8.91309 1.125C11.4548 3.2985 15.5771 3.43066 15.5771 3.43066V9.22656C15.5767 12.7831 8.91309 16.875 8.91309 16.875C8.86421 16.8449 2.25042 12.77 2.25 9.22656V3.43066C2.25 3.43066 6.37134 3.29832 8.91309 1.125ZM7.2793 9.90918C7.2091 9.94947 7.16702 10.0229 7.16699 10.1035V12.5801C7.16699 12.6002 7.17163 12.6209 7.18164 12.6377C7.21173 12.6914 7.28048 12.708 7.33398 12.6777L11.2783 10.3828C11.3134 10.3627 11.3352 10.3254 11.3369 10.2852V7.54785L7.2793 9.90918ZM7.33398 5.21191C7.28052 5.18171 7.21343 5.19831 7.18164 5.25195C7.17161 5.26875 7.16699 5.28942 7.16699 5.30957V7.78613C7.16699 7.86667 7.2082 7.94112 7.27832 7.98145L8.46582 8.6709L10.8701 7.27051L7.33398 5.21191Z"
+                            fill="#0089CF" />
+                    </svg>
+                    <span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by </span>
+                    <span class="text-xs font-semibold text-gray-900 dark:text-white">TRANA</span>
+                </div>
+                <div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400">
+                    <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a>
+                    <span class="text-gray-300 dark:text-gray-600">|</span>
+                    <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar collapse toggle -->
+    <button id="desktop-sidebar-toggle" type="button"
+        class="hidden lg:flex fixed top-[30px] left-[344px] z-[70] rounded-sm bg-white px-1 py-1 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:shadow-none dark:inset-ring-gray-700 dark:hover:bg-gray-700 items-center justify-center transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+            class="size-4 text-gray-700 dark:text-gray-300 transition-transform duration-200 ease-out"
+            id="desktop-sidebar-toggle-icon">
+            <path fill-rule="evenodd"
+                d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
+                clip-rule="evenodd" />
+        </svg>
+    </button>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <div id="main-content-wrapper" class="lg:pl-[360px]">
+
+        <!-- ===== TOP HEADER BAR ===== -->
+        <div
+            class="sticky top-0 z-40 border-b border-gray-200 bg-white shadow-xs dark:border-white/10 dark:bg-gray-900 dark:shadow-none">
+            <div class="flex flex-col gap-4 px-4 pt-4 pb-4 sm:px-6 lg:px-6 lg:pt-6">
+                <!-- Top row -->
+                <div class="flex items-center justify-between gap-x-4">
+                    <!-- Mobile hamburger -->
+                    <button type="button" command="show-modal" commandfor="sidebar"
+                        class="-m-2.5 p-2.5 text-gray-700 hover:text-gray-900 lg:hidden dark:text-gray-300 dark:hover:text-white">
+                        <span class="sr-only">Open sidebar</span>
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"
+                            class="size-6">
+                            <path d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" stroke-linecap="round"
+                                stroke-linejoin="round" />
+                        </svg>
+                    </button>
+                    <!-- Greeting -->
+                    <h1 class="flex-1 truncate text-xl sm:text-2xl font-bold text-gray-900 dark:text-white">
+                        Hello, Johnny Anderson
+                    </h1>
+                    <!-- Right side -->
+                    <div class="flex items-center gap-3 sm:gap-4">
+                        <button
+                            class="hidden sm:flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm sm:text-base font-semibold text-gray-800 hover:bg-gray-50 transition-colors dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/10">
+                            Big Kahuna Burger Ltd
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                class="size-5 text-gray-400 dark:text-gray-500">
+                                <path fill-rule="evenodd"
+                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                        </button>
+                        <div class="hidden sm:ml-6 sm:flex sm:items-center">
+                            <button type="button"
+                                class="relative rounded-full p-1 text-gray-400 hover:text-gray-500 focus:outline-2 focus:outline-offset-2 focus:outline-blue-600 dark:text-gray-400 dark:hover:text-white">
+                                <span class="sr-only">View notifications</span>
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                    aria-hidden="true" class="size-6">
+                                    <path
+                                        d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0"
+                                        stroke-linecap="round" stroke-linejoin="round" />
+                                </svg>
+                            </button>
+                            <el-dropdown class="relative ml-3">
+                                <button
+                                    class="relative flex rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                    <span class="sr-only">Open user menu</span>
+                                    <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                                        alt=""
+                                        class="size-8 rounded-full outline -outline-offset-1 outline-black/5 dark:outline-white/10" />
+                                </button>
+                                <el-menu anchor="bottom end" popover
+                                    class="w-48 origin-top-right rounded-md bg-white py-1 shadow-lg outline outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+                                    <a href="#"
+                                        class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:outline-hidden dark:text-gray-300 dark:focus:bg-gray-700">Your
+                                        profile</a>
+                                    <a href="#"
+                                        class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:outline-hidden dark:text-gray-300 dark:focus:bg-gray-700">Settings</a>
+                                    <a href="#"
+                                        class="block px-4 py-2 text-sm text-gray-700 focus:bg-gray-100 focus:outline-hidden dark:text-gray-300 dark:focus:bg-gray-700">Sign
+                                        out</a>
+                                </el-menu>
+                            </el-dropdown>
+                        </div>
+                    </div>
+                </div>
+                <!-- Separator -->
+                <div class="h-px bg-gray-200 dark:bg-white/10"></div>
+                <!-- Breadcrumbs -->
+                <div class="flex flex-wrap items-center gap-3 sm:gap-6">
+                    <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">SMART Exchange</h2>
+                    <div class="hidden sm:block h-5 w-px bg-gray-300 dark:bg-gray-600"></div>
+                    <nav class="hidden sm:flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            class="size-5 text-gray-400 dark:text-gray-500">
+                            <path fill-rule="evenodd"
+                                d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            class="size-5 text-gray-300 dark:text-gray-600">
+                            <path fill-rule="evenodd"
+                                d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <a href="smart-exchange.html"
+                            class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors dark:text-gray-400 dark:hover:text-gray-200">Payments</a>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                            class="size-5 text-gray-300 dark:text-gray-600">
+                            <path fill-rule="evenodd"
+                                d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                clip-rule="evenodd" />
+                        </svg>
+                        <span class="text-sm font-medium text-gray-900 dark:text-white">Payment Preferences</span>
+                    </nav>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== MAIN CONTENT AREA ===== -->
+        <main class="w-full flex justify-center p-0 sm:p-2 lg:p-4">
+            <div class="flex w-full max-w-[1280px] flex-col gap-5">
+
+                <!-- ===== PAYMENT PREFERENCES CARD ===== -->
+                <div class="rounded-none sm:rounded-lg bg-white shadow-sm dark:bg-gray-900">
+
+                    <!-- Head: Title + Tabs (separate top section) -->
+                    <div class="pt-5 sm:pt-6">
+                        <div class="flex flex-col gap-3 px-4 sm:px-6">
+                            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Payment Preferences</h2>
+
+                            <!-- Mobile: select -->
+                            <div class="grid grid-cols-1 sm:hidden">
+                                <select aria-label="Select a tab"
+                                    class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                    <option selected>Payment Methods</option>
+                                    <option>Global Preferences</option>
+                                    <option>Advanced Settings</option>
+                                </select>
+                                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
+                                    class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500 dark:fill-gray-400">
+                                    <path fill-rule="evenodd"
+                                        d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
+                                        clip-rule="evenodd" />
+                                </svg>
+                            </div>
+                        </div>
+
+                        <!-- Full-width separator under tabs/header -->
+                        <div class="mt-3 border-b border-gray-200 dark:border-white/10">
+                            <!-- Desktop: underline tabs (blue only) -->
+                            <div class="hidden sm:block px-4 sm:px-6">
+                                <nav aria-label="Tabs" class="-mb-px flex space-x-6">
+                                    <button type="button"
+                                        class="tab-btn border-b-2 border-blue-500 px-1 py-4 text-sm font-medium whitespace-nowrap text-blue-600 dark:text-blue-400 dark:border-blue-400"
+                                        data-tab="payment-methods" aria-current="page">
+                                        Payment Methods
+                                    </button>
+                                    <button type="button"
+                                        class="tab-btn border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap text-gray-500 hover:border-blue-300 hover:text-blue-500 transition-colors dark:text-gray-400 dark:hover:text-blue-400 dark:hover:border-blue-500"
+                                        data-tab="global-preferences">
+                                        Global Preferences
+                                    </button>
+                                    <button type="button"
+                                        class="tab-btn border-b-2 border-transparent px-1 py-4 text-sm font-medium whitespace-nowrap text-gray-500 hover:border-blue-300 hover:text-blue-500 transition-colors dark:text-gray-400 dark:hover:text-blue-400 dark:hover:border-blue-500"
+                                        data-tab="advanced-settings">
+                                        Advanced Settings
+                                    </button>
+                                </nav>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Payment Methods (active) -->
+                    <div id="tab-payment-methods" class="tab-panel">
+
+                        <!-- Cards container -->
+                        <div class="flex flex-col gap-5 p-4 sm:p-6">
+
+                            <!-- ===== SECTION 1: PAYERS' CARDS ===== -->
+                            <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-2 xl:gap-10">
+
+                                <!-- Left: title + description -->
+                                <div
+                                    class="flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-28">
+                                    <div class="flex flex-col gap-1">
+                                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Payers'
+                                            Cards</h3>
+                                        <p class="text-sm font-normal text-gray-500 dark:text-gray-400">Accept
+                                            payment by card.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Right: card details -->
+                                <div class="flex w-full flex-col items-start gap-2 min-w-0">
+
+
+
+                                    <!-- STP block -->
+                                    <div
+                                        class="flex items-start sm:items-center gap-3 sm:gap-6 p-4 self-stretch rounded-lg bg-gray-50 dark:bg-white/5">
+
+
+                                        <!-- Card info -->
+                                        <div class="flex flex-col gap-1 grow shrink-0 basis-0 min-w-0">
+                                            <div class="flex items-center gap-2 min-w-0">
+                                                <span
+                                                    class="text-sm font-semibold text-gray-900 dark:text-gray-100">Automatic
+                                                    Card Processing (STP)</span>
+                                                <span
+                                                    class="shrink-0 whitespace-nowrap inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 inset-ring inset-ring-yellow-600/20">Action Required</span>
+
+                                            </div>
+
+                                            <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Card
+                                                payments are automatically processed and settled to your bank
+                                                account.</span>
+                                        </div>
+                                        <!-- Actions -->
+                                        <button type="button"
+                                            class="shrink-0 rounded-md p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-600 transition-colors dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                fill="currentColor" class="size-4">
+                                                <path
+                                                    d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+                                            </svg>
+                                        </button>
+                                    </div>
+
+                                    <!-- Yellow info box: Action Required -->
+                                    <div
+                                        class="flex w-full items-start gap-3 rounded-md bg-yellow-50 p-4 dark:bg-yellow-900/20">
+                                        <!-- Warning icon -->
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                            class="size-5 shrink-0 text-yellow-500 dark:text-yellow-400 mt-0.5">
+                                            <path fill-rule="evenodd"
+                                                d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                                                clip-rule="evenodd" />
+                                        </svg>
+                                        <div class="flex flex-col gap-4 flex-1">
+                                            <div class="flex flex-col gap-2">
+                                                <p class="text-sm font-semibold text-yellow-800 dark:text-yellow-300">
+                                                    Automatic Card Processing</p>
+                                                <p class="text-sm font-normal text-yellow-700 dark:text-yellow-400">
+                                                    To complete set-up, please confirm the small deposit amount.</p>
+                                            </div>
+                                            <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+                                                <button type="button" command="show-modal"
+                                                    commandfor="pp-verify-deposit-dialog"
+                                                    class="whitespace-nowrap inline-flex items-center gap-1.5 rounded-sm bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">
+                                                    Verify now
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                        fill="currentColor" class="size-4">
+                                                        <path fill-rule="evenodd"
+                                                            d="M2 10a.75.75 0 0 1 .75-.75h12.59l-2.1-1.95a.75.75 0 1 1 1.02-1.1l3.5 3.25a.75.75 0 0 1 0 1.1l-3.5 3.25a.75.75 0 1 1-1.02-1.1l2.1-1.95H2.75A.75.75 0 0 1 2 10Z"
+                                                            clip-rule="evenodd" />
+                                                    </svg>
+                                                </button>
+
+                                                <button type="button"
+                                                    class="whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2 py-1 text-sm font-semibold text-gray-900 hover:bg-gray-900/10 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-300">
+
+                                                    Don't see a small deposit?
+                                                </button>
+
+                                            </div>
+                                            <p class="text-xs font-normal text-gray-700 dark:text-gray-400">Date
+                                                initiated: June 10, 2024</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Separator -->
+                                    <div class="h-px bg-gray-200 dark:bg-white/10"></div>
+
+                                    <!-- Cards list -->
+                                    <div
+                                        class="flex w-full flex-col gap-3 rounded-lg pt-6 border-t border-gray-200 dark:border-white/10 ">
+
+                                        <!-- List header -->
+                                        <div class="flex flex-col gap-2">
+                                            <h4 class="text-sm font-medium text-gray-900 dark:text-gray-100 pb-2">Cards
+                                            </h4>
+                                            <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                                                <!-- Search -->
+                                                <div class="relative w-full max-w-[380px]">
+                                                    <div
+                                                        class="pointer-events-none absolute  inset-y-0 left-0 flex items-center pl-3">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                            fill="currentColor"
+                                                            class="size-4 text-gray-400 dark:text-gray-500">
+                                                            <path fill-rule="evenodd"
+                                                                d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
+                                                                clip-rule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                                    <input type="text" placeholder="Search customer"
+                                                        class="block w-full rounded-md border-0 bg-white py-1.5 pl-9 pr-3 text-sm text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10 dark:placeholder:text-gray-500 dark:focus:ring-blue-500" />
+                                                </div>
+                                                <div class="flex items-center gap-3 sm:ml-auto">
+                                                    <!-- Active only checkbox -->
+                                                    <label
+                                                        class="whitespace-nowrap flex items-center gap-2 cursor-pointer rounded-lg bg-gray-50 px-3 py-1.5 dark:bg-white/5">
+                                                        <div class="group grid size-4 grid-cols-1">
+                                                            <input type="checkbox" name="active-only"
+                                                                class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
+                                                            <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"
+                                                                viewBox="0 0 14 14" fill="none">
+                                                                <path class="opacity-0 group-has-checked:opacity-100"
+                                                                    d="M3 8L6 11L11 3.5" stroke-width="2"
+                                                                    stroke-linecap="round" stroke-linejoin="round" />
+                                                            </svg>
+                                                        </div>
+                                                        <span
+                                                            class="text-sm font-medium text-gray-700 dark:text-gray-300">Active
+                                                            only</span>
+                                                    </label>
+                                                    <!-- Filter button -->
+                                                    <button type="button"
+                                                        class="whitespace-nowrap inline-flex items-center gap-1.5 rounded-sm bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                            fill="currentColor" class="size-4">
+                                                            <path
+                                                                d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+                                                        </svg>
+                                                        Filter
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <!-- Card items -->
+                                        <div class="flex flex-col items-start gap-2 self-stretch">
+                                            <!-- Card row 1 -->
+                                            <div
+                                                class="flex items-center gap-6 p-3 self-stretch rounded-lg bg-gray-50 dark:bg-white/5">
+                                                <!-- Brand badge -->
+                                                <div class="flex flex-col items-start p-2">
+                                                    <svg width="24" height="16" viewBox="0 0 24 16" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <rect width="24" height="16" rx="1.2"
+                                                            fill="url(#visa-grad-1)" />
+                                                        <path
+                                                            d="M12.309 7.05313C12.2987 7.85651 13.0305 8.30487 13.5818 8.57141C14.1483 8.84493 14.3385 9.0203 14.3364 9.26485C14.3321 9.6392 13.8845 9.80438 13.4656 9.81081C12.7349 9.82208 12.3101 9.61506 11.9722 9.45846L11.709 10.6807C12.0479 10.8357 12.6754 10.9708 13.3262 10.9767C14.8536 10.9767 15.853 10.2286 15.8584 9.06857C15.8644 7.5964 13.8061 7.51489 13.8202 6.85684C13.8251 6.65733 14.0169 6.44442 14.4374 6.39025C14.6455 6.3629 15.2201 6.34198 15.8714 6.63963L16.127 5.45708C15.7768 5.33051 15.3266 5.2093 14.7661 5.2093C13.3283 5.2093 12.3171 5.96764 12.309 7.05313ZM18.5836 5.3112C18.3047 5.3112 18.0696 5.47263 17.9647 5.7204L15.7827 10.8899H17.3091L17.6129 10.057H19.4781L19.6543 10.8899H20.9996L19.8257 5.3112H18.5836ZM18.7971 6.81822L19.2376 8.91304H18.0312L18.7971 6.81822ZM10.4583 5.3112L9.25517 10.8899H10.7096L11.9122 5.3112H10.4583ZM8.3066 5.3112L6.79266 9.10825L6.18028 5.87969C6.1084 5.51929 5.82464 5.3112 5.50953 5.3112H3.03459L3 5.47317C3.50807 5.58257 4.08532 5.75902 4.43502 5.9478C4.64906 6.0631 4.71013 6.16393 4.7804 6.43798L5.9403 10.8899H7.47747L9.83404 5.3112H8.3066Z"
+                                                            fill="white" />
+                                                        <defs>
+                                                            <linearGradient id="visa-grad-1" x1="10.7812" y1="16"
+                                                                x2="15.6708" y2="0.32624"
+                                                                gradientUnits="userSpaceOnUse">
+                                                                <stop stop-color="#222357" />
+                                                                <stop offset="1" stop-color="#254AA5" />
+                                                            </linearGradient>
+                                                        </defs>
+                                                    </svg>
+                                                </div>
+                                                <!-- Card info -->
+                                                <div class="flex flex-col gap-1 grow shrink-0 basis-0 min-w-0">
+                                                    <span
+                                                        class="text-sm font-semibold text-gray-900 dark:text-gray-100">Rad
+                                                        Roofing Ltd •••• 5612</span>
+                                                    <span
+                                                        class="text-sm font-normal text-gray-500 dark:text-gray-400">Expiration
+                                                        12/2026</span>
+                                                </div>
+                                                <!-- Actions -->
+                                                <button type="button"
+                                                    class="shrink-0 rounded-md p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-600 transition-colors dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                        fill="currentColor" class="size-4">
+                                                        <path
+                                                            d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                            <!-- Card row 2 -->
+                                            <div
+                                                class="flex items-center gap-6 p-3 self-stretch rounded-lg bg-gray-50 dark:bg-white/5">
+                                                <!-- Brand badge -->
+                                                <div class="flex flex-col items-start p-2">
+                                                    <svg width="24" height="16" viewBox="0 0 128 86" fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg">
+                                                        <rect width="128" height="86" rx="4" fill="#01326F" />
+                                                        <path d="M75.4894 21.7739H51.8672V64.2265H75.4894V21.7739Z"
+                                                            fill="#FF5F00" />
+                                                        <path
+                                                            d="M53.3672 43.005C53.3628 38.916 54.2889 34.8795 56.0754 31.2013C57.8619 27.5231 60.4619 24.2997 63.6785 21.775C59.6958 18.645 54.9128 16.6987 49.8763 16.1584C44.8397 15.6181 39.7528 16.5057 35.1969 18.7198C30.6409 20.9338 26.7998 24.385 24.1124 28.6788C21.4251 32.9726 20 37.9358 20 43.0013C20 48.0667 21.4251 53.03 24.1124 57.3238C26.7998 61.6176 30.6409 65.0687 35.1969 67.2828C39.7528 69.4968 44.8397 70.3844 49.8763 69.8441C54.9128 69.3039 59.6958 67.3575 63.6785 64.2276C60.4628 61.7037 57.8635 58.4814 56.077 54.8046C54.2906 51.1278 53.3639 47.0928 53.3672 43.005Z"
+                                                            fill="#EB001B" />
+                                                        <path
+                                                            d="M107.361 43.0037C107.361 48.0696 105.935 53.0331 103.247 57.3271C100.559 61.621 96.7177 65.0721 92.1612 67.2859C87.6047 69.4996 82.5173 70.3866 77.4804 69.8456C72.4436 69.3045 67.6606 67.3572 63.6782 64.2263C66.8926 61.7002 69.4912 58.477 71.2781 54.8C73.065 51.123 73.9935 47.0882 73.9935 43C73.9935 38.9118 73.065 34.877 71.2781 31.2C69.4912 27.523 66.8926 24.2998 63.6782 21.7737C67.6606 18.6428 72.4436 16.6955 77.4804 16.1544C82.5173 15.6134 87.6047 16.5004 92.1612 18.7141C96.7177 20.9279 100.559 24.379 103.247 28.6729C105.935 32.9669 107.361 37.9304 107.361 42.9963V43.0037Z"
+                                                            fill="#F79E1B" />
+                                                    </svg>
+                                                </div>
+                                                <!-- Card info -->
+                                                <div class="flex flex-col gap-1 grow shrink-0 basis-0 min-w-0">
+                                                    <span
+                                                        class="text-sm font-semibold text-gray-900 dark:text-gray-100">Sunset
+                                                        Industries •••• 4892</span>
+                                                    <span
+                                                        class="text-sm font-normal text-gray-500 dark:text-gray-400">Expiration
+                                                        08/2027</span>
+                                                </div>
+                                                <!-- Actions -->
+                                                <button type="button"
+                                                    class="shrink-0 rounded-md p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-600 transition-colors dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                        fill="currentColor" class="size-4">
+                                                        <path
+                                                            d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <!-- Add card -->
+                                        <button type="button"
+                                            class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                fill="currentColor" class="size-4">
+                                                <path
+                                                    d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+                                            </svg>
+                                            Add Card
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <!-- Section separator -->
+                            <div class="h-px bg-gray-200 dark:bg-white/10"></div>
+
+                            <!-- ===== SECTION 2: PAYMENT ACCOUNT DETAILS ===== -->
+                            <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-2 xl:gap-10">
+
+                                <!-- Left: title + description -->
+                                <div
+                                    class="flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-28">
+                                    <div class="flex flex-col gap-1">
+                                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Payment
+                                            Account Details</h3>
+                                        <p class="text-sm font-normal text-gray-500 dark:text-gray-400">Account
+                                            details for payment acceptance.</p>
+                                    </div>
+                                </div>
+
+                                <!-- Right: payment account details -->
+                                <div class="flex w-full flex-col items-start gap-6 min-w-0">
+
+                                    <!-- Bank Accounts -->
+                                    <div class="flex flex-col w-full gap-3">
+                                        <h4 class="text-sm font-medium text-gray-900 pb-2 dark:text-gray-100">Bank
+                                            Accounts
+                                        </h4>
+
+                                        <!-- Empty state -->
+                                        <div
+                                            class="flex flex-col p-4  gap-2 rounded-lg border border-dashed border-gray-300  dark:border-white/20">
+
+                                            <div class="text-left">
+                                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">No
+                                                    Bank Accounts</p>
+                                                <p class="text-sm font-normal text-gray-500 dark:text-gray-400">Get
+                                                    started by adding a new bank account.</p>
+                                            </div>
+                                        </div>
+
+                                        <!-- Add bank account -->
+                                        <button type="button"
+                                            class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                fill="currentColor" class="size-4">
+                                                <path
+                                                    d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+                                            </svg>
+                                            Add Bank Account
+                                        </button>
+
+                                    </div>
+
+                                    <!-- Separator -->
+                                    <div class="h-px bg-gray-200 dark:bg-white/10"></div>
+
+                                    <!-- Address for Checks -->
+                                    <div class="flex flex-col w-full gap-2">
+                                        <h4 class="text-sm font-medium text-gray-900 pb-2 dark:text-gray-100 pb-2">
+                                            Address for
+                                            Checks</h4>
+
+                                        <!-- Address item -->
+                                        <div
+                                            class="flex items-start sm:items-center gap-3 sm:gap-6 p-3 self-stretch rounded-lg bg-gray-50 dark:bg-white/5">
+                                            <!-- Brand badge -->
+                                            <div class="flex flex-col items-start p-2">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                    viewBox="0 0 20 20" fill="none">
+                                                    <path
+                                                        d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z"
+                                                        fill="#6B7280" />
+                                                </svg>
+                                            </div>
+                                            <!-- Card info -->
+                                            <div class="flex flex-col gap-1 grow shrink-0 basis-0 min-w-0">
+                                                <span
+                                                    class="text-sm font-semibold text-gray-900 dark:text-gray-100">Sunset
+                                                    Industries •••• 4892</span>
+                                                <span
+                                                    class="text-sm font-normal text-gray-500 dark:text-gray-400">Expiration
+                                                    08/2027</span>
+                                            </div>
+                                            <!-- Actions -->
+                                            <button type="button"
+                                                class="shrink-0 rounded-md p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-600 transition-colors dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                    fill="currentColor" class="size-4">
+                                                    <path
+                                                        d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+                                                </svg>
+                                            </button>
+                                        </div>
+
+
+                                        <!-- Add address -->
+                                        <button type="button"
+                                            class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                fill="currentColor" class="size-4">
+                                                <path
+                                                    d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
+                                            </svg>
+                                            Add Address
+                                        </button>
+
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <!-- /tab-payment-methods -->
+
+                    <!-- Tab: Global Preferences (hidden) -->
+                    <div id="tab-global-preferences" class="tab-panel hidden">
+                        <div class="flex flex-col items-center justify-center gap-2 px-6 py-16 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-10 text-gray-300 dark:text-gray-600">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M12 21a9.004 9.004 0 0 0 8.716-6.747M12 21a9.004 9.004 0 0 1-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 0 1 7.843 4.582M12 3a8.997 8.997 0 0 0-7.843 4.582m15.686 0A11.953 11.953 0 0 1 12 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0 1 21 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0 1 12 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 0 1 3 12c0-1.605.42-3.113 1.157-4.418" />
+                            </svg>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Global Preferences</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Configure global payment settings here.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Tab: Advanced Settings (hidden) -->
+                    <div id="tab-advanced-settings" class="tab-panel hidden">
+                        <div class="flex flex-col items-center justify-center gap-2 px-6 py-16 text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                stroke="currentColor" class="size-10 text-gray-300 dark:text-gray-600">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.991l1.004.827c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                    d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+                            </svg>
+                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Advanced Settings</p>
+                            <p class="text-sm text-gray-500 dark:text-gray-400">Fine-tune advanced configuration
+                                options.</p>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- /payment-preferences-card -->
+
+            </div>
+        </main>
+    </div>
+    <!-- /main-content-wrapper -->
+
+    <!-- ===== VERIFY SMALL DEPOSIT MODAL ===== -->
+    <el-dialog>
+        <dialog id="pp-verify-deposit-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="flex h-14 self-stretch flex-col items-end justify-end px-6 pt-4">
+                        <button type="button" command="close" commandfor="pp-verify-deposit-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Content -->
+                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+                        <div class="flex flex-col items-center text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44"
+                                fill="none" aria-hidden="true">
+                                <path
+                                    d="M21.2374 4.35593C21.6993 4.04802 22.301 4.04802 22.7629 4.35593L39.2629 15.3559C39.8947 15.7772 40.0655 16.6309 39.6442 17.2627C39.223 17.8946 38.3693 18.0653 37.7374 17.6441L22.0001 7.15254L6.26286 17.6441C5.63101 18.0653 4.77731 17.8946 4.35608 17.2627C3.93484 16.6309 4.10558 15.7772 4.73743 15.3559L21.2374 4.35593Z"
+                                    fill="#3B82F6" />
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M37.125 18.9429V37.125H38.5C39.2594 37.125 39.875 37.7406 39.875 38.5C39.875 39.2594 39.2594 39.875 38.5 39.875H5.5C4.74061 39.875 4.125 39.2594 4.125 38.5C4.125 37.7406 4.74061 37.125 5.5 37.125H6.875V18.9429C6.875 18.2658 7.36794 17.6895 8.03686 17.5845C12.5873 16.8705 17.2508 16.5 22 16.5C26.7492 16.5 31.4127 16.8705 35.9631 17.5845C36.6321 17.6895 37.125 18.2658 37.125 18.9429ZM23.375 23.375C23.375 22.6156 22.7594 22 22 22C21.2406 22 20.625 22.6156 20.625 23.375V35.75C20.625 36.5094 21.2406 37.125 22 37.125C22.7594 37.125 23.375 36.5094 23.375 35.75V23.375ZM28.875 22C29.6344 22 30.25 22.6156 30.25 23.375V35.75C30.25 36.5094 29.6344 37.125 28.875 37.125C28.1156 37.125 27.5 36.5094 27.5 35.75V23.375C27.5 22.6156 28.1156 22 28.875 22ZM16.5 23.375C16.5 22.6156 15.8844 22 15.125 22C14.3656 22 13.75 22.6156 13.75 23.375V35.75C13.75 36.5094 14.3656 37.125 15.125 37.125C15.8844 37.125 16.5 36.5094 16.5 35.75V23.375Z"
+                                    fill="#3B82F6" />
+                                <path
+                                    d="M22 14.4375C23.1391 14.4375 24.0625 13.5141 24.0625 12.375C24.0625 11.2359 23.1391 10.3125 22 10.3125C20.8609 10.3125 19.9375 11.2359 19.9375 12.375C19.9375 13.5141 20.8609 14.4375 22 14.4375Z"
+                                    fill="#3B82F6" />
+                            </svg>
+                            <div class="mt-6 flex flex-col items-center gap-2">
+                                <h2 class="text-center text-lg/6 font-semibold text-gray-900">
+                                    Bank Account Verification
+                                </h2>
+                                <p class="text-center text-sm/5 font-normal text-gray-500">
+                                    This step ensures funds are settling to your account. Once the deposit amount is confirmed, set up for automatic card processing will be complete.
+                                </p>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-2">
+                            <label for="pp-deposit-amount"
+                                class="block text-sm/6 font-medium text-gray-900 dark:text-white">Enter exact deposit amount</label>
+                            <div class="grid grid-cols-1">
+                                <input id="pp-deposit-amount" type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*" placeholder="0.00"
+                                    aria-invalid="false" aria-describedby="pp-deposit-amount-error"
+                                    class="col-start-1 row-start-1 block w-full rounded-md bg-white py-2 pr-10 pl-3 text-sm font-normal text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                <svg id="pp-deposit-amount-error-icon" viewBox="0 0 16 16" fill="currentColor"
+                                    aria-hidden="true"
+                                    class="pointer-events-none col-start-1 row-start-1 mr-3 hidden size-5 self-center justify-self-end text-red-500 sm:size-4">
+                                    <path
+                                        d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                                        clip-rule="evenodd" fill-rule="evenodd" />
+                                </svg>
+                            </div>
+                            <p id="pp-deposit-amount-error" class="hidden text-sm text-red-600 dark:text-red-400">
+                                Only numbers and one decimal point are allowed.
+                            </p>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="flex justify-end gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                        <button type="button" command="close" commandfor="pp-verify-deposit-dialog"
+                            class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">
+                            Cancel
+                        </button>
+                        <button id="pp-verify-deposit-btn" type="button" command="close"
+                            commandfor="pp-verify-deposit-dialog" disabled
+                            class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">
+                            Verify
+                        </button>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
+    <!-- Tab switching script -->
+    <script>
+        (function () {
+            var tabs = document.querySelectorAll('.tab-btn');
+            var panels = document.querySelectorAll('.tab-panel');
+
+            tabs.forEach(function (tab) {
+                tab.addEventListener('click', function () {
+                    // Deactivate all tabs
+                    tabs.forEach(function (t) {
+                        t.classList.remove('border-blue-500', 'text-blue-600', 'dark:text-blue-400', 'dark:border-blue-400');
+                        t.classList.add('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+                        t.removeAttribute('aria-current');
+                    });
+                    // Activate clicked tab
+                    tab.classList.add('border-blue-500', 'text-blue-600', 'dark:text-blue-400', 'dark:border-blue-400');
+                    tab.classList.remove('border-transparent', 'text-gray-500', 'dark:text-gray-400');
+                    tab.setAttribute('aria-current', 'page');
+
+                    // Hide all panels, show target
+                    var targetId = 'tab-' + tab.getAttribute('data-tab');
+                    panels.forEach(function (panel) {
+                        panel.classList.add('hidden');
+                    });
+                    var target = document.getElementById(targetId);
+                    if (target) target.classList.remove('hidden');
+                });
+            });
+        })();
+
+        (function () {
+            var input = document.getElementById('pp-deposit-amount');
+            var verifyBtn = document.getElementById('pp-verify-deposit-btn');
+            var errorMsg = document.getElementById('pp-deposit-amount-error');
+            var errorIcon = document.getElementById('pp-deposit-amount-error-icon');
+            if (!input || !verifyBtn || !errorMsg || !errorIcon) return;
+            var hasError = false;
+
+            function setError(show) {
+                hasError = show;
+                input.setAttribute('aria-invalid', show ? 'true' : 'false');
+                errorMsg.classList.toggle('hidden', !show);
+                errorIcon.classList.toggle('hidden', !show);
+                input.classList.toggle('text-red-900', show);
+                input.classList.toggle('outline-red-300', show);
+                input.classList.toggle('placeholder:text-red-300', show);
+                input.classList.toggle('focus:outline-red-600', show);
+                input.classList.toggle('dark:text-red-300', show);
+                input.classList.toggle('dark:outline-red-500/40', show);
+                input.classList.toggle('dark:placeholder:text-red-400/70', show);
+                input.classList.toggle('dark:focus:outline-red-500', show);
+            }
+
+            function updateState() {
+                verifyBtn.disabled = hasError || !/\d/.test(input.value);
+            }
+
+            function sanitizeDecimal(raw) {
+                var cleaned = raw.replace(/[^0-9.]/g, '');
+                var firstDot = cleaned.indexOf('.');
+                if (firstDot === -1) return cleaned;
+                return cleaned.slice(0, firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g, '');
+            }
+
+            input.addEventListener('focus', function () {
+                setTimeout(function () {
+                    var len = input.value.length;
+                    input.setSelectionRange(len, len);
+                }, 0);
+            });
+
+            input.addEventListener('click', function () {
+                var len = input.value.length;
+                input.setSelectionRange(len, len);
+            });
+
+            input.addEventListener('keydown', function (event) {
+                var key = event.key;
+                var allowControl = key === 'Tab' || key === 'ArrowLeft' || key === 'ArrowRight' || key === 'Home' || key === 'End';
+
+                if (allowControl) return;
+
+                if (key === 'Backspace' || key === 'Delete') return;
+                if (key >= '0' && key <= '9') {
+                    setError(false);
+                    updateState();
+                    return;
+                }
+                if (key === '.') {
+                    if (input.value.indexOf('.') !== -1) {
+                        event.preventDefault();
+                        setError(true);
+                        updateState();
+                    } else {
+                        setError(false);
+                        updateState();
+                    }
+                    return;
+                }
+
+                if (key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {
+                    event.preventDefault();
+                    setError(true);
+                    updateState();
+                }
+            });
+
+            input.addEventListener('paste', function (event) {
+                event.preventDefault();
+                var text = (event.clipboardData || window.clipboardData).getData('text') || '';
+                var sanitized = sanitizeDecimal(text);
+                var hasInvalid = text !== sanitized;
+                input.value = sanitized;
+                setError(hasInvalid);
+                updateState();
+            });
+
+            input.addEventListener('input', function () {
+                var raw = input.value;
+                var clean = sanitizeDecimal(raw);
+                var hasInvalid = raw !== clean;
+                input.value = clean;
+                setError(hasInvalid);
+                updateState();
+            });
+
+            updateState();
+        })();
+    </script>
+
+</body>
+
+</html>
