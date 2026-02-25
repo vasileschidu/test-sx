@@ -839,37 +839,8 @@
                 <div class="h-px bg-gray-200 dark:bg-white/10"></div>
 
                 <!-- Breadcrumbs row -->
-                <div class="flex flex-wrap items-center gap-3 sm:gap-6">
-                    <h2 class="text-lg sm:text-xl font-semibold text-gray-900 dark:text-white">SMART Exchange</h2>
-                    <div class="hidden sm:block h-5 w-px bg-gray-300 dark:bg-gray-600"></div>
-                    <nav class="hidden sm:flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                            class="size-5 text-gray-400 dark:text-gray-500">
-                            <path fill-rule="evenodd"
-                                d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z"
-                                clip-rule="evenodd" />
-                        </svg>
-
-
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                            class="size-5 text-gray-300 dark:text-gray-600">
-                            <path fill-rule="evenodd"
-                                d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                clip-rule="evenodd" />
-                        </svg>
-
-                        <a href="#"
-                            class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors dark:text-gray-400 dark:hover:text-gray-200">Payments</a>
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                            class="size-5 text-gray-300 dark:text-gray-600">
-                            <path fill-rule="evenodd"
-                                d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                clip-rule="evenodd" />
-                        </svg>
-                        <a href="#"
-                            class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors dark:text-gray-400 dark:hover:text-gray-200">Payment
-                            Preferences</a>
-                    </nav>
+                <div class="flex flex-wrap items-center">
+                    <nav id="dynamic-breadcrumbs" class="hidden sm:flex items-center gap-2"></nav>
                 </div>
 
 
@@ -2440,6 +2411,45 @@
 
     <!-- Copy-to-clipboard with animated tooltip -->
     <script>
+        (function () {
+            var nav = document.getElementById('dynamic-breadcrumbs');
+            if (!nav) return;
+
+            var path = (window.location.pathname || '').split('/').pop() || '';
+            var configs = {
+                'smart-exchange.html': [
+                    { label: 'SMART Exchange', href: 'smart-exchange.html' }
+                ],
+                'payment-preferences.html': [
+                    { label: 'SMART Exchange', href: 'smart-exchange.html' },
+                    { label: 'Payment Preferences', href: null }
+                ]
+            };
+
+            var items = configs[path] || [
+                { label: 'SMART Exchange', href: 'smart-exchange.html' }
+            ];
+
+            var html = '' +
+                '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-400 dark:text-gray-500">' +
+                '  <path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd" />' +
+                '</svg>';
+
+            items.forEach(function (item, index) {
+                html += '' +
+                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-300 dark:text-gray-600">' +
+                    '  <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
+                    '</svg>';
+                if (item.href && index !== items.length - 1) {
+                    html += '<a href="' + item.href + '" class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors dark:text-gray-400 dark:hover:text-gray-200">' + item.label + '</a>';
+                } else {
+                    html += '<span class="text-sm font-medium text-gray-900 dark:text-white">' + item.label + '</span>';
+                }
+            });
+
+            nav.innerHTML = html;
+        })();
+
         document.addEventListener('click', function (e) {
             var btn = e.target.closest('[data-copy-id]');
             if (!btn) return;
