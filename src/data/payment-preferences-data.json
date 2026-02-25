@@ -1,0 +1,53 @@
+{
+  "customers": [
+    { "id": "rad-roofing-ltd", "name": "Rad Roofing Ltd", "vendorEntries": ["Rad Roof", "Rad Roof - West Division"] },
+    { "id": "blueprint-architecture-inc", "name": "BluePrint Architecture Inc", "vendorEntries": ["BluePrint Arc", "BluePrint Arc - Capital Projects"] },
+    { "id": "greenscape-gardens-eu", "name": "GreenScape Gardens EU", "vendorEntries": ["GreenScape"] },
+    { "id": "technova-solutions-llc", "name": "TechNova Solutions LLC", "vendorEntries": ["TechNova", "TechNova - Enterprise Services"] },
+    { "id": "clearview-windows-uk", "name": "ClearView Windows UK", "vendorEntries": ["ClearView"] },
+    { "id": "steelcore-manufacturing", "name": "SteelCore Manufacturing", "vendorEntries": ["SteelCore", "SteelCore - Fabrication"] },
+    { "id": "mapletech-services-ca", "name": "MapleTech Services CA", "vendorEntries": ["MapleTech"] },
+    { "id": "apex-builders-group", "name": "Apex Builders Group", "vendorEntries": ["Apex Build", "Apex Build - Riverside Program"] },
+    { "id": "quickprint-express", "name": "QuickPrint Express", "vendorEntries": ["QuickPrint"] },
+    { "id": "soltec-energia-mx", "name": "SolTec Energía MX", "vendorEntries": ["SolTec"] },
+    { "id": "northstar-logistics", "name": "NorthStar Logistics", "vendorEntries": ["NorthStar"] },
+    { "id": "pixelforge-design-studio", "name": "PixelForge Design Studio", "vendorEntries": ["PixelForge"] },
+    { "id": "ironclad-security-inc", "name": "IronClad Security Inc", "vendorEntries": ["IronClad"] },
+    { "id": "freshbrew-coffee-co", "name": "FreshBrew Coffee Co", "vendorEntries": ["FreshBrew"] },
+    { "id": "voltedge-electrical", "name": "VoltEdge Electrical", "vendorEntries": ["VoltEdge"] },
+    { "id": "coralnet-it-solutions-au", "name": "CoralNet IT Solutions AU", "vendorEntries": ["CoralNet"] },
+    { "id": "summit-hr-consulting", "name": "Summit HR Consulting", "vendorEntries": ["Summit HR"] },
+    { "id": "titan-infrastructure-corp", "name": "Titan Infrastructure Corp", "vendorEntries": ["Titan Infra"] },
+    { "id": "brightsign-media", "name": "BrightSign Media", "vendorEntries": ["BrightSign"] },
+    { "id": "kazentech-ltd-jp", "name": "KazenTech Ltd JP", "vendorEntries": ["KazenTech"] },
+    { "id": "cardona-ventures-llc", "name": "Cardona Ventures LLC", "vendorEntries": ["Cardona Vent."] },
+    { "id": "marvel-industries-inc", "name": "MarVel Industries Inc", "vendorEntries": ["MarVel Ind."] },
+    { "id": "zerocarbon-solutions-eu", "name": "ZeroCarbon Solutions EU", "vendorEntries": ["ZeroCarbon"] },
+    { "id": "orion-technology-group", "name": "Orion Technology Group", "vendorEntries": ["Orion Tech", "Orion Tech - Field Ops"] },
+    { "id": "flowtrack-analytics", "name": "FlowTrack Analytics", "vendorEntries": ["FlowTrack"] },
+    { "id": "dynaxpro-corp", "name": "DynaxPro Corp", "vendorEntries": ["DynaxPro"] },
+    { "id": "westcargo-freight-llc", "name": "WestCargo Freight LLC", "vendorEntries": ["WestCargo", "WestCargo - Priority Lane"] }
+  ],
+  "bankAccounts": [
+    { "id": "wf-8419", "name": "Wells Fargo Account", "last4": "8419" },
+    { "id": "citi-3674", "name": "Citibank Account", "last4": "3674" }
+  ],
+  "checkAddresses": [
+    {
+      "id": "addr-sf",
+      "displayName": "San Francisco Office",
+      "name": "Nexus Financial Group",
+      "cityState": "San Francisco, CA",
+      "summary": "1200 Market Street, Suite 400, San Francisco, CA 94102",
+      "address": "1200 Market Street\nSuite 400\nSan Francisco, CA 94102\nUnited States"
+    },
+    {
+      "id": "addr-ny",
+      "displayName": "New York Office",
+      "name": "Nexus Financial Group",
+      "cityState": "New York, NY",
+      "summary": "388 Greenwich Street, Floor 12, New York, NY 10013",
+      "address": "388 Greenwich Street\nFloor 12\nNew York, NY 10013\nUnited States"
+    }
+  ]
+}

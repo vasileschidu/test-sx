@@ -121,6 +121,7 @@
   var ICON_CHEVRON_RIGHT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
 
   var ICON_EYE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-blue-600"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" /></svg>';
+  var ICON_EYE_SLASH = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 text-blue-600"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.28033 2.21967C2.98744 1.92678 2.51256 1.92678 2.21967 2.21967C1.92678 2.51256 1.92678 2.98744 2.21967 3.28033L12.7197 13.7803C13.0126 14.0732 13.4874 14.0732 13.7803 13.7803C14.0732 13.4874 14.0732 13.0126 13.7803 12.7197L12.4577 11.397C13.438 10.5863 14.1937 9.51366 14.6176 8.2863C14.681 8.10274 14.6811 7.90313 14.6179 7.71951C13.672 4.97316 11.0653 3 7.99777 3C6.85414 3 5.77457 3.27425 4.82123 3.76057L3.28033 2.21967Z" /><path d="M6.47602 5.41536L7.61147 6.55081C7.73539 6.51767 7.86563 6.5 8 6.5C8.82843 6.5 9.5 7.17157 9.5 8C9.5 8.13437 9.48233 8.26461 9.44919 8.38853L10.5846 9.52398C10.8486 9.07734 11 8.55636 11 8C11 6.34315 9.65685 5 8 5C7.44364 5 6.92266 5.15145 6.47602 5.41536Z" /><path d="M7.81206 10.9942L9.62754 12.8097C9.10513 12.9341 8.56002 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C1.63675 6.96935 2.01588 6.28191 2.49314 5.67529L5.00579 8.18794C5.09895 9.69509 6.30491 10.901 7.81206 10.9942Z" /></svg>';
 
   var ICON_DOCUMENT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5 text-gray-400 dark:text-gray-500 shrink-0"><path fill-rule="evenodd" d="M4.5 2A1.5 1.5 0 0 0 3 3.5v13A1.5 1.5 0 0 0 4.5 18h11a1.5 1.5 0 0 0 1.5-1.5V7.621a1.5 1.5 0 0 0-.44-1.06l-4.12-4.122A1.5 1.5 0 0 0 11.378 2H4.5Zm2.25 8.5a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Zm0 3a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Z" clip-rule="evenodd" /></svg>';
 
@@ -173,6 +174,33 @@
       return dateStr + ' ' + hour12 + ':' + minute + ' ' + ampm + ' (EST)';
     }
     return dateStr;
+  }
+
+  function getDigits(value) {
+    return String(value || '').replace(/\D/g, '');
+  }
+
+  function formatCard16(cardDigits) {
+    var trimmed = String(cardDigits || '').slice(0, 16);
+    return trimmed.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+  }
+
+  function getRevealedCardNumber(info, fallbackEnding) {
+    var fullDigits = getDigits(info && info.fullCardNumber);
+    if (fullDigits.length >= 16) return formatCard16(fullDigits);
+
+    var baseDigits = getDigits(info && info.cardNumber) || getDigits(fallbackEnding);
+    var last4 = baseDigits.slice(-4) || '4242';
+    var synthetic16 = (last4 + last4 + last4 + last4);
+    return formatCard16(synthetic16);
+  }
+
+  function getRevealedCvc2(info) {
+    var cvcFull = getDigits(info && info.cvcFull);
+    if (cvcFull.length >= 3) return cvcFull.slice(0, 3);
+    var cvcDigits = getDigits(info && info.cvc);
+    if (cvcDigits.length >= 3) return cvcDigits.slice(0, 3);
+    return '999';
   }
 
   // Returns entries filtered to the given tab key using TAB_STATUS_FILTER.
@@ -293,9 +321,11 @@
     }
 
     if (method === 'Card') {
+      var endingDigits = getDigits(ending);
+      var last4 = endingDigits ? endingDigits.slice(-4) : String(ending || '').slice(-4);
       return '<span class="inline-flex items-center gap-x-2">' +
         ICON_VISA +
-        '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(ending) + '</span>' +
+        '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(last4) + '</span>' +
         '</span>';
     }
 
@@ -466,9 +496,22 @@
           '<dd class="flex-1">' + ICON_VISA + '</dd>' +
         '</div>';
 
-      rows += buildPaymentInfoRow('Card Number', '&bull;&bull;&bull;&bull; ' + escapeHtml(info.cardNumber || ''), true);
+      var maskedLast4 = getDigits(info.cardNumber) || getDigits(entry.paymentMethodEnding).slice(-4) || '0000';
+      var maskedCardNumber = '•••• ' + maskedLast4.slice(-4);
+      var revealedCardNumber = getRevealedCardNumber(info, entry.paymentMethodEnding);
+      rows += buildPaymentInfoRow(
+        'Card Number',
+        '<span data-mask-field="card-number" class="inline-block whitespace-nowrap" data-masked="' + escapeHtml(maskedCardNumber) + '" data-revealed="' + escapeHtml(revealedCardNumber) + '">' + escapeHtml(maskedCardNumber) + '</span>',
+        true
+      );
       rows += buildPaymentInfoRow('Expires', escapeHtml(info.expires || ''), true);
-      rows += buildPaymentInfoRow('CVC2', '&bull;&bull;&bull;', true);
+      var maskedCvc = '•••';
+      var revealedCvc = getRevealedCvc2(info);
+      rows += buildPaymentInfoRow(
+        'CVC2',
+        '<span data-mask-field="cvc" data-masked="' + escapeHtml(maskedCvc) + '" data-revealed="' + escapeHtml(revealedCvc) + '">' + escapeHtml(maskedCvc) + '</span>',
+        true
+      );
 
     } else if (info.type === 'ach') {
       typeLabel = 'ACH';
@@ -492,9 +535,14 @@
     }
 
     var revealLink = info.type === 'card'
-      ? '<a href="#" class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">' + ICON_EYE + ' Reveal Details</a>'
+      ? (
+        '<button type="button" data-card-reveal-toggle data-revealed="false" class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">' +
+          '<span data-icon="reveal">' + ICON_EYE + '</span>' +
+          '<span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span>' +
+          '<span data-card-reveal-text>Reveal Details</span>' +
+        '</button>'
+      )
       : '';
-
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
@@ -507,18 +555,18 @@
           // Chevron between label and column
           ICON_CHEVRON_RIGHT +
           // Detail column: w-[380px], gap-2 — matches Figma layout_UTWGTK
-          '<div class="flex flex-col gap-2 w-[380px]">' +
+          '<div ' + (info.type === 'card' ? 'data-payment-info-card ' : '') + 'class="flex flex-col gap-2 w-[380px]">' +
             // Head: flex gap-6 (24px), both children fill — matches Figma layout_MFYG14
             '<div class="flex gap-6">' +
               '<div class="flex-1 text-sm font-medium text-gray-900 dark:text-white">' + titleLabel + '</div>' +
               '<div class="flex-1 flex items-center">' + revealLink + '</div>' +
             '</div>' +
-            // Separator — matches Figma Separator component
-            '<div class="border-t border-gray-200 dark:border-white/10"></div>' +
-            // Rows — each row is flex gap-6 with both children flex-1
-            '<dl class="flex flex-col gap-3">' +
-              rows +
-            '</dl>' +
+            '<div>' +
+              '<div class="border-t border-gray-200 dark:border-white/10"></div>' +
+              '<dl class="mt-2 flex flex-col gap-3">' +
+                rows +
+              '</dl>' +
+            '</div>' +
           '</div>' +
         '</div>' +
       '</div>'
@@ -736,6 +784,32 @@
     table.dataset.toggleBound = '1';
 
     table.addEventListener('click', function (event) {
+      var revealBtn = event.target.closest('[data-card-reveal-toggle]');
+      if (revealBtn && table.contains(revealBtn)) {
+        event.preventDefault();
+        var cardSection = revealBtn.closest('[data-payment-info-card]');
+        if (!cardSection) return;
+
+        var revealed = revealBtn.getAttribute('data-revealed') === 'true';
+        revealed = !revealed;
+        revealBtn.setAttribute('data-revealed', String(revealed));
+
+        var maskFields = cardSection.querySelectorAll('[data-mask-field]');
+        maskFields.forEach(function (field) {
+          var maskedValue = field.getAttribute('data-masked') || '';
+          var revealedValue = field.getAttribute('data-revealed') || '';
+          field.textContent = revealed ? (revealedValue || maskedValue) : maskedValue;
+        });
+
+        var revealIcon = revealBtn.querySelector('[data-icon="reveal"]');
+        var hideIcon = revealBtn.querySelector('[data-icon="hide"]');
+        var text = revealBtn.querySelector('[data-card-reveal-text]');
+        if (revealIcon) revealIcon.classList.toggle('hidden', revealed);
+        if (hideIcon) hideIcon.classList.toggle('hidden', !revealed);
+        if (text) text.textContent = revealed ? 'Hide Details' : 'Reveal Details';
+        return;
+      }
+
       var button = event.target.closest('[data-row-toggle]');
       if (!button || !table.contains(button)) return;
       toggleRow(button);
