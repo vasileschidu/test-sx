@@ -28,7 +28,7 @@
     <!-- Tailwind Plus Elements -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
     <script src="../../../src/scripts/sidebar.js" defer></script>
-    <script src="../../../src/scripts/payment-preferences-components.js" defer></script>
+    <script src="../../../src/scripts/payment-preferences-components.js"></script>
     <script src="../../../src/scripts/payment-preferences-tabs.js" defer></script>
 </head>
 
@@ -2905,14 +2905,48 @@
                 editCheckCountryFlag.className = 'fi fi-' + code + ' pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm';
             }
 
+            function buildDefaultBankFormValues() {
+                var index = bankAccounts.length + 1;
+                var accountDigits = String(400000000000 + index).slice(-12);
+                return {
+                    accountName: 'Nexus Financial Group',
+                    routing: '021000021',
+                    accountNumber: formatAccountNumber(accountDigits),
+                    nickname: 'My Bank Account ' + index
+                };
+            }
+
+            function prefillAddBankForm() {
+                var defaults = buildDefaultBankFormValues();
+                nameInput.value = defaults.accountName;
+                routingInput.value = defaults.routing;
+                accountInput.value = defaults.accountNumber;
+                confirmAccountInput.value = defaults.accountNumber;
+                nicknameInput.value = defaults.nickname;
+            }
+
+            function buildDefaultCheckFormValues() {
+                var index = checkAddresses.length + 1;
+                return {
+                    nickname: 'My Check Address ' + index,
+                    line1: (1100 + index) + ' Market Street',
+                    line2: 'Suite ' + (300 + index),
+                    city: 'San Francisco',
+                    state: 'CA',
+                    zip: '9410' + Math.min(index, 9),
+                    country: 'us'
+                };
+            }
+
             function resetAddCheckForm() {
-                addCheckNicknameInput.value = '';
-                addCheckLine1Input.value = '';
-                addCheckLine2Input.value = '';
-                addCheckCityInput.value = '';
-                addCheckStateInput.value = '';
-                addCheckZipInput.value = '';
-                addCheckCountrySelect.value = 'us';
+                var defaults = buildDefaultCheckFormValues();
+                addCheckNicknameInput.value = defaults.nickname;
+                addCheckLine1Input.value = defaults.line1;
+                addCheckLine2Input.value = defaults.line2;
+                addCheckCityInput.value = defaults.city;
+                addCheckStateInput.value = defaults.state;
+                addCheckZipInput.value = defaults.zip;
+                addCheckCountrySelect.value = defaults.country;
                 updateAddCheckCountryFlag();
             }
 
@@ -3346,9 +3380,19 @@
                 addCheckDialog.close();
             });
 
+            document.querySelectorAll('[command="show-modal"][commandfor="pp-add-bank-account-dialog"]').forEach(function (btn) {
+                btn.addEventListener('click', prefillAddBankForm);
+            });
+            document.querySelectorAll('[command="show-modal"][commandfor="pp-add-check-dialog"]').forEach(function (btn) {
+                btn.addEventListener('click', resetAddCheckForm);
+            });
+
+            dialog.addEventListener('close', prefillAddBankForm);
             addCheckDialog.addEventListener('close', resetAddCheckForm);
             editBankDialog.addEventListener('close', function () { editingBankAccountId = ''; });
             editCheckDialog.addEventListener('close', function () { editingCheckAddressId = ''; });
+            prefillAddBankForm();
+            resetAddCheckForm();
             updateAddCheckCountryFlag();
             updateEditCheckCountryFlag();
 
