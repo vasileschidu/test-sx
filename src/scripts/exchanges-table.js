@@ -14,6 +14,11 @@
     '/src/data/exchanges.json',
     './src/data/exchanges.json',
   ];
+  var CHECK_ADDRESSES_PATH_FALLBACKS = [
+    '../../../src/data/check-addresses.json',
+    '/src/data/check-addresses.json',
+    './src/data/check-addresses.json',
+  ];
   var TABLE_ID = 'exchanges-table';
   var TABLE_SCROLL_SELECTOR = '[data-table-scroll]';
   var ACTION_COLUMN_SELECTOR = '[data-action-column]';
@@ -1112,6 +1117,74 @@
     });
   }
 
+  function getCheckAddressPathCandidates() {
+    var candidates = CHECK_ADDRESSES_PATH_FALLBACKS.slice();
+    if (document.currentScript && document.currentScript.src) {
+      try {
+        candidates.unshift(new URL('../data/check-addresses.json', document.currentScript.src).toString());
+      } catch (err) {
+        // Ignore URL parse errors
+      }
+    }
+    return Array.from(new Set(candidates));
+  }
+
+  function normalizeCheckAddress(address) {
+    if (!address || typeof address !== 'object') return null;
+    var id = typeof address.id === 'string' ? address.id.trim() : '';
+    var displayName = typeof address.displayName === 'string' ? address.displayName.trim() : '';
+    var name = typeof address.name === 'string' ? address.name.trim() : '';
+    var fullAddress = typeof address.address === 'string' ? address.address.trim() : '';
+    var cityState = typeof address.cityState === 'string' ? address.cityState.trim() : '';
+    var summary = typeof address.summary === 'string' ? address.summary.trim() : '';
+    if (!id || !displayName || !name || !fullAddress) return null;
+    if (!cityState) {
+      var lines = fullAddress
+        .split('\n')
+        .map(function (line) { return line.trim(); })
+        .filter(Boolean);
+      cityState = lines.length > 1 ? lines[lines.length - 2] : (lines[0] || '');
+    }
+    if (!summary) {
+      var summaryLines = fullAddress
+        .split('\n')
+        .map(function (line) { return line.trim(); })
+        .filter(Boolean);
+      summary = summaryLines.slice(0, 3).join(', ');
+    }
+    if (!cityState) return null;
+    return {
+      id: id,
+      displayName: displayName,
+      name: name,
+      address: fullAddress,
+      cityState: cityState,
+      summary: summary,
+    };
+  }
+
+  function fetchCheckAddressesData() {
+    var paths = getCheckAddressPathCandidates();
+    var index = 0;
+
+    function tryNextPath() {
+      if (index >= paths.length) {
+        throw new Error('Failed to load check addresses from all candidate paths');
+      }
+      var path = paths[index++];
+      return fetchJsonFromPath(path).catch(function () {
+        return tryNextPath();
+      });
+    }
+
+    return tryNextPath().then(function (payload) {
+      if (!Array.isArray(payload)) return [];
+      return payload
+        .map(normalizeCheckAddress)
+        .filter(function (address) { return address !== null; });
+    });
+  }
+
   function fetchExchangesData() {
     var paths = getJsonPathCandidates();
     var index = 0;
@@ -1420,6 +1493,45 @@
     };
   }
 
+  function buildCheckAddressOptionHtml(address) {
+    return (
+      '<el-option value="' + escapeHtml(address.id) + '" class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
+        '<div class="flex items-center gap-3">' +
+          '<div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">' +
+              '<path d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z" fill="#6B7280" />' +
+            '</svg>' +
+          '</div>' +
+          '<div class="in-[el-selectedcontent]:hidden">' +
+            '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' + escapeHtml(address.displayName) + '</span>' +
+            '<span class="block text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(address.summary || address.cityState || '') + '</span>' +
+          '</div>' +
+          '<span class="hidden in-[el-selectedcontent]:block truncate font-medium">' + escapeHtml(address.displayName) + '</span>' +
+        '</div>' +
+        '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
+          '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
+            '<path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
+          '</svg>' +
+        '</span>' +
+      '</el-option>'
+    );
+  }
+
+  function renderCheckAddressOptions(addresses) {
+    var sel = document.getElementById('gp-check-address-select');
+    if (!sel) return;
+    var optionsEl = sel.querySelector('el-options');
+    if (!optionsEl) return;
+
+    optionsEl.querySelectorAll('el-option').forEach(function (opt) {
+      opt.remove();
+    });
+
+    (addresses || []).forEach(function (address) {
+      optionsEl.insertAdjacentHTML('beforeend', buildCheckAddressOptionHtml(address));
+    });
+  }
+
   function updateCheckDetails(addressId) {
     var details = document.getElementById('gp-pmc-check-details');
     if (!details) return;
@@ -1448,6 +1560,8 @@
 
     var details = document.getElementById('gp-pmc-check-details');
     if (details) details.classList.add('hidden');
+
+    renderCheckAddressOptions(_myBusiness && _myBusiness.checkAddresses);
 
     var sel = document.getElementById('gp-check-address-select');
     if (!sel) return;
@@ -1995,11 +2109,16 @@
     initReviewModal();
     initSignatureModal();
 
-    fetchExchangesData()
-      .then(function (result) {
+    Promise.all([fetchExchangesData(), fetchCheckAddressesData().catch(function () { return []; })])
+      .then(function (results) {
+        var result = results[0];
+        var sharedCheckAddresses = results[1];
         var columns = result.columns;
         var entries = result.entries;
-        _myBusiness = result.myBusiness;
+        _myBusiness = result.myBusiness || {};
+        if (sharedCheckAddresses && sharedCheckAddresses.length) {
+          _myBusiness.checkAddresses = sharedCheckAddresses;
+        }
         paginationState.sourceEntries = entries;
         updateTabBadges(entries);
 
