@@ -20,11 +20,23 @@
         rel="stylesheet">
 
     <!-- Flag icons -->
-    <link rel="stylesheet" href="../../../node_modules/flag-icons/css/flag-icons.min.css">
-    <link rel="stylesheet" href="../../../src/styles/mobile-readability.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.3.2/css/flag-icons.min.css">
+
+    <script>
+        (function () {
+            try {
+                var savedTheme = localStorage.getItem('theme');
+                if (savedTheme === 'dark') document.documentElement.classList.add('dark');
+                if (savedTheme === 'light') document.documentElement.classList.remove('dark');
+            } catch (e) {}
+        })();
+    </script>
 
     <!-- Tailwind -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+        @custom-variant dark (&:where(.dark, .dark *));
+    </style>
 
     <!-- Tailwind Plus Elements -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
@@ -685,6 +697,14 @@
                     </h1>
                     <!-- Right side -->
                     <div class="flex items-center gap-3 sm:gap-4">
+                        <div class="hidden sm:flex items-center gap-2">
+                            <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/20">
+                                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
+                                <input id="theme-toggle" type="checkbox" name="theme-toggle" aria-labelledby="theme-toggle-label"
+                                    class="absolute inset-0 size-full appearance-none focus:outline-hidden cursor-pointer" />
+                            </div>
+                            <label id="theme-toggle-label" for="theme-toggle" class="text-sm font-medium text-gray-700 dark:text-gray-300">Dark mode</label>
+                        </div>
                         <button
                             class="hidden sm:flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm sm:text-base font-semibold text-gray-800 hover:bg-gray-50 transition-colors dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer">
                             Big Kahuna Burger Ltd
@@ -748,7 +768,7 @@
                     <!-- Head: Title + Tabs (separate top section) -->
                     <div class="pt-5 sm:pt-6">
                         <div class="flex flex-col gap-3 px-4 sm:px-6">
-                            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">Payment Preferences</h2>
+                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Payment Preferences</h2>
 
                             <!-- Mobile: select -->
                             <div class="grid grid-cols-1 sm:hidden">
@@ -804,10 +824,10 @@
                                 <!-- Left: title + description -->
                                 <div
                                     class="flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-40">
-                                    <div class="flex flex-col gap-1">
-                                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Payers'
+                                    <div class="flex flex-col gap-2">
+                                        <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Payers'
                                             Cards</h3>
-                                        <p class="text-sm font-normal text-gray-500 dark:text-gray-400">Accept
+                                        <p class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">Accept
                                             payment by card.</p>
                                     </div>
                                 </div>
@@ -830,7 +850,7 @@
                                                     Card Processing (STP)</span>
                                                 <span
                                                     id="pp-stp-status-badge"
-                                                    class="shrink-0 whitespace-nowrap inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 inset-ring inset-ring-yellow-600/20">Action Required</span>
+                                                    class="shrink-0 whitespace-nowrap inline-flex items-center rounded-md bg-yellow-50 px-2 py-1 text-xs font-medium text-yellow-800 inset-ring inset-ring-yellow-600/20 dark:bg-yellow-900/30 dark:text-yellow-300 dark:inset-ring-yellow-500/30">Action Required</span>
 
                                             </div>
 
@@ -871,7 +891,7 @@
                                             <div class="flex flex-col items-start gap-3 sm:flex-row sm:items-center">
                                                 <button type="button" command="show-modal"
                                                     commandfor="pp-verify-deposit-dialog"
-                                                    class="whitespace-nowrap inline-flex items-center gap-1.5 rounded-sm bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 cursor-pointer">
+                                                    class="whitespace-nowrap inline-flex items-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10 cursor-pointer">
                                                     Verify now
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                                         fill="currentColor" class="size-4">
@@ -941,7 +961,7 @@
                                                     <!-- Filter button -->
                                                     <div id="pp-cards-filter-dropdown" class="relative inline-block">
                                                         <button id="pp-cards-filter-btn" type="button"
-                                                            class="whitespace-nowrap inline-flex items-center gap-1.5 rounded-sm bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 cursor-pointer">
+                                                            class="whitespace-nowrap inline-flex items-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10 cursor-pointer">
                                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                                                 fill="currentColor" class="size-4">
                                                                 <path
@@ -981,7 +1001,7 @@
                                                                 <div id="pp-cards-filter-detail-slot" class="w-full sm:w-72">
                                                                     <div id="pp-cards-filter-panel-customer" class="hidden w-full flex-col sm:w-72">
                                                                         <div role="button" tabindex="0" data-filter-back
-                                                                            class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/10">
+                                                                            class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
                                                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                                                 viewBox="0 0 20 20" fill="currentColor"
                                                                                 class="size-4">
@@ -995,14 +1015,14 @@
                                                                             class="max-h-56 grow overflow-auto px-2 py-2"></div>
                                                                         <div class="border-t border-gray-200 p-2 dark:border-white/10">
                                                                             <button id="pp-cards-filter-apply-btn" type="button" disabled
-                                                                                class="inline-flex items-center rounded-md bg-blue-600 px-2 py-1 text-xs font-semibold text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-100 dark:disabled:bg-gray-700 dark:disabled:text-gray-400 cursor-pointer">
+                                                                                class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer">
                                                                                 Apply
                                                                             </button>
                                                                         </div>
                                                                     </div>
                                                                     <div id="pp-cards-filter-panel-status" class="hidden w-full flex-col sm:w-72">
                                                                         <div role="button" tabindex="0" data-filter-back
-                                                                            class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/10">
+                                                                            class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
                                                                             <svg xmlns="http://www.w3.org/2000/svg"
                                                                                 viewBox="0 0 20 20" fill="currentColor"
                                                                                 class="size-4">
@@ -1016,7 +1036,7 @@
                                                                             class="max-h-56 grow overflow-auto px-2 py-2"></div>
                                                                         <div class="border-t border-gray-200 p-2 dark:border-white/10">
                                                                             <button id="pp-cards-filter-apply-status-btn" type="button" disabled
-                                                                                class="inline-flex items-center rounded-md bg-blue-600 px-2 py-1 text-xs font-semibold text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-100 dark:disabled:bg-gray-700 dark:disabled:text-gray-400 cursor-pointer">
+                                                                                class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer">
                                                                                 Apply
                                                                             </button>
                                                                         </div>
@@ -1058,10 +1078,10 @@
                                 <!-- Left: title + description -->
                                 <div
                                     class="flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-40">
-                                    <div class="flex flex-col gap-1">
-                                        <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Payment
+                                    <div class="flex flex-col gap-2">
+                                        <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Payment
                                             Account Details</h3>
-                                        <p class="text-sm font-normal text-gray-500 dark:text-gray-400">Account
+                                        <p class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">Account
                                             details for payment acceptance.</p>
                                     </div>
                                 </div>
@@ -1102,7 +1122,7 @@
 
                                         <!-- Add bank account -->
                                         <button type="button" command="show-modal" commandfor="pp-add-bank-account-dialog"
-                                            class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300 cursor-pointer">
+                                            class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                                 fill="currentColor" class="size-4">
                                                 <path
@@ -1149,7 +1169,7 @@
 
                                         <!-- Add address -->
                                         <button type="button" command="show-modal" commandfor="pp-add-check-dialog"
-                                            class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300 cursor-pointer">
+                                            class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                                 fill="currentColor" class="size-4">
                                                 <path
@@ -1176,10 +1196,10 @@
 
                                 <!-- Left: title + description -->
                                 <div class="flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-40">
-                                    <div class="flex flex-col gap-3">
-                                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Set Default Payment Methods</h3>
-                                        <p class="text-sm font-normal text-gray-500 dark:text-gray-400">Set the order of payment preferences. If the primary method is not supported by the payer, we will automatically default to the next choice.</p>
-                                        <p class="mt-2 text-sm font-normal text-gray-500 dark:text-gray-400">Payer specific payment preferences can be set within Advanced Settings.</p>
+                                    <div class="flex flex-col gap-2">
+                                        <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Set Default Payment Methods</h3>
+                                        <p class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">Set the order of payment preferences. If the primary method is not supported by the payer, we will automatically default to the next choice.</p>
+                                        <p class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">Payer specific payment preferences can be set within Advanced Settings.</p>
                                     </div>
                                 </div>
 
@@ -1192,7 +1212,7 @@
                                             <span class="mt-2 inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">1</span>
                                             <div class="flex w-full flex-col gap-2">
                                                 <el-select name="gp-default-payment-method-1" class="block w-full">
-                                                    <button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                    <button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                         <el-selectedcontent class="col-start-1 row-start-1 flex items-center gap-2 pr-6 font-medium text-gray-900 dark:text-white">
                                                             <span class="truncate text-gray-400 dark:text-gray-500">Select default destination</span>
                                                         </el-selectedcontent>
@@ -1200,7 +1220,7 @@
                                                             <path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
                                                         </svg>
                                                     </button>
-                                                    <el-options anchor="bottom start" popover class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
+                                                    <el-options anchor="bottom start" popover class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
                                                         <!-- Accept Payer's Card -->
                                                         <el-option value="payers-card"
                                                             class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
@@ -1357,7 +1377,7 @@
                                             <span class="mt-2 inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">2</span>
                                             <div class="flex w-full flex-col gap-2">
                                                 <el-select name="gp-default-payment-method-2" class="block w-full">
-                                                    <button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                    <button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                         <el-selectedcontent class="col-start-1 row-start-1 flex items-center gap-2 pr-6 font-medium text-gray-900 dark:text-white">
                                                             <span class="truncate text-gray-400 dark:text-gray-500">Select default destination</span>
                                                         </el-selectedcontent>
@@ -1365,7 +1385,7 @@
                                                             <path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
                                                         </svg>
                                                     </button>
-                                                    <el-options anchor="bottom start" popover class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
+                                                    <el-options anchor="bottom start" popover class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
                                                         <el-option value="payers-card"
                                                             class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
                                                             <div class="flex items-center gap-3">
@@ -1469,7 +1489,7 @@
                                             <span class="mt-2 inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">3</span>
                                             <div class="flex w-full flex-col gap-2">
                                                 <el-select name="gp-default-payment-method-3" class="block w-full">
-                                                    <button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                    <button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                         <el-selectedcontent class="col-start-1 row-start-1 flex items-center gap-2 pr-6 font-medium text-gray-900 dark:text-white">
                                                             <span class="truncate text-gray-400 dark:text-gray-500">Select default destination</span>
                                                         </el-selectedcontent>
@@ -1477,7 +1497,7 @@
                                                             <path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
                                                         </svg>
                                                     </button>
-                                                    <el-options anchor="bottom start" popover class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
+                                                    <el-options anchor="bottom start" popover class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
                                                         <el-option value="payers-card"
                                                             class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
                                                             <div class="flex items-center gap-3">
@@ -1616,11 +1636,11 @@
                             <div class="flex w-full flex-col gap-5">
                                 <div class="flex w-full items-center gap-6">
                                     <div class="flex min-w-0 flex-1 items-center gap-4">
-                                        <div class="flex min-w-0 flex-1 flex-col gap-3">
+                                        <div class="flex min-w-0 flex-1 flex-col gap-2">
                                             <div class="flex w-full items-center gap-2">
-                                                <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Customize Default Preferences by Payer</h3>
+                                                <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Customize Default Preferences by Payer</h3>
                                             </div>
-                                            <p class="w-full text-sm font-normal text-gray-500 dark:text-gray-400">Global Preferences will remain the same for all other payers.</p>
+                                            <p class="w-full max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">Global Preferences will remain the same for all other payers.</p>
                                         </div>
                                     </div>
                                 </div>
@@ -1667,7 +1687,7 @@
                                         <div class="min-w-0 flex-1">
                                             <el-select data-adv-payer-select class="block w-full">
                                                 <button type="button"
-                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                     <el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white">
                                                         <span class="text-gray-400 dark:text-gray-500">Select payer</span>
                                                     </el-selectedcontent>
@@ -1679,7 +1699,7 @@
                                                     </svg>
                                                 </button>
                                                 <el-options anchor="bottom start" popover
-                                                    class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                                    class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
                                                     data-adv-payer-options>
                                                 </el-options>
                                             </el-select>
@@ -1687,7 +1707,7 @@
                                         <div class="min-w-0 flex-1">
                                             <el-select data-adv-entity-select value="all-entities" class="block w-full">
                                                 <button type="button"
-                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                     <el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white">
                                                         All entities
                                                     </el-selectedcontent>
@@ -1699,7 +1719,7 @@
                                                     </svg>
                                                 </button>
                                                 <el-options anchor="bottom start" popover
-                                                    class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                                    class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
                                                     data-adv-entity-options>
                                                 </el-options>
                                             </el-select>
@@ -1707,7 +1727,7 @@
                                         <div class="min-w-0 flex-1">
                                             <el-select data-adv-method-select data-method-slot="1" class="block w-full">
                                                 <button type="button"
-                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                     <el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white">
                                                         <span class="text-gray-400 dark:text-gray-500">Select payment method</span>
                                                     </el-selectedcontent>
@@ -1719,7 +1739,7 @@
                                                     </svg>
                                                 </button>
                                                 <el-options anchor="bottom start" popover
-                                                    class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                                    class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
                                                     data-adv-method-options>
                                                 </el-options>
                                             </el-select>
@@ -1727,7 +1747,7 @@
                                         <div class="min-w-0 flex-1">
                                             <el-select data-adv-method-select data-method-slot="2" class="block w-full">
                                                 <button type="button"
-                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                     <el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white">
                                                         <span class="text-gray-400 dark:text-gray-500">Select payment method</span>
                                                     </el-selectedcontent>
@@ -1739,7 +1759,7 @@
                                                     </svg>
                                                 </button>
                                                 <el-options anchor="bottom start" popover
-                                                    class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                                    class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
                                                     data-adv-method-options>
                                                 </el-options>
                                             </el-select>
@@ -1747,7 +1767,7 @@
                                         <div class="min-w-0 flex-1">
                                             <el-select data-adv-method-select data-method-slot="3" class="block w-full">
                                                 <button type="button"
-                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                     <el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white">
                                                         <span class="text-gray-400 dark:text-gray-500">Select payment method</span>
                                                     </el-selectedcontent>
@@ -1759,7 +1779,7 @@
                                                     </svg>
                                                 </button>
                                                 <el-options anchor="bottom start" popover
-                                                    class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                                    class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
                                                     data-adv-method-options>
                                                 </el-options>
                                             </el-select>
@@ -1776,7 +1796,7 @@
                                 </div>
                                 <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
                                 <div class="flex w-full items-center py-5">
-                                    <button id="pp-adv-add-payer-btn" type="button" class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300 cursor-pointer">
+                                    <button id="pp-adv-add-payer-btn" type="button" class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                                             <path fill-rule="evenodd" d="M9.25 4a.75.75 0 0 1 1.5 0v5.25H16a.75.75 0 0 1 0 1.5h-5.25V16a.75.75 0 0 1-1.5 0v-5.25H4a.75.75 0 0 1 0-1.5h5.25V4Z" clip-rule="evenodd" />
                                         </svg>
@@ -2036,14 +2056,14 @@
                                 <label for="pp-add-check-nickname" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Nickname</label>
                                 <div class="mt-2">
                                     <input id="pp-add-check-nickname" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div class="w-full">
                                 <label for="pp-add-check-line1" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 1</label>
                                 <div class="mt-2">
                                     <input id="pp-add-check-line1" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div class="w-full">
@@ -2053,14 +2073,14 @@
                                 </div>
                                 <div class="mt-2">
                                     <input id="pp-add-check-line2" type="text" placeholder="Suite, floor, unit..."
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div class="w-full">
                                 <label for="pp-add-check-city" class="block text-sm/6 font-medium text-gray-900 dark:text-white">City</label>
                                 <div class="mt-2">
                                     <input id="pp-add-check-city" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div class="grid w-full grid-cols-2 gap-4">
@@ -2068,14 +2088,14 @@
                                     <label for="pp-add-check-state" class="block text-sm/6 font-medium text-gray-900 dark:text-white">State / Province</label>
                                     <div class="mt-2">
                                         <input id="pp-add-check-state" type="text"
-                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                     </div>
                                 </div>
                                 <div>
                                     <label for="pp-add-check-zip" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Zip / Postal Code</label>
                                     <div class="mt-2">
                                         <input id="pp-add-check-zip" type="text"
-                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                     </div>
                                 </div>
                             </div>
@@ -2084,7 +2104,7 @@
                                 <div class="mt-2 grid grid-cols-1">
                                     <span id="pp-add-check-country-flag" class="fi fi-us pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm"></span>
                                     <select id="pp-add-check-country" name="pp-add-check-country"
-                                        class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-10 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                        class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-10 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                         <option value="us" selected>United States</option>
                                         <option value="ca">Canada</option>
                                         <option value="mx">Mexico</option>
@@ -2142,28 +2162,28 @@
                                 <label for="pp-edit-bank-name" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Name on Account</label>
                                 <div class="mt-2">
                                     <input id="pp-edit-bank-name" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div class="w-full">
                                 <label for="pp-edit-bank-routing" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Routing Number</label>
                                 <div class="mt-2">
                                     <input id="pp-edit-bank-routing" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div class="w-full">
                                 <label for="pp-edit-bank-account" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Account Number</label>
                                 <div class="mt-2">
                                     <input id="pp-edit-bank-account" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div class="w-full">
                                 <label for="pp-edit-bank-confirm" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Confirm Account Number</label>
                                 <div class="mt-2">
                                     <input id="pp-edit-bank-confirm" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div class="w-full">
@@ -2173,7 +2193,7 @@
                                 </div>
                                 <div class="mt-2">
                                     <input id="pp-edit-bank-nickname" type="text" placeholder="e.g. Primary Account"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                         </div>
@@ -2219,14 +2239,14 @@
                                 <label for="pp-edit-check-nickname" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Nickname</label>
                                 <div class="mt-2">
                                     <input id="pp-edit-check-nickname" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div class="w-full">
                                 <label for="pp-edit-check-line1" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 1</label>
                                 <div class="mt-2">
                                     <input id="pp-edit-check-line1" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div class="w-full">
@@ -2236,14 +2256,14 @@
                                 </div>
                                 <div class="mt-2">
                                     <input id="pp-edit-check-line2" type="text" placeholder="Suite, floor, unit..."
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div class="w-full">
                                 <label for="pp-edit-check-city" class="block text-sm/6 font-medium text-gray-900 dark:text-white">City</label>
                                 <div class="mt-2">
                                     <input id="pp-edit-check-city" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div class="grid w-full grid-cols-2 gap-4">
@@ -2251,14 +2271,14 @@
                                     <label for="pp-edit-check-state" class="block text-sm/6 font-medium text-gray-900 dark:text-white">State / Province</label>
                                     <div class="mt-2">
                                         <input id="pp-edit-check-state" type="text"
-                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                     </div>
                                 </div>
                                 <div>
                                     <label for="pp-edit-check-zip" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Zip / Postal Code</label>
                                     <div class="mt-2">
                                         <input id="pp-edit-check-zip" type="text"
-                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                     </div>
                                 </div>
                             </div>
@@ -2267,7 +2287,7 @@
                                 <div class="mt-2 grid grid-cols-1">
                                     <span id="pp-edit-check-country-flag" class="fi fi-us pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm"></span>
                                     <select id="pp-edit-check-country" name="pp-edit-check-country"
-                                        class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-10 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                        class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-10 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                         <option value="us" selected>United States</option>
                                         <option value="ca">Canada</option>
                                         <option value="mx">Mexico</option>
@@ -2490,6 +2510,30 @@
 
     <!-- Tab switching script -->
     <script>
+        (function () {
+            var root = document.documentElement;
+            var toggle = document.getElementById('theme-toggle');
+            if (!toggle) return;
+
+            function setTheme(isDark) {
+                root.classList.toggle('dark', isDark);
+                try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
+                toggle.checked = isDark;
+            }
+
+            var savedTheme = null;
+            try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
+            if (savedTheme === 'dark' || savedTheme === 'light') {
+                setTheme(savedTheme === 'dark');
+            } else {
+                toggle.checked = root.classList.contains('dark');
+            }
+
+            toggle.addEventListener('change', function () {
+                setTheme(toggle.checked);
+            });
+        })();
+
         (function () {
             var nav = document.getElementById('dynamic-breadcrumbs');
             if (!nav) return;
@@ -3424,47 +3468,47 @@
                     '<div class="pp-adv-row flex w-full items-center gap-4 px-2 py-3">' +
                         '<div class="min-w-0 flex-1">' +
                             '<el-select data-adv-payer-select class="block w-full">' +
-                                '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
+                                '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
                                     '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"><span class="text-gray-400 dark:text-gray-500">Select payer</span></el-selectedcontent>' +
                                     '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
                                 '</button>' +
-                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-payer-options></el-options>' +
+                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-payer-options></el-options>' +
                             '</el-select>' +
                         '</div>' +
                         '<div class="min-w-0 flex-1">' +
                             '<el-select data-adv-entity-select value="all-entities" class="block w-full">' +
-                                '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
+                                '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
                                     '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white">All entities</el-selectedcontent>' +
                                     '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
                                 '</button>' +
-                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-entity-options></el-options>' +
+                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-entity-options></el-options>' +
                             '</el-select>' +
                         '</div>' +
                         '<div class="min-w-0 flex-1">' +
                             '<el-select data-adv-method-select data-method-slot="1" class="block w-full">' +
-                                '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
+                                '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
                                     '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"><span class="text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
                                     '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
                                 '</button>' +
-                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
+                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
                             '</el-select>' +
                         '</div>' +
                         '<div class="min-w-0 flex-1">' +
                             '<el-select data-adv-method-select data-method-slot="2" class="block w-full">' +
-                                '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
+                                '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
                                     '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"><span class="text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
                                     '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
                                 '</button>' +
-                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
+                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
                             '</el-select>' +
                         '</div>' +
                         '<div class="min-w-0 flex-1">' +
                             '<el-select data-adv-method-select data-method-slot="3" class="block w-full">' +
-                                '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
+                                '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
                                     '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"><span class="text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
                                     '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
                                 '</button>' +
-                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
+                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
                             '</el-select>' +
                         '</div>' +
                         '<div class="shrink-0">' +
@@ -4501,7 +4545,7 @@
                 if (statusBadge) {
                     statusBadge.textContent = 'Opted in';
                     statusBadge.className =
-                        'shrink-0 whitespace-nowrap inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20';
+                        'shrink-0 whitespace-nowrap inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20 dark:bg-green-900/30 dark:text-green-300 dark:inset-ring-green-500/30';
                 }
 
                 if (stpAlert) {

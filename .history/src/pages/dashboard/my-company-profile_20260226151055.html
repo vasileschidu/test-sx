@@ -18,23 +18,10 @@
         rel="stylesheet">
 
     <!-- Flag icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.3.2/css/flag-icons.min.css">
-
-    <script>
-        (function () {
-            try {
-                var savedTheme = localStorage.getItem('theme');
-                if (savedTheme === 'dark') document.documentElement.classList.add('dark');
-                if (savedTheme === 'light') document.documentElement.classList.remove('dark');
-            } catch (e) {}
-        })();
-    </script>
+    <link rel="stylesheet" href="../../../node_modules/flag-icons/css/flag-icons.min.css">
 
     <!-- Tailwind -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style type="text/tailwindcss">
-        @custom-variant dark (&:where(.dark, .dark *));
-    </style>
 
     <!-- Tailwind Plus Elements -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
@@ -693,14 +680,6 @@
                     </h1>
                     <!-- Right side -->
                     <div class="flex items-center gap-3 sm:gap-4">
-                        <div class="hidden sm:flex items-center gap-2">
-                            <div class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/20">
-                                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
-                                <input id="theme-toggle" type="checkbox" name="theme-toggle" aria-labelledby="theme-toggle-label"
-                                    class="absolute inset-0 size-full appearance-none focus:outline-hidden cursor-pointer" />
-                            </div>
-                            <label id="theme-toggle-label" for="theme-toggle" class="text-sm font-medium text-gray-700 dark:text-gray-300">Dark mode</label>
-                        </div>
                         <button
                             class="hidden sm:flex items-center gap-2 rounded-lg border border-gray-200 px-3 py-2 text-sm sm:text-base font-semibold text-gray-800 hover:bg-gray-50 transition-colors dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer">
                             Big Kahuna Burger Ltd
@@ -759,7 +738,7 @@
                 <div class="rounded-none sm:rounded-lg bg-white shadow-sm dark:bg-gray-900">
                     <div class="pt-5 sm:pt-6">
                         <div class="px-4 sm:px-6 pb-5">
-                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">My Company Profile</h2>
+                            <h2 class="text-2xl font-semibold text-gray-900 dark:text-white">My Company Profile</h2>
                         </div>
                         <div class="h-px bg-gray-200 dark:bg-white/10"></div>
                     </div>
@@ -768,308 +747,94 @@
 
                     <div class="divide-y divide-gray-200 dark:divide-white/10">
 
-                        <div class="p-4 sm:p-6 lg:p-8">
-                            <form id="business-info-form" class="w-full">
+                        <div class="p-4 sm:p-6 lg:px-8">
+                            <form class="w-full">
                                 <div class="px-4 sm:px-0">
                                     <div class="flex items-start justify-between gap-4">
-                                        <div class="flex flex-col gap-2">
-                                            <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Business Information</h3>
-                                            <p class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">Please provide your information below.</p>
-                                        </div>
-                                        <button id="business-info-edit-btn" type="button" class="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+                                        <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Business Information</h3>
+                                        <button type="button" class="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="text-gray-500 dark:text-gray-300">
                                                 <path d="M2.69533 14.7623L1.43355 17.9168C1.27028 18.3249 1.67532 18.73 2.08348 18.5667L5.23795 17.3049C5.74091 17.1037 6.19777 16.8025 6.58081 16.4194L17.5 5.50072C18.3284 4.67229 18.3284 3.32914 17.5 2.50072C16.6716 1.67229 15.3284 1.67229 14.5 2.50071L3.58081 13.4194C3.19777 13.8025 2.89652 14.2593 2.69533 14.7623Z" fill="currentColor" />
                                             </svg>
-                                            <span>Edit</span>
+                                            Edit
                                         </button>
-                                        <div id="business-info-edit-actions" class="hidden items-center gap-2">
-                                            <button id="business-info-cancel-btn" type="button"
-                                                class="rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
-                                                Cancel
-                                            </button>
-                                            <button id="business-info-update-btn" type="button" disabled
-                                                class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:text-white/90 dark:disabled:bg-blue-900/40">
-                                                Update
-                                            </button>
-                                        </div>
                                     </div>
+                                    <p class="mt-1 max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">Please provide your information below.</p>
                                 </div>
-                                <div class="mt-6 border-t border-gray-200 dark:border-white/10">
-                                    <dl class="divide-y divide-gray-200 dark:divide-white/10">
-                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                <div class="mt-6 border-t border-gray-100 dark:border-white/10">
+                                    <dl class="divide-y divide-gray-100 dark:divide-white/10">
+                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Business Legal Name</dt>
-                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                                                <span id="business-legal-name-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">ABC Corporation Ltd.</span>
-                                                <div data-edit class="hidden w-full max-w-md">
-                                                    <input id="business-legal-name-input" type="text" value="ABC Corporation Ltd." class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                </div>
-                                            </dd>
+                                            <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">ABC Corporation Ltd.</dd>
                                         </div>
-                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Main Business Phone Number <span class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500">Optional</span></dt>
-                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                                                <span id="business-phone-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">---</span>
-                                                <div data-edit class="hidden w-full max-w-md">
-                                                    <input id="business-phone-input" type="text" value="" placeholder="(555) 123-4567" class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                </div>
-                                            </dd>
+                                            <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">---</dd>
                                         </div>
-                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Main Business Email Address <span class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500">Optional</span></dt>
-                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                                                <span id="business-email-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">---</span>
-                                                <div data-edit class="hidden w-full max-w-md">
-                                                    <input id="business-email-input" type="email" value="" placeholder="business@example.com" class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                </div>
-                                            </dd>
+                                            <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">---</dd>
                                         </div>
-                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Legal Address</dt>
-                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                                                <span id="business-legal-address-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">
-                                                    2972 Westheimer Rd<br>
-                                                    Suite 1010<br>
-                                                    Chicago, Illinois 85486<br>
-                                                    United States
-                                                </span>
-                                                <div data-edit class="hidden w-full max-w-md flex flex-col gap-6">
-                                                    <div class="w-full">
-                                                        <label for="business-legal-address-nickname-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Nickname</label>
-                                                        <div class="mt-2">
-                                                            <input id="business-legal-address-nickname-input" type="text" value="Headquarters"
-                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="w-full">
-                                                        <label for="business-legal-address-line1-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 1</label>
-                                                        <div class="mt-2">
-                                                            <input id="business-legal-address-line1-input" type="text" value="2972 Westheimer Rd"
-                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="w-full">
-                                                        <div class="flex items-baseline justify-between">
-                                                            <label for="business-legal-address-line2-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 2</label>
-                                                            <span class="text-sm/6 text-gray-400 dark:text-gray-500">Optional</span>
-                                                        </div>
-                                                        <div class="mt-2">
-                                                            <input id="business-legal-address-line2-input" type="text" value="Suite 1010" placeholder="Suite, floor, unit..."
-                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="w-full">
-                                                        <label for="business-legal-address-city-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">City</label>
-                                                        <div class="mt-2">
-                                                            <input id="business-legal-address-city-input" type="text" value="Chicago"
-                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                        </div>
-                                                    </div>
-                                                    <div class="grid w-full grid-cols-2 gap-4">
-                                                        <div>
-                                                            <label for="business-legal-address-state-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">State / Province</label>
-                                                            <div class="mt-2">
-                                                                <input id="business-legal-address-state-input" type="text" value="Illinois"
-                                                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <label for="business-legal-address-zip-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Zip / Postal Code</label>
-                                                            <div class="mt-2">
-                                                                <input id="business-legal-address-zip-input" type="text" value="85486"
-                                                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div class="w-full">
-                                                        <label for="business-legal-address-country-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Country</label>
-                                                        <div class="mt-2 grid grid-cols-1">
-                                                            <span id="business-legal-address-country-flag" class="fi fi-us pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm"></span>
-                                                            <select id="business-legal-address-country-input" name="business-legal-address-country-input"
-                                                                class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-10 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
-                                                                <option value="us" selected>United States</option>
-                                                                <option value="ca">Canada</option>
-                                                                <option value="mx">Mexico</option>
-                                                                <option value="gb">United Kingdom</option>
-                                                                <option value="au">Australia</option>
-                                                                <option value="de">Germany</option>
-                                                                <option value="fr">France</option>
-                                                            </select>
-                                                            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
-                                                                class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
-                                                                <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">
+                                                2972 Westheimer Rd<br>
+                                                Suite 1010<br>
+                                                Chicago, Illinois 85486<br>
+                                                United States
                                             </dd>
                                         </div>
-                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Business Structure <span class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500">Optional</span></dt>
-                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                                                <span id="business-structure-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">S Corporation (S-Corp)</span>
-                                                <div data-edit class="hidden w-full max-w-md">
-                                                    <div class="grid grid-cols-1">
-                                                        <select id="business-structure-input" name="business-structure-input"
-                                                            class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
-                                                            <option>Corporation (C-Corp)</option>
-                                                            <option selected>S Corporation (S-Corp)</option>
-                                                            <option>Limited Liability Company (LLC)</option>
-                                                            <option>Partnership</option>
-                                                            <option>Sole Proprietorship</option>
-                                                            <option>Nonprofit Organization</option>
-                                                        </select>
-                                                        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
-                                                            class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
-                                                            <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
-                                                        </svg>
-                                                    </div>
-                                                </div>
-                                            </dd>
+                                            <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">S Corporation (S-Corp)</dd>
                                         </div>
-                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Organization Identification Type <span class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500">Optional</span></dt>
-                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                                                <span id="business-org-id-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">
-                                                    Tax Identification Number (TIN)<br>
-                                                    000-123-456-001
-                                                </span>
-                                                <div data-edit class="hidden w-full max-w-md flex flex-col gap-6">
-                                                    <div class="w-full">
-                                                        <div class="grid grid-cols-1">
-                                                            <select id="business-org-id-type-input" name="business-org-id-type-input"
-                                                                class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
-                                                                <option value="TIN" selected>Tax Identification Number (TIN)</option>
-                                                                <option value="EIN">Employer Identification Number (EIN)</option>
-                                                            </select>
-                                                            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
-                                                                class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
-                                                                <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
-                                                            </svg>
-                                                        </div>
-                                                    </div>
-                                                    <div class="w-full">
-                                                        <label for="business-org-id-value-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">ID Number</label>
-                                                        <div class="mt-2">
-                                                            <input id="business-org-id-value-input" type="text" value="000-123-456-001" class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                        </div>
-                                                    </div>
-                                                </div>
+                                            <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">
+                                                TIN<br>
+                                                000-123-456-001
                                             </dd>
                                         </div>
-                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Business Website URL <span class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500">Optional</span></dt>
-                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                                                <span id="business-website-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">---</span>
-                                                <div data-edit class="hidden w-full max-w-md">
-                                                    <input id="business-website-input" type="url" value="" placeholder="https://example.com" class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                </div>
-                                            </dd>
+                                            <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">---</dd>
                                         </div>
-                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Stock Symbol <span class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500">Optional</span></dt>
-                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                                                <span id="business-stock-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">---</span>
-                                                <div data-edit class="hidden w-full max-w-md">
-                                                    <input id="business-stock-input" type="text" value="" placeholder="ABCD" class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                </div>
-                                            </dd>
+                                            <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">---</dd>
                                         </div>
-                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                             <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Do you operate under a fictitious name /<br>Doing Business As (DBA)?</dt>
-                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                                                <span id="business-dba-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">Lorem Business</span>
-                                                <div data-edit class="hidden w-full max-w-md flex flex-col gap-6">
-                                                    <div class="flex self-start gap-3 rounded-md bg-gray-100 px-4 py-3 dark:bg-white/10">
-                                                        <div class="flex h-6 shrink-0 items-center">
-                                                            <div class="group grid size-4 grid-cols-1">
-                                                                <input id="business-dba-toggle" type="checkbox" name="business-dba-toggle" checked
-                                                                    class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
-                                                                <svg viewBox="0 0 14 14" fill="none"
-                                                                    class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25">
-                                                                    <path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                                        class="opacity-0 group-has-checked:opacity-100" />
-                                                                    <path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-                                                                        class="opacity-0 group-has-indeterminate:opacity-100" />
-                                                                </svg>
-                                                            </div>
-                                                        </div>
-                                                        <div class="text-sm/6">
-                                                            <label for="business-dba-toggle" class="font-medium text-gray-900 dark:text-white">I operate under a fictitious name (DBA)</label>
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <label for="business-dba-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Fictitious / Doing Business As (DBA) name</label>
-                                                        <div class="mt-2">
-                                                            <input id="business-dba-input" type="text" value="Lorem Business"
-                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:disabled:bg-white/5 dark:disabled:text-gray-500 dark:disabled:outline-white/10" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </dd>
+                                            <dd class="mt-1 text-sm/6 text-gray-700 dark:text-gray-300 sm:col-span-2 sm:mt-0">Lorem Business</dd>
                                         </div>
                                     </dl>
                                 </div>
                             </form>
                         </div>
 
-                        <div class="p-4 sm:p-6 lg:p-8">
-                            <form id="contact-info-form" class="w-full">
-                                <div class="px-4 sm:px-0">
-                                    <div class="flex items-start justify-between gap-4">
-                                        <div class="flex flex-col gap-2">
-                                            <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Contact Information</h3>
-                                            <p class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">Provide contact details for customer inquiries or payment disputes.</p>
-                                        </div>
-                                        <button id="contact-info-edit-btn" type="button" class="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="text-gray-500 dark:text-gray-300">
-                                                <path d="M2.69533 14.7623L1.43355 17.9168C1.27028 18.3249 1.67532 18.73 2.08348 18.5667L5.23795 17.3049C5.74091 17.1037 6.19777 16.8025 6.58081 16.4194L17.5 5.50072C18.3284 4.67229 18.3284 3.32914 17.5 2.50072C16.6716 1.67229 15.3284 1.67229 14.5 2.50071L3.58081 13.4194C3.19777 13.8025 2.89652 14.2593 2.69533 14.7623Z" fill="currentColor" />
-                                            </svg>
-                                            <span>Edit</span>
-                                        </button>
-                                        <div id="contact-info-edit-actions" class="hidden items-center gap-2">
-                                            <button id="contact-info-cancel-btn" type="button"
-                                                class="rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
-                                                Cancel
-                                            </button>
-                                            <button id="contact-info-update-btn" type="button" disabled
-                                                class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:text-white/90 dark:disabled:bg-blue-900/40">
-                                                Update
-                                            </button>
-                                        </div>
-                                    </div>
+                        <div class="grid max-w-7xl grid-cols-1 gap-x-8 gap-y-10 px-4 py-16 sm:px-6 md:grid-cols-3 lg:px-8">
+                            <div>
+                                <h2 class="text-base/7 font-semibold text-gray-900 dark:text-white">Contact Information</h2>
+                                <p class="mt-1 text-sm/6 text-gray-500 dark:text-gray-400">Provide contact details for customer inquiries or payment disputes.</p>
+                            </div>
+
+                            <form class="md:col-span-2">
+                                <div class="flex justify-end pb-5">
+                                    <button type="button" class="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="text-gray-500 dark:text-gray-300">
+                                            <path d="M2.69533 14.7623L1.43355 17.9168C1.27028 18.3249 1.67532 18.73 2.08348 18.5667L5.23795 17.3049C5.74091 17.1037 6.19777 16.8025 6.58081 16.4194L17.5 5.50072C18.3284 4.67229 18.3284 3.32914 17.5 2.50072C16.6716 1.67229 15.3284 1.67229 14.5 2.50071L3.58081 13.4194C3.19777 13.8025 2.89652 14.2593 2.69533 14.7623Z" fill="currentColor" />
+                                        </svg>
+                                        Edit
+                                    </button>
                                 </div>
-                                <div class="mt-6 border-t border-gray-200 dark:border-white/10">
-                                    <dl class="divide-y divide-gray-200 dark:divide-white/10">
-                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
-                                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Primary Contact Information</dt>
-                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                                                <span id="contact-info-read" data-contact-read class="text-sm/6 text-gray-700 dark:text-gray-300">Johnny Anderson<br>j.anderson@mail.com<br>+1 (555) 987-6543</span>
-                                                <div data-contact-edit class="hidden w-full max-w-md flex flex-col gap-6">
-                                                    <div>
-                                                        <label for="contact-name-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Contact Name</label>
-                                                        <div class="mt-2">
-                                                            <input id="contact-name-input" type="text" value="Johnny Anderson"
-                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <label for="contact-email-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Contact Email</label>
-                                                        <div class="mt-2">
-                                                            <input id="contact-email-input" type="email" value="j.anderson@mail.com"
-                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <label for="contact-phone-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Contact Phone Number</label>
-                                                        <div class="mt-2">
-                                                            <input id="contact-phone-input" type="text" value="+1 (555) 987-6543"
-                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </dd>
-                                        </div>
-                                    </dl>
+
+                                <div class="grid grid-cols-1 gap-y-1 py-4 sm:grid-cols-2 sm:gap-x-6">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white">Primary Contact Information</p>
+                                    <div class="text-sm font-normal text-gray-700 dark:text-gray-300">
+                                        <p>Johnny Anderson</p>
+                                        <p>j.anderson@mail.com</p>
+                                        <p>+1 (555) 987-6543</p>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -1082,516 +847,35 @@
     </div>
     <!-- /main-content-wrapper -->
 
-    <!-- ===== BUSINESS EDIT REVIEW MODAL ===== -->
-    <el-dialog>
-        <dialog id="business-info-review-dialog"
-            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
-            <el-dialog-backdrop
-                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
-            <div tabindex="0"
-                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
-                <el-dialog-panel
-                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
-                    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
-                        <button type="button" command="close" commandfor="business-info-review-dialog"
-                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
-                            <span class="sr-only">Close</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
-                        <div class="flex flex-col items-center text-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
-                                <path d="M22 4.40039C31.7202 4.40039 39.5996 12.2798 39.5996 22C39.5996 31.7202 31.7202 39.5996 22 39.5996C12.2798 39.5996 4.40039 31.7202 4.40039 22C4.40039 12.2798 12.2798 4.40039 22 4.40039ZM19.7998 19.7998C18.8886 19.7999 18.1504 20.539 18.1504 21.4502C18.1505 22.3613 18.8887 23.0995 19.7998 23.0996H20.3574C20.7093 23.0996 20.9709 23.426 20.8945 23.7695L19.8838 28.3145C19.3495 30.7188 21.1795 33 23.6426 33H24.2002C25.1114 32.9999 25.8496 32.2608 25.8496 31.3496C25.8494 30.4386 25.1112 29.7003 24.2002 29.7002H23.6426C23.2907 29.7002 23.0291 29.3738 23.1055 29.0303L24.1162 24.4854C24.6505 22.081 22.8205 19.7998 20.3574 19.7998H19.7998ZM22 11C20.785 11 19.7998 11.9852 19.7998 13.2002C19.7999 14.4151 20.785 15.4004 22 15.4004C23.215 15.4004 24.2001 14.4151 24.2002 13.2002C24.2002 11.9852 23.215 11 22 11Z" fill="#3B82F6"/>
-                            </svg>
-                            <div class="mt-6 flex flex-col items-center gap-2">
-                                <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">Updates May Require Review</h2>
-                                <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
-                                    Some changes may need additional verification. Click <span class="font-semibold text-gray-900 dark:text-white">"Continue"</span> to proceed.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
-                        <button type="button" command="close" commandfor="business-info-review-dialog"
-                            class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
-                            Cancel
-                        </button>
-                        <button id="business-info-review-continue-btn" type="button"
-                            class="w-full rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
-                            Continue
-                        </button>
-                    </div>
-                </el-dialog-panel>
-            </div>
-        </dialog>
-    </el-dialog>
-
-    <!-- ===== CONTACT EDIT REVIEW MODAL ===== -->
-    <el-dialog>
-        <dialog id="contact-info-review-dialog"
-            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
-            <el-dialog-backdrop
-                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
-            <div tabindex="0"
-                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
-                <el-dialog-panel
-                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
-                    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
-                        <button type="button" command="close" commandfor="contact-info-review-dialog"
-                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
-                            <span class="sr-only">Close</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
-                        <div class="flex flex-col items-center text-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
-                                <path d="M22 4.40039C31.7202 4.40039 39.5996 12.2798 39.5996 22C39.5996 31.7202 31.7202 39.5996 22 39.5996C12.2798 39.5996 4.40039 31.7202 4.40039 22C4.40039 12.2798 12.2798 4.40039 22 4.40039ZM19.7998 19.7998C18.8886 19.7999 18.1504 20.539 18.1504 21.4502C18.1505 22.3613 18.8887 23.0995 19.7998 23.0996H20.3574C20.7093 23.0996 20.9709 23.426 20.8945 23.7695L19.8838 28.3145C19.3495 30.7188 21.1795 33 23.6426 33H24.2002C25.1114 32.9999 25.8496 32.2608 25.8496 31.3496C25.8494 30.4386 25.1112 29.7003 24.2002 29.7002H23.6426C23.2907 29.7002 23.0291 29.3738 23.1055 29.0303L24.1162 24.4854C24.6505 22.081 22.8205 19.7998 20.3574 19.7998H19.7998ZM22 11C20.785 11 19.7998 11.9852 19.7998 13.2002C19.7999 14.4151 20.785 15.4004 22 15.4004C23.215 15.4004 24.2001 14.4151 24.2002 13.2002C24.2002 11.9852 23.215 11 22 11Z" fill="#3B82F6"/>
-                            </svg>
-                            <div class="mt-6 flex flex-col items-center gap-2">
-                                <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">Updates May Require Review</h2>
-                                <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
-                                    Some changes may need additional verification. Click <span class="font-semibold text-gray-900 dark:text-white">"Continue"</span> to proceed.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
-                        <button type="button" command="close" commandfor="contact-info-review-dialog"
-                            class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
-                            Cancel
-                        </button>
-                        <button id="contact-info-review-continue-btn" type="button"
-                            class="w-full rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
-                            Continue
-                        </button>
-                    </div>
-                </el-dialog-panel>
-            </div>
-        </dialog>
-    </el-dialog>
-
-        <script>
+            <script>
             (function () {
                 var nav = document.getElementById('dynamic-breadcrumbs');
                 if (!nav) return;
-                var items = [
+                var crumbs = [
+                    { label: 'SMART Exchange', href: 'smart-exchange.html' },
                     { label: 'My Company Profile', href: null }
                 ];
-
-                var html = '' +
-                    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-400 dark:text-gray-500">' +
-                    '  <path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd" />' +
-                    '</svg>';
-
-                items.forEach(function (item, index) {
-                    html += '' +
-                        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-300 dark:text-gray-600">' +
-                        '  <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
-                        '</svg>';
-                    if (item.href && index !== items.length - 1) {
-                        html += '<a href="' + item.href + '" class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors dark:text-gray-400 dark:hover:text-gray-200">' + item.label + '</a>';
+                nav.className = 'hidden sm:flex items-center gap-2';
+                nav.innerHTML = '';
+                crumbs.forEach(function (item, index) {
+                    if (index > 0) {
+                        var sep = document.createElement('span');
+                        sep.className = 'text-gray-300 dark:text-gray-600';
+                        sep.textContent = '›';
+                        nav.appendChild(sep);
+                    }
+                    var el;
+                    if (item.href) {
+                        el = document.createElement('a');
+                        el.href = item.href;
+                        el.className = 'text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200';
                     } else {
-                        html += '<span class="text-sm font-medium text-gray-900 dark:text-white">' + item.label + '</span>';
+                        el = document.createElement('span');
+                        el.className = 'text-sm font-medium text-gray-900 dark:text-white';
+                        el.setAttribute('aria-current', 'page');
                     }
-                });
-
-                nav.innerHTML = html;
-            })();
-
-            (function () {
-                var root = document.documentElement;
-                var toggle = document.getElementById('theme-toggle');
-                if (!toggle) return;
-
-                function setTheme(isDark) {
-                    root.classList.toggle('dark', isDark);
-                    try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
-                    toggle.checked = isDark;
-                }
-
-                var savedTheme = null;
-                try { savedTheme = localStorage.getItem('theme'); } catch (e) {}
-                if (savedTheme === 'dark' || savedTheme === 'light') {
-                    setTheme(savedTheme === 'dark');
-                } else {
-                    toggle.checked = root.classList.contains('dark');
-                }
-
-                toggle.addEventListener('change', function () {
-                    setTheme(toggle.checked);
-                });
-            })();
-
-            (function () {
-                var form = document.getElementById('business-info-form');
-                var editBtn = document.getElementById('business-info-edit-btn');
-                var actionsWrap = document.getElementById('business-info-edit-actions');
-                var cancelBtn = document.getElementById('business-info-cancel-btn');
-                var updateBtn = document.getElementById('business-info-update-btn');
-                var reviewDialog = document.getElementById('business-info-review-dialog');
-                var reviewContinueBtn = document.getElementById('business-info-review-continue-btn');
-                if (!form || !editBtn || !actionsWrap || !cancelBtn || !updateBtn || !reviewDialog || !reviewContinueBtn) return;
-
-                function setMultiline(el, lines) {
-                    el.innerHTML = '';
-                    lines.forEach(function (line, index) {
-                        if (index > 0) el.appendChild(document.createElement('br'));
-                        el.appendChild(document.createTextNode(line));
-                    });
-                }
-
-                function nonEmpty(value, fallback) {
-                    var trimmed = (value || '').trim();
-                    return trimmed ? trimmed : fallback;
-                }
-
-                function updateBusinessAddressCountryFlag() {
-                    var countrySelect = document.getElementById('business-legal-address-country-input');
-                    var countryFlag = document.getElementById('business-legal-address-country-flag');
-                    if (!countrySelect || !countryFlag) return;
-                    var code = String(countrySelect.value || 'us').toLowerCase();
-                    countryFlag.className = 'fi fi-' + code + ' pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm';
-                }
-
-                function syncReadValues() {
-                    var legalNameInput = document.getElementById('business-legal-name-input');
-                    var phoneInput = document.getElementById('business-phone-input');
-                    var emailInput = document.getElementById('business-email-input');
-                    var legalAddressLine1Input = document.getElementById('business-legal-address-line1-input');
-                    var legalAddressLine2Input = document.getElementById('business-legal-address-line2-input');
-                    var legalAddressCityInput = document.getElementById('business-legal-address-city-input');
-                    var legalAddressStateInput = document.getElementById('business-legal-address-state-input');
-                    var legalAddressZipInput = document.getElementById('business-legal-address-zip-input');
-                    var legalAddressCountryInput = document.getElementById('business-legal-address-country-input');
-                    var structureInput = document.getElementById('business-structure-input');
-                    var orgTypeInput = document.getElementById('business-org-id-type-input');
-                    var orgValueInput = document.getElementById('business-org-id-value-input');
-                    var websiteInput = document.getElementById('business-website-input');
-                    var stockInput = document.getElementById('business-stock-input');
-                    var dbaInput = document.getElementById('business-dba-input');
-                    var dbaToggle = document.getElementById('business-dba-toggle');
-
-                    document.getElementById('business-legal-name-read').textContent = nonEmpty(legalNameInput.value, '---');
-                    document.getElementById('business-phone-read').textContent = nonEmpty(phoneInput.value, '---');
-                    document.getElementById('business-email-read').textContent = nonEmpty(emailInput.value, '---');
-                    document.getElementById('business-structure-read').textContent = nonEmpty(structureInput.value, '---');
-                    document.getElementById('business-website-read').textContent = nonEmpty(websiteInput.value, '---');
-                    document.getElementById('business-stock-read').textContent = nonEmpty(stockInput.value, '---');
-                    var isDbaEnabled = dbaToggle ? dbaToggle.checked : true;
-                    document.getElementById('business-dba-read').textContent = isDbaEnabled
-                        ? nonEmpty(dbaInput.value, '---')
-                        : '---';
-
-                    var line1 = nonEmpty(legalAddressLine1Input.value, '');
-                    var line2 = nonEmpty(legalAddressLine2Input.value, '');
-                    var city = nonEmpty(legalAddressCityInput.value, '');
-                    var state = nonEmpty(legalAddressStateInput.value, '');
-                    var zip = nonEmpty(legalAddressZipInput.value, '');
-                    var countryLabel = '';
-                    if (legalAddressCountryInput && legalAddressCountryInput.options[legalAddressCountryInput.selectedIndex]) {
-                        countryLabel = legalAddressCountryInput.options[legalAddressCountryInput.selectedIndex].text;
-                    }
-                    var cityStateZip = [city, state].filter(Boolean).join(', ');
-                    if (zip) cityStateZip = cityStateZip ? (cityStateZip + ' ' + zip) : zip;
-                    var addressLines = [line1, line2, cityStateZip, countryLabel].filter(function (line) { return line && line.trim(); });
-                    setMultiline(
-                        document.getElementById('business-legal-address-read'),
-                        addressLines.length ? addressLines : ['---']
-                    );
-
-                    var orgType = '';
-                    if (orgTypeInput && orgTypeInput.options && orgTypeInput.options[orgTypeInput.selectedIndex]) {
-                        orgType = String(orgTypeInput.options[orgTypeInput.selectedIndex].text || '').trim();
-                    } else {
-                        orgType = (orgTypeInput.value || '').trim();
-                    }
-                    var orgValue = (orgValueInput.value || '').trim();
-                    var orgLines = [];
-                    if (orgType) orgLines.push(orgType);
-                    if (orgValue) orgLines.push(orgValue);
-                    if (!orgLines.length) orgLines = ['---'];
-                    setMultiline(document.getElementById('business-org-id-read'), orgLines);
-                }
-
-                function setEditing(isEditing) {
-                    form.querySelectorAll('[data-read]').forEach(function (el) {
-                        el.classList.toggle('hidden', isEditing);
-                    });
-                    form.querySelectorAll('[data-edit]').forEach(function (el) {
-                        el.classList.toggle('hidden', !isEditing);
-                    });
-                    editBtn.classList.toggle('hidden', isEditing);
-                    editBtn.classList.toggle('inline-flex', !isEditing);
-                    actionsWrap.classList.toggle('hidden', !isEditing);
-                    actionsWrap.classList.toggle('flex', isEditing);
-                }
-
-                function getBusinessEditControls() {
-                    return Array.prototype.slice.call(
-                        form.querySelectorAll('[data-edit] input, [data-edit] select, [data-edit] textarea')
-                    );
-                }
-
-                function snapshotControls() {
-                    return getBusinessEditControls().map(function (el) {
-                        return {
-                            id: el.id,
-                            value: el.value,
-                            checked: !!el.checked
-                        };
-                    });
-                }
-
-                function restoreControls(snapshot) {
-                    (snapshot || []).forEach(function (item) {
-                        var el = document.getElementById(item.id);
-                        if (!el) return;
-                        if (el.type === 'checkbox') {
-                            el.checked = !!item.checked;
-                        } else {
-                            el.value = item.value;
-                        }
-                    });
-                }
-
-                function controlsAreEqual(a, b) {
-                    if (!a || !b || a.length !== b.length) return false;
-                    for (var i = 0; i < a.length; i += 1) {
-                        if (a[i].id !== b[i].id) return false;
-                        if (a[i].value !== b[i].value) return false;
-                        if (!!a[i].checked !== !!b[i].checked) return false;
-                    }
-                    return true;
-                }
-
-                function updateDirtyState() {
-                    if (!editing) {
-                        updateBtn.disabled = true;
-                        return;
-                    }
-                    updateBtn.disabled = controlsAreEqual(snapshotAtEditStart, snapshotControls());
-                }
-
-                function updateDbaInputState() {
-                    var dbaToggle = document.getElementById('business-dba-toggle');
-                    var dbaInput = document.getElementById('business-dba-input');
-                    if (!dbaToggle || !dbaInput) return;
-                    dbaInput.disabled = !dbaToggle.checked;
-                }
-
-                var editing = false;
-                var snapshotAtEditStart = [];
-                setEditing(editing);
-                updateBusinessAddressCountryFlag();
-                updateDbaInputState();
-                updateDirtyState();
-
-                function enterBusinessEditMode() {
-                    editing = true;
-                    setEditing(true);
-                    updateDbaInputState();
-                    snapshotAtEditStart = snapshotControls();
-                    updateDirtyState();
-                }
-
-                editBtn.addEventListener('click', function () {
-                    if (typeof reviewDialog.showModal === 'function') {
-                        reviewDialog.showModal();
-                    }
-                });
-
-                reviewContinueBtn.addEventListener('click', function () {
-                    if (typeof reviewDialog.close === 'function') reviewDialog.close();
-                    enterBusinessEditMode();
-                });
-
-                cancelBtn.addEventListener('click', function () {
-                    restoreControls(snapshotAtEditStart);
-                    updateBusinessAddressCountryFlag();
-                    updateDbaInputState();
-                    editing = false;
-                    setEditing(false);
-                    updateDirtyState();
-                });
-
-                updateBtn.addEventListener('click', function () {
-                    if (updateBtn.disabled) return;
-                    syncReadValues();
-                    editing = false;
-                    setEditing(false);
-                    updateDirtyState();
-                });
-
-                var countrySelect = document.getElementById('business-legal-address-country-input');
-                if (countrySelect) {
-                    countrySelect.addEventListener('change', function () {
-                        updateBusinessAddressCountryFlag();
-                        updateDirtyState();
-                    });
-                }
-
-                var dbaToggle = document.getElementById('business-dba-toggle');
-                if (dbaToggle) {
-                    dbaToggle.addEventListener('change', function () {
-                        updateDbaInputState();
-                        updateDirtyState();
-                    });
-                }
-
-                form.addEventListener('input', function (event) {
-                    if (!editing) return;
-                    if (!event.target.closest('[data-edit]')) return;
-                    updateDirtyState();
-                });
-
-                form.addEventListener('change', function (event) {
-                    if (!editing) return;
-                    if (!event.target.closest('[data-edit]')) return;
-                    updateDirtyState();
-                });
-            })();
-
-            (function () {
-                var form = document.getElementById('contact-info-form');
-                var editBtn = document.getElementById('contact-info-edit-btn');
-                var actionsWrap = document.getElementById('contact-info-edit-actions');
-                var cancelBtn = document.getElementById('contact-info-cancel-btn');
-                var updateBtn = document.getElementById('contact-info-update-btn');
-                var reviewDialog = document.getElementById('contact-info-review-dialog');
-                var reviewContinueBtn = document.getElementById('contact-info-review-continue-btn');
-                var readEl = document.getElementById('contact-info-read');
-                if (!form || !editBtn || !actionsWrap || !cancelBtn || !updateBtn || !reviewDialog || !reviewContinueBtn || !readEl) return;
-
-                function setMultiline(el, lines) {
-                    el.innerHTML = '';
-                    lines.forEach(function (line, index) {
-                        if (index > 0) el.appendChild(document.createElement('br'));
-                        el.appendChild(document.createTextNode(line));
-                    });
-                }
-
-                function nonEmpty(value, fallback) {
-                    var trimmed = (value || '').trim();
-                    return trimmed ? trimmed : fallback;
-                }
-
-                function syncReadValues() {
-                    var nameInput = document.getElementById('contact-name-input');
-                    var emailInput = document.getElementById('contact-email-input');
-                    var phoneInput = document.getElementById('contact-phone-input');
-                    setMultiline(readEl, [
-                        nonEmpty(nameInput.value, '---'),
-                        nonEmpty(emailInput.value, '---'),
-                        nonEmpty(phoneInput.value, '---')
-                    ]);
-                }
-
-                function setEditing(isEditing) {
-                    form.querySelectorAll('[data-contact-read]').forEach(function (el) {
-                        el.classList.toggle('hidden', isEditing);
-                    });
-                    form.querySelectorAll('[data-contact-edit]').forEach(function (el) {
-                        el.classList.toggle('hidden', !isEditing);
-                    });
-                    editBtn.classList.toggle('hidden', isEditing);
-                    editBtn.classList.toggle('inline-flex', !isEditing);
-                    actionsWrap.classList.toggle('hidden', !isEditing);
-                    actionsWrap.classList.toggle('flex', isEditing);
-                }
-
-                function getControls() {
-                    return Array.prototype.slice.call(
-                        form.querySelectorAll('[data-contact-edit] input, [data-contact-edit] select, [data-contact-edit] textarea')
-                    );
-                }
-
-                function snapshotControls() {
-                    return getControls().map(function (el) {
-                        return { id: el.id, value: el.value };
-                    });
-                }
-
-                function restoreControls(snapshot) {
-                    (snapshot || []).forEach(function (item) {
-                        var el = document.getElementById(item.id);
-                        if (!el) return;
-                        el.value = item.value;
-                    });
-                }
-
-                function controlsAreEqual(a, b) {
-                    if (!a || !b || a.length !== b.length) return false;
-                    for (var i = 0; i < a.length; i += 1) {
-                        if (a[i].id !== b[i].id) return false;
-                        if (a[i].value !== b[i].value) return false;
-                    }
-                    return true;
-                }
-
-                function updateDirtyState() {
-                    if (!editing) {
-                        updateBtn.disabled = true;
-                        return;
-                    }
-                    updateBtn.disabled = controlsAreEqual(snapshotAtEditStart, snapshotControls());
-                }
-
-                var editing = false;
-                var snapshotAtEditStart = [];
-                setEditing(editing);
-                updateDirtyState();
-
-                function enterEditMode() {
-                    editing = true;
-                    setEditing(true);
-                    snapshotAtEditStart = snapshotControls();
-                    updateDirtyState();
-                }
-
-                editBtn.addEventListener('click', function () {
-                    if (typeof reviewDialog.showModal === 'function') {
-                        reviewDialog.showModal();
-                    }
-                });
-
-                reviewContinueBtn.addEventListener('click', function () {
-                    if (typeof reviewDialog.close === 'function') reviewDialog.close();
-                    enterEditMode();
-                });
-
-                cancelBtn.addEventListener('click', function () {
-                    restoreControls(snapshotAtEditStart);
-                    editing = false;
-                    setEditing(false);
-                    updateDirtyState();
-                });
-
-                updateBtn.addEventListener('click', function () {
-                    if (updateBtn.disabled) return;
-                    syncReadValues();
-                    editing = false;
-                    setEditing(false);
-                    updateDirtyState();
-                });
-
-                form.addEventListener('input', function (event) {
-                    if (!editing) return;
-                    if (!event.target.closest('[data-contact-edit]')) return;
-                    updateDirtyState();
-                });
-
-                form.addEventListener('change', function (event) {
-                    if (!editing) return;
-                    if (!event.target.closest('[data-contact-edit]')) return;
-                    updateDirtyState();
+                    el.textContent = item.label;
+                    nav.appendChild(el);
                 });
             })();
         </script>
