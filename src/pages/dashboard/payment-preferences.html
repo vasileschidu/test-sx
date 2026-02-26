@@ -2962,11 +2962,15 @@
                 var width = targetPanel ? targetPanel.offsetWidth : 0;
                 var height = targetPanel ? targetPanel.offsetHeight : 0;
                 var isMobileView = window.matchMedia('(max-width: 639px)').matches;
+                if (isMobileView) {
+                    filterTrack.style.transform = 'translateX(' + (-offset) + 'px)';
+                    cardsFilterMenu.style.width = '100vw';
+                    if (height > 0) cardsFilterMenu.style.height = height + 'px';
+                    return;
+                }
                 if (immediate) {
                     filterTrack.style.transform = 'translateX(' + (-offset) + 'px)';
-                    if (isMobileView) {
-                        cardsFilterMenu.style.width = '100vw';
-                    } else if (width > 0) {
+                    if (width > 0) {
                         cardsFilterMenu.style.width = width + 'px';
                     }
                     if (height > 0) cardsFilterMenu.style.height = height + 'px';
@@ -3001,6 +3005,7 @@
                     cardsFilterMenu.style.borderBottomLeftRadius = '0';
                     cardsFilterMenu.style.borderBottomRightRadius = '0';
                     cardsFilterMenu.style.width = '100vw';
+                    filterTrack.classList.remove('transition-transform', 'duration-250', 'ease-[cubic-bezier(0.22,1,0.36,1)]');
                     cardsFilterMenu.classList.remove('origin-top-right');
                     cardsFilterMenu.classList.add('origin-bottom');
                     if (filterRootPanel) {
@@ -3021,6 +3026,7 @@
                     cardsFilterMenu.style.borderBottomLeftRadius = '';
                     cardsFilterMenu.style.borderBottomRightRadius = '';
                     cardsFilterMenu.style.width = '';
+                    filterTrack.classList.add('transition-transform', 'duration-250', 'ease-[cubic-bezier(0.22,1,0.36,1)]');
                     cardsFilterMenu.classList.remove('origin-bottom');
                     cardsFilterMenu.classList.add('origin-top-right');
                     if (filterRootPanel) {
