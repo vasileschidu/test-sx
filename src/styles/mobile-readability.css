@@ -1,0 +1,24 @@
+/*
+ * Mobile readability layer:
+ * - Keep desktop typography unchanged.
+ * - Increase <=14px utility text and form controls on small screens.
+ */
+@media (max-width: 639px) {
+  .text-xs,
+  .text-xs\/5,
+  .text-xs\/6,
+  .text-sm,
+  .text-sm\/5,
+  .text-sm\/6 {
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
+  }
+
+  input,
+  select,
+  textarea,
+  [role="combobox"] {
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
+  }
+}
