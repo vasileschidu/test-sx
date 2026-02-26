@@ -2158,15 +2158,23 @@
                             </div>
                             <div class="grid grid-cols-2 gap-4 self-stretch items-center">
                                 <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Type</span>
-                                <span class="inline-flex w-fit items-center rounded bg-[#1a1f71] px-2 py-0.5">
-                                    <span
-                                        class="font-['Arial'] text-xs font-black italic tracking-tight text-white">VISA</span>
+                                <span class="inline-flex w-fit items-center">
+                                    <svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="24" height="16" rx="1.2" fill="url(#visa-grad-gp-modal)" />
+                                        <path d="M12.309 7.05313C12.2987 7.85651 13.0305 8.30487 13.5818 8.57141C14.1483 8.84493 14.3385 9.0203 14.3364 9.26485C14.3321 9.6392 13.8845 9.80438 13.4656 9.81081C12.7349 9.82208 12.3101 9.61506 11.9722 9.45846L11.709 10.6807C12.0479 10.8357 12.6754 10.9708 13.3262 10.9767C14.8536 10.9767 15.853 10.2286 15.8584 9.06857C15.8644 7.5964 13.8061 7.51489 13.8202 6.85684C13.8251 6.65733 14.0169 6.44442 14.4374 6.39025C14.6455 6.3629 15.2201 6.34198 15.8714 6.63963L16.127 5.45708C15.7768 5.33051 15.3266 5.2093 14.7661 5.2093C13.3283 5.2093 12.3171 5.96764 12.309 7.05313ZM18.5836 5.3112C18.3047 5.3112 18.0696 5.47263 17.9647 5.7204L15.7827 10.8899H17.3091L17.6129 10.057H19.4781L19.6543 10.8899H20.9996L19.8257 5.3112H18.5836ZM18.7971 6.81822L19.2376 8.91304H18.0312L18.7971 6.81822ZM10.4583 5.3112L9.25517 10.8899H10.7096L11.9122 5.3112H10.4583ZM8.3066 5.3112L6.79266 9.10825L6.18028 5.87969C6.1084 5.51929 5.82464 5.3112 5.50953 5.3112H3.03459L3 5.47317C3.50807 5.58257 4.08532 5.75902 4.43502 5.9478C4.64906 6.0631 4.71013 6.16393 4.7804 6.43798L5.9403 10.8899H7.47747L9.83404 5.3112H8.3066Z" fill="white" />
+                                        <defs>
+                                            <linearGradient id="visa-grad-gp-modal" x1="10.7812" y1="16" x2="15.6708" y2="0.32624" gradientUnits="userSpaceOnUse">
+                                                <stop stop-color="#222357" />
+                                                <stop offset="1" stop-color="#254AA5" />
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
                                 </span>
                             </div>
                             <div class="grid grid-cols-2 gap-4 self-stretch">
                                 <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Number</span>
                                 <button type="button" data-copy-id="gp-vc-full-number"
-                                    class="copy-btn -mx-1.5 -my-0.5 flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10 cursor-pointer">
+                                    class="copy-btn inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer">
                                     <span id="gp-vc-full-number" class="text-sm font-normal">5444 1234 0000 5612</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500">
                                         <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
@@ -2177,7 +2185,7 @@
                             <div class="grid grid-cols-2 gap-4 self-stretch">
                                 <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Expires</span>
                                 <button type="button" data-copy-id="gp-vc-full-expiry"
-                                    class="copy-btn -mx-1.5 -my-0.5 flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10 cursor-pointer">
+                                    class="copy-btn inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer">
                                     <span id="gp-vc-full-expiry" class="text-sm font-normal">12/2026</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500">
                                         <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
@@ -2188,7 +2196,7 @@
                             <div class="grid grid-cols-2 gap-4 self-stretch">
                                 <span class="text-sm font-medium text-gray-900 dark:text-gray-100">CVC2</span>
                                 <button type="button" data-copy-id="gp-vc-cvc2"
-                                    class="copy-btn -mx-1.5 -my-0.5 flex items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10 cursor-pointer">
+                                    class="copy-btn inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer">
                                     <span id="gp-vc-cvc2" class="text-sm font-normal">999</span>
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500">
                                         <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
@@ -2450,6 +2458,30 @@
             nav.innerHTML = html;
         })();
 
+        function isMaskedText(value) {
+            return /[•]/.test(String(value || ''));
+        }
+
+        function syncMaskedCopyButtons() {
+            document.querySelectorAll('[data-copy-id]').forEach(function (btn) {
+                var targetEl = document.getElementById(btn.getAttribute('data-copy-id'));
+                if (!targetEl) return;
+                var masked = isMaskedText(targetEl.textContent.trim());
+                btn.classList.toggle('hidden', masked);
+                if (masked && btn._copyTip) {
+                    clearTimeout(btn._copyTipTimer);
+                    btn._copyTip.remove();
+                    btn._copyTip = null;
+                }
+            });
+        }
+
+        syncMaskedCopyButtons();
+        var copyObserver = new MutationObserver(syncMaskedCopyButtons);
+        if (document.body) {
+            copyObserver.observe(document.body, { subtree: true, childList: true, characterData: true });
+        }
+
         document.addEventListener('click', function (e) {
             var btn = e.target.closest('[data-copy-id]');
             if (!btn) return;
@@ -2458,6 +2490,7 @@
             if (!targetEl) return;
 
             var text = targetEl.textContent.trim();
+            if (isMaskedText(text)) return;
 
             (navigator.clipboard
                 ? navigator.clipboard.writeText(text)
@@ -2473,19 +2506,19 @@
                     })()
                 )
             ).then(function () {
-                var rect = btn.getBoundingClientRect();
-
                 // Remove any in-flight tooltip for this button
                 var existing = btn._copyTip;
                 if (existing) { clearTimeout(btn._copyTipTimer); existing.remove(); }
+                if (window.getComputedStyle(btn).position === 'static') btn.style.position = 'relative';
+                btn.style.overflow = 'visible';
 
                 var tip = document.createElement('div');
-                tip.textContent = 'Data copied';
+                tip.textContent = 'Copied';
                 tip.style.cssText = [
-                    'position:fixed',
-                    'left:' + (rect.left + rect.width / 2) + 'px',
-                    'top:' + (rect.top - 6) + 'px',
-                    'transform:translate(-50%, calc(-100% + 4px))',
+                    'position:absolute',
+                    'left:50%',
+                    'bottom:calc(100% + 6px)',
+                    'transform:translate(-50%, 6px)',
                     'background:#111827',
                     'color:#fff',
                     'font-size:12px',
@@ -2494,25 +2527,25 @@
                     'padding:3px 8px',
                     'border-radius:6px',
                     'pointer-events:none',
-                    'z-index:9999',
+                    'z-index:50',
                     'opacity:0',
-                    'transition:opacity 160ms ease-out,transform 160ms ease-out',
+                    'transition:opacity 220ms ease-out,transform 220ms ease-out',
                     'white-space:nowrap'
                 ].join(';');
-                document.body.appendChild(tip);
+                btn.appendChild(tip);
                 btn._copyTip = tip;
 
-                // Force reflow then animate in (rise 4px, fade in)
+                // Force reflow then animate in (rise 6px, fade in)
                 tip.getBoundingClientRect();
-                tip.style.transform = 'translate(-50%,-100%)';
+                tip.style.transform = 'translate(-50%,0)';
                 tip.style.opacity = '1';
 
-                // After 1.6s: animate out (rise another 4px, fade out) then remove
+                // After 1.5s: animate out (rise another 6px, fade out) then remove
                 btn._copyTipTimer = setTimeout(function () {
-                    tip.style.transform = 'translate(-50%,calc(-100% - 4px))';
+                    tip.style.transform = 'translate(-50%,-6px)';
                     tip.style.opacity = '0';
-                    setTimeout(function () { tip.remove(); btn._copyTip = null; }, 180);
-                }, 1600);
+                    setTimeout(function () { tip.remove(); btn._copyTip = null; }, 240);
+                }, 700);
             });
         });
     </script>

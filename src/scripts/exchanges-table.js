@@ -117,7 +117,7 @@
 
   var ICON_CHEVRON_DOWN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
 
-  var ICON_COPY = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-400 dark:text-gray-500"><path d="M15.988 3.012A2.25 2.25 0 0 0 13.75 1h-3.5a2.25 2.25 0 0 0-2.238 2.012c-.875.092-1.6.686-1.884 1.488H11A3.75 3.75 0 0 1 14.75 8.25v4.872c.802-.284 1.396-1.009 1.488-1.884A2.25 2.25 0 0 0 18.25 9V5.25a2.25 2.25 0 0 0-2.262-2.238ZM13.25 9a2.25 2.25 0 0 0-2.25-2.25h-5A2.25 2.25 0 0 0 3.75 9v5A2.25 2.25 0 0 0 6 16.25h5A2.25 2.25 0 0 0 13.25 14V9Z" /></svg>';
+  var ICON_COPY = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>';
   var ICON_CHEVRON_RIGHT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
 
   var ICON_EYE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-blue-600"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" /></svg>';
@@ -458,14 +458,32 @@
     );
   }
 
+  var paymentInfoCopyIdCounter = 0;
+
   // Payment info: each row is a 2-col layout (both flex-1, gap-6 = 24px)
   function buildPaymentInfoRow(label, value, hasCopy) {
+    var valueHtml = value;
+    if (hasCopy) {
+      var copyId = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var requiresReveal = hasCopy === 'revealed';
+      var isMaskedValue = /[•]/.test(String(value || ''));
+      var hideByDefault = requiresReveal || isMaskedValue;
+      valueHtml =
+        '<button type="button" data-copy-id="' + copyId + '"' +
+          (requiresReveal ? ' data-copy-requires-reveal="true"' : '') +
+          (isMaskedValue ? ' data-copy-masked="true"' : '') +
+          ' class="copy-btn inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer' +
+          (hideByDefault ? ' hidden' : '') + '">' +
+          '<span id="' + copyId + '" class="text-sm font-normal">' + value + '</span>' +
+          ICON_COPY +
+        '</button>';
+    }
+
     return (
       '<div class="flex gap-6">' +
         '<dt class="flex-1 text-sm font-medium text-gray-900 dark:text-gray-100">' + label + '</dt>' +
         '<dd class="flex-1 flex items-center gap-6 text-sm text-gray-700 dark:text-gray-300">' +
-          value +
-          (hasCopy ? ('<button class="shrink-0 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300">' + ICON_COPY + '</button>') : '') +
+          valueHtml +
         '</dd>' +
       '</div>'
     );
@@ -502,15 +520,15 @@
       rows += buildPaymentInfoRow(
         'Card Number',
         '<span data-mask-field="card-number" class="inline-block whitespace-nowrap" data-masked="' + escapeHtml(maskedCardNumber) + '" data-revealed="' + escapeHtml(revealedCardNumber) + '">' + escapeHtml(maskedCardNumber) + '</span>',
-        true
+        'revealed'
       );
-      rows += buildPaymentInfoRow('Expires', escapeHtml(info.expires || ''), true);
+      rows += buildPaymentInfoRow('Expires', escapeHtml(info.expires || ''), 'revealed');
       var maskedCvc = '•••';
       var revealedCvc = getRevealedCvc2(info);
       rows += buildPaymentInfoRow(
         'CVC2',
         '<span data-mask-field="cvc" data-masked="' + escapeHtml(maskedCvc) + '" data-revealed="' + escapeHtml(revealedCvc) + '">' + escapeHtml(maskedCvc) + '</span>',
-        true
+        'revealed'
       );
 
     } else if (info.type === 'ach') {
@@ -543,6 +561,9 @@
         '</button>'
       )
       : '';
+    var detailsColumnClass = info.type === 'card'
+      ? 'flex flex-col gap-2 w-[460px]'
+      : 'flex flex-col gap-2 w-[380px]';
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
@@ -555,7 +576,7 @@
           // Chevron between label and column
           ICON_CHEVRON_RIGHT +
           // Detail column: w-[380px], gap-2 — matches Figma layout_UTWGTK
-          '<div ' + (info.type === 'card' ? 'data-payment-info-card ' : '') + 'class="flex flex-col gap-2 w-[380px]">' +
+          '<div ' + (info.type === 'card' ? 'data-payment-info-card ' : '') + 'class="' + detailsColumnClass + '">' +
             // Head: flex gap-6 (24px), both children fill — matches Figma layout_MFYG14
             '<div class="flex gap-6">' +
               '<div class="flex-1 text-sm font-medium text-gray-900 dark:text-white">' + titleLabel + '</div>' +
@@ -784,6 +805,85 @@
     table.dataset.toggleBound = '1';
 
     table.addEventListener('click', function (event) {
+      var copyBtn = event.target.closest('[data-copy-id]');
+      if (copyBtn && table.contains(copyBtn)) {
+        if (copyBtn.getAttribute('data-copy-requires-reveal') === 'true') {
+          var cardPanel = copyBtn.closest('[data-payment-info-card]');
+          var revealToggle = cardPanel ? cardPanel.querySelector('[data-card-reveal-toggle]') : null;
+          var isRevealed = revealToggle && revealToggle.getAttribute('data-revealed') === 'true';
+          if (!isRevealed) return;
+        }
+
+        event.preventDefault();
+        event.stopPropagation();
+
+        var copyTarget = document.getElementById(copyBtn.getAttribute('data-copy-id'));
+        if (!copyTarget) return;
+        var copyText = String(copyTarget.textContent || '').trim();
+        if (/[•]/.test(copyText)) return;
+        if (!copyText) return;
+
+        (navigator.clipboard
+          ? navigator.clipboard.writeText(copyText)
+          : Promise.resolve(
+              (function () {
+                var ta = document.createElement('textarea');
+                ta.value = copyText;
+                ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+              })()
+            )
+        ).then(function () {
+          var existing = copyBtn._copyTip;
+          if (existing) {
+            clearTimeout(copyBtn._copyTipTimer);
+            existing.remove();
+          }
+          if (window.getComputedStyle(copyBtn).position === 'static') copyBtn.style.position = 'relative';
+          copyBtn.style.overflow = 'visible';
+
+          var tip = document.createElement('div');
+          tip.textContent = 'Copied';
+          tip.style.cssText = [
+            'position:absolute',
+            'left:50%',
+            'bottom:calc(100% + 6px)',
+            'transform:translate(-50%, 6px)',
+            'background:#111827',
+            'color:#fff',
+            'font-size:12px',
+            'font-family:Inter,sans-serif',
+            'line-height:1.5',
+            'padding:3px 8px',
+            'border-radius:6px',
+            'pointer-events:none',
+            'z-index:50',
+            'opacity:0',
+            'transition:opacity 220ms ease-out,transform 220ms ease-out',
+            'white-space:nowrap'
+          ].join(';');
+          copyBtn.appendChild(tip);
+          copyBtn._copyTip = tip;
+
+          tip.getBoundingClientRect();
+          tip.style.transform = 'translate(-50%,0)';
+          tip.style.opacity = '1';
+
+          copyBtn._copyTipTimer = setTimeout(function () {
+            tip.style.transform = 'translate(-50%,-6px)';
+            tip.style.opacity = '0';
+            setTimeout(function () {
+              tip.remove();
+              copyBtn._copyTip = null;
+            }, 240);
+          }, 700);
+        });
+        return;
+      }
+
       var revealBtn = event.target.closest('[data-card-reveal-toggle]');
       if (revealBtn && table.contains(revealBtn)) {
         event.preventDefault();
@@ -804,6 +904,9 @@
         var revealIcon = revealBtn.querySelector('[data-icon="reveal"]');
         var hideIcon = revealBtn.querySelector('[data-icon="hide"]');
         var text = revealBtn.querySelector('[data-card-reveal-text]');
+        cardSection.querySelectorAll('[data-copy-requires-reveal="true"]').forEach(function (copyAction) {
+          copyAction.classList.toggle('hidden', !revealed);
+        });
         if (revealIcon) revealIcon.classList.toggle('hidden', revealed);
         if (hideIcon) hideIcon.classList.toggle('hidden', !revealed);
         if (text) text.textContent = revealed ? 'Hide Details' : 'Reveal Details';

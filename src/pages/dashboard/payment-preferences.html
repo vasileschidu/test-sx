@@ -318,7 +318,7 @@
                                         fill="#0089CF" />
                                 </svg>
                                 <span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span>
-                                <span class="text-xs font-semibold text-gray-900 dark:text-white">TRANA</span>
+                                <span class="text-xs font-semibold text-gray-900 dark:text-white">Transcard</span>
                             </div>
                             <div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400">
                                 <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of
@@ -636,7 +636,7 @@
                             fill="#0089CF" />
                     </svg>
                     <span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by </span>
-                    <span class="text-xs font-semibold text-gray-900 dark:text-white">TRANA</span>
+                    <span class="text-xs font-semibold text-gray-900 dark:text-white">Transcard</span>
                 </div>
                 <div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400">
                     <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a>
@@ -767,7 +767,7 @@
                         </div>
 
                         <!-- Full-width separator under tabs/header -->
-                        <div class="mt-3 border-b border-gray-200 dark:border-white/10">
+                        <div class="sticky top-[132px] z-30 mt-3 border-b border-gray-200 bg-white/95 backdrop-blur-sm dark:border-white/10 dark:bg-gray-900/95">
                             <!-- Desktop: underline tabs (blue only) -->
                             <div class="hidden sm:block px-4 sm:px-6">
                                 <nav aria-label="Tabs" class="-mb-px flex space-x-6">
@@ -802,7 +802,7 @@
 
                                 <!-- Left: title + description -->
                                 <div
-                                    class="flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-28">
+                                    class="flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-40">
                                     <div class="flex flex-col gap-1">
                                         <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Payers'
                                             Cards</h3>
@@ -916,7 +916,7 @@
                                                                 clip-rule="evenodd" />
                                                         </svg>
                                                     </div>
-                                                    <input type="text" placeholder="Search customer"
+                                                    <input id="pp-cards-search-input" type="text" placeholder="Search customer"
                                                         class="block w-full rounded-md border-0 bg-white py-1.5 pl-9 pr-3 text-sm font-medium text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10 dark:placeholder:text-gray-500 dark:focus:ring-blue-500" />
                                                 </div>
                                                 <div class="flex items-center gap-3 sm:ml-auto">
@@ -924,7 +924,7 @@
                                                     <label
                                                         class="whitespace-nowrap flex items-center gap-2 cursor-pointer rounded-lg bg-gray-50 px-3 py-1.5 dark:bg-white/5">
                                                         <div class="group grid size-4 grid-cols-1">
-                                                            <input type="checkbox" name="active-only"
+                                                            <input id="pp-cards-active-only" type="checkbox" name="active-only"
                                                                 class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
                                                             <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"
                                                                 viewBox="0 0 14 14" fill="none">
@@ -938,100 +938,110 @@
                                                             only</span>
                                                     </label>
                                                     <!-- Filter button -->
-                                                    <button type="button"
-                                                        class="whitespace-nowrap inline-flex items-center gap-1.5 rounded-sm bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 cursor-pointer">
-                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                                            fill="currentColor" class="size-4">
-                                                            <path
-                                                                d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" />
-                                                        </svg>
-                                                        Filter
-                                                    </button>
+                                                    <div id="pp-cards-filter-dropdown" class="relative inline-block">
+                                                        <button id="pp-cards-filter-btn" type="button"
+                                                            class="whitespace-nowrap inline-flex items-center gap-1.5 rounded-sm bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 cursor-pointer">
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                                fill="currentColor" class="size-4">
+                                                                <path
+                                                                    d="M10 4.75a.75.75 0 0 1 .75.75v3.75h3.75a.75.75 0 0 1 0 1.5h-3.75v3.75a.75.75 0 0 1-1.5 0v-3.75H5.5a.75.75 0 0 1 0-1.5h3.75V5.5a.75.75 0 0 1 .75-.75Z" />
+                                                            </svg>
+                                                            Filter
+                                                        </button>
+                                                        <div id="pp-cards-filter-menu"
+                                                            class="pointer-events-none invisible absolute right-0 z-30 mt-2 origin-top-right overflow-hidden rounded-md bg-white opacity-0 shadow-lg outline-1 outline-black/5 transition-[width,height,opacity] duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+                                                            <div id="pp-cards-filter-track"
+                                                                class="flex w-max items-start transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                                                                style="transform: translateX(0);">
+                                                                <div id="pp-cards-filter-panel-root" class="w-full min-w-0 py-1 sm:w-fit sm:min-w-[168px]">
+                                                                    <div role="button" tabindex="0" data-filter-open="customer"
+                                                                        class="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                                                        <span>By customer</span>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            viewBox="0 0 20 20" fill="currentColor"
+                                                                            class="size-4 text-gray-500 dark:text-gray-400">
+                                                                            <path fill-rule="evenodd"
+                                                                                d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                                                                clip-rule="evenodd" />
+                                                                        </svg>
+                                                                    </div>
+                                                                    <div role="button" tabindex="0" data-filter-open="status"
+                                                                        class="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                                                        <span>By status</span>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                                                            viewBox="0 0 20 20" fill="currentColor"
+                                                                            class="size-4 text-gray-500 dark:text-gray-400">
+                                                                            <path fill-rule="evenodd"
+                                                                                d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                                                                clip-rule="evenodd" />
+                                                                        </svg>
+                                                                    </div>
+                                                                </div>
+                                                                <div id="pp-cards-filter-detail-slot" class="w-full sm:w-72">
+                                                                    <div id="pp-cards-filter-panel-customer" class="hidden w-full flex-col sm:w-72">
+                                                                        <div role="button" tabindex="0" data-filter-back
+                                                                            class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/10">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                viewBox="0 0 20 20" fill="currentColor"
+                                                                                class="size-4">
+                                                                                <path fill-rule="evenodd"
+                                                                                    d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
+                                                                                    clip-rule="evenodd" />
+                                                                            </svg>
+                                                                            By customer
+                                                                        </div>
+                                                                        <div id="pp-cards-filter-customers"
+                                                                            class="max-h-56 grow overflow-auto px-2 py-2"></div>
+                                                                        <div class="border-t border-gray-200 p-2 dark:border-white/10">
+                                                                            <button id="pp-cards-filter-apply-btn" type="button" disabled
+                                                                                class="inline-flex items-center rounded-md bg-blue-600 px-2 py-1 text-xs font-semibold text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-100 dark:disabled:bg-gray-700 dark:disabled:text-gray-400 cursor-pointer">
+                                                                                Apply
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div id="pp-cards-filter-panel-status" class="hidden w-full flex-col sm:w-72">
+                                                                        <div role="button" tabindex="0" data-filter-back
+                                                                            class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:text-gray-200 dark:hover:bg-white/10">
+                                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                                viewBox="0 0 20 20" fill="currentColor"
+                                                                                class="size-4">
+                                                                                <path fill-rule="evenodd"
+                                                                                    d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
+                                                                                    clip-rule="evenodd" />
+                                                                            </svg>
+                                                                            By status
+                                                                        </div>
+                                                                        <div id="pp-cards-filter-statuses"
+                                                                            class="max-h-56 grow overflow-auto px-2 py-2"></div>
+                                                                        <div class="border-t border-gray-200 p-2 dark:border-white/10">
+                                                                            <button id="pp-cards-filter-apply-status-btn" type="button" disabled
+                                                                                class="inline-flex items-center rounded-md bg-blue-600 px-2 py-1 text-xs font-semibold text-white hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-gray-300 disabled:text-gray-100 dark:disabled:bg-gray-700 dark:disabled:text-gray-400 cursor-pointer">
+                                                                                Apply
+                                                                            </button>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div id="pp-cards-filter-backdrop"
+                                                            class="pointer-events-none invisible fixed inset-0 z-40 bg-gray-900/50 opacity-0 transition-opacity duration-200 ease-out"></div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
 
                                         <!-- Card items -->
-                                        <div class="flex flex-col items-start gap-2 self-stretch">
-                                            <!-- Card row 1 -->
-                                            <div
-                                                class="flex items-center gap-3 p-3 self-stretch rounded-lg bg-gray-50 dark:bg-white/5">
-                                                <!-- Brand badge -->
-                                                <div class="flex flex-col items-start p-2">
-                                                    <svg width="24" height="16" viewBox="0 0 24 16" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <rect width="24" height="16" rx="1.2"
-                                                            fill="url(#visa-grad-1)" />
-                                                        <path
-                                                            d="M12.309 7.05313C12.2987 7.85651 13.0305 8.30487 13.5818 8.57141C14.1483 8.84493 14.3385 9.0203 14.3364 9.26485C14.3321 9.6392 13.8845 9.80438 13.4656 9.81081C12.7349 9.82208 12.3101 9.61506 11.9722 9.45846L11.709 10.6807C12.0479 10.8357 12.6754 10.9708 13.3262 10.9767C14.8536 10.9767 15.853 10.2286 15.8584 9.06857C15.8644 7.5964 13.8061 7.51489 13.8202 6.85684C13.8251 6.65733 14.0169 6.44442 14.4374 6.39025C14.6455 6.3629 15.2201 6.34198 15.8714 6.63963L16.127 5.45708C15.7768 5.33051 15.3266 5.2093 14.7661 5.2093C13.3283 5.2093 12.3171 5.96764 12.309 7.05313ZM18.5836 5.3112C18.3047 5.3112 18.0696 5.47263 17.9647 5.7204L15.7827 10.8899H17.3091L17.6129 10.057H19.4781L19.6543 10.8899H20.9996L19.8257 5.3112H18.5836ZM18.7971 6.81822L19.2376 8.91304H18.0312L18.7971 6.81822ZM10.4583 5.3112L9.25517 10.8899H10.7096L11.9122 5.3112H10.4583ZM8.3066 5.3112L6.79266 9.10825L6.18028 5.87969C6.1084 5.51929 5.82464 5.3112 5.50953 5.3112H3.03459L3 5.47317C3.50807 5.58257 4.08532 5.75902 4.43502 5.9478C4.64906 6.0631 4.71013 6.16393 4.7804 6.43798L5.9403 10.8899H7.47747L9.83404 5.3112H8.3066Z"
-                                                            fill="white" />
-                                                        <defs>
-                                                            <linearGradient id="visa-grad-1" x1="10.7812" y1="16"
-                                                                x2="15.6708" y2="0.32624"
-                                                                gradientUnits="userSpaceOnUse">
-                                                                <stop stop-color="#222357" />
-                                                                <stop offset="1" stop-color="#254AA5" />
-                                                            </linearGradient>
-                                                        </defs>
-                                                    </svg>
-                                                </div>
-                                                <!-- Card info -->
-                                                <div class="flex flex-col gap-1 grow shrink-0 basis-0 min-w-0">
-                                                    <span
-                                                        class="text-sm font-semibold text-gray-900 dark:text-gray-100">Rad
-                                                        Roofing Ltd •••• 5612</span>
-                                                    <span
-                                                        class="text-sm font-normal text-gray-500 dark:text-gray-400">Expiration
-                                                        12/2026</span>
-                                                </div>
-                                                <!-- Actions -->
-                                                <button type="button"
-                                                    class="shrink-0 rounded-md p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-600 transition-colors dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                                        fill="currentColor" class="size-4">
-                                                        <path
-                                                            d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                            <!-- Card row 2 -->
-                                            <div
-                                                class="flex items-center gap-3 p-3 self-stretch rounded-lg bg-gray-50 dark:bg-white/5">
-                                                <!-- Brand badge -->
-                                                <div class="flex flex-col items-start p-2">
-                                                    <svg width="24" height="16" viewBox="0 0 128 86" fill="none"
-                                                        xmlns="http://www.w3.org/2000/svg">
-                                                        <rect width="128" height="86" rx="4" fill="#01326F" />
-                                                        <path d="M75.4894 21.7739H51.8672V64.2265H75.4894V21.7739Z"
-                                                            fill="#FF5F00" />
-                                                        <path
-                                                            d="M53.3672 43.005C53.3628 38.916 54.2889 34.8795 56.0754 31.2013C57.8619 27.5231 60.4619 24.2997 63.6785 21.775C59.6958 18.645 54.9128 16.6987 49.8763 16.1584C44.8397 15.6181 39.7528 16.5057 35.1969 18.7198C30.6409 20.9338 26.7998 24.385 24.1124 28.6788C21.4251 32.9726 20 37.9358 20 43.0013C20 48.0667 21.4251 53.03 24.1124 57.3238C26.7998 61.6176 30.6409 65.0687 35.1969 67.2828C39.7528 69.4968 44.8397 70.3844 49.8763 69.8441C54.9128 69.3039 59.6958 67.3575 63.6785 64.2276C60.4628 61.7037 57.8635 58.4814 56.077 54.8046C54.2906 51.1278 53.3639 47.0928 53.3672 43.005Z"
-                                                            fill="#EB001B" />
-                                                        <path
-                                                            d="M107.361 43.0037C107.361 48.0696 105.935 53.0331 103.247 57.3271C100.559 61.621 96.7177 65.0721 92.1612 67.2859C87.6047 69.4996 82.5173 70.3866 77.4804 69.8456C72.4436 69.3045 67.6606 67.3572 63.6782 64.2263C66.8926 61.7002 69.4912 58.477 71.2781 54.8C73.065 51.123 73.9935 47.0882 73.9935 43C73.9935 38.9118 73.065 34.877 71.2781 31.2C69.4912 27.523 66.8926 24.2998 63.6782 21.7737C67.6606 18.6428 72.4436 16.6955 77.4804 16.1544C82.5173 15.6134 87.6047 16.5004 92.1612 18.7141C96.7177 20.9279 100.559 24.379 103.247 28.6729C105.935 32.9669 107.361 37.9304 107.361 42.9963V43.0037Z"
-                                                            fill="#F79E1B" />
-                                                    </svg>
-                                                </div>
-                                                <!-- Card info -->
-                                                <div class="flex flex-col gap-1 grow shrink-0 basis-0 min-w-0">
-                                                    <span
-                                                        class="text-sm font-semibold text-gray-900 dark:text-gray-100">Sunset
-                                                        Industries •••• 4892</span>
-                                                    <span
-                                                        class="text-sm font-normal text-gray-500 dark:text-gray-400">Expiration
-                                                        08/2027</span>
-                                                </div>
-                                                <!-- Actions -->
-                                                <button type="button"
-                                                    class="shrink-0 rounded-md p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-600 transition-colors dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                                        fill="currentColor" class="size-4">
-                                                        <path
-                                                            d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
-                                                    </svg>
-                                                </button>
-                                            </div>
-                                        </div>
+                                        <div id="pp-payer-cards-list" class="flex flex-col items-start gap-2 self-stretch"></div>
+                                        <button id="pp-payer-cards-toggle" type="button"
+                                            class="hidden self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100 cursor-pointer">
+                                            <span id="pp-payer-cards-toggle-label">Show all</span>
+                                            <svg id="pp-payer-cards-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                fill="currentColor" class="size-4 transition-transform">
+                                                <path fill-rule="evenodd"
+                                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
 
                                     </div>
 
@@ -1046,7 +1056,7 @@
 
                                 <!-- Left: title + description -->
                                 <div
-                                    class="flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-28">
+                                    class="flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-40">
                                     <div class="flex flex-col gap-1">
                                         <h3 class="text-sm font-semibold text-gray-900 dark:text-gray-100">Payment
                                             Account Details</h3>
@@ -1078,6 +1088,16 @@
                                         </div>
 
                                         <div id="pp-bank-accounts-list" class="flex flex-col items-start gap-2 self-stretch"></div>
+                                        <button id="pp-bank-accounts-toggle" type="button"
+                                            class="hidden self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100 cursor-pointer">
+                                            <span id="pp-bank-accounts-toggle-label">Show all</span>
+                                            <svg id="pp-bank-accounts-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                fill="currentColor" class="size-4 transition-transform">
+                                                <path fill-rule="evenodd"
+                                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
 
                                         <!-- Add bank account -->
                                         <button type="button" command="show-modal" commandfor="pp-add-bank-account-dialog"
@@ -1114,6 +1134,16 @@
 
                                         <div id="pp-check-addresses-list"
                                             class="flex flex-col items-start gap-2 self-stretch"></div>
+                                        <button id="pp-check-addresses-toggle" type="button"
+                                            class="hidden self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100 cursor-pointer">
+                                            <span id="pp-check-addresses-toggle-label">Show all</span>
+                                            <svg id="pp-check-addresses-toggle-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                fill="currentColor" class="size-4 transition-transform">
+                                                <path fill-rule="evenodd"
+                                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                                    clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
 
 
                                         <!-- Add address -->
@@ -1144,7 +1174,7 @@
                             <div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-2 xl:gap-10">
 
                                 <!-- Left: title + description -->
-                                <div class="flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-28">
+                                <div class="flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-40">
                                     <div class="flex flex-col gap-3">
                                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Set Default Payment Methods</h3>
                                         <p class="text-sm font-normal text-gray-500 dark:text-gray-400">Set the order of payment preferences. If the primary method is not supported by the payer, we will automatically default to the next choice.</p>
@@ -1777,6 +1807,134 @@
     </div>
     <!-- /main-content-wrapper -->
 
+    <!-- ===== PAYERS CARD DETAILS MODAL ===== -->
+    <el-dialog>
+        <dialog id="pp-card-details-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full max-w-[512px] transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="flex items-center justify-end px-4 pt-4">
+                        <button type="button" command="close" commandfor="pp-card-details-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <div class="flex flex-col items-center gap-4 px-6 pb-6">
+
+                        <div class="relative h-[200px] w-[320px] flex-shrink-0 overflow-hidden rounded-xl bg-[#151A32] p-5 shadow-lg ring-[0.94px] ring-inset ring-white/20">
+                            <div class="flex h-full flex-col gap-2">
+                                <div class="flex items-center justify-end">
+                                    <div class="flex items-center rounded-full bg-white/20 px-2.5 py-0.5">
+                                        <span class="font-['Inter'] text-[11px] text-white">CVV : •••</span>
+                                    </div>
+                                </div>
+                                <div class="flex h-[108px] flex-col justify-end gap-2">
+                                    <div class="flex items-end gap-2 self-stretch">
+                                        <p id="pp-vc-amount" class="flex-1 text-2xl font-bold text-white"></p>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="19" height="28" viewBox="0 0 19 28" fill="none" class="shrink-0" aria-hidden="true">
+                                            <path d="M1.63451 14.0121C1.63451 16.3874 0 16.4362 0 17.3061C0 17.7886 0.415193 18.1801 0.926639 18.1801C1.17182 18.1801 1.60287 17.9797 1.60287 17.9797C2.76417 17.003 3.51553 15.5899 3.51553 14.0121C3.51553 12.4514 2.78131 11.0119 1.60683 10.0167C1.60683 10.0167 0.805383 9.3695 0.216164 10.1419C-0.228056 10.7246 0.266249 11.2756 0.540427 11.5497C1.18896 12.1983 1.63451 13.059 1.63451 14.0121ZM6.37329 14.0121C6.37329 16.2925 5.37282 18.3304 3.77784 19.7843L3.79103 19.7948C3.67372 19.9412 3.60515 20.1217 3.60515 20.3195C3.60515 20.8032 4.02038 21.1947 4.53182 21.1947C4.78359 21.1947 5.01162 21.0998 5.17903 20.9456L5.18959 20.9548C7.07851 19.1779 8.25431 16.7196 8.25431 13.9883C8.25431 11.269 7.07851 8.81719 5.18959 7.04294L5.17771 7.05348C5.01162 6.90058 4.78359 6.80567 4.53182 6.80567C4.02038 6.80567 3.60515 7.19716 3.60515 7.68093C3.60515 7.87733 3.67372 8.05924 3.78971 8.20555L3.7818 8.21215C5.38732 9.68454 6.37329 11.7461 6.37329 14.0121ZM7.8681 5.0591C11.8964 9.08741 11.6275 13.9501 11.6275 13.9501C11.6275 18.2025 9.67792 21.0998 7.85359 22.9531C7.64927 23.1126 7.52009 23.3552 7.52009 23.6254C7.52009 24.1079 7.93531 24.4994 8.44676 24.4994C8.71566 24.4994 8.95691 24.3926 9.12563 24.2212C9.12563 24.2212 13.5085 20.4131 13.5085 14.0239C13.5085 7.48848 9.12563 3.77917 9.12563 3.77917C8.95559 3.60781 8.71434 3.49973 8.44676 3.49973C7.93531 3.49973 7.52009 3.89254 7.52009 4.37499C7.52009 4.6518 7.65588 4.89829 7.8681 5.0591ZM11.8384 1.52644C17.1071 6.68968 17.0623 13.1737 17.0623 14.0002C17.0623 14.0002 17.5803 20.6002 11.8437 26.4758C11.671 26.6524 11.5378 26.8672 11.5378 27.1246C11.5378 27.6081 11.9531 28 12.4645 28C12.7809 28 13.2396 27.6343 13.2396 27.6343C19.4745 21.3107 18.942 14.0002 18.942 14.0002C18.942 5.62065 13.2857 0.375671 13.2857 0.375671C13.1183 0.148949 12.7809 -1.90735e-06 12.4645 -1.90735e-06C11.9531 -1.90735e-06 11.5378 0.392813 11.5378 0.875259C11.5378 1.1323 11.6552 1.3643 11.8423 1.5238L11.8384 1.52644Z" fill="white"/>
+                                        </svg>
+                                    </div>
+                                    <div class="flex flex-col items-start justify-end gap-2 self-stretch">
+                                        <p id="pp-vc-card-number" class="font-['Inter'] text-lg font-normal leading-6 text-white">•••• 0000</p>
+                                        <div class="flex items-center gap-1 pl-14">
+                                            <p class="font-['Roboto_Mono'] text-[7px] font-bold uppercase leading-normal text-white">EXPIRATION<br>DATE</p>
+                                            <p id="pp-vc-expiry" class="ml-1 font-['Inter'] text-sm font-normal leading-5 text-white">12/26</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex h-9 items-end gap-4 self-stretch">
+                                    <p id="pp-vc-name" class="flex-1 font-['Inter'] text-sm font-normal leading-5 uppercase text-white"></p>
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="59" height="18" viewBox="0 0 59 18" fill="none" class="shrink-0" aria-label="Visa" role="img">
+                                        <path d="M49.0149 11.5661L50.911 6.68624C50.8879 6.73859 51.3015 5.67937 51.5423 5.02376L51.8689 6.53035L52.9693 11.5632H49.0117V11.5661H49.0149ZM11.5564 9.78621L12.0496 12.209L16.7013 0.317736H21.7424L14.2524 17.7318H9.22275L5.1113 2.98625C5.04534 2.74336 4.8883 2.53396 4.67367 2.40225C3.19221 1.6366 1.6228 1.05585 0 0.672661L0.0638636 0.305067H7.72453C8.76417 0.347157 9.60175 0.672659 9.88025 1.78224L11.5543 9.79564V9.78621H11.5564ZM23.6395 0.170012H28.399L25.4215 17.6176H20.6682L23.6395 0.164774V0.170012ZM54.8874 0.317736H51.2167C50.0744 0.317736 49.2138 0.631828 48.7155 1.76465L41.6568 17.7558H46.6509L47.6496 15.1331L53.7451 15.1397C53.8885 15.7531 54.3293 17.7558 54.3293 17.7558H58.7339L54.8874 0.317736ZM42.6954 0.737259C41.3312 0.239948 39.8885 -0.00985909 38.4353 0.000297546C33.7375 0.000297546 30.4197 2.36666 30.3956 5.76397C30.3663 8.25994 32.7534 9.66602 34.5594 10.5002C36.4125 11.3579 37.0313 11.8982 37.0261 12.6645C37.0145 13.8297 35.5456 14.3585 34.1804 14.3585C32.3042 14.3585 31.2792 14.0968 29.7025 13.4424L29.1183 13.1693L28.4524 17.0807C29.5947 17.5559 31.653 17.9644 33.7784 18C38.7734 18 42.0379 15.6473 42.0766 12.0331C42.1175 10.0385 40.8255 8.53309 38.1065 7.28825C36.4534 6.48009 35.4284 5.93986 35.4284 5.12113C35.4284 4.39558 36.3068 3.62093 38.1421 3.62093C39.3629 3.59151 40.5763 3.81975 41.7029 4.29287L42.1437 4.4896L42.8106 0.71035L42.6954 0.737259Z" fill="white"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex flex-col gap-2 self-stretch rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Pending Payment</span>
+                                <span id="pp-vc-pending-amount" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Name</span>
+                                <span id="pp-vc-holder-name" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Address</span>
+                                <span id="pp-vc-card-address" class="text-sm font-normal text-gray-700 whitespace-pre-line dark:text-gray-300"></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch items-center">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Type</span>
+                                <span class="inline-flex w-fit items-center">
+                                    <svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                        <rect width="24" height="16" rx="1.2" fill="url(#visa-grad-pp-modal)" />
+                                        <path d="M12.309 7.05313C12.2987 7.85651 13.0305 8.30487 13.5818 8.57141C14.1483 8.84493 14.3385 9.0203 14.3364 9.26485C14.3321 9.6392 13.8845 9.80438 13.4656 9.81081C12.7349 9.82208 12.3101 9.61506 11.9722 9.45846L11.709 10.6807C12.0479 10.8357 12.6754 10.9708 13.3262 10.9767C14.8536 10.9767 15.853 10.2286 15.8584 9.06857C15.8644 7.5964 13.8061 7.51489 13.8202 6.85684C13.8251 6.65733 14.0169 6.44442 14.4374 6.39025C14.6455 6.3629 15.2201 6.34198 15.8714 6.63963L16.127 5.45708C15.7768 5.33051 15.3266 5.2093 14.7661 5.2093C13.3283 5.2093 12.3171 5.96764 12.309 7.05313ZM18.5836 5.3112C18.3047 5.3112 18.0696 5.47263 17.9647 5.7204L15.7827 10.8899H17.3091L17.6129 10.057H19.4781L19.6543 10.8899H20.9996L19.8257 5.3112H18.5836ZM18.7971 6.81822L19.2376 8.91304H18.0312L18.7971 6.81822ZM10.4583 5.3112L9.25517 10.8899H10.7096L11.9122 5.3112H10.4583ZM8.3066 5.3112L6.79266 9.10825L6.18028 5.87969C6.1084 5.51929 5.82464 5.3112 5.50953 5.3112H3.03459L3 5.47317C3.50807 5.58257 4.08532 5.75902 4.43502 5.9478C4.64906 6.0631 4.71013 6.16393 4.7804 6.43798L5.9403 10.8899H7.47747L9.83404 5.3112H8.3066Z" fill="white" />
+                                        <defs>
+                                            <linearGradient id="visa-grad-pp-modal" x1="10.7812" y1="16" x2="15.6708" y2="0.32624" gradientUnits="userSpaceOnUse">
+                                                <stop stop-color="#222357" />
+                                                <stop offset="1" stop-color="#254AA5" />
+                                            </linearGradient>
+                                        </defs>
+                                    </svg>
+                                </span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Number</span>
+                                <button type="button" data-copy-id="pp-vc-full-number" class="copy-btn inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer">
+                                    <span id="pp-vc-full-number" class="text-sm font-normal"></span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500">
+                                        <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+                                        <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Expires</span>
+                                <button type="button" data-copy-id="pp-vc-full-expiry" class="copy-btn inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer">
+                                    <span id="pp-vc-full-expiry" class="text-sm font-normal"></span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500">
+                                        <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+                                        <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">CVC2</span>
+                                <button type="button" data-copy-id="pp-vc-cvc2" class="copy-btn inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer">
+                                    <span id="pp-vc-cvc2" class="text-sm font-normal"></span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500">
+                                        <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+                                        <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div
+                            class="flex flex-col gap-2 self-stretch rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">
+                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">How can you use the payer's card?</p>
+                            <p class="text-xs font-normal text-gray-500 dark:text-gray-400">The payer has provided their card to cover a specific amount. You are only authorized to charge the amount indicated. To process the payment, enter the card details into your card terminal.</p>
+                            <p class="text-xs font-normal text-gray-500 dark:text-gray-400">The card may also be used for future authorized payments. It can be securely stored under the Payment Preference tab in the SMART Exchange.</p>
+                        </div>
+
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
     <!-- ===== ADD BANK ACCOUNT MODAL ===== -->
     <el-dialog>
         <dialog id="pp-add-bank-account-dialog"
@@ -2140,6 +2298,112 @@
         </dialog>
     </el-dialog>
 
+    <!-- ===== DELETE BANK ACCOUNT CONFIRM MODAL ===== -->
+    <el-dialog>
+        <dialog id="pp-delete-bank-confirm-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
+                        <button type="button" command="close" commandfor="pp-delete-bank-confirm-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+                        <div class="flex flex-col items-center text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44"
+                                fill="none" aria-hidden="true">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M18.6667 5.48896C20.1486 2.92229 23.8532 2.9223 25.3351 5.48897L39.1482 29.414C40.6301 31.9806 38.7777 35.189 35.814 35.189H8.18777C5.22404 35.189 3.37171 31.9806 4.85358 29.414L18.6667 5.48896ZM22.0008 11C22.9121 11 23.6508 11.7387 23.6508 12.65V20.35C23.6508 21.2612 22.9121 22 22.0008 22C21.0895 22 20.3508 21.2612 20.3508 20.35L20.3508 12.65C20.3508 11.7387 21.0895 11 22.0008 11ZM22.0008 30.8C23.2158 30.8 24.2008 29.815 24.2008 28.6C24.2008 27.3849 23.2158 26.4 22.0008 26.4C20.7858 26.4 19.8008 27.3849 19.8008 28.6C19.8008 29.815 20.7858 30.8 22.0008 30.8Z"
+                                    fill="#EF4444" />
+                            </svg>
+                            <div class="mt-6 flex flex-col items-center gap-2">
+                                <h2 id="pp-delete-bank-confirm-title" class="text-center text-lg/6 font-semibold text-gray-900">
+                                    Delete Bank Account?
+                                </h2>
+                                <p id="pp-delete-bank-confirm-description" class="text-center text-sm/5 font-normal text-gray-500">
+                                    If you delete this bank account it will be removed as a payment option for receiving payments.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                        <button type="button" command="close" commandfor="pp-delete-bank-confirm-dialog"
+                            class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+                            Cancel
+                        </button>
+                        <button id="pp-delete-bank-confirm-btn" type="button"
+                            class="w-full rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                            Delete
+                        </button>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
+    <!-- ===== DELETE CHECK ADDRESS CONFIRM MODAL ===== -->
+    <el-dialog>
+        <dialog id="pp-delete-check-confirm-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
+                        <button type="button" command="close" commandfor="pp-delete-check-confirm-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+                        <div class="flex flex-col items-center text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44"
+                                fill="none" aria-hidden="true">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M18.6667 5.48896C20.1486 2.92229 23.8532 2.9223 25.3351 5.48897L39.1482 29.414C40.6301 31.9806 38.7777 35.189 35.814 35.189H8.18777C5.22404 35.189 3.37171 31.9806 4.85358 29.414L18.6667 5.48896ZM22.0008 11C22.9121 11 23.6508 11.7387 23.6508 12.65V20.35C23.6508 21.2612 22.9121 22 22.0008 22C21.0895 22 20.3508 21.2612 20.3508 20.35L20.3508 12.65C20.3508 11.7387 21.0895 11 22.0008 11ZM22.0008 30.8C23.2158 30.8 24.2008 29.815 24.2008 28.6C24.2008 27.3849 23.2158 26.4 22.0008 26.4C20.7858 26.4 19.8008 27.3849 19.8008 28.6C19.8008 29.815 20.7858 30.8 22.0008 30.8Z"
+                                    fill="#EF4444" />
+                            </svg>
+                            <div class="mt-6 flex flex-col items-center gap-2">
+                                <h2 id="pp-delete-check-confirm-title" class="text-center text-lg/6 font-semibold text-gray-900">
+                                    Delete Check Address?
+                                </h2>
+                                <p id="pp-delete-check-confirm-description" class="text-center text-sm/5 font-normal text-gray-500">
+                                    If you delete this check address it will be removed as a payment option for receiving payments.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                        <button type="button" command="close" commandfor="pp-delete-check-confirm-dialog"
+                            class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+                            Cancel
+                        </button>
+                        <button id="pp-delete-check-confirm-btn" type="button"
+                            class="w-full rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                            Delete
+                        </button>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
     <!-- ===== VERIFY SMALL DEPOSIT MODAL ===== -->
     <el-dialog>
         <dialog id="pp-verify-deposit-dialog"
@@ -2266,10 +2530,76 @@
 
         (function () {
             var PAYMENT_PREFS_DATA_URL = '../../data/payment-preferences-data.json';
+            var exchangesDataUrl = '../../data/exchanges.json';
             var customersFallbackUrl = '../../data/customers.json';
             var bankAccountsFallbackUrl = '../../data/bank-accounts.json';
             var checkAddressesFallbackUrl = '../../data/check-addresses.json';
             var sharedDataPromise = null;
+
+            function getDigits(value) {
+                return String(value || '').replace(/\D/g, '');
+            }
+
+            function formatCard16(cardDigits) {
+                return String(cardDigits || '').slice(0, 16).replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+            }
+
+            function getRevealedCardNumber(paymentInfo, fallbackEnding) {
+                var fullDigits = getDigits(paymentInfo && paymentInfo.fullCardNumber);
+                if (fullDigits.length >= 16) return formatCard16(fullDigits);
+
+                var baseDigits = getDigits(paymentInfo && paymentInfo.cardNumber) || getDigits(fallbackEnding);
+                var last4 = baseDigits.slice(-4) || '4242';
+                return formatCard16(last4 + last4 + last4 + last4);
+            }
+
+            function getRevealedCvc2(paymentInfo) {
+                var cvcFull = getDigits(paymentInfo && paymentInfo.cvcFull);
+                if (cvcFull.length >= 3) return cvcFull.slice(0, 3);
+                var cvc = getDigits(paymentInfo && paymentInfo.cvc);
+                if (cvc.length >= 3) return cvc.slice(0, 3);
+                return '999';
+            }
+
+            function formatCurrency(amount, currency) {
+                try {
+                    return Number(amount).toLocaleString('en-US', {
+                        style: 'currency',
+                        currency: currency || 'USD',
+                        minimumFractionDigits: 2
+                    });
+                } catch (error) {
+                    return '$' + Number(amount || 0).toFixed(2);
+                }
+            }
+
+            function extractCardsFromExchanges(exchangePayload) {
+                if (!exchangePayload || !Array.isArray(exchangePayload.entries)) return [];
+                var cards = [];
+                exchangePayload.entries.forEach(function (entry, index) {
+                    if (!entry || entry.paymentMethod !== 'Card') return;
+                    var details = entry.details && typeof entry.details === 'object' ? entry.details : null;
+                    var paymentInfo = details && details.paymentInfo && typeof details.paymentInfo === 'object' ? details.paymentInfo : null;
+                    if (!paymentInfo || paymentInfo.type !== 'card') return;
+
+                    var endingDigits = getDigits(paymentInfo.cardNumber || entry.paymentMethodEnding);
+                    var last4 = endingDigits.slice(-4) || '0000';
+                    cards.push({
+                        id: String(entry.invoice || ('card-' + (index + 1))),
+                        vendorName: String(entry.customer || paymentInfo.cardholderName || 'Customer'),
+                        holderName: String(paymentInfo.cardholderName || entry.customer || ''),
+                        fullNumber: String(getRevealedCardNumber(paymentInfo, entry.paymentMethodEnding || '').replace(/\s/g, '')),
+                        last4: last4,
+                        expiration: String(paymentInfo.expires || ''),
+                        expirationFull: String(paymentInfo.expires || ''),
+                        cvc2: String(getRevealedCvc2(paymentInfo)),
+                        pendingAmount: formatCurrency(entry.amount, entry.currency),
+                        billingAddress: String(paymentInfo.cardholderAddress || ''),
+                        status: String(entry.status || '').toLowerCase() === 'failed' ? 'inactive' : 'active'
+                    });
+                });
+                return cards;
+            }
 
             window.__ppLoadSharedData = function () {
                 if (!sharedDataPromise) {
@@ -2278,16 +2608,28 @@
                             if (!res.ok) throw new Error('Failed loading shared data');
                             return res.json();
                         })
+                        .then(function (payload) {
+                            payload = payload && typeof payload === 'object' ? payload : {};
+                            return fetch(exchangesDataUrl)
+                                .then(function (res) { return res.ok ? res.json() : null; })
+                                .catch(function () { return null; })
+                                .then(function (exchangePayload) {
+                                    payload.cards = extractCardsFromExchanges(exchangePayload);
+                                    return payload;
+                                });
+                        })
                         .catch(function () {
                             return Promise.all([
                                 fetch(customersFallbackUrl).then(function (res) { return res.ok ? res.json() : []; }).catch(function () { return []; }),
                                 fetch(bankAccountsFallbackUrl).then(function (res) { return res.ok ? res.json() : []; }).catch(function () { return []; }),
-                                fetch(checkAddressesFallbackUrl).then(function (res) { return res.ok ? res.json() : []; }).catch(function () { return []; })
+                                fetch(checkAddressesFallbackUrl).then(function (res) { return res.ok ? res.json() : []; }).catch(function () { return []; }),
+                                fetch(exchangesDataUrl).then(function (res) { return res.ok ? res.json() : null; }).catch(function () { return null; })
                             ]).then(function (result) {
                                 return {
                                     customers: Array.isArray(result[0]) ? result[0] : [],
                                     bankAccounts: Array.isArray(result[1]) ? result[1] : [],
-                                    checkAddresses: Array.isArray(result[2]) ? result[2] : []
+                                    checkAddresses: Array.isArray(result[2]) ? result[2] : [],
+                                    cards: extractCardsFromExchanges(result[3])
                                 };
                             });
                         });
@@ -2327,6 +2669,549 @@
                     isDirty: function () { return isDirty; }
                 };
             };
+        })();
+
+        (function () {
+            var cardsListEl = document.getElementById('pp-payer-cards-list');
+            var cardsToggleBtn = document.getElementById('pp-payer-cards-toggle');
+            var cardsToggleLabel = document.getElementById('pp-payer-cards-toggle-label');
+            var cardsToggleIcon = document.getElementById('pp-payer-cards-toggle-icon');
+            var cardsSearchInput = document.getElementById('pp-cards-search-input');
+            var cardsActiveOnlyInput = document.getElementById('pp-cards-active-only');
+            var cardsFilterBtn = document.getElementById('pp-cards-filter-btn');
+            var cardsFilterDropdown = document.getElementById('pp-cards-filter-dropdown');
+            var cardsFilterMenu = document.getElementById('pp-cards-filter-menu');
+            var cardsFilterBackdrop = document.getElementById('pp-cards-filter-backdrop');
+            var filterTrack = document.getElementById('pp-cards-filter-track');
+            var filterRootPanel = document.getElementById('pp-cards-filter-panel-root');
+            var filterDetailSlot = document.getElementById('pp-cards-filter-detail-slot');
+            var filterCustomerPanel = document.getElementById('pp-cards-filter-panel-customer');
+            var filterStatusPanel = document.getElementById('pp-cards-filter-panel-status');
+            var filterCustomersWrap = document.getElementById('pp-cards-filter-customers');
+            var filterStatusesWrap = document.getElementById('pp-cards-filter-statuses');
+            var filterApplyBtn = document.getElementById('pp-cards-filter-apply-btn');
+            var filterApplyStatusBtn = document.getElementById('pp-cards-filter-apply-status-btn');
+            var cardDetailsDialog = document.getElementById('pp-card-details-dialog');
+            var vcAmountEl = document.getElementById('pp-vc-amount');
+            var vcCardNumberEl = document.getElementById('pp-vc-card-number');
+            var vcExpiryEl = document.getElementById('pp-vc-expiry');
+            var vcNameEl = document.getElementById('pp-vc-name');
+            var vcPendingAmountEl = document.getElementById('pp-vc-pending-amount');
+            var vcHolderNameEl = document.getElementById('pp-vc-holder-name');
+            var vcCardAddressEl = document.getElementById('pp-vc-card-address');
+            var vcFullNumberEl = document.getElementById('pp-vc-full-number');
+            var vcFullExpiryEl = document.getElementById('pp-vc-full-expiry');
+            var vcCvc2El = document.getElementById('pp-vc-cvc2');
+            if (!cardsListEl || !cardsToggleBtn || !cardsToggleLabel || !cardsToggleIcon) return;
+
+            var INITIAL_VISIBLE = 6;
+            var allCards = [];
+            var filteredCards = [];
+            var isExpanded = false;
+            var searchTerm = '';
+            var selectedCustomers = new Set();
+            var selectedStatuses = new Set();
+            var isFilterMenuOpen = false;
+            var activeFilterPanel = 'root';
+            var cardsById = new Map();
+
+            function escapeHtml(value) {
+                return String(value || '')
+                    .replace(/&/g, '&amp;')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#39;');
+            }
+
+            function buildVisaBadge(index) {
+                var gradId = 'visa-grad-pp-' + index;
+                return '' +
+                    '<svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">' +
+                    '  <rect width="24" height="16" rx="1.2" fill="url(#' + gradId + ')" />' +
+                    '  <path d="M12.309 7.05313C12.2987 7.85651 13.0305 8.30487 13.5818 8.57141C14.1483 8.84493 14.3385 9.0203 14.3364 9.26485C14.3321 9.6392 13.8845 9.80438 13.4656 9.81081C12.7349 9.82208 12.3101 9.61506 11.9722 9.45846L11.709 10.6807C12.0479 10.8357 12.6754 10.9708 13.3262 10.9767C14.8536 10.9767 15.853 10.2286 15.8584 9.06857C15.8644 7.5964 13.8061 7.51489 13.8202 6.85684C13.8251 6.65733 14.0169 6.44442 14.4374 6.39025C14.6455 6.3629 15.2201 6.34198 15.8714 6.63963L16.127 5.45708C15.7768 5.33051 15.3266 5.2093 14.7661 5.2093C13.3283 5.2093 12.3171 5.96764 12.309 7.05313ZM18.5836 5.3112C18.3047 5.3112 18.0696 5.47263 17.9647 5.7204L15.7827 10.8899H17.3091L17.6129 10.057H19.4781L19.6543 10.8899H20.9996L19.8257 5.3112H18.5836ZM18.7971 6.81822L19.2376 8.91304H18.0312L18.7971 6.81822ZM10.4583 5.3112L9.25517 10.8899H10.7096L11.9122 5.3112H10.4583ZM8.3066 5.3112L6.79266 9.10825L6.18028 5.87969C6.1084 5.51929 5.82464 5.3112 5.50953 5.3112H3.03459L3 5.47317C3.50807 5.58257 4.08532 5.75902 4.43502 5.9478C4.64906 6.0631 4.71013 6.16393 4.7804 6.43798L5.9403 10.8899H7.47747L9.83404 5.3112H8.3066Z" fill="white" />' +
+                    '  <defs>' +
+                    '    <linearGradient id="' + gradId + '" x1="10.7812" y1="16" x2="15.6708" y2="0.32624" gradientUnits="userSpaceOnUse">' +
+                    '      <stop stop-color="#222357" />' +
+                    '      <stop offset="1" stop-color="#254AA5" />' +
+                    '    </linearGradient>' +
+                    '  </defs>' +
+                    '</svg>';
+            }
+
+            function buildCardRow(card, index) {
+                var isInactive = card && card.status === 'inactive';
+                var rowBgClass = isInactive ? ' bg-gray-100 dark:bg-white/10' : ' bg-gray-50 dark:bg-white/5';
+                return '' +
+                    '<div class="flex items-center gap-3 p-3 self-stretch rounded-lg' + rowBgClass + '">' +
+                    '  <div class="flex items-center gap-3 grow shrink-0 basis-0 min-w-0' + (isInactive ? ' opacity-40' : '') + '">' +
+                    '    <div class="flex flex-col items-start p-2">' + buildVisaBadge(index) + '</div>' +
+                    '    <div class="flex flex-col gap-1 grow shrink-0 basis-0 min-w-0">' +
+                    '      <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">' + escapeHtml(card.vendorName) + ' •••• ' + escapeHtml(card.last4) + '</span>' +
+                    '      <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Expiration ' + escapeHtml(card.expiration) + '</span>' +
+                    '    </div>' +
+                    '  </div>' +
+                    '  <el-dropdown class="shrink-0 inline-block">' +
+                    '    <button type="button" class="rounded-md p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-600 transition-colors dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">' +
+                    '      <span class="sr-only">Open card actions</span>' +
+                    '      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">' +
+                    '        <path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />' +
+                    '      </svg>' +
+                    '    </button>' +
+                    '    <el-menu anchor="bottom end" popover class="min-w-56 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
+                    '      <div class="py-1">' +
+                    '        <button type="button" data-view-card-details="' + escapeHtml(card.id) + '" class="flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:focus:text-white cursor-pointer">' +
+                    '          <span>View card details</span>' +
+                    '        </button>' +
+                    '        <button type="button" data-view-card-payables="' + escapeHtml(card.id) + '" class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:focus:text-white cursor-pointer">' +
+                    '          <span>View associated payable(s)</span>' +
+                    '          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>' +
+                    '        </button>' +
+                    '      </div>' +
+                    '    </el-menu>' +
+                    '  </el-dropdown>' +
+                    '</div>';
+            }
+
+            function buildFilterCheckbox(id, text, countText, value, checked) {
+                return '' +
+                    '<label class="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-gray-100 group-has-checked:bg-gray-100 dark:hover:bg-white/5 dark:group-has-checked:bg-white/10">' +
+                    '  <div class="grid size-4 grid-cols-1">' +
+                    '    <input type="checkbox" data-filter-value="' + escapeHtml(value) + '" id="' + escapeHtml(id) + '"' + (checked ? ' checked' : '') +
+                    '      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
+                    '    <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
+                    '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
+                    '    </svg>' +
+                    '  </div>' +
+                    '  <span class="text-sm font-medium text-gray-900 dark:text-gray-100">' + escapeHtml(text) + '</span>' +
+                    (countText ? ('<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(countText) + '</span>') : '') +
+                    '</label>';
+            }
+
+            function normalizeCards(payload) {
+                if (!payload || !Array.isArray(payload.cards)) return [];
+                return payload.cards
+                    .map(function (card, index) {
+                        if (!card || typeof card !== 'object') return null;
+                        var fullNumberDigits = String(card.fullNumber || '').replace(/\D/g, '');
+                        var last4 = String(card.last4 || fullNumberDigits.slice(-4) || '');
+                        return {
+                            id: String(card.id || ('card-' + (index + 1))),
+                            vendorName: String(card.vendorName || card.holderName || 'Customer'),
+                            holderName: String(card.holderName || card.vendorName || 'Customer'),
+                            fullNumber: fullNumberDigits || ('424242424242' + (last4 || '4242')).slice(-16),
+                            last4: last4 || '0000',
+                            expiration: String(card.expiration || ''),
+                            expirationFull: String(card.expirationFull || card.expiration || ''),
+                            cvc2: String(card.cvc2 || '999'),
+                            pendingAmount: String(card.pendingAmount || '$0.00'),
+                            billingAddress: String(card.billingAddress || ''),
+                            status: String(card.status || 'active').toLowerCase() === 'inactive' ? 'inactive' : 'active'
+                        };
+                    })
+                    .filter(function (card) { return !!card; });
+            }
+
+            function normalizeCustomerNames(payload) {
+                if (!payload || !Array.isArray(payload.customers)) return [];
+                return payload.customers
+                    .map(function (customer) {
+                        return customer && typeof customer.name === 'string' ? customer.name.trim() : '';
+                    })
+                    .filter(function (name) { return !!name; });
+            }
+
+            function generateFallbackCards(customerNames) {
+                var names = customerNames.length ? customerNames : ['Customer'];
+                var total = 12;
+                var cards = [];
+                for (var i = 0; i < total; i++) {
+                    var month = String((i % 12) + 1).padStart(2, '0');
+                    var year = String(2026 + Math.floor(i / 8));
+                    var fullNumber = '4' + String(100000000000000 + ((i * 98765431 + 1234567) % 900000000000000));
+                    cards.push({
+                        id: 'fallback-card-' + (i + 1),
+                        vendorName: names[i % names.length],
+                        holderName: names[i % names.length],
+                        fullNumber: fullNumber,
+                        last4: fullNumber.slice(-4),
+                        expiration: month + '/' + year,
+                        expirationFull: month + '/' + year,
+                        cvc2: String(100 + ((i * 37 + 19) % 900)),
+                        pendingAmount: '$' + (125 + i * 37).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+                        billingAddress: '3476 Orphan Road\nSuite 1010\nHayward, Wisconsin 54843\nUnited States',
+                        status: (i % 5 === 0 || i % 9 === 0) ? 'inactive' : 'active'
+                    });
+                }
+                return cards;
+            }
+
+            function formatCardNumber(number) {
+                return String(number || '').replace(/\D/g, '').replace(/(\d{4})(?=\d)/g, '$1 ').trim();
+            }
+
+            function populateCardDetailsModal(card) {
+                if (!card) return;
+                if (vcAmountEl) vcAmountEl.textContent = card.pendingAmount || '$0.00';
+                if (vcCardNumberEl) vcCardNumberEl.textContent = '•••• ' + (card.last4 || '');
+                if (vcExpiryEl) vcExpiryEl.textContent = card.expiration || '';
+                if (vcNameEl) vcNameEl.textContent = (card.holderName || '').toUpperCase();
+                if (vcPendingAmountEl) vcPendingAmountEl.textContent = card.pendingAmount || '$0.00';
+                if (vcHolderNameEl) vcHolderNameEl.textContent = card.holderName || '';
+                if (vcCardAddressEl) vcCardAddressEl.textContent = card.billingAddress || '';
+                if (vcFullNumberEl) vcFullNumberEl.textContent = formatCardNumber(card.fullNumber);
+                if (vcFullExpiryEl) vcFullExpiryEl.textContent = card.expirationFull || '';
+                if (vcCvc2El) vcCvc2El.textContent = card.cvc2 || '';
+            }
+
+            function getCustomerCounts() {
+                var counts = new Map();
+                allCards.forEach(function (card) {
+                    var name = card.vendorName || 'Customer';
+                    counts.set(name, (counts.get(name) || 0) + 1);
+                });
+                return Array.from(counts.entries()).sort(function (a, b) {
+                    return a[0].localeCompare(b[0]);
+                });
+            }
+
+            function renderCustomerFilters() {
+                if (!filterCustomersWrap) return;
+                var customerEntries = getCustomerCounts();
+                filterCustomersWrap.innerHTML = customerEntries
+                    .map(function (entry, idx) {
+                        return buildFilterCheckbox(
+                            'pp-filter-customer-' + idx,
+                            entry[0],
+                            String(entry[1]),
+                            entry[0],
+                            selectedCustomers.has(entry[0])
+                        );
+                    })
+                    .join('');
+            }
+
+            function renderStatusFilters() {
+                if (!filterStatusesWrap) return;
+                var activeCount = allCards.filter(function (card) { return card.status === 'active'; }).length;
+                var inactiveCount = allCards.filter(function (card) { return card.status === 'inactive'; }).length;
+                var rows = [
+                    { key: 'active', label: 'Active', count: activeCount },
+                    { key: 'inactive', label: 'Inactive', count: inactiveCount }
+                ];
+                filterStatusesWrap.innerHTML = rows
+                    .map(function (row, idx) {
+                        return buildFilterCheckbox(
+                            'pp-filter-status-' + idx,
+                            row.label,
+                            String(row.count),
+                            row.key,
+                            selectedStatuses.has(row.key)
+                        );
+                    })
+                    .join('');
+            }
+
+            function applyFilters() {
+                var term = searchTerm.trim().toLowerCase();
+                filteredCards = allCards.filter(function (card) {
+                    var matchesTerm = !term || (card.vendorName || '').toLowerCase().indexOf(term) !== -1;
+                    if (!matchesTerm) return false;
+
+                    var matchesCustomer = selectedCustomers.size === 0 || selectedCustomers.has(card.vendorName);
+                    if (!matchesCustomer) return false;
+
+                    if (cardsActiveOnlyInput && cardsActiveOnlyInput.checked) {
+                        return card.status === 'active';
+                    }
+                    return selectedStatuses.size === 0 || selectedStatuses.has(card.status);
+                });
+            }
+
+            function syncApplyButtonState() {
+                if (filterApplyBtn) filterApplyBtn.disabled = selectedCustomers.size === 0;
+                if (filterApplyStatusBtn) filterApplyStatusBtn.disabled = selectedStatuses.size === 0;
+            }
+
+            function setDetailPanelVisibility(panel) {
+                if (!filterCustomerPanel || !filterStatusPanel) return;
+                filterCustomerPanel.classList.add('hidden');
+                filterCustomerPanel.classList.remove('flex');
+                filterStatusPanel.classList.add('hidden');
+                filterStatusPanel.classList.remove('flex');
+                if (panel === 'customer') {
+                    filterCustomerPanel.classList.remove('hidden');
+                    filterCustomerPanel.classList.add('flex');
+                } else if (panel === 'status') {
+                    filterStatusPanel.classList.remove('hidden');
+                    filterStatusPanel.classList.add('flex');
+                }
+            }
+
+            function setFilterPanel(panel, immediate) {
+                if (!filterTrack || !cardsFilterMenu) return;
+                activeFilterPanel = panel;
+                var targetPanel = filterRootPanel;
+                if (panel === 'customer' || panel === 'status') {
+                    setDetailPanelVisibility(panel);
+                    if (filterDetailSlot) targetPanel = filterDetailSlot;
+                } else {
+                    setDetailPanelVisibility('root');
+                }
+                var offset = targetPanel ? targetPanel.offsetLeft : 0;
+                var width = targetPanel ? targetPanel.offsetWidth : 0;
+                var height = targetPanel ? targetPanel.offsetHeight : 0;
+                var isMobileView = window.matchMedia('(max-width: 639px)').matches;
+                if (immediate) {
+                    filterTrack.style.transform = 'translateX(' + (-offset) + 'px)';
+                    if (isMobileView) {
+                        cardsFilterMenu.style.width = '100vw';
+                    } else if (width > 0) {
+                        cardsFilterMenu.style.width = width + 'px';
+                    }
+                    if (height > 0) cardsFilterMenu.style.height = height + 'px';
+                    return;
+                }
+                var currentRect = cardsFilterMenu.getBoundingClientRect();
+                if (!isMobileView && currentRect.width > 0) cardsFilterMenu.style.width = currentRect.width + 'px';
+                if (currentRect.height > 0) cardsFilterMenu.style.height = currentRect.height + 'px';
+                requestAnimationFrame(function () {
+                    filterTrack.style.transform = 'translateX(' + (-offset) + 'px)';
+                    if (isMobileView) {
+                        cardsFilterMenu.style.width = '100vw';
+                    } else if (width > 0) {
+                        cardsFilterMenu.style.width = width + 'px';
+                    }
+                    if (height > 0) cardsFilterMenu.style.height = height + 'px';
+                });
+            }
+
+            function applyFilterMenuLayout() {
+                if (!cardsFilterMenu) return;
+                var isMobileView = window.matchMedia('(max-width: 639px)').matches;
+
+                if (isMobileView) {
+                    cardsFilterMenu.style.position = 'fixed';
+                    cardsFilterMenu.style.left = '0';
+                    cardsFilterMenu.style.right = '0';
+                    cardsFilterMenu.style.bottom = '0';
+                    cardsFilterMenu.style.top = 'auto';
+                    cardsFilterMenu.style.marginTop = '0';
+                    cardsFilterMenu.style.zIndex = '50';
+                    cardsFilterMenu.style.borderBottomLeftRadius = '0';
+                    cardsFilterMenu.style.borderBottomRightRadius = '0';
+                    cardsFilterMenu.style.width = '100vw';
+                    cardsFilterMenu.classList.remove('origin-top-right');
+                    cardsFilterMenu.classList.add('origin-bottom');
+                    if (filterRootPanel) {
+                        filterRootPanel.style.width = '100vw';
+                        filterRootPanel.style.minWidth = '0';
+                    }
+                    if (filterDetailSlot) filterDetailSlot.style.width = '100vw';
+                    if (filterCustomerPanel) filterCustomerPanel.style.width = '100vw';
+                    if (filterStatusPanel) filterStatusPanel.style.width = '100vw';
+                } else {
+                    cardsFilterMenu.style.position = '';
+                    cardsFilterMenu.style.left = '';
+                    cardsFilterMenu.style.right = '';
+                    cardsFilterMenu.style.bottom = '';
+                    cardsFilterMenu.style.top = '';
+                    cardsFilterMenu.style.marginTop = '';
+                    cardsFilterMenu.style.zIndex = '';
+                    cardsFilterMenu.style.borderBottomLeftRadius = '';
+                    cardsFilterMenu.style.borderBottomRightRadius = '';
+                    cardsFilterMenu.style.width = '';
+                    cardsFilterMenu.classList.remove('origin-bottom');
+                    cardsFilterMenu.classList.add('origin-top-right');
+                    if (filterRootPanel) {
+                        filterRootPanel.style.width = '';
+                        filterRootPanel.style.minWidth = '';
+                    }
+                    if (filterDetailSlot) filterDetailSlot.style.width = '';
+                    if (filterCustomerPanel) filterCustomerPanel.style.width = '';
+                    if (filterStatusPanel) filterStatusPanel.style.width = '';
+                }
+            }
+
+            function setFilterMenuOpen(nextOpen) {
+                isFilterMenuOpen = !!nextOpen;
+                if (!cardsFilterMenu) return;
+                applyFilterMenuLayout();
+                if (isFilterMenuOpen) {
+                    setFilterPanel(activeFilterPanel || 'root', true);
+                    cardsFilterMenu.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
+                    if (cardsFilterBackdrop && window.matchMedia('(max-width: 639px)').matches) {
+                        cardsFilterBackdrop.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
+                    }
+                } else {
+                    cardsFilterMenu.classList.add('invisible', 'opacity-0', 'pointer-events-none');
+                    cardsFilterMenu.style.width = '';
+                    cardsFilterMenu.style.height = '';
+                    if (cardsFilterBackdrop) {
+                        cardsFilterBackdrop.classList.add('invisible', 'opacity-0', 'pointer-events-none');
+                    }
+                }
+            }
+
+            function renderCards() {
+                applyFilters();
+                cardsById.clear();
+                allCards.forEach(function (card) { cardsById.set(card.id, card); });
+                var visibleCount = isExpanded ? filteredCards.length : Math.min(INITIAL_VISIBLE, filteredCards.length);
+                cardsListEl.innerHTML = filteredCards
+                    .slice(0, visibleCount)
+                    .map(function (card, index) { return buildCardRow(card, index); })
+                    .join('');
+
+                var hiddenCount = Math.max(filteredCards.length - INITIAL_VISIBLE, 0);
+                if (!isExpanded && hiddenCount > 0) {
+                    cardsToggleBtn.style.display = 'inline-flex';
+                    cardsToggleLabel.textContent = 'Show more (' + hiddenCount + ')';
+                    cardsToggleIcon.classList.remove('rotate-180');
+                } else if (isExpanded && filteredCards.length > INITIAL_VISIBLE) {
+                    cardsToggleBtn.style.display = 'inline-flex';
+                    cardsToggleLabel.textContent = 'Show less';
+                    cardsToggleIcon.classList.add('rotate-180');
+                } else {
+                    cardsToggleBtn.style.display = 'none';
+                }
+            }
+
+            cardsToggleBtn.addEventListener('click', function () {
+                isExpanded = !isExpanded;
+                renderCards();
+            });
+
+            cardsListEl.addEventListener('click', function (event) {
+                var viewDetailsBtn = event.target.closest('[data-view-card-details]');
+                if (viewDetailsBtn) {
+                    event.preventDefault();
+                    var cardId = viewDetailsBtn.getAttribute('data-view-card-details');
+                    var card = cardsById.get(cardId);
+                    if (!card || !cardDetailsDialog) return;
+                    populateCardDetailsModal(card);
+                    cardDetailsDialog.showModal();
+                    return;
+                }
+            });
+
+            if (cardsSearchInput) {
+                cardsSearchInput.addEventListener('input', function (event) {
+                    searchTerm = event.target.value || '';
+                    isExpanded = false;
+                    renderCards();
+                });
+            }
+
+            if (cardsActiveOnlyInput) {
+                cardsActiveOnlyInput.addEventListener('change', function () {
+                    isExpanded = false;
+                    renderCards();
+                });
+            }
+
+            if (cardsFilterBtn) {
+                cardsFilterBtn.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    var nextOpen = !isFilterMenuOpen;
+                    if (nextOpen) activeFilterPanel = 'root';
+                    setFilterMenuOpen(nextOpen);
+                    syncApplyButtonState();
+                });
+            }
+
+            if (filterTrack) {
+                filterTrack.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    var openBtn = event.target.closest('[data-filter-open]');
+                    if (openBtn) {
+                        event.preventDefault();
+                        setFilterPanel(openBtn.getAttribute('data-filter-open'));
+                        return;
+                    }
+                    if (event.target.closest('[data-filter-back]')) {
+                        event.preventDefault();
+                        setFilterPanel('root');
+                        return;
+                    }
+                });
+
+                filterTrack.addEventListener('change', function (event) {
+                    var checkbox = event.target.closest('input[type="checkbox"][data-filter-value]');
+                    if (!checkbox) return;
+                    var panelEl = checkbox.closest('#pp-cards-filter-customers, #pp-cards-filter-statuses');
+                    var value = checkbox.getAttribute('data-filter-value');
+                    if (!panelEl || !value) return;
+                    if (panelEl.id === 'pp-cards-filter-customers') {
+                        if (checkbox.checked) selectedCustomers.add(value);
+                        else selectedCustomers.delete(value);
+                    } else {
+                        if (checkbox.checked) selectedStatuses.add(value);
+                        else selectedStatuses.delete(value);
+                    }
+                    isExpanded = false;
+                    renderCards();
+                    syncApplyButtonState();
+                });
+            }
+
+            if (filterApplyBtn) {
+                filterApplyBtn.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    if (filterApplyBtn.disabled) return;
+                    setFilterMenuOpen(false);
+                    setFilterPanel('root');
+                });
+            }
+
+            if (filterApplyStatusBtn) {
+                filterApplyStatusBtn.addEventListener('click', function (event) {
+                    event.stopPropagation();
+                    if (filterApplyStatusBtn.disabled) return;
+                    setFilterMenuOpen(false);
+                    setFilterPanel('root');
+                });
+            }
+
+            document.addEventListener('click', function (event) {
+                if (!cardsFilterDropdown || !isFilterMenuOpen) return;
+                if (cardsFilterDropdown.contains(event.target)) return;
+                setFilterMenuOpen(false);
+                setFilterPanel('root');
+            });
+
+            if (cardsFilterBackdrop) {
+                cardsFilterBackdrop.addEventListener('click', function () {
+                    if (!isFilterMenuOpen) return;
+                    setFilterMenuOpen(false);
+                    setFilterPanel('root');
+                });
+            }
+
+            window.addEventListener('resize', function () {
+                if (!isFilterMenuOpen) return;
+                applyFilterMenuLayout();
+                setFilterPanel(activeFilterPanel || 'root');
+            });
+
+            window.__ppLoadSharedData()
+                .then(function (payload) {
+                    allCards = normalizeCards(payload);
+                    if (!allCards.length) {
+                        allCards = generateFallbackCards(normalizeCustomerNames(payload));
+                    }
+                    renderCustomerFilters();
+                    renderStatusFilters();
+                    syncApplyButtonState();
+                    renderCards();
+                })
+                .catch(function () {
+                    allCards = generateFallbackCards([]);
+                    renderCustomerFilters();
+                    renderStatusFilters();
+                    syncApplyButtonState();
+                    renderCards();
+                });
         })();
 
         (function () {
@@ -2778,16 +3663,35 @@
             var editCheckZipInput = document.getElementById('pp-edit-check-zip');
             var editCheckCountrySelect = document.getElementById('pp-edit-check-country');
             var editCheckCountryFlag = document.getElementById('pp-edit-check-country-flag');
+            var deleteBankConfirmDialog = document.getElementById('pp-delete-bank-confirm-dialog');
+            var deleteBankConfirmTitle = document.getElementById('pp-delete-bank-confirm-title');
+            var deleteBankConfirmDescription = document.getElementById('pp-delete-bank-confirm-description');
+            var deleteBankConfirmBtn = document.getElementById('pp-delete-bank-confirm-btn');
+            var deleteCheckConfirmDialog = document.getElementById('pp-delete-check-confirm-dialog');
+            var deleteCheckConfirmTitle = document.getElementById('pp-delete-check-confirm-title');
+            var deleteCheckConfirmDescription = document.getElementById('pp-delete-check-confirm-description');
+            var deleteCheckConfirmBtn = document.getElementById('pp-delete-check-confirm-btn');
             var bankEmptyState = document.getElementById('pp-bank-empty-state');
             var bankList = document.getElementById('pp-bank-accounts-list');
+            var bankToggleBtn = document.getElementById('pp-bank-accounts-toggle');
+            var bankToggleLabel = document.getElementById('pp-bank-accounts-toggle-label');
+            var bankToggleIcon = document.getElementById('pp-bank-accounts-toggle-icon');
             var checkEmptyState = document.getElementById('pp-check-empty-state');
             var checkList = document.getElementById('pp-check-addresses-list');
-            if (!dialog || !saveBtn || !nameInput || !routingInput || !accountInput || !confirmAccountInput || !nicknameInput || !addCheckDialog || !addCheckSaveBtn || !addCheckNicknameInput || !addCheckLine1Input || !addCheckLine2Input || !addCheckCityInput || !addCheckStateInput || !addCheckZipInput || !addCheckCountrySelect || !addCheckCountryFlag || !editBankDialog || !editBankSaveBtn || !editBankNameInput || !editBankRoutingInput || !editBankAccountInput || !editBankConfirmInput || !editBankNicknameInput || !editCheckDialog || !editCheckSaveBtn || !editCheckNicknameInput || !editCheckLine1Input || !editCheckLine2Input || !editCheckCityInput || !editCheckStateInput || !editCheckZipInput || !editCheckCountrySelect || !editCheckCountryFlag || !bankEmptyState || !bankList || !checkEmptyState || !checkList) return;
+            var checkToggleBtn = document.getElementById('pp-check-addresses-toggle');
+            var checkToggleLabel = document.getElementById('pp-check-addresses-toggle-label');
+            var checkToggleIcon = document.getElementById('pp-check-addresses-toggle-icon');
+            if (!dialog || !saveBtn || !nameInput || !routingInput || !accountInput || !confirmAccountInput || !nicknameInput || !addCheckDialog || !addCheckSaveBtn || !addCheckNicknameInput || !addCheckLine1Input || !addCheckLine2Input || !addCheckCityInput || !addCheckStateInput || !addCheckZipInput || !addCheckCountrySelect || !addCheckCountryFlag || !editBankDialog || !editBankSaveBtn || !editBankNameInput || !editBankRoutingInput || !editBankAccountInput || !editBankConfirmInput || !editBankNicknameInput || !editCheckDialog || !editCheckSaveBtn || !editCheckNicknameInput || !editCheckLine1Input || !editCheckLine2Input || !editCheckCityInput || !editCheckStateInput || !editCheckZipInput || !editCheckCountrySelect || !editCheckCountryFlag || !deleteBankConfirmDialog || !deleteBankConfirmTitle || !deleteBankConfirmDescription || !deleteBankConfirmBtn || !deleteCheckConfirmDialog || !deleteCheckConfirmTitle || !deleteCheckConfirmDescription || !deleteCheckConfirmBtn || !bankEmptyState || !bankList || !bankToggleBtn || !bankToggleLabel || !bankToggleIcon || !checkEmptyState || !checkList || !checkToggleBtn || !checkToggleLabel || !checkToggleIcon) return;
 
             var bankAccounts = [];
             var checkAddresses = [];
+            var INITIAL_VISIBLE_ACCOUNT_ROWS = 6;
+            var isBankAccountsExpanded = false;
+            var isCheckAddressesExpanded = false;
             var editingBankAccountId = '';
             var editingCheckAddressId = '';
+            var pendingDeleteBankAccountId = '';
+            var pendingDeleteCheckAddressId = '';
 
             function sanitizeDigits(value, maxLen) {
                 return (value || '').replace(/\D/g, '').slice(0, maxLen);
@@ -2976,6 +3880,36 @@
                 return { line1: line1, line2: line2, city: city, state: state, zip: zip, country: country };
             }
 
+            function openDeleteBankConfirm(account) {
+                if (!account) return;
+                pendingDeleteBankAccountId = account.id;
+                var accountLabel = String(account.name || 'Bank Account').trim();
+                var accountLast4 = String(account.last4 || '').trim();
+                deleteBankConfirmTitle.textContent = 'Delete ' + accountLabel + '?';
+                var bankLabel = accountLabel + (accountLast4 ? ' ••••' + accountLast4 : '');
+                deleteBankConfirmDescription.innerHTML =
+                    'If you delete <span class="font-medium text-gray-900">' + bankLabel +
+                    '</span> it will be removed as a payment option for receiving payments.';
+                if (typeof deleteBankConfirmDialog.showModal === 'function') {
+                    deleteBankConfirmDialog.showModal();
+                }
+            }
+
+            function openDeleteCheckConfirm(address) {
+                if (!address) return;
+                pendingDeleteCheckAddressId = address.id;
+                var addressLabel = String(address.displayName || 'Check Address').trim();
+                var addressSummary = String(address.summary || '').trim();
+                deleteCheckConfirmTitle.textContent = 'Delete ' + addressLabel + '?';
+                var checkLabel = addressLabel + (addressSummary ? ' (' + addressSummary + ')' : '');
+                deleteCheckConfirmDescription.innerHTML =
+                    'If you delete <span class="font-medium text-gray-900">' + checkLabel +
+                    '</span> it will be removed as a payment option for receiving payments.';
+                if (typeof deleteCheckConfirmDialog.showModal === 'function') {
+                    deleteCheckConfirmDialog.showModal();
+                }
+            }
+
             function createBankOption(account) {
                 var option = document.createElement('el-option');
                 option.setAttribute('value', account.id);
@@ -3026,18 +3960,48 @@
 
             function renderBankAccountsList() {
                 bankList.innerHTML = '';
-                bankAccounts.forEach(function (account) {
+                var visibleCount = isBankAccountsExpanded
+                    ? bankAccounts.length
+                    : Math.min(INITIAL_VISIBLE_ACCOUNT_ROWS, bankAccounts.length);
+                bankAccounts.slice(0, visibleCount).forEach(function (account) {
                     bankList.appendChild(createBankAccountRow(account));
                 });
                 bankEmptyState.classList.toggle('hidden', bankAccounts.length > 0);
+                var hiddenCount = Math.max(bankAccounts.length - INITIAL_VISIBLE_ACCOUNT_ROWS, 0);
+                if (!isBankAccountsExpanded && hiddenCount > 0) {
+                    bankToggleBtn.style.display = 'inline-flex';
+                    bankToggleLabel.textContent = 'Show more (' + hiddenCount + ')';
+                    bankToggleIcon.classList.remove('rotate-180');
+                } else if (isBankAccountsExpanded && bankAccounts.length > INITIAL_VISIBLE_ACCOUNT_ROWS) {
+                    bankToggleBtn.style.display = 'inline-flex';
+                    bankToggleLabel.textContent = 'Show less';
+                    bankToggleIcon.classList.add('rotate-180');
+                } else {
+                    bankToggleBtn.style.display = 'none';
+                }
             }
 
             function renderCheckAddressesList() {
                 checkList.innerHTML = '';
-                checkAddresses.forEach(function (address) {
+                var visibleCount = isCheckAddressesExpanded
+                    ? checkAddresses.length
+                    : Math.min(INITIAL_VISIBLE_ACCOUNT_ROWS, checkAddresses.length);
+                checkAddresses.slice(0, visibleCount).forEach(function (address) {
                     checkList.appendChild(createCheckAddressRow(address));
                 });
                 checkEmptyState.classList.toggle('hidden', checkAddresses.length > 0);
+                var hiddenCount = Math.max(checkAddresses.length - INITIAL_VISIBLE_ACCOUNT_ROWS, 0);
+                if (!isCheckAddressesExpanded && hiddenCount > 0) {
+                    checkToggleBtn.style.display = 'inline-flex';
+                    checkToggleLabel.textContent = 'Show more (' + hiddenCount + ')';
+                    checkToggleIcon.classList.remove('rotate-180');
+                } else if (isCheckAddressesExpanded && checkAddresses.length > INITIAL_VISIBLE_ACCOUNT_ROWS) {
+                    checkToggleBtn.style.display = 'inline-flex';
+                    checkToggleLabel.textContent = 'Show less';
+                    checkToggleIcon.classList.add('rotate-180');
+                } else {
+                    checkToggleBtn.style.display = 'none';
+                }
             }
 
             function renderGlobalPreferencesPaymentOptions() {
@@ -3097,6 +4061,16 @@
                     window.__ppUpdateGpSavedSnapshot();
                 }
             }
+
+            bankToggleBtn.addEventListener('click', function () {
+                isBankAccountsExpanded = !isBankAccountsExpanded;
+                renderBankAccountsList();
+            });
+
+            checkToggleBtn.addEventListener('click', function () {
+                isCheckAddressesExpanded = !isCheckAddressesExpanded;
+                renderCheckAddressesList();
+            });
 
             function normalizeBankAccounts(rawAccounts) {
                 if (!Array.isArray(rawAccounts)) return [];
@@ -3199,10 +4173,17 @@
                 var deleteBtn = event.target.closest('[data-delete-bank-account-id]');
                 if (deleteBtn) {
                     var accountId = deleteBtn.getAttribute('data-delete-bank-account-id');
-                    bankAccounts = bankAccounts.filter(function (account) { return account.id !== accountId; });
-                    saveBankAccounts();
-                    renderAllViews();
+                    var accountToDelete = bankAccounts.find(function (account) { return account.id === accountId; });
+                    openDeleteBankConfirm(accountToDelete);
                 }
+            });
+
+            deleteBankConfirmBtn.addEventListener('click', function () {
+                if (!pendingDeleteBankAccountId) return;
+                bankAccounts = bankAccounts.filter(function (account) { return account.id !== pendingDeleteBankAccountId; });
+                saveBankAccounts();
+                renderAllViews();
+                deleteBankConfirmDialog.close();
             });
 
             checkList.addEventListener('click', function (event) {
@@ -3228,10 +4209,17 @@
                 var deleteBtn = event.target.closest('[data-delete-check-address-id]');
                 if (deleteBtn) {
                     var addressId = deleteBtn.getAttribute('data-delete-check-address-id');
-                    checkAddresses = checkAddresses.filter(function (address) { return address.id !== addressId; });
-                    saveCheckAddresses();
-                    renderAllViews();
+                    var addressToDelete = checkAddresses.find(function (address) { return address.id === addressId; });
+                    openDeleteCheckConfirm(addressToDelete);
                 }
+            });
+
+            deleteCheckConfirmBtn.addEventListener('click', function () {
+                if (!pendingDeleteCheckAddressId) return;
+                checkAddresses = checkAddresses.filter(function (address) { return address.id !== pendingDeleteCheckAddressId; });
+                saveCheckAddresses();
+                renderAllViews();
+                deleteCheckConfirmDialog.close();
             });
 
             saveBtn.addEventListener('click', function () {
@@ -3391,6 +4379,8 @@
             addCheckDialog.addEventListener('close', resetAddCheckForm);
             editBankDialog.addEventListener('close', function () { editingBankAccountId = ''; });
             editCheckDialog.addEventListener('close', function () { editingCheckAddressId = ''; });
+            deleteBankConfirmDialog.addEventListener('close', function () { pendingDeleteBankAccountId = ''; });
+            deleteCheckConfirmDialog.addEventListener('close', function () { pendingDeleteCheckAddressId = ''; });
             prefillAddBankForm();
             resetAddCheckForm();
             updateAddCheckCountryFlag();
@@ -3518,6 +4508,93 @@
 
             updateState();
         })();
+
+        function isMaskedText(value) {
+            return /[•]/.test(String(value || ''));
+        }
+
+        function syncMaskedCopyButtons() {
+            document.querySelectorAll('[data-copy-id]').forEach(function (btn) {
+                var targetEl = document.getElementById(btn.getAttribute('data-copy-id'));
+                if (!targetEl) return;
+                var masked = isMaskedText(targetEl.textContent.trim());
+                btn.classList.toggle('hidden', masked);
+                if (masked && btn._copyTip) {
+                    clearTimeout(btn._copyTipTimer);
+                    btn._copyTip.remove();
+                    btn._copyTip = null;
+                }
+            });
+        }
+
+        syncMaskedCopyButtons();
+        var copyObserver = new MutationObserver(syncMaskedCopyButtons);
+        if (document.body) {
+            copyObserver.observe(document.body, { subtree: true, childList: true, characterData: true });
+        }
+
+        document.addEventListener('click', function (e) {
+            var btn = e.target.closest('[data-copy-id]');
+            if (!btn) return;
+
+            var targetEl = document.getElementById(btn.getAttribute('data-copy-id'));
+            if (!targetEl) return;
+
+            var text = targetEl.textContent.trim();
+            if (isMaskedText(text)) return;
+            (navigator.clipboard
+                ? navigator.clipboard.writeText(text)
+                : Promise.resolve(
+                    (function () {
+                        var ta = document.createElement('textarea');
+                        ta.value = text;
+                        ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+                        document.body.appendChild(ta);
+                        ta.select();
+                        document.execCommand('copy');
+                        document.body.removeChild(ta);
+                    })()
+                )
+            ).then(function () {
+                var existing = btn._copyTip;
+                if (existing) { clearTimeout(btn._copyTipTimer); existing.remove(); }
+                if (window.getComputedStyle(btn).position === 'static') btn.style.position = 'relative';
+                btn.style.overflow = 'visible';
+
+                var tip = document.createElement('div');
+                tip.textContent = 'Copied';
+                tip.style.cssText = [
+                    'position:absolute',
+                    'left:50%',
+                    'bottom:calc(100% + 6px)',
+                    'transform:translate(-50%, 6px)',
+                    'background:#111827',
+                    'color:#fff',
+                    'font-size:12px',
+                    'font-family:Inter,sans-serif',
+                    'line-height:1.5',
+                    'padding:3px 8px',
+                    'border-radius:6px',
+                    'pointer-events:none',
+                    'z-index:50',
+                    'opacity:0',
+                    'transition:opacity 220ms ease-out,transform 220ms ease-out',
+                    'white-space:nowrap'
+                ].join(';');
+                btn.appendChild(tip);
+                btn._copyTip = tip;
+
+                tip.getBoundingClientRect();
+                tip.style.transform = 'translate(-50%,0)';
+                tip.style.opacity = '1';
+
+                btn._copyTipTimer = setTimeout(function () {
+                    tip.style.transform = 'translate(-50%,-6px)';
+                    tip.style.opacity = '0';
+                    setTimeout(function () { tip.remove(); btn._copyTip = null; }, 240);
+                }, 700);
+            });
+        });
     </script>
 
 </body>
