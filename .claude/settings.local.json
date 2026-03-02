@@ -17,7 +17,11 @@
       "WebFetch(domain:heroicons.com)",
       "WebFetch(domain:raw.githubusercontent.com)",
       "Bash(npm init:*)",
-      "Bash(npm install:*)"
+      "Bash(npm install:*)",
+      "Bash(wc:*)",
+      "Bash(test:*)",
+      "Bash(git checkout:*)",
+      "WebFetch(domain:cdn.jsdelivr.net)"
     ]
   }
 }

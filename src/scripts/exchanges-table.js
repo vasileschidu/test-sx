@@ -19,6 +19,21 @@
     '/src/data/check-addresses.json',
     './src/data/check-addresses.json',
   ];
+  var CUSTOMERS_PATH_FALLBACKS = [
+    '../../../src/data/customers.json',
+    '/src/data/customers.json',
+    './src/data/customers.json',
+  ];
+  var BANK_ACCOUNTS_PATH_FALLBACKS = [
+    '../../../src/data/bank-accounts.json',
+    '/src/data/bank-accounts.json',
+    './src/data/bank-accounts.json',
+  ];
+  var PAYMENT_PREFERENCES_DATA_PATH_FALLBACKS = [
+    '../../../src/data/payment-preferences-data.json',
+    '/src/data/payment-preferences-data.json',
+    './src/data/payment-preferences-data.json',
+  ];
   var TABLE_ID = 'exchanges-table';
   var TABLE_SCROLL_SELECTOR = '[data-table-scroll]';
   var ACTION_COLUMN_SELECTOR = '[data-action-column]';
@@ -63,6 +78,8 @@
   // MutationObserver for check address select changes
   var _checkSelectObserver = null;
   var _activeGetPaidEntry = null;
+  var _activeTableTabKey = 'pending';
+  var _customers = [];
 
   // Pagination state
   var paginationState = {
@@ -73,25 +90,38 @@
     sourceEntries: [],
     columns: [],
   };
+  var sortState = {
+    key: '',
+    direction: '', // '', 'asc', 'desc'
+  };
 
   // Maps tab key (from data-tab-count) to the status values shown in that tab.
   // null means no filter — show all entries.
   var TAB_STATUS_FILTER = {
-    ready: null,
-    pending: ['Pending', 'Processing'],
-    paid: ['Completed'],
-    exceptions: ['Failed'],
+    pending: ['pending'],
+    paid: ['paid'],
+    exceptions: ['exception'],
   };
 
   var STATUS_STYLES = {
-    Pending:
+    pending:
       'bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20',
-    Completed:
+    paid:
       'bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20',
-    Processing:
-      'bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/20',
-    Failed:
+    exception:
       'bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20',
+  };
+
+  var STATUS_LABELS = {
+    pending: 'Pending',
+    paid: 'Paid',
+    exception: 'Exception',
+  };
+
+  var METHOD_TYPE_LABELS = {
+    smart_exchange: 'SMART Exchange',
+    card: 'Card',
+    ach: 'ACH',
   };
 
   var CLASS_NAMES = {
@@ -99,7 +129,7 @@
     row: 'transition-colors duration-200',
     cellBorder: ' border-b border-gray-200 dark:border-white/10',
     actionCell:
-      'bg-white py-2 pr-4 pl-3 whitespace-nowrap w-24 min-w-24 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2',
+      'bg-white h-12 align-middle py-2 pr-4 pl-3 whitespace-nowrap w-24 min-w-24 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2',
     detailCell: 'bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10',
   };
 
@@ -110,6 +140,8 @@
   var ICON_VISA = '<svg class="size-5 shrink-0" height="20" width="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h32v32H0z" fill="#00579f"></path><g fill="#fff" fill-rule="nonzero"><path d="M13.823 19.876H11.8l1.265-7.736h2.023zm7.334-7.546a5.036 5.036 0 0 0-1.814-.33c-1.998 0-3.405 1.053-3.414 2.56-.016 1.11 1.007 1.728 1.773 2.098.783.379 1.05.626 1.05.963-.009.518-.633.757-1.216.757-.808 0-1.24-.123-1.898-.411l-.267-.124-.283 1.737c.475.213 1.349.403 2.257.411 2.123 0 3.505-1.037 3.521-2.641.008-.881-.532-1.556-1.698-2.107-.708-.354-1.141-.593-1.141-.955.008-.33.366-.667 1.165-.667a3.471 3.471 0 0 1 1.507.297l.183.082zm2.69 4.806.807-2.165c-.008.017.167-.452.266-.74l.142.666s.383 1.852.466 2.239h-1.682zm2.497-4.996h-1.565c-.483 0-.85.14-1.058.642l-3.005 7.094h2.123l.425-1.16h2.597c.059.271.242 1.16.242 1.16h1.873zm-16.234 0-1.982 5.275-.216-1.07c-.366-1.234-1.515-2.575-2.797-3.242l1.815 6.765h2.14l3.18-7.728z"></path><path d="M6.289 12.14H3.033L3 12.297c2.54.641 4.221 2.189 4.912 4.049l-.708-3.556c-.116-.494-.474-.633-.915-.65z"></path></g></g></svg>';
 
   var ICON_SORT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 0 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Zm-4.31 9.81 3.25 3.25a.75.75 0 0 0 1.06 0l3.25-3.25a.75.75 0 1 0-1.06-1.06L10 14.94l-2.72-2.72a.75.75 0 0 0-1.06 1.06Z" clip-rule="evenodd" /></svg>';
+  var ICON_SORT_ASC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-40" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+  var ICON_SORT_DESC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-40" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
 
   var ICON_FILTER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z" clip-rule="evenodd" /></svg>';
 
@@ -118,7 +150,7 @@
   var ICON_CHEVRON_DOWN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
 
   var ICON_COPY = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>';
-  var ICON_CHEVRON_RIGHT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+  var ICON_EXPAND_RIGHT = '<svg class="size-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>';
 
   var ICON_EYE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-blue-600"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" /></svg>';
   var ICON_EYE_SLASH = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 text-blue-600"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.28033 2.21967C2.98744 1.92678 2.51256 1.92678 2.21967 2.21967C1.92678 2.51256 1.92678 2.98744 2.21967 3.28033L12.7197 13.7803C13.0126 14.0732 13.4874 14.0732 13.7803 13.7803C14.0732 13.4874 14.0732 13.0126 13.7803 12.7197L12.4577 11.397C13.438 10.5863 14.1937 9.51366 14.6176 8.2863C14.681 8.10274 14.6811 7.90313 14.6179 7.71951C13.672 4.97316 11.0653 3 7.99777 3C6.85414 3 5.77457 3.27425 4.82123 3.76057L3.28033 2.21967Z" /><path d="M6.47602 5.41536L7.61147 6.55081C7.73539 6.51767 7.86563 6.5 8 6.5C8.82843 6.5 9.5 7.17157 9.5 8C9.5 8.13437 9.48233 8.26461 9.44919 8.38853L10.5846 9.52398C10.8486 9.07734 11 8.55636 11 8C11 6.34315 9.65685 5 8 5C7.44364 5 6.92266 5.15145 6.47602 5.41536Z" /><path d="M7.81206 10.9942L9.62754 12.8097C9.10513 12.9341 8.56002 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C1.63675 6.96935 2.01588 6.28191 2.49314 5.67529L5.00579 8.18794C5.09895 9.69509 6.30491 10.901 7.81206 10.9942Z" /></svg>';
@@ -180,36 +212,124 @@
     return String(value || '').replace(/\D/g, '');
   }
 
-  function formatCard16(cardDigits) {
-    var trimmed = String(cardDigits || '').slice(0, 16);
-    return trimmed.replace(/(\d{4})(?=\d)/g, '$1 ').trim();
-  }
-
-  function getRevealedCardNumber(info, fallbackEnding) {
-    var fullDigits = getDigits(info && info.fullCardNumber);
-    if (fullDigits.length >= 16) return formatCard16(fullDigits);
-
-    var baseDigits = getDigits(info && info.cardNumber) || getDigits(fallbackEnding);
-    var last4 = baseDigits.slice(-4) || '4242';
-    var synthetic16 = (last4 + last4 + last4 + last4);
-    return formatCard16(synthetic16);
-  }
-
-  function getRevealedCvc2(info) {
-    var cvcFull = getDigits(info && info.cvcFull);
-    if (cvcFull.length >= 3) return cvcFull.slice(0, 3);
-    var cvcDigits = getDigits(info && info.cvc);
-    if (cvcDigits.length >= 3) return cvcDigits.slice(0, 3);
-    return '999';
-  }
-
   // Returns entries filtered to the given tab key using TAB_STATUS_FILTER.
   function filterEntriesByTab(tabKey) {
     var filter = TAB_STATUS_FILTER[tabKey];
-    if (!filter) return paginationState.sourceEntries.slice();
+    if (!filter || !filter.length) return paginationState.sourceEntries.slice();
     return paginationState.sourceEntries.filter(function (entry) {
       return filter.indexOf(entry.status) !== -1;
     });
+  }
+
+  function getSortDirectionForKey(key) {
+    return sortState.key === key ? sortState.direction : '';
+  }
+
+  function cycleSortDirection(key) {
+    if (!key) return;
+    if (sortState.key !== key) {
+      sortState.key = key;
+      sortState.direction = 'asc';
+      return;
+    }
+    if (sortState.direction === 'asc') {
+      sortState.direction = 'desc';
+      return;
+    }
+    if (sortState.direction === 'desc') {
+      sortState.key = '';
+      sortState.direction = '';
+      return;
+    }
+    sortState.direction = 'asc';
+  }
+
+  function getSortedEntries(entries) {
+    var list = Array.isArray(entries) ? entries.slice() : [];
+    var key = sortState.key;
+    var direction = sortState.direction;
+    if (!key || !direction) return list;
+
+    var multiplier = direction === 'desc' ? -1 : 1;
+    var statusRank = { pending: 1, paid: 2, exception: 3 };
+    list.sort(function (a, b) {
+      var av;
+      var bv;
+
+      if (key === 'amount') {
+        av = Number(a && a.amount) || 0;
+        bv = Number(b && b.amount) || 0;
+        if (av === bv) return 0;
+        return (av > bv ? 1 : -1) * multiplier;
+      }
+
+      if (key === 'dateInitiated') {
+        av = new Date(String(a && a.dateInitiated || '') + 'T00:00:00').getTime();
+        bv = new Date(String(b && b.dateInitiated || '') + 'T00:00:00').getTime();
+        av = Number.isFinite(av) ? av : 0;
+        bv = Number.isFinite(bv) ? bv : 0;
+        if (av === bv) return 0;
+        return (av > bv ? 1 : -1) * multiplier;
+      }
+
+      if (key === 'status') {
+        av = statusRank[String(a && a.status || '').toLowerCase()] || 99;
+        bv = statusRank[String(b && b.status || '').toLowerCase()] || 99;
+        if (av === bv) return 0;
+        return (av > bv ? 1 : -1) * multiplier;
+      }
+
+      if (key === 'paymentMethod') {
+        av = (String(a && a.paymentMethod || '') + ' ' + String(a && a.paymentMethodEnding || '')).trim().toLowerCase();
+        bv = (String(b && b.paymentMethod || '') + ' ' + String(b && b.paymentMethodEnding || '')).trim().toLowerCase();
+        var pmCmp = av.localeCompare(bv, undefined, { numeric: true, sensitivity: 'base' });
+        if (pmCmp === 0) return 0;
+        return pmCmp * multiplier;
+      }
+
+      av = String(a && a[key] || '').toLowerCase();
+      bv = String(b && b[key] || '').toLowerCase();
+      var cmp = av.localeCompare(bv, undefined, { numeric: true, sensitivity: 'base' });
+      if (cmp === 0) return 0;
+      return cmp * multiplier;
+    });
+    return list;
+  }
+
+  function isPendingLikeStatus(status) {
+    return status === 'pending';
+  }
+
+  function normalizeStatusValue(status) {
+    var value = String(status || '').trim().toLowerCase();
+    if (value === 'completed') return 'paid';
+    if (value === 'failed') return 'exception';
+    if (value === 'processing') return 'pending';
+    if (value === 'pending' || value === 'paid' || value === 'exception') return value;
+    return 'pending';
+  }
+
+  function normalizeMethodTypeValue(entry) {
+    var methodType = String(entry && entry.methodType || '').trim().toLowerCase();
+    if (methodType === 'card' || methodType === 'ach' || methodType === 'smart_exchange') return methodType;
+
+    var infoType = String(entry && entry.details && entry.details.paymentInfo && entry.details.paymentInfo.type || '').trim().toLowerCase();
+    if (infoType === 'card' || infoType === 'ach') return infoType;
+    if (infoType === 'smartexchange' || infoType === 'smart_exchange') return 'smart_exchange';
+
+    var method = String(entry && entry.paymentMethod || '').trim().toLowerCase();
+    if (method === 'card') return 'card';
+    if (method === 'ach' || method === 'bank account') return 'ach';
+    if (method === 'smart exchange') return 'smart_exchange';
+    return 'smart_exchange';
+  }
+
+  function getMethodLabelFromType(methodType) {
+    return METHOD_TYPE_LABELS[methodType] || 'SMART Exchange';
+  }
+
+  function getStatusLabel(status) {
+    return STATUS_LABELS[status] || 'Pending';
   }
 
   function normalizeDetails(details) {
@@ -229,6 +349,7 @@
       console.warn('Skipping malformed exchange row at index', index, entry);
       return null;
     }
+    var methodType = normalizeMethodTypeValue(entry);
     return {
       amount: Number(entry.amount) || 0,
       currency: typeof entry.currency === 'string' ? entry.currency : 'USD',
@@ -236,9 +357,11 @@
       invoice: typeof entry.invoice === 'string' ? entry.invoice : '',
       customer: typeof entry.customer === 'string' ? entry.customer : '',
       dateInitiated: typeof entry.dateInitiated === 'string' ? entry.dateInitiated : '',
-      paymentMethod: typeof entry.paymentMethod === 'string' ? entry.paymentMethod : '',
+      paymentMethod: getMethodLabelFromType(methodType),
+      methodType: methodType,
       paymentMethodEnding: typeof entry.paymentMethodEnding === 'string' ? entry.paymentMethodEnding : '',
-      status: typeof entry.status === 'string' ? entry.status : 'Pending',
+      status: normalizeStatusValue(entry.status),
+      payeeId: typeof entry.payeeId === 'string' ? entry.payeeId : ((_myBusiness && _myBusiness.id) || 'my-business'),
       details: normalizeDetails(entry.details),
     };
   }
@@ -265,16 +388,29 @@
       html += '<th scope="col" class="' + thClass + '">';
 
       if (col.sortable || col.filterable) {
-        html += '<a href="#" class="group flex items-center gap-x-1.5">';
-        html += escapeHtml(col.label);
+        var headerBtnAttrs = '';
+        if (col.sortable) {
+          headerBtnAttrs += ' data-sort-key="' + escapeHtml(col.key || '') + '"';
+        }
+        html += '<button type="button"' + headerBtnAttrs + ' class="group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white">';
+        html += '<span>' + escapeHtml(col.label) + '</span>';
 
-        if (col.filterable) {
-          html += '<button type="button" class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">' + ICON_FILTER + '</button>';
-        } else {
-          html += '<button type="button" class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-1 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors">' + ICON_SORT + '</button>';
+        if (col.sortable) {
+          var sortDirection = getSortDirectionForKey(col.key || '');
+          var sortBtnClass = sortDirection
+            ? 'inline-flex items-center rounded-md bg-blue-100 p-1 text-blue-600 dark:bg-blue-500/20 dark:text-blue-300'
+            : 'inline-flex items-center rounded-md bg-gray-100 p-1 text-gray-700 dark:bg-white/10 dark:text-gray-400';
+          var sortIcon = sortDirection === 'asc'
+            ? ICON_SORT_ASC
+            : (sortDirection === 'desc' ? ICON_SORT_DESC : ICON_SORT);
+          html += '<span class="' + sortBtnClass + '">' + sortIcon + '</span>';
         }
 
-        html += '</a>';
+        if (col.filterable) {
+          html += '<span class="inline-flex items-center rounded-md bg-gray-100 p-1 text-gray-700 dark:bg-white/10 dark:text-gray-400">' + ICON_FILTER + '</span>';
+        }
+
+        html += '</button>';
       } else {
         html += escapeHtml(col.label);
       }
@@ -312,17 +448,25 @@
   function renderPaymentMethod(entry) {
     var method = entry.paymentMethod;
     var ending = entry.paymentMethodEnding;
+    var info = entry && entry.details ? (entry.details.paymentInfo || {}) : {};
 
-    if (method === 'ACH') {
+    if (entry.methodType === 'ach') {
+      var payee = getResolvedPayee(entry);
+      var receivingBank = resolveReceivingBankAccount(entry, info) || (payee && payee.bankAccounts && payee.bankAccounts[0]);
+      var achLast4 = getDigits(receivingBank && (receivingBank.accountNumber || receivingBank.maskedAccount || receivingBank.last4 || '')).slice(-4) ||
+        getDigits(info && info.accountNumber).slice(-4) ||
+        getDigits(ending).slice(-4);
       return '<span class="inline-flex items-center gap-x-2">' +
         ICON_ACH +
-        '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(ending) + '</span>' +
+        '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(achLast4 || '') + '</span>' +
         '</span>';
     }
 
-    if (method === 'Card') {
-      var endingDigits = getDigits(ending);
-      var last4 = endingDigits ? endingDigits.slice(-4) : String(ending || '').slice(-4);
+    if (entry.methodType === 'card') {
+      var customer = getCustomerForEntry(entry);
+      var cardDetails = getPayerCardDetailsForRender(entry, info, customer);
+      var last4 = getDigits(cardDetails && (cardDetails.fullCardNumber || cardDetails.maskedCardNumber || '')).slice(-4) ||
+        getDigits(ending).slice(-4);
       return '<span class="inline-flex items-center gap-x-2">' +
         ICON_VISA +
         '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(last4) + '</span>' +
@@ -334,15 +478,30 @@
   }
 
   function renderStatus(status) {
-    var badgeClasses = STATUS_STYLES[status] || STATUS_STYLES.Pending;
+    var badgeClasses = STATUS_STYLES[status] || STATUS_STYLES.pending;
     return '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + badgeClasses + '">' +
-      escapeHtml(status) +
+      escapeHtml(getStatusLabel(status)) +
       '</span>';
   }
 
   function renderActionCell(entry) {
-    if (entry.paymentMethod === 'SMART Exchange' && entry.status === 'Pending') {
+    if (entry.status === 'pending' && entry.methodType === 'smart_exchange') {
       return '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>';
+    }
+
+    if (_activeTableTabKey === 'pending' && isPendingLikeStatus(entry.status) && (entry.methodType === 'card' || entry.methodType === 'ach')) {
+      return '<el-dropdown class="inline-block">' +
+        '<button class="flex items-center justify-center rounded-sm bg-white p-1 text-gray-500 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:hover:text-gray-300">' +
+          '<span class="sr-only">Open options</span>' +
+          ICON_THREE_DOTS +
+        '</button>' +
+        '<el-menu anchor="bottom end" popover class=" min-w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
+          '<div class="py-1">' +
+            '<a href="#" data-mark-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Mark as paid (manual)</a>' +
+            '<a href="#" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>' +
+          '</div>' +
+        '</el-menu>' +
+      '</el-dropdown>';
     }
 
     // 3-dot dropdown for ACH / Card
@@ -370,7 +529,7 @@
     columns.forEach(function (col) {
       if (col.type === 'expand') {
         html +=
-          '<td class="py-2 pr-3 pl-4 whitespace-nowrap sm:pl-0' + cb + '">' +
+          '<td class="h-12 align-middle py-2 pr-3 pl-4 whitespace-nowrap sm:pl-0' + cb + '">' +
             '<button data-row-toggle class="rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20">' +
               '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
                 '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />' +
@@ -390,11 +549,11 @@
 
       var cellClass;
       if (col.type === 'status' || col.type === 'paymentMethod') {
-        cellClass = 'px-2 py-2 whitespace-nowrap' + cb;
+        cellClass = 'h-12 align-middle px-2 py-2 whitespace-nowrap' + cb;
       } else if (col.key === 'invoice' || col.key === 'dateInitiated') {
-        cellClass = 'px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb;
+        cellClass = 'h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb;
       } else {
-        cellClass = 'px-2 py-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb;
+        cellClass = 'h-12 align-middle px-2 py-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb;
       }
 
       html += '<td class="' + cellClass + '">' + renderCellValue(col, entry) + '</td>';
@@ -422,13 +581,13 @@
   }
 
   function buildStatusSection(entry) {
-    var statusClass = STATUS_STYLES[entry.status] || STATUS_STYLES.Pending;
+    var statusClass = STATUS_STYLES[entry.status] || STATUS_STYLES.pending;
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Status</div>' +
         '<div class="flex-1 flex items-center p-4">' +
           '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + statusClass + '">' +
-            escapeHtml(entry.status) +
+            escapeHtml(getStatusLabel(entry.status)) +
           '</span>' +
         '</div>' +
       '</div>'
@@ -459,6 +618,7 @@
   }
 
   var paymentInfoCopyIdCounter = 0;
+  var EMPTY_DETAIL_VALUE = '<span class="text-gray-400 dark:text-gray-500">—</span>';
 
   // Payment info: each row is a 2-col layout (both flex-1, gap-6 = 24px)
   function buildPaymentInfoRow(label, value, hasCopy) {
@@ -483,115 +643,417 @@
       '<div class="flex gap-6">' +
         '<dt class="flex-1 text-sm font-medium text-gray-900 dark:text-gray-100">' + label + '</dt>' +
         '<dd class="flex-1 flex items-center gap-6 text-sm text-gray-700 dark:text-gray-300">' +
-          valueHtml +
+          (valueHtml || EMPTY_DETAIL_VALUE) +
         '</dd>' +
       '</div>'
     );
   }
 
-  function buildPaymentInfoSection(entry) {
-    var info = entry.details.paymentInfo;
-    if (!info) return '';
+  function getSafeTextValue(value) {
+    var str = String(value || '').trim();
+    return str ? escapeHtml(str) : EMPTY_DETAIL_VALUE;
+  }
 
-    var typeLabel = '';
-    var titleLabel = '';
-    var rows = '';
+  function getSafeMultilineValue(value) {
+    var str = String(value || '').trim();
+    return str ? escapeHtml(str).replace(/\n/g, '<br>') : EMPTY_DETAIL_VALUE;
+  }
 
-    if (info.type === 'card') {
-      typeLabel = 'Card';
-      titleLabel = 'Card Details';
+  function getMaskedLast4(raw, prefix) {
+    var digits = getDigits(raw);
+    if (!digits) return '';
+    return (prefix || '•••• ') + digits.slice(-4);
+  }
 
-      rows += buildPaymentInfoRow('Cardholder Name', escapeHtml(info.cardholderName || ''), false);
+  function buildMaskedCardField(maskedValue, fieldName, revealedValue) {
+    if (!maskedValue) return EMPTY_DETAIL_VALUE;
+    var safeMasked = escapeHtml(maskedValue);
+    var safeRevealed = escapeHtml(revealedValue || maskedValue);
+    return '<span data-mask-field="' + fieldName + '" class="inline-block whitespace-nowrap" data-masked="' + safeMasked + '" data-revealed="' + safeRevealed + '">' + safeMasked + '</span>';
+  }
 
-      if (info.cardholderAddress) {
-        var addrHtml = escapeHtml(info.cardholderAddress).replace(/\n/g, '<br>');
-        rows += buildPaymentInfoRow('Cardholder Address', addrHtml, false);
+  function buildMaskedAchField(maskedValue, revealedValue) {
+    if (!maskedValue) return EMPTY_DETAIL_VALUE;
+    var safeMasked = escapeHtml(maskedValue);
+    var safeRevealed = escapeHtml(revealedValue || maskedValue);
+    return '<span data-ach-mask-field="true" data-masked="' + safeMasked + '" data-revealed="' + safeRevealed + '" class="inline-block whitespace-nowrap">' + safeMasked + '</span>';
+  }
+
+  function findMatchingBusinessBankAccount(info) {
+    var banks = _myBusiness && Array.isArray(_myBusiness.bankAccounts) ? _myBusiness.bankAccounts : [];
+    if (!banks.length) return null;
+    var targetLast4 = getDigits(info && info.accountNumber).slice(-4);
+    var targetBankName = String(info && info.bankName || '').trim().toLowerCase();
+    for (var i = 0; i < banks.length; i++) {
+      var bank = banks[i];
+      var bankLast4 = getDigits(bank && (bank.accountNumber || bank.maskedAccount || '')).slice(-4);
+      var bankName = String(bank && (bank.bankName || bank.displayName || '')).trim().toLowerCase();
+      if (targetLast4 && bankLast4 && targetLast4 === bankLast4) return bank;
+      if (targetBankName && bankName && targetBankName === bankName) return bank;
+    }
+    return null;
+  }
+
+  function resolveReceivingBankAccount(entry, info) {
+    var banks = _myBusiness && Array.isArray(_myBusiness.bankAccounts) ? _myBusiness.bankAccounts : [];
+    if (!banks.length) return null;
+
+    var endingLast4 = getDigits(entry && entry.paymentMethodEnding).slice(-4);
+    if (endingLast4) {
+      for (var i = 0; i < banks.length; i++) {
+        var bank = banks[i];
+        var bankLast4 = getDigits(bank && (bank.accountNumber || bank.maskedAccount || bank.last4 || '')).slice(-4);
+        if (bankLast4 && bankLast4 === endingLast4) return bank;
       }
-
-      rows +=
-        '<div class="flex gap-6">' +
-          '<dt class="flex-1 text-sm font-medium text-gray-900 dark:text-gray-100">Type</dt>' +
-          '<dd class="flex-1">' + ICON_VISA + '</dd>' +
-        '</div>';
-
-      var maskedLast4 = getDigits(info.cardNumber) || getDigits(entry.paymentMethodEnding).slice(-4) || '0000';
-      var maskedCardNumber = '•••• ' + maskedLast4.slice(-4);
-      var revealedCardNumber = getRevealedCardNumber(info, entry.paymentMethodEnding);
-      rows += buildPaymentInfoRow(
-        'Card Number',
-        '<span data-mask-field="card-number" class="inline-block whitespace-nowrap" data-masked="' + escapeHtml(maskedCardNumber) + '" data-revealed="' + escapeHtml(revealedCardNumber) + '">' + escapeHtml(maskedCardNumber) + '</span>',
-        'revealed'
-      );
-      rows += buildPaymentInfoRow('Expires', escapeHtml(info.expires || ''), 'revealed');
-      var maskedCvc = '•••';
-      var revealedCvc = getRevealedCvc2(info);
-      rows += buildPaymentInfoRow(
-        'CVC2',
-        '<span data-mask-field="cvc" data-masked="' + escapeHtml(maskedCvc) + '" data-revealed="' + escapeHtml(revealedCvc) + '">' + escapeHtml(maskedCvc) + '</span>',
-        'revealed'
-      );
-
-    } else if (info.type === 'ach') {
-      typeLabel = 'ACH';
-      titleLabel = 'Bank Account Details';
-
-      rows += buildPaymentInfoRow('Account Holder', escapeHtml(info.accountHolder || ''), false);
-      rows += buildPaymentInfoRow('Bank Name', escapeHtml(info.bankName || ''), false);
-      rows += buildPaymentInfoRow('Routing Number', escapeHtml(info.routingNumber || ''), true);
-      rows += buildPaymentInfoRow('Account Number', escapeHtml(info.accountNumber || ''), true);
-      rows += buildPaymentInfoRow('Account Type', escapeHtml(info.accountType || ''), false);
-
-    } else if (info.type === 'smartExchange') {
-      typeLabel = 'SMART Exchange';
-      titleLabel = 'Exchange Details';
-
-      rows += buildPaymentInfoRow('Exchange ID', escapeHtml(info.exchangeId || ''), false);
-      rows += buildPaymentInfoRow('Exchange Rate', escapeHtml(info.exchangeRate || ''), false);
-      rows += buildPaymentInfoRow('Source Amount', escapeHtml(info.sourceAmount || ''), false);
-      rows += buildPaymentInfoRow('Target Amount', escapeHtml(info.targetAmount || ''), false);
-      rows += buildPaymentInfoRow('Settlement Date', escapeHtml(info.settlementDate || ''), false);
     }
 
-    var revealLink = info.type === 'card'
+    var byInfo = findMatchingBusinessBankAccount(info);
+    if (byInfo) return byInfo;
+
+    return banks[0];
+  }
+
+  function getResolvedPayee(entry) {
+    if (!_myBusiness) return null;
+    if (entry && entry.payeeId && _myBusiness.id && entry.payeeId !== _myBusiness.id) return null;
+    return _myBusiness;
+  }
+
+  function getExceptionContextMessage(entry) {
+    var log = entry && entry.details && Array.isArray(entry.details.activityLog) ? entry.details.activityLog : [];
+    for (var i = log.length - 1; i >= 0; i--) {
+      var item = log[i];
+      if (item && item.type === 'failed' && item.action) return String(item.action);
+    }
+    return 'Payment is in exception state and requires review.';
+  }
+
+  function getCustomerForEntry(entry) {
+    var targetCustomerName = String(entry && entry.customer || '').trim().toLowerCase();
+    var targetVendorEntry = String(entry && entry.vendorEntry || '').trim().toLowerCase();
+    for (var i = 0; i < _customers.length; i++) {
+      var customer = _customers[i];
+      var customerName = String(customer && customer.name || '').trim().toLowerCase();
+      if (targetCustomerName && customerName === targetCustomerName) return customer;
+      var vendorEntries = Array.isArray(customer && customer.vendorEntries) ? customer.vendorEntries : [];
+      for (var j = 0; j < vendorEntries.length; j++) {
+        if (String(vendorEntries[j] || '').trim().toLowerCase() === targetVendorEntry) return customer;
+      }
+    }
+    return null;
+  }
+
+  function getPayerCardDetailsForRender(entry, info, customer) {
+    var paymentInfo = info || {};
+    var payerCardInfo = paymentInfo.payerCard || paymentInfo;
+    var cardHolderName = (customer && customer.name) || payerCardInfo.cardholderName || entry.customer || '';
+    var cardHolderAddress = payerCardInfo.cardholderAddress || paymentInfo.cardholderAddress || '';
+    var cardNumberRaw = String(paymentInfo.cardNumber || payerCardInfo.cardNumber || entry.paymentMethodEnding || '');
+    var cardDigits = cardNumberRaw.replace(/\D/g, '');
+    var cardLast4 = cardDigits.length >= 4 ? cardDigits.slice(-4) : '0000';
+    var fullCardNumber = cardDigits.length >= 13
+      ? cardDigits.slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
+      : ('4000 0000 0000 ' + cardLast4);
+    var maskedCardNumber = '•••• ' + cardLast4;
+    var expiryFull = String(paymentInfo.expires || payerCardInfo.expires || '12/2026');
+    var rawCvc = String(paymentInfo.cvcFull || paymentInfo.cvc || payerCardInfo.cvcFull || payerCardInfo.cvc || '').trim();
+    var cvcDigits = rawCvc.replace(/\D/g, '');
+    var cvcValue = cvcDigits.length >= 3 ? cvcDigits.slice(0, 3) : '999';
+    var maskedCvc = '•••';
+    return {
+      cardHolderName: cardHolderName,
+      cardHolderAddress: cardHolderAddress,
+      cardType: paymentInfo.cardType || payerCardInfo.cardType || 'Visa',
+      maskedCardNumber: maskedCardNumber,
+      fullCardNumber: fullCardNumber,
+      expiryFull: expiryFull,
+      maskedCvc: maskedCvc,
+      cvcValue: cvcValue,
+    };
+  }
+
+  function getPaymentMethodDetailsVariant(status, methodType, entry, info, payee) {
+    if (status === 'pending' && methodType === 'smart_exchange') {
+      return {
+        key: 'smart_exchange_unselected',
+        typeLabel: 'SMART Exchange',
+        titleLabel: 'No Payment Method Selected',
+        revealKind: '',
+        rowsHtml:
+          '<div class="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-300">' +
+            'No payment method selected yet. Click \'Get paid\' to choose how you want to be paid.' +
+          '</div>',
+      };
+    }
+
+    if (methodType === 'ach') {
+      var receivingBank = resolveReceivingBankAccount(entry, info) || (payee && payee.bankAccounts && payee.bankAccounts[0]);
+      var achName = getSafeTextValue(
+        (receivingBank && (receivingBank.name || receivingBank.displayName || receivingBank.bankName)) ||
+        (info && (info.accountHolder || info.bankName))
+      );
+      var achAccountLast4 = getDigits(receivingBank && (receivingBank.accountNumber || receivingBank.maskedAccount || receivingBank.last4 || '')).slice(-4) ||
+        getDigits(info && info.accountNumber).slice(-4);
+      var achRoutingLast4 = getDigits(receivingBank && (receivingBank.routingNumber || receivingBank.maskedRouting || receivingBank.routing || '')).slice(-4) ||
+        getDigits(info && info.routingNumber).slice(-4);
+      var achAccountMasked = (receivingBank && receivingBank.maskedAccount) || (achAccountLast4 ? ('••••' + achAccountLast4) : '');
+      var achRoutingMasked = (receivingBank && receivingBank.maskedRouting) || (achRoutingLast4 ? ('••••' + achRoutingLast4) : '');
+      var achAccountRevealed = String(
+        (receivingBank && receivingBank.accountNumber) ||
+        (info && info.accountNumber) ||
+        ''
+      ).trim();
+      var achRoutingRevealed = String(
+        (receivingBank && (receivingBank.routingNumber || receivingBank.routing)) ||
+        (info && info.routingNumber) ||
+        ''
+      ).trim();
+      var achAddress = getSafeMultilineValue((receivingBank && receivingBank.address) || (info && info.address));
+      var accountCopyId = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var routingCopyId = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var achCardHtml =
+        '<div data-ach-info-card class="flex flex-col items-start self-stretch">' +
+          '<div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">' +
+            '<span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Account Details</span>' +
+            '<span></span>' +
+          '</div>' +
+          '<div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">' +
+            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name</span>' +
+              '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + achName + '</span>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span>' +
+              '<button type="button" data-copy-id="' + accountCopyId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+                '<span id="' + accountCopyId + '" data-ach-mask-field="true" data-masked="' + escapeHtml(achAccountMasked) + '" data-revealed="' + escapeHtml(achAccountRevealed) + '" class="text-sm font-normal">' + escapeHtml(achAccountMasked) + '</span>' +
+                '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
+              '</button>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span>' +
+              '<button type="button" data-copy-id="' + routingCopyId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+                '<span id="' + routingCopyId + '" data-ach-mask-field="true" data-masked="' + escapeHtml(achRoutingMasked) + '" data-revealed="' + escapeHtml(achRoutingRevealed) + '" class="text-sm font-normal">' + escapeHtml(achRoutingMasked) + '</span>' +
+                '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
+              '</button>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-4 self-stretch items-start">' +
+              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Address</span>' +
+              '<div class="flex flex-col items-start gap-1.5">' +
+                '<span class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line">' + achAddress + '</span>' +
+                '<button type="button" data-ach-reveal-toggle data-revealed="false" class="mr-2.5 inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
+                  '<span data-icon="reveal">' + ICON_EYE + '</span>' +
+                  '<span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span>' +
+                  '<span data-ach-reveal-text>Reveal Details</span>' +
+                '</button>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      var achRows = achCardHtml;
+      if (status === 'exception') {
+        achRows +=
+          '<div class="mt-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300">' +
+            escapeHtml(getExceptionContextMessage(entry)) +
+          '</div>';
+      }
+      return {
+        key: status === 'exception' ? 'exception_ach' : 'ach',
+        typeLabel: 'ACH',
+        titleLabel: '',
+        revealKind: '',
+        rawCardHtml: achRows,
+      };
+    }
+
+    if (methodType === 'card') {
+      var customer = getCustomerForEntry(entry);
+      var cardDetails = getPayerCardDetailsForRender(entry, info, customer);
+      var cardNumberCopyId = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var expiryCopyId = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var cvcCopyId = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var cardRows =
+        '<div data-payment-info-card class="flex flex-col items-start self-stretch">' +
+          '<div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">' +
+            '<span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Card Details</span>' +
+            '<span></span>' +
+          '</div>' +
+          '<div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">' +
+            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Name</span>' +
+              '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + getSafeTextValue(cardDetails.cardHolderName) + '</span>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-4 self-stretch items-start">' +
+              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Address</span>' +
+              '<span class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line">' + getSafeMultilineValue(cardDetails.cardHolderAddress) + '</span>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Type</span>' +
+              '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(cardDetails.cardType) + '</span>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Number</span>' +
+              '<button type="button" data-copy-id="' + cardNumberCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+                '<span id="' + cardNumberCopyId + '" data-mask-field="card-number" data-masked="' + escapeHtml(cardDetails.maskedCardNumber) + '" data-revealed="' + escapeHtml(cardDetails.fullCardNumber) + '" class="text-sm font-normal">' + escapeHtml(cardDetails.maskedCardNumber) + '</span>' +
+                '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
+              '</button>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Expires</span>' +
+              '<button type="button" data-copy-id="' + expiryCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+                '<span id="' + expiryCopyId + '" data-mask-field="card-expiry" data-masked="' + escapeHtml(cardDetails.expiryFull) + '" data-revealed="' + escapeHtml(cardDetails.expiryFull) + '" class="text-sm font-normal">' + escapeHtml(cardDetails.expiryFull) + '</span>' +
+                '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
+              '</button>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">CVC2</span>' +
+              '<button type="button" data-copy-id="' + cvcCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+                '<span id="' + cvcCopyId + '" data-mask-field="card-cvc" data-masked="' + escapeHtml(cardDetails.maskedCvc) + '" data-revealed="' + escapeHtml(cardDetails.cvcValue) + '" class="text-sm font-normal">' + escapeHtml(cardDetails.maskedCvc) + '</span>' +
+                '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
+              '</button>' +
+            '</div>' +
+            '<div class="grid grid-cols-2 gap-4 self-stretch items-start">' +
+              '<span></span>' +
+              '<button type="button" data-card-reveal-toggle data-revealed="false" class="mr-2.5 inline-flex w-fit self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
+                '<span data-icon="reveal">' + ICON_EYE + '</span>' +
+                '<span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span>' +
+                '<span data-card-reveal-text>Reveal Details</span>' +
+              '</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>';
+      if (status === 'exception') {
+        cardRows +=
+          '<div class="mt-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300">' +
+            escapeHtml(getExceptionContextMessage(entry)) +
+          '</div>';
+      }
+      return {
+        key: status === 'exception' ? 'exception_card' : 'card',
+        typeLabel: 'Card',
+        titleLabel: '',
+        revealKind: '',
+        rawCardHtml: cardRows,
+      };
+    }
+
+    if (status === 'exception') {
+      return {
+        key: 'exception_smart_exchange_unselected',
+        typeLabel: 'SMART Exchange',
+        titleLabel: 'No Payment Method Selected',
+        revealKind: '',
+        rowsHtml:
+          '<div class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300">' +
+            escapeHtml(getExceptionContextMessage(entry)) +
+          '</div>',
+      };
+    }
+
+    return {
+      key: 'smart_exchange',
+      typeLabel: 'SMART Exchange',
+      titleLabel: 'Exchange Details',
+      revealKind: '',
+      rowsHtml:
+        buildPaymentInfoRow('Exchange ID', getSafeTextValue(info && info.exchangeId), false) +
+        buildPaymentInfoRow('Exchange Rate', getSafeTextValue(info && info.exchangeRate), false) +
+        buildPaymentInfoRow('Source Amount', getSafeTextValue(info && info.sourceAmount), false) +
+        buildPaymentInfoRow('Target Amount', getSafeTextValue(info && info.targetAmount), false) +
+        buildPaymentInfoRow('Settlement Date', getSafeTextValue(info && info.settlementDate), false),
+    };
+  }
+
+  function buildPaymentMethodDetailsSection(variant) {
+    var revealKind = variant.revealKind;
+    var revealAttr = revealKind === 'card'
+      ? ' data-payment-info-card'
+      : (revealKind === 'ach' ? ' data-ach-info-card' : '');
+    var revealLink = revealKind === 'card'
       ? (
-        '<button type="button" data-card-reveal-toggle data-revealed="false" class="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300">' +
+        '<button type="button" data-card-reveal-toggle data-revealed="false" class="mr-2.5 inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
           '<span data-icon="reveal">' + ICON_EYE + '</span>' +
           '<span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span>' +
           '<span data-card-reveal-text>Reveal Details</span>' +
         '</button>'
       )
-      : '';
-    var detailsColumnClass = info.type === 'card'
-      ? 'flex flex-col gap-2 w-[460px]'
-      : 'flex flex-col gap-2 w-[380px]';
+      : (revealKind === 'ach'
+        ? (
+          '<button type="button" data-ach-reveal-toggle data-revealed="false" class="mr-2.5 inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
+            '<span data-icon="reveal">' + ICON_EYE + '</span>' +
+            '<span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span>' +
+            '<span data-ach-reveal-text>Reveal Details</span>' +
+          '</button>'
+        )
+        : '');
+
+    if (variant.rawCardHtml) {
+      return (
+        '<div class="flex">' +
+          '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
+          '<div class="flex-1 p-4 flex gap-4">' +
+            '<div class="w-28 shrink-0 pt-0.5">' +
+              '<div class="inline-flex items-center gap-1 text-sm font-semibold text-gray-900 dark:text-gray-100">' +
+                '<span>' + variant.typeLabel + '</span>' +
+                '<span class="inline-flex items-center justify-center rounded-md p-1 text-gray-500 dark:text-gray-300">' + ICON_EXPAND_RIGHT + '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="w-[460px] max-w-full">' +
+              variant.rawCardHtml +
+            '</div>' +
+          '</div>' +
+        '</div>'
+      );
+    }
+
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
-        // MoP container: p-4, gap-9 (36px) — matches Figma layout_MTB9A0
-        '<div class="flex-1 p-4 flex gap-9">' +
-          // Card/ACH/Exchange label: w-14 (56px) — matches Figma layout_LL9L0Z
-          '<div class="w-14 shrink-0 flex items-start gap-2">' +
-            '<span class="text-sm font-medium text-gray-800 dark:text-gray-200">' + typeLabel + '</span>' +
+        '<div class="flex-1 p-4 flex gap-4">' +
+          '<div class="w-28 shrink-0 pt-0.5">' +
+            '<div class="inline-flex items-center gap-1 text-sm font-semibold text-gray-900 dark:text-gray-100">' +
+              '<span>' + variant.typeLabel + '</span>' +
+              '<span class="inline-flex items-center justify-center rounded-md p-1 text-gray-500 dark:text-gray-300">' + ICON_EXPAND_RIGHT + '</span>' +
+            '</div>' +
           '</div>' +
-          // Chevron between label and column
-          ICON_CHEVRON_RIGHT +
-          // Detail column: w-[380px], gap-2 — matches Figma layout_UTWGTK
-          '<div ' + (info.type === 'card' ? 'data-payment-info-card ' : '') + 'class="' + detailsColumnClass + '">' +
-            // Head: flex gap-6 (24px), both children fill — matches Figma layout_MFYG14
+          '<div' + revealAttr + ' class="flex flex-col gap-2 w-[460px] max-w-full">' +
             '<div class="flex gap-6">' +
-              '<div class="flex-1 text-sm font-medium text-gray-900 dark:text-white">' + titleLabel + '</div>' +
+              '<div class="flex-1 text-sm font-medium text-gray-900 dark:text-white">' + variant.titleLabel + '</div>' +
               '<div class="flex-1 flex items-center">' + revealLink + '</div>' +
             '</div>' +
             '<div>' +
               '<div class="border-t border-gray-200 dark:border-white/10"></div>' +
               '<dl class="mt-2 flex flex-col gap-3">' +
-                rows +
+                variant.rowsHtml +
               '</dl>' +
             '</div>' +
           '</div>' +
         '</div>' +
       '</div>'
     );
+  }
+
+  function PaymentMethodDetails(params) {
+    if (!params) return '';
+    var status = params.status;
+    var methodType = params.methodType;
+    var payment = params.payment;
+    var payee = params.payee;
+    var info = payment && payment.details ? payment.details.paymentInfo : null;
+    var variant = getPaymentMethodDetailsVariant(status, methodType, payment, info || {}, payee);
+    if (!variant) return '';
+    return buildPaymentMethodDetailsSection(variant);
+  }
+
+  function buildPaymentInfoSection(entry) {
+    var info = entry.details.paymentInfo;
+    var payee = getResolvedPayee(entry);
+    return PaymentMethodDetails({
+      status: entry.status,
+      methodType: entry.methodType,
+      payment: entry,
+      payee: payee,
+      paymentInfo: info || {},
+    });
   }
 
   // Activity log — matches Figma Activity Log component (31822:55675)
@@ -634,7 +1096,7 @@
     var log = entry.details.activityLog;
     var items = '';
 
-    if (entry.status === 'Completed') {
+    if (entry.status === 'paid') {
       // Find most recent complete event for processed timestamp
       var completedEntry = null;
       for (var ci = log.length - 1; ci >= 0; ci--) {
@@ -656,13 +1118,13 @@
         false
       );
 
-    } else if (entry.status === 'Failed') {
+    } else if (entry.status === 'exception') {
       var initiatedDateF = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
 
       items += buildActivityLogItem(
         'bg-red-100 ring-1 ring-red-700/60 dark:bg-red-400/10 dark:ring-red-400/20',
-        'Payment Failed',
-        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has failed due to an error. Contact your customer to resolve it.',
+        'Payment Exception',
+        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has an exception and needs review.',
         true
       );
       items += buildActivityLogItem(
@@ -673,7 +1135,7 @@
       );
 
     } else {
-      // Pending / Processing / default
+      // Pending/default
       items += buildActivityLogItem(
         'bg-yellow-100 ring-1 ring-yellow-700/60 dark:bg-yellow-400/10 dark:ring-yellow-400/20',
         'Pending Your Action',
@@ -692,15 +1154,14 @@
   }
 
   function buildDetailRowHTML(entry, colCount) {
+    var paymentSection = buildPaymentInfoSection(entry);
     return (
       '<tr data-detail class="hidden">' +
         '<td colspan="' + colCount + '" class="' + CLASS_NAMES.detailCell + '">' +
           buildNotesSection(entry) +
           buildStatusSection(entry) +
           buildAttachmentsSection(entry) +
-          DETAIL_SEPARATOR +
-          buildPaymentInfoSection(entry) +
-          DETAIL_SEPARATOR +
+          (paymentSection ? (DETAIL_SEPARATOR + paymentSection + DETAIL_SEPARATOR) : DETAIL_SEPARATOR) +
           buildActivityLogSection(entry) +
         '</td>' +
       '</tr>'
@@ -805,82 +1266,16 @@
     table.dataset.toggleBound = '1';
 
     table.addEventListener('click', function (event) {
-      var copyBtn = event.target.closest('[data-copy-id]');
-      if (copyBtn && table.contains(copyBtn)) {
-        if (copyBtn.getAttribute('data-copy-requires-reveal') === 'true') {
-          var cardPanel = copyBtn.closest('[data-payment-info-card]');
-          var revealToggle = cardPanel ? cardPanel.querySelector('[data-card-reveal-toggle]') : null;
-          var isRevealed = revealToggle && revealToggle.getAttribute('data-revealed') === 'true';
-          if (!isRevealed) return;
-        }
-
+      var sortBtn = event.target.closest('[data-sort-key]');
+      if (sortBtn && table.contains(sortBtn)) {
         event.preventDefault();
         event.stopPropagation();
-
-        var copyTarget = document.getElementById(copyBtn.getAttribute('data-copy-id'));
-        if (!copyTarget) return;
-        var copyText = String(copyTarget.textContent || '').trim();
-        if (/[•]/.test(copyText)) return;
-        if (!copyText) return;
-
-        (navigator.clipboard
-          ? navigator.clipboard.writeText(copyText)
-          : Promise.resolve(
-              (function () {
-                var ta = document.createElement('textarea');
-                ta.value = copyText;
-                ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
-                document.body.appendChild(ta);
-                ta.select();
-                document.execCommand('copy');
-                document.body.removeChild(ta);
-              })()
-            )
-        ).then(function () {
-          var existing = copyBtn._copyTip;
-          if (existing) {
-            clearTimeout(copyBtn._copyTipTimer);
-            existing.remove();
-          }
-          if (window.getComputedStyle(copyBtn).position === 'static') copyBtn.style.position = 'relative';
-          copyBtn.style.overflow = 'visible';
-
-          var tip = document.createElement('div');
-          tip.textContent = 'Copied';
-          tip.style.cssText = [
-            'position:absolute',
-            'left:50%',
-            'bottom:calc(100% + 6px)',
-            'transform:translate(-50%, 6px)',
-            'background:#111827',
-            'color:#fff',
-            'font-size:12px',
-            'font-family:Inter,sans-serif',
-            'line-height:1.5',
-            'padding:3px 8px',
-            'border-radius:6px',
-            'pointer-events:none',
-            'z-index:50',
-            'opacity:0',
-            'transition:opacity 220ms ease-out,transform 220ms ease-out',
-            'white-space:nowrap'
-          ].join(';');
-          copyBtn.appendChild(tip);
-          copyBtn._copyTip = tip;
-
-          tip.getBoundingClientRect();
-          tip.style.transform = 'translate(-50%,0)';
-          tip.style.opacity = '1';
-
-          copyBtn._copyTipTimer = setTimeout(function () {
-            tip.style.transform = 'translate(-50%,-6px)';
-            tip.style.opacity = '0';
-            setTimeout(function () {
-              tip.remove();
-              copyBtn._copyTip = null;
-            }, 240);
-          }, 700);
-        });
+        var sortKey = sortBtn.getAttribute('data-sort-key') || '';
+        if (!sortKey) return;
+        cycleSortDirection(sortKey);
+        var resorted = getSortedEntries(filterEntriesByTab(_activeTableTabKey || 'pending'));
+        renderTable(table, paginationState.columns, resorted);
+        refreshStickyAction();
         return;
       }
 
@@ -889,6 +1284,20 @@
         event.preventDefault();
         var cardSection = revealBtn.closest('[data-payment-info-card]');
         if (!cardSection) return;
+        function setCardCopyVisible(copyBtn, visible) {
+          if (!copyBtn) return;
+          copyBtn.setAttribute('data-copy-enabled', visible ? 'true' : 'false');
+          var icon = copyBtn.querySelector('[data-copy-icon="true"]');
+          if (visible) {
+            copyBtn.classList.remove('pointer-events-none');
+            copyBtn.classList.add('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+            if (icon) icon.classList.remove('hidden');
+          } else {
+            copyBtn.classList.add('pointer-events-none');
+            copyBtn.classList.remove('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+            if (icon) icon.classList.add('hidden');
+          }
+        }
 
         var revealed = revealBtn.getAttribute('data-revealed') === 'true';
         revealed = !revealed;
@@ -904,12 +1313,55 @@
         var revealIcon = revealBtn.querySelector('[data-icon="reveal"]');
         var hideIcon = revealBtn.querySelector('[data-icon="hide"]');
         var text = revealBtn.querySelector('[data-card-reveal-text]');
-        cardSection.querySelectorAll('[data-copy-requires-reveal="true"]').forEach(function (copyAction) {
-          copyAction.classList.toggle('hidden', !revealed);
+        cardSection.querySelectorAll('[data-card-copy-control="true"]').forEach(function (copyAction) {
+          setCardCopyVisible(copyAction, revealed);
         });
         if (revealIcon) revealIcon.classList.toggle('hidden', revealed);
         if (hideIcon) hideIcon.classList.toggle('hidden', !revealed);
         if (text) text.textContent = revealed ? 'Hide Details' : 'Reveal Details';
+        return;
+      }
+
+      var achRevealBtn = event.target.closest('[data-ach-reveal-toggle]');
+      if (achRevealBtn && table.contains(achRevealBtn)) {
+        event.preventDefault();
+        var achSection = achRevealBtn.closest('[data-ach-info-card]');
+        if (!achSection) return;
+        function setAchCopyVisible(copyBtn, visible) {
+          if (!copyBtn) return;
+          copyBtn.setAttribute('data-copy-enabled', visible ? 'true' : 'false');
+          var icon = copyBtn.querySelector('[data-copy-icon="true"]');
+          if (visible) {
+            copyBtn.classList.remove('pointer-events-none');
+            copyBtn.classList.add('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+            if (icon) icon.classList.remove('hidden');
+          } else {
+            copyBtn.classList.add('pointer-events-none');
+            copyBtn.classList.remove('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+            if (icon) icon.classList.add('hidden');
+          }
+        }
+
+        var achRevealed = achRevealBtn.getAttribute('data-revealed') === 'true';
+        achRevealed = !achRevealed;
+        achRevealBtn.setAttribute('data-revealed', String(achRevealed));
+
+        var achFields = achSection.querySelectorAll('[data-ach-mask-field="true"]');
+        achFields.forEach(function (field) {
+          var maskedValue = field.getAttribute('data-masked') || '';
+          var revealedValue = field.getAttribute('data-revealed') || '';
+          field.textContent = achRevealed ? (revealedValue || maskedValue) : maskedValue;
+        });
+
+        var achRevealIcon = achRevealBtn.querySelector('[data-icon="reveal"]');
+        var achHideIcon = achRevealBtn.querySelector('[data-icon="hide"]');
+        var achText = achRevealBtn.querySelector('[data-ach-reveal-text]');
+        achSection.querySelectorAll('[data-ach-copy-control="true"]').forEach(function (copyAction) {
+          setAchCopyVisible(copyAction, achRevealed);
+        });
+        if (achRevealIcon) achRevealIcon.classList.toggle('hidden', achRevealed);
+        if (achHideIcon) achHideIcon.classList.toggle('hidden', !achRevealed);
+        if (achText) achText.textContent = achRevealed ? 'Hide Details' : 'Reveal Details';
         return;
       }
 
@@ -1062,7 +1514,6 @@
 
   function calculateTabCounts(entries) {
     var counts = {
-      ready: entries.length,
       pending: 0,
       paid: 0,
       exceptions: 0,
@@ -1070,11 +1521,11 @@
 
     entries.forEach(function (entry) {
       var status = String(entry.status || '');
-      if (status === 'Completed') {
+      if (status === 'paid') {
         counts.paid += 1;
-      } else if (status === 'Failed') {
+      } else if (status === 'exception') {
         counts.exceptions += 1;
-      } else if (status === 'Pending' || status === 'Processing') {
+      } else if (status === 'pending') {
         counts.pending += 1;
       }
     });
@@ -1129,6 +1580,8 @@
     if (!nav) return;
 
     syncTabBadgeStyles(nav);
+    var activeBadge = nav.querySelector('a[aria-current="page"] ' + TAB_COUNT_SELECTOR);
+    _activeTableTabKey = activeBadge ? (activeBadge.getAttribute('data-tab-count') || 'pending') : 'pending';
 
     if (nav.dataset.tabBound === '1') return;
     nav.dataset.tabBound = '1';
@@ -1149,8 +1602,9 @@
 
       // Filter table to the selected tab
       var tabCountEl = clicked.querySelector(TAB_COUNT_SELECTOR);
-      var tabKey = tabCountEl ? tabCountEl.getAttribute('data-tab-count') : 'ready';
-      var filtered = filterEntriesByTab(tabKey);
+      var tabKey = tabCountEl ? tabCountEl.getAttribute('data-tab-count') : 'pending';
+      _activeTableTabKey = tabKey || 'pending';
+      var filtered = getSortedEntries(filterEntriesByTab(tabKey));
       paginationState.allEntries = filtered;
       paginationState.totalItems = filtered.length;
       paginationState.currentPage = 1;
@@ -1251,6 +1705,15 @@
     refreshStickyAction();
   }
 
+  function refreshTableForActiveTab() {
+    var filtered = getSortedEntries(filterEntriesByTab(_activeTableTabKey || 'pending'));
+    paginationState.allEntries = filtered;
+    paginationState.totalItems = filtered.length;
+    paginationState.currentPage = 1;
+    updateTabBadges(paginationState.sourceEntries);
+    renderCurrentPage();
+  }
+
   function renderTable(table, columns, entries) {
     // Store in pagination state
     paginationState.allEntries = entries;
@@ -1304,6 +1767,75 @@
       }
     }
     return Array.from(new Set(candidates));
+  }
+
+  function getBankAccountPathCandidates() {
+    var candidates = BANK_ACCOUNTS_PATH_FALLBACKS.slice();
+    if (document.currentScript && document.currentScript.src) {
+      try {
+        candidates.unshift(new URL('../data/bank-accounts.json', document.currentScript.src).toString());
+      } catch (err) {
+        // Ignore URL parse errors
+      }
+    }
+    return Array.from(new Set(candidates));
+  }
+
+  function getPaymentPreferencesDataPathCandidates() {
+    var candidates = PAYMENT_PREFERENCES_DATA_PATH_FALLBACKS.slice();
+    if (document.currentScript && document.currentScript.src) {
+      try {
+        candidates.unshift(new URL('../data/payment-preferences-data.json', document.currentScript.src).toString());
+      } catch (err) {
+        // Ignore URL parse errors
+      }
+    }
+    return Array.from(new Set(candidates));
+  }
+
+  function getCustomerPathCandidates() {
+    var candidates = CUSTOMERS_PATH_FALLBACKS.slice();
+    if (document.currentScript && document.currentScript.src) {
+      try {
+        candidates.unshift(new URL('../data/customers.json', document.currentScript.src).toString());
+      } catch (err) {
+        // Ignore URL parse errors
+      }
+    }
+    return Array.from(new Set(candidates));
+  }
+
+  function normalizeCustomer(customer) {
+    if (!customer || typeof customer !== 'object') return null;
+    var id = typeof customer.id === 'string' ? customer.id.trim() : '';
+    var name = typeof customer.name === 'string' ? customer.name.trim() : '';
+    var vendorEntries = Array.isArray(customer.vendorEntries)
+      ? customer.vendorEntries.map(function (v) { return String(v || '').trim(); }).filter(Boolean)
+      : [];
+    if (!id || !name) return null;
+    return { id: id, name: name, vendorEntries: vendorEntries };
+  }
+
+  function fetchCustomersData() {
+    var paths = getCustomerPathCandidates();
+    var index = 0;
+
+    function tryNextPath() {
+      if (index >= paths.length) {
+        throw new Error('Failed to load customers from all candidate paths');
+      }
+      var path = paths[index++];
+      return fetchJsonFromPath(path).catch(function () {
+        return tryNextPath();
+      });
+    }
+
+    return tryNextPath().then(function (payload) {
+      if (!Array.isArray(payload)) return [];
+      return payload
+        .map(normalizeCustomer)
+        .filter(function (customer) { return customer !== null; });
+    });
   }
 
   function normalizeCheckAddress(address) {
@@ -1360,6 +1892,114 @@
         .map(normalizeCheckAddress)
         .filter(function (address) { return address !== null; });
     });
+  }
+
+  function normalizeBankAccount(account) {
+    if (!account || typeof account !== 'object') return null;
+    var id = typeof account.id === 'string' ? account.id.trim() : '';
+    if (!id) return null;
+    var displayName = typeof account.displayName === 'string' ? account.displayName.trim() : '';
+    var bankName = typeof account.bankName === 'string' ? account.bankName.trim() : '';
+    var name = typeof account.name === 'string' ? account.name.trim() : '';
+    var accountNumber = typeof account.accountNumber === 'string' ? account.accountNumber.trim() : '';
+    var maskedAccount = typeof account.maskedAccount === 'string' ? account.maskedAccount.trim() : '';
+    var routingNumber = typeof account.routingNumber === 'string' ? account.routingNumber.trim() : '';
+    var maskedRouting = typeof account.maskedRouting === 'string' ? account.maskedRouting.trim() : '';
+    var address = typeof account.address === 'string' ? account.address.trim() : '';
+    var last4 = typeof account.last4 === 'string' ? account.last4.trim() : '';
+    if (!last4) {
+      var digits = accountNumber.replace(/\D/g, '');
+      if (digits.length >= 4) last4 = digits.slice(-4);
+    }
+    if (!displayName) {
+      if (bankName) displayName = bankName + ' Account';
+      else if (name) displayName = name;
+      else displayName = 'Bank Account';
+    }
+    return {
+      id: id,
+      displayName: displayName,
+      name: name || displayName,
+      bankName: bankName || displayName.replace(/\s+Account$/i, ''),
+      accountNumber: accountNumber,
+      maskedAccount: maskedAccount || (last4 ? ('••••' + last4) : ''),
+      routingNumber: routingNumber,
+      maskedRouting: maskedRouting,
+      address: address,
+      last4: last4,
+    };
+  }
+
+  function fetchBankAccountsData() {
+    var paths = getBankAccountPathCandidates();
+    var index = 0;
+
+    function tryNextPath() {
+      if (index >= paths.length) {
+        throw new Error('Failed to load bank accounts from all candidate paths');
+      }
+      var path = paths[index++];
+      return fetchJsonFromPath(path).catch(function () {
+        return tryNextPath();
+      });
+    }
+
+    return tryNextPath().then(function (payload) {
+      if (!Array.isArray(payload)) return [];
+      return payload
+        .map(normalizeBankAccount)
+        .filter(function (account) { return account !== null; });
+    });
+  }
+
+  function fetchPaymentPreferencesData() {
+    var paths = getPaymentPreferencesDataPathCandidates();
+    var index = 0;
+
+    function tryNextPath() {
+      if (index >= paths.length) {
+        throw new Error('Failed to load payment-preferences data from all candidate paths');
+      }
+      var path = paths[index++];
+      return fetchJsonFromPath(path).catch(function () {
+        return tryNextPath();
+      });
+    }
+
+    return tryNextPath().then(function (payload) {
+      var banks = Array.isArray(payload && payload.bankAccounts) ? payload.bankAccounts : [];
+      return {
+        bankAccounts: banks.map(normalizeBankAccount).filter(function (item) { return item !== null; }),
+      };
+    });
+  }
+
+  function mergeBankAccounts(primary, secondary) {
+    var byId = {};
+    var orderedIds = [];
+
+    (primary || []).forEach(function (account) {
+      var normalized = normalizeBankAccount(account);
+      if (!normalized) return;
+      byId[normalized.id] = normalized;
+      orderedIds.push(normalized.id);
+    });
+
+    (secondary || []).forEach(function (account) {
+      var normalized = normalizeBankAccount(account);
+      if (!normalized) return;
+      var current = byId[normalized.id] || {};
+      byId[normalized.id] = Object.assign({}, current, normalized, {
+        accountNumber: normalized.accountNumber || current.accountNumber || '',
+        maskedAccount: normalized.maskedAccount || current.maskedAccount || '',
+        routingNumber: normalized.routingNumber || current.routingNumber || '',
+        maskedRouting: normalized.maskedRouting || current.maskedRouting || '',
+        address: normalized.address || current.address || '',
+      });
+      if (orderedIds.indexOf(normalized.id) === -1) orderedIds.push(normalized.id);
+    });
+
+    return orderedIds.map(function (id) { return byId[id]; });
   }
 
   function fetchExchangesData() {
@@ -1453,6 +2093,64 @@
     return selected ? String(selected.getAttribute('value') || '') : '';
   }
 
+  function findEntryByInvoice(invoice) {
+    var inv = String(invoice || '');
+    for (var i = 0; i < paginationState.sourceEntries.length; i++) {
+      if (paginationState.sourceEntries[i].invoice === inv) return paginationState.sourceEntries[i];
+    }
+    return null;
+  }
+
+  function populateGetPaidCardModal(entry) {
+    if (!entry) return;
+    var formattedAmount = formatCurrency(entry.amount, entry.currency);
+    var paymentInfo = entry.details && entry.details.paymentInfo ? entry.details.paymentInfo : {};
+    var payerCardInfo = paymentInfo.payerCard || paymentInfo;
+    var cardHolderName = payerCardInfo.cardholderName || entry.customer || '';
+    var cardHolderAddress = payerCardInfo.cardholderAddress || '';
+    var cardNumberRaw = String(paymentInfo.cardNumber || payerCardInfo.cardNumber || entry.paymentMethodEnding || '');
+    var cardDigits = cardNumberRaw.replace(/\D/g, '');
+    var cardLast4 = cardDigits.length >= 4 ? cardDigits.slice(-4) : '0000';
+    var displayCardNumber = cardDigits.length >= 13
+      ? cardDigits.slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
+      : ('4000 0000 0000 ' + cardLast4);
+    var expiryFull = String(paymentInfo.expires || payerCardInfo.expires || '12/2026');
+    var expiryShort = /^\d{2}\/\d{4}$/.test(expiryFull) ? (expiryFull.slice(0, 3) + expiryFull.slice(-2)) : expiryFull;
+    var cvcValue = String(paymentInfo.cvc || payerCardInfo.cvc || '999').replace(/\s+/g, '');
+
+    var vcAmountEl = document.getElementById('gp-vc-amount');
+    var vcPendingEl = document.getElementById('gp-vc-pending-amount');
+    var vcNameOnCardEl = document.getElementById('gp-vc-name');
+    var vcHolderNameEl = document.getElementById('gp-vc-holder-name');
+    var vcHolderAddressEl = document.getElementById('gp-vc-card-address');
+    var vcCardNumberEl = document.getElementById('gp-vc-card-number');
+    var vcExpiryEl = document.getElementById('gp-vc-expiry');
+    var vcFullNumberEl = document.getElementById('gp-vc-full-number');
+    var vcFullExpiryEl = document.getElementById('gp-vc-full-expiry');
+    var vcCvcEl = document.getElementById('gp-vc-cvc2');
+    var vcCvvPillEl = document.getElementById('gp-vc-cvv-pill');
+
+    if (vcAmountEl) vcAmountEl.textContent = formattedAmount;
+    if (vcPendingEl) vcPendingEl.textContent = formattedAmount;
+    if (vcNameOnCardEl) vcNameOnCardEl.textContent = cardHolderName;
+    if (vcHolderNameEl) vcHolderNameEl.textContent = cardHolderName;
+    if (vcHolderAddressEl) vcHolderAddressEl.textContent = cardHolderAddress;
+    if (vcCardNumberEl) vcCardNumberEl.textContent = displayCardNumber;
+    if (vcExpiryEl) vcExpiryEl.textContent = expiryShort;
+    if (vcFullNumberEl) vcFullNumberEl.textContent = displayCardNumber;
+    if (vcFullExpiryEl) vcFullExpiryEl.textContent = expiryFull;
+    if (vcCvcEl) vcCvcEl.textContent = cvcValue;
+    if (vcCvvPillEl) vcCvvPillEl.textContent = 'CVV : ' + cvcValue;
+  }
+
+  function initGetPaidCardDetailsTrigger() {
+    document.addEventListener('click', function (e) {
+      var trigger = e.target.closest('[commandfor="gp-card-details-dialog"]');
+      if (!trigger) return;
+      if (_activeGetPaidEntry) populateGetPaidCardModal(_activeGetPaidEntry);
+    });
+  }
+
   function updateGetPaidStepStates() {
     // Step 1: all document review actions are complete
     var openReviewBtns = document.querySelectorAll('#gp-attachments .gp-review-trigger:not(.hidden)');
@@ -1500,7 +2198,7 @@
         '</div>' +
         '<div class="ml-4 shrink-0 flex items-center">' +
           '<button type="button" command="show-modal" commandfor="gp-review-dialog"' +
-            ' class="gp-review-trigger font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"' +
+            ' class="gp-review-trigger inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"' +
             ' data-attach-idx="' + idx + '">Review</button>' +
           '<div id="gp-attach-' + idx + '-status" class="hidden">' +
             CHECKBOX_STATUS_HTML +
@@ -1524,7 +2222,6 @@
     var dateEl = document.getElementById('gp-date');
     var customerEl = document.getElementById('gp-customer');
     var invoiceEl = document.getElementById('gp-invoice');
-    var copyBtn = document.getElementById('gp-invoice-copy');
     var attachEl = document.getElementById('gp-attachments');
     var activityEl = document.getElementById('gp-activity-content');
 
@@ -1533,12 +2230,6 @@
     if (dateEl) dateEl.textContent = formatDate(entry.dateInitiated);
     if (customerEl) customerEl.textContent = entry.customer;
     if (invoiceEl) invoiceEl.textContent = '#' + entry.invoice;
-
-    if (copyBtn) {
-      copyBtn.onclick = function () {
-        navigator.clipboard.writeText(entry.invoice).catch(function () {});
-      };
-    }
 
     if (attachEl) attachEl.innerHTML = buildGetPaidAttachments(entry.details.attachments);
     if (activityEl) activityEl.innerHTML = buildGetPaidActivityLog(entry);
@@ -1626,6 +2317,8 @@
 
     // Reset reveal button to hidden state
     var btn = document.getElementById('gp-pmc-reveal-btn');
+    var acctCopyBtn = document.getElementById('gp-pmc-bank-acct-copy-btn');
+    var routingCopyBtn = document.getElementById('gp-pmc-bank-routing-copy-btn');
     if (btn) {
       btn.setAttribute('data-revealed', 'false');
       var revealIcon = btn.querySelector('[data-icon="reveal"]');
@@ -1634,6 +2327,20 @@
       if (revealIcon) revealIcon.classList.remove('hidden');
       if (hideIcon) hideIcon.classList.add('hidden');
       if (revealText) revealText.textContent = 'Reveal Details';
+    }
+    if (acctCopyBtn) {
+      acctCopyBtn.setAttribute('data-copy-enabled', 'false');
+      acctCopyBtn.classList.add('pointer-events-none');
+      acctCopyBtn.classList.remove('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+      var acctIcon = acctCopyBtn.querySelector('[data-copy-icon="true"]');
+      if (acctIcon) acctIcon.classList.add('hidden');
+    }
+    if (routingCopyBtn) {
+      routingCopyBtn.setAttribute('data-copy-enabled', 'false');
+      routingCopyBtn.classList.add('pointer-events-none');
+      routingCopyBtn.classList.remove('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+      var routingIcon = routingCopyBtn.querySelector('[data-copy-icon="true"]');
+      if (routingIcon) routingIcon.classList.add('hidden');
     }
 
     details.classList.remove('hidden');
@@ -1644,6 +2351,50 @@
   function initRevealToggle(account) {
     var btn = document.getElementById('gp-pmc-reveal-btn');
     if (!btn) return;
+    var acctCopyBtn = document.getElementById('gp-pmc-bank-acct-copy-btn');
+    var routingCopyBtn = document.getElementById('gp-pmc-bank-routing-copy-btn');
+    function setCopyBtnVisible(copyBtn, visible) {
+      if (!copyBtn) return;
+      copyBtn.setAttribute('data-copy-enabled', visible ? 'true' : 'false');
+      var icon = copyBtn.querySelector('[data-copy-icon="true"]');
+      if (visible) {
+        copyBtn.classList.remove('pointer-events-none');
+        copyBtn.classList.add('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+        if (icon) icon.classList.remove('hidden');
+      } else {
+        copyBtn.classList.add('pointer-events-none');
+        copyBtn.classList.remove('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+        if (icon) icon.classList.add('hidden');
+      }
+    }
+
+    if (acctCopyBtn) {
+      acctCopyBtn.onclick = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (acctCopyBtn.getAttribute('data-copy-enabled') !== 'true') return;
+        var target = document.getElementById('gp-pmc-bank-acct');
+        var text = target ? String(target.textContent || '').trim() : '';
+        if (!text || /[•]/.test(text)) return;
+        if (window.copyTextWithFeedback) {
+          window.copyTextWithFeedback(text, acctCopyBtn);
+        }
+      };
+    }
+
+    if (routingCopyBtn) {
+      routingCopyBtn.onclick = function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (routingCopyBtn.getAttribute('data-copy-enabled') !== 'true') return;
+        var target = document.getElementById('gp-pmc-bank-routing');
+        var text = target ? String(target.textContent || '').trim() : '';
+        if (!text || /[•]/.test(text)) return;
+        if (window.copyTextWithFeedback) {
+          window.copyTextWithFeedback(text, routingCopyBtn);
+        }
+      };
+    }
 
     btn.onclick = function () {
       var revealed = btn.getAttribute('data-revealed') === 'true';
@@ -1660,19 +2411,23 @@
         if (revealIcon) revealIcon.classList.add('hidden');
         if (hideIcon) hideIcon.classList.remove('hidden');
         if (revealText) revealText.textContent = 'Hide Details';
+        setCopyBtnVisible(acctCopyBtn, true);
+        setCopyBtnVisible(routingCopyBtn, true);
       } else {
         pmcSetText('gp-pmc-bank-acct', account.maskedAccount);
         pmcSetText('gp-pmc-bank-routing', account.maskedRouting);
         if (revealIcon) revealIcon.classList.remove('hidden');
         if (hideIcon) hideIcon.classList.add('hidden');
         if (revealText) revealText.textContent = 'Reveal Details';
+        setCopyBtnVisible(acctCopyBtn, false);
+        setCopyBtnVisible(routingCopyBtn, false);
       }
     };
   }
 
   function buildCheckAddressOptionHtml(address) {
     return (
-      '<el-option value="' + escapeHtml(address.id) + '" class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
+      '<el-option value="' + escapeHtml(address.id) + '" class="group/option relative block cursor-default select-none border-b border-gray-200 py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
         '<div class="flex items-center gap-3">' +
           '<div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">' +
             '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">' +
@@ -1694,19 +2449,105 @@
     );
   }
 
+  function getBankAccountDisplayName(account) {
+    if (!account || typeof account !== 'object') return 'Bank Account';
+    var displayName = typeof account.displayName === 'string' ? account.displayName.trim() : '';
+    if (displayName) return displayName;
+    var bankName = typeof account.bankName === 'string' ? account.bankName.trim() : '';
+    if (bankName) return bankName + ' Account';
+    return 'Bank Account';
+  }
+
+  function getBankAccountLast4(account) {
+    if (!account || typeof account !== 'object') return '';
+    if (typeof account.last4 === 'string' && account.last4.trim()) {
+      return account.last4.trim().slice(-4);
+    }
+    var accountNumber = typeof account.accountNumber === 'string' ? account.accountNumber : '';
+    var accountDigits = accountNumber.replace(/\D/g, '');
+    if (accountDigits.length >= 4) return accountDigits.slice(-4);
+    var masked = typeof account.maskedAccount === 'string' ? account.maskedAccount : '';
+    var maskedDigits = masked.replace(/\D/g, '');
+    if (maskedDigits.length >= 4) return maskedDigits.slice(-4);
+    return '';
+  }
+
+  function buildBankAccountOptionHtml(account) {
+    var label = getBankAccountDisplayName(account);
+    var last4 = getBankAccountLast4(account);
+    var summary = last4 ? ('••••' + last4) : label;
+    return (
+      '<el-option value="' + escapeHtml(account.id) + '" class="group/option relative block cursor-default select-none border-b border-gray-200 py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
+        '<div class="flex items-center gap-3">' +
+          '<div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>' +
+          '</div>' +
+          '<div class="in-[el-selectedcontent]:hidden">' +
+            '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' + escapeHtml(label) + '</span>' +
+            '<span class="block text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(summary) + '</span>' +
+          '</div>' +
+          '<span class="hidden in-[el-selectedcontent]:block truncate font-medium">' + escapeHtml(label + (last4 ? (' ••••' + last4) : '')) + '</span>' +
+        '</div>' +
+        '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
+          '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
+            '<path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
+          '</svg>' +
+        '</span>' +
+      '</el-option>'
+    );
+  }
+
+  function renderBankAccountOptions(accounts) {
+    var sel = document.getElementById('gp-bank-account-select');
+    if (!sel) return;
+    var optionsEl = sel.querySelector('el-options');
+    if (!optionsEl) return;
+    var addButton = optionsEl.querySelector('[data-gp-add-bank-account]');
+    var addFooter = addButton ? addButton.parentElement : null;
+
+    optionsEl.querySelectorAll('el-option').forEach(function (opt) {
+      opt.remove();
+    });
+
+    (accounts || []).forEach(function (account) {
+      if (!account || !account.id) return;
+      if (addFooter) {
+        addFooter.insertAdjacentHTML('beforebegin', buildBankAccountOptionHtml(account));
+      } else {
+        optionsEl.insertAdjacentHTML('beforeend', buildBankAccountOptionHtml(account));
+      }
+    });
+
+    var bankOptions = optionsEl.querySelectorAll('el-option');
+    if (bankOptions.length) {
+      bankOptions[bankOptions.length - 1].classList.remove('border-b', 'border-gray-200', 'dark:border-white/10');
+    }
+  }
+
   function renderCheckAddressOptions(addresses) {
     var sel = document.getElementById('gp-check-address-select');
     if (!sel) return;
     var optionsEl = sel.querySelector('el-options');
     if (!optionsEl) return;
+    var addButton = optionsEl.querySelector('[data-gp-add-check-address]');
+    var addFooter = addButton ? addButton.parentElement : null;
 
     optionsEl.querySelectorAll('el-option').forEach(function (opt) {
       opt.remove();
     });
 
     (addresses || []).forEach(function (address) {
-      optionsEl.insertAdjacentHTML('beforeend', buildCheckAddressOptionHtml(address));
+      if (addFooter) {
+        addFooter.insertAdjacentHTML('beforebegin', buildCheckAddressOptionHtml(address));
+      } else {
+        optionsEl.insertAdjacentHTML('beforeend', buildCheckAddressOptionHtml(address));
+      }
     });
+
+    var checkOptions = optionsEl.querySelectorAll('el-option');
+    if (checkOptions.length) {
+      checkOptions[checkOptions.length - 1].classList.remove('border-b', 'border-gray-200', 'dark:border-white/10');
+    }
   }
 
   function updateCheckDetails(addressId) {
@@ -1772,6 +2613,8 @@
 
     var details = document.getElementById('gp-pmc-bank-details');
     if (details) details.classList.add('hidden');
+
+    renderBankAccountOptions(_myBusiness && _myBusiness.bankAccounts);
 
     var sel = document.getElementById('gp-bank-account-select');
     if (!sel) return;
@@ -2040,11 +2883,30 @@
           }
         }
 
-        var formattedAmount = formatCurrency(_activeGetPaidEntry.amount, _activeGetPaidEntry.currency);
-        var vcAmountEl = document.getElementById('gp-vc-amount');
-        var vcPendingEl = document.getElementById('gp-vc-pending-amount');
-        if (vcAmountEl) vcAmountEl.textContent = formattedAmount;
-        if (vcPendingEl) vcPendingEl.textContent = formattedAmount;
+        var selectedMethodType = paymentValue === 'payers-card' ? 'card' : 'ach';
+        _activeGetPaidEntry.methodType = selectedMethodType;
+        _activeGetPaidEntry.paymentMethod = getMethodLabelFromType(selectedMethodType);
+        _activeGetPaidEntry.status = 'paid';
+        if (selectedMethodType === 'card') {
+          var selectedCardLast4 = String(_activeGetPaidEntry.paymentMethodEnding || '').replace(/\D/g, '').slice(-4);
+          if (selectedCardLast4) _activeGetPaidEntry.paymentMethodEnding = selectedCardLast4;
+        } else {
+          var selectedBank = document.getElementById('gp-bank-account-select');
+          var selectedBankOption = selectedBank && selectedBank.querySelector('el-option[aria-selected="true"]');
+          var selectedBankId = selectedBankOption && selectedBankOption.getAttribute('value');
+          var selectedBankAccount = null;
+          var allBanks = _myBusiness && _myBusiness.bankAccounts;
+          if (allBanks && selectedBankId) {
+            for (var sb = 0; sb < allBanks.length; sb++) {
+              if (allBanks[sb].id === selectedBankId) { selectedBankAccount = allBanks[sb]; break; }
+            }
+          }
+          var bankLast4 = getDigits(selectedBankAccount && (selectedBankAccount.last4 || selectedBankAccount.accountNumber || selectedBankAccount.maskedAccount || '')).slice(-4);
+          if (bankLast4) _activeGetPaidEntry.paymentMethodEnding = bankLast4;
+        }
+
+        refreshTableForActiveTab();
+        populateGetPaidCardModal(_activeGetPaidEntry);
 
         var dialog = document.getElementById('gp-submit-success-dialog');
         if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
@@ -2053,6 +2915,18 @@
 
     // "Get paid" button clicks (delegated — buttons are rendered dynamically)
     document.addEventListener('click', function (e) {
+      var markPaidLink = e.target.closest('[data-mark-paid-invoice]');
+      if (markPaidLink) {
+        e.preventDefault();
+        var invoiceToMark = markPaidLink.getAttribute('data-mark-paid-invoice');
+        var targetEntry = findEntryByInvoice(invoiceToMark);
+        if (targetEntry) {
+          targetEntry.status = 'paid';
+          refreshTableForActiveTab();
+        }
+        return;
+      }
+
       var btn = e.target.closest('[data-get-paid-invoice]');
       if (!btn) return;
       e.preventDefault();
@@ -2103,7 +2977,11 @@
       if (activeAttachIdx === null) return;
       var btn = document.querySelector('.gp-review-trigger[data-attach-idx="' + activeAttachIdx + '"]');
       var status = document.getElementById('gp-attach-' + activeAttachIdx + '-status');
-      if (btn) btn.classList.add('hidden');
+      if (btn) {
+        btn.classList.add('hidden');
+        btn.classList.remove('inline-flex');
+        btn.style.display = 'none';
+      }
       if (status) {
         status.classList.remove('hidden');
         var checkbox = status.querySelector('input[type="checkbox"]');
@@ -2276,6 +3154,26 @@
     setMode('draw');
   }
 
+  function initSubmitSuccessModalCopy() {
+    var pairs = [
+      { valueId: 'gp-vc-full-number', selector: '[data-copy-id="gp-vc-full-number"]' },
+      { valueId: 'gp-vc-full-expiry', selector: '[data-copy-id="gp-vc-full-expiry"]' },
+      { valueId: 'gp-vc-cvc2', selector: '[data-copy-id="gp-vc-cvc2"]' },
+    ];
+    pairs.forEach(function (item) {
+      var valueEl = document.getElementById(item.valueId);
+      var btn = document.querySelector(item.selector);
+      if (!valueEl || !btn) return;
+      btn.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        var text = String(valueEl.textContent || '').trim();
+        if (!text) return;
+        if (window.copyTextWithFeedback) window.copyTextWithFeedback(text, btn);
+      });
+    });
+  }
+
   // ── Init ──
 
   function init() {
@@ -2283,24 +3181,48 @@
     if (!table) return;
     initTabBadges();
     initGetPaidPanel();
+    initGetPaidCardDetailsTrigger();
     initReviewModal();
     initSignatureModal();
+    initSubmitSuccessModalCopy();
 
-    Promise.all([fetchExchangesData(), fetchCheckAddressesData().catch(function () { return []; })])
+    Promise.all([
+      fetchExchangesData(),
+      fetchPaymentPreferencesData().catch(function () { return { bankAccounts: [] }; }),
+      fetchCheckAddressesData().catch(function () { return []; }),
+      fetchBankAccountsData().catch(function () { return []; }),
+      fetchCustomersData().catch(function () { return []; }),
+    ])
       .then(function (results) {
         var result = results[0];
-        var sharedCheckAddresses = results[1];
+        var paymentPreferencesData = results[1];
+        var sharedCheckAddresses = results[2];
+        var sharedBankAccounts = results[3];
+        var customers = results[4];
         var columns = result.columns;
         var entries = result.entries;
         _myBusiness = result.myBusiness || {};
         if (sharedCheckAddresses && sharedCheckAddresses.length) {
           _myBusiness.checkAddresses = sharedCheckAddresses;
         }
+        var preferredBankAccounts = paymentPreferencesData && paymentPreferencesData.bankAccounts
+          ? paymentPreferencesData.bankAccounts
+          : [];
+        if (sharedBankAccounts && sharedBankAccounts.length) {
+          _myBusiness.bankAccounts = mergeBankAccounts(_myBusiness.bankAccounts, sharedBankAccounts);
+        } else if (preferredBankAccounts.length) {
+          _myBusiness.bankAccounts = mergeBankAccounts(_myBusiness.bankAccounts, preferredBankAccounts);
+        } else {
+          _myBusiness.bankAccounts = mergeBankAccounts(_myBusiness.bankAccounts, []);
+        }
+        if (!_myBusiness.id) _myBusiness.id = 'my-business';
+        _customers = Array.isArray(customers) ? customers : [];
         paginationState.sourceEntries = entries;
         updateTabBadges(entries);
+        var initialFilteredEntries = getSortedEntries(filterEntriesByTab(_activeTableTabKey || 'pending'));
 
         if (columns) {
-          renderTable(table, columns, entries);
+          renderTable(table, columns, initialFilteredEntries);
         } else {
           attachToggleListeners(table);
         }

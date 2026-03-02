@@ -29,25 +29,29 @@
     { "id": "westcargo-freight-llc", "name": "WestCargo Freight LLC", "vendorEntries": ["WestCargo", "WestCargo - Priority Lane"] }
   ],
   "bankAccounts": [
-    { "id": "wf-8419", "name": "Wells Fargo Account", "last4": "8419" },
-    { "id": "citi-3674", "name": "Citibank Account", "last4": "3674" }
-  ],
-  "checkAddresses": [
     {
-      "id": "addr-sf",
-      "displayName": "San Francisco Office",
+      "id": "wf-8419",
+      "displayName": "Wells Fargo Account",
       "name": "Nexus Financial Group",
-      "cityState": "San Francisco, CA",
-      "summary": "1200 Market Street, Suite 400, San Francisco, CA 94102",
-      "address": "1200 Market Street\nSuite 400\nSan Francisco, CA 94102\nUnited States"
+      "bankName": "Wells Fargo",
+      "last4": "8419",
+      "maskedAccount": "•••••••••••••8419",
+      "accountNumber": "000048390108419",
+      "maskedRouting": "•••••2847",
+      "routingNumber": "121002847",
+      "address": "1200 Market Street\nSuite 400\nSan Francisco, CA 94102\nUS"
     },
     {
-      "id": "addr-ny",
-      "displayName": "New York Office",
+      "id": "citi-3674",
+      "displayName": "Citibank Account",
       "name": "Nexus Financial Group",
-      "cityState": "New York, NY",
-      "summary": "388 Greenwich Street, Floor 12, New York, NY 10013",
-      "address": "388 Greenwich Street\nFloor 12\nNew York, NY 10013\nUnited States"
+      "bankName": "Citibank",
+      "last4": "3674",
+      "maskedAccount": "•••••••••••••3674",
+      "accountNumber": "000040198913674",
+      "maskedRouting": "•••••0089",
+      "routingNumber": "021000089",
+      "address": "388 Greenwich Street\nNew York, NY 10013\nUS"
     }
   ]
 }

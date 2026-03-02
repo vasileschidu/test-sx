@@ -297,6 +297,22 @@ if (desktopSidebarToggle) {
 
 prepareDesktopNavLabels();
 
+/**
+ * Normalizes active nav item styles on initial page load.
+ * Ensures active item icons are blue even if HTML classes drift.
+ */
+function syncActiveNavItemStyles() {
+    document.querySelectorAll('.nav-item.is-active').forEach(function (item) {
+        item.classList.add('bg-gray-100', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
+        item.querySelectorAll('svg.nav-icon').forEach(function (icon) {
+            icon.classList.remove('text-gray-500', 'dark:text-gray-400');
+            icon.classList.add('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
+        });
+    });
+}
+
+syncActiveNavItemStyles();
+
 /* ===== Active Nav Item Management ===== */
 
 /**
@@ -316,7 +332,7 @@ document.addEventListener('click', function (e) {
     document.querySelectorAll('.nav-item.is-active').forEach(function (item) {
         item.classList.remove('is-active', 'bg-gray-100', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
         item.querySelectorAll('svg.nav-icon').forEach(function (icon) {
-            icon.classList.remove('text-blue-600', 'dark:text-blue-400');
+            icon.classList.remove('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
             icon.classList.add('text-gray-500', 'dark:text-gray-400');
         });
     });
@@ -324,6 +340,6 @@ document.addEventListener('click', function (e) {
     navItem.classList.add('is-active', 'bg-gray-100', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
     navItem.querySelectorAll('svg.nav-icon').forEach(function (icon) {
         icon.classList.remove('text-gray-500', 'dark:text-gray-400');
-        icon.classList.add('text-blue-600', 'dark:text-blue-400');
+        icon.classList.add('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
     });
 });

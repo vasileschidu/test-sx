@@ -1,0 +1,99 @@
+{
+  "_comment": "Dashboard navigation structure. Single source of truth. Mirror changes to APP_NAV_DATA in src/scripts/nav-component.js.",
+  "items": [
+    {
+      "type": "link",
+      "id": "insights",
+      "label": "Insights",
+      "href": "#",
+      "icon": "insights"
+    },
+    { "type": "divider" },
+    {
+      "type": "link",
+      "id": "bills",
+      "label": "Bills/Payables",
+      "href": "#",
+      "icon": "bills"
+    },
+    {
+      "type": "link",
+      "id": "vendors",
+      "label": "Vendors",
+      "href": "#",
+      "icon": "vendors"
+    },
+    {
+      "type": "link",
+      "id": "card-manager",
+      "label": "Card Manager",
+      "href": "#",
+      "icon": "card-manager"
+    },
+    { "type": "divider" },
+    {
+      "type": "link",
+      "id": "invoices",
+      "label": "Invoices/Receivables",
+      "href": "#",
+      "icon": "invoices"
+    },
+    {
+      "type": "link",
+      "id": "customers",
+      "label": "Customers",
+      "href": "#",
+      "icon": "customers"
+    },
+    { "type": "divider" },
+    {
+      "type": "smart-exchange",
+      "id": "smart-exchange",
+      "label": "SMART Exchange",
+      "href": "smart-exchange.html",
+      "icon": "smart-exchange",
+      "children": [
+        { "id": "payment-preferences", "label": "Payment Preferences", "href": "payment-preferences.html" }
+      ]
+    },
+    { "type": "divider" },
+    {
+      "type": "link-arrow",
+      "id": "my-company-profile",
+      "label": "My Company Profile",
+      "href": "my-company-profile.html",
+      "icon": "my-company-profile"
+    },
+    {
+      "type": "expandable",
+      "id": "settings",
+      "label": "Settings",
+      "icon": "settings",
+      "children": [
+        { "id": "user-management", "label": "User Management", "href": "#" }
+      ]
+    },
+    {
+      "type": "expandable",
+      "id": "transcard-only",
+      "label": "Transcard Only",
+      "icon": "transcard-only",
+      "children": [
+        { "id": "businesses", "label": "Businesses", "href": "#" },
+        { "id": "se-recipients", "label": "SMART Exchange Recipients", "href": "#" },
+        { "id": "tenants", "label": "Tenants", "href": "#" },
+        { "id": "connections", "label": "Connections", "href": "#" },
+        { "id": "connectors", "label": "Connectors", "href": "#" },
+        { "id": "integrations", "label": "Integrations", "href": "#" },
+        { "id": "message-templates", "label": "Message Templates", "href": "#" },
+        { "id": "statement-templates", "label": "Statement Templates", "href": "#" },
+        { "id": "reports", "label": "Reports", "href": "#" }
+      ]
+    }
+  ],
+  "pageActiveIds": {
+    "smart-exchange.html": "smart-exchange",
+    "payment-preferences.html": "payment-preferences",
+    "my-company-profile.html": "my-company-profile"
+  }
+}
