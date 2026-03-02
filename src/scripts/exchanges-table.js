@@ -94,6 +94,20 @@
     key: '',
     direction: '', // '', 'asc', 'desc'
   };
+  var tableFilterState = {
+    selectedCustomers: new Set(),
+    selectedStatuses: new Set(),
+    selectedMethods: new Set(),
+    initiatedDateFrom: '',
+    initiatedDateTo: '',
+    initiatedDateFromDraft: '',
+    initiatedDateToDraft: '',
+    initiatedDateActiveField: 'from',
+    initiatedDateMonth: null,
+    menuOpen: false,
+    activePanel: 'root',
+  };
+  var syncTableFilterUi = function () {};
 
   // Maps tab key (from data-tab-count) to the status values shown in that tab.
   // null means no filter — show all entries.
@@ -219,6 +233,43 @@
     return paginationState.sourceEntries.filter(function (entry) {
       return filter.indexOf(entry.status) !== -1;
     });
+  }
+
+  function applyTableFilters(entries) {
+    var list = Array.isArray(entries) ? entries.slice() : [];
+    if (tableFilterState.selectedCustomers.size) {
+      list = list.filter(function (entry) {
+        return tableFilterState.selectedCustomers.has(String(entry && entry.customer || ''));
+      });
+    }
+    if (tableFilterState.selectedStatuses.size) {
+      list = list.filter(function (entry) {
+        return tableFilterState.selectedStatuses.has(String(entry && entry.status || ''));
+      });
+    }
+    if (tableFilterState.selectedMethods.size) {
+      list = list.filter(function (entry) {
+        return tableFilterState.selectedMethods.has(String(entry && entry.methodType || ''));
+      });
+    }
+    if (tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo) {
+      var from = tableFilterState.initiatedDateFrom || '';
+      var to = tableFilterState.initiatedDateTo || '';
+      list = list.filter(function (entry) {
+        var dateKey = String(entry && entry.dateInitiated || '').slice(0, 10);
+        if (!dateKey) return false;
+        if (from && dateKey < from) return false;
+        if (to && dateKey > to) return false;
+        return true;
+      });
+    }
+    return list;
+  }
+
+  function getVisibleEntriesForActiveTab() {
+    var base = filterEntriesByTab(_activeTableTabKey || 'pending');
+    var filtered = applyTableFilters(base);
+    return getSortedEntries(filtered);
   }
 
   function getSortDirectionForKey(key) {
@@ -404,10 +455,6 @@
             ? ICON_SORT_ASC
             : (sortDirection === 'desc' ? ICON_SORT_DESC : ICON_SORT);
           html += '<span class="' + sortBtnClass + '">' + sortIcon + '</span>';
-        }
-
-        if (col.filterable) {
-          html += '<span class="inline-flex items-center rounded-md bg-gray-100 p-1 text-gray-700 dark:bg-white/10 dark:text-gray-400">' + ICON_FILTER + '</span>';
         }
 
         html += '</button>';
@@ -729,8 +776,8 @@
   }
 
   function getCustomerForEntry(entry) {
-    var targetCustomerName = String(entry && entry.customer || '').trim().toLowerCase();
-    var targetVendorEntry = String(entry && entry.vendorEntry || '').trim().toLowerCase();
+    var targetCustomerName = String(entry && entry.vendorEntry || '').trim().toLowerCase();
+    var targetVendorEntry = String(entry && entry.customer || '').trim().toLowerCase();
     for (var i = 0; i < _customers.length; i++) {
       var customer = _customers[i];
       var customerName = String(customer && customer.name || '').trim().toLowerCase();
@@ -746,7 +793,7 @@
   function getPayerCardDetailsForRender(entry, info, customer) {
     var paymentInfo = info || {};
     var payerCardInfo = paymentInfo.payerCard || paymentInfo;
-    var cardHolderName = (customer && customer.name) || payerCardInfo.cardholderName || entry.customer || '';
+    var cardHolderName = (customer && customer.name) || payerCardInfo.cardholderName || entry.vendorEntry || '';
     var cardHolderAddress = payerCardInfo.cardholderAddress || paymentInfo.cardholderAddress || '';
     var cardNumberRaw = String(paymentInfo.cardNumber || payerCardInfo.cardNumber || entry.paymentMethodEnding || '');
     var cardDigits = cardNumberRaw.replace(/\D/g, '');
@@ -1273,9 +1320,10 @@
         var sortKey = sortBtn.getAttribute('data-sort-key') || '';
         if (!sortKey) return;
         cycleSortDirection(sortKey);
-        var resorted = getSortedEntries(filterEntriesByTab(_activeTableTabKey || 'pending'));
+        var resorted = getVisibleEntriesForActiveTab();
         renderTable(table, paginationState.columns, resorted);
         refreshStickyAction();
+        syncTableFilterUi();
         return;
       }
 
@@ -1604,11 +1652,8 @@
       var tabCountEl = clicked.querySelector(TAB_COUNT_SELECTOR);
       var tabKey = tabCountEl ? tabCountEl.getAttribute('data-tab-count') : 'pending';
       _activeTableTabKey = tabKey || 'pending';
-      var filtered = getSortedEntries(filterEntriesByTab(tabKey));
-      paginationState.allEntries = filtered;
-      paginationState.totalItems = filtered.length;
-      paginationState.currentPage = 1;
-      renderCurrentPage();
+      refreshTableForActiveTab();
+      syncTableFilterUi();
     });
   }
 
@@ -1667,6 +1712,797 @@
     });
   }
 
+  function initTableFilterDropdown() {
+    var filterBtn = document.getElementById('sx-table-filter-btn');
+    var filterDropdown = document.getElementById('sx-table-filter-dropdown');
+    var filterMenu = document.getElementById('sx-table-filter-menu');
+    var filterTrack = document.getElementById('sx-table-filter-track');
+    var filterRootPanel = document.getElementById('sx-table-filter-panel-root');
+    var filterDetailSlot = document.getElementById('sx-table-filter-detail-slot');
+    var filterCustomerPanel = document.getElementById('sx-table-filter-panel-customer');
+    var filterStatusPanel = document.getElementById('sx-table-filter-panel-status');
+    var filterMethodPanel = document.getElementById('sx-table-filter-panel-method');
+    var filterInitiatedDatePanel = document.getElementById('sx-table-filter-panel-initiated-date');
+    var filterCustomersWrap = document.getElementById('sx-table-filter-customers');
+    var filterStatusesWrap = document.getElementById('sx-table-filter-statuses');
+    var filterMethodsWrap = document.getElementById('sx-table-filter-methods');
+    var filterDateFromInput = document.getElementById('sx-table-filter-date-from-input');
+    var filterDateToInput = document.getElementById('sx-table-filter-date-to-input');
+    var filterDateFromMaskFilled = document.getElementById('sx-table-filter-date-from-mask-filled');
+    var filterDateFromMaskEmpty = document.getElementById('sx-table-filter-date-from-mask-empty');
+    var filterDateToMaskFilled = document.getElementById('sx-table-filter-date-to-mask-filled');
+    var filterDateToMaskEmpty = document.getElementById('sx-table-filter-date-to-mask-empty');
+    var filterDateMonthLabel = document.getElementById('sx-table-filter-date-month-label');
+    var filterDatePrevBtn = document.getElementById('sx-table-filter-date-prev');
+    var filterDateNextBtn = document.getElementById('sx-table-filter-date-next');
+    var filterDateGrid = document.getElementById('sx-table-filter-date-grid');
+    var filterDateCalendarWrap = document.getElementById('sx-table-filter-date-calendar');
+    var filterApplyBtn = document.getElementById('sx-table-filter-apply-btn');
+    var filterApplyStatusBtn = document.getElementById('sx-table-filter-apply-status-btn');
+    var filterApplyMethodBtn = document.getElementById('sx-table-filter-apply-method-btn');
+    var filterApplyDateBtn = document.getElementById('sx-table-filter-apply-date-btn');
+    var filterBackdrop = document.getElementById('sx-table-filter-backdrop');
+    var activeFiltersWrap = document.getElementById('sx-table-active-filters');
+    if (!filterBtn || !filterMenu || !filterTrack || !filterRootPanel || !filterDetailSlot || !filterCustomerPanel || !filterStatusPanel || !filterMethodPanel || !filterInitiatedDatePanel || !filterCustomersWrap || !filterStatusesWrap || !filterMethodsWrap || !filterDateFromInput || !filterDateToInput || !filterDateFromMaskFilled || !filterDateFromMaskEmpty || !filterDateToMaskFilled || !filterDateToMaskEmpty || !filterDateMonthLabel || !filterDatePrevBtn || !filterDateNextBtn || !filterDateGrid || !filterDateCalendarWrap) return;
+
+    function buildFilterCheckbox(id, label, countText, value, checked) {
+      return '' +
+        '<label class="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-gray-100 group-has-checked:bg-gray-100 dark:hover:bg-white/5 dark:group-has-checked:bg-white/10">' +
+        '  <div class="grid size-4 grid-cols-1">' +
+        '    <input type="checkbox" data-filter-value="' + escapeHtml(value) + '" id="' + escapeHtml(id) + '"' + (checked ? ' checked' : '') +
+        '      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
+        '    <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
+        '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
+        '    </svg>' +
+        '  </div>' +
+        '  <span class="text-sm font-medium text-gray-900 dark:text-gray-100">' + escapeHtml(label) + '</span>' +
+        (countText ? ('<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(countText) + '</span>') : '') +
+        '</label>';
+    }
+
+    function getBaseFilterEntries() {
+      return filterEntriesByTab(_activeTableTabKey || 'pending');
+    }
+
+    function isIsoDateString(value) {
+      return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ''));
+    }
+
+    function toIsoDate(value) {
+      var str = String(value || '').slice(0, 10);
+      return isIsoDateString(str) ? str : '';
+    }
+
+    function toLocalIsoDate(date) {
+      if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
+      var y = date.getFullYear();
+      var m = String(date.getMonth() + 1).padStart(2, '0');
+      var d = String(date.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + d;
+    }
+
+    function isoToDate(iso) {
+      if (!isIsoDateString(iso)) return null;
+      var date = new Date(iso + 'T00:00:00');
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    function partsToIso(mm, dd, yyyy) {
+      var mmNum = parseInt(mm, 10);
+      var ddNum = parseInt(dd, 10);
+      var yyyyNum = parseInt(yyyy, 10);
+      if (!mm || !dd || !yyyy || Number.isNaN(mmNum) || Number.isNaN(ddNum) || Number.isNaN(yyyyNum)) return '';
+      if (yyyy.length !== 4 || mm.length !== 2 || dd.length !== 2) return '';
+      if (mmNum < 1 || mmNum > 12) return '';
+      if (ddNum < 1 || ddNum > 31) return '';
+      if (yyyyNum < 1900 || yyyyNum > 2099) return '';
+      return yyyy + '-' + mm.padStart(2, '0') + '-' + dd.padStart(2, '0');
+    }
+
+    function formatIsoAsUsInput(iso) {
+      if (!isIsoDateString(iso)) return '';
+      return iso.slice(5, 7) + ' / ' + iso.slice(8, 10) + ' / ' + iso.slice(0, 4);
+    }
+
+    function sanitizeUsDateDigits(value) {
+      var rawDigits = String(value || '').replace(/\D/g, '').slice(0, 8);
+      var accepted = '';
+      for (var i = 0; i < rawDigits.length; i++) {
+        var ch = rawDigits.charAt(i);
+        var ok = false;
+        if (accepted.length === 0) {
+          ok = ch === '0' || ch === '1';
+        } else if (accepted.length === 1) {
+          var monthTens = accepted.charAt(0);
+          if (monthTens === '0') ok = ch >= '1' && ch <= '9';
+          else if (monthTens === '1') ok = ch >= '0' && ch <= '2';
+        } else if (accepted.length === 2) {
+          ok = ch >= '0' && ch <= '3';
+        } else if (accepted.length === 3) {
+          var dayTens = accepted.charAt(2);
+          if (dayTens === '0') ok = ch >= '1' && ch <= '9';
+          else if (dayTens === '1' || dayTens === '2') ok = ch >= '0' && ch <= '9';
+          else if (dayTens === '3') ok = ch >= '0' && ch <= '1';
+        } else if (accepted.length === 4) {
+          ok = ch === '1' || ch === '2';
+        } else if (accepted.length === 5) {
+          var yearThousands = accepted.charAt(4);
+          if (yearThousands === '1') ok = ch === '9';
+          else if (yearThousands === '2') ok = ch === '0';
+        } else if (accepted.length === 6 || accepted.length === 7) {
+          ok = ch >= '0' && ch <= '9';
+        }
+        if (ok) accepted += ch;
+      }
+      return accepted;
+    }
+
+    function formatUsInput(value) {
+      var digits = sanitizeUsDateDigits(value);
+      if (!digits) return '';
+      if (digits.length <= 1) return digits;
+      if (digits.length === 2) return digits + ' / ';
+      if (digits.length === 3) return digits.slice(0, 2) + ' / ' + digits.slice(2);
+      if (digits.length === 4) return digits.slice(0, 2) + ' / ' + digits.slice(2, 4) + ' / ';
+      return digits.slice(0, 2) + ' / ' + digits.slice(2, 4) + ' / ' + digits.slice(4);
+    }
+
+    function usInputToIso(value) {
+      var digits = sanitizeUsDateDigits(value);
+      if (digits.length !== 8) return '';
+      return partsToIso(digits.slice(0, 2), digits.slice(2, 4), digits.slice(4, 8));
+    }
+
+    function renderInputMaskDisplay(inputValue, filledEl, emptyEl) {
+      var template = 'MM / DD / YYYY';
+      var filled = String(inputValue || '');
+      var clamped = filled.length > template.length ? filled.slice(0, template.length) : filled;
+      filledEl.textContent = clamped;
+      emptyEl.textContent = template.slice(clamped.length);
+    }
+
+    function setInitiatedDateMonthFromIso(iso) {
+      var source = isoToDate(iso) || new Date();
+      tableFilterState.initiatedDateMonth = new Date(source.getFullYear(), source.getMonth(), 1);
+    }
+
+    function shiftInitiatedDateMonth(offset) {
+      if (!tableFilterState.initiatedDateMonth) setInitiatedDateMonthFromIso(tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo);
+      tableFilterState.initiatedDateMonth = new Date(
+        tableFilterState.initiatedDateMonth.getFullYear(),
+        tableFilterState.initiatedDateMonth.getMonth() + offset,
+        1
+      );
+    }
+
+    function getSelectedDateForActiveField() {
+      return tableFilterState.initiatedDateActiveField === 'to'
+        ? tableFilterState.initiatedDateTo
+        : tableFilterState.initiatedDateFrom;
+    }
+
+    function renderInitiatedDateInputs() {
+      var fromDisplay = tableFilterState.initiatedDateFromDraft || formatIsoAsUsInput(tableFilterState.initiatedDateFrom);
+      var toDisplay = tableFilterState.initiatedDateToDraft || formatIsoAsUsInput(tableFilterState.initiatedDateTo);
+      filterDateFromInput.value = fromDisplay;
+      filterDateToInput.value = toDisplay;
+      renderInputMaskDisplay(fromDisplay, filterDateFromMaskFilled, filterDateFromMaskEmpty);
+      renderInputMaskDisplay(toDisplay, filterDateToMaskFilled, filterDateToMaskEmpty);
+    }
+
+    function renderInitiatedDateCalendar() {
+      if (!tableFilterState.initiatedDateMonth) setInitiatedDateMonthFromIso(getSelectedDateForActiveField());
+      var monthStart = tableFilterState.initiatedDateMonth;
+      filterDateMonthLabel.textContent = monthStart.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+      var firstOfMonth = new Date(monthStart.getFullYear(), monthStart.getMonth(), 1);
+      var startOffset = (firstOfMonth.getDay() + 6) % 7; // Monday-first
+      var gridStart = new Date(firstOfMonth);
+      gridStart.setDate(firstOfMonth.getDate() - startOffset);
+      var todayIso = toLocalIsoDate(new Date());
+      var selectedFrom = tableFilterState.initiatedDateFrom;
+      var selectedTo = tableFilterState.initiatedDateTo;
+      var activeIso = getSelectedDateForActiveField();
+      var cells = '';
+
+      for (var i = 0; i < 42; i++) {
+        var current = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+        var iso = toLocalIsoDate(current);
+        var isCurrentMonth = current.getMonth() === monthStart.getMonth() && current.getFullYear() === monthStart.getFullYear();
+        var isSelected = iso && (iso === selectedFrom || iso === selectedTo);
+        var isInRange = selectedFrom && selectedTo && iso >= selectedFrom && iso <= selectedTo;
+        var isToday = iso === todayIso;
+        var isActive = iso && iso === activeIso;
+        var classes = 'mx-auto flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-200';
+        if (!isCurrentMonth) classes += ' text-gray-400 dark:text-gray-500';
+        else classes += ' text-gray-900 dark:text-gray-100';
+        if (isInRange && !isSelected) classes += ' bg-blue-50 dark:bg-blue-500/20';
+        if (isSelected) classes += ' bg-blue-600 font-semibold text-white';
+        else if (isToday) classes += ' font-semibold text-blue-600 dark:text-blue-400';
+        if (isActive && !isSelected) classes += ' ring-2 ring-blue-500';
+
+        cells += '' +
+          '<div class="py-1">' +
+          '  <button type="button" data-date-cell="' + escapeHtml(iso) + '" class="' + classes + '">' +
+          '    <time datetime="' + escapeHtml(iso) + '">' + current.getDate() + '</time>' +
+          '  </button>' +
+          '</div>';
+      }
+      filterDateGrid.innerHTML = cells;
+    }
+
+    function setDateCalendarVisible(visible) {
+      filterDateCalendarWrap.classList.toggle('hidden', !visible);
+      if (visible) renderInitiatedDateCalendar();
+    }
+
+    function syncSelectedFiltersToAvailable() {
+      var baseEntries = getBaseFilterEntries();
+      var customerSet = new Set();
+      var statusSet = new Set();
+      var methodSet = new Set();
+      baseEntries.forEach(function (entry) {
+        customerSet.add(String(entry && entry.customer || ''));
+        statusSet.add(String(entry && entry.status || ''));
+        methodSet.add(String(entry && entry.methodType || ''));
+      });
+      Array.from(tableFilterState.selectedCustomers).forEach(function (customer) {
+        if (!customerSet.has(customer)) tableFilterState.selectedCustomers.delete(customer);
+      });
+      Array.from(tableFilterState.selectedStatuses).forEach(function (status) {
+        if (!statusSet.has(status)) tableFilterState.selectedStatuses.delete(status);
+      });
+      Array.from(tableFilterState.selectedMethods).forEach(function (method) {
+        if (!methodSet.has(method)) tableFilterState.selectedMethods.delete(method);
+      });
+      tableFilterState.initiatedDateFrom = toIsoDate(tableFilterState.initiatedDateFrom);
+      tableFilterState.initiatedDateTo = toIsoDate(tableFilterState.initiatedDateTo);
+      tableFilterState.initiatedDateFromDraft = formatUsInput(tableFilterState.initiatedDateFromDraft);
+      tableFilterState.initiatedDateToDraft = formatUsInput(tableFilterState.initiatedDateToDraft);
+      if (tableFilterState.initiatedDateFrom && tableFilterState.initiatedDateTo && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
+        tableFilterState.initiatedDateTo = tableFilterState.initiatedDateFrom;
+      }
+    }
+
+    function renderCustomerFilters() {
+      var counts = new Map();
+      getBaseFilterEntries().forEach(function (entry) {
+        var name = String(entry && entry.customer || '').trim();
+        counts.set(name, (counts.get(name) || 0) + 1);
+      });
+      var rows = Array.from(counts.entries())
+        .sort(function (a, b) { return a[0].localeCompare(b[0]); })
+        .map(function (entry, idx) {
+          return buildFilterCheckbox(
+            'sx-table-filter-customer-' + idx,
+            entry[0],
+            String(entry[1]),
+            entry[0],
+            tableFilterState.selectedCustomers.has(entry[0])
+          );
+        });
+      filterCustomersWrap.innerHTML = rows.join('');
+    }
+
+    function renderStatusFilters() {
+      var counts = {};
+      getBaseFilterEntries().forEach(function (entry) {
+        var key = String(entry && entry.status || '');
+        if (!key) return;
+        counts[key] = (counts[key] || 0) + 1;
+      });
+      var statusOrder = ['pending', 'paid', 'exception'];
+      var statusLabels = { pending: 'Pending', paid: 'Paid', exception: 'Exception' };
+      var rows = statusOrder
+        .filter(function (key) { return counts[key] > 0; })
+        .map(function (key) {
+          return { key: key, label: statusLabels[key] || key, count: counts[key] };
+        });
+      filterStatusesWrap.innerHTML = rows.map(function (row, idx) {
+        return buildFilterCheckbox(
+          'sx-table-filter-status-' + idx,
+          row.label,
+          String(row.count),
+          row.key,
+          tableFilterState.selectedStatuses.has(row.key)
+        );
+      }).join('');
+    }
+
+    function renderMethodFilters() {
+      var counts = {};
+      getBaseFilterEntries().forEach(function (entry) {
+        var key = String(entry && entry.methodType || '');
+        if (!key) return;
+        counts[key] = (counts[key] || 0) + 1;
+      });
+      var methodOrder = ['card', 'ach', 'smart_exchange'];
+      var rows = methodOrder
+        .filter(function (key) { return counts[key] > 0; })
+        .map(function (key) {
+          return { key: key, label: getMethodLabelFromType(key), count: counts[key] };
+        });
+      filterMethodsWrap.innerHTML = rows.map(function (row, idx) {
+        return buildFilterCheckbox(
+          'sx-table-filter-method-' + idx,
+          row.label,
+          String(row.count),
+          row.key,
+          tableFilterState.selectedMethods.has(row.key)
+        );
+      }).join('');
+    }
+
+    function syncApplyButtonState() {
+      if (filterApplyBtn) filterApplyBtn.disabled = tableFilterState.selectedCustomers.size === 0;
+      if (filterApplyStatusBtn) filterApplyStatusBtn.disabled = tableFilterState.selectedStatuses.size === 0;
+      if (filterApplyMethodBtn) filterApplyMethodBtn.disabled = tableFilterState.selectedMethods.size === 0;
+      if (filterApplyDateBtn) filterApplyDateBtn.disabled = !tableFilterState.initiatedDateFrom && !tableFilterState.initiatedDateTo;
+    }
+
+    function renderActiveFilterTags() {
+      if (!activeFiltersWrap) return;
+      var tags = [];
+      var selectedCustomers = Array.from(tableFilterState.selectedCustomers)
+        .filter(function (customer) { return customer && customer.trim(); })
+        .sort(function (a, b) { return a.localeCompare(b); });
+      var selectedStatuses = Array.from(tableFilterState.selectedStatuses)
+        .filter(function (status) { return status && status.trim(); })
+        .sort(function (a, b) { return a.localeCompare(b); });
+
+      if (selectedCustomers.length) {
+        tags.push({
+          type: 'customer',
+          label: 'Customer',
+          value: selectedCustomers.join(', '),
+        });
+      }
+      if (selectedStatuses.length) {
+        var statusText = selectedStatuses
+          .map(function (status) { return STATUS_LABELS[status] || status; })
+          .join(', ');
+        tags.push({
+          type: 'status',
+          label: 'Status',
+          value: statusText,
+        });
+      }
+      var selectedMethods = Array.from(tableFilterState.selectedMethods)
+        .filter(function (method) { return method && method.trim(); })
+        .sort(function (a, b) { return a.localeCompare(b); });
+      if (selectedMethods.length) {
+        var methodText = selectedMethods
+          .map(function (method) { return getMethodLabelFromType(method); })
+          .join(', ');
+        tags.push({
+          type: 'method',
+          label: 'Method of payment',
+          value: methodText,
+        });
+      }
+      if (tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo) {
+        var fromLabel = tableFilterState.initiatedDateFrom ? formatDate(tableFilterState.initiatedDateFrom) : 'Any';
+        var toLabel = tableFilterState.initiatedDateTo ? formatDate(tableFilterState.initiatedDateTo) : 'Any';
+        tags.push({
+          type: 'initiated_date',
+          label: 'Initiated date',
+          value: fromLabel + ' - ' + toLabel,
+        });
+      }
+
+      if (!tags.length) {
+        activeFiltersWrap.innerHTML = '';
+        activeFiltersWrap.classList.add('hidden');
+        return;
+      }
+      activeFiltersWrap.classList.remove('hidden');
+
+      activeFiltersWrap.innerHTML = tags.map(function (tag) {
+        var byLabel = 'By ' + String(tag.label || '').toLowerCase();
+        return '' +
+          '<span class="relative inline-flex max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-xs font-medium text-gray-600 dark:bg-white/10 dark:text-gray-300">' +
+          '  <span class="inline-flex shrink-0 items-center bg-gray-100 px-2 py-1 font-medium text-gray-900 dark:bg-white/15 dark:text-white">' + escapeHtml(byLabel) + '</span>' +
+          '  <button type="button" data-filter-tag-open="' + escapeHtml(tag.type) + '" title="' + escapeHtml(tag.label + ': ' + tag.value) + '"' +
+          '    class="inline-flex min-w-0 items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15 cursor-pointer">' +
+          '    <span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(tag.value) + '</span>' +
+          '  </button>' +
+          '  <button type="button" data-filter-tag-remove="' + escapeHtml(tag.type) + '"' +
+          '    class="inline-flex w-6 shrink-0 self-stretch items-center justify-center border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white cursor-pointer" aria-label="Remove filter">' +
+          '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">' +
+          '      <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
+          '    </svg>' +
+          '  </button>' +
+          '  <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span>' +
+          '</span>';
+      }).join('');
+    }
+
+    function setDetailPanelVisibility(panel) {
+      filterCustomerPanel.classList.add('hidden');
+      filterCustomerPanel.classList.remove('flex');
+      filterStatusPanel.classList.add('hidden');
+      filterStatusPanel.classList.remove('flex');
+      filterMethodPanel.classList.add('hidden');
+      filterMethodPanel.classList.remove('flex');
+      filterInitiatedDatePanel.classList.add('hidden');
+      filterInitiatedDatePanel.classList.remove('flex');
+      if (panel === 'customer') {
+        filterCustomerPanel.classList.remove('hidden');
+        filterCustomerPanel.classList.add('flex');
+      } else if (panel === 'status') {
+        filterStatusPanel.classList.remove('hidden');
+        filterStatusPanel.classList.add('flex');
+      } else if (panel === 'method') {
+        filterMethodPanel.classList.remove('hidden');
+        filterMethodPanel.classList.add('flex');
+      } else if (panel === 'initiated_date') {
+        filterInitiatedDatePanel.classList.remove('hidden');
+        filterInitiatedDatePanel.classList.add('flex');
+      }
+    }
+
+    function applyFilterMenuLayout() {
+      var isMobileView = window.matchMedia('(max-width: 639px)').matches;
+      if (isMobileView) {
+        filterMenu.style.position = 'fixed';
+        filterMenu.style.left = '0';
+        filterMenu.style.right = '0';
+        filterMenu.style.bottom = '0';
+        filterMenu.style.top = 'auto';
+        filterMenu.style.marginTop = '0';
+        filterMenu.style.zIndex = '50';
+        filterMenu.style.borderBottomLeftRadius = '0';
+        filterMenu.style.borderBottomRightRadius = '0';
+        filterMenu.style.width = '100vw';
+        filterTrack.classList.remove('transition-transform', 'duration-250', 'ease-[cubic-bezier(0.22,1,0.36,1)]');
+        filterMenu.classList.remove('origin-top-right');
+        filterMenu.classList.add('origin-bottom');
+      } else {
+        filterMenu.style.position = '';
+        filterMenu.style.left = '';
+        filterMenu.style.right = '';
+        filterMenu.style.bottom = '';
+        filterMenu.style.top = '';
+        filterMenu.style.marginTop = '';
+        filterMenu.style.zIndex = '';
+        filterMenu.style.borderBottomLeftRadius = '';
+        filterMenu.style.borderBottomRightRadius = '';
+        filterMenu.style.width = '';
+        filterTrack.classList.add('transition-transform', 'duration-250', 'ease-[cubic-bezier(0.22,1,0.36,1)]');
+        filterMenu.classList.remove('origin-bottom');
+        filterMenu.classList.add('origin-top-right');
+      }
+    }
+
+    function setFilterPanel(panel, immediate) {
+      tableFilterState.activePanel = panel;
+      var targetPanel = filterRootPanel;
+      if (panel === 'customer' || panel === 'status' || panel === 'method' || panel === 'initiated_date') {
+        setDetailPanelVisibility(panel);
+        targetPanel = filterDetailSlot;
+        if (panel === 'initiated_date') {
+          setInitiatedDateMonthFromIso(getSelectedDateForActiveField() || tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo);
+          renderInitiatedDateInputs();
+          renderInitiatedDateCalendar();
+          setDateCalendarVisible(false);
+        }
+      } else {
+        setDetailPanelVisibility('root');
+      }
+      var offset = targetPanel ? targetPanel.offsetLeft : 0;
+      var width = targetPanel ? targetPanel.offsetWidth : 0;
+      var height = targetPanel ? targetPanel.offsetHeight : 0;
+      var isMobileView = window.matchMedia('(max-width: 639px)').matches;
+      if (isMobileView) {
+        filterTrack.style.transform = 'translateX(' + (-offset) + 'px)';
+        filterMenu.style.width = '100vw';
+        if (height > 0) filterMenu.style.height = height + 'px';
+        return;
+      }
+      if (immediate) {
+        filterTrack.style.transform = 'translateX(' + (-offset) + 'px)';
+        if (width > 0) filterMenu.style.width = width + 'px';
+        if (height > 0) filterMenu.style.height = height + 'px';
+        return;
+      }
+      var currentRect = filterMenu.getBoundingClientRect();
+      if (!isMobileView && currentRect.width > 0) filterMenu.style.width = currentRect.width + 'px';
+      if (currentRect.height > 0) filterMenu.style.height = currentRect.height + 'px';
+      requestAnimationFrame(function () {
+        filterTrack.style.transform = 'translateX(' + (-offset) + 'px)';
+        if (isMobileView) {
+          filterMenu.style.width = '100vw';
+        } else if (width > 0) {
+          filterMenu.style.width = width + 'px';
+        }
+        if (height > 0) filterMenu.style.height = height + 'px';
+      });
+    }
+
+    function setFilterMenuOpen(nextOpen) {
+      tableFilterState.menuOpen = !!nextOpen;
+      applyFilterMenuLayout();
+      if (tableFilterState.menuOpen) {
+        setFilterPanel(tableFilterState.activePanel || 'root', true);
+        filterMenu.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
+        if (filterBackdrop && window.matchMedia('(max-width: 639px)').matches) {
+          filterBackdrop.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
+        }
+      } else {
+        filterMenu.classList.add('invisible', 'opacity-0', 'pointer-events-none');
+        filterMenu.style.width = '';
+        filterMenu.style.height = '';
+        if (filterBackdrop) {
+          filterBackdrop.classList.add('invisible', 'opacity-0', 'pointer-events-none');
+        }
+      }
+    }
+
+    filterBtn.addEventListener('click', function (event) {
+      event.stopPropagation();
+      var nextOpen = !tableFilterState.menuOpen;
+      if (nextOpen) tableFilterState.activePanel = 'root';
+      setFilterMenuOpen(nextOpen);
+      syncApplyButtonState();
+    });
+
+    filterTrack.addEventListener('click', function (event) {
+      event.stopPropagation();
+      var openBtn = event.target.closest('[data-filter-open]');
+      if (openBtn) {
+        event.preventDefault();
+        setFilterPanel(openBtn.getAttribute('data-filter-open'));
+        return;
+      }
+      if (event.target.closest('[data-filter-back]')) {
+        event.preventDefault();
+        setFilterPanel('root');
+      }
+    });
+
+    filterTrack.addEventListener('change', function (event) {
+      var checkbox = event.target.closest('input[type="checkbox"][data-filter-value]');
+      if (!checkbox) return;
+      var panelEl = checkbox.closest('#sx-table-filter-customers, #sx-table-filter-statuses');
+      if (!panelEl) panelEl = checkbox.closest('#sx-table-filter-methods');
+      var value = checkbox.getAttribute('data-filter-value');
+      if (!panelEl || !value) return;
+      if (panelEl.id === 'sx-table-filter-customers') {
+        if (checkbox.checked) tableFilterState.selectedCustomers.add(value);
+        else tableFilterState.selectedCustomers.delete(value);
+      } else if (panelEl.id === 'sx-table-filter-statuses') {
+        if (checkbox.checked) tableFilterState.selectedStatuses.add(value);
+        else tableFilterState.selectedStatuses.delete(value);
+      } else {
+        if (checkbox.checked) tableFilterState.selectedMethods.add(value);
+        else tableFilterState.selectedMethods.delete(value);
+      }
+      syncApplyButtonState();
+      refreshTableForActiveTab();
+    });
+
+    function setActiveDateField(field) {
+      tableFilterState.initiatedDateActiveField = field === 'to' ? 'to' : 'from';
+      setInitiatedDateMonthFromIso(getSelectedDateForActiveField() || tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo);
+      renderInitiatedDateInputs();
+      setDateCalendarVisible(false);
+    }
+
+    function setDateFieldFromInput(field, rawInput) {
+      var formatted = formatUsInput(rawInput);
+      var iso = usInputToIso(formatted);
+      if (field === 'to') {
+        tableFilterState.initiatedDateToDraft = formatted;
+        if (!formatted || formatted === 'MM / DD / YYYY') tableFilterState.initiatedDateTo = '';
+        else if (iso) tableFilterState.initiatedDateTo = iso;
+        if (tableFilterState.initiatedDateFrom && tableFilterState.initiatedDateTo && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
+          tableFilterState.initiatedDateFrom = tableFilterState.initiatedDateTo;
+          tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(tableFilterState.initiatedDateFrom);
+        }
+      } else {
+        tableFilterState.initiatedDateFromDraft = formatted;
+        if (!formatted || formatted === 'MM / DD / YYYY') tableFilterState.initiatedDateFrom = '';
+        else if (iso) tableFilterState.initiatedDateFrom = iso;
+        if (tableFilterState.initiatedDateFrom && tableFilterState.initiatedDateTo && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
+          tableFilterState.initiatedDateTo = tableFilterState.initiatedDateFrom;
+          tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(tableFilterState.initiatedDateTo);
+        }
+      }
+      syncApplyButtonState();
+      if (!formatted || iso) refreshTableForActiveTab();
+      return formatted;
+    }
+
+    function bindDateInput(inputEl, field) {
+      function getCaretIndexFromDigitsCount(count, formatted) {
+        if (!formatted) return 0;
+        var map = [0, 1, 5, 6, 10, 11, 12, 13, 14];
+        var safeCount = Math.max(0, Math.min(8, count));
+        var idx = map[safeCount];
+        return Math.max(0, Math.min(idx, formatted.length));
+      }
+
+      inputEl.addEventListener('focus', function () {
+        setActiveDateField(field);
+      });
+      inputEl.addEventListener('click', function (event) {
+        event.stopPropagation();
+      });
+      inputEl.addEventListener('input', function () {
+        var selectionStart = typeof inputEl.selectionStart === 'number' ? inputEl.selectionStart : inputEl.value.length;
+        var digitsBeforeCaret = String(inputEl.value || '').slice(0, selectionStart).replace(/\D/g, '').length;
+        var formatted = setDateFieldFromInput(field, inputEl.value);
+        inputEl.value = formatted;
+        if (field === 'from') {
+          renderInputMaskDisplay(formatted, filterDateFromMaskFilled, filterDateFromMaskEmpty);
+        } else {
+          renderInputMaskDisplay(formatted, filterDateToMaskFilled, filterDateToMaskEmpty);
+        }
+        var nextCaret = getCaretIndexFromDigitsCount(digitsBeforeCaret, formatted);
+        try {
+          inputEl.setSelectionRange(nextCaret, nextCaret);
+        } catch (err) {
+          // Ignore selection errors on unsupported input states.
+        }
+      });
+    }
+
+    bindDateInput(filterDateFromInput, 'from');
+    bindDateInput(filterDateToInput, 'to');
+
+    filterDatePrevBtn.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      shiftInitiatedDateMonth(-1);
+      renderInitiatedDateCalendar();
+    });
+
+    filterDateNextBtn.addEventListener('click', function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      shiftInitiatedDateMonth(1);
+      renderInitiatedDateCalendar();
+    });
+
+    filterDateGrid.addEventListener('click', function (event) {
+      var dayBtn = event.target.closest('button[data-date-cell]');
+      if (!dayBtn) return;
+      event.preventDefault();
+      event.stopPropagation();
+      var iso = toIsoDate(dayBtn.getAttribute('data-date-cell'));
+      if (!iso) return;
+      if (tableFilterState.initiatedDateActiveField === 'to') {
+        tableFilterState.initiatedDateTo = iso;
+        tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(iso);
+        if (tableFilterState.initiatedDateFrom && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
+          tableFilterState.initiatedDateFrom = tableFilterState.initiatedDateTo;
+          tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(tableFilterState.initiatedDateFrom);
+        }
+      } else {
+        tableFilterState.initiatedDateFrom = iso;
+        tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(iso);
+        if (tableFilterState.initiatedDateTo && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
+          tableFilterState.initiatedDateTo = tableFilterState.initiatedDateFrom;
+          tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(tableFilterState.initiatedDateTo);
+        }
+      }
+      syncApplyButtonState();
+      renderInitiatedDateInputs();
+      renderInitiatedDateCalendar();
+      refreshTableForActiveTab();
+    });
+
+    if (filterApplyBtn) {
+      filterApplyBtn.addEventListener('click', function (event) {
+        event.stopPropagation();
+        if (filterApplyBtn.disabled) return;
+        setFilterMenuOpen(false);
+        setFilterPanel('root');
+      });
+    }
+
+    if (filterApplyStatusBtn) {
+      filterApplyStatusBtn.addEventListener('click', function (event) {
+        event.stopPropagation();
+        if (filterApplyStatusBtn.disabled) return;
+        setFilterMenuOpen(false);
+        setFilterPanel('root');
+      });
+    }
+
+    if (filterApplyMethodBtn) {
+      filterApplyMethodBtn.addEventListener('click', function (event) {
+        event.stopPropagation();
+        if (filterApplyMethodBtn.disabled) return;
+        setFilterMenuOpen(false);
+        setFilterPanel('root');
+      });
+    }
+
+    if (filterApplyDateBtn) {
+      filterApplyDateBtn.addEventListener('click', function (event) {
+        event.stopPropagation();
+        if (filterApplyDateBtn.disabled) return;
+        setFilterMenuOpen(false);
+        setFilterPanel('root');
+      });
+    }
+
+    document.addEventListener('click', function (event) {
+      if (!filterDropdown || !tableFilterState.menuOpen) return;
+      if (filterDropdown.contains(event.target)) return;
+      setFilterMenuOpen(false);
+      setFilterPanel('root');
+    });
+
+    if (filterBackdrop) {
+      filterBackdrop.addEventListener('click', function () {
+        if (!tableFilterState.menuOpen) return;
+        setFilterMenuOpen(false);
+        setFilterPanel('root');
+      });
+    }
+
+    if (activeFiltersWrap) {
+      activeFiltersWrap.addEventListener('click', function (event) {
+        var openBtn = event.target.closest('button[data-filter-tag-open]');
+        if (openBtn) {
+          event.preventDefault();
+          event.stopPropagation();
+          var panelType = openBtn.getAttribute('data-filter-tag-open');
+          if (panelType === 'customer' || panelType === 'status' || panelType === 'method' || panelType === 'initiated_date') {
+            tableFilterState.activePanel = panelType;
+            syncTableFilterUi();
+            setFilterMenuOpen(true);
+            setFilterPanel(panelType, true);
+            syncApplyButtonState();
+          }
+          return;
+        }
+        var removeBtn = event.target.closest('button[data-filter-tag-remove]');
+        if (!removeBtn) return;
+        event.preventDefault();
+        event.stopPropagation();
+        var type = removeBtn.getAttribute('data-filter-tag-remove');
+        if (!type) return;
+        if (type === 'customer') tableFilterState.selectedCustomers.clear();
+        if (type === 'status') tableFilterState.selectedStatuses.clear();
+        if (type === 'method') tableFilterState.selectedMethods.clear();
+        if (type === 'initiated_date') {
+          tableFilterState.initiatedDateFrom = '';
+          tableFilterState.initiatedDateTo = '';
+          tableFilterState.initiatedDateFromDraft = '';
+          tableFilterState.initiatedDateToDraft = '';
+          tableFilterState.initiatedDateActiveField = 'from';
+        }
+        refreshTableForActiveTab();
+      });
+    }
+
+    window.addEventListener('resize', function () {
+      if (!tableFilterState.menuOpen) return;
+      applyFilterMenuLayout();
+      setFilterPanel(tableFilterState.activePanel || 'root');
+    });
+
+    syncTableFilterUi = function () {
+      syncSelectedFiltersToAvailable();
+      renderCustomerFilters();
+      renderStatusFilters();
+      renderMethodFilters();
+      renderInitiatedDateInputs();
+      renderInitiatedDateCalendar();
+      renderActiveFilterTags();
+      syncApplyButtonState();
+      if (tableFilterState.menuOpen) {
+        applyFilterMenuLayout();
+        setFilterPanel(tableFilterState.activePanel || 'root', true);
+      }
+    };
+
+    syncTableFilterUi();
+  }
+
   // ── Render ──
 
   var refreshStickyAction = function () {};
@@ -1706,12 +2542,13 @@
   }
 
   function refreshTableForActiveTab() {
-    var filtered = getSortedEntries(filterEntriesByTab(_activeTableTabKey || 'pending'));
+    var filtered = getVisibleEntriesForActiveTab();
     paginationState.allEntries = filtered;
     paginationState.totalItems = filtered.length;
     paginationState.currentPage = 1;
     updateTabBadges(paginationState.sourceEntries);
     renderCurrentPage();
+    syncTableFilterUi();
   }
 
   function renderTable(table, columns, entries) {
@@ -2106,7 +2943,7 @@
     var formattedAmount = formatCurrency(entry.amount, entry.currency);
     var paymentInfo = entry.details && entry.details.paymentInfo ? entry.details.paymentInfo : {};
     var payerCardInfo = paymentInfo.payerCard || paymentInfo;
-    var cardHolderName = payerCardInfo.cardholderName || entry.customer || '';
+    var cardHolderName = payerCardInfo.cardholderName || entry.vendorEntry || '';
     var cardHolderAddress = payerCardInfo.cardholderAddress || '';
     var cardNumberRaw = String(paymentInfo.cardNumber || payerCardInfo.cardNumber || entry.paymentMethodEnding || '');
     var cardDigits = cardNumberRaw.replace(/\D/g, '');
@@ -2228,7 +3065,7 @@
     if (amountEl) amountEl.textContent = formatCurrency(entry.amount, entry.currency);
     if (currencyEl) currencyEl.textContent = entry.currency;
     if (dateEl) dateEl.textContent = formatDate(entry.dateInitiated);
-    if (customerEl) customerEl.textContent = entry.customer;
+    if (customerEl) customerEl.textContent = entry.vendorEntry;
     if (invoiceEl) invoiceEl.textContent = '#' + entry.invoice;
 
     if (attachEl) attachEl.innerHTML = buildGetPaidAttachments(entry.details.attachments);
@@ -3180,6 +4017,7 @@
     var table = document.getElementById(TABLE_ID);
     if (!table) return;
     initTabBadges();
+    initTableFilterDropdown();
     initGetPaidPanel();
     initGetPaidCardDetailsTrigger();
     initReviewModal();
@@ -3219,13 +4057,14 @@
         _customers = Array.isArray(customers) ? customers : [];
         paginationState.sourceEntries = entries;
         updateTabBadges(entries);
-        var initialFilteredEntries = getSortedEntries(filterEntriesByTab(_activeTableTabKey || 'pending'));
+        var initialFilteredEntries = getVisibleEntriesForActiveTab();
 
         if (columns) {
           renderTable(table, columns, initialFilteredEntries);
         } else {
           attachToggleListeners(table);
         }
+        syncTableFilterUi();
 
         refreshStickyAction = initStickyAction(table);
         refreshStickyAction();
