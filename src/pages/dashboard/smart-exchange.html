@@ -900,10 +900,10 @@
                                         <div id="sx-table-filter-track"
                                             class="flex w-max items-start transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]"
                                             style="transform: translateX(0);">
-                                            <div id="sx-table-filter-panel-root" class="w-full min-w-0 py-1 sm:w-fit sm:min-w-[168px]">
+                                            <div id="sx-table-filter-panel-root" class="w-full min-w-0 shrink-0 py-1 sm:w-fit sm:min-w-[168px]">
                                                 <div role="button" tabindex="0" data-filter-open="customer"
-                                                    class="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
-                                                    <span>By customer</span>
+                                                    class="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                                    <span class="min-w-0 flex-1">By customer</span>
                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                         viewBox="0 0 20 20" fill="currentColor"
                                                         class="size-4 text-gray-500 dark:text-gray-400">
@@ -913,8 +913,8 @@
                                                     </svg>
                                                 </div>
                                                 <div role="button" tabindex="0" data-filter-open="status"
-                                                    class="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
-                                                    <span>By status</span>
+                                                    class="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                                    <span class="min-w-0 flex-1">By status</span>
                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                         viewBox="0 0 20 20" fill="currentColor"
                                                         class="size-4 text-gray-500 dark:text-gray-400">
@@ -924,8 +924,8 @@
                                                     </svg>
                                                 </div>
                                                 <div role="button" tabindex="0" data-filter-open="method"
-                                                    class="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
-                                                    <span>By method of payment</span>
+                                                    class="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                                    <span class="min-w-0 flex-1">By method of payment</span>
                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                         viewBox="0 0 20 20" fill="currentColor"
                                                         class="size-4 text-gray-500 dark:text-gray-400">
@@ -935,8 +935,8 @@
                                                     </svg>
                                                 </div>
                                                 <div role="button" tabindex="0" data-filter-open="initiated_date"
-                                                    class="flex w-full cursor-pointer items-center justify-between px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
-                                                    <span>By initiated date</span>
+                                                    class="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                                    <span class="min-w-0 flex-1">By initiated date</span>
                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                         viewBox="0 0 20 20" fill="currentColor"
                                                         class="size-4 text-gray-500 dark:text-gray-400">
@@ -946,8 +946,8 @@
                                                     </svg>
                                                 </div>
                                             </div>
-                                            <div id="sx-table-filter-detail-slot" class="w-full sm:w-72">
-                                                <div id="sx-table-filter-panel-customer" class="hidden w-full flex-col sm:w-72">
+                                            <div id="sx-table-filter-detail-slot" class="w-full shrink-0 sm:w-72">
+                                                <div id="sx-table-filter-panel-customer" class="hidden w-full shrink-0 flex-col sm:w-72">
                                                     <div role="button" tabindex="0" data-filter-back
                                                         class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -960,7 +960,7 @@
                                                         By customer
                                                     </div>
                                                     <div id="sx-table-filter-customers"
-                                                        class="max-h-56 grow overflow-auto px-2 py-2"></div>
+                                                        class="grow max-h-[60vh] overflow-auto px-2 py-2 sm:max-h-56"></div>
                                                     <div class="border-t border-gray-200 p-2 dark:border-white/10">
                                                         <button id="sx-table-filter-apply-btn" type="button" disabled
                                                             class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer">
@@ -968,7 +968,7 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div id="sx-table-filter-panel-status" class="hidden w-full flex-col sm:w-72">
+                                                <div id="sx-table-filter-panel-status" class="hidden w-full shrink-0 flex-col sm:w-72">
                                                     <div role="button" tabindex="0" data-filter-back
                                                         class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -989,7 +989,7 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div id="sx-table-filter-panel-method" class="hidden w-full flex-col sm:w-72">
+                                                <div id="sx-table-filter-panel-method" class="hidden w-full shrink-0 flex-col sm:w-72">
                                                     <div role="button" tabindex="0" data-filter-back
                                                         class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -1010,7 +1010,7 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div id="sx-table-filter-panel-initiated-date" class="hidden w-full flex-col sm:w-72">
+                                                <div id="sx-table-filter-panel-initiated-date" class="hidden w-full shrink-0 flex-col sm:w-72">
                                                     <div role="button" tabindex="0" data-filter-back
                                                         class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
                                                         <svg xmlns="http://www.w3.org/2000/svg"
@@ -1031,7 +1031,7 @@
                                                                     <span id="sx-table-filter-date-from-mask-filled" class="font-medium text-gray-900 dark:text-white"></span><span id="sx-table-filter-date-from-mask-empty" class="font-normal text-gray-400 dark:text-gray-500">MM / DD / YYYY</span>
                                                                 </span>
                                                                 <input id="sx-table-filter-date-from-input" type="text" inputmode="numeric" placeholder="MM / DD / YYYY"
-                                                                    class="relative z-10 block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-transparent caret-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-transparent focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:caret-white dark:outline-white/10 dark:placeholder:text-transparent" />
+                                                                    class="relative z-10 block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-transparent caret-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-transparent focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:caret-white dark:outline-white/10 dark:placeholder:text-transparent" />
                                                             </div>
                                                         </div>
                                                         <div>
@@ -1042,7 +1042,7 @@
                                                                     <span id="sx-table-filter-date-to-mask-filled" class="font-medium text-gray-900 dark:text-white"></span><span id="sx-table-filter-date-to-mask-empty" class="font-normal text-gray-400 dark:text-gray-500">MM / DD / YYYY</span>
                                                                 </span>
                                                                 <input id="sx-table-filter-date-to-input" type="text" inputmode="numeric" placeholder="MM / DD / YYYY"
-                                                                    class="relative z-10 block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-transparent caret-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-transparent focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6 dark:caret-white dark:outline-white/10 dark:placeholder:text-transparent" />
+                                                                    class="relative z-10 block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-transparent caret-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-transparent focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:caret-white dark:outline-white/10 dark:placeholder:text-transparent" />
                                                             </div>
                                                         </div>
                                                     </div>

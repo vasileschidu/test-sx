@@ -256,6 +256,86 @@ function initCountryFlag() {
     });
 }
 
+/* ===== Mobile Overlay Scroll Lock ===== */
+
+var _mobileOverlayScrollLock = {
+    locked: false,
+    scrollY: 0
+};
+
+function shouldLockMobileOverlayScroll() {
+    if (!window.matchMedia('(max-width: 639px)').matches) return false;
+
+    if (document.querySelector('dialog[open]')) return true;
+
+    var filterMenu = document.getElementById('sx-table-filter-menu');
+    if (filterMenu && !filterMenu.classList.contains('invisible') && !filterMenu.classList.contains('pointer-events-none')) {
+        return true;
+    }
+
+    var filterBackdrop = document.getElementById('sx-table-filter-backdrop');
+    if (filterBackdrop && !filterBackdrop.classList.contains('invisible') && !filterBackdrop.classList.contains('pointer-events-none')) {
+        return true;
+    }
+
+    return false;
+}
+
+function setMobileOverlayScrollLocked(locked) {
+    var body = document.body;
+    if (!body) return;
+
+    if (locked && !_mobileOverlayScrollLock.locked) {
+        _mobileOverlayScrollLock.scrollY = window.scrollY || window.pageYOffset || 0;
+        body.style.position = 'fixed';
+        body.style.top = '-' + _mobileOverlayScrollLock.scrollY + 'px';
+        body.style.left = '0';
+        body.style.right = '0';
+        body.style.width = '100%';
+        body.style.overflowY = 'scroll';
+        _mobileOverlayScrollLock.locked = true;
+        return;
+    }
+
+    if (!locked && _mobileOverlayScrollLock.locked) {
+        var restoreY = _mobileOverlayScrollLock.scrollY || 0;
+        body.style.position = '';
+        body.style.top = '';
+        body.style.left = '';
+        body.style.right = '';
+        body.style.width = '';
+        body.style.overflowY = '';
+        _mobileOverlayScrollLock.locked = false;
+        window.scrollTo(0, restoreY);
+    }
+}
+
+function initMobileOverlayScrollLock() {
+    function syncLockState() {
+        setMobileOverlayScrollLocked(shouldLockMobileOverlayScroll());
+    }
+
+    syncLockState();
+
+    window.addEventListener('resize', syncLockState);
+    window.addEventListener('orientationchange', syncLockState);
+    document.addEventListener('click', function () {
+        requestAnimationFrame(syncLockState);
+    }, true);
+
+    if (document.body) {
+        var observer = new MutationObserver(function () {
+            syncLockState();
+        });
+        observer.observe(document.body, {
+            subtree: true,
+            childList: true,
+            attributes: true,
+            attributeFilter: ['class', 'open']
+        });
+    }
+}
+
 /* ===== Init ===== */
 
 initThemeToggle();
@@ -263,3 +343,4 @@ initBreadcrumbs();
 initCopyToClipboard();
 initMaskedCopySync();
 initCountryFlag();
+initMobileOverlayScrollLock();

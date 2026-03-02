@@ -2150,10 +2150,16 @@
         filterMenu.style.bottom = '0';
         filterMenu.style.top = 'auto';
         filterMenu.style.marginTop = '0';
+        filterMenu.style.margin = '0';
         filterMenu.style.zIndex = '50';
+        filterMenu.style.maxWidth = '100dvw';
         filterMenu.style.borderBottomLeftRadius = '0';
         filterMenu.style.borderBottomRightRadius = '0';
-        filterMenu.style.width = '100vw';
+        filterMenu.style.borderTopLeftRadius = '0';
+        filterMenu.style.borderTopRightRadius = '0';
+        filterMenu.style.width = '100dvw';
+        filterRootPanel.style.width = '100dvw';
+        filterDetailSlot.style.width = '100dvw';
         filterTrack.classList.remove('transition-transform', 'duration-250', 'ease-[cubic-bezier(0.22,1,0.36,1)]');
         filterMenu.classList.remove('origin-top-right');
         filterMenu.classList.add('origin-bottom');
@@ -2164,10 +2170,16 @@
         filterMenu.style.bottom = '';
         filterMenu.style.top = '';
         filterMenu.style.marginTop = '';
+        filterMenu.style.margin = '';
         filterMenu.style.zIndex = '';
+        filterMenu.style.maxWidth = '';
         filterMenu.style.borderBottomLeftRadius = '';
         filterMenu.style.borderBottomRightRadius = '';
+        filterMenu.style.borderTopLeftRadius = '';
+        filterMenu.style.borderTopRightRadius = '';
         filterMenu.style.width = '';
+        filterRootPanel.style.width = '';
+        filterDetailSlot.style.width = '';
         filterTrack.classList.add('transition-transform', 'duration-250', 'ease-[cubic-bezier(0.22,1,0.36,1)]');
         filterMenu.classList.remove('origin-bottom');
         filterMenu.classList.add('origin-top-right');
@@ -2195,7 +2207,7 @@
       var isMobileView = window.matchMedia('(max-width: 639px)').matches;
       if (isMobileView) {
         filterTrack.style.transform = 'translateX(' + (-offset) + 'px)';
-        filterMenu.style.width = '100vw';
+        filterMenu.style.width = '100dvw';
         if (height > 0) filterMenu.style.height = height + 'px';
         return;
       }
@@ -2211,7 +2223,7 @@
       requestAnimationFrame(function () {
         filterTrack.style.transform = 'translateX(' + (-offset) + 'px)';
         if (isMobileView) {
-          filterMenu.style.width = '100vw';
+          filterMenu.style.width = '100dvw';
         } else if (width > 0) {
           filterMenu.style.width = width + 'px';
         }
