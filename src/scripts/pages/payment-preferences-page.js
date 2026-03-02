@@ -162,6 +162,7 @@
             var filterStatusesWrap = document.getElementById('pp-cards-filter-statuses');
             var filterApplyBtn = document.getElementById('pp-cards-filter-apply-btn');
             var filterApplyStatusBtn = document.getElementById('pp-cards-filter-apply-status-btn');
+            var activeFiltersWrap = document.getElementById('pp-cards-active-filters');
             var cardDetailsDialog = document.getElementById('pp-card-details-dialog');
             var vcAmountEl = document.getElementById('pp-vc-amount');
             var vcCardNumberEl = document.getElementById('pp-vc-card-number');
@@ -185,6 +186,7 @@
             var isFilterMenuOpen = false;
             var activeFilterPanel = 'root';
             var cardsById = new Map();
+            var STATUS_LABELS = { active: 'Active', inactive: 'Inactive' };
 
             function escapeHtml(value) {
                 return String(value || '')
@@ -424,6 +426,59 @@
                 if (filterApplyStatusBtn) filterApplyStatusBtn.disabled = selectedStatuses.size === 0;
             }
 
+            function renderActiveFilterTags() {
+                if (!activeFiltersWrap) return;
+                var tags = [];
+
+                var customerValues = Array.from(selectedCustomers)
+                    .filter(function (customer) { return customer && customer.trim(); })
+                    .sort(function (a, b) { return a.localeCompare(b); });
+                if (customerValues.length) {
+                    tags.push({
+                        type: 'customer',
+                        label: 'Customer',
+                        value: customerValues.join(', ')
+                    });
+                }
+
+                var statusValues = Array.from(selectedStatuses)
+                    .filter(function (status) { return status && status.trim(); })
+                    .sort(function (a, b) { return a.localeCompare(b); });
+                if (statusValues.length) {
+                    tags.push({
+                        type: 'status',
+                        label: 'Status',
+                        value: statusValues.map(function (status) { return STATUS_LABELS[status] || status; }).join(', ')
+                    });
+                }
+
+                if (!tags.length) {
+                    activeFiltersWrap.innerHTML = '';
+                    activeFiltersWrap.classList.add('hidden');
+                    return;
+                }
+
+                activeFiltersWrap.classList.remove('hidden');
+                activeFiltersWrap.innerHTML = tags.map(function (tag) {
+                    var byLabel = 'By ' + String(tag.label || '').toLowerCase();
+                    return '' +
+                        '<span class="relative inline-flex max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-xs font-medium text-gray-600 dark:bg-white/10 dark:text-gray-300">' +
+                        '  <span class="inline-flex shrink-0 items-center bg-gray-100 px-2 py-1 font-medium text-gray-900 dark:bg-white/15 dark:text-white">' + escapeHtml(byLabel) + '</span>' +
+                        '  <button type="button" data-filter-tag-open="' + escapeHtml(tag.type) + '" title="' + escapeHtml(tag.label + ': ' + tag.value) + '"' +
+                        '    class="inline-flex min-w-0 items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15 cursor-pointer">' +
+                        '    <span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(tag.value) + '</span>' +
+                        '  </button>' +
+                        '  <button type="button" data-filter-tag-remove="' + escapeHtml(tag.type) + '"' +
+                        '    class="inline-flex w-6 shrink-0 self-stretch items-center justify-center border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white cursor-pointer" aria-label="Remove filter">' +
+                        '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">' +
+                        '      <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
+                        '    </svg>' +
+                        '  </button>' +
+                        '  <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span>' +
+                        '</span>';
+                }).join('');
+            }
+
             function setDetailPanelVisibility(panel) {
                 if (!filterCustomerPanel || !filterStatusPanel) return;
                 filterCustomerPanel.classList.add('hidden');
@@ -554,6 +609,7 @@
                 applyFilters();
                 cardsById.clear();
                 allCards.forEach(function (card) { cardsById.set(card.id, card); });
+                renderActiveFilterTags();
                 var visibleCount = isExpanded ? filteredCards.length : Math.min(INITIAL_VISIBLE, filteredCards.length);
                 cardsListEl.innerHTML = filteredCards
                     .slice(0, visibleCount)
@@ -669,6 +725,30 @@
                     if (filterApplyStatusBtn.disabled) return;
                     setFilterMenuOpen(false);
                     setFilterPanel('root');
+                });
+            }
+
+            if (activeFiltersWrap) {
+                activeFiltersWrap.addEventListener('click', function (event) {
+                    var removeBtn = event.target.closest('[data-filter-tag-remove]');
+                    if (removeBtn) {
+                        var removeType = removeBtn.getAttribute('data-filter-tag-remove');
+                        if (removeType === 'customer') selectedCustomers.clear();
+                        else if (removeType === 'status') selectedStatuses.clear();
+                        isExpanded = false;
+                        renderCustomerFilters();
+                        renderStatusFilters();
+                        syncApplyButtonState();
+                        renderCards();
+                        return;
+                    }
+
+                    var openBtn = event.target.closest('[data-filter-tag-open]');
+                    if (!openBtn) return;
+                    var openType = openBtn.getAttribute('data-filter-tag-open');
+                    activeFilterPanel = openType === 'status' ? 'status' : 'customer';
+                    setFilterMenuOpen(true);
+                    setFilterPanel(activeFilterPanel, true);
                 });
             }
 

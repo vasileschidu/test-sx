@@ -278,6 +278,16 @@ function shouldLockMobileOverlayScroll() {
         return true;
     }
 
+    var ppCardsFilterMenu = document.getElementById('pp-cards-filter-menu');
+    if (ppCardsFilterMenu && !ppCardsFilterMenu.classList.contains('invisible') && !ppCardsFilterMenu.classList.contains('pointer-events-none')) {
+        return true;
+    }
+
+    var ppCardsFilterBackdrop = document.getElementById('pp-cards-filter-backdrop');
+    if (ppCardsFilterBackdrop && !ppCardsFilterBackdrop.classList.contains('invisible') && !ppCardsFilterBackdrop.classList.contains('pointer-events-none')) {
+        return true;
+    }
+
     return false;
 }
 
