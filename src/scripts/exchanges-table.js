@@ -448,13 +448,7 @@
 
         if (col.sortable) {
           var sortDirection = getSortDirectionForKey(col.key || '');
-          var sortBtnClass = sortDirection
-            ? 'inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300'
-            : 'inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400';
-          var sortIcon = sortDirection === 'asc'
-            ? ICON_SORT_ASC
-            : (sortDirection === 'desc' ? ICON_SORT_DESC : ICON_SORT);
-          html += '<span class="' + sortBtnClass + '">' + sortIcon + '</span>';
+          html += buildSortBadgeHTML(sortDirection);
         }
 
         html += '</button>';
@@ -467,6 +461,33 @@
 
     html += '</tr></thead>';
     return html;
+  }
+
+  function buildSortBadgeHTML(sortDirection) {
+    var sortBtnClass = sortDirection
+      ? 'inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300'
+      : 'inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400';
+    var sortIcon = sortDirection === 'asc'
+      ? ICON_SORT_ASC
+      : (sortDirection === 'desc' ? ICON_SORT_DESC : ICON_SORT);
+    return '<span data-sort-badge="true" class="' + sortBtnClass + '">' + sortIcon + '</span>';
+  }
+
+  function syncSortBadges(table) {
+    if (!table) return;
+    var sortButtons = table.querySelectorAll('[data-sort-key]');
+    sortButtons.forEach(function (button) {
+      var key = button.getAttribute('data-sort-key') || '';
+      if (!key) return;
+      var direction = getSortDirectionForKey(key);
+      var badge = button.querySelector('[data-sort-badge="true"]');
+      var badgeHtml = buildSortBadgeHTML(direction);
+      if (!badge) {
+        button.insertAdjacentHTML('beforeend', badgeHtml);
+        return;
+      }
+      badge.outerHTML = badgeHtml;
+    });
   }
 
   // ── Cell renderers by type ──
@@ -1320,10 +1341,8 @@
         var sortKey = sortBtn.getAttribute('data-sort-key') || '';
         if (!sortKey) return;
         cycleSortDirection(sortKey);
-        var resorted = getVisibleEntriesForActiveTab();
-        renderTable(table, paginationState.columns, resorted);
-        refreshStickyAction();
-        syncTableFilterUi();
+        refreshTableForActiveTab();
+        syncSortBadges(table);
         return;
       }
 

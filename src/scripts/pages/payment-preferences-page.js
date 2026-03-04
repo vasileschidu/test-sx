@@ -1978,6 +1978,10 @@
         })();
 
         (function () {
+            var enableDialog = document.getElementById('pp-enable-stp-dialog');
+            var verifyDialog = document.getElementById('pp-verify-deposit-dialog');
+            var agreementCheckbox = document.getElementById('pp-stp-agreement-checkbox');
+            var enableConfirmBtn = document.getElementById('pp-enable-stp-confirm-btn');
             var input = document.getElementById('pp-deposit-amount');
             var verifyBtn = document.getElementById('pp-verify-deposit-btn');
             var errorMsg = document.getElementById('pp-deposit-amount-error');
@@ -1985,8 +1989,100 @@
             var statusBadge = document.getElementById('pp-stp-status-badge');
             var stpAlert = document.getElementById('pp-stp-alert');
             var reverifyBtn = document.getElementById('pp-stp-reverify-btn');
-            if (!input || !verifyBtn || !errorMsg || !errorIcon) return;
+            var stpOptInBtn = document.getElementById('pp-stp-opt-in-btn');
+            var stpTerminalImage = document.getElementById('pp-stp-terminal-image');
+            if (!agreementCheckbox || !enableConfirmBtn || !input || !verifyBtn || !errorMsg || !errorIcon) return;
             var hasError = false;
+            var stpAnimationCycleTimer = null;
+            var stpDotTimers = [];
+
+            var TERMINAL_BASE_SRC = '../../../src/assets/illustrations/terminal.svg';
+            var TERMINAL_PROGRESS_SRCS = [
+                '../../../src/assets/illustrations/terminal-dot1.svg',
+                '../../../src/assets/illustrations/terminal-dot2.svg',
+                '../../../src/assets/illustrations/terminal-dot3.svg',
+                '../../../src/assets/illustrations/terminal-dot4.svg'
+            ];
+            function readDialogMs(varName, fallback) {
+                if (!enableDialog) return fallback;
+                var raw = getComputedStyle(enableDialog).getPropertyValue(varName).trim();
+                var parsed = parseInt(raw, 10);
+                return Number.isFinite(parsed) ? parsed : fallback;
+            }
+
+            function getAnimationConfig() {
+                return {
+                    loopMs: readDialogMs('--pp-stp-loop-ms', 8000),
+                    dotSequenceMs: [
+                        readDialogMs('--pp-stp-dot-1-ms', 2700),
+                        readDialogMs('--pp-stp-dot-2-ms', 2820),
+                        readDialogMs('--pp-stp-dot-3-ms', 2940),
+                        readDialogMs('--pp-stp-dot-4-ms', 3060)
+                    ],
+                    dotResetMs: readDialogMs('--pp-stp-dot-reset-ms', 7000)
+                };
+            }
+
+            function clearTerminalDotTimers() {
+                stpDotTimers.forEach(function (timer) { clearTimeout(timer); });
+                stpDotTimers = [];
+            }
+
+            function stopStpCardAnimationLoop() {
+                clearTerminalDotTimers();
+                if (stpAnimationCycleTimer) {
+                    clearTimeout(stpAnimationCycleTimer);
+                    stpAnimationCycleTimer = null;
+                }
+                if (enableDialog) enableDialog.removeAttribute('data-card-animating');
+                setTerminalStep(0);
+            }
+
+            function setTerminalStep(step) {
+                if (!stpTerminalImage) return;
+                if (step <= 0) {
+                    stpTerminalImage.src = TERMINAL_BASE_SRC;
+                    return;
+                }
+                stpTerminalImage.src = TERMINAL_PROGRESS_SRCS[Math.min(step, TERMINAL_PROGRESS_SRCS.length) - 1];
+            }
+
+            function runTerminalDotCycle(config) {
+                clearTerminalDotTimers();
+                setTerminalStep(0);
+
+                config.dotSequenceMs.forEach(function (ms, index) {
+                    stpDotTimers.push(setTimeout(function () {
+                        if (!enableDialog.open) return;
+                        setTerminalStep(index + 1);
+                    }, ms));
+                });
+
+                stpDotTimers.push(setTimeout(function () {
+                    if (!enableDialog.open) return;
+                    setTerminalStep(0);
+                }, config.dotResetMs));
+            }
+
+            function runStpCardAnimationCycle() {
+                if (!enableDialog || !enableDialog.open) return;
+                var config = getAnimationConfig();
+                runTerminalDotCycle(config);
+                stpAnimationCycleTimer = setTimeout(runStpCardAnimationCycle, config.loopMs);
+            }
+
+            function startStpCardAnimationLoop() {
+                if (!enableDialog) return;
+                stopStpCardAnimationLoop();
+                enableDialog.removeAttribute('data-card-animating');
+                void enableDialog.offsetWidth;
+                enableDialog.setAttribute('data-card-animating', 'true');
+                runStpCardAnimationCycle();
+            }
+
+            function updateEnableState() {
+                enableConfirmBtn.disabled = !agreementCheckbox.checked;
+            }
 
             function setError(show) {
                 hasError = show;
@@ -2003,7 +2099,7 @@
                 input.classList.toggle('dark:focus:outline-red-500', show);
             }
 
-            function updateState() {
+            function updateVerifyState() {
                 verifyBtn.disabled = hasError || !/\d/.test(input.value);
             }
 
@@ -2012,6 +2108,41 @@
                 var firstDot = cleaned.indexOf('.');
                 if (firstDot === -1) return cleaned;
                 return cleaned.slice(0, firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g, '');
+            }
+
+            function openVerifyStep() {
+                if (enableDialog && enableDialog.open) {
+                    try { enableDialog.close(); } catch (err) { /* noop */ }
+                }
+                setTimeout(function () {
+                    if (verifyDialog && typeof verifyDialog.showModal === 'function' && !verifyDialog.open) {
+                        verifyDialog.showModal();
+                    }
+                }, 0);
+            }
+
+            agreementCheckbox.addEventListener('change', updateEnableState);
+            enableConfirmBtn.addEventListener('click', function () {
+                if (enableConfirmBtn.disabled) return;
+                openVerifyStep();
+            });
+
+            if (enableDialog) {
+                var enableDialogObserver = new MutationObserver(function () {
+                    if (enableDialog.open) {
+                        requestAnimationFrame(startStpCardAnimationLoop);
+                    } else {
+                        stopStpCardAnimationLoop();
+                    }
+                });
+
+                enableDialogObserver.observe(enableDialog, { attributes: true, attributeFilter: ['open'] });
+
+                enableDialog.addEventListener('close', function () {
+                    agreementCheckbox.checked = false;
+                    updateEnableState();
+                    stopStpCardAnimationLoop();
+                });
             }
 
             input.addEventListener('focus', function () {
@@ -2029,31 +2160,27 @@
             input.addEventListener('keydown', function (event) {
                 var key = event.key;
                 var allowControl = key === 'Tab' || key === 'ArrowLeft' || key === 'ArrowRight' || key === 'Home' || key === 'End';
-
                 if (allowControl) return;
-
                 if (key === 'Backspace' || key === 'Delete') return;
                 if (key >= '0' && key <= '9') {
                     setError(false);
-                    updateState();
+                    updateVerifyState();
                     return;
                 }
                 if (key === '.') {
                     if (input.value.indexOf('.') !== -1) {
                         event.preventDefault();
                         setError(true);
-                        updateState();
                     } else {
                         setError(false);
-                        updateState();
                     }
+                    updateVerifyState();
                     return;
                 }
-
                 if (key.length === 1 && !event.metaKey && !event.ctrlKey && !event.altKey) {
                     event.preventDefault();
                     setError(true);
-                    updateState();
+                    updateVerifyState();
                 }
             });
 
@@ -2064,7 +2191,7 @@
                 var hasInvalid = text !== sanitized;
                 input.value = sanitized;
                 setError(hasInvalid);
-                updateState();
+                updateVerifyState();
             });
 
             input.addEventListener('input', function () {
@@ -2073,7 +2200,7 @@
                 var hasInvalid = raw !== clean;
                 input.value = clean;
                 setError(hasInvalid);
-                updateState();
+                updateVerifyState();
             });
 
             verifyBtn.addEventListener('click', function () {
@@ -2092,9 +2219,19 @@
                 if (reverifyBtn) {
                     reverifyBtn.classList.remove('hidden');
                 }
+
+                if (stpOptInBtn) {
+                    stpOptInBtn.textContent = 'Opted in';
+                    stpOptInBtn.disabled = true;
+                    stpOptInBtn.removeAttribute('command');
+                    stpOptInBtn.removeAttribute('commandfor');
+                    stpOptInBtn.className =
+                        'inline-flex shrink-0 items-center justify-center rounded-md bg-green-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs cursor-default';
+                }
             });
 
-            updateState();
+            updateEnableState();
+            updateVerifyState();
         })();
 
         /* ===== Global Preferences — detail cards ===== */
