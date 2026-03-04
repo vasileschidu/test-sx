@@ -1432,7 +1432,7 @@
             <el-dialog-backdrop
                 class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
             <div tabindex="0"
-                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-4 md:p-6">
                 <el-dialog-panel
                     class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
                     <div class="flex self-stretch items-center justify-between gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
@@ -1903,7 +1903,7 @@
             <div tabindex="0"
                 class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
-                    class="relative flex h-auto max-h-[92vh] w-full max-w-[800px] flex-[1_0_0] flex-col items-center transform overflow-hidden rounded-3xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 md:h-[624px] md:max-h-none dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    class="relative flex h-[calc(100vh-2rem)] max-h-[92vh] w-full max-w-[800px] flex-[1_0_0] flex-col items-center transform overflow-hidden rounded-3xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 md:h-[624px] md:max-h-none dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
                     <button type="button" command="close" commandfor="pp-enable-stp-dialog"
                         class="absolute top-4 right-4 z-10 rounded-md bg-gray-900/8 p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 cursor-pointer">
                         <span class="sr-only">Close</span>
@@ -1973,11 +1973,11 @@
                             </div>
                         </div>
 
-                        <div class="col-span-2 row-span-1 justify-self-stretch flex min-h-0 w-full min-w-0 flex-col items-start justify-start overflow-y-auto p-6 md:h-[608px] md:min-w-[360px] md:overflow-visible md:p-9">
+                        <div class="col-span-2 row-span-1 justify-self-stretch flex min-h-0 w-full min-w-0 flex-col items-start justify-start overflow-y-auto p-4 md:h-[608px] md:min-w-[360px] md:overflow-visible md:p-9">
                             <div class="flex h-auto w-full flex-col self-stretch md:h-full">
-                                <div class="flex flex-col items-start justify-center gap-4 self-stretch md:min-h-0 md:flex-1 md:gap-6">
+                                <div class="flex flex-col items-start justify-center gap-4 self-stretch md:min-h-0 md:flex-1 md:gap-4">
                                 <h2 class="text-xl font-semibold leading-8 text-slate-950 md:text-[30px] md:leading-[36px] dark:text-white">Enable Automatic Card Processing</h2>
-                                <p class="text-base font-normal leading-6 text-slate-950 md:text-[18px] dark:text-gray-100">When enabled, eligible virtual card payments will be processed automatically through your existing merchant processor.</p>
+                                <p class="hidden text-sm font-medium leading-6 text-slate-950 md:block md:text-[18px] dark:text-gray-100">When enabled, eligible virtual card payments will be processed automatically through your existing merchant processor.</p>
 
                                 <div class="flex flex-col gap-2">
                                     <p class="text-[14px] font-medium leading-6 text-slate-950 dark:text-white">How it works:</p>
@@ -2027,7 +2027,7 @@
                                 </label>
                                 </div>
 
-                                <div class="mt-6 flex w-full flex-col items-stretch gap-3 md:mt-8">
+                                <div class="sticky bottom-0 mt-6 flex w-full flex-col items-stretch gap-3 bg-white pt-3 pb-1 md:static md:mt-8 md:bg-transparent md:pt-0 md:pb-0 dark:bg-gray-900 md:dark:bg-transparent">
                                     <button id="pp-enable-stp-confirm-btn" type="button" disabled
                                         class="w-full rounded-md bg-blue-600 px-6 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">
                                         Confirm

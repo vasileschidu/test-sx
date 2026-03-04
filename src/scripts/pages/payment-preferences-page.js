@@ -2121,11 +2121,25 @@
                 }, 0);
             }
 
+            function openEnableStep() {
+                if (!enableDialog || typeof enableDialog.showModal !== 'function') return;
+                if (!enableDialog.open) {
+                    try { enableDialog.showModal(); } catch (err) { /* noop */ }
+                } else {
+                    requestAnimationFrame(startStpCardAnimationLoop);
+                }
+            }
+
             agreementCheckbox.addEventListener('change', updateEnableState);
             enableConfirmBtn.addEventListener('click', function () {
                 if (enableConfirmBtn.disabled) return;
                 openVerifyStep();
             });
+            if (stpOptInBtn) {
+                stpOptInBtn.addEventListener('click', function () {
+                    openEnableStep();
+                });
+            }
 
             if (enableDialog) {
                 var enableDialogObserver = new MutationObserver(function () {
