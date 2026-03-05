@@ -1903,9 +1903,9 @@
             <div tabindex="0"
                 class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
-                    class="relative flex h-[calc(100vh-2rem)] max-h-[92vh] w-full max-w-[800px] flex-[1_0_0] flex-col items-center transform overflow-hidden rounded-3xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 md:h-[624px] md:max-h-none dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    class="relative flex h-auto max-h-[calc(100vh-2rem)] w-full max-w-[800px] flex-[1_0_0] flex-col items-center transform overflow-y-auto rounded-3xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 md:h-[624px] md:max-h-none md:overflow-hidden dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
                     <button type="button" command="close" commandfor="pp-enable-stp-dialog"
-                        class="absolute top-4 right-4 z-10 rounded-md bg-gray-900/8 p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 cursor-pointer">
+                        class="absolute top-4 right-4 z-20 rounded-md bg-gray-900/8 p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 cursor-pointer">
                         <span class="sr-only">Close</span>
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                             <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
@@ -1973,37 +1973,50 @@
                             </div>
                         </div>
 
-                        <div class="col-span-2 row-span-1 justify-self-stretch flex min-h-0 w-full min-w-0 flex-col items-start justify-start overflow-y-auto p-4 md:h-[608px] md:min-w-[360px] md:overflow-visible md:p-9">
+                        <div class="col-span-2 row-span-1 justify-self-stretch flex min-h-0 w-full min-w-0 flex-col items-start justify-start overflow-visible p-4 md:h-[608px] md:min-w-[360px] md:overflow-visible md:p-9">
                             <div class="flex h-auto w-full flex-col self-stretch md:h-full">
                                 <div class="flex flex-col items-start justify-center gap-4 self-stretch md:min-h-0 md:flex-1 md:gap-4">
                                 <h2 class="text-xl font-semibold leading-8 text-slate-950 md:text-[30px] md:leading-[36px] dark:text-white">Enable Automatic Card Processing</h2>
-                                <p class="hidden text-sm font-medium leading-6 text-slate-950 md:block md:text-[18px] dark:text-gray-100">When enabled, eligible virtual card payments will be processed automatically through your existing merchant processor.</p>
+                                <p class="text-sm font-medium leading-6 text-slate-950 md:text-[18px] dark:text-gray-100">When enabled, eligible virtual card payments will be processed automatically through your existing merchant processor.</p>
 
-                                <div class="flex flex-col gap-2">
-                                    <p class="text-[14px] font-medium leading-6 text-slate-950 dark:text-white">How it works:</p>
-                                    <div class="flex items-start gap-1.5 text-[14px] font-normal leading-6 text-gray-700 dark:text-gray-300">
-                                        <span class="mt-0.5">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/>
-                                            </svg>
-                                        </span>
-                                        <span>Eligible virtual card payments are securely transmitted to your processor.</span>
+                                <details class="w-full rounded-md bg-gray-100 p-3 md:hidden dark:bg-white/10">
+                                    <summary class="flex cursor-pointer list-none items-center justify-between text-sm font-medium leading-6 text-slate-950 dark:text-white">
+                                        <span>How it works</span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400">
+                                            <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
+                                        </svg>
+                                    </summary>
+                                    <div class="mt-2 flex flex-col gap-1.5 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300">
+                                        <div class="flex items-start gap-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="mt-0.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/></svg>
+                                            <p>Eligible virtual card payments are securely transmitted to your processor.</p>
+                                        </div>
+                                        <div class="flex items-start gap-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="mt-0.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/></svg>
+                                            <p>Funds settle as usual.</p>
+                                        </div>
+                                        <div class="flex items-start gap-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="mt-0.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/></svg>
+                                            <p>You can turn this off anytime.</p>
+                                        </div>
                                     </div>
-                                    <div class="flex items-start gap-1.5 text-[14px] font-normal leading-6 text-gray-700 dark:text-gray-300">
-                                        <span class="mt-0.5">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/>
-                                            </svg>
-                                        </span>
-                                        <span>Funds settle as usual.</span>
-                                    </div>
-                                    <div class="flex items-start gap-1.5 text-[14px] font-normal leading-6 text-gray-700 dark:text-gray-300">
-                                        <span class="mt-0.5">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                                                <path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/>
-                                            </svg>
-                                        </span>
-                                        <span>You can turn this off anytime.</span>
+                                </details>
+
+                                <div class="hidden w-full flex-col gap-1.5 rounded-md bg-gray-100 p-3 md:flex dark:bg-white/10">
+                                    <p class="text-sm font-medium leading-6 text-slate-950 dark:text-white">How it works</p>
+                                    <div class="flex flex-col gap-1.5 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300">
+                                        <div class="flex items-start gap-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="mt-0.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/></svg>
+                                            <p>Eligible virtual card payments are securely transmitted to your processor.</p>
+                                        </div>
+                                        <div class="flex items-start gap-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="mt-0.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/></svg>
+                                            <p>Funds settle as usual.</p>
+                                        </div>
+                                        <div class="flex items-start gap-1.5">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="mt-0.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/></svg>
+                                            <p>You can turn this off anytime.</p>
+                                        </div>
                                     </div>
                                 </div>
 
