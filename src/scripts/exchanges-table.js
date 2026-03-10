@@ -140,11 +140,28 @@
 
   var CLASS_NAMES = {
     tbody: 'bg-white dark:bg-gray-900',
-    row: 'transition-colors duration-200',
+    row: 'transition-colors duration-300 motion-reduce:transition-none',
     cellBorder: ' border-b border-gray-200 dark:border-white/10',
     actionCell:
       'bg-white h-12 align-middle py-2 pr-4 pl-3 whitespace-nowrap w-24 min-w-24 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2',
     detailCell: 'bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10',
+  };
+  var ACTION_GUIDE_PARAM = 'card-rows';
+
+  var actionGuideState = {
+    active: false,
+    step: 1,
+    highlightFilter: '',
+    selectedInvoice: '',
+    backdropEl: null,
+    closeBtnEl: null,
+    spotlightLayerEl: null,
+    tooltipEl: null,
+    onEsc: null,
+    onViewportChange: null,
+    onDocumentPointerDown: null,
+    openTimer: null,
+    stepTransitionTimer: null,
   };
 
   // ── SVG Icons ──
@@ -541,7 +558,7 @@
         '</span>';
     }
 
-    // SMART Exchange or any other — plain text
+    // SMART Exchange or any other — normal value
     return '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(method) + '</span>';
   }
 
@@ -559,14 +576,14 @@
 
     if (_activeTableTabKey === 'pending' && isPendingLikeStatus(entry.status) && (entry.methodType === 'card' || entry.methodType === 'ach')) {
       return '<el-dropdown class="inline-block">' +
-        '<button class="flex items-center justify-center rounded-sm bg-white p-1 text-gray-500 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:hover:text-gray-300">' +
+        '<button data-action-menu-trigger="true" class="flex items-center justify-center rounded-sm bg-white p-1 text-gray-500 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:hover:text-gray-300">' +
           '<span class="sr-only">Open options</span>' +
           ICON_THREE_DOTS +
         '</button>' +
         '<el-menu anchor="bottom end" popover class=" min-w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
           '<div class="py-1">' +
             '<a href="#" data-mark-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Mark as paid (manual)</a>' +
-            '<a href="#" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>' +
+            '<a href="#" data-view-details-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>' +
           '</div>' +
         '</el-menu>' +
       '</el-dropdown>';
@@ -574,13 +591,13 @@
 
     // 3-dot dropdown for ACH / Card
     return '<el-dropdown class="inline-block">' +
-      '<button class="flex items-center justify-center rounded-sm bg-white p-1 text-gray-500 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:hover:text-gray-300">' +
+      '<button data-action-menu-trigger="true" class="flex items-center justify-center rounded-sm bg-white p-1 text-gray-500 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:hover:text-gray-300">' +
         '<span class="sr-only">Open options</span>' +
         ICON_THREE_DOTS +
       '</button>' +
       '<el-menu anchor="bottom end" popover class=" min-w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
         '<div class="py-1">' +
-          '<a href="#" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>' +
+          '<a href="#" data-view-details-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>' +
           '<a href="#" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Edit payment</a>' +
           '<a href="#" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Cancel</a>' +
         '</div>' +
@@ -592,7 +609,7 @@
 
   function buildMainRowHTML(entry, columns, isLast) {
     var cb = isLast ? '' : CLASS_NAMES.cellBorder;
-    var html = '<tr data-row class="' + CLASS_NAMES.row + '">';
+    var html = '<tr data-row data-method-type="' + escapeHtml(String(entry.methodType || '')) + '" data-invoice="' + escapeHtml(String(entry.invoice || '')) + '" class="' + CLASS_NAMES.row + '">';
 
     columns.forEach(function (col) {
       if (col.type === 'expand') {
@@ -1237,8 +1254,9 @@
   }
 
   function buildRowHTML(entry, columns, isLast) {
+    var rowHighlightClass = getRowHighlightClass(entry, actionGuideState.highlightFilter);
     return (
-      '<tbody class="' + CLASS_NAMES.tbody + '">' +
+      '<tbody class="' + CLASS_NAMES.tbody + (rowHighlightClass ? (' ' + rowHighlightClass) : '') + '">' +
         buildMainRowHTML(entry, columns, isLast) +
         buildDetailRowHTML(entry, columns.length) +
       '</tbody>'
@@ -2570,6 +2588,7 @@
     renderTableBody(table, paginationState.columns, pageEntries);
     renderPagination();
     refreshStickyAction();
+    syncActionColumnGuide();
   }
 
   function refreshTableForActiveTab() {
@@ -2600,6 +2619,524 @@
     // Render pagination controls
     renderPagination();
     attachPaginationListeners();
+    syncActionColumnGuide();
+  }
+
+  function shouldShowActionColumnGuide() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      return params.get('guide') === ACTION_GUIDE_PARAM;
+    } catch (err) {
+      return false;
+    }
+  }
+
+  function removeGuideUrlParam() {
+    try {
+      var url = new URL(window.location.href);
+      if (!url.searchParams.has('guide')) return;
+      url.searchParams.delete('guide');
+      var query = url.searchParams.toString();
+      var next = url.pathname + (query ? ('?' + query) : '') + url.hash;
+      window.history.replaceState({}, '', next);
+    } catch (err) {
+      // Ignore URL parsing errors
+    }
+  }
+
+  function getRowHighlightClass(payment, highlightFilter) {
+    if (highlightFilter !== 'card') return '';
+    if (String(payment && payment.methodType || '') !== 'card') return '';
+    return 'relative z-[210]';
+  }
+
+  function getGuideCardRows() {
+    var table = document.getElementById(TABLE_ID);
+    if (!table) return [];
+    return Array.prototype.slice.call(table.querySelectorAll('tr[data-row][data-method-type="card"]'));
+  }
+
+  function getFirstVisibleGuideCardRow() {
+    var rows = getGuideCardRows();
+    for (var i = 0; i < rows.length; i += 1) {
+      var row = rows[i];
+      if (!row || row.offsetParent === null) continue;
+      var rect = row.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) continue;
+      if (rect.bottom <= 0 || rect.top >= window.innerHeight) continue;
+      return row;
+    }
+    return null;
+  }
+
+  function isVisibleGuideTarget(el) {
+    if (!el) return false;
+    var row = el.closest('tr[data-row]');
+    var target = row || el;
+    if (!target || target.offsetParent === null) return false;
+    var rect = target.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return false;
+    // Must be in current viewport; otherwise positioning clamps to bottom.
+    if (rect.bottom <= 0 || rect.top >= window.innerHeight) return false;
+    return true;
+  }
+
+  function pickFirstVisibleTarget(nodeList) {
+    var items = Array.prototype.slice.call(nodeList || []);
+    for (var i = 0; i < items.length; i += 1) {
+      if (isVisibleGuideTarget(items[i])) return items[i];
+    }
+    return null;
+  }
+
+  function getFirstGuideTargetButton() {
+    var table = document.getElementById(TABLE_ID);
+    if (!table) return null;
+    var firstRow = getFirstVisibleGuideCardRow();
+    var firstTarget = firstRow
+      ? pickFirstVisibleTarget(firstRow.querySelectorAll('[data-action-menu-trigger="true"]'))
+      : null;
+    if (!firstTarget) {
+      firstTarget = pickFirstVisibleTarget(
+        table.querySelectorAll('tr[data-row] [data-action-menu-trigger="true"]')
+      );
+    }
+    return firstTarget || null;
+  }
+
+  function getGuideTargetButton() {
+    var selectedInvoice = String(actionGuideState.selectedInvoice || '');
+    if (selectedInvoice) {
+      var table = document.getElementById(TABLE_ID);
+      if (table) {
+        var selectedTargets = Array.prototype.slice.call(
+          table.querySelectorAll('tr[data-row] [data-action-menu-trigger="true"]')
+        );
+        for (var i = 0; i < selectedTargets.length; i += 1) {
+          var target = selectedTargets[i];
+          var row = target && target.closest('tr[data-row]');
+          if (!row) continue;
+          if (String(row.getAttribute('data-invoice') || '') !== selectedInvoice) continue;
+          if (isVisibleGuideTarget(target)) return target;
+        }
+      }
+    }
+    return getFirstGuideTargetButton();
+  }
+
+  function getFirstGuideTargetButtonRect() {
+    var guideTarget = getGuideTargetButton();
+    if (guideTarget) {
+      var rect = guideTarget.getBoundingClientRect();
+      if (rect.width > 0 && rect.height > 0) return rect;
+    }
+    return null;
+  }
+
+  function getGuideViewDetailsRect() {
+    var selectedInvoice = String(actionGuideState.selectedInvoice || '');
+    var links = Array.prototype.slice.call(document.querySelectorAll('el-menu a, [popover] a'));
+    for (var i = 0; i < links.length; i += 1) {
+      var link = links[i];
+      if (!link || String(link.textContent || '').trim().toLowerCase() !== 'view details') continue;
+      var invoice = String(link.getAttribute('data-view-details-invoice') || '');
+      var rect = link.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) continue;
+      if (rect.bottom <= 0 || rect.top >= window.innerHeight) continue;
+      if (selectedInvoice && invoice && invoice !== selectedInvoice) continue;
+      return rect;
+    }
+    return null;
+  }
+
+  function openGuideMenuForTargetButton(button) {
+    if (!button) return;
+    var dropdown = button.closest('el-dropdown');
+    var menu = dropdown ? dropdown.querySelector('el-menu[popover], [popover]') : null;
+    if (menu && typeof menu.matches === 'function' && menu.matches(':popover-open')) return;
+    if (menu && typeof menu.showPopover === 'function') {
+      try {
+        menu.showPopover();
+        return;
+      } catch (err) {
+        // Fall through to click toggle if popover API call fails.
+      }
+    }
+    button.click();
+  }
+
+  function setGuideSelectedInvoice(invoice) {
+    actionGuideState.selectedInvoice = String(invoice || '');
+  }
+
+  function getEntryFromActionTrigger(button) {
+    if (!button) return null;
+    var row = button.closest('tr[data-row]');
+    if (!row) return null;
+    var invoice = row.getAttribute('data-invoice') || '';
+    return invoice ? findEntryByInvoice(invoice) : null;
+  }
+
+  function getGuideSelectedEntry() {
+    var selected = findEntryByInvoice(actionGuideState.selectedInvoice);
+    if (selected) return selected;
+    var firstGuideRow = getFirstVisibleGuideCardRow();
+    if (!firstGuideRow) return null;
+    return findEntryByInvoice(firstGuideRow.getAttribute('data-invoice') || '');
+  }
+
+  function openCardDetailsModalForEntry(entry) {
+    if (!entry) return;
+    _activeGetPaidEntry = entry;
+    populateGetPaidCardModal(entry);
+    var dialog = document.getElementById('gp-card-details-dialog');
+    if (dialog && typeof dialog.showModal === 'function') {
+      if (dialog.open) dialog.close();
+      dialog.showModal();
+    }
+  }
+
+  function openGuideSelectedEntryCardDetailsModal() {
+    var entry = getGuideSelectedEntry();
+    if (!entry) return;
+    closeActionColumnGuide();
+    openCardDetailsModalForEntry(entry);
+  }
+
+  function setGuideTooltipContent(step) {
+    if (!actionGuideState.tooltipEl) return;
+    actionGuideState.step = step;
+    if (step === 2) {
+      actionGuideState.tooltipEl.innerHTML =
+        '<div class="relative rounded-lg border border-gray-300 bg-gray-50 p-4 shadow-sm dark:border-white/10 dark:bg-gray-800">' +
+          '<span class="pointer-events-none absolute top-1/2 -right-1 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-t border-r border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-gray-800"></span>' +
+          '<div class="flex items-start justify-between gap-4">' +
+            '<div class="min-w-0">' +
+              '<p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Reveal Card Details</p>' +
+              '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Open <span class="font-medium text-gray-900 dark:text-gray-100">View details</span> to verify this payment card information and continue setup.</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="mt-4 flex items-center justify-end gap-2">' +
+            '<button type="button" data-guide-tooltip-skip class="inline-flex items-center rounded-md px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-900/10 dark:text-gray-300 dark:hover:bg-gray-900/10">Skip for now</button>' +
+            '<button type="button" data-guide-tooltip-next class="rounded bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Next</button>' +
+          '</div>' +
+        '</div>';
+      var skipBtnStep2 = actionGuideState.tooltipEl.querySelector('[data-guide-tooltip-skip]');
+      var nextBtnStep2 = actionGuideState.tooltipEl.querySelector('[data-guide-tooltip-next]');
+      if (skipBtnStep2) skipBtnStep2.addEventListener('click', closeActionColumnGuide);
+      if (nextBtnStep2) nextBtnStep2.addEventListener('click', function () {
+        openGuideSelectedEntryCardDetailsModal();
+      });
+      return;
+    }
+
+    actionGuideState.tooltipEl.innerHTML =
+      '<div class="relative rounded-lg border border-gray-300 bg-gray-50 p-4 shadow-sm dark:border-white/10 dark:bg-gray-800">' +
+        '<span class="pointer-events-none absolute top-1/2 -right-1 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-t border-r border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-gray-800"></span>' +
+        '<div class="flex items-start justify-between gap-4">' +
+          '<div class="min-w-0">' +
+            '<p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Choose Any of These Payments</p>' +
+            '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Start with any highlighted card payment to connect your terminal and begin the setup flow.</p>' +
+          '</div>' +
+        '</div>' +
+        '<div class="mt-4 flex items-center justify-end gap-2">' +
+          '<button type="button" data-guide-tooltip-skip class="inline-flex items-center rounded-md px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-900/10 dark:text-gray-300 dark:hover:bg-gray-900/10">Skip for now</button>' +
+          '<button type="button" data-guide-tooltip-next class="rounded bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Next</button>' +
+        '</div>' +
+      '</div>';
+
+    var skipBtn = actionGuideState.tooltipEl.querySelector('[data-guide-tooltip-skip]');
+    var nextBtn = actionGuideState.tooltipEl.querySelector('[data-guide-tooltip-next]');
+    if (skipBtn) skipBtn.addEventListener('click', closeActionColumnGuide);
+    if (nextBtn) {
+      nextBtn.addEventListener('click', function () {
+        goToGuideStep2(true);
+      });
+    }
+  }
+
+  function goToGuideStep2(forceOpenMenu) {
+    if (!actionGuideState.active) return;
+    if (actionGuideState.step === 2 && getGuideViewDetailsRect()) {
+      syncActionColumnGuide();
+      return;
+    }
+    if (forceOpenMenu) {
+      var guideTarget = getGuideTargetButton();
+      var guideTargetEntry = getEntryFromActionTrigger(guideTarget);
+      if (guideTargetEntry) setGuideSelectedInvoice(guideTargetEntry.invoice);
+      if (!guideTargetEntry) {
+        var fallbackRow = getFirstVisibleGuideCardRow();
+        if (fallbackRow) setGuideSelectedInvoice(fallbackRow.getAttribute('data-invoice') || '');
+      }
+      if (guideTarget && !getGuideViewDetailsRect()) openGuideMenuForTargetButton(guideTarget);
+    }
+    var attempts = 0;
+    function tryAdvance() {
+      if (!actionGuideState.active) return;
+      var rect = getGuideViewDetailsRect();
+      if (rect) {
+        var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reducedMotion || !actionGuideState.tooltipEl) {
+          setGuideTooltipContent(2);
+          syncActionColumnGuide();
+          if (actionGuideState.tooltipEl) {
+            actionGuideState.tooltipEl.style.opacity = '1';
+            actionGuideState.tooltipEl.style.transform = 'translateX(0)';
+          }
+          return;
+        }
+        actionGuideState.tooltipEl.style.opacity = '0';
+        actionGuideState.tooltipEl.style.transform = 'translateX(-10px)';
+        if (actionGuideState.stepTransitionTimer) clearTimeout(actionGuideState.stepTransitionTimer);
+        actionGuideState.stepTransitionTimer = window.setTimeout(function () {
+          setGuideTooltipContent(2);
+          syncActionColumnGuide();
+          if (actionGuideState.tooltipEl && actionGuideState.active) {
+            actionGuideState.tooltipEl.style.opacity = '1';
+            actionGuideState.tooltipEl.style.transform = 'translateX(0)';
+          }
+        }, 160);
+        return;
+      }
+      attempts += 1;
+      if (attempts <= 30) {
+        if (attempts === 10 && forceOpenMenu) {
+          var retryTarget = getGuideTargetButton();
+          if (retryTarget && !getGuideViewDetailsRect()) openGuideMenuForTargetButton(retryTarget);
+        }
+        window.requestAnimationFrame(tryAdvance);
+        return;
+      }
+      syncActionColumnGuide();
+    }
+    tryAdvance();
+  }
+
+  function positionGuideTooltip() {
+    if (!actionGuideState.tooltipEl) return;
+    var rect = actionGuideState.step === 2 ? getGuideViewDetailsRect() : getFirstGuideTargetButtonRect();
+    if (!rect) {
+      actionGuideState.tooltipEl.style.display = 'none';
+      return;
+    }
+
+    actionGuideState.tooltipEl.style.display = 'inline-flex';
+    var gap = 16;
+    var tooltipRect = actionGuideState.tooltipEl.getBoundingClientRect();
+    var left = rect.left - tooltipRect.width - gap;
+    var top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
+    var maxLeft = window.innerWidth - tooltipRect.width - 16;
+    var maxTop = window.innerHeight - tooltipRect.height - 16;
+    if (left < 16 || left > maxLeft || top < 16 || top > maxTop) {
+      actionGuideState.tooltipEl.style.display = 'none';
+      return;
+    }
+    actionGuideState.tooltipEl.style.left = left + 'px';
+    actionGuideState.tooltipEl.style.top = top + 'px';
+  }
+
+  function getGuideTransitionDuration() {
+    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return 0;
+    return 300;
+  }
+
+  function buildGuideSpotlightBoxes() {
+    if (!actionGuideState.spotlightLayerEl) return;
+    var rows = getGuideCardRows();
+    actionGuideState.spotlightLayerEl.innerHTML = '';
+    rows.forEach(function (row) {
+      var rect = row.getBoundingClientRect();
+      if (rect.width <= 0 || rect.height <= 0) return;
+      var box = document.createElement('div');
+      box.className = 'pointer-events-none fixed rounded-xl';
+      box.style.left = Math.max(8, rect.left - 2) + 'px';
+      box.style.top = Math.max(8, rect.top - 2) + 'px';
+      box.style.width = Math.max(0, rect.width + 4) + 'px';
+      box.style.height = Math.max(0, rect.height + 4) + 'px';
+      actionGuideState.spotlightLayerEl.appendChild(box);
+    });
+  }
+
+  function syncActionColumnGuide() {
+    if (!actionGuideState.active) return;
+    buildGuideSpotlightBoxes();
+    positionGuideTooltip();
+  }
+
+  function closeActionColumnGuide() {
+    if (actionGuideState.openTimer) {
+      clearTimeout(actionGuideState.openTimer);
+      actionGuideState.openTimer = null;
+    }
+    if (!actionGuideState.active && !actionGuideState.highlightFilter) return;
+    actionGuideState.active = false;
+
+    if (actionGuideState.onEsc) {
+      window.removeEventListener('keydown', actionGuideState.onEsc);
+      actionGuideState.onEsc = null;
+    }
+    if (actionGuideState.onViewportChange) {
+      window.removeEventListener('resize', actionGuideState.onViewportChange);
+      window.removeEventListener('scroll', actionGuideState.onViewportChange, true);
+      actionGuideState.onViewportChange = null;
+    }
+    if (actionGuideState.onDocumentPointerDown) {
+      document.removeEventListener('pointerdown', actionGuideState.onDocumentPointerDown, true);
+      actionGuideState.onDocumentPointerDown = null;
+    }
+    if (actionGuideState.stepTransitionTimer) {
+      clearTimeout(actionGuideState.stepTransitionTimer);
+      actionGuideState.stepTransitionTimer = null;
+    }
+
+    var backdropToRemove = actionGuideState.backdropEl;
+    var closeBtnToRemove = actionGuideState.closeBtnEl;
+    var spotlightToRemove = actionGuideState.spotlightLayerEl;
+    var tooltipToRemove = actionGuideState.tooltipEl;
+
+    if (backdropToRemove) {
+      backdropToRemove.style.pointerEvents = 'none';
+      backdropToRemove.style.opacity = '0';
+    }
+    if (closeBtnToRemove) {
+      closeBtnToRemove.style.pointerEvents = 'none';
+      closeBtnToRemove.style.opacity = '0';
+    }
+    if (spotlightToRemove) {
+      spotlightToRemove.style.pointerEvents = 'none';
+      spotlightToRemove.style.opacity = '0';
+    }
+    if (tooltipToRemove) {
+      tooltipToRemove.style.pointerEvents = 'none';
+      tooltipToRemove.style.opacity = '0';
+    }
+
+    actionGuideState.backdropEl = null;
+    actionGuideState.closeBtnEl = null;
+    actionGuideState.spotlightLayerEl = null;
+    actionGuideState.tooltipEl = null;
+
+    var cleanup = function () {
+      if (backdropToRemove && backdropToRemove.parentNode) backdropToRemove.parentNode.removeChild(backdropToRemove);
+      if (closeBtnToRemove && closeBtnToRemove.parentNode) closeBtnToRemove.parentNode.removeChild(closeBtnToRemove);
+      if (spotlightToRemove && spotlightToRemove.parentNode) spotlightToRemove.parentNode.removeChild(spotlightToRemove);
+      if (tooltipToRemove && tooltipToRemove.parentNode) tooltipToRemove.parentNode.removeChild(tooltipToRemove);
+      actionGuideState.highlightFilter = '';
+      actionGuideState.selectedInvoice = '';
+      renderCurrentPage();
+    };
+
+    var duration = getGuideTransitionDuration();
+    if (duration <= 0) {
+      cleanup();
+      return;
+    }
+    window.setTimeout(cleanup, duration);
+  }
+
+  function openActionColumnGuide() {
+    if (actionGuideState.active) return;
+    actionGuideState.active = true;
+    actionGuideState.highlightFilter = 'card';
+    renderCurrentPage();
+
+    actionGuideState.onEsc = function (event) {
+      if (event.key === 'Escape') closeActionColumnGuide();
+    };
+    window.addEventListener('keydown', actionGuideState.onEsc);
+
+    var backdrop = document.createElement('button');
+    backdrop.type = 'button';
+    backdrop.setAttribute('aria-label', 'Close payments guide');
+    backdrop.setAttribute('data-guide-overlay', 'true');
+    backdrop.className = 'fixed inset-0 z-[200] bg-gray-900/75 transition-opacity duration-300 ease-out motion-reduce:transition-none';
+    backdrop.style.opacity = '0';
+    backdrop.addEventListener('click', closeActionColumnGuide);
+    document.body.appendChild(backdrop);
+    actionGuideState.backdropEl = backdrop;
+
+    actionGuideState.closeBtnEl = null;
+
+    var spotlightLayer = document.createElement('div');
+    spotlightLayer.className = 'fixed inset-0 z-[215] pointer-events-none transition-opacity duration-300 ease-out motion-reduce:transition-none';
+    spotlightLayer.style.opacity = '0';
+    document.body.appendChild(spotlightLayer);
+    actionGuideState.spotlightLayerEl = spotlightLayer;
+
+    var tooltip = document.createElement('div');
+    tooltip.className = 'fixed z-[230] w-[413px] max-w-[calc(100vw-32px)] transition-[opacity,transform] duration-400 ease-out motion-reduce:transition-none';
+    tooltip.style.opacity = '0';
+    tooltip.style.transform = 'translateX(-10px)';
+    document.body.appendChild(tooltip);
+    actionGuideState.tooltipEl = tooltip;
+    setGuideTooltipContent(1);
+
+    actionGuideState.onDocumentPointerDown = function (event) {
+      if (!actionGuideState.active) return;
+      var tooltipEl = actionGuideState.tooltipEl;
+      if (tooltipEl && tooltipEl.contains(event.target)) return;
+      var actionTrigger = event.target.closest('[data-action-menu-trigger="true"]');
+      if (actionTrigger && actionGuideState.step === 1) {
+        var actionEntry = getEntryFromActionTrigger(actionTrigger);
+        if (actionEntry) setGuideSelectedInvoice(actionEntry.invoice);
+        window.setTimeout(function () { goToGuideStep2(false); }, 0);
+        return;
+      }
+      var viewDetailsLink = event.target.closest('[data-view-details-invoice]');
+      if (viewDetailsLink && actionGuideState.step === 2) return;
+      closeActionColumnGuide();
+    };
+    document.addEventListener('pointerdown', actionGuideState.onDocumentPointerDown, true);
+
+    actionGuideState.onViewportChange = function () {
+      syncActionColumnGuide();
+    };
+    window.addEventListener('resize', actionGuideState.onViewportChange);
+    window.addEventListener('scroll', actionGuideState.onViewportChange, true);
+    syncActionColumnGuide();
+
+    window.requestAnimationFrame(function () {
+      if (actionGuideState.backdropEl) actionGuideState.backdropEl.style.opacity = '1';
+      if (actionGuideState.spotlightLayerEl) actionGuideState.spotlightLayerEl.style.opacity = '1';
+      var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (actionGuideState.tooltipEl) {
+        if (reducedMotion) {
+          actionGuideState.tooltipEl.style.opacity = '1';
+          actionGuideState.tooltipEl.style.transform = 'translateX(0)';
+        } else {
+          actionGuideState.tooltipEl.style.transitionDuration = '400ms';
+          actionGuideState.tooltipEl.style.transitionTimingFunction = 'ease-out';
+          window.setTimeout(function () {
+            if (!actionGuideState.tooltipEl || !actionGuideState.active) return;
+            actionGuideState.tooltipEl.style.opacity = '1';
+            actionGuideState.tooltipEl.style.transform = 'translateX(0)';
+          }, 500);
+        }
+      }
+      window.setTimeout(function () {
+        syncActionColumnGuide();
+      }, 50);
+      window.setTimeout(function () {
+        syncActionColumnGuide();
+      }, 280);
+    });
+  }
+
+  function startActionColumnGuide() {
+    var firstTarget = getFirstGuideTargetButton();
+    var firstRow = getFirstVisibleGuideCardRow();
+    var table = document.getElementById(TABLE_ID);
+    var scrollTarget = firstTarget || firstRow || table;
+    if (scrollTarget && typeof scrollTarget.scrollIntoView === 'function') {
+      // Use instant scroll to avoid race where tooltip computes before smooth scroll finishes.
+      scrollTarget.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'nearest' });
+    }
+    actionGuideState.openTimer = window.setTimeout(function () {
+      actionGuideState.openTimer = null;
+      openActionColumnGuide();
+      window.setTimeout(syncActionColumnGuide, 120);
+    }, 50);
   }
 
   // ── Data fetching ──
@@ -2973,18 +3510,14 @@
     if (!entry) return;
     var formattedAmount = formatCurrency(entry.amount, entry.currency);
     var paymentInfo = entry.details && entry.details.paymentInfo ? entry.details.paymentInfo : {};
-    var payerCardInfo = paymentInfo.payerCard || paymentInfo;
-    var cardHolderName = payerCardInfo.cardholderName || entry.vendorEntry || '';
-    var cardHolderAddress = payerCardInfo.cardholderAddress || '';
-    var cardNumberRaw = String(paymentInfo.cardNumber || payerCardInfo.cardNumber || entry.paymentMethodEnding || '');
-    var cardDigits = cardNumberRaw.replace(/\D/g, '');
-    var cardLast4 = cardDigits.length >= 4 ? cardDigits.slice(-4) : '0000';
-    var displayCardNumber = cardDigits.length >= 13
-      ? cardDigits.slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
-      : ('4000 0000 0000 ' + cardLast4);
-    var expiryFull = String(paymentInfo.expires || payerCardInfo.expires || '12/2026');
+    var customer = getCustomerForEntry(entry);
+    var cardDetails = getPayerCardDetailsForRender(entry, paymentInfo, customer);
+    var cardHolderName = cardDetails.cardHolderName || entry.vendorEntry || '';
+    var cardHolderAddress = cardDetails.cardHolderAddress || '';
+    var displayCardNumber = cardDetails.fullCardNumber || cardDetails.maskedCardNumber || '';
+    var expiryFull = String(cardDetails.expiryFull || '12/2026');
     var expiryShort = /^\d{2}\/\d{4}$/.test(expiryFull) ? (expiryFull.slice(0, 3) + expiryFull.slice(-2)) : expiryFull;
-    var cvcValue = String(paymentInfo.cvc || payerCardInfo.cvc || '999').replace(/\s+/g, '');
+    var cvcValue = String(cardDetails.cvcValue || '999');
 
     var vcAmountEl = document.getElementById('gp-vc-amount');
     var vcPendingEl = document.getElementById('gp-vc-pending-amount');
@@ -3783,6 +4316,17 @@
 
     // "Get paid" button clicks (delegated — buttons are rendered dynamically)
     document.addEventListener('click', function (e) {
+      var viewDetailsLink = e.target.closest('[data-view-details-invoice]');
+      if (viewDetailsLink) {
+        e.preventDefault();
+        var invoiceForDetails = viewDetailsLink.getAttribute('data-view-details-invoice');
+        if (invoiceForDetails) setGuideSelectedInvoice(invoiceForDetails);
+        var detailsEntry = findEntryByInvoice(invoiceForDetails);
+        if (actionGuideState.active) closeActionColumnGuide();
+        if (detailsEntry) openCardDetailsModalForEntry(detailsEntry);
+        return;
+      }
+
       var markPaidLink = e.target.closest('[data-mark-paid-invoice]');
       if (markPaidLink) {
         e.preventDefault();
@@ -4022,7 +4566,34 @@
     setMode('draw');
   }
 
+  function copyTextFallback(text, triggerEl) {
+    if (!text) return;
+    if (window.copyTextWithFeedback) {
+      window.copyTextWithFeedback(text, triggerEl);
+      return;
+    }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(function () {
+        if (window.showCopiedTooltip) window.showCopiedTooltip(triggerEl);
+      }).catch(function () {});
+      return;
+    }
+    var textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', 'readonly');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    var copied = false;
+    try { copied = document.execCommand('copy'); } catch (err) {}
+    document.body.removeChild(textarea);
+    if (copied && window.showCopiedTooltip) window.showCopiedTooltip(triggerEl);
+  }
+
   function initSubmitSuccessModalCopy() {
+    var cardDialog = document.getElementById('gp-card-details-dialog');
+    if (!cardDialog) return;
     var pairs = [
       { valueId: 'gp-vc-full-number', selector: '[data-copy-id="gp-vc-full-number"]' },
       { valueId: 'gp-vc-full-expiry', selector: '[data-copy-id="gp-vc-full-expiry"]' },
@@ -4030,14 +4601,14 @@
     ];
     pairs.forEach(function (item) {
       var valueEl = document.getElementById(item.valueId);
-      var btn = document.querySelector(item.selector);
+      var btn = cardDialog.querySelector(item.selector);
       if (!valueEl || !btn) return;
       btn.addEventListener('click', function (event) {
         event.preventDefault();
         event.stopPropagation();
         var text = String(valueEl.textContent || '').trim();
         if (!text) return;
-        if (window.copyTextWithFeedback) window.copyTextWithFeedback(text, btn);
+        copyTextFallback(text, btn);
       });
     });
   }
@@ -4054,6 +4625,15 @@
     initReviewModal();
     initSignatureModal();
     initSubmitSuccessModalCopy();
+    var shouldOpenActionGuide = shouldShowActionColumnGuide();
+    if (shouldOpenActionGuide) removeGuideUrlParam();
+
+    if (window.STPState && typeof window.STPState.subscribe === 'function') {
+      window.STPState.subscribe(function () {
+        if (!paginationState.sourceEntries || !paginationState.sourceEntries.length) return;
+        refreshTableForActiveTab();
+      });
+    }
 
     Promise.all([
       fetchExchangesData(),
@@ -4102,6 +4682,9 @@
 
         // Auto-open Get Paid panel if URL contains ?view=get-paid&id=...
         var params = new URLSearchParams(location.search);
+        if (shouldOpenActionGuide) {
+          startActionColumnGuide();
+        }
         if (params.get('view') === 'get-paid') {
           var invoiceId = params.get('id');
           for (var j = 0; j < paginationState.sourceEntries.length; j++) {

@@ -175,6 +175,13 @@
 
                                     <!-- Step 1: Review Documents -->
                                     <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+                                        <!-- Step 1 Header with Title and Description -->
+                                        <div class="mb-6 col-span-3">
+                                            <h4 class="text-lg font-semibold text-gray-900 dark:text-white">Choose your preferred payment method</h4>
+                                            <p class="mt-1.5 text-sm text-gray-600 dark:text-gray-400">Select how you'd like to receive your funds. We offer multiple secure payment options tailored to your needs.</p>
+                                        </div>
+                                    </div>
+                                    <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
                                         <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
                                             <div class="flex items-center gap-2">
                                                 <span id="gp-step-1-badge"
@@ -207,7 +214,7 @@
                                                         <div class="ml-4 shrink-0 flex items-center">
                                                             <button type="button" command="show-modal"
                                                                 commandfor="gp-review-dialog"
-                                                                class="gp-review-trigger inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"
+                                                                class="gp-review-trigger inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10 cursor-pointer"
                                                                 data-attach-idx="0">Review</button>
                                                             <div id="gp-attach-0-status" class="hidden">
                                                                 <div class="flex h-6 shrink-0 items-center">
@@ -247,7 +254,7 @@
                                                         <div class="ml-4 shrink-0 flex items-center">
                                                             <button type="button" command="show-modal"
                                                                 commandfor="gp-review-dialog"
-                                                                class="gp-review-trigger inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"
+                                                                class="gp-review-trigger inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10 cursor-pointer"
                                                                 data-attach-idx="1">Review</button>
                                                             <div id="gp-attach-1-status" class="hidden">
                                                                 <div class="flex h-6 shrink-0 items-center">
@@ -1727,7 +1734,7 @@
     </el-dialog>
 
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
-    <script src="../../../src/scripts/exchanges-table.js?v=20260309d"></script>
+    <script src="../../../src/scripts/exchanges-table.js?v=20260305o"></script>
 
 </body>
 

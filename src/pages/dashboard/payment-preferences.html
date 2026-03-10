@@ -108,6 +108,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
     <script src="../../../src/scripts/nav-component.js" defer></script>
     <script src="../../../src/scripts/sidebar.js" defer></script>
+    <script src="../../../src/scripts/stp-state.js" defer></script>
     <script src="../../../src/scripts/topbar-component.js" defer></script>
     <script src="../../../src/scripts/shared.js" defer></script>
     <script src="../../../src/scripts/payment-preferences-components.js"></script>
@@ -217,7 +218,7 @@
                                                 <p class="mt-1 text-sm font-normal leading-5 text-gray-500 dark:text-gray-400">Automatically process eligible payments with no manual steps. This option can be turned off anytime.</p>
                                             </div>
                                         </div>
-                                        <button id="pp-stp-opt-in-btn" type="button" command="show-modal" commandfor="pp-enable-stp-dialog"
+                                        <button id="pp-stp-opt-in-btn" type="button"
                                             class="inline-flex shrink-0 items-center justify-center rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
                                             Opt in
                                         </button>
@@ -1903,7 +1904,7 @@
             <div tabindex="0"
                 class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
-                    class="relative flex h-auto max-h-[calc(100vh-2rem)] w-full max-w-[800px] flex-[1_0_0] flex-col items-center transform overflow-y-auto rounded-3xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 md:h-[624px] md:max-h-none md:overflow-hidden dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    class="relative flex h-auto max-h-[calc(100vh-2rem)] w-full max-w-[800px] flex-[1_0_0] flex-col items-center transform overflow-y-auto rounded-3xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 md:overflow-hidden dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
                     <button type="button" command="close" commandfor="pp-enable-stp-dialog"
                         class="absolute top-4 right-4 z-20 rounded-md bg-gray-900/8 p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 cursor-pointer">
                         <span class="sr-only">Close</span>
@@ -1912,7 +1913,7 @@
                         </svg>
                     </button>
 
-                    <div class="grid h-auto w-full grid-cols-1 grid-rows-[auto_auto] gap-0 md:h-full md:grid-cols-3 md:grid-rows-1 md:gap-0">
+                    <div class="grid h-auto w-full grid-cols-1 grid-rows-[auto_auto] gap-0 md:grid-cols-3 md:grid-rows-1 md:gap-0">
                         <div class="col-span-1 flex w-full self-stretch p-2 md:justify-start md:p-2">
                             <div
                                 class="relative h-[200px] w-full min-w-0 overflow-hidden rounded-2xl md:h-[608px] md:w-64 md:rounded-2xl"
@@ -1940,6 +1941,7 @@
                                     <div class="absolute -bottom-[100px] left-1/2 -translate-x-[56%] md:bottom-[80px]">
                                         <img
                                             id="pp-stp-terminal-image"
+                                            data-stp-terminal-image
                                             src="../../../src/assets/illustrations/terminal.svg"
                                             alt=""
                                             class="h-[192px] w-[332px] max-w-none" />
@@ -1973,13 +1975,13 @@
                             </div>
                         </div>
 
-                        <div class="col-span-2 row-span-1 justify-self-stretch flex min-h-0 w-full min-w-0 flex-col items-start justify-start overflow-visible p-4 md:h-[608px] md:min-w-[360px] md:overflow-visible md:p-9">
-                            <div class="flex h-auto w-full flex-col self-stretch md:h-full">
+                        <div class="col-span-2 row-span-1 justify-self-stretch flex min-h-0 w-full min-w-0 flex-col items-start justify-start self-stretch overflow-visible p-4 md:min-w-[360px] md:overflow-visible md:p-9">
+                            <div class="flex h-auto w-full flex-col self-stretch md:h-full md:justify-between">
                                 <div class="flex flex-col items-start justify-center gap-4 self-stretch md:min-h-0 md:flex-1 md:gap-4">
-                                <h2 class="text-xl font-semibold leading-8 text-slate-950 md:text-[30px] md:leading-[36px] dark:text-white">Enable Automatic Card Processing</h2>
-                                <p class="text-sm font-medium leading-6 text-slate-950 md:text-[18px] dark:text-gray-100">When enabled, eligible virtual card payments will be processed automatically through your existing merchant processor.</p>
+                                <h2 class="self-stretch text-xl font-semibold leading-8 text-slate-950 md:text-[30px] md:leading-[36px] dark:text-white">Enable Automatic Card Processing</h2>
+                                <p class="self-stretch text-sm font-medium leading-6 text-slate-950 md:text-[18px] dark:text-gray-100">When enabled, eligible virtual card payments will be processed automatically through your existing merchant processor.</p>
 
-                                <details class="w-full rounded-md bg-gray-100 p-3 md:hidden dark:bg-white/10">
+                                <details class="w-full rounded-md bg-gray-100 p-3 md:hidden">
                                     <summary class="flex cursor-pointer list-none items-center justify-between text-sm font-medium leading-6 text-slate-950 dark:text-white">
                                         <span>How it works</span>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400">
@@ -2002,7 +2004,7 @@
                                     </div>
                                 </details>
 
-                                <div class="hidden w-full flex-col gap-1.5 rounded-md bg-gray-100 p-3 md:flex dark:bg-white/10">
+                                <div class="hidden w-full flex-col gap-1.5 rounded-md p-3 md:flex md:p-0">
                                     <p class="text-sm font-medium leading-6 text-slate-950 dark:text-white">How it works</p>
                                     <div class="flex flex-col gap-1.5 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300">
                                         <div class="flex items-start gap-1.5">
@@ -2020,7 +2022,7 @@
                                     </div>
                                 </div>
 
-                                <label for="pp-stp-agreement-checkbox" class="flex cursor-pointer items-start gap-3 text-sm leading-5 text-gray-700 dark:text-gray-300">
+                                <label for="pp-stp-agreement-checkbox" class="mt-4 flex cursor-pointer items-center gap-3 text-sm leading-6 text-gray-700 dark:text-gray-300">
                                     <div class="flex h-6 shrink-0 items-center">
                                         <div class="group grid size-4 grid-cols-1">
                                             <input id="pp-stp-agreement-checkbox" type="checkbox"
@@ -2040,15 +2042,107 @@
                                 </label>
                                 </div>
 
-                                <div class="sticky bottom-0 mt-6 flex w-full flex-col items-stretch gap-3 bg-white pt-3 pb-1 md:static md:mt-8 md:bg-transparent md:pt-0 md:pb-0 dark:bg-gray-900 md:dark:bg-transparent">
+                                <div class="sticky bottom-0 mt-6 flex w-full flex-col items-stretch gap-3 bg-white pt-3 pb-1 md:static md:mt-8 md:flex-row md:items-center md:justify-between md:bg-transparent md:pt-0 md:pb-0 dark:bg-gray-900 md:dark:bg-transparent">
                                     <button id="pp-enable-stp-confirm-btn" type="button" disabled
-                                        class="w-full rounded-md bg-blue-600 px-6 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">
+                                        class="w-full rounded-md bg-blue-600 px-6 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300 md:w-auto">
                                         Confirm
                                     </button>
                                     <button id="pp-stp-remind-btn" type="button" command="close" commandfor="pp-enable-stp-dialog"
-                                        class="w-full rounded-md px-2.5 py-1.5 text-center text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10 cursor-pointer">
+                                        class="w-full rounded-md px-2.5 py-1.5 text-center text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10 cursor-pointer md:ml-auto md:w-auto">
                                         Remind me later
                                     </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
+    <!-- ===== STP NEXT STEPS MODAL ===== -->
+    <el-dialog>
+        <dialog id="pp-stp-next-steps-dialog"
+            class="fixed inset-0 m-0 size-auto max-h-none max-w-none border-0 p-0 overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative flex h-auto max-h-[calc(100vh-2rem)] w-full max-w-[800px] flex-[1_0_0] flex-col items-center transform overflow-y-auto rounded-3xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 md:max-h-none md:overflow-hidden dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <button type="button" command="close" commandfor="pp-stp-next-steps-dialog"
+                        class="absolute top-4 right-4 z-20 rounded-md bg-gray-900/8 p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 cursor-pointer">
+                        <span class="sr-only">Close</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                            <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                        </svg>
+                    </button>
+
+                    <div class="grid h-auto w-full grid-cols-1 grid-rows-[auto_auto] gap-0 md:grid-cols-3 md:grid-rows-1 md:gap-0">
+                        <div class="col-span-1 flex w-full self-stretch p-2 md:justify-start md:self-stretch md:p-2">
+                            <div class="relative h-[200px] w-full min-w-0 overflow-hidden rounded-2xl md:h-full md:min-h-full md:w-64 md:rounded-2xl"
+                                style="background-image: linear-gradient(180deg, rgb(236, 242, 255) 0%, rgb(248, 244, 255) 100%);">
+                                <div class="absolute inset-0 overflow-hidden">
+                                    <img src="../../../src/assets/illustrations/Receivables%20Table.svg" alt=""
+                                        class="absolute left-1/2 top-2 h-auto w-[300px] max-w-none -translate-x-1/2 md:left-auto md:right-6 md:top-[132px] md:w-[430px] md:translate-x-0" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-span-2 row-span-1 justify-self-stretch flex min-h-0 w-full min-w-0 flex-col items-start self-stretch p-4 md:min-w-[360px] md:px-9 md:py-20">
+                            <div class="flex h-auto w-full flex-col self-stretch md:h-full">
+                                <div class="flex flex-col gap-6 self-stretch md:my-auto">
+                                    <h2 class="text-3xl font-semibold leading-9 text-slate-950 dark:text-white">
+                                        To enable automatic card processing, complete the steps below.
+                                    </h2>
+                                    <div class="flex flex-col gap-0 self-stretch">
+                                        <div class="flex gap-3">
+                                            <div class="flex w-5 shrink-0 flex-col items-center">
+                                                <span class="flex h-5 w-5 items-center justify-center rounded-full border border-blue-400 bg-blue-100 text-xs font-medium leading-4 text-blue-700">1</span>
+                                                <span class="w-[1.5px] flex-1 bg-gray-200"></span>
+                                            </div>
+                                            <div class="flex flex-col gap-2 pb-6">
+                                                <p class="text-sm font-medium leading-5 text-slate-950 dark:text-white">Process Any Payment</p>
+                                                <p class="text-sm font-normal leading-5 text-gray-700 dark:text-gray-300">
+                                                    Go to your <a href="smart-exchange.html" class="font-medium text-blue-600 underline decoration-solid dark:text-blue-400">Payments</a> and process any available virtual card using your terminal.<br />
+                                                    This links your Merchant and Terminal IDs.
+                                                </p>
+                                                <a id="pp-stp-go-to-payments-btn" href="smart-exchange.html?guide=card-rows"
+                                                    class="inline-flex w-fit max-w-fit shrink-0 items-center justify-center self-start rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                                                    Go to Payments
+                                                </a>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-3">
+                                            <div class="flex w-5 shrink-0 flex-col items-center">
+                                                <span class="flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium leading-4 text-gray-800">2</span>
+                                                <span class="w-px flex-1 bg-gray-200"></span>
+                                            </div>
+                                            <div class="flex flex-col gap-2 pb-6">
+                                                <p class="text-sm font-medium leading-5 text-slate-950 dark:text-white">Terminal Verification</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-3">
+                                            <div class="flex w-5 shrink-0 flex-col items-center">
+                                                <span class="flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium leading-4 text-gray-800">3</span>
+                                                <span class="w-px flex-1 bg-gray-200"></span>
+                                            </div>
+                                            <div class="flex flex-col gap-2 pb-6">
+                                                <p class="text-sm font-medium leading-5 text-slate-950 dark:text-white">Verify Your Bank Account (Penny Test)</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-3">
+                                            <div class="flex w-5 shrink-0 flex-col items-center">
+                                                <span class="flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium leading-4 text-gray-800">4</span>
+                                            </div>
+                                            <div class="flex flex-col gap-2 pb-6">
+                                                <p class="text-sm font-medium leading-5 text-slate-950 dark:text-white">Automatic Card Processing Activated</p>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>

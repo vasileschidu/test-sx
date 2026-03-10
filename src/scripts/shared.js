@@ -93,8 +93,10 @@ function isMaskedText(value) {
 function showCopiedTooltip(anchorEl) {
     if (!anchorEl) return;
     var rect = anchorEl.getBoundingClientRect();
-    var insideModal = !!anchorEl.closest('dialog[open]');
+    var dialogHost = anchorEl.closest('dialog[open]');
+    var insideModal = !!dialogHost;
     var topOffset = insideModal ? 8 : 4;
+    var tipHost = dialogHost || document.body;
 
     var existing = anchorEl._copyTip;
     if (existing) {
@@ -122,7 +124,7 @@ function showCopiedTooltip(anchorEl) {
         'transition:opacity 220ms ease-out,transform 220ms ease-out',
         'white-space:nowrap'
     ].join(';');
-    document.body.appendChild(tip);
+    tipHost.appendChild(tip);
     anchorEl._copyTip = tip;
 
     tip.getBoundingClientRect();
