@@ -196,6 +196,9 @@
                     editing = false;
                     setEditing(false);
                     updateDirtyState();
+                    if (window.showGlobalTopToast && typeof window.showGlobalTopToast === 'function') {
+                        window.showGlobalTopToast('Business information updated.');
+                    }
                 });
 
                 var countrySelect = document.getElementById('business-legal-address-country-input');
@@ -348,6 +351,9 @@
                     editing = false;
                     setEditing(false);
                     updateDirtyState();
+                    if (window.showGlobalTopToast && typeof window.showGlobalTopToast === 'function') {
+                        window.showGlobalTopToast('Contact information updated.');
+                    }
                 });
 
                 form.addEventListener('input', function (event) {

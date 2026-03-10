@@ -205,8 +205,10 @@
 
 
                                     <!-- STP block (R3 compact variant) -->
+                                    <div class="w-full flex flex-col gap-2">
                                     <div
-                                        class="flex w-full items-center justify-between gap-8 rounded-lg bg-gray-50 p-3 dark:bg-white/5">
+                                        id="pp-stp-card-container"
+                                        class="flex w-full flex-col gap-3 rounded-lg bg-gray-50 py-3 pl-3 pr-0 sm:flex-row sm:items-center sm:justify-between sm:gap-6 dark:bg-white/5">
                                         <div class="flex min-w-0 flex-1 items-start gap-3">
                                             <div class="shrink-0 pt-0.5">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
@@ -214,14 +216,85 @@
                                                 </svg>
                                             </div>
                                             <div class="min-w-0">
-                                                <p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Automatic Card Processing (STP)</p>
+                                                <div class="flex w-full items-center justify-between gap-3">
+                                                    <div class="flex min-w-0 items-center gap-2">
+                                                        <div class="min-w-0">
+                                                            <p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Automatic Card Processing (STP)</p>
+                                                        </div>
+                                                        <div class="shrink-0">
+                                                            <span id="pp-stp-status-badge" class="hidden inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-white/5 dark:text-gray-300 dark:ring-white/15">Enabling pending</span>
+                                                        </div>
+                                                    </div>
+                                                    <div id="pp-stp-actions-wrap" class="hidden shrink-0 self-center">
+                                                        <el-dropdown class="inline-block">
+                                                            <button type="button"
+                                                                class="shrink-0 rounded-md p-1.5 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-600 active:bg-gray-200 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:active:bg-white/10 cursor-pointer">
+                                                                <span class="sr-only">Open STP options</span>
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                                    fill="currentColor" class="size-4">
+                                                                    <path
+                                                                        d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />
+                                                                </svg>
+                                                            </button>
+                                                            <el-menu anchor="bottom end" popover
+                                                                class="min-w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+                                                                <div class="py-1">
+                                                                    <button id="pp-stp-learn-more-menu-btn" type="button"
+                                                                        class="flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:focus:text-white cursor-pointer">
+                                                                        <span>Learn more</span>
+                                                                    </button>
+                                                                    <button id="pp-stp-opt-out-menu-btn" type="button"
+                                                                        class="flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium text-red-700 hover:bg-red-50 focus:bg-red-50 focus:text-red-700 focus:outline-hidden dark:text-red-400 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:focus:text-red-300 cursor-pointer">
+                                                                        <span>Opt out</span>
+                                                                    </button>
+                                                                </div>
+                                                            </el-menu>
+                                                        </el-dropdown>
+                                                    </div>
+                                                </div>
                                                 <p class="mt-1 text-sm font-normal leading-5 text-gray-500 dark:text-gray-400">Automatically process eligible payments with no manual steps. This option can be turned off anytime.</p>
+                                                <div id="pp-stp-fully-automated-wrap" class="mt-5 w-full border-t border-gray-200 pt-3 hidden dark:border-white/10">
+                                                    <div id="pp-stp-fully-automated-row" class="flex items-start gap-3">
+                                                        <div class="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-full outline-offset-2 outline-blue-600 has-[:focus-visible]:outline has-[:focus-visible]:outline-2">
+                                                            <span class="absolute mx-auto h-4 w-9 rounded-full bg-gray-200 ring-1 ring-inset ring-gray-900/5 transition-colors duration-200 ease-in-out group-has-[:checked]:bg-blue-600 dark:bg-white/10 dark:ring-white/10 dark:group-has-[:checked]:bg-blue-500"></span>
+                                                            <span class="absolute left-0 size-5 rounded-full border border-gray-300 bg-white shadow-sm transition-transform duration-200 ease-in-out group-has-[:checked]:translate-x-5 dark:border-white/20"></span>
+                                                            <input id="pp-stp-fully-automated-toggle" type="checkbox" name="pp-stp-fully-automated-toggle" aria-labelledby="pp-stp-fully-automated-label" aria-describedby="pp-stp-fully-automated-description" class="absolute inset-0 size-full appearance-none focus:outline-none" />
+                                                        </div>
+                                                        <span class="flex grow flex-col">
+                                                            <label id="pp-stp-fully-automated-label" class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Fully Automated</label>
+                                                            <span id="pp-stp-fully-automated-description" class="text-sm text-gray-500 dark:text-gray-400">Payment is automatically processed by card. The "Get Paid" step is included only when the transaction requires documents or signatures.</span>
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </div>
                                         </div>
-                                        <button id="pp-stp-opt-in-btn" type="button"
-                                            class="inline-flex shrink-0 items-center justify-center rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
-                                            Opt in
-                                        </button>
+                                        <div class="flex w-full items-center gap-3 sm:w-auto">
+                                            <button id="pp-stp-opt-in-btn" type="button"
+                                                class="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer sm:w-auto">
+                                                Opt in
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <div id="pp-stp-inline-verify-alert"
+                                        class="hidden w-full rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-400/30 dark:bg-amber-500/10">
+                                        <div class="flex min-w-0 items-start gap-3">
+                                            <div class="shrink-0 pt-0.5 text-yellow-500 dark:text-yellow-500">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                                    <path fill-rule="evenodd" clip-rule="evenodd" d="M8.27598 3.0253C9.0322 1.65823 10.9678 1.65823 11.724 3.0253L17.2431 13.0025C17.9848 14.3433 17.0319 16 15.5191 16H4.48093C2.96807 16 2.01521 14.3433 2.75691 13.0025L8.27598 3.0253ZM10.9889 12.983C10.9889 13.5384 10.5461 13.9887 9.99992 13.9887C9.45369 13.9887 9.01089 13.5384 9.01089 12.983C9.01089 12.4276 9.45369 11.9773 9.99992 11.9773C10.5461 11.9773 10.9889 12.4276 10.9889 12.983ZM9.99991 4.93733C9.45369 4.93733 9.01089 5.3876 9.01089 5.94303V8.96016C9.01089 9.51559 9.45369 9.96587 9.99991 9.96587C10.5461 9.96587 10.9889 9.51559 10.9889 8.96016V5.94303C10.9889 5.3876 10.5461 4.93733 9.99991 4.93733Z" fill="#FBBF24"/>
+                                                </svg>
+                                            </div>
+                                            <div class="min-w-0">
+                                                <p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">One more step till final setup</p>
+                                                <p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">To complete Automatic Card Processing set-up, please confirm the small deposit amount.</p>
+                                                <div class="mt-3 flex items-center gap-3">
+                                                    <button id="pp-stp-inline-verify-btn" type="button"
+                                                        class="inline-flex items-center justify-center rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-200 dark:ring-white/10 dark:hover:bg-white/20 cursor-pointer">Verify now</button>
+                                                    <button id="pp-stp-inline-learn-more-btn" type="button"
+                                                        class="inline-flex items-center justify-center rounded-md px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-900/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer">Don’t see a small deposit?</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                     </div>
 
                                     <!-- Separator -->
@@ -1895,6 +1968,60 @@
         </dialog>
     </el-dialog>
 
+    <!-- ===== STP OPT-OUT CONFIRM MODAL ===== -->
+    <el-dialog>
+        <dialog id="pp-stp-opt-out-confirm-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
+                        <button type="button" command="close" commandfor="pp-stp-opt-out-confirm-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+                        <div class="flex flex-col items-center text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44"
+                                fill="none" aria-hidden="true">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M18.6667 5.48896C20.1486 2.92229 23.8532 2.9223 25.3351 5.48897L39.1482 29.414C40.6301 31.9806 38.7777 35.189 35.814 35.189H8.18777C5.22404 35.189 3.37171 31.9806 4.85358 29.414L18.6667 5.48896ZM22.0008 11C22.9121 11 23.6508 11.7387 23.6508 12.65V20.35C23.6508 21.2612 22.9121 22 22.0008 22C21.0895 22 20.3508 21.2612 20.3508 20.35L20.3508 12.65C20.3508 11.7387 21.0895 11 22.0008 11ZM22.0008 30.8C23.2158 30.8 24.2008 29.815 24.2008 28.6C24.2008 27.3849 23.2158 26.4 22.0008 26.4C20.7858 26.4 19.8008 27.3849 19.8008 28.6C19.8008 29.815 20.7858 30.8 22.0008 30.8Z"
+                                    fill="#EF4444" />
+                            </svg>
+                            <div class="mt-6 flex flex-col items-center gap-2">
+                                <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">
+                                    Are you sure you want to opt out of Automatic Card Processing?
+                                </h2>
+                                <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
+                                    By opting out, card payments will not be automatically processed and you will need
+                                    to manually key in the card info.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                        <button type="button" command="close" commandfor="pp-stp-opt-out-confirm-dialog"
+                            class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+                            Cancel
+                        </button>
+                        <button id="pp-stp-opt-out-confirm-btn" type="button"
+                            class="w-full rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                            Yes, opt out
+                        </button>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
     <!-- ===== ENABLE STP MODAL ===== -->
     <el-dialog>
         <dialog id="pp-enable-stp-dialog"
@@ -2117,7 +2244,7 @@
                                         <div class="flex gap-3">
                                             <div class="flex w-5 shrink-0 flex-col items-center">
                                                 <span class="flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium leading-4 text-gray-800">2</span>
-                                                <span class="w-px flex-1 bg-gray-200"></span>
+                                                <span class="w-[1.5px] flex-1 bg-gray-200"></span>
                                             </div>
                                             <div class="flex flex-col gap-2 pb-6">
                                                 <p class="text-sm font-medium leading-5 text-slate-950 dark:text-white">Terminal Verification</p>
@@ -2127,7 +2254,7 @@
                                         <div class="flex gap-3">
                                             <div class="flex w-5 shrink-0 flex-col items-center">
                                                 <span class="flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium leading-4 text-gray-800">3</span>
-                                                <span class="w-px flex-1 bg-gray-200"></span>
+                                                <span class="w-[1.5px] flex-1 bg-gray-200"></span>
                                             </div>
                                             <div class="flex flex-col gap-2 pb-6">
                                                 <p class="text-sm font-medium leading-5 text-slate-950 dark:text-white">Verify Your Bank Account (Penny Test)</p>
@@ -2163,7 +2290,7 @@
                 <el-dialog-panel
                     class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
                     <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
-                        <button type="button" command="close" commandfor="pp-verify-deposit-dialog"
+                        <button id="pp-verify-deposit-close-btn" type="button" command="close" commandfor="pp-verify-deposit-dialog"
                             class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
                             <span class="sr-only">Close</span>
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
@@ -2203,13 +2330,59 @@
                         </div>
                     </div>
                     <div class="flex justify-end gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
-                        <button type="button" command="close" commandfor="pp-verify-deposit-dialog"
+                        <button id="pp-verify-deposit-cancel-btn" type="button" command="close" commandfor="pp-verify-deposit-dialog"
                             class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
                             Cancel
                         </button>
-                        <button id="pp-verify-deposit-btn" type="button" command="close" commandfor="pp-verify-deposit-dialog" disabled
-                            class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">
+                        <button id="pp-verify-deposit-btn" type="button" disabled
+                            class="inline-flex items-center justify-center whitespace-nowrap rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">
                             Verify
+                        </button>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
+    <!-- ===== VERIFY SUCCESS MODAL ===== -->
+    <el-dialog>
+        <dialog id="pp-verify-success-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
+                        <button type="button" command="close" commandfor="pp-verify-success-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+                        <div class="flex flex-col items-center text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M4.125 22C4.125 12.1279 12.1279 4.125 22 4.125C31.8721 4.125 39.875 12.1279 39.875 22C39.875 31.8721 31.8721 39.875 22 39.875C12.1279 39.875 4.125 31.8721 4.125 22ZM28.6189 18.6742C29.0603 18.0563 28.9171 17.1975 28.2992 16.7561C27.6813 16.3147 26.8225 16.4579 26.3811 17.0758L20.4495 25.38L17.4723 22.4027C16.9353 21.8658 16.0647 21.8658 15.5277 22.4027C14.9908 22.9397 14.9908 23.8103 15.5277 24.3473L19.6527 28.4723C19.9385 28.7581 20.3356 28.9037 20.7384 28.8703C21.1412 28.837 21.509 28.6281 21.7439 28.2992L28.6189 18.6742Z" fill="#10B981"/>
+                            </svg>
+                            <div class="mt-6 flex flex-col items-center gap-2">
+                                <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">
+                                    Bank Account Verified Successfully!
+                                </h2>
+                                <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
+                                    Automatic card processing is set up, card payments will be processed automatically and you'll receive a notification.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex w-full border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                        <button id="pp-verify-success-done-btn" type="button" command="close" commandfor="pp-verify-success-dialog"
+                            class="w-full rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                            Done
                         </button>
                     </div>
                 </el-dialog-panel>

@@ -157,12 +157,106 @@
     closeBtnEl: null,
     spotlightLayerEl: null,
     tooltipEl: null,
+    modalHighlightEl: null,
     onEsc: null,
     onViewportChange: null,
     onDocumentPointerDown: null,
     openTimer: null,
     stepTransitionTimer: null,
+    step3Transitioning: false,
   };
+  var pendingMarkPaidInvoice = '';
+  var pendingMarkPaidCloseCardDialog = false;
+  var topActionToast = {
+    el: null,
+    removeTimer: null,
+    autoHideTimer: null,
+  };
+
+  function ensureTopActionToastStyles() {
+    if (document.getElementById('sx-top-action-toast-style')) return;
+    var style = document.createElement('style');
+    style.id = 'sx-top-action-toast-style';
+    style.textContent =
+      '.sx-top-action-toast{' +
+      'position:fixed;left:50%;top:36px;z-index:500;display:flex;align-items:center;gap:12px;' +
+      'max-width:min(680px,calc(100vw - 24px));padding:10px 12px;border-radius:10px;' +
+      'background:#111827;color:#fff;box-shadow:0 10px 25px rgba(0,0,0,.2);' +
+      'transform:translate(-50%,-8px);opacity:0;pointer-events:auto;' +
+      'transition:transform 220ms ease,opacity 220ms ease;}' +
+      '.sx-top-action-toast[data-state="visible"]{transform:translate(-50%,0);opacity:1;}' +
+      '.sx-top-action-toast[data-state="leaving"]{transform:translate(-50%,8px);opacity:0;}' +
+      '.sx-top-action-toast__msg{font-size:14px;line-height:20px;font-weight:500;}' +
+      '.sx-top-action-toast__close{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:#D1D5DB;cursor:pointer;}' +
+      '.sx-top-action-toast__close:hover{background:rgba(255,255,255,.12);color:#fff;}';
+    document.head.appendChild(style);
+  }
+
+  function hideTopActionToast() {
+    if (!topActionToast.el) return;
+    if (topActionToast.autoHideTimer) {
+      clearTimeout(topActionToast.autoHideTimer);
+      topActionToast.autoHideTimer = null;
+    }
+    topActionToast.el.setAttribute('data-state', 'leaving');
+    if (topActionToast.removeTimer) clearTimeout(topActionToast.removeTimer);
+    topActionToast.removeTimer = window.setTimeout(function () {
+      if (!topActionToast.el) return;
+      topActionToast.el.remove();
+      topActionToast.el = null;
+      topActionToast.removeTimer = null;
+    }, 240);
+  }
+
+  function showTopActionToast(message) {
+    var text = String(message || '').trim();
+    if (!text) return;
+    ensureTopActionToastStyles();
+    if (topActionToast.removeTimer) {
+      clearTimeout(topActionToast.removeTimer);
+      topActionToast.removeTimer = null;
+    }
+    if (topActionToast.autoHideTimer) {
+      clearTimeout(topActionToast.autoHideTimer);
+      topActionToast.autoHideTimer = null;
+    }
+    if (topActionToast.el) {
+      topActionToast.el.remove();
+      topActionToast.el = null;
+    }
+
+    var toast = document.createElement('div');
+    toast.className = 'sx-top-action-toast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    toast.innerHTML =
+      '<span aria-hidden="true" class="inline-flex shrink-0 text-emerald-500">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">' +
+          '<path fill-rule="evenodd" clip-rule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.8566 8.19113C14.1002 7.85614 14.0261 7.38708 13.6911 7.14345C13.3561 6.89982 12.8871 6.97388 12.6434 7.30887L9.15969 12.099L7.28033 10.2197C6.98744 9.92678 6.51256 9.92678 6.21967 10.2197C5.92678 10.5126 5.92678 10.9874 6.21967 11.2803L8.71967 13.7803C8.87477 13.9354 9.08999 14.0149 9.30867 13.9977C9.52734 13.9805 9.72754 13.8685 9.85655 13.6911L13.8566 8.19113Z" fill="#10B981"/>' +
+        '</svg>' +
+      '</span>' +
+      '<span class="sx-top-action-toast__msg">' + escapeHtml(text) + '</span>' +
+      '<button type="button" aria-label="Dismiss notification" class="sx-top-action-toast__close">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">' +
+          '<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/>' +
+        '</svg>' +
+      '</button>';
+    document.body.appendChild(toast);
+    topActionToast.el = toast;
+
+    var closeBtn = toast.querySelector('.sx-top-action-toast__close');
+    if (closeBtn) {
+      closeBtn.addEventListener('click', function () {
+        hideTopActionToast();
+      });
+    }
+
+    window.requestAnimationFrame(function () {
+      if (!topActionToast.el) return;
+      topActionToast.el.setAttribute('data-state', 'visible');
+    });
+    topActionToast.autoHideTimer = window.setTimeout(hideTopActionToast, 3000);
+  }
 
   // ── SVG Icons ──
 
@@ -570,11 +664,18 @@
   }
 
   function renderActionCell(entry) {
+    var isCard = entry.methodType === 'card';
+    var isAch = entry.methodType === 'ach';
     if (entry.status === 'pending' && entry.methodType === 'smart_exchange') {
       return '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>';
     }
 
-    if (_activeTableTabKey === 'pending' && isPendingLikeStatus(entry.status) && (entry.methodType === 'card' || entry.methodType === 'ach')) {
+    if (_activeTableTabKey === 'pending' && isPendingLikeStatus(entry.status) && (isCard || isAch)) {
+      var pendingItemsHtml =
+        '<a href="#" data-mark-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Mark as paid (manual)</a>' +
+        (isCard
+          ? '<a href="#" data-view-details-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>'
+          : '<span aria-disabled="true" class="block cursor-not-allowed px-3 py-1.5 text-sm whitespace-nowrap text-gray-400 dark:text-gray-500">View details</span>');
       return '<el-dropdown class="inline-block">' +
         '<button data-action-menu-trigger="true" class="flex items-center justify-center rounded-sm bg-white p-1 text-gray-500 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:hover:text-gray-300">' +
           '<span class="sr-only">Open options</span>' +
@@ -582,14 +683,20 @@
         '</button>' +
         '<el-menu anchor="bottom end" popover class=" min-w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
           '<div class="py-1">' +
-            '<a href="#" data-mark-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Mark as paid (manual)</a>' +
-            '<a href="#" data-view-details-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>' +
+            pendingItemsHtml +
           '</div>' +
         '</el-menu>' +
       '</el-dropdown>';
     }
 
     // 3-dot dropdown for ACH / Card
+    var defaultItemsHtml = isAch
+      ? '<span aria-disabled="true" class="block cursor-not-allowed px-3 py-1.5 text-sm whitespace-nowrap text-gray-400 dark:text-gray-500">View details</span>'
+      : (
+        '<a href="#" data-view-details-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>' +
+        '<a href="#" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Edit payment</a>' +
+        '<a href="#" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Cancel</a>'
+      );
     return '<el-dropdown class="inline-block">' +
       '<button data-action-menu-trigger="true" class="flex items-center justify-center rounded-sm bg-white p-1 text-gray-500 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:hover:text-gray-300">' +
         '<span class="sr-only">Open options</span>' +
@@ -597,9 +704,7 @@
       '</button>' +
       '<el-menu anchor="bottom end" popover class=" min-w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
         '<div class="py-1">' +
-          '<a href="#" data-view-details-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>' +
-          '<a href="#" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Edit payment</a>' +
-          '<a href="#" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Cancel</a>' +
+          defaultItemsHtml +
         '</div>' +
       '</el-menu>' +
     '</el-dropdown>';
@@ -832,7 +937,11 @@
     var paymentInfo = info || {};
     var payerCardInfo = paymentInfo.payerCard || paymentInfo;
     var cardHolderName = (customer && customer.name) || payerCardInfo.cardholderName || entry.vendorEntry || '';
-    var cardHolderAddress = payerCardInfo.cardholderAddress || paymentInfo.cardholderAddress || '';
+    var cardHolderAddress =
+      payerCardInfo.cardholderAddress ||
+      paymentInfo.cardholderAddress ||
+      (customer && customer.address) ||
+      '';
     var cardNumberRaw = String(paymentInfo.cardNumber || payerCardInfo.cardNumber || entry.paymentMethodEnding || '');
     var cardDigits = cardNumberRaw.replace(/\D/g, '');
     var cardLast4 = cardDigits.length >= 4 ? cardDigits.slice(-4) : '0000';
@@ -2749,6 +2858,82 @@
     return null;
   }
 
+  function getGuideCardDetailsHighlightEl() {
+    var dialog = document.getElementById('gp-card-details-dialog');
+    if (!dialog || !dialog.open) return null;
+    return document.getElementById('gp-card-copy-details-section');
+  }
+
+  function clearGuideCardDetailsHighlight() {
+    var section = document.getElementById('gp-card-copy-details-section');
+    if (section) {
+      section.classList.remove(
+        'ring-2',
+        'ring-blue-500',
+        'ring-offset-2',
+        'ring-offset-white',
+        'dark:ring-offset-gray-900'
+      );
+    }
+    actionGuideState.modalHighlightEl = null;
+  }
+
+  function getGuideCardDetailsRect() {
+    var section = getGuideCardDetailsHighlightEl();
+    if (!section) return null;
+    var rect = section.getBoundingClientRect();
+    if (rect.width <= 0 || rect.height <= 0) return null;
+    if (rect.bottom <= 0 || rect.top >= window.innerHeight) return null;
+    return rect;
+  }
+
+  function ensureGuideTooltipHostForCurrentStep() {
+    if (!actionGuideState.tooltipEl) return;
+    var host = document.body;
+    if (actionGuideState.step === 3) {
+      var dialog = document.getElementById('gp-card-details-dialog');
+      var panel = dialog ? dialog.querySelector('el-dialog-panel') : null;
+      if (dialog && dialog.open && panel) {
+        host = panel;
+        // Keep tooltip visible outside panel bounds while still counting as "inside modal".
+        panel.classList.remove('overflow-hidden');
+        panel.setAttribute('data-guide-tooltip-open', 'true');
+      }
+    } else {
+      var openDialog = document.getElementById('gp-card-details-dialog');
+      var openPanel = openDialog ? openDialog.querySelector('el-dialog-panel[data-guide-tooltip-open="true"]') : null;
+      if (openPanel) {
+        openPanel.classList.add('overflow-hidden');
+        openPanel.removeAttribute('data-guide-tooltip-open');
+      }
+    }
+    if (actionGuideState.tooltipEl.parentNode !== host) {
+      // Avoid one-frame flash at stale coordinates when host changes (step 2 -> step 3).
+      actionGuideState.tooltipEl.style.display = 'none';
+      actionGuideState.tooltipEl.style.opacity = '0';
+      host.appendChild(actionGuideState.tooltipEl);
+    }
+  }
+
+  function setGuideModalHighlightActive(active) {
+    var target = getGuideCardDetailsHighlightEl();
+    if (actionGuideState.modalHighlightEl && actionGuideState.modalHighlightEl !== target) {
+      clearGuideCardDetailsHighlight();
+    }
+    if (!active || !target) {
+      if (!active) clearGuideCardDetailsHighlight();
+      return;
+    }
+    target.classList.add(
+      'ring-2',
+      'ring-blue-500',
+      'ring-offset-2',
+      'ring-offset-white',
+      'dark:ring-offset-gray-900'
+    );
+    actionGuideState.modalHighlightEl = target;
+  }
+
   function openGuideMenuForTargetButton(button) {
     if (!button) return;
     var dropdown = button.closest('el-dropdown');
@@ -2787,25 +2972,73 @@
 
   function openCardDetailsModalForEntry(entry) {
     if (!entry) return;
+    if (entry.methodType !== 'card') return;
+    if (!(actionGuideState.active && actionGuideState.step === 3)) {
+      clearGuideCardDetailsHighlight();
+    }
+    var howContent = document.getElementById('gp-card-how-content');
+    var howToggle = document.getElementById('gp-card-how-toggle');
+    if (howContent) {
+      howContent.classList.add('hidden');
+      howContent.classList.remove('flex');
+    }
+    if (howToggle) {
+      var howIcon = howToggle.querySelector('[data-collapse-icon]');
+      if (howIcon) howIcon.classList.remove('rotate-180');
+    }
     _activeGetPaidEntry = entry;
     populateGetPaidCardModal(entry);
     var dialog = document.getElementById('gp-card-details-dialog');
     if (dialog && typeof dialog.showModal === 'function') {
-      if (dialog.open) dialog.close();
-      dialog.showModal();
+      if (!dialog.open) dialog.showModal();
     }
   }
 
   function openGuideSelectedEntryCardDetailsModal() {
     var entry = getGuideSelectedEntry();
-    if (!entry) return;
-    closeActionColumnGuide();
+    if (!entry) return false;
     openCardDetailsModalForEntry(entry);
+    return true;
   }
 
   function setGuideTooltipContent(step) {
     if (!actionGuideState.tooltipEl) return;
     actionGuideState.step = step;
+    ensureGuideTooltipHostForCurrentStep();
+    if (step === 3) {
+      actionGuideState.tooltipEl.innerHTML =
+        '<div class="relative rounded-lg border border-gray-300 bg-gray-50 p-4 shadow-sm dark:border-white/10 dark:bg-gray-800">' +
+          '<span class="pointer-events-none absolute top-1/2 -right-1 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-t border-r border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-gray-800"></span>' +
+          '<div class="flex items-start justify-between gap-4">' +
+            '<div class="min-w-0">' +
+              '<p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Use This Card in Your Terminal</p>' +
+              '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Take these card details and run the payment through your terminal like a regular card charge.</p>' +
+            '</div>' +
+          '</div>' +
+          '<div class="mt-4 flex items-center justify-end gap-2">' +
+            '<button type="button" data-guide-tooltip-done class="rounded bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Done</button>' +
+          '</div>' +
+        '</div>';
+      var doneBtn = actionGuideState.tooltipEl.querySelector('[data-guide-tooltip-done]');
+      if (doneBtn) {
+        doneBtn.addEventListener('pointerdown', function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+        }, true);
+        doneBtn.addEventListener('click', function (event) {
+          event.preventDefault();
+          event.stopPropagation();
+          if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+          if (window.STPState && typeof window.STPState.setStpStep === 'function') {
+            window.STPState.setStpStep('bank_verification_required');
+          }
+          closeActionColumnGuide({ keepCardDetailsModalOpen: true });
+        });
+      }
+      return;
+    }
+
     if (step === 2) {
       actionGuideState.tooltipEl.innerHTML =
         '<div class="relative rounded-lg border border-gray-300 bg-gray-50 p-4 shadow-sm dark:border-white/10 dark:bg-gray-800">' +
@@ -2825,7 +3058,7 @@
       var nextBtnStep2 = actionGuideState.tooltipEl.querySelector('[data-guide-tooltip-next]');
       if (skipBtnStep2) skipBtnStep2.addEventListener('click', closeActionColumnGuide);
       if (nextBtnStep2) nextBtnStep2.addEventListener('click', function () {
-        openGuideSelectedEntryCardDetailsModal();
+        goToGuideStep3();
       });
       return;
     }
@@ -2913,27 +3146,116 @@
     tryAdvance();
   }
 
+  function goToGuideStep3() {
+    if (!actionGuideState.active) return;
+    if (actionGuideState.step === 3 && getGuideCardDetailsRect()) {
+      syncActionColumnGuide();
+      return;
+    }
+    actionGuideState.step3Transitioning = true;
+    if (actionGuideState.tooltipEl) {
+      actionGuideState.tooltipEl.style.display = 'none';
+      actionGuideState.tooltipEl.style.visibility = 'hidden';
+      actionGuideState.tooltipEl.style.opacity = '0';
+    }
+    var opened = openGuideSelectedEntryCardDetailsModal();
+    if (!opened) {
+      actionGuideState.step3Transitioning = false;
+      syncActionColumnGuide();
+      return;
+    }
+    var attempts = 0;
+    function tryAdvance() {
+      if (!actionGuideState.active) return;
+      var rect = getGuideCardDetailsRect();
+      if (rect) {
+        var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        if (reducedMotion || !actionGuideState.tooltipEl) {
+          setGuideTooltipContent(3);
+          syncActionColumnGuide();
+          actionGuideState.step3Transitioning = false;
+          syncActionColumnGuide();
+          if (actionGuideState.tooltipEl) {
+            actionGuideState.tooltipEl.style.opacity = '1';
+            actionGuideState.tooltipEl.style.transform = 'translateX(0)';
+          }
+          return;
+        }
+        actionGuideState.tooltipEl.style.opacity = '0';
+        actionGuideState.tooltipEl.style.transform = 'translateX(-10px)';
+        if (actionGuideState.stepTransitionTimer) clearTimeout(actionGuideState.stepTransitionTimer);
+        actionGuideState.stepTransitionTimer = window.setTimeout(function () {
+          setGuideTooltipContent(3);
+          actionGuideState.step3Transitioning = false;
+          syncActionColumnGuide();
+          syncActionColumnGuide();
+          if (actionGuideState.tooltipEl && actionGuideState.active) {
+            actionGuideState.tooltipEl.style.opacity = '1';
+            actionGuideState.tooltipEl.style.transform = 'translateX(0)';
+          }
+        }, 160);
+        return;
+      }
+      attempts += 1;
+      if (attempts <= 30) {
+        window.requestAnimationFrame(tryAdvance);
+      } else {
+        actionGuideState.step3Transitioning = false;
+        syncActionColumnGuide();
+      }
+    }
+    tryAdvance();
+  }
+
   function positionGuideTooltip() {
     if (!actionGuideState.tooltipEl) return;
-    var rect = actionGuideState.step === 2 ? getGuideViewDetailsRect() : getFirstGuideTargetButtonRect();
+    if (actionGuideState.step3Transitioning) {
+      actionGuideState.tooltipEl.style.display = 'none';
+      actionGuideState.tooltipEl.style.visibility = 'hidden';
+      return;
+    }
+    ensureGuideTooltipHostForCurrentStep();
+    var rect = null;
+    if (actionGuideState.step === 3) rect = getGuideCardDetailsRect();
+    else if (actionGuideState.step === 2) rect = getGuideViewDetailsRect();
+    else rect = getFirstGuideTargetButtonRect();
     if (!rect) {
       actionGuideState.tooltipEl.style.display = 'none';
+      actionGuideState.tooltipEl.style.visibility = 'hidden';
       return;
     }
 
+    // Park offscreen before measuring to avoid a one-frame flash at stale coordinates.
+    actionGuideState.tooltipEl.style.left = '-9999px';
+    actionGuideState.tooltipEl.style.top = '-9999px';
     actionGuideState.tooltipEl.style.display = 'inline-flex';
+    actionGuideState.tooltipEl.style.visibility = 'hidden';
     var gap = 16;
     var tooltipRect = actionGuideState.tooltipEl.getBoundingClientRect();
+    var hostPanel = actionGuideState.step === 3 ? actionGuideState.tooltipEl.closest('el-dialog-panel') : null;
+    if (hostPanel) {
+      actionGuideState.tooltipEl.style.position = 'absolute';
+      var panelRect = hostPanel.getBoundingClientRect();
+      var leftInPanel = (rect.left - panelRect.left) - tooltipRect.width - gap;
+      var topInPanel = (rect.top - panelRect.top) + (rect.height / 2) - (tooltipRect.height / 2);
+      actionGuideState.tooltipEl.style.left = leftInPanel + 'px';
+      actionGuideState.tooltipEl.style.top = topInPanel + 'px';
+      actionGuideState.tooltipEl.style.visibility = 'visible';
+      return;
+    }
+    actionGuideState.tooltipEl.style.position = 'fixed';
     var left = rect.left - tooltipRect.width - gap;
     var top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
     var maxLeft = window.innerWidth - tooltipRect.width - 16;
     var maxTop = window.innerHeight - tooltipRect.height - 16;
     if (left < 16 || left > maxLeft || top < 16 || top > maxTop) {
       actionGuideState.tooltipEl.style.display = 'none';
+      actionGuideState.tooltipEl.style.visibility = 'hidden';
       return;
     }
     actionGuideState.tooltipEl.style.left = left + 'px';
     actionGuideState.tooltipEl.style.top = top + 'px';
+    actionGuideState.tooltipEl.style.visibility = 'visible';
   }
 
   function getGuideTransitionDuration() {
@@ -2943,6 +3265,12 @@
 
   function buildGuideSpotlightBoxes() {
     if (!actionGuideState.spotlightLayerEl) return;
+    if (actionGuideState.step === 3) {
+      actionGuideState.spotlightLayerEl.innerHTML = '';
+      setGuideModalHighlightActive(true);
+      return;
+    }
+    setGuideModalHighlightActive(false);
     var rows = getGuideCardRows();
     actionGuideState.spotlightLayerEl.innerHTML = '';
     rows.forEach(function (row) {
@@ -2964,7 +3292,9 @@
     positionGuideTooltip();
   }
 
-  function closeActionColumnGuide() {
+  function closeActionColumnGuide(options) {
+    var keepCardDetailsModalOpen = !!(options && options.keepCardDetailsModalOpen);
+    var cardDetailsDialog = keepCardDetailsModalOpen ? document.getElementById('gp-card-details-dialog') : null;
     if (actionGuideState.openTimer) {
       clearTimeout(actionGuideState.openTimer);
       actionGuideState.openTimer = null;
@@ -2988,6 +3318,14 @@
     if (actionGuideState.stepTransitionTimer) {
       clearTimeout(actionGuideState.stepTransitionTimer);
       actionGuideState.stepTransitionTimer = null;
+    }
+    actionGuideState.step3Transitioning = false;
+    setGuideModalHighlightActive(false);
+    var guideDialog = document.getElementById('gp-card-details-dialog');
+    var guidePanel = guideDialog ? guideDialog.querySelector('el-dialog-panel[data-guide-tooltip-open="true"]') : null;
+    if (guidePanel) {
+      guidePanel.classList.add('overflow-hidden');
+      guidePanel.removeAttribute('data-guide-tooltip-open');
     }
 
     var backdropToRemove = actionGuideState.backdropEl;
@@ -3016,6 +3354,7 @@
     actionGuideState.closeBtnEl = null;
     actionGuideState.spotlightLayerEl = null;
     actionGuideState.tooltipEl = null;
+    actionGuideState.modalHighlightEl = null;
 
     var cleanup = function () {
       if (backdropToRemove && backdropToRemove.parentNode) backdropToRemove.parentNode.removeChild(backdropToRemove);
@@ -3025,6 +3364,9 @@
       actionGuideState.highlightFilter = '';
       actionGuideState.selectedInvoice = '';
       renderCurrentPage();
+      if (keepCardDetailsModalOpen && cardDetailsDialog && !cardDetailsDialog.open && typeof cardDetailsDialog.showModal === 'function') {
+        cardDetailsDialog.showModal();
+      }
     };
 
     var duration = getGuideTransitionDuration();
@@ -3066,6 +3408,7 @@
 
     var tooltip = document.createElement('div');
     tooltip.className = 'fixed z-[230] w-[413px] max-w-[calc(100vw-32px)] transition-[opacity,transform] duration-400 ease-out motion-reduce:transition-none';
+    tooltip.setAttribute('data-guide-tooltip-host', 'true');
     tooltip.style.opacity = '0';
     tooltip.style.transform = 'translateX(-10px)';
     document.body.appendChild(tooltip);
@@ -3076,6 +3419,10 @@
       if (!actionGuideState.active) return;
       var tooltipEl = actionGuideState.tooltipEl;
       if (tooltipEl && tooltipEl.contains(event.target)) return;
+      if (actionGuideState.step === 3) {
+        var cardDialog = document.getElementById('gp-card-details-dialog');
+        if (cardDialog && cardDialog.open && cardDialog.contains(event.target)) return;
+      }
       var actionTrigger = event.target.closest('[data-action-menu-trigger="true"]');
       if (actionTrigger && actionGuideState.step === 1) {
         var actionEntry = getEntryFromActionTrigger(actionTrigger);
@@ -3217,8 +3564,9 @@
     var vendorEntries = Array.isArray(customer.vendorEntries)
       ? customer.vendorEntries.map(function (v) { return String(v || '').trim(); }).filter(Boolean)
       : [];
+    var address = typeof customer.address === 'string' ? customer.address.trim() : '';
     if (!id || !name) return null;
-    return { id: id, name: name, vendorEntries: vendorEntries };
+    return { id: id, name: name, vendorEntries: vendorEntries, address: address };
   }
 
   function fetchCustomersData() {
@@ -3542,13 +3890,47 @@
     if (vcFullExpiryEl) vcFullExpiryEl.textContent = expiryFull;
     if (vcCvcEl) vcCvcEl.textContent = cvcValue;
     if (vcCvvPillEl) vcCvvPillEl.textContent = 'CVV : ' + cvcValue;
+
+    var footer = document.getElementById('gp-card-details-footer');
+    var markPaidBtn = document.getElementById('gp-card-mark-paid-btn');
+    var showMarkPaid = _activeTableTabKey === 'pending' && isPendingLikeStatus(entry.status) && entry.methodType === 'card';
+    if (footer) footer.classList.toggle('hidden', !showMarkPaid);
+    if (markPaidBtn) {
+      if (showMarkPaid) markPaidBtn.setAttribute('data-mark-paid-invoice', entry.invoice || '');
+      else markPaidBtn.removeAttribute('data-mark-paid-invoice');
+    }
   }
 
   function initGetPaidCardDetailsTrigger() {
     document.addEventListener('click', function (e) {
       var trigger = e.target.closest('[commandfor="gp-card-details-dialog"]');
       if (!trigger) return;
+      if (!(actionGuideState.active && actionGuideState.step === 3)) {
+        clearGuideCardDetailsHighlight();
+      }
+      var howContent = document.getElementById('gp-card-how-content');
+      var howToggle = document.getElementById('gp-card-how-toggle');
+      if (howContent) {
+        howContent.classList.add('hidden');
+        howContent.classList.remove('flex');
+      }
+      if (howToggle) {
+        var howIcon = howToggle.querySelector('[data-collapse-icon]');
+        if (howIcon) howIcon.classList.remove('rotate-180');
+      }
       if (_activeGetPaidEntry) populateGetPaidCardModal(_activeGetPaidEntry);
+    });
+  }
+
+  function initCardDetailsHowItWorksToggle() {
+    var howToggle = document.getElementById('gp-card-how-toggle');
+    var howContent = document.getElementById('gp-card-how-content');
+    if (!howToggle || !howContent) return;
+    howToggle.addEventListener('click', function () {
+      howContent.classList.toggle('hidden');
+      howContent.classList.toggle('flex', !howContent.classList.contains('hidden'));
+      var icon = howToggle.querySelector('[data-collapse-icon]');
+      if (icon) icon.classList.toggle('rotate-180');
     });
   }
 
@@ -4308,9 +4690,54 @@
 
         refreshTableForActiveTab();
         populateGetPaidCardModal(_activeGetPaidEntry);
+        showTopActionToast('Payment marked as paid.');
 
         var dialog = document.getElementById('gp-submit-success-dialog');
         if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
+      });
+    }
+
+    function openMarkPaidConfirm(invoice, options) {
+      var normalizedInvoice = String(invoice || '').trim();
+      if (!normalizedInvoice) return;
+      pendingMarkPaidInvoice = normalizedInvoice;
+      pendingMarkPaidCloseCardDialog = !!(options && options.closeCardDetailsDialog);
+      var dialog = document.getElementById('gp-mark-paid-confirm-dialog');
+      if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
+        dialog.showModal();
+      }
+    }
+
+    function applyPendingMarkPaid() {
+      if (!pendingMarkPaidInvoice) return;
+      var targetEntry = findEntryByInvoice(pendingMarkPaidInvoice);
+      if (targetEntry) {
+        targetEntry.status = 'paid';
+        refreshTableForActiveTab();
+        showTopActionToast('Payment marked as paid.');
+      }
+      if (pendingMarkPaidCloseCardDialog) {
+        var cardDialog = document.getElementById('gp-card-details-dialog');
+        if (cardDialog && cardDialog.open && typeof cardDialog.close === 'function') cardDialog.close();
+      }
+      pendingMarkPaidInvoice = '';
+      pendingMarkPaidCloseCardDialog = false;
+    }
+
+    var markPaidConfirmDialog = document.getElementById('gp-mark-paid-confirm-dialog');
+    var markPaidConfirmBtn = document.getElementById('gp-mark-paid-confirm-btn');
+    if (markPaidConfirmBtn) {
+      markPaidConfirmBtn.addEventListener('click', function () {
+        applyPendingMarkPaid();
+        if (markPaidConfirmDialog && markPaidConfirmDialog.open && typeof markPaidConfirmDialog.close === 'function') {
+          markPaidConfirmDialog.close();
+        }
+      });
+    }
+    if (markPaidConfirmDialog) {
+      markPaidConfirmDialog.addEventListener('close', function () {
+        pendingMarkPaidInvoice = '';
+        pendingMarkPaidCloseCardDialog = false;
       });
     }
 
@@ -4322,8 +4749,20 @@
         var invoiceForDetails = viewDetailsLink.getAttribute('data-view-details-invoice');
         if (invoiceForDetails) setGuideSelectedInvoice(invoiceForDetails);
         var detailsEntry = findEntryByInvoice(invoiceForDetails);
-        if (actionGuideState.active) closeActionColumnGuide();
+        if (detailsEntry && detailsEntry.methodType !== 'card') return;
         if (detailsEntry) openCardDetailsModalForEntry(detailsEntry);
+        if (actionGuideState.active) {
+          if (actionGuideState.step === 2) goToGuideStep3();
+          else if (actionGuideState.step !== 3) closeActionColumnGuide();
+        }
+        return;
+      }
+
+      var markPaidBtn = e.target.closest('#gp-card-mark-paid-btn[data-mark-paid-invoice]');
+      if (markPaidBtn) {
+        e.preventDefault();
+        var invoiceFromModal = markPaidBtn.getAttribute('data-mark-paid-invoice');
+        openMarkPaidConfirm(invoiceFromModal, { closeCardDetailsDialog: true });
         return;
       }
 
@@ -4331,11 +4770,7 @@
       if (markPaidLink) {
         e.preventDefault();
         var invoiceToMark = markPaidLink.getAttribute('data-mark-paid-invoice');
-        var targetEntry = findEntryByInvoice(invoiceToMark);
-        if (targetEntry) {
-          targetEntry.status = 'paid';
-          refreshTableForActiveTab();
-        }
+        openMarkPaidConfirm(invoiceToMark);
         return;
       }
 
@@ -4613,6 +5048,65 @@
     });
   }
 
+  function initCardDetailsDialogGuards() {
+    var cardDialog = document.getElementById('gp-card-details-dialog');
+    if (!cardDialog || cardDialog.getAttribute('data-outside-close-guard') === 'true') return;
+    cardDialog.setAttribute('data-outside-close-guard', 'true');
+
+    // Keep this modal dismissible only via explicit controls (close button / commands).
+    cardDialog.addEventListener('cancel', function (event) {
+      event.preventDefault();
+    });
+
+    function isCardDialogBackdropInteraction(event) {
+      var target = event.target;
+      if (!target || typeof target.closest !== 'function') return false;
+      if (!cardDialog.open) return false;
+      if (target.closest('[data-guide-tooltip-host]')) return false;
+      if (target === cardDialog) return true;
+      if (target.closest('el-dialog-panel')) return false;
+      if (target.closest('el-dialog-backdrop')) return true;
+      return cardDialog.contains(target);
+    }
+
+    function swallowBackdropInteraction(event) {
+      if (!isCardDialogBackdropInteraction(event)) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+    }
+
+    cardDialog.addEventListener('pointerdown', swallowBackdropInteraction, true);
+    cardDialog.addEventListener('click', swallowBackdropInteraction, true);
+
+    // Some dialog wrapper implementations emit light-dismiss from elements outside <dialog>.
+    // Guard globally while this specific dialog is open so only explicit close controls can dismiss.
+    function swallowOutsidePanelInteraction(event) {
+      if (!cardDialog.open) return;
+      var target = event.target;
+      if (!target || typeof target.closest !== 'function') return;
+      var cardDialogHost = cardDialog.closest('el-dialog');
+      if (target.closest('[data-guide-tooltip-host]')) return;
+      if (target.closest('[command="close"][commandfor="gp-card-details-dialog"]')) return;
+      if (target.closest('#gp-card-mark-paid-btn')) return;
+      if (target.closest('#gp-card-details-dialog el-dialog-panel')) return;
+      if (target.closest('#gp-card-details-dialog [data-copy-id]')) return;
+      if (target.closest('#gp-card-how-toggle')) return;
+
+      var inCardDialog = !!target.closest('#gp-card-details-dialog');
+      var inCardDialogHost = !!(cardDialogHost && cardDialogHost.contains(target));
+      if (!inCardDialog && !inCardDialogHost) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+    }
+
+    document.addEventListener('pointerdown', swallowOutsidePanelInteraction, true);
+    document.addEventListener('click', swallowOutsidePanelInteraction, true);
+
+  }
+
   // ── Init ──
 
   function init() {
@@ -4622,9 +5116,11 @@
     initTableFilterDropdown();
     initGetPaidPanel();
     initGetPaidCardDetailsTrigger();
+    initCardDetailsHowItWorksToggle();
     initReviewModal();
     initSignatureModal();
     initSubmitSuccessModalCopy();
+    initCardDetailsDialogGuards();
     var shouldOpenActionGuide = shouldShowActionColumnGuide();
     if (shouldOpenActionGuide) removeGuideUrlParam();
 

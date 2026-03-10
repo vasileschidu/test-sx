@@ -258,6 +258,154 @@ function initCountryFlag() {
     });
 }
 
+/* ===== Global Top Snackbar ===== */
+
+var _globalTopToast = {
+    el: null,
+    removeTimer: null,
+    autoHideTimer: null
+};
+
+function _escapeToastHtml(value) {
+    return String(value == null ? '' : value)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function ensureGlobalTopToastStyles() {
+    if (document.getElementById('sx-global-top-toast-style')) return;
+    var style = document.createElement('style');
+    style.id = 'sx-global-top-toast-style';
+    style.textContent =
+        '.sx-global-top-toast{' +
+        'position:fixed;left:50%;top:36px;z-index:500;display:flex;align-items:center;gap:12px;' +
+        'max-width:min(680px,calc(100vw - 24px));padding:10px 12px;border-radius:10px;' +
+        'background:#111827;color:#fff;box-shadow:0 10px 25px rgba(0,0,0,.2);' +
+        'transform:translate(-50%,-8px);opacity:0;pointer-events:auto;' +
+        'transition:transform 220ms ease,opacity 220ms ease;}' +
+        '.sx-global-top-toast[data-state="visible"]{transform:translate(-50%,0);opacity:1;}' +
+        '.sx-global-top-toast[data-state="leaving"]{transform:translate(-50%,8px);opacity:0;}' +
+        '.sx-global-top-toast__msg{font-size:14px;line-height:20px;font-weight:500;}' +
+        '.sx-global-top-toast__close{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:#D1D5DB;cursor:pointer;}' +
+        '.sx-global-top-toast__close:hover{background:rgba(255,255,255,.12);color:#fff;}';
+    document.head.appendChild(style);
+}
+
+function hideGlobalTopToast() {
+    if (!_globalTopToast.el) return;
+    if (_globalTopToast.autoHideTimer) {
+        clearTimeout(_globalTopToast.autoHideTimer);
+        _globalTopToast.autoHideTimer = null;
+    }
+    _globalTopToast.el.setAttribute('data-state', 'leaving');
+    if (_globalTopToast.removeTimer) clearTimeout(_globalTopToast.removeTimer);
+    _globalTopToast.removeTimer = window.setTimeout(function () {
+        if (!_globalTopToast.el) return;
+        _globalTopToast.el.remove();
+        _globalTopToast.el = null;
+        _globalTopToast.removeTimer = null;
+    }, 240);
+}
+
+function showGlobalTopToast(message) {
+    var text = String(message || '').trim();
+    if (!text) return;
+    ensureGlobalTopToastStyles();
+    if (_globalTopToast.removeTimer) {
+        clearTimeout(_globalTopToast.removeTimer);
+        _globalTopToast.removeTimer = null;
+    }
+    if (_globalTopToast.autoHideTimer) {
+        clearTimeout(_globalTopToast.autoHideTimer);
+        _globalTopToast.autoHideTimer = null;
+    }
+    if (_globalTopToast.el) {
+        _globalTopToast.el.remove();
+        _globalTopToast.el = null;
+    }
+
+    var toast = document.createElement('div');
+    toast.className = 'sx-global-top-toast';
+    toast.setAttribute('role', 'status');
+    toast.setAttribute('aria-live', 'polite');
+    toast.innerHTML =
+        '<span aria-hidden="true" class="inline-flex shrink-0 text-emerald-500">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">' +
+              '<path fill-rule="evenodd" clip-rule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.8566 8.19113C14.1002 7.85614 14.0261 7.38708 13.6911 7.14345C13.3561 6.89982 12.8871 6.97388 12.6434 7.30887L9.15969 12.099L7.28033 10.2197C6.98744 9.92678 6.51256 9.92678 6.21967 10.2197C5.92678 10.5126 5.92678 10.9874 6.21967 11.2803L8.71967 13.7803C8.87477 13.9354 9.08999 14.0149 9.30867 13.9977C9.52734 13.9805 9.72754 13.8685 9.85655 13.6911L13.8566 8.19113Z" fill="#10B981"/>' +
+            '</svg>' +
+        '</span>' +
+        '<span class="sx-global-top-toast__msg">' + _escapeToastHtml(text) + '</span>' +
+        '<button type="button" aria-label="Dismiss notification" class="sx-global-top-toast__close">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">' +
+                '<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/>' +
+            '</svg>' +
+        '</button>';
+    document.body.appendChild(toast);
+    _globalTopToast.el = toast;
+
+    var closeBtn = toast.querySelector('.sx-global-top-toast__close');
+    if (closeBtn) closeBtn.addEventListener('click', hideGlobalTopToast);
+
+    window.requestAnimationFrame(function () {
+        if (!_globalTopToast.el) return;
+        _globalTopToast.el.setAttribute('data-state', 'visible');
+    });
+    _globalTopToast.autoHideTimer = window.setTimeout(hideGlobalTopToast, 3000);
+}
+
+window.showGlobalTopToast = showGlobalTopToast;
+
+/* ===== Dialog Dismiss Guard ===== */
+
+function initDialogDismissGuard() {
+    // Disable light-dismiss/escape-dismiss globally for native dialogs.
+    document.addEventListener('cancel', function (e) {
+        var dialog = e.target;
+        if (!dialog || dialog.tagName !== 'DIALOG') return;
+        e.preventDefault();
+    }, true);
+
+    // Ignore backdrop clicks for both native <dialog> backdrops and custom el-dialog wrappers.
+    function isDialogBackdropInteraction(e) {
+        var target = e.target;
+        if (!target || typeof target.closest !== 'function') return false;
+        if (target.closest('[data-guide-tooltip-host]')) return false;
+        var dialog = target.closest('dialog[open]');
+        if (!dialog) {
+            var backdrop = target.closest('el-dialog-backdrop');
+            if (backdrop) {
+                var backdropHost = backdrop.closest('el-dialog');
+                if (backdropHost && backdropHost.querySelector('dialog[open]')) return true;
+            }
+            var host = target.closest('el-dialog');
+            if (
+                host &&
+                host.querySelector('dialog[open]') &&
+                host.querySelector('el-dialog-panel') &&
+                !target.closest('el-dialog-panel')
+            ) return true;
+            return false;
+        }
+        if (target === dialog) return true;
+        if (target.closest('el-dialog-panel')) return false;
+        if (!dialog.querySelector('el-dialog-panel')) return false;
+        if (target.closest('el-dialog-backdrop')) return true;
+        // For Tailwind-plus el-dialog structure, wrapper clicks outside panel are light-dismiss attempts.
+        return dialog.contains(target);
+    }
+
+    function blockBackdropPointer(e) {
+        if (!isDialogBackdropInteraction(e)) return;
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    document.addEventListener('pointerdown', blockBackdropPointer, true);
+    document.addEventListener('click', blockBackdropPointer, true);
+}
+
 /* ===== Mobile Overlay Scroll Lock ===== */
 
 var _mobileOverlayScrollLock = {
@@ -355,4 +503,5 @@ initBreadcrumbs();
 initCopyToClipboard();
 initMaskedCopySync();
 initCountryFlag();
+initDialogDismissGuard();
 initMobileOverlayScrollLock();

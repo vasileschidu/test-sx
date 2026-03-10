@@ -1,6 +1,6 @@
 [
   { "id": "rad-roofing-ltd", "name": "Rad Roofing Ltd", "vendorEntries": ["Rad Roof", "Rad Roof - West Division"] },
-  { "id": "blueprint-architecture-inc", "name": "BluePrint Architecture Inc", "vendorEntries": ["BluePrint Arc", "BluePrint Arc - Capital Projects"] },
+  { "id": "blueprint-architecture-inc", "name": "BluePrint Architecture Inc", "vendorEntries": ["BluePrint Arc", "BluePrint Arc - Capital Projects"], "address": "225 W Wacker Drive\nSuite 1800\nChicago, IL 60606\nUnited States" },
   { "id": "greenscape-gardens-eu", "name": "GreenScape Gardens EU", "vendorEntries": ["GreenScape"] },
   { "id": "technova-solutions-llc", "name": "TechNova Solutions LLC", "vendorEntries": ["TechNova", "TechNova - Enterprise Services"] },
   { "id": "clearview-windows-uk", "name": "ClearView Windows UK", "vendorEntries": ["ClearView"] },

@@ -1271,6 +1271,11 @@
             var editingCheckAddressId = '';
             var pendingDeleteBankAccountId = '';
             var pendingDeleteCheckAddressId = '';
+            function notifyCrud(message) {
+                if (window.showGlobalTopToast && typeof window.showGlobalTopToast === 'function') {
+                    window.showGlobalTopToast(message);
+                }
+            }
 
             function sanitizeDigits(value, maxLen) {
                 return (value || '').replace(/\D/g, '').slice(0, maxLen);
@@ -1768,10 +1773,12 @@
 
             deleteBankConfirmBtn.addEventListener('click', function () {
                 if (!pendingDeleteBankAccountId) return;
+                var deletedAccount = bankAccounts.find(function (account) { return account.id === pendingDeleteBankAccountId; });
                 bankAccounts = bankAccounts.filter(function (account) { return account.id !== pendingDeleteBankAccountId; });
                 saveBankAccounts();
                 renderAllViews();
                 deleteBankConfirmDialog.close();
+                notifyCrud('Deleted bank account "' + (deletedAccount && deletedAccount.name ? deletedAccount.name : 'Bank Account') + '".');
             });
 
             checkList.addEventListener('click', function (event) {
@@ -1804,10 +1811,12 @@
 
             deleteCheckConfirmBtn.addEventListener('click', function () {
                 if (!pendingDeleteCheckAddressId) return;
+                var deletedAddress = checkAddresses.find(function (address) { return address.id === pendingDeleteCheckAddressId; });
                 checkAddresses = checkAddresses.filter(function (address) { return address.id !== pendingDeleteCheckAddressId; });
                 saveCheckAddresses();
                 renderAllViews();
                 deleteCheckConfirmDialog.close();
+                notifyCrud('Deleted check address "' + (deletedAddress && deletedAddress.displayName ? deletedAddress.displayName : 'Check Address') + '".');
             });
 
             saveBtn.addEventListener('click', function () {
@@ -1842,6 +1851,7 @@
                 confirmAccountInput.value = '';
                 nicknameInput.value = '';
                 dialog.close();
+                notifyCrud('Added bank account "' + newAccount.name + '".');
             });
 
             addCheckCountrySelect.addEventListener('change', updateAddCheckCountryFlag);
@@ -1884,6 +1894,7 @@
                 saveBankAccounts();
                 renderAllViews();
                 editBankDialog.close();
+                notifyCrud('Updated bank account "' + account.name + '".');
             });
 
             editCheckSaveBtn.addEventListener('click', function () {
@@ -1919,6 +1930,7 @@
                 saveCheckAddresses();
                 renderAllViews();
                 editCheckDialog.close();
+                notifyCrud('Updated check address "' + address.displayName + '".');
             });
 
             addCheckSaveBtn.addEventListener('click', function () {
@@ -1954,6 +1966,7 @@
                 renderAllViews();
                 resetAddCheckForm();
                 addCheckDialog.close();
+                notifyCrud('Added check address "' + newAddress.displayName + '".');
             });
 
             document.querySelectorAll('[command="show-modal"][commandfor="pp-add-bank-account-dialog"]').forEach(function (btn) {
@@ -1981,22 +1994,44 @@
             var enableDialog = document.getElementById('pp-enable-stp-dialog');
             var nextStepsDialog = document.getElementById('pp-stp-next-steps-dialog');
             var verifyDialog = document.getElementById('pp-verify-deposit-dialog');
+            var verifySuccessDialog = document.getElementById('pp-verify-success-dialog');
             var agreementCheckbox = document.getElementById('pp-stp-agreement-checkbox');
             var enableConfirmBtn = document.getElementById('pp-enable-stp-confirm-btn');
             var input = document.getElementById('pp-deposit-amount');
             var verifyBtn = document.getElementById('pp-verify-deposit-btn');
+            var verifyCancelBtn = document.getElementById('pp-verify-deposit-cancel-btn');
+            var verifyCloseBtn = document.getElementById('pp-verify-deposit-close-btn');
             var errorMsg = document.getElementById('pp-deposit-amount-error');
             var errorIcon = document.getElementById('pp-deposit-amount-error-icon');
             var stpOptInBtn = document.getElementById('pp-stp-opt-in-btn');
+            var stpCardContainer = document.getElementById('pp-stp-card-container');
+            var stpActionsWrap = document.getElementById('pp-stp-actions-wrap');
+            var stpLearnMoreMenuBtn = document.getElementById('pp-stp-learn-more-menu-btn');
+            var stpOptOutMenuBtn = document.getElementById('pp-stp-opt-out-menu-btn');
+            var stpOptOutConfirmDialog = document.getElementById('pp-stp-opt-out-confirm-dialog');
+            var stpOptOutConfirmBtn = document.getElementById('pp-stp-opt-out-confirm-btn');
+            var stpStatusBadge = document.getElementById('pp-stp-status-badge');
+            var stpInlineVerifyAlert = document.getElementById('pp-stp-inline-verify-alert');
+            var stpInlineVerifyBtn = document.getElementById('pp-stp-inline-verify-btn');
+            var stpInlineLearnMoreBtn = document.getElementById('pp-stp-inline-learn-more-btn');
+            var stpFullyAutomatedWrap = document.getElementById('pp-stp-fully-automated-wrap');
+            var stpFullyAutomatedRow = document.getElementById('pp-stp-fully-automated-row');
+            var stpFullyAutomatedToggle = document.getElementById('pp-stp-fully-automated-toggle');
+            var verifySuccessDoneBtn = document.getElementById('pp-verify-success-done-btn');
             var stpTerminalImages = Array.prototype.slice.call(document.querySelectorAll('[data-stp-terminal-image]'));
             if (!agreementCheckbox || !enableConfirmBtn || !input || !verifyBtn || !errorMsg || !errorIcon) return;
             var hasError = false;
+            var isVerifyingDeposit = false;
             var stpAnimationCycleTimer = null;
             var stpDotTimers = [];
+            var stpFullyAutoGuideActive = false;
+            var stpFullyAutoGuideOverlay = null;
+            var stpFullyAutoGuideTooltip = null;
+            var stpFullyAutoGuideHighlight = null;
             var STP_ENABLED_CLASS =
-                'inline-flex shrink-0 items-center justify-center rounded-md bg-green-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs cursor-default';
+                'inline-flex w-full items-center justify-center rounded-md bg-green-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs cursor-default sm:w-auto';
             var STP_DISABLED_CLASS =
-                'inline-flex shrink-0 items-center justify-center rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer';
+                'inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer sm:w-auto';
 
             var TERMINAL_BASE_SRC = '../../../src/assets/illustrations/terminal.svg';
             var TERMINAL_PROGRESS_SRCS = [
@@ -2106,7 +2141,36 @@
             }
 
             function updateVerifyState() {
+                if (isVerifyingDeposit) {
+                    verifyBtn.disabled = true;
+                    return;
+                }
                 verifyBtn.disabled = hasError || !/\d/.test(input.value);
+            }
+
+            function setVerifyLoading(loading) {
+                isVerifyingDeposit = !!loading;
+                if (verifyCancelBtn) verifyCancelBtn.disabled = loading;
+                if (verifyCloseBtn) verifyCloseBtn.disabled = loading;
+                if (verifyBtn) {
+                    if (loading) {
+                        verifyBtn.disabled = true;
+                        verifyBtn.classList.add('bg-indigo-500');
+                        verifyBtn.classList.remove('hover:bg-blue-500');
+                        verifyBtn.innerHTML =
+                            '<span class="inline-flex items-center whitespace-nowrap">' +
+                                '<svg class="mr-3 size-5 animate-spin text-white" viewBox="0 0 24 24" fill="none" aria-hidden="true">' +
+                                    '<circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>' +
+                                    '<path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 0 1 8-8v3a5 5 0 0 0-5 5H4Z"></path>' +
+                                '</svg>' +
+                                '<span>Verifying...</span>' +
+                            '</span>';
+                    } else {
+                        verifyBtn.classList.remove('bg-indigo-500');
+                        verifyBtn.classList.add('hover:bg-blue-500');
+                        verifyBtn.textContent = 'Verify';
+                    }
+                }
             }
 
             function sanitizeDecimal(raw) {
@@ -2116,17 +2180,151 @@
                 return cleaned.slice(0, firstDot + 1) + cleaned.slice(firstDot + 1).replace(/\./g, '');
             }
 
+            function closeFullyAutomatedGuide() {
+                if (stpFullyAutoGuideOverlay) stpFullyAutoGuideOverlay.style.opacity = '0';
+                if (stpFullyAutoGuideTooltip) {
+                    stpFullyAutoGuideTooltip.style.opacity = '0';
+                    stpFullyAutoGuideTooltip.style.transform = 'translateX(-10px)';
+                }
+                if (stpFullyAutoGuideHighlight) stpFullyAutoGuideHighlight.style.opacity = '0';
+                var overlayToRemove = stpFullyAutoGuideOverlay;
+                var tooltipToRemove = stpFullyAutoGuideTooltip;
+                var highlightToRemove = stpFullyAutoGuideHighlight;
+                window.setTimeout(function () {
+                    if (overlayToRemove && overlayToRemove.parentNode) overlayToRemove.parentNode.removeChild(overlayToRemove);
+                    if (tooltipToRemove && tooltipToRemove.parentNode) tooltipToRemove.parentNode.removeChild(tooltipToRemove);
+                    if (highlightToRemove && highlightToRemove.parentNode) highlightToRemove.parentNode.removeChild(highlightToRemove);
+                }, 220);
+                stpFullyAutoGuideOverlay = null;
+                stpFullyAutoGuideTooltip = null;
+                stpFullyAutoGuideHighlight = null;
+                stpFullyAutoGuideActive = false;
+                if (stpFullyAutomatedRow) {
+                    stpFullyAutomatedRow.classList.remove('relative', 'z-[235]', 'bg-white', 'rounded-[8px]', 'px-2', 'py-2');
+                }
+                window.removeEventListener('resize', positionFullyAutomatedGuide);
+                window.removeEventListener('scroll', positionFullyAutomatedGuide, true);
+            }
+
+            function positionFullyAutomatedGuide() {
+                if (!stpFullyAutoGuideActive || !stpFullyAutomatedRow || !stpFullyAutoGuideTooltip || !stpFullyAutoGuideHighlight) return;
+                var rect = stpFullyAutomatedRow.getBoundingClientRect();
+                if (rect.width <= 0 || rect.height <= 0) return;
+                var pad = 8;
+                stpFullyAutoGuideHighlight.style.left = Math.max(8, rect.left - pad) + 'px';
+                stpFullyAutoGuideHighlight.style.top = Math.max(8, rect.top - pad) + 'px';
+                stpFullyAutoGuideHighlight.style.width = Math.min(window.innerWidth - 16, rect.width + (pad * 2)) + 'px';
+                stpFullyAutoGuideHighlight.style.height = rect.height + (pad * 2) + 'px';
+
+                stpFullyAutoGuideTooltip.style.left = '-9999px';
+                stpFullyAutoGuideTooltip.style.top = '-9999px';
+                stpFullyAutoGuideTooltip.style.visibility = 'hidden';
+                stpFullyAutoGuideTooltip.style.display = 'block';
+                var tooltipRect = stpFullyAutoGuideTooltip.getBoundingClientRect();
+                var left = rect.left + (rect.width / 2) - (tooltipRect.width / 2);
+                left = Math.max(16, Math.min(left, window.innerWidth - tooltipRect.width - 16));
+                var top = rect.bottom + 18;
+                top = Math.min(top, window.innerHeight - tooltipRect.height - 16);
+                stpFullyAutoGuideTooltip.style.left = left + 'px';
+                stpFullyAutoGuideTooltip.style.top = top + 'px';
+                stpFullyAutoGuideTooltip.style.visibility = 'visible';
+            }
+
+            function openFullyAutomatedGuide() {
+                if (!stpFullyAutomatedRow || stpFullyAutoGuideActive) return;
+                stpFullyAutoGuideActive = true;
+
+                var overlay = document.createElement('div');
+                overlay.className = 'fixed inset-0 z-[220] bg-gray-900/75 transition-opacity duration-300 ease-out motion-reduce:transition-none';
+                overlay.setAttribute('data-stp-fully-auto-guide-overlay', 'true');
+                overlay.style.opacity = '0';
+
+                var highlight = document.createElement('div');
+                highlight.className = 'fixed z-[230] rounded-[8px] border-2 border-blue-600 bg-transparent pointer-events-none transition-opacity duration-300 ease-out motion-reduce:transition-none';
+                highlight.setAttribute('data-stp-fully-auto-guide-highlight', 'true');
+                highlight.style.opacity = '0';
+
+                var tooltip = document.createElement('div');
+                tooltip.className = 'fixed z-[240] w-[413px] max-w-[calc(100vw-32px)] transition-[opacity,transform] duration-400 ease-out motion-reduce:transition-none';
+                tooltip.setAttribute('data-stp-fully-auto-guide-tooltip', 'true');
+                tooltip.style.opacity = '0';
+                tooltip.style.transform = 'translateX(-10px)';
+                tooltip.innerHTML =
+                    '<div class="relative rounded-lg border border-gray-300 bg-gray-50 p-4 shadow-sm dark:border-white/10 dark:bg-gray-800">' +
+                        '<span class="pointer-events-none absolute -top-1 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-t border-l border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-gray-800"></span>' +
+                        '<div class="flex items-start justify-between gap-4">' +
+                            '<div class="min-w-0">' +
+                                '<p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Automatic Card Processing is Set Up</p>' +
+                                '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Enable Fully Automated to let the system process payments automatically by card. The "Get Paid" step will only appear when documents or signatures are required</p>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="mt-4 flex items-center justify-end gap-2">' +
+                            '<button type="button" data-stp-fully-auto-guide-skip class="inline-flex items-center rounded-md px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-900/10 dark:text-gray-300 dark:hover:bg-gray-900/10">Skip for now</button>' +
+                            '<button type="button" data-stp-fully-auto-guide-enable class="rounded bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Enable</button>' +
+                        '</div>' +
+                    '</div>';
+
+                document.body.appendChild(overlay);
+                document.body.appendChild(highlight);
+                document.body.appendChild(tooltip);
+
+                stpFullyAutoGuideOverlay = overlay;
+                stpFullyAutoGuideTooltip = tooltip;
+                stpFullyAutoGuideHighlight = highlight;
+                stpFullyAutomatedRow.classList.add('relative', 'z-[235]', 'bg-white', 'rounded-[8px]', 'px-2', 'py-2');
+
+                function enableFullyAutomated() {
+                    if (!stpFullyAutomatedToggle) return;
+                    if (!stpFullyAutomatedToggle.checked) {
+                        stpFullyAutomatedToggle.checked = true;
+                        stpFullyAutomatedToggle.dispatchEvent(new Event('input', { bubbles: true }));
+                        stpFullyAutomatedToggle.dispatchEvent(new Event('change', { bubbles: true }));
+                    }
+                }
+
+                var skipBtn = tooltip.querySelector('[data-stp-fully-auto-guide-skip]');
+                var enableBtn = tooltip.querySelector('[data-stp-fully-auto-guide-enable]');
+                if (skipBtn) skipBtn.addEventListener('click', closeFullyAutomatedGuide);
+                if (enableBtn) {
+                    enableBtn.addEventListener('click', function () {
+                        enableFullyAutomated();
+                        closeFullyAutomatedGuide();
+                    });
+                }
+
+                window.addEventListener('resize', positionFullyAutomatedGuide);
+                window.addEventListener('scroll', positionFullyAutomatedGuide, true);
+                positionFullyAutomatedGuide();
+                window.requestAnimationFrame(function () {
+                    if (stpFullyAutoGuideOverlay) stpFullyAutoGuideOverlay.style.opacity = '1';
+                    if (stpFullyAutoGuideHighlight) stpFullyAutoGuideHighlight.style.opacity = '1';
+                    var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                    if (!stpFullyAutoGuideTooltip) return;
+                    if (reducedMotion) {
+                        stpFullyAutoGuideTooltip.style.opacity = '1';
+                        stpFullyAutoGuideTooltip.style.transform = 'translateX(0)';
+                    } else {
+                        window.setTimeout(function () {
+                            if (!stpFullyAutoGuideTooltip || !stpFullyAutoGuideActive) return;
+                            stpFullyAutoGuideTooltip.style.opacity = '1';
+                            stpFullyAutoGuideTooltip.style.transform = 'translateX(0)';
+                        }, 500);
+                    }
+                });
+            }
+
             function openNextStepsModal() {
                 if (enableDialog && enableDialog.open) {
                     try { enableDialog.close(); } catch (err) { /* noop */ }
                 }
                 setTimeout(function () {
+                    if (window.STPState && typeof window.STPState.setStpStep === 'function') {
+                        window.STPState.setStpStep('terminal_completed_tid_mid_received');
+                    } else if (window.STPState && typeof window.STPState.setStpStatus === 'function') {
+                        window.STPState.setStpStatus('in_progress');
+                    }
                     if (nextStepsDialog && typeof nextStepsDialog.showModal === 'function' && !nextStepsDialog.open) {
                         nextStepsDialog.showModal();
-                        return;
-                    }
-                    if (verifyDialog && typeof verifyDialog.showModal === 'function' && !verifyDialog.open) {
-                        verifyDialog.showModal();
                     }
                 }, 0);
             }
@@ -2140,21 +2338,54 @@
                 }
             }
 
-            function applyStpUi(status) {
+            function applyStpUi(status, state) {
                 if (!stpOptInBtn) return;
-                if (status === 'enabled') {
-                    stpOptInBtn.textContent = 'Enabled';
-                    stpOptInBtn.disabled = true;
-                    stpOptInBtn.className = STP_ENABLED_CLASS;
+                var stpStep = state && state.stpStep ? String(state.stpStep) : '';
+                var showOptIn = status === 'disabled' && stpStep === 'opt_in_required';
+                var showInlineVerify = status === 'in_progress' && stpStep === 'bank_verification_required';
+                var isEnabled = status === 'enabled';
+                if (stpCardContainer) {
+                    stpCardContainer.classList.toggle('pr-0', !showOptIn);
+                    stpCardContainer.classList.toggle('pr-3', showOptIn);
+                }
+                if (stpLearnMoreMenuBtn) {
+                    stpLearnMoreMenuBtn.textContent = isEnabled ? 'Changed payment processors' : 'Learn more';
+                }
+                if (stpStatusBadge) {
+                    var showStatusBadge = status === 'in_progress' || status === 'enabled';
+                    stpStatusBadge.hidden = !showStatusBadge;
+                    if (status === 'enabled') {
+                        stpStatusBadge.textContent = 'Opted in';
+                        stpStatusBadge.className = 'inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30';
+                    } else {
+                        stpStatusBadge.textContent = 'Enabling pending';
+                        stpStatusBadge.className = 'inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-white/5 dark:text-gray-300 dark:ring-white/15';
+                    }
+                    stpStatusBadge.classList.toggle('hidden', !showStatusBadge);
+                }
+                if (stpActionsWrap) {
+                    stpActionsWrap.classList.toggle('hidden', showOptIn);
+                }
+                if (stpInlineVerifyAlert) {
+                    stpInlineVerifyAlert.classList.toggle('hidden', !showInlineVerify);
+                }
+                if (stpFullyAutomatedWrap) {
+                    stpFullyAutomatedWrap.classList.toggle('hidden', !isEnabled);
+                }
+                if (!showOptIn) {
+                    stpOptInBtn.hidden = true;
+                    stpOptInBtn.classList.add('hidden');
                     return;
                 }
+                stpOptInBtn.hidden = false;
                 stpOptInBtn.textContent = 'Opt in';
                 stpOptInBtn.disabled = false;
+                stpOptInBtn.classList.remove('hidden');
                 stpOptInBtn.className = STP_DISABLED_CLASS;
             }
 
-            function syncStpStatus(status) {
-                applyStpUi(status);
+            function syncStpStatus(status, state) {
+                applyStpUi(status, state);
             }
 
             agreementCheckbox.addEventListener('change', updateEnableState);
@@ -2172,7 +2403,88 @@
                     }
                 });
             }
-
+            if (stpOptOutMenuBtn && stpOptOutConfirmDialog && typeof stpOptOutConfirmDialog.showModal === 'function') {
+                stpOptOutMenuBtn.addEventListener('click', function () {
+                    stpOptOutConfirmDialog.showModal();
+                });
+            }
+            if (stpLearnMoreMenuBtn) {
+                stpLearnMoreMenuBtn.addEventListener('click', function () {
+                    if (window.STPState && typeof window.STPState.getStpStatus === 'function' && window.STPState.getStpStatus() === 'enabled') {
+                        return;
+                    }
+                    if (window.STPState && typeof window.STPState.openSetupStepsModal === 'function') {
+                        window.STPState.openSetupStepsModal();
+                        return;
+                    }
+                    if (nextStepsDialog && typeof nextStepsDialog.showModal === 'function' && !nextStepsDialog.open) {
+                        nextStepsDialog.showModal();
+                    }
+                });
+            }
+            if (stpInlineVerifyBtn) {
+                stpInlineVerifyBtn.addEventListener('click', function () {
+                    if (window.STPState && typeof window.STPState.openVerifyModal === 'function') {
+                        window.STPState.openVerifyModal();
+                        return;
+                    }
+                    if (verifyDialog && typeof verifyDialog.showModal === 'function' && !verifyDialog.open) {
+                        verifyDialog.showModal();
+                    }
+                });
+            }
+            if (stpInlineLearnMoreBtn) {
+                stpInlineLearnMoreBtn.addEventListener('click', function () {
+                    if (window.STPState && typeof window.STPState.openSetupStepsModal === 'function') {
+                        window.STPState.openSetupStepsModal();
+                        return;
+                    }
+                    if (nextStepsDialog && typeof nextStepsDialog.showModal === 'function' && !nextStepsDialog.open) {
+                        nextStepsDialog.showModal();
+                    }
+                });
+            }
+            if (verifySuccessDoneBtn) {
+                verifySuccessDoneBtn.addEventListener('click', function () {
+                    setTimeout(function () {
+                        openFullyAutomatedGuide();
+                    }, 0);
+                });
+            }
+            if (stpFullyAutomatedToggle) {
+                stpFullyAutomatedToggle.addEventListener('change', function () {
+                    if (window.showGlobalTopToast && typeof window.showGlobalTopToast === 'function') {
+                        window.showGlobalTopToast(stpFullyAutomatedToggle.checked ? 'Fully Automated has been enabled.' : 'Fully Automated has been disabled.');
+                    }
+                    if (stpFullyAutoGuideActive) {
+                        closeFullyAutomatedGuide();
+                    }
+                });
+            }
+            if (stpOptOutConfirmBtn) {
+                stpOptOutConfirmBtn.addEventListener('click', function () {
+                    closeFullyAutomatedGuide();
+                    if (stpStatusBadge) {
+                        stpStatusBadge.hidden = true;
+                        stpStatusBadge.classList.add('hidden');
+                    }
+                    if (window.STPState && typeof window.STPState.setStpStep === 'function') {
+                        window.STPState.setStpStep('opt_in_required');
+                    } else if (window.STPState && typeof window.STPState.setStpStatus === 'function') {
+                        window.STPState.setStpStatus('disabled');
+                    } else {
+                        applyStpUi('disabled', { stpStep: 'opt_in_required' });
+                    }
+                    applyStpUi('disabled', { stpStep: 'opt_in_required' });
+                    if (enableDialog && enableDialog.open) enableDialog.close();
+                    if (nextStepsDialog && nextStepsDialog.open) nextStepsDialog.close();
+                    if (verifyDialog && verifyDialog.open) verifyDialog.close();
+                    if (stpOptOutConfirmDialog && stpOptOutConfirmDialog.open) stpOptOutConfirmDialog.close();
+                    if (window.showGlobalTopToast && typeof window.showGlobalTopToast === 'function') {
+                        window.showGlobalTopToast('Automatic Card Processing has been opted out.');
+                    }
+                });
+            }
             if (enableDialog) {
                 var enableDialogObserver = new MutationObserver(function () {
                     if (enableDialog.open) {
@@ -2251,37 +2563,56 @@
 
             verifyBtn.addEventListener('click', function () {
                 if (verifyBtn.disabled) return;
-                if (window.STPState && typeof window.STPState.setStpStatus === 'function') {
-                    window.STPState.setStpStatus('enabled');
-                } else {
-                    applyStpUi('enabled');
-                }
+                if (isVerifyingDeposit) return;
+                setVerifyLoading(true);
+                window.setTimeout(function () {
+                    if (window.STPState && typeof window.STPState.setStpStatus === 'function') {
+                        window.STPState.setStpStatus('enabled');
+                    } else {
+                        applyStpUi('enabled');
+                    }
+                    setVerifyLoading(false);
+                    if (verifyDialog && verifyDialog.open) verifyDialog.close();
+                    if (verifySuccessDialog && typeof verifySuccessDialog.showModal === 'function' && !verifySuccessDialog.open) {
+                        verifySuccessDialog.showModal();
+                    }
+                }, 3000);
             });
 
             if (window.STPState && typeof window.STPState.subscribe === 'function') {
                 window.STPState.subscribe(syncStpStatus);
             } else {
-                syncStpStatus('disabled');
+                syncStpStatus('disabled', { stpStep: 'opt_in_required' });
             }
 
             var openStpFromQuery = false;
+            var openFullyAutomatedGuideFromQuery = false;
             try {
                 var params = new URLSearchParams(window.location.search || '');
                 openStpFromQuery = params.get('openStpModal') === '1';
+                openFullyAutomatedGuideFromQuery = params.get('stpGuide') === 'fully-automated';
                 if (openStpFromQuery) {
                     params.delete('openStpModal');
+                }
+                if (openFullyAutomatedGuideFromQuery) params.delete('stpGuide');
+                if (openStpFromQuery || openFullyAutomatedGuideFromQuery) {
                     var newQuery = params.toString();
                     var nextUrl = window.location.pathname + (newQuery ? ('?' + newQuery) : '') + window.location.hash;
                     window.history.replaceState({}, '', nextUrl);
                 }
             } catch (err) {
                 openStpFromQuery = false;
+                openFullyAutomatedGuideFromQuery = false;
             }
             if (openStpFromQuery) {
                 setTimeout(function () { openEnableStep(); }, 0);
             }
+            if (openFullyAutomatedGuideFromQuery) {
+                setTimeout(function () { openFullyAutomatedGuide(); }, 200);
+            }
 
             updateEnableState();
+            setVerifyLoading(false);
             updateVerifyState();
         })();
 
