@@ -45,6 +45,13 @@ var BREADCRUMB_CONFIGS = {
     'smart-exchange.html': [
         { label: 'SMART Exchange', href: null }
     ],
+    'bills-and-payables.html': [
+        { label: 'Bills and Payables', href: null }
+    ],
+    'payables-pay.html': [
+        { label: 'Bills and Payables', href: 'bills-and-payables.html' },
+        { label: 'Pay Page', href: null }
+    ],
     'payment-preferences.html': [
         { label: 'SMART Exchange', href: 'smart-exchange.html' },
         { label: 'Payment Preferences', href: null }
@@ -256,6 +263,126 @@ function initCountryFlag() {
     sel.addEventListener('change', function () {
         flag.className = 'fi fi-' + sel.value + ' col-start-1 row-start-1 pointer-events-none z-10 self-center justify-self-start ml-3 rounded-sm';
     });
+}
+
+/* ===== Filled Field Typography ===== */
+
+function ensureFilledFieldTypographyStyles() {
+    if (document.getElementById('sx-filled-field-style')) return;
+    var style = document.createElement('style');
+    style.id = 'sx-filled-field-style';
+    style.textContent =
+        ':is(input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="reset"]),textarea,select).sx-field-filled{font-weight:500;}' +
+        ':is(input,textarea)::placeholder{font-weight:400;}' +
+        'el-select.sx-field-filled el-selectedcontent,el-select.sx-field-filled el-selectedcontent *{font-weight:500;}' +
+        'el-select:not(.sx-field-filled) el-selectedcontent{font-weight:400;}';
+    document.head.appendChild(style);
+}
+
+function isFieldElement(node) {
+    if (!node || !node.tagName) return false;
+    var tag = node.tagName.toUpperCase();
+    return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT';
+}
+
+function shouldTrackInputField(el) {
+    if (!el || !el.tagName) return false;
+    if (el.tagName.toUpperCase() !== 'INPUT') return true;
+    var type = String(el.type || '').toLowerCase();
+    return !/^(checkbox|radio|button|submit|reset|file|range|color|image|hidden)$/.test(type);
+}
+
+function updateNativeFieldFilledState(el) {
+    if (!isFieldElement(el) || !shouldTrackInputField(el)) return;
+    var filled = false;
+    var tag = el.tagName.toUpperCase();
+    if (tag === 'SELECT') {
+        if (el.multiple) {
+            filled = Array.prototype.some.call(el.options || [], function (opt) { return opt.selected; });
+        } else {
+            filled = String(el.value || '').trim() !== '';
+        }
+    } else {
+        filled = String(el.value || '').trim() !== '';
+    }
+    el.classList.toggle('sx-field-filled', filled);
+}
+
+function updateElSelectFilledState(selectEl) {
+    if (!selectEl || !selectEl.tagName || selectEl.tagName.toUpperCase() !== 'EL-SELECT') return;
+    var selectedOption = selectEl.querySelector('el-option[aria-selected="true"]');
+    var selectedContent = selectEl.querySelector('el-selectedcontent');
+    var hasPlaceholder = !!(selectedContent && selectedContent.querySelector('.text-gray-400, .dark\\:text-gray-500'));
+    var hasText = !!(selectedContent && String(selectedContent.textContent || '').trim());
+    var filled = !!selectedOption || (!hasPlaceholder && hasText);
+    selectEl.classList.toggle('sx-field-filled', filled);
+}
+
+function initFilledFieldTypography() {
+    ensureFilledFieldTypographyStyles();
+
+    function syncAll() {
+        document.querySelectorAll('input,textarea,select').forEach(updateNativeFieldFilledState);
+        document.querySelectorAll('el-select').forEach(updateElSelectFilledState);
+    }
+
+    syncAll();
+
+    document.addEventListener('input', function (e) {
+        var target = e.target;
+        if (isFieldElement(target)) updateNativeFieldFilledState(target);
+    }, true);
+
+    document.addEventListener('change', function (e) {
+        var target = e.target;
+        if (isFieldElement(target)) updateNativeFieldFilledState(target);
+        var host = target && target.closest ? target.closest('el-select') : null;
+        if (host) {
+            requestAnimationFrame(function () { updateElSelectFilledState(host); });
+        }
+    }, true);
+
+    document.addEventListener('click', function (e) {
+        var host = e.target && e.target.closest ? e.target.closest('el-select') : null;
+        if (host) {
+            requestAnimationFrame(function () { updateElSelectFilledState(host); });
+        }
+    }, true);
+
+    if (document.body) {
+        var observer = new MutationObserver(function (mutations) {
+            mutations.forEach(function (mutation) {
+                if (mutation.type === 'attributes') {
+                    if (isFieldElement(mutation.target)) updateNativeFieldFilledState(mutation.target);
+                    var attrHost = mutation.target.closest ? mutation.target.closest('el-select') : null;
+                    if (attrHost) updateElSelectFilledState(attrHost);
+                    return;
+                }
+
+                if (mutation.type === 'childList') {
+                    mutation.addedNodes.forEach(function (node) {
+                        if (!node || node.nodeType !== 1) return;
+                        if (isFieldElement(node)) updateNativeFieldFilledState(node);
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('input,textarea,select').forEach(updateNativeFieldFilledState);
+                        }
+                        if (node.tagName && node.tagName.toUpperCase() === 'EL-SELECT') updateElSelectFilledState(node);
+                        if (node.querySelectorAll) {
+                            node.querySelectorAll('el-select').forEach(updateElSelectFilledState);
+                        }
+                    });
+                    var targetHost = mutation.target && mutation.target.closest ? mutation.target.closest('el-select') : null;
+                    if (targetHost) updateElSelectFilledState(targetHost);
+                }
+            });
+        });
+        observer.observe(document.body, {
+            subtree: true,
+            childList: true,
+            attributes: true,
+            attributeFilter: ['value', 'aria-selected']
+        });
+    }
 }
 
 /* ===== Global Top Snackbar ===== */
@@ -503,5 +630,6 @@ initBreadcrumbs();
 initCopyToClipboard();
 initMaskedCopySync();
 initCountryFlag();
+initFilledFieldTypography();
 initDialogDismissGuard();
 initMobileOverlayScrollLock();

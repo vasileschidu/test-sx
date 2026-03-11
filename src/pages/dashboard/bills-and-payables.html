@@ -1,0 +1,213 @@
+<!doctype html>
+<html class="h-full bg-gray-100 dark:bg-gray-950">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bills and Payables - Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <script src="../../../src/scripts/theme-init.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+
+  <script src="../../../src/scripts/nav-component.js" defer></script>
+  <script src="../../../src/scripts/sidebar.js" defer></script>
+  <script src="../../../src/scripts/stp-state.js" defer></script>
+  <script src="../../../src/scripts/topbar-component.js" defer></script>
+  <script src="../../../src/scripts/shared.js" defer></script>
+  <script src="../../../src/scripts/table-skeleton.js" defer></script>
+</head>
+
+<body class="h-full font-['Inter'] antialiased dark:text-gray-100">
+  <app-nav></app-nav>
+
+  <div id="main-content-wrapper" class="lg:pl-[360px]">
+    <app-topbar></app-topbar>
+
+    <main class="w-full flex justify-center p-2 sm:p-2 lg:p-4">
+      <div class="flex w-full max-w-[1280px] flex-col gap-5">
+        <div class="rounded-xl border border-gray-200 dark:border-white/10 bg-white shadow-xs dark:bg-gray-900 overflow-clip mb-4">
+          <div class="px-4 py-3 border-b border-gray-200 dark:border-white/10">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div class="flex items-center gap-4">
+                <h3 class="text-base font-semibold text-gray-900 dark:text-white whitespace-nowrap">Bills and Payables</h3>
+
+                <button id="bp-refresh-btn" type="button" class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:focus-visible:outline-blue-500 transition-colors cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                    <path fill-rule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z" clip-rule="evenodd" />
+                  </svg>
+                  Refresh
+                </button>
+              </div>
+
+              <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                <div class="w-full sm:w-auto">
+                  <div class="grid grid-cols-1">
+                    <input id="bp-search-input" type="text" placeholder="Search payables..." class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pr-3 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:pl-9 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500" />
+                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4 dark:text-gray-500">
+                      <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="flex w-full gap-3 sm:w-auto">
+                  <div id="bp-table-filter-dropdown" class="relative inline-block w-full sm:w-auto">
+                    <button id="bp-table-filter-btn" type="button"
+                      class="whitespace-nowrap inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10 cursor-pointer sm:w-auto">
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                        <path d="M10 4.75a.75.75 0 0 1 .75.75v3.75h3.75a.75.75 0 0 1 0 1.5h-3.75v3.75a.75.75 0 0 1-1.5 0v-3.75H5.5a.75.75 0 0 1 0-1.5h3.75V5.5a.75.75 0 0 1 .75-.75Z" />
+                      </svg>
+                      Filter
+                    </button>
+                    <div id="bp-table-filter-menu"
+                      class="pointer-events-none invisible absolute right-0 z-30 mt-2 origin-top-right overflow-hidden rounded-md bg-white opacity-0 shadow-lg outline-1 outline-black/5 transition-[width,height,opacity] duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+                      <div id="bp-table-filter-track"
+                        class="flex w-max items-start transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]"
+                        style="transform: translateX(0);">
+                        <div id="bp-table-filter-panel-root" class="w-full min-w-0 shrink-0 py-1 sm:w-fit sm:min-w-[168px]">
+                          <div role="button" tabindex="0" data-filter-open="source" class="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                            <span class="min-w-0 flex-1">By source</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+                          </div>
+                          <div role="button" tabindex="0" data-filter-open="status" class="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                            <span class="min-w-0 flex-1">By status</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+                          </div>
+                          <div role="button" tabindex="0" data-filter-open="method" class="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                            <span class="min-w-0 flex-1">By method of payment</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+                          </div>
+                          <div role="button" tabindex="0" data-filter-open="initiated_date" class="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                            <span class="min-w-0 flex-1">By initiated date</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+                          </div>
+                        </div>
+                        <div id="bp-table-filter-detail-slot" class="w-full shrink-0 sm:w-72">
+                          <div id="bp-table-filter-panel-source" class="hidden w-full shrink-0 flex-col sm:w-72">
+                            <div role="button" tabindex="0" data-filter-back class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>
+                              By source
+                            </div>
+                            <div id="bp-table-filter-sources" class="grow max-h-[60vh] overflow-auto px-2 py-2 sm:max-h-56"></div>
+                            <div class="border-t border-gray-200 p-2 dark:border-white/10">
+                              <button id="bp-table-filter-apply-source-btn" type="button" disabled class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer">Apply</button>
+                            </div>
+                          </div>
+                          <div id="bp-table-filter-panel-status" class="hidden w-full shrink-0 flex-col sm:w-72">
+                            <div role="button" tabindex="0" data-filter-back class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>
+                              By status
+                            </div>
+                            <div id="bp-table-filter-statuses" class="max-h-56 grow overflow-auto px-2 py-2"></div>
+                            <div class="border-t border-gray-200 p-2 dark:border-white/10">
+                              <button id="bp-table-filter-apply-status-btn" type="button" disabled class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer">Apply</button>
+                            </div>
+                          </div>
+                          <div id="bp-table-filter-panel-method" class="hidden w-full shrink-0 flex-col sm:w-72">
+                            <div role="button" tabindex="0" data-filter-back class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>
+                              By method of payment
+                            </div>
+                            <div id="bp-table-filter-methods" class="max-h-56 grow overflow-auto px-2 py-2"></div>
+                            <div class="border-t border-gray-200 p-2 dark:border-white/10">
+                              <button id="bp-table-filter-apply-method-btn" type="button" disabled class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer">Apply</button>
+                            </div>
+                          </div>
+                          <div id="bp-table-filter-panel-initiated-date" class="hidden w-full shrink-0 flex-col sm:w-72">
+                            <div role="button" tabindex="0" data-filter-back class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+                              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" /></svg>
+                              By initiated date
+                            </div>
+                            <div class="space-y-2 p-2">
+                              <div>
+                                <label class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">From</label>
+                                <div class="relative mt-2">
+                                  <input id="bp-table-filter-date-from-input" type="text" inputmode="numeric" placeholder="MM / DD / YYYY" class="relative z-10 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                </div>
+                              </div>
+                              <div>
+                                <label class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">To</label>
+                                <div class="relative mt-2">
+                                  <input id="bp-table-filter-date-to-input" type="text" inputmode="numeric" placeholder="MM / DD / YYYY" class="relative z-10 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                </div>
+                              </div>
+                            </div>
+                            <div class="border-t border-gray-200 p-2 dark:border-white/10">
+                              <button id="bp-table-filter-apply-date-btn" type="button" disabled class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer">Apply</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div id="bp-table-filter-backdrop" class="pointer-events-none invisible fixed inset-0 z-40 bg-gray-900/50 opacity-0 transition-opacity duration-200 ease-out"></div>
+                  </div>
+
+                  <button id="bp-export-btn" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 sm:w-auto cursor-pointer">
+                    Export
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div id="bp-table-active-filters" class="hidden mt-3 flex flex-wrap items-center justify-end gap-2"></div>
+          </div>
+
+          <div class="border-b border-gray-200 px-4 py-4 dark:border-white/10">
+            <div class="grid grid-cols-1 sm:hidden">
+              <select id="bp-tab-select" aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-gray-800/50 dark:text-gray-100 dark:*:bg-gray-800 dark:outline-white/10 dark:focus:outline-indigo-500">
+                <option value="ready_to_pay">Ready to Pay</option>
+                <option value="in_progress">In Progress</option>
+                <option value="paid">Paid</option>
+                <option value="exception">Exceptions</option>
+              </select>
+              <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500 dark:fill-gray-400">
+                <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+              </svg>
+            </div>
+
+            <div class="hidden sm:block">
+              <nav id="bp-tab-nav" aria-label="Tabs" class="flex space-x-4">
+                <a href="#" data-tab="ready_to_pay" aria-current="page" class="inline-flex items-center gap-2 rounded-md bg-blue-100 px-3 py-2 text-sm font-medium text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
+                  <span>Ready to Pay</span>
+                  <span data-tab-count="ready_to_pay" class="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30">0</span>
+                </a>
+                <a href="#" data-tab="in_progress" class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                  <span>In Progress</span>
+                  <span data-tab-count="in_progress" class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">0</span>
+                </a>
+                <a href="#" data-tab="paid" class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                  <span>Paid</span>
+                  <span data-tab-count="paid" class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">0</span>
+                </a>
+                <a href="#" data-tab="exception" class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                  <span>Exceptions</span>
+                  <span data-tab-count="exception" class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">0</span>
+                </a>
+              </nav>
+            </div>
+          </div>
+
+          <div class="px-0 sm:px-4">
+            <div data-table-scroll class="overflow-x-auto">
+              <div class="inline-block min-w-full align-middle">
+                <table id="bills-payables-table" class="min-w-full table-fixed border-separate border-spacing-0 divide-y divide-gray-200 dark:divide-white/10"></table>
+              </div>
+            </div>
+          </div>
+
+          <div data-pagination class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:px-6 rounded-b-xl"></div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="../../../src/scripts/bills-payables-table.js"></script>
+</body>
+
+</html>

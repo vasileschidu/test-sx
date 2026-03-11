@@ -13,7 +13,7 @@
       "type": "link",
       "id": "bills",
       "label": "Bills/Payables",
-      "href": "#",
+      "href": "bills-and-payables.html",
       "icon": "bills"
     },
     {
@@ -93,6 +93,8 @@
   ],
   "pageActiveIds": {
     "smart-exchange.html": "smart-exchange",
+    "bills-and-payables.html": "bills",
+    "payables-pay.html": "bills",
     "payment-preferences.html": "payment-preferences",
     "my-company-profile.html": "my-company-profile"
   }

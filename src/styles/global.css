@@ -1,3 +1,75 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  /* Keep default cursor for non-input text/content (no I-beam on tables/text). */
+  body {
+    cursor: default;
+  }
+
+  /* Only editable form fields should display text cursor. */
+  input:not([type='checkbox']):not([type='radio']):not([type='button']):not([type='submit']):not([type='reset']),
+  textarea,
+  [contenteditable=''],
+  [contenteditable='true'] {
+    cursor: text;
+  }
+
+  /* All interactive buttons should consistently show hand cursor. */
+  button:not(:disabled),
+  [type='button']:not(:disabled),
+  [type='submit']:not(:disabled),
+  [type='reset']:not(:disabled),
+  [role='button']:not([aria-disabled='true']),
+  [command]:not(:disabled),
+  [commandfor]:not(:disabled) {
+    cursor: pointer !important;
+  }
+
+  button:disabled,
+  [type='button']:disabled,
+  [type='submit']:disabled,
+  [type='reset']:disabled,
+  [aria-disabled='true'] {
+    cursor: not-allowed;
+  }
+
+  /* Table tabs: consistent hand cursor + hover feedback across pages. */
+  nav[aria-label='Tabs'] > a {
+    cursor: pointer !important;
+    transition: color 150ms ease, background-color 150ms ease;
+  }
+
+  nav[aria-label='Tabs'] > a:not([aria-current='page']):hover {
+    background-color: rgb(243 244 246); /* gray-100 */
+    color: rgb(55 65 81); /* gray-700 */
+  }
+
+  .dark nav[aria-label='Tabs'] > a:not([aria-current='page']):hover {
+    background-color: rgb(255 255 255 / 0.08);
+    color: rgb(229 231 235); /* gray-200 */
+  }
+
+  /* Filled form values should be emphasized portal-wide. */
+  :is(
+    input:not([type='checkbox']):not([type='radio']):not([type='button']):not([type='submit']):not([type='reset']),
+    textarea,
+    select
+  ).sx-field-filled {
+    font-weight: 500;
+  }
+
+  :is(input, textarea)::placeholder {
+    font-weight: 400;
+  }
+
+  el-select.sx-field-filled el-selectedcontent,
+  el-select.sx-field-filled el-selectedcontent * {
+    font-weight: 500;
+  }
+
+  el-select:not(.sx-field-filled) el-selectedcontent {
+    font-weight: 400;
+  }
+}

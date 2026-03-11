@@ -22,7 +22,7 @@
 const APP_NAV_DATA = [
     { type: 'link', id: 'insights', label: 'Insights', href: '#', icon: 'insights' },
     { type: 'divider' },
-    { type: 'link', id: 'bills', label: 'Bills/Payables', href: '#', icon: 'bills' },
+    { type: 'link', id: 'bills', label: 'Bills/Payables', href: 'bills-and-payables.html', icon: 'bills' },
     { type: 'link', id: 'vendors', label: 'Vendors', href: '#', icon: 'vendors' },
     { type: 'link', id: 'card-manager', label: 'Card Manager', href: '#', icon: 'card-manager' },
     { type: 'divider' },
@@ -78,6 +78,8 @@ const APP_NAV_DATA = [
 /** Maps page filenames to active nav-item IDs. */
 const APP_NAV_PAGE_MAP = {
     'smart-exchange.html': 'smart-exchange',
+    'bills-and-payables.html': 'bills',
+    'payables-pay.html': 'bills',
     'payment-preferences.html': 'payment-preferences',
     'my-company-profile.html': 'my-company-profile'
 };

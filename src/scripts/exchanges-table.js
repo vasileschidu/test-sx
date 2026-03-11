@@ -62,6 +62,9 @@
 
   var DEFAULT_PAGE_SIZE = 16;
   var PAGE_SIZE_OPTIONS = [10, 16, 25, 50];
+  var TAB_SWITCH_SKELETON_MS = 500;
+  var INITIAL_TABLE_SKELETON_MS = 500;
+  var MANUAL_REFRESH_SKELETON_MS = 1000;
 
   // Suppress history.pushState when responding to a popstate event
   var _suppressUrlUpdate = false;
@@ -90,6 +93,15 @@
     sourceEntries: [],
     columns: [],
   };
+  var tabSwitchLoadingState = {
+    active: false,
+    timer: null,
+  };
+  var initialTableLoadingState = {
+    active: false,
+    timer: null,
+  };
+  var manualRefreshHalfTurns = 0;
   var sortState = {
     key: '',
     direction: '', // '', 'asc', 'desc'
@@ -537,7 +549,7 @@
       var base = 'border-b border-gray-200 dark:border-white/10';
 
       if (col.type === 'expand') {
-        html += '<th scope="col" class="' + base + ' py-3.5 pr-3 pl-4 whitespace-nowrap sm:pl-0"><span class="sr-only">Expand</span></th>';
+        html += '<th scope="col" class="' + base + ' w-10 min-w-10 h-12 py-3.5 px-0 text-center whitespace-nowrap"><span class="sr-only">Expand</span></th>';
         return;
       }
 
@@ -719,8 +731,8 @@
     columns.forEach(function (col) {
       if (col.type === 'expand') {
         html +=
-          '<td class="h-12 align-middle py-2 pr-3 pl-4 whitespace-nowrap sm:pl-0' + cb + '">' +
-            '<button data-row-toggle class="rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20">' +
+          '<td class="h-12 w-10 min-w-10 align-middle py-2 px-0 text-center whitespace-nowrap' + cb + '">' +
+            '<button data-row-toggle class="inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20">' +
               '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
                 '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />' +
               '</svg>' +
@@ -1184,12 +1196,12 @@
       return (
         '<div class="flex">' +
           '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
-          '<div class="flex-1 p-4 flex gap-4">' +
-            '<div class="w-28 shrink-0 pt-0.5">' +
-              '<div class="inline-flex items-center gap-1 text-sm font-semibold text-gray-900 dark:text-gray-100">' +
-                '<span>' + variant.typeLabel + '</span>' +
-                '<span class="inline-flex items-center justify-center rounded-md p-1 text-gray-500 dark:text-gray-300">' + ICON_EXPAND_RIGHT + '</span>' +
-              '</div>' +
+          '<div class="flex-1 p-4 grid grid-cols-[max-content_32px_minmax(0,460px)] items-start gap-4">' +
+            '<div class="pt-0.5 text-sm font-semibold text-gray-900 dark:text-gray-100">' +
+              '<span class="inline-flex max-w-full truncate">' + variant.typeLabel + '</span>' +
+            '</div>' +
+            '<div class="flex items-center justify-center pt-0.5 text-gray-500 dark:text-gray-300">' +
+              '<span class="inline-flex size-5 items-center justify-center">' + ICON_EXPAND_RIGHT + '</span>' +
             '</div>' +
             '<div class="w-[460px] max-w-full">' +
               variant.rawCardHtml +
@@ -1202,12 +1214,12 @@
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
-        '<div class="flex-1 p-4 flex gap-4">' +
-          '<div class="w-28 shrink-0 pt-0.5">' +
-            '<div class="inline-flex items-center gap-1 text-sm font-semibold text-gray-900 dark:text-gray-100">' +
-              '<span>' + variant.typeLabel + '</span>' +
-              '<span class="inline-flex items-center justify-center rounded-md p-1 text-gray-500 dark:text-gray-300">' + ICON_EXPAND_RIGHT + '</span>' +
-            '</div>' +
+        '<div class="flex-1 p-4 grid grid-cols-[max-content_32px_minmax(0,460px)] items-start gap-4">' +
+          '<div class="pt-0.5 text-sm font-semibold text-gray-900 dark:text-gray-100">' +
+            '<span class="inline-flex max-w-full truncate">' + variant.typeLabel + '</span>' +
+          '</div>' +
+          '<div class="flex items-center justify-center pt-0.5 text-gray-500 dark:text-gray-300">' +
+            '<span class="inline-flex size-5 items-center justify-center">' + ICON_EXPAND_RIGHT + '</span>' +
           '</div>' +
           '<div' + revealAttr + ' class="flex flex-col gap-2 w-[460px] max-w-full">' +
             '<div class="flex gap-6">' +
@@ -1706,6 +1718,94 @@
     container.innerHTML = mobileHTML + desktopHTML;
   }
 
+  function renderPaginationSkeleton() {
+    var container = document.querySelector(PAGINATION_SELECTOR);
+    if (!container) return;
+    container.innerHTML = '' +
+      '<div class="flex flex-1 justify-between sm:hidden animate-pulse">' +
+        '<span class="inline-flex h-9 w-24 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+        '<span class="inline-flex h-9 w-20 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+      '</div>' +
+      '<div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between animate-pulse">' +
+        '<div class="flex items-center gap-x-6">' +
+          '<span class="inline-flex h-4 w-56 rounded bg-gray-200 dark:bg-white/15"></span>' +
+          '<span class="inline-flex h-8 w-28 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+        '</div>' +
+        '<span class="inline-flex h-8 w-56 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+      '</div>';
+  }
+
+  function renderTabSwitchSkeleton() {
+    var table = document.getElementById(TABLE_ID);
+    if (!table) return;
+    var columns = Array.isArray(paginationState.columns) ? paginationState.columns : [];
+    if (window.TableSkeleton && typeof window.TableSkeleton.render === 'function' && columns.length) {
+      window.TableSkeleton.render({
+        tableEl: table,
+        columns: columns,
+        rowCount: Math.min(10, paginationState.pageSize || DEFAULT_PAGE_SIZE),
+        includeHeader: true,
+      });
+    } else {
+      table.innerHTML = '<tbody><tr><td class="px-4 py-8 text-sm text-gray-500 dark:text-gray-400">Loading...</td></tr></tbody>';
+    }
+    renderPaginationSkeleton();
+    refreshStickyAction();
+    syncActionColumnGuide();
+  }
+
+  function initTableRefreshButton() {
+    var refreshBtn = document.getElementById('sx-table-refresh-btn');
+    if (!refreshBtn) return;
+    refreshBtn.addEventListener('click', function () {
+      if (tabSwitchLoadingState.active || initialTableLoadingState.active) return;
+      if (tabSwitchLoadingState.timer) {
+        clearTimeout(tabSwitchLoadingState.timer);
+        tabSwitchLoadingState.timer = null;
+      }
+      tabSwitchLoadingState.active = true;
+      renderTabSwitchSkeleton();
+      manualRefreshHalfTurns += 1;
+      var icon = refreshBtn.querySelector('svg');
+      if (icon) {
+        icon.style.transition = 'transform 800ms ease-out';
+        icon.style.transform = 'rotate(' + (manualRefreshHalfTurns * 180) + 'deg)';
+      }
+      tabSwitchLoadingState.timer = window.setTimeout(function () {
+        tabSwitchLoadingState.active = false;
+        tabSwitchLoadingState.timer = null;
+        refreshTableForActiveTab({ forceTableShell: true });
+        if (icon) icon.style.transition = '';
+        if (typeof window.showGlobalTopToast === 'function') {
+          window.showGlobalTopToast("Data synced. You're up to date.");
+        }
+      }, MANUAL_REFRESH_SKELETON_MS);
+    });
+  }
+
+  function startTabSwitchLoading(tabKey) {
+    var nextTabKey = tabKey || 'pending';
+    if (initialTableLoadingState.timer) {
+      clearTimeout(initialTableLoadingState.timer);
+      initialTableLoadingState.timer = null;
+    }
+    initialTableLoadingState.active = false;
+    if (tabSwitchLoadingState.timer) {
+      clearTimeout(tabSwitchLoadingState.timer);
+      tabSwitchLoadingState.timer = null;
+    }
+    _activeTableTabKey = nextTabKey;
+    tabSwitchLoadingState.active = true;
+    renderTabSwitchSkeleton();
+    syncTableFilterUi();
+    tabSwitchLoadingState.timer = window.setTimeout(function () {
+      tabSwitchLoadingState.active = false;
+      tabSwitchLoadingState.timer = null;
+      refreshTableForActiveTab({ forceTableShell: true });
+      syncTableFilterUi();
+    }, TAB_SWITCH_SKELETON_MS);
+  }
+
   function calculateTabCounts(entries) {
     var counts = {
       pending: 0,
@@ -1783,6 +1883,7 @@
     nav.addEventListener('click', function (event) {
       var clicked = event.target.closest('a');
       if (!clicked || !nav.contains(clicked)) return;
+      if (clicked.getAttribute('aria-current') === 'page') return;
 
       nav.querySelectorAll('a').forEach(function (tab) {
         if (tab === clicked) {
@@ -1797,9 +1898,7 @@
       // Filter table to the selected tab
       var tabCountEl = clicked.querySelector(TAB_COUNT_SELECTOR);
       var tabKey = tabCountEl ? tabCountEl.getAttribute('data-tab-count') : 'pending';
-      _activeTableTabKey = tabKey || 'pending';
-      refreshTableForActiveTab();
-      syncTableFilterUi();
+      startTabSwitchLoading(tabKey || 'pending');
     });
   }
 
@@ -2700,13 +2799,24 @@
     syncActionColumnGuide();
   }
 
-  function refreshTableForActiveTab() {
+  function refreshTableForActiveTab(options) {
+    if (tabSwitchLoadingState.active || initialTableLoadingState.active) return;
+    var forceTableShell = !!(options && options.forceTableShell);
     var filtered = getVisibleEntriesForActiveTab();
     paginationState.allEntries = filtered;
     paginationState.totalItems = filtered.length;
     paginationState.currentPage = 1;
     updateTabBadges(paginationState.sourceEntries);
-    renderCurrentPage();
+    if (forceTableShell) {
+      var table = document.getElementById(TABLE_ID);
+      if (table) {
+        renderTable(table, paginationState.columns, filtered);
+      } else {
+        renderCurrentPage();
+      }
+    } else {
+      renderCurrentPage();
+    }
     syncTableFilterUi();
   }
 
@@ -3820,7 +3930,7 @@
   var STEP_BADGE_NUMBER_CLASS =
     'inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300';
   var STEP_BADGE_COMPLETE_CLASS =
-    'inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-green-200 bg-green-50 text-green-600 dark:border-green-500/30 dark:bg-green-400/10 dark:text-green-400';
+    'inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-blue-300 bg-blue-100 text-blue-700 dark:border-blue-500/40 dark:bg-blue-400/15 dark:text-blue-300';
   var STEP_BADGE_CHECK_ICON =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5" aria-hidden="true">' +
       '<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />' +
@@ -5112,6 +5222,9 @@
   function init() {
     var table = document.getElementById(TABLE_ID);
     if (!table) return;
+    var initialLoadStartedAt = Date.now();
+    initialTableLoadingState.active = true;
+    renderTabSwitchSkeleton();
     initTabBadges();
     initTableFilterDropdown();
     initGetPaidPanel();
@@ -5121,6 +5234,7 @@
     initSignatureModal();
     initSubmitSuccessModalCopy();
     initCardDetailsDialogGuards();
+    initTableRefreshButton();
     var shouldOpenActionGuide = shouldShowActionColumnGuide();
     if (shouldOpenActionGuide) removeGuideUrlParam();
 
@@ -5166,31 +5280,58 @@
         updateTabBadges(entries);
         var initialFilteredEntries = getVisibleEntriesForActiveTab();
 
-        if (columns) {
-          renderTable(table, columns, initialFilteredEntries);
-        } else {
-          attachToggleListeners(table);
-        }
-        syncTableFilterUi();
-
         refreshStickyAction = initStickyAction(table);
-        refreshStickyAction();
 
-        // Auto-open Get Paid panel if URL contains ?view=get-paid&id=...
-        var params = new URLSearchParams(location.search);
-        if (shouldOpenActionGuide) {
-          startActionColumnGuide();
-        }
-        if (params.get('view') === 'get-paid') {
-          var invoiceId = params.get('id');
-          for (var j = 0; j < paginationState.sourceEntries.length; j++) {
-            if (paginationState.sourceEntries[j].invoice === invoiceId) {
-              _suppressUrlUpdate = true;
-              openGetPaidPanel(paginationState.sourceEntries[j]);
-              _suppressUrlUpdate = false;
-              break;
+        function afterInitialTableRender() {
+          syncTableFilterUi();
+          refreshStickyAction();
+
+          // Auto-open Get Paid panel if URL contains ?view=get-paid&id=...
+          var params = new URLSearchParams(location.search);
+          if (shouldOpenActionGuide) {
+            startActionColumnGuide();
+          }
+          if (params.get('view') === 'get-paid') {
+            var invoiceId = params.get('id');
+            for (var j = 0; j < paginationState.sourceEntries.length; j++) {
+              if (paginationState.sourceEntries[j].invoice === invoiceId) {
+                _suppressUrlUpdate = true;
+                openGetPaidPanel(paginationState.sourceEntries[j]);
+                _suppressUrlUpdate = false;
+                break;
+              }
             }
           }
+        }
+
+        if (columns) {
+          paginationState.columns = columns;
+          paginationState.allEntries = initialFilteredEntries;
+          paginationState.totalItems = initialFilteredEntries.length;
+          paginationState.currentPage = 1;
+          if (initialTableLoadingState.timer) {
+            clearTimeout(initialTableLoadingState.timer);
+            initialTableLoadingState.timer = null;
+          }
+          var elapsed = Date.now() - initialLoadStartedAt;
+          var remaining = Math.max(0, INITIAL_TABLE_SKELETON_MS - elapsed);
+          initialTableLoadingState.active = remaining > 0;
+          renderTabSwitchSkeleton();
+          if (remaining > 0) {
+            initialTableLoadingState.timer = window.setTimeout(function () {
+              initialTableLoadingState.active = false;
+              initialTableLoadingState.timer = null;
+              renderTable(table, columns, initialFilteredEntries);
+              afterInitialTableRender();
+            }, remaining);
+          } else {
+            initialTableLoadingState.active = false;
+            renderTable(table, columns, initialFilteredEntries);
+            afterInitialTableRender();
+          }
+        } else {
+          attachToggleListeners(table);
+          afterInitialTableRender();
         }
       })
       .catch(function (error) {

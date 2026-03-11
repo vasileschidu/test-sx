@@ -1,0 +1,356 @@
+{
+  "data": [
+    {
+      "id": "red-maple-construction",
+      "name": "Red Maple Construction",
+      "smartExchangeEnabled": true,
+      "paymentMethods": {
+        "ach": [
+          {
+            "id": "ach-rmc-1",
+            "label": "Red Maple Construction •••• 4128",
+            "accountName": "Red Maple Construction",
+            "bankName": "Wells Fargo",
+            "maskedAccount": "••••••4128",
+            "accountNumber": "0000000004128",
+            "maskedRouting": "•••••2847",
+            "routingNumber": "121002847",
+            "address": "1845 Willow Creek Rd\nAustin, TX 78701\nUnited States"
+          }
+        ],
+        "wire": [
+          {
+            "id": "wire-rmc-1",
+            "label": "Red Maple Construction Wire •••• 9901",
+            "accountName": "Red Maple Construction",
+            "bankName": "JPMorgan Chase",
+            "maskedAccount": "••••••9901",
+            "accountNumber": "9000000009901",
+            "maskedRouting": "•••••0210",
+            "routingNumber": "021000021",
+            "address": "1845 Willow Creek Rd\nAustin, TX 78701\nUnited States"
+          }
+        ],
+        "card": [
+          {
+            "id": "card-rmc-1",
+            "label": "Visa •••• 5511",
+            "cardholderName": "Red Maple Construction",
+            "cardholderAddress": "1845 Willow Creek Rd\nAustin, TX 78701\nUnited States"
+          }
+        ],
+        "check": [
+          {
+            "id": "check-rmc-1",
+            "label": "HQ Mailing Address",
+            "name": "Red Maple Construction",
+            "address": "1845 Willow Creek Rd\nAustin, TX 78701\nUnited States"
+          }
+        ],
+        "smartDisburse": [
+          {
+            "id": "sd-rmc-1",
+            "label": "Finance Team (Email)",
+            "channel": "Email",
+            "destination": "ap@redmaple.example"
+          }
+        ],
+        "smartExchange": [
+          {
+            "id": "sx-rmc-1",
+            "label": "Red Maple Construction Profile",
+            "status": "Enabled"
+          }
+        ]
+      }
+    },
+    {
+      "id": "beacon-property-care",
+      "name": "Beacon Property Care",
+      "smartExchangeEnabled": false,
+      "paymentMethods": {
+        "ach": [
+          {
+            "id": "ach-bpc-1",
+            "label": "Beacon Property Care •••• 3842",
+            "accountName": "Beacon Property Care",
+            "bankName": "Bank of America",
+            "maskedAccount": "••••••3842",
+            "accountNumber": "0000000003842",
+            "maskedRouting": "•••••0026",
+            "routingNumber": "026009593",
+            "address": "902 Market Street\nDallas, TX 75201\nUnited States"
+          }
+        ],
+        "wire": [
+          {
+            "id": "wire-bpc-1",
+            "label": "Beacon Property Wire •••• 7720",
+            "accountName": "Beacon Property Care",
+            "bankName": "Citi",
+            "maskedAccount": "••••••7720",
+            "accountNumber": "9000000007720",
+            "maskedRouting": "•••••0089",
+            "routingNumber": "021000089",
+            "address": "902 Market Street\nDallas, TX 75201\nUnited States"
+          }
+        ],
+        "card": [
+          {
+            "id": "card-bpc-1",
+            "label": "Mastercard •••• 6291",
+            "cardholderName": "Beacon Property Care",
+            "cardholderAddress": "902 Market Street\nDallas, TX 75201\nUnited States"
+          }
+        ],
+        "check": [],
+        "smartDisburse": [
+          {
+            "id": "sd-bpc-1",
+            "label": "Accounts Payable (SMS)",
+            "channel": "SMS",
+            "destination": "+1 (214) 555-0148"
+          }
+        ],
+        "smartExchange": []
+      }
+    },
+    {
+      "id": "mosaic-printing-co",
+      "name": "Mosaic Printing Co",
+      "smartExchangeEnabled": true,
+      "paymentMethods": {
+        "ach": [
+          {
+            "id": "ach-mpc-1",
+            "label": "Mosaic Printing Co •••• 2060",
+            "accountName": "Mosaic Printing Co",
+            "bankName": "U.S. Bank",
+            "maskedAccount": "••••••2060",
+            "accountNumber": "0000000002060",
+            "maskedRouting": "•••••1230",
+            "routingNumber": "091000022",
+            "address": "411 Harbor Ave\nNashville, TN 37203\nUnited States"
+          }
+        ],
+        "wire": [
+          {
+            "id": "wire-mpc-1",
+            "label": "Mosaic Printing Wire •••• 6005",
+            "accountName": "Mosaic Printing Co",
+            "bankName": "Wells Fargo",
+            "maskedAccount": "••••••6005",
+            "accountNumber": "9000000006005",
+            "maskedRouting": "•••••2847",
+            "routingNumber": "121002847",
+            "address": "411 Harbor Ave\nNashville, TN 37203\nUnited States"
+          }
+        ],
+        "card": [
+          {
+            "id": "card-mpc-1",
+            "label": "Visa •••• 4532",
+            "cardholderName": "Mosaic Printing Co",
+            "cardholderAddress": "411 Harbor Ave\nNashville, TN 37203\nUnited States"
+          }
+        ],
+        "check": [
+          {
+            "id": "check-mpc-1",
+            "label": "Operations Office",
+            "name": "Mosaic Printing Co",
+            "address": "411 Harbor Ave\nNashville, TN 37203\nUnited States"
+          }
+        ],
+        "smartDisburse": [
+          {
+            "id": "sd-mpc-1",
+            "label": "AP Automation (Email)",
+            "channel": "Email",
+            "destination": "payments@mosaic.example"
+          }
+        ],
+        "smartExchange": [
+          {
+            "id": "sx-mpc-1",
+            "label": "Mosaic Printing Co Profile",
+            "status": "Enabled"
+          }
+        ]
+      }
+    },
+    {
+      "id": "sierra-office-supply",
+      "name": "Sierra Office Supply",
+      "smartExchangeEnabled": false,
+      "paymentMethods": {
+        "ach": [
+          {
+            "id": "ach-sos-1",
+            "label": "Sierra Office Supply •••• 3207",
+            "accountName": "Sierra Office Supply",
+            "bankName": "PNC Bank",
+            "maskedAccount": "••••••3207",
+            "accountNumber": "0000000003207",
+            "maskedRouting": "•••••2670",
+            "routingNumber": "031000503",
+            "address": "1201 Midtown Blvd\nDenver, CO 80202\nUnited States"
+          }
+        ],
+        "wire": [
+          {
+            "id": "wire-sos-1",
+            "label": "Sierra Office Wire •••• 8884",
+            "accountName": "Sierra Office Supply",
+            "bankName": "JPMorgan Chase",
+            "maskedAccount": "••••••8884",
+            "accountNumber": "9000000008884",
+            "maskedRouting": "•••••0210",
+            "routingNumber": "021000021",
+            "address": "1201 Midtown Blvd\nDenver, CO 80202\nUnited States"
+          }
+        ],
+        "card": [
+          {
+            "id": "card-sos-1",
+            "label": "Mastercard •••• 0860",
+            "cardholderName": "Sierra Office Supply",
+            "cardholderAddress": "1201 Midtown Blvd\nDenver, CO 80202\nUnited States"
+          }
+        ],
+        "check": [],
+        "smartDisburse": [
+          {
+            "id": "sd-sos-1",
+            "label": "Disburse Endpoint",
+            "channel": "Token",
+            "destination": "sierra-token-endpoint"
+          }
+        ],
+        "smartExchange": []
+      }
+    },
+    {
+      "id": "technova-solutions-llc",
+      "name": "TechNova Solutions LLC",
+      "smartExchangeEnabled": true,
+      "paymentMethods": {
+        "ach": [
+          {
+            "id": "ach-tns-1",
+            "label": "TechNova Solutions •••• 1086",
+            "accountName": "TechNova Solutions LLC",
+            "bankName": "Wells Fargo",
+            "maskedAccount": "••••••1086",
+            "accountNumber": "0000000001086",
+            "maskedRouting": "•••••2847",
+            "routingNumber": "121002847",
+            "address": "892 Innovation Blvd\nAustin, TX 78701\nUnited States"
+          }
+        ],
+        "wire": [
+          {
+            "id": "wire-tns-1",
+            "label": "TechNova Wire •••• 5017",
+            "accountName": "TechNova Solutions LLC",
+            "bankName": "Citi",
+            "maskedAccount": "••••••5017",
+            "accountNumber": "9000000005017",
+            "maskedRouting": "•••••0089",
+            "routingNumber": "021000089",
+            "address": "892 Innovation Blvd\nAustin, TX 78701\nUnited States"
+          }
+        ],
+        "card": [
+          {
+            "id": "card-tns-1",
+            "label": "Visa •••• 5511",
+            "cardholderName": "TechNova Solutions LLC",
+            "cardholderAddress": "892 Innovation Blvd\nAustin, TX 78701\nUnited States"
+          }
+        ],
+        "check": [
+          {
+            "id": "check-tns-1",
+            "label": "Finance Office",
+            "name": "TechNova Solutions LLC",
+            "address": "892 Innovation Blvd\nAustin, TX 78701\nUnited States"
+          }
+        ],
+        "smartDisburse": [
+          {
+            "id": "sd-tns-1",
+            "label": "Treasury Queue",
+            "channel": "Email",
+            "destination": "treasury@technova.example"
+          }
+        ],
+        "smartExchange": [
+          {
+            "id": "sx-tns-1",
+            "label": "TechNova Solutions Profile",
+            "status": "Enabled"
+          }
+        ]
+      }
+    },
+    {
+      "id": "urban-pulse-marketing",
+      "name": "Urban Pulse Marketing",
+      "smartExchangeEnabled": false,
+      "paymentMethods": {
+        "ach": [
+          {
+            "id": "ach-upm-1",
+            "label": "Urban Pulse Marketing •••• 7341",
+            "accountName": "Urban Pulse Marketing",
+            "bankName": "Bank of America",
+            "maskedAccount": "••••••7341",
+            "accountNumber": "0000000007341",
+            "maskedRouting": "•••••0026",
+            "routingNumber": "026009593",
+            "address": "55 Madison Ave\nNew York, NY 10010\nUnited States"
+          }
+        ],
+        "wire": [
+          {
+            "id": "wire-upm-1",
+            "label": "Urban Pulse Wire •••• 6688",
+            "accountName": "Urban Pulse Marketing",
+            "bankName": "JPMorgan Chase",
+            "maskedAccount": "••••••6688",
+            "accountNumber": "9000000006688",
+            "maskedRouting": "•••••0210",
+            "routingNumber": "021000021",
+            "address": "55 Madison Ave\nNew York, NY 10010\nUnited States"
+          }
+        ],
+        "card": [
+          {
+            "id": "card-upm-1",
+            "label": "Mastercard •••• 3423",
+            "cardholderName": "Urban Pulse Marketing",
+            "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
+          }
+        ],
+        "check": [
+          {
+            "id": "check-upm-1",
+            "label": "Mailing Address",
+            "name": "Urban Pulse Marketing",
+            "address": "55 Madison Ave\nNew York, NY 10010\nUnited States"
+          }
+        ],
+        "smartDisburse": [
+          {
+            "id": "sd-upm-1",
+            "label": "AP Portal",
+            "channel": "Token",
+            "destination": "urbanpulse-disburse-token"
+          }
+        ],
+        "smartExchange": []
+      }
+    }
+  ]
+}

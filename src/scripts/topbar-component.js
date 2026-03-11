@@ -10,6 +10,7 @@
         var file = (window.location.pathname || '').split('/').pop() || '';
         var map = {
             'smart-exchange.html': 'SMART Exchange',
+            'bills-and-payables.html': 'Bills and Payables',
             'payment-preferences.html': 'Payment Preferences',
             'my-company-profile.html': 'My Company Profile'
         };

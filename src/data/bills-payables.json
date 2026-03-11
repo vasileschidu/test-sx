@@ -1,0 +1,4024 @@
+{
+  "tableConfig": {
+    "columns": [
+      {
+        "key": "_expand",
+        "label": "",
+        "type": "expand"
+      },
+      {
+        "key": "_select",
+        "label": "NEW",
+        "type": "select"
+      },
+      {
+        "key": "amount",
+        "label": "Amount",
+        "sortable": true
+      },
+      {
+        "key": "billNumber",
+        "label": "Bill #",
+        "sortable": true
+      },
+      {
+        "key": "payeeName",
+        "label": "Payee",
+        "sortable": true
+      },
+      {
+        "key": "paymentMethod",
+        "label": "Payment Method",
+        "sortable": true
+      },
+      {
+        "key": "source",
+        "label": "Source",
+        "sortable": true
+      },
+      {
+        "key": "dueDate",
+        "label": "Due Date",
+        "sortable": true
+      },
+      {
+        "key": "adDate",
+        "label": "Date Initiated",
+        "sortable": true
+      },
+      {
+        "key": "status",
+        "label": "Status",
+        "sortable": true,
+        "type": "status"
+      },
+      {
+        "key": "_action",
+        "label": "",
+        "type": "action"
+      }
+    ]
+  },
+  "data": [
+    {
+      "id": "payable-1",
+      "amount": 487,
+      "currency": "USD",
+      "billNumber": "BP-01003",
+      "payeeName": "Red Maple Construction",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-03",
+      "adDate": "2026-03-07",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Red Maple Construction bill BP-01003 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$452.91"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$34.09"
+          },
+          {
+            "label": "Total",
+            "value": "$487.00"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01003.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01003.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill BP-01003 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01003 started on 2026-03-07."
+          }
+        ]
+      },
+      "payeeId": "red-maple-construction"
+    },
+    {
+      "id": "payable-2",
+      "amount": 749.75,
+      "currency": "USD",
+      "billNumber": "GL-01006",
+      "payeeName": "Beacon Property Care",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-04",
+      "adDate": "2026-03-06",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Beacon Property Care bill GL-01006 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$697.27"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$52.48"
+          },
+          {
+            "label": "Total",
+            "value": "$749.75"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01006.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01006.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill GL-01006 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01006 started on 2026-03-06."
+          }
+        ]
+      },
+      "payeeId": "beacon-property-care"
+    },
+    {
+      "id": "payable-3",
+      "amount": 1012.5,
+      "currency": "USD",
+      "billNumber": "VR-01009",
+      "payeeName": "Red Maple Construction",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-05",
+      "adDate": "2026-03-05",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Red Maple Construction bill VR-01009 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$941.63"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$70.88"
+          },
+          {
+            "label": "Total",
+            "value": "$1012.50"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01009.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01009.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill VR-01009 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01009 started on 2026-03-05."
+          }
+        ]
+      },
+      "payeeId": "red-maple-construction"
+    },
+    {
+      "id": "payable-4",
+      "amount": 1275.25,
+      "currency": "USD",
+      "billNumber": "PO-01012",
+      "payeeName": "Beacon Property Care",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-06",
+      "adDate": "2026-03-04",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Beacon Property Care bill PO-01012 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$1185.98"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$89.27"
+          },
+          {
+            "label": "Total",
+            "value": "$1275.25"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01012.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01012.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill PO-01012 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01012 started on 2026-03-04."
+          }
+        ]
+      },
+      "payeeId": "beacon-property-care"
+    },
+    {
+      "id": "payable-5",
+      "amount": 1538,
+      "currency": "USD",
+      "billNumber": "AP-01015",
+      "payeeName": "Red Maple Construction",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-07",
+      "adDate": "2026-03-03",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Red Maple Construction bill AP-01015 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$1430.34"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$107.66"
+          },
+          {
+            "label": "Total",
+            "value": "$1538.00"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01015.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01015.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill AP-01015 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01015 started on 2026-03-03."
+          }
+        ]
+      },
+      "payeeId": "red-maple-construction"
+    },
+    {
+      "id": "payable-6",
+      "amount": 1172,
+      "currency": "USD",
+      "billNumber": "BP-01018",
+      "payeeName": "Beacon Property Care",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-08",
+      "adDate": "2026-03-02",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Beacon Property Care bill BP-01018 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$1089.96"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$82.04"
+          },
+          {
+            "label": "Total",
+            "value": "$1172.00"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01018.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01018.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill BP-01018 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01018 started on 2026-03-02."
+          }
+        ]
+      },
+      "payeeId": "beacon-property-care"
+    },
+    {
+      "id": "payable-7",
+      "amount": 1434.75,
+      "currency": "USD",
+      "billNumber": "GL-01021",
+      "payeeName": "Red Maple Construction",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-09",
+      "adDate": "2026-03-01",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Red Maple Construction bill GL-01021 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$1334.32"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$100.43"
+          },
+          {
+            "label": "Total",
+            "value": "$1434.75"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01021.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01021.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill GL-01021 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01021 started on 2026-03-01."
+          }
+        ]
+      },
+      "payeeId": "red-maple-construction"
+    },
+    {
+      "id": "payable-8",
+      "amount": 1697.5,
+      "currency": "USD",
+      "billNumber": "VR-01024",
+      "payeeName": "Beacon Property Care",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-10",
+      "adDate": "2026-02-28",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Beacon Property Care bill VR-01024 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$1578.68"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$118.83"
+          },
+          {
+            "label": "Total",
+            "value": "$1697.50"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01024.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01024.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill VR-01024 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01024 started on 2026-02-28."
+          }
+        ]
+      },
+      "payeeId": "beacon-property-care"
+    },
+    {
+      "id": "payable-9",
+      "amount": 1960.25,
+      "currency": "USD",
+      "billNumber": "PO-01027",
+      "payeeName": "Red Maple Construction",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-11",
+      "adDate": "2026-02-27",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Red Maple Construction bill PO-01027 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$1823.03"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$137.22"
+          },
+          {
+            "label": "Total",
+            "value": "$1960.25"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01027.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01027.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill PO-01027 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01027 started on 2026-02-27."
+          }
+        ]
+      },
+      "payeeId": "red-maple-construction"
+    },
+    {
+      "id": "payable-10",
+      "amount": 2223,
+      "currency": "USD",
+      "billNumber": "AP-01030",
+      "payeeName": "Beacon Property Care",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-12",
+      "adDate": "2026-02-26",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Beacon Property Care bill AP-01030 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$2067.39"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$155.61"
+          },
+          {
+            "label": "Total",
+            "value": "$2223.00"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01030.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01030.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill AP-01030 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01030 started on 2026-02-26."
+          }
+        ]
+      },
+      "payeeId": "beacon-property-care"
+    },
+    {
+      "id": "payable-11",
+      "amount": 1857,
+      "currency": "USD",
+      "billNumber": "BP-01033",
+      "payeeName": "Red Maple Construction",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-13",
+      "adDate": "2026-02-25",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Red Maple Construction bill BP-01033 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$1727.01"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$129.99"
+          },
+          {
+            "label": "Total",
+            "value": "$1857.00"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01033.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01033.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill BP-01033 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01033 started on 2026-02-25."
+          }
+        ]
+      },
+      "payeeId": "red-maple-construction"
+    },
+    {
+      "id": "payable-12",
+      "amount": 2119.75,
+      "currency": "USD",
+      "billNumber": "GL-01036",
+      "payeeName": "Beacon Property Care",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-14",
+      "adDate": "2026-02-24",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Beacon Property Care bill GL-01036 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$1971.37"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$148.38"
+          },
+          {
+            "label": "Total",
+            "value": "$2119.75"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01036.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01036.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill GL-01036 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01036 started on 2026-02-24."
+          }
+        ]
+      },
+      "payeeId": "beacon-property-care"
+    },
+    {
+      "id": "payable-13",
+      "amount": 2382.5,
+      "currency": "USD",
+      "billNumber": "VR-01039",
+      "payeeName": "Red Maple Construction",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-15",
+      "adDate": "2026-02-23",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Red Maple Construction bill VR-01039 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$2215.72"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$166.78"
+          },
+          {
+            "label": "Total",
+            "value": "$2382.50"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01039.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01039.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill VR-01039 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01039 started on 2026-02-23."
+          }
+        ]
+      },
+      "payeeId": "red-maple-construction"
+    },
+    {
+      "id": "payable-14",
+      "amount": 2645.25,
+      "currency": "USD",
+      "billNumber": "PO-01042",
+      "payeeName": "Beacon Property Care",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-16",
+      "adDate": "2026-02-22",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Beacon Property Care bill PO-01042 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$2460.08"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$185.17"
+          },
+          {
+            "label": "Total",
+            "value": "$2645.25"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01042.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01042.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill PO-01042 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01042 started on 2026-02-22."
+          }
+        ]
+      },
+      "payeeId": "beacon-property-care"
+    },
+    {
+      "id": "payable-15",
+      "amount": 2908,
+      "currency": "USD",
+      "billNumber": "AP-01045",
+      "payeeName": "Red Maple Construction",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-17",
+      "adDate": "2026-02-21",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Red Maple Construction bill AP-01045 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$2704.44"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$203.56"
+          },
+          {
+            "label": "Total",
+            "value": "$2908.00"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01045.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01045.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill AP-01045 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01045 started on 2026-02-21."
+          }
+        ]
+      },
+      "payeeId": "red-maple-construction"
+    },
+    {
+      "id": "payable-16",
+      "amount": 2542,
+      "currency": "USD",
+      "billNumber": "BP-01048",
+      "payeeName": "Beacon Property Care",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-18",
+      "adDate": "2026-02-20",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Beacon Property Care bill BP-01048 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$2364.06"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$177.94"
+          },
+          {
+            "label": "Total",
+            "value": "$2542.00"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01048.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01048.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill BP-01048 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01048 started on 2026-02-20."
+          }
+        ]
+      },
+      "payeeId": "beacon-property-care"
+    },
+    {
+      "id": "payable-17",
+      "amount": 2804.75,
+      "currency": "USD",
+      "billNumber": "GL-01051",
+      "payeeName": "Red Maple Construction",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-19",
+      "adDate": "2026-02-19",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Red Maple Construction bill GL-01051 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$2608.42"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$196.33"
+          },
+          {
+            "label": "Total",
+            "value": "$2804.75"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01051.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01051.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill GL-01051 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01051 started on 2026-02-19."
+          }
+        ]
+      },
+      "payeeId": "red-maple-construction"
+    },
+    {
+      "id": "payable-18",
+      "amount": 3067.5,
+      "currency": "USD",
+      "billNumber": "VR-01054",
+      "payeeName": "Beacon Property Care",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-20",
+      "adDate": "2026-02-18",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Beacon Property Care bill VR-01054 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$2852.78"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$214.73"
+          },
+          {
+            "label": "Total",
+            "value": "$3067.50"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01054.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01054.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill VR-01054 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01054 started on 2026-02-18."
+          }
+        ]
+      },
+      "payeeId": "beacon-property-care"
+    },
+    {
+      "id": "payable-19",
+      "amount": 3330.25,
+      "currency": "USD",
+      "billNumber": "PO-01057",
+      "payeeName": "Red Maple Construction",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-21",
+      "adDate": "2026-02-17",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Red Maple Construction bill PO-01057 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$3097.13"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$233.12"
+          },
+          {
+            "label": "Total",
+            "value": "$3330.25"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01057.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01057.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill PO-01057 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01057 started on 2026-02-17."
+          }
+        ]
+      },
+      "payeeId": "red-maple-construction"
+    },
+    {
+      "id": "payable-20",
+      "amount": 3593,
+      "currency": "USD",
+      "billNumber": "AP-01060",
+      "payeeName": "Beacon Property Care",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-22",
+      "adDate": "2026-02-16",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Beacon Property Care bill AP-01060 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$3341.49"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$251.51"
+          },
+          {
+            "label": "Total",
+            "value": "$3593.00"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01060.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01060.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill AP-01060 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01060 started on 2026-02-16."
+          }
+        ]
+      },
+      "payeeId": "beacon-property-care"
+    },
+    {
+      "id": "payable-21",
+      "amount": 3227,
+      "currency": "USD",
+      "billNumber": "BP-01063",
+      "payeeName": "Red Maple Construction",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-23",
+      "adDate": "2026-02-15",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Red Maple Construction bill BP-01063 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$3001.11"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$225.89"
+          },
+          {
+            "label": "Total",
+            "value": "$3227.00"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01063.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01063.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill BP-01063 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01063 started on 2026-02-15."
+          }
+        ]
+      },
+      "payeeId": "red-maple-construction"
+    },
+    {
+      "id": "payable-22",
+      "amount": 3489.75,
+      "currency": "USD",
+      "billNumber": "GL-01066",
+      "payeeName": "Beacon Property Care",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-24",
+      "adDate": "2026-02-14",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Beacon Property Care bill GL-01066 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$3245.47"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$244.28"
+          },
+          {
+            "label": "Total",
+            "value": "$3489.75"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01066.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01066.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill GL-01066 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01066 started on 2026-02-14."
+          }
+        ]
+      },
+      "payeeId": "beacon-property-care"
+    },
+    {
+      "id": "payable-23",
+      "amount": 3752.5,
+      "currency": "USD",
+      "billNumber": "VR-01069",
+      "payeeName": "Red Maple Construction",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-25",
+      "adDate": "2026-02-13",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Red Maple Construction bill VR-01069 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$3489.83"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$262.68"
+          },
+          {
+            "label": "Total",
+            "value": "$3752.50"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01069.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01069.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill VR-01069 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01069 started on 2026-02-13."
+          }
+        ]
+      },
+      "payeeId": "red-maple-construction"
+    },
+    {
+      "id": "payable-24",
+      "amount": 4015.25,
+      "currency": "USD",
+      "billNumber": "PO-01072",
+      "payeeName": "Beacon Property Care",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-26",
+      "adDate": "2026-02-12",
+      "status": "ready_to_pay",
+      "statusLabel": "Unprocessed",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Beacon Property Care bill PO-01072 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$3734.18"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$281.07"
+          },
+          {
+            "label": "Total",
+            "value": "$4015.25"
+          }
+        ],
+        "notes": "Ready for payment release. All approvals are complete.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01072.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01072.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "Ready to Pay",
+            "description": "Bill PO-01072 is ready for release."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01072 started on 2026-02-12."
+          }
+        ]
+      },
+      "payeeId": "beacon-property-care"
+    },
+    {
+      "id": "payable-25",
+      "amount": 3775,
+      "currency": "USD",
+      "billNumber": "AP-01075",
+      "payeeName": "Mosaic Printing Co",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-27",
+      "adDate": "2026-02-11",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Bank verification",
+      "details": {
+        "summary": "Mosaic Printing Co bill AP-01075 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$3510.75"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$264.25"
+          },
+          {
+            "label": "Total",
+            "value": "$3775.00"
+          }
+        ],
+        "notes": "Current step: bank handoff.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01075.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01075.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Bank verification."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01075 started on 2026-02-11."
+          }
+        ]
+      },
+      "payeeId": "mosaic-printing-co"
+    },
+    {
+      "id": "payable-26",
+      "amount": 4037.75,
+      "currency": "USD",
+      "billNumber": "BP-01078",
+      "payeeName": "Sierra Office Supply",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-28",
+      "adDate": "2026-02-10",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Payment processor sync",
+      "details": {
+        "summary": "Sierra Office Supply bill BP-01078 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$3755.11"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$282.64"
+          },
+          {
+            "label": "Total",
+            "value": "$4037.75"
+          }
+        ],
+        "notes": "Current step: processing queue.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01078.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01078.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Payment processor sync."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01078 started on 2026-02-10."
+          }
+        ]
+      },
+      "payeeId": "sierra-office-supply"
+    },
+    {
+      "id": "payable-27",
+      "amount": 4300.5,
+      "currency": "USD",
+      "billNumber": "GL-01081",
+      "payeeName": "Mosaic Printing Co",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-29",
+      "adDate": "2026-02-09",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Release scheduled",
+      "details": {
+        "summary": "Mosaic Printing Co bill GL-01081 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$3999.47"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$301.04"
+          },
+          {
+            "label": "Total",
+            "value": "$4300.50"
+          }
+        ],
+        "notes": "Current step: settlement window.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01081.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01081.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Release scheduled."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01081 started on 2026-02-09."
+          }
+        ]
+      },
+      "payeeId": "mosaic-printing-co"
+    },
+    {
+      "id": "payable-28",
+      "amount": 4563.25,
+      "currency": "USD",
+      "billNumber": "VR-01084",
+      "payeeName": "Sierra Office Supply",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-30",
+      "adDate": "2026-02-08",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Approval queued",
+      "details": {
+        "summary": "Sierra Office Supply bill VR-01084 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$4243.82"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$319.43"
+          },
+          {
+            "label": "Total",
+            "value": "$4563.25"
+          }
+        ],
+        "notes": "Current step: approval workflow.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01084.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01084.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Approval queued."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01084 started on 2026-02-08."
+          }
+        ]
+      },
+      "payeeId": "sierra-office-supply"
+    },
+    {
+      "id": "payable-29",
+      "amount": 4826,
+      "currency": "USD",
+      "billNumber": "PO-01087",
+      "payeeName": "Mosaic Printing Co",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-02",
+      "adDate": "2026-02-07",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Bank verification",
+      "details": {
+        "summary": "Mosaic Printing Co bill PO-01087 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$4488.18"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$337.82"
+          },
+          {
+            "label": "Total",
+            "value": "$4826.00"
+          }
+        ],
+        "notes": "Current step: bank handoff.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01087.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01087.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Bank verification."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01087 started on 2026-02-07."
+          }
+        ]
+      },
+      "payeeId": "mosaic-printing-co"
+    },
+    {
+      "id": "payable-30",
+      "amount": 4460,
+      "currency": "USD",
+      "billNumber": "AP-01090",
+      "payeeName": "Sierra Office Supply",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-03",
+      "adDate": "2026-02-06",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Payment processor sync",
+      "details": {
+        "summary": "Sierra Office Supply bill AP-01090 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$4147.80"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$312.20"
+          },
+          {
+            "label": "Total",
+            "value": "$4460.00"
+          }
+        ],
+        "notes": "Current step: processing queue.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01090.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01090.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Payment processor sync."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01090 started on 2026-02-06."
+          }
+        ]
+      },
+      "payeeId": "sierra-office-supply"
+    },
+    {
+      "id": "payable-31",
+      "amount": 4722.75,
+      "currency": "USD",
+      "billNumber": "BP-01093",
+      "payeeName": "Mosaic Printing Co",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-04",
+      "adDate": "2026-02-05",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Release scheduled",
+      "details": {
+        "summary": "Mosaic Printing Co bill BP-01093 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$4392.16"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$330.59"
+          },
+          {
+            "label": "Total",
+            "value": "$4722.75"
+          }
+        ],
+        "notes": "Current step: settlement window.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01093.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01093.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Release scheduled."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01093 started on 2026-02-05."
+          }
+        ]
+      },
+      "payeeId": "mosaic-printing-co"
+    },
+    {
+      "id": "payable-32",
+      "amount": 4985.5,
+      "currency": "USD",
+      "billNumber": "GL-01096",
+      "payeeName": "Sierra Office Supply",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-05",
+      "adDate": "2026-02-04",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Approval queued",
+      "details": {
+        "summary": "Sierra Office Supply bill GL-01096 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$4636.52"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$348.99"
+          },
+          {
+            "label": "Total",
+            "value": "$4985.50"
+          }
+        ],
+        "notes": "Current step: approval workflow.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01096.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01096.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Approval queued."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01096 started on 2026-02-04."
+          }
+        ]
+      },
+      "payeeId": "sierra-office-supply"
+    },
+    {
+      "id": "payable-33",
+      "amount": 5248.25,
+      "currency": "USD",
+      "billNumber": "VR-01099",
+      "payeeName": "Mosaic Printing Co",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-06",
+      "adDate": "2026-02-03",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Bank verification",
+      "details": {
+        "summary": "Mosaic Printing Co bill VR-01099 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$4880.87"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$367.38"
+          },
+          {
+            "label": "Total",
+            "value": "$5248.25"
+          }
+        ],
+        "notes": "Current step: bank handoff.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01099.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01099.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Bank verification."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01099 started on 2026-02-03."
+          }
+        ]
+      },
+      "payeeId": "mosaic-printing-co"
+    },
+    {
+      "id": "payable-34",
+      "amount": 5511,
+      "currency": "USD",
+      "billNumber": "PO-01102",
+      "payeeName": "Sierra Office Supply",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-07",
+      "adDate": "2026-02-02",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Payment processor sync",
+      "details": {
+        "summary": "Sierra Office Supply bill PO-01102 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$5125.23"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$385.77"
+          },
+          {
+            "label": "Total",
+            "value": "$5511.00"
+          }
+        ],
+        "notes": "Current step: processing queue.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01102.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01102.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Payment processor sync."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01102 started on 2026-02-02."
+          }
+        ]
+      },
+      "payeeId": "sierra-office-supply"
+    },
+    {
+      "id": "payable-35",
+      "amount": 5145,
+      "currency": "USD",
+      "billNumber": "AP-01105",
+      "payeeName": "Mosaic Printing Co",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-08",
+      "adDate": "2026-02-01",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Release scheduled",
+      "details": {
+        "summary": "Mosaic Printing Co bill AP-01105 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$4784.85"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$360.15"
+          },
+          {
+            "label": "Total",
+            "value": "$5145.00"
+          }
+        ],
+        "notes": "Current step: settlement window.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01105.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01105.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Release scheduled."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01105 started on 2026-02-01."
+          }
+        ]
+      },
+      "payeeId": "mosaic-printing-co"
+    },
+    {
+      "id": "payable-36",
+      "amount": 5407.75,
+      "currency": "USD",
+      "billNumber": "BP-01108",
+      "payeeName": "Sierra Office Supply",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-09",
+      "adDate": "2026-01-31",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Approval queued",
+      "details": {
+        "summary": "Sierra Office Supply bill BP-01108 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$5029.21"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$378.54"
+          },
+          {
+            "label": "Total",
+            "value": "$5407.75"
+          }
+        ],
+        "notes": "Current step: approval workflow.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01108.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01108.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Approval queued."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01108 started on 2026-01-31."
+          }
+        ]
+      },
+      "payeeId": "sierra-office-supply"
+    },
+    {
+      "id": "payable-37",
+      "amount": 5670.5,
+      "currency": "USD",
+      "billNumber": "GL-01111",
+      "payeeName": "Mosaic Printing Co",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-10",
+      "adDate": "2026-01-30",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Bank verification",
+      "details": {
+        "summary": "Mosaic Printing Co bill GL-01111 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$5273.57"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$396.94"
+          },
+          {
+            "label": "Total",
+            "value": "$5670.50"
+          }
+        ],
+        "notes": "Current step: bank handoff.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01111.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01111.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Bank verification."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01111 started on 2026-01-30."
+          }
+        ]
+      },
+      "payeeId": "mosaic-printing-co"
+    },
+    {
+      "id": "payable-38",
+      "amount": 5933.25,
+      "currency": "USD",
+      "billNumber": "VR-01114",
+      "payeeName": "Sierra Office Supply",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-11",
+      "adDate": "2026-01-29",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Payment processor sync",
+      "details": {
+        "summary": "Sierra Office Supply bill VR-01114 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$5517.92"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$415.33"
+          },
+          {
+            "label": "Total",
+            "value": "$5933.25"
+          }
+        ],
+        "notes": "Current step: processing queue.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01114.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01114.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Payment processor sync."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01114 started on 2026-01-29."
+          }
+        ]
+      },
+      "payeeId": "sierra-office-supply"
+    },
+    {
+      "id": "payable-39",
+      "amount": 6196,
+      "currency": "USD",
+      "billNumber": "PO-01117",
+      "payeeName": "Mosaic Printing Co",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-12",
+      "adDate": "2026-01-28",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Release scheduled",
+      "details": {
+        "summary": "Mosaic Printing Co bill PO-01117 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$5762.28"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$433.72"
+          },
+          {
+            "label": "Total",
+            "value": "$6196.00"
+          }
+        ],
+        "notes": "Current step: settlement window.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01117.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01117.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Release scheduled."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01117 started on 2026-01-28."
+          }
+        ]
+      },
+      "payeeId": "mosaic-printing-co"
+    },
+    {
+      "id": "payable-40",
+      "amount": 5830,
+      "currency": "USD",
+      "billNumber": "AP-01120",
+      "payeeName": "Sierra Office Supply",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-13",
+      "adDate": "2026-03-08",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Approval queued",
+      "details": {
+        "summary": "Sierra Office Supply bill AP-01120 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$5421.90"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$408.10"
+          },
+          {
+            "label": "Total",
+            "value": "$5830.00"
+          }
+        ],
+        "notes": "Current step: approval workflow.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01120.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01120.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Approval queued."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01120 started on 2026-03-08."
+          }
+        ]
+      },
+      "payeeId": "sierra-office-supply"
+    },
+    {
+      "id": "payable-41",
+      "amount": 6092.75,
+      "currency": "USD",
+      "billNumber": "BP-01123",
+      "payeeName": "Mosaic Printing Co",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-14",
+      "adDate": "2026-03-07",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Bank verification",
+      "details": {
+        "summary": "Mosaic Printing Co bill BP-01123 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$5666.26"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$426.49"
+          },
+          {
+            "label": "Total",
+            "value": "$6092.75"
+          }
+        ],
+        "notes": "Current step: bank handoff.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01123.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01123.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Bank verification."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01123 started on 2026-03-07."
+          }
+        ]
+      },
+      "payeeId": "mosaic-printing-co"
+    },
+    {
+      "id": "payable-42",
+      "amount": 6355.5,
+      "currency": "USD",
+      "billNumber": "GL-01126",
+      "payeeName": "Sierra Office Supply",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-15",
+      "adDate": "2026-03-06",
+      "status": "in_progress",
+      "statusLabel": "In Progress",
+      "exceptionReason": "",
+      "processingStep": "Payment processor sync",
+      "details": {
+        "summary": "Sierra Office Supply bill GL-01126 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$5910.62"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$444.89"
+          },
+          {
+            "label": "Total",
+            "value": "$6355.50"
+          }
+        ],
+        "notes": "Current step: processing queue.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01126.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01126.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "pending",
+            "title": "In Progress",
+            "description": "Payment processor sync."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01126 started on 2026-03-06."
+          }
+        ]
+      },
+      "payeeId": "sierra-office-supply"
+    },
+    {
+      "id": "payable-43",
+      "amount": 6241,
+      "currency": "USD",
+      "billNumber": "VR-01129",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-16",
+      "adDate": "2026-03-05",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill VR-01129 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$5804.13"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$436.87"
+          },
+          {
+            "label": "Total",
+            "value": "$6241.00"
+          }
+        ],
+        "notes": "Paid via Card and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01129.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01129.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill VR-01129 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01129 started on 2026-03-05."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-44",
+      "amount": 6503.75,
+      "currency": "USD",
+      "billNumber": "PO-01132",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-17",
+      "adDate": "2026-03-04",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill PO-01132 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$6048.49"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$455.26"
+          },
+          {
+            "label": "Total",
+            "value": "$6503.75"
+          }
+        ],
+        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01132.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01132.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill PO-01132 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01132 started on 2026-03-04."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-45",
+      "amount": 6766.5,
+      "currency": "USD",
+      "billNumber": "AP-01135",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-18",
+      "adDate": "2026-03-03",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill AP-01135 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$6292.85"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$473.66"
+          },
+          {
+            "label": "Total",
+            "value": "$6766.50"
+          }
+        ],
+        "notes": "Paid via ACH and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01135.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01135.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill AP-01135 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01135 started on 2026-03-03."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-46",
+      "amount": 7029.25,
+      "currency": "USD",
+      "billNumber": "BP-01138",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-19",
+      "adDate": "2026-03-02",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill BP-01138 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$6537.20"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$492.05"
+          },
+          {
+            "label": "Total",
+            "value": "$7029.25"
+          }
+        ],
+        "notes": "Paid via Card and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01138.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01138.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill BP-01138 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01138 started on 2026-03-02."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-47",
+      "amount": 7292,
+      "currency": "USD",
+      "billNumber": "GL-01141",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-20",
+      "adDate": "2026-03-01",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill GL-01141 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$6781.56"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$510.44"
+          },
+          {
+            "label": "Total",
+            "value": "$7292.00"
+          }
+        ],
+        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01141.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01141.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill GL-01141 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01141 started on 2026-03-01."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-48",
+      "amount": 6926,
+      "currency": "USD",
+      "billNumber": "VR-01144",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-21",
+      "adDate": "2026-02-28",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill VR-01144 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$6441.18"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$484.82"
+          },
+          {
+            "label": "Total",
+            "value": "$6926.00"
+          }
+        ],
+        "notes": "Paid via ACH and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01144.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01144.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill VR-01144 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01144 started on 2026-02-28."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-49",
+      "amount": 7188.75,
+      "currency": "USD",
+      "billNumber": "PO-01147",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-22",
+      "adDate": "2026-02-27",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill PO-01147 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$6685.54"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$503.21"
+          },
+          {
+            "label": "Total",
+            "value": "$7188.75"
+          }
+        ],
+        "notes": "Paid via Card and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01147.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01147.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill PO-01147 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01147 started on 2026-02-27."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-50",
+      "amount": 7451.5,
+      "currency": "USD",
+      "billNumber": "AP-01150",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-23",
+      "adDate": "2026-02-26",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill AP-01150 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$6929.90"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$521.61"
+          },
+          {
+            "label": "Total",
+            "value": "$7451.50"
+          }
+        ],
+        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01150.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01150.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill AP-01150 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01150 started on 2026-02-26."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-51",
+      "amount": 7714.25,
+      "currency": "USD",
+      "billNumber": "BP-01153",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-24",
+      "adDate": "2026-02-25",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill BP-01153 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$7174.25"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$540.00"
+          },
+          {
+            "label": "Total",
+            "value": "$7714.25"
+          }
+        ],
+        "notes": "Paid via ACH and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01153.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01153.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill BP-01153 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01153 started on 2026-02-25."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-52",
+      "amount": 7977,
+      "currency": "USD",
+      "billNumber": "GL-01156",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-25",
+      "adDate": "2026-02-24",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill GL-01156 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$7418.61"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$558.39"
+          },
+          {
+            "label": "Total",
+            "value": "$7977.00"
+          }
+        ],
+        "notes": "Paid via Card and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01156.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01156.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill GL-01156 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01156 started on 2026-02-24."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-53",
+      "amount": 7611,
+      "currency": "USD",
+      "billNumber": "VR-01159",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-26",
+      "adDate": "2026-02-23",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill VR-01159 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$7078.23"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$532.77"
+          },
+          {
+            "label": "Total",
+            "value": "$7611.00"
+          }
+        ],
+        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01159.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01159.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill VR-01159 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01159 started on 2026-02-23."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-54",
+      "amount": 7873.75,
+      "currency": "USD",
+      "billNumber": "PO-01162",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-27",
+      "adDate": "2026-02-22",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill PO-01162 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$7322.59"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$551.16"
+          },
+          {
+            "label": "Total",
+            "value": "$7873.75"
+          }
+        ],
+        "notes": "Paid via ACH and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01162.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01162.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill PO-01162 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01162 started on 2026-02-22."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-55",
+      "amount": 8136.5,
+      "currency": "USD",
+      "billNumber": "AP-01165",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-28",
+      "adDate": "2026-02-21",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill AP-01165 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$7566.95"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$569.56"
+          },
+          {
+            "label": "Total",
+            "value": "$8136.50"
+          }
+        ],
+        "notes": "Paid via Card and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01165.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01165.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill AP-01165 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01165 started on 2026-02-21."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-56",
+      "amount": 8399.25,
+      "currency": "USD",
+      "billNumber": "BP-01168",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-29",
+      "adDate": "2026-02-20",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill BP-01168 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$7811.30"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$587.95"
+          },
+          {
+            "label": "Total",
+            "value": "$8399.25"
+          }
+        ],
+        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01168.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01168.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill BP-01168 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01168 started on 2026-02-20."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-57",
+      "amount": 8662,
+      "currency": "USD",
+      "billNumber": "GL-01171",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-30",
+      "adDate": "2026-02-19",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill GL-01171 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$8055.66"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$606.34"
+          },
+          {
+            "label": "Total",
+            "value": "$8662.00"
+          }
+        ],
+        "notes": "Paid via ACH and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01171.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01171.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill GL-01171 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01171 started on 2026-02-19."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-58",
+      "amount": 8296,
+      "currency": "USD",
+      "billNumber": "VR-01174",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-02",
+      "adDate": "2026-02-18",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill VR-01174 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$7715.28"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$580.72"
+          },
+          {
+            "label": "Total",
+            "value": "$8296.00"
+          }
+        ],
+        "notes": "Paid via Card and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01174.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01174.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill VR-01174 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01174 started on 2026-02-18."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-59",
+      "amount": 8558.75,
+      "currency": "USD",
+      "billNumber": "PO-01177",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-03",
+      "adDate": "2026-02-17",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill PO-01177 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$7959.64"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$599.11"
+          },
+          {
+            "label": "Total",
+            "value": "$8558.75"
+          }
+        ],
+        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01177.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01177.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill PO-01177 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01177 started on 2026-02-17."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-60",
+      "amount": 8821.5,
+      "currency": "USD",
+      "billNumber": "AP-01180",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-04",
+      "adDate": "2026-02-16",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill AP-01180 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$8204.00"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$617.51"
+          },
+          {
+            "label": "Total",
+            "value": "$8821.50"
+          }
+        ],
+        "notes": "Paid via ACH and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01180.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01180.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill AP-01180 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01180 started on 2026-02-16."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-61",
+      "amount": 9084.25,
+      "currency": "USD",
+      "billNumber": "BP-01183",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-05",
+      "adDate": "2026-02-15",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill BP-01183 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$8448.35"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$635.90"
+          },
+          {
+            "label": "Total",
+            "value": "$9084.25"
+          }
+        ],
+        "notes": "Paid via Card and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01183.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01183.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill BP-01183 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01183 started on 2026-02-15."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-62",
+      "amount": 9347,
+      "currency": "USD",
+      "billNumber": "GL-01186",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-06",
+      "adDate": "2026-02-14",
+      "status": "paid",
+      "statusLabel": "Paid",
+      "exceptionReason": "",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill GL-01186 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$8692.71"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$654.29"
+          },
+          {
+            "label": "Total",
+            "value": "$9347.00"
+          }
+        ],
+        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01186.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01186.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "complete",
+            "title": "Paid",
+            "description": "Bill GL-01186 was processed successfully."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01186 started on 2026-02-14."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-63",
+      "amount": 8981,
+      "currency": "USD",
+      "billNumber": "VR-01189",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-07",
+      "adDate": "2026-02-13",
+      "status": "exception",
+      "statusLabel": "Exception",
+      "exceptionReason": "Approval required",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill VR-01189 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$8352.33"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$628.67"
+          },
+          {
+            "label": "Total",
+            "value": "$8981.00"
+          }
+        ],
+        "notes": "Action required: re-run approvals.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01189.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01189.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "failed",
+            "title": "Payment Exception",
+            "description": "Approval required."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01189 started on 2026-02-13."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-64",
+      "amount": 9243.75,
+      "currency": "USD",
+      "billNumber": "PO-01192",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-08",
+      "adDate": "2026-02-12",
+      "status": "exception",
+      "statusLabel": "Exception",
+      "exceptionReason": "Missing remittance details",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill PO-01192 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$8596.69"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$647.06"
+          },
+          {
+            "label": "Total",
+            "value": "$9243.75"
+          }
+        ],
+        "notes": "Action required: review vendor profile.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01192.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01192.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "failed",
+            "title": "Payment Exception",
+            "description": "Missing remittance details."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01192 started on 2026-02-12."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-65",
+      "amount": 9506.5,
+      "currency": "USD",
+      "billNumber": "AP-01195",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-09",
+      "adDate": "2026-02-11",
+      "status": "exception",
+      "statusLabel": "Exception",
+      "exceptionReason": "Invalid vendor account",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill AP-01195 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$8841.05"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$665.46"
+          },
+          {
+            "label": "Total",
+            "value": "$9506.50"
+          }
+        ],
+        "notes": "Action required: confirm account details.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01195.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01195.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "failed",
+            "title": "Payment Exception",
+            "description": "Invalid vendor account."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01195 started on 2026-02-11."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-66",
+      "amount": 9769.25,
+      "currency": "USD",
+      "billNumber": "BP-01198",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-10",
+      "adDate": "2026-02-10",
+      "status": "exception",
+      "statusLabel": "Exception",
+      "exceptionReason": "Duplicate bill detected",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill BP-01198 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$9085.40"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$683.85"
+          },
+          {
+            "label": "Total",
+            "value": "$9769.25"
+          }
+        ],
+        "notes": "Action required: validate uploaded document.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01198.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01198.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "failed",
+            "title": "Payment Exception",
+            "description": "Duplicate bill detected."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01198 started on 2026-02-10."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-67",
+      "amount": 10032,
+      "currency": "USD",
+      "billNumber": "GL-01201",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-11",
+      "adDate": "2026-02-09",
+      "status": "exception",
+      "statusLabel": "Exception",
+      "exceptionReason": "Approval required",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill GL-01201 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$9329.76"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$702.24"
+          },
+          {
+            "label": "Total",
+            "value": "$10032.00"
+          }
+        ],
+        "notes": "Action required: re-run approvals.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01201.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01201.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "failed",
+            "title": "Payment Exception",
+            "description": "Approval required."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01201 started on 2026-02-09."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-68",
+      "amount": 9666,
+      "currency": "USD",
+      "billNumber": "VR-01204",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "Sage (ERP)",
+      "dueDate": "2026-03-12",
+      "adDate": "2026-02-08",
+      "status": "exception",
+      "statusLabel": "Exception",
+      "exceptionReason": "Missing remittance details",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill VR-01204 imported from Sage (ERP).",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$8989.38"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$676.62"
+          },
+          {
+            "label": "Total",
+            "value": "$9666.00"
+          }
+        ],
+        "notes": "Action required: review vendor profile.",
+        "attachments": [
+          {
+            "name": "invoice_VR-01204.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_VR-01204.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "failed",
+            "title": "Payment Exception",
+            "description": "Missing remittance details."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for VR-01204 started on 2026-02-08."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-69",
+      "amount": 9928.75,
+      "currency": "USD",
+      "billNumber": "PO-01207",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "Batch Upload",
+      "dueDate": "2026-03-13",
+      "adDate": "2026-02-07",
+      "status": "exception",
+      "statusLabel": "Exception",
+      "exceptionReason": "Invalid vendor account",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill PO-01207 imported from Batch Upload.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$9233.74"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$695.01"
+          },
+          {
+            "label": "Total",
+            "value": "$9928.75"
+          }
+        ],
+        "notes": "Action required: confirm account details.",
+        "attachments": [
+          {
+            "name": "invoice_PO-01207.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_PO-01207.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "failed",
+            "title": "Payment Exception",
+            "description": "Invalid vendor account."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for PO-01207 started on 2026-02-07."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-70",
+      "amount": 10191.5,
+      "currency": "USD",
+      "billNumber": "AP-01210",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "QuickBooks Sync",
+      "dueDate": "2026-03-14",
+      "adDate": "2026-02-06",
+      "status": "exception",
+      "statusLabel": "Exception",
+      "exceptionReason": "Duplicate bill detected",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill AP-01210 imported from QuickBooks Sync.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$9478.10"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$713.41"
+          },
+          {
+            "label": "Total",
+            "value": "$10191.50"
+          }
+        ],
+        "notes": "Action required: validate uploaded document.",
+        "attachments": [
+          {
+            "name": "invoice_AP-01210.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_AP-01210.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "failed",
+            "title": "Payment Exception",
+            "description": "Duplicate bill detected."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for AP-01210 started on 2026-02-06."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    },
+    {
+      "id": "payable-71",
+      "amount": 10454.25,
+      "currency": "USD",
+      "billNumber": "BP-01213",
+      "payeeName": "TechNova Solutions LLC",
+      "source": "NetSuite Import",
+      "dueDate": "2026-03-15",
+      "adDate": "2026-02-05",
+      "status": "exception",
+      "statusLabel": "Exception",
+      "exceptionReason": "Approval required",
+      "processingStep": "",
+      "details": {
+        "summary": "TechNova Solutions LLC bill BP-01213 imported from NetSuite Import.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$9722.45"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$731.80"
+          },
+          {
+            "label": "Total",
+            "value": "$10454.25"
+          }
+        ],
+        "notes": "Action required: re-run approvals.",
+        "attachments": [
+          {
+            "name": "invoice_BP-01213.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_BP-01213.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "failed",
+            "title": "Payment Exception",
+            "description": "Approval required."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for BP-01213 started on 2026-02-05."
+          }
+        ]
+      },
+      "payeeId": "technova-solutions-llc"
+    },
+    {
+      "id": "payable-72",
+      "amount": 10717,
+      "currency": "USD",
+      "billNumber": "GL-01216",
+      "payeeName": "Urban Pulse Marketing",
+      "source": "Manual Entry",
+      "dueDate": "2026-03-16",
+      "adDate": "2026-02-04",
+      "status": "exception",
+      "statusLabel": "Exception",
+      "exceptionReason": "Missing remittance details",
+      "processingStep": "",
+      "details": {
+        "summary": "Urban Pulse Marketing bill GL-01216 imported from Manual Entry.",
+        "lineItems": [
+          {
+            "label": "Subtotal",
+            "value": "$9966.81"
+          },
+          {
+            "label": "Tax/Fees",
+            "value": "$750.19"
+          },
+          {
+            "label": "Total",
+            "value": "$10717.00"
+          }
+        ],
+        "notes": "Action required: review vendor profile.",
+        "attachments": [
+          {
+            "name": "invoice_GL-01216.pdf",
+            "size": "2.1mb"
+          },
+          {
+            "name": "supporting_docs_GL-01216.pdf",
+            "size": "4.3mb"
+          }
+        ],
+        "activityLog": [
+          {
+            "type": "failed",
+            "title": "Payment Exception",
+            "description": "Missing remittance details."
+          },
+          {
+            "type": "event",
+            "title": "Initiated",
+            "description": "Payment workflow for GL-01216 started on 2026-02-04."
+          }
+        ]
+      },
+      "payeeId": "urban-pulse-marketing"
+    }
+  ]
+}
