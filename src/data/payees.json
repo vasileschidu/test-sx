@@ -52,7 +52,22 @@
             "id": "sd-rmc-1",
             "label": "Finance Team (Email)",
             "channel": "Email",
-            "destination": "ap@redmaple.example"
+            "destination": "ap@redmaple.example",
+            "contactPerson": "Rachel Morris",
+            "contacts": [
+              {
+                "id": "sd-rmc-1-email",
+                "type": "email",
+                "label": "Rachel Morris",
+                "value": "ap@redmaple.example"
+              },
+              {
+                "id": "sd-rmc-1-phone",
+                "type": "phone",
+                "label": "Rachel Morris",
+                "value": "+1 (512) 555-0182"
+              }
+            ]
           }
         ],
         "smartExchange": [
@@ -109,7 +124,22 @@
             "id": "sd-bpc-1",
             "label": "Accounts Payable (SMS)",
             "channel": "SMS",
-            "destination": "+1 (214) 555-0148"
+            "destination": "+1 (214) 555-0148",
+            "contactPerson": "Melissa Grant",
+            "contacts": [
+              {
+                "id": "sd-bpc-1-email",
+                "type": "email",
+                "label": "Melissa Grant",
+                "value": "ap@beaconproperty.example"
+              },
+              {
+                "id": "sd-bpc-1-phone",
+                "type": "phone",
+                "label": "Melissa Grant",
+                "value": "+1 (214) 555-0148"
+              }
+            ]
           }
         ],
         "smartExchange": []
@@ -167,7 +197,22 @@
             "id": "sd-mpc-1",
             "label": "AP Automation (Email)",
             "channel": "Email",
-            "destination": "payments@mosaic.example"
+            "destination": "payments@mosaic.example",
+            "contactPerson": "Daniel Price",
+            "contacts": [
+              {
+                "id": "sd-mpc-1-email",
+                "type": "email",
+                "label": "Daniel Price",
+                "value": "payments@mosaic.example"
+              },
+              {
+                "id": "sd-mpc-1-phone",
+                "type": "phone",
+                "label": "Daniel Price",
+                "value": "+1 (615) 555-0126"
+              }
+            ]
           }
         ],
         "smartExchange": [
@@ -224,7 +269,22 @@
             "id": "sd-sos-1",
             "label": "Disburse Endpoint",
             "channel": "Token",
-            "destination": "sierra-token-endpoint"
+            "destination": "sierra-token-endpoint",
+            "contactPerson": "Alicia Barnes",
+            "contacts": [
+              {
+                "id": "sd-sos-1-email",
+                "type": "email",
+                "label": "Alicia Barnes",
+                "value": "payables@sierraoffice.example"
+              },
+              {
+                "id": "sd-sos-1-phone",
+                "type": "phone",
+                "label": "Alicia Barnes",
+                "value": "+1 (303) 555-0169"
+              }
+            ]
           }
         ],
         "smartExchange": []
@@ -282,7 +342,22 @@
             "id": "sd-tns-1",
             "label": "Treasury Queue",
             "channel": "Email",
-            "destination": "treasury@technova.example"
+            "destination": "treasury@technova.example",
+            "contactPerson": "Marcus Lee",
+            "contacts": [
+              {
+                "id": "sd-tns-1-email",
+                "type": "email",
+                "label": "Marcus Lee",
+                "value": "treasury@technova.example"
+              },
+              {
+                "id": "sd-tns-1-phone",
+                "type": "phone",
+                "label": "Marcus Lee",
+                "value": "+1 (737) 555-0104"
+              }
+            ]
           }
         ],
         "smartExchange": [
@@ -346,7 +421,22 @@
             "id": "sd-upm-1",
             "label": "AP Portal",
             "channel": "Token",
-            "destination": "urbanpulse-disburse-token"
+            "destination": "urbanpulse-disburse-token",
+            "contactPerson": "Olivia Chen",
+            "contacts": [
+              {
+                "id": "sd-upm-1-email",
+                "type": "email",
+                "label": "Olivia Chen",
+                "value": "ap@urbanpulse.example"
+              },
+              {
+                "id": "sd-upm-1-phone",
+                "type": "phone",
+                "label": "Olivia Chen",
+                "value": "+1 (646) 555-0195"
+              }
+            ]
           }
         ],
         "smartExchange": []
