@@ -647,6 +647,7 @@
       methodId: methodId,
       methodLabel: getPaymentMethodLabel(methodId),
       amount: formatMoney(_payContext.row && _payContext.row.amount, (_payContext.row && _payContext.row.currency) || 'USD'),
+      payeeName: String((_payContext.row && _payContext.row.payeeName) || recipientName || 'Payee').trim(),
       paymentDateIso: getEffectivePaymentDateIso(),
       originName: originName,
       originSub: originSub,
@@ -658,28 +659,141 @@
     };
   }
 
+  function getCurrentCheckRecipientDetails() {
+    var methodId = getSelectedOptionValueByOptionsId('pp-pay-method-options');
+    if (methodId !== 'check') return null;
+    if (!getSelectedOptionValueByOptionsId('gp-check-address-select')) return null;
+    var origin = _origDetailsState && _origDetailsState.account ? _origDetailsState.account : null;
+    var originName = origin ? String(origin.displayName || origin.name || origin.bankName || 'My account').trim() : 'My account';
+    var originSub = origin ? ('••••' + getAccountLast4(origin)) : '--';
+    var recipientName = String((document.getElementById('gp-pmc-check-name') || {}).textContent || '').trim() || String((_payContext.row && _payContext.row.payeeName) || 'Payee');
+    var recipientAddress = String((document.getElementById('gp-pmc-check-address') || {}).textContent || '').trim() || '--';
+    var attentionTo = String((document.getElementById('gp-pmc-check-attention') || {}).value || (document.getElementById('gp-pmc-check-attention-mobile') || {}).value || recipientName).trim() || '--';
+    var printDate = String((document.getElementById('gp-pmc-check-print-date') || {}).value || (document.getElementById('gp-pmc-check-print-date-mobile') || {}).value || formatDate(getEffectivePaymentDateIso())).trim() || '--';
+    var memo = String((document.getElementById('gp-pmc-check-memo') || {}).value || (document.getElementById('gp-pmc-check-memo-mobile') || {}).value || '').trim() || '--';
+    var amount = formatMoney(_payContext.row && _payContext.row.amount, (_payContext.row && _payContext.row.currency) || 'USD');
+    var billNumber = String((_payContext.row && _payContext.row.billNumber) || '').trim();
+
+    return {
+      methodId: methodId,
+      methodLabel: getPaymentMethodLabel(methodId),
+      amount: amount,
+      payeeName: recipientName,
+      paymentDateIso: getEffectivePaymentDateIso(),
+      originName: originName,
+      originSub: originSub,
+      recipientName: recipientName,
+      recipientAddress: recipientAddress,
+      checkNumber: billNumber ? ('#' + billNumber) : '--',
+      checkCompany: recipientName,
+      checkAddress: recipientAddress,
+      checkAttentionTo: attentionTo,
+      checkAmount: amount,
+      checkPrintDate: printDate,
+      checkMemo: memo,
+    };
+  }
+
+  function getCurrentPaymentConfirmSelection() {
+    var methodId = getSelectedOptionValueByOptionsId('pp-pay-method-options');
+    if (methodId === 'ach' || methodId === 'wire') return getCurrentBankRecipientDetails();
+    if (methodId === 'check') return getCurrentCheckRecipientDetails();
+    return null;
+  }
+
   function populatePaymentConfirmModal(selection) {
     if (!selection) return;
+    var defaultMethodCheckbox = document.getElementById('pp-confirm-default-method');
+    var defaultMethodLabel = document.getElementById('pp-confirm-default-method-label');
+    var dateLabel = document.getElementById('pp-confirm-date-label');
+    var dateIcon = document.getElementById('pp-confirm-date-icon');
+    var genericDetails = document.getElementById('pp-confirm-generic-details');
+    var checkDetails = document.getElementById('pp-confirm-check-details');
+    var isScheduled = !!(_schedulePickerState && _schedulePickerState.confirmedDate);
+    var isCheck = selection.methodId === 'check';
+    if (defaultMethodCheckbox) defaultMethodCheckbox.checked = false;
+    if (defaultMethodLabel) defaultMethodLabel.textContent = 'Make this the default payment method for ' + selection.payeeName;
+    if (dateLabel) dateLabel.textContent = isScheduled ? 'Scheduled for' : 'Payment date';
+    if (dateIcon) dateIcon.classList.toggle('hidden', !isScheduled);
+    if (genericDetails) genericDetails.classList.toggle('hidden', isCheck);
+    if (checkDetails) checkDetails.classList.toggle('hidden', !isCheck);
+    setText('pp-payment-confirm-title', 'Confirm ' + selection.amount + ' payment');
     setText('pp-confirm-amount', selection.amount);
+    setText('pp-confirm-payee', selection.payeeName);
     setText('pp-confirm-date', formatDate(selection.paymentDateIso));
     setText('pp-confirm-method', selection.methodLabel);
     setText('pp-confirm-origin-name', selection.originName);
     setText('pp-confirm-origin-sub', selection.originSub);
     setText('pp-confirm-recipient-name', selection.recipientName);
-    setText('pp-confirm-recipient-sub', selection.recipientAccount !== '--' ? selection.recipientAccount : (selection.recipientRouting !== '--' ? selection.recipientRouting : selection.recipientAddress));
+    setText('pp-confirm-recipient-sub', isCheck ? selection.recipientAddress : (selection.recipientAccount !== '--' ? selection.recipientAccount : (selection.recipientRouting !== '--' ? selection.recipientRouting : selection.recipientAddress)));
+    if (isCheck) {
+      setText('pp-confirm-check-number', selection.checkNumber);
+      setText('pp-confirm-check-company', selection.checkCompany);
+      setText('pp-confirm-check-address', selection.checkAddress);
+      setText('pp-confirm-check-attention', selection.checkAttentionTo);
+      setText('pp-confirm-check-amount', selection.checkAmount);
+      setText('pp-confirm-check-print-date', selection.checkPrintDate);
+      setText('pp-confirm-check-memo', selection.checkMemo);
+    }
   }
 
   function populateSubmitSuccessModal(selection) {
     if (!selection) return;
-    setText('gp-submit-amount', selection.amount);
-    setText('gp-submit-date', formatDate(selection.paymentDateIso));
-    setText('gp-submit-method', selection.methodLabel);
-    setText('gp-submit-txid', 'TX-' + String(Date.now()).slice(-8));
-    var bankRow = document.getElementById('gp-submit-bank-row');
-    var checkRow = document.getElementById('gp-submit-check-row');
-    if (bankRow) bankRow.classList.toggle('hidden', !(selection.methodId === 'ach' || selection.methodId === 'wire'));
-    if (checkRow) checkRow.classList.add('hidden');
-    setText('gp-submit-bank-name', selection.recipientBankLabel || selection.recipientName || '--');
+    var isScheduled = !!(_schedulePickerState && _schedulePickerState.confirmedDate);
+    var isCheck = selection.methodId === 'check';
+    var successCopy = document.getElementById('gp-submit-success-copy');
+    var progressBar = document.getElementById('gp-submit-progress-bar');
+    var stage1 = document.getElementById('gp-submit-stage-1');
+    var stage2 = document.getElementById('gp-submit-stage-2');
+    var stage3 = document.getElementById('gp-submit-stage-3');
+
+    function setStageState(el, label, active) {
+      if (!el) return;
+      el.textContent = label;
+      el.classList.toggle('text-blue-600', !!active);
+      el.classList.toggle('dark:text-blue-400', !!active);
+    }
+
+    if (isScheduled) {
+      setText('gp-submit-success-title', 'Payment Scheduled!');
+      setText('gp-submit-success-copy', 'Your payment has been scheduled for ' + formatDate(selection.paymentDateIso) + '. If there are additional actions for you to take, you\'ll be notified.');
+      setText('gp-submit-progress-title', 'Payment initiation is scheduled for ' + formatDate(selection.paymentDateIso) + '.');
+      if (progressBar) progressBar.style.width = '12.5%';
+      setStageState(stage1, 'Payment Initiation', true);
+      setStageState(stage2, 'In Progress', false);
+      setStageState(stage3, 'Paid', false);
+      return;
+    }
+
+    setText('gp-submit-success-title', 'Payment Submitted!');
+    setText('gp-submit-success-copy', 'Your payment is in progress. Check back later for status updates. If there are additional actions for you to take, you\'ll be notified.');
+    setText('gp-submit-progress-title', isCheck ? 'Check payment is in progress...' : (selection.amount + ' to ' + selection.payeeName + ' is in progress...'));
+    if (progressBar) progressBar.style.width = '50%';
+    setStageState(stage1, 'Payment Initiation', true);
+    setStageState(stage2, 'In Progress', true);
+    setStageState(stage3, 'Paid', false);
+  }
+
+  function setInputValue(id, value) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.value = value == null ? '' : String(value);
+  }
+
+  function populateCheckDetails(selected) {
+    var attentionTo = String((selected && selected.name) || (_payContext.row && _payContext.row.payeeName) || 'Payee').trim();
+    var amount = formatMoney(_payContext.row && _payContext.row.amount, (_payContext.row && _payContext.row.currency) || 'USD');
+    var printDate = formatDate(getEffectivePaymentDateIso());
+    var memo = _payContext.row && _payContext.row.billNumber ? ('Bill # ' + String(_payContext.row.billNumber).trim()) : '';
+
+    setInputValue('gp-pmc-check-attention', attentionTo);
+    setInputValue('gp-pmc-check-attention-mobile', attentionTo);
+    setInputValue('gp-pmc-check-amount', amount);
+    setInputValue('gp-pmc-check-amount-mobile', amount);
+    setInputValue('gp-pmc-check-print-date', printDate);
+    setInputValue('gp-pmc-check-print-date-mobile', printDate);
+    setInputValue('gp-pmc-check-memo', memo);
+    setInputValue('gp-pmc-check-memo-mobile', memo);
   }
 
   function initPaymentConfirmFlow() {
@@ -689,10 +803,10 @@
 
     entryBtn.addEventListener('click', function (event) {
       event.preventDefault();
-      var selection = getCurrentBankRecipientDetails();
+      var selection = getCurrentPaymentConfirmSelection();
       if (!selection) {
         if (typeof window.showGlobalTopToast === 'function') {
-          window.showGlobalTopToast('Select a bank destination to continue.');
+          window.showGlobalTopToast('Complete the payment details to continue.');
         }
         return;
       }
@@ -702,7 +816,7 @@
 
     confirmBtn.addEventListener('click', function (event) {
       event.preventDefault();
-      var selection = getCurrentBankRecipientDetails();
+      var selection = getCurrentPaymentConfirmSelection();
       if (!selection) return;
       populateSubmitSuccessModal(selection);
       closeDialogById('pp-payment-confirm-dialog');
@@ -1449,8 +1563,11 @@
               });
               setText('gp-pmc-check-name', selected.name || _payContext.row.payeeName);
               setText('gp-pmc-check-address', selected.address || '--');
+              populateCheckDetails(selected);
               var details = document.getElementById('gp-pmc-check-details');
               if (details) details.classList.remove('hidden');
+              var fields = document.getElementById('gp-pmc-check-fields');
+              if (fields) fields.classList.remove('hidden');
               updatePayStepStates();
             };
           }

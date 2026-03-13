@@ -689,20 +689,17 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <div class="mt-4 rounded-md bg-blue-50 p-4 dark:bg-blue-500/10">
-                                                                <div class="flex">
+                                                            <div class="mt-4 rounded-md bg-gray-100 p-[10px] dark:bg-white/10">
+                                                                <div class="flex items-start gap-2.5">
                                                                     <div class="shrink-0">
-                                                                        <svg viewBox="0 0 20 20" fill="currentColor"
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor"
                                                                             aria-hidden="true"
-                                                                            class="size-5 text-blue-400 dark:text-blue-300">
-                                                                            <path
-                                                                                d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z"
-                                                                                clip-rule="evenodd"
-                                                                                fill-rule="evenodd" />
+                                                                            class="size-3 text-gray-500 dark:text-gray-400">
+                                                                            <path fill-rule="evenodd" d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM9 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6.75 8a.75.75 0 0 0 0 1.5h.75v1.75a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8.25 8h-1.5Z" clip-rule="evenodd" />
                                                                         </svg>
                                                                     </div>
-                                                                    <div class="ml-3">
-                                                                        <p class="text-sm text-blue-700 dark:text-blue-200">
+                                                                    <div class="min-w-0">
+                                                                        <p class="text-xs text-gray-600 dark:text-gray-300">
                                                                             If your Routing Number, Account Number or Address records (as registered under the bank account) are no longer accurate, please update the details in your ERP. Once your details are updated, please "Refresh" to reflect the changes.
                                                                         </p>
                                                                     </div>
@@ -851,7 +848,7 @@
                                                             <!-- body -->
                                                             <div
                                                                 class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
-                                                                <div class="grid grid-cols-2 gap-4 self-stretch">
+                                                                <div class="grid grid-cols-2 gap-4 self-stretch items-center">
                                                                     <span
                                                                         class="text-sm font-medium text-gray-900 dark:text-gray-100">Recipient
                                                                         Name</span>
@@ -865,6 +862,98 @@
                                                                     <span id="gp-pmc-check-address"
                                                                         class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line"></span>
                                                                 </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div id="gp-pmc-check-fields" class="hidden mt-4 flex flex-col items-start gap-3 self-stretch">
+                                                        <div class="hidden sm:grid sm:grid-cols-2 sm:items-center sm:gap-4 self-stretch">
+                                                            <label for="gp-pmc-check-attention"
+                                                                class="text-sm font-medium text-gray-900 dark:text-gray-100">Attention
+                                                                To</label>
+                                                            <input id="gp-pmc-check-attention" type="text"
+                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                                        </div>
+                                                        <div class="sm:hidden self-stretch">
+                                                            <label for="gp-pmc-check-attention-mobile"
+                                                                class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">Attention To</label>
+                                                            <div class="mt-2">
+                                                                <input id="gp-pmc-check-attention-mobile" type="text"
+                                                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="hidden sm:grid sm:grid-cols-2 sm:items-center sm:gap-4 self-stretch">
+                                                            <label for="gp-pmc-check-amount"
+                                                                class="text-sm font-medium text-gray-900 dark:text-gray-100">Amount</label>
+                                                            <input id="gp-pmc-check-amount" type="text" disabled
+                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:disabled:bg-white/5 dark:disabled:text-gray-400 dark:disabled:outline-white/10" />
+                                                        </div>
+                                                        <div class="sm:hidden self-stretch">
+                                                            <label for="gp-pmc-check-amount-mobile"
+                                                                class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">Amount</label>
+                                                            <div class="mt-2">
+                                                                <input id="gp-pmc-check-amount-mobile" type="text" disabled
+                                                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:disabled:bg-white/5 dark:disabled:text-gray-400 dark:disabled:outline-white/10" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="hidden sm:grid sm:grid-cols-2 sm:items-center sm:gap-4 self-stretch">
+                                                            <label for="gp-pmc-check-print-date"
+                                                                class="inline-flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-100">Print
+                                                                Date
+                                                                <span class="group relative inline-flex">
+                                                                    <span class="inline-flex rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-500 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                                                                            <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" />
+                                                                        </svg>
+                                                                    </span>
+                                                                    <span role="tooltip"
+                                                                        class="pointer-events-none invisible absolute bottom-full left-1/2 z-50 mb-1.5 w-72 -translate-x-1/2 origin-bottom rounded-md bg-gray-900 px-3 py-2 text-xs font-normal leading-5 text-white opacity-0 scale-95 shadow-lg transition duration-100 ease-out group-hover:visible group-hover:opacity-100 group-hover:scale-100 dark:bg-black">
+                                                                        This is the date the check will be printed. If you would like to change it in the future please select either Pay on Due Date or Schedule Payment options.
+                                                                    </span>
+                                                                </span>
+                                                            </label>
+                                                            <div class="relative">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-gray-400 dark:text-gray-500">
+                                                                    <path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd" />
+                                                                </svg>
+                                                                <input id="gp-pmc-check-print-date" type="text"
+                                                                    class="block w-full rounded-md bg-white py-1.5 pr-3 pl-11 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="sm:hidden self-stretch">
+                                                            <label for="gp-pmc-check-print-date-mobile"
+                                                                class="inline-flex items-center gap-2 text-sm/6 font-medium text-gray-900 dark:text-gray-100">Print Date
+                                                                <span class="group relative inline-flex">
+                                                                    <span class="inline-flex rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-500 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                                                                            <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" />
+                                                                        </svg>
+                                                                    </span>
+                                                                    <span role="tooltip"
+                                                                        class="pointer-events-none invisible absolute bottom-full left-0 z-50 mb-1.5 w-72 origin-bottom rounded-md bg-gray-900 px-3 py-2 text-xs font-normal leading-5 text-white opacity-0 scale-95 shadow-lg transition duration-100 ease-out group-hover:visible group-hover:opacity-100 group-hover:scale-100 dark:bg-black">
+                                                                        This is the date the check will be printed. If you would like to change it in the future please select either Pay on Due Date or Schedule Payment options.
+                                                                    </span>
+                                                                </span>
+                                                            </label>
+                                                            <div class="relative mt-2">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="pointer-events-none absolute left-3 top-1/2 size-5 -translate-y-1/2 text-gray-400 dark:text-gray-500">
+                                                                    <path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd" />
+                                                                </svg>
+                                                                <input id="gp-pmc-check-print-date-mobile" type="text"
+                                                                    class="block w-full rounded-md bg-white py-1.5 pr-3 pl-11 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                                            </div>
+                                                        </div>
+                                                        <div class="hidden sm:grid sm:grid-cols-2 sm:items-center sm:gap-4 self-stretch">
+                                                            <label for="gp-pmc-check-memo"
+                                                                class="text-sm font-medium text-gray-900 dark:text-gray-100">Memo</label>
+                                                            <input id="gp-pmc-check-memo" type="text"
+                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                                        </div>
+                                                        <div class="sm:hidden self-stretch">
+                                                            <label for="gp-pmc-check-memo-mobile"
+                                                                class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">Memo</label>
+                                                            <div class="mt-2">
+                                                                <input id="gp-pmc-check-memo-mobile" type="text"
+                                                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                                             </div>
                                                         </div>
                                                     </div>
@@ -1433,74 +1522,152 @@
                     </div>
                     <div class="px-6 pb-6 sm:px-8">
                         <h3 id="pp-payment-confirm-title" class="text-xl font-semibold text-gray-900 dark:text-white">
-                            Confirm payment details
+                            Confirm payment
                         </h3>
                         <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
                             Review your account and recipient details before you continue.
                         </p>
 
-                        <div class="mt-5 rounded-xl bg-gray-100 p-4 dark:bg-white/10">
-                            <dl class="space-y-3">
+                        <div class="mt-6">
+                            <div class="hidden sm:grid sm:grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)] sm:items-start sm:gap-2">
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Origination Account</p>
+                                </div>
+                                <span aria-hidden="true"></span>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Recipient</p>
+                                </div>
+                            </div>
+                            <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-2">
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100 sm:hidden">Origination Account</p>
+                                    <div class="mt-2 flex items-center gap-3 rounded-lg bg-gray-100 p-4 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10 sm:mt-0">
+                                        <div class="shrink-0 text-gray-500 dark:text-gray-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>
+                                        </div>
+                                        <div class="flex min-w-0 flex-1 flex-col justify-center gap-1">
+                                            <p id="pp-confirm-origin-name" class="truncate text-sm font-medium text-gray-900 dark:text-white">--</p>
+                                            <p id="pp-confirm-origin-sub" class="block text-sm text-gray-500 dark:text-gray-400">--</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <span class="hidden shrink-0 sm:flex sm:items-center sm:justify-center">
+                                        <span class="inline-flex items-center justify-center rounded-full bg-gray-50 p-2 dark:bg-white/5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400">
+                                            <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
+                                        </svg>
+                                        </span>
+                                </span>
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100 sm:hidden">Recipient</p>
+                                    <div class="mt-2 flex items-center gap-3 rounded-lg bg-gray-100 p-4 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10 sm:mt-0">
+                                        <div class="shrink-0 text-gray-500 dark:text-gray-400">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path fill-rule="evenodd" d="M4 16.5v-13h-.25a.75.75 0 0 1 0-1.5h12.5a.75.75 0 0 1 0 1.5H16v13h.25a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75v-2.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75v2.5a.75.75 0 0 1-.75.75h-3.5a.75.75 0 0 1 0-1.5H4Zm3-11a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM7.5 9a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1ZM11 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm.5 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z" clip-rule="evenodd" /></svg>
+                                        </div>
+                                        <div class="flex min-w-0 flex-1 flex-col justify-center gap-1">
+                                            <p id="pp-confirm-recipient-name" class="truncate text-sm font-medium text-gray-900 dark:text-white">--</p>
+                                            <p id="pp-confirm-recipient-sub" class="truncate text-sm text-gray-500 dark:text-gray-400">--</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="pp-confirm-generic-details" class="mt-3 rounded-xl bg-gray-100 p-4 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10">
+                            <dl class="space-y-2">
                                 <div class="grid grid-cols-2 gap-4">
                                     <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Amount</dt>
                                     <dd id="pp-confirm-amount" class="text-right text-sm/6 font-normal text-gray-700 dark:text-gray-300">--</dd>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Payment date</dt>
-                                    <dd id="pp-confirm-date" class="text-right text-sm/6 font-normal text-gray-700 dark:text-gray-300">--</dd>
+                                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Payee</dt>
+                                    <dd id="pp-confirm-payee" class="text-right text-sm/6 font-normal text-gray-700 dark:text-gray-300">--</dd>
                                 </div>
                                 <div class="grid grid-cols-2 gap-4">
                                     <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Payment method</dt>
                                     <dd id="pp-confirm-method" class="text-right text-sm/6 font-normal text-gray-700 dark:text-gray-300">--</dd>
                                 </div>
+                                <div class="grid grid-cols-2 items-center gap-4">
+                                    <dt id="pp-confirm-date-label" class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Payment date</dt>
+                                    <dd class="text-right text-sm/6 font-normal text-gray-700 dark:text-gray-300">
+                                        <span id="pp-confirm-date-wrap" class="inline-flex items-center justify-end gap-1.5 leading-6">
+                                            <svg id="pp-confirm-date-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="hidden size-3.5 shrink-0 text-gray-500 dark:text-gray-400" aria-hidden="true">
+                                                <path fill-rule="evenodd" d="M5.75 2a.75.75 0 0 1 .75.75V4h7V2.75a.75.75 0 0 1 1.5 0V4h.25A2.75 2.75 0 0 1 18 6.75v8.5A2.75 2.75 0 0 1 15.25 18H4.75A2.75 2.75 0 0 1 2 15.25v-8.5A2.75 2.75 0 0 1 4.75 4H5V2.75A.75.75 0 0 1 5.75 2Zm-1 5.5c-.69 0-1.25.56-1.25 1.25v6.5c0 .69.56 1.25 1.25 1.25h10.5c.69 0 1.25-.56 1.25-1.25v-6.5c0-.69-.56-1.25-1.25-1.25H4.75Z" clip-rule="evenodd" />
+                                            </svg>
+                                            <span id="pp-confirm-date" class="text-sm/6 font-normal text-gray-700 dark:text-gray-300">--</span>
+                                        </span>
+                                    </dd>
+                                </div>
                             </dl>
                         </div>
-
-                        <div class="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_56px_1fr] sm:items-start">
-                            <div class="min-w-0">
-                                <p class="mb-3 text-sm/6 font-medium text-gray-900 dark:text-gray-100">Origination Account</p>
-                                <div class="flex items-center gap-3 self-stretch rounded-lg bg-gray-100 p-3 dark:bg-white/10">
-                                    <div class="flex flex-col items-start p-2">
-                                        <span class="text-gray-500 dark:text-gray-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>
-                                        </span>
-                                    </div>
-                                    <div class="flex min-w-0 grow shrink-0 basis-0 flex-col gap-1">
-                                        <p id="pp-confirm-origin-name" class="truncate text-sm font-medium text-gray-900 dark:text-white">--</p>
-                                        <p id="pp-confirm-origin-sub" class="block text-sm text-gray-500 dark:text-gray-400">--</p>
-                                    </div>
+                        <div id="pp-confirm-check-details" class="hidden mt-3 rounded-xl bg-gray-100 p-4 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10">
+                            <dl class="space-y-2">
+                                <div class="grid grid-cols-2 gap-4">
+                                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Check Number</dt>
+                                    <dd id="pp-confirm-check-number" class="text-right text-sm/6 font-normal text-gray-700 dark:text-gray-300">--</dd>
                                 </div>
-                            </div>
-                            <span class="hidden sm:flex sm:items-center sm:justify-center">
-                                    <span class="inline-flex items-center justify-center rounded-full bg-gray-50 p-2 dark:bg-white/5">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400">
-                                        <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
-                                    </svg>
-                                    </span>
-                            </span>
-                            <div class="min-w-0">
-                                <p class="mb-3 text-sm/6 font-medium text-gray-900 dark:text-gray-100">Recipient</p>
-                                <div class="flex items-center gap-3 self-stretch rounded-lg bg-gray-100 p-3 dark:bg-white/10">
-                                    <div class="flex flex-col items-start p-2">
-                                        <span class="text-gray-500 dark:text-gray-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>
-                                        </span>
-                                    </div>
-                                    <div class="flex min-w-0 grow shrink-0 basis-0 flex-col gap-1">
-                                        <p id="pp-confirm-recipient-name" class="truncate text-sm font-medium text-gray-900 dark:text-white">--</p>
-                                        <p id="pp-confirm-recipient-sub" class="block text-sm text-gray-500 dark:text-gray-400">--</p>
-                                    </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Amount</dt>
+                                    <dd id="pp-confirm-check-amount" class="text-right text-sm/6 font-normal text-gray-700 dark:text-gray-300">--</dd>
                                 </div>
-                            </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Print Date</dt>
+                                    <dd id="pp-confirm-check-print-date" class="text-right text-sm/6 font-normal text-gray-700 dark:text-gray-300">--</dd>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Name or Company Name</dt>
+                                    <dd id="pp-confirm-check-company" class="text-right text-sm/6 font-normal text-gray-700 dark:text-gray-300">--</dd>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4 items-start">
+                                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Address</dt>
+                                    <dd id="pp-confirm-check-address" class="text-right text-sm/6 font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line">--</dd>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Attention To</dt>
+                                    <dd id="pp-confirm-check-attention" class="text-right text-sm/6 font-normal text-gray-700 dark:text-gray-300">--</dd>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Memo</dt>
+                                    <dd id="pp-confirm-check-memo" class="text-right text-sm/6 font-normal text-gray-700 dark:text-gray-300">--</dd>
+                                </div>
+                            </dl>
                         </div>
+                        <fieldset class="mt-6">
+                            <legend class="sr-only">Payment preferences</legend>
+                            <div class="space-y-5">
+                                <div class="flex gap-3">
+                                    <div class="flex h-6 shrink-0 items-center">
+                                        <div class="group grid size-4 grid-cols-1">
+                                            <input id="pp-confirm-default-method" type="checkbox" name="defaultPaymentMethod"
+                                                aria-describedby="pp-confirm-default-method-description"
+                                                class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto dark:border-white/10 dark:bg-white/5" />
+                                            <svg viewBox="0 0 14 14" fill="none"
+                                                class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25">
+                                                <path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="opacity-0 group-has-checked:opacity-100" />
+                                                <path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                    class="opacity-0 group-has-indeterminate:opacity-100" />
+                                            </svg>
+                                        </div>
+                                    </div>
+                                    <div class="text-sm">
+                                        <label for="pp-confirm-default-method" id="pp-confirm-default-method-label"
+                                            class="font-medium text-gray-900 dark:text-white">Make this my default payment method</label>
+                                        <p id="pp-confirm-default-method-description" class="mt-0.5 text-gray-500 dark:text-gray-400">
+                                            Checking this means next time you make a payment it will be pre-selected. You can change it anytime in
+                                            <a href="payment-preferences.html" class="font-medium text-blue-600 underline decoration-blue-600 underline-offset-2 hover:text-blue-500 dark:text-blue-400 dark:decoration-blue-400">vendor profile</a>.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </fieldset>
                     </div>
-                    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                    <div class="flex w-full justify-end gap-3 px-6 py-5">
                         <button type="button" command="close" commandfor="pp-payment-confirm-dialog"
-                            class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+                            class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
                             Cancel
                         </button>
                         <button id="pp-payment-confirm-submit-btn" type="button"
-                            class="w-full rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
+                            class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
                             Confirm payment
                         </button>
                     </div>
@@ -1518,104 +1685,55 @@
             <div tabindex="0"
                 class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
-                    class="relative flex w-full max-w-[512px] flex-col items-center transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
-                    <div class="w-full px-5 py-7 sm:px-8 sm:py-8">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
-                            class="mx-auto size-11 text-green-500">
-                            <path fill-rule="evenodd"
-                                d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
-                                clip-rule="evenodd" />
-                        </svg>
-
-                        <h3 id="gp-submit-success-title"
-                            class="mt-5 text-center text-lg font-semibold text-gray-900 dark:text-white">
-                            Successfully Submitted!</h3>
-
-                        <div class="mt-6 overflow-hidden rounded-xl border border-gray-200 dark:border-white/10">
-                            <div class="px-4 py-4 sm:px-6 sm:py-5">
-                                <p class="text-sm font-semibold text-gray-600 dark:text-gray-400">Amount</p>
-                                <p id="gp-submit-amount"
-                                    class="mt-1 text-[30px] leading-9 font-bold tracking-tight text-gray-900 dark:text-white">
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
+                        <button type="button" command="close" commandfor="gp-submit-success-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+                        <div class="flex flex-col items-center text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                                class="size-11 text-green-500" aria-hidden="true">
+                                <path fill-rule="evenodd"
+                                    d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <div class="mt-6 flex flex-col items-center gap-2">
+                                <h2 id="gp-submit-success-title" class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">
+                                    Payment Submitted!
+                                </h2>
+                                <p id="gp-submit-success-copy" class="max-w-[32rem] text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
+                                    Your payment is in progress. Check back later for status updates. If there are additional actions for you to take, you'll be notified.
                                 </p>
-                                <div id="gp-submit-card-section"
-                                    class="hidden mt-5 items-center gap-3 rounded-lg bg-gray-100 pr-2 dark:bg-white/5">
-                                    <div
-                                        class="flex h-[46px] w-[71px] flex-col items-end gap-0.5 rounded-md bg-gray-950 p-2 text-gray-200 font-['Roboto_Mono'] text-[10px] leading-3">
-                                        <svg class="h-4 w-8" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"
-                                            aria-hidden="true">
-                                            <path d="M0 0h32v32H0z" fill="#00579f"></path>
-                                            <g fill="#fff" fill-rule="nonzero">
-                                                <path
-                                                    d="M13.823 19.876H11.8l1.265-7.736h2.023zm7.334-7.546a5.036 5.036 0 0 0-1.814-.33c-1.998 0-3.405 1.053-3.414 2.56-.016 1.11 1.007 1.728 1.773 2.098.783.379 1.05.626 1.05.963-.009.518-.633.757-1.216.757-.808 0-1.24-.123-1.898-.411l-.267-.124-.283 1.737c.475.213 1.349.403 2.257.411 2.123 0 3.505-1.037 3.521-2.641.008-.881-.532-1.556-1.698-2.107-.708-.354-1.141-.593-1.141-.955.008-.33.366-.667 1.165-.667a3.471 3.471 0 0 1 1.507.297l.183.082zm2.69 4.806.807-2.165c-.008.017.167-.452.266-.74l.142.666s.383 1.852.466 2.239h-1.682zm2.497-4.996h-1.565c-.483 0-.85.14-1.058.642l-3.005 7.094h2.123l.425-1.16h2.597c.059.271.242 1.16.242 1.16h1.873zm-16.234 0-1.982 5.275-.216-1.07c-.366-1.234-1.515-2.575-2.797-3.242l1.815 6.765h2.14l3.18-7.728z">
-                                                </path>
-                                                <path
-                                                    d="M6.289 12.14H3.033L3 12.297c2.54.641 4.221 2.189 4.912 4.049l-.708-3.556c-.116-.494-.474-.633-.915-.65z">
-                                                </path>
-                                            </g>
-                                        </svg>
-                                        <div>•••• <span id="gp-submit-card-last4"></span></div>
-                                    </div>
-                                    <button type="button" command="show-modal" commandfor="gp-card-details-dialog"
-                                        class="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-white/20 dark:hover:text-white">
-                                        Reveal Card Details
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                            class="size-4">
-                                            <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
-                                            <path fill-rule="evenodd"
-                                                d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"
-                                                clip-rule="evenodd" />
-                                        </svg>
-                                    </button>
-                                </div>
-                            </div>
-
-                            <div class="border-t border-gray-200 dark:border-white/10 px-4 py-4 sm:px-6">
-                                <dl class="space-y-3">
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <dt class="text-sm/6 font-medium text-gray-700 dark:text-gray-300">Transaction ID</dt>
-                                        <dd id="gp-submit-txid"
-                                            class="text-right text-sm/6 font-normal text-gray-900 dark:text-white"></dd>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <dt class="text-sm/6 font-medium text-gray-700 dark:text-gray-300">Payment date</dt>
-                                        <dd id="gp-submit-date"
-                                            class="text-right text-sm/6 font-normal text-gray-900 dark:text-white"></dd>
-                                    </div>
-                                    <div class="grid grid-cols-2 gap-4">
-                                        <dt class="text-sm/6 font-medium text-gray-700 dark:text-gray-300">Payment method</dt>
-                                        <dd id="gp-submit-method"
-                                            class="text-right text-sm/6 font-normal text-gray-900 dark:text-white"></dd>
-                                    </div>
-                                    <div id="gp-submit-bank-row" class="hidden grid-cols-2 gap-4">
-                                        <dt class="text-sm/6 font-medium text-gray-700 dark:text-gray-300">Bank account</dt>
-                                        <dd id="gp-submit-bank-name"
-                                            class="text-right text-sm/6 font-normal text-gray-900 dark:text-white"></dd>
-                                    </div>
-                                    <div id="gp-submit-check-row" class="hidden grid-cols-2 gap-4">
-                                        <dt class="text-sm/6 font-medium text-gray-700 dark:text-gray-300">Send check to</dt>
-                                        <dd id="gp-submit-check-address"
-                                            class="text-right text-sm/6 font-normal text-gray-900 dark:text-white"></dd>
-                                    </div>
-                                </dl>
-                            </div>
-
-                            <div class="border-t border-gray-200 dark:border-white/10 px-4 py-4 sm:px-6">
-                                <button type="button"
-                                    class="inline-flex items-center gap-2 -ml-2.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300">
-                                    Download Details
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                        class="size-5">
-                                        <path
-                                            d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.19L6.28 7.97a.75.75 0 1 0-1.06 1.06l4.25 4.25a.75.75 0 0 0 1.06 0l4.25-4.25a.75.75 0 0 0-1.06-1.06l-2.97 2.97V2.75Z" />
-                                        <path
-                                            d="M3.5 13.75a.75.75 0 0 0-1.5 0v1.75A1.75 1.75 0 0 0 3.75 17.25h12.5A1.75 1.75 0 0 0 18 15.5v-1.75a.75.75 0 0 0-1.5 0v1.75a.25.25 0 0 1-.25.25H3.75a.25.25 0 0 1-.25-.25v-1.75Z" />
-                                    </svg>
-                                </button>
                             </div>
                         </div>
 
+                        <div class="self-stretch rounded-lg bg-gray-50 p-4 dark:bg-white/5">
+                            <div>
+                                <h4 class="sr-only">Status</h4>
+                                <p id="gp-submit-progress-title" class="text-sm font-medium text-gray-900 dark:text-white">Payment in progress...</p>
+                                <div aria-hidden="true" class="mt-4">
+                                    <div class="overflow-hidden rounded-full bg-gray-200 dark:bg-white/10">
+                                        <div id="gp-submit-progress-bar" style="width: 50%" class="h-2 rounded-full bg-blue-600"></div>
+                                    </div>
+                                    <div class="mt-4 hidden grid-cols-3 text-sm font-medium text-gray-600 dark:text-gray-400 sm:grid">
+                                        <div id="gp-submit-stage-1" class="text-blue-600 dark:text-blue-400">Payment Initiation</div>
+                                        <div id="gp-submit-stage-2" class="text-center text-blue-600 dark:text-blue-400">In Progress</div>
+                                        <div id="gp-submit-stage-3" class="text-right">Paid</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
                         <button type="button" command="close" commandfor="gp-submit-success-dialog"
-                            class="mt-6 inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                            class="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                             Done
                         </button>
                     </div>
