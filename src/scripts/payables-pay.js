@@ -598,6 +598,118 @@
     if (scheduleBtn) scheduleBtn.disabled = false;
   }
 
+  function getPaymentMethodLabel(methodId) {
+    var labels = {
+      ach: 'Send to a Bank Account',
+      wire: 'Wire',
+      card: 'Pay with a Card',
+      check: 'Check',
+      smart_disburse: 'SMART Disburse',
+      smart_exchange: 'SMART Exchange',
+    };
+    return labels[String(methodId || '')] || 'Payment Method';
+  }
+
+  function getEffectivePaymentDateIso() {
+    if (_schedulePickerState && _schedulePickerState.confirmedDate) {
+      return toIsoDate(_schedulePickerState.confirmedDate);
+    }
+    return toIsoDate(new Date());
+  }
+
+  function openDialogById(id) {
+    var dialog = document.getElementById(id);
+    if (!dialog || typeof dialog.showModal !== 'function') return false;
+    if (!dialog.open) dialog.showModal();
+    return true;
+  }
+
+  function closeDialogById(id) {
+    var dialog = document.getElementById(id);
+    if (!dialog || typeof dialog.close !== 'function') return;
+    if (dialog.open) dialog.close();
+  }
+
+  function getCurrentBankRecipientDetails() {
+    var methodId = getSelectedOptionValueByOptionsId('pp-pay-method-options');
+    if (methodId !== 'ach' && methodId !== 'wire') return null;
+    if (!getSelectedOptionValueByOptionsId('gp-bank-account-select')) return null;
+    var bankSelected = document.querySelector('#gp-bank-account-select el-selectedcontent');
+    var origin = _origDetailsState && _origDetailsState.account ? _origDetailsState.account : null;
+    var originName = origin ? String(origin.displayName || origin.name || origin.bankName || 'My account').trim() : 'My account';
+    var originSub = origin ? ('••••' + getAccountLast4(origin)) : '--';
+    var recipientName = String((document.getElementById('gp-pmc-bank-name-val') || {}).textContent || '').trim() || '--';
+    var recipientAccount = String((document.getElementById('gp-pmc-bank-acct') || {}).textContent || '').trim() || '--';
+    var recipientRouting = String((document.getElementById('gp-pmc-bank-routing') || {}).textContent || '').trim() || '--';
+    var recipientAddress = String((document.getElementById('gp-pmc-bank-address') || {}).textContent || '').trim() || '--';
+
+    return {
+      methodId: methodId,
+      methodLabel: getPaymentMethodLabel(methodId),
+      amount: formatMoney(_payContext.row && _payContext.row.amount, (_payContext.row && _payContext.row.currency) || 'USD'),
+      paymentDateIso: getEffectivePaymentDateIso(),
+      originName: originName,
+      originSub: originSub,
+      recipientName: recipientName,
+      recipientAccount: recipientAccount,
+      recipientRouting: recipientRouting,
+      recipientAddress: recipientAddress,
+      recipientBankLabel: bankSelected ? String(bankSelected.textContent || '').trim() : '--',
+    };
+  }
+
+  function populatePaymentConfirmModal(selection) {
+    if (!selection) return;
+    setText('pp-confirm-amount', selection.amount);
+    setText('pp-confirm-date', formatDate(selection.paymentDateIso));
+    setText('pp-confirm-method', selection.methodLabel);
+    setText('pp-confirm-origin-name', selection.originName);
+    setText('pp-confirm-origin-sub', selection.originSub);
+    setText('pp-confirm-recipient-name', selection.recipientName);
+    setText('pp-confirm-recipient-sub', selection.recipientAccount !== '--' ? selection.recipientAccount : (selection.recipientRouting !== '--' ? selection.recipientRouting : selection.recipientAddress));
+  }
+
+  function populateSubmitSuccessModal(selection) {
+    if (!selection) return;
+    setText('gp-submit-amount', selection.amount);
+    setText('gp-submit-date', formatDate(selection.paymentDateIso));
+    setText('gp-submit-method', selection.methodLabel);
+    setText('gp-submit-txid', 'TX-' + String(Date.now()).slice(-8));
+    var bankRow = document.getElementById('gp-submit-bank-row');
+    var checkRow = document.getElementById('gp-submit-check-row');
+    if (bankRow) bankRow.classList.toggle('hidden', !(selection.methodId === 'ach' || selection.methodId === 'wire'));
+    if (checkRow) checkRow.classList.add('hidden');
+    setText('gp-submit-bank-name', selection.recipientBankLabel || selection.recipientName || '--');
+  }
+
+  function initPaymentConfirmFlow() {
+    var entryBtn = document.getElementById('gp-submit-btn');
+    var confirmBtn = document.getElementById('pp-payment-confirm-submit-btn');
+    if (!entryBtn || !confirmBtn) return;
+
+    entryBtn.addEventListener('click', function (event) {
+      event.preventDefault();
+      var selection = getCurrentBankRecipientDetails();
+      if (!selection) {
+        if (typeof window.showGlobalTopToast === 'function') {
+          window.showGlobalTopToast('Select a bank destination to continue.');
+        }
+        return;
+      }
+      populatePaymentConfirmModal(selection);
+      openDialogById('pp-payment-confirm-dialog');
+    });
+
+    confirmBtn.addEventListener('click', function (event) {
+      event.preventDefault();
+      var selection = getCurrentBankRecipientDetails();
+      if (!selection) return;
+      populateSubmitSuccessModal(selection);
+      closeDialogById('pp-payment-confirm-dialog');
+      openDialogById('gp-submit-success-dialog');
+    });
+  }
+
   function initPayStepStatusObserver() {
     var signedBadge = document.getElementById('gp-signed-badge');
     if (!signedBadge || typeof MutationObserver === 'undefined') return;
@@ -1862,6 +1974,7 @@
     initPayInfoToggle();
     initRefreshButtons();
     initScheduleDropdown();
+    initPaymentConfirmFlow();
     var params = new URLSearchParams(window.location.search || '');
     Promise.all([
       loadJsonWithFallbacks(JSON_PATH_FALLBACKS),
