@@ -694,10 +694,115 @@
     };
   }
 
+  function getSelectedDestinationTokens(tokensId, inputId) {
+    var tokens = [];
+    var host = document.getElementById(tokensId);
+    var input = document.getElementById(inputId);
+    var fallbackLabel = String((_payContext.row && _payContext.row.payeeName) || 'Payee').trim();
+
+    if (host) {
+      host.querySelectorAll('[data-token-value]').forEach(function (el) {
+        var value = String(el.getAttribute('data-token-value') || '').trim();
+        if (!value) return;
+        tokens.push({
+          label: String(el.getAttribute('data-token-label') || '').trim() || fallbackLabel,
+          value: value,
+          type: String(el.getAttribute('data-token-type') || '').trim() || 'custom'
+        });
+      });
+    }
+
+    if (input) {
+      var pendingValue = String(input.value || '').trim();
+      if (pendingValue) {
+        tokens.push({
+          label: fallbackLabel,
+          value: pendingValue,
+          type: pendingValue.indexOf('@') !== -1 ? 'email' : 'custom'
+        });
+      }
+    }
+
+    return tokens;
+  }
+
+  function getGroupedRecipientContacts(tokens) {
+    var groups = [];
+    (Array.isArray(tokens) ? tokens : []).forEach(function (token) {
+      var name = String((token && token.label) || '').trim() || 'Payee';
+      var value = String((token && token.value) || '').trim();
+      if (!value) return;
+      var existing = null;
+      for (var i = 0; i < groups.length; i++) {
+        if (groups[i].name.toLowerCase() === name.toLowerCase()) {
+          existing = groups[i];
+          break;
+        }
+      }
+      if (!existing) {
+        existing = { name: name, values: [] };
+        groups.push(existing);
+      }
+      if (existing.values.indexOf(value) === -1) existing.values.push(value);
+    });
+    return groups.map(function (group) {
+      return {
+        name: group.name,
+        sub: group.values.join(' · ')
+      };
+    });
+  }
+
+  function getSmartBadgeTexts(tokens) {
+    return (Array.isArray(tokens) ? tokens : []).map(function (token) {
+      var label = String((token && token.label) || '').trim();
+      var value = String((token && token.value) || '').trim();
+      if (label && value && label !== value) return label + ' · ' + value;
+      return value || label;
+    }).filter(Boolean);
+  }
+
+  function getCurrentSmartRecipientDetails(methodId) {
+    var isDisburse = methodId === 'smart_disburse';
+    var isExchange = methodId === 'smart_exchange';
+    if (!isDisburse && !isExchange) return null;
+
+    var tokens = getSelectedDestinationTokens(
+      isDisburse ? 'pp-smart-disburse-contact-tokens' : 'pp-smart-exchange-contact-tokens',
+      isDisburse ? 'pp-smart-disburse-contact-input' : 'pp-smart-exchange-contact-input'
+    );
+    if (!tokens.length) return null;
+
+    var groups = getGroupedRecipientContacts(tokens);
+    if (!groups.length) return null;
+
+    var origin = _origDetailsState && _origDetailsState.account ? _origDetailsState.account : null;
+    var originName = origin ? String(origin.displayName || origin.name || origin.bankName || 'My account').trim() : 'My account';
+    var originSub = origin ? ('••••' + getAccountLast4(origin)) : '--';
+    var amount = formatMoney(_payContext.row && _payContext.row.amount, (_payContext.row && _payContext.row.currency) || 'USD');
+
+    return {
+      methodId: methodId,
+      methodLabel: getPaymentMethodLabel(methodId),
+      amount: amount,
+      payeeName: String((_payContext.row && _payContext.row.payeeName) || groups[0].name || 'Payee').trim(),
+      paymentDateIso: getEffectivePaymentDateIso(),
+      originName: originName,
+      originSub: originSub,
+      recipientName: groups[0].name,
+      recipientSub: groups[0].sub,
+      recipientSecondaryName: groups[1] ? groups[1].name : '',
+      recipientSecondarySub: groups[1] ? groups[1].sub : '',
+      confirmTitle: 'Send payment link for ' + amount,
+      smartBadgeTexts: getSmartBadgeTexts(tokens)
+    };
+  }
+
   function getCurrentPaymentConfirmSelection() {
     var methodId = getSelectedOptionValueByOptionsId('pp-pay-method-options');
     if (methodId === 'ach' || methodId === 'wire') return getCurrentBankRecipientDetails();
     if (methodId === 'check') return getCurrentCheckRecipientDetails();
+    if (methodId === 'smart_disburse' || methodId === 'smart_exchange') return getCurrentSmartRecipientDetails(methodId);
     return null;
   }
 
@@ -705,19 +810,78 @@
     if (!selection) return;
     var defaultMethodCheckbox = document.getElementById('pp-confirm-default-method');
     var defaultMethodLabel = document.getElementById('pp-confirm-default-method-label');
+    var confirmCopy = document.getElementById('pp-payment-confirm-copy');
+    var headerGrid = document.getElementById('pp-confirm-header-grid');
+    var originLabel = document.getElementById('pp-confirm-origin-label');
+    var originWrap = document.getElementById('pp-confirm-origin-wrap');
+    var arrowWrap = document.getElementById('pp-confirm-arrow-wrap');
+    var recipientLabel = document.getElementById('pp-confirm-recipient-label');
+    var recipientMobileLabel = document.getElementById('pp-confirm-recipient-mobile-label');
+    var smartBadges = document.getElementById('pp-confirm-smart-badges');
+    var recipientCards = document.getElementById('pp-confirm-recipient-cards');
     var dateLabel = document.getElementById('pp-confirm-date-label');
     var dateIcon = document.getElementById('pp-confirm-date-icon');
     var genericDetails = document.getElementById('pp-confirm-generic-details');
     var checkDetails = document.getElementById('pp-confirm-check-details');
+    var payeeRow = document.getElementById('pp-confirm-payee-row');
+    var methodRow = document.getElementById('pp-confirm-method-row');
+    var recipientIcon = document.getElementById('pp-confirm-recipient-icon');
+    var recipientSecondaryCard = document.getElementById('pp-confirm-recipient-secondary-card');
+    var recipientSecondaryIcon = document.getElementById('pp-confirm-recipient-secondary-icon');
     var isScheduled = !!(_schedulePickerState && _schedulePickerState.confirmedDate);
     var isCheck = selection.methodId === 'check';
+    var isSmart = selection.methodId === 'smart_disburse' || selection.methodId === 'smart_exchange';
+    var buildingIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path fill-rule="evenodd" d="M4 16.5v-13h-.25a.75.75 0 0 1 0-1.5h12.5a.75.75 0 0 1 0 1.5H16v13h.25a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75v-2.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75v2.5a.75.75 0 0 1-.75.75h-3.5a.75.75 0 0 1 0-1.5H4Zm3-11a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM7.5 9a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1ZM11 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm.5 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z" clip-rule="evenodd" /></svg>';
+    var contactIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z" /></svg>';
     if (defaultMethodCheckbox) defaultMethodCheckbox.checked = false;
     if (defaultMethodLabel) defaultMethodLabel.textContent = 'Make this the default payment method for ' + selection.payeeName;
-    if (dateLabel) dateLabel.textContent = isScheduled ? 'Scheduled for' : 'Payment date';
+    if (confirmCopy) confirmCopy.textContent = isSmart ? 'Review who will receive the payment link before you continue.' : 'Review your account and recipient details before you continue.';
+    if (headerGrid) {
+      headerGrid.classList.toggle('hidden', false);
+      headerGrid.classList.toggle('sm:grid', !isSmart);
+      headerGrid.classList.toggle('grid-cols-1', isSmart);
+      headerGrid.classList.toggle('sm:grid-cols-1', isSmart);
+      headerGrid.classList.toggle('sm:grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)]', !isSmart);
+    }
+    if (originLabel) originLabel.textContent = isSmart ? 'Send to' : 'Origination Account';
+    if (originWrap) originWrap.classList.toggle('hidden', isSmart);
+    if (arrowWrap) {
+      arrowWrap.classList.toggle('hidden', isSmart);
+      arrowWrap.classList.toggle('sm:flex', !isSmart);
+    }
+    if (recipientLabel) recipientLabel.textContent = isSmart ? '' : 'Recipient';
+    if (recipientMobileLabel) recipientMobileLabel.textContent = isSmart ? 'Send to' : 'Recipient';
+    if (recipientCards) {
+      recipientCards.classList.toggle('sm:flex-row', isSmart);
+      recipientCards.classList.toggle('sm:flex-wrap', isSmart);
+      recipientCards.classList.toggle('sm:items-start', isSmart);
+      recipientCards.classList.toggle('sm:justify-start', isSmart);
+    }
+    if (payeeRow) payeeRow.classList.toggle('hidden', isSmart);
+    if (methodRow) methodRow.classList.remove('hidden');
+    if (dateLabel) dateLabel.textContent = isScheduled ? 'Scheduled for' : (isSmart ? 'Send on' : 'Payment date');
     if (dateIcon) dateIcon.classList.toggle('hidden', !isScheduled);
-    if (genericDetails) genericDetails.classList.toggle('hidden', isCheck);
+    if (genericDetails) {
+      genericDetails.classList.toggle('hidden', isCheck);
+      genericDetails.classList.toggle('mt-3', !isSmart);
+      genericDetails.classList.toggle('mt-6', isSmart);
+    }
     if (checkDetails) checkDetails.classList.toggle('hidden', !isCheck);
-    setText('pp-payment-confirm-title', 'Confirm ' + selection.amount + ' payment');
+    if (smartBadges) {
+      smartBadges.classList.toggle('hidden', !isSmart);
+      smartBadges.classList.toggle('flex', isSmart);
+      smartBadges.innerHTML = isSmart ? (selection.smartBadgeTexts || []).map(function (text) {
+        return '<span class="inline-flex max-w-full items-center rounded-md bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-700 dark:bg-white/10 dark:text-gray-200"><span class="truncate">' + escapeHtml(text) + '</span></span>';
+      }).join('') : '';
+    }
+    if (recipientCards) recipientCards.classList.toggle('hidden', isSmart);
+    if (recipientIcon) recipientIcon.innerHTML = isSmart ? contactIconSvg : buildingIconSvg;
+    if (recipientSecondaryIcon) recipientSecondaryIcon.innerHTML = isSmart ? contactIconSvg : buildingIconSvg;
+    if (recipientSecondaryCard) {
+      recipientSecondaryCard.classList.toggle('hidden', !selection.recipientSecondaryName);
+      recipientSecondaryCard.classList.toggle('flex', !!selection.recipientSecondaryName);
+    }
+    setText('pp-payment-confirm-title', selection.confirmTitle || ('Confirm ' + selection.amount + ' payment'));
     setText('pp-confirm-amount', selection.amount);
     setText('pp-confirm-payee', selection.payeeName);
     setText('pp-confirm-date', formatDate(selection.paymentDateIso));
@@ -725,7 +889,9 @@
     setText('pp-confirm-origin-name', selection.originName);
     setText('pp-confirm-origin-sub', selection.originSub);
     setText('pp-confirm-recipient-name', selection.recipientName);
-    setText('pp-confirm-recipient-sub', isCheck ? selection.recipientAddress : (selection.recipientAccount !== '--' ? selection.recipientAccount : (selection.recipientRouting !== '--' ? selection.recipientRouting : selection.recipientAddress)));
+    setText('pp-confirm-recipient-sub', selection.recipientSub || (isCheck ? selection.recipientAddress : (selection.recipientAccount !== '--' ? selection.recipientAccount : (selection.recipientRouting !== '--' ? selection.recipientRouting : selection.recipientAddress))));
+    setText('pp-confirm-recipient-secondary-name', selection.recipientSecondaryName || '--');
+    setText('pp-confirm-recipient-secondary-sub', selection.recipientSecondarySub || '--');
     if (isCheck) {
       setText('pp-confirm-check-number', selection.checkNumber);
       setText('pp-confirm-check-company', selection.checkCompany);
@@ -741,6 +907,7 @@
     if (!selection) return;
     var isScheduled = !!(_schedulePickerState && _schedulePickerState.confirmedDate);
     var isCheck = selection.methodId === 'check';
+    var isSmart = selection.methodId === 'smart_disburse' || selection.methodId === 'smart_exchange';
     var successCopy = document.getElementById('gp-submit-success-copy');
     var progressBar = document.getElementById('gp-submit-progress-bar');
     var stage1 = document.getElementById('gp-submit-stage-1');
@@ -755,12 +922,33 @@
     }
 
     if (isScheduled) {
+      if (isSmart) {
+        setText('gp-submit-success-title', 'Payment Link Scheduled!');
+        setText('gp-submit-success-copy', 'Your payment link will be sent on ' + formatDate(selection.paymentDateIso) + '. The payee will choose how to pay after opening the link.');
+        setText('gp-submit-progress-title', 'Payment link send is scheduled for ' + formatDate(selection.paymentDateIso) + '.');
+        if (progressBar) progressBar.style.width = '12.5%';
+        setStageState(stage1, 'Link Scheduled', true);
+        setStageState(stage2, 'Pending Payee Action', false);
+        setStageState(stage3, 'Paid', false);
+        return;
+      }
       setText('gp-submit-success-title', 'Payment Scheduled!');
       setText('gp-submit-success-copy', 'Your payment has been scheduled for ' + formatDate(selection.paymentDateIso) + '. If there are additional actions for you to take, you\'ll be notified.');
       setText('gp-submit-progress-title', 'Payment initiation is scheduled for ' + formatDate(selection.paymentDateIso) + '.');
       if (progressBar) progressBar.style.width = '12.5%';
       setStageState(stage1, 'Payment Initiation', true);
       setStageState(stage2, 'In Progress', false);
+      setStageState(stage3, 'Paid', false);
+      return;
+    }
+
+    if (isSmart) {
+      setText('gp-submit-success-title', 'Payment Link Sent!');
+      setText('gp-submit-success-copy', 'Your payee has been notified. They still need to open the link and choose how to pay before funds can be collected.');
+      setText('gp-submit-progress-title', 'Waiting for payee action...');
+      if (progressBar) progressBar.style.width = '50%';
+      setStageState(stage1, 'Link Sent', true);
+      setStageState(stage2, 'Pending Payee Action', true);
       setStageState(stage3, 'Paid', false);
       return;
     }
@@ -1164,6 +1352,22 @@
         contacts: contacts
       });
     });
+    smartExchange = smartExchange.map(function (profileEntry, idx) {
+      var contactPerson = String((profileEntry && profileEntry.contactPerson) || profileEntry.label || (_payContext.row && _payContext.row.payeeName) || 'Payee');
+      var contacts = Array.isArray(profileEntry && profileEntry.contacts) ? profileEntry.contacts : [];
+      if (!contacts.length && profileEntry && profileEntry.destination) {
+        contacts = [{
+          id: String((profileEntry.id || ('sx-contact-' + idx)) + '-default'),
+          type: String(profileEntry.channel || '').toLowerCase() === 'sms' ? 'phone' : 'email',
+          label: contactPerson,
+          value: String(profileEntry.destination)
+        }];
+      }
+      return Object.assign({}, profileEntry, {
+        contactPerson: contactPerson,
+        contacts: contacts
+      });
+    });
 
     return { ach: ach, wire: wire, card: card, check: check, smartDisburse: smartDisburse, smartExchange: smartExchange };
   }
@@ -1210,6 +1414,8 @@
         }];
       }
       profileContacts.forEach(function (entry, idx) {
+        var value = String((entry && (entry.value || entry.destination)) || '').trim();
+        if (!value || value === '--') return;
         contacts.push(Object.assign({}, entry, {
           id: String((entry && entry.id) || (profile.id || 'sd') + '-contact-' + idx)
         }));
@@ -1251,6 +1457,13 @@
       return String((token && (token.value || token.destination || token.label)) || '');
     }
 
+    function tokenDisplayText(token) {
+      var label = String((token && token.label) || '').trim();
+      var value = tokenText(token).trim();
+      if (label && value && label !== value) return label + ' · ' + value;
+      return value || label;
+    }
+
     function tokenKey(token) {
       return tokenText(token).toLowerCase();
     }
@@ -1263,8 +1476,8 @@
     function renderTokens() {
       tokenHost.innerHTML = tokens.map(function (token, idx) {
         return '' +
-          '<span class="inline-flex max-w-full items-center gap-1 rounded-md bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-700 dark:bg-white/10 dark:text-gray-200">' +
-          '  <span class="truncate">' + escapeHtml(tokenText(token)) + '</span>' +
+          '<span data-token-label="' + escapeHtml(String((token && token.label) || '')) + '" data-token-value="' + escapeHtml(String((token && (token.value || token.destination || token.label)) || '')) + '" data-token-type="' + escapeHtml(String((token && token.type) || '')) + '" class="inline-flex max-w-full items-center gap-1 rounded-md bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-700 dark:bg-white/10 dark:text-gray-200">' +
+          '  <span class="truncate">' + escapeHtml(tokenDisplayText(token)) + '</span>' +
           '  <button type="button" data-token-remove="' + idx + '" class="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-sm text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200 cursor-pointer" aria-label="Remove destination">' +
           '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>' +
           '  </button>' +
@@ -1590,7 +1803,7 @@
           var sxPanel = document.getElementById('gp-pmc-smart-exchange');
           var sxDetailsPanel = document.getElementById('gp-pmc-smart-exchange-details');
           if (sxPanel) sxPanel.classList.remove('hidden');
-          var sxContacts = collectSmartDisburseContacts(normalized.smartDisburse);
+          var sxContacts = collectSmartDisburseContacts(normalized.smartExchange);
           initSmartExchangeTypeahead(sxContacts);
           if (sxDetailsPanel) sxDetailsPanel.classList.remove('hidden');
           updatePayStepStates();
