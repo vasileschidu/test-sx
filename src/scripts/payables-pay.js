@@ -30,6 +30,8 @@
     '/src/data/check-addresses.json',
     './src/data/check-addresses.json',
   ];
+  var PAYABLE_ROW_OVERRIDES_STORAGE_KEY = 'bp-row-overrides-v1';
+  var PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY = 'bp-pay-page-view-context-v1';
   var _origDetailsState = {
     account: null,
     expanded: false,
@@ -83,18 +85,53 @@
     var styles = {
       ready_to_pay: 'bg-gray-50 text-gray-600 inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20',
       in_progress: 'bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30',
+      scheduled: 'bg-gray-100 text-gray-700 inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-300 dark:inset-ring-white/15',
       paid: 'bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20',
       exception: 'bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20',
     };
     var labels = {
       ready_to_pay: 'Unprocessed',
       in_progress: 'In Progress',
+      scheduled: 'Scheduled',
       paid: 'Paid',
       exception: 'Failed',
     };
     var key = String(status || 'ready_to_pay');
     el.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + (styles[key] || styles.ready_to_pay);
-    el.textContent = String(statusLabel || labels[key] || labels.ready_to_pay);
+    el.innerHTML = key === 'scheduled'
+      ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg><span>' + escapeHtml(String(statusLabel || labels[key] || labels.ready_to_pay)) + '</span>'
+      : escapeHtml(String(statusLabel || labels[key] || labels.ready_to_pay));
+  }
+
+  function getDisplayStatus(row) {
+    var status = String((row && row.status) || 'ready_to_pay');
+    var statusType = String((row && row.statusType) || '').toLowerCase();
+    if (status === 'scheduled' || (status === 'in_progress' && statusType === 'scheduled')) {
+      return { key: 'scheduled', label: 'Scheduled' };
+    }
+    if (status === 'in_progress') {
+      return { key: 'in_progress', label: 'Processing' };
+    }
+    if (status === 'paid') {
+      return { key: 'paid', label: 'Paid' };
+    }
+    if (status === 'exception') {
+      return { key: 'exception', label: 'Failed' };
+    }
+    return { key: 'ready_to_pay', label: 'Unprocessed' };
+  }
+
+  function isConfirmedPayableRow(row) {
+    if (!row) return false;
+    var status = String(row.status || '').toLowerCase();
+    return status === 'in_progress' || status === 'scheduled' || status === 'paid';
+  }
+
+  function isScheduledPayableRow(row) {
+    if (!row) return false;
+    var status = String(row.status || '').toLowerCase();
+    var statusType = String(row.statusType || '').toLowerCase();
+    return status === 'scheduled' || (status === 'in_progress' && statusType === 'scheduled');
   }
 
   function formatMoney(amount, currency) {
@@ -116,6 +153,211 @@
     var date = new Date(String(value) + 'T00:00:00');
     if (isNaN(date.getTime())) return String(value);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+
+  function getHeaderDateMeta(row) {
+    if (!row) return '--';
+    var status = String(row.status || '').toLowerCase();
+    var statusType = String(row.statusType || '').toLowerCase();
+    if (status === 'paid') return '';
+    if (status === 'exception') return 'Failed on ' + formatDate(row.adDate || row.dueDate);
+    if (status === 'scheduled' || status === 'in_progress') return '';
+    return '';
+  }
+
+  function cloneJson(value) {
+    if (value == null) return value;
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function getStoredPayableOverrides() {
+    try {
+      var raw = window.localStorage.getItem(PAYABLE_ROW_OVERRIDES_STORAGE_KEY);
+      if (!raw) return {};
+      var parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (err) {
+      return {};
+    }
+  }
+
+  function persistPayableOverride(row) {
+    if (!row || row.id == null) return;
+    try {
+      var overrides = getStoredPayableOverrides();
+      overrides[String(row.id)] = cloneJson(row);
+      window.localStorage.setItem(PAYABLE_ROW_OVERRIDES_STORAGE_KEY, JSON.stringify(overrides));
+    } catch (err) {
+      // Ignore storage failures so the flow still completes.
+    }
+  }
+
+  function applyStoredPayableOverrides(rows) {
+    var overrides = getStoredPayableOverrides();
+    return (Array.isArray(rows) ? rows : []).map(function (row) {
+      if (!row || row.id == null) return row;
+      var override = overrides[String(row.id)];
+      return override ? cloneJson(override) : row;
+    });
+  }
+
+  function getSavedPayPageState(row) {
+    var state = row && row.details && row.details.payPageState;
+    return state && typeof state === 'object' ? state : null;
+  }
+
+  function getStoredPayPageViewContext() {
+    try {
+      var raw = window.sessionStorage.getItem(PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY);
+      if (!raw) return null;
+      var parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : null;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  function applyStoredPayPageViewContext(row, params) {
+    var context = getStoredPayPageViewContext();
+    if (!context || !row) return row;
+    var id = String(params.get('id') || '').trim();
+    var bill = String(params.get('bill') || '').trim();
+    var sameId = id && String(context.id || '') === id && String(row.id || '') === id;
+    var sameBill = bill && String(context.billNumber || '') === bill && String(row.billNumber || '') === bill;
+    // The normalized row from the current dataset is the source of truth for
+    // payment method and status, so don't let stale session context override it.
+    if (sameId || sameBill) return row;
+    return row;
+  }
+
+  function getRowSeed(row) {
+    var source = String((row && (row.id || row.billNumber || row.payeeName)) || '');
+    var seed = 0;
+    for (var i = 0; i < source.length; i += 1) seed += source.charCodeAt(i);
+    return seed;
+  }
+
+  function getDeterministicListItem(list, row, offset) {
+    var items = Array.isArray(list) ? list.filter(Boolean) : [];
+    if (!items.length) return null;
+    var seed = getRowSeed(row) + Number(offset || 0);
+    return items[((seed % items.length) + items.length) % items.length] || null;
+  }
+
+  function getDigits(value) {
+    return String(value == null ? '' : value).replace(/\D/g, '');
+  }
+
+  function normalizePayableRowsForPage(rows, payeesList) {
+    var methods = ['card', 'ach', 'wire', 'smart_disburse', 'smart_exchange'];
+    var byId = {};
+    var byName = {};
+    (Array.isArray(payeesList) ? payeesList : []).forEach(function (payee) {
+      if (!payee || typeof payee !== 'object') return;
+      if (payee.id) byId[String(payee.id)] = payee;
+      if (payee.name) byName[String(payee.name)] = payee;
+    });
+
+    return (Array.isArray(rows) ? rows : []).map(function (row, idx) {
+      var next = cloneJson(row) || {};
+      var payee = (next.payeeId && byId[next.payeeId]) || (next.payeeName && byName[next.payeeName]) || null;
+      if (payee) {
+        next.payeeId = next.payeeId || payee.id;
+        next.payeeName = payee.name || next.payeeName;
+      }
+
+      var methodType = String(next.paymentMethodType || '').trim().toLowerCase();
+      if (!methodType) methodType = methods[idx % methods.length];
+      next.paymentMethodType = methodType;
+
+      if (methodType === 'card') {
+        var network = String(next.cardNetwork || (idx % 2 === 0 ? 'Visa' : 'Mastercard'));
+        var cardLast4 = getDigits(next.cardLast4 || next.paymentMethodEnding || String(4100 + (idx % 9000))).slice(-4);
+        next.cardNetwork = network;
+        next.cardLast4 = cardLast4;
+        next.paymentMethod = network + ' •••• ' + cardLast4;
+      } else if (methodType === 'ach' || methodType === 'wire') {
+        var bankLast4 = getDigits(next.bankLast4 || next.paymentMethodEnding || String(1200 + (idx % 8000))).slice(-4);
+        next.bankLast4 = bankLast4;
+        next.paymentMethod = (methodType === 'wire' ? 'Wire' : 'Bank') + ' •••• ' + bankLast4;
+      } else if (methodType === 'smart_exchange') {
+        next.paymentMethod = 'SMART Exchange';
+      } else if (methodType === 'smart_disburse') {
+        next.paymentMethod = 'SMART Disburse';
+      } else {
+        next.paymentMethodType = 'smart_disburse';
+        next.paymentMethod = 'SMART Disburse';
+      }
+
+      if (next.status === 'in_progress') {
+        var statusType = next.statusType;
+        if (!statusType) {
+          statusType = (idx % 3 === 0) ? 'scheduled' : 'processing';
+        }
+        next.statusType = statusType;
+        if (statusType === 'scheduled') {
+          if (!next.scheduledFor) {
+            var day = 14 + (idx % 10);
+            var minute = idx % 2 === 0 ? '45' : '15';
+            next.scheduledFor = '2026-07-' + String(day).padStart(2, '0') + 'T00:' + minute + ':00';
+          }
+          next.statusLabel = 'Scheduled';
+        } else {
+          next.statusLabel = 'Processing';
+        }
+      }
+
+      return next;
+    });
+  }
+
+  function inferRowMethodType(row) {
+    var explicitType = String((row && row.paymentMethodType) || '').trim().toLowerCase();
+    if (explicitType) return explicitType;
+    var text = String((row && row.paymentMethod) || '').trim().toLowerCase();
+    if (text.indexOf('smart exchange') !== -1) return 'smart_exchange';
+    if (text.indexOf('smart disburse') !== -1) return 'smart_disburse';
+    if (text.indexOf('wire') !== -1) return 'wire';
+    if (text.indexOf('bank') !== -1 || text.indexOf('ach') !== -1) return 'ach';
+    if (text.indexOf('visa') !== -1 || text.indexOf('mastercard') !== -1 || text.indexOf('card') !== -1) return 'card';
+    if (text.indexOf('check') !== -1) return 'check';
+    return '';
+  }
+
+  function buildFallbackOriginationState(row, accounts) {
+    var selected = getDeterministicListItem(accounts, row, 7);
+    if (!selected) return null;
+    return {
+      originationAccountId: String(selected.id || ''),
+      originationExpanded: false,
+      originationRevealed: false,
+    };
+  }
+
+  function formatActivityDateTime(value) {
+    if (!value) return '--';
+    var str = String(value);
+    var normalized = str.indexOf('T') === -1 ? (str + 'T00:00:00') : str;
+    var date = new Date(normalized);
+    if (isNaN(date.getTime())) return str;
+    return date.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
+    });
+  }
+
+  function getNowIsoDateTime() {
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = String(date.getMonth() + 1).padStart(2, '0');
+    var day = String(date.getDate()).padStart(2, '0');
+    var hours = String(date.getHours()).padStart(2, '0');
+    var minutes = String(date.getMinutes()).padStart(2, '0');
+    var seconds = String(date.getSeconds()).padStart(2, '0');
+    return year + '-' + month + '-' + day + 'T' + hours + ':' + minutes + ':' + seconds;
   }
 
   function getMonthStart(date) {
@@ -240,6 +482,62 @@
     panel.classList.toggle('scale-100', _schedulePickerState.open);
   }
 
+  function applyConfirmedScheduleDate(iso) {
+    var parsed = isoStringToDate(iso);
+    var simpleBtn = document.getElementById('pp-schedule-simple-btn');
+    var segmentedChip = document.getElementById('pp-schedule-segmented-chip');
+    var chipText = document.getElementById('pp-schedule-chip-text');
+    var clearBtn = document.getElementById('pp-schedule-chip-clear-btn');
+    var dateInput = document.getElementById('pp-schedule-date-input');
+    var dateMaskFilled = document.getElementById('pp-schedule-date-mask-filled');
+    var dateMaskEmpty = document.getElementById('pp-schedule-date-mask-empty');
+    if (!simpleBtn || !segmentedChip || !chipText || !dateInput || !dateMaskFilled || !dateMaskEmpty) return;
+
+    _schedulePickerState.selectedDate = parsed ? new Date(parsed.getTime()) : null;
+    _schedulePickerState.confirmedDate = parsed ? new Date(parsed.getTime()) : null;
+    _schedulePickerState.monthCursor = getMonthStart(parsed || new Date());
+    _schedulePickerState.draftInput = parsed ? formatIsoAsUsInput(toIsoDate(parsed)) : '';
+
+    dateInput.value = _schedulePickerState.draftInput;
+    renderInputMaskDisplay(_schedulePickerState.draftInput, dateMaskFilled, dateMaskEmpty);
+    renderScheduleCalendar();
+
+    if (parsed) {
+      simpleBtn.classList.add('hidden');
+      simpleBtn.style.display = 'none';
+      simpleBtn.setAttribute('aria-hidden', 'true');
+      segmentedChip.classList.remove('hidden');
+      segmentedChip.classList.add('inline-flex');
+      segmentedChip.style.display = '';
+      segmentedChip.setAttribute('aria-hidden', 'false');
+      chipText.textContent = formatDate(toIsoDate(parsed));
+      if (clearBtn) clearBtn.classList.add('hidden');
+    } else {
+      simpleBtn.classList.remove('hidden');
+      simpleBtn.style.display = '';
+      simpleBtn.setAttribute('aria-hidden', 'false');
+      segmentedChip.classList.remove('inline-flex');
+      segmentedChip.classList.add('hidden');
+      segmentedChip.style.display = 'none';
+      segmentedChip.setAttribute('aria-hidden', 'true');
+      chipText.textContent = '--';
+      if (clearBtn) clearBtn.classList.remove('hidden');
+    }
+
+    setScheduleDropdownOpen(false);
+  }
+
+  function getScheduledPaymentDateIso(row) {
+    var savedState = getSavedPayPageState(row);
+    if (savedState && savedState.paymentDateIso) return String(savedState.paymentDateIso);
+    var scheduledFor = String((row && row.scheduledFor) || '').trim();
+    if (/^\d{4}-\d{2}-\d{2}/.test(scheduledFor)) return scheduledFor.slice(0, 10);
+    if (row && (row.status === 'scheduled' || (row.status === 'in_progress' && String(row.statusType || '').toLowerCase() === 'scheduled')) && row.dueDate) {
+      return String(row.dueDate);
+    }
+    return '';
+  }
+
   function renderScheduleCalendar() {
     var label = document.getElementById('pp-schedule-month-label');
     var grid = document.getElementById('pp-schedule-grid');
@@ -319,7 +617,7 @@
     var dateInput = document.getElementById('pp-schedule-date-input');
     var dateMaskFilled = document.getElementById('pp-schedule-date-mask-filled');
     var dateMaskEmpty = document.getElementById('pp-schedule-date-mask-empty');
-    if (!wrap || !panel || !simpleBtn || !segmentedChip || !dateBtn || !clearBtn || !prev || !next || !grid || !confirmBtn || !chipText || !dateInput || !dateMaskFilled || !dateMaskEmpty) return;
+    if (!wrap || !panel || !simpleBtn || !segmentedChip || !dateBtn || !prev || !next || !grid || !confirmBtn || !chipText || !dateInput || !dateMaskFilled || !dateMaskEmpty) return;
 
     function getCaretIndexFromDigitsCount(count, formatted) {
       if (!formatted) return 0;
@@ -494,18 +792,20 @@
       setScheduleDropdownOpen(false);
     });
 
-    clearBtn.addEventListener('click', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      _schedulePickerState.selectedDate = null;
-      _schedulePickerState.confirmedDate = null;
-      _schedulePickerState.draftInput = '';
-      _schedulePickerState.monthCursor = getMonthStart(new Date());
-      renderScheduleDateInput();
-      renderScheduleCalendar();
-      renderScheduleChip();
-      setScheduleDropdownOpen(false);
-    });
+    if (clearBtn) {
+      clearBtn.addEventListener('click', function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        _schedulePickerState.selectedDate = null;
+        _schedulePickerState.confirmedDate = null;
+        _schedulePickerState.draftInput = '';
+        _schedulePickerState.monthCursor = getMonthStart(new Date());
+        renderScheduleDateInput();
+        renderScheduleCalendar();
+        renderScheduleChip();
+        setScheduleDropdownOpen(false);
+      });
+    }
 
     panel.addEventListener('click', function (event) {
       event.stopPropagation();
@@ -596,6 +896,122 @@
     var scheduleBtn = document.getElementById('pp-schedule-simple-btn') || document.getElementById('pp-schedule-chip-date-btn');
     if (payBtn) payBtn.disabled = !canSubmit;
     if (scheduleBtn) scheduleBtn.disabled = false;
+
+    if (isConfirmedPayableRow(_payContext.row)) {
+      applyConfirmedPayPageReadOnlyState(_payContext.row);
+    }
+  }
+
+  function setPaySelectDisabled(selectEl, disabled) {
+    if (!selectEl) return;
+    var button = selectEl.querySelector('button');
+    var selectedContent = selectEl.querySelector('el-selectedcontent');
+    if (button) {
+      button.classList.toggle('pointer-events-none', disabled);
+      button.classList.toggle('cursor-not-allowed', disabled);
+      button.classList.toggle('bg-white', !disabled);
+      button.classList.toggle('dark:bg-white/5', !disabled);
+      button.classList.toggle('bg-gray-50', disabled);
+      button.classList.toggle('text-gray-900', !disabled);
+      button.classList.toggle('text-gray-500', disabled);
+      button.classList.toggle('outline-gray-300', !disabled);
+      button.classList.toggle('outline-gray-200', disabled);
+      button.classList.toggle('dark:text-white', !disabled);
+      button.classList.toggle('dark:text-gray-400', disabled);
+    }
+    if (selectedContent) {
+      selectedContent.classList.toggle('text-gray-900', !disabled);
+      selectedContent.classList.toggle('text-gray-500', disabled);
+      selectedContent.classList.toggle('dark:text-white', !disabled);
+      selectedContent.classList.toggle('dark:text-gray-400', disabled);
+    }
+    selectEl.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+  }
+
+  function applyConfirmedPayPageReadOnlyState(row) {
+    var isConfirmed = isConfirmedPayableRow(row);
+    var isScheduled = isScheduledPayableRow(row);
+    var originationSelect = document.getElementById('pp-orig-bank-select');
+    var methodSelect = document.getElementById('pp-pay-method-select');
+    var bankRecipientSelect = document.getElementById('gp-bank-account-select');
+    var bankEditBtn = document.getElementById('gp-edit-bank-btn');
+    var checkEditBtn = document.getElementById('gp-edit-check-btn');
+    var submitBtn = document.getElementById('gp-submit-btn');
+    var headerCancelBtn = document.getElementById('pp-header-cancel-btn');
+    var scheduleWrap = document.getElementById('pp-schedule-wrap');
+    var simpleScheduleBtn = document.getElementById('pp-schedule-simple-btn');
+    var segmentedChip = document.getElementById('pp-schedule-segmented-chip');
+    var chipDateBtn = document.getElementById('pp-schedule-chip-date-btn');
+    var chipClearBtn = document.getElementById('pp-schedule-chip-clear-btn');
+    var hasScheduledDate = !!getScheduledPaymentDateIso(row);
+
+    setPaySelectDisabled(originationSelect, isConfirmed);
+    setPaySelectDisabled(methodSelect, isConfirmed);
+    setPaySelectDisabled(bankRecipientSelect, isConfirmed);
+    if (bankEditBtn) {
+      bankEditBtn.classList.toggle('hidden', isConfirmed);
+      bankEditBtn.style.display = isConfirmed ? 'none' : '';
+    }
+    if (checkEditBtn) {
+      checkEditBtn.classList.toggle('hidden', isConfirmed);
+      checkEditBtn.style.display = isConfirmed ? 'none' : '';
+    }
+
+    if (submitBtn) submitBtn.classList.toggle('hidden', isConfirmed);
+    if (headerCancelBtn) headerCancelBtn.classList.toggle('hidden', !isScheduled);
+
+    if (scheduleWrap) {
+      if (isConfirmed && !hasScheduledDate) {
+        scheduleWrap.classList.add('hidden');
+      } else {
+        scheduleWrap.classList.remove('hidden');
+      }
+    }
+
+    if (simpleScheduleBtn) {
+      simpleScheduleBtn.disabled = !!isConfirmed;
+      if (isConfirmed) {
+        simpleScheduleBtn.classList.add('hidden');
+        simpleScheduleBtn.style.display = 'none';
+        simpleScheduleBtn.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    if (segmentedChip) {
+      if (isConfirmed && !hasScheduledDate) {
+        segmentedChip.classList.remove('inline-flex');
+        segmentedChip.classList.add('hidden');
+        segmentedChip.style.display = 'none';
+        segmentedChip.setAttribute('aria-hidden', 'true');
+      }
+    }
+
+    if (chipDateBtn) {
+      chipDateBtn.disabled = !!isConfirmed;
+      chipDateBtn.classList.toggle('pointer-events-none', isConfirmed);
+      chipDateBtn.classList.toggle('cursor-not-allowed', isConfirmed);
+    }
+    if (chipClearBtn) {
+      chipClearBtn.disabled = !!isConfirmed;
+      chipClearBtn.classList.toggle('pointer-events-none', isConfirmed);
+      chipClearBtn.classList.toggle('cursor-not-allowed', isConfirmed);
+    }
+  }
+
+  function movePayableBackToReady(row) {
+    if (!row || row.id == null) return null;
+    var updated = cloneJson(row) || {};
+    updated.status = 'ready_to_pay';
+    updated.statusType = '';
+    updated.statusLabel = 'Unprocessed';
+    updated.processingStep = '';
+    updated.scheduledFor = '';
+    updated.adDate = '';
+    updated.details = Object.assign({}, updated.details || {});
+    delete updated.details.payPageState;
+    updated.details.activityLog = [];
+    persistPayableOverride(updated);
+    return updated;
   }
 
   function getPaymentMethodLabel(methodId) {
@@ -608,6 +1024,35 @@
       smart_exchange: 'SMART Exchange',
     };
     return labels[String(methodId || '')] || 'Payment Method';
+  }
+
+  function ensureMethodItemPresent(methodItems, methodId) {
+    var id = String(methodId || '').trim().toLowerCase();
+    if (!id) return methodItems;
+    var items = Array.isArray(methodItems) ? methodItems.slice() : [];
+    for (var i = 0; i < items.length; i += 1) {
+      if (String(items[i] && items[i].id || '') === id) return items;
+    }
+
+    var fallbackMap = {
+      smart_disburse: {
+        id: 'smart_disburse',
+        label: 'SMART Disburse',
+        subtitle: 'Send a disbursement choice to payee',
+        icon: '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#406AFF"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#406AFF"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#406AFF"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#406AFF"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#406AFF"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>',
+        selectedIcon: '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#374151"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#374151"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#374151"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#374151"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#374151"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>'
+      },
+      smart_exchange: {
+        id: 'smart_exchange',
+        label: 'SMART Exchange',
+        subtitle: 'Pay inside SMART Exchange',
+        icon: '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#F5B842"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#F5B842"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#F5B842"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#F5B842"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#F5B842"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>',
+        selectedIcon: '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#374151"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#374151"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#374151"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#374151"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#374151"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>'
+      }
+    };
+
+    if (fallbackMap[id]) items.unshift(fallbackMap[id]);
+    return items;
   }
 
   function getEffectivePaymentDateIso() {
@@ -806,6 +1251,134 @@
     return null;
   }
 
+  function buildFallbackPaidPayPageState(row, normalized, accounts) {
+    if (!row || row.status !== 'paid') return null;
+
+    var methodId = inferRowMethodType(row);
+    var availableMethods = [];
+    if (normalized && normalized.smartDisburse && normalized.smartDisburse.length) availableMethods.push('smart_disburse');
+    if (normalized && normalized.smartExchange && normalized.smartExchange.length) availableMethods.push('smart_exchange');
+    if (normalized && normalized.ach && normalized.ach.length) availableMethods.push('ach');
+    if (normalized && normalized.wire && normalized.wire.length) availableMethods.push('wire');
+    if (normalized && normalized.card && normalized.card.length) availableMethods.push('card');
+    if (normalized && normalized.check && normalized.check.length) availableMethods.push('check');
+    if (!methodId || availableMethods.indexOf(methodId) === -1) {
+      methodId = availableMethods.length ? availableMethods[getRowSeed(row) % availableMethods.length] : '';
+    }
+    if (!methodId) return null;
+
+    var paymentDateIso = String((row && (row.adDate || row.dueDate)) || '');
+    var state = Object.assign({
+      paymentDateIso: '',
+      originationAccountId: '',
+      originationExpanded: false,
+      originationRevealed: false,
+      methodId: methodId,
+      bankAccountId: '',
+      cardId: '',
+      checkAddressId: '',
+      checkAttention: String((row && row.payeeName) || '').trim(),
+      checkPrintDate: paymentDateIso ? formatDate(paymentDateIso) : '',
+      checkMemo: row && row.billNumber ? ('Bill # ' + String(row.billNumber).trim()) : '',
+      smartTokens: [],
+    }, buildFallbackOriginationState(row, accounts) || {});
+
+    if (methodId === 'ach' || methodId === 'wire') {
+      var bankEntry = getDeterministicListItem(methodId === 'wire' ? normalized.wire : normalized.ach, row, 13);
+      if (bankEntry) state.bankAccountId = String(bankEntry.id || '');
+    } else if (methodId === 'card') {
+      var cardEntry = getDeterministicListItem(normalized.card, row, 19);
+      if (cardEntry) state.cardId = String(cardEntry.id || '');
+    } else if (methodId === 'check') {
+      var checkEntry = getDeterministicListItem(normalized.check, row, 23);
+      if (checkEntry) state.checkAddressId = String(checkEntry.id || '');
+    } else if (methodId === 'smart_disburse' || methodId === 'smart_exchange') {
+      var contacts = collectSmartDisburseContacts(methodId === 'smart_exchange' ? normalized.smartExchange : normalized.smartDisburse);
+      var primary = getDeterministicListItem(contacts, row, 29);
+      var secondary = getDeterministicListItem(contacts, row, 31);
+      var tokens = [];
+      if (primary) {
+        tokens.push({
+          id: String(primary.id || 'saved-primary'),
+          label: String(primary.label || row.payeeName || 'Payee'),
+          value: String(primary.value || primary.destination || ''),
+          type: String(primary.type || '').trim() || 'custom'
+        });
+      }
+      if (secondary && primary && String(secondary.id || '') !== String(primary.id || '')) {
+        tokens.push({
+          id: String(secondary.id || 'saved-secondary'),
+          label: String(secondary.label || row.payeeName || 'Payee'),
+          value: String(secondary.value || secondary.destination || ''),
+          type: String(secondary.type || '').trim() || 'custom'
+        });
+      }
+      state.smartTokens = tokens.filter(function (token) { return token && token.value; });
+    }
+
+    return state;
+  }
+
+  function reconcileSavedPayPageState(row, savedState) {
+    if (!savedState || !row) return savedState;
+    var rowMethodId = inferRowMethodType(row);
+    if (!rowMethodId || String(savedState.methodId || '') === rowMethodId) return savedState;
+
+    var nextState = Object.assign({}, savedState, {
+      methodId: rowMethodId,
+      bankAccountId: '',
+      cardId: '',
+      checkAddressId: '',
+      smartTokens: [],
+    });
+
+    if (rowMethodId !== 'check') {
+      nextState.checkAttention = '';
+      nextState.checkPrintDate = '';
+      nextState.checkMemo = '';
+    }
+
+    return nextState;
+  }
+
+  function buildConfirmedPayPageState(selection) {
+    var methodId = String((selection && selection.methodId) || getSelectedOptionValueByOptionsId('pp-pay-method-options') || '');
+    var state = {
+      paymentDateIso: (_schedulePickerState && _schedulePickerState.confirmedDate && selection && selection.paymentDateIso)
+        ? String(selection.paymentDateIso)
+        : '',
+      originationAccountId: _origDetailsState && _origDetailsState.account ? String(_origDetailsState.account.id || '') : '',
+      originationExpanded: !!(_origDetailsState && _origDetailsState.expanded),
+      originationRevealed: !!(_origDetailsState && _origDetailsState.revealed),
+      methodId: methodId,
+      bankAccountId: '',
+      cardId: '',
+      checkAddressId: '',
+      checkAttention: '',
+      checkPrintDate: '',
+      checkMemo: '',
+      smartTokens: [],
+    };
+
+    if (methodId === 'ach' || methodId === 'wire') {
+      state.bankAccountId = getSelectedOptionValueByOptionsId('gp-bank-account-select');
+    } else if (methodId === 'card') {
+      state.cardId = getSelectedOptionValueByOptionsId('pp-pay-card-options');
+    } else if (methodId === 'check') {
+      state.checkAddressId = getSelectedOptionValueByOptionsId('gp-check-address-select');
+      state.checkAttention = String((document.getElementById('gp-pmc-check-attention') || {}).value || '').trim();
+      state.checkPrintDate = String((document.getElementById('gp-pmc-check-print-date') || {}).value || '').trim();
+      state.checkMemo = String((document.getElementById('gp-pmc-check-memo') || {}).value || '').trim();
+    } else if (methodId === 'smart_disburse' || methodId === 'smart_exchange') {
+      state.smartTokens = getSelectedDestinationTokens(
+        methodId === 'smart_disburse' ? 'pp-smart-disburse-contact-tokens' : 'pp-smart-exchange-contact-tokens',
+        methodId === 'smart_disburse' ? 'pp-smart-disburse-contact-input' : 'pp-smart-exchange-contact-input'
+      );
+    }
+
+    return state;
+  }
+
   function populatePaymentConfirmModal(selection) {
     if (!selection) return;
     var defaultMethodCheckbox = document.getElementById('pp-confirm-default-method');
@@ -984,6 +1557,133 @@
     setInputValue('gp-pmc-check-memo-mobile', memo);
   }
 
+  function buildPayPageActivityLogItem(item, showLine) {
+    var dotClassesByType = {
+      processing: 'bg-blue-100 ring-1 ring-blue-700/40 dark:bg-blue-400/15 dark:ring-blue-400/30',
+      scheduled: 'bg-gray-200 ring-1 ring-gray-400/40 dark:bg-white/15 dark:ring-white/20',
+      pending: 'bg-yellow-100 ring-1 ring-yellow-700/40 dark:bg-yellow-400/15 dark:ring-yellow-400/30',
+      success: 'bg-green-100 ring-1 ring-green-700/40 dark:bg-green-400/15 dark:ring-green-400/30',
+      failed: 'bg-red-100 ring-1 ring-red-700/40 dark:bg-red-400/15 dark:ring-red-400/30',
+      event: 'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
+    };
+    var dotClasses = dotClassesByType[item && item.type] || dotClassesByType.event;
+    var lineHtml = showLine
+      ? '<div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center"><div class="w-px bg-gray-200 dark:bg-white/10"></div></div>'
+      : '';
+
+    return (
+      '<div class="relative flex gap-4">' +
+        lineHtml +
+        '<div class="relative flex size-6 flex-none items-center justify-center bg-white dark:bg-gray-900">' +
+          '<div class="size-1.5 rounded-full ' + dotClasses + '"></div>' +
+        '</div>' +
+        '<div class="flex flex-col gap-1 pb-6">' +
+          '<p class="text-base font-medium text-gray-900 dark:text-white">' + escapeHtml((item && item.title) || '') + '</p>' +
+          '<p class="text-sm text-gray-700 dark:text-gray-300">' + escapeHtml((item && item.description) || '') + '</p>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
+  function renderPayPageActivityLog(row) {
+    var content = document.getElementById('gp-activity-content');
+    if (!content) return;
+    var log = row && row.details && Array.isArray(row.details.activityLog) ? row.details.activityLog : [];
+    if (!log.length) {
+      content.innerHTML =
+        '<div class="rounded-lg border border-dashed border-gray-300 bg-gray-50/70 px-4 py-5 text-center dark:border-white/15 dark:bg-white/5">' +
+          '<div class="mx-auto mb-2 inline-flex size-8 items-center justify-center rounded-full bg-white text-gray-500 ring-1 ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:ring-white/10">' +
+            '<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-4"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM10.75 5C10.75 4.58579 10.4142 4.25 10 4.25C9.58579 4.25 9.25 4.58579 9.25 5V10C9.25 10.4142 9.58579 10.75 10 10.75H14C14.4142 10.75 14.75 10.4142 14.75 10C14.75 9.58579 14.4142 9.25 14 9.25H10.75V5Z" fill="#6B7280"/></svg>' +
+          '</div>' +
+          '<p class="text-sm font-medium text-gray-900 dark:text-white">No activity yet</p>' +
+          '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Activity entries will show here after you perform payment actions.</p>' +
+        '</div>';
+      return;
+    }
+    content.innerHTML = log.map(function (item, idx) {
+      return buildPayPageActivityLogItem(item, idx < log.length - 1);
+    }).join('');
+  }
+
+  function getSelectionTransferLabel(selection) {
+    if (!selection) return 'payment';
+    var methodId = String(selection.methodId || '').toLowerCase();
+    if (methodId === 'ach') return 'ACH transfer';
+    if (methodId === 'wire') return 'wire transfer';
+    if (methodId === 'check') return 'check payment';
+    if (methodId === 'smart_disburse') return 'SMART Disburse payment';
+    if (methodId === 'smart_exchange') return 'SMART Exchange payment';
+    return 'payment';
+  }
+
+  function createUpdatedPayableRow(selection) {
+    if (!_payContext.row) return null;
+    var updated = cloneJson(_payContext.row) || {};
+    var nowIso = getNowIsoDateTime();
+    var paymentDateIso = selection && selection.paymentDateIso ? String(selection.paymentDateIso) : '';
+    var isScheduled = !!(_schedulePickerState && _schedulePickerState.confirmedDate);
+    var transferLabel = getSelectionTransferLabel(selection);
+    var payeeName = String((updated && updated.payeeName) || (selection && selection.payeeName) || 'payee').trim();
+    var amount = formatMoney(updated.amount, updated.currency || 'USD');
+
+    updated.details = Object.assign({}, updated.details || {});
+    updated.adDate = String(nowIso).slice(0, 10);
+    updated.paymentMethod = selection && selection.methodLabel ? selection.methodLabel : updated.paymentMethod;
+    updated.processingStep = isScheduled ? 'Release scheduled' : 'Processing payment';
+    updated.status = 'in_progress';
+    updated.statusType = isScheduled ? 'scheduled' : 'processing';
+    updated.statusLabel = isScheduled ? 'Scheduled' : 'Processing';
+    updated.scheduledFor = isScheduled && paymentDateIso ? (paymentDateIso + 'T09:00:00') : '';
+    updated.details.payPageState = buildConfirmedPayPageState(selection);
+    updated.details.activityLog = isScheduled
+      ? [
+          {
+            type: 'scheduled',
+            title: 'Scheduled',
+            description: 'Payment is scheduled for ' + formatDate(paymentDateIso) + '.',
+          },
+          {
+            type: 'event',
+            title: 'Payment Confirmed',
+            description: amount + ' for ' + payeeName + ' was confirmed on ' + formatActivityDateTime(nowIso) + '.',
+          },
+          {
+            type: 'event',
+            title: 'Transfer Queued',
+            description: 'The ' + transferLabel + ' is queued to start on ' + formatDate(paymentDateIso) + '.',
+          },
+          {
+            type: 'event',
+            title: 'Cancel',
+            description: 'This payment can be canceled before ' + formatDate(paymentDateIso) + '.',
+          },
+        ]
+      : [
+          {
+            type: 'processing',
+            title: 'Processing',
+            description: amount + ' for ' + payeeName + ' is now in progress.',
+          },
+          {
+            type: 'event',
+            title: 'Payment Confirmed',
+            description: 'Payment was confirmed on ' + formatActivityDateTime(nowIso) + '.',
+          },
+          {
+            type: 'event',
+            title: 'Transfer Submitted',
+            description: 'The ' + transferLabel + ' was submitted and is moving through processing.',
+          },
+          {
+            type: 'event',
+            title: 'Cancel',
+            description: 'This payment can be canceled until processing completes.',
+          },
+        ];
+
+    return updated;
+  }
+
   function initPaymentConfirmFlow() {
     var entryBtn = document.getElementById('gp-submit-btn');
     var confirmBtn = document.getElementById('pp-payment-confirm-submit-btn');
@@ -1006,9 +1706,47 @@
       event.preventDefault();
       var selection = getCurrentPaymentConfirmSelection();
       if (!selection) return;
+      var updatedRow = createUpdatedPayableRow(selection);
+      if (updatedRow) {
+        _payContext.row = updatedRow;
+        persistPayableOverride(updatedRow);
+        var updatedStatus = getDisplayStatus(updatedRow);
+        setStatusBadge(updatedStatus.key, updatedStatus.label);
+        renderPayPageActivityLog(updatedRow);
+        applyConfirmedScheduleDate(getScheduledPaymentDateIso(updatedRow));
+        applyConfirmedPayPageReadOnlyState(updatedRow);
+      }
       populateSubmitSuccessModal(selection);
       closeDialogById('pp-payment-confirm-dialog');
       openDialogById('gp-submit-success-dialog');
+    });
+  }
+
+  function initHeaderCancelAction() {
+    var cancelBtn = document.getElementById('pp-header-cancel-btn');
+    var confirmBtn = document.getElementById('pp-schedule-cancel-confirm-btn');
+    if (!cancelBtn || !confirmBtn) return;
+
+    function cancelScheduledPayment() {
+      if (!isScheduledPayableRow(_payContext.row)) return;
+      var updatedRow = movePayableBackToReady(_payContext.row);
+      if (!updatedRow) return;
+      _payContext.row = updatedRow;
+      populatePage(updatedRow, _payContext.payeeProfile);
+      applyConfirmedScheduleDate('');
+      updatePayStepStates();
+      applyConfirmedPayPageReadOnlyState(updatedRow);
+    }
+
+    cancelBtn.addEventListener('click', function (event) {
+      event.preventDefault();
+      if (!isScheduledPayableRow(_payContext.row)) return;
+      openDialogById('pp-schedule-cancel-dialog');
+    });
+
+    confirmBtn.addEventListener('click', function () {
+      cancelScheduledPayment();
+      closeDialogById('pp-schedule-cancel-dialog');
     });
   }
 
@@ -1219,9 +1957,11 @@
     var bankDetails = document.getElementById('gp-pmc-bank-details');
     var checkDetails = document.getElementById('gp-pmc-check-details');
     var smartDisburseDetails = document.getElementById('gp-pmc-smart-disburse-details');
+    var smartExchangeDetails = document.getElementById('gp-pmc-smart-exchange-details');
     if (bankDetails) bankDetails.classList.add('hidden');
     if (checkDetails) checkDetails.classList.add('hidden');
     if (smartDisburseDetails) smartDisburseDetails.classList.add('hidden');
+    if (smartExchangeDetails) smartExchangeDetails.classList.add('hidden');
   }
 
   function setBankCopyVisible(buttonId, visible) {
@@ -1438,6 +2178,7 @@
 
     var allContacts = Array.isArray(contacts) ? contacts.slice() : [];
     var tokens = [];
+    var isReadOnly = isConfirmedPayableRow(_payContext.row);
 
     function startsWith(value, query) {
       return String(value || '').toLowerCase().indexOf(String(query || '').toLowerCase()) === 0;
@@ -1478,13 +2219,26 @@
         return '' +
           '<span data-token-label="' + escapeHtml(String((token && token.label) || '')) + '" data-token-value="' + escapeHtml(String((token && (token.value || token.destination || token.label)) || '')) + '" data-token-type="' + escapeHtml(String((token && token.type) || '')) + '" class="inline-flex max-w-full items-center gap-1 rounded-md bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-700 dark:bg-white/10 dark:text-gray-200">' +
           '  <span class="truncate">' + escapeHtml(tokenDisplayText(token)) + '</span>' +
-          '  <button type="button" data-token-remove="' + idx + '" class="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-sm text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200 cursor-pointer" aria-label="Remove destination">' +
-          '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>' +
-          '  </button>' +
+          (isReadOnly ? '' : (
+            '  <button type="button" data-token-remove="' + idx + '" class="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-sm text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200 cursor-pointer" aria-label="Remove destination">' +
+            '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>' +
+            '  </button>'
+          )) +
           '</span>';
       }).join('');
       combo.setAttribute('data-token-count', String(tokens.length));
-      input.placeholder = tokens.length ? '' : (config.placeholder || 'Choose destination');
+      input.placeholder = isReadOnly ? '' : (tokens.length ? '' : (config.placeholder || 'Choose destination'));
+      input.classList.toggle('hidden', isReadOnly);
+      input.disabled = !!isReadOnly;
+      input.readOnly = !!isReadOnly;
+      if (isReadOnly) {
+        input.value = '';
+        combo.classList.add('min-h-0');
+        combo.classList.remove('min-h-[38px]');
+      } else {
+        combo.classList.remove('min-h-0');
+        combo.classList.add('min-h-[38px]');
+      }
       updatePayStepStates();
     }
 
@@ -1543,6 +2297,7 @@
     };
 
     tokenHost.onclick = function (event) {
+      if (isReadOnly) return;
       var removeBtn = event.target.closest('[data-token-remove]');
       if (!removeBtn) return;
       var idx = Number(removeBtn.getAttribute('data-token-remove'));
@@ -1553,16 +2308,19 @@
     };
 
     input.onfocus = function () {
+      if (isReadOnly) return;
       renderList(input.value);
     };
 
     input.oninput = function () {
+      if (isReadOnly) return;
       setInputWeight();
       renderList(input.value);
       updatePayStepStates();
     };
 
     input.onkeydown = function (event) {
+      if (isReadOnly) return;
       if ((event.key === 'Enter' || event.key === ',' || event.key === 'Tab') && String(input.value || '').trim()) {
         event.preventDefault();
         addFreeToken(input.value);
@@ -1578,6 +2336,10 @@
     };
 
     input.onblur = function () {
+      if (isReadOnly) {
+        list.classList.add('hidden');
+        return;
+      }
       window.setTimeout(function () {
         if (String(input.value || '').trim()) {
           addFreeToken(input.value);
@@ -1593,10 +2355,29 @@
     setInputWeight();
     renderTokens();
     list.classList.add('hidden');
+
+    return {
+      setTokens: function (nextTokens) {
+        tokens = (Array.isArray(nextTokens) ? nextTokens : []).map(function (token, idx) {
+          var value = String((token && (token.value || token.destination || token.label)) || '').trim();
+          if (!value) return null;
+          return {
+            id: String((token && token.id) || ('saved-token-' + idx)),
+            label: String((token && token.label) || '').trim(),
+            value: value,
+            type: String((token && token.type) || '').trim() || (value.indexOf('@') !== -1 ? 'email' : 'custom')
+          };
+        }).filter(Boolean);
+        input.value = '';
+        setInputWeight();
+        renderTokens();
+        list.classList.add('hidden');
+      }
+    };
   }
 
   function initSmartDisburseTypeahead(contacts) {
-    initDestinationTypeahead({
+    return initDestinationTypeahead({
       comboboxId: 'pp-smart-disburse-contact-combobox',
       tokensId: 'pp-smart-disburse-contact-tokens',
       inputId: 'pp-smart-disburse-contact-input',
@@ -1606,7 +2387,7 @@
   }
 
   function initSmartExchangeTypeahead(contacts) {
-    initDestinationTypeahead({
+    return initDestinationTypeahead({
       comboboxId: 'pp-smart-exchange-contact-combobox',
       tokensId: 'pp-smart-exchange-contact-tokens',
       inputId: 'pp-smart-exchange-contact-input',
@@ -1621,6 +2402,92 @@
     _payContext.row = row || null;
     _payContext.payeeProfile = findPayeeProfile(payeesList, row);
     var normalized = normalizeMethods(_payContext.payeeProfile, fallbackBanks, fallbackAddresses);
+    var savedState = reconcileSavedPayPageState(
+      row,
+      getSavedPayPageState(row) || buildFallbackPaidPayPageState(row, normalized, fallbackBanks)
+    );
+
+    function applyBankRecipientSelection(accounts, bankSelContent, bankOpts, selectedId, placeholder) {
+      var selected = null;
+      (Array.isArray(accounts) ? accounts : []).forEach(function (account) {
+        if (String(account.id) === String(selectedId)) selected = account;
+      });
+      bankOpts.querySelectorAll('el-option').forEach(function (el) {
+        if (String(el.getAttribute('value') || '') === String(selectedId)) el.setAttribute('aria-selected', 'true');
+        else el.removeAttribute('aria-selected');
+      });
+      if (!selected) {
+        setSelectedContent(bankSelContent, '', placeholder);
+        return;
+      }
+      bankSelContent.innerHTML = buildSelectedBankContent({
+        displayName: selected.label || selected.bankName || 'Bank Account',
+        bankName: selected.bankName || '',
+        last4: getAccountLast4(selected),
+        accountNumber: selected.accountNumber || '',
+        maskedAccount: selected.maskedAccount || ''
+      });
+      setText('gp-pmc-bank-name-val', selected.accountName || _payContext.row.payeeName);
+      setText('gp-pmc-bank-acct', selected.maskedAccount);
+      setText('gp-pmc-bank-routing', selected.maskedRouting);
+      setText('gp-pmc-bank-address', selected.address);
+      var details = document.getElementById('gp-pmc-bank-details');
+      if (details) details.classList.remove('hidden');
+      initBankRevealToggle(selected);
+    }
+
+    function applyCardSelection(cardOpts, cardContent, selectedId) {
+      var selected = null;
+      normalized.card.forEach(function (card) {
+        if (String(card.id) === String(selectedId)) selected = card;
+      });
+      cardOpts.querySelectorAll('el-option').forEach(function (el) {
+        if (String(el.getAttribute('value') || '') === String(selectedId)) el.setAttribute('aria-selected', 'true');
+        else el.removeAttribute('aria-selected');
+      });
+      if (!selected) {
+        setSelectedContent(cardContent, '', 'Select card');
+        return;
+      }
+      setSelectedContent(cardContent, selected.label, '');
+      setText('gp-pmc-card-name', selected.cardholderName || _payContext.row.payeeName);
+      setText('gp-pmc-card-address', selected.cardholderAddress || '--');
+    }
+
+    function applyCheckSelection(checkSelContent, checkOpts, selectedId) {
+      var selected = null;
+      normalized.check.forEach(function (entry) {
+        if (String(entry.id) === String(selectedId)) selected = entry;
+      });
+      checkOpts.querySelectorAll('el-option').forEach(function (el) {
+        if (String(el.getAttribute('value') || '') === String(selectedId)) el.setAttribute('aria-selected', 'true');
+        else el.removeAttribute('aria-selected');
+      });
+      if (!selected) {
+        setSelectedContent(checkSelContent, '', 'Select mailing address');
+        return;
+      }
+      checkSelContent.innerHTML = buildSelectFilledContent({
+        label: selected.label || selected.displayName || selected.name || 'Mailing Address',
+        icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z" fill="#6B7280" /></svg>',
+        selectedIcon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z" fill="#6B7280" /></svg>'
+      });
+      setText('gp-pmc-check-name', selected.name || _payContext.row.payeeName);
+      setText('gp-pmc-check-address', selected.address || '--');
+      populateCheckDetails(selected);
+      if (savedState) {
+        setInputValue('gp-pmc-check-attention', savedState.checkAttention || '');
+        setInputValue('gp-pmc-check-attention-mobile', savedState.checkAttention || '');
+        setInputValue('gp-pmc-check-print-date', savedState.checkPrintDate || '');
+        setInputValue('gp-pmc-check-print-date-mobile', savedState.checkPrintDate || '');
+        setInputValue('gp-pmc-check-memo', savedState.checkMemo || '');
+        setInputValue('gp-pmc-check-memo-mobile', savedState.checkMemo || '');
+      }
+      var details = document.getElementById('gp-pmc-check-details');
+      if (details) details.classList.remove('hidden');
+      var fields = document.getElementById('gp-pmc-check-fields');
+      if (fields) fields.classList.remove('hidden');
+    }
 
     var methodItems = [];
     if (normalized.smartDisburse.length) methodItems.push({
@@ -1663,6 +2530,8 @@
       subtitle: 'Slowest form of payment (approximately 7-10 days)'
     });
 
+    methodItems = ensureMethodItemPresent(methodItems, inferRowMethodType(row));
+
     var applyMethod = initSelect(
       'pp-pay-method-select',
       'pp-pay-method-selected',
@@ -1692,28 +2561,27 @@
             bankOpts.onclick = function (ev) {
               var opt = ev.target.closest('el-option');
               if (!opt) return;
-              var selected = null;
-              accounts.forEach(function (a) { if (String(a.id) === String(opt.getAttribute('value'))) selected = a; });
-              bankOpts.querySelectorAll('el-option').forEach(function (el) {
-                if (el === opt) el.setAttribute('aria-selected', 'true'); else el.removeAttribute('aria-selected');
-              });
-              if (!selected) return;
-              bankSelContent.innerHTML = buildSelectedBankContent({
-                displayName: selected.label || selected.bankName || 'Bank Account',
-                bankName: selected.bankName || '',
-                last4: getAccountLast4(selected),
-                accountNumber: selected.accountNumber || '',
-                maskedAccount: selected.maskedAccount || ''
-              });
-              setText('gp-pmc-bank-name-val', selected.accountName || _payContext.row.payeeName);
-              setText('gp-pmc-bank-acct', selected.maskedAccount);
-              setText('gp-pmc-bank-routing', selected.maskedRouting);
-              setText('gp-pmc-bank-address', selected.address);
-              var details = document.getElementById('gp-pmc-bank-details');
-              if (details) details.classList.remove('hidden');
-              initBankRevealToggle(selected);
+              applyBankRecipientSelection(
+                accounts,
+                bankSelContent,
+                bankOpts,
+                opt.getAttribute('value'),
+                item.id === 'wire' ? 'Select wire destination' : 'Select bank account'
+              );
               updatePayStepStates();
             };
+            var bankSelectionId = savedState && savedState.methodId === item.id && savedState.bankAccountId
+              ? savedState.bankAccountId
+              : String(((getDeterministicListItem(accounts, row, item.id === 'wire' ? 41 : 37) || {}).id) || '');
+            if (bankSelectionId) {
+              applyBankRecipientSelection(
+                accounts,
+                bankSelContent,
+                bankOpts,
+                bankSelectionId,
+                item.id === 'wire' ? 'Select wire destination' : 'Select bank account'
+              );
+            }
           }
           updatePayStepStates();
           return;
@@ -1733,17 +2601,15 @@
             cardOpts.onclick = function (ev) {
               var opt = ev.target.closest('el-option');
               if (!opt) return;
-              var selected = null;
-              normalized.card.forEach(function (c) { if (String(c.id) === String(opt.getAttribute('value'))) selected = c; });
-              cardOpts.querySelectorAll('el-option').forEach(function (el) {
-                if (el === opt) el.setAttribute('aria-selected', 'true'); else el.removeAttribute('aria-selected');
-              });
-              if (!selected) return;
-              setSelectedContent(cardContent, selected.label, '');
-              setText('gp-pmc-card-name', selected.cardholderName || _payContext.row.payeeName);
-              setText('gp-pmc-card-address', selected.cardholderAddress || '--');
+              applyCardSelection(cardOpts, cardContent, opt.getAttribute('value'));
               updatePayStepStates();
             };
+            var cardSelectionId = savedState && savedState.methodId === 'card' && savedState.cardId
+              ? savedState.cardId
+              : String(((getDeterministicListItem(normalized.card, row, 43) || {}).id) || '');
+            if (cardSelectionId) {
+              applyCardSelection(cardOpts, cardContent, cardSelectionId);
+            }
           }
           updatePayStepStates();
           return;
@@ -1763,26 +2629,15 @@
             checkOpts.onclick = function (ev) {
               var opt = ev.target.closest('el-option');
               if (!opt) return;
-              var selected = null;
-              normalized.check.forEach(function (c) { if (String(c.id) === String(opt.getAttribute('value'))) selected = c; });
-              checkOpts.querySelectorAll('el-option').forEach(function (el) {
-                if (el === opt) el.setAttribute('aria-selected', 'true'); else el.removeAttribute('aria-selected');
-              });
-              if (!selected) return;
-              checkSelContent.innerHTML = buildSelectFilledContent({
-                label: selected.label || selected.displayName || selected.name || 'Mailing Address',
-                icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z" fill="#6B7280" /></svg>',
-                selectedIcon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z" fill="#6B7280" /></svg>'
-              });
-              setText('gp-pmc-check-name', selected.name || _payContext.row.payeeName);
-              setText('gp-pmc-check-address', selected.address || '--');
-              populateCheckDetails(selected);
-              var details = document.getElementById('gp-pmc-check-details');
-              if (details) details.classList.remove('hidden');
-              var fields = document.getElementById('gp-pmc-check-fields');
-              if (fields) fields.classList.remove('hidden');
+              applyCheckSelection(checkSelContent, checkOpts, opt.getAttribute('value'));
               updatePayStepStates();
             };
+            var checkSelectionId = savedState && savedState.methodId === 'check' && savedState.checkAddressId
+              ? savedState.checkAddressId
+              : String(((getDeterministicListItem(normalized.check, row, 47) || {}).id) || '');
+            if (checkSelectionId) {
+              applyCheckSelection(checkSelContent, checkOpts, checkSelectionId);
+            }
           }
           updatePayStepStates();
           return;
@@ -1793,8 +2648,21 @@
           var sdDetailsPanel = document.getElementById('gp-pmc-smart-disburse-details');
           if (sdPanel) sdPanel.classList.remove('hidden');
           var activeSdContacts = collectSmartDisburseContacts(normalized.smartDisburse);
-          initSmartDisburseTypeahead(activeSdContacts);
+          var sdApi = initSmartDisburseTypeahead(activeSdContacts);
           if (sdDetailsPanel) sdDetailsPanel.classList.remove('hidden');
+          var sdTokens = savedState && savedState.methodId === 'smart_disburse' && Array.isArray(savedState.smartTokens) && savedState.smartTokens.length
+            ? savedState.smartTokens
+            : (function () {
+                var primary = getDeterministicListItem(activeSdContacts, row, 53);
+                var secondary = getDeterministicListItem(activeSdContacts, row, 59);
+                var tokens = [];
+                if (primary) tokens.push(primary);
+                if (secondary && primary && String(secondary.id || '') !== String(primary.id || '')) tokens.push(secondary);
+                return tokens;
+              })();
+          if (sdApi && sdTokens && sdTokens.length) {
+            sdApi.setTokens(sdTokens);
+          }
           updatePayStepStates();
           return;
         }
@@ -1804,16 +2672,45 @@
           var sxDetailsPanel = document.getElementById('gp-pmc-smart-exchange-details');
           if (sxPanel) sxPanel.classList.remove('hidden');
           var sxContacts = collectSmartDisburseContacts(normalized.smartExchange);
-          initSmartExchangeTypeahead(sxContacts);
+          var sxApi = initSmartExchangeTypeahead(sxContacts);
           if (sxDetailsPanel) sxDetailsPanel.classList.remove('hidden');
+          var sxTokens = savedState && savedState.methodId === 'smart_exchange' && Array.isArray(savedState.smartTokens) && savedState.smartTokens.length
+            ? savedState.smartTokens
+            : (function () {
+                var primary = getDeterministicListItem(sxContacts, row, 61);
+                var secondary = getDeterministicListItem(sxContacts, row, 67);
+                var tokens = [];
+                if (primary) tokens.push(primary);
+                if (secondary && primary && String(secondary.id || '') !== String(primary.id || '')) tokens.push(secondary);
+                return tokens;
+              })();
+          if (sxApi && sxTokens && sxTokens.length) {
+            sxApi.setTokens(sxTokens);
+          }
           updatePayStepStates();
           return;
         }
       }
     );
 
+    var desiredMethodId = savedState && savedState.methodId
+      ? String(savedState.methodId)
+      : String(inferRowMethodType(row) || '');
+    var hasDesiredMethod = false;
+    for (var methodIdx = 0; methodIdx < methodItems.length; methodIdx += 1) {
+      if (String(methodItems[methodIdx].id) === desiredMethodId) {
+        hasDesiredMethod = true;
+        break;
+      }
+    }
+    if (!hasDesiredMethod) {
+      desiredMethodId = methodItems.length
+        ? String(methodItems[getRowSeed(row) % methodItems.length].id)
+        : '';
+    }
+
     hideAllPaymentMethodPanels();
-    applyMethod('');
+    applyMethod(desiredMethodId);
     updatePayStepStates();
   }
 
@@ -1951,7 +2848,11 @@
     var backBtn = document.getElementById('get-paid-back');
     if (!backBtn) return;
     backBtn.addEventListener('click', function () {
-      window.location.href = './bills-and-payables.html';
+      var params = new URLSearchParams(window.location.search || '');
+      var nextUrl = './bills-and-payables.html';
+      var tab = String(params.get('tab') || '').trim();
+      if (tab) nextUrl += '?tab=' + encodeURIComponent(tab);
+      window.location.href = nextUrl;
     });
   }
 
@@ -1984,11 +2885,12 @@
     }
   }
 
-  function initOriginationAccountSelector(accounts) {
+  function initOriginationAccountSelector(accounts, row) {
     var list = Array.isArray(accounts) ? accounts.filter(function (a) { return a && a.id; }) : [];
     var selectEl = document.getElementById('pp-orig-bank-select');
     var optionsEl = document.getElementById('pp-orig-bank-options');
     var selectedEl = document.getElementById('pp-orig-bank-selected');
+    var savedState = getSavedPayPageState(row) || buildFallbackOriginationState(row, list);
     if (!selectEl || !optionsEl || !selectedEl) return;
 
     optionsEl.innerHTML = list.map(buildBankOptionHtml).join('');
@@ -2029,6 +2931,15 @@
       applySelection(option.getAttribute('value'));
     });
 
+    if (savedState && savedState.originationAccountId) {
+      applySelection(savedState.originationAccountId);
+      _origDetailsState.expanded = !!savedState.originationExpanded;
+      _origDetailsState.revealed = !!savedState.originationRevealed;
+      applyOriginationExpandedState();
+      applyOriginationRevealState();
+      return;
+    }
+
     resetSelection();
   }
 
@@ -2043,11 +2954,41 @@
     setText('gp-date', formatDate(row.dueDate));
     setText('gp-customer', (payeeProfile && payeeProfile.name) || row.payeeName);
     setText('gp-invoice', row.billNumber);
+    var headerMeta = document.getElementById('pp-header-date-meta');
+    var statusDateChip = document.getElementById('pp-status-date-chip');
+    var statusDateLabel = document.getElementById('pp-status-date-label');
+    var statusDateText = document.getElementById('pp-status-date-text');
+    var status = String(row.status || '').toLowerCase();
+    var statusType = String(row.statusType || '').toLowerCase();
+    var isScheduled = status === 'scheduled' || (status === 'in_progress' && statusType === 'scheduled');
+    var isProcessing = status === 'in_progress' && statusType !== 'scheduled';
+    var isPaid = status === 'paid';
+    if (headerMeta) {
+      var headerMetaText = getHeaderDateMeta(row);
+      headerMeta.textContent = headerMetaText || '';
+      headerMeta.classList.toggle('hidden', !headerMetaText);
+    }
+    if (statusDateChip) {
+      var showStatusDateChip = isProcessing || isPaid;
+      statusDateChip.classList.toggle('hidden', !showStatusDateChip);
+      statusDateChip.classList.toggle('inline-flex', showStatusDateChip);
+    }
+    if (statusDateLabel) {
+      statusDateLabel.textContent = isPaid ? 'Completed on' : 'Initiated on';
+    }
+    if (statusDateText) {
+      statusDateText.textContent = (isProcessing || isPaid) ? formatDate(row.adDate || row.dueDate) : '--';
+    }
+    if (headerMeta && isScheduled) {
+      headerMeta.classList.add('hidden');
+    }
 
     setText('gp-submit-amount', formatMoney(row.amount, row.currency));
     setText('gp-submit-date', formatDate(row.dueDate));
-    setStatusBadge(row.status, row.statusLabel);
+    var displayStatus = getDisplayStatus(row);
+    setStatusBadge(displayStatus.key, displayStatus.label);
     renderPillAttachments(row);
+    renderPayPageActivityLog(row);
   }
 
   function renderPillAttachments(row) {
@@ -2305,6 +3246,7 @@
     initRefreshButtons();
     initScheduleDropdown();
     initPaymentConfirmFlow();
+    initHeaderCancelAction();
     var params = new URLSearchParams(window.location.search || '');
     Promise.all([
       loadJsonWithFallbacks(JSON_PATH_FALLBACKS),
@@ -2320,13 +3262,16 @@
         var banksFallback = results[3];
         var checkAddresses = results[4];
         var payeesList = getPayeesArray(payeesPayload);
-        var row = findSelectedPayable(payload && payload.data, params);
+        var rows = normalizePayableRowsForPage(applyStoredPayableOverrides((payload && payload.data) || []), payeesList);
+        var row = applyStoredPayPageViewContext(findSelectedPayable(rows, params), params);
         var payeeProfile = findPayeeProfile(payeesList, row);
         populatePage(row, payeeProfile);
         var bankAccounts = (prefs && Array.isArray(prefs.bankAccounts) ? prefs.bankAccounts : null) || (Array.isArray(banksFallback) ? banksFallback : []);
-        initOriginationAccountSelector(bankAccounts);
+        applyConfirmedScheduleDate(getScheduledPaymentDateIso(row));
+        initOriginationAccountSelector(bankAccounts, row);
         initPaymentMethodFlow(payeesList, row, bankAccounts, Array.isArray(checkAddresses) ? checkAddresses : []);
         updatePayStepStates();
+        applyConfirmedPayPageReadOnlyState(row);
       })
       .catch(function () {
         setText('gp-amount', '$0.00');
@@ -2335,9 +3280,11 @@
         setText('gp-customer', '--');
         setText('gp-invoice', '--');
         setStatusBadge('ready_to_pay', 'Unprocessed');
-        initOriginationAccountSelector([]);
+        applyConfirmedScheduleDate('');
+        initOriginationAccountSelector([], null);
         initPaymentMethodFlow([], null, [], []);
         updatePayStepStates();
+        applyConfirmedPayPageReadOnlyState(null);
       });
   }
 

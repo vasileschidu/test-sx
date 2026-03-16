@@ -117,7 +117,21 @@
                                     <span id="gp-status-badge"
                                         class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-gray-50 text-gray-600 inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">Unprocessed</span>
                                 </div>
-                                <div class="flex w-full items-center gap-4 sm:w-auto sm:shrink-0">
+                                <div class="flex w-full flex-col items-start gap-2 sm:w-auto sm:shrink-0 sm:items-end">
+                                    <span id="pp-header-date-meta"
+                                        class="text-sm font-medium text-gray-500 dark:text-gray-400">Due on --</span>
+                                    <span id="pp-status-date-chip"
+                                        class="hidden relative max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-sm font-medium text-gray-700 dark:bg-white/10 dark:text-gray-300">
+                                        <span class="inline-flex shrink-0 items-center gap-1 bg-gray-100 px-2 py-1 font-medium text-gray-700 dark:bg-white/10 dark:text-gray-300">
+                                            <span id="pp-status-date-label">Initiated on</span>
+                                        </span>
+                                        <span
+                                            class="inline-flex min-w-0 items-center border-l border-gray-300 bg-white px-2 py-1 text-left dark:border-gray-500/40 dark:bg-white/5">
+                                            <span id="pp-status-date-text" class="truncate text-sm font-medium text-gray-700 dark:text-gray-300">--</span>
+                                        </span>
+                                        <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span>
+                                    </span>
+                                    <div class="flex w-full items-center gap-4 sm:w-auto">
                                     <div id="pp-schedule-wrap" class="relative">
                                         <button id="pp-schedule-simple-btn" type="button" aria-label="Schedule payment" aria-expanded="false" aria-controls="pp-schedule-dropdown"
                                             class="relative inline-flex max-w-[360px] items-center gap-1.5 rounded-md bg-gray-50 px-2 py-1 text-sm font-medium text-gray-700 inset-ring inset-ring-gray-300 hover:bg-gray-100 dark:bg-white/10 dark:text-gray-300 dark:inset-ring-gray-500/40 dark:hover:bg-white/15 cursor-pointer">
@@ -128,21 +142,15 @@
                                         </button>
                                         <span id="pp-schedule-segmented-chip"
                                             class="hidden relative max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-sm font-medium text-gray-700 dark:bg-white/10 dark:text-gray-300">
-                                            <span class="inline-flex shrink-0 items-center gap-1.5 bg-gray-100 px-2 py-1 font-medium text-gray-900 dark:bg-white/15 dark:text-white">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-300">
-                                                    <path d="M14.25 2C14.6642 2 15 2.33579 15 2.75V4H15.25C16.7688 4 18 5.23122 18 6.75V15.25C18 16.7688 16.7688 18 15.25 18H4.75C3.23122 18 2 16.7688 2 15.25V6.75C2 5.23122 3.23122 4 4.75 4H5V2.75C5 2.33579 5.33579 2 5.75 2C6.16421 2 6.5 2.33579 6.5 2.75V4H13.5V2.75C13.5 2.33579 13.8358 2 14.25 2ZM4.75 7.5C4.05964 7.5 3.5 8.05964 3.5 8.75V15.25C3.5 15.9404 4.05964 16.5 4.75 16.5H15.25C15.9404 16.5 16.5 15.9404 16.5 15.25V8.75C16.5 8.05964 15.9404 7.5 15.25 7.5H4.75Z" />
+                                            <span class="inline-flex shrink-0 items-center gap-1 bg-gray-100 px-2 py-1 font-medium text-gray-700 dark:bg-white/10 dark:text-gray-300">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 shrink-0" aria-hidden="true">
+                                                    <path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" />
                                                 </svg>
-                                                Scheduled for
+                                                <span>Scheduled</span>
                                             </span>
                                             <button id="pp-schedule-chip-date-btn" type="button" aria-label="Edit schedule date" aria-expanded="false" aria-controls="pp-schedule-dropdown"
                                                 class="inline-flex min-w-0 items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15 cursor-pointer">
-                                                <span id="pp-schedule-chip-text" class="truncate text-sm font-medium text-blue-600 dark:text-blue-400">--</span>
-                                            </button>
-                                            <button id="pp-schedule-chip-clear-btn" type="button" aria-label="Clear schedule date"
-                                                class="inline-flex size-7 shrink-0 items-center justify-center border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white cursor-pointer">
-                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">
-                                                    <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
-                                                </svg>
+                                                <span id="pp-schedule-chip-text" class="truncate text-sm font-medium text-gray-700 dark:text-gray-300">--</span>
                                             </button>
                                             <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span>
                                         </span>
@@ -189,10 +197,15 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <button id="pp-header-cancel-btn" type="button"
+                                        class="hidden rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40 cursor-pointer">
+                                        Cancel
+                                    </button>
                                     <button id="gp-submit-btn" type="button" disabled
                                         class="h-10 flex-1 rounded-md bg-blue-600 px-4 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-blue-600 cursor-pointer sm:flex-none">
                                         Confirm payment
                                     </button>
+                                </div>
                                 </div>
                             </div>
 
@@ -1803,6 +1816,58 @@
                         <button id="gp-mark-paid-confirm-btn" type="button"
                             class="w-full rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                             Confirm
+                        </button>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
+    <el-dialog>
+        <dialog id="pp-schedule-cancel-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
+                        <button type="button" command="close" commandfor="pp-schedule-cancel-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+                        <div class="flex flex-col items-center text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#EF4444"
+                                class="size-11" aria-hidden="true">
+                                <path fill-rule="evenodd"
+                                    d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z"
+                                    clip-rule="evenodd" />
+                            </svg>
+                            <div class="mt-6 flex flex-col items-center gap-2">
+                                <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">
+                                    Cancel Scheduled Payment
+                                </h2>
+                                <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
+                                    This will cancel the scheduled payment and move it back to Ready to Pay. Are you sure you want to continue?
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                        <button type="button" command="close" commandfor="pp-schedule-cancel-dialog"
+                            class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+                            Keep Scheduled
+                        </button>
+                        <button id="pp-schedule-cancel-confirm-btn" type="button"
+                            class="w-full rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">
+                            Cancel Schedule
                         </button>
                     </div>
                 </el-dialog-panel>

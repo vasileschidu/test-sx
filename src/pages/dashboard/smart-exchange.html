@@ -112,7 +112,7 @@
                                             class="text-2xl font-bold text-gray-900 dark:text-white"></span>
                                         <span id="gp-currency" class="text-2xl text-gray-500 dark:text-gray-400"></span>
                                     </div>
-                                    <span
+                                    <span id="gp-status-badge"
                                         class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20">Pending
                                         Your Action</span>
                                 </div>
@@ -437,7 +437,7 @@
 
                                                 <!-- Accept Payer's Card -->
                                                 <div id="gp-pmc-payers-card" class="hidden">
-                                                    <div class="flex flex-col items-start self-stretch">
+                                                    <div id="gp-pmc-cardholder-details-wrap" class="flex flex-col items-start self-stretch">
                                                         <!-- header -->
                                                         <div
                                                             class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
@@ -464,21 +464,68 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <label class="mt-4 flex items-center gap-3 cursor-pointer">
-                                                        <div class="group grid size-4 grid-cols-1">
-                                                            <input type="checkbox" checked
-                                                                class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
-                                                            <svg viewBox="0 0 14 14" fill="none"
-                                                                class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">
-                                                                <path d="M3 8L6 11L11 3.5" stroke-width="2"
-                                                                    stroke-linecap="round" stroke-linejoin="round"
-                                                                    class="opacity-0 group-has-checked:opacity-100" />
+                                                    <div id="gp-pmc-paid-card-section"
+                                                        class="hidden mt-4 items-center gap-3 rounded-lg bg-gray-100 pr-2 dark:bg-white/5">
+                                                        <div
+                                                            class="flex h-[46px] w-[71px] flex-col items-end gap-0.5 rounded-md bg-gray-950 p-2 text-gray-200 font-['Roboto_Mono'] text-[10px] leading-3">
+                                                            <svg class="h-4 w-8" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"
+                                                                aria-hidden="true">
+                                                                <path d="M0 0h32v32H0z" fill="#00579f"></path>
+                                                                <g fill="#fff" fill-rule="nonzero">
+                                                                    <path
+                                                                        d="M13.823 19.876H11.8l1.265-7.736h2.023zm7.334-7.546a5.036 5.036 0 0 0-1.814-.33c-1.998 0-3.405 1.053-3.414 2.56-.016 1.11 1.007 1.728 1.773 2.098.783.379 1.05.626 1.05.963-.009.518-.633.757-1.216.757-.808 0-1.24-.123-1.898-.411l-.267-.124-.283 1.737c.475.213 1.349.403 2.257.411 2.123 0 3.505-1.037 3.521-2.641.008-.881-.532-1.556-1.698-2.107-.708-.354-1.141-.593-1.141-.955.008-.33.366-.667 1.165-.667a3.471 3.471 0 0 1 1.507.297l.183.082zm2.69 4.806.807-2.165c-.008.017.167-.452.266-.74l.142.666s.383 1.852.466 2.239h-1.682zm2.497-4.996h-1.565c-.483 0-.85.14-1.058.642l-3.005 7.094h2.123l.425-1.16h2.597c.059.271.242 1.16.242 1.16h1.873zm-16.234 0-1.982 5.275-.216-1.07c-.366-1.234-1.515-2.575-2.797-3.242l1.815 6.765h2.14l3.18-7.728z">
+                                                                    </path>
+                                                                    <path
+                                                                        d="M6.289 12.14H3.033L3 12.297c2.54.641 4.221 2.189 4.912 4.049l-.708-3.556c-.116-.494-.474-.633-.915-.65z">
+                                                                    </path>
+                                                                </g>
                                                             </svg>
+                                                            <div>•••• <span id="gp-pmc-card-last4"></span></div>
                                                         </div>
-                                                        <span
-                                                            class="text-sm font-normal text-gray-700 dark:text-gray-300">Set
-                                                            card as default for future payments</span>
-                                                    </label>
+                                                        <button type="button" command="show-modal" commandfor="gp-card-details-dialog"
+                                                            class="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-white/20 dark:hover:text-white">
+                                                            Reveal Card Details
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                                                class="size-4">
+                                                                <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                                                                <path fill-rule="evenodd"
+                                                                    d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"
+                                                                    clip-rule="evenodd" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
+                                                    <div id="gp-stp-card-container"
+                                                        class="hidden mt-4 w-full rounded-lg border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">
+                                                        <div class="flex items-center justify-between gap-4">
+                                                            <div class="flex min-w-0 items-center gap-2">
+                                                                <p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">
+                                                                    Automatic Card Processing (STP)
+                                                                </p>
+                                                                <div class="group relative flex shrink-0">
+                                                                    <button id="gp-stp-info-btn" type="button"
+                                                                        class="inline-flex size-7 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200 cursor-pointer">
+                                                                        <span class="sr-only">Automatic Card Processing information</span>
+                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
+                                                                            <path fill-rule="evenodd" d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM9 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6.75 8a.75.75 0 0 0 0 1.5h.75v1.75a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8.25 8h-1.5Z" clip-rule="evenodd" />
+                                                                        </svg>
+                                                                    </button>
+                                                                    <div
+                                                                        class="pointer-events-none absolute left-1/2 top-0 z-20 hidden w-72 -translate-x-1/2 -translate-y-[calc(100%+10px)] rounded-md bg-gray-900 px-3 py-2 text-sm leading-5 text-white shadow-lg group-hover:block group-focus-within:block dark:bg-gray-950">
+                                                                        Say goodbye to manual processing; we’ll securely send the details to the card network who will process the payment automatically. Funds will continue to settle through your current merchant processor.
+                                                                        <span class="absolute left-1/2 top-full h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-gray-900 dark:bg-gray-950"></span>
+                                                                    </div>
+                                                                </div>
+                                                                <span id="gp-stp-status-badge"
+                                                                    class="hidden inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-white/5 dark:text-gray-300 dark:ring-white/15">Enabling pending</span>
+                                                            </div>
+                                                            <label class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 ring-1 ring-inset ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/10 dark:ring-white/10 dark:has-checked:bg-blue-500">
+                                                                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5 dark:ring-white/10"></span>
+                                                                <input id="gp-stp-enable-toggle" type="checkbox" aria-labelledby="gp-stp-toggle-label"
+                                                                    class="absolute inset-0 size-full appearance-none focus:outline-hidden" />
+                                                                <span id="gp-stp-toggle-label" class="sr-only">Enable Automatic Card Processing</span>
+                                                            </label>
+                                                        </div>
+                                                    </div>
                                                 </div>
 
                                                 <!-- Send to Bank Account -->

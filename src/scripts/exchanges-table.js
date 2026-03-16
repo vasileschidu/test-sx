@@ -518,13 +518,35 @@
     };
   }
 
+  var EXCHANGE_OVERRIDES_STORAGE_KEY = 'sx_exchange_entry_overrides_v1';
+
+  function readExchangeEntryOverrides() {
+    try {
+      var raw = localStorage.getItem(EXCHANGE_OVERRIDES_STORAGE_KEY);
+      var parsed = raw ? JSON.parse(raw) : {};
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function writeExchangeEntryOverride(invoice, patch) {
+    var key = String(invoice || '').trim();
+    if (!key) return;
+    var overrides = readExchangeEntryOverrides();
+    overrides[key] = Object.assign({}, overrides[key] || {}, patch || {});
+    try {
+      localStorage.setItem(EXCHANGE_OVERRIDES_STORAGE_KEY, JSON.stringify(overrides));
+    } catch (error) {}
+  }
+
   function normalizeEntry(entry, index) {
     if (!entry || typeof entry !== 'object') {
       console.warn('Skipping malformed exchange row at index', index, entry);
       return null;
     }
     var methodType = normalizeMethodTypeValue(entry);
-    return {
+    var normalized = {
       amount: Number(entry.amount) || 0,
       currency: typeof entry.currency === 'string' ? entry.currency : 'USD',
       vendorEntry: typeof entry.vendorEntry === 'string' ? entry.vendorEntry : '',
@@ -538,6 +560,20 @@
       payeeId: typeof entry.payeeId === 'string' ? entry.payeeId : ((_myBusiness && _myBusiness.id) || 'my-business'),
       details: normalizeDetails(entry.details),
     };
+    var overrides = readExchangeEntryOverrides();
+    var saved = overrides[normalized.invoice];
+    if (saved && typeof saved === 'object') {
+      if (saved.status) normalized.status = normalizeStatusValue(saved.status);
+      if (saved.methodType) normalized.methodType = normalizeMethodTypeValue(saved.methodType);
+      if (typeof saved.paymentMethodEnding === 'string') normalized.paymentMethodEnding = saved.paymentMethodEnding;
+      if (typeof saved.paymentMethod === 'string') normalized.paymentMethod = saved.paymentMethod;
+      if (saved.details && typeof saved.details === 'object') {
+        normalized.details = Object.assign({}, normalized.details, {
+          activityLog: Array.isArray(saved.details.activityLog) ? saved.details.activityLog : normalized.details.activityLog
+        });
+      }
+    }
+    return normalized;
   }
 
   // ── Dynamic <thead> builder ──
@@ -629,6 +665,8 @@
       case 'amount':
         return formatCurrency(entry.amount, entry.currency) +
           ' <span class="text-gray-500 dark:text-gray-400">' + escapeHtml(entry.currency) + '</span>';
+      case 'invoice':
+        return '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer p-0 text-sm font-medium text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">#' + escapeHtml(entry.invoice) + '</button>';
       case 'dateInitiated':
         return formatDate(entry.dateInitiated);
       default:
@@ -662,6 +700,19 @@
         ICON_VISA +
         '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(last4) + '</span>' +
         '</span>';
+    }
+
+    if (entry.methodType === 'smart_exchange' && entry.status === 'paid') {
+      var sxCustomer = getCustomerForEntry(entry);
+      var sxCardDetails = getPayerCardDetailsForRender(entry, info, sxCustomer);
+      var sxLast4 = getDigits(sxCardDetails && (sxCardDetails.fullCardNumber || sxCardDetails.maskedCardNumber || '')).slice(-4) ||
+        getDigits(ending).slice(-4);
+      if (sxLast4) {
+        return '<span class="inline-flex items-center gap-x-2">' +
+          ICON_VISA +
+          '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(sxLast4) + '</span>' +
+          '</span>';
+      }
     }
 
     // SMART Exchange or any other — normal value
@@ -3955,8 +4006,8 @@
 
   var CHECKBOX_STATUS_HTML =
     '<div class="flex h-6 shrink-0 items-center">' +
-      '<div class="group grid size-4 grid-cols-1">' +
-        '<input type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
+      '<div class="group grid size-4 grid-cols-1 opacity-60">' +
+        '<input type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
         '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
           '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
         '</svg>' +
@@ -3971,6 +4022,9 @@
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5" aria-hidden="true">' +
       '<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />' +
     '</svg>';
+  var _getPaidStpOptInRequested = false;
+  var _getPaidStpModalActive = false;
+  var _getPaidStpModalConfirmed = false;
 
   function setGetPaidStepBadge(stepNum, isComplete) {
     var badge = document.getElementById('gp-step-' + stepNum + '-badge');
@@ -4121,7 +4175,9 @@
         '<div class="flex w-0 flex-1 items-center">' +
           ATTACHMENT_ICON +
           '<div class="ml-4 flex min-w-0 flex-1 gap-2">' +
-            '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(att.name || '') + '</span>' +
+            '<button type="button" command="show-modal" commandfor="gp-review-dialog"' +
+              ' class="gp-review-name-trigger truncate font-medium text-gray-900 underline decoration-transparent underline-offset-2 transition-colors hover:text-gray-700 hover:decoration-gray-400 dark:text-white dark:hover:text-gray-200 dark:hover:decoration-white/30"' +
+              ' data-attach-idx="' + idx + '">' + escapeHtml(att.name || '') + '</button>' +
             '<span class="shrink-0 text-gray-400 dark:text-gray-500">' + escapeHtml(att.size || '') + '</span>' +
           '</div>' +
         '</div>' +
@@ -4144,8 +4200,181 @@
     return '<ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200 dark:divide-white/5 dark:border-white/10">' + items + '</ul>';
   }
 
+  function setGetPaidMethodSelection(value, entry, displayLabel) {
+    var sel = document.querySelector('el-select[name="paymentMethod"]');
+    if (!sel || !value) return;
+    var targetOption = sel.querySelector('el-option[value="' + value + '"]');
+    if (!targetOption) return;
+    sel.querySelectorAll('el-option').forEach(function (opt) {
+      if (opt === targetOption) opt.setAttribute('aria-selected', 'true');
+      else opt.removeAttribute('aria-selected');
+    });
+    var selectedContent = sel.querySelector('el-selectedcontent');
+    var labelMap = {
+      'payers-card': "Accept Payer's Card",
+      'bank-account': 'Send to Bank Account',
+      'paper-check': 'Request a Paper Check'
+    };
+    if (selectedContent) {
+      var label = displayLabel || labelMap[value] || value;
+      if (value === 'payers-card') {
+        selectedContent.innerHTML =
+          '<span class="flex min-w-0 items-center gap-2">' +
+            '<span class="shrink-0 text-gray-600 dark:text-gray-400">' +
+              '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">' +
+                '<path d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>' +
+              '</svg>' +
+            '</span>' +
+            '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(label) + '</span>' +
+          '</span>';
+      } else {
+        selectedContent.innerHTML = '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(label) + '</span>';
+      }
+    }
+    updatePaymentMethodDetails(value, entry);
+  }
+
+  function getPaidGetPaidMethodValue(entry) {
+    var methodType = String(entry && entry.methodType || '').toLowerCase();
+    var paymentMethod = String(entry && entry.paymentMethod || '').toLowerCase();
+    if (methodType === 'card') return 'payers-card';
+    if (methodType === 'smart_exchange' || paymentMethod.indexOf('smart exchange') !== -1) return 'payers-card';
+    if (paymentMethod.indexOf('check') !== -1) return 'paper-check';
+    if (methodType === 'ach' || paymentMethod.indexOf('bank') !== -1 || paymentMethod.indexOf('transfer') !== -1 || paymentMethod.indexOf('ach') !== -1) {
+      return 'bank-account';
+    }
+    return 'payers-card';
+  }
+
+  function getPaidGetPaidMethodLabel(entry, paymentValue) {
+    var methodType = String(entry && entry.methodType || '').toLowerCase();
+    var paymentMethod = String(entry && entry.paymentMethod || '');
+    if (methodType === 'smart_exchange' || paymentMethod.toLowerCase().indexOf('smart exchange') !== -1) {
+      return "Accept Payer's Card";
+    }
+    if (paymentValue === 'bank-account') return 'Send to Bank Account';
+    if (paymentValue === 'paper-check') return 'Request a Paper Check';
+    return "Accept Payer's Card";
+  }
+
+  function setSelectOptionByValue(selectEl, value, selectedMarkup) {
+    if (!selectEl || !value) return false;
+    var targetOption = selectEl.querySelector('el-option[value="' + value + '"]');
+    if (!targetOption) return false;
+    selectEl.querySelectorAll('el-option').forEach(function (opt) {
+      if (opt === targetOption) opt.setAttribute('aria-selected', 'true');
+      else opt.removeAttribute('aria-selected');
+    });
+    var selectedContent = selectEl.querySelector('el-selectedcontent');
+    if (selectedContent && selectedMarkup) selectedContent.innerHTML = selectedMarkup;
+    return true;
+  }
+
+  function applyPaidMethodDetailsSelection(paymentValue) {
+    if (paymentValue === 'bank-account') {
+      var bankSelect = document.getElementById('gp-bank-account-select');
+      var accounts = _myBusiness && Array.isArray(_myBusiness.bankAccounts) ? _myBusiness.bankAccounts : [];
+      if (bankSelect && accounts.length) {
+        var selectedBank = accounts[0];
+        setSelectOptionByValue(bankSelect, selectedBank.id, buildSelectedBankContent(selectedBank));
+        updateBankDetails(selectedBank.id);
+      }
+      return;
+    }
+    if (paymentValue === 'paper-check') {
+      var checkSelect = document.getElementById('gp-check-address-select');
+      var addresses = _myBusiness && Array.isArray(_myBusiness.checkAddresses) ? _myBusiness.checkAddresses : [];
+      if (checkSelect && addresses.length) {
+        var selectedAddress = addresses[0];
+        setSelectOptionByValue(checkSelect, selectedAddress.id, '<span class="truncate font-medium">' + escapeHtml(selectedAddress.displayName || 'Mailing Address') + '</span>');
+        updateCheckDetails(selectedAddress.id);
+      }
+    }
+  }
+
+  function setGetPaidSelectDisabled(selectEl, disabled) {
+    if (!selectEl) return;
+    var button = selectEl.querySelector('button');
+    var selectedContent = selectEl.querySelector('el-selectedcontent');
+    if (button) {
+      button.classList.toggle('pointer-events-none', disabled);
+      button.classList.toggle('cursor-not-allowed', disabled);
+      button.classList.toggle('bg-white', !disabled);
+      button.classList.toggle('dark:bg-white/5', !disabled);
+      button.classList.toggle('bg-gray-50', disabled);
+      button.classList.toggle('text-gray-900', !disabled);
+      button.classList.toggle('text-gray-500', disabled);
+      button.classList.toggle('outline-gray-300', !disabled);
+      button.classList.toggle('outline-gray-200', disabled);
+      button.classList.toggle('dark:text-white', !disabled);
+      button.classList.toggle('dark:text-gray-400', disabled);
+    }
+    if (selectedContent) {
+      selectedContent.classList.toggle('text-gray-900', !disabled);
+      selectedContent.classList.toggle('text-gray-500', disabled);
+      selectedContent.classList.toggle('dark:text-white', !disabled);
+      selectedContent.classList.toggle('dark:text-gray-400', disabled);
+    }
+    selectEl.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+  }
+
+  function applyPaidGetPaidPanelState(entry) {
+    var submitBtn = document.getElementById('gp-submit-btn');
+    var sigTrigger = document.getElementById('gp-signature-trigger');
+    var sigBadge = document.getElementById('gp-signed-badge');
+    var paymentValue = getPaidGetPaidMethodValue(entry);
+    var paymentMethodSelect = document.querySelector('el-select[name="paymentMethod"]');
+    var bankAccountSelect = document.getElementById('gp-bank-account-select');
+    var checkAddressSelect = document.getElementById('gp-check-address-select');
+    var paymentLabel = getPaidGetPaidMethodLabel(entry, paymentValue);
+
+    document.querySelectorAll('#gp-attachments .gp-review-trigger').forEach(function (btn) {
+      btn.classList.add('hidden');
+      btn.classList.remove('inline-flex');
+      btn.style.display = 'none';
+    });
+    document.querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"]').forEach(function (status) {
+      status.classList.remove('hidden');
+      var checkbox = status.querySelector('input[type="checkbox"]');
+      if (checkbox) {
+        checkbox.checked = true;
+        checkbox.disabled = true;
+      }
+    });
+
+    if (sigTrigger) sigTrigger.classList.add('hidden');
+    if (sigBadge) sigBadge.classList.remove('hidden');
+    if (submitBtn) submitBtn.classList.add('hidden');
+
+    if (paymentValue) setGetPaidMethodSelection(paymentValue, entry, paymentLabel);
+    applyPaidMethodDetailsSelection(paymentValue);
+    setGetPaidSelectDisabled(paymentMethodSelect, true);
+    setGetPaidSelectDisabled(bankAccountSelect, true);
+    setGetPaidSelectDisabled(checkAddressSelect, true);
+    syncGetPaidHeaderStatus(entry);
+    updateGetPaidStepStates();
+  }
+
+  function syncGetPaidHeaderStatus(entry) {
+    var badge = document.getElementById('gp-status-badge');
+    if (!badge || !entry) return;
+    if (entry.status === 'paid') {
+      badge.textContent = 'Paid';
+      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:inset-ring-green-400/30';
+      return;
+    }
+    if (entry.status === 'exception') {
+      badge.textContent = 'Exception';
+      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-red-50 text-red-700 inset-ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:inset-ring-red-400/30';
+      return;
+    }
+    badge.textContent = 'Pending Your Action';
+    badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20';
+  }
+
   function openGetPaidPanel(entry) {
     _activeGetPaidEntry = entry;
+    _getPaidStpOptInRequested = false;
     var amountEl = document.getElementById('gp-amount');
     var currencyEl = document.getElementById('gp-currency');
     var dateEl = document.getElementById('gp-date');
@@ -4159,6 +4388,7 @@
     if (dateEl) dateEl.textContent = formatDate(entry.dateInitiated);
     if (customerEl) customerEl.textContent = entry.vendorEntry;
     if (invoiceEl) invoiceEl.textContent = '#' + entry.invoice;
+    syncGetPaidHeaderStatus(entry);
 
     if (attachEl) attachEl.innerHTML = buildGetPaidAttachments(entry.details.attachments);
     if (activityEl) activityEl.innerHTML = buildGetPaidActivityLog(entry);
@@ -4190,6 +4420,12 @@
     window.scrollTo(0, 0);
 
     initPaymentMethodDetails(entry);
+    var submitBtn = document.getElementById('gp-submit-btn');
+    setGetPaidSelectDisabled(document.querySelector('el-select[name="paymentMethod"]'), false);
+    setGetPaidSelectDisabled(document.getElementById('gp-bank-account-select'), false);
+    setGetPaidSelectDisabled(document.getElementById('gp-check-address-select'), false);
+    if (submitBtn) submitBtn.classList.remove('hidden');
+    if (entry.status === 'paid') applyPaidGetPaidPanelState(entry);
     updateGetPaidStepStates();
   }
 
@@ -4198,21 +4434,148 @@
     if (el) el.textContent = value || '';
   }
 
+  function getGetPaidStpState() {
+    if (window.STPState && typeof window.STPState.getStpState === 'function') {
+      return window.STPState.getStpState();
+    }
+    return { stpStatus: 'disabled', stpStep: 'opt_in_required' };
+  }
+
+  function updateGetPaidStpCardToggleState() {
+    var enableToggle = document.getElementById('gp-stp-enable-toggle');
+    if (!enableToggle) return;
+    enableToggle.disabled = false;
+  }
+
+  function syncGetPaidStpToggle() {
+    var enableToggle = document.getElementById('gp-stp-enable-toggle');
+    if (!enableToggle) return;
+    enableToggle.checked = !!_getPaidStpOptInRequested;
+  }
+
+  function openGetPaidStpModal() {
+    _getPaidStpModalActive = true;
+    _getPaidStpModalConfirmed = false;
+    _getPaidStpOptInRequested = true;
+    syncGetPaidStpToggle();
+    if (window.STPState && typeof window.STPState.openOptInModal === 'function') {
+      window.STPState.openOptInModal();
+    }
+    bindGetPaidStpModalBridge();
+  }
+
+  function bindGetPaidStpModalBridge() {
+    var ppDialog = document.getElementById('pp-enable-stp-dialog');
+    var ppConfirmBtn = document.getElementById('pp-enable-stp-confirm-btn');
+    var inlineDialog = document.getElementById('sx-inline-stp-dialog');
+    var inlineConfirmBtn = inlineDialog && inlineDialog.querySelector('[data-inline-stp-confirm]');
+
+    function handleConfirm(event, dialog) {
+      if (!_getPaidStpModalActive) return;
+      var target = event.currentTarget;
+      if (target && target.disabled) return;
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+      _getPaidStpModalConfirmed = true;
+      _getPaidStpOptInRequested = true;
+      syncGetPaidStpToggle();
+      if (dialog && dialog.open && typeof dialog.close === 'function') dialog.close();
+    }
+
+    function handleClose() {
+      if (!_getPaidStpModalActive) return;
+      if (!_getPaidStpModalConfirmed) {
+        _getPaidStpOptInRequested = false;
+        syncGetPaidStpToggle();
+      }
+      _getPaidStpModalActive = false;
+      _getPaidStpModalConfirmed = false;
+    }
+
+    if (ppConfirmBtn && ppDialog && ppConfirmBtn.getAttribute('data-gp-stp-bound') !== 'true') {
+      ppConfirmBtn.setAttribute('data-gp-stp-bound', 'true');
+      ppConfirmBtn.addEventListener('click', function (event) {
+        handleConfirm(event, ppDialog);
+      }, true);
+    }
+    if (ppDialog && ppDialog.getAttribute('data-gp-stp-close-bound') !== 'true') {
+      ppDialog.setAttribute('data-gp-stp-close-bound', 'true');
+      ppDialog.addEventListener('close', handleClose);
+    }
+    if (inlineConfirmBtn && inlineDialog && inlineConfirmBtn.getAttribute('data-gp-stp-bound') !== 'true') {
+      inlineConfirmBtn.setAttribute('data-gp-stp-bound', 'true');
+      inlineConfirmBtn.addEventListener('click', function (event) {
+        handleConfirm(event, inlineDialog);
+      }, true);
+    }
+    if (inlineDialog && inlineDialog.getAttribute('data-gp-stp-close-bound') !== 'true') {
+      inlineDialog.setAttribute('data-gp-stp-close-bound', 'true');
+      inlineDialog.addEventListener('close', handleClose);
+    }
+  }
+
+  function updateGetPaidStpInlineUi() {
+    var stpCardContainer = document.getElementById('gp-stp-card-container');
+    var stpStatusBadge = document.getElementById('gp-stp-status-badge');
+    var agreementCheckbox = document.getElementById('gp-stp-agreement-checkbox');
+    var enableToggle = document.getElementById('gp-stp-enable-toggle');
+    var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
+    var paymentValue = getSelectedOptionValue(paymentSel);
+    var isPaidEntry = !!(_activeGetPaidEntry && _activeGetPaidEntry.status === 'paid');
+    var state = getGetPaidStpState();
+    var status = state && state.stpStatus ? String(state.stpStatus) : 'disabled';
+    var step = state && state.stpStep ? String(state.stpStep) : 'opt_in_required';
+    var showOptInCard = !isPaidEntry && paymentValue === 'payers-card' && status === 'disabled' && step === 'opt_in_required';
+    var showStatusBadge = paymentValue === 'payers-card' && (status === 'in_progress' || status === 'enabled');
+
+    if (stpCardContainer) stpCardContainer.classList.toggle('hidden', !showOptInCard);
+
+    if (stpStatusBadge) {
+      stpStatusBadge.hidden = !showStatusBadge;
+      stpStatusBadge.classList.toggle('hidden', !showStatusBadge);
+      if (showStatusBadge && status === 'enabled') {
+        stpStatusBadge.textContent = 'Opted in';
+        stpStatusBadge.className = 'inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30';
+      } else if (showStatusBadge) {
+        stpStatusBadge.textContent = 'Enabling pending';
+        stpStatusBadge.className = 'inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-white/5 dark:text-gray-300 dark:ring-white/15';
+      }
+    }
+
+    if (enableToggle) {
+      if (!showOptInCard) {
+        _getPaidStpOptInRequested = false;
+      }
+      syncGetPaidStpToggle();
+      updateGetPaidStpCardToggleState();
+    }
+  }
+
   function updatePaymentMethodDetails(value, entry) {
     var wrapper = document.getElementById('gp-payment-method-details');
     var cardPanel = document.getElementById('gp-pmc-payers-card');
     var bankPanel = document.getElementById('gp-pmc-bank-account');
     var checkPanel = document.getElementById('gp-pmc-paper-check');
+    var cardholderDetailsWrap = document.getElementById('gp-pmc-cardholder-details-wrap');
+    var paidCardSection = document.getElementById('gp-pmc-paid-card-section');
 
     if (cardPanel) cardPanel.classList.add('hidden');
     if (bankPanel) bankPanel.classList.add('hidden');
     if (checkPanel) checkPanel.classList.add('hidden');
 
     if (value === 'payers-card') {
-      var payerCard = entry.details.paymentInfo && entry.details.paymentInfo.payerCard;
-      if (payerCard) {
-        pmcSetText('gp-pmc-card-name', payerCard.cardholderName);
-        pmcSetText('gp-pmc-card-address', payerCard.cardholderAddress);
+      var paymentInfo = entry && entry.details ? (entry.details.paymentInfo || {}) : {};
+      var customer = getCustomerForEntry(entry);
+      var cardDetails = getPayerCardDetailsForRender(entry, paymentInfo, customer);
+      pmcSetText('gp-pmc-card-name', cardDetails.cardHolderName || '');
+      pmcSetText('gp-pmc-card-address', cardDetails.cardHolderAddress || '');
+      pmcSetText('gp-pmc-card-last4', String(cardDetails.maskedCardNumber || '').replace(/\D/g, '').slice(-4) || '0000');
+      var isPaidEntry = !!(entry && entry.status === 'paid');
+      if (cardholderDetailsWrap) cardholderDetailsWrap.classList.toggle('hidden', isPaidEntry);
+      if (paidCardSection) {
+        paidCardSection.classList.toggle('hidden', !isPaidEntry);
+        paidCardSection.classList.toggle('inline-flex', isPaidEntry);
       }
       if (cardPanel) cardPanel.classList.remove('hidden');
     } else if (value === 'bank-account') {
@@ -4224,6 +4587,7 @@
     }
 
     if (wrapper) wrapper.classList.remove('hidden');
+    updateGetPaidStpInlineUi();
   }
 
   function updateBankDetails(bankId) {
@@ -4670,11 +5034,13 @@
     if (selContent) {
       selContent.innerHTML = '<span class="truncate text-gray-400 dark:text-gray-500">Select payment method</span>';
     }
+    updateGetPaidStpInlineUi();
 
     // Watch for aria-selected changes on options
     var observer = new MutationObserver(function () {
       var selected = sel.querySelector('el-option[aria-selected="true"]');
       if (selected) updatePaymentMethodDetails(selected.getAttribute('value'), entry);
+      else updateGetPaidStpInlineUi();
       updateGetPaidStepStates();
     });
     sel.querySelectorAll('el-option').forEach(function (opt) {
@@ -4726,6 +5092,24 @@
       });
     }
 
+    var stpEnableToggle = document.getElementById('gp-stp-enable-toggle');
+    var stpInfoBtn = document.getElementById('gp-stp-info-btn');
+    bindGetPaidStpModalBridge();
+    if (stpEnableToggle) {
+      stpEnableToggle.checked = false;
+      stpEnableToggle.addEventListener('change', function () {
+        if (stpEnableToggle.checked) {
+          openGetPaidStpModal();
+          return;
+        }
+        _getPaidStpOptInRequested = false;
+        syncGetPaidStpToggle();
+      });
+      updateGetPaidStpCardToggleState();
+      syncGetPaidStpToggle();
+    }
+    if (stpInfoBtn) stpInfoBtn.addEventListener('click', openGetPaidStpModal);
+
     var submitBtn = document.getElementById('gp-submit-btn');
     if (submitBtn) {
       submitBtn.addEventListener('click', function () {
@@ -4753,6 +5137,7 @@
           _activeGetPaidEntry.details.paymentInfo &&
           _activeGetPaidEntry.details.paymentInfo.payerCard;
         var cardLast4 = _activeGetPaidEntry.paymentMethodEnding || '';
+        var shouldAdvanceStpAfterPayment = paymentValue === 'payers-card' && _getPaidStpOptInRequested;
         if (!cardLast4 && payerCard && payerCard.cardNumber) cardLast4 = String(payerCard.cardNumber).slice(-4);
 
         if (txIdEl) txIdEl.textContent = txId;
@@ -4812,10 +5197,22 @@
           }
         }
 
+        var originalMethodType = String(_activeGetPaidEntry.methodType || '').toLowerCase();
         var selectedMethodType = paymentValue === 'payers-card' ? 'card' : 'ach';
-        _activeGetPaidEntry.methodType = selectedMethodType;
-        _activeGetPaidEntry.paymentMethod = getMethodLabelFromType(selectedMethodType);
+        if (originalMethodType === 'smart_exchange' && paymentValue === 'payers-card') {
+          _activeGetPaidEntry.methodType = 'smart_exchange';
+          _activeGetPaidEntry.paymentMethod = 'SMART Exchange';
+        } else {
+          _activeGetPaidEntry.methodType = selectedMethodType;
+          _activeGetPaidEntry.paymentMethod = getMethodLabelFromType(selectedMethodType);
+        }
         _activeGetPaidEntry.status = 'paid';
+        if (_activeGetPaidEntry.details && Array.isArray(_activeGetPaidEntry.details.activityLog)) {
+          _activeGetPaidEntry.details.activityLog.push({
+            type: 'complete',
+            date: new Date().toISOString()
+          });
+        }
         if (selectedMethodType === 'card') {
           var selectedCardLast4 = String(_activeGetPaidEntry.paymentMethodEnding || '').replace(/\D/g, '').slice(-4);
           if (selectedCardLast4) _activeGetPaidEntry.paymentMethodEnding = selectedCardLast4;
@@ -4833,8 +5230,27 @@
           var bankLast4 = getDigits(selectedBankAccount && (selectedBankAccount.last4 || selectedBankAccount.accountNumber || selectedBankAccount.maskedAccount || '')).slice(-4);
           if (bankLast4) _activeGetPaidEntry.paymentMethodEnding = bankLast4;
         }
+        writeExchangeEntryOverride(_activeGetPaidEntry.invoice, {
+          status: _activeGetPaidEntry.status,
+          methodType: _activeGetPaidEntry.methodType,
+          paymentMethod: _activeGetPaidEntry.paymentMethod,
+          paymentMethodEnding: _activeGetPaidEntry.paymentMethodEnding,
+          details: {
+            activityLog: _activeGetPaidEntry.details && Array.isArray(_activeGetPaidEntry.details.activityLog)
+              ? _activeGetPaidEntry.details.activityLog
+              : []
+          }
+        });
 
         refreshTableForActiveTab();
+        if (shouldAdvanceStpAfterPayment && window.STPState && typeof window.STPState.setStpStep === 'function') {
+          window.STPState.setStpStep('bank_verification_required');
+          _getPaidStpOptInRequested = false;
+          updateGetPaidStpInlineUi();
+        }
+        applyPaidGetPaidPanelState(_activeGetPaidEntry);
+        var updatedActivityEl = document.getElementById('gp-activity-content');
+        if (updatedActivityEl) updatedActivityEl.innerHTML = buildGetPaidActivityLog(_activeGetPaidEntry);
         populateGetPaidCardModal(_activeGetPaidEntry);
         showTopActionToast('Payment marked as paid.');
 
@@ -4859,6 +5275,23 @@
       var targetEntry = findEntryByInvoice(pendingMarkPaidInvoice);
       if (targetEntry) {
         targetEntry.status = 'paid';
+        if (targetEntry.details && Array.isArray(targetEntry.details.activityLog)) {
+          targetEntry.details.activityLog.push({
+            type: 'complete',
+            date: new Date().toISOString()
+          });
+        }
+        writeExchangeEntryOverride(targetEntry.invoice, {
+          status: targetEntry.status,
+          methodType: targetEntry.methodType,
+          paymentMethod: targetEntry.paymentMethod,
+          paymentMethodEnding: targetEntry.paymentMethodEnding,
+          details: {
+            activityLog: targetEntry.details && Array.isArray(targetEntry.details.activityLog)
+              ? targetEntry.details.activityLog
+              : []
+          }
+        });
         refreshTableForActiveTab();
         showTopActionToast('Payment marked as paid.');
       }
@@ -4962,7 +5395,7 @@
     var activeAttachIdx = null;
 
     document.addEventListener('click', function (e) {
-      var trigger = e.target.closest('.gp-review-trigger');
+      var trigger = e.target.closest('.gp-review-trigger, .gp-review-name-trigger');
       if (trigger) activeAttachIdx = trigger.getAttribute('data-attach-idx');
     });
 
@@ -5277,6 +5710,7 @@
     if (window.STPState && typeof window.STPState.subscribe === 'function') {
       window.STPState.subscribe(function () {
         if (!paginationState.sourceEntries || !paginationState.sourceEntries.length) return;
+        updateGetPaidStpInlineUi();
         refreshTableForActiveTab();
       });
     }

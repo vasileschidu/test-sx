@@ -16,6 +16,8 @@
     '/src/data/payees.json',
     './src/data/payees.json',
   ];
+  var PAYABLE_ROW_OVERRIDES_STORAGE_KEY = 'bp-row-overrides-v1';
+  var PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY = 'bp-pay-page-view-context-v1';
 
   var DEFAULT_PAGE_SIZE = 16;
   var PAGE_SIZE_OPTIONS = [10, 16, 25, 50];
@@ -42,6 +44,8 @@
       'bg-gray-50 text-gray-600 inset-ring-gray-500/10',
     in_progress:
       'bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30',
+    scheduled:
+      'bg-gray-100 text-gray-700 inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-300 dark:inset-ring-white/15',
     paid:
       'bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20',
     exception:
@@ -100,11 +104,12 @@
   var tabLoadingTimer = null;
   var initialLoadingTimer = null;
   var refreshHalfTurns = 0;
+  var pendingScheduleCancelId = '';
   var ICON_SORT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-70" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-70" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
   var ICON_SORT_ASC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path transform="translate(10 5.6) scale(1.2) translate(-10 -5.6)" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-40" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
   var ICON_SORT_DESC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-40" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path transform="translate(10 14.4) scale(1.2) translate(-10 -14.4)" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
   var ICON_CHEVRON_DOWN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var ICON_SCHEDULED = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none" class="shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.17505 1.80005C5.54784 1.80005 5.85005 2.10226 5.85005 2.47505V3.60005H12.1501V2.47505C12.1501 2.10226 12.4523 1.80005 12.8251 1.80005C13.1978 1.80005 13.5001 2.10226 13.5001 2.47505V3.60005H13.7251C15.092 3.60005 16.2001 4.70814 16.2001 6.07505V13.725C16.2001 15.092 15.092 16.2 13.7251 16.2H4.27505C2.90815 16.2 1.80005 15.092 1.80005 13.725V6.07505C1.80005 4.70814 2.90814 3.60005 4.27505 3.60005H4.50005V2.47505C4.50005 2.10226 4.80226 1.80005 5.17505 1.80005ZM4.27505 6.75005C3.65373 6.75005 3.15005 7.25373 3.15005 7.87505V13.725C3.15005 14.3464 3.65373 14.85 4.27505 14.85H13.7251C14.3464 14.85 14.8501 14.3464 14.8501 13.725V7.87505C14.8501 7.25373 14.3464 6.75005 13.7251 6.75005H4.27505Z" fill="#9CA3AF"/></svg>';
+  var ICON_SCHEDULED = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg>';
   var ICON_ACH = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400 shrink-0"><path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" /></svg>';
   var ICON_SMART_DISBURSE = '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#406AFF"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#406AFF"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#406AFF"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#406AFF"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#406AFF"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>';
   var ICON_SMART_EXCHANGE = '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#F5B842"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#F5B842"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#F5B842"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#F5B842"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#F5B842"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>';
@@ -191,6 +196,67 @@
       .replace(/'/g, '&#39;');
   }
 
+  function cloneJson(value) {
+    if (value == null) return value;
+    return JSON.parse(JSON.stringify(value));
+  }
+
+  function getStoredPayableOverrides() {
+    try {
+      var raw = window.localStorage.getItem(PAYABLE_ROW_OVERRIDES_STORAGE_KEY);
+      if (!raw) return {};
+      var parsed = JSON.parse(raw);
+      return parsed && typeof parsed === 'object' ? parsed : {};
+    } catch (err) {
+      return {};
+    }
+  }
+
+  function applyStoredPayableOverrides(rows) {
+    var overrides = getStoredPayableOverrides();
+    return (Array.isArray(rows) ? rows : []).map(function (row) {
+      if (!row || row.id == null) return row;
+      var override = overrides[String(row.id)];
+      return override ? cloneJson(override) : row;
+    });
+  }
+
+  function persistPayableOverride(row) {
+    if (!row || row.id == null) return;
+    try {
+      var overrides = getStoredPayableOverrides();
+      overrides[String(row.id)] = cloneJson(row);
+      window.localStorage.setItem(PAYABLE_ROW_OVERRIDES_STORAGE_KEY, JSON.stringify(overrides));
+    } catch (err) {
+      // Ignore storage failures.
+    }
+  }
+
+  function persistPayPageViewContext(row) {
+    if (!row) return;
+    try {
+      window.sessionStorage.setItem(PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY, JSON.stringify(cloneJson(row)));
+    } catch (err) {
+      // Ignore storage failures.
+    }
+  }
+
+  function clearPayableOverride(rowId) {
+    if (rowId == null) return;
+    try {
+      var overrides = getStoredPayableOverrides();
+      delete overrides[String(rowId)];
+      window.localStorage.setItem(PAYABLE_ROW_OVERRIDES_STORAGE_KEY, JSON.stringify(overrides));
+    } catch (err) {
+      // Ignore storage failures.
+    }
+  }
+
+  function getDisplayStatusKey(row) {
+    if (row && row.status === 'in_progress' && row.statusType === 'scheduled') return 'scheduled';
+    return row && row.status ? row.status : 'ready_to_pay';
+  }
+
   var DETAIL_LABEL = 'w-[156px] shrink-0 p-4 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400';
   var DETAIL_SEPARATOR = '<div class="border-t border-gray-200 dark:border-white/10"></div>';
   var ATTACHMENT_ICON =
@@ -199,7 +265,10 @@
     '</svg>';
 
   function getStatusDotClass(type) {
-    if (type === 'scheduled' || type === 'processing' || type === 'in_progress') {
+    if (type === 'scheduled') {
+      return 'bg-gray-200 ring-1 ring-gray-400/60 dark:bg-white/15 dark:ring-white/20';
+    }
+    if (type === 'processing' || type === 'in_progress') {
       return 'bg-blue-100 ring-1 ring-blue-700/60 dark:bg-blue-400/10 dark:ring-blue-400/20';
     }
     if (type === 'paid' || type === 'complete' || type === 'completed') {
@@ -223,13 +292,15 @@
   }
 
   function buildStatusSection(row) {
-    var status = row && row.status;
+    var status = getDisplayStatusKey(row);
+    var label = (row && row.statusLabel) || STATUS_LABELS[status] || status || '';
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Status</div>' +
         '<div class="flex-1 flex items-center p-4">' +
-          '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + (STATUS_STYLES[status] || STATUS_STYLES.ready_to_pay) + '">' +
-            escapeHtml((row && row.statusLabel) || STATUS_LABELS[status] || status || '') +
+          '<span class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium inset-ring ' + (STATUS_STYLES[status] || STATUS_STYLES.ready_to_pay) + '">' +
+            (status === 'scheduled' ? ICON_SCHEDULED : '') +
+            escapeHtml(label) +
           '</span>' +
         '</div>' +
       '</div>'
@@ -533,18 +604,20 @@
           }
           next.statusLabel = 'Scheduled';
           next.details = next.details || {};
-          next.details.activityLog = [
-            {
-              type: 'scheduled',
-              title: 'Scheduled',
-              description: 'Payment is scheduled for ' + formatScheduledDateTime(next.scheduledFor) + '.',
-            },
-            {
-              type: 'event',
-              title: 'Queued',
-              description: 'Payment request was queued and is waiting for the scheduled run.',
-            },
-          ];
+          if (!Array.isArray(next.details.activityLog) || !next.details.activityLog.length) {
+            next.details.activityLog = [
+              {
+                type: 'scheduled',
+                title: 'Scheduled',
+                description: 'Payment is scheduled for ' + formatScheduledDateTime(next.scheduledFor) + '.',
+              },
+              {
+                type: 'event',
+                title: 'Queued',
+                description: 'Payment request was queued and is waiting for the scheduled run.',
+              },
+            ];
+          }
         } else {
           next.statusLabel = 'Processing';
           next.details = next.details || {};
@@ -618,6 +691,7 @@
           description: 'Payment was initiated on ' + formatDate(today) + '.',
         },
       ];
+      persistPayableOverride(updated);
       return updated;
     });
   }
@@ -625,13 +699,15 @@
   function openPayPage(rowId) {
     var selected = null;
     for (var i = 0; i < state.allRows.length; i++) {
-      if (state.allRows[i] && state.allRows[i].id === rowId) {
+      if (state.allRows[i] && String(state.allRows[i].id) === String(rowId)) {
         selected = state.allRows[i];
         break;
       }
     }
     var params = new URLSearchParams();
     params.set('view', 'pay');
+    params.set('tab', state.activeTab);
+    if (selected) persistPayPageViewContext(selected);
     if (selected && selected.id) params.set('id', String(selected.id));
     if (selected && selected.billNumber) params.set('bill', String(selected.billNumber));
     window.location.href = './payables-pay.html?' + params.toString();
@@ -653,7 +729,50 @@
           description: 'Payment was returned to Ready to Pay.',
         },
       ];
+      clearPayableOverride(updated.id);
       return updated;
+    });
+  }
+
+  function openDialogById(id) {
+    var dialog = document.getElementById(id);
+    if (!dialog || typeof dialog.showModal !== 'function') return false;
+    if (!dialog.open) dialog.showModal();
+    return true;
+  }
+
+  function closeDialogById(id) {
+    var dialog = document.getElementById(id);
+    if (!dialog || typeof dialog.close !== 'function') return;
+    if (dialog.open) dialog.close();
+  }
+
+  function initScheduledCancelDialog() {
+    var dialog = document.getElementById('bp-schedule-cancel-dialog');
+    var confirmBtn = document.getElementById('bp-schedule-cancel-confirm-btn');
+    if (!dialog || !confirmBtn) return;
+
+    dialog.querySelectorAll('[data-bp-cancel-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        pendingScheduleCancelId = '';
+        closeDialogById('bp-schedule-cancel-dialog');
+      });
+    });
+
+    dialog.addEventListener('close', function () {
+      pendingScheduleCancelId = '';
+    });
+
+    confirmBtn.addEventListener('click', function () {
+      if (!pendingScheduleCancelId) {
+        closeDialogById('bp-schedule-cancel-dialog');
+        return;
+      }
+      moveRowBackToReady(pendingScheduleCancelId);
+      pendingScheduleCancelId = '';
+      state.currentPage = 1;
+      renderAll();
+      closeDialogById('bp-schedule-cancel-dialog');
     });
   }
 
@@ -1003,6 +1122,13 @@
     state.activeTab = nextTab;
     state.currentPage = 1;
     state.isTabLoading = true;
+    try {
+      var nextUrl = new URL(window.location.href);
+      nextUrl.searchParams.set('tab', nextTab);
+      window.history.replaceState({}, '', nextUrl.toString());
+    } catch (err) {
+      // Ignore URL update failures and continue switching tabs.
+    }
     if (state.filterMenuOpen) {
       setFilterMenuOpen(false);
       setFilterPanel('root', true);
@@ -1394,11 +1520,14 @@
             '</td>';
         }
         if (col.type === 'action') {
-          var actionButton = row.status === 'in_progress'
+          var isScheduledAction = row.status === 'scheduled' || (row.status === 'in_progress' && row.statusType === 'scheduled');
+          var actionButton = isScheduledAction
             ? '<button type="button" data-cancel-id="' + row.id + '" class="rounded-md bg-gray-100 px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40">Cancel</button>'
-            : (row.status === 'exception'
+            : (row.status === 'in_progress'
+              ? '<span class="inline-flex h-8"></span>'
+              : (row.status === 'exception'
               ? '<button type="button" data-rerun-id="' + row.id + '" class="rounded-md bg-gray-100 px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40">Re-run</button>'
-              : '<button type="button" data-pay-id="' + row.id + '" class="cursor-pointer rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Pay</button>');
+              : '<button type="button" data-pay-id="' + row.id + '" class="cursor-pointer rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Pay</button>'));
           return '<td data-action-column class="h-12 align-middle py-2 pr-3 pl-3 whitespace-nowrap w-px text-right text-sm font-medium' + cb + actionBgClass + ' group-hover:bg-gray-50 dark:group-hover:bg-white/5 sm:pr-2">' +
             actionButton +
             '</td>';
@@ -1416,7 +1545,8 @@
           if (status === 'in_progress' && row.statusType === 'scheduled') {
             var scheduledText = formatScheduledDateTime(row.scheduledFor);
             return '<td class="h-12 align-middle px-2 py-2 whitespace-nowrap' + cb + '">' +
-              '<span class="group/scheduled relative inline-flex cursor-default select-none items-center gap-1 rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 hover:bg-blue-100 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30 dark:hover:bg-blue-400/20">' +
+              '<span class="group/scheduled relative inline-flex cursor-default select-none items-center gap-1 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 inset-ring inset-ring-gray-500/10 hover:bg-gray-200 dark:bg-white/10 dark:text-gray-300 dark:inset-ring-white/15 dark:hover:bg-white/15">' +
+                ICON_SCHEDULED +
                 '<span>Scheduled</span>' +
                 '<span class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg group-hover/scheduled:inline-flex items-center gap-2">' +
                   ICON_SCHEDULED +
@@ -1431,7 +1561,13 @@
             '</span></td>';
         }
         if (col.key === 'billNumber') {
-          return '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb + '">' + escapeHtml(row[col.key] == null ? '--' : row[col.key]) + '</td>';
+          var billValue = escapeHtml(row[col.key] == null ? '--' : row[col.key]);
+          if (row.status === 'in_progress' || row.status === 'paid') {
+            return '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb + '">' +
+              '<button type="button" data-pay-id="' + row.id + '" class="cursor-pointer p-0 font-medium text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">' + billValue + '</button>' +
+            '</td>';
+          }
+          return '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb + '">' + billValue + '</td>';
         }
         if (col.key === 'paymentMethod') {
           return renderPaymentMethodCell(row, cb);
@@ -1802,9 +1938,9 @@
 
         var cancelBtn = e.target.closest('[data-cancel-id]');
         if (cancelBtn) {
-          moveRowBackToReady(cancelBtn.getAttribute('data-cancel-id'));
-          state.currentPage = 1;
-          renderAll();
+          pendingScheduleCancelId = String(cancelBtn.getAttribute('data-cancel-id') || '').trim();
+          if (!pendingScheduleCancelId) return;
+          openDialogById('bp-schedule-cancel-dialog');
           return;
         }
 
@@ -1920,6 +2056,13 @@
   function init() {
     initRefs();
     if (!refs.table || !refs.pagination) return;
+    try {
+      var params = new URLSearchParams(window.location.search || '');
+      var initialTab = String(params.get('tab') || '').trim();
+      if (TAB_LABELS[initialTab]) state.activeTab = initialTab;
+    } catch (err) {
+      // Ignore malformed query params.
+    }
     var initialLoadStartedAt = Date.now();
     state.isInitialLoading = true;
     renderTableSkeleton([]);
@@ -1932,12 +2075,13 @@
       var payeesPayload = results[1];
       indexPayees(payeesPayload);
       state.columns = ensurePaymentMethodColumn((payload && payload.tableConfig && payload.tableConfig.columns) || []);
-      state.allRows = normalizeRows((payload && payload.data) || []);
+      state.allRows = normalizeRows(applyStoredPayableOverrides((payload && payload.data) || []));
       if (!state.columns.length || !state.allRows.length) {
         refs.table.innerHTML = '<tbody><tr><td class="px-4 py-12 text-sm text-gray-500">No data available.</td></tr></tbody>';
         return;
       }
       bindEvents();
+      initScheduledCancelDialog();
       initTableFilterDropdown();
       refreshStickyAction = initStickyAction(refs.table);
       if (initialLoadingTimer) {
