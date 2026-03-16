@@ -4227,6 +4227,16 @@
             '</span>' +
             '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(label) + '</span>' +
           '</span>';
+      } else if (value === 'bank-account') {
+        selectedContent.innerHTML =
+          '<span class="flex min-w-0 items-center gap-2">' +
+            '<span class="shrink-0 text-gray-600 dark:text-gray-400">' +
+              '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">' +
+                '<path d="M12 21V12.75M15.75 21V12.75M8.25 21V12.75M3 9L12 3L21 9M19.5 21V10.3325C17.0563 9.94906 14.5514 9.75 12 9.75C9.44861 9.75 6.94372 9.94906 4.5 10.3325V21M3 21H21M12 6.75H12.0075V6.7575H12V6.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>' +
+              '</svg>' +
+            '</span>' +
+            '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(label) + '</span>' +
+          '</span>';
       } else {
         selectedContent.innerHTML = '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(label) + '</span>';
       }
@@ -4257,6 +4267,54 @@
     return "Accept Payer's Card";
   }
 
+  function isPendingManualReviewEntry(entry) {
+    if (!entry || !isPendingLikeStatus(entry.status)) return false;
+    var methodType = String(entry.methodType || '').toLowerCase();
+    return methodType === 'card' || methodType === 'ach';
+  }
+
+  function getManualPendingGetPaidMethodLabel(paymentValue) {
+    if (paymentValue === 'bank-account') return 'Send to My Bank';
+    if (paymentValue === 'paper-check') return 'Request a Paper Check';
+    return 'Customers Card';
+  }
+
+  function getManualPendingBankDetailsTitle(entry) {
+    return 'Account Details';
+  }
+
+  function shouldUseCompactCardView(entry) {
+    return !!entry && (entry.status === 'paid' || isPendingManualReviewEntry(entry));
+  }
+
+  function getEntryPaymentEndingDigits(entry) {
+    return getDigits(entry && (entry.paymentMethodEnding || '')).slice(-4);
+  }
+
+  function findMatchingBusinessBankAccountForEntry(entry) {
+    var accounts = _myBusiness && Array.isArray(_myBusiness.bankAccounts) ? _myBusiness.bankAccounts : [];
+    if (!accounts.length) return null;
+    var targetLast4 = getEntryPaymentEndingDigits(entry);
+    if (targetLast4) {
+      for (var i = 0; i < accounts.length; i += 1) {
+        if (getBankAccountLast4(accounts[i]) === targetLast4) return accounts[i];
+      }
+    }
+    return accounts[0] || null;
+  }
+
+  function syncGetPaidBankEditVisibility(entry) {
+    var editBankBtn = document.getElementById('gp-edit-bank-btn');
+    if (!editBankBtn) return;
+    var bankSelect = document.getElementById('gp-bank-account-select');
+    var isDisabled = !!(bankSelect && bankSelect.getAttribute('aria-disabled') === 'true');
+    var isReadOnlyState = !!(entry && (entry.status === 'paid' || isPendingManualReviewEntry(entry)));
+    var shouldHide = isDisabled || isReadOnlyState;
+    editBankBtn.hidden = shouldHide;
+    editBankBtn.style.display = shouldHide ? 'none' : '';
+    editBankBtn.classList.toggle('hidden', shouldHide);
+  }
+
   function setSelectOptionByValue(selectEl, value, selectedMarkup) {
     if (!selectEl || !value) return false;
     var targetOption = selectEl.querySelector('el-option[value="' + value + '"]');
@@ -4270,12 +4328,11 @@
     return true;
   }
 
-  function applyPaidMethodDetailsSelection(paymentValue) {
+  function applyResolvedMethodDetailsSelection(entry, paymentValue) {
     if (paymentValue === 'bank-account') {
       var bankSelect = document.getElementById('gp-bank-account-select');
-      var accounts = _myBusiness && Array.isArray(_myBusiness.bankAccounts) ? _myBusiness.bankAccounts : [];
-      if (bankSelect && accounts.length) {
-        var selectedBank = accounts[0];
+      var selectedBank = findMatchingBusinessBankAccountForEntry(entry);
+      if (bankSelect && selectedBank) {
         setSelectOptionByValue(bankSelect, selectedBank.id, buildSelectedBankContent(selectedBank));
         updateBankDetails(selectedBank.id);
       }
@@ -4347,12 +4404,67 @@
     if (submitBtn) submitBtn.classList.add('hidden');
 
     if (paymentValue) setGetPaidMethodSelection(paymentValue, entry, paymentLabel);
-    applyPaidMethodDetailsSelection(paymentValue);
+    applyResolvedMethodDetailsSelection(entry, paymentValue);
     setGetPaidSelectDisabled(paymentMethodSelect, true);
     setGetPaidSelectDisabled(bankAccountSelect, true);
     setGetPaidSelectDisabled(checkAddressSelect, true);
+    syncGetPaidBankEditVisibility(entry);
     syncGetPaidHeaderStatus(entry);
     updateGetPaidStepStates();
+
+    if (paymentValue === 'bank-account') {
+      window.requestAnimationFrame(function () {
+        if (!_activeGetPaidEntry || String(_activeGetPaidEntry.invoice || '') !== String(entry.invoice || '')) return;
+        var fallbackBank = findMatchingBusinessBankAccountForEntry(entry);
+        if (!fallbackBank || !bankAccountSelect) return;
+        setSelectOptionByValue(bankAccountSelect, fallbackBank.id, buildSelectedBankContent(fallbackBank));
+        updateBankDetails(fallbackBank.id);
+        setGetPaidSelectDisabled(bankAccountSelect, true);
+        syncGetPaidBankEditVisibility(entry);
+        setGetPaidStepBadge(3, true);
+      });
+    }
+  }
+
+  function applyPendingManualGetPaidPanelState(entry) {
+    var submitBtn = document.getElementById('gp-submit-btn');
+    var paymentValue = getPaidGetPaidMethodValue(entry);
+    var paymentMethodSelect = document.querySelector('el-select[name="paymentMethod"]');
+    var bankAccountSelect = document.getElementById('gp-bank-account-select');
+    var checkAddressSelect = document.getElementById('gp-check-address-select');
+
+    applyPaidGetPaidPanelState(entry);
+
+    if (paymentValue) {
+      setGetPaidMethodSelection(paymentValue, entry, getManualPendingGetPaidMethodLabel(paymentValue));
+      applyResolvedMethodDetailsSelection(entry, paymentValue);
+    }
+
+    if (submitBtn) {
+      submitBtn.classList.remove('hidden');
+      submitBtn.textContent = 'Mark as Paid';
+      submitBtn.disabled = false;
+    }
+
+    setGetPaidSelectDisabled(paymentMethodSelect, true);
+    setGetPaidSelectDisabled(bankAccountSelect, true);
+    setGetPaidSelectDisabled(checkAddressSelect, true);
+    syncGetPaidBankEditVisibility(entry);
+    syncGetPaidHeaderStatus(entry);
+
+    if (paymentValue === 'bank-account') {
+      window.requestAnimationFrame(function () {
+        if (!_activeGetPaidEntry || String(_activeGetPaidEntry.invoice || '') !== String(entry.invoice || '')) return;
+        var fallbackBank = findMatchingBusinessBankAccountForEntry(entry);
+        if (!fallbackBank || !bankAccountSelect) return;
+        setSelectOptionByValue(bankAccountSelect, fallbackBank.id, buildSelectedBankContent(fallbackBank));
+        updateBankDetails(fallbackBank.id);
+        setGetPaidSelectDisabled(bankAccountSelect, true);
+        syncGetPaidBankEditVisibility(entry);
+        if (submitBtn) submitBtn.disabled = false;
+        setGetPaidStepBadge(3, true);
+      });
+    }
   }
 
   function syncGetPaidHeaderStatus(entry) {
@@ -4424,8 +4536,12 @@
     setGetPaidSelectDisabled(document.querySelector('el-select[name="paymentMethod"]'), false);
     setGetPaidSelectDisabled(document.getElementById('gp-bank-account-select'), false);
     setGetPaidSelectDisabled(document.getElementById('gp-check-address-select'), false);
-    if (submitBtn) submitBtn.classList.remove('hidden');
+    if (submitBtn) {
+      submitBtn.classList.remove('hidden');
+      submitBtn.textContent = 'Submit and Get Paid';
+    }
     if (entry.status === 'paid') applyPaidGetPaidPanelState(entry);
+    else if (isPendingManualReviewEntry(entry)) applyPendingManualGetPaidPanelState(entry);
     updateGetPaidStepStates();
   }
 
@@ -4526,7 +4642,7 @@
     var state = getGetPaidStpState();
     var status = state && state.stpStatus ? String(state.stpStatus) : 'disabled';
     var step = state && state.stpStep ? String(state.stpStep) : 'opt_in_required';
-    var showOptInCard = !isPaidEntry && paymentValue === 'payers-card' && status === 'disabled' && step === 'opt_in_required';
+    var showOptInCard = !isPaidEntry && !isPendingManualReviewEntry(_activeGetPaidEntry) && paymentValue === 'payers-card' && status === 'disabled' && step === 'opt_in_required';
     var showStatusBadge = paymentValue === 'payers-card' && (status === 'in_progress' || status === 'enabled');
 
     if (stpCardContainer) stpCardContainer.classList.toggle('hidden', !showOptInCard);
@@ -4559,29 +4675,48 @@
     var checkPanel = document.getElementById('gp-pmc-paper-check');
     var cardholderDetailsWrap = document.getElementById('gp-pmc-cardholder-details-wrap');
     var paidCardSection = document.getElementById('gp-pmc-paid-card-section');
+    var cardHeaderTitle = document.getElementById('gp-pmc-card-header-title');
+    var bankHeaderTitle = document.getElementById('gp-pmc-bank-header-title');
+    var editBankBtn = document.getElementById('gp-edit-bank-btn');
+    var bankDefaultWrap = document.getElementById('gp-pmc-bank-default-wrap');
 
     if (cardPanel) cardPanel.classList.add('hidden');
     if (bankPanel) bankPanel.classList.add('hidden');
     if (checkPanel) checkPanel.classList.add('hidden');
+    if (bankDefaultWrap) bankDefaultWrap.classList.toggle('hidden', false);
 
     if (value === 'payers-card') {
       var paymentInfo = entry && entry.details ? (entry.details.paymentInfo || {}) : {};
       var customer = getCustomerForEntry(entry);
       var cardDetails = getPayerCardDetailsForRender(entry, paymentInfo, customer);
+      if (cardHeaderTitle) {
+        cardHeaderTitle.textContent = isPendingManualReviewEntry(entry) ? 'Customers Card' : 'Cardholder Details';
+      }
+      if (bankHeaderTitle) bankHeaderTitle.textContent = getManualPendingBankDetailsTitle(entry);
       pmcSetText('gp-pmc-card-name', cardDetails.cardHolderName || '');
       pmcSetText('gp-pmc-card-address', cardDetails.cardHolderAddress || '');
       pmcSetText('gp-pmc-card-last4', String(cardDetails.maskedCardNumber || '').replace(/\D/g, '').slice(-4) || '0000');
-      var isPaidEntry = !!(entry && entry.status === 'paid');
-      if (cardholderDetailsWrap) cardholderDetailsWrap.classList.toggle('hidden', isPaidEntry);
+      var useCompactCardView = shouldUseCompactCardView(entry);
+      if (cardholderDetailsWrap) cardholderDetailsWrap.classList.toggle('hidden', useCompactCardView);
       if (paidCardSection) {
-        paidCardSection.classList.toggle('hidden', !isPaidEntry);
-        paidCardSection.classList.toggle('inline-flex', isPaidEntry);
+        paidCardSection.classList.toggle('hidden', !useCompactCardView);
+        paidCardSection.classList.toggle('inline-flex', useCompactCardView);
       }
       if (cardPanel) cardPanel.classList.remove('hidden');
     } else if (value === 'bank-account') {
+      if (cardHeaderTitle) cardHeaderTitle.textContent = 'Cardholder Details';
+      if (bankHeaderTitle) bankHeaderTitle.textContent = getManualPendingBankDetailsTitle(entry);
+      if (editBankBtn) {
+        editBankBtn.hidden = false;
+        editBankBtn.style.display = '';
+        editBankBtn.classList.remove('hidden');
+      }
+      if (bankDefaultWrap) bankDefaultWrap.classList.toggle('hidden', String(entry && entry.methodType || '').toLowerCase() !== 'smart_exchange');
       if (bankPanel) bankPanel.classList.remove('hidden');
       initBankAccountSelector();
     } else if (value === 'paper-check') {
+      if (cardHeaderTitle) cardHeaderTitle.textContent = 'Cardholder Details';
+      if (bankHeaderTitle) bankHeaderTitle.textContent = 'Account Details';
       if (checkPanel) checkPanel.classList.remove('hidden');
       initCheckAddressSelector();
     }
@@ -4787,6 +4922,19 @@
           '</svg>' +
         '</span>' +
       '</el-option>'
+    );
+  }
+
+  function buildSelectedBankContent(account) {
+    var label = getBankAccountDisplayName(account);
+    var last4 = getBankAccountLast4(account);
+    return (
+      '<span class="flex min-w-0 items-center gap-2">' +
+        '<span class="shrink-0 text-gray-600 dark:text-gray-400">' +
+          '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="currentColor"/></svg>' +
+        '</span>' +
+        '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(label + (last4 ? (' ••••' + last4) : '')) + '</span>' +
+      '</span>'
     );
   }
 
@@ -5114,6 +5262,10 @@
     if (submitBtn) {
       submitBtn.addEventListener('click', function () {
         if (submitBtn.disabled || !_activeGetPaidEntry) return;
+        if (isPendingManualReviewEntry(_activeGetPaidEntry)) {
+          openMarkPaidConfirm(_activeGetPaidEntry.invoice);
+          return;
+        }
         var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
         var paymentValue = getSelectedOptionValue(paymentSel);
         var validMethods = ['payers-card', 'bank-account', 'paper-check'];
@@ -5293,6 +5445,13 @@
           }
         });
         refreshTableForActiveTab();
+        if (_activeGetPaidEntry && String(_activeGetPaidEntry.invoice || '') === String(targetEntry.invoice || '')) {
+          _activeGetPaidEntry = targetEntry;
+          applyPaidGetPaidPanelState(targetEntry);
+          var updatedActivityEl = document.getElementById('gp-activity-content');
+          if (updatedActivityEl) updatedActivityEl.innerHTML = buildGetPaidActivityLog(targetEntry);
+          populateGetPaidCardModal(targetEntry);
+        }
         showTopActionToast('Payment marked as paid.');
       }
       if (pendingMarkPaidCloseCardDialog) {
