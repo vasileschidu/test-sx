@@ -1,0 +1,136 @@
+[
+  {
+    "id": "card_001",
+    "cardName": "Insurance #1",
+    "brand": "mastercard",
+    "last4": "4708",
+    "expDate": "12/2026",
+    "currentBalance": 12034.5,
+    "projectedBalance": 12034.5,
+    "currency": "USD",
+    "payments": [
+      {
+        "payableId": "pay_044",
+        "vendor": "TechNova Solutions LLC",
+        "amount": 5200,
+        "date": "2024-06-15"
+      }
+    ]
+  },
+  {
+    "id": "card_002",
+    "cardName": "Marketing Ops",
+    "brand": "visa",
+    "last4": "5511",
+    "expDate": "09/2027",
+    "currentBalance": 6430.75,
+    "projectedBalance": 6430.75,
+    "currency": "USD",
+    "payments": [
+      {
+        "payableId": "pay_052",
+        "vendor": "Mosaic Printing Co",
+        "amount": 1875.25,
+        "date": "2024-07-02"
+      }
+    ]
+  },
+  {
+    "id": "card_003",
+    "cardName": "Construction Retainer",
+    "brand": "mastercard",
+    "last4": "8834",
+    "expDate": "03/2028",
+    "currentBalance": 25000,
+    "projectedBalance": 25000,
+    "currency": "USD",
+    "payments": [
+      {
+        "payableId": "pay_061",
+        "vendor": "Red Maple Construction",
+        "amount": 9300,
+        "date": "2024-08-18"
+      }
+    ]
+  },
+  {
+    "id": "card_004",
+    "cardName": "Facilities West",
+    "brand": "visa",
+    "last4": "2149",
+    "expDate": "11/2027",
+    "currentBalance": 3180.2,
+    "projectedBalance": 3180.2,
+    "currency": "USD",
+    "payments": []
+  },
+  {
+    "id": "card_005",
+    "cardName": "Events / Travel",
+    "brand": "mastercard",
+    "last4": "6291",
+    "expDate": "05/2027",
+    "currentBalance": 910.45,
+    "projectedBalance": 910.45,
+    "currency": "USD",
+    "payments": [
+      {
+        "payableId": "pay_075",
+        "vendor": "Beacon Property Care",
+        "amount": 450,
+        "date": "2024-09-01"
+      }
+    ]
+  },
+  {
+    "id": "card_006",
+    "cardName": "Field Team North",
+    "brand": "visa",
+    "last4": "8076",
+    "expDate": "01/2028",
+    "currentBalance": 7450,
+    "projectedBalance": 7450,
+    "currency": "USD",
+    "payments": []
+  },
+  {
+    "id": "card_007",
+    "cardName": "BluePrint Programs",
+    "brand": "mastercard",
+    "last4": "1182",
+    "expDate": "07/2028",
+    "currentBalance": 15480.18,
+    "projectedBalance": 15480.18,
+    "currency": "USD",
+    "payments": [
+      {
+        "payableId": "pay_083",
+        "vendor": "BluePrint Architecture Inc",
+        "amount": 6120.8,
+        "date": "2024-09-14"
+      }
+    ]
+  },
+  {
+    "id": "card_008",
+    "cardName": "Corporate Services",
+    "brand": "visa",
+    "last4": "4532",
+    "expDate": "10/2027",
+    "currentBalance": 5400,
+    "projectedBalance": 5400,
+    "currency": "USD",
+    "payments": []
+  },
+  {
+    "id": "card_009",
+    "cardName": "Legal Reserve",
+    "brand": "mastercard",
+    "last4": "9914",
+    "expDate": "02/2029",
+    "currentBalance": 30000,
+    "projectedBalance": 30000,
+    "currency": "USD",
+    "payments": []
+  }
+]

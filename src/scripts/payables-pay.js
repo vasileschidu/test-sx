@@ -30,8 +30,14 @@
     '/src/data/check-addresses.json',
     './src/data/check-addresses.json',
   ];
+  var CARDS_DATA_PATHS = [
+    '../../../src/data/cards.json',
+    '/src/data/cards.json',
+    './src/data/cards.json',
+  ];
   var PAYABLE_ROW_OVERRIDES_STORAGE_KEY = 'bp-row-overrides-v1';
   var PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY = 'bp-pay-page-view-context-v1';
+  var PAYABLE_CARDS_STORAGE_KEY = 'bp-cards-dataset-v1';
   var _origDetailsState = {
     account: null,
     expanded: false,
@@ -53,6 +59,14 @@
     confirmedDate: null,
     bound: false,
   };
+  var _cardFundingState = {
+    cards: [],
+    cardSource: '',
+    selectedCardId: '',
+    fundingMethod: '',
+    fundingAmount: '',
+    sendingMethod: 'on_file',
+  };
   var STEP_BADGE_NUMBER_CLASS =
     'inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300';
   var STEP_BADGE_COMPLETE_CLASS =
@@ -61,6 +75,8 @@
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5" aria-hidden="true">' +
       '<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />' +
     '</svg>';
+  var CARD_ICON_VISA = '<svg class="size-5 shrink-0 rounded-[2px]" height="20" width="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h32v32H0z" fill="#00579f"></path><g fill="#fff" fill-rule="nonzero"><path d="M13.823 19.876H11.8l1.265-7.736h2.023zm7.334-7.546a5.036 5.036 0 0 0-1.814-.33c-1.998 0-3.405 1.053-3.414 2.56-.016 1.11 1.007 1.728 1.773 2.098.783.379 1.05.626 1.05.963-.009.518-.633.757-1.216.757-.808 0-1.24-.123-1.898-.411l-.267-.124-.283 1.737c.475.213 1.349.403 2.257.411 2.123 0 3.505-1.037 3.521-2.641.008-.881-.532-1.556-1.698-2.107-.708-.354-1.141-.593-1.141-.955.008-.33.366-.667 1.165-.667a3.471 3.471 0 0 1 1.507.297l.183.082zm2.69 4.806.807-2.165c-.008.017.167-.452.266-.74l.142.666s.383 1.852.466 2.239h-1.682zm2.497-4.996h-1.565c-.483 0-.85.14-1.058.642l-3.005 7.094h2.123l.425-1.16h2.597c.059.271.242 1.16.242 1.16h1.873zm-16.234 0-1.982 5.275-.216-1.07c-.366-1.234-1.515-2.575-2.797-3.242l1.815 6.765h2.14l3.18-7.728z"></path><path d="M6.289 12.14H3.033L3 12.297c2.54.641 4.221 2.189 4.912 4.049l-.708-3.556c-.116-.494-.474-.633-.915-.65z"></path></g></g></svg>';
+  var CARD_ICON_MASTERCARD = '<img src="../../../src/assets/illustrations/ma_symbol.svg" alt="Mastercard" class="size-5 shrink-0" />';
   var _refreshHalfTurns = 0;
 
   function setText(id, value, fallback) {
@@ -97,9 +113,9 @@
       exception: 'Failed',
     };
     var key = String(status || 'ready_to_pay');
-    el.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + (styles[key] || styles.ready_to_pay);
+    el.className = 'inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium inset-ring ' + (styles[key] || styles.ready_to_pay);
     el.innerHTML = key === 'scheduled'
-      ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg><span>' + escapeHtml(String(statusLabel || labels[key] || labels.ready_to_pay)) + '</span>'
+      ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg><span class="leading-none">' + escapeHtml(String(statusLabel || labels[key] || labels.ready_to_pay)) + '</span>'
       : escapeHtml(String(statusLabel || labels[key] || labels.ready_to_pay));
   }
 
@@ -199,6 +215,296 @@
       var override = overrides[String(row.id)];
       return override ? cloneJson(override) : row;
     });
+  }
+
+  function normalizeCardsDataset(payload) {
+    var list = Array.isArray(payload) ? payload : ((payload && Array.isArray(payload.data)) ? payload.data : []);
+    return list.map(function (card, idx) {
+      var next = cloneJson(card) || {};
+      next.id = String(next.id || ('card_' + String(idx + 1).padStart(3, '0')));
+      next.cardName = String(next.cardName || ('Virtual Card #' + (idx + 1)));
+      next.brand = String(next.brand || (idx % 2 === 0 ? 'visa' : 'mastercard')).toLowerCase();
+      next.last4 = getDigits(next.last4).slice(-4) || String(1000 + idx).slice(-4);
+      next.expDate = String(next.expDate || '12/2027');
+      next.currentBalance = Number(next.currentBalance || 0);
+      next.projectedBalance = Number(next.projectedBalance != null ? next.projectedBalance : next.currentBalance || 0);
+      next.currency = String(next.currency || 'USD');
+      next.payments = Array.isArray(next.payments) ? next.payments : [];
+      return next;
+    });
+  }
+
+  function getStoredCardsDataset(seedCards) {
+    var fallback = normalizeCardsDataset(seedCards);
+    try {
+      var raw = window.localStorage.getItem(PAYABLE_CARDS_STORAGE_KEY);
+      if (!raw) return fallback;
+      return normalizeCardsDataset(JSON.parse(raw)).filter(function (card) {
+        return !(Number(card.currentBalance || 0) === 0 && Number(card.projectedBalance || 0) === 0 && (!Array.isArray(card.payments) || !card.payments.length));
+      });
+    } catch (err) {
+      return fallback;
+    }
+  }
+
+  function persistCardsDataset(cards) {
+    try {
+      window.localStorage.setItem(PAYABLE_CARDS_STORAGE_KEY, JSON.stringify(normalizeCardsDataset(cards)));
+    } catch (err) {
+      // Ignore storage failures.
+    }
+  }
+
+  function getCardBrandIcon(brand) {
+    return String(brand || '').toLowerCase() === 'mastercard' ? CARD_ICON_MASTERCARD : CARD_ICON_VISA;
+  }
+
+  function getCardDisplayLabel(card) {
+    if (!card) return '';
+    return String(card.cardName || 'Virtual Card').trim() + ' •••• ' + String(card.last4 || '').trim();
+  }
+
+  function buildCardSelectContent(card) {
+    if (!card) return '';
+    return '' +
+      '<span class="inline-flex min-w-0 items-center justify-between gap-4 w-full pr-6">' +
+        '<span class="inline-flex min-w-0 items-center gap-3">' +
+        '<span class="shrink-0">' + getCardBrandIcon(card.brand) + '</span>' +
+        '<span class="flex min-w-0 items-center gap-3">' +
+          '<span class="truncate font-medium">' + escapeHtml(getCardDisplayLabel(card)) + '</span>' +
+          '<span class="shrink-0 text-sm font-medium text-gray-700 dark:text-gray-300">' + escapeHtml(String(card.expDate || '').trim()) + '</span>' +
+        '</span>' +
+        '</span>' +
+        '<span class="shrink-0 text-sm font-semibold text-gray-700 dark:text-gray-300">' + escapeHtml(formatMoney(card.currentBalance, card.currency || 'USD')) + '</span>' +
+      '</span>';
+  }
+
+  function buildCardOptionHtml(card) {
+    return (
+      '<el-option value="' + escapeHtml(String(card.id || '')) + '" class="group/option relative block cursor-default select-none border-b border-gray-200 py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
+        '<div class="flex items-start justify-between gap-4 pr-8">' +
+          '<span class="flex min-w-0 items-center gap-3">' +
+            '<span class="shrink-0">' + getCardBrandIcon(card.brand) + '</span>' +
+            '<span class="min-w-0">' +
+              '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' + escapeHtml(getCardDisplayLabel(card)) + '</span>' +
+              '<span class="mt-1 block text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(String(card.expDate || '').trim()) + '</span>' +
+            '</span>' +
+          '</span>' +
+          '<span class="shrink-0 pt-0.5 text-sm font-semibold text-gray-700 dark:text-gray-300">' + escapeHtml(formatMoney(card.currentBalance, card.currency || 'USD')) + '</span>' +
+        '</div>' +
+        '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden">' +
+          '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
+        '</span>' +
+      '</el-option>'
+    );
+  }
+
+  function getCurrentPayableAmountNumber() {
+    return Number((_payContext.row && _payContext.row.amount) || 0);
+  }
+
+  function parseMoneyInput(value) {
+    var raw = String(value == null ? '' : value).replace(/[^0-9.]/g, '');
+    if (!raw) return 0;
+    var parts = raw.split('.');
+    var normalized = parts.shift();
+    if (parts.length) normalized += '.' + parts.join('').slice(0, 2);
+    var numeric = Number(normalized);
+    return isNaN(numeric) ? 0 : numeric;
+  }
+
+  function formatMoneyInputValue(value) {
+    var numeric = Number(value || 0);
+    return numeric ? numeric.toFixed(2) : '0.00';
+  }
+
+  function getCardById(cardId) {
+    var id = String(cardId || '');
+    for (var i = 0; i < _cardFundingState.cards.length; i += 1) {
+      if (String(_cardFundingState.cards[i].id) === id) return _cardFundingState.cards[i];
+    }
+    return null;
+  }
+
+  function getCardFundingMethodMeta(card) {
+    var payableAmount = getCurrentPayableAmountNumber();
+    var currentBalance = Number((card && card.currentBalance) || 0);
+    return [
+      {
+        id: 'add_funds',
+        label: 'Add Funds',
+        subtitle: 'Fund this card with another specific amount.',
+        disabled: false,
+        badge: ''
+      },
+      {
+        id: 'spend_balance',
+        label: 'Spend Balance',
+        subtitle: 'Make payment with existing money on the card.',
+        disabled: !card || currentBalance < payableAmount,
+        badge: (!card || currentBalance < payableAmount) ? 'Not enough funds' : ''
+      }
+    ];
+  }
+
+  function getCardProjectedBalance(card) {
+    var currentBalance = Number((card && card.currentBalance) || 0);
+    var fundingMethod = String(_cardFundingState.fundingMethod || '');
+    var fundingAmount = fundingMethod === 'spend_balance' ? 0 : parseMoneyInput(_cardFundingState.fundingAmount);
+    return currentBalance + fundingAmount;
+  }
+
+  function getCardAvailableBalanceForPayment(card) {
+    var projected = getCardProjectedBalance(card);
+    if (String(_cardFundingState.fundingMethod || '') === 'spend_balance') {
+      return Number((card && card.currentBalance) || 0);
+    }
+    return projected;
+  }
+
+  function syncCardProgressiveReveal() {
+    var existingWrap = document.getElementById('pp-card-existing-selector-wrap');
+    var createdWrap = document.getElementById('pp-card-created-summary');
+    var fundingMethodWrap = document.getElementById('pp-card-funding-method-wrap');
+    var fundingDetailsWrap = document.getElementById('pp-card-funding-details-wrap');
+    var fundingAmountWrap = document.getElementById('pp-card-funding-amount-wrap');
+    var sendingWrap = document.getElementById('pp-card-sending-methods');
+    var hasCard = !!getCardById(_cardFundingState.selectedCardId);
+    var hasFundingMethod = !!String(_cardFundingState.fundingMethod || '');
+
+    if (existingWrap) existingWrap.classList.toggle('hidden', _cardFundingState.cardSource !== 'existing');
+    if (createdWrap) createdWrap.classList.toggle('hidden', !(_cardFundingState.cardSource === 'new' && hasCard));
+    if (fundingMethodWrap) fundingMethodWrap.classList.toggle('hidden', !hasCard);
+    if (fundingDetailsWrap) fundingDetailsWrap.classList.toggle('hidden', !hasFundingMethod);
+    if (fundingAmountWrap) fundingAmountWrap.classList.toggle('hidden', !hasFundingMethod);
+    if (sendingWrap) sendingWrap.classList.toggle('hidden', !hasFundingMethod);
+  }
+
+  function renderCardBalanceSummary() {
+    var projectedEl = document.getElementById('pp-card-projected-balance');
+    var warningEl = document.getElementById('pp-card-projected-warning');
+    var panelEl = document.getElementById('pp-card-balance-panel');
+    var card = getCardById(_cardFundingState.selectedCardId);
+    var hasFundingMethod = !!String(_cardFundingState.fundingMethod || '');
+    if (!projectedEl || !warningEl || !panelEl) return;
+    panelEl.classList.toggle('hidden', !(card && hasFundingMethod));
+    if (!card || !hasFundingMethod) {
+      projectedEl.textContent = '$0.00';
+      warningEl.classList.add('hidden');
+      return;
+    }
+    projectedEl.textContent = formatMoney(getCardProjectedBalance(card), card.currency || 'USD');
+    warningEl.classList.toggle('hidden', getCardAvailableBalanceForPayment(card) >= getCurrentPayableAmountNumber());
+    syncCardProgressiveReveal();
+  }
+
+  function syncFundingAmountInput() {
+    var input = document.getElementById('pp-card-funding-amount');
+    var info = document.getElementById('pp-card-funding-amount-info');
+    if (!input) return;
+    var disabled = String(_cardFundingState.fundingMethod || '') === 'spend_balance';
+    input.disabled = disabled;
+    input.classList.toggle('cursor-not-allowed', disabled);
+    input.classList.toggle('bg-gray-50', disabled);
+    input.classList.toggle('text-gray-500', disabled);
+    input.classList.toggle('outline-gray-200', disabled);
+    if (info) {
+      info.classList.toggle('invisible', !disabled);
+      info.classList.toggle('opacity-0', !disabled);
+      info.classList.toggle('pointer-events-none', !disabled);
+    }
+    if (_cardFundingState.fundingMethod === 'add_funds' && !parseMoneyInput(_cardFundingState.fundingAmount)) {
+      _cardFundingState.fundingAmount = formatMoneyInputValue(getCurrentPayableAmountNumber());
+    } else if (_cardFundingState.fundingMethod === 'spend_balance') {
+      _cardFundingState.fundingAmount = '0.00';
+    }
+    input.value = _cardFundingState.fundingAmount;
+    syncCardProgressiveReveal();
+  }
+
+  function renderCardFundingMethodOptions() {
+    var optionsEl = document.getElementById('pp-card-funding-method-radios');
+    if (!optionsEl) return;
+    var items = getCardFundingMethodMeta(getCardById(_cardFundingState.selectedCardId));
+    optionsEl.innerHTML = items.map(function (item) {
+      var checked = String(_cardFundingState.fundingMethod || '') === String(item.id || '');
+      return (
+        '<div class="flex items-center' + (item.disabled ? ' opacity-60' : '') + '">' +
+          '<input id="pp-card-funding-method-' + escapeHtml(String(item.id || '')) + '" type="radio" name="pp-card-funding-method" value="' + escapeHtml(item.id) + '" data-base-disabled="' + (item.disabled ? 'true' : 'false') + '" ' + (checked ? 'checked ' : '') + (item.disabled ? 'disabled ' : '') + 'class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden" />' +
+          '<label for="pp-card-funding-method-' + escapeHtml(String(item.id || '')) + '" class="ml-3 block text-sm/6 font-medium text-gray-900 dark:text-white">' + escapeHtml(item.label) + '</label>' +
+          (item.badge ? '<span class="ml-2 inline-flex shrink-0 items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-200 dark:bg-amber-400/10 dark:text-amber-300 dark:ring-amber-400/20">' + escapeHtml(item.badge) + '</span>' : '') +
+        '</div>'
+      );
+    }).join('');
+    optionsEl.querySelectorAll('input[name="pp-card-funding-method"]').forEach(function (input) {
+      input.addEventListener('click', function (event) {
+        if (input.disabled) return;
+        var optionValue = String(input.value || '');
+        var currentValue = String(optionsEl.getAttribute('data-selected-value') || '');
+        if (currentValue && optionValue === currentValue) {
+          event.preventDefault();
+          _cardFundingState.fundingMethod = '';
+          _cardFundingState.fundingAmount = '';
+          optionsEl.setAttribute('data-selected-value', '');
+          input.checked = false;
+          syncFundingAmountInput();
+          renderCardBalanceSummary();
+          updatePayStepStates();
+        }
+      });
+      input.addEventListener('change', function () {
+        if (!input.checked || input.disabled) return;
+        var optionValue = String(input.value || '');
+        _cardFundingState.fundingMethod = optionValue;
+        if (optionValue === 'add_funds' && !parseMoneyInput(_cardFundingState.fundingAmount)) {
+          _cardFundingState.fundingAmount = formatMoneyInputValue(getCurrentPayableAmountNumber());
+        }
+        optionsEl.setAttribute('data-selected-value', optionValue);
+        syncFundingAmountInput();
+        renderCardBalanceSummary();
+        updatePayStepStates();
+      });
+    });
+    if (!_cardFundingState.fundingMethod) {
+      optionsEl.setAttribute('data-selected-value', '');
+      return;
+    }
+    var selectedMeta = items.filter(function (item) { return item.id === _cardFundingState.fundingMethod && !item.disabled; })[0];
+    if (!selectedMeta) {
+      _cardFundingState.fundingMethod = '';
+      _cardFundingState.fundingAmount = '';
+      optionsEl.setAttribute('data-selected-value', '');
+      syncFundingAmountInput();
+      return;
+    }
+    optionsEl.setAttribute('data-selected-value', _cardFundingState.fundingMethod);
+    syncCardProgressiveReveal();
+  }
+
+  function createNewVirtualCard() {
+    var nextIndex = _cardFundingState.cards.length + 1;
+    var payableAmount = getCurrentPayableAmountNumber();
+    var rowSeed = getRowSeed(_payContext.row) + nextIndex * 17;
+    var last4 = String(1000 + (rowSeed % 9000)).slice(-4);
+    var month = String(((nextIndex % 12) || 12)).padStart(2, '0');
+    var year = String(2028 + (nextIndex % 3));
+    var card = {
+      id: 'card_' + String(Date.now()),
+      cardName: 'Virtual Card #' + nextIndex,
+      brand: nextIndex % 2 === 0 ? 'visa' : 'mastercard',
+      last4: last4,
+      expDate: month + '/' + year,
+      currentBalance: 0,
+      projectedBalance: 0,
+      currency: String((_payContext.row && _payContext.row.currency) || 'USD'),
+      payments: []
+    };
+    _cardFundingState.cards = _cardFundingState.cards.concat([card]);
+    _cardFundingState.cardSource = 'new';
+    _cardFundingState.selectedCardId = card.id;
+    _cardFundingState.fundingMethod = '';
+    _cardFundingState.fundingAmount = formatMoneyInputValue(payableAmount);
+    return card;
   }
 
   function getSavedPayPageState(row) {
@@ -870,7 +1176,21 @@
     if (selectedMethod === 'ach' || selectedMethod === 'wire') {
       step2Done = !!getSelectedOptionValueByOptionsId('gp-bank-account-select');
     } else if (selectedMethod === 'card') {
-      step2Done = !!getSelectedOptionValueByOptionsId('pp-pay-card-options');
+      var sourceChosen = !!String(_cardFundingState.cardSource || '');
+      var selectedCard = !!getSelectedOptionValueByOptionsId('pp-pay-card-options');
+      var fundingMethod = !!String(_cardFundingState.fundingMethod || '');
+      var sendingMethod = !!String(_cardFundingState.sendingMethod || '');
+      var deliveryWrap = document.getElementById('pp-card-delivery-contact-combobox');
+      var deliveryInput = document.getElementById('pp-card-delivery-contact-input');
+      var deliveryTokenCount = deliveryWrap ? Number(deliveryWrap.getAttribute('data-token-count') || '0') : 0;
+      var deliveryReady = _cardFundingState.sendingMethod === 'delivery_website'
+        ? (deliveryTokenCount > 0 || !!(deliveryInput && String(deliveryInput.value || '').trim()))
+        : true;
+      var fundingValid = _cardFundingState.fundingMethod === 'spend_balance'
+        ? true
+        : parseMoneyInput(_cardFundingState.fundingAmount) > 0;
+      var projectedValid = selectedCard ? getCardAvailableBalanceForPayment(getCardById(_cardFundingState.selectedCardId)) >= getCurrentPayableAmountNumber() : false;
+      step2Done = sourceChosen && selectedCard && fundingMethod && sendingMethod && deliveryReady && fundingValid && projectedValid;
     } else if (selectedMethod === 'check') {
       step2Done = !!getSelectedOptionValueByOptionsId('gp-check-address-select');
     } else if (selectedMethod === 'smart_disburse') {
@@ -900,6 +1220,57 @@
     if (isConfirmedPayableRow(_payContext.row)) {
       applyConfirmedPayPageReadOnlyState(_payContext.row);
     }
+  }
+
+  function getCurrentCardPaymentSelection() {
+    var card = getCardById(_cardFundingState.selectedCardId);
+    var fundingMethod = String(_cardFundingState.fundingMethod || '');
+    if (!card || !fundingMethod) return null;
+    if (fundingMethod !== 'spend_balance' && parseMoneyInput(_cardFundingState.fundingAmount) <= 0) return null;
+    if (getCardAvailableBalanceForPayment(card) < getCurrentPayableAmountNumber()) return null;
+    var origin = _origDetailsState && _origDetailsState.account ? _origDetailsState.account : null;
+    var fundingLabels = {
+      match_payment: 'Match Payment',
+      add_funds: 'Add Funds',
+      spend_balance: 'Spend Balance'
+    };
+    var sendingLabels = {
+      on_file: 'Card on file with vendor',
+      delivery_website: 'Delivery Website'
+    };
+    var deliveryTokens = getSelectedDestinationTokens('pp-card-delivery-contact-tokens', 'pp-card-delivery-contact-input');
+    var deliveryBadgeTexts = getSmartBadgeTexts(deliveryTokens);
+    var formattedProjectedBalance = formatMoney(getCardProjectedBalance(card), card.currency || 'USD');
+    var formattedFundingAmount = formatMoney(fundingMethod === 'spend_balance' ? 0 : parseMoneyInput(_cardFundingState.fundingAmount), card.currency || 'USD');
+    return {
+      methodId: 'card',
+      methodLabel: 'Pay with a Card',
+      amount: formatMoney(_payContext.row && _payContext.row.amount, (_payContext.row && _payContext.row.currency) || 'USD'),
+      payeeName: String((_payContext.row && _payContext.row.payeeName) || 'Payee').trim(),
+      paymentDateIso: getEffectivePaymentDateIso(),
+      originName: origin ? String(origin.displayName || origin.name || origin.bankName || 'Origination account').trim() : 'Origination account',
+      originSub: origin ? ('••••' + getAccountLast4(origin)) : '--',
+      recipientName: getCardDisplayLabel(card),
+      recipientSub: 'Expires ' + String(card.expDate || '').trim(),
+      confirmTitle: 'Confirm ' + formatMoney(_payContext.row && _payContext.row.amount, (_payContext.row && _payContext.row.currency) || 'USD') + ' payment',
+      cardId: card.id,
+      cardName: card.cardName,
+      cardBrand: card.brand,
+      cardLast4: card.last4,
+      cardExpDate: card.expDate,
+      fundingMethod: fundingMethod,
+      fundingMethodLabel: fundingLabels[fundingMethod] || 'Funding',
+      fundingAmount: fundingMethod === 'spend_balance' ? 0 : parseMoneyInput(_cardFundingState.fundingAmount),
+      fundingAmountText: formattedFundingAmount,
+      isSpendBalance: fundingMethod === 'spend_balance',
+      sendingMethod: String(_cardFundingState.sendingMethod || 'on_file'),
+      sendingMethodLabel: sendingLabels[String(_cardFundingState.sendingMethod || 'on_file')] || 'Card on file with vendor',
+      deliveryTokens: deliveryTokens,
+      cardDeliveryBadgeTexts: deliveryBadgeTexts,
+      projectedBalance: getCardProjectedBalance(card),
+      projectedBalanceText: formattedProjectedBalance,
+      availableBalance: getCardAvailableBalanceForPayment(card)
+    };
   }
 
   function setPaySelectDisabled(selectEl, disabled) {
@@ -934,6 +1305,8 @@
     var originationSelect = document.getElementById('pp-orig-bank-select');
     var methodSelect = document.getElementById('pp-pay-method-select');
     var bankRecipientSelect = document.getElementById('gp-bank-account-select');
+    var cardSelect = document.getElementById('pp-pay-card-select');
+    var cardFundingAmount = document.getElementById('pp-card-funding-amount');
     var bankEditBtn = document.getElementById('gp-edit-bank-btn');
     var checkEditBtn = document.getElementById('gp-edit-check-btn');
     var submitBtn = document.getElementById('gp-submit-btn');
@@ -943,11 +1316,33 @@
     var segmentedChip = document.getElementById('pp-schedule-segmented-chip');
     var chipDateBtn = document.getElementById('pp-schedule-chip-date-btn');
     var chipClearBtn = document.getElementById('pp-schedule-chip-clear-btn');
+    var chipText = document.getElementById('pp-schedule-chip-text');
     var hasScheduledDate = !!getScheduledPaymentDateIso(row);
 
     setPaySelectDisabled(originationSelect, isConfirmed);
     setPaySelectDisabled(methodSelect, isConfirmed);
     setPaySelectDisabled(bankRecipientSelect, isConfirmed);
+    setPaySelectDisabled(cardSelect, isConfirmed);
+    if (cardFundingAmount) {
+      cardFundingAmount.disabled = !!isConfirmed || String(_cardFundingState.fundingMethod || '') === 'spend_balance';
+      cardFundingAmount.classList.toggle('cursor-not-allowed', !!isConfirmed || String(_cardFundingState.fundingMethod || '') === 'spend_balance');
+      cardFundingAmount.classList.toggle('bg-gray-50', !!isConfirmed || String(_cardFundingState.fundingMethod || '') === 'spend_balance');
+      cardFundingAmount.classList.toggle('text-gray-500', !!isConfirmed || String(_cardFundingState.fundingMethod || '') === 'spend_balance');
+      cardFundingAmount.classList.toggle('outline-gray-200', !!isConfirmed || String(_cardFundingState.fundingMethod || '') === 'spend_balance');
+    }
+    document.querySelectorAll('input[name="pp-card-sending-method"]').forEach(function (input) {
+      input.disabled = !!isConfirmed;
+      input.classList.toggle('cursor-not-allowed', !!isConfirmed);
+    });
+    document.querySelectorAll('input[name="pp-card-source"]').forEach(function (input) {
+      input.disabled = !!isConfirmed;
+      input.classList.toggle('cursor-not-allowed', !!isConfirmed);
+    });
+    document.querySelectorAll('input[name="pp-card-funding-method"]').forEach(function (input) {
+      var shouldDisable = !!isConfirmed || input.getAttribute('data-base-disabled') === 'true';
+      input.disabled = shouldDisable;
+      input.classList.toggle('cursor-not-allowed', shouldDisable);
+    });
     if (bankEditBtn) {
       bankEditBtn.classList.toggle('hidden', isConfirmed);
       bankEditBtn.style.display = isConfirmed ? 'none' : '';
@@ -990,11 +1385,22 @@
       chipDateBtn.disabled = !!isConfirmed;
       chipDateBtn.classList.toggle('pointer-events-none', isConfirmed);
       chipDateBtn.classList.toggle('cursor-not-allowed', isConfirmed);
+      chipDateBtn.classList.toggle('text-blue-600', !isConfirmed);
+      chipDateBtn.classList.toggle('dark:text-blue-400', !isConfirmed);
+      chipDateBtn.classList.toggle('text-gray-700', isConfirmed);
+      chipDateBtn.classList.toggle('dark:text-gray-300', isConfirmed);
+    }
+    if (chipText) {
+      chipText.classList.toggle('text-blue-600', !isConfirmed);
+      chipText.classList.toggle('dark:text-blue-400', !isConfirmed);
+      chipText.classList.toggle('text-gray-700', isConfirmed);
+      chipText.classList.toggle('dark:text-gray-300', isConfirmed);
     }
     if (chipClearBtn) {
       chipClearBtn.disabled = !!isConfirmed;
       chipClearBtn.classList.toggle('pointer-events-none', isConfirmed);
       chipClearBtn.classList.toggle('cursor-not-allowed', isConfirmed);
+      chipClearBtn.classList.toggle('hidden', isConfirmed);
     }
   }
 
@@ -1245,6 +1651,7 @@
 
   function getCurrentPaymentConfirmSelection() {
     var methodId = getSelectedOptionValueByOptionsId('pp-pay-method-options');
+    if (methodId === 'card') return getCurrentCardPaymentSelection();
     if (methodId === 'ach' || methodId === 'wire') return getCurrentBankRecipientDetails();
     if (methodId === 'check') return getCurrentCheckRecipientDetails();
     if (methodId === 'smart_disburse' || methodId === 'smart_exchange') return getCurrentSmartRecipientDetails(methodId);
@@ -1330,6 +1737,10 @@
       cardId: '',
       checkAddressId: '',
       smartTokens: [],
+      cardFundingMethod: '',
+      cardFundingAmount: '',
+      cardSendingMethod: '',
+      cardDeliveryTokens: [],
     });
 
     if (rowMethodId !== 'check') {
@@ -1358,12 +1769,20 @@
       checkPrintDate: '',
       checkMemo: '',
       smartTokens: [],
+      cardFundingMethod: '',
+      cardFundingAmount: '',
+      cardSendingMethod: '',
+      cardDeliveryTokens: [],
     };
 
     if (methodId === 'ach' || methodId === 'wire') {
       state.bankAccountId = getSelectedOptionValueByOptionsId('gp-bank-account-select');
     } else if (methodId === 'card') {
       state.cardId = getSelectedOptionValueByOptionsId('pp-pay-card-options');
+      state.cardFundingMethod = String(_cardFundingState.fundingMethod || '');
+      state.cardFundingAmount = String(_cardFundingState.fundingAmount || '');
+      state.cardSendingMethod = String(_cardFundingState.sendingMethod || 'on_file');
+      state.cardDeliveryTokens = getSelectedDestinationTokens('pp-card-delivery-contact-tokens', 'pp-card-delivery-contact-input');
     } else if (methodId === 'check') {
       state.checkAddressId = getSelectedOptionValueByOptionsId('gp-check-address-select');
       state.checkAttention = String((document.getElementById('gp-pmc-check-attention') || {}).value || '').trim();
@@ -1384,13 +1803,19 @@
     var defaultMethodCheckbox = document.getElementById('pp-confirm-default-method');
     var defaultMethodLabel = document.getElementById('pp-confirm-default-method-label');
     var confirmCopy = document.getElementById('pp-payment-confirm-copy');
+    var sendToWrap = document.getElementById('pp-confirm-sendto-wrap');
+    var sendToBadges = document.getElementById('pp-confirm-sendto-badges');
     var headerGrid = document.getElementById('pp-confirm-header-grid');
     var originLabel = document.getElementById('pp-confirm-origin-label');
     var originWrap = document.getElementById('pp-confirm-origin-wrap');
+    var originCard = document.getElementById('pp-confirm-origin-card');
+    var originPlaceholder = document.getElementById('pp-confirm-origin-placeholder');
     var arrowWrap = document.getElementById('pp-confirm-arrow-wrap');
+    var arrowIcon = document.getElementById('pp-confirm-arrow-icon');
     var recipientLabel = document.getElementById('pp-confirm-recipient-label');
     var recipientMobileLabel = document.getElementById('pp-confirm-recipient-mobile-label');
     var smartBadges = document.getElementById('pp-confirm-smart-badges');
+    var recipientCardsLabel = document.getElementById('pp-confirm-recipient-cards-label');
     var recipientCards = document.getElementById('pp-confirm-recipient-cards');
     var dateLabel = document.getElementById('pp-confirm-date-label');
     var dateIcon = document.getElementById('pp-confirm-date-icon');
@@ -1401,14 +1826,28 @@
     var recipientIcon = document.getElementById('pp-confirm-recipient-icon');
     var recipientSecondaryCard = document.getElementById('pp-confirm-recipient-secondary-card');
     var recipientSecondaryIcon = document.getElementById('pp-confirm-recipient-secondary-icon');
+    var amountEl = document.getElementById('pp-confirm-amount');
+    var amountInfo = document.getElementById('pp-confirm-amount-info');
+    var projectedRow = document.getElementById('pp-confirm-projected-row');
+    var projectedBalanceEl = document.getElementById('pp-confirm-projected-balance');
     var isScheduled = !!(_schedulePickerState && _schedulePickerState.confirmedDate);
     var isCheck = selection.methodId === 'check';
     var isSmart = selection.methodId === 'smart_disburse' || selection.methodId === 'smart_exchange';
+    var isCard = selection.methodId === 'card';
+    var isSpendBalance = isCard && (selection.fundingMethod === 'spend_balance');
+    var isCardSecure = isCard && selection.sendingMethod === 'delivery_website';
     var buildingIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path fill-rule="evenodd" d="M4 16.5v-13h-.25a.75.75 0 0 1 0-1.5h12.5a.75.75 0 0 1 0 1.5H16v13h.25a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75v-2.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75v2.5a.75.75 0 0 1-.75.75h-3.5a.75.75 0 0 1 0-1.5H4Zm3-11a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM7.5 9a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1ZM11 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm.5 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z" clip-rule="evenodd" /></svg>';
     var contactIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z" /></svg>';
+    var cardIconSvg = isCard ? getCardBrandIcon(selection.cardBrand) : '';
     if (defaultMethodCheckbox) defaultMethodCheckbox.checked = false;
     if (defaultMethodLabel) defaultMethodLabel.textContent = 'Make this the default payment method for ' + selection.payeeName;
-    if (confirmCopy) confirmCopy.textContent = isSmart ? 'Review who will receive the payment link before you continue.' : 'Review your account and recipient details before you continue.';
+    if (confirmCopy) confirmCopy.textContent = isSmart
+      ? 'Review who will receive the payment link before you continue.'
+      : (isCard
+          ? (isCardSecure
+              ? 'Review who will receive the secure card-delivery link, the selected card, and the payment details before you continue.'
+              : 'Review the origination account, selected card, and payment details before you continue.')
+          : 'Review your account and recipient details before you continue.');
     if (headerGrid) {
       headerGrid.classList.toggle('hidden', false);
       headerGrid.classList.toggle('sm:grid', !isSmart);
@@ -1416,19 +1855,34 @@
       headerGrid.classList.toggle('sm:grid-cols-1', isSmart);
       headerGrid.classList.toggle('sm:grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)]', !isSmart);
     }
-    if (originLabel) originLabel.textContent = isSmart ? 'Send to' : 'Origination Account';
+    if (sendToWrap) sendToWrap.classList.toggle('hidden', !(isSmart || isCardSecure));
+    if (sendToBadges) {
+      var sendToBadgeTexts = isSmart ? (selection.smartBadgeTexts || []) : (selection.cardDeliveryBadgeTexts || []);
+      sendToBadges.innerHTML = (isSmart || isCardSecure) ? sendToBadgeTexts.map(function (text) {
+        return '<span class="inline-flex max-w-full items-center rounded-md bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-700 dark:bg-white/10 dark:text-gray-200"><span class="truncate">' + escapeHtml(text) + '</span></span>';
+      }).join('') : '';
+    }
+    if (sendToWrap) sendToWrap.classList.toggle('mb-5', isCardSecure || isSmart);
+    if (originLabel) originLabel.textContent = 'Origination Account';
     if (originWrap) originWrap.classList.toggle('hidden', isSmart);
+    if (originCard) originCard.classList.toggle('hidden', isSpendBalance);
+    if (originPlaceholder) originPlaceholder.classList.toggle('hidden', !isSpendBalance);
     if (arrowWrap) {
       arrowWrap.classList.toggle('hidden', isSmart);
       arrowWrap.classList.toggle('sm:flex', !isSmart);
     }
-    if (recipientLabel) recipientLabel.textContent = isSmart ? '' : 'Recipient';
-    if (recipientMobileLabel) recipientMobileLabel.textContent = isSmart ? 'Send to' : 'Recipient';
+    if (arrowIcon) {
+      arrowIcon.classList.toggle('invisible', isSpendBalance);
+      arrowIcon.classList.toggle('opacity-0', isSpendBalance);
+    }
+    if (recipientLabel) recipientLabel.textContent = isSmart ? '' : (isCard ? 'Card' : 'Recipient');
+    if (recipientMobileLabel) recipientMobileLabel.textContent = isCard ? 'Card' : (isSmart ? 'Send to' : 'Recipient');
     if (recipientCards) {
       recipientCards.classList.toggle('sm:flex-row', isSmart);
       recipientCards.classList.toggle('sm:flex-wrap', isSmart);
       recipientCards.classList.toggle('sm:items-start', isSmart);
       recipientCards.classList.toggle('sm:justify-start', isSmart);
+      recipientCards.classList.remove('mt-3', 'sm:mt-3');
     }
     if (payeeRow) payeeRow.classList.toggle('hidden', isSmart);
     if (methodRow) methodRow.classList.remove('hidden');
@@ -1441,21 +1895,32 @@
     }
     if (checkDetails) checkDetails.classList.toggle('hidden', !isCheck);
     if (smartBadges) {
-      smartBadges.classList.toggle('hidden', !isSmart);
-      smartBadges.classList.toggle('flex', isSmart);
-      smartBadges.innerHTML = isSmart ? (selection.smartBadgeTexts || []).map(function (text) {
+      var showRecipientChips = isSmart;
+      var badgeTexts = isSmart ? (selection.smartBadgeTexts || []) : [];
+      smartBadges.classList.toggle('hidden', !showRecipientChips);
+      smartBadges.classList.toggle('flex', showRecipientChips);
+      smartBadges.innerHTML = showRecipientChips ? badgeTexts.map(function (text) {
         return '<span class="inline-flex max-w-full items-center rounded-md bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-700 dark:bg-white/10 dark:text-gray-200"><span class="truncate">' + escapeHtml(text) + '</span></span>';
       }).join('') : '';
     }
+    if (recipientCardsLabel) {
+      recipientCardsLabel.classList.add('hidden');
+      recipientCardsLabel.textContent = 'Card';
+    }
     if (recipientCards) recipientCards.classList.toggle('hidden', isSmart);
-    if (recipientIcon) recipientIcon.innerHTML = isSmart ? contactIconSvg : buildingIconSvg;
-    if (recipientSecondaryIcon) recipientSecondaryIcon.innerHTML = isSmart ? contactIconSvg : buildingIconSvg;
+    if (recipientIcon) recipientIcon.innerHTML = isSmart ? contactIconSvg : (isCard ? cardIconSvg : buildingIconSvg);
+    if (recipientSecondaryIcon) recipientSecondaryIcon.innerHTML = isSmart ? contactIconSvg : (isCard ? contactIconSvg : buildingIconSvg);
     if (recipientSecondaryCard) {
       recipientSecondaryCard.classList.toggle('hidden', !selection.recipientSecondaryName);
       recipientSecondaryCard.classList.toggle('flex', !!selection.recipientSecondaryName);
     }
     setText('pp-payment-confirm-title', selection.confirmTitle || ('Confirm ' + selection.amount + ' payment'));
-    setText('pp-confirm-amount', selection.amount);
+    if (amountEl) amountEl.textContent = isCard ? String(selection.fundingAmountText || '--') : String(selection.amount || '--');
+    if (amountInfo) {
+      amountInfo.classList.toggle('invisible', !isSpendBalance);
+      amountInfo.classList.toggle('opacity-0', !isSpendBalance);
+      amountInfo.classList.toggle('pointer-events-none', !isSpendBalance);
+    }
     setText('pp-confirm-payee', selection.payeeName);
     setText('pp-confirm-date', formatDate(selection.paymentDateIso));
     setText('pp-confirm-method', selection.methodLabel);
@@ -1465,6 +1930,8 @@
     setText('pp-confirm-recipient-sub', selection.recipientSub || (isCheck ? selection.recipientAddress : (selection.recipientAccount !== '--' ? selection.recipientAccount : (selection.recipientRouting !== '--' ? selection.recipientRouting : selection.recipientAddress))));
     setText('pp-confirm-recipient-secondary-name', selection.recipientSecondaryName || '--');
     setText('pp-confirm-recipient-secondary-sub', selection.recipientSecondarySub || '--');
+    if (projectedRow) projectedRow.classList.toggle('hidden', !isCard);
+    if (projectedBalanceEl) projectedBalanceEl.textContent = isCard ? String(selection.projectedBalanceText || '--') : '--';
     if (isCheck) {
       setText('pp-confirm-check-number', selection.checkNumber);
       setText('pp-confirm-check-company', selection.checkCompany);
@@ -1610,10 +2077,53 @@
     var methodId = String(selection.methodId || '').toLowerCase();
     if (methodId === 'ach') return 'ACH transfer';
     if (methodId === 'wire') return 'wire transfer';
+    if (methodId === 'card') return 'card payment';
     if (methodId === 'check') return 'check payment';
     if (methodId === 'smart_disburse') return 'SMART Disburse payment';
     if (methodId === 'smart_exchange') return 'SMART Exchange payment';
     return 'payment';
+  }
+
+  function persistCardPaymentSelection(updatedRow, selection) {
+    if (!selection || String(selection.methodId || '') !== 'card' || !selection.cardId) return;
+    var cards = normalizeCardsDataset(_cardFundingState.cards);
+    var matched = false;
+    for (var i = 0; i < cards.length; i += 1) {
+      if (String(cards[i].id) !== String(selection.cardId)) continue;
+      matched = true;
+      var postPaymentBalance = Number(selection.availableBalance || 0) - Number((updatedRow && updatedRow.amount) || 0);
+      cards[i].currentBalance = postPaymentBalance;
+      cards[i].projectedBalance = postPaymentBalance;
+      if (!Array.isArray(cards[i].payments)) cards[i].payments = [];
+      cards[i].payments.unshift({
+        payableId: String((updatedRow && (updatedRow.id || updatedRow.billNumber)) || ''),
+        vendor: String((updatedRow && updatedRow.payeeName) || ''),
+        amount: Number((updatedRow && updatedRow.amount) || 0),
+        date: String((updatedRow && updatedRow.adDate) || '')
+      });
+      break;
+    }
+    if (!matched) {
+      var postPaymentBalanceNew = Number(selection.availableBalance || 0) - Number((updatedRow && updatedRow.amount) || 0);
+      cards.unshift({
+        id: String(selection.cardId),
+        cardName: String(selection.cardName || 'Virtual Card').trim(),
+        brand: String(selection.cardBrand || 'visa').toLowerCase(),
+        last4: String(selection.cardLast4 || '').trim(),
+        expDate: String(selection.cardExpDate || '').trim(),
+        currentBalance: postPaymentBalanceNew,
+        projectedBalance: postPaymentBalanceNew,
+        currency: String((updatedRow && updatedRow.currency) || 'USD'),
+        payments: [{
+          payableId: String((updatedRow && (updatedRow.id || updatedRow.billNumber)) || ''),
+          vendor: String((updatedRow && updatedRow.payeeName) || ''),
+          amount: Number((updatedRow && updatedRow.amount) || 0),
+          date: String((updatedRow && updatedRow.adDate) || '')
+        }]
+      });
+    }
+    _cardFundingState.cards = cards;
+    persistCardsDataset(cards);
   }
 
   function createUpdatedPayableRow(selection) {
@@ -1708,6 +2218,7 @@
       if (!selection) return;
       var updatedRow = createUpdatedPayableRow(selection);
       if (updatedRow) {
+        persistCardPaymentSelection(updatedRow, selection);
         _payContext.row = updatedRow;
         persistPayableOverride(updatedRow);
         var updatedStatus = getDisplayStatus(updatedRow);
@@ -1898,7 +2409,7 @@
   function setSelectedContent(selectedEl, text, placeholder) {
     if (!selectedEl) return;
     if (!text) {
-      selectedEl.innerHTML = '<span class="truncate text-gray-400 dark:text-gray-500">' + escapeHtml(placeholder || 'Select') + '</span>';
+      selectedEl.innerHTML = '<span class="truncate font-normal text-gray-400 dark:text-gray-500">' + escapeHtml(placeholder || 'Select') + '</span>';
       return;
     }
     selectedEl.innerHTML = '<span class="truncate font-medium">' + escapeHtml(text) + '</span>';
@@ -1916,12 +2427,14 @@
     setSelectedContent(selectedEl, '', placeholder);
 
     function apply(id) {
+      var normalizedId = String(id || '');
       var selected = null;
       for (var i = 0; i < list.length; i++) {
-        if (String(list[i].id) === String(id)) { selected = list[i]; break; }
+        if (String(list[i].id) === normalizedId) { selected = list[i]; break; }
       }
+      optionsEl.setAttribute('data-selected-value', selected ? normalizedId : '');
       optionsEl.querySelectorAll('el-option').forEach(function (opt) {
-        if (String(opt.getAttribute('value') || '') === String(id)) opt.setAttribute('aria-selected', 'true');
+        if (String(opt.getAttribute('value') || '') === normalizedId && selected) opt.setAttribute('aria-selected', 'true');
         else opt.removeAttribute('aria-selected');
       });
       if (!selected) {
@@ -1941,7 +2454,13 @@
     optionsEl.addEventListener('click', function (event) {
       var option = event.target.closest('el-option');
       if (!option) return;
-      apply(option.getAttribute('value'));
+      var optionValue = String(option.getAttribute('value') || '');
+      var currentValue = String(optionsEl.getAttribute('data-selected-value') || '');
+      if (currentValue && optionValue === currentValue) {
+        apply('');
+        return;
+      }
+      apply(optionValue);
     });
 
     return apply;
@@ -2396,28 +2915,54 @@
     }, contacts);
   }
 
-  function initPaymentMethodFlow(payeesList, row, fallbackBanks, fallbackAddresses) {
+  function initCardDeliveryTypeahead(contacts) {
+    return initDestinationTypeahead({
+      comboboxId: 'pp-card-delivery-contact-combobox',
+      tokensId: 'pp-card-delivery-contact-tokens',
+      inputId: 'pp-card-delivery-contact-input',
+      listId: 'pp-card-delivery-contact-list',
+      placeholder: 'Choose destination'
+    }, contacts);
+  }
+
+  function initCardDeliveryTypeahead(contacts) {
+    return initDestinationTypeahead({
+      comboboxId: 'pp-card-delivery-contact-combobox',
+      tokensId: 'pp-card-delivery-contact-tokens',
+      inputId: 'pp-card-delivery-contact-input',
+      listId: 'pp-card-delivery-contact-list',
+      placeholder: 'Choose destination'
+    }, contacts);
+  }
+
+  function initPaymentMethodFlow(payeesList, row, fallbackBanks, fallbackAddresses, cardsData) {
     var detailsWrap = document.getElementById('gp-payment-method-details');
     if (!detailsWrap) return;
     _payContext.row = row || null;
     _payContext.payeeProfile = findPayeeProfile(payeesList, row);
+    _cardFundingState.cards = getStoredCardsDataset(cardsData);
     var normalized = normalizeMethods(_payContext.payeeProfile, fallbackBanks, fallbackAddresses);
+    var isReadyToPay = String((row && row.status) || '').toLowerCase() === 'ready_to_pay';
     var savedState = reconcileSavedPayPageState(
       row,
-      getSavedPayPageState(row) || buildFallbackPaidPayPageState(row, normalized, fallbackBanks)
+      getSavedPayPageState(row) || (!isReadyToPay ? buildFallbackPaidPayPageState(row, normalized, fallbackBanks) : null)
     );
 
     function applyBankRecipientSelection(accounts, bankSelContent, bankOpts, selectedId, placeholder) {
+      var normalizedId = String(selectedId || '');
       var selected = null;
       (Array.isArray(accounts) ? accounts : []).forEach(function (account) {
-        if (String(account.id) === String(selectedId)) selected = account;
+        if (String(account.id) === normalizedId) selected = account;
       });
+      bankOpts.setAttribute('data-selected-value', selected ? normalizedId : '');
       bankOpts.querySelectorAll('el-option').forEach(function (el) {
-        if (String(el.getAttribute('value') || '') === String(selectedId)) el.setAttribute('aria-selected', 'true');
+        if (String(el.getAttribute('value') || '') === normalizedId && selected) el.setAttribute('aria-selected', 'true');
         else el.removeAttribute('aria-selected');
       });
       if (!selected) {
         setSelectedContent(bankSelContent, '', placeholder);
+        var hiddenDetails = document.getElementById('gp-pmc-bank-details');
+        if (hiddenDetails) hiddenDetails.classList.add('hidden');
         return;
       }
       bankSelContent.innerHTML = buildSelectedBankContent({
@@ -2437,34 +2982,66 @@
     }
 
     function applyCardSelection(cardOpts, cardContent, selectedId) {
+      var normalizedId = String(selectedId || '');
       var selected = null;
-      normalized.card.forEach(function (card) {
-        if (String(card.id) === String(selectedId)) selected = card;
+      _cardFundingState.cards.forEach(function (card) {
+        if (String(card.id) === normalizedId) selected = card;
       });
+      cardOpts.setAttribute('data-selected-value', selected ? normalizedId : '');
       cardOpts.querySelectorAll('el-option').forEach(function (el) {
-        if (String(el.getAttribute('value') || '') === String(selectedId)) el.setAttribute('aria-selected', 'true');
+        if (String(el.getAttribute('value') || '') === normalizedId && selected) el.setAttribute('aria-selected', 'true');
         else el.removeAttribute('aria-selected');
       });
       if (!selected) {
         setSelectedContent(cardContent, '', 'Select card');
+        _cardFundingState.selectedCardId = '';
+        _cardFundingState.fundingMethod = '';
+        _cardFundingState.fundingAmount = '';
+        renderCardFundingMethodOptions();
+        syncFundingAmountInput();
+        renderCardBalanceSummary();
         return;
       }
-      setSelectedContent(cardContent, selected.label, '');
-      setText('gp-pmc-card-name', selected.cardholderName || _payContext.row.payeeName);
-      setText('gp-pmc-card-address', selected.cardholderAddress || '--');
+      _cardFundingState.selectedCardId = String(selected.id || '');
+      cardContent.innerHTML = buildCardSelectContent(selected);
+      if (_cardFundingState.fundingMethod === 'spend_balance' && selected.currentBalance < getCurrentPayableAmountNumber()) {
+        _cardFundingState.fundingMethod = '';
+      }
+      renderCardFundingMethodOptions();
+      syncFundingAmountInput();
+      renderCardBalanceSummary();
+    }
+
+    function syncCardSendingMethodDetails() {
+      var deliveryDetails = document.getElementById('pp-card-delivery-details');
+      if (!deliveryDetails) return;
+      deliveryDetails.classList.toggle('hidden', String(_cardFundingState.sendingMethod || '') !== 'delivery_website');
+    }
+
+    function syncCardSendingMethodDetails() {
+      var deliveryDetails = document.getElementById('pp-card-delivery-details');
+      if (deliveryDetails) {
+        deliveryDetails.classList.toggle('hidden', String(_cardFundingState.sendingMethod || '') !== 'delivery_website');
+      }
     }
 
     function applyCheckSelection(checkSelContent, checkOpts, selectedId) {
+      var normalizedId = String(selectedId || '');
       var selected = null;
       normalized.check.forEach(function (entry) {
-        if (String(entry.id) === String(selectedId)) selected = entry;
+        if (String(entry.id) === normalizedId) selected = entry;
       });
+      checkOpts.setAttribute('data-selected-value', selected ? normalizedId : '');
       checkOpts.querySelectorAll('el-option').forEach(function (el) {
-        if (String(el.getAttribute('value') || '') === String(selectedId)) el.setAttribute('aria-selected', 'true');
+        if (String(el.getAttribute('value') || '') === normalizedId && selected) el.setAttribute('aria-selected', 'true');
         else el.removeAttribute('aria-selected');
       });
       if (!selected) {
         setSelectedContent(checkSelContent, '', 'Select mailing address');
+        var emptyDetails = document.getElementById('gp-pmc-check-details');
+        if (emptyDetails) emptyDetails.classList.add('hidden');
+        var emptyFields = document.getElementById('gp-pmc-check-fields');
+        if (emptyFields) emptyFields.classList.add('hidden');
         return;
       }
       checkSelContent.innerHTML = buildSelectFilledContent({
@@ -2518,7 +3095,7 @@
       subtitle: 'Fast bank-to-bank transfer',
       icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21V12.75M15.75 21V12.75M8.25 21V12.75M3 9L12 3L21 9M19.5 21V10.3325C17.0563 9.94906 14.5514 9.75 12 9.75C9.44861 9.75 6.94372 9.94906 4.5 10.3325V21M3 21H21M12 6.75H12.0075V6.7575H12V6.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>'
     });
-    if (normalized.card.length) methodItems.push({
+    if (_cardFundingState.cards.length) methodItems.push({
       id: 'card',
       label: 'Pay with a Card',
       subtitle: 'No bank account details required',
@@ -2561,11 +3138,24 @@
             bankOpts.onclick = function (ev) {
               var opt = ev.target.closest('el-option');
               if (!opt) return;
+              var optionValue = String(opt.getAttribute('value') || '');
+              var currentValue = String(bankOpts.getAttribute('data-selected-value') || '');
+              if (currentValue && optionValue === currentValue) {
+                applyBankRecipientSelection(
+                  accounts,
+                  bankSelContent,
+                  bankOpts,
+                  '',
+                  item.id === 'wire' ? 'Select wire destination' : 'Select bank account'
+                );
+                updatePayStepStates();
+                return;
+              }
               applyBankRecipientSelection(
                 accounts,
                 bankSelContent,
                 bankOpts,
-                opt.getAttribute('value'),
+                optionValue,
                 item.id === 'wire' ? 'Select wire destination' : 'Select bank account'
               );
               updatePayStepStates();
@@ -2593,22 +3183,111 @@
           var cardSel = document.getElementById('pp-pay-card-select');
           var cardContent = document.getElementById('pp-pay-card-selected');
           var cardOpts = document.getElementById('pp-pay-card-options');
+          var fundingInput = document.getElementById('pp-card-funding-amount');
+          var createdLabel = document.getElementById('pp-card-created-label');
+          var sourceInputs = cardPanel.querySelectorAll('input[name="pp-card-source"]');
+          var cardDeliveryContacts = collectSmartDisburseContacts([].concat(normalized.smartExchange || [], normalized.smartDisburse || []));
+          var cardDeliveryApi = initCardDeliveryTypeahead(cardDeliveryContacts);
           if (cardSel && cardContent && cardOpts) {
-            cardOpts.innerHTML = normalized.card.map(function (c) {
-              return buildSimpleOptionHtml(c.id, c.label, '');
+            _cardFundingState.cardSource = (savedState && savedState.methodId === 'card' && savedState.cardId)
+              ? 'existing'
+              : '';
+            _cardFundingState.sendingMethod = (savedState && savedState.methodId === 'card' && savedState.cardSendingMethod)
+              ? (String(savedState.cardSendingMethod) === 'display_details' ? 'on_file' : String(savedState.cardSendingMethod))
+              : (!isReadyToPay ? 'on_file' : 'on_file');
+            _cardFundingState.fundingMethod = (savedState && savedState.methodId === 'card' && savedState.cardFundingMethod)
+              ? String(savedState.cardFundingMethod).replace('match_payment', 'add_funds')
+              : (!isReadyToPay ? 'add_funds' : '');
+            _cardFundingState.fundingAmount = (savedState && savedState.methodId === 'card' && savedState.cardFundingAmount)
+              ? String(savedState.cardFundingAmount)
+              : (!isReadyToPay ? formatMoneyInputValue(getCurrentPayableAmountNumber()) : '');
+            cardOpts.innerHTML = _cardFundingState.cards.map(function (card) {
+              return buildCardOptionHtml(card);
             }).join('');
             setSelectedContent(cardContent, '', 'Select card');
             cardOpts.onclick = function (ev) {
               var opt = ev.target.closest('el-option');
               if (!opt) return;
-              applyCardSelection(cardOpts, cardContent, opt.getAttribute('value'));
+              var optionValue = String(opt.getAttribute('value') || '');
+              var currentValue = String(cardOpts.getAttribute('data-selected-value') || '');
+              if (currentValue && optionValue === currentValue) {
+                applyCardSelection(cardOpts, cardContent, '');
+                updatePayStepStates();
+                return;
+              }
+              applyCardSelection(cardOpts, cardContent, optionValue);
               updatePayStepStates();
             };
+            sourceInputs.forEach(function (input) {
+              input.checked = input.value === _cardFundingState.cardSource;
+              input.onchange = function () {
+                if (!input.checked) return;
+                _cardFundingState.cardSource = String(input.value || '');
+                _cardFundingState.selectedCardId = '';
+                _cardFundingState.fundingMethod = '';
+                _cardFundingState.fundingAmount = '';
+                setSelectedContent(cardContent, '', 'Select card');
+                if (_cardFundingState.cardSource === 'new') {
+                  var createdCard = createNewVirtualCard();
+                  cardOpts.innerHTML = _cardFundingState.cards.map(function (card) {
+                    return buildCardOptionHtml(card);
+                  }).join('');
+                  if (createdLabel) createdLabel.textContent = getCardDisplayLabel(createdCard);
+                  applyCardSelection(cardOpts, cardContent, createdCard.id);
+                } else if (createdLabel) {
+                  createdLabel.textContent = '--';
+                }
+                syncCardProgressiveReveal();
+                updatePayStepStates();
+              };
+            });
+            var sendingInputs = cardPanel.querySelectorAll('input[name="pp-card-sending-method"]');
+            sendingInputs.forEach(function (input) {
+              input.checked = String(input.value || '') === _cardFundingState.sendingMethod;
+              input.onchange = function () {
+                if (input.checked) {
+                  _cardFundingState.sendingMethod = String(input.value || 'on_file');
+                  syncCardSendingMethodDetails();
+                  updatePayStepStates();
+                }
+              };
+            });
+            syncCardSendingMethodDetails();
+            var savedDeliveryTokens = savedState && savedState.methodId === 'card' && Array.isArray(savedState.cardDeliveryTokens)
+              ? savedState.cardDeliveryTokens
+              : [];
+            if (cardDeliveryApi) {
+              cardDeliveryApi.setTokens(savedDeliveryTokens);
+            }
+            if (fundingInput) {
+              fundingInput.oninput = function () {
+                _cardFundingState.fundingAmount = String(fundingInput.value || '').replace(/[^0-9.]/g, '');
+                renderCardBalanceSummary();
+                updatePayStepStates();
+              };
+              fundingInput.onblur = function () {
+                if (_cardFundingState.fundingMethod !== 'spend_balance') {
+                  _cardFundingState.fundingAmount = formatMoneyInputValue(parseMoneyInput(fundingInput.value));
+                  fundingInput.value = _cardFundingState.fundingAmount;
+                  renderCardBalanceSummary();
+                  updatePayStepStates();
+                }
+              };
+            }
+            renderCardFundingMethodOptions();
+            syncFundingAmountInput();
+            renderCardBalanceSummary();
             var cardSelectionId = savedState && savedState.methodId === 'card' && savedState.cardId
               ? savedState.cardId
-              : String(((getDeterministicListItem(normalized.card, row, 43) || {}).id) || '');
+              : (!isReadyToPay ? String(((getDeterministicListItem(_cardFundingState.cards, row, 43) || {}).id) || '') : '');
             if (cardSelectionId) {
+              _cardFundingState.cardSource = 'existing';
+              sourceInputs.forEach(function (input) {
+                input.checked = input.value === 'existing';
+              });
               applyCardSelection(cardOpts, cardContent, cardSelectionId);
+            } else {
+              syncCardProgressiveReveal();
             }
           }
           updatePayStepStates();
@@ -2629,7 +3308,14 @@
             checkOpts.onclick = function (ev) {
               var opt = ev.target.closest('el-option');
               if (!opt) return;
-              applyCheckSelection(checkSelContent, checkOpts, opt.getAttribute('value'));
+              var optionValue = String(opt.getAttribute('value') || '');
+              var currentValue = String(checkOpts.getAttribute('data-selected-value') || '');
+              if (currentValue && optionValue === currentValue) {
+                applyCheckSelection(checkSelContent, checkOpts, '');
+                updatePayStepStates();
+                return;
+              }
+              applyCheckSelection(checkSelContent, checkOpts, optionValue);
               updatePayStepStates();
             };
             var checkSelectionId = savedState && savedState.methodId === 'check' && savedState.checkAddressId
@@ -2695,7 +3381,7 @@
 
     var desiredMethodId = savedState && savedState.methodId
       ? String(savedState.methodId)
-      : String(inferRowMethodType(row) || '');
+      : (isReadyToPay ? '' : String(inferRowMethodType(row) || ''));
     var hasDesiredMethod = false;
     for (var methodIdx = 0; methodIdx < methodItems.length; methodIdx += 1) {
       if (String(methodItems[methodIdx].id) === desiredMethodId) {
@@ -2703,14 +3389,14 @@
         break;
       }
     }
-    if (!hasDesiredMethod) {
+    if (!hasDesiredMethod && desiredMethodId) {
       desiredMethodId = methodItems.length
         ? String(methodItems[getRowSeed(row) % methodItems.length].id)
         : '';
     }
 
     hideAllPaymentMethodPanels();
-    applyMethod(desiredMethodId);
+    if (desiredMethodId) applyMethod(desiredMethodId);
     updatePayStepStates();
   }
 
@@ -2890,13 +3576,15 @@
     var selectEl = document.getElementById('pp-orig-bank-select');
     var optionsEl = document.getElementById('pp-orig-bank-options');
     var selectedEl = document.getElementById('pp-orig-bank-selected');
-    var savedState = getSavedPayPageState(row) || buildFallbackOriginationState(row, list);
+    var isReadyToPay = String((row && row.status) || '').toLowerCase() === 'ready_to_pay';
+    var savedState = getSavedPayPageState(row) || (!isReadyToPay ? buildFallbackOriginationState(row, list) : null);
     if (!selectEl || !optionsEl || !selectedEl) return;
 
     optionsEl.innerHTML = list.map(buildBankOptionHtml).join('');
 
     function resetSelection() {
       selectedEl.innerHTML = '<span class="truncate text-gray-400 dark:text-gray-500">Select origination account</span>';
+      optionsEl.setAttribute('data-selected-value', '');
       optionsEl.querySelectorAll('el-option').forEach(function (opt) {
         opt.removeAttribute('aria-selected');
       });
@@ -2916,6 +3604,7 @@
         resetSelection();
         return;
       }
+      optionsEl.setAttribute('data-selected-value', String(selected.id || ''));
       selectedEl.innerHTML = buildSelectedBankContent(selected);
       setOriginationDetails(selected);
       optionsEl.querySelectorAll('el-option').forEach(function (opt) {
@@ -2928,7 +3617,13 @@
     optionsEl.addEventListener('click', function (event) {
       var option = event.target.closest('el-option');
       if (!option) return;
-      applySelection(option.getAttribute('value'));
+      var optionValue = String(option.getAttribute('value') || '');
+      var currentValue = String(optionsEl.getAttribute('data-selected-value') || '');
+      if (currentValue && optionValue === currentValue) {
+        resetSelection();
+        return;
+      }
+      applySelection(optionValue);
     });
 
     if (savedState && savedState.originationAccountId) {
@@ -3254,6 +3949,7 @@
       loadJsonWithFallbacks(PAYMENT_PREFERENCES_DATA_PATHS).catch(function () { return null; }),
       loadJsonWithFallbacks(BANK_ACCOUNTS_PATHS).catch(function () { return null; }),
       loadJsonWithFallbacks(CHECK_ADDRESSES_PATHS).catch(function () { return []; }),
+      loadJsonWithFallbacks(CARDS_DATA_PATHS).catch(function () { return []; }),
     ])
       .then(function (results) {
         var payload = results[0];
@@ -3261,6 +3957,7 @@
         var prefs = results[2];
         var banksFallback = results[3];
         var checkAddresses = results[4];
+        var cardsPayload = results[5];
         var payeesList = getPayeesArray(payeesPayload);
         var rows = normalizePayableRowsForPage(applyStoredPayableOverrides((payload && payload.data) || []), payeesList);
         var row = applyStoredPayPageViewContext(findSelectedPayable(rows, params), params);
@@ -3269,7 +3966,7 @@
         var bankAccounts = (prefs && Array.isArray(prefs.bankAccounts) ? prefs.bankAccounts : null) || (Array.isArray(banksFallback) ? banksFallback : []);
         applyConfirmedScheduleDate(getScheduledPaymentDateIso(row));
         initOriginationAccountSelector(bankAccounts, row);
-        initPaymentMethodFlow(payeesList, row, bankAccounts, Array.isArray(checkAddresses) ? checkAddresses : []);
+        initPaymentMethodFlow(payeesList, row, bankAccounts, Array.isArray(checkAddresses) ? checkAddresses : [], cardsPayload);
         updatePayStepStates();
         applyConfirmedPayPageReadOnlyState(row);
       })
@@ -3282,7 +3979,7 @@
         setStatusBadge('ready_to_pay', 'Unprocessed');
         applyConfirmedScheduleDate('');
         initOriginationAccountSelector([], null);
-        initPaymentMethodFlow([], null, [], []);
+        initPaymentMethodFlow([], null, [], [], []);
         updatePayStepStates();
         applyConfirmedPayPageReadOnlyState(null);
       });

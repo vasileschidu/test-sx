@@ -24,6 +24,7 @@
   var TAB_SWITCH_SKELETON_MS = 500;
   var INITIAL_TABLE_SKELETON_MS = 500;
   var MANUAL_REFRESH_SKELETON_MS = 1000;
+  var SEARCH_SKELETON_MS = 200;
 
   var TAB_LABELS = {
     ready_to_pay: 'Ready to Pay',
@@ -94,6 +95,7 @@
     pageSize: DEFAULT_PAGE_SIZE,
     isTabLoading: false,
     isInitialLoading: false,
+    isSearchLoading: false,
     payeesById: {},
     payeesByName: {},
   };
@@ -103,6 +105,7 @@
   var syncFilterUi = function () {};
   var tabLoadingTimer = null;
   var initialLoadingTimer = null;
+  var searchLoadingTimer = null;
   var refreshHalfTurns = 0;
   var pendingScheduleCancelId = '';
   var ICON_SORT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-70" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-70" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
@@ -472,15 +475,31 @@
   function matchesSearch(row, query) {
     if (!query) return true;
     var q = query.toLowerCase();
+    var billNumber = String(row.billNumber || '').trim();
+    var normalizedBillNumber = billNumber.replace(/^#/, '');
     var haystack = [
-      row.billNumber,
+      billNumber,
+      normalizedBillNumber,
+      normalizedBillNumber ? '#' + normalizedBillNumber : '',
       row.payeeName,
       row.source,
+      row.paymentMethod,
+      row.paymentMethodType,
       row.statusLabel || STATUS_LABELS[row.status] || row.status,
       String(row.amount),
       row.id,
     ].join(' ').toLowerCase();
     return haystack.indexOf(q) !== -1;
+  }
+
+  function buildEmptyStateRow(colspan, title, description) {
+    return '<tr><td colspan="' + colspan + '" class="px-0 py-4">' +
+      '<div class="flex w-full flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-gray-50/80 px-6 py-8 text-center dark:border-white/10 dark:bg-white/5">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-gray-400 dark:text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>' +
+        '<h3 class="mt-3 text-sm font-semibold text-gray-900 dark:text-white">' + escapeHtml(title) + '</h3>' +
+        '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(description) + '</p>' +
+      '</div>' +
+    '</td></tr>';
   }
 
   function matchesFilters(row) {
@@ -1432,7 +1451,7 @@
   function renderTable() {
     if (!refs.table) return;
     var renderColumns = getRenderableColumns();
-    if (state.isTabLoading || state.isInitialLoading) {
+    if (state.isTabLoading || state.isInitialLoading || state.isSearchLoading) {
       renderTableSkeleton(renderColumns);
       return;
     }
@@ -1592,7 +1611,11 @@
     }).join('');
 
     if (!bodyRows) {
-      bodyRows = '<tr><td colspan="' + renderColumns.length + '" class="px-4 py-12 text-center text-sm text-gray-500 dark:text-gray-400">No payables found for the current filters.</td></tr>';
+      bodyRows = buildEmptyStateRow(
+        renderColumns.length,
+        'No payables found',
+        'Try a different search or adjust the active filters to find matching bills.'
+      );
     }
 
     refs.table.innerHTML = headerHtml + '<tbody class="bg-white dark:bg-gray-900">' + bodyRows + '</tbody>';
@@ -1786,7 +1809,14 @@
       refs.searchInput.addEventListener('input', function (e) {
         state.search = String(e.target.value || '').trim();
         state.currentPage = 1;
+        state.isSearchLoading = true;
+        if (searchLoadingTimer) clearTimeout(searchLoadingTimer);
         renderTable();
+        searchLoadingTimer = setTimeout(function () {
+          state.isSearchLoading = false;
+          searchLoadingTimer = null;
+          renderTable();
+        }, SEARCH_SKELETON_MS);
       });
     }
 

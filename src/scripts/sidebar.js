@@ -31,6 +31,8 @@ function toggleRow(rowId) {
 
 /* ===== Desktop Sidebar State ===== */
 
+const DESKTOP_SIDEBAR_COLLAPSED_STORAGE_KEY = 'dashboard-sidebar-collapsed-v1';
+
 const desktopSidebarShell = document.getElementById('desktop-sidebar-shell');
 const desktopSidebarPanel = document.getElementById('desktop-sidebar-panel');
 const desktopSidebarToggle = document.getElementById('desktop-sidebar-toggle');
@@ -84,6 +86,20 @@ function prepareDesktopNavLabels() {
  */
 function isDesktopSidebarCollapsed() {
     return Boolean(desktopSidebarShell && desktopSidebarShell.classList.contains('is-collapsed'));
+}
+
+function loadDesktopSidebarCollapsedPreference() {
+    try {
+        return localStorage.getItem(DESKTOP_SIDEBAR_COLLAPSED_STORAGE_KEY) === 'true';
+    } catch (error) {
+        return false;
+    }
+}
+
+function saveDesktopSidebarCollapsedPreference(collapsed) {
+    try {
+        localStorage.setItem(DESKTOP_SIDEBAR_COLLAPSED_STORAGE_KEY, collapsed ? 'true' : 'false');
+    } catch (error) {}
 }
 
 /**
@@ -166,6 +182,7 @@ function setDesktopSidebarCollapsed(collapsed) {
 
     if (collapsed) closeAllDesktopSubmenus();
     hideNavTooltip();
+    saveDesktopSidebarCollapsedPreference(collapsed);
 }
 
 /* ===== Submenu Toggle ===== */
@@ -296,6 +313,7 @@ if (desktopSidebarToggle) {
 }
 
 prepareDesktopNavLabels();
+setDesktopSidebarCollapsed(loadDesktopSidebarCollapsedPreference());
 
 /**
  * Normalizes active nav item styles on initial page load.

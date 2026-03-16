@@ -65,6 +65,7 @@
   var TAB_SWITCH_SKELETON_MS = 500;
   var INITIAL_TABLE_SKELETON_MS = 500;
   var MANUAL_REFRESH_SKELETON_MS = 1000;
+  var SEARCH_SKELETON_MS = 200;
 
   // Suppress history.pushState when responding to a popstate event
   var _suppressUrlUpdate = false;
@@ -101,12 +102,17 @@
     active: false,
     timer: null,
   };
+  var searchLoadingState = {
+    active: false,
+    timer: null,
+  };
   var manualRefreshHalfTurns = 0;
   var sortState = {
     key: '',
     direction: '', // '', 'asc', 'desc'
   };
   var tableFilterState = {
+    search: '',
     selectedCustomers: new Set(),
     selectedStatuses: new Set(),
     selectedMethods: new Set(),
@@ -360,6 +366,18 @@
 
   function applyTableFilters(entries) {
     var list = Array.isArray(entries) ? entries.slice() : [];
+    var search = String(tableFilterState.search || '').trim().toLowerCase();
+    if (search) {
+      list = list.filter(function (entry) {
+        var vendorEntry = String(entry && entry.vendorEntry || '').toLowerCase();
+        var invoice = String(entry && entry.invoice || '').toLowerCase();
+        var customer = String(entry && entry.customer || '').toLowerCase();
+        return vendorEntry.indexOf(search) !== -1 ||
+          invoice.indexOf(search) !== -1 ||
+          ('#' + invoice).indexOf(search) !== -1 ||
+          customer.indexOf(search) !== -1;
+      });
+    }
     if (tableFilterState.selectedCustomers.size) {
       list = list.filter(function (entry) {
         return tableFilterState.selectedCustomers.has(String(entry && entry.customer || ''));
@@ -735,10 +753,7 @@
 
     if (_activeTableTabKey === 'pending' && isPendingLikeStatus(entry.status) && (isCard || isAch)) {
       var pendingItemsHtml =
-        '<a href="#" data-mark-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Mark as paid (manual)</a>' +
-        (isCard
-          ? '<a href="#" data-view-details-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>'
-          : '<span aria-disabled="true" class="block cursor-not-allowed px-3 py-1.5 text-sm whitespace-nowrap text-gray-400 dark:text-gray-500">View details</span>');
+        '<a href="#" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>';
       return '<el-dropdown class="inline-block">' +
         '<button data-action-menu-trigger="true" class="flex items-center justify-center rounded-sm bg-white p-1 text-gray-500 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:hover:text-gray-300">' +
           '<span class="sr-only">Open options</span>' +
@@ -753,13 +768,8 @@
     }
 
     // 3-dot dropdown for ACH / Card
-    var defaultItemsHtml = isAch
-      ? '<span aria-disabled="true" class="block cursor-not-allowed px-3 py-1.5 text-sm whitespace-nowrap text-gray-400 dark:text-gray-500">View details</span>'
-      : (
-        '<a href="#" data-view-details-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>' +
-        '<a href="#" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Edit payment</a>' +
-        '<a href="#" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">Cancel</a>'
-      );
+    var defaultItemsHtml =
+      '<a href="#" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>';
     return '<el-dropdown class="inline-block">' +
       '<button data-action-menu-trigger="true" class="flex items-center justify-center rounded-sm bg-white p-1 text-gray-500 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:hover:text-gray-300">' +
         '<span class="sr-only">Open options</span>' +
@@ -1439,8 +1449,12 @@
     return (
       '<tbody class="' + CLASS_NAMES.tbody + '">' +
         '<tr>' +
-          '<td colspan="' + colspan + '" class="px-4 py-10 text-center text-sm text-gray-500 dark:text-gray-400">' +
-            'No exchange records available.' +
+          '<td colspan="' + colspan + '" class="px-0 py-4">' +
+            '<div class="flex w-full flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-gray-50/80 px-6 py-8 text-center dark:border-white/10 dark:bg-white/5">' +
+              '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-gray-400 dark:text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>' +
+              '<h3 class="mt-3 text-sm font-semibold text-gray-900 dark:text-white">No exchange records found</h3>' +
+              '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Try a different search or adjust the active filters to see matching invoices.</p>' +
+            '</div>' +
           '</td>' +
         '</tr>' +
       '</tbody>'
@@ -1842,6 +1856,27 @@
           window.showGlobalTopToast("Data synced. You're up to date.");
         }
       }, MANUAL_REFRESH_SKELETON_MS);
+    });
+  }
+
+  function initTableSearchInput() {
+    var input = document.getElementById('sx-table-search-input');
+    if (!input) return;
+    input.value = tableFilterState.search || '';
+    input.addEventListener('input', function () {
+      if (tabSwitchLoadingState.active || initialTableLoadingState.active) return;
+      tableFilterState.search = String(input.value || '');
+      if (searchLoadingState.timer) {
+        clearTimeout(searchLoadingState.timer);
+        searchLoadingState.timer = null;
+      }
+      searchLoadingState.active = true;
+      renderTabSwitchSkeleton();
+      searchLoadingState.timer = window.setTimeout(function () {
+        searchLoadingState.active = false;
+        searchLoadingState.timer = null;
+        refreshTableForActiveTab({ forceTableShell: true });
+      }, SEARCH_SKELETON_MS);
     });
   }
 
@@ -2887,7 +2922,7 @@
   }
 
   function refreshTableForActiveTab(options) {
-    if (tabSwitchLoadingState.active || initialTableLoadingState.active) return;
+    if (tabSwitchLoadingState.active || initialTableLoadingState.active || searchLoadingState.active) return;
     var forceTableShell = !!(options && options.forceTableShell);
     var filtered = getVisibleEntriesForActiveTab();
     paginationState.allEntries = filtered;
@@ -5863,6 +5898,7 @@
     initSubmitSuccessModalCopy();
     initCardDetailsDialogGuards();
     initTableRefreshButton();
+    initTableSearchInput();
     var shouldOpenActionGuide = shouldShowActionColumnGuide();
     if (shouldOpenActionGuide) removeGuideUrlParam();
 
