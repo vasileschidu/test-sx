@@ -35,9 +35,16 @@
     '/src/data/cards.json',
     './src/data/cards.json',
   ];
+  var PUBLIC_RUNTIME_CONFIG_PATHS = [
+    '../../../src/data/public-runtime-config.json',
+    '/src/data/public-runtime-config.json',
+    './src/data/public-runtime-config.json',
+  ];
   var PAYABLE_ROW_OVERRIDES_STORAGE_KEY = 'bp-row-overrides-v1';
   var PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY = 'bp-pay-page-view-context-v1';
   var PAYABLE_CARDS_STORAGE_KEY = 'bp-cards-dataset-v1';
+  var TOKEN_SERVICE_CONFIG_STORAGE_KEY = 'sd-sx-token-test-config-v1';
+  var _tokenServiceConfigPromise = null;
   var _origDetailsState = {
     account: null,
     expanded: false,
@@ -67,6 +74,10 @@
     fundingMethod: '',
     fundingAmount: '',
     sendingMethod: 'on_file',
+  };
+  var _smartTestEmailState = {
+    smart_disburse: { sending: false },
+    smart_exchange: { sending: false },
   };
   var STEP_BADGE_NUMBER_CLASS =
     'inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300';
@@ -1361,6 +1372,8 @@
     var scheduleBtn = document.getElementById('pp-schedule-simple-btn') || document.getElementById('pp-schedule-chip-date-btn');
     if (payBtn) payBtn.disabled = !canSubmit;
     if (scheduleBtn) scheduleBtn.disabled = false;
+    updateSmartTestEmailUi('smart_disburse');
+    updateSmartTestEmailUi('smart_exchange');
 
     if (isConfirmedPayableRow(_payContext.row)) {
       applyConfirmedPayPageReadOnlyState(_payContext.row);
@@ -1825,6 +1838,201 @@
       if (label && value && label !== value) return label + ' · ' + value;
       return value || label;
     }).filter(Boolean);
+  }
+
+  function normalizeServiceBaseUrl(value) {
+    return String(value || '').trim().replace(/\/+$/, '');
+  }
+
+  function getStoredTokenServiceConfig() {
+    try {
+      var raw = window.localStorage.getItem(TOKEN_SERVICE_CONFIG_STORAGE_KEY);
+      return raw ? JSON.parse(raw) : {};
+    } catch (err) {
+      return {};
+    }
+  }
+
+  function getTokenServiceConfig() {
+    if (!_tokenServiceConfigPromise) {
+      _tokenServiceConfigPromise = loadJsonWithFallbacks(PUBLIC_RUNTIME_CONFIG_PATHS)
+        .catch(function () { return {}; })
+        .then(function (runtimeConfig) {
+          var storedConfig = getStoredTokenServiceConfig();
+          return {
+            tokenServiceBaseUrl: normalizeServiceBaseUrl(
+              (storedConfig && storedConfig.tokenServiceBaseUrl) ||
+              (runtimeConfig && runtimeConfig.tokenServiceBaseUrl) ||
+              ''
+            )
+          };
+        });
+    }
+    return _tokenServiceConfigPromise;
+  }
+
+  function isValidEmailAddress(value) {
+    var email = String(value || '').trim();
+    if (!email) return false;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  }
+
+  function getSmartTestEmailUi(methodId) {
+    if (methodId === 'smart_disburse') {
+      return {
+        buttonId: 'pp-smart-disburse-send-test-email-btn',
+        helpId: 'pp-smart-disburse-send-test-email-help',
+        resultId: 'pp-smart-disburse-send-test-email-result',
+        flow: 'sd',
+        label: 'SMART Disburse'
+      };
+    }
+    if (methodId === 'smart_exchange') {
+      return {
+        buttonId: 'pp-smart-exchange-send-test-email-btn',
+        helpId: 'pp-smart-exchange-send-test-email-help',
+        resultId: 'pp-smart-exchange-send-test-email-result',
+        flow: 'sx',
+        label: 'SMART Exchange'
+      };
+    }
+    return null;
+  }
+
+  function getSmartTestEmailDestination(methodId) {
+    var isDisburse = methodId === 'smart_disburse';
+    var isExchange = methodId === 'smart_exchange';
+    if (!isDisburse && !isExchange) return null;
+    var tokens = getSelectedDestinationTokens(
+      isDisburse ? 'pp-smart-disburse-contact-tokens' : 'pp-smart-exchange-contact-tokens',
+      isDisburse ? 'pp-smart-disburse-contact-input' : 'pp-smart-exchange-contact-input'
+    );
+    for (var i = 0; i < tokens.length; i += 1) {
+      var token = tokens[i];
+      var value = String((token && token.value) || '').trim();
+      if (!isValidEmailAddress(value)) continue;
+      return {
+        email: value,
+        label: String((token && token.label) || (_payContext.row && _payContext.row.payeeName) || 'Payee').trim()
+      };
+    }
+    return null;
+  }
+
+  function setSmartTestEmailResult(methodId, type, lines) {
+    var config = getSmartTestEmailUi(methodId);
+    if (!config) return;
+    var resultEl = document.getElementById(config.resultId);
+    if (!resultEl) return;
+    var palette = {
+      success: 'border-green-200 bg-green-50 text-green-800 dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-200',
+      error: 'border-red-200 bg-red-50 text-red-800 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-200',
+      info: 'border-blue-200 bg-blue-50 text-blue-800 dark:border-blue-500/30 dark:bg-blue-500/10 dark:text-blue-200'
+    };
+    resultEl.className = 'mt-3 rounded-md border px-3 py-2 text-sm ' + (palette[type] || palette.info);
+    resultEl.innerHTML = (Array.isArray(lines) ? lines : [String(lines || '')])
+      .filter(Boolean)
+      .map(function (line) { return '<p>' + String(line) + '</p>'; })
+      .join('');
+    resultEl.classList.remove('hidden');
+  }
+
+  function updateSmartTestEmailUi(methodId) {
+    var config = getSmartTestEmailUi(methodId);
+    if (!config) return;
+    var button = document.getElementById(config.buttonId);
+    var help = document.getElementById(config.helpId);
+    if (!button || !help) return;
+    var state = _smartTestEmailState[methodId] || { sending: false };
+    var selectedMethod = getSelectedOptionValueByOptionsId('pp-pay-method-options');
+    var destination = getSmartTestEmailDestination(methodId);
+    var isConfirmed = isConfirmedPayableRow(_payContext.row);
+    var isActive = selectedMethod === methodId;
+    button.disabled = !isActive || !destination || isConfirmed || !!state.sending;
+    button.textContent = state.sending ? 'Sending...' : 'Send test email';
+    if (isConfirmed) {
+      help.textContent = 'Test email sending is available before the payment is confirmed.';
+    } else if (state.sending) {
+      help.textContent = 'Sending test email request...';
+    } else if (destination) {
+      help.textContent = 'Send a test token email to ' + destination.email + '.';
+    } else {
+      help.textContent = 'Enter one valid email destination to send a test token.';
+    }
+  }
+
+  function bindSmartTestEmailButton(methodId) {
+    var config = getSmartTestEmailUi(methodId);
+    if (!config) return;
+    var button = document.getElementById(config.buttonId);
+    if (!button) return;
+    button.onclick = function () {
+      var destination = getSmartTestEmailDestination(methodId);
+      if (!destination) {
+        setSmartTestEmailResult(methodId, 'error', 'Enter one valid email destination before sending a test email.');
+        updateSmartTestEmailUi(methodId);
+        return;
+      }
+
+      _smartTestEmailState[methodId].sending = true;
+      updateSmartTestEmailUi(methodId);
+
+      getTokenServiceConfig()
+        .then(function (serviceConfig) {
+          var baseUrl = normalizeServiceBaseUrl(serviceConfig && serviceConfig.tokenServiceBaseUrl);
+          if (!baseUrl) throw new Error('Token service is not configured for this environment.');
+          return fetch(baseUrl + '/send-test-token', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              flow: config.flow,
+              email: destination.email,
+              recipientName: destination.label,
+              sandbox: false
+            })
+          });
+        })
+        .then(function (response) {
+          return response.json()
+            .catch(function () { return {}; })
+            .then(function (payload) {
+              if (!response.ok || payload.ok === false) {
+                throw new Error(payload.error || ('Request failed with ' + response.status));
+              }
+              return payload;
+            });
+        })
+        .then(function (payload) {
+          var lines = [
+            config.label + ' test email request accepted.',
+            'Recipient: ' + escapeHtml(payload.email || destination.email)
+          ];
+          if (payload.delivery === 'preview_only' || payload.mode === 'sandbox') {
+            lines.push('Live email sending is not enabled for this environment yet. A preview link was generated instead.');
+          } else {
+            lines.push('Test email sent successfully.');
+          }
+          if (payload.previewUrl) {
+            lines.push('Preview link: <a class="font-medium underline" href="' + escapeHtml(payload.previewUrl) + '" target="_blank" rel="noreferrer">Open verification page</a>');
+          }
+          setSmartTestEmailResult(methodId, 'success', lines);
+          if (typeof window.showGlobalTopToast === 'function') {
+            window.showGlobalTopToast(payload.delivery === 'preview_only' || payload.mode === 'sandbox'
+              ? (config.label + ' preview link generated for ' + (payload.email || destination.email))
+              : (config.label + ' test email sent to ' + (payload.email || destination.email)));
+          }
+        })
+        .catch(function (error) {
+          setSmartTestEmailResult(methodId, 'error', error && error.message ? error.message : 'Failed to send test email.');
+          if (typeof window.showGlobalTopToast === 'function') {
+            window.showGlobalTopToast('Failed to send ' + config.label + ' test email');
+          }
+        })
+        .finally(function () {
+          _smartTestEmailState[methodId].sending = false;
+          updateSmartTestEmailUi(methodId);
+        });
+    };
   }
 
   function getCurrentSmartRecipientDetails(methodId) {
@@ -2382,6 +2590,7 @@
       scheduled: 'bg-gray-200 ring-1 ring-gray-400/40 dark:bg-white/15 dark:ring-white/20',
       pending: 'bg-yellow-100 ring-1 ring-yellow-700/40 dark:bg-yellow-400/15 dark:ring-yellow-400/30',
       success: 'bg-green-100 ring-1 ring-green-700/40 dark:bg-green-400/15 dark:ring-green-400/30',
+      completed: 'bg-green-100 ring-1 ring-green-700/40 dark:bg-green-400/15 dark:ring-green-400/30',
       failed: 'bg-red-100 ring-1 ring-red-700/40 dark:bg-red-400/15 dark:ring-red-400/30',
       event: 'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
     };
@@ -2398,6 +2607,7 @@
         '</div>' +
         '<div class="flex flex-col gap-1 pb-6">' +
           '<p class="text-base font-medium text-gray-900 dark:text-white">' + escapeHtml((item && item.title) || '') + '</p>' +
+          ((item && item.dateLabel) ? '<p class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">' + escapeHtml(item.dateLabel) + '</p>' : '') +
           '<p class="text-sm text-gray-700 dark:text-gray-300">' + escapeHtml((item && item.description) || '') + '</p>' +
         '</div>' +
       '</div>'
@@ -2407,7 +2617,7 @@
   function renderPayPageActivityLog(row) {
     var content = document.getElementById('gp-activity-content');
     if (!content) return;
-    var log = row && row.details && Array.isArray(row.details.activityLog) ? row.details.activityLog : [];
+    var log = typeof window.getActivityLog === 'function' ? window.getActivityLog(row) : [];
     if (!log.length) {
       content.innerHTML =
         '<div class="rounded-lg border border-dashed border-gray-300 bg-gray-50/70 px-4 py-5 text-center dark:border-white/15 dark:bg-white/5">' +
@@ -3392,6 +3602,8 @@
       row,
       getSavedPayPageState(row) || (!isReadyToPay ? buildFallbackPaidPayPageState(row, normalized, fallbackBanks) : null)
     );
+    bindSmartTestEmailButton('smart_disburse');
+    bindSmartTestEmailButton('smart_exchange');
 
     function applyBankRecipientSelection(accounts, bankSelContent, bankOpts, selectedId, placeholder) {
       var normalizedId = String(selectedId || '');
