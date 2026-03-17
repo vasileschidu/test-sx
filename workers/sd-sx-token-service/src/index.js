@@ -85,15 +85,58 @@ async function sha256(value) {
     .join('');
 }
 
-function buildEmailHtml({ flow, token, verifyUrl }) {
+function getRecipientGreeting(name, email) {
+  const trimmedName = String(name || '').trim();
+  if (trimmedName) return trimmedName;
+  const normalizedEmail = normalizeEmail(email);
+  if (!normalizedEmail || normalizedEmail.indexOf('@') === -1) return 'there';
+  const localPart = normalizedEmail.split('@')[0].replace(/[._-]+/g, ' ').trim();
+  if (!localPart) return 'there';
+  return localPart.replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function buildOnboardingUrl(baseUrl, flow, email) {
+  const rawBaseUrl = String(baseUrl || '').trim();
+  if (!rawBaseUrl) return '';
+
+  try {
+    const url = new URL(rawBaseUrl);
+    if (/\/src\/pages\/tools\/[^/]+$/i.test(url.pathname)) {
+      url.pathname = url.pathname.replace(/\/src\/pages\/tools\/[^/]+$/i, '/src/pages/onboarding/index.html');
+    } else if (/\/src\/pages\/onboarding\/[^/]+$/i.test(url.pathname)) {
+      url.pathname = url.pathname.replace(/\/src\/pages\/onboarding\/[^/]+$/i, '/src/pages/onboarding/index.html');
+    } else {
+      url.pathname = url.pathname.replace(/\/+$/, '') + '/src/pages/onboarding/index.html';
+    }
+    url.search = '';
+    url.searchParams.set('flow', flow);
+    if (email) url.searchParams.set('email', email);
+    return url.toString();
+  } catch (error) {
+    return '';
+  }
+}
+
+function buildEmailHtml({ flow, token, verifyUrl, onboardingUrl, recipientName, email }) {
   const title = FLOW_LABELS[flow] || flow.toUpperCase();
+  const greeting = getRecipientGreeting(recipientName, email);
+  const onboardingButton = onboardingUrl
+    ? `<p style="margin:0 0 12px;"><a href="${onboardingUrl}" style="display:inline-block;padding:12px 16px;border-radius:12px;background:#111827;color:#fff;text-decoration:none;font-weight:600;">Start onboarding</a></p>`
+    : '';
+  const onboardingText = onboardingUrl
+    ? `<p style="margin:0 0 12px;">To continue, start the onboarding flow here:</p>
+      <p style="margin:0 0 20px;word-break:break-all;"><a href="${onboardingUrl}" style="color:#2563eb;text-decoration:underline;">${onboardingUrl}</a></p>`
+    : '';
   return `
     <div style="font-family:Inter,Arial,sans-serif;line-height:1.6;color:#111827;padding:24px;">
       <p style="margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#2563eb;">Test Mode</p>
       <h1 style="margin:0 0 16px;font-size:24px;line-height:1.2;">${title} test token</h1>
-      <p style="margin:0 0 12px;">Use the token below to test the ${title} email flow.</p>
+      <p style="margin:0 0 12px;">Hi ${greeting},</p>
+      <p style="margin:0 0 12px;">You have received a ${title} payment invitation. Use the onboarding link below to get started, then use your token to continue the test flow.</p>
+      ${onboardingButton}
       <p style="margin:0 0 20px;padding:12px 16px;border-radius:12px;background:#f3f4f6;font-size:18px;font-weight:700;letter-spacing:.04em;">${token}</p>
       <p style="margin:0 0 12px;"><a href="${verifyUrl}" style="display:inline-block;padding:12px 16px;border-radius:12px;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;">Open verification page</a></p>
+      ${onboardingText}
       <p style="margin:12px 0 0;color:#6b7280;font-size:14px;">If the button does not work, paste this URL into the browser:</p>
       <p style="margin:8px 0 0;color:#374151;font-size:14px;word-break:break-all;">${verifyUrl}</p>
     </div>
@@ -148,6 +191,7 @@ async function handleSendToken(request, env) {
   const ttlMinutes = Number(env.TOKEN_TTL_MINUTES || 15);
   const expiresAt = new Date(now + ttlMinutes * 60 * 1000).toISOString();
   const verifyUrl = verifyBaseUrl.replace(/\/+$/, '') + '?flow=' + flow + '&token=' + encodeURIComponent(token);
+  const onboardingUrl = buildOnboardingUrl(verifyBaseUrl, flow, email);
 
   await env.TOKEN_STORE.put(
     'token:' + tokenHash,
@@ -165,9 +209,11 @@ async function handleSendToken(request, env) {
   );
 
   const subject = '[' + FLOW_LABELS[flow] + '] Test token';
-  const htmlContent = buildEmailHtml({ flow, token, verifyUrl });
+  const htmlContent = buildEmailHtml({ flow, token, verifyUrl, onboardingUrl, recipientName, email });
   const textContent =
-    FLOW_LABELS[flow] + ' test token\n\n' +
+    'Hi ' + getRecipientGreeting(recipientName, email) + ',\n\n' +
+    'You have received a ' + FLOW_LABELS[flow] + ' payment invitation.\n' +
+    (onboardingUrl ? ('Start onboarding: ' + onboardingUrl + '\n') : '') +
     'Token: ' + token + '\n' +
     'Verify: ' + verifyUrl + '\n';
 
