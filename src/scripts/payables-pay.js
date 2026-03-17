@@ -1859,10 +1859,13 @@
         .catch(function () { return {}; })
         .then(function (runtimeConfig) {
           var storedConfig = getStoredTokenServiceConfig();
+          var runtimeBaseUrl = normalizeServiceBaseUrl(runtimeConfig && runtimeConfig.tokenServiceBaseUrl);
+          var storedBaseUrl = normalizeServiceBaseUrl(storedConfig && storedConfig.tokenServiceBaseUrl);
+          var storedIsLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(storedBaseUrl);
           return {
             tokenServiceBaseUrl: normalizeServiceBaseUrl(
-              (storedConfig && storedConfig.tokenServiceBaseUrl) ||
-              (runtimeConfig && runtimeConfig.tokenServiceBaseUrl) ||
+              runtimeBaseUrl ||
+              (storedIsLocalhost ? '' : storedBaseUrl) ||
               ''
             )
           };
