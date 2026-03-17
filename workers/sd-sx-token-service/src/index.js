@@ -62,6 +62,30 @@ function isAllowedEmail(env, email) {
   return allowlist.includes(normalizeEmail(email));
 }
 
+function resolveRecipientEmail(env, requestedEmail) {
+  const normalizedRequested = normalizeEmail(requestedEmail);
+  const allowlist = parseList(env.TEST_EMAIL_ALLOWLIST).map(normalizeEmail).filter(Boolean);
+  if (!allowlist.length) {
+    return {
+      requestedEmail: normalizedRequested,
+      deliveryEmail: normalizedRequested,
+      forcedAllowlist: false
+    };
+  }
+  if (allowlist.includes(normalizedRequested)) {
+    return {
+      requestedEmail: normalizedRequested,
+      deliveryEmail: normalizedRequested,
+      forcedAllowlist: false
+    };
+  }
+  return {
+    requestedEmail: normalizedRequested,
+    deliveryEmail: allowlist[0],
+    forcedAllowlist: true
+  };
+}
+
 function getFlow(payload) {
   const flow = String(payload && payload.flow || '').trim().toLowerCase();
   return flow === 'sd' || flow === 'sx' ? flow : '';
@@ -170,19 +194,17 @@ function canSendBrevo(env) {
 async function handleSendToken(request, env) {
   const payload = await readJson(request);
   const flow = getFlow(payload);
-  const email = normalizeEmail(payload.email);
+  const emailTarget = resolveRecipientEmail(env, payload.email);
+  const email = emailTarget.deliveryEmail;
   const recipientName = String(payload.recipientName || '').trim();
   const sandbox = payload.sandbox === true || payload.sandbox === 'true' || String(env.BREVO_SANDBOX_DEFAULT || '').toLowerCase() === 'true';
   const verifyBaseUrl = String(payload.verifyBaseUrl || '').trim() || String(env.APP_BASE_URL || '').trim();
 
   if (!flow) return json({ ok: false, error: 'Flow must be "sd" or "sx".' }, 400);
-  if (!email) return json({ ok: false, error: 'Email is required.' }, 400);
+  if (!emailTarget.requestedEmail) return json({ ok: false, error: 'Email is required.' }, 400);
   if (!verifyBaseUrl) return json({ ok: false, error: 'APP_BASE_URL or verifyBaseUrl is required.' }, 400);
   if (!env.TOKEN_STORE) {
     return json({ ok: false, error: 'TOKEN_STORE KV binding is missing.' }, 500);
-  }
-  if (!isAllowedEmail(env, email)) {
-    return json({ ok: false, error: 'Email is not allowlisted for this test environment.' }, 403);
   }
 
   const token = createToken();
@@ -198,6 +220,7 @@ async function handleSendToken(request, env) {
     JSON.stringify({
       flow,
       email,
+      requestedEmail: emailTarget.requestedEmail,
       recipientName,
       createdAt: new Date(now).toISOString(),
       expiresAt,
@@ -244,6 +267,8 @@ async function handleSendToken(request, env) {
     ok: true,
     flow,
     email,
+    requestedEmail: emailTarget.requestedEmail,
+    forcedAllowlist: emailTarget.forcedAllowlist,
     mode: sandbox ? 'sandbox' : 'live',
     previewUrl: verifyUrl,
     delivery: emailDeliveryEnabled ? 'brevo' : 'preview_only'
