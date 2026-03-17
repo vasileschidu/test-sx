@@ -1919,6 +1919,10 @@
     return null;
   }
 
+  function getTokenTestPageUrl() {
+    return window.location.origin + '/test-sx/src/pages/tools/sd-sx-token-test.html';
+  }
+
   function setSmartTestEmailResult(methodId, type, lines) {
     var config = getSmartTestEmailUi(methodId);
     if (!config) return;
@@ -1988,7 +1992,8 @@
               flow: config.flow,
               email: destination.email,
               recipientName: destination.label,
-              sandbox: false
+              sandbox: true,
+              verifyBaseUrl: getTokenTestPageUrl()
             })
           });
         })
@@ -2023,7 +2028,11 @@
           }
         })
         .catch(function (error) {
-          setSmartTestEmailResult(methodId, 'error', error && error.message ? error.message : 'Failed to send test email.');
+          var message = error && error.message ? error.message : 'Failed to send test email.';
+          if (message === 'Failed to fetch') {
+            message = 'Could not reach the token service. Refresh the page and try again.';
+          }
+          setSmartTestEmailResult(methodId, 'error', message);
           if (typeof window.showGlobalTopToast === 'function') {
             window.showGlobalTopToast('Failed to send ' + config.label + ' test email');
           }
