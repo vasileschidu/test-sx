@@ -2015,9 +2015,6 @@
             config.label + ' test email request accepted.',
             'Recipient: ' + escapeHtml(payload.email || destination.email)
           ];
-          if (payload.forcedAllowlist && payload.requestedEmail) {
-            lines.push('Input email ' + escapeHtml(payload.requestedEmail) + ' was ignored. This environment sends only to the allowlisted address.');
-          }
           if (payload.delivery === 'preview_only' || payload.mode === 'sandbox') {
             lines.push('Live email sending is not enabled for this environment yet. A preview link was generated instead.');
           } else {
