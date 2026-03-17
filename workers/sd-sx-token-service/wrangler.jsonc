@@ -1,0 +1,12 @@
+{
+	"$schema": "node_modules/wrangler/config-schema.json",
+	"name": "sd-sx-token-service",
+	"main": "src/index.js",
+	"compatibility_date": "2026-03-17",
+	"kv_namespaces": [
+		{
+			"binding": "TOKEN_STORE",
+			"id": "2cc6eeb2122249e992f12aee48feffc3"
+		}
+	]
+}

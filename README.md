@@ -19,6 +19,17 @@ python3 -m http.server 8080
 
 No build step is required.
 
+## GitHub Pages Test Token Flow
+
+This repo now includes a GitHub Pages compatible SD / SX email token test flow.
+
+- Public test page: `src/pages/tools/sd-sx-token-test.html`
+- Runtime config: `src/data/public-runtime-config.json`
+- Cloudflare Worker backend: `workers/sd-sx-token-service`
+- Full setup guide: `docs/github-pages-sd-sx-token-testing.md`
+
+Use this when you want other people to test token delivery from a public static GitHub Pages site without exposing email API keys in the browser.
+
 ## Folder Structure
 
 ```text
