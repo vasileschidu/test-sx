@@ -152,6 +152,12 @@
                                                 class="inline-flex min-w-0 items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15 cursor-pointer">
                                                 <span id="pp-schedule-chip-text" class="truncate text-sm font-medium text-gray-700 dark:text-gray-300">--</span>
                                             </button>
+                                            <button id="pp-schedule-chip-clear-btn" type="button" aria-label="Clear scheduled payment date"
+                                                class="inline-flex w-8 self-stretch shrink-0 items-center justify-center border-l border-gray-300 bg-white text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:border-gray-500/40 dark:bg-white/5 dark:text-gray-500 dark:hover:bg-white/15 dark:hover:text-gray-300 cursor-pointer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4" aria-hidden="true">
+                                                    <path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" />
+                                                </svg>
+                                            </button>
                                             <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span>
                                         </span>
                                         <div id="pp-schedule-dropdown"
@@ -513,9 +519,9 @@
                                                 <!-- Accept Payer's Card -->
                                                 <div id="gp-pmc-payers-card" class="hidden">
                                                     <fieldset class="mt-3 w-full max-w-[512px]">
-                                                        <legend class="text-sm/6 font-semibold text-gray-900 dark:text-white">Select a card to pay with</legend>
-                                                        <p class="mt-1 text-sm/6 text-gray-600 dark:text-gray-400">Choose whether to use an existing virtual card or create a new one for this payment.</p>
-                                                        <div class="mt-4 space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
+                                                        <legend id="pp-card-section-title" class="text-sm/6 font-semibold text-gray-900 dark:text-white">Select a card to pay with</legend>
+                                                        <p id="pp-card-section-description" class="mt-1 text-sm/6 text-gray-600 dark:text-gray-400">Choose whether to use an existing virtual card or create a new one for this payment.</p>
+                                                        <div id="pp-card-source-radios" class="mt-6 space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
                                                             <label class="flex items-center">
                                                                 <input id="pp-card-source-existing" type="radio" name="pp-card-source" value="existing" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden" />
                                                                 <span class="ml-3 block text-sm/6 font-medium text-gray-900 dark:text-white">Use Existing Card</span>
@@ -530,11 +536,11 @@
                                                     <div id="pp-card-existing-selector-wrap" class="mt-4 hidden w-full max-w-[512px]">
                                                         <el-select name="payeeCardSelect" id="pp-pay-card-select" class="block w-full">
                                                             <button type="button"
-                                                                class="grid w-full cursor-default grid-cols-1 rounded-md bg-white px-3 py-1.5 text-left text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                                class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                                 <el-selectedcontent id="pp-pay-card-selected"
                                                                     class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-gray-900 dark:text-white"><span
                                                                         class="truncate font-normal text-gray-400 dark:text-gray-500">Select card</span></el-selectedcontent>
-                                                                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
+                                                                <svg id="pp-pay-card-chevron-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
                                                                     class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
                                                                     <path
                                                                         d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
@@ -547,19 +553,35 @@
                                                         </el-select>
                                                     </div>
 
-                                                    <div id="pp-card-created-summary" class="mt-4 hidden w-full max-w-[512px] rounded-xl border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">
-                                                        <p class="text-sm font-medium text-gray-500 dark:text-gray-400">New card created</p>
-                                                        <div id="pp-card-created-label" class="mt-2 text-sm font-semibold text-gray-900 dark:text-white">--</div>
+                                                    <div id="pp-card-created-summary" class="mt-4 hidden w-full max-w-[512px] rounded-xl border border-dashed border-gray-300 bg-white p-4 dark:border-white/10 dark:bg-white/5">
+                                                        <div id="pp-card-created-label">--</div>
                                                     </div>
 
-                                                    <div id="pp-card-funding-method-wrap" class="mt-8 hidden w-full max-w-[512px] border-t border-gray-200 pt-8 dark:border-white/10">
+                                                    <div id="pp-card-paid-reveal-section" class="mt-4 hidden w-fit max-w-[512px]">
+                                                        <div class="flex items-center gap-3 rounded-lg bg-gray-100 pr-2 dark:bg-white/5">
+                                                            <div class="flex h-[46px] w-[71px] flex-col items-end gap-0.5 rounded-md bg-gray-950 p-2 text-gray-200 font-['Roboto_Mono'] text-[10px] leading-3">
+                                                                <div id="pp-card-paid-brand" class="h-4 w-8"></div>
+                                                                <div class="mt-auto whitespace-nowrap">•••• <span id="pp-card-paid-last4"></span></div>
+                                                            </div>
+                                                            <button type="button" command="show-modal" commandfor="gp-card-details-dialog"
+                                                                class="inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-300 dark:hover:bg-white/20 dark:hover:text-white">
+                                                                Reveal Card Details
+                                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                                                                    <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                                                                    <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" />
+                                                                </svg>
+                                                            </button>
+                                                        </div>
+                                                    </div>
+
+                                                    <div id="pp-card-funding-method-wrap" class="mt-6 hidden w-full max-w-[512px] border-t border-gray-200 pt-6 dark:border-white/10">
                                                         <fieldset class="min-w-0">
                                                             <legend class="text-sm/6 font-semibold text-gray-900 dark:text-white">Choose How This Card Will Be Funded</legend>
                                                             <p class="mt-1 text-sm/6 text-gray-600 dark:text-gray-400">Add funds to this virtual card before payment, or use funds already available on the card. If you choose Spend Balance, no additional transfer will be initiated.</p>
                                                             <div id="pp-card-funding-method-radios" class="mt-6 flex w-full items-center gap-10"></div>
                                                         </fieldset>
 
-                                                        <div id="pp-card-funding-details-wrap" class="mt-4 hidden w-full border-b border-gray-200 pb-4 dark:border-white/10">
+                                                        <div id="pp-card-funding-details-wrap" class="mt-4 hidden w-full border-b border-gray-200 pb-6 dark:border-white/10">
                                                             <div class="grid w-full gap-4 sm:grid-cols-2">
                                                             <div id="pp-card-funding-amount-wrap" class="hidden min-w-0">
                                                                 <label for="pp-card-funding-amount" class="flex min-h-[24px] items-center gap-1.5 text-sm/6 font-medium text-gray-900 dark:text-white">
@@ -610,7 +632,7 @@
                                                         </div>
                                                     </div>
 
-                                                    <fieldset id="pp-card-sending-methods" class="mt-8 hidden w-full max-w-[512px] border-0 p-0 pt-4">
+                                                    <fieldset id="pp-card-sending-methods" class="mt-6 hidden w-full max-w-[512px] border-0 p-0">
                                                         <legend class="text-sm/6 font-semibold text-gray-900 dark:text-white">Select Sending Method</legend>
                                                         <p class="mt-1 text-sm/6 text-gray-600 dark:text-gray-400">Choose how the card details should be shared with your vendor.</p>
                                                         <div class="mt-6 space-y-6">
@@ -1622,7 +1644,10 @@
                                 </div>
                                 <span aria-hidden="true"></span>
                                 <div class="min-w-0 flex-1">
-                                    <p id="pp-confirm-recipient-label" class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Card</p>
+                                    <div class="flex items-center gap-2">
+                                        <p id="pp-confirm-recipient-label" class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Card</p>
+                                        <span id="pp-confirm-recipient-new-card-badge" class="hidden inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-500/10 dark:text-blue-300 dark:inset-ring-blue-400/20">New Card</span>
+                                    </div>
                                 </div>
                             </div>
                             <div id="pp-confirm-transfer-row" class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-2">
@@ -1651,7 +1676,10 @@
                                         </span>
                                 </span>
                                 <div class="min-w-0 flex-1">
-                                    <p id="pp-confirm-recipient-mobile-label" class="text-sm/6 font-medium text-gray-900 dark:text-gray-100 sm:hidden">Card</p>
+                                    <div class="flex items-center gap-2 sm:hidden">
+                                        <p id="pp-confirm-recipient-mobile-label" class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Card</p>
+                                        <span id="pp-confirm-recipient-mobile-new-card-badge" class="hidden inline-flex items-center rounded-md bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-500/10 dark:text-blue-300 dark:inset-ring-blue-400/20">New Card</span>
+                                    </div>
                                     <div id="pp-confirm-smart-badges" class="mt-2 hidden flex-wrap gap-3 sm:mt-0"></div>
                                     <p id="pp-confirm-recipient-cards-label" class="mt-3 hidden text-sm/6 font-medium text-gray-900 dark:text-gray-100">Origination</p>
                                     <div id="pp-confirm-recipient-cards" class="mt-2 flex flex-col gap-2 sm:mt-0">
@@ -1691,7 +1719,7 @@
                                                     </svg>
                                                 </button>
                                                 <span role="tooltip" class="pointer-events-none invisible absolute bottom-full left-0 z-50 mb-2 w-64 rounded-md bg-gray-900 px-3 py-2 text-xs font-medium leading-5 text-white opacity-0 shadow-lg transition duration-100 ease-out group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 dark:bg-black">
-                                                    No funds were transferred because the payment uses the existing balance on the card.
+                                                    No funds will be transferred because this payment will use the existing balance on the card.
                                                 </span>
                                             </span>
                                         </span>
@@ -1850,6 +1878,23 @@
                                 <p id="gp-submit-success-copy" class="max-w-[32rem] text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
                                     Your payment is in progress. Check back later for status updates. If there are additional actions for you to take, you'll be notified.
                                 </p>
+                            </div>
+                        </div>
+
+                        <div id="gp-submit-success-card-summary" class="hidden self-stretch">
+                            <div class="flex items-center gap-3 rounded-lg bg-gray-100 pr-2 dark:bg-white/5">
+                                <div class="flex h-[46px] w-[71px] flex-col items-end gap-0.5 rounded-md bg-gray-950 p-2 text-gray-200 font-['Roboto_Mono'] text-[10px] leading-3">
+                                    <div id="gp-submit-success-card-brand" class="h-4 w-8"></div>
+                                    <div class="mt-auto whitespace-nowrap">•••• <span id="gp-submit-success-card-last4"></span></div>
+                                </div>
+                                <button type="button" command="show-modal" commandfor="gp-card-details-dialog"
+                                    class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-base font-semibold text-gray-700 hover:bg-gray-200 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-white/20 dark:hover:text-white">
+                                    Reveal Card Details
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                                        <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                                        <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" />
+                                    </svg>
+                                </button>
                             </div>
                         </div>
 
@@ -2045,9 +2090,7 @@
                                 <!-- Bottom: name + Visa -->
                                 <div class="flex h-9 items-end gap-4 self-stretch">
                                     <p id="gp-vc-name" class="flex-1 font-['Inter'] text-sm font-normal leading-5 uppercase text-white"></p>
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="59" height="18" viewBox="0 0 59 18" fill="none" class="shrink-0" aria-label="Visa" role="img">
-                                        <path d="M49.0149 11.5661L50.911 6.68624C50.8879 6.73859 51.3015 5.67937 51.5423 5.02376L51.8689 6.53035L52.9693 11.5632H49.0117V11.5661H49.0149ZM11.5564 9.78621L12.0496 12.209L16.7013 0.317736H21.7424L14.2524 17.7318H9.22275L5.1113 2.98625C5.04534 2.74336 4.8883 2.53396 4.67367 2.40225C3.19221 1.6366 1.6228 1.05585 0 0.672661L0.0638636 0.305067H7.72453C8.76417 0.347157 9.60175 0.672659 9.88025 1.78224L11.5543 9.79564V9.78621H11.5564ZM23.6395 0.170012H28.399L25.4215 17.6176H20.6682L23.6395 0.164774V0.170012ZM54.8874 0.317736H51.2167C50.0744 0.317736 49.2138 0.631828 48.7155 1.76465L41.6568 17.7558H46.6509L47.6496 15.1331L53.7451 15.1397C53.8885 15.7531 54.3293 17.7558 54.3293 17.7558H58.7339L54.8874 0.317736ZM42.6954 0.737259C41.3312 0.239948 39.8885 -0.00985909 38.4353 0.000297546C33.7375 0.000297546 30.4197 2.36666 30.3956 5.76397C30.3663 8.25994 32.7534 9.66602 34.5594 10.5002C36.4125 11.3579 37.0313 11.8982 37.0261 12.6645C37.0145 13.8297 35.5456 14.3585 34.1804 14.3585C32.3042 14.3585 31.2792 14.0968 29.7025 13.4424L29.1183 13.1693L28.4524 17.0807C29.5947 17.5559 31.653 17.9644 33.7784 18C38.7734 18 42.0379 15.6473 42.0766 12.0331C42.1175 10.0385 40.8255 8.53309 38.1065 7.28825C36.4534 6.48009 35.4284 5.93986 35.4284 5.12113C35.4284 4.39558 36.3068 3.62093 38.1421 3.62093C39.3629 3.59151 40.5763 3.81975 41.7029 4.29287L42.1437 4.4896L42.8106 0.71035L42.6954 0.737259Z" fill="white"/>
-                                    </svg>
+                                    <div id="gp-vc-brand-logo" class="shrink-0"></div>
                                 </div>
                             </div>
                         </div>
@@ -2079,18 +2122,7 @@
                             </div>
                             <div class="grid grid-cols-2 gap-4 self-stretch items-center">
                                 <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Type</span>
-                                <span class="inline-flex w-fit items-center">
-                                    <svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Visa" role="img">
-                                        <rect width="24" height="16" rx="1.2" fill="url(#visa-grad-gp-modal)" />
-                                        <path d="M12.309 7.05313C12.2987 7.85651 13.0305 8.30487 13.5818 8.57141C14.1483 8.84493 14.3385 9.0203 14.3364 9.26485C14.3321 9.6392 13.8845 9.80438 13.4656 9.81081C12.7349 9.82208 12.3101 9.61506 11.9722 9.45846L11.709 10.6807C12.0479 10.8357 12.6754 10.9708 13.3262 10.9767C14.8536 10.9767 15.853 10.2286 15.8584 9.06857C15.8644 7.5964 13.8061 7.51489 13.8202 6.85684C13.8251 6.65733 14.0169 6.44442 14.4374 6.39025C14.6455 6.3629 15.2201 6.34198 15.8714 6.63963L16.127 5.45708C15.7768 5.33051 15.3266 5.2093 14.7661 5.2093C13.3283 5.2093 12.3171 5.96764 12.309 7.05313ZM18.5836 5.3112C18.3047 5.3112 18.0696 5.47263 17.9647 5.7204L15.7827 10.8899H17.3091L17.6129 10.057H19.4781L19.6543 10.8899H20.9996L19.8257 5.3112H18.5836ZM18.7971 6.81822L19.2376 8.91304H18.0312L18.7971 6.81822ZM10.4583 5.3112L9.25517 10.8899H10.7096L11.9122 5.3112H10.4583ZM8.3066 5.3112L6.79266 9.10825L6.18028 5.87969C6.1084 5.51929 5.82464 5.3112 5.50953 5.3112H3.03459L3 5.47317C3.50807 5.58257 4.08532 5.75902 4.43502 5.9478C4.64906 6.0631 4.71013 6.16393 4.7804 6.43798L5.9403 10.8899H7.47747L9.83404 5.3112H8.3066Z" fill="white" />
-                                        <defs>
-                                            <linearGradient id="visa-grad-gp-modal" x1="10.7812" y1="16" x2="15.6708" y2="0.32624" gradientUnits="userSpaceOnUse">
-                                                <stop stop-color="#222357" />
-                                                <stop offset="1" stop-color="#254AA5" />
-                                            </linearGradient>
-                                        </defs>
-                                    </svg>
-                                </span>
+                                <span id="gp-vc-type-logo" class="inline-flex w-fit items-center"></span>
                             </div>
                             <div class="grid grid-cols-2 gap-4 self-stretch">
                                 <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Number</span>
@@ -2131,7 +2163,7 @@
                         <div class="w-full rounded-md bg-gray-100 p-3 hover:bg-gray-200/80 dark:bg-white/10 dark:hover:bg-white/10">
                             <button type="button" id="gp-card-how-toggle"
                                 class="flex w-full cursor-pointer list-none items-center justify-between text-sm font-medium leading-6 text-slate-950 dark:text-white">
-                                <span>How can you use the payer’s card?</span>
+                                <span>How can you use this virtual card?</span>
                                 <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                     fill="currentColor"
                                     class="size-4 text-gray-500 transition-transform dark:text-gray-400">
@@ -2141,10 +2173,10 @@
                                 </svg>
                             </button>
                             <div id="gp-card-how-content" class="mt-2 hidden flex-col gap-1.5 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300">
-                                <p>The payer has provided their card to cover a specific amount. You are only authorized to charge the amount indicated. To process the payment, enter the card details into your card terminal.</p>
+                                <p>This virtual card has been funded for the payment amount shown. Use these card details with your vendor like a regular card payment.</p>
                                 <ul class="list-disc pl-5">
-                                    <li>The card may also be used for future authorized payments.</li>
-                                    <li>It can be securely stored under the <span class="font-semibold text-gray-900 dark:text-gray-100">Payment Preference</span> tab in the <span class="font-semibold text-gray-900 dark:text-gray-100">SMART Exchange</span>.</li>
+                                    <li>Only charge the amount authorized for this payment.</li>
+                                    <li>You can keep it on file only if future use is authorized.</li>
                                 </ul>
                             </div>
                         </div>

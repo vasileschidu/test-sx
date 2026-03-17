@@ -163,13 +163,39 @@ function setDesktopSidebarCollapsed(collapsed) {
 
             const iconLabelGroup = item.querySelector(':scope > span, :scope > a');
             if (iconLabelGroup) {
-                iconLabelGroup.classList.toggle('w-6', collapsed);
-                iconLabelGroup.classList.toggle('!flex-none', collapsed);
-                iconLabelGroup.classList.toggle('overflow-hidden', collapsed);
-                iconLabelGroup.classList.toggle('gap-0', collapsed);
-                iconLabelGroup.classList.toggle('justify-center', collapsed);
-                const label = iconLabelGroup.querySelector('.nav-label');
-                if (label) label.classList.toggle('hidden', collapsed);
+                const isSmartExchangeTrigger = item.hasAttribute('data-smart-exchange-trigger');
+                if (isSmartExchangeTrigger) {
+                    iconLabelGroup.classList.toggle('overflow-hidden', collapsed);
+                    iconLabelGroup.classList.toggle('justify-center', collapsed);
+                    iconLabelGroup.classList.toggle('px-2', !collapsed);
+                    iconLabelGroup.classList.toggle('px-0', collapsed);
+                    iconLabelGroup.classList.toggle('gap-3', !collapsed);
+                    iconLabelGroup.classList.toggle('gap-0', collapsed);
+                    const innerGroup = iconLabelGroup.querySelector(':scope > span');
+                    if (innerGroup) {
+                        innerGroup.classList.toggle('w-6', collapsed);
+                        innerGroup.classList.toggle('!flex-none', collapsed);
+                        innerGroup.classList.toggle('overflow-hidden', collapsed);
+                        innerGroup.classList.toggle('gap-0', collapsed);
+                        innerGroup.classList.toggle('justify-center', collapsed);
+                        const label = innerGroup.querySelector('.nav-label');
+                        if (label) {
+                            label.classList.toggle('hidden', collapsed);
+                            label.classList.toggle('sr-only', collapsed);
+                        }
+                    }
+                } else {
+                    iconLabelGroup.classList.toggle('w-6', collapsed);
+                    iconLabelGroup.classList.toggle('!flex-none', collapsed);
+                    iconLabelGroup.classList.toggle('overflow-hidden', collapsed);
+                    iconLabelGroup.classList.toggle('gap-0', collapsed);
+                    iconLabelGroup.classList.toggle('justify-center', collapsed);
+                    const label = iconLabelGroup.querySelector('.nav-label');
+                    if (label) {
+                        label.classList.toggle('hidden', collapsed);
+                        label.classList.toggle('sr-only', collapsed);
+                    }
+                }
             }
 
             const chevronButton = item.querySelector(':scope > [data-chevron-toggle]');
@@ -256,6 +282,20 @@ function toggleSmartExchangeSubmenu(chevronBtn) {
     });
 }
 
+function expandSmartExchangeFromCollapsedLink(link) {
+    const trigger = link ? link.closest('[data-smart-exchange-trigger]') : null;
+    const submenu = trigger ? trigger.nextElementSibling : null;
+    if (!trigger || !submenu) return false;
+    if (!desktopNav || !trigger.closest('[data-nav="desktop"]') || !isDesktopSidebarCollapsed()) return false;
+
+    setDesktopSidebarCollapsed(false);
+    if (submenu.classList.contains('max-h-0')) {
+        const chevron = trigger.querySelector('[data-chevron-toggle] .chevron-icon');
+        toggleSubmenuAnimation(submenu, chevron);
+    }
+    return true;
+}
+
 /* ===== Nav Tooltip ===== */
 
 /**
@@ -292,6 +332,14 @@ function showNavTooltip(navItem) {
 /* ===== Event Listeners ===== */
 
 if (desktopNav) {
+    desktopNav.addEventListener('click', function (e) {
+        const smartExchangeLink = e.target.closest('[data-smart-exchange-trigger] > a');
+        if (!smartExchangeLink) return;
+        if (expandSmartExchangeFromCollapsedLink(smartExchangeLink)) {
+            e.preventDefault();
+        }
+    });
+
     desktopNav.addEventListener('mouseover', function (e) {
         const navItem = e.target.closest('.nav-item');
         if (!navItem) return;

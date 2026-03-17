@@ -199,8 +199,8 @@ function buildSmartExchangeItem(item, activeId, expand) {
         : 'nav-icon size-6 shrink-0 text-gray-500 dark:text-gray-400';
     const ariaCurrent = isActive ? ' aria-current="page"' : '';
     const chevron = SVG_CHEVRON_DOWN_TPL.replace('{ROT}', expand ? 'rotate-180' : '');
-    return `<div class="flex h-10 items-center gap-1" data-smart-exchange-trigger>
-<a href="${item.href}" class="${linkCls}"${ariaCurrent}>${renderIcon(item.icon, iconCls)} ${item.label}</a>
+    return `<div class="nav-item group flex h-10 w-full items-center gap-1 rounded-md" data-smart-exchange-trigger>
+<a href="${item.href}" class="${linkCls}"${ariaCurrent}><span class="flex items-center gap-3">${renderIcon(item.icon, iconCls)} <span class="nav-label">${item.label}</span></span></a>
 <button type="button" data-chevron-toggle aria-label="Toggle SMART Exchange submenu"
   class="flex size-8 items-center justify-center rounded-md text-gray-600 hover:bg-gray-200 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/30 transition-colors dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-300 cursor-pointer">
 ${chevron}
