@@ -98,6 +98,7 @@
     isSearchLoading: false,
     payeesById: {},
     payeesByName: {},
+    myCompanyProfile: null,
   };
 
   var refs = {};
@@ -341,8 +342,13 @@
       var cardFull = '4000 0000 0000 ' + cardLast4;
       var expiry = row.cardExpiry || '12/2028';
       var cvcValue = row.cardCvc || '123';
-      var holder = row.payeeName || 'Cardholder';
-      var address = (row.cardholderAddress || '892 Innovation Blvd\nAustin, TX 78701\nUnited States');
+      var holder = row.cardholderName ||
+        (state.myCompanyProfile && (window.getMyCompanyDisplayName ? window.getMyCompanyDisplayName(state.myCompanyProfile) : state.myCompanyProfile.legalName)) ||
+        row.payeeName ||
+        'Cardholder';
+      var address = row.cardholderAddress ||
+        (state.myCompanyProfile && (window.getMyCompanyAddressText ? window.getMyCompanyAddressText(state.myCompanyProfile) : ((state.myCompanyProfile.mailingAddress && state.myCompanyProfile.mailingAddress.address) || ''))) ||
+        '892 Innovation Blvd\nAustin, TX 78701\nUnited States';
       var cardNetworkValue = String(row.cardNetwork || 'Visa');
       var typeIcon = cardNetworkValue.toLowerCase().indexOf('master') !== -1 ? ICON_MASTERCARD : ICON_VISA;
       var numberId = 'bp-payment-copy-' + (++paymentInfoCopyIdCounter);
@@ -400,7 +406,7 @@
     );
   }
 
-  function buildActivityLogItem(dotClasses, title, description, showLine) {
+  function buildActivityLogItem(dotClasses, title, description, dateLabel, showLine) {
     var lineHtml = showLine
       ? '<div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center"><div class="w-px bg-gray-200 dark:bg-white/10"></div></div>'
       : '';
@@ -412,6 +418,7 @@
         '</div>' +
         '<div class="flex flex-col gap-1 pb-6">' +
           '<p class="text-base font-medium text-gray-900 dark:text-white">' + escapeHtml(title || '') + '</p>' +
+          (dateLabel ? '<p class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">' + escapeHtml(dateLabel) + '</p>' : '') +
           '<p class="text-sm text-gray-700 dark:text-gray-300">' + escapeHtml(description || '') + '</p>' +
         '</div>' +
       '</div>'
@@ -419,18 +426,19 @@
   }
 
   function buildActivityLogSection(row) {
-    if (!row || row.status === 'ready_to_pay') return '';
-    var log = (row.details && row.details.activityLog) || [];
+    if (!row || typeof window.getActivityLog !== 'function') return '';
+    var log = window.getActivityLog(row);
     if (!log.length) return '';
     var items = log.map(function (item, idx) {
       var dotType = item && item.type;
-      if (row.status === 'in_progress' && (dotType === 'pending' || !dotType)) {
+      if (dotType === 'pending') {
         dotType = 'processing';
       }
       return buildActivityLogItem(
         getStatusDotClass(dotType),
-        item && item.title,
+        item && (item.title || item.label),
         item && item.description,
+        item && item.dateLabel,
         idx < log.length - 1
       );
     }).join('');
@@ -2100,9 +2108,11 @@
     Promise.all([
       loadJsonWithFallbacks(JSON_PATH_FALLBACKS),
       loadJsonWithFallbacks(PAYEES_PATH_FALLBACKS).catch(function () { return { data: [] }; }),
+      typeof window.getMyCompanyProfile === 'function' ? window.getMyCompanyProfile().catch(function () { return null; }) : Promise.resolve(null),
     ]).then(function (results) {
       var payload = results[0];
       var payeesPayload = results[1];
+      state.myCompanyProfile = results[2] || null;
       indexPayees(payeesPayload);
       state.columns = ensurePaymentMethodColumn((payload && payload.tableConfig && payload.tableConfig.columns) || []);
       state.allRows = normalizeRows(applyStoredPayableOverrides((payload && payload.data) || []));

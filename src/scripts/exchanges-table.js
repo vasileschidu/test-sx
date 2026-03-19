@@ -982,6 +982,23 @@
     return _myBusiness;
   }
 
+  function mergeMyBusinessProfile(business, profile) {
+    var next = business && typeof business === 'object' ? Object.assign({}, business) : {};
+    var normalized = window.normalizeMyCompanyProfile ? window.normalizeMyCompanyProfile(profile) : null;
+    if (!normalized || !normalized.legalName) return next;
+    next.id = String(next.id || normalized.id || 'my-business');
+    next.name = normalized.legalName;
+    next.legalName = normalized.legalName;
+    if (normalized.legalAddress && normalized.legalAddress.displayText) {
+      next.address = normalized.legalAddress.displayText;
+      next.mailingAddress = Object.assign({}, next.mailingAddress || {}, {
+        name: normalized.legalName,
+        address: normalized.legalAddress.displayText
+      });
+    }
+    return next;
+  }
+
   function getExceptionContextMessage(entry) {
     var log = entry && entry.details && Array.isArray(entry.details.activityLog) ? entry.details.activityLog : [];
     for (var i = log.length - 1; i >= 0; i--) {
@@ -1009,10 +1026,16 @@
   function getPayerCardDetailsForRender(entry, info, customer) {
     var paymentInfo = info || {};
     var payerCardInfo = paymentInfo.payerCard || paymentInfo;
-    var cardHolderName = (customer && customer.name) || payerCardInfo.cardholderName || entry.vendorEntry || '';
+    var myBusiness = getResolvedPayee(entry);
+    var cardHolderName = (myBusiness && (window.getMyCompanyDisplayName ? window.getMyCompanyDisplayName(myBusiness) : (myBusiness.legalName || myBusiness.name))) ||
+      (customer && customer.name) ||
+      payerCardInfo.cardholderName ||
+      entry.vendorEntry ||
+      '';
     var cardHolderAddress =
       payerCardInfo.cardholderAddress ||
       paymentInfo.cardholderAddress ||
+      (myBusiness && (window.getMyCompanyAddressText ? window.getMyCompanyAddressText(myBusiness) : ((myBusiness.mailingAddress && myBusiness.mailingAddress.address) || myBusiness.address))) ||
       (customer && customer.address) ||
       '';
     var cardNumberRaw = String(paymentInfo.cardNumber || payerCardInfo.cardNumber || entry.paymentMethodEnding || '');
@@ -5916,6 +5939,7 @@
       fetchCheckAddressesData().catch(function () { return []; }),
       fetchBankAccountsData().catch(function () { return []; }),
       fetchCustomersData().catch(function () { return []; }),
+      typeof window.getMyCompanyProfile === 'function' ? window.getMyCompanyProfile().catch(function () { return null; }) : Promise.resolve(null),
     ])
       .then(function (results) {
         var result = results[0];
@@ -5923,9 +5947,10 @@
         var sharedCheckAddresses = results[2];
         var sharedBankAccounts = results[3];
         var customers = results[4];
+        var myCompanyProfile = results[5];
         var columns = result.columns;
         var entries = result.entries;
-        _myBusiness = result.myBusiness || {};
+        _myBusiness = mergeMyBusinessProfile(result.myBusiness || {}, myCompanyProfile);
         if (sharedCheckAddresses && sharedCheckAddresses.length) {
           _myBusiness.checkAddresses = sharedCheckAddresses;
         }

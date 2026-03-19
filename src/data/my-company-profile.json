@@ -1,0 +1,33 @@
+{
+  "id": "my-business",
+  "legalName": "ABC Corporation Ltd.",
+  "businessPhone": "",
+  "businessEmail": "",
+  "legalAddress": {
+    "nickname": "Headquarters",
+    "line1": "2972 Westheimer Rd",
+    "line2": "Suite 1010",
+    "city": "Chicago",
+    "state": "Illinois",
+    "postalCode": "85486",
+    "countryCode": "us",
+    "country": "United States"
+  },
+  "mailingAddress": {
+    "name": "ABC Corporation Ltd.",
+    "address": "2972 Westheimer Rd\nSuite 1010\nChicago, Illinois 85486\nUnited States"
+  },
+  "businessStructure": "S Corporation (S-Corp)",
+  "organizationIdType": "TIN",
+  "organizationIdLabel": "Tax Identification Number (TIN)",
+  "organizationIdValue": "000-123-456-001",
+  "website": "",
+  "stockSymbol": "",
+  "dbaEnabled": true,
+  "dbaName": "Lorem Business",
+  "contact": {
+    "name": "Johnny Anderson",
+    "email": "j.anderson@mail.com",
+    "phone": "+1 (555) 987-6543"
+  }
+}

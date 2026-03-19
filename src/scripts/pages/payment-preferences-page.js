@@ -43,28 +43,41 @@
                 }
             }
 
-            function extractCardsFromExchanges(exchangePayload) {
+            function getMyCompanyCardholderName(profile) {
+                return window.getMyCompanyDisplayName ? window.getMyCompanyDisplayName(profile) : String((profile && profile.legalName) || (profile && profile.name) || '');
+            }
+
+            function getMyCompanyCardholderAddress(profile) {
+                return window.getMyCompanyAddressText ? window.getMyCompanyAddressText(profile) : String((profile && profile.mailingAddress && profile.mailingAddress.address) || '');
+            }
+
+            function extractCardsFromExchanges(exchangePayload, myCompanyProfile) {
                 if (!exchangePayload || !Array.isArray(exchangePayload.entries)) return [];
                 var cards = [];
+                var myCompanyId = String((myCompanyProfile && myCompanyProfile.id) || 'my-business');
+                var myCardholderName = getMyCompanyCardholderName(myCompanyProfile);
+                var myCardholderAddress = getMyCompanyCardholderAddress(myCompanyProfile);
                 exchangePayload.entries.forEach(function (entry, index) {
                     if (!entry || entry.paymentMethod !== 'Card') return;
                     var details = entry.details && typeof entry.details === 'object' ? entry.details : null;
                     var paymentInfo = details && details.paymentInfo && typeof details.paymentInfo === 'object' ? details.paymentInfo : null;
                     if (!paymentInfo || paymentInfo.type !== 'card') return;
+                    var isMyCard = !entry.payeeId || String(entry.payeeId) === myCompanyId;
 
                     var endingDigits = getDigits(paymentInfo.cardNumber || entry.paymentMethodEnding);
                     var last4 = endingDigits.slice(-4) || '0000';
                     cards.push({
                         id: String(entry.invoice || ('card-' + (index + 1))),
+                        ownerId: isMyCard ? myCompanyId : String(entry.payeeId || ''),
                         vendorName: String(entry.customer || paymentInfo.cardholderName || 'Customer'),
-                        holderName: String(paymentInfo.cardholderName || entry.customer || ''),
+                        holderName: String((isMyCard && myCardholderName) || paymentInfo.cardholderName || entry.customer || ''),
                         fullNumber: String(getRevealedCardNumber(paymentInfo, entry.paymentMethodEnding || '').replace(/\s/g, '')),
                         last4: last4,
                         expiration: String(paymentInfo.expires || ''),
                         expirationFull: String(paymentInfo.expires || ''),
                         cvc2: String(getRevealedCvc2(paymentInfo)),
                         pendingAmount: formatCurrency(entry.amount, entry.currency),
-                        billingAddress: String(paymentInfo.cardholderAddress || ''),
+                        billingAddress: String((isMyCard && myCardholderAddress) || paymentInfo.cardholderAddress || ''),
                         status: String(entry.status || '').toLowerCase() === 'failed' ? 'inactive' : 'active'
                     });
                 });
@@ -82,10 +95,12 @@
                             payload = payload && typeof payload === 'object' ? payload : {};
                             return Promise.all([
                                 fetch(checkAddressesFallbackUrl).then(function (res) { return res.ok ? res.json() : []; }).catch(function () { return []; }),
-                                fetch(exchangesDataUrl).then(function (res) { return res.ok ? res.json() : null; }).catch(function () { return null; })
+                                fetch(exchangesDataUrl).then(function (res) { return res.ok ? res.json() : null; }).catch(function () { return null; }),
+                                typeof window.getMyCompanyProfile === 'function' ? window.getMyCompanyProfile().catch(function () { return null; }) : Promise.resolve(null)
                             ]).then(function (result) {
                                 payload.checkAddresses = Array.isArray(result[0]) ? result[0] : [];
-                                payload.cards = extractCardsFromExchanges(result[1]);
+                                payload.myCompanyProfile = result[2] || null;
+                                payload.cards = extractCardsFromExchanges(result[1], payload.myCompanyProfile);
                                 return payload;
                             });
                         })
@@ -94,13 +109,15 @@
                                 fetch(customersFallbackUrl).then(function (res) { return res.ok ? res.json() : []; }).catch(function () { return []; }),
                                 fetch(bankAccountsFallbackUrl).then(function (res) { return res.ok ? res.json() : []; }).catch(function () { return []; }),
                                 fetch(checkAddressesFallbackUrl).then(function (res) { return res.ok ? res.json() : []; }).catch(function () { return []; }),
-                                fetch(exchangesDataUrl).then(function (res) { return res.ok ? res.json() : null; }).catch(function () { return null; })
+                                fetch(exchangesDataUrl).then(function (res) { return res.ok ? res.json() : null; }).catch(function () { return null; }),
+                                typeof window.getMyCompanyProfile === 'function' ? window.getMyCompanyProfile().catch(function () { return null; }) : Promise.resolve(null)
                             ]).then(function (result) {
                                 return {
                                     customers: Array.isArray(result[0]) ? result[0] : [],
                                     bankAccounts: Array.isArray(result[1]) ? result[1] : [],
                                     checkAddresses: Array.isArray(result[2]) ? result[2] : [],
-                                    cards: extractCardsFromExchanges(result[3])
+                                    myCompanyProfile: result[4] || null,
+                                    cards: extractCardsFromExchanges(result[3], result[4] || null)
                                 };
                             });
                         });
@@ -263,22 +280,29 @@
 
             function normalizeCards(payload) {
                 if (!payload || !Array.isArray(payload.cards)) return [];
+                var myCompanyProfile = payload.myCompanyProfile || null;
+                var myCompanyId = String((myCompanyProfile && myCompanyProfile.id) || 'my-business');
+                var myCardholderName = getMyCompanyCardholderName(myCompanyProfile);
+                var myCardholderAddress = getMyCompanyCardholderAddress(myCompanyProfile);
                 return payload.cards
                     .map(function (card, index) {
                         if (!card || typeof card !== 'object') return null;
                         var fullNumberDigits = String(card.fullNumber || '').replace(/\D/g, '');
                         var last4 = String(card.last4 || fullNumberDigits.slice(-4) || '');
+                        var ownerId = String(card.ownerId || '');
+                        var isMyCard = !!ownerId && ownerId === myCompanyId;
                         return {
                             id: String(card.id || ('card-' + (index + 1))),
+                            ownerId: ownerId,
                             vendorName: String(card.vendorName || card.holderName || 'Customer'),
-                            holderName: String(card.holderName || card.vendorName || 'Customer'),
+                            holderName: String((isMyCard && myCardholderName) || card.holderName || card.vendorName || 'Customer'),
                             fullNumber: fullNumberDigits || ('424242424242' + (last4 || '4242')).slice(-16),
                             last4: last4 || '0000',
                             expiration: String(card.expiration || ''),
                             expirationFull: String(card.expirationFull || card.expiration || ''),
                             cvc2: String(card.cvc2 || '999'),
                             pendingAmount: String(card.pendingAmount || '$0.00'),
-                            billingAddress: String(card.billingAddress || ''),
+                            billingAddress: String((isMyCard && myCardholderAddress) || card.billingAddress || ''),
                             status: String(card.status || 'active').toLowerCase() === 'inactive' ? 'inactive' : 'active'
                         };
                     })
@@ -294,25 +318,29 @@
                     .filter(function (name) { return !!name; });
             }
 
-            function generateFallbackCards(customerNames) {
+            function generateFallbackCards(customerNames, myCompanyProfile) {
                 var names = customerNames.length ? customerNames : ['Customer'];
                 var total = 12;
                 var cards = [];
+                var myCompanyId = String((myCompanyProfile && myCompanyProfile.id) || 'my-business');
+                var myCardholderName = getMyCompanyCardholderName(myCompanyProfile) || names[0];
+                var myCardholderAddress = getMyCompanyCardholderAddress(myCompanyProfile) || '3476 Orphan Road\nSuite 1010\nHayward, Wisconsin 54843\nUnited States';
                 for (var i = 0; i < total; i++) {
                     var month = String((i % 12) + 1).padStart(2, '0');
                     var year = String(2026 + Math.floor(i / 8));
                     var fullNumber = '4' + String(100000000000000 + ((i * 98765431 + 1234567) % 900000000000000));
                     cards.push({
                         id: 'fallback-card-' + (i + 1),
+                        ownerId: myCompanyId,
                         vendorName: names[i % names.length],
-                        holderName: names[i % names.length],
+                        holderName: myCardholderName,
                         fullNumber: fullNumber,
                         last4: fullNumber.slice(-4),
                         expiration: month + '/' + year,
                         expirationFull: month + '/' + year,
                         cvc2: String(100 + ((i * 37 + 19) % 900)),
                         pendingAmount: '$' + (125 + i * 37).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
-                        billingAddress: '3476 Orphan Road\nSuite 1010\nHayward, Wisconsin 54843\nUnited States',
+                        billingAddress: myCardholderAddress,
                         status: (i % 5 === 0 || i % 9 === 0) ? 'inactive' : 'active'
                     });
                 }
@@ -777,7 +805,7 @@
                 .then(function (payload) {
                     allCards = normalizeCards(payload);
                     if (!allCards.length) {
-                        allCards = generateFallbackCards(normalizeCustomerNames(payload));
+                        allCards = generateFallbackCards(normalizeCustomerNames(payload), payload && payload.myCompanyProfile);
                     }
                     renderCustomerFilters();
                     renderStatusFilters();
@@ -785,7 +813,7 @@
                     renderCards();
                 })
                 .catch(function () {
-                    allCards = generateFallbackCards([]);
+                    allCards = generateFallbackCards([], null);
                     renderCustomerFilters();
                     renderStatusFilters();
                     syncApplyButtonState();

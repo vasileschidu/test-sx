@@ -1,0 +1,8 @@
+BREVO_API_KEY=your_brevo_api_key
+EMAIL_FROM=sender@yourdomain.com
+EMAIL_FROM_NAME=SMART Exchange Test
+APP_BASE_URL=http://localhost:8080
+ALLOWED_ORIGINS=http://localhost:8080,http://127.0.0.1:8080
+TEST_EMAIL_ALLOWLIST=your-email@example.com
+TOKEN_TTL_MINUTES=15
+BREVO_SANDBOX_DEFAULT=true

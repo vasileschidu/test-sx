@@ -1,4 +1,70 @@
             (function () {
+                function setInputValue(id, value) {
+                    var el = document.getElementById(id);
+                    if (!el) return;
+                    el.value = value == null ? '' : String(value);
+                }
+
+                function setCheckboxValue(id, checked) {
+                    var el = document.getElementById(id);
+                    if (!el) return;
+                    el.checked = !!checked;
+                }
+
+                function setSelectValue(id, value, fallbackText) {
+                    var el = document.getElementById(id);
+                    if (!el || !el.options) return;
+                    var targetValue = String(value || '').trim().toLowerCase();
+                    var targetText = String(fallbackText || value || '').trim().toLowerCase();
+                    var matchedIndex = -1;
+                    for (var i = 0; i < el.options.length; i += 1) {
+                        var option = el.options[i];
+                        var optionValue = String(option.value || '').trim().toLowerCase();
+                        var optionText = String(option.text || '').trim().toLowerCase();
+                        if (targetValue && optionValue === targetValue) {
+                            matchedIndex = i;
+                            break;
+                        }
+                        if (targetText && optionText === targetText) {
+                            matchedIndex = i;
+                            break;
+                        }
+                    }
+                    if (matchedIndex >= 0) el.selectedIndex = matchedIndex;
+                }
+
+                window.__hydrateMyCompanyBusinessForm = function (profile) {
+                    var normalized = window.normalizeMyCompanyProfile ? window.normalizeMyCompanyProfile(profile) : (profile || {});
+                    var legalAddress = normalized.legalAddress || {};
+                    setInputValue('business-legal-name-input', normalized.legalName || '');
+                    setInputValue('business-phone-input', normalized.businessPhone || '');
+                    setInputValue('business-email-input', normalized.businessEmail || '');
+                    setInputValue('business-legal-address-nickname-input', legalAddress.nickname || '');
+                    setInputValue('business-legal-address-line1-input', legalAddress.line1 || '');
+                    setInputValue('business-legal-address-line2-input', legalAddress.line2 || '');
+                    setInputValue('business-legal-address-city-input', legalAddress.city || '');
+                    setInputValue('business-legal-address-state-input', legalAddress.state || '');
+                    setInputValue('business-legal-address-zip-input', legalAddress.postalCode || '');
+                    setSelectValue('business-legal-address-country-input', legalAddress.countryCode || '', legalAddress.country || '');
+                    setSelectValue('business-structure-input', normalized.businessStructure || '', normalized.businessStructure || '');
+                    setSelectValue('business-org-id-type-input', normalized.organizationIdType || '', normalized.organizationIdLabel || '');
+                    setInputValue('business-org-id-value-input', normalized.organizationIdValue || '');
+                    setInputValue('business-website-input', normalized.website || '');
+                    setInputValue('business-stock-input', normalized.stockSymbol || '');
+                    setCheckboxValue('business-dba-toggle', normalized.dbaEnabled && !!normalized.dbaName);
+                    setInputValue('business-dba-input', normalized.dbaName || '');
+                };
+
+                window.__hydrateMyCompanyContactForm = function (profile) {
+                    var normalized = window.normalizeMyCompanyProfile ? window.normalizeMyCompanyProfile(profile) : (profile || {});
+                    var contact = normalized.contact || {};
+                    setInputValue('contact-name-input', contact.name || '');
+                    setInputValue('contact-email-input', contact.email || '');
+                    setInputValue('contact-phone-input', contact.phone || '');
+                };
+            })();
+
+            (function () {
                 var form = document.getElementById('business-info-form');
                 var editBtn = document.getElementById('business-info-edit-btn');
                 var actionsWrap = document.getElementById('business-info-edit-actions');
@@ -160,7 +226,21 @@
                 setEditing(editing);
                 updateBusinessAddressCountryFlag();
                 updateDbaInputState();
+                syncReadValues();
                 updateDirtyState();
+
+                if (typeof window.getMyCompanyProfile === 'function') {
+                    window.getMyCompanyProfile().then(function (profile) {
+                        if (typeof window.__hydrateMyCompanyBusinessForm === 'function') {
+                            window.__hydrateMyCompanyBusinessForm(profile);
+                        }
+                        updateBusinessAddressCountryFlag();
+                        updateDbaInputState();
+                        syncReadValues();
+                        snapshotAtEditStart = snapshotControls();
+                        updateDirtyState();
+                    }).catch(function () {});
+                }
 
                 function enterBusinessEditMode() {
                     editing = true;
@@ -318,7 +398,19 @@
                 var editing = false;
                 var snapshotAtEditStart = [];
                 setEditing(editing);
+                syncReadValues();
                 updateDirtyState();
+
+                if (typeof window.getMyCompanyProfile === 'function') {
+                    window.getMyCompanyProfile().then(function (profile) {
+                        if (typeof window.__hydrateMyCompanyContactForm === 'function') {
+                            window.__hydrateMyCompanyContactForm(profile);
+                        }
+                        syncReadValues();
+                        snapshotAtEditStart = snapshotControls();
+                        updateDirtyState();
+                    }).catch(function () {});
+                }
 
                 function enterEditMode() {
                     editing = true;

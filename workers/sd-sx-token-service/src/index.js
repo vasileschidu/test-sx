@@ -99,14 +99,16 @@ function buildOnboardingUrl(baseUrl, flow, email) {
   const rawBaseUrl = String(baseUrl || '').trim();
   if (!rawBaseUrl) return '';
 
+  const onboardingFolder = flow === 'sd' ? 'onboarding-sd' : 'onboarding';
+
   try {
     const url = new URL(rawBaseUrl);
     if (/\/src\/pages\/tools\/[^/]+$/i.test(url.pathname)) {
-      url.pathname = url.pathname.replace(/\/src\/pages\/tools\/[^/]+$/i, '/src/pages/onboarding/index.html');
-    } else if (/\/src\/pages\/onboarding\/[^/]+$/i.test(url.pathname)) {
-      url.pathname = url.pathname.replace(/\/src\/pages\/onboarding\/[^/]+$/i, '/src/pages/onboarding/index.html');
+      url.pathname = url.pathname.replace(/\/src\/pages\/tools\/[^/]+$/i, `/src/pages/${onboardingFolder}/index.html`);
+    } else if (/\/src\/pages\/onboarding(?:-sd)?\/[^/]+$/i.test(url.pathname)) {
+      url.pathname = url.pathname.replace(/\/src\/pages\/onboarding(?:-sd)?\/[^/]+$/i, `/src/pages/${onboardingFolder}/index.html`);
     } else {
-      url.pathname = url.pathname.replace(/\/+$/, '') + '/src/pages/onboarding/index.html';
+      url.pathname = url.pathname.replace(/\/+$/, '') + `/src/pages/${onboardingFolder}/index.html`;
     }
     url.search = '';
     url.searchParams.set('flow', flow);

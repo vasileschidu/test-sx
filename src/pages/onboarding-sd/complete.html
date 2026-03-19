@@ -1,0 +1,475 @@
+<!--
+  @file onboarding-sd/complete.html
+  @description Final step of SD onboarding. No sidebar — content centered on gray bg.
+-->
+<!doctype html>
+<html class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+  <style>
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .stagger-item { opacity: 0; }
+    .stagger-item.visible { animation: fadeInUp 300ms ease forwards; }
+  </style>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var KEY = 'sd-onboarding-state';
+      function getState() {
+        try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
+      }
+
+      var s = getState();
+      var vc = s.virtualCard || {};
+      var fullName = [vc.firstName, vc.lastName].filter(Boolean).join(' ') || 'James Rivera';
+
+      document.getElementById('card-name').textContent = fullName.toUpperCase();
+
+      var modalCardName = document.getElementById('sd-modal-card-name');
+      if (modalCardName) modalCardName.textContent = fullName.toUpperCase();
+
+      var modalFullName = document.getElementById('sd-modal-full-name');
+      if (modalFullName) modalFullName.textContent = fullName;
+
+      var now = new Date();
+      var days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+      var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      var dd = String(now.getDate()).padStart(2, '0');
+      var hh = now.getHours();
+      var ampm = hh >= 12 ? 'PM' : 'AM';
+      var h12 = String(hh % 12 || 12).padStart(2, '0');
+      var mm = String(now.getMinutes()).padStart(2, '0');
+      var ss = String(now.getSeconds()).padStart(2, '0');
+      document.getElementById('rcpt-date').textContent =
+        days[now.getDay()] + ', ' + months[now.getMonth()] + ' ' + dd + ' ' + now.getFullYear() +
+        ' ' + h12 + ':' + mm + ':' + ss + ' ' + ampm + ' (ET)';
+
+      // Wallet button visibility (device detection)
+      var isApple   = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+      var isAndroid = /Android/.test(navigator.userAgent);
+      var appleBtn  = document.getElementById('sd-apple-wallet-btn');
+      var googleBtn = document.getElementById('sd-google-wallet-btn');
+      if (appleBtn)  appleBtn.classList.toggle('hidden', !isApple);
+      if (googleBtn) googleBtn.classList.toggle('hidden', !isAndroid);
+
+      // How to Use toggle in modal
+      var howToggle  = document.getElementById('sd-card-how-toggle');
+      var howContent = document.getElementById('sd-card-how-content');
+      if (howToggle && howContent) {
+        howToggle.addEventListener('click', function () {
+          var isHidden = howContent.classList.contains('hidden');
+          howContent.classList.toggle('hidden', !isHidden);
+          howContent.classList.toggle('flex', isHidden);
+          var icon = howToggle.querySelector('[data-collapse-icon]');
+          if (icon) icon.style.transform = isHidden ? 'rotate(180deg)' : '';
+        });
+      }
+
+      // ── Loading → content transition ──────────────────────────────────────
+      var loadingEl = document.getElementById('sd-loading');
+      var contentEl = document.getElementById('sd-content-wrapper');
+
+      setTimeout(function () {
+        // Fade out loader
+        loadingEl.style.transition = 'opacity 300ms ease';
+        loadingEl.style.opacity = '0';
+
+        setTimeout(function () {
+          loadingEl.style.display = 'none';
+          contentEl.style.display = 'flex';
+
+          // Stagger items in
+          var items = contentEl.querySelectorAll('.stagger-item');
+          items.forEach(function (item, i) {
+            setTimeout(function () { item.classList.add('visible'); }, i * 100);
+          });
+        }, 300);
+      }, 2000);
+
+      // ── Copy-to-clipboard ─────────────────────────────────────────────────
+      function showCopiedTooltip(el) {
+        var rect = el.getBoundingClientRect();
+        var dialogHost = el.closest('dialog[open]');
+        var topOffset = dialogHost ? 8 : 4;
+        var tipHost = dialogHost || document.body;
+        var existing = el._tip;
+        if (existing) { clearTimeout(el._tipTimer); existing.remove(); }
+        var tip = document.createElement('div');
+        tip.textContent = 'Copied!';
+        tip.style.cssText = [
+          'position:fixed',
+          'left:' + (rect.left + rect.width / 2) + 'px',
+          'top:' + (rect.top - topOffset) + 'px',
+          'transform:translate(-50%,calc(-100% + 6px))',
+          'background:#111827',
+          'color:#fff',
+          'font-size:12px',
+          'font-family:Inter,sans-serif',
+          'line-height:1.5',
+          'padding:3px 8px',
+          'border-radius:6px',
+          'pointer-events:none',
+          'z-index:9999',
+          'opacity:0',
+          'transition:opacity 220ms ease-out,transform 220ms ease-out',
+          'white-space:nowrap'
+        ].join(';');
+        tipHost.appendChild(tip);
+        el._tip = tip;
+        tip.getBoundingClientRect();
+        tip.style.transform = 'translate(-50%,-100%)';
+        tip.style.opacity = '1';
+        el._tipTimer = setTimeout(function () {
+          tip.style.transform = 'translate(-50%,calc(-100% - 6px))';
+          tip.style.opacity = '0';
+          setTimeout(function () { tip.remove(); el._tip = null; }, 240);
+        }, 700);
+      }
+
+      document.addEventListener('click', function (e) {
+        var btn = e.target.closest('.copy-btn');
+        if (!btn) return;
+        var targetEl = document.getElementById(btn.dataset.copyId);
+        var text = targetEl ? targetEl.textContent.trim() : '';
+        if (!text) return;
+        function fallback() {
+          try {
+            var ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          } catch (e) {}
+        }
+        var write = navigator.clipboard && navigator.clipboard.writeText
+          ? navigator.clipboard.writeText(text).catch(function () { fallback(); })
+          : Promise.resolve(fallback());
+        write.then(function () { showCopiedTooltip(btn); });
+      });
+    });
+  </script>
+</head>
+
+<body class="min-h-screen bg-gray-200 px-6 antialiased font-['Inter']">
+
+  <div class="mx-auto max-w-[1024px] w-full min-h-screen bg-white flex flex-col">
+
+    <main class="flex-1 flex flex-col items-center justify-center py-12">
+
+      <!-- ── Loading state ─────────────────────────────────────────────── -->
+      <div id="sd-loading" class="flex flex-col items-center text-center gap-3">
+        <div class="h-11 w-11 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"></div>
+        <div class="flex flex-col items-center gap-1">
+          <h1 class="text-2xl font-semibold text-gray-900">Your card is almost ready…</h1>
+          <p class="text-sm text-gray-500">Setting up your virtual card.</p>
+        </div>
+      </div>
+
+      <!-- ── Content (revealed after loader) ──────────────────────────── -->
+      <div id="sd-content-wrapper" class="hidden flex-col items-center gap-6">
+
+        <!-- Success header -->
+        <div class="stagger-item flex flex-col items-center text-center gap-3">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-11 text-green-500" aria-hidden="true">
+            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
+          </svg>
+          <div class="flex flex-col items-center gap-1">
+            <h1 class="text-2xl font-semibold text-gray-900">Card Created!</h1>
+            <p class="text-sm text-gray-500">Your virtual card was issued and funded.</p>
+          </div>
+        </div>
+
+        <!-- Card + wallet buttons container -->
+        <div class="stagger-item flex w-[320px] flex-col overflow-hidden rounded-xl bg-gray-100">
+
+          <!-- Virtual card (masked) -->
+          <div class="relative h-[200px] w-full flex-shrink-0 overflow-hidden rounded-xl bg-[#151A32] p-5 shadow-lg ring-[0.94px] ring-inset ring-white/20">
+            <div class="flex h-full flex-col gap-2">
+              <div class="flex items-center justify-end">
+                <div class="flex items-center rounded-full bg-white/20 px-2.5 py-0.5">
+                  <span class="font-['Inter'] text-[11px] text-white">CVV : •••</span>
+                </div>
+              </div>
+              <div class="flex h-[108px] flex-col justify-end gap-2">
+                <div class="flex items-end gap-2 self-stretch">
+                  <p class="flex-1 text-2xl font-bold text-white">$3,526.00</p>
+                  <svg xmlns="http://www.w3.org/2000/svg" width="19" height="28" viewBox="0 0 19 28" fill="none" class="shrink-0" aria-hidden="true"><path d="M1.63451 14.0121C1.63451 16.3874 0 16.4362 0 17.3061C0 17.7886 0.415193 18.1801 0.926639 18.1801C1.17182 18.1801 1.60287 17.9797 1.60287 17.9797C2.76417 17.003 3.51553 15.5899 3.51553 14.0121C3.51553 12.4514 2.78131 11.0119 1.60683 10.0167C1.60683 10.0167 0.805383 9.3695 0.216164 10.1419C-0.228056 10.7246 0.266249 11.2756 0.540427 11.5497C1.18896 12.1983 1.63451 13.059 1.63451 14.0121ZM6.37329 14.0121C6.37329 16.2925 5.37282 18.3304 3.77784 19.7843L3.79103 19.7948C3.67372 19.9412 3.60515 20.1217 3.60515 20.3195C3.60515 20.8032 4.02038 21.1947 4.53182 21.1947C4.78359 21.1947 5.01162 21.0998 5.17903 20.9456L5.18959 20.9548C7.07851 19.1779 8.25431 16.7196 8.25431 13.9883C8.25431 11.269 7.07851 8.81719 5.18959 7.04294L5.17771 7.05348C5.01162 6.90058 4.78359 6.80567 4.53182 6.80567C4.02038 6.80567 3.60515 7.19716 3.60515 7.68093C3.60515 7.87733 3.67372 8.05924 3.78971 8.20555L3.7818 8.21215C5.38732 9.68454 6.37329 11.7461 6.37329 14.0121ZM7.8681 5.0591C11.8964 9.08741 11.6275 13.9501 11.6275 13.9501C11.6275 18.2025 9.67792 21.0998 7.85359 22.9531C7.64927 23.1126 7.52009 23.3552 7.52009 23.6254C7.52009 24.1079 7.93531 24.4994 8.44676 24.4994C8.71566 24.4994 8.95691 24.3926 9.12563 24.2212C9.12563 24.2212 13.5085 20.4131 13.5085 14.0239C13.5085 7.48848 9.12563 3.77917 9.12563 3.77917C8.95559 3.60781 8.71434 3.49973 8.44676 3.49973C7.93531 3.49973 7.52009 3.89254 7.52009 4.37499C7.52009 4.6518 7.65588 4.89829 7.8681 5.0591ZM11.8384 1.52644C17.1071 6.68968 17.0623 13.1737 17.0623 14.0002C17.0623 14.0002 17.5803 20.6002 11.8437 26.4758C11.671 26.6524 11.5378 26.8672 11.5378 27.1246C11.5378 27.6081 11.9531 28 12.4645 28C12.7809 28 13.2396 27.6343 13.2396 27.6343C19.4745 21.3107 18.942 14.0002 18.942 14.0002C18.942 5.62065 13.2857 0.375671 13.2857 0.375671C13.1183 0.148949 12.7809 -1.90735e-06 12.4645 -1.90735e-06C11.9531 -1.90735e-06 11.5378 0.392813 11.5378 0.875259C11.5378 1.1323 11.6552 1.3643 11.8423 1.5238L11.8384 1.52644Z" fill="white"/></svg>
+                </div>
+                <div class="flex flex-col items-start justify-end gap-2 self-stretch">
+                  <p class="font-['Roboto_Mono'] text-lg font-normal leading-6 tracking-wider text-white">•••• •••• •••• ••••</p>
+                  <div class="flex items-center gap-1 pl-14">
+                    <p class="font-['Roboto_Mono'] text-[7px] font-bold uppercase leading-normal text-white">EXPIRATION<br>DATE</p>
+                    <p class="ml-1 font-['Roboto_Mono'] text-sm font-normal leading-5 text-white">•• / ••</p>
+                  </div>
+                </div>
+              </div>
+              <div class="flex h-9 items-end gap-4 self-stretch">
+                <p id="card-name" class="flex-1 font-['Roboto_Mono'] text-sm font-normal uppercase leading-5 tracking-wide text-white"></p>
+                <svg width="48" height="30" viewBox="0 0 52 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0" aria-hidden="true"><path d="M32.8867 28.5803H18.8867V3.42188H32.8867V28.5803Z" fill="#F14D1C"/><path d="M19.7765 15.9999C19.7745 18.4228 20.3233 20.8143 21.3829 22.9941C22.4416 25.1734 23.9824 27.0836 25.8876 28.5796C23.5272 30.4349 20.6927 31.5884 17.7079 31.9089C14.723 32.2287 11.7073 31.7027 9.00732 30.3913C6.30731 29.0782 4.03059 27.0338 2.43807 24.488C0.844559 21.9437 0 19.0025 0 15.9999C0 12.998 0.844559 10.0557 2.43807 7.51144C4.03059 4.96671 6.30731 2.92113 9.00732 1.60928C11.7073 0.296621 14.723 -0.229337 17.7079 0.091656C20.6927 0.412151 23.5272 1.56526 25.8876 3.421C23.9824 4.91691 22.4416 6.82593 21.3829 9.00606C20.3243 11.1851 19.7745 13.5765 19.7765 15.9999Z" fill="#EB1C24"/><path d="M51.7733 15.9999C51.7733 12.998 50.9287 10.0557 49.3362 7.51144C47.7427 4.96671 45.467 2.92113 42.766 1.60928C40.066 0.296621 37.0512 -0.229337 34.0664 0.091656C31.0816 0.412151 28.2461 1.56526 25.8867 3.421C27.791 4.91771 29.3297 6.82783 30.3884 9.00725C31.4471 11.1863 31.9968 13.5777 31.9968 15.9999C31.9968 18.4228 31.4471 20.8131 30.3884 22.9921C29.3297 25.1715 27.791 27.0818 25.8867 28.5796C28.2461 30.4349 31.0816 31.5884 34.0664 31.9089C37.0512 32.2287 40.066 31.7027 42.766 30.3913C45.467 29.0782 47.7427 27.0338 49.3362 24.488C50.9287 21.9437 51.7733 19.0025 51.7733 15.9999Z" fill="#F59412"/><path d="M51.2753 26.2622V25.6416H51.1129L50.9267 26.0681L50.7404 25.6416H50.5781V26.2622H50.6926V25.7942L50.8679 26.1973H50.9864L51.1607 25.793V26.2622H51.2753ZM50.2484 26.2622V25.7471H50.4566V25.6424H49.9277V25.7471H50.1349V26.2622H50.2484Z" fill="#F59412"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Wallet buttons (device-detected, hidden by default) -->
+          <div class="flex flex-col items-center gap-1.5 px-3 py-2">
+            <button id="sd-apple-wallet-btn" type="button" class="hidden">
+              <svg width="129" height="40" viewBox="0 0 129 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Add to Apple Wallet" role="img"><g clip-path="url(#clip0_2001_12289)"><path d="M117.797 0H11.2026C10.7676 0 10.3444 0 9.92127 0C9.55686 0 9.20421 0 8.8398 0.0117578C8.05221 0.0352734 7.26463 0.0823045 6.48879 0.223398C5.7012 0.364491 4.97239 0.599647 4.25533 0.964139C3.55003 1.32863 2.9035 1.78718 2.35101 2.35156C1.78677 2.90417 1.32832 3.55085 0.963915 4.25632C0.599508 4.97354 0.364407 5.70253 0.235101 6.4903C0.0940405 7.26631 0.0470202 8.05408 0.0235101 8.84186C0.0235101 9.20635 0.0117551 9.55908 0 9.92357V30.0647C0 30.4292 0 30.7819 0.0235101 31.1464C0.0470202 31.9342 0.0940405 32.7219 0.235101 33.4979C0.376162 34.2857 0.599508 35.0264 0.963915 35.7319C1.31657 36.4374 1.78677 37.0723 2.35101 37.6249C2.9035 38.1893 3.55003 38.6478 4.25533 39.0123C4.97239 39.3768 5.7012 39.612 6.48879 39.7531C7.26463 39.8942 8.06397 39.9412 8.8398 39.9647C9.20421 39.9647 9.55686 39.9765 9.92127 39.9765C10.3562 39.9765 10.7794 39.9765 11.2026 39.9765H117.797C118.221 39.9765 118.644 39.9765 119.067 39.9765C119.42 39.9765 119.796 39.9765 120.148 39.9647C120.936 39.9412 121.724 39.8942 122.499 39.7531C123.287 39.612 124.016 39.3768 124.745 39.0123C125.45 38.6596 126.085 38.1893 126.649 37.6249C127.213 37.0723 127.672 36.4256 128.036 35.7319C128.4 35.0147 128.636 34.2857 128.765 33.4979C128.906 32.7219 128.953 31.9342 128.988 31.1464C128.988 30.7819 128.988 30.4292 128.988 30.0647C128.988 29.6414 128.988 29.2181 128.988 28.7831V11.2052C128.988 10.7701 128.988 10.3469 128.988 9.92357C128.988 9.55908 128.988 9.20635 128.988 8.84186C128.965 8.05408 128.918 7.26631 128.765 6.4903C128.636 5.70253 128.4 4.97354 128.036 4.25632C127.672 3.55085 127.213 2.90417 126.649 2.35156C126.096 1.79894 125.45 1.32863 124.745 0.964139C124.016 0.599647 123.287 0.364491 122.499 0.223398C121.724 0.0823045 120.936 0.0352734 120.148 0.0117578C119.796 0.0117578 119.42 0 119.067 0C118.644 0 118.221 0 117.797 0Z" fill="#A6A6A6"/><path d="M117.797 0.764238C118.221 0.764238 118.644 0.764238 119.067 0.764238C119.361 0.764238 119.655 0.764238 119.949 0.764238H120.137C120.76 0.787754 121.571 0.823027 122.37 0.964121C123.099 1.09346 123.757 1.3051 124.392 1.62256C125.027 1.95177 125.603 2.3633 126.108 2.86888C126.602 3.36271 127.025 3.93884 127.354 4.57376C127.672 5.20868 127.883 5.86712 128.013 6.60786C128.154 7.3486 128.189 8.12461 128.212 8.83008C128.212 9.18281 128.212 9.54731 128.212 9.92356C128.212 10.3468 128.212 10.7701 128.212 11.1934V28.7713C128.212 29.1946 128.212 29.6179 128.212 30.0529C128.212 30.4174 128.212 30.7701 128.212 31.1111C128.189 31.8401 128.142 32.6161 128.001 33.3686C127.871 34.0976 127.66 34.756 127.343 35.3792C127.013 36.0258 126.59 36.602 126.085 37.0958C125.591 37.6014 125.015 38.0129 124.38 38.3421C123.757 38.6596 123.087 38.883 122.347 39.0123C121.571 39.1534 120.783 39.1887 120.113 39.2122C119.76 39.2122 119.396 39.224 119.043 39.224C118.62 39.224 118.197 39.224 117.774 39.224H11.2025C10.7676 39.224 10.3444 39.224 9.92123 39.224C9.56858 39.224 9.21593 39.224 8.86327 39.2122C8.19324 39.1887 7.39389 39.1534 6.61806 39.0123C5.87749 38.883 5.20745 38.6596 4.59619 38.3421C3.96141 38.0247 3.38542 37.6014 2.87995 37.0958C2.38624 36.6137 1.96305 36.0376 1.63391 35.3909C1.31653 34.7795 1.10493 34.1093 0.975629 33.3686C0.834568 32.5691 0.787548 31.7578 0.775793 31.1346C0.775793 30.8877 0.775793 30.6525 0.764038 30.4056V30.0646V28.783V9.93531V9.58258C0.764038 9.34742 0.764038 9.10051 0.775793 8.8536C0.787548 8.23043 0.822813 7.41915 0.975629 6.60786C1.10493 5.86712 1.31653 5.20868 1.63391 4.58552C1.9513 3.9506 2.37448 3.37447 2.87995 2.86888C3.38542 2.3633 3.96141 1.95177 4.58443 1.62256C5.21921 1.3051 5.87749 1.0817 6.6063 0.952363C7.40565 0.811269 8.2285 0.775996 8.83976 0.75248H9.07486C9.35699 0.75248 9.63911 0.740723 9.90947 0.740723C10.3327 0.740723 10.7676 0.740723 11.1908 0.740723H117.786" fill="black"/><mask id="mask0_2001_12289" style="mask-type:luminance" maskUnits="userSpaceOnUse" x="8" y="8" width="32" height="24"><path d="M39.0973 27.1017V27.4192C39.0973 27.5721 39.0973 27.7131 39.0973 27.866C39.0973 27.9953 39.0973 28.1129 39.0973 28.2422C39.0973 28.5127 39.0738 28.7949 39.0268 29.0653C38.9798 29.3357 38.8975 29.5944 38.7682 29.8413C38.6389 30.0882 38.4743 30.3116 38.2862 30.5115C38.0864 30.7114 37.8631 30.8642 37.6162 30.9936C37.3693 31.1229 37.1107 31.2052 36.8404 31.2522C36.57 31.2993 36.2879 31.3228 36.0175 31.3228C35.8882 31.3228 35.7707 31.3228 35.6413 31.3228C35.4885 31.3228 35.3475 31.3228 35.1947 31.3228H33.4784H35.0771H12.9071H14.5058H12.7895C12.6367 31.3228 12.4956 31.3228 12.3428 31.3228C12.2135 31.3228 12.096 31.3228 11.9667 31.3228C11.6963 31.3228 11.4142 31.2993 11.1438 31.2522C10.8734 31.2052 10.6148 31.1229 10.368 30.9936C10.1211 30.8642 9.89778 30.6996 9.69794 30.5115C9.4981 30.3116 9.34529 30.0882 9.21598 29.8413C9.08668 29.5944 9.00439 29.3357 8.95737 29.0653C8.91035 28.7949 8.88684 28.5127 8.88684 28.2422C8.88684 28.1129 8.88684 27.9953 8.88684 27.866C8.88684 27.7131 8.88684 27.5721 8.88684 27.4192V27.1723V12.816V14.2858V12.5691C8.88684 12.4163 8.88684 12.2752 8.88684 12.1223C8.88684 11.993 8.88684 11.8754 8.88684 11.7461C8.88684 11.4756 8.91035 11.1935 8.95737 10.923C9.00439 10.6526 9.08668 10.3939 9.21598 10.147C9.34529 9.9001 9.50986 9.6767 9.69794 9.47682C9.89778 9.27693 10.1211 9.12408 10.368 8.99475C10.6148 8.86541 10.8734 8.78311 11.1438 8.73607C11.4142 8.68904 11.6963 8.66553 11.9667 8.66553C12.096 8.66553 12.2135 8.66553 12.3428 8.66553C12.4956 8.66553 12.6367 8.66553 12.7895 8.66553H14.5058H35.0771H35.1947C35.3475 8.66553 35.4885 8.66553 35.6413 8.66553C35.7707 8.66553 35.8882 8.66553 36.0175 8.66553C36.2879 8.66553 36.57 8.68904 36.8404 8.73607C37.1107 8.78311 37.3693 8.86541 37.6162 8.99475C37.8631 9.12408 38.0864 9.28869 38.2862 9.47682C38.4861 9.6767 38.6389 9.9001 38.7682 10.147C38.8975 10.3939 38.9798 10.6526 39.0268 10.923C39.0738 11.1935 39.0973 11.4756 39.0973 11.7461C39.0973 11.8754 39.0973 11.993 39.0973 12.1223C39.0973 12.2752 39.0973 12.4163 39.0973 12.5691V12.8866V27.1135V27.1017Z" fill="white"/></mask><g mask="url(#mask0_2001_12289)"><path d="M38.1451 9.6062H9.81543V29.3358H38.1451V9.6062Z" fill="#DEDBCE"/><path d="M37.8396 9.92358H10.1447V21.6814H37.8396V9.92358Z" fill="#40A5D9"/><g filter="url(#filter0_d_2001_12289)"><path fill-rule="evenodd" clip-rule="evenodd" d="M37.8395 14.9206C37.8395 14.8265 37.8395 14.7324 37.8395 14.6384C37.8395 14.5561 37.8395 14.4738 37.8395 14.4032C37.8395 14.2268 37.8278 14.0505 37.7925 13.8859C37.7572 13.7095 37.7102 13.5449 37.6279 13.392C37.5457 13.2392 37.4399 13.0981 37.3223 12.9688C37.193 12.8394 37.0519 12.7454 36.8991 12.6631C36.7463 12.5808 36.5817 12.5337 36.4054 12.4984C36.2291 12.4632 36.0528 12.4632 35.8882 12.4514C35.8059 12.4514 35.7236 12.4514 35.6531 12.4514C35.559 12.4514 35.465 12.4514 35.371 12.4514H35.2887H13.7182H12.6249C12.5309 12.4514 12.4369 12.4514 12.3428 12.4514C12.2605 12.4514 12.1782 12.4514 12.1077 12.4514C11.9314 12.4514 11.7551 12.4632 11.5905 12.4984C11.4142 12.5337 11.2496 12.5808 11.0968 12.6631C10.944 12.7454 10.8029 12.8512 10.6736 12.9688C10.5443 13.0981 10.4502 13.2392 10.368 13.392C10.2857 13.5449 10.2387 13.7095 10.2034 13.8859C10.1681 14.0622 10.1681 14.2386 10.1564 14.4032C10.1564 14.4855 10.1564 14.5678 10.1564 14.6384C10.1564 14.7324 10.1564 14.8265 10.1564 14.9206V16.014V15.1557V24.1974H37.8513V14.9206H37.8395Z" fill="#FFB003"/></g><g filter="url(#filter1_d_2001_12289)"><path fill-rule="evenodd" clip-rule="evenodd" d="M37.8395 17.4367C37.8395 17.3426 37.8395 17.2485 37.8395 17.1545C37.8395 17.0722 37.8395 16.9899 37.8395 16.9193C37.8395 16.743 37.8278 16.5666 37.7925 16.402C37.7572 16.2256 37.7102 16.061 37.6279 15.9082C37.5457 15.7553 37.4399 15.6142 37.3223 15.4849C37.193 15.3555 37.0519 15.2615 36.8991 15.1792C36.7463 15.0969 36.5817 15.0498 36.4054 15.0146C36.2291 14.9793 36.0528 14.9793 35.8882 14.9675C35.8059 14.9675 35.7236 14.9675 35.6531 14.9675C35.559 14.9675 35.465 14.9675 35.371 14.9675H35.2887H13.7182H12.6249C12.5309 14.9675 12.4369 14.9675 12.3428 14.9675C12.2605 14.9675 12.1782 14.9675 12.1077 14.9675C11.9314 14.9675 11.7551 14.9793 11.5905 15.0146C11.4142 15.0498 11.2496 15.0969 11.0968 15.1792C10.944 15.2615 10.8029 15.3673 10.6736 15.4849C10.5443 15.6142 10.4502 15.7553 10.368 15.9082C10.2857 16.061 10.2387 16.2256 10.2034 16.402C10.1681 16.5783 10.1681 16.7547 10.1564 16.9193C10.1564 17.0016 10.1564 17.0839 10.1564 17.1545C10.1564 17.2485 10.1564 17.3426 10.1564 17.4367V18.5301V17.6718V26.7136H37.8513V17.4367H37.8395Z" fill="#40C740"/></g><g filter="url(#filter2_d_2001_12289)"><path fill-rule="evenodd" clip-rule="evenodd" d="M37.8395 19.953C37.8395 19.859 37.8395 19.7649 37.8395 19.6708C37.8395 19.5885 37.8395 19.5062 37.8395 19.4357C37.8395 19.2593 37.8278 19.0829 37.7925 18.9183C37.7572 18.742 37.7102 18.5774 37.6279 18.4245C37.5457 18.2717 37.4399 18.1306 37.3223 18.0012C37.193 17.8719 37.0519 17.7778 36.8991 17.6955C36.7463 17.6132 36.5817 17.5662 36.4054 17.5309C36.2291 17.4956 36.0528 17.4956 35.8882 17.4839C35.8059 17.4839 35.7236 17.4839 35.6531 17.4839C35.559 17.4839 35.465 17.4839 35.371 17.4839H35.2887H13.7182H12.6249C12.5309 17.4839 12.4369 17.4839 12.3428 17.4839C12.2605 17.4839 12.1782 17.4839 12.1077 17.4839C11.9314 17.4839 11.7551 17.4956 11.5905 17.5309C11.4142 17.5662 11.2496 17.6132 11.0968 17.6955C10.944 17.7778 10.8029 17.8837 10.6736 18.0012C10.5443 18.1306 10.4502 18.2717 10.368 18.4245C10.2857 18.5774 10.2387 18.742 10.2034 18.9183C10.1681 19.0947 10.1681 19.2711 10.1564 19.4357C10.1564 19.518 10.1564 19.6003 10.1564 19.6708C10.1564 19.7649 10.1564 19.859 10.1564 19.953V21.0465V20.1882V29.2299H37.8513V19.953H37.8395Z" fill="#F26D5F"/></g><path fill-rule="evenodd" clip-rule="evenodd" d="M8.46338 8.24194V21.2578H10.1444V12.4042C10.1444 12.3101 10.1444 12.2161 10.1444 12.122C10.1444 12.0397 10.1444 11.9574 10.1444 11.8869C10.1444 11.7105 10.1561 11.5341 10.1914 11.3695C10.2266 11.1931 10.2737 11.0285 10.3559 10.8757C10.4382 10.7228 10.544 10.5817 10.6616 10.4524C10.7909 10.3231 10.9319 10.229 11.0848 10.1467C11.2376 10.0644 11.4021 10.0174 11.5785 9.9821C11.7548 9.94682 11.9311 9.94682 12.0957 9.93506C12.178 9.93506 12.2603 9.93506 12.3308 9.93506C12.4248 9.93506 12.5189 9.93506 12.6129 9.93506H13.7061H35.2767H35.3589C35.453 9.93506 35.547 9.93506 35.6411 9.93506C35.7234 9.93506 35.8056 9.93506 35.8762 9.93506C36.0525 9.93506 36.2288 9.94682 36.3934 9.9821C36.5697 10.0174 36.7343 10.0644 36.8871 10.1467C37.0399 10.229 37.181 10.3348 37.3103 10.4524C37.4396 10.5817 37.5336 10.7228 37.6159 10.8757C37.6982 11.0285 37.7452 11.1931 37.7805 11.3695C37.8158 11.5459 37.8158 11.7222 37.8275 11.8869C37.8275 11.9692 37.8275 12.0515 37.8275 12.122C37.8275 12.2161 37.8275 12.3101 37.8275 12.4042V13.4977V21.2578H39.5085V8.24194H8.46338Z" fill="#D9D6CC"/><g filter="url(#filter3_d_2001_12289)"><path fill-rule="evenodd" clip-rule="evenodd" d="M31.7268 20C31.5505 20 31.3624 20 31.1861 20C31.0333 20 30.8805 20 30.7277 20C30.3985 20 30.0576 20.0235 29.7402 20.0823C29.4111 20.1411 29.1055 20.2352 28.7998 20.388C28.7646 20.4115 27.93 20.7878 27.1894 21.94C26.6251 22.8219 25.5202 23.7507 23.9803 23.7507C22.4403 23.7507 21.3354 22.8219 20.7711 21.94C19.9835 20.7172 19.0902 20.3527 19.1607 20.388C18.8551 20.2352 18.5494 20.1411 18.2203 20.0823C17.8911 20.0235 17.562 20 17.2329 20C17.08 20 16.9272 20 16.7744 20C16.5981 20 16.41 20 16.2337 20H8.47534V31.7578H39.5322V20H31.7268Z" fill="#DEDBCE"/></g></g><path d="M48.466 20.7642H50.053L53.4972 30.2409H51.9573L51.0874 27.6777H47.4434L46.5735 30.2409H45.0336L48.4778 20.7642H48.466ZM47.8313 26.502H50.6877L49.2771 22.3397H49.2536L47.8313 26.502Z" fill="white"/><path d="M54.4023 23.3273H55.8247V24.5149H55.86C56.2714 23.6918 57.0355 23.198 58.0229 23.198C59.7862 23.198 60.9146 24.5737 60.9146 26.7841C60.9146 28.9946 59.7744 30.3703 58.0464 30.3703C57.0707 30.3703 56.2714 29.8764 55.8717 29.0651H55.8365V32.5219H54.4141V23.3156L54.4023 23.3273ZM59.457 26.7959C59.457 25.3144 58.7517 24.4208 57.6467 24.4208C56.5418 24.4208 55.813 25.3497 55.813 26.7959C55.813 28.2303 56.577 29.171 57.6467 29.171C58.7165 29.171 59.457 28.2656 59.457 26.8076V26.7959Z" fill="white"/><path d="M62.3018 23.3273H63.7241V24.5149H63.7594C64.1708 23.6918 64.9349 23.198 65.9223 23.198C67.6856 23.198 68.8141 24.5737 68.8141 26.7841C68.8141 28.9946 67.6738 30.3703 65.9458 30.3703C64.9702 30.3703 64.1708 29.8764 63.7711 29.0651H63.7359V32.5219H62.3135V23.3156L62.3018 23.3273ZM67.3564 26.7959C67.3564 25.3144 66.6511 24.4208 65.5462 24.4208C64.4412 24.4208 63.7124 25.3497 63.7124 26.7959C63.7124 28.2303 64.4764 29.171 65.5462 29.171C66.6159 29.171 67.3564 28.2656 67.3564 26.8076V26.7959Z" fill="white"/><path d="M70.0483 20.7642H71.4707V30.2409H70.0483V20.7642Z" fill="white"/><path d="M72.8461 26.8076C72.8461 24.6442 74.0921 23.198 76.0317 23.198C77.9713 23.198 79.1585 24.5854 79.1585 26.6665V27.1486H74.2684C74.2919 28.4537 75.009 29.218 76.1375 29.218C76.9721 29.218 77.5363 28.7829 77.7127 28.2656L77.7362 28.2186H79.0762V28.2891C78.8411 29.3826 77.7714 30.382 76.1022 30.382C74.0686 30.382 72.8461 28.9946 72.8461 26.8194V26.8076ZM74.2802 26.1374H77.7479C77.6304 24.9382 76.9603 24.362 76.0317 24.362C75.103 24.362 74.3977 24.9852 74.2802 26.1374Z" fill="white"/><path d="M83.6607 20.7642H85.1889L86.9521 28.1951H86.9756L88.974 20.7642H90.3611L92.3595 28.1951H92.3947L94.158 20.7642H95.6861L93.1235 30.2409H91.7129L89.6793 23.0922H89.644L87.5987 30.2409H86.1881L83.6372 20.7642H83.6607Z" fill="white"/><path d="M96.1093 28.2773C96.1093 27.0663 97.0379 26.3255 98.6719 26.2315L100.553 26.1256V25.6083C100.553 24.8441 100.059 24.3855 99.1773 24.3855C98.3545 24.3855 97.849 24.7735 97.7314 25.3261V25.3849H96.3796V25.3144C96.4854 24.1268 97.5199 23.2097 99.2126 23.2097C100.905 23.2097 101.975 24.1033 101.975 25.4907V30.2526H100.553V29.1592H100.529C100.129 29.8999 99.3301 30.3702 98.4132 30.3702C97.0379 30.3702 96.1093 29.5236 96.1093 28.2773ZM98.8012 29.2297C99.8003 29.2297 100.553 28.5478 100.553 27.6542V27.1133L98.8599 27.2191C98.0018 27.2662 97.5316 27.6424 97.5316 28.2303C97.5316 28.8535 98.0253 29.2297 98.7894 29.2297H98.8012Z" fill="white"/><path d="M103.527 20.7642H104.949V30.2409H103.527V20.7642Z" fill="white"/><path d="M106.947 20.7642H108.37V30.2409H106.947V20.7642Z" fill="white"/><path d="M109.616 26.8076C109.616 24.6442 110.862 23.198 112.801 23.198C114.741 23.198 115.928 24.5854 115.928 26.6665V27.1486H111.038C111.062 28.4537 111.779 29.218 112.907 29.218C113.742 29.218 114.306 28.7829 114.482 28.2656L114.506 28.2186H115.846V28.2891C115.611 29.3826 114.541 30.382 112.872 30.382C110.838 30.382 109.616 28.9946 109.616 26.8194V26.8076ZM111.05 26.1374H114.518C114.4 24.9382 113.73 24.362 112.801 24.362C111.873 24.362 111.179 24.9852 111.05 26.1374Z" fill="white"/><path d="M117.715 28.4184V24.456H116.728V23.3273H117.715V21.5283H119.161V23.3273H120.454V24.456H119.161V28.3243C119.161 29.0298 119.478 29.2414 120.078 29.2414C120.231 29.2414 120.348 29.2297 120.454 29.2179V30.3114C120.289 30.3349 120.019 30.3702 119.737 30.3702C118.373 30.3702 117.715 29.794 117.715 28.4184Z" fill="white"/><path d="M49.5946 14.6738H46.7617L46.0446 16.7079H45.116L47.7373 9.59448H48.619L51.2404 16.7079H50.3117L49.5946 14.6738ZM47.032 13.9213H49.336L48.2193 10.7467H48.137L47.0203 13.9213H47.032Z" fill="white"/><path d="M51.8046 14.0505C51.8046 12.3809 52.6862 11.2992 54.0381 11.2992C54.7786 11.2992 55.4016 11.6519 55.7073 12.2281H55.7778V9.27686H56.6242V16.7078H55.8131V15.8612H55.7308C55.3899 16.4491 54.7669 16.8018 54.0263 16.8018C52.6627 16.8018 51.7928 15.7201 51.7928 14.0505H51.8046ZM52.6862 14.0505C52.6862 15.2968 53.274 16.0376 54.2379 16.0376C55.2018 16.0376 55.8013 15.2733 55.8013 14.0505C55.8013 12.8277 55.2018 12.0635 54.2379 12.0635C53.274 12.0635 52.6862 12.816 52.6862 14.0505Z" fill="white"/><path d="M57.9994 14.0505C57.9994 12.3809 58.8811 11.2992 60.2329 11.2992C60.9735 11.2992 61.5965 11.6519 61.9021 12.2281H61.9726V9.27686H62.819V16.7078H62.0079V15.8612H61.9256C61.5847 16.4491 60.9617 16.8018 60.2211 16.8018C58.8575 16.8018 57.9877 15.7201 57.9877 14.0505H57.9994ZM58.8811 14.0505C58.8811 15.2968 59.4688 16.0376 60.4327 16.0376C61.3966 16.0376 61.9961 15.2733 61.9961 14.0505C61.9961 12.8277 61.3966 12.0635 60.4327 12.0635C59.4688 12.0635 58.8811 12.816 58.8811 14.0505Z" fill="white"/><path d="M68.4967 10.0176V11.3932H69.684V12.0987H68.4967V15.1087C68.4967 15.7319 68.7318 16.0023 69.2843 16.0023C69.4371 16.0023 69.5194 16.0023 69.684 15.9788V16.696C69.5194 16.7195 69.3548 16.743 69.1903 16.743C68.097 16.743 67.6504 16.3433 67.6504 15.3203V12.0987H66.7922V11.3932H67.6504V10.0176H68.4967Z" fill="white"/><path d="M70.6127 14.0506C70.6127 12.334 71.5531 11.2993 73.0695 11.2993C74.5859 11.2993 75.5145 12.3458 75.5145 14.0506C75.5145 15.7555 74.5741 16.802 73.0695 16.802C71.5648 16.802 70.6127 15.7555 70.6127 14.0506ZM74.6447 14.0506C74.6447 12.7926 74.0804 12.0636 73.0695 12.0636C72.0585 12.0636 71.4943 12.7926 71.4943 14.0506C71.4943 15.3087 72.0585 16.0377 73.0695 16.0377C74.0804 16.0377 74.6447 15.3087 74.6447 14.0506Z" fill="white"/></g><defs><filter id="filter0_d_2001_12289" x="9.37637" y="11.4214" width="29.2549" height="13.3061" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="-0.25"/><feGaussianBlur stdDeviation="0.39"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.17 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2001_12289"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2001_12289" result="shape"/></filter><filter id="filter1_d_2001_12289" x="9.37637" y="13.9375" width="29.2549" height="13.3061" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="-0.25"/><feGaussianBlur stdDeviation="0.39"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.16 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2001_12289"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2001_12289" result="shape"/></filter><filter id="filter2_d_2001_12289" x="9.37637" y="16.4539" width="29.2549" height="13.3061" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="-0.25"/><feGaussianBlur stdDeviation="0.39"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.17 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2001_12289"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2001_12289" result="shape"/></filter><filter id="filter3_d_2001_12289" x="7.69534" y="18.97" width="32.6169" height="13.3178" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feFlood flood-opacity="0" result="BackgroundImageFix"/><feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/><feOffset dy="-0.25"/><feGaussianBlur stdDeviation="0.39"/><feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.14 0"/><feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2001_12289"/><feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_2001_12289" result="shape"/></filter><clipPath id="clip0_2001_12289"><rect width="129" height="40" fill="white"/></clipPath></defs></svg>
+            </button>
+            <button id="sd-google-wallet-btn" type="button" class="hidden">
+              <svg xmlns="http://www.w3.org/2000/svg" width="129" height="40" viewBox="0 0 129 40" fill="none" aria-label="Add to Google Wallet" role="img"><rect width="129" height="40" rx="8" fill="#1A1A1A"/><text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle" fill="white" font-family="Inter,sans-serif" font-size="14" font-weight="500">Add to Google Wallet</text></svg>
+            </button>
+          </div>
+
+        </div>
+
+        <!-- Reveal Card Details button -->
+        <button type="button" command="show-modal" commandfor="sd-card-details-dialog"
+          class="stagger-item inline-flex w-[320px] items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
+            <path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+            <path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" />
+          </svg>
+          Reveal Card Details
+        </button>
+
+        <!-- Receipt details card -->
+        <div class="stagger-item flex w-full max-w-[320px] flex-col overflow-hidden rounded-md">
+
+          <div class="flex items-center px-4 py-2 bg-gray-100">
+            <span class="text-sm font-semibold text-gray-900">Receipt Details</span>
+          </div>
+
+          <div class="flex flex-col items-start self-stretch bg-gray-50">
+
+            <div class="px-4 pt-3 pb-2 self-stretch">
+              <dt class="text-sm/6 font-medium text-gray-900">Date Issued</dt>
+              <dd id="rcpt-date" class="mt-0.5 text-sm/6 text-gray-700">—</dd>
+            </div>
+
+            <div class="px-4 py-2 self-stretch">
+              <dt class="text-sm/6 font-medium text-gray-900">Transaction ID</dt>
+              <dd class="mt-0.5 text-sm/6 text-gray-700">
+                <button type="button" data-copy-id="rcpt-txid" class="copy-btn -ml-1.5 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer">
+                  <span id="rcpt-txid">233DFERDRGRG54EV45GT</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400" aria-hidden="true">
+                    <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+                    <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+                  </svg>
+                </button>
+              </dd>
+            </div>
+
+            <div class="px-4 py-2 self-stretch">
+              <dt class="text-sm/6 font-medium text-gray-900">Client Payment Reference ID</dt>
+              <dd class="mt-0.5 text-sm/6 text-gray-500">[ClientPaymentReferenceId]</dd>
+            </div>
+
+            <div class="w-full border-t border-gray-200"></div>
+
+            <div class="px-4 py-3 self-stretch">
+              <button type="button" class="inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5 -ml-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-colors">
+                Download
+              </button>
+            </div>
+
+            <!-- Perforated receipt edge -->
+            <div class="w-full h-[8px]" style="background-image: radial-gradient(circle at 50% 100%, white 5px, #F9FAFB 5px); background-size: 13px 8px; background-position: bottom center; background-repeat: repeat-x;"></div>
+
+          </div>
+        </div>
+
+      </div><!-- end #sd-content-wrapper -->
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="flex items-center justify-center gap-1.5 py-5 px-6">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+        <path d="M8.91309 1.125C11.4548 3.2985 15.5771 3.43066 15.5771 3.43066V9.22656C15.5767 12.7831 8.91309 16.875 8.91309 16.875C8.86421 16.8449 2.25042 12.77 2.25 9.22656V3.43066C2.25 3.43066 6.37134 3.29832 8.91309 1.125ZM7.2793 9.90918C7.2091 9.94947 7.16702 10.0229 7.16699 10.1035V12.5801C7.16699 12.6002 7.17163 12.6209 7.18164 12.6377C7.21173 12.6914 7.28048 12.708 7.33398 12.6777L11.2783 10.3828C11.3134 10.3627 11.3352 10.3254 11.3369 10.2852V7.54785L7.2793 9.90918ZM7.33398 5.21191C7.28052 5.18171 7.21343 5.19831 7.18164 5.25195C7.17161 5.26875 7.16699 5.28942 7.16699 5.30957V7.78613C7.16699 7.86667 7.2082 7.94112 7.27832 7.98145L8.46582 8.6709L10.8701 7.27051L7.33398 5.21191Z" fill="#0089CF"/>
+      </svg>
+      <span class="text-xs text-gray-700">
+        Powered by <span class="font-bold">Transcard</span>
+        <span class="mx-1">|</span>
+        <a href="#" class="text-gray-700 hover:underline">Terms of Use</a>
+        <span class="mx-0.5">&bull;</span>
+        <a href="#" class="text-gray-700 hover:underline">Privacy Policy</a>
+        <span class="mx-0.5">&bull;</span>
+        <a href="#" class="text-gray-700 hover:underline">E-Sign Consent</a>
+      </span>
+    </footer>
+
+  </div><!-- end white container -->
+
+  <!-- Reveal Card Details Modal -->
+  <el-dialog>
+    <dialog id="sd-card-details-dialog"
+      class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+      <el-dialog-backdrop
+        class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+      <div tabindex="0"
+        class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+        <el-dialog-panel
+          class="relative w-full max-w-[512px] transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+
+          <!-- Close button -->
+          <div class="flex items-center justify-end px-4 pt-4">
+            <button type="button" command="close" commandfor="sd-card-details-dialog"
+              class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 cursor-pointer">
+              <span class="sr-only">Close</span>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+
+          <!-- Content -->
+          <div class="flex flex-col items-center gap-4 px-6 pb-0">
+
+            <!-- Portal card (revealed) -->
+            <div class="relative h-[200px] w-[320px] flex-shrink-0 overflow-hidden rounded-xl bg-[#151A32] p-5 shadow-lg ring-[0.94px] ring-inset ring-white/20">
+              <div class="flex h-full flex-col gap-2">
+                <div class="flex items-center justify-end">
+                  <div class="flex items-center rounded-full bg-white/20 px-2.5 py-0.5">
+                    <span class="font-['Inter'] text-[11px] text-white">CVV : <span id="sd-modal-cvv-pill">452</span></span>
+                  </div>
+                </div>
+                <div class="flex h-[108px] flex-col justify-end gap-2">
+                  <div class="flex items-end gap-2 self-stretch">
+                    <p class="flex-1 text-2xl font-bold text-white">$3,526.00</p>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="19" height="28" viewBox="0 0 19 28" fill="none" class="shrink-0" aria-hidden="true"><path d="M1.63451 14.0121C1.63451 16.3874 0 16.4362 0 17.3061C0 17.7886 0.415193 18.1801 0.926639 18.1801C1.17182 18.1801 1.60287 17.9797 1.60287 17.9797C2.76417 17.003 3.51553 15.5899 3.51553 14.0121C3.51553 12.4514 2.78131 11.0119 1.60683 10.0167C1.60683 10.0167 0.805383 9.3695 0.216164 10.1419C-0.228056 10.7246 0.266249 11.2756 0.540427 11.5497C1.18896 12.1983 1.63451 13.059 1.63451 14.0121ZM6.37329 14.0121C6.37329 16.2925 5.37282 18.3304 3.77784 19.7843L3.79103 19.7948C3.67372 19.9412 3.60515 20.1217 3.60515 20.3195C3.60515 20.8032 4.02038 21.1947 4.53182 21.1947C4.78359 21.1947 5.01162 21.0998 5.17903 20.9456L5.18959 20.9548C7.07851 19.1779 8.25431 16.7196 8.25431 13.9883C8.25431 11.269 7.07851 8.81719 5.18959 7.04294L5.17771 7.05348C5.01162 6.90058 4.78359 6.80567 4.53182 6.80567C4.02038 6.80567 3.60515 7.19716 3.60515 7.68093C3.60515 7.87733 3.67372 8.05924 3.78971 8.20555L3.7818 8.21215C5.38732 9.68454 6.37329 11.7461 6.37329 14.0121ZM7.8681 5.0591C11.8964 9.08741 11.6275 13.9501 11.6275 13.9501C11.6275 18.2025 9.67792 21.0998 7.85359 22.9531C7.64927 23.1126 7.52009 23.3552 7.52009 23.6254C7.52009 24.1079 7.93531 24.4994 8.44676 24.4994C8.71566 24.4994 8.95691 24.3926 9.12563 24.2212C9.12563 24.2212 13.5085 20.4131 13.5085 14.0239C13.5085 7.48848 9.12563 3.77917 9.12563 3.77917C8.95559 3.60781 8.71434 3.49973 8.44676 3.49973C7.93531 3.49973 7.52009 3.89254 7.52009 4.37499C7.52009 4.6518 7.65588 4.89829 7.8681 5.0591ZM11.8384 1.52644C17.1071 6.68968 17.0623 13.1737 17.0623 14.0002C17.0623 14.0002 17.5803 20.6002 11.8437 26.4758C11.671 26.6524 11.5378 26.8672 11.5378 27.1246C11.5378 27.6081 11.9531 28 12.4645 28C12.7809 28 13.2396 27.6343 13.2396 27.6343C19.4745 21.3107 18.942 14.0002 18.942 14.0002C18.942 5.62065 13.2857 0.375671 13.2857 0.375671C13.1183 0.148949 12.7809 -1.90735e-06 12.4645 -1.90735e-06C11.9531 -1.90735e-06 11.5378 0.392813 11.5378 0.875259C11.5378 1.1323 11.6552 1.3643 11.8423 1.5238L11.8384 1.52644Z" fill="white"/></svg>
+                  </div>
+                  <div class="flex flex-col items-start justify-end gap-2 self-stretch">
+                    <p id="sd-modal-card-number" class="font-['Roboto_Mono'] text-lg font-normal leading-6 tracking-wider text-white">5444 0001 0002 0003</p>
+                    <div class="flex items-center gap-1 pl-14">
+                      <p class="font-['Roboto_Mono'] text-[7px] font-bold uppercase leading-normal text-white">EXPIRATION<br>DATE</p>
+                      <p id="sd-modal-expiry" class="ml-1 font-['Roboto_Mono'] text-sm font-normal leading-5 text-white">03/27</p>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex h-9 items-end gap-4 self-stretch">
+                  <p id="sd-modal-card-name" class="flex-1 font-['Roboto_Mono'] text-sm font-normal uppercase leading-5 tracking-wide text-white"></p>
+                  <svg width="48" height="30" viewBox="0 0 52 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0" aria-hidden="true"><path d="M32.8867 28.5803H18.8867V3.42188H32.8867V28.5803Z" fill="#F14D1C"/><path d="M19.7765 15.9999C19.7745 18.4228 20.3233 20.8143 21.3829 22.9941C22.4416 25.1734 23.9824 27.0836 25.8876 28.5796C23.5272 30.4349 20.6927 31.5884 17.7079 31.9089C14.723 32.2287 11.7073 31.7027 9.00732 30.3913C6.30731 29.0782 4.03059 27.0338 2.43807 24.488C0.844559 21.9437 0 19.0025 0 15.9999C0 12.998 0.844559 10.0557 2.43807 7.51144C4.03059 4.96671 6.30731 2.92113 9.00732 1.60928C11.7073 0.296621 14.723 -0.229337 17.7079 0.091656C20.6927 0.412151 23.5272 1.56526 25.8876 3.421C23.9824 4.91691 22.4416 6.82593 21.3829 9.00606C20.3243 11.1851 19.7745 13.5765 19.7765 15.9999Z" fill="#EB1C24"/><path d="M51.7733 15.9999C51.7733 12.998 50.9287 10.0557 49.3362 7.51144C47.7427 4.96671 45.467 2.92113 42.766 1.60928C40.066 0.296621 37.0512 -0.229337 34.0664 0.091656C31.0816 0.412151 28.2461 1.56526 25.8867 3.421C27.791 4.91771 29.3297 6.82783 30.3884 9.00725C31.4471 11.1863 31.9968 13.5777 31.9968 15.9999C31.9968 18.4228 31.4471 20.8131 30.3884 22.9921C29.3297 25.1715 27.791 27.0818 25.8867 28.5796C28.2461 30.4349 31.0816 31.5884 34.0664 31.9089C37.0512 32.2287 40.066 31.7027 42.766 30.3913C45.467 29.0782 47.7427 27.0338 49.3362 24.488C50.9287 21.9437 51.7733 19.0025 51.7733 15.9999Z" fill="#F59412"/><path d="M51.2753 26.2622V25.6416H51.1129L50.9267 26.0681L50.7404 25.6416H50.5781V26.2622H50.6926V25.7942L50.8679 26.1973H50.9864L51.1607 25.793V26.2622H51.2753ZM50.2484 26.2622V25.7471H50.4566V25.6424H49.9277V25.7471H50.1349V26.2622H50.2484Z" fill="#F59412"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Trademark Disclaimer under modal card -->
+            <div class="flex items-center justify-center">
+              <button type="button" class="rounded-sm px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-100">
+                Trademark Disclaimer
+              </button>
+            </div>
+
+            <!-- Details section — same fields/order as Portal modal -->
+            <div class="flex flex-col gap-2 self-stretch rounded-lg border border-gray-200 bg-gray-50 p-4">
+
+              <div class="grid grid-cols-2 gap-4 self-stretch">
+                <span class="text-sm font-medium text-gray-900">Amount</span>
+                <span class="text-sm font-normal text-gray-700">$3,526.00</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 self-stretch">
+                <span class="text-sm font-medium text-gray-900">Cardholder Name</span>
+                <button type="button" data-copy-id="sd-modal-full-name"
+                  class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer">
+                  <span id="sd-modal-full-name" class="text-sm font-normal"></span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 self-stretch">
+                <span class="text-sm font-medium text-gray-900">Cardholder Address</span>
+                <span class="text-sm font-normal text-gray-700 whitespace-pre-line">3476 Orphan Road
+Suite 1010
+Hayward, WI 54843
+United States</span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 self-stretch items-center">
+                <span class="text-sm font-medium text-gray-900">Type</span>
+                <span class="inline-flex w-fit items-center">
+                  <img src="../../assets/illustrations/ma_symbol.svg" alt="Mastercard" class="h-[18px] w-[28px]" />
+                </span>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 self-stretch">
+                <span class="text-sm font-medium text-gray-900">Card Number</span>
+                <button type="button" data-copy-id="sd-modal-full-number"
+                  class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer">
+                  <span id="sd-modal-full-number" class="text-sm font-normal">5444 0001 0002 0003</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 self-stretch">
+                <span class="text-sm font-medium text-gray-900">Expires</span>
+                <button type="button" data-copy-id="sd-modal-full-expiry"
+                  class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer">
+                  <span id="sd-modal-full-expiry" class="text-sm font-normal">03/2027</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>
+                </button>
+              </div>
+
+              <div class="grid grid-cols-2 gap-4 self-stretch">
+                <span class="text-sm font-medium text-gray-900">CVC2</span>
+                <button type="button" data-copy-id="sd-modal-full-cvv"
+                  class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer">
+                  <span id="sd-modal-full-cvv" class="text-sm font-normal">452</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>
+                </button>
+              </div>
+
+            </div>
+
+            <!-- How to Use collapsible -->
+            <div class="w-full rounded-md bg-gray-100 p-3 hover:bg-gray-200/80">
+              <button type="button" id="sd-card-how-toggle"
+                class="flex w-full cursor-pointer items-center justify-between text-sm font-medium leading-6 text-slate-950">
+                <span>How to Use</span>
+                <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 transition-transform">
+                  <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
+                </svg>
+              </button>
+              <div id="sd-card-how-content" class="mt-2 hidden flex-col gap-1.5 text-sm font-normal leading-6 text-gray-700">
+                <p>Your virtual card has been issued and loaded. Enter the card details into your card terminal or payment portal to complete the transaction.</p>
+                <ul class="list-disc pl-5">
+                  <li>Only charge the amount shown on this card.</li>
+                  <li>Card details can be securely stored for future authorized payments.</li>
+                </ul>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Modal footer: download + amber notice -->
+          <div class="flex flex-col gap-3 px-6 py-4 mt-2 border-t border-gray-100">
+            <button type="button"
+              class="inline-flex w-full items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
+                <path fill-rule="evenodd" d="M5.625 1.5H9a3.75 3.75 0 0 1 3.75 3.75v1.875c0 1.036.84 1.875 1.875 1.875H16.5a3.75 3.75 0 0 1 3.75 3.75v7.875c0 1.035-.84 1.875-1.875 1.875H5.625a1.875 1.875 0 0 1-1.875-1.875V3.375c0-1.036.84-1.875 1.875-1.875Zm5.845 17.03a.75.75 0 0 0 1.06 0l3-3a.75.75 0 1 0-1.06-1.06l-1.72 1.72V12a.75.75 0 0 0-1.5 0v4.19l-1.72-1.72a.75.75 0 0 0-1.06 1.06l3 3Z" clip-rule="evenodd" />
+                <path d="M14.25 5.25a5.23 5.23 0 0 0-1.279-3.434 9.768 9.768 0 0 1 6.963 6.963A5.23 5.23 0 0 0 16.5 7.5h-1.875a.375.375 0 0 1-.375-.375V5.25Z" />
+              </svg>
+              Download Card Details
+            </button>
+            <p class="text-xs text-amber-700 bg-amber-50 ring-1 ring-inset ring-amber-600/20 rounded-md px-3 py-2">
+              Download card details now — this token may expire and card information will not be accessible again from this screen.
+            </p>
+          </div>
+
+        </el-dialog-panel>
+      </div>
+    </dialog>
+  </el-dialog>
+
+</body>
+</html>

@@ -79,6 +79,7 @@
     smart_disburse: { sending: false },
     smart_exchange: { sending: false },
   };
+  var _allowedTestEmails = [];
   var STEP_BADGE_NUMBER_CLASS =
     'inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300';
   var STEP_BADGE_COMPLETE_CLASS =
@@ -1862,12 +1863,16 @@
           var runtimeBaseUrl = normalizeServiceBaseUrl(runtimeConfig && runtimeConfig.tokenServiceBaseUrl);
           var storedBaseUrl = normalizeServiceBaseUrl(storedConfig && storedConfig.tokenServiceBaseUrl);
           var storedIsLocalhost = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/i.test(storedBaseUrl);
+          _allowedTestEmails = (Array.isArray(runtimeConfig && runtimeConfig.allowedTestEmails) ? runtimeConfig.allowedTestEmails : [])
+            .map(function (email) { return String(email || '').trim().toLowerCase(); })
+            .filter(Boolean);
           return {
             tokenServiceBaseUrl: normalizeServiceBaseUrl(
               runtimeBaseUrl ||
               (storedIsLocalhost ? '' : storedBaseUrl) ||
               ''
-            )
+            ),
+            allowedTestEmails: _allowedTestEmails
           };
         });
     }
@@ -3402,11 +3407,16 @@
 
     function renderTokens() {
       tokenHost.innerHTML = tokens.map(function (token, idx) {
+        var tokenValue = String((token && (token.value || token.destination || token.label)) || '').trim().toLowerCase();
+        var isAllowed = _allowedTestEmails.indexOf(tokenValue) !== -1;
+        var badgeClass = isAllowed
+          ? 'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400'
+          : 'bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-200';
         return '' +
-          '<span data-token-label="' + escapeHtml(String((token && token.label) || '')) + '" data-token-value="' + escapeHtml(String((token && (token.value || token.destination || token.label)) || '')) + '" data-token-type="' + escapeHtml(String((token && token.type) || '')) + '" class="inline-flex max-w-full items-center gap-1 rounded-md bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-700 dark:bg-white/10 dark:text-gray-200">' +
+          '<span data-token-label="' + escapeHtml(String((token && token.label) || '')) + '" data-token-value="' + escapeHtml(String((token && (token.value || token.destination || token.label)) || '')) + '" data-token-type="' + escapeHtml(String((token && token.type) || '')) + '" class="inline-flex max-w-full items-center gap-1 rounded-md px-2 py-0.5 text-sm font-medium ' + badgeClass + '">' +
           '  <span class="truncate">' + escapeHtml(tokenDisplayText(token)) + '</span>' +
           (isReadOnly ? '' : (
-            '  <button type="button" data-token-remove="' + idx + '" class="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-sm text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200 cursor-pointer" aria-label="Remove destination">' +
+            '  <button type="button" data-token-remove="' + idx + '" class="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-sm ' + (isAllowed ? 'text-green-500 hover:bg-green-200 hover:text-green-700 dark:text-green-400 dark:hover:bg-green-500/20 dark:hover:text-green-300' : 'text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200') + ' cursor-pointer" aria-label="Remove destination">' +
             '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>' +
             '  </button>'
           )) +

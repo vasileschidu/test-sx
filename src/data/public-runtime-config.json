@@ -1,5 +1,9 @@
 {
   "tokenServiceBaseUrl": "https://sd-sx-token-service.schidu-vasile.workers.dev",
   "defaultTestRecipient": "sckeedoo@gmail.com",
-  "defaultFlow": "sd"
+  "defaultFlow": "sd",
+  "allowedTestEmails": [
+    "sckeedoo@gmail.com",
+    "ap@redmaple.example"
+  ]
 }

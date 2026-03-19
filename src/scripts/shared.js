@@ -95,6 +95,387 @@ function isMaskedText(value) {
     return /[•]/.test(String(value || ''));
 }
 
+/* ===== Shared My Company Profile ===== */
+
+var MY_COMPANY_PROFILE_PATHS = [
+    '../../data/my-company-profile.json',
+    '../../../src/data/my-company-profile.json',
+    '/src/data/my-company-profile.json',
+    './src/data/my-company-profile.json'
+];
+var _myCompanyProfilePromise = null;
+
+function loadSharedJsonWithFallbacks(paths) {
+    var index = 0;
+    function tryNext() {
+        if (index >= paths.length) return Promise.reject(new Error('Failed to load JSON.'));
+        var path = paths[index++];
+        return fetch(path, { cache: 'no-store' })
+            .then(function (response) {
+                if (!response.ok) throw new Error('HTTP ' + response.status + ' for ' + path);
+                return response.json();
+            })
+            .catch(function () {
+                return tryNext();
+            });
+    }
+    return tryNext();
+}
+
+function buildMyCompanyAddressText(legalAddress, fallbackAddress) {
+    var address = legalAddress && typeof legalAddress === 'object' ? legalAddress : {};
+    var line1 = String(address.line1 || '').trim();
+    var line2 = String(address.line2 || '').trim();
+    var city = String(address.city || '').trim();
+    var state = String(address.state || '').trim();
+    var postalCode = String(address.postalCode || address.zip || '').trim();
+    var country = String(address.country || address.countryName || '').trim();
+    var cityState = [city, state].filter(Boolean).join(', ');
+    if (postalCode) cityState = cityState ? (cityState + ' ' + postalCode) : postalCode;
+    var lines = [line1, line2, cityState, country].filter(Boolean);
+    if (lines.length) return lines.join('\n');
+    return String(fallbackAddress || '').trim();
+}
+
+function normalizeMyCompanyProfile(profile) {
+    var raw = profile && typeof profile === 'object' ? profile : {};
+    var legalAddress = raw.legalAddress && typeof raw.legalAddress === 'object' ? raw.legalAddress : {};
+    var contact = raw.contact && typeof raw.contact === 'object' ? raw.contact : {};
+    var legalName = String(raw.legalName || raw.name || '').trim();
+    var legalAddressText = buildMyCompanyAddressText(
+        legalAddress,
+        raw.mailingAddress && raw.mailingAddress.address
+    );
+    return {
+        id: String(raw.id || 'my-business'),
+        legalName: legalName,
+        businessPhone: String(raw.businessPhone || raw.phone || '').trim(),
+        businessEmail: String(raw.businessEmail || raw.email || '').trim(),
+        businessStructure: String(raw.businessStructure || '').trim(),
+        organizationIdType: String(raw.organizationIdType || '').trim(),
+        organizationIdLabel: String(raw.organizationIdLabel || raw.organizationIdType || '').trim(),
+        organizationIdValue: String(raw.organizationIdValue || '').trim(),
+        website: String(raw.website || '').trim(),
+        stockSymbol: String(raw.stockSymbol || raw.stock || '').trim(),
+        dbaEnabled: raw.dbaEnabled !== false,
+        dbaName: String(raw.dbaName || '').trim(),
+        contact: {
+            name: String(contact.name || '').trim(),
+            email: String(contact.email || '').trim(),
+            phone: String(contact.phone || '').trim()
+        },
+        legalAddress: {
+            nickname: String(legalAddress.nickname || '').trim(),
+            line1: String(legalAddress.line1 || '').trim(),
+            line2: String(legalAddress.line2 || '').trim(),
+            city: String(legalAddress.city || '').trim(),
+            state: String(legalAddress.state || '').trim(),
+            postalCode: String(legalAddress.postalCode || legalAddress.zip || '').trim(),
+            countryCode: String(legalAddress.countryCode || '').trim().toLowerCase(),
+            country: String(legalAddress.country || legalAddress.countryName || '').trim(),
+            displayText: legalAddressText
+        },
+        mailingAddress: {
+            name: legalName,
+            address: legalAddressText
+        }
+    };
+}
+
+function getMyCompanyDisplayName(profile) {
+    var normalized = normalizeMyCompanyProfile(profile);
+    return normalized.legalName || '';
+}
+
+function getMyCompanyAddressText(profile) {
+    var normalized = normalizeMyCompanyProfile(profile);
+    return normalized.legalAddress.displayText || normalized.mailingAddress.address || '';
+}
+
+function getMyCompanyProfile() {
+    if (!_myCompanyProfilePromise) {
+        _myCompanyProfilePromise = loadSharedJsonWithFallbacks(MY_COMPANY_PROFILE_PATHS)
+            .then(function (profile) {
+                var normalized = normalizeMyCompanyProfile(profile);
+                window.__myCompanyProfileCache = normalized;
+                return normalized;
+            })
+            .catch(function () {
+                var normalized = normalizeMyCompanyProfile({});
+                window.__myCompanyProfileCache = normalized;
+                return normalized;
+            });
+    }
+    return _myCompanyProfilePromise;
+}
+
+window.normalizeMyCompanyProfile = normalizeMyCompanyProfile;
+window.getMyCompanyDisplayName = getMyCompanyDisplayName;
+window.getMyCompanyAddressText = getMyCompanyAddressText;
+window.getMyCompanyProfile = getMyCompanyProfile;
+
+/* ===== Shared Payment Activity Inference ===== */
+
+function firstNonEmptyValue() {
+    for (var i = 0; i < arguments.length; i += 1) {
+        var value = arguments[i];
+        if (value == null) continue;
+        if (typeof value === 'string' && !value.trim()) continue;
+        return value;
+    }
+    return '';
+}
+
+function normalizeActivityTimestamp(value) {
+    if (!value) return '';
+    var str = String(value).trim();
+    if (!str) return '';
+    var normalized = /^\d{4}-\d{2}-\d{2}$/.test(str) ? (str + 'T00:00:00') : str;
+    var date = new Date(normalized);
+    if (isNaN(date.getTime())) return '';
+    return normalized;
+}
+
+function formatActivityLogDate(value) {
+    var normalized = normalizeActivityTimestamp(value);
+    if (!normalized) return '';
+    var date = new Date(normalized);
+    return date.toLocaleString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+        hour: 'numeric',
+        minute: '2-digit'
+    });
+}
+
+function inferActivityKind(item) {
+    if (!item || typeof item !== 'object') return '';
+    var content = [
+        item.kind,
+        item.type,
+        item.label,
+        item.title,
+        item.action,
+        item.description,
+        item.comment
+    ].join(' ').toLowerCase();
+
+    if (!content) return '';
+    if (/fail|failed|exception|declin|reject|error|returned/.test(content)) return 'failed';
+    if (/complet|paid|delivered|settled|success/.test(content)) return 'completed';
+    if (/processing|processor|verification|approval|sync|pending payee action|in progress/.test(content)) return 'processing';
+    if (/initiated|confirmed|submitted|started/.test(content)) return 'initiated';
+    if (/ready to pay|created|imported|available|open/.test(content)) return 'created';
+    return '';
+}
+
+function getExistingActivityItems(payment) {
+    var details = payment && payment.details;
+    var raw = details && Array.isArray(details.activityLog) ? details.activityLog : [];
+    return raw
+        .map(function (item) {
+            var normalized = Object.assign({}, item || {});
+            normalized.kind = inferActivityKind(normalized);
+            normalized.timestamp = normalizeActivityTimestamp(firstNonEmptyValue(
+                normalized.date,
+                normalized.timestamp,
+                normalized.at,
+                normalized.createdAt
+            ));
+            return normalized;
+        })
+        .filter(function (item) { return !!item.kind; });
+}
+
+function findActivityItemByKind(items, kind) {
+    for (var i = 0; i < items.length; i += 1) {
+        if (items[i] && items[i].kind === kind) return items[i];
+    }
+    return null;
+}
+
+function buildDerivedActivityItem(kind, timestamp, payment, existingItem) {
+    var details = payment && payment.details ? payment.details : {};
+    var failureReason = firstNonEmptyValue(
+        payment && payment.exceptionReason,
+        details && details.exceptionReason,
+        details && details.error,
+        details && details.errorMessage,
+        details && details.failureReason
+    );
+
+    var titles = {
+        created: 'Payment created',
+        initiated: 'Payment initiated',
+        processing: 'Processing payment',
+        completed: 'Payment completed',
+        failed: 'Payment failed'
+    };
+
+    var descriptions = {
+        created: 'Payment was created and is awaiting processing.',
+        initiated: 'Payment has been initiated.',
+        processing: 'Payment is currently in progress.',
+        completed: 'Payment completed successfully.',
+        failed: failureReason ? ('Payment failed: ' + failureReason + '.') : 'Payment failed before completion.'
+    };
+
+    var typeMap = {
+        created: 'event',
+        initiated: 'event',
+        processing: 'processing',
+        completed: 'completed',
+        failed: 'failed'
+    };
+
+    return {
+        kind: kind,
+        type: typeMap[kind] || 'event',
+        label: titles[kind],
+        title: titles[kind],
+        description: descriptions[kind],
+        date: timestamp || '',
+        timestamp: timestamp || '',
+        dateLabel: formatActivityLogDate(timestamp || '')
+    };
+}
+
+function getActivityLog(payment) {
+    var details = payment && payment.details ? payment.details : {};
+    var payPageState = details && details.payPageState ? details.payPageState : {};
+    var existingItems = getExistingActivityItems(payment);
+    var status = String(payment && payment.status || '').trim().toLowerCase();
+    var statusType = String(payment && payment.statusType || '').trim().toLowerCase();
+    var existingInitiatedItem = findActivityItemByKind(existingItems, 'initiated');
+    var existingProcessingItem = findActivityItemByKind(existingItems, 'processing');
+    var existingCompletedItem = findActivityItemByKind(existingItems, 'completed');
+    var existingFailedItem = findActivityItemByKind(existingItems, 'failed');
+    var existingCreatedItem = findActivityItemByKind(existingItems, 'created');
+    var rawCompletedAt = normalizeActivityTimestamp(firstNonEmptyValue(
+        payment && payment.completedAt,
+        details && details.completedAt,
+        payment && payment.paidAt,
+        payment && payment.settledAt
+    ));
+    var rawFailedAt = normalizeActivityTimestamp(firstNonEmptyValue(
+        payment && payment.failedAt,
+        details && details.failedAt,
+        payment && payment.errorAt,
+        details && details.errorAt
+    ));
+    var isPaidState = status === 'paid';
+    var isFailedState = status === 'exception';
+    var isActiveState = status === 'in_progress' || status === 'scheduled' || (status === 'in_progress' && statusType === 'scheduled');
+    var isOpenState = status === 'ready_to_pay' || status === 'pending';
+
+    var hasCompletion = !!firstNonEmptyValue(
+        isPaidState ? 'paid' : '',
+        !isActiveState && !isOpenState && !isFailedState ? rawCompletedAt : '',
+        !isActiveState && !isOpenState && !isFailedState ? existingCompletedItem : null
+    );
+    var hasFailure = !!firstNonEmptyValue(
+        isFailedState ? 'failed' : '',
+        !isActiveState && !isOpenState && !isPaidState ? rawFailedAt : '',
+        payment && payment.exceptionReason,
+        details && details.exceptionReason,
+        details && details.error,
+        details && details.errorMessage,
+        details && details.failureReason,
+        !isActiveState && !isOpenState && !isPaidState ? existingFailedItem : null
+    );
+    var hasExplicitProcessing = !!firstNonEmptyValue(
+        payment && payment.processingStep,
+        details && details.processingStep,
+        existingProcessingItem
+    );
+    var hasMethodSelectionEvidence = !!firstNonEmptyValue(
+        payPageState && payPageState.methodId,
+        details && details.paymentMethodId,
+        details && details.cardId,
+        details && details.accountId,
+        details && details.bankAccountId
+    );
+    var hasLifecycleAfterInitiation = hasExplicitProcessing || hasCompletion || hasFailure;
+
+    var createdAt = normalizeActivityTimestamp(firstNonEmptyValue(
+        payment && payment.createdAt,
+        details && details.createdAt,
+        payment && payment.importedAt,
+        details && details.importedAt,
+        payment && payment.adDate,
+        payment && payment.createdDate,
+        payment && payment.invoiceDate,
+        existingCreatedItem && existingCreatedItem.timestamp
+    ));
+    var initiatedAt = normalizeActivityTimestamp(firstNonEmptyValue(
+        payment && payment.initiatedAt,
+        details && details.initiatedAt,
+        payPageState && payPageState.confirmedAt,
+        payment && payment.dateInitiated,
+        (hasLifecycleAfterInitiation || hasMethodSelectionEvidence) ? (payment && payment.adDate) : '',
+        existingInitiatedItem && existingInitiatedItem.timestamp
+    ));
+    var hasInitiation = !!(initiatedAt || hasMethodSelectionEvidence || hasLifecycleAfterInitiation);
+    var hasProcessing = !!(hasExplicitProcessing || ((hasCompletion || hasFailure) && hasInitiation));
+    var processingAt = normalizeActivityTimestamp(firstNonEmptyValue(
+        details && details.processingAt,
+        existingProcessingItem && existingProcessingItem.timestamp,
+        hasProcessing ? initiatedAt : ''
+    ));
+    var completedAt = normalizeActivityTimestamp(firstNonEmptyValue(
+        rawCompletedAt,
+        existingCompletedItem && existingCompletedItem.timestamp,
+        processingAt,
+        initiatedAt
+    ));
+    var failedAt = normalizeActivityTimestamp(firstNonEmptyValue(
+        rawFailedAt,
+        existingFailedItem && existingFailedItem.timestamp,
+        processingAt,
+        initiatedAt,
+        hasFailure ? initiatedAt : ''
+    ));
+    if (!createdAt) {
+        createdAt = normalizeActivityTimestamp(firstNonEmptyValue(initiatedAt, processingAt, completedAt, failedAt));
+    }
+
+    var candidates = [];
+    candidates.push(buildDerivedActivityItem('created', createdAt, payment, existingCreatedItem));
+    if (hasInitiation) {
+        candidates.push(buildDerivedActivityItem('initiated', initiatedAt, payment, existingInitiatedItem));
+    }
+    if (hasProcessing) {
+        candidates.push(buildDerivedActivityItem('processing', processingAt, payment, existingProcessingItem));
+    }
+    if (hasCompletion) {
+        candidates.push(buildDerivedActivityItem('completed', completedAt, payment, existingCompletedItem));
+    } else if (hasFailure) {
+        candidates.push(buildDerivedActivityItem('failed', failedAt, payment, existingFailedItem));
+    }
+
+    var order = {
+        created: 0,
+        initiated: 1,
+        processing: 2,
+        completed: 3,
+        failed: 4
+    };
+
+    return candidates
+        .filter(function (item) { return !!item; })
+        .sort(function (a, b) {
+            if (a.timestamp && b.timestamp && a.timestamp !== b.timestamp) {
+                return a.timestamp > b.timestamp ? -1 : 1;
+            }
+            var aOrder = Object.prototype.hasOwnProperty.call(order, a.kind) ? order[a.kind] : 99;
+            var bOrder = Object.prototype.hasOwnProperty.call(order, b.kind) ? order[b.kind] : 99;
+            return bOrder - aOrder;
+        });
+}
+
+window.getActivityLog = getActivityLog;
+
 /* ===== Copy to Clipboard with Animated Tooltip ===== */
 
 function showCopiedTooltip(anchorEl) {
