@@ -26,9 +26,6 @@
       function getState() {
         try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
       }
-      function saveState(next) {
-        try { sessionStorage.setItem(KEY, JSON.stringify(next || {})); } catch (e) {}
-      }
       function randomId(prefix) {
         var rand = Math.random().toString(36).slice(2, 8).toUpperCase();
         var stamp = Date.now().toString(36).slice(-6).toUpperCase();
@@ -88,9 +85,7 @@
       var clientRefId = s.clientPaymentReferenceId || s.clientReferenceId || randomId('CPR');
       setText('rcpt-txid', transactionId);
       setText('rcpt-client-ref-id', clientRefId);
-      if (!s.transactionId && !s.txId) s.transactionId = transactionId;
-      if (!s.clientPaymentReferenceId && !s.clientReferenceId) s.clientPaymentReferenceId = clientRefId;
-      saveState(s);
+      try { sessionStorage.removeItem(KEY); } catch (e) {}
 
       if (isPayout) {
         var virtualCardStack = document.getElementById('sd-virtual-card-stack');
