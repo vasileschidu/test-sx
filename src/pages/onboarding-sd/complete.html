@@ -23,8 +23,15 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var KEY = 'sd-onboarding-state';
+      var COMPLETE_KEY = 'sd-onboarding-complete-state';
       function getState() {
         try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
+      }
+      function getCompleteState() {
+        try { return JSON.parse(sessionStorage.getItem(COMPLETE_KEY) || '{}'); } catch (e) { return {}; }
+      }
+      function saveCompleteState(state) {
+        try { sessionStorage.setItem(COMPLETE_KEY, JSON.stringify(state || {})); } catch (e) {}
       }
       function randomId(prefix) {
         var rand = Math.random().toString(36).slice(2, 8).toUpperCase();
@@ -32,7 +39,9 @@
         return String(prefix || 'TX') + '-' + stamp + rand;
       }
 
-      var s = getState();
+      var onboardingState = getState();
+      var completeState = getCompleteState();
+      var s = Object.keys(onboardingState).length ? onboardingState : completeState;
       var method = s.paymentMethod || 'instant-virtual-card';
       var isDebit = method === 'debit-card';
       var isBank = method === 'bank-account';
@@ -85,6 +94,12 @@
       var clientRefId = s.clientPaymentReferenceId || s.clientReferenceId || randomId('CPR');
       setText('rcpt-txid', transactionId);
       setText('rcpt-client-ref-id', clientRefId);
+      if (Object.keys(onboardingState).length) {
+        saveCompleteState(Object.assign({}, onboardingState, {
+          transactionId: transactionId,
+          clientPaymentReferenceId: clientRefId
+        }));
+      }
       try { sessionStorage.removeItem(KEY); } catch (e) {}
 
       if (isPayout) {
@@ -288,7 +303,7 @@
         </div>
 
         <!-- Card + wallet buttons container -->
-        <div id="sd-virtual-card-stack" class="stagger-item flex w-[400px] flex-col overflow-hidden rounded-xl bg-gray-100">
+        <div id="sd-virtual-card-stack" class="stagger-item flex w-[320px] flex-col overflow-hidden rounded-xl bg-gray-100">
 
           <!-- Virtual card (masked) -->
           <div class="relative h-[200px] w-full flex-shrink-0 overflow-hidden rounded-xl bg-[#151A32] p-5 shadow-lg ring-[0.94px] ring-inset ring-white/20">
