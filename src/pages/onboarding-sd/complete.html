@@ -40,7 +40,7 @@
       var vc = s.virtualCard || {};
       var dc = s.debitCard || {};
       var ba = s.bankAccount || {};
-      var fullName = [vc.firstName, vc.lastName].filter(Boolean).join(' ') || 'James Rivera';
+      var fullName = [vc.firstName, vc.lastName].filter(Boolean).join(' ');
       var amountRaw = s.amount || s.paymentAmount || '3526.00';
       var amount = formatCurrency(amountRaw, 'USD');
 

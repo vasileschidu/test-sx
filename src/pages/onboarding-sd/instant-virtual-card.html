@@ -22,27 +22,13 @@
         sessionStorage.setItem(KEY, JSON.stringify(s));
       }
 
-      // Defaults shown when no saved state exists
-      var DEFAULTS = {
-        firstName: 'James',
-        lastName: 'Rivera',
-        phoneNumber: '+1 (555) 204-8821',
-        email: 'james.rivera@example.com',
-        addressLine1: '4821 Elmwood Drive',
-        addressLine2: 'Apt 3B',
-        city: 'Austin',
-        state: 'TX',
-        zipCode: '78701',
-        country: 'United States'
-      };
-
-      // Restore saved values, falling back to defaults, then persist to sessionStorage
+      // Restore saved values only; do not prefill onboarding with placeholder profile data.
       var saved = getState().virtualCard || {};
       var current = {};
       REQUIRED_IDS.concat(['addressLine2']).forEach(function (id) {
         var el = document.getElementById(id);
         if (!el) return;
-        el.value = saved[id] || DEFAULTS[id] || '';
+        el.value = saved[id] || '';
         current[id] = el.value;
       });
       saveState({ virtualCard: current });
