@@ -10,39 +10,106 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var KEY = 'sd-onboarding-state';
-      var method = (JSON.parse(sessionStorage.getItem(KEY) || '{}')).paymentMethod;
-      if (method === 'instant-virtual-card') {
-        var el = document.getElementById('substep-account-info');
-        if (el) el.classList.remove('hidden');
-      }
-
       function getState() {
         try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
       }
 
-      function set(id, value) {
-        var el = document.getElementById(id);
-        if (el) el.textContent = value || '—';
-      }
-
       var s = getState();
+      var method = s.paymentMethod;
       var vc = s.virtualCard || {};
+      var dc = s.debitCard || {};
+      var ba = s.bankAccount || {};
 
+      // ── Method label ─────────────────────────────────────────────────────────
+      var methodLabels = {
+        'instant-virtual-card': 'Instant Virtual Card',
+        'debit-card': 'Send to my Debit Card',
+        'bank-account': 'Send to my Bank Account'
+      };
+      setText('sum-method', methodLabels[method] || '—');
+
+      // ── Virtual card preview name ─────────────────────────────────────────
       var fullName = [vc.firstName, vc.lastName].filter(Boolean).join(' ');
-      set('sum-name', fullName);
       var cardName = document.getElementById('card-preview-name');
       if (cardName) cardName.textContent = fullName.toUpperCase();
-      set('sum-email', vc.email);
-      set('sum-phone', vc.phoneNumber);
 
-      var addrParts = [
-        vc.addressLine1,
-        vc.addressLine2,
-        [vc.city, vc.state, vc.zipCode].filter(Boolean).join(', '),
-        vc.country
-      ].filter(Boolean);
+      // ── Show/hide sections based on method ───────────────────────────────
+      var cardPreviewSection = document.getElementById('sum-card-preview');
+      var cardDetailsCard    = document.getElementById('sum-card-details-card');
+      var bankDetailsCard    = document.getElementById('sum-bank-details-card');
+      var isDebit = method === 'debit-card';
+      var isBank = method === 'bank-account';
+
+      if (cardPreviewSection) cardPreviewSection.classList.toggle('hidden', isDebit || isBank);
+      if (cardDetailsCard) {
+        cardDetailsCard.classList.toggle('hidden', !isDebit);
+        cardDetailsCard.classList.toggle('flex', isDebit);
+      }
+      if (bankDetailsCard) {
+        bankDetailsCard.classList.toggle('hidden', !isBank);
+        bankDetailsCard.classList.toggle('flex', isBank);
+      }
+
+      // ── Populate Card Details (debit only) ───────────────────────────────
+      if (isDebit) {
+        setText('sum-dc-number', dc.cardNumber || '—');
+        setText('sum-dc-name',   dc.nameOnCard || '—');
+        setText('sum-dc-expiry', dc.expiry || '—');
+
+        // CVV reveal
+        var cvvActual  = dc.cvv || '';
+        var cvvEl      = document.getElementById('sum-dc-cvv');
+        var revealBtn  = document.getElementById('btn-reveal-cvv');
+        var cvvEye     = document.getElementById('cvv-eye');
+        var cvvEyeSlash = document.getElementById('cvv-eye-slash');
+        var revealed   = false;
+        if (cvvEl) cvvEl.textContent = cvvActual ? '•••' : '—';
+        if (revealBtn && cvvActual) {
+          revealBtn.addEventListener('click', function () {
+            revealed = !revealed;
+            cvvEl.textContent = revealed ? cvvActual : '•••';
+            revealBtn.setAttribute('aria-pressed', revealed);
+            revealBtn.setAttribute('aria-label', revealed ? 'Hide security code' : 'Reveal security code');
+            if (cvvEye)      cvvEye.classList.toggle('hidden', revealed);
+            if (cvvEyeSlash) cvvEyeSlash.classList.toggle('hidden', !revealed);
+          });
+        } else if (revealBtn) {
+          revealBtn.classList.add('hidden');
+        }
+      }
+
+      if (isBank) {
+        setText('sum-ba-type', ba.accountType ? ba.accountType.charAt(0).toUpperCase() + ba.accountType.slice(1) : '—');
+        setText('sum-ba-holder', ba.accountHolderName || '—');
+        setText('sum-ba-routing', ba.routingNumber || '—');
+        setText('sum-ba-number', ba.accountNumber || '—');
+      }
+
+      // ── Populate Account Information ──────────────────────────────────────
+      setText('sum-name',  fullName || '—');
+      setText('sum-email', vc.email || '—');
+      setText('sum-phone', vc.phoneNumber || '—');
       var addrEl = document.getElementById('sum-address');
-      if (addrEl) addrEl.innerHTML = addrParts.join('<br>') || '—';
+      if (addrEl) {
+        var addrParts = [
+          vc.addressLine1,
+          vc.addressLine2,
+          [vc.city, vc.state, vc.zipCode].filter(Boolean).join(', '),
+          vc.country
+        ].filter(Boolean);
+        addrEl.innerHTML = addrParts.join('<br>') || '—';
+      }
+
+      function setText(id, value) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = value;
+      }
+
+      var backLink = document.getElementById('summary-back-link');
+      if (backLink) {
+        backLink.setAttribute('href', isBank ? 'debit-account-info.html' : 'instant-virtual-card.html');
+      }
+
     });
   </script>
 </head>
@@ -54,8 +121,6 @@
 
     <!-- LEFT SIDEBAR -->
     <div class="bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex flex-col p-[56px] gap-[35px]">
-
-      <!-- Logo -->
       <button class="ml-auto flex items-center gap-2 p-2.5 rounded-lg bg-gray-900/25 hover:bg-gray-900/35">
         <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
           <path d="M18.6709 15.8289L15.1834 13.8033L8.12004 17.9137L18.5088 23.9562C18.666 24.0449 18.8625 23.9956 18.9558 23.8379C18.9853 23.7886 19 23.7295 19 23.6703L19 16.4007C19 16.1641 18.8772 15.9472 18.6709 15.8289Z" fill="white"/>
@@ -63,10 +128,8 @@
         </svg>
       </button>
 
-      <!-- Stepper Nav -->
       <nav aria-label="Progress">
         <ol role="list" class="space-y-6">
-
           <li>
             <a href="confirm-identity.html" class="group">
               <span class="flex items-start">
@@ -79,7 +142,6 @@
               </span>
             </a>
           </li>
-
           <li>
             <a href="review-documents.html" class="group">
               <span class="flex items-start">
@@ -92,7 +154,6 @@
               </span>
             </a>
           </li>
-
           <li>
             <a href="signature.html" class="group">
               <span class="flex items-start">
@@ -105,7 +166,6 @@
               </span>
             </a>
           </li>
-
           <li>
             <a href="paywall.html" class="group">
               <span class="flex items-start">
@@ -118,20 +178,16 @@
               </span>
             </a>
           </li>
-
           <li id="substep-account-info" class="hidden pl-6">
             <a href="instant-virtual-card.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-full text-white group-hover:text-blue-300">
-                    <path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Account Information</span>
-              </span>
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Account Information</p>
+              </div>
             </a>
           </li>
-
           <li>
             <a href="#" aria-current="step" class="flex items-start">
               <span aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
@@ -141,7 +197,6 @@
               <span class="ml-3 text-sm font-medium text-white">Summary</span>
             </a>
           </li>
-
           <li>
             <a href="complete.html" class="group">
               <div class="flex items-start">
@@ -152,7 +207,6 @@
               </div>
             </a>
           </li>
-
         </ol>
       </nav>
     </div>
@@ -161,83 +215,168 @@
     <div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
       <div class="min-h-screen flex flex-col">
 
-        <!-- Content area -->
         <div class="flex-1 flex flex-col items-center px-10 pt-12 pb-8">
-          <div class="w-full max-w-[640px]">
+          <div class="w-full max-w-[640px] flex flex-col gap-2">
 
-            <h1 class="text-3xl font-semibold text-gray-900">Review Your Information</h1>
-            <p class="mt-2 text-sm text-gray-500">A new virtual card with these details will be created and loaded with <span class="font-semibold text-gray-700">$3,526.00</span> — ready to use instantly.</p>
+            <!-- Page header -->
+            <div class="mb-2">
+              <h1 class="text-3xl font-semibold text-gray-900">Review Your Information</h1>
+              <p class="mt-2 text-sm text-gray-500">Please confirm the details below before submitting.</p>
+            </div>
 
-            <!-- Virtual card preview (Portal card, sample) -->
-            <div class="mt-8 flex flex-col items-start gap-2">
-
-              <!-- Card -->
+            <!-- Virtual card preview (instant-virtual-card only) -->
+            <div id="sum-card-preview" class="flex flex-col items-start gap-2">
               <div class="relative h-[200px] w-[320px] flex-shrink-0 overflow-hidden rounded-xl bg-[#151A32] p-5 shadow-lg ring-[0.94px] ring-inset ring-white/20">
                 <div class="flex h-full flex-col gap-2">
-                  <!-- Top: CVV pill -->
                   <div class="flex items-center justify-end">
                     <div class="flex items-center rounded-full bg-white/20 px-2.5 py-0.5">
                       <span class="font-['Inter'] text-[11px] text-white">CVV : •••</span>
                     </div>
                   </div>
-                  <!-- Middle -->
                   <div class="flex h-[108px] flex-col justify-end gap-2">
-                    <!-- Amount + NFC icon -->
                     <div class="flex items-end gap-2 self-stretch">
                       <p class="flex-1 text-2xl font-bold text-white">$3,526.00</p>
                       <svg xmlns="http://www.w3.org/2000/svg" width="19" height="28" viewBox="0 0 19 28" fill="none" class="shrink-0" aria-hidden="true"><path d="M1.63451 14.0121C1.63451 16.3874 0 16.4362 0 17.3061C0 17.7886 0.415193 18.1801 0.926639 18.1801C1.17182 18.1801 1.60287 17.9797 1.60287 17.9797C2.76417 17.003 3.51553 15.5899 3.51553 14.0121C3.51553 12.4514 2.78131 11.0119 1.60683 10.0167C1.60683 10.0167 0.805383 9.3695 0.216164 10.1419C-0.228056 10.7246 0.266249 11.2756 0.540427 11.5497C1.18896 12.1983 1.63451 13.059 1.63451 14.0121ZM6.37329 14.0121C6.37329 16.2925 5.37282 18.3304 3.77784 19.7843L3.79103 19.7948C3.67372 19.9412 3.60515 20.1217 3.60515 20.3195C3.60515 20.8032 4.02038 21.1947 4.53182 21.1947C4.78359 21.1947 5.01162 21.0998 5.17903 20.9456L5.18959 20.9548C7.07851 19.1779 8.25431 16.7196 8.25431 13.9883C8.25431 11.269 7.07851 8.81719 5.18959 7.04294L5.17771 7.05348C5.01162 6.90058 4.78359 6.80567 4.53182 6.80567C4.02038 6.80567 3.60515 7.19716 3.60515 7.68093C3.60515 7.87733 3.67372 8.05924 3.78971 8.20555L3.7818 8.21215C5.38732 9.68454 6.37329 11.7461 6.37329 14.0121ZM7.8681 5.0591C11.8964 9.08741 11.6275 13.9501 11.6275 13.9501C11.6275 18.2025 9.67792 21.0998 7.85359 22.9531C7.64927 23.1126 7.52009 23.3552 7.52009 23.6254C7.52009 24.1079 7.93531 24.4994 8.44676 24.4994C8.71566 24.4994 8.95691 24.3926 9.12563 24.2212C9.12563 24.2212 13.5085 20.4131 13.5085 14.0239C13.5085 7.48848 9.12563 3.77917 9.12563 3.77917C8.95559 3.60781 8.71434 3.49973 8.44676 3.49973C7.93531 3.49973 7.52009 3.89254 7.52009 4.37499C7.52009 4.6518 7.65588 4.89829 7.8681 5.0591ZM11.8384 1.52644C17.1071 6.68968 17.0623 13.1737 17.0623 14.0002C17.0623 14.0002 17.5803 20.6002 11.8437 26.4758C11.671 26.6524 11.5378 26.8672 11.5378 27.1246C11.5378 27.6081 11.9531 28 12.4645 28C12.7809 28 13.2396 27.6343 13.2396 27.6343C19.4745 21.3107 18.942 14.0002 18.942 14.0002C18.942 5.62065 13.2857 0.375671 13.2857 0.375671C13.1183 0.148949 12.7809 -1.90735e-06 12.4645 -1.90735e-06C11.9531 -1.90735e-06 11.5378 0.392813 11.5378 0.875259C11.5378 1.1323 11.6552 1.3643 11.8423 1.5238L11.8384 1.52644Z" fill="white"/></svg>
                     </div>
-                    <!-- Card number + expiry -->
                     <div class="flex flex-col items-start justify-end gap-2 self-stretch">
-                      <p id="card-preview-number" class="font-['Roboto_Mono'] text-lg font-normal leading-6 tracking-wider text-white">•••• •••• •••• ••••</p>
+                      <p class="font-['Roboto_Mono'] text-lg font-normal leading-6 tracking-wider text-white">•••• •••• •••• ••••</p>
                       <div class="flex items-center gap-1 pl-14">
                         <p class="font-['Roboto_Mono'] text-[7px] font-bold uppercase leading-normal text-white">EXPIRATION<br>DATE</p>
                         <p class="ml-1 font-['Roboto_Mono'] text-sm font-normal leading-5 text-white">•• / ••</p>
                       </div>
                     </div>
                   </div>
-                  <!-- Bottom: name + Visa -->
                   <div class="flex h-9 items-end gap-4 self-stretch">
                     <p id="card-preview-name" class="flex-1 font-['Roboto_Mono'] text-sm font-normal uppercase leading-5 tracking-wide text-white"></p>
-                    <svg width="48" height="30" viewBox="0 0 52 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0" aria-hidden="true"><path d="M32.8867 28.5803H18.8867V3.42188H32.8867V28.5803Z" fill="#F14D1C"/><path d="M19.7765 15.9999C19.7745 18.4228 20.3233 20.8143 21.3829 22.9941C22.4416 25.1734 23.9824 27.0836 25.8876 28.5796C23.5272 30.4349 20.6927 31.5884 17.7079 31.9089C14.723 32.2287 11.7073 31.7027 9.00732 30.3913C6.30731 29.0782 4.03059 27.0338 2.43807 24.488C0.844559 21.9437 0 19.0025 0 15.9999C0 12.998 0.844559 10.0557 2.43807 7.51144C4.03059 4.96671 6.30731 2.92113 9.00732 1.60928C11.7073 0.296621 14.723 -0.229337 17.7079 0.091656C20.6927 0.412151 23.5272 1.56526 25.8876 3.421C23.9824 4.91691 22.4416 6.82593 21.3829 9.00606C20.3243 11.1851 19.7745 13.5765 19.7765 15.9999Z" fill="#EB1C24"/><path d="M51.7733 15.9999C51.7733 12.998 50.9287 10.0557 49.3362 7.51144C47.7427 4.96671 45.467 2.92113 42.766 1.60928C40.066 0.296621 37.0512 -0.229337 34.0664 0.091656C31.0816 0.412151 28.2461 1.56526 25.8867 3.421C27.791 4.91771 29.3297 6.82783 30.3884 9.00725C31.4471 11.1863 31.9968 13.5777 31.9968 15.9999C31.9968 18.4228 31.4471 20.8131 30.3884 22.9921C29.3297 25.1715 27.791 27.0818 25.8867 28.5796C28.2461 30.4349 31.0816 31.5884 34.0664 31.9089C37.0512 32.2287 40.066 31.7027 42.766 30.3913C45.467 29.0782 47.7427 27.0338 49.3362 24.488C50.9287 21.9437 51.7733 19.0025 51.7733 15.9999Z" fill="#F59412"/><path d="M51.2753 26.2622V25.6416H51.1129L50.9267 26.0681L50.7404 25.6416H50.5781V26.2622H50.6926V25.7942L50.8679 26.1973H50.9864L51.1607 25.793V26.2622H51.2753ZM50.2484 26.2622V25.7471H50.4566V25.6424H49.9277V25.7471H50.1349V26.2622H50.2484Z" fill="#F59412"/></svg>
+                    <svg width="48" height="30" viewBox="0 0 52 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0" aria-hidden="true"><path d="M32.8867 28.5803H18.8867V3.42188H32.8867V28.5803Z" fill="#F14D1C"/><path d="M19.7765 15.9999C19.7745 18.4228 20.3233 20.8143 21.3829 22.9941C22.4416 25.1734 23.9824 27.0836 25.8876 28.5796C23.5272 30.4349 20.6927 31.5884 17.7079 31.9089C14.723 32.2287 11.7073 31.7027 9.00732 30.3913C6.30731 29.0782 4.03059 27.0338 2.43807 24.488C0.844559 21.9437 0 19.0025 0 15.9999C0 12.998 0.844559 10.0557 2.43807 7.51144C4.03059 4.96671 6.30731 2.92113 9.00732 1.60928C11.7073 0.296621 14.723 -0.229337 17.7079 0.091656C20.6927 0.412151 23.5272 1.56526 25.8876 3.421C23.9824 4.91691 22.4416 6.82593 21.3829 9.00606C20.3243 11.1851 19.7745 13.5765 19.7765 15.9999Z" fill="#EB1C24"/><path d="M51.7733 15.9999C51.7733 12.998 50.9287 10.0557 49.3362 7.51144C47.7427 4.96671 45.467 2.92113 42.766 1.60928C40.066 0.296621 37.0512 -0.229337 34.0664 0.091656C31.0816 0.412151 28.2461 1.56526 25.8867 3.421C27.791 4.91771 29.3297 6.82783 30.3884 9.00725C31.4471 11.1863 31.9968 13.5777 31.9968 15.9999C31.9968 18.4228 31.4471 20.8131 30.3884 22.9921C29.3297 25.1715 27.791 27.0818 25.8867 28.5796C28.2461 30.4349 31.0816 31.5884 34.0664 31.9089C37.0512 32.2287 40.066 31.7027 42.766 30.3913C45.467 29.0782 47.7427 27.0338 49.3362 24.488C50.9287 21.9437 51.7733 19.0025 51.7733 15.9999Z" fill="#F59412"/></svg>
                   </div>
                 </div>
               </div>
-
-              <!-- Sample badge -->
               <span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-500 ring-1 ring-inset ring-gray-500/20">Sample only — actual card details will be issued on submit</span>
             </div>
 
-            <dl class="mt-8 rounded-lg bg-gray-50 p-6">
-
-              <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                <dt class="text-sm/6 font-medium text-gray-900">Full Name</dt>
-                <dd id="sum-name" class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+            <!-- Payment Summary -->
+            <div class="flex w-full flex-col overflow-hidden rounded-md">
+              <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
+                <dl class="w-full">
+                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm/6 font-medium text-gray-900">Amount</dt>
+                    <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">$3,526.00</dd>
+                  </div>
+                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm/6 font-medium text-gray-900">Method of Payment</dt>
+                    <dd id="sum-method" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                  </div>
+                </dl>
               </div>
+            </div>
 
-              <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                <dt class="text-sm/6 font-medium text-gray-900">Mailing Address</dt>
-                <dd id="sum-address" class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+            <!-- Card Details (debit card method only) -->
+            <div id="sum-card-details-card" class="hidden flex-col gap-2">
+              <div class="flex w-full flex-col overflow-hidden rounded-md">
+                <div class="flex items-center px-5 py-2.5 bg-gray-100">
+                  <span class="text-sm font-semibold text-gray-900">Card Details</span>
+                </div>
+                <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
+                  <dl class="w-full">
+                    <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm/6 font-medium text-gray-900">Card Number</dt>
+                      <dd id="sum-dc-number" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0">—</dd>
+                    </div>
+                    <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm/6 font-medium text-gray-900">Name on Card</dt>
+                      <dd id="sum-dc-name" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    </div>
+                    <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm/6 font-medium text-gray-900">Expiry</dt>
+                      <dd id="sum-dc-expiry" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    </div>
+                    <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm/6 font-medium text-gray-900">Security Code</dt>
+                      <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                        <span class="inline-flex items-center gap-2">
+                          <span id="sum-dc-cvv" class="font-['Roboto_Mono'] tracking-wider">•••</span>
+                          <button id="btn-reveal-cvv" type="button" aria-label="Reveal security code" aria-pressed="false"
+                            class="rounded p-0.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700">
+                            <svg id="cvv-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
+                              <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                              <path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 0 1 0-1.113ZM17.25 12a5.25 5.25 0 1 1-10.5 0 5.25 5.25 0 0 1 10.5 0Z" clip-rule="evenodd" />
+                            </svg>
+                            <svg id="cvv-eye-slash" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="hidden size-5">
+                              <path d="M3.53 2.47a.75.75 0 0 0-1.06 1.06l18 18a.75.75 0 1 0 1.06-1.06l-18-18ZM22.676 12.553a11.249 11.249 0 0 1-2.631 4.31l-3.099-3.099a5.25 5.25 0 0 0-6.71-6.71L7.759 4.577a11.217 11.217 0 0 1 4.242-.827c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113Z" />
+                              <path d="M15.75 12c0 .18-.013.357-.037.53l-4.244-4.243A3.75 3.75 0 0 1 15.75 12ZM12.53 15.713l-4.243-4.244a3.75 3.75 0 0 0 4.244 4.243Z" />
+                              <path d="M6.75 12c0-.619.107-1.213.304-1.764l-3.1-3.1a11.25 11.25 0 0 0-2.63 4.31c-.12.362-.12.752 0 1.114 1.489 4.467 5.704 7.69 10.675 7.69 1.5 0 2.933-.294 4.242-.827l-2.477-2.477A5.25 5.25 0 0 1 6.75 12Z" />
+                            </svg>
+                          </button>
+                        </span>
+                      </dd>
+                    </div>
+                  </dl>
+                </div>
               </div>
+            </div>
 
-              <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                <dt class="text-sm/6 font-medium text-gray-900">Contact Email Address</dt>
-                <dd id="sum-email" class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+            <div id="sum-bank-details-card" class="hidden flex-col gap-2">
+              <div class="flex w-full flex-col overflow-hidden rounded-md">
+                <div class="flex items-center px-5 py-2.5 bg-gray-100">
+                  <span class="text-sm font-semibold text-gray-900">Bank Details</span>
+                </div>
+                <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
+                  <dl class="w-full">
+                    <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm/6 font-medium text-gray-900">Account Type</dt>
+                      <dd id="sum-ba-type" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    </div>
+                    <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm/6 font-medium text-gray-900">Account Holder Name</dt>
+                      <dd id="sum-ba-holder" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    </div>
+                    <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm/6 font-medium text-gray-900">Routing Number</dt>
+                      <dd id="sum-ba-routing" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0">—</dd>
+                    </div>
+                    <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                      <dt class="text-sm/6 font-medium text-gray-900">Account Number</dt>
+                      <dd id="sum-ba-number" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0">—</dd>
+                    </div>
+                  </dl>
+                </div>
               </div>
+            </div>
 
-              <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                <dt class="text-sm/6 font-medium text-gray-900">Contact Phone Number</dt>
-                <dd id="sum-phone" class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+            <!-- Account Information -->
+            <div class="flex w-full flex-col overflow-hidden rounded-md">
+              <div class="flex items-center px-5 py-2.5 bg-gray-100">
+                <span class="text-sm font-semibold text-gray-900">Account Information</span>
               </div>
-
-            </dl>
+              <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
+                <dl class="w-full">
+                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm/6 font-medium text-gray-900">Full Name</dt>
+                    <dd id="sum-name" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                  </div>
+                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm/6 font-medium text-gray-900">Email</dt>
+                    <dd id="sum-email" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                  </div>
+                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm/6 font-medium text-gray-900">Phone</dt>
+                    <dd id="sum-phone" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                  </div>
+                  <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
+                    <dt class="text-sm/6 font-medium text-gray-900">Mailing Address</dt>
+                    <dd id="sum-address" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                  </div>
+                </dl>
+              </div>
+            </div>
 
           </div>
 
           <!-- Actions -->
-          <div class="w-full max-w-[640px] mt-auto pt-10 pb-6">
+          <div class="w-full max-w-[640px] mt-auto pt-8 pb-6">
             <div class="flex items-center gap-6">
-              <a href="instant-virtual-card.html" class="h-11 flex-1 inline-flex items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">
+              <a id="summary-back-link" href="instant-virtual-card.html" class="h-11 flex-1 inline-flex items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">
                 Back
               </a>
               <button type="button" onclick="window.location.href='complete.html'" class="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">

@@ -17,10 +17,21 @@
       function getState() { try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }
       function saveState(p) { var s = getState(); Object.assign(s, p); sessionStorage.setItem(KEY, JSON.stringify(s)); }
 
-      var substep = document.getElementById('substep-account-info');
+      var substepVC  = document.getElementById('substep-account-info');
+      var substepDC1 = document.getElementById('substep-debit-card-details');
+      var substepDC2 = document.getElementById('substep-debit-account-info');
+      var substepBank1 = document.getElementById('substep-bank-details');
+      var substepBank2 = document.getElementById('substep-bank-account-info');
 
       function showSubstepFor(method) {
-        if (method === 'instant-virtual-card' && substep) substep.classList.remove('hidden');
+        var isVirtual = method === 'instant-virtual-card';
+        var isDebit = method === 'debit-card';
+        var isBank = method === 'bank-account';
+        if (substepVC)  substepVC.classList.toggle('hidden',  !isVirtual);
+        if (substepDC1) substepDC1.classList.toggle('hidden', !isDebit);
+        if (substepDC2) substepDC2.classList.toggle('hidden', !isDebit);
+        if (substepBank1) substepBank1.classList.toggle('hidden', !isBank);
+        if (substepBank2) substepBank2.classList.toggle('hidden', !isBank);
       }
 
       // Restore on load
@@ -31,6 +42,18 @@
         saveState({ paymentMethod: 'instant-virtual-card' });
         showSubstepFor('instant-virtual-card');
         setTimeout(function () { window.location.href = 'instant-virtual-card.html'; }, 80);
+      });
+
+      document.getElementById('btn-debit-card').addEventListener('click', function () {
+        saveState({ paymentMethod: 'debit-card' });
+        showSubstepFor('debit-card');
+        setTimeout(function () { window.location.href = 'debit-card-details.html'; }, 80);
+      });
+
+      document.getElementById('btn-bank-account').addEventListener('click', function () {
+        saveState({ paymentMethod: 'bank-account', bankFlowStep: 'bank-details' });
+        showSubstepFor('bank-account');
+        setTimeout(function () { window.location.href = 'debit-account-info.html'; }, 80);
       });
     });
   </script>
@@ -126,6 +149,50 @@
 
           <li id="substep-account-info" class="hidden pl-6">
             <a href="instant-virtual-card.html" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Account Information</p>
+              </div>
+            </a>
+          </li>
+
+          <li id="substep-debit-card-details" class="hidden pl-6">
+            <a href="debit-card-details.html" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Card Details</p>
+              </div>
+            </a>
+          </li>
+
+          <li id="substep-debit-account-info" class="hidden pl-6">
+            <a href="debit-account-info.html" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Account Information</p>
+              </div>
+            </a>
+          </li>
+
+          <li id="substep-bank-details" class="hidden pl-6">
+            <a href="debit-account-info.html" class="group">
+              <div class="flex items-start">
+                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
+                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
+                </div>
+                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Bank Details</p>
+              </div>
+            </a>
+          </li>
+
+          <li id="substep-bank-account-info" class="hidden pl-6">
+            <a href="debit-account-info.html" class="group">
               <div class="flex items-start">
                 <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
                   <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
@@ -301,7 +368,7 @@
             </button>
 
             <!-- Option 2: Send to my Debit Card -->
-            <button type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition hover:bg-gray-50 focus-visible:outline-none">
+            <button id="btn-debit-card" type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition hover:bg-gray-50 focus-visible:outline-none">
               <div class="flex justify-between items-center">
                 <div class="flex items-center gap-4">
                   <div class="flex w-8 h-8 items-center justify-center rounded-md bg-gray-50">
@@ -321,7 +388,7 @@
             </button>
 
             <!-- Option 3: Send to my Bank Account -->
-            <button type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition hover:bg-gray-50 focus-visible:outline-none">
+            <button id="btn-bank-account" type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition hover:bg-gray-50 focus-visible:outline-none">
               <div class="flex justify-between items-center">
                 <div class="flex items-center gap-4">
                   <div class="flex w-8 h-8 items-center justify-center rounded-md bg-gray-50">

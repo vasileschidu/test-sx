@@ -205,6 +205,18 @@
             var cardsById = new Map();
             var STATUS_LABELS = { active: 'Active', inactive: 'Inactive' };
 
+            function getMyCompanyCardholderName(profile) {
+                return window.getMyCompanyDisplayName
+                    ? window.getMyCompanyDisplayName(profile)
+                    : String((profile && profile.legalName) || (profile && profile.name) || '');
+            }
+
+            function getMyCompanyCardholderAddress(profile) {
+                return window.getMyCompanyAddressText
+                    ? window.getMyCompanyAddressText(profile)
+                    : String((profile && profile.mailingAddress && profile.mailingAddress.address) || '');
+            }
+
             function escapeHtml(value) {
                 return String(value || '')
                     .replace(/&/g, '&amp;')
