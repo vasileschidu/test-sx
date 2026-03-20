@@ -93,11 +93,18 @@
         var context = stateSnapshot && stateSnapshot.payableContext ? stateSnapshot.payableContext : null;
         if (!context || !context.payableId || stateSnapshot.payableCompletionSynced) return Promise.resolve(stateSnapshot);
         var nowIso = new Date().toISOString();
+        var completionDate = String(nowIso).slice(0, 10);
         var completionName = String(
           (context.contact && context.contact.name) ||
           [stateSnapshot.virtualCard && stateSnapshot.virtualCard.firstName, stateSnapshot.virtualCard && stateSnapshot.virtualCard.lastName].filter(Boolean).join(' ') ||
           context.payeeName ||
           'The customer'
+        ).trim();
+        var deliveryEmail = String(
+          context.recipientEmail ||
+          (context.contact && context.contact.email) ||
+          (stateSnapshot.virtualCard && stateSnapshot.virtualCard.email) ||
+          ''
         ).trim();
         return loadJsonWithFallbacks([
           '../../../src/data/bills-payables.json',
@@ -137,8 +144,37 @@
           row.status = 'paid';
           row.statusType = '';
           row.statusLabel = 'Paid';
+          row.paymentMethodType = 'smart_disburse';
+          row.paymentMethod = 'SMART Disburse';
+          row.paymentMethodLabel = 'SMART Disburse';
+          row.method = 'smart_disburse';
+          row.paymentMethodEnding = '';
+          row.cardLast4 = '';
+          row.cardNetwork = '';
+          row.bankLast4 = '';
           row.processingStep = 'Payment completed';
-          row.adDate = String(nowIso).slice(0, 10);
+          row.initiatedDate = row.initiatedDate || completionDate;
+          row.adDate = completionDate;
+          row.details.payPageState = Object.assign({}, row.details.payPageState || {}, {
+            methodId: 'smart_disburse',
+            paymentDateIso: completionDate,
+            cardId: '',
+            cardFundingMethod: '',
+            cardFundingAmount: '',
+            cardSendingMethod: '',
+            cardDeliveryTokens: [],
+            bankAccountId: '',
+            checkAddressId: '',
+            checkAttention: '',
+            checkPrintDate: '',
+            checkMemo: '',
+            smartTokens: deliveryEmail ? [{
+              id: 'sd-complete-email',
+              label: completionName || context.payeeName || 'Payee',
+              value: deliveryEmail,
+              type: 'email'
+            }] : []
+          });
           row.details.activityLog = existingLog;
           persistPayableOverride(row);
           var nextState = Object.assign({}, stateSnapshot, { payableCompletionSynced: true });
