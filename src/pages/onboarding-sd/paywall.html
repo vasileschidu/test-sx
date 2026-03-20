@@ -11,17 +11,41 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var KEY = 'sd-onboarding-state';
-      function getState() { try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; } }
-      function saveState(p) { var s = getState(); Object.assign(s, p); sessionStorage.setItem(KEY, JSON.stringify(s)); }
+      function getState() {
+        return window.SDOnboardingContext ? window.SDOnboardingContext.getState() : {};
+      }
+      function saveState(p) {
+        if (window.SDOnboardingContext) window.SDOnboardingContext.saveState(p);
+      }
+      function formatAmountParts(value, currency) {
+        var amount = Number(value || 0);
+        if (!Number.isFinite(amount)) amount = 0;
+        var fixed = amount.toFixed(2);
+        var parts = fixed.split('.');
+        try {
+          var formatted = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency || 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }).format(amount);
+          var match = formatted.match(/^([^0-9-]*)([0-9,]+)\.(\d{2})$/);
+          if (match) return { integer: match[1] + match[2], decimal: '.' + match[3] };
+        } catch (error) {}
+        return { integer: '$' + parts[0], decimal: '.' + parts[1] };
+      }
 
       var substepVC  = document.getElementById('substep-account-info');
       var substepDC1 = document.getElementById('substep-debit-card-details');
       var substepDC2 = document.getElementById('substep-debit-account-info');
       var substepBank1 = document.getElementById('substep-bank-details');
       var substepBank2 = document.getElementById('substep-bank-account-info');
+      var amountInteger = document.getElementById('paywall-amount-integer');
+      var amountDecimal = document.getElementById('paywall-amount-decimal');
+      var senderNode = document.getElementById('paywall-sender-name');
 
       function showSubstepFor(method) {
         var isVirtual = method === 'instant-virtual-card';
@@ -34,27 +58,35 @@
         if (substepBank2) substepBank2.classList.toggle('hidden', !isBank);
       }
 
-      // Restore on load
-      showSubstepFor(getState().paymentMethod);
+      Promise.resolve(window.SDOnboardingContext && window.SDOnboardingContext.bootstrap ? window.SDOnboardingContext.bootstrap() : null)
+        .then(function () {
+          var state = getState();
+          var context = state.payableContext || {};
+          var amountParts = formatAmountParts(context.amount || state.amount || 0, context.currency || state.paymentCurrency || 'USD');
+          if (amountInteger) amountInteger.textContent = amountParts.integer;
+          if (amountDecimal) amountDecimal.textContent = amountParts.decimal;
+          if (senderNode) senderNode.textContent = context.senderName || 'SMART Hub';
 
-      // Wire method buttons
-      document.getElementById('btn-instant-card').addEventListener('click', function () {
-        saveState({ paymentMethod: 'instant-virtual-card' });
-        showSubstepFor('instant-virtual-card');
-        setTimeout(function () { window.location.href = 'instant-virtual-card.html'; }, 80);
-      });
+          showSubstepFor(state.paymentMethod);
 
-      document.getElementById('btn-debit-card').addEventListener('click', function () {
-        saveState({ paymentMethod: 'debit-card' });
-        showSubstepFor('debit-card');
-        setTimeout(function () { window.location.href = 'debit-card-details.html'; }, 80);
-      });
+          document.getElementById('btn-instant-card').addEventListener('click', function () {
+            saveState({ paymentMethod: 'instant-virtual-card' });
+            showSubstepFor('instant-virtual-card');
+            setTimeout(function () { window.location.href = 'instant-virtual-card.html'; }, 80);
+          });
 
-      document.getElementById('btn-bank-account').addEventListener('click', function () {
-        saveState({ paymentMethod: 'bank-account', bankFlowStep: 'bank-details' });
-        showSubstepFor('bank-account');
-        setTimeout(function () { window.location.href = 'debit-account-info.html'; }, 80);
-      });
+          document.getElementById('btn-debit-card').addEventListener('click', function () {
+            saveState({ paymentMethod: 'debit-card' });
+            showSubstepFor('debit-card');
+            setTimeout(function () { window.location.href = 'debit-card-details.html'; }, 80);
+          });
+
+          document.getElementById('btn-bank-account').addEventListener('click', function () {
+            saveState({ paymentMethod: 'bank-account', bankFlowStep: 'bank-details' });
+            showSubstepFor('bank-account');
+            setTimeout(function () { window.location.href = 'debit-account-info.html'; }, 80);
+          });
+        });
     });
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -284,14 +316,14 @@
               </p>
 
               <div class="flex items-baseline">
-                <span class="text-white text-[48px] font-normal leading-[48px]">$3,526</span>
-                <span class="text-[#3B82F6] text-[48px] font-normal leading-[48px]">.00</span>
+                <span id="paywall-amount-integer" class="text-white text-[48px] font-normal leading-[48px]">$3,526</span>
+                <span id="paywall-amount-decimal" class="text-[#3B82F6] text-[48px] font-normal leading-[48px]">.00</span>
               </div>
 
               <div class="mt-2 inline-flex items-center gap-[6px] rounded-[512px] bg-[#1E40AF] px-[16px] py-[4px]">
                 <span
                   class="text-[#60A5FA] text-[10px] font-medium leading-[16px] tracking-[0.7px] uppercase">FROM</span>
-                <span class="text-white text-[14px] font-normal leading-[20px]">Rad Roofing Ltd</span>
+                <span id="paywall-sender-name" class="text-white text-[14px] font-normal leading-[20px]">Rad Roofing Ltd</span>
               </div>
             </div>
 

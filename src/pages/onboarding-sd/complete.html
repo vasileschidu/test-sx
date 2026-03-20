@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <style>
     @keyframes fadeInUp {
       from { opacity: 0; transform: translateY(8px); }
@@ -24,6 +25,7 @@
     document.addEventListener('DOMContentLoaded', function () {
       var KEY = 'sd-onboarding-state';
       var COMPLETE_KEY = 'sd-onboarding-complete-state';
+      var PAYABLE_ROW_OVERRIDES_STORAGE_KEY = 'bp-row-overrides-v1';
       function getState() {
         try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
       }
@@ -32,6 +34,119 @@
       }
       function saveCompleteState(state) {
         try { sessionStorage.setItem(COMPLETE_KEY, JSON.stringify(state || {})); } catch (e) {}
+      }
+      function cloneJson(value) {
+        return value == null ? value : JSON.parse(JSON.stringify(value));
+      }
+      function getStoredPayableOverrides() {
+        try {
+          var raw = window.localStorage.getItem(PAYABLE_ROW_OVERRIDES_STORAGE_KEY);
+          if (!raw) return {};
+          var parsed = JSON.parse(raw);
+          return parsed && typeof parsed === 'object' ? parsed : {};
+        } catch (error) {
+          return {};
+        }
+      }
+      function persistPayableOverride(row) {
+        if (!row || row.id == null) return;
+        try {
+          var overrides = getStoredPayableOverrides();
+          overrides[String(row.id)] = cloneJson(row);
+          window.localStorage.setItem(PAYABLE_ROW_OVERRIDES_STORAGE_KEY, JSON.stringify(overrides));
+        } catch (error) {}
+      }
+      function formatDate(value) {
+        if (!value) return '--';
+        var date = new Date(String(value).replace(' ', 'T'));
+        if (isNaN(date.getTime())) date = new Date(String(value) + 'T00:00:00');
+        if (isNaN(date.getTime())) return String(value);
+        return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      }
+      function formatDateTime(value) {
+        if (!value) return '--';
+        var date = new Date(String(value));
+        if (isNaN(date.getTime())) return String(value);
+        return date.toLocaleString('en-US', {
+          month: 'short',
+          day: 'numeric',
+          year: 'numeric',
+          hour: 'numeric',
+          minute: '2-digit'
+        });
+      }
+      function loadJsonWithFallbacks(paths) {
+        var index = 0;
+        function tryNext() {
+          if (index >= paths.length) return Promise.reject(new Error('Failed to load payables JSON.'));
+          var path = paths[index++];
+          return fetch(path, { cache: 'no-store' }).then(function (response) {
+            if (!response.ok) throw new Error('HTTP ' + response.status + ' for ' + path);
+            return response.json();
+          }).catch(function () {
+            return tryNext();
+          });
+        }
+        return tryNext();
+      }
+      function syncPayableCompletion(stateSnapshot, amountText) {
+        var context = stateSnapshot && stateSnapshot.payableContext ? stateSnapshot.payableContext : null;
+        if (!context || !context.payableId || stateSnapshot.payableCompletionSynced) return Promise.resolve(stateSnapshot);
+        var nowIso = new Date().toISOString();
+        var completionName = String(
+          (context.contact && context.contact.name) ||
+          [stateSnapshot.virtualCard && stateSnapshot.virtualCard.firstName, stateSnapshot.virtualCard && stateSnapshot.virtualCard.lastName].filter(Boolean).join(' ') ||
+          context.payeeName ||
+          'The customer'
+        ).trim();
+        return loadJsonWithFallbacks([
+          '../../../src/data/bills-payables.json',
+          '/src/data/bills-payables.json',
+          './src/data/bills-payables.json'
+        ]).then(function (payload) {
+          var rows = Array.isArray(payload) ? payload : ((payload && Array.isArray(payload.data)) ? payload.data : []);
+          var overrides = getStoredPayableOverrides();
+          var row = overrides[String(context.payableId)] || null;
+          if (!row) {
+            for (var i = 0; i < rows.length; i += 1) {
+              if (rows[i] && String(rows[i].id) === String(context.payableId)) {
+                row = cloneJson(rows[i]);
+                break;
+              }
+            }
+          } else {
+            row = cloneJson(row);
+          }
+          if (!row) return stateSnapshot;
+          row.details = Object.assign({}, row.details || {});
+          var existingLog = Array.isArray(row.details.activityLog) ? cloneJson(row.details.activityLog) : [];
+          var alreadyLogged = existingLog.some(function (entry) {
+            return entry && entry.meta && entry.meta.sdCompletionId && String(entry.meta.sdCompletionId) === String(context.payableId);
+          });
+          if (!alreadyLogged) {
+            existingLog.unshift({
+              type: 'success',
+              title: 'SMART Disburse Completed',
+              dateLabel: formatDate(nowIso),
+              description: completionName + ' completed the SMART Disburse flow and collected ' + amountText + ' on ' + formatDateTime(nowIso) + '.',
+              meta: {
+                sdCompletionId: String(context.payableId)
+              }
+            });
+          }
+          row.status = 'paid';
+          row.statusType = '';
+          row.statusLabel = 'Paid';
+          row.processingStep = 'Payment completed';
+          row.adDate = String(nowIso).slice(0, 10);
+          row.details.activityLog = existingLog;
+          persistPayableOverride(row);
+          var nextState = Object.assign({}, stateSnapshot, { payableCompletionSynced: true });
+          saveCompleteState(nextState);
+          return nextState;
+        }).catch(function () {
+          return stateSnapshot;
+        });
       }
       function randomId(prefix) {
         var rand = Math.random().toString(36).slice(2, 8).toUpperCase();
@@ -100,6 +215,9 @@
           clientPaymentReferenceId: clientRefId
         }));
       }
+      syncPayableCompletion(s, amount).then(function (nextState) {
+        s = nextState || s;
+      });
       try { sessionStorage.removeItem(KEY); } catch (e) {}
 
       if (isPayout) {

@@ -3448,10 +3448,14 @@
     var label = String((contact && contact.label) || (contact && contact.contactPerson) || 'Contact');
     var value = String((contact && contact.value) || (contact && contact.destination) || '');
     var icon = getSmartDisburseContactIcon(contact && contact.type);
+    var isTestContact = !!(contact && contact.source === 'master_allowlist');
+    var iconClasses = isTestContact
+      ? 'shrink-0 text-blue-600 dark:text-blue-400'
+      : 'shrink-0 text-gray-500 dark:text-gray-400';
     return (
       '<button type="button" data-contact-id="' + escapeHtml(id) + '" class="group/option relative block w-full cursor-pointer select-none border-b border-gray-200 py-3 pr-4 pl-3 text-left text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:hover:bg-white/10 dark:focus:bg-white/10">' +
         '<div class="flex items-center gap-3">' +
-          '<div class="shrink-0 text-gray-500 dark:text-gray-400">' +
+          '<div class="' + iconClasses + '">' +
             icon +
           '</div>' +
           '<div>' +
@@ -3466,6 +3470,7 @@
   function collectSmartDisburseContacts(smartDisburseProfiles) {
     var profiles = Array.isArray(smartDisburseProfiles) ? smartDisburseProfiles : [];
     var contacts = [];
+    var seen = {};
     profiles.forEach(function (profile) {
       var profileContacts = Array.isArray(profile && profile.contacts) ? profile.contacts : [];
       if (!profileContacts.length && profile) {
@@ -3479,12 +3484,33 @@
       profileContacts.forEach(function (entry, idx) {
         var value = String((entry && (entry.value || entry.destination)) || '').trim();
         if (!value || value === '--') return;
+        var key = String(value).trim().toLowerCase();
+        if (seen[key]) return;
+        seen[key] = true;
         contacts.push(Object.assign({}, entry, {
           id: String((entry && entry.id) || (profile.id || 'sd') + '-contact-' + idx)
         }));
       });
     });
+    _allowedTestEmails.forEach(function (email, idx) {
+      var value = String(email || '').trim().toLowerCase();
+      if (!value || seen[value]) return;
+      seen[value] = true;
+      contacts.push({
+        id: 'master-allow-email-' + idx,
+        type: 'email',
+        label: value,
+        value: value,
+        source: 'master_allowlist'
+      });
+    });
     return contacts;
+  }
+
+  function getNonMasterAllowlistContacts(list) {
+    return (Array.isArray(list) ? list : []).filter(function (contact) {
+      return !(contact && contact.source === 'master_allowlist');
+    });
   }
 
   function initDestinationTypeahead(config, contacts) {
@@ -4147,13 +4173,14 @@
           var sdDetailsPanel = document.getElementById('gp-pmc-smart-disburse-details');
           if (sdPanel) sdPanel.classList.remove('hidden');
           var activeSdContacts = collectSmartDisburseContacts(normalized.smartDisburse);
+          var defaultSdContacts = getNonMasterAllowlistContacts(activeSdContacts);
           var sdApi = initSmartDisburseTypeahead(activeSdContacts);
           if (sdDetailsPanel) sdDetailsPanel.classList.remove('hidden');
           var sdTokens = savedState && savedState.methodId === 'smart_disburse' && Array.isArray(savedState.smartTokens) && savedState.smartTokens.length
             ? savedState.smartTokens
             : (function () {
-                var primary = getDeterministicListItem(activeSdContacts, row, 53);
-                var secondary = getDeterministicListItem(activeSdContacts, row, 59);
+                var primary = getDeterministicListItem(defaultSdContacts, row, 53);
+                var secondary = getDeterministicListItem(defaultSdContacts, row, 59);
                 var tokens = [];
                 if (primary) tokens.push(primary);
                 if (secondary && primary && String(secondary.id || '') !== String(primary.id || '')) tokens.push(secondary);
@@ -4171,13 +4198,14 @@
           var sxDetailsPanel = document.getElementById('gp-pmc-smart-exchange-details');
           if (sxPanel) sxPanel.classList.remove('hidden');
           var sxContacts = collectSmartDisburseContacts(normalized.smartExchange);
+          var defaultSxContacts = getNonMasterAllowlistContacts(sxContacts);
           var sxApi = initSmartExchangeTypeahead(sxContacts);
           if (sxDetailsPanel) sxDetailsPanel.classList.remove('hidden');
           var sxTokens = savedState && savedState.methodId === 'smart_exchange' && Array.isArray(savedState.smartTokens) && savedState.smartTokens.length
             ? savedState.smartTokens
             : (function () {
-                var primary = getDeterministicListItem(sxContacts, row, 61);
-                var secondary = getDeterministicListItem(sxContacts, row, 67);
+                var primary = getDeterministicListItem(defaultSxContacts, row, 61);
+                var secondary = getDeterministicListItem(defaultSxContacts, row, 67);
                 var tokens = [];
                 if (primary) tokens.push(primary);
                 if (secondary && primary && String(secondary.id || '') !== String(primary.id || '')) tokens.push(secondary);
