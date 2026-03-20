@@ -1,5 +1,6 @@
 window.SDOnboardingContext = (function () {
   var KEY = 'sd-onboarding-state';
+  var SKELETON_STYLE_ID = 'sd-context-skeleton-style';
   var PAYABLE_PATHS = [
     '../../../src/data/bills-payables.json',
     '/src/data/bills-payables.json',
@@ -211,9 +212,78 @@ window.SDOnboardingContext = (function () {
     return bootstrapPromise;
   }
 
+  function ensureSkeletonStyles() {
+    if (document.getElementById(SKELETON_STYLE_ID)) return;
+    var style = document.createElement('style');
+    style.id = SKELETON_STYLE_ID;
+    style.textContent = [
+      '.sd-context-skeleton-overlay{position:fixed;inset:0;z-index:9999;display:flex;align-items:center;justify-content:center;padding:24px;background:#e5e7eb;}',
+      '.sd-context-skeleton-shell{display:flex;width:min(1024px,100%);height:min(100vh,900px);background:#fff;overflow:hidden;box-shadow:0 12px 32px rgba(15,23,42,.08);}',
+      '.sd-context-skeleton-sidebar{width:325px;flex-shrink:0;background:linear-gradient(180deg,#1E326F 0%,#090C38 100%);padding:56px;display:flex;flex-direction:column;gap:24px;}',
+      '.sd-context-skeleton-main{flex:1;padding:48px 40px;display:flex;flex-direction:column;gap:18px;background:#fff;}',
+      '.sd-context-skeleton-card{border-radius:16px;background:#fff;box-shadow:0 1px 2px rgba(15,23,42,.06);padding:24px;border:1px solid #e5e7eb;}',
+      '.sd-context-skeleton-shimmer{position:relative;overflow:hidden;background:#e5e7eb;}',
+      '.sd-context-skeleton-shimmer::after{content:"";position:absolute;inset:0;transform:translateX(-100%);background:linear-gradient(90deg,transparent,rgba(255,255,255,.7),transparent);animation:sdContextShimmer 1.3s infinite;}',
+      '.sd-context-skeleton-line{height:14px;border-radius:999px;}',
+      '.sd-context-skeleton-line-lg{height:22px;border-radius:999px;}',
+      '.sd-context-skeleton-circle{border-radius:999px;}',
+      '@keyframes sdContextShimmer{100%{transform:translateX(100%)}}',
+      '@media (max-width: 900px){.sd-context-skeleton-shell{height:auto;min-height:100vh}.sd-context-skeleton-sidebar{display:none}.sd-context-skeleton-main{padding:32px 24px}}'
+    ].join('');
+    document.head.appendChild(style);
+  }
+
+  function createLoadingOverlay() {
+    ensureSkeletonStyles();
+    if (!document.body) {
+      return { done: function () {} };
+    }
+    document.body.classList.add('sd-context-loading');
+    var overlay = document.createElement('div');
+    overlay.className = 'sd-context-skeleton-overlay';
+    overlay.setAttribute('aria-hidden', 'true');
+    overlay.innerHTML = [
+      '<div class="sd-context-skeleton-shell">',
+      '  <div class="sd-context-skeleton-sidebar">',
+      '    <div class="sd-context-skeleton-shimmer sd-context-skeleton-circle" style="width:48px;height:48px;margin-left:auto;"></div>',
+      '    <div style="display:flex;flex-direction:column;gap:18px;margin-top:12px;">',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line" style="width:164px;"></div>',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line" style="width:140px;"></div>',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line" style="width:152px;"></div>',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line" style="width:132px;"></div>',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line" style="width:120px;"></div>',
+      '    </div>',
+      '  </div>',
+      '  <div class="sd-context-skeleton-main">',
+      '    <div class="sd-context-skeleton-shimmer sd-context-skeleton-line" style="width:180px;"></div>',
+      '    <div class="sd-context-skeleton-card" style="display:flex;flex-direction:column;gap:16px;">',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line-lg" style="width:62%;"></div>',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line" style="width:88%;"></div>',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line" style="width:74%;"></div>',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line-lg" style="width:32%;margin-top:8px;"></div>',
+      '    </div>',
+      '    <div class="sd-context-skeleton-card" style="display:flex;flex-direction:column;gap:14px;">',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line" style="width:38%;"></div>',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line" style="width:100%;"></div>',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line" style="width:100%;"></div>',
+      '      <div class="sd-context-skeleton-shimmer sd-context-skeleton-line" style="width:84%;"></div>',
+      '    </div>',
+      '  </div>',
+      '</div>'
+    ].join('');
+    document.body.appendChild(overlay);
+    return {
+      done: function () {
+        document.body.classList.remove('sd-context-loading');
+        if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
+      }
+    };
+  }
+
   return {
     getState: getState,
     saveState: saveState,
-    bootstrap: bootstrap
+    bootstrap: bootstrap,
+    createLoadingOverlay: createLoadingOverlay
   };
 })();

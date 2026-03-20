@@ -16,6 +16,9 @@
   <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      var pageLoader = window.SDOnboardingContext && window.SDOnboardingContext.createLoadingOverlay
+        ? window.SDOnboardingContext.createLoadingOverlay()
+        : { done: function () {} };
       function formatCurrency(value, currency) {
         var numeric = Number(value || 0);
         if (!Number.isFinite(numeric)) numeric = 0;
@@ -35,6 +38,10 @@
           if (note && context.amount) {
             note.innerHTML = 'You have a payment of <span class="font-semibold text-white">' + formatCurrency(context.amount, context.currency) + '</span> from <span class="font-semibold text-white">' + String(context.senderName || 'SMART Hub') + '</span>.';
           }
+        })
+        .catch(function () {})
+        .then(function () {
+          pageLoader.done();
         });
     });
   </script>

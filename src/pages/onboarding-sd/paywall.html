@@ -14,6 +14,9 @@
   <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      var pageLoader = window.SDOnboardingContext && window.SDOnboardingContext.createLoadingOverlay
+        ? window.SDOnboardingContext.createLoadingOverlay()
+        : { done: function () {} };
       function getState() {
         return window.SDOnboardingContext ? window.SDOnboardingContext.getState() : {};
       }
@@ -86,6 +89,10 @@
             showSubstepFor('bank-account');
             setTimeout(function () { window.location.href = 'debit-account-info.html'; }, 80);
           });
+        })
+        .catch(function () {})
+        .then(function () {
+          pageLoader.done();
         });
     });
   </script>

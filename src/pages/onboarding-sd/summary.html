@@ -10,6 +10,9 @@
   <script src="../../scripts/sd-onboarding-context.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
+      var pageLoader = window.SDOnboardingContext && window.SDOnboardingContext.createLoadingOverlay
+        ? window.SDOnboardingContext.createLoadingOverlay()
+        : { done: function () {} };
       var KEY = 'sd-onboarding-state';
       function getState() {
         try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
@@ -136,9 +139,15 @@
       }
 
       if (window.SDOnboardingContext && typeof window.SDOnboardingContext.bootstrap === 'function') {
-        window.SDOnboardingContext.bootstrap().then(render);
+        window.SDOnboardingContext.bootstrap()
+          .then(render)
+          .catch(function () {})
+          .then(function () {
+            pageLoader.done();
+          });
       } else {
         render();
+        pageLoader.done();
       }
     });
   </script>
