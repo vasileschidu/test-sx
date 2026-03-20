@@ -257,7 +257,7 @@ function buildEmailHtml({
                       </tr>
                       <tr>
                         <td style="padding:0 0 12px 0;">
-                          <a href="${safeOnboardingUrl}" style="display:block;width:100%;box-sizing:border-box;padding:14px 20px;border-radius:10px;background:#2563eb;color:#ffffff;font-family:${emailFontStack};font-size:15px;font-weight:700;line-height:15px;text-align:center;text-decoration:none;">Open payment</a>
+                          <a href="${safeOnboardingUrl}" target="_blank" rel="noreferrer noopener" style="display:block;width:100%;box-sizing:border-box;padding:14px 20px;border-radius:10px;background:#2563eb;color:#ffffff;font-family:${emailFontStack};font-size:15px;font-weight:700;line-height:15px;text-align:center;text-decoration:none;">Open payment</a>
                         </td>
                       </tr>
                       <tr>
