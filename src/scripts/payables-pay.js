@@ -1914,7 +1914,8 @@
     if (!isDisburse && !isExchange) return null;
     var input = document.getElementById(isDisburse ? 'pp-smart-disburse-contact-input' : 'pp-smart-exchange-contact-input');
     var pendingValue = String(input && input.value || '').trim();
-    if (isValidEmailAddress(pendingValue)) {
+    var pendingNormalized = pendingValue.toLowerCase();
+    if (isValidEmailAddress(pendingValue) && _allowedTestEmails.indexOf(pendingNormalized) !== -1) {
       return {
         email: pendingValue,
         label: String((_payContext.row && _payContext.row.payeeName) || 'Payee').trim()
@@ -1927,7 +1928,7 @@
     for (var i = 0; i < tokens.length; i += 1) {
       var token = tokens[i];
       var value = String((token && token.value) || '').trim();
-      if (!isValidEmailAddress(value)) continue;
+      if (!isValidEmailAddress(value) || _allowedTestEmails.indexOf(value.toLowerCase()) === -1) continue;
       return {
         email: value,
         label: String((token && token.label) || (_payContext.row && _payContext.row.payeeName) || 'Payee').trim()
