@@ -511,7 +511,7 @@ async function handleSendToken(request, env) {
     flow,
     email,
     mode: sandbox ? 'sandbox' : 'live',
-    previewUrl: verifyUrl,
+    previewUrl: onboardingUrl,
     delivery: emailDeliveryEnabled ? 'brevo' : 'preview_only'
   });
 }
