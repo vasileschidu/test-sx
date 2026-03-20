@@ -95,6 +95,28 @@ function getRecipientGreeting(name, email) {
   return localPart.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
+function escapeHtml(value) {
+  return String(value || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
+function formatDisplayDate(value) {
+  const raw = String(value || '').trim();
+  if (!raw) return '';
+  const normalized = /^\d{4}-\d{2}-\d{2}$/.test(raw) ? `${raw}T00:00:00` : raw;
+  const date = new Date(normalized);
+  if (Number.isNaN(date.getTime())) return raw;
+  return new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric'
+  }).format(date);
+}
+
 function buildOnboardingUrl(baseUrl, flow, email) {
   const rawBaseUrl = String(baseUrl || '').trim();
   if (!rawBaseUrl) return '';
@@ -119,29 +141,209 @@ function buildOnboardingUrl(baseUrl, flow, email) {
   }
 }
 
-function buildEmailHtml({ flow, token, verifyUrl, onboardingUrl, recipientName, email }) {
+function buildEmailHtml({
+  flow,
+  token,
+  verifyUrl,
+  onboardingUrl,
+  recipientName,
+  email,
+  senderName,
+  supportEmail,
+  supportPhone,
+  paymentAmountFormatted,
+  paymentDate,
+  paymentDateFormatted,
+  tokenExpiresAtFormatted,
+  paymentReference,
+  payableId,
+  payeeName
+}) {
   const title = FLOW_LABELS[flow] || flow.toUpperCase();
   const greeting = getRecipientGreeting(recipientName, email);
-  const onboardingButton = onboardingUrl
-    ? `<p style="margin:0 0 12px;"><a href="${onboardingUrl}" style="display:inline-block;padding:12px 16px;border-radius:12px;background:#111827;color:#fff;text-decoration:none;font-weight:600;">Start onboarding</a></p>`
-    : '';
-  const onboardingText = onboardingUrl
-    ? `<p style="margin:0 0 12px;">To continue, start the onboarding flow here:</p>
-      <p style="margin:0 0 20px;word-break:break-all;"><a href="${onboardingUrl}" style="color:#2563eb;text-decoration:underline;">${onboardingUrl}</a></p>`
-    : '';
+  const safeTitle = escapeHtml(title);
+  const safeGreeting = escapeHtml(greeting);
+  const safeSenderName = escapeHtml(senderName || 'SMART Hub');
+  const safeToken = escapeHtml(token);
+  const safeOnboardingUrl = escapeHtml(onboardingUrl);
+  const amount = escapeHtml(paymentAmountFormatted || '');
+  const displayDate = escapeHtml(paymentDateFormatted || formatDisplayDate(paymentDate || ''));
+  const tokenExpiry = escapeHtml(tokenExpiresAtFormatted || '');
+  const referenceId = escapeHtml(paymentReference || payableId || '');
+  const safePayeeName = escapeHtml(payeeName || recipientName || '');
+  const safeSupportEmail = escapeHtml(supportEmail || '');
+  const safeSupportPhone = escapeHtml(supportPhone || '');
+  const emailFontStack = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
+  const detailsRows = [
+    amount ? ['Amount', amount] : null,
+    displayDate ? ['Payment date', displayDate] : null,
+    safeTitle ? ['Payment type', safeTitle] : null,
+    referenceId ? ['Reference ID', referenceId] : null,
+    safePayeeName ? ['Recipient', safePayeeName] : null
+  ].filter(Boolean).map(([label, value]) => `
+                            <tr>
+                              <td style="padding:6px 20px;font-family:${emailFontStack};font-size:14px;line-height:20px;color:#6b7280;">
+                                ${label}
+                              </td>
+                              <td style="padding:6px 20px;font-family:${emailFontStack};font-size:14px;line-height:20px;font-weight:600;color:#111827;" align="right">
+                                ${value}
+                              </td>
+                            </tr>
+                          `).join('');
+  const supportParts = [];
+  const defaultSupportEmail = 'support@smarthub.test';
+  if (safeSupportEmail) supportParts.push(`<a href="mailto:${safeSupportEmail}" style="color:#2563eb;text-decoration:none;">${safeSupportEmail}</a>`);
+  if (safeSupportPhone) supportParts.push(`<span style="color:#111827;">${safeSupportPhone}</span>`);
+  const supportLine = supportParts.length
+    ? `Need help? Contact ${supportParts.join(' or ')}.`
+    : `Need help? Contact <a href="mailto:${defaultSupportEmail}" style="color:#2563eb;text-decoration:none;">${defaultSupportEmail}</a>.`;
   return `
-    <div style="font-family:Inter,Arial,sans-serif;line-height:1.6;color:#111827;padding:24px;">
-      <p style="margin:0 0 12px;font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#2563eb;">Test Mode</p>
-      <h1 style="margin:0 0 16px;font-size:24px;line-height:1.2;">${title} test token</h1>
-      <p style="margin:0 0 12px;">Hi ${greeting},</p>
-      <p style="margin:0 0 12px;">You have received a ${title} payment invitation. Use the onboarding link below to get started, then use your token to continue the test flow.</p>
-      ${onboardingButton}
-      <p style="margin:0 0 20px;padding:12px 16px;border-radius:12px;background:#f3f4f6;font-size:18px;font-weight:700;letter-spacing:.04em;">${token}</p>
-      <p style="margin:0 0 12px;"><a href="${verifyUrl}" style="display:inline-block;padding:12px 16px;border-radius:12px;background:#2563eb;color:#fff;text-decoration:none;font-weight:600;">Open verification page</a></p>
-      ${onboardingText}
-      <p style="margin:12px 0 0;color:#6b7280;font-size:14px;">If the button does not work, paste this URL into the browser:</p>
-      <p style="margin:8px 0 0;color:#374151;font-size:14px;word-break:break-all;">${verifyUrl}</p>
-    </div>
+    <!doctype html>
+    <html lang="en">
+      <body style="margin:0;padding:0;background-color:#f3f6fb;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#f3f6fb;">
+          <tr>
+            <td align="center" style="padding:24px 16px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;">
+                <tr>
+                  <td align="center" style="padding:0 0 24px 0;">
+                    <img src="https://vasileschidu.github.io/test-sx/src/assets/illustrations/smart-disburse-logo.svg" alt="SMART Disburse" width="164" style="display:block;width:164px;max-width:100%;height:auto;border:0;margin:0 auto;" />
+                  </td>
+                </tr>
+                <tr>
+                  <td style="border-radius:12px;background:linear-gradient(180deg,#f8fbff 0%,#ffffff 100%);border:1px solid #dbe6f3;padding:32px 24px 24px 24px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                      <tr>
+                        <td style="padding:0 0 8px 0;font-family:${emailFontStack};font-size:11px;line-height:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2563eb;">
+                          Test mode
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 0 8px 0;font-family:${emailFontStack};font-size:28px;line-height:34px;font-weight:700;color:#111827;">
+                          ${safeSenderName} sent you a payment
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 0 2px 0;font-family:${emailFontStack};font-size:14px;line-height:22px;color:#4b5563;">
+                          Hi ${safeGreeting},
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 0 24px 0;font-family:${emailFontStack};font-size:14px;line-height:22px;color:#4b5563;">
+                          ${amount ? `You’ve received ${amount} from ${safeSenderName}.` : `You’ve received a ${safeTitle} payment.`}<br />
+                          Open the secure ${safeTitle} link below to receive it.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 0 24px 0;">
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-radius:10px;background-color:#f9fafb;border:1px solid #e5e7eb;">
+                            <tr>
+                              <td style="padding:20px 20px 8px 20px;font-family:${emailFontStack};font-size:14px;line-height:20px;font-weight:700;color:#2563eb;">
+                                Payment delivery
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding:0 20px 8px 20px;font-family:${emailFontStack};font-size:28px;line-height:34px;font-weight:700;color:#111827;">
+                                ${amount || `You’ve received a ${safeTitle} payment.`}
+                              </td>
+                            </tr>
+                            <tr>
+                              <td style="padding:0 20px 20px 20px;font-family:${emailFontStack};font-size:13px;line-height:20px;font-weight:500;color:#4b5563;">
+                                ${tokenExpiry ? `Payment token expires ${tokenExpiry}.` : `Use the secure ${safeTitle} link to continue.`}
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 0 12px 0;">
+                          <a href="${safeOnboardingUrl}" style="display:block;width:100%;box-sizing:border-box;padding:14px 20px;border-radius:10px;background:#2563eb;color:#ffffff;font-family:${emailFontStack};font-size:15px;font-weight:700;line-height:15px;text-align:center;text-decoration:none;">Open payment</a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td align="center" style="padding:0 0 0 0;font-family:${emailFontStack};font-size:14px;line-height:22px;color:#4b5563;">
+                          Your payment is being processed securely through SMART Hub.
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td style="padding:24px 0 0 0;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:separate;border-spacing:0;border:1px solid #e5e7eb;border-radius:10px;background-color:#ffffff;">
+                      <tr>
+                        <td colspan="2" style="padding:20px 24px 12px 24px;font-family:${emailFontStack};font-size:14px;line-height:20px;font-weight:700;color:#111827;">
+                          Payment details
+                        </td>
+                      </tr>
+                      <tr>
+	                        <td colspan="2" style="padding:8px 20px 8px 20px;">
+	                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-collapse:separate;border-spacing:0;border:1px solid #e5e7eb;border-radius:10px;background-color:#f9fafb;">
+	                            <tr>
+	                              <td colspan="2" style="padding:4px 0;font-size:0;line-height:0;">&nbsp;</td>
+	                            </tr>
+	                            ${detailsRows}
+	                            <tr>
+	                              <td style="padding:6px 20px;font-family:${emailFontStack};font-size:14px;line-height:20px;color:#6b7280;">
+	                                Payment token
+	                              </td>
+                              <td style="padding:6px 20px;font-family:${emailFontStack};font-size:14px;line-height:20px;font-weight:700;color:#111827;" align="right">
+	                                ${safeToken}
+	                              </td>
+	                            </tr>
+	                            <tr>
+	                              <td colspan="2" style="padding:4px 0;font-size:0;line-height:0;">&nbsp;</td>
+	                            </tr>
+	                          </table>
+	                        </td>
+	                      </tr>
+                      <tr>
+                        <td colspan="2" style="padding:16px 24px 0 24px;font-family:${emailFontStack};font-size:14px;line-height:22px;color:#4b5563;">
+                          ${supportLine}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="padding:8px 24px 0 24px;font-family:${emailFontStack};font-size:13px;line-height:20px;color:#6b7280;word-break:break-all;">
+                          If the button does not open, copy and paste this link into your browser:<br />
+                          <span style="color:#2563eb;">${safeOnboardingUrl}</span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td colspan="2" style="padding:24px 24px 24px 24px;">
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td style="padding:0 0 16px 0;border-top:1px solid #e5e7eb;font-size:0;line-height:0;">&nbsp;</td>
+                            </tr>
+                          </table>
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                            <tr>
+                              <td align="center" style="font-family:${emailFontStack};font-size:12px;line-height:18px;color:#6b7280;">
+                                <span style="display:inline-block;vertical-align:middle;margin-right:6px;">
+                                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
+                                    <path d="M8.91309 1.125C11.4548 3.2985 15.5771 3.43066 15.5771 3.43066V9.22656C15.5767 12.7831 8.91309 16.875 8.91309 16.875C8.86421 16.8449 2.25042 12.77 2.25 9.22656V3.43066C2.25 3.43066 6.37134 3.29832 8.91309 1.125ZM7.2793 9.90918C7.2091 9.94947 7.16702 10.0229 7.16699 10.1035V12.5801C7.16699 12.6002 7.17163 12.6209 7.18164 12.6377C7.21173 12.6914 7.28048 12.708 7.33398 12.6777L11.2783 10.3828C11.3134 10.3627 11.3352 10.3254 11.3369 10.2852V7.54785L7.2793 9.90918ZM7.33398 5.21191C7.28052 5.18171 7.21343 5.19831 7.18164 5.25195C7.17161 5.26875 7.16699 5.28942 7.16699 5.30957V7.78613C7.16699 7.86667 7.2082 7.94112 7.27832 7.98145L8.46582 8.6709L10.8701 7.27051L7.33398 5.21191Z" fill="#0089CF"/>
+                                  </svg>
+                                </span>
+                                Powered by <span style="font-weight:700;color:#374151;">Transcard</span>
+                                <span style="margin:0 6px;">|</span>
+                                <a href="#" style="color:#6b7280;text-decoration:none;">Terms of Use</a>
+                                <span style="margin:0 4px;">&bull;</span>
+                                <a href="#" style="color:#6b7280;text-decoration:none;">Privacy Policy</a>
+                                <span style="margin:0 4px;">&bull;</span>
+                                <a href="#" style="color:#6b7280;text-decoration:none;">E-Sign Consent</a>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
   `;
 }
 
@@ -169,6 +371,31 @@ function canSendBrevo(env) {
   return !!(env.BREVO_API_KEY && env.EMAIL_FROM);
 }
 
+function buildPreviewEmailRequest(url, env) {
+  const flow = getFlow({ flow: url.searchParams.get('flow') }) || 'sd';
+  const email = normalizeEmail(url.searchParams.get('email')) || 'michelle@example.com';
+  const recipientName = String(url.searchParams.get('name') || 'Michelle').trim();
+  const previewBaseUrl = String(env.APP_BASE_URL || '').trim() || 'http://127.0.0.1:5500/src/pages/tools/sd-sx-token-test.html';
+  const token = String(url.searchParams.get('token') || 'abc123TESTtoken').trim();
+  const onboardingUrl = buildOnboardingUrl(previewBaseUrl, flow, email);
+  return {
+    flow,
+    email,
+    recipientName,
+    token,
+    verifyUrl: '',
+    onboardingUrl,
+    senderName: String(url.searchParams.get('sender') || 'ABC Corporation Ltd.').trim(),
+    paymentAmountFormatted: String(url.searchParams.get('amount') || '$10,000.00').trim(),
+    paymentDateFormatted: String(url.searchParams.get('date') || 'April 19, 2026').trim(),
+    tokenExpiresAtFormatted: String(url.searchParams.get('expires') || 'April 19, 2026 at 11:59 PM').trim(),
+    paymentReference: String(url.searchParams.get('reference') || 'BP-01138').trim(),
+    payeeName: recipientName,
+    supportEmail: String(url.searchParams.get('supportEmail') || 'support@smarthub.test').trim(),
+    supportPhone: String(url.searchParams.get('supportPhone') || '+1 415-555-0199').trim()
+  };
+}
+
 async function handleSendToken(request, env) {
   const payload = await readJson(request);
   const flow = getFlow(payload);
@@ -176,6 +403,15 @@ async function handleSendToken(request, env) {
   const recipientName = String(payload.recipientName || '').trim();
   const sandbox = payload.sandbox === true || payload.sandbox === 'true' || String(env.BREVO_SANDBOX_DEFAULT || '').toLowerCase() === 'true';
   const verifyBaseUrl = String(payload.verifyBaseUrl || '').trim() || String(env.APP_BASE_URL || '').trim();
+  const senderName = String(payload.senderName || 'SMART Hub').trim();
+  const supportEmail = String(payload.supportEmail || '').trim();
+  const supportPhone = String(payload.supportPhone || '').trim();
+  const paymentAmountFormatted = String(payload.paymentAmountFormatted || '').trim();
+  const paymentDate = String(payload.paymentDate || '').trim();
+  const paymentDateFormatted = String(payload.paymentDateFormatted || formatDisplayDate(paymentDate)).trim();
+  const paymentReference = String(payload.paymentReference || '').trim();
+  const payableId = String(payload.payableId || '').trim();
+  const payeeName = String(payload.payeeName || recipientName || '').trim();
 
   if (!flow) return json({ ok: false, error: 'Flow must be "sd" or "sx".' }, 400);
   if (!email) return json({ ok: false, error: 'Email is required.' }, 400);
@@ -192,7 +428,13 @@ async function handleSendToken(request, env) {
   const now = Date.now();
   const ttlMinutes = Number(env.TOKEN_TTL_MINUTES || 15);
   const expiresAt = new Date(now + ttlMinutes * 60 * 1000).toISOString();
-  const verifyUrl = verifyBaseUrl.replace(/\/+$/, '') + '?flow=' + flow + '&token=' + encodeURIComponent(token);
+  const tokenExpiresAtFormatted = new Intl.DateTimeFormat('en-US', {
+    month: 'long',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  }).format(new Date(expiresAt));
   const onboardingUrl = buildOnboardingUrl(verifyBaseUrl, flow, email);
 
   await env.TOKEN_STORE.put(
@@ -210,14 +452,36 @@ async function handleSendToken(request, env) {
     }
   );
 
-  const subject = '[' + FLOW_LABELS[flow] + '] Test token';
-  const htmlContent = buildEmailHtml({ flow, token, verifyUrl, onboardingUrl, recipientName, email });
+  const subject = 'SMART Hub: Your ' + FLOW_LABELS[flow] + ' payment link';
+  const htmlContent = buildEmailHtml({
+    flow,
+    token,
+    verifyUrl: '',
+    onboardingUrl,
+    recipientName,
+    email,
+    senderName,
+    supportEmail,
+    supportPhone,
+    paymentAmountFormatted,
+    paymentDate,
+    paymentDateFormatted,
+    tokenExpiresAtFormatted,
+    paymentReference,
+    payableId,
+    payeeName
+  });
   const textContent =
     'Hi ' + getRecipientGreeting(recipientName, email) + ',\n\n' +
-    'You have received a ' + FLOW_LABELS[flow] + ' payment invitation.\n' +
-    (onboardingUrl ? ('Start onboarding: ' + onboardingUrl + '\n') : '') +
-    'Token: ' + token + '\n' +
-    'Verify: ' + verifyUrl + '\n';
+    senderName + ' sent you a payment.\n' +
+    (paymentAmountFormatted ? ('Amount: ' + paymentAmountFormatted + '\n') : '') +
+    (paymentDateFormatted ? ('Payment date: ' + paymentDateFormatted + '\n') : '') +
+    'Payment type: ' + FLOW_LABELS[flow] + '\n' +
+    (paymentReference ? ('Reference ID: ' + paymentReference + '\n') : '') +
+    'Payment token: ' + token + '\n' +
+    'Open payment: ' + onboardingUrl + '\n' +
+    (supportEmail || supportPhone ? ('Support: ' + [supportEmail, supportPhone].filter(Boolean).join(' | ') + '\n') : '') +
+    '\nPowered by Transcard\n';
 
   const emailDeliveryEnabled = canSendBrevo(env);
   if (!sandbox && !emailDeliveryEnabled) {
@@ -304,6 +568,13 @@ export default {
     try {
       if (request.method === 'GET' && url.pathname === '/health') {
         response = json({ ok: true, service: 'sd-sx-token-service' });
+      } else if (request.method === 'GET' && url.pathname === '/preview-email') {
+        response = new Response(buildEmailHtml(buildPreviewEmailRequest(url, env)), {
+          status: 200,
+          headers: {
+            'content-type': 'text/html; charset=utf-8'
+          }
+        });
       } else if (request.method === 'POST' && url.pathname === '/send-test-token') {
         response = await handleSendToken(request, env);
       } else if (request.method === 'POST' && url.pathname === '/verify-test-token') {

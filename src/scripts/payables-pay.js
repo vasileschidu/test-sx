@@ -1891,6 +1891,7 @@
         buttonId: 'pp-smart-disburse-send-test-email-btn',
         helpId: 'pp-smart-disburse-send-test-email-help',
         resultId: 'pp-smart-disburse-send-test-email-result',
+        noteId: 'pp-smart-disburse-test-mode-note',
         flow: 'sd',
         label: 'SMART Disburse'
       };
@@ -1911,6 +1912,14 @@
     var isDisburse = methodId === 'smart_disburse';
     var isExchange = methodId === 'smart_exchange';
     if (!isDisburse && !isExchange) return null;
+    var input = document.getElementById(isDisburse ? 'pp-smart-disburse-contact-input' : 'pp-smart-exchange-contact-input');
+    var pendingValue = String(input && input.value || '').trim();
+    if (isValidEmailAddress(pendingValue)) {
+      return {
+        email: pendingValue,
+        label: String((_payContext.row && _payContext.row.payeeName) || 'Payee').trim()
+      };
+    }
     var tokens = getSelectedDestinationTokens(
       isDisburse ? 'pp-smart-disburse-contact-tokens' : 'pp-smart-exchange-contact-tokens',
       isDisburse ? 'pp-smart-disburse-contact-input' : 'pp-smart-exchange-contact-input'
@@ -1925,6 +1934,31 @@
       };
     }
     return null;
+  }
+
+  function getSmartAllowedEmailDestinations(methodId) {
+    var isDisburse = methodId === 'smart_disburse';
+    var isExchange = methodId === 'smart_exchange';
+    if (!isDisburse && !isExchange) return [];
+    var seen = {};
+    var allowed = [];
+    var input = document.getElementById(isDisburse ? 'pp-smart-disburse-contact-input' : 'pp-smart-exchange-contact-input');
+    var pendingValue = String(input && input.value || '').trim().toLowerCase();
+    if (isValidEmailAddress(pendingValue) && _allowedTestEmails.indexOf(pendingValue) !== -1) {
+      seen[pendingValue] = true;
+      allowed.push(pendingValue);
+    }
+    var tokens = getSelectedDestinationTokens(
+      isDisburse ? 'pp-smart-disburse-contact-tokens' : 'pp-smart-exchange-contact-tokens',
+      isDisburse ? 'pp-smart-disburse-contact-input' : 'pp-smart-exchange-contact-input'
+    );
+    tokens.forEach(function (token) {
+      var value = String((token && token.value) || '').trim().toLowerCase();
+      if (!isValidEmailAddress(value) || _allowedTestEmails.indexOf(value) === -1 || seen[value]) return;
+      seen[value] = true;
+      allowed.push(value);
+    });
+    return allowed;
   }
 
   function getTokenTestPageUrl() {
@@ -1954,23 +1988,105 @@
     if (!config) return;
     var button = document.getElementById(config.buttonId);
     var help = document.getElementById(config.helpId);
-    if (!button || !help) return;
+    var row = methodId === 'smart_disburse' ? document.getElementById('pp-smart-disburse-send-test-email-row') : null;
+    var note = document.getElementById(config.noteId);
+    var noteText = methodId === 'smart_disburse' ? document.getElementById('pp-smart-disburse-test-mode-note-text') : null;
+    var inputWrap = methodId === 'smart_disburse' ? document.getElementById('pp-smart-disburse-contact-input-wrap') : null;
+    var input = methodId === 'smart_disburse' ? document.getElementById('pp-smart-disburse-contact-input') : null;
     var state = _smartTestEmailState[methodId] || { sending: false };
     var selectedMethod = getSelectedOptionValueByOptionsId('pp-pay-method-options');
     var destination = getSmartTestEmailDestination(methodId);
     var isConfirmed = isConfirmedPayableRow(_payContext.row);
     var isActive = selectedMethod === methodId;
-    button.disabled = !isActive || !destination || isConfirmed || !!state.sending;
-    button.textContent = state.sending ? 'Sending...' : 'Send test email';
-    if (isConfirmed) {
-      help.textContent = 'Test email sending is available before the payment is confirmed.';
-    } else if (state.sending) {
-      help.textContent = 'Sending test email request...';
-    } else if (destination) {
-      help.textContent = 'Send a test token email to ' + destination.email + '.';
-    } else {
-      help.textContent = 'Enter one valid email destination to send a test token.';
+    var allowedEmails = getSmartAllowedEmailDestinations(methodId);
+    var isAllowed = allowedEmails.length > 0;
+    var hasDestination = !!destination;
+    var showTestUi = isActive && isAllowed && !isConfirmed;
+    if (row) {
+      row.classList.toggle('hidden', !showTestUi);
+      row.classList.toggle('flex', showTestUi);
     }
+    if (button) {
+      button.disabled = !isActive || !isAllowed || isConfirmed || !!state.sending;
+      button.textContent = state.sending ? 'Sending...' : 'Send test email';
+    }
+    if (help) {
+      help.classList.toggle('hidden', showTestUi);
+      if (isConfirmed) {
+        help.textContent = 'Test email sending is available before the payment is confirmed.';
+      } else if (state.sending) {
+        help.textContent = 'Sending test email request...';
+      } else if (isAllowed) {
+        help.textContent = allowedEmails.length > 1
+          ? 'Test email will be sent only to the allowlisted blue email chips.'
+          : 'Test email will be sent only to the allowlisted blue email chip.';
+      } else if (hasDestination) {
+        help.textContent = 'Test emails can be sent only to allowlisted email addresses.';
+      } else {
+        help.textContent = 'Enter an allowlisted email destination to send a test token.';
+      }
+    }
+    if (note) {
+      note.classList.toggle('hidden', !(isActive && isAllowed && !isConfirmed));
+    }
+    if (noteText) {
+      noteText.textContent = allowedEmails.length > 1
+        ? 'Test only: token will be sent to those blue email chips.'
+        : 'Test only: token will be sent to that blue email chip.';
+    }
+    if (inputWrap) {
+      inputWrap.classList.toggle('bg-blue-50', isActive && isAllowed && !isConfirmed);
+      inputWrap.classList.toggle('outline-blue-300', isActive && isAllowed && !isConfirmed);
+    }
+    if (input) {
+      input.classList.toggle('text-blue-700', isActive && isAllowed && !isConfirmed);
+      input.classList.toggle('placeholder:text-blue-400', isActive && isAllowed && !isConfirmed);
+    }
+  }
+
+  function buildSmartTestEmailPayload(methodId, destination) {
+    var row = _payContext && _payContext.row ? _payContext.row : null;
+    var amountValue = Number((row && row.amount) || 0);
+    var currency = String((row && row.currency) || 'USD');
+    var paymentDate = String((row && (row.adDate || row.dueDate)) || '').trim();
+    return Promise.resolve(typeof window.getMyCompanyProfile === 'function'
+      ? window.getMyCompanyProfile().catch(function () { return null; })
+      : null)
+      .then(function (companyProfile) {
+        var senderName = String(
+          (companyProfile && (companyProfile.legalName || companyProfile.dbaName)) ||
+          'SMART Hub'
+        ).trim();
+        var supportEmail = String(
+          (companyProfile && companyProfile.businessEmail) ||
+          (companyProfile && companyProfile.contact && companyProfile.contact.email) ||
+          ''
+        ).trim();
+        var supportPhone = String(
+          (companyProfile && companyProfile.businessPhone) ||
+          (companyProfile && companyProfile.contact && companyProfile.contact.phone) ||
+          ''
+        ).trim();
+        return {
+          flow: methodId === 'smart_exchange' ? 'sx' : 'sd',
+          email: destination.email,
+          recipientName: destination.label,
+          sandbox: true,
+          verifyBaseUrl: getTokenTestPageUrl(),
+          senderName: senderName,
+          supportEmail: supportEmail,
+          supportPhone: supportPhone,
+          paymentAmount: amountValue,
+          paymentAmountFormatted: formatMoney(amountValue, currency),
+          paymentCurrency: currency,
+          paymentDate: paymentDate,
+          paymentDateFormatted: paymentDate ? formatDate(paymentDate) : '',
+          paymentReference: String((row && row.billNumber) || '').trim(),
+          payableId: String((row && (row.id || row.billNumber)) || '').trim(),
+          payeeName: String((row && row.payeeName) || destination.label || 'Payee').trim(),
+          paymentTypeLabel: methodId === 'smart_exchange' ? 'SMART Exchange' : 'SMART Disburse'
+        };
+      });
   }
 
   function bindSmartTestEmailButton(methodId) {
@@ -1989,20 +2105,19 @@
       _smartTestEmailState[methodId].sending = true;
       updateSmartTestEmailUi(methodId);
 
-      getTokenServiceConfig()
-        .then(function (serviceConfig) {
+      Promise.all([
+        getTokenServiceConfig(),
+        buildSmartTestEmailPayload(methodId, destination)
+      ])
+        .then(function (results) {
+          var serviceConfig = results[0];
+          var emailPayload = results[1];
           var baseUrl = normalizeServiceBaseUrl(serviceConfig && serviceConfig.tokenServiceBaseUrl);
           if (!baseUrl) throw new Error('Token service is not configured for this environment.');
           return fetch(baseUrl + '/send-test-token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              flow: config.flow,
-              email: destination.email,
-              recipientName: destination.label,
-              sandbox: true,
-              verifyBaseUrl: getTokenTestPageUrl()
-            })
+            body: JSON.stringify(emailPayload)
           });
         })
         .then(function (response) {
@@ -2295,6 +2410,8 @@
     var isScheduled = !!(_schedulePickerState && _schedulePickerState.confirmedDate);
     var isCheck = selection.methodId === 'check';
     var isSmart = selection.methodId === 'smart_disburse' || selection.methodId === 'smart_exchange';
+    var isSmartDisburse = selection.methodId === 'smart_disburse';
+    var isSmartExchange = selection.methodId === 'smart_exchange';
     var isCard = selection.methodId === 'card';
     var isSpendBalance = isCard && (selection.fundingMethod === 'spend_balance');
     var isCardSecure = isCard && selection.sendingMethod === 'delivery_website';
@@ -2313,10 +2430,10 @@
           : 'Review your account and recipient details before you continue.');
     if (headerGrid) {
       headerGrid.classList.toggle('hidden', false);
-      headerGrid.classList.toggle('sm:grid', !isSmart);
-      headerGrid.classList.toggle('grid-cols-1', isSmart);
-      headerGrid.classList.toggle('sm:grid-cols-1', isSmart);
-      headerGrid.classList.toggle('sm:grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)]', !isSmart);
+      headerGrid.classList.toggle('sm:grid', !isSmartExchange);
+      headerGrid.classList.toggle('grid-cols-1', isSmartExchange);
+      headerGrid.classList.toggle('sm:grid-cols-1', isSmartExchange);
+      headerGrid.classList.toggle('sm:grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)]', !isSmartExchange);
     }
     if (sendToWrap) sendToWrap.classList.toggle('hidden', !(isSmart || isCardSecure));
     if (sendToBadges) {
@@ -2327,18 +2444,18 @@
     }
     if (sendToWrap) sendToWrap.classList.toggle('mb-5', isCardSecure || isSmart);
     if (originLabel) originLabel.textContent = 'Origination Account';
-    if (originWrap) originWrap.classList.toggle('hidden', isSmart);
+    if (originWrap) originWrap.classList.toggle('hidden', isSmartExchange);
     if (originCard) originCard.classList.toggle('hidden', isSpendBalance);
     if (originPlaceholder) originPlaceholder.classList.toggle('hidden', !isSpendBalance);
     if (arrowWrap) {
-      arrowWrap.classList.toggle('hidden', isSmart);
-      arrowWrap.classList.toggle('sm:flex', !isSmart);
+      arrowWrap.classList.toggle('hidden', isSmartExchange);
+      arrowWrap.classList.toggle('sm:flex', !isSmartExchange);
     }
     if (arrowIcon) {
       arrowIcon.classList.toggle('invisible', isSpendBalance);
       arrowIcon.classList.toggle('opacity-0', isSpendBalance);
     }
-    if (recipientLabel) recipientLabel.textContent = isSmart ? '' : (isCard ? 'Card' : 'Recipient');
+    if (recipientLabel) recipientLabel.textContent = isSmartExchange ? '' : (isCard ? 'Card' : 'Recipient');
     if (recipientMobileLabel) recipientMobileLabel.textContent = isCard ? 'Card' : (isSmart ? 'Send to' : 'Recipient');
     if (recipientNewCardBadge) recipientNewCardBadge.classList.toggle('hidden', !isNewCard);
     if (recipientMobileNewCardBadge) recipientMobileNewCardBadge.classList.toggle('hidden', !isNewCard);
@@ -2372,7 +2489,7 @@
       recipientCardsLabel.classList.add('hidden');
       recipientCardsLabel.textContent = 'Card';
     }
-    if (recipientCards) recipientCards.classList.toggle('hidden', isSmart);
+    if (recipientCards) recipientCards.classList.toggle('hidden', isSmartExchange);
     if (recipientIcon) recipientIcon.innerHTML = isSmart ? contactIconSvg : (isCard ? cardIconSvg : buildingIconSvg);
     if (recipientSecondaryIcon) recipientSecondaryIcon.innerHTML = isSmart ? contactIconSvg : (isCard ? contactIconSvg : buildingIconSvg);
     if (recipientSecondaryCard) {
@@ -3410,13 +3527,13 @@
         var tokenValue = String((token && (token.value || token.destination || token.label)) || '').trim().toLowerCase();
         var isAllowed = _allowedTestEmails.indexOf(tokenValue) !== -1;
         var badgeClass = isAllowed
-          ? 'bg-green-100 text-green-700 dark:bg-green-500/10 dark:text-green-400'
+          ? 'bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300'
           : 'bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-200';
         return '' +
           '<span data-token-label="' + escapeHtml(String((token && token.label) || '')) + '" data-token-value="' + escapeHtml(String((token && (token.value || token.destination || token.label)) || '')) + '" data-token-type="' + escapeHtml(String((token && token.type) || '')) + '" class="inline-flex max-w-full items-center gap-1 rounded-md px-2 py-0.5 text-sm font-medium ' + badgeClass + '">' +
           '  <span class="truncate">' + escapeHtml(tokenDisplayText(token)) + '</span>' +
           (isReadOnly ? '' : (
-            '  <button type="button" data-token-remove="' + idx + '" class="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-sm ' + (isAllowed ? 'text-green-500 hover:bg-green-200 hover:text-green-700 dark:text-green-400 dark:hover:bg-green-500/20 dark:hover:text-green-300' : 'text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200') + ' cursor-pointer" aria-label="Remove destination">' +
+            '  <button type="button" data-token-remove="' + idx + '" class="inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-sm ' + (isAllowed ? 'text-blue-500 hover:bg-blue-200 hover:text-blue-700 dark:text-blue-300 dark:hover:bg-blue-500/20 dark:hover:text-blue-200' : 'text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200') + ' cursor-pointer" aria-label="Remove destination">' +
             '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/></svg>' +
             '  </button>'
           )) +
@@ -3626,6 +3743,11 @@
     );
     bindSmartTestEmailButton('smart_disburse');
     bindSmartTestEmailButton('smart_exchange');
+    getTokenServiceConfig()
+      .catch(function () { return null; })
+      .finally(function () {
+        updatePayStepStates();
+      });
 
     function applyBankRecipientSelection(accounts, bankSelContent, bankOpts, selectedId, placeholder) {
       var normalizedId = String(selectedId || '');
