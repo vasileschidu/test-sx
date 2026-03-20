@@ -2046,9 +2046,26 @@
 
   function buildSmartTestEmailPayload(methodId, destination) {
     var row = _payContext && _payContext.row ? _payContext.row : null;
+    var payeeProfile = _payContext && _payContext.payeeProfile ? _payContext.payeeProfile : null;
     var amountValue = Number((row && row.amount) || 0);
     var currency = String((row && row.currency) || 'USD');
     var paymentDate = String((row && (row.adDate || row.dueDate)) || '').trim();
+    var normalizedMethods = normalizeMethods(payeeProfile, [], []);
+    var methodProfiles = methodId === 'smart_exchange' ? normalizedMethods.smartExchange : normalizedMethods.smartDisburse;
+    var payeeContacts = collectSmartDisburseContacts(methodProfiles);
+    var destinationEmail = String((destination && destination.email) || '').trim().toLowerCase();
+    var matchedContact = null;
+    var fallbackEmailContact = null;
+    var fallbackAnyContact = null;
+    payeeContacts.forEach(function (contact) {
+      if (!contact) return;
+      var value = String((contact.value || contact.destination || '')).trim().toLowerCase();
+      var type = String(contact.type || '').trim().toLowerCase();
+      if (!fallbackAnyContact) fallbackAnyContact = contact;
+      if (type === 'email' && !fallbackEmailContact) fallbackEmailContact = contact;
+      if (destinationEmail && value && value === destinationEmail) matchedContact = contact;
+    });
+    var recipientContact = matchedContact || fallbackEmailContact || fallbackAnyContact || null;
     return Promise.resolve(typeof window.getMyCompanyProfile === 'function'
       ? window.getMyCompanyProfile().catch(function () { return null; })
       : null)
@@ -2070,7 +2087,11 @@
         return {
           flow: methodId === 'smart_exchange' ? 'sx' : 'sd',
           email: destination.email,
-          recipientName: destination.label,
+          recipientName: String(
+            (recipientContact && recipientContact.label) ||
+            (Array.isArray(methodProfiles) && methodProfiles[0] && methodProfiles[0].contactPerson) ||
+            destination.label
+          ).trim(),
           sandbox: true,
           verifyBaseUrl: getTokenTestPageUrl(),
           senderName: senderName,
@@ -2083,7 +2104,12 @@
           paymentDateFormatted: paymentDate ? formatDate(paymentDate) : '',
           paymentReference: String((row && row.billNumber) || '').trim(),
           payableId: String((row && (row.id || row.billNumber)) || '').trim(),
-          payeeName: String((row && row.payeeName) || destination.label || 'Payee').trim(),
+          payeeName: String(
+            (payeeProfile && payeeProfile.name) ||
+            (row && row.payeeName) ||
+            destination.label ||
+            'Payee'
+          ).trim(),
           paymentTypeLabel: methodId === 'smart_exchange' ? 'SMART Exchange' : 'SMART Disburse'
         };
       });
@@ -3358,19 +3384,7 @@
       cardholderAddress: '--'
     }];
     var check = Array.isArray(methods.check) ? methods.check : [];
-    var smartDisburse = Array.isArray(methods.smartDisburse) && methods.smartDisburse.length ? methods.smartDisburse : [{
-      id: 'sd-fallback',
-      label: 'Default SMART Disburse',
-      channel: 'Token',
-      destination: 'smart-disburse-endpoint',
-      contactPerson: (_payContext.row && _payContext.row.payeeName) || 'Payee',
-      contacts: [{
-        id: 'sd-fallback-email',
-        type: 'email',
-        label: (_payContext.row && _payContext.row.payeeName) || 'Payee',
-        value: 'ap@payee.example'
-      }]
-    }];
+    var smartDisburse = Array.isArray(methods.smartDisburse) ? methods.smartDisburse : [];
     var smartExchange = Array.isArray(methods.smartExchange) ? methods.smartExchange : [];
 
     // Fallback addresses for check (if provided by data and check method exists)
@@ -3469,11 +3483,6 @@
         }));
       });
     });
-    contacts.push(
-      { id: 'sd-ref-1', type: 'email', label: 'Dorian Ionescu', value: 'dorian.ionescu@example.com' },
-      { id: 'sd-ref-2', type: 'phone', label: 'Dorian Ionescu', value: '+1 (415) 555-0117' },
-      { id: 'sd-ref-3', type: 'phone', label: 'Ana Dumitru', value: '+1 (415) 555-0199' }
-    );
     return contacts;
   }
 
