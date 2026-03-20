@@ -2104,6 +2104,7 @@
           paymentDateFormatted: paymentDate ? formatDate(paymentDate) : '',
           paymentReference: String((row && row.billNumber) || '').trim(),
           payableId: String((row && (row.id || row.billNumber)) || '').trim(),
+          payeeId: String((payeeProfile && payeeProfile.id) || (row && row.payeeId) || '').trim(),
           payeeName: String(
             (payeeProfile && payeeProfile.name) ||
             (row && row.payeeName) ||
@@ -4460,7 +4461,14 @@
     setText('gp-currency', row.currency || 'USD');
     setText('gp-date', formatDate(row.dueDate));
     setText('gp-customer', (payeeProfile && payeeProfile.name) || row.payeeName);
+    setText('gp-payee-id-copy-source', (payeeProfile && payeeProfile.vendorId) || '');
     setText('gp-invoice', row.billNumber);
+    var payeeCopyButton = document.getElementById('gp-customer-copy');
+    if (payeeCopyButton) {
+      var hasVendorId = !!String((payeeProfile && payeeProfile.vendorId) || '').trim();
+      payeeCopyButton.classList.toggle('hidden', !hasVendorId);
+      payeeCopyButton.classList.toggle('inline-flex', hasVendorId);
+    }
     var headerMeta = document.getElementById('pp-header-date-meta');
     var statusDateChip = document.getElementById('pp-status-date-chip');
     var statusDateLabel = document.getElementById('pp-status-date-label');

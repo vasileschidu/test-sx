@@ -117,7 +117,7 @@ function formatDisplayDate(value) {
   }).format(date);
 }
 
-function buildOnboardingUrl(baseUrl, flow, email) {
+function buildOnboardingUrl(baseUrl, flow, email, extraParams) {
   const rawBaseUrl = String(baseUrl || '').trim();
   if (!rawBaseUrl) return '';
 
@@ -135,6 +135,10 @@ function buildOnboardingUrl(baseUrl, flow, email) {
     url.search = '';
     url.searchParams.set('flow', flow);
     if (email) url.searchParams.set('email', email);
+    Object.entries(extraParams || {}).forEach(([key, value]) => {
+      if (value === undefined || value === null || String(value).trim() === '') return;
+      url.searchParams.set(key, String(value).trim());
+    });
     return url.toString();
   } catch (error) {
     return '';
@@ -377,7 +381,12 @@ function buildPreviewEmailRequest(url, env) {
   const recipientName = String(url.searchParams.get('name') || 'Michelle').trim();
   const previewBaseUrl = String(env.APP_BASE_URL || '').trim() || 'http://127.0.0.1:5500/src/pages/tools/sd-sx-token-test.html';
   const token = String(url.searchParams.get('token') || 'abc123TESTtoken').trim();
-  const onboardingUrl = buildOnboardingUrl(previewBaseUrl, flow, email);
+  const onboardingUrl = buildOnboardingUrl(previewBaseUrl, flow, email, {
+    payableId: String(url.searchParams.get('payableId') || '').trim(),
+    payeeId: String(url.searchParams.get('payeeId') || '').trim(),
+    bill: String(url.searchParams.get('bill') || '').trim(),
+    sender: String(url.searchParams.get('sender') || 'ABC Corporation Ltd.').trim()
+  });
   return {
     flow,
     email,
@@ -411,6 +420,7 @@ async function handleSendToken(request, env) {
   const paymentDateFormatted = String(payload.paymentDateFormatted || formatDisplayDate(paymentDate)).trim();
   const paymentReference = String(payload.paymentReference || '').trim();
   const payableId = String(payload.payableId || '').trim();
+  const payeeId = String(payload.payeeId || '').trim();
   const payeeName = String(payload.payeeName || recipientName || '').trim();
 
   if (!flow) return json({ ok: false, error: 'Flow must be "sd" or "sx".' }, 400);
@@ -435,7 +445,12 @@ async function handleSendToken(request, env) {
     hour: 'numeric',
     minute: '2-digit'
   }).format(new Date(expiresAt));
-  const onboardingUrl = buildOnboardingUrl(verifyBaseUrl, flow, email);
+  const onboardingUrl = buildOnboardingUrl(verifyBaseUrl, flow, email, {
+    payableId,
+    payeeId,
+    bill: paymentReference,
+    sender: senderName
+  });
 
   await env.TOKEN_STORE.put(
     'token:' + tokenHash,

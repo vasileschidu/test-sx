@@ -21,18 +21,19 @@ document.addEventListener('DOMContentLoaded', () => {
   const nextButton = document.getElementById('next-button');
 
   /** @type {HTMLInputElement[]} Checkboxes that track read-status for each document */
-  const checkboxes = [
-    document.getElementById('doc-1-checkbox'),
-    document.getElementById('doc-2-checkbox'),
-    document.getElementById('doc-3-checkbox'),
-  ];
+  const checkboxes = Array.from(document.querySelectorAll('input[id$="-checkbox"]'));
 
   /**
    * Enable or disable the "Next" button based on whether every document
    * checkbox is checked.
    */
   function updateNextButtonState() {
-    nextButton.disabled = !checkboxes.every((checkbox) => checkbox.checked);
+    const visibleCheckboxes = checkboxes.filter((checkbox) => {
+      if (!checkbox) return false;
+      const row = checkbox.closest('li');
+      return !(row && row.classList.contains('hidden'));
+    });
+    nextButton.disabled = !visibleCheckboxes.length || !visibleCheckboxes.every((checkbox) => checkbox.checked);
   }
 
   // When a review button is clicked, record which document is being reviewed.
@@ -61,6 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Allow manual toggling of checkboxes to also update the Next button state.
   checkboxes.forEach((checkbox) => {
+    if (!checkbox) return;
     checkbox.addEventListener('change', updateNextButtonState);
   });
 

@@ -7,79 +7,95 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var KEY = 'sd-onboarding-state';
       var REQUIRED_IDS = ['firstName', 'lastName', 'addressLine1', 'city', 'state', 'zipCode', 'country', 'phoneNumber', 'email'];
       var nextButton = document.getElementById('next-button');
+      var descriptionNode = document.getElementById('instant-card-description');
 
       function getState() {
-        try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
+        return window.SDOnboardingContext ? window.SDOnboardingContext.getState() : {};
       }
       function saveState(patch) {
-        var s = getState();
-        Object.assign(s, patch);
-        sessionStorage.setItem(KEY, JSON.stringify(s));
+        if (window.SDOnboardingContext) window.SDOnboardingContext.saveState(patch);
+      }
+      function formatCurrency(value, currency) {
+        var n = Number(String(value).replace(/[^0-9.-]/g, ''));
+        if (!Number.isFinite(n)) n = 0;
+        try {
+          return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency || 'USD' }).format(n);
+        } catch (error) {
+          return '$' + n.toFixed(2);
+        }
       }
 
-      // Account information comes from the customer portal and should be prefilled.
-      var DEFAULTS = {
-        firstName: 'James',
-        lastName: 'Rivera',
-        phoneNumber: '+1 (555) 204-8821',
-        email: 'james.rivera@example.com',
-        addressLine1: '4821 Elmwood Drive',
-        addressLine2: 'Apt 3B',
-        city: 'Austin',
-        state: 'TX',
-        zipCode: '78701',
-        country: 'United States'
-      };
+      Promise.resolve(window.SDOnboardingContext && window.SDOnboardingContext.bootstrap ? window.SDOnboardingContext.bootstrap() : null)
+        .then(function () {
+          var state = getState();
+          var context = state.payableContext || {};
+          var defaults = Object.assign({
+            firstName: '',
+            lastName: '',
+            phoneNumber: '',
+            email: '',
+            addressLine1: '',
+            addressLine2: '',
+            city: '',
+            state: '',
+            zipCode: '',
+            country: 'United States'
+          }, context.accountInformation || {});
 
-      var saved = getState().virtualCard || {};
-      var current = {};
-      REQUIRED_IDS.concat(['addressLine2']).forEach(function (id) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        el.value = saved[id] || DEFAULTS[id] || '';
-        current[id] = el.value;
-      });
-      saveState({ virtualCard: current });
+          if (descriptionNode) {
+            descriptionNode.textContent = formatCurrency(context.amount || state.amount || '0', context.currency || state.paymentCurrency || 'USD') + ' will be deposited on an instantly issued Virtual Card.';
+          }
 
-      function updateNextState() {
-        var allFilled = REQUIRED_IDS.every(function (id) {
-          var el = document.getElementById(id);
-          return el && el.value.trim() !== '';
-        });
-        nextButton.disabled = !allFilled;
-      }
-
-      REQUIRED_IDS.concat(['addressLine2']).forEach(function (id) {
-        var el = document.getElementById(id);
-        if (!el) return;
-        el.addEventListener('input', function () {
-          var patch = {};
-          patch[id] = el.value;
-          var current = getState().virtualCard || {};
-          Object.assign(current, patch);
+          var saved = getState().virtualCard || {};
+          var current = {};
+          REQUIRED_IDS.concat(['addressLine2']).forEach(function (id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.value = saved[id] || defaults[id] || '';
+            current[id] = el.value;
+          });
           saveState({ virtualCard: current });
+
+          function updateNextState() {
+            var allFilled = REQUIRED_IDS.every(function (id) {
+              var el = document.getElementById(id);
+              return el && el.value.trim() !== '';
+            });
+            nextButton.disabled = !allFilled;
+          }
+
+          REQUIRED_IDS.concat(['addressLine2']).forEach(function (id) {
+            var el = document.getElementById(id);
+            if (!el) return;
+            el.addEventListener('input', function () {
+              var patch = {};
+              patch[id] = el.value;
+              var next = getState().virtualCard || {};
+              Object.assign(next, patch);
+              saveState({ virtualCard: next });
+              updateNextState();
+            });
+            el.addEventListener('change', function () {
+              var patch = {};
+              patch[id] = el.value;
+              var next = getState().virtualCard || {};
+              Object.assign(next, patch);
+              saveState({ virtualCard: next });
+              updateNextState();
+            });
+          });
+
+          nextButton.addEventListener('click', function () {
+            if (!nextButton.disabled) window.location.href = 'summary.html';
+          });
+
           updateNextState();
         });
-        el.addEventListener('change', function () {
-          var patch = {};
-          patch[id] = el.value;
-          var current = getState().virtualCard || {};
-          Object.assign(current, patch);
-          saveState({ virtualCard: current });
-          updateNextState();
-        });
-      });
-
-      nextButton.addEventListener('click', function () {
-        if (!nextButton.disabled) window.location.href = 'summary.html';
-      });
-
-      updateNextState();
     });
   </script>
 </head>
@@ -196,7 +212,7 @@
           <div class="w-full max-w-[640px]">
 
             <h1 class="text-3xl font-semibold text-gray-900">Get an Instant Virtual Card</h1>
-            <p class="mt-2 text-sm text-gray-500">$3,526.00 will be deposited on an instantly issued Virtual Card.</p>
+            <p id="instant-card-description" class="mt-2 text-sm text-gray-500">$3,526.00 will be deposited on an instantly issued Virtual Card.</p>
 
             <div class="mt-10 space-y-8">
 

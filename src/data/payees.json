@@ -3,6 +3,26 @@
     {
       "id": "red-maple-construction",
       "name": "Red Maple Construction",
+      "vendorId": "PAYEE-RMC-483920",
+      "contact": {
+        "name": "Rachel Morris",
+        "firstName": "Rachel",
+        "lastName": "Morris",
+        "email": "ap@redmaple.example",
+        "phone": "+1 (512) 555-0182"
+      },
+      "accountInformation": {
+        "firstName": "Rachel",
+        "lastName": "Morris",
+        "email": "ap@redmaple.example",
+        "phoneNumber": "+1 (512) 555-0182",
+        "addressLine1": "1845 Willow Creek Rd",
+        "addressLine2": "",
+        "city": "Austin",
+        "state": "TX",
+        "zipCode": "78701",
+        "country": "United States"
+      },
       "smartExchangeEnabled": true,
       "paymentMethods": {
         "ach": [
@@ -82,6 +102,26 @@
     {
       "id": "beacon-property-care",
       "name": "Beacon Property Care",
+      "vendorId": "PAYEE-BPC-512684",
+      "contact": {
+        "name": "Melissa Grant",
+        "firstName": "Melissa",
+        "lastName": "Grant",
+        "email": "ap@beaconproperty.example",
+        "phone": "+1 (214) 555-0148"
+      },
+      "accountInformation": {
+        "firstName": "Melissa",
+        "lastName": "Grant",
+        "email": "ap@beaconproperty.example",
+        "phoneNumber": "+1 (214) 555-0148",
+        "addressLine1": "902 Market Street",
+        "addressLine2": "",
+        "city": "Dallas",
+        "state": "TX",
+        "zipCode": "75201",
+        "country": "United States"
+      },
       "smartExchangeEnabled": false,
       "paymentMethods": {
         "ach": [
@@ -148,6 +188,26 @@
     {
       "id": "mosaic-printing-co",
       "name": "Mosaic Printing Co",
+      "vendorId": "PAYEE-MPC-274155",
+      "contact": {
+        "name": "Daniel Price",
+        "firstName": "Daniel",
+        "lastName": "Price",
+        "email": "payments@mosaic.example",
+        "phone": "+1 (615) 555-0126"
+      },
+      "accountInformation": {
+        "firstName": "Daniel",
+        "lastName": "Price",
+        "email": "payments@mosaic.example",
+        "phoneNumber": "+1 (615) 555-0126",
+        "addressLine1": "411 Harbor Ave",
+        "addressLine2": "",
+        "city": "Nashville",
+        "state": "TN",
+        "zipCode": "37203",
+        "country": "United States"
+      },
       "smartExchangeEnabled": true,
       "paymentMethods": {
         "ach": [
@@ -227,6 +287,26 @@
     {
       "id": "sierra-office-supply",
       "name": "Sierra Office Supply",
+      "vendorId": "PAYEE-SOS-661273",
+      "contact": {
+        "name": "Alicia Barnes",
+        "firstName": "Alicia",
+        "lastName": "Barnes",
+        "email": "payables@sierraoffice.example",
+        "phone": "+1 (303) 555-0169"
+      },
+      "accountInformation": {
+        "firstName": "Alicia",
+        "lastName": "Barnes",
+        "email": "payables@sierraoffice.example",
+        "phoneNumber": "+1 (303) 555-0169",
+        "addressLine1": "1201 Midtown Blvd",
+        "addressLine2": "",
+        "city": "Denver",
+        "state": "CO",
+        "zipCode": "80202",
+        "country": "United States"
+      },
       "smartExchangeEnabled": false,
       "paymentMethods": {
         "ach": [
@@ -293,6 +373,26 @@
     {
       "id": "technova-solutions-llc",
       "name": "TechNova Solutions LLC",
+      "vendorId": "PAYEE-TNS-845731",
+      "contact": {
+        "name": "Marcus Lee",
+        "firstName": "Marcus",
+        "lastName": "Lee",
+        "email": "treasury@technova.example",
+        "phone": "+1 (737) 555-0104"
+      },
+      "accountInformation": {
+        "firstName": "Marcus",
+        "lastName": "Lee",
+        "email": "treasury@technova.example",
+        "phoneNumber": "+1 (737) 555-0104",
+        "addressLine1": "892 Innovation Blvd",
+        "addressLine2": "",
+        "city": "Austin",
+        "state": "TX",
+        "zipCode": "78701",
+        "country": "United States"
+      },
       "smartExchangeEnabled": true,
       "paymentMethods": {
         "ach": [
@@ -372,6 +472,26 @@
     {
       "id": "urban-pulse-marketing",
       "name": "Urban Pulse Marketing",
+      "vendorId": "PAYEE-UPM-390184",
+      "contact": {
+        "name": "Olivia Chen",
+        "firstName": "Olivia",
+        "lastName": "Chen",
+        "email": "ap@urbanpulse.example",
+        "phone": "+1 (646) 555-0195"
+      },
+      "accountInformation": {
+        "firstName": "Olivia",
+        "lastName": "Chen",
+        "email": "ap@urbanpulse.example",
+        "phoneNumber": "+1 (646) 555-0195",
+        "addressLine1": "55 Madison Ave",
+        "addressLine2": "",
+        "city": "New York",
+        "state": "NY",
+        "zipCode": "10010",
+        "country": "United States"
+      },
       "smartExchangeEnabled": false,
       "paymentMethods": {
         "ach": [

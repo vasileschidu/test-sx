@@ -244,8 +244,25 @@
                                     <div class="flex min-w-0 flex-col items-start gap-1 py-3 lg:py-0">
                                         <span id="gp-customer-label"
                                             class="text-sm font-medium leading-5 text-gray-900 dark:text-gray-100">Payee</span>
-                                        <span id="gp-customer"
-                                            class="text-sm font-normal leading-5 text-gray-600 dark:text-gray-400 truncate"></span>
+                                        <div class="flex min-w-0 items-center gap-1.5">
+                                            <span id="gp-customer"
+                                                class="truncate text-sm font-normal leading-5 text-gray-600 dark:text-gray-400"></span>
+                                            <span id="gp-payee-id-copy-source" class="sr-only"></span>
+                                            <button id="gp-customer-copy" type="button" data-copy-id="gp-payee-id-copy-source"
+                                                class="copy-btn group relative hidden shrink-0 items-center justify-center rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
+                                                    fill="currentColor" class="size-4">
+                                                    <path
+                                                        d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+                                                    <path
+                                                        d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+                                                </svg>
+                                                <span role="tooltip"
+                                                    class="pointer-events-none invisible absolute bottom-full left-1/2 z-50 mb-2 -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-3 py-2 text-xs font-medium leading-5 text-white opacity-0 shadow-lg transition duration-100 ease-out group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 dark:bg-black">
+                                                    Copy Payee ID
+                                                </span>
+                                            </button>
+                                        </div>
                                     </div>
                                     <div class="hidden h-px w-full bg-gray-200 dark:bg-white/10 lg:col-span-2 lg:block 2xl:hidden"></div>
                                     <div class="hidden h-8 w-px self-center bg-gray-200 dark:bg-white/10 2xl:block"></div>

@@ -14,45 +14,63 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <script src="../../../src/scripts/review-documents.js" defer></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var KEY = 'sd-onboarding-state';
       var DOC_IDS = ['doc-1', 'doc-2', 'doc-3'];
 
       function getState() {
-        try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
+        return window.SDOnboardingContext ? window.SDOnboardingContext.getState() : {};
       }
       function saveState(patch) {
-        var s = getState();
-        Object.assign(s, patch);
-        sessionStorage.setItem(KEY, JSON.stringify(s));
+        if (window.SDOnboardingContext) window.SDOnboardingContext.saveState(patch);
       }
 
-      // Restore reviewed docs
-      var reviewed = getState().reviewedDocs || [];
-      reviewed.forEach(function (docId) {
-        var btn = document.querySelector('.review-trigger[data-doc-id="' + docId + '"]');
-        var status = document.getElementById(docId + '-status');
-        var checkbox = document.getElementById(docId + '-checkbox');
-        if (btn) btn.classList.add('hidden');
-        if (status) status.classList.remove('hidden');
-        if (checkbox) checkbox.checked = true;
-      });
+      Promise.resolve(window.SDOnboardingContext && window.SDOnboardingContext.bootstrap ? window.SDOnboardingContext.bootstrap() : null)
+        .then(function () {
+          var state = getState();
+          var context = state.payableContext || {};
+          var attachments = Array.isArray(context.attachments) ? context.attachments.slice(0, DOC_IDS.length) : [];
+          DOC_IDS.forEach(function (docId, index) {
+            var row = document.getElementById(docId + '-row');
+            var name = document.getElementById(docId + '-name');
+            var size = document.getElementById(docId + '-size');
+            var attachment = attachments[index];
+            if (!row) return;
+            if (!attachment) {
+              row.classList.add('hidden');
+              return;
+            }
+            row.classList.remove('hidden');
+            if (name) name.textContent = attachment.name || ('Attachment ' + (index + 1));
+            if (size) size.textContent = attachment.size || '--';
+          });
 
-      // Save when a doc is marked as read (defer so review-documents.js updates DOM first)
-      var markReadBtn = document.getElementById('mark-read-btn');
-      if (markReadBtn) {
-        markReadBtn.addEventListener('click', function () {
-          setTimeout(function () {
-            var nowReviewed = DOC_IDS.filter(function (id) {
-              var cb = document.getElementById(id + '-checkbox');
-              return cb && cb.checked;
+          var reviewed = getState().reviewedDocs || [];
+          reviewed.forEach(function (docId) {
+            var btn = document.querySelector('.review-trigger[data-doc-id="' + docId + '"]');
+            var status = document.getElementById(docId + '-status');
+            var checkbox = document.getElementById(docId + '-checkbox');
+            if (btn) btn.classList.add('hidden');
+            if (status) status.classList.remove('hidden');
+            if (checkbox) checkbox.checked = true;
+          });
+
+          var markReadBtn = document.getElementById('mark-read-btn');
+          if (markReadBtn) {
+            markReadBtn.addEventListener('click', function () {
+              setTimeout(function () {
+                var nowReviewed = DOC_IDS.filter(function (id) {
+                  var row = document.getElementById(id + '-row');
+                  var cb = document.getElementById(id + '-checkbox');
+                  return row && !row.classList.contains('hidden') && cb && cb.checked;
+                });
+                saveState({ reviewedDocs: nowReviewed });
+              }, 0);
             });
-            saveState({ reviewedDocs: nowReviewed });
-          }, 0);
+          }
         });
-      }
     });
   </script>
 </head>
@@ -172,7 +190,7 @@
               <ul role="list" class="mt-4 divide-y divide-gray-100 rounded-md border border-gray-200">
 
                 <!-- Document 1 -->
-                <li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
+                <li id="doc-1-row" class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
                   <div class="flex w-0 flex-1 items-center">
                     <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
                       class="size-5 shrink-0 text-gray-400">
@@ -181,8 +199,8 @@
                         clip-rule="evenodd" fill-rule="evenodd" />
                     </svg>
                     <div class="ml-4 flex min-w-0 flex-1 flex-col">
-                      <span class="truncate font-medium text-gray-900">resume_back_end_developer.pdf</span>
-                      <span class="text-xs text-gray-400">2.4mb</span>
+                      <span id="doc-1-name" class="truncate font-medium text-gray-900">resume_back_end_developer.pdf</span>
+                      <span id="doc-1-size" class="text-xs text-gray-400">2.4mb</span>
                     </div>
                   </div>
                   <div class="ml-4 shrink-0">
@@ -205,7 +223,7 @@
                 </li>
 
                 <!-- Document 2 -->
-                <li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
+                <li id="doc-2-row" class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
                   <div class="flex w-0 flex-1 items-center">
                     <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
                       class="size-5 shrink-0 text-gray-400">
@@ -214,8 +232,8 @@
                         clip-rule="evenodd" fill-rule="evenodd" />
                     </svg>
                     <div class="ml-4 flex min-w-0 flex-1 flex-col">
-                      <span class="truncate font-medium text-gray-900">coverletter_back_end_developer.pdf</span>
-                      <span class="text-xs text-gray-400">4.5mb</span>
+                      <span id="doc-2-name" class="truncate font-medium text-gray-900">coverletter_back_end_developer.pdf</span>
+                      <span id="doc-2-size" class="text-xs text-gray-400">4.5mb</span>
                     </div>
                   </div>
                   <div class="ml-4 shrink-0">
@@ -238,7 +256,7 @@
                 </li>
 
                 <!-- Document 3 -->
-                <li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
+                <li id="doc-3-row" class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
                   <div class="flex w-0 flex-1 items-center">
                     <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
                       class="size-5 shrink-0 text-gray-400">
@@ -247,8 +265,8 @@
                         clip-rule="evenodd" fill-rule="evenodd" />
                     </svg>
                     <div class="ml-4 flex min-w-0 flex-1 flex-col">
-                      <span class="truncate font-medium text-gray-900">business_registration_certificate.pdf</span>
-                      <span class="text-xs text-gray-400">3.1mb</span>
+                      <span id="doc-3-name" class="truncate font-medium text-gray-900">business_registration_certificate.pdf</span>
+                      <span id="doc-3-size" class="text-xs text-gray-400">3.1mb</span>
                     </div>
                   </div>
                   <div class="ml-4 shrink-0">

@@ -12,48 +12,115 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
-      var KEY = 'sd-onboarding-state';
       var invoiceInput = document.getElementById('invoice-number');
       var vendorInput = document.getElementById('vendor-id');
       var nextButton = document.getElementById('next-button');
+      var introLine = document.getElementById('identity-intro-line');
+      var identityError = document.getElementById('identity-error');
+      var invoiceIcon = document.getElementById('invoice-error-icon');
+      var vendorIcon = document.getElementById('vendor-error-icon');
+      var MAX_ATTEMPTS = 3;
 
       function getState() {
-        try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
+        return window.SDOnboardingContext ? window.SDOnboardingContext.getState() : {};
       }
       function saveState(patch) {
-        var s = getState();
-        Object.assign(s, patch);
-        sessionStorage.setItem(KEY, JSON.stringify(s));
+        return window.SDOnboardingContext ? window.SDOnboardingContext.saveState(patch) : getState();
       }
-
-      // Restore saved values
-      var saved = getState();
-      if (saved.invoiceNumber) invoiceInput.value = saved.invoiceNumber;
-      if (saved.vendorId) vendorInput.value = saved.vendorId;
-
+      function formatMoney(amount, currency) {
+        var numeric = Number(amount || 0);
+        if (!Number.isFinite(numeric)) numeric = 0;
+        try {
+          return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency || 'USD' }).format(numeric);
+        } catch (error) {
+          return '$' + numeric.toFixed(2);
+        }
+      }
+      function applyErrorState(active) {
+        [invoiceInput, vendorInput].forEach(function (input) {
+          input.setAttribute('aria-invalid', active ? 'true' : 'false');
+          input.classList.toggle('text-red-900', active);
+          input.classList.toggle('outline-red-300', active);
+          input.classList.toggle('placeholder:text-red-300', active);
+          input.classList.toggle('focus:outline-red-600', active);
+          input.classList.toggle('text-gray-900', !active);
+          input.classList.toggle('outline-gray-300', !active);
+          input.classList.toggle('placeholder:text-gray-400', !active);
+          input.classList.toggle('focus:outline-blue-600', !active);
+        });
+        if (invoiceIcon) invoiceIcon.classList.toggle('hidden', !active);
+        if (vendorIcon) vendorIcon.classList.toggle('hidden', !active);
+      }
       function updateNextState() {
         nextButton.disabled = invoiceInput.value.trim() === '' || vendorInput.value.trim() === '';
       }
 
-      invoiceInput.addEventListener('input', function () {
-        invoiceInput.value = invoiceInput.value.toUpperCase();
-        saveState({ invoiceNumber: invoiceInput.value });
-        updateNextState();
-      });
+      Promise.resolve(window.SDOnboardingContext && window.SDOnboardingContext.bootstrap ? window.SDOnboardingContext.bootstrap() : null)
+        .then(function () {
+          var saved = getState();
+          var context = saved.payableContext || {};
+          var expectedInvoice = String((context.billNumber || '')).trim().toUpperCase();
+          var expectedVendorId = String((context.vendorId || '')).trim().toUpperCase();
+          var attemptsUsed = Number(saved.identityAttemptsUsed || 0);
 
-      vendorInput.addEventListener('input', function () {
-        vendorInput.value = vendorInput.value.toUpperCase();
-        saveState({ vendorId: vendorInput.value });
-        updateNextState();
-      });
+          if (introLine && context.amount) {
+            introLine.textContent = formatMoney(context.amount, context.currency) + ' from ' + String(context.senderName || 'SMART Hub') + ' is ready to collect.';
+          }
+          if (expectedInvoice) invoiceInput.placeholder = expectedInvoice;
+          if (expectedVendorId) vendorInput.placeholder = expectedVendorId;
+          if (saved.invoiceNumber) invoiceInput.value = String(saved.invoiceNumber || '').toUpperCase();
+          if (saved.vendorId) vendorInput.value = String(saved.vendorId || '').toUpperCase();
 
-      nextButton.addEventListener('click', function () {
-        if (!nextButton.disabled) window.location.href = 'review-documents.html';
-      });
+          function clearErrorState() {
+            applyErrorState(false);
+            if (identityError) {
+              identityError.classList.add('hidden');
+              identityError.textContent = '';
+            }
+          }
 
-      updateNextState();
+          invoiceInput.addEventListener('input', function () {
+            invoiceInput.value = invoiceInput.value.toUpperCase();
+            saveState({ invoiceNumber: invoiceInput.value, identityValidated: false });
+            clearErrorState();
+            updateNextState();
+          });
+
+          vendorInput.addEventListener('input', function () {
+            vendorInput.value = vendorInput.value.toUpperCase();
+            saveState({ vendorId: vendorInput.value, identityValidated: false });
+            clearErrorState();
+            updateNextState();
+          });
+
+          nextButton.addEventListener('click', function () {
+            if (nextButton.disabled) return;
+            var invoiceValue = invoiceInput.value.trim().toUpperCase();
+            var vendorValue = vendorInput.value.trim().toUpperCase();
+            var matches = invoiceValue && vendorValue && invoiceValue === expectedInvoice && vendorValue === expectedVendorId;
+            if (matches) {
+              saveState({ invoiceNumber: invoiceValue, vendorId: vendorValue, identityValidated: true, identityAttemptsUsed: attemptsUsed });
+              window.location.href = 'review-documents.html';
+              return;
+            }
+
+            attemptsUsed = Math.min(MAX_ATTEMPTS, attemptsUsed + 1);
+            saveState({ invoiceNumber: invoiceValue, vendorId: vendorValue, identityValidated: false, identityAttemptsUsed: attemptsUsed });
+            applyErrorState(true);
+            if (identityError) {
+              var remaining = Math.max(0, MAX_ATTEMPTS - attemptsUsed);
+              identityError.textContent = remaining > 0
+                ? (remaining + ' out of ' + MAX_ATTEMPTS + ' attempts remain. Re-enter your invoice number and Payee ID to continue.')
+                : 'No attempts remain. Request a new payment link and try again.';
+              identityError.classList.remove('hidden');
+            }
+          });
+
+          updateNextState();
+        });
     });
   </script>
 </head>
@@ -164,21 +231,30 @@
           <div class="w-full max-w-[640px]">
             <h1 class="text-3xl font-semibold text-gray-900">Let's make sure it's you!</h1>
             <p class="mt-2 text-sm text-gray-500">To collect your payment, please confirm the following.</p>
+            <p id="identity-intro-line" class="mt-1 text-sm text-gray-500"></p>
 
             <div class="mt-8 flex w-full flex-col gap-4">
               <div class="sm:max-w-[430px]">
                 <label for="invoice-number" class="block text-sm/6 font-medium text-gray-900">Invoice Number</label>
-                <div class="mt-2">
-                  <input id="invoice-number" type="text" name="invoice-number" placeholder="INV-2026-10458" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                <div class="mt-2 grid grid-cols-1">
+                  <input id="invoice-number" type="text" name="invoice-number" placeholder="INV-2026-10458" aria-invalid="false" aria-describedby="identity-error" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pr-10 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                  <svg id="invoice-error-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-3 hidden size-5 self-center justify-self-end text-red-500 sm:size-4">
+                    <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" fill-rule="evenodd" />
+                  </svg>
                 </div>
               </div>
 
               <div class="sm:max-w-[430px]">
                 <label for="vendor-id" class="block text-sm/6 font-medium text-gray-900">Your Vendor ID</label>
-                <div class="mt-2">
-                  <input id="vendor-id" type="text" name="vendor-id" placeholder="US-VND-483920" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                <div class="mt-2 grid grid-cols-1">
+                  <input id="vendor-id" type="text" name="vendor-id" placeholder="PAYEE-123456" aria-invalid="false" aria-describedby="identity-error" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pr-10 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                  <svg id="vendor-error-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-3 hidden size-5 self-center justify-self-end text-red-500 sm:size-4">
+                    <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" fill-rule="evenodd" />
+                  </svg>
                 </div>
               </div>
+
+              <p id="identity-error" class="hidden max-w-[430px] rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700"></p>
             </div>
 
           </div>
