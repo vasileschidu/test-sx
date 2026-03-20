@@ -19,7 +19,9 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var pageLoader = window.SDOnboardingContext && window.SDOnboardingContext.createLoadingOverlay
-        ? window.SDOnboardingContext.createLoadingOverlay()
+        ? window.SDOnboardingContext.createLoadingOverlay({
+            targets: ['#doc-1-name', '#doc-1-size', '#doc-2-name', '#doc-2-size', '#doc-3-name', '#doc-3-size']
+          })
         : { done: function () {} };
       var DOC_IDS = ['doc-1', 'doc-2', 'doc-3'];
 

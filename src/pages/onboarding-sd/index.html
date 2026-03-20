@@ -17,7 +17,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var pageLoader = window.SDOnboardingContext && window.SDOnboardingContext.createLoadingOverlay
-        ? window.SDOnboardingContext.createLoadingOverlay()
+        ? window.SDOnboardingContext.createLoadingOverlay({ targets: ['#sd-welcome-name', '#sd-welcome-note'] })
         : { done: function () {} };
       function formatCurrency(value, currency) {
         var numeric = Number(value || 0);

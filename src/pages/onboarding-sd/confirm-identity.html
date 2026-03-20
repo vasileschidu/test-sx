@@ -16,7 +16,7 @@
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var pageLoader = window.SDOnboardingContext && window.SDOnboardingContext.createLoadingOverlay
-        ? window.SDOnboardingContext.createLoadingOverlay()
+        ? window.SDOnboardingContext.createLoadingOverlay({ targets: ['#identity-intro-line', '#invoice-number', '#vendor-id'] })
         : { done: function () {} };
       var invoiceInput = document.getElementById('invoice-number');
       var vendorInput = document.getElementById('vendor-id');
