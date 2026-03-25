@@ -23,7 +23,7 @@ const APP_NAV_DATA = [
     { type: 'link', id: 'insights', label: 'Insights', href: '#', icon: 'insights' },
     { type: 'divider' },
     { type: 'link', id: 'bills', label: 'Bills/Payables', href: 'bills-and-payables.html', icon: 'bills' },
-    { type: 'link', id: 'vendors', label: 'Vendors', href: '#', icon: 'vendors' },
+    { type: 'link', id: 'vendors', label: 'Vendors', href: 'vendors.html', icon: 'vendors' },
     { type: 'link', id: 'card-manager', label: 'Card Manager', href: '#', icon: 'card-manager' },
     { type: 'divider' },
     { type: 'link', id: 'invoices', label: 'Invoices/Receivables', href: '#', icon: 'invoices' },
@@ -80,8 +80,20 @@ const APP_NAV_PAGE_MAP = {
     'smart-exchange.html': 'smart-exchange',
     'bills-and-payables.html': 'bills',
     'payables-pay.html': 'bills',
+    'vendors.html': 'vendors',
+    'vendor-profile.html': 'vendors',
     'payment-preferences.html': 'payment-preferences',
     'my-company-profile.html': 'my-company-profile'
+};
+
+const APP_NAV_REACT_ROUTE_MAP = {
+    'smart-exchange.html': '#/smart-exchange',
+    'bills-and-payables.html': '#/payables',
+    'payables-pay.html': '#/payables',
+    'vendors.html': '#/vendors',
+    'vendor-profile.html': '#/vendors',
+    'payment-preferences.html': '#/payment-preferences',
+    'my-company-profile.html': '#/smart-exchange'
 };
 
 /* ===== Icon Registry ===== */
@@ -116,9 +128,16 @@ const SVG_CHEVRON_RIGHT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 
 
 const SVG_ARROW_UP_RIGHT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="chevron-icon size-5 text-gray-500 transition-transform dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.21967 14.7803C5.51256 15.0732 5.98744 15.0732 6.28033 14.7803L13.5 7.56066V13.25C13.5 13.6642 13.8358 14 14.25 14C14.6642 14 15 13.6642 15 13.25V5.75C15 5.33579 14.6642 5 14.25 5H6.75C6.33579 5 6 5.33579 6 5.75C6 6.16421 6.33579 6.5 6.75 6.5H12.4393L5.21967 13.7197C4.92678 14.0126 4.92678 14.4874 5.21967 14.7803Z"/></svg>';
 
-const LOGO_HTML =
-    '<img src="../../../assets/img/smart-hub.svg" alt="SMART Hub" class="h-8 w-auto dark:hidden"/>' +
-    '<img src="../../../assets/img/smart-hub-dark.svg" alt="SMART Hub" class="hidden h-8 w-auto dark:block"/>';
+function getShellAssetUrl(key, fallback) {
+    var assets = window.__APP_SHELL_ASSET_URLS || {};
+    return assets[key] || fallback;
+}
+
+function buildLogoHtml() {
+    return '' +
+        '<img src="' + getShellAssetUrl('logoLight', '../../../assets/img/smart-hub.svg') + '" alt="SMART Hub" class="h-8 w-auto dark:hidden"/>' +
+        '<img src="' + getShellAssetUrl('logoDark', '../../../assets/img/smart-hub-dark.svg') + '" alt="SMART Hub" class="hidden h-8 w-auto dark:block"/>';
+}
 
 const TRANSCARD_LOGO_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="12" viewBox="0 0 64 12" fill="none" class="mb-0.5 text-black dark:text-white"><path d="M0 2.8782H3.2576V7.37029V11.8624H5.19674V7.37029V2.8782H8.45435V1.19781H0V2.8782Z" fill="currentColor"/><path d="M12.598 3.69985C12.4327 3.67405 12.2675 3.65194 12.1059 3.6372C11.9443 3.62246 11.801 3.61509 11.6799 3.61509C11.0775 3.61141 10.4789 3.67037 9.89129 3.79197C9.43589 3.88779 8.98783 4.01308 8.54712 4.17154V11.8696H10.4018V5.39498C10.5597 5.34707 10.7213 5.3139 10.8866 5.28811C11.1033 5.24757 11.3199 5.22546 11.5403 5.22546C11.8561 5.22178 12.172 5.25126 12.4842 5.31022C12.7008 5.35075 12.9138 5.40603 13.1232 5.47236L13.4427 3.89147C13.3509 3.85831 13.2297 3.82514 13.0754 3.79197C12.9175 3.75512 12.7596 3.72564 12.598 3.69985Z" fill="currentColor"/><path d="M19.5607 4.48129C19.2889 4.19017 18.9437 3.96906 18.5691 3.84009C18.0806 3.67794 17.5701 3.60056 17.0597 3.6153C16.5932 3.61161 16.1231 3.65583 15.6641 3.73691C15.3299 3.79218 14.9956 3.87325 14.6651 3.97643L14.621 3.99117L14.8598 5.56101L14.9222 5.5389C15.194 5.44677 15.4768 5.37676 15.7559 5.33622C16.1268 5.27357 16.5088 5.24409 16.887 5.24778C17.1405 5.24041 17.3902 5.27726 17.6289 5.36202C17.9852 5.49099 18.2496 5.78948 18.3414 6.15799C18.3891 6.34593 18.4148 6.54492 18.4148 6.74023V6.9687C18.2055 6.9208 17.9925 6.88395 17.7795 6.85815C17.5701 6.83236 17.3608 6.8213 17.1515 6.8213C17.1441 6.8213 17.1405 6.8213 17.1331 6.8213C16.7254 6.8213 16.3178 6.86552 15.9211 6.94659C15.5502 7.02029 15.1976 7.16401 14.8745 7.36669C14.577 7.562 14.3272 7.82732 14.1546 8.14055C13.9673 8.498 13.8755 8.89599 13.8902 9.29766C13.8755 9.7067 13.9526 10.1194 14.1179 10.499C14.2648 10.8122 14.4925 11.0886 14.7716 11.295C15.0764 11.5087 15.4107 11.6561 15.7742 11.7372C16.1966 11.8293 16.6263 11.8772 17.056 11.8735C17.089 11.8735 17.1184 11.8735 17.1515 11.8735C17.7501 11.8735 18.3561 11.8293 18.951 11.7445C19.5203 11.6598 19.9316 11.5898 20.2034 11.5271L20.2475 11.5161V6.75128C20.2512 6.32382 20.1997 5.89635 20.0896 5.47994C19.9941 5.11143 19.8141 4.76504 19.5607 4.48129ZM18.4112 8.33955V10.2484C18.0145 10.3111 17.6105 10.3405 17.2102 10.3295H17.1551C16.7401 10.3221 16.4096 10.241 16.1635 10.0936C15.9175 9.94255 15.7889 9.6588 15.7889 9.25344C15.7816 9.07287 15.8293 8.89599 15.9285 8.74122C16.024 8.60487 16.1525 8.49432 16.2994 8.4243C16.4684 8.34323 16.6446 8.29164 16.832 8.26584C17.2286 8.20688 17.6326 8.20688 18.0329 8.26584C18.1541 8.28058 18.2826 8.30638 18.4112 8.33955Z" fill="currentColor"/><path d="M27.6177 4.63596C27.3386 4.30062 26.975 4.04266 26.5673 3.88421C26.0422 3.6889 25.4839 3.59677 24.9257 3.61151C24.2903 3.60783 23.6513 3.65573 23.0233 3.75154C22.5532 3.82156 22.0868 3.92106 21.6277 4.04635V11.866H23.4824V5.34717C23.6072 5.32506 23.7945 5.29927 24.0516 5.26979C24.294 5.24031 24.5401 5.22557 24.7898 5.22188C25.0652 5.21451 25.337 5.25873 25.5941 5.35086C25.8071 5.43193 25.9871 5.57933 26.1156 5.76727C26.2552 5.99206 26.3507 6.24633 26.3911 6.50797C26.4535 6.87279 26.4792 7.2413 26.4755 7.61349V11.855H28.3339V7.31868C28.3375 6.81383 28.2825 6.30897 28.1723 5.81518C28.0768 5.38771 27.8895 4.98235 27.6177 4.63596Z" fill="currentColor"/><path d="M35.1506 8.64496C35.0588 8.39069 34.9082 8.15485 34.7173 7.96691C34.4969 7.75317 34.2472 7.57629 33.9754 7.44363C33.6228 7.26675 33.2592 7.10829 32.892 6.97194C32.6753 6.89824 32.4623 6.81348 32.2493 6.71399C32.1024 6.64766 31.9591 6.5629 31.8306 6.46709C31.7425 6.40076 31.669 6.31232 31.6213 6.2165C31.5772 6.11701 31.5588 6.00646 31.5588 5.8959C31.5515 5.6748 31.6727 5.47212 31.8673 5.37631C32.1317 5.24733 32.4292 5.18469 32.7304 5.19574C33.083 5.19206 33.4355 5.22891 33.7807 5.30629C34.0342 5.36525 34.2839 5.44633 34.5226 5.54951L34.5814 5.5753L34.9303 4.00915L34.8862 3.99441C34.5814 3.88755 34.2655 3.80648 33.9497 3.74751C33.52 3.66276 33.0793 3.61854 32.6422 3.62222C31.7388 3.62222 31.0153 3.83596 30.4864 4.25237C29.9539 4.67246 29.6858 5.25102 29.6858 5.97698C29.6748 6.30495 29.7335 6.62555 29.8584 6.92772C29.9686 7.18199 30.1302 7.40678 30.3358 7.59103C30.5489 7.78265 30.7912 7.94111 31.0483 8.0664C31.3385 8.21012 31.6433 8.33541 31.9444 8.44596C32.4696 8.64127 32.8479 8.82553 33.0756 8.99135C33.2776 9.12033 33.3951 9.34143 33.3951 9.58465V9.58833C33.4135 9.80944 33.296 10.0195 33.1013 10.1227C32.8956 10.2332 32.5541 10.2885 32.095 10.2885C32.084 10.2885 32.0767 10.2885 32.0656 10.2885C31.6543 10.2885 31.243 10.2369 30.8463 10.1337C30.5231 10.049 30.2073 9.94578 29.9025 9.82786L29.8437 9.80207L29.5132 11.4088L29.5573 11.4235C29.8437 11.5304 30.1375 11.6262 30.435 11.6999C30.9198 11.8141 31.4193 11.8731 31.9187 11.8731C31.9738 11.8731 32.0289 11.8731 32.084 11.8694H32.0877C33.105 11.8694 33.8983 11.6741 34.4528 11.2871C35.0111 10.8965 35.2939 10.3143 35.2939 9.55885C35.2939 9.24562 35.2498 8.93976 35.1506 8.64496Z" fill="currentColor"/><path d="M41.8496 9.89443C41.6366 9.98287 41.3795 10.0566 41.0894 10.1155C40.7992 10.1745 40.4981 10.204 40.1969 10.204C39.4 10.204 38.827 9.98287 38.4965 9.55172C38.1623 9.1132 37.9897 8.50885 37.9897 7.75341C37.9897 6.96849 38.1696 6.35309 38.5259 5.92562C38.8784 5.50184 39.4 5.28442 40.0794 5.28442C40.3695 5.28442 40.645 5.3139 40.9021 5.37286C41.1591 5.43182 41.3942 5.50552 41.5962 5.59397L41.6549 5.61976L42.0663 4.04256L42.0222 4.02413C41.3685 3.75512 40.6633 3.61877 39.9325 3.61877C39.3375 3.61877 38.7903 3.72564 38.3129 3.93569C37.8354 4.14574 37.4241 4.44054 37.0899 4.80905C36.7557 5.17755 36.4949 5.61976 36.3186 6.12461C36.1387 6.62947 36.0505 7.17486 36.0505 7.75341C36.0505 8.33933 36.1313 8.89209 36.2893 9.39326C36.4472 9.89811 36.6932 10.3403 37.0164 10.7051C37.3396 11.07 37.7546 11.3611 38.2504 11.5638C38.7426 11.7701 39.3302 11.8733 39.9949 11.8733C40.4209 11.8733 40.8396 11.8328 41.2399 11.7554C41.6403 11.6743 41.9487 11.5859 42.1471 11.4827L42.1838 11.4643L41.9157 9.87232L41.8496 9.89443Z" fill="currentColor"/><path d="M48.7158 4.48129C48.444 4.19017 48.0988 3.96906 47.7242 3.84009C47.2357 3.67794 46.7252 3.60056 46.2147 3.6153C45.7483 3.61161 45.2782 3.65215 44.8154 3.73322C44.4812 3.7885 44.147 3.86957 43.8202 3.97275L43.7761 3.98749L44.0111 5.55732L44.0736 5.53521C44.3454 5.44309 44.6245 5.37307 44.9073 5.33254C45.2782 5.26989 45.6601 5.24041 46.0384 5.24409C46.2918 5.23672 46.5416 5.27358 46.7803 5.35833C47.1365 5.48731 47.401 5.7858 47.4928 6.1543C47.5405 6.34224 47.5662 6.54124 47.5662 6.73654V6.96502C47.3569 6.91711 47.1439 6.88026 46.9309 6.85447C46.7179 6.82867 46.5085 6.81762 46.3029 6.81762C46.2992 6.81762 46.2992 6.81762 46.2955 6.81762C45.8842 6.81762 45.4692 6.86184 45.0689 6.94659C44.6979 7.02029 44.3454 7.16401 44.0222 7.36669C43.7247 7.562 43.4749 7.82732 43.3023 8.14055C43.115 8.498 43.0232 8.89599 43.0379 9.29766C43.0269 9.7067 43.104 10.1231 43.2729 10.499C43.4199 10.8122 43.6476 11.0886 43.9267 11.295C44.2315 11.5087 44.5694 11.6561 44.9293 11.7372C45.348 11.8293 45.7813 11.8772 46.211 11.8735C46.2441 11.8735 46.2735 11.8735 46.3065 11.8735C46.9052 11.8735 47.5111 11.8293 48.1061 11.7445C48.6754 11.6598 49.0867 11.5898 49.3585 11.5271L49.4025 11.5161V6.75128C49.4062 6.32382 49.3548 5.89267 49.2446 5.47994C49.1455 5.11143 48.9655 4.76504 48.7158 4.48129ZM47.5626 8.33955V10.2484C47.1659 10.3111 46.7619 10.3405 46.3616 10.3295H46.3065C45.8915 10.3221 45.561 10.241 45.3149 10.0936C45.0689 9.94255 44.9403 9.6588 44.9403 9.25344C44.933 9.07287 44.9807 8.89599 45.0799 8.74122C45.1754 8.60487 45.3039 8.49432 45.4508 8.4243C45.6198 8.34323 45.796 8.29164 45.9833 8.26584C46.38 8.20688 46.784 8.20688 47.1843 8.26584C47.3092 8.28058 47.4377 8.30638 47.5626 8.33955Z" fill="currentColor"/><path d="M54.829 3.69985C54.6637 3.67405 54.4984 3.65194 54.3368 3.6372C54.1752 3.62246 54.032 3.61509 53.9108 3.61509C53.3085 3.61141 52.7099 3.67037 52.1222 3.79197C51.6668 3.88779 51.2188 4.01308 50.7781 4.17154V11.8696H52.6327V5.39498C52.7907 5.34707 52.9523 5.3139 53.1175 5.28811C53.3342 5.24757 53.5509 5.22546 53.7713 5.22546C54.0871 5.22178 54.4029 5.25126 54.7151 5.31022C54.9318 5.35075 55.1448 5.40603 55.3541 5.47236L55.6737 3.89147C55.5818 3.85831 55.4606 3.82514 55.3064 3.79197C55.1485 3.75512 54.9942 3.72564 54.829 3.69985Z" fill="currentColor"/><path d="M63.1198 11.3242V10.7714L63.1235 0L61.2247 0.316915V4.01303C61.0081 3.90985 60.784 3.82141 60.5563 3.75139C60.2295 3.65558 59.8879 3.60767 59.55 3.61504C59.0359 3.60399 58.5364 3.70349 58.0626 3.90985C57.6403 4.10147 57.2583 4.39259 56.9645 4.75373C56.6487 5.14066 56.421 5.57918 56.2814 6.05824C56.1198 6.60731 56.0427 7.1785 56.05 7.74968C56.0427 8.33192 56.1345 8.90679 56.3255 9.45955C56.4981 9.94598 56.7662 10.3845 57.1224 10.7604C57.4713 11.1215 57.9047 11.4053 58.3748 11.5858C58.8853 11.7775 59.4178 11.8733 59.9614 11.8733C59.9871 11.8733 60.0128 11.8733 60.0385 11.8733C60.6077 11.8733 61.1807 11.829 61.7389 11.7406C62.1906 11.6706 62.6424 11.5711 63.0794 11.4421L63.1198 11.4311V11.3242ZM61.2211 10.086C61.0742 10.1155 60.9236 10.1413 60.773 10.156C60.5343 10.1818 60.2882 10.1966 60.0458 10.1929C59.4068 10.1929 58.8963 9.97177 58.5364 9.53694C58.1802 9.10947 57.9965 8.5088 57.9892 7.75705H57.9929V7.70178C57.9929 6.95371 58.1398 6.35304 58.4299 5.91821C58.72 5.49074 59.1828 5.27332 59.8145 5.27332C59.8181 5.27332 59.8255 5.27332 59.8292 5.27332C60.1046 5.27332 60.3727 5.32123 60.6335 5.41335C60.8428 5.48337 61.0411 5.57918 61.2247 5.6971V10.086H61.2211Z" fill="currentColor"/></svg>';
 
@@ -146,13 +165,19 @@ function renderIcon(key, cls) {
     return (APP_NAV_ICONS[key] || '').replace('{CLS}', cls);
 }
 
+function resolveNavHref(href, routerMode) {
+    if (!href || href === '#') return href || '#';
+    if (routerMode === 'hash' && APP_NAV_REACT_ROUTE_MAP[href]) return APP_NAV_REACT_ROUTE_MAP[href];
+    return href;
+}
+
 /* ===== Item Builders ===== */
 
 function buildDivider() {
     return '<div class="my-1 h-px bg-gray-200 dark:bg-white/10"></div>';
 }
 
-function buildSubmenuItems(children, activeId) {
+function buildSubmenuItems(children, activeId, routerMode) {
     return children.map(child => {
         const isActive = child.id === activeId;
         const cls = 'nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium transition-colors cursor-pointer focus-visible:outline-none ' +
@@ -160,34 +185,34 @@ function buildSubmenuItems(children, activeId) {
                 ? 'is-active bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 dark:bg-white/10 dark:text-white dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white'
                 : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white');
         const ariaCurrent = isActive ? ' aria-current="page"' : '';
-        return `<a href="${child.href || '#'}" class="${cls}"${ariaCurrent}>${child.label}</a>`;
+        return `<a href="${resolveNavHref(child.href || '#', routerMode)}" class="${cls}"${ariaCurrent}>${child.label}</a>`;
     }).join('\n');
 }
 
-function buildSubmenu(children, activeId, expanded) {
+function buildSubmenu(children, activeId, expanded, routerMode) {
     const openCls = expanded
         ? 'nav-submenu ml-9 flex flex-col overflow-hidden max-h-96 opacity-100 pointer-events-auto transition-all duration-400 ease-in-out'
         : 'nav-submenu ml-9 flex flex-col overflow-hidden max-h-0 opacity-0 pointer-events-none transition-all duration-400 ease-in-out';
-    return `<div class="${openCls}">${buildSubmenuItems(children, activeId)}</div>`;
+    return `<div class="${openCls}">${buildSubmenuItems(children, activeId, routerMode)}</div>`;
 }
 
-function buildNavLink(item, activeId) {
+function buildNavLink(item, activeId, routerMode) {
     const ariaCurrent = item.id === activeId ? ' aria-current="page"' : '';
-    return `<a href="${item.href}" class="${navLinkCls(item.id, activeId)}"${ariaCurrent}>
+    return `<a href="${resolveNavHref(item.href, routerMode)}" class="${navLinkCls(item.id, activeId)}"${ariaCurrent}>
 <span class="flex items-center gap-3">${renderIcon(item.icon, navIconCls(item.id, activeId))} ${item.label}</span>
 </a>`;
 }
 
-function buildNavLinkArrow(item, activeId, isDesktop) {
+function buildNavLinkArrow(item, activeId, isDesktop, routerMode) {
     const ariaCurrent = item.id === activeId ? ' aria-current="page"' : '';
     const trailingIcon = isDesktop ? SVG_ARROW_UP_RIGHT : SVG_CHEVRON_RIGHT;
-    return `<a href="${item.href}" class="${navLinkCls(item.id, activeId)}"${ariaCurrent}>
+    return `<a href="${resolveNavHref(item.href, routerMode)}" class="${navLinkCls(item.id, activeId)}"${ariaCurrent}>
 <span class="flex items-center gap-3">${renderIcon(item.icon, navIconCls(item.id, activeId))} ${item.label}</span>
 ${trailingIcon}
 </a>`;
 }
 
-function buildSmartExchangeItem(item, activeId, expand) {
+function buildSmartExchangeItem(item, activeId, expand, routerMode) {
     const isActive = item.id === activeId;
     const linkCls = 'nav-item ' + (isActive ? 'is-active ' : '') +
         'flex flex-1 h-full items-center gap-3 rounded-md px-2 text-base font-medium transition-colors cursor-pointer focus-visible:outline-none ' +
@@ -200,32 +225,32 @@ function buildSmartExchangeItem(item, activeId, expand) {
     const ariaCurrent = isActive ? ' aria-current="page"' : '';
     const chevron = SVG_CHEVRON_DOWN_TPL.replace('{ROT}', expand ? 'rotate-180' : '');
     return `<div class="nav-item group flex h-10 w-full items-center gap-1 rounded-md" data-smart-exchange-trigger>
-<a href="${item.href}" class="${linkCls}"${ariaCurrent}><span class="flex items-center gap-3">${renderIcon(item.icon, iconCls)} <span class="nav-label">${item.label}</span></span></a>
+<a href="${resolveNavHref(item.href, routerMode)}" class="${linkCls}"${ariaCurrent}><span class="flex items-center gap-3">${renderIcon(item.icon, iconCls)} <span class="nav-label">${item.label}</span></span></a>
 <button type="button" data-chevron-toggle aria-label="Toggle SMART Exchange submenu"
   class="flex size-8 items-center justify-center rounded-md text-gray-600 hover:bg-gray-200 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/30 transition-colors dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-300 cursor-pointer">
 ${chevron}
 </button>
 </div>
-${buildSubmenu(item.children, activeId, expand)}`;
+${buildSubmenu(item.children, activeId, expand, routerMode)}`;
 }
 
-function buildExpandableItem(item, activeId) {
+function buildExpandableItem(item, activeId, routerMode) {
     const chevronCls = 'chevron-icon size-5 text-gray-500 transition-transform dark:text-gray-400';
     return `<button type="button" class="${navLinkCls(item.id, activeId, 'w-full')}" data-expandable-trigger>
 <span class="flex items-center gap-3">${renderIcon(item.icon, navIconCls(item.id, activeId))} ${item.label}</span>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="${chevronCls}"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
 </button>
-${buildSubmenu(item.children, activeId, false)}`;
+${buildSubmenu(item.children, activeId, false, routerMode)}`;
 }
 
-function buildNavItems(isDesktop, activeId, expand) {
+function buildNavItems(isDesktop, activeId, expand, routerMode) {
     return APP_NAV_DATA.map(item => {
         switch (item.type) {
             case 'divider':        return buildDivider();
-            case 'link':           return buildNavLink(item, activeId);
-            case 'link-arrow':     return buildNavLinkArrow(item, activeId, isDesktop);
-            case 'smart-exchange': return buildSmartExchangeItem(item, activeId, expand);
-            case 'expandable':     return buildExpandableItem(item, activeId);
+            case 'link':           return buildNavLink(item, activeId, routerMode);
+            case 'link-arrow':     return buildNavLinkArrow(item, activeId, isDesktop, routerMode);
+            case 'smart-exchange': return buildSmartExchangeItem(item, activeId, expand, routerMode);
+            case 'expandable':     return buildExpandableItem(item, activeId, routerMode);
             default:               return '';
         }
     }).join('\n');
@@ -260,17 +285,21 @@ ${TRANSCARD_LOGO_SVG}
 
 class AppNav extends HTMLElement {
     connectedCallback() {
-        const filename = window.location.pathname.split('/').pop() || '';
+        const filename = this.getAttribute('data-page') || window.location.pathname.split('/').pop() || '';
         const activeId = APP_NAV_PAGE_MAP[filename] || null;
-        const expand = (filename === 'smart-exchange.html' || filename === 'payment-preferences.html');
+        const routerMode = this.getAttribute('data-router') || 'static';
+        const expandAttr = this.getAttribute('data-expand-smart-exchange');
+        const expand = expandAttr == null
+            ? (filename === 'smart-exchange.html' || filename === 'payment-preferences.html')
+            : expandAttr === 'true';
 
-        this.innerHTML = this._buildHTML(activeId, expand);
+        this.innerHTML = this._buildHTML(activeId, expand, routerMode);
         this._attachEventListeners();
     }
 
-    _buildHTML(activeId, expand) {
-        const mobileItems = buildNavItems(false, activeId, expand);
-        const desktopItems = buildNavItems(true, activeId, expand);
+    _buildHTML(activeId, expand, routerMode) {
+        const mobileItems = buildNavItems(false, activeId, expand, routerMode);
+        const desktopItems = buildNavItems(true, activeId, expand, routerMode);
 
         return `<!-- ===== MOBILE SIDEBAR (off-canvas drawer, hidden on lg+) ===== -->
 <el-dialog>
@@ -285,7 +314,7 @@ class AppNav extends HTMLElement {
 </button></div>
 <div class="flex grow flex-col justify-between overflow-y-auto bg-white dark:bg-gray-900 px-6 pt-6 pb-6">
 <div class="flex flex-col gap-9">
-<div class="flex items-center justify-between px-1">${LOGO_HTML}</div>
+<div class="flex items-center justify-between px-1">${buildLogoHtml()}</div>
 <nav class="flex flex-col" data-nav="mobile">
 ${mobileItems}
 </nav>
@@ -301,8 +330,8 @@ ${buildFooter('')}
 <div id="desktop-sidebar-panel" class="flex grow flex-col justify-between overflow-y-auto border-r border-gray-200 bg-white px-6 pt-6 pb-6 dark:border-white/10 dark:bg-gray-900">
 <div class="flex flex-col gap-9">
 <div id="desktop-logo-row" class="relative flex items-center justify-between px-1">
-<div id="desktop-logo-full">${LOGO_HTML}</div>
-<img id="desktop-logo-mark" src="../../../assets/img/smart-hub-mark.svg" alt="SMART Hub" class="hidden h-8 w-8 shrink-0"/>
+<div id="desktop-logo-full">${buildLogoHtml()}</div>
+<img id="desktop-logo-mark" src="${getShellAssetUrl('logoMark', '../../../assets/img/smart-hub-mark.svg')}" alt="SMART Hub" class="hidden h-8 w-8 shrink-0"/>
 </div>
 <nav class="flex flex-col" data-nav="desktop">
 ${desktopItems}
@@ -339,4 +368,6 @@ ${buildFooter('desktop-sidebar-footer')}
     }
 }
 
-customElements.define('app-nav', AppNav);
+if (!customElements.get('app-nav')) {
+    customElements.define('app-nav', AppNav);
+}

@@ -1,0 +1,246 @@
+{
+  "data": [
+    {
+      "payeeId": "red-maple-construction",
+      "displayName": "Red Maple Construction",
+      "legalName": "Red Maple Construction, Inc.",
+      "status": "active",
+      "statusLabel": "Active",
+      "onboardingStatus": "completed",
+      "onboardingStatusLabel": "Onboarding Complete",
+      "verificationStatus": "verified",
+      "verificationStatusLabel": "Verified",
+      "riskStatus": "low",
+      "riskStatusLabel": "Low Risk",
+      "sourceSystem": "Sage Intacct",
+      "paymentTerms": "Net 30",
+      "defaultPaymentMethod": "ach",
+      "taxInfo": {
+        "einMasked": "**-4839201",
+        "classification": "Corporation",
+        "w9Status": "On file",
+        "tinMatchStatus": "Matched"
+      },
+      "documents": [
+        { "name": "red_maple_w9.pdf", "size": "1.1mb", "type": "Tax Form" },
+        { "name": "red_maple_bank_letter.pdf", "size": "830kb", "type": "Bank Verification" },
+        { "name": "red_maple_msa.pdf", "size": "2.4mb", "type": "Contract" }
+      ],
+      "notes": "Primary field contractor for Austin projects. Prefers ACH for standard releases and keeps SMART Exchange enabled for accelerated settlements.",
+      "activityLog": [
+        {
+          "timestamp": "2026-03-20T14:15:00",
+          "title": "Vendor reviewed",
+          "description": "Banking profile reviewed with no action required"
+        },
+        {
+          "timestamp": "2026-02-28T09:40:00",
+          "title": "Remittance contact updated",
+          "description": "Rachel Morris confirmed the primary AP inbox"
+        },
+        {
+          "timestamp": "2026-02-12T11:05:00",
+          "title": "Vendor verified",
+          "description": "Tax profile and bank account were approved"
+        }
+      ]
+    },
+    {
+      "payeeId": "beacon-property-care",
+      "displayName": "Beacon Property Care",
+      "legalName": "Beacon Property Care LLC",
+      "status": "needs_verification",
+      "statusLabel": "Needs Verification",
+      "onboardingStatus": "in_review",
+      "onboardingStatusLabel": "In Review",
+      "verificationStatus": "pending",
+      "verificationStatusLabel": "Pending Documents",
+      "riskStatus": "medium",
+      "riskStatusLabel": "Review Needed",
+      "sourceSystem": "Batch Upload",
+      "paymentTerms": "Net 15",
+      "defaultPaymentMethod": "ach",
+      "taxInfo": {
+        "einMasked": "**-5126848",
+        "classification": "LLC",
+        "w9Status": "Requested",
+        "tinMatchStatus": "Pending"
+      },
+      "documents": [
+        { "name": "beacon_vendor_packet.pdf", "size": "2.0mb", "type": "Onboarding Packet" },
+        { "name": "beacon_insurance_certificate.pdf", "size": "1.4mb", "type": "Insurance" }
+      ],
+      "notes": "Payments are active for approved invoices, but tax verification is still waiting on the updated W-9 from Beacon.",
+      "activityLog": [
+        {
+          "timestamp": "2026-03-19T16:20:00",
+          "title": "Verification requested",
+          "description": "Updated W-9 requested from Melissa Grant"
+        },
+        {
+          "timestamp": "2026-03-10T10:10:00",
+          "title": "Vendor imported",
+          "description": "Vendor record created from batch onboarding file"
+        }
+      ]
+    },
+    {
+      "payeeId": "mosaic-printing-co",
+      "displayName": "Mosaic Printing Co",
+      "legalName": "Mosaic Printing Company",
+      "status": "active",
+      "statusLabel": "Active",
+      "onboardingStatus": "completed",
+      "onboardingStatusLabel": "Onboarding Complete",
+      "verificationStatus": "verified",
+      "verificationStatusLabel": "Verified",
+      "riskStatus": "low",
+      "riskStatusLabel": "Low Risk",
+      "sourceSystem": "NetSuite",
+      "paymentTerms": "Net 30",
+      "defaultPaymentMethod": "smart_exchange",
+      "taxInfo": {
+        "einMasked": "**-2741553",
+        "classification": "Corporation",
+        "w9Status": "On file",
+        "tinMatchStatus": "Matched"
+      },
+      "documents": [
+        { "name": "mosaic_w9.pdf", "size": "1.0mb", "type": "Tax Form" },
+        { "name": "mosaic_exchange_enrollment.pdf", "size": "920kb", "type": "Enrollment" }
+      ],
+      "notes": "Mosaic is enabled for SMART Exchange and uses it for rush settlement windows tied to campaign print runs.",
+      "activityLog": [
+        {
+          "timestamp": "2026-03-21T08:55:00",
+          "title": "SMART Exchange confirmed",
+          "description": "Daniel Price confirmed the settlement destination"
+        },
+        {
+          "timestamp": "2026-03-18T13:25:00",
+          "title": "Vendor profile synced",
+          "description": "NetSuite vendor details refreshed"
+        }
+      ]
+    },
+    {
+      "payeeId": "sierra-office-supply",
+      "displayName": "Sierra Office Supply",
+      "legalName": "Sierra Office Supply Co.",
+      "status": "active",
+      "statusLabel": "Active",
+      "onboardingStatus": "completed",
+      "onboardingStatusLabel": "Onboarding Complete",
+      "verificationStatus": "verified",
+      "verificationStatusLabel": "Verified",
+      "riskStatus": "low",
+      "riskStatusLabel": "Low Risk",
+      "sourceSystem": "Coupa",
+      "paymentTerms": "Net 45",
+      "defaultPaymentMethod": "ach",
+      "taxInfo": {
+        "einMasked": "**-6612730",
+        "classification": "Corporation",
+        "w9Status": "On file",
+        "tinMatchStatus": "Matched"
+      },
+      "documents": [
+        { "name": "sierra_w9.pdf", "size": "980kb", "type": "Tax Form" },
+        { "name": "sierra_catalog_agreement.pdf", "size": "1.8mb", "type": "Contract" }
+      ],
+      "notes": "Office supply vendor for recurring branch replenishment. ACH remains the preferred default for scheduled releases.",
+      "activityLog": [
+        {
+          "timestamp": "2026-03-17T09:00:00",
+          "title": "Payment method confirmed",
+          "description": "ACH account ending in 4470 remains active"
+        },
+        {
+          "timestamp": "2026-02-26T15:50:00",
+          "title": "Vendor verified",
+          "description": "Bank account and remittance contacts approved"
+        }
+      ]
+    },
+    {
+      "payeeId": "technova-solutions-llc",
+      "displayName": "TechNova Solutions LLC",
+      "legalName": "TechNova Solutions LLC",
+      "status": "exception",
+      "statusLabel": "Exception",
+      "onboardingStatus": "completed",
+      "onboardingStatusLabel": "Onboarding Complete",
+      "verificationStatus": "verified",
+      "verificationStatusLabel": "Verified",
+      "riskStatus": "high",
+      "riskStatusLabel": "Escalated Review",
+      "sourceSystem": "QuickBooks Sync",
+      "paymentTerms": "Net 30",
+      "defaultPaymentMethod": "ach",
+      "taxInfo": {
+        "einMasked": "**-8457316",
+        "classification": "LLC",
+        "w9Status": "On file",
+        "tinMatchStatus": "Matched"
+      },
+      "documents": [
+        { "name": "technova_w9.pdf", "size": "1.2mb", "type": "Tax Form" },
+        { "name": "technova_security_addendum.pdf", "size": "2.6mb", "type": "Compliance" },
+        { "name": "technova_bank_confirmation.pdf", "size": "910kb", "type": "Bank Verification" }
+      ],
+      "notes": "Recent exception activity is tied to approval holds on high-value invoices. Vendor data remains verified, but releases require treasury review.",
+      "activityLog": [
+        {
+          "timestamp": "2026-03-21T07:35:00",
+          "title": "Exception escalated",
+          "description": "Treasury review triggered for the latest failed release"
+        },
+        {
+          "timestamp": "2026-03-14T12:20:00",
+          "title": "Vendor reviewed",
+          "description": "Compliance profile reviewed after exception activity"
+        }
+      ]
+    },
+    {
+      "payeeId": "urban-pulse-marketing",
+      "displayName": "Urban Pulse Marketing",
+      "legalName": "Urban Pulse Marketing Group",
+      "status": "active",
+      "statusLabel": "Active",
+      "onboardingStatus": "completed",
+      "onboardingStatusLabel": "Onboarding Complete",
+      "verificationStatus": "verified",
+      "verificationStatusLabel": "Verified",
+      "riskStatus": "low",
+      "riskStatusLabel": "Low Risk",
+      "sourceSystem": "Sage Intacct",
+      "paymentTerms": "Net 20",
+      "defaultPaymentMethod": "card",
+      "taxInfo": {
+        "einMasked": "**-3901845",
+        "classification": "Corporation",
+        "w9Status": "On file",
+        "tinMatchStatus": "Matched"
+      },
+      "documents": [
+        { "name": "urban_pulse_w9.pdf", "size": "1.1mb", "type": "Tax Form" },
+        { "name": "urban_pulse_statement_of_work.pdf", "size": "1.9mb", "type": "Contract" },
+        { "name": "urban_pulse_creative_msa.pdf", "size": "2.3mb", "type": "Contract" }
+      ],
+      "notes": "Marketing spend is frequently settled by card for campaign timing. Remittance notifications go to Olivia Chen and the AP inbox.",
+      "activityLog": [
+        {
+          "timestamp": "2026-03-20T17:05:00",
+          "title": "Card preference confirmed",
+          "description": "Default settlement card remains on file"
+        },
+        {
+          "timestamp": "2026-03-11T10:45:00",
+          "title": "Remittance contact updated",
+          "description": "Campaign billing notices routed to Olivia Chen"
+        }
+      ]
+    }
+  ]
+}

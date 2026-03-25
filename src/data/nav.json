@@ -20,7 +20,7 @@
       "type": "link",
       "id": "vendors",
       "label": "Vendors",
-      "href": "#",
+      "href": "vendors.html",
       "icon": "vendors"
     },
     {
@@ -95,6 +95,8 @@
     "smart-exchange.html": "smart-exchange",
     "bills-and-payables.html": "bills",
     "payables-pay.html": "bills",
+    "vendors.html": "vendors",
+    "vendor-profile.html": "vendors",
     "payment-preferences.html": "payment-preferences",
     "my-company-profile.html": "my-company-profile"
   }

@@ -1280,13 +1280,7 @@
       return (
         '<div class="flex">' +
           '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
-          '<div class="flex-1 p-4 grid grid-cols-[max-content_32px_minmax(0,460px)] items-start gap-4">' +
-            '<div class="pt-0.5 text-sm font-semibold text-gray-900 dark:text-gray-100">' +
-              '<span class="inline-flex max-w-full truncate">' + variant.typeLabel + '</span>' +
-            '</div>' +
-            '<div class="flex items-center justify-center pt-0.5 text-gray-500 dark:text-gray-300">' +
-              '<span class="inline-flex size-5 items-center justify-center">' + ICON_EXPAND_RIGHT + '</span>' +
-            '</div>' +
+          '<div class="flex-1 p-4">' +
             '<div class="w-[460px] max-w-full">' +
               variant.rawCardHtml +
             '</div>' +
@@ -1298,13 +1292,7 @@
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
-        '<div class="flex-1 p-4 grid grid-cols-[max-content_32px_minmax(0,460px)] items-start gap-4">' +
-          '<div class="pt-0.5 text-sm font-semibold text-gray-900 dark:text-gray-100">' +
-            '<span class="inline-flex max-w-full truncate">' + variant.typeLabel + '</span>' +
-          '</div>' +
-          '<div class="flex items-center justify-center pt-0.5 text-gray-500 dark:text-gray-300">' +
-            '<span class="inline-flex size-5 items-center justify-center">' + ICON_EXPAND_RIGHT + '</span>' +
-          '</div>' +
+        '<div class="flex-1 p-4">' +
           '<div' + revealAttr + ' class="flex flex-col gap-2 w-[460px] max-w-full">' +
             '<div class="flex gap-6">' +
               '<div class="flex-1 text-sm font-medium text-gray-900 dark:text-white">' + variant.titleLabel + '</div>' +
@@ -1347,22 +1335,24 @@
   }
 
   // Activity log — matches Figma Activity Log component (31822:55675)
-  function buildActivityLogItem(dotClasses, title, description, showLine) {
-    var lineHtml = showLine
-      ? '<div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center">' +
-          '<div class="w-px bg-gray-200 dark:bg-white/10"></div>' +
-        '</div>'
-      : '';
+  function buildInlineActivityDescription(description, timestampLabel) {
+    if (!timestampLabel) return description || '';
+    return (description || '') + '<span class="text-gray-700 dark:text-gray-300"><span class="mx-1.5 text-base leading-none align-middle">&middot;</span>' + escapeHtml(timestampLabel) + '</span>';
+  }
 
+  function buildActivityLogItem(dotClasses, title, description, timestampLabel, showLine) {
+    var lineHtml = showLine
+      ? '<div class="flex-1 w-px bg-gray-200 dark:bg-white/10"></div>'
+      : '';
     return (
-      '<div class="relative flex gap-4">' +
-        lineHtml +
-        '<div class="relative flex size-6 flex-none items-center justify-center bg-white dark:bg-gray-900">' +
+      '<div class="flex gap-3">' +
+        '<div class="flex w-6 flex-none self-stretch flex-col items-center gap-[6px] pt-[6px]">' +
           '<div class="size-1.5 rounded-full ' + dotClasses + '"></div>' +
+          lineHtml +
         '</div>' +
-        '<div class="flex flex-col gap-1 pb-6">' +
-          '<p class="text-base font-medium text-gray-900 dark:text-white">' + title + '</p>' +
-          '<p class="text-sm text-gray-700 dark:text-gray-300">' + description + '</p>' +
+        '<div class="flex min-w-0 flex-col gap-2 pb-4">' +
+          '<p class="text-sm font-medium text-gray-900 dark:text-white">' + title + '</p>' +
+          '<p class="text-sm text-gray-700 dark:text-gray-300">' + buildInlineActivityDescription(description, timestampLabel) + '</p>' +
         '</div>' +
       '</div>'
     );
@@ -1398,44 +1388,52 @@
       items += buildActivityLogItem(
         'bg-green-100 ring-1 ring-green-700/60 dark:bg-green-400/10 dark:ring-green-400/20',
         'Paid',
-        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been processed' + (processedDate ? ' on ' + processedDate : ''),
+        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been processed',
+        processedDate,
         true
       );
       items += buildActivityLogItem(
         'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
         'Initiated',
-        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated' + (initiatedDate ? ' on ' + initiatedDate : ''),
+        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated',
+        initiatedDate,
         false
       );
 
     } else if (entry.status === 'exception') {
       var initiatedDateF = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
+      var failedDate = log[log.length - 1] ? formatActivityDate(log[log.length - 1].date) : '';
 
       items += buildActivityLogItem(
         'bg-red-100 ring-1 ring-red-700/60 dark:bg-red-400/10 dark:ring-red-400/20',
         'Payment Exception',
         'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has an exception and needs review.',
-        true
-      );
-      items += buildActivityLogItem(
-        'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
-        'Initiated',
-        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated' + (initiatedDateF ? ' on ' + initiatedDateF : ''),
-        false
-      );
-
-    } else {
-      // Pending/default
-      items += buildActivityLogItem(
-        'bg-yellow-100 ring-1 ring-yellow-700/60 dark:bg-yellow-400/10 dark:ring-yellow-400/20',
-        'Pending Your Action',
-        'Please make sure to process your card.',
+        failedDate,
         true
       );
       items += buildActivityLogItem(
         'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
         'Initiated',
         'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated',
+        initiatedDateF,
+        false
+      );
+
+    } else {
+      // Pending/default
+      var pendingDate = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
+      items += buildActivityLogItem(
+        'bg-yellow-100 ring-1 ring-yellow-700/60 dark:bg-yellow-400/10 dark:ring-yellow-400/20',
+        'Pending Your Action',
+        'Please make sure to process your card.',
+        pendingDate,
+        true
+      );
+      items += buildActivityLogItem(
+        'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
+        'Initiated',
+        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated',
+        pendingDate,
         false
       );
     }

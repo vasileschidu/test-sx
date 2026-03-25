@@ -28,12 +28,12 @@
         "ach": [
           {
             "id": "ach-rmc-1",
-            "label": "Red Maple Construction •••• 4128",
+            "label": "Red Maple Construction \u2022\u2022\u2022\u2022 4128",
             "accountName": "Red Maple Construction",
             "bankName": "Wells Fargo",
-            "maskedAccount": "••••••4128",
+            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20224128",
             "accountNumber": "0000000004128",
-            "maskedRouting": "•••••2847",
+            "maskedRouting": "\u2022\u2022\u2022\u2022\u20222847",
             "routingNumber": "121002847",
             "address": "1845 Willow Creek Rd\nAustin, TX 78701\nUnited States"
           }
@@ -41,12 +41,12 @@
         "wire": [
           {
             "id": "wire-rmc-1",
-            "label": "Red Maple Construction Wire •••• 9901",
+            "label": "Red Maple Construction Wire \u2022\u2022\u2022\u2022 9901",
             "accountName": "Red Maple Construction",
             "bankName": "JPMorgan Chase",
-            "maskedAccount": "••••••9901",
+            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20229901",
             "accountNumber": "9000000009901",
-            "maskedRouting": "•••••0210",
+            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220210",
             "routingNumber": "021000021",
             "address": "1845 Willow Creek Rd\nAustin, TX 78701\nUnited States"
           }
@@ -54,7 +54,7 @@
         "card": [
           {
             "id": "card-rmc-1",
-            "label": "Visa •••• 5511",
+            "label": "Visa \u2022\u2022\u2022\u2022 5511",
             "cardholderName": "Red Maple Construction",
             "cardholderAddress": "1845 Willow Creek Rd\nAustin, TX 78701\nUnited States"
           }
@@ -94,7 +94,23 @@
           {
             "id": "sx-rmc-1",
             "label": "Red Maple Construction Profile",
-            "status": "Enabled"
+            "status": "Enabled",
+            "contactPerson": "Rachel Morris",
+            "destination": "ap@redmaple.example",
+            "contacts": [
+              {
+                "id": "sx-rmc-1-email",
+                "type": "email",
+                "label": "Rachel Morris",
+                "value": "ap@redmaple.example"
+              },
+              {
+                "id": "sx-rmc-1-phone",
+                "type": "phone",
+                "label": "Rachel Morris",
+                "value": "+1 (512) 555-0182"
+              }
+            ]
           }
         ]
       }
@@ -127,12 +143,12 @@
         "ach": [
           {
             "id": "ach-bpc-1",
-            "label": "Beacon Property Care •••• 3842",
+            "label": "Beacon Property Care \u2022\u2022\u2022\u2022 3842",
             "accountName": "Beacon Property Care",
             "bankName": "Bank of America",
-            "maskedAccount": "••••••3842",
+            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20223842",
             "accountNumber": "0000000003842",
-            "maskedRouting": "•••••0026",
+            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220026",
             "routingNumber": "026009593",
             "address": "902 Market Street\nDallas, TX 75201\nUnited States"
           }
@@ -140,12 +156,12 @@
         "wire": [
           {
             "id": "wire-bpc-1",
-            "label": "Beacon Property Wire •••• 7720",
+            "label": "Beacon Property Wire \u2022\u2022\u2022\u2022 7720",
             "accountName": "Beacon Property Care",
             "bankName": "Citi",
-            "maskedAccount": "••••••7720",
+            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20227720",
             "accountNumber": "9000000007720",
-            "maskedRouting": "•••••0089",
+            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220089",
             "routingNumber": "021000089",
             "address": "902 Market Street\nDallas, TX 75201\nUnited States"
           }
@@ -153,7 +169,7 @@
         "card": [
           {
             "id": "card-bpc-1",
-            "label": "Mastercard •••• 6291",
+            "label": "Mastercard \u2022\u2022\u2022\u2022 6291",
             "cardholderName": "Beacon Property Care",
             "cardholderAddress": "902 Market Street\nDallas, TX 75201\nUnited States"
           }
@@ -213,12 +229,12 @@
         "ach": [
           {
             "id": "ach-mpc-1",
-            "label": "Mosaic Printing Co •••• 2060",
+            "label": "Mosaic Printing Co \u2022\u2022\u2022\u2022 2060",
             "accountName": "Mosaic Printing Co",
             "bankName": "U.S. Bank",
-            "maskedAccount": "••••••2060",
+            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20222060",
             "accountNumber": "0000000002060",
-            "maskedRouting": "•••••1230",
+            "maskedRouting": "\u2022\u2022\u2022\u2022\u20221230",
             "routingNumber": "091000022",
             "address": "411 Harbor Ave\nNashville, TN 37203\nUnited States"
           }
@@ -226,12 +242,12 @@
         "wire": [
           {
             "id": "wire-mpc-1",
-            "label": "Mosaic Printing Wire •••• 6005",
+            "label": "Mosaic Printing Wire \u2022\u2022\u2022\u2022 6005",
             "accountName": "Mosaic Printing Co",
             "bankName": "Wells Fargo",
-            "maskedAccount": "••••••6005",
+            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20226005",
             "accountNumber": "9000000006005",
-            "maskedRouting": "•••••2847",
+            "maskedRouting": "\u2022\u2022\u2022\u2022\u20222847",
             "routingNumber": "121002847",
             "address": "411 Harbor Ave\nNashville, TN 37203\nUnited States"
           }
@@ -239,7 +255,7 @@
         "card": [
           {
             "id": "card-mpc-1",
-            "label": "Visa •••• 4532",
+            "label": "Visa \u2022\u2022\u2022\u2022 4532",
             "cardholderName": "Mosaic Printing Co",
             "cardholderAddress": "411 Harbor Ave\nNashville, TN 37203\nUnited States"
           }
@@ -279,7 +295,23 @@
           {
             "id": "sx-mpc-1",
             "label": "Mosaic Printing Co Profile",
-            "status": "Enabled"
+            "status": "Enabled",
+            "contactPerson": "Daniel Price",
+            "destination": "payments@mosaic.example",
+            "contacts": [
+              {
+                "id": "sx-mpc-1-email",
+                "type": "email",
+                "label": "Daniel Price",
+                "value": "payments@mosaic.example"
+              },
+              {
+                "id": "sx-mpc-1-phone",
+                "type": "phone",
+                "label": "Daniel Price",
+                "value": "+1 (615) 555-0126"
+              }
+            ]
           }
         ]
       }
@@ -312,12 +344,12 @@
         "ach": [
           {
             "id": "ach-sos-1",
-            "label": "Sierra Office Supply •••• 3207",
+            "label": "Sierra Office Supply \u2022\u2022\u2022\u2022 3207",
             "accountName": "Sierra Office Supply",
             "bankName": "PNC Bank",
-            "maskedAccount": "••••••3207",
+            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20223207",
             "accountNumber": "0000000003207",
-            "maskedRouting": "•••••2670",
+            "maskedRouting": "\u2022\u2022\u2022\u2022\u20222670",
             "routingNumber": "031000503",
             "address": "1201 Midtown Blvd\nDenver, CO 80202\nUnited States"
           }
@@ -325,12 +357,12 @@
         "wire": [
           {
             "id": "wire-sos-1",
-            "label": "Sierra Office Wire •••• 8884",
+            "label": "Sierra Office Wire \u2022\u2022\u2022\u2022 8884",
             "accountName": "Sierra Office Supply",
             "bankName": "JPMorgan Chase",
-            "maskedAccount": "••••••8884",
+            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20228884",
             "accountNumber": "9000000008884",
-            "maskedRouting": "•••••0210",
+            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220210",
             "routingNumber": "021000021",
             "address": "1201 Midtown Blvd\nDenver, CO 80202\nUnited States"
           }
@@ -338,7 +370,7 @@
         "card": [
           {
             "id": "card-sos-1",
-            "label": "Mastercard •••• 0860",
+            "label": "Mastercard \u2022\u2022\u2022\u2022 0860",
             "cardholderName": "Sierra Office Supply",
             "cardholderAddress": "1201 Midtown Blvd\nDenver, CO 80202\nUnited States"
           }
@@ -398,12 +430,12 @@
         "ach": [
           {
             "id": "ach-tns-1",
-            "label": "TechNova Solutions •••• 1086",
+            "label": "TechNova Solutions \u2022\u2022\u2022\u2022 1086",
             "accountName": "TechNova Solutions LLC",
             "bankName": "Wells Fargo",
-            "maskedAccount": "••••••1086",
+            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20221086",
             "accountNumber": "0000000001086",
-            "maskedRouting": "•••••2847",
+            "maskedRouting": "\u2022\u2022\u2022\u2022\u20222847",
             "routingNumber": "121002847",
             "address": "892 Innovation Blvd\nAustin, TX 78701\nUnited States"
           }
@@ -411,12 +443,12 @@
         "wire": [
           {
             "id": "wire-tns-1",
-            "label": "TechNova Wire •••• 5017",
+            "label": "TechNova Wire \u2022\u2022\u2022\u2022 5017",
             "accountName": "TechNova Solutions LLC",
             "bankName": "Citi",
-            "maskedAccount": "••••••5017",
+            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20225017",
             "accountNumber": "9000000005017",
-            "maskedRouting": "•••••0089",
+            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220089",
             "routingNumber": "021000089",
             "address": "892 Innovation Blvd\nAustin, TX 78701\nUnited States"
           }
@@ -424,7 +456,7 @@
         "card": [
           {
             "id": "card-tns-1",
-            "label": "Visa •••• 5511",
+            "label": "Visa \u2022\u2022\u2022\u2022 5511",
             "cardholderName": "TechNova Solutions LLC",
             "cardholderAddress": "892 Innovation Blvd\nAustin, TX 78701\nUnited States"
           }
@@ -464,7 +496,23 @@
           {
             "id": "sx-tns-1",
             "label": "TechNova Solutions Profile",
-            "status": "Enabled"
+            "status": "Enabled",
+            "contactPerson": "Marcus Lee",
+            "destination": "treasury@technova.example",
+            "contacts": [
+              {
+                "id": "sx-tns-1-email",
+                "type": "email",
+                "label": "Marcus Lee",
+                "value": "treasury@technova.example"
+              },
+              {
+                "id": "sx-tns-1-phone",
+                "type": "phone",
+                "label": "Marcus Lee",
+                "value": "+1 (737) 555-0104"
+              }
+            ]
           }
         ]
       }
@@ -497,12 +545,12 @@
         "ach": [
           {
             "id": "ach-upm-1",
-            "label": "Urban Pulse Marketing •••• 7341",
+            "label": "Urban Pulse Marketing \u2022\u2022\u2022\u2022 7341",
             "accountName": "Urban Pulse Marketing",
             "bankName": "Bank of America",
-            "maskedAccount": "••••••7341",
+            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20227341",
             "accountNumber": "0000000007341",
-            "maskedRouting": "•••••0026",
+            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220026",
             "routingNumber": "026009593",
             "address": "55 Madison Ave\nNew York, NY 10010\nUnited States"
           }
@@ -510,12 +558,12 @@
         "wire": [
           {
             "id": "wire-upm-1",
-            "label": "Urban Pulse Wire •••• 6688",
+            "label": "Urban Pulse Wire \u2022\u2022\u2022\u2022 6688",
             "accountName": "Urban Pulse Marketing",
             "bankName": "JPMorgan Chase",
-            "maskedAccount": "••••••6688",
+            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20226688",
             "accountNumber": "9000000006688",
-            "maskedRouting": "•••••0210",
+            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220210",
             "routingNumber": "021000021",
             "address": "55 Madison Ave\nNew York, NY 10010\nUnited States"
           }
@@ -523,7 +571,7 @@
         "card": [
           {
             "id": "card-upm-1",
-            "label": "Mastercard •••• 3423",
+            "label": "Mastercard \u2022\u2022\u2022\u2022 3423",
             "cardholderName": "Urban Pulse Marketing",
             "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
           }

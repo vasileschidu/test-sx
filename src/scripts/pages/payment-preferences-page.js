@@ -1705,14 +1705,17 @@
                         var legalName = (account && account.name ? String(account.name) : '').trim();
                         var bankName = (account && account.bankName ? String(account.bankName) : '').trim();
                         var name = displayName || (bankName ? (bankName + ' Account') : legalName);
+                        var accountHolderName = legalName || displayName || bankName;
                         var nickname = (account && account.nickname ? String(account.nickname) : '').trim();
                         var routingRaw = account && (account.routing || account.routingNumber) ? String(account.routing || account.routingNumber) : '';
                         var routing = sanitizeDigits(routingRaw, 9);
-                        var accountNumber = formatAccountNumber(account && account.accountNumber ? String(account.accountNumber) : '');
+                        var accountNumber = (account && account.accountNumber ? String(account.accountNumber) : '').trim();
+                        var maskedAccount = (account && (account.maskedAccount || account.maskedAccountNumber || account.accountMasked) ? String(account.maskedAccount || account.maskedAccountNumber || account.accountMasked) : '').trim();
+                        var maskedRouting = (account && (account.maskedRouting || account.routingMasked) ? String(account.maskedRouting || account.routingMasked) : '').trim();
                         var last4 = sanitizeDigits(account && account.last4 ? String(account.last4) : '', 4);
                         var address = (account && account.address ? String(account.address) : '').trim();
                         if (!id || !name || last4.length !== 4) return null;
-                        return { id: id, name: name, last4: last4, nickname: nickname, routing: routing, accountNumber: accountNumber, address: address };
+                        return { id: id, name: name, displayName: displayName, accountHolderName: accountHolderName, bankName: bankName, last4: last4, nickname: nickname, routing: routing, accountNumber: accountNumber, maskedAccount: maskedAccount, maskedRouting: maskedRouting, address: address };
                     })
                     .filter(Boolean);
             }

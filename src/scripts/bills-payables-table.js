@@ -6,16 +6,16 @@
 (function () {
   'use strict';
 
-  var JSON_PATH_FALLBACKS = [
+  var JSON_PATH_FALLBACKS = (window.__BP_JSON_PATHS && window.__BP_JSON_PATHS.length ? window.__BP_JSON_PATHS : [
     '../../../src/data/bills-payables.json',
     '/src/data/bills-payables.json',
     './src/data/bills-payables.json',
-  ];
-  var PAYEES_PATH_FALLBACKS = [
+  ]);
+  var PAYEES_PATH_FALLBACKS = (window.__BP_PAYEES_PATHS && window.__BP_PAYEES_PATHS.length ? window.__BP_PAYEES_PATHS : [
     '../../../src/data/payees.json',
     '/src/data/payees.json',
     './src/data/payees.json',
-  ];
+  ]);
   var PAYABLE_ROW_OVERRIDES_STORAGE_KEY = 'bp-row-overrides-v1';
   var PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY = 'bp-pay-page-view-context-v1';
 
@@ -34,7 +34,7 @@
   };
 
   var STATUS_LABELS = {
-    ready_to_pay: 'Unprocessed',
+    ready_to_pay: 'Ready to Pay',
     in_progress: 'In Progress',
     paid: 'Paid',
     exception: 'Exception',
@@ -117,8 +117,23 @@
   var ICON_ACH = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400 shrink-0"><path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" /></svg>';
   var ICON_SMART_DISBURSE = '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#406AFF"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#406AFF"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#406AFF"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#406AFF"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#406AFF"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>';
   var ICON_SMART_EXCHANGE = '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#F5B842"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#F5B842"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#F5B842"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#F5B842"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#F5B842"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>';
+
+  function getTodayIsoDate() {
+    var now = new Date();
+    var localMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var year = localMidnight.getFullYear();
+    var month = String(localMidnight.getMonth() + 1).padStart(2, '0');
+    var day = String(localMidnight.getDate()).padStart(2, '0');
+    return year + '-' + month + '-' + day;
+  }
+
+  function isPastDue(dueDate) {
+    var normalized = String(dueDate || '').slice(0, 10);
+    return !!normalized && normalized < getTodayIsoDate();
+  }
   var ICON_VISA = '<svg class="size-5 shrink-0 rounded-md" height="20" width="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h32v32H0z" fill="#00579f"></path><g fill="#fff" fill-rule="nonzero"><path d="M13.823 19.876H11.8l1.265-7.736h2.023zm7.334-7.546a5.036 5.036 0 0 0-1.814-.33c-1.998 0-3.405 1.053-3.414 2.56-.016 1.11 1.007 1.728 1.773 2.098.783.379 1.05.626 1.05.963-.009.518-.633.757-1.216.757-.808 0-1.24-.123-1.898-.411l-.267-.124-.283 1.737c.475.213 1.349.403 2.257.411 2.123 0 3.505-1.037 3.521-2.641.008-.881-.532-1.556-1.698-2.107-.708-.354-1.141-.593-1.141-.955.008-.33.366-.667 1.165-.667a3.471 3.471 0 0 1 1.507.297l.183.082zm2.69 4.806.807-2.165c-.008.017.167-.452.266-.74l.142.666s.383 1.852.466 2.239h-1.682zm2.497-4.996h-1.565c-.483 0-.85.14-1.058.642l-3.005 7.094h2.123l.425-1.16h2.597c.059.271.242 1.16.242 1.16h1.873zm-16.234 0-1.982 5.275-.216-1.07c-.366-1.234-1.515-2.575-2.797-3.242l1.815 6.765h2.14l3.18-7.728z"></path><path d="M6.289 12.14H3.033L3 12.297c2.54.641 4.221 2.189 4.912 4.049l-.708-3.556c-.116-.494-.474-.633-.915-.65z"></path></g></g></svg>';
-  var ICON_MASTERCARD = '<img src="../../../src/assets/illustrations/ma_symbol.svg" alt="Mastercard" class="size-5 shrink-0" />';
+  var mastercardSymbolUrl = (window.__BP_ASSET_URLS && window.__BP_ASSET_URLS.mastercardSymbol) || '../../../src/assets/illustrations/ma_symbol.svg';
+  var ICON_MASTERCARD = '<img src="' + mastercardSymbolUrl + '" alt="Mastercard" class="size-5 shrink-0" />';
   var ICON_COPY = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>';
   var ICON_EYE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-blue-600"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" /></svg>';
   var ICON_EYE_SLASH = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 text-blue-600"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.28033 2.21967C2.98744 1.92678 2.51256 1.92678 2.21967 2.21967C1.92678 2.51256 1.92678 2.98744 2.21967 3.28033L12.7197 13.7803C13.0126 14.0732 13.4874 14.0732 13.7803 13.7803C14.0732 13.4874 14.0732 13.0126 13.7803 12.7197L12.4577 11.397C13.438 10.5863 14.1937 9.51366 14.6176 8.2863C14.681 8.10274 14.6811 7.90313 14.6179 7.71951C13.672 4.97316 11.0653 3 7.99777 3C6.85414 3 5.77457 3.27425 4.82123 3.76057L3.28033 2.21967Z" /><path d="M6.47602 5.41536L7.61147 6.55081C7.73539 6.51767 7.86563 6.5 8 6.5C8.82843 6.5 9.5 7.17157 9.5 8C9.5 8.13437 9.48233 8.26461 9.44919 8.38853L10.5846 9.52398C10.8486 9.07734 11 8.55636 11 8C11 6.34315 9.65685 5 8 5C7.44364 5 6.92266 5.15145 6.47602 5.41536Z" /><path d="M7.81206 10.9942L9.62754 12.8097C9.10513 12.9341 8.56002 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C1.63675 6.96935 2.01588 6.28191 2.49314 5.67529L5.00579 8.18794C5.09895 9.69509 6.30491 10.901 7.81206 10.9942Z" /></svg>';
@@ -357,15 +372,13 @@
       return (
         '<div class="flex">' +
           '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
-          '<div class="flex-1 p-4 grid grid-cols-[max-content_32px_minmax(0,460px)] items-start gap-4">' +
-            '<div class="pt-0.5 text-sm font-semibold text-gray-900 dark:text-gray-100"><span class="inline-flex max-w-full truncate">Card</span></div>' +
-            '<div class="flex items-center justify-center pt-0.5 text-gray-500 dark:text-gray-300"><span class="inline-flex size-5 items-center justify-center">' + ICON_EXPAND_RIGHT + '</span></div>' +
+          '<div class="flex-1 p-4">' +
             '<div class="w-[460px] max-w-full">' +
               '<div data-payment-info-card class="flex flex-col items-start self-stretch">' +
-                '<div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">' +
+                '<div class="flex items-center justify-between self-stretch rounded-t-md border border-gray-200 bg-gray-100 px-4 py-2 dark:border-white/10 dark:bg-white/10">' +
                   '<span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Card Details</span><span></span>' +
                 '</div>' +
-                '<div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">' +
+                '<div class="flex flex-col items-start gap-2 self-stretch rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">' +
                   '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Name</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(holder) + '</span></div>' +
                   '<div class="grid grid-cols-2 gap-4 self-stretch items-start"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Address</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line">' + escapeHtml(address).replace(/\n/g, '<br>') + '</span></div>' +
                   '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Type</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + typeIcon + '</span></div>' +
@@ -387,13 +400,11 @@
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
-        '<div class="flex-1 p-4 grid grid-cols-[max-content_32px_minmax(0,460px)] items-start gap-4">' +
-          '<div class="pt-0.5 text-sm font-semibold text-gray-900 dark:text-gray-100"><span class="inline-flex max-w-full truncate">ACH</span></div>' +
-          '<div class="flex items-center justify-center pt-0.5 text-gray-500 dark:text-gray-300"><span class="inline-flex size-5 items-center justify-center">' + ICON_EXPAND_RIGHT + '</span></div>' +
+        '<div class="flex-1 p-4">' +
           '<div class="w-[460px] max-w-full">' +
             '<div data-ach-info-card class="flex flex-col items-start self-stretch">' +
-              '<div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10"><span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Account Details</span><span></span></div>' +
-              '<div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">' +
+              '<div class="flex items-center justify-between self-stretch rounded-t-md border border-gray-200 bg-gray-100 px-4 py-2 dark:border-white/10 dark:bg-white/10"><span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Account Details</span><span></span></div>' +
+              '<div class="flex flex-col items-start gap-2 self-stretch rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">' +
                 '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(row.payeeName || 'Account Holder') + '</span></div>' +
                 '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span><button type="button" data-copy-id="' + acctId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' + acctId + '" data-ach-mask-field="true" data-masked="••••' + escapeHtml(bankLast4) + '" data-revealed="' + escapeHtml(row.bankAccountNumber || ('00000000' + bankLast4)) + '" class="text-sm font-normal">••••' + escapeHtml(bankLast4) + '</span><span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span></button></div>' +
                 '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span><button type="button" data-copy-id="' + routingId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' + routingId + '" data-ach-mask-field="true" data-masked="••••1100" data-revealed="' + escapeHtml(row.bankRoutingNumber || '021000021') + '" class="text-sm font-normal">••••1100</span><span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span></button></div>' +
@@ -406,20 +417,25 @@
     );
   }
 
-  function buildActivityLogItem(dotClasses, title, description, dateLabel, showLine) {
+  function buildActivityDescription(description, timestamp) {
+    var copy = escapeHtml(description || '');
+    if (!timestamp) return copy;
+    return copy + '<span class="text-gray-700 dark:text-gray-300"><span class="mx-1.5 text-base leading-none align-middle">&middot;</span>' + formatActivityLogDate(timestamp) + '</span>';
+  }
+
+  function buildActivityLogItem(dotClasses, title, description, timestamp, showLine) {
     var lineHtml = showLine
-      ? '<div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center"><div class="w-px bg-gray-200 dark:bg-white/10"></div></div>'
+      ? '<div class="flex-1 w-px bg-gray-200 dark:bg-white/10"></div>'
       : '';
     return (
-      '<div class="relative flex gap-4">' +
-        lineHtml +
-        '<div class="relative flex size-6 flex-none items-center justify-center bg-white dark:bg-gray-900">' +
+      '<div class="flex gap-3">' +
+        '<div class="flex w-6 flex-none self-stretch flex-col items-center gap-[6px] pt-[6px]">' +
           '<div class="size-1.5 rounded-full ' + dotClasses + '"></div>' +
+          lineHtml +
         '</div>' +
-        '<div class="flex flex-col gap-1 pb-6">' +
-          '<p class="text-base font-medium text-gray-900 dark:text-white">' + escapeHtml(title || '') + '</p>' +
-          (dateLabel ? '<p class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">' + escapeHtml(dateLabel) + '</p>' : '') +
-          '<p class="text-sm text-gray-700 dark:text-gray-300">' + escapeHtml(description || '') + '</p>' +
+        '<div class="flex min-w-0 flex-col gap-2 pb-4">' +
+          '<p class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(title || '') + '</p>' +
+          '<p class="text-sm text-gray-700 dark:text-gray-300">' + buildActivityDescription(description, timestamp) + '</p>' +
         '</div>' +
       '</div>'
     );
@@ -438,7 +454,7 @@
         getStatusDotClass(dotType),
         item && (item.title || item.label),
         item && item.description,
-        item && item.dateLabel,
+        item && item.timestamp,
         idx < log.length - 1
       );
     }).join('');
@@ -1484,14 +1500,14 @@
       return '<span data-sort-badge="true" class="' + sortBtnClass + '">' + sortIcon + '</span>';
     }
 
-    var headerHtml = '<thead><tr>' + renderColumns.map(function (col) {
+    var headerHtml = '<thead class="bg-white dark:bg-gray-900"><tr class="h-14">' + renderColumns.map(function (col) {
       var base = 'border-b border-gray-200 dark:border-white/10';
       if (col.type === 'expand') {
-        return '<th class="' + base + ' w-10 min-w-10 py-3.5 px-0 text-center whitespace-nowrap"><span class="sr-only">Expand</span></th>';
+        return '<th class="' + base + ' h-14 w-10 min-w-10 px-0 py-4 align-middle text-center whitespace-nowrap"><span class="sr-only">Expand</span></th>';
       }
       if (col.type === 'select') {
         return '' +
-          '<th class="' + base + ' w-10 min-w-10 px-0 py-3.5 text-center text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">' +
+          '<th class="' + base + ' h-14 w-10 min-w-10 px-0 py-4 align-middle text-center text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">' +
           '<div class="flex h-6 items-center justify-center">' +
           '<label class="inline-flex items-center justify-center cursor-pointer select-none">' +
           '<span class="group grid size-4 grid-cols-1">' +
@@ -1506,10 +1522,10 @@
           '</th>';
       }
       if (col.type === 'action') {
-        return '<th data-action-column scope="col" class="' + base + ' bg-white py-3.5 pr-3 pl-3 whitespace-nowrap w-px dark:bg-gray-900 sm:pr-2"><span class="sr-only">Action</span></th>';
+        return '<th data-action-column scope="col" class="' + base + ' h-14 w-px bg-white py-4 pr-3 pl-3 align-middle whitespace-nowrap dark:bg-gray-900 sm:pr-2"><span class="sr-only">Action</span></th>';
       }
 
-      var thClass = base + ' px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white';
+      var thClass = base + ' h-14 px-2 py-4 align-middle text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white';
       var direction = state.sortKey === col.key ? state.sortDirection : '';
       var content = col.sortable
         ? '<button type="button" data-sort-key="' + col.key + '" class="group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white"><span>' + escapeHtml(col.label) + '</span>' + buildSortBadgeHTML(direction) + '</button>'
@@ -1564,7 +1580,16 @@
             escapeHtml(formatMoney(row.amount, row.currency)) +
             ' <span class="text-gray-500 dark:text-gray-400">' + escapeHtml(row.currency || 'USD') + '</span></td>';
         }
-        if (col.key === 'dueDate' || col.key === 'adDate') {
+        if (col.key === 'dueDate') {
+          var pastDue = isPastDue(row.dueDate);
+          return '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap' + cb + '">' +
+            '<span class="group/due relative inline-flex items-center ' + (pastDue ? 'text-red-600 dark:text-red-400' : 'text-gray-500 dark:text-gray-400') + '">' +
+              escapeHtml(formatDate(row.dueDate)) +
+              '<span class="pointer-events-none invisible absolute bottom-full left-1/2 z-30 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg ' + (pastDue ? 'group-hover/due:inline-flex group-hover/due:visible group-hover/due:opacity-100 group-focus-within/due:inline-flex group-focus-within/due:visible group-focus-within/due:opacity-100' : '') + '">Past due</span>' +
+            '</span>' +
+          '</td>';
+        }
+        if (col.key === 'adDate') {
           return '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb + '">' + escapeHtml(formatDate(row[col.key])) + '</td>';
         }
         if (col.type === 'status' || col.key === 'status') {
@@ -2095,6 +2120,9 @@
     initRefs();
     if (!refs.table || !refs.pagination) return;
     try {
+      window.dispatchEvent(new CustomEvent('bp:loading-start'));
+    } catch (err) {}
+    try {
       var params = new URLSearchParams(window.location.search || '');
       var initialTab = String(params.get('tab') || '').trim();
       if (TAB_LABELS[initialTab]) state.activeTab = initialTab;
@@ -2137,13 +2165,25 @@
           state.isInitialLoading = false;
           initialLoadingTimer = null;
           renderAll();
+          try {
+            window.dispatchEvent(new CustomEvent('bp:loading-end', { detail: { status: 'ready' } }));
+          } catch (err) {}
         }, remaining);
+      } else {
+        try {
+          window.dispatchEvent(new CustomEvent('bp:loading-end', { detail: { status: 'ready' } }));
+        } catch (err) {}
       }
     }).catch(function (err) {
       refs.table.innerHTML = '<tbody><tr><td class="px-4 py-12 text-sm text-red-600">Failed to load data.</td></tr></tbody>';
+      try {
+        window.dispatchEvent(new CustomEvent('bp:loading-end', { detail: { status: 'error', error: err && err.message ? err.message : 'Failed to load data.' } }));
+      } catch (eventError) {}
       console.error(err);
     });
   }
+
+  window.initBillsPayablesTable = init;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

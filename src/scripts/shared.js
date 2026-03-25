@@ -48,6 +48,13 @@ var BREADCRUMB_CONFIGS = {
     'bills-and-payables.html': [
         { label: 'Bills and Payables', href: null }
     ],
+    'vendors.html': [
+        { label: 'Vendors', href: null }
+    ],
+    'vendor-profile.html': [
+        { label: 'Vendors', href: 'vendors.html' },
+        { label: 'Vendor Profile', href: null }
+    ],
     'payables-pay.html': [
         { label: 'Bills and Payables', href: 'bills-and-payables.html' },
         { label: 'Pay Page', href: null }
@@ -61,11 +68,32 @@ var BREADCRUMB_CONFIGS = {
     ]
 };
 
+var BREADCRUMB_REACT_ROUTE_MAP = {
+    'smart-exchange.html': '#/smart-exchange',
+    'bills-and-payables.html': '#/payables',
+    'payables-pay.html': '#/payables',
+    'vendors.html': '#/vendors',
+    'vendor-profile.html': '#/vendors',
+    'payment-preferences.html': '#/payment-preferences',
+    'my-company-profile.html': '#/smart-exchange'
+};
+
+function resolveBreadcrumbHref(href) {
+    if (!href) return href;
+    var routerMode = document.body && document.body.getAttribute('data-router');
+    if (routerMode === 'hash' && BREADCRUMB_REACT_ROUTE_MAP[href]) {
+        return BREADCRUMB_REACT_ROUTE_MAP[href];
+    }
+    return href;
+}
+
 function initBreadcrumbs() {
     var nav = document.getElementById('dynamic-breadcrumbs');
     if (!nav) return;
 
-    var path = (window.location.pathname || '').split('/').pop() || '';
+    var path = document.body && document.body.getAttribute('data-page')
+        ? document.body.getAttribute('data-page')
+        : ((window.location.pathname || '').split('/').pop() || '');
     var items = BREADCRUMB_CONFIGS[path] || [];
     if (!items.length) return;
 
@@ -80,7 +108,7 @@ function initBreadcrumbs() {
             '  <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
             '</svg>';
         if (item.href && index !== items.length - 1) {
-            html += '<a href="' + item.href + '" class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors dark:text-gray-400 dark:hover:text-gray-200">' + item.label + '</a>';
+            html += '<a href="' + resolveBreadcrumbHref(item.href) + '" class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors dark:text-gray-400 dark:hover:text-gray-200">' + item.label + '</a>';
         } else {
             html += '<span class="text-sm font-medium text-gray-900 dark:text-white">' + item.label + '</span>';
         }
@@ -213,6 +241,8 @@ window.normalizeMyCompanyProfile = normalizeMyCompanyProfile;
 window.getMyCompanyDisplayName = getMyCompanyDisplayName;
 window.getMyCompanyAddressText = getMyCompanyAddressText;
 window.getMyCompanyProfile = getMyCompanyProfile;
+window.initThemeToggle = initThemeToggle;
+window.initBreadcrumbs = initBreadcrumbs;
 
 /* ===== Shared Payment Activity Inference ===== */
 

@@ -1,0 +1,83 @@
+<!doctype html>
+<html class="h-full bg-gray-100 dark:bg-gray-950">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Vendor Profile - Dashboard</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+
+  <script src="../../../src/scripts/theme-init.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+
+  <script src="../../../src/scripts/nav-component.js" defer></script>
+  <script src="../../../src/scripts/sidebar.js" defer></script>
+  <script src="../../../src/scripts/stp-state.js" defer></script>
+  <script src="../../../src/scripts/topbar-component.js" defer></script>
+  <script src="../../../src/scripts/shared.js" defer></script>
+  <script src="../../../src/scripts/vendors-data.js" defer></script>
+  <script src="../../../src/scripts/vendor-profile-page.js" defer></script>
+</head>
+
+<body class="h-full font-['Inter'] antialiased dark:text-gray-100">
+  <app-nav></app-nav>
+
+  <div id="main-content-wrapper" class="lg:pl-[360px]">
+    <app-topbar></app-topbar>
+
+    <main id="vendor-profile-main" class="flex w-full justify-center p-2 sm:p-2 lg:p-4">
+      <section class="w-full max-w-[1280px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs dark:border-white/10 dark:bg-gray-900">
+        <div class="border-b border-gray-200 px-6 py-6 dark:border-white/10">
+          <div class="flex min-w-0 flex-1 flex-col gap-4">
+            <div>
+              <p id="vendor-profile-legal-name" class="text-sm font-medium text-gray-500 dark:text-gray-400"></p>
+              <div class="mt-2 flex flex-wrap items-center gap-3">
+                <h1 id="vendor-profile-name" class="text-2xl font-semibold text-gray-900 dark:text-white">Loading vendor...</h1>
+                <span id="vendor-profile-vendor-id-copy-source" class="sr-only"></span>
+                <button id="vendor-profile-vendor-id-button" type="button" data-copy-id="vendor-profile-vendor-id-copy-source"
+                  class="copy-btn group relative inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600 transition-colors hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white cursor-pointer">
+                  <span id="vendor-profile-vendor-id" class="leading-none"></span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5 shrink-0 text-gray-400 dark:text-gray-500">
+                    <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+                    <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+                  </svg>
+                </button>
+              </div>
+              <div id="vendor-profile-alert" class="hidden mt-4"></div>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="px-6 py-6">
+          <div class="grid grid-cols-1 gap-8 xl:grid-cols-3">
+            <div id="vendor-profile-left-column" class="flex flex-col gap-8 xl:col-span-2">
+              <section id="vendor-profile-overview"></section>
+              <section id="vendor-profile-methods"></section>
+              <section id="vendor-profile-remittance"></section>
+              <section id="vendor-profile-tax"></section>
+              <section id="vendor-profile-payables"></section>
+              <section id="vendor-profile-documents"></section>
+              <section id="vendor-profile-notes"></section>
+            </div>
+
+            <aside id="vendor-profile-right-column" class="flex flex-col gap-8">
+              <section id="vendor-profile-contact"></section>
+              <section id="vendor-profile-health"></section>
+              <section id="vendor-profile-addresses"></section>
+              <section id="vendor-profile-recent-activity"></section>
+              <section id="vendor-profile-audit-log"></section>
+            </aside>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+</body>
+</html>

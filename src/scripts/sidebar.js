@@ -33,21 +33,32 @@ function toggleRow(rowId) {
 
 const DESKTOP_SIDEBAR_COLLAPSED_STORAGE_KEY = 'dashboard-sidebar-collapsed-v1';
 
-const desktopSidebarShell = document.getElementById('desktop-sidebar-shell');
-const desktopSidebarPanel = document.getElementById('desktop-sidebar-panel');
-const desktopSidebarToggle = document.getElementById('desktop-sidebar-toggle');
-const desktopSidebarToggleIcon = document.getElementById('desktop-sidebar-toggle-icon');
-const desktopLogoRow = document.getElementById('desktop-logo-row');
-const desktopLogoFull = document.getElementById('desktop-logo-full');
-const desktopLogoMark = document.getElementById('desktop-logo-mark');
-const desktopSidebarHelp = document.getElementById('desktop-sidebar-help');
-const desktopSidebarFooter = document.getElementById('desktop-sidebar-footer');
-const mainContentWrapper = document.getElementById('main-content-wrapper');
-const desktopNav = document.querySelector('[data-nav="desktop"]');
+function getSidebarRefs() {
+    return {
+        desktopSidebarShell: document.getElementById('desktop-sidebar-shell'),
+        desktopSidebarPanel: document.getElementById('desktop-sidebar-panel'),
+        desktopSidebarToggle: document.getElementById('desktop-sidebar-toggle'),
+        desktopSidebarToggleIcon: document.getElementById('desktop-sidebar-toggle-icon'),
+        desktopLogoRow: document.getElementById('desktop-logo-row'),
+        desktopLogoFull: document.getElementById('desktop-logo-full'),
+        desktopLogoMark: document.getElementById('desktop-logo-mark'),
+        desktopSidebarHelp: document.getElementById('desktop-sidebar-help'),
+        desktopSidebarFooter: document.getElementById('desktop-sidebar-footer'),
+        mainContentWrapper: document.getElementById('main-content-wrapper'),
+        desktopNav: document.querySelector('[data-nav="desktop"]')
+    };
+}
 
-const navTooltip = document.createElement('div');
-navTooltip.className = 'pointer-events-none fixed z-[80] -translate-y-1/2 rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg opacity-0 -translate-x-1 transition-all duration-200 ease-out';
-document.body.appendChild(navTooltip);
+function ensureNavTooltip() {
+    var existing = document.getElementById('dashboard-nav-tooltip');
+    if (existing) return existing;
+
+    var tooltip = document.createElement('div');
+    tooltip.id = 'dashboard-nav-tooltip';
+    tooltip.className = 'pointer-events-none fixed z-[80] -translate-y-1/2 rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg opacity-0 -translate-x-1 transition-all duration-200 ease-out';
+    document.body.appendChild(tooltip);
+    return tooltip;
+}
 
 /* ===== Nav Label Preparation ===== */
 
@@ -56,6 +67,7 @@ document.body.appendChild(navTooltip);
  * so they can be individually hidden/shown during sidebar collapse.
  */
 function prepareDesktopNavLabels() {
+    var desktopNav = getSidebarRefs().desktopNav;
     if (!desktopNav) return;
     desktopNav.querySelectorAll(':scope > .nav-item > span, :scope > .nav-item > a, :scope > [data-smart-exchange-trigger] > a').forEach(function (group) {
         if (group.querySelector('.nav-label')) return;
@@ -85,6 +97,7 @@ function prepareDesktopNavLabels() {
  * @returns {boolean} True if the sidebar has the 'is-collapsed' class.
  */
 function isDesktopSidebarCollapsed() {
+    var desktopSidebarShell = getSidebarRefs().desktopSidebarShell;
     return Boolean(desktopSidebarShell && desktopSidebarShell.classList.contains('is-collapsed'));
 }
 
@@ -106,6 +119,7 @@ function saveDesktopSidebarCollapsedPreference(collapsed) {
  * Hides the floating nav tooltip with a fade-out transition.
  */
 function hideNavTooltip() {
+    var navTooltip = ensureNavTooltip();
     navTooltip.classList.add('opacity-0', '-translate-x-1');
     navTooltip.classList.remove('opacity-100', 'translate-x-0');
 }
@@ -114,6 +128,7 @@ function hideNavTooltip() {
  * Closes all open submenus in the desktop navigation and resets chevron rotations.
  */
 function closeAllDesktopSubmenus() {
+    var desktopNav = getSidebarRefs().desktopNav;
     if (!desktopNav) return;
     desktopNav.querySelectorAll('.nav-submenu').forEach(function (submenu) {
         submenu.classList.remove('max-h-96', 'opacity-100', 'pointer-events-auto');
@@ -130,6 +145,19 @@ function closeAllDesktopSubmenus() {
  * @param {boolean} collapsed - Whether the sidebar should be collapsed.
  */
 function setDesktopSidebarCollapsed(collapsed) {
+    var refs = getSidebarRefs();
+    var desktopSidebarShell = refs.desktopSidebarShell;
+    var desktopSidebarPanel = refs.desktopSidebarPanel;
+    var desktopSidebarToggle = refs.desktopSidebarToggle;
+    var desktopSidebarToggleIcon = refs.desktopSidebarToggleIcon;
+    var desktopLogoRow = refs.desktopLogoRow;
+    var desktopLogoFull = refs.desktopLogoFull;
+    var desktopLogoMark = refs.desktopLogoMark;
+    var desktopSidebarHelp = refs.desktopSidebarHelp;
+    var desktopSidebarFooter = refs.desktopSidebarFooter;
+    var mainContentWrapper = refs.mainContentWrapper;
+    var desktopNav = refs.desktopNav;
+
     if (!desktopSidebarShell || !desktopSidebarPanel || !mainContentWrapper) return;
 
     desktopSidebarShell.classList.toggle('is-collapsed', collapsed);
@@ -283,6 +311,7 @@ function toggleSmartExchangeSubmenu(chevronBtn) {
 }
 
 function expandSmartExchangeFromCollapsedLink(link) {
+    var desktopNav = getSidebarRefs().desktopNav;
     const trigger = link ? link.closest('[data-smart-exchange-trigger]') : null;
     const submenu = trigger ? trigger.nextElementSibling : null;
     if (!trigger || !submenu) return false;
@@ -312,6 +341,8 @@ function getTooltipLabel(navItem) {
  * @param {HTMLElement} navItem - The nav item to show the tooltip for.
  */
 function showNavTooltip(navItem) {
+    var desktopNav = getSidebarRefs().desktopNav;
+    var navTooltip = ensureNavTooltip();
     if (!isDesktopSidebarCollapsed()) return;
     if (!desktopNav || navItem.closest('.nav-submenu')) return;
 
@@ -330,38 +361,6 @@ function showNavTooltip(navItem) {
 }
 
 /* ===== Event Listeners ===== */
-
-if (desktopNav) {
-    desktopNav.addEventListener('click', function (e) {
-        const smartExchangeLink = e.target.closest('[data-smart-exchange-trigger] > a');
-        if (!smartExchangeLink) return;
-        if (expandSmartExchangeFromCollapsedLink(smartExchangeLink)) {
-            e.preventDefault();
-        }
-    });
-
-    desktopNav.addEventListener('mouseover', function (e) {
-        const navItem = e.target.closest('.nav-item');
-        if (!navItem) return;
-        showNavTooltip(navItem);
-    });
-
-    desktopNav.addEventListener('mouseout', function (e) {
-        const navItem = e.target.closest('.nav-item');
-        if (!navItem) return;
-        if (e.relatedTarget && navItem.contains(e.relatedTarget)) return;
-        hideNavTooltip();
-    });
-}
-
-if (desktopSidebarToggle) {
-    desktopSidebarToggle.addEventListener('click', function () {
-        setDesktopSidebarCollapsed(!isDesktopSidebarCollapsed());
-    });
-}
-
-prepareDesktopNavLabels();
-setDesktopSidebarCollapsed(loadDesktopSidebarCollapsedPreference());
 
 /**
  * Normalizes active nav item styles on initial page load.
@@ -385,27 +384,77 @@ syncActiveNavItemStyles();
  * Handles click events on nav items to highlight the active item.
  * Only one nav item can be active at a time. Prevents default on # links.
  */
-document.addEventListener('click', function (e) {
-    if (e.target.closest('[data-chevron-toggle]')) return;
+function initDashboardSidebar() {
+    var refs = getSidebarRefs();
+    var desktopNav = refs.desktopNav;
+    var desktopSidebarToggle = refs.desktopSidebarToggle;
 
-    const navItem = e.target.closest('.nav-item');
-    if (!navItem) return;
+    ensureNavTooltip();
 
-    if (navItem.matches('a[href="#"]')) {
-        e.preventDefault();
+    if (desktopNav && !desktopNav.dataset.sidebarBound) {
+        desktopNav.addEventListener('click', function (e) {
+            const smartExchangeLink = e.target.closest('[data-smart-exchange-trigger] > a');
+            if (!smartExchangeLink) return;
+            if (expandSmartExchangeFromCollapsedLink(smartExchangeLink)) {
+                e.preventDefault();
+            }
+        });
+
+        desktopNav.addEventListener('mouseover', function (e) {
+            const navItem = e.target.closest('.nav-item');
+            if (!navItem) return;
+            showNavTooltip(navItem);
+        });
+
+        desktopNav.addEventListener('mouseout', function (e) {
+            const navItem = e.target.closest('.nav-item');
+            if (!navItem) return;
+            if (e.relatedTarget && navItem.contains(e.relatedTarget)) return;
+            hideNavTooltip();
+        });
+
+        desktopNav.dataset.sidebarBound = 'true';
     }
 
-    document.querySelectorAll('.nav-item.is-active').forEach(function (item) {
-        item.classList.remove('is-active', 'bg-gray-100', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
-        item.querySelectorAll('svg.nav-icon').forEach(function (icon) {
-            icon.classList.remove('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
-            icon.classList.add('text-gray-500', 'dark:text-gray-400');
+    if (desktopSidebarToggle && !desktopSidebarToggle.dataset.sidebarBound) {
+        desktopSidebarToggle.addEventListener('click', function () {
+            setDesktopSidebarCollapsed(!isDesktopSidebarCollapsed());
         });
-    });
+        desktopSidebarToggle.dataset.sidebarBound = 'true';
+    }
 
-    navItem.classList.add('is-active', 'bg-gray-100', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
-    navItem.querySelectorAll('svg.nav-icon').forEach(function (icon) {
-        icon.classList.remove('text-gray-500', 'dark:text-gray-400');
-        icon.classList.add('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
-    });
-});
+    if (!document.body.dataset.sidebarClickBound) {
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('[data-chevron-toggle]')) return;
+
+            const navItem = e.target.closest('.nav-item');
+            if (!navItem) return;
+
+            if (navItem.matches('a[href="#"]')) {
+                e.preventDefault();
+            }
+
+            document.querySelectorAll('.nav-item.is-active').forEach(function (item) {
+                item.classList.remove('is-active', 'bg-gray-100', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
+                item.querySelectorAll('svg.nav-icon').forEach(function (icon) {
+                    icon.classList.remove('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
+                    icon.classList.add('text-gray-500', 'dark:text-gray-400');
+                });
+            });
+
+            navItem.classList.add('is-active', 'bg-gray-100', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
+            navItem.querySelectorAll('svg.nav-icon').forEach(function (icon) {
+                icon.classList.remove('text-gray-500', 'dark:text-gray-400');
+                icon.classList.add('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
+            });
+        });
+        document.body.dataset.sidebarClickBound = 'true';
+    }
+
+    prepareDesktopNavLabels();
+    setDesktopSidebarCollapsed(loadDesktopSidebarCollapsedPreference());
+    syncActiveNavItemStyles();
+}
+
+window.initDashboardSidebar = initDashboardSidebar;
+initDashboardSidebar();

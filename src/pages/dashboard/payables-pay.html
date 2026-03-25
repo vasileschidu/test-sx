@@ -115,7 +115,7 @@
                                         <span id="gp-currency" class="text-2xl text-gray-500 dark:text-gray-400"></span>
                                     </div>
                                     <span id="gp-status-badge"
-                                        class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-gray-50 text-gray-600 inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">Unprocessed</span>
+                                        class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-gray-50 text-gray-600 inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">Ready to Pay</span>
                                 </div>
                                 <div class="flex w-full flex-col items-start gap-2 sm:w-auto sm:shrink-0 sm:items-end">
                                     <span id="pp-header-date-meta"
@@ -232,11 +232,15 @@
                                     <div
                                         class="grid grid-cols-1 divide-y divide-gray-200 dark:divide-white/10 lg:grid-cols-2 lg:gap-x-6 lg:gap-y-4 lg:divide-y-0 2xl:flex 2xl:flex-row 2xl:items-center 2xl:gap-6">
                                     <!-- Date Initiated -->
-                                    <div class="flex flex-col items-start gap-1 py-3 first:pt-0 lg:py-0">
+                                    <div class="group/date relative flex flex-col items-start gap-1 py-3 first:pt-0 lg:py-0">
                                         <span id="gp-date-label" class="text-sm font-medium leading-5 text-gray-900 dark:text-gray-100">Date
                                             Initiated</span>
                                         <span id="gp-date"
                                             class="text-sm font-normal leading-5 text-gray-600 dark:text-gray-400"></span>
+                                        <span id="gp-date-past-due-tooltip" role="tooltip"
+                                            class="pointer-events-none invisible absolute bottom-full left-0 z-50 mb-2 hidden whitespace-nowrap rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium leading-5 text-white opacity-0 shadow-lg transition duration-100 ease-out group-hover/date:visible group-hover/date:opacity-100 group-focus-within/date:visible group-focus-within/date:opacity-100 dark:bg-black">
+                                            Past due
+                                        </span>
                                     </div>
                                     <div class="hidden h-8 w-px self-center bg-gray-200 dark:bg-white/10 2xl:block"></div>
 
@@ -1131,7 +1135,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <div class="mt-4 flex flex-wrap items-center gap-3">
+                                                        <div class="mt-4 hidden flex-wrap items-center gap-3">
                                                             <button id="pp-smart-exchange-send-test-email-btn" type="button"
                                                                 class="inline-flex items-center justify-center rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs transition hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600 cursor-pointer">
                                                                 Send test email
@@ -1919,8 +1923,8 @@
                             </div>
                         </div>
 
-                        <div id="gp-submit-success-card-summary" class="hidden self-stretch">
-                            <div class="flex items-center gap-3 rounded-lg bg-gray-100 pr-2 dark:bg-white/5">
+                        <div id="gp-submit-success-card-summary" class="hidden self-center">
+                            <div class="inline-flex items-center gap-3 rounded-lg bg-gray-100 pr-2 dark:bg-white/5">
                                 <div class="flex h-[46px] w-[71px] flex-col items-end gap-0.5 rounded-md bg-gray-950 p-2 text-gray-200 font-['Roboto_Mono'] text-[10px] leading-3">
                                     <div id="gp-submit-success-card-brand" class="h-4 w-8"></div>
                                     <div class="mt-auto whitespace-nowrap">•••• <span id="gp-submit-success-card-last4"></span></div>
@@ -2211,7 +2215,7 @@
                                 </svg>
                             </button>
                             <div id="gp-card-how-content" class="mt-2 hidden flex-col gap-1.5 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300">
-                                <p>This virtual card has been funded for the payment amount shown. Use these card details with your vendor like a regular card payment.</p>
+                                <p id="gp-card-how-copy">This virtual card has been funded for the payment amount shown. Use these card details with your vendor like a regular card payment.</p>
                                 <ul class="list-disc pl-5">
                                     <li>Only charge the amount authorized for this payment.</li>
                                     <li>You can keep it on file only if future use is authorized.</li>

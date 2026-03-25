@@ -119,11 +119,11 @@
       exception: 'bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20',
     };
     var labels = {
-      ready_to_pay: 'Unprocessed',
+      ready_to_pay: 'Ready to Pay',
       in_progress: 'In Progress',
       scheduled: 'Scheduled',
       paid: 'Paid',
-      exception: 'Failed',
+      exception: 'Exception',
     };
     var key = String(status || 'ready_to_pay');
     el.className = 'inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium inset-ring ' + (styles[key] || styles.ready_to_pay);
@@ -134,26 +134,25 @@
 
   function getDisplayStatus(row) {
     var status = String((row && row.status) || 'ready_to_pay');
-    var statusType = String((row && row.statusType) || '').toLowerCase();
-    if (status === 'scheduled' || (status === 'in_progress' && statusType === 'scheduled')) {
-      return { key: 'scheduled', label: 'Scheduled' };
-    }
     if (status === 'in_progress') {
-      return { key: 'in_progress', label: 'Processing' };
+      return { key: 'in_progress', label: 'In Progress' };
     }
     if (status === 'paid') {
       return { key: 'paid', label: 'Paid' };
     }
     if (status === 'exception') {
-      return { key: 'exception', label: 'Failed' };
+      return { key: 'exception', label: 'Exception' };
     }
-    return { key: 'ready_to_pay', label: 'Unprocessed' };
+    if (status === 'scheduled') {
+      return { key: 'in_progress', label: 'In Progress' };
+    }
+    return { key: 'ready_to_pay', label: 'Ready to Pay' };
   }
 
   function isConfirmedPayableRow(row) {
     if (!row) return false;
     var status = String(row.status || '').toLowerCase();
-    return status === 'in_progress' || status === 'scheduled' || status === 'paid';
+    return status === 'in_progress' || status === 'paid';
   }
 
   function isScheduledPayableRow(row) {
@@ -184,12 +183,26 @@
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
+  function getTodayIsoDate() {
+    var now = new Date();
+    var localMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var year = localMidnight.getFullYear();
+    var month = String(localMidnight.getMonth() + 1).padStart(2, '0');
+    var day = String(localMidnight.getDate()).padStart(2, '0');
+    return year + '-' + month + '-' + day;
+  }
+
+  function isPastDue(dueDate) {
+    var normalized = String(dueDate || '').slice(0, 10);
+    return !!normalized && normalized < getTodayIsoDate();
+  }
+
   function getHeaderDateMeta(row) {
     if (!row) return '--';
     var status = String(row.status || '').toLowerCase();
     var statusType = String(row.statusType || '').toLowerCase();
     if (status === 'paid') return '';
-    if (status === 'exception') return 'Failed on ' + formatDate(row.adDate || row.dueDate);
+    if (status === 'exception') return 'Exception on ' + formatDate(row.adDate || row.dueDate);
     if (status === 'scheduled' || status === 'in_progress') return '';
     return '';
   }
@@ -285,6 +298,10 @@
       return '<svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Visa" role="img"><rect width="24" height="16" rx="1.2" fill="url(#visa-grad-pay-modal)" /><path d="M12.309 7.05313C12.2987 7.85651 13.0305 8.30487 13.5818 8.57141C14.1483 8.84493 14.3385 9.0203 14.3364 9.26485C14.3321 9.6392 13.8845 9.80438 13.4656 9.81081C12.7349 9.82208 12.3101 9.61506 11.9722 9.45846L11.709 10.6807C12.0479 10.8357 12.6754 10.9708 13.3262 10.9767C14.8536 10.9767 15.853 10.2286 15.8584 9.06857C15.8644 7.5964 13.8061 7.51489 13.8202 6.85684C13.8251 6.65733 14.0169 6.44442 14.4374 6.39025C14.6455 6.3629 15.2201 6.34198 15.8714 6.63963L16.127 5.45708C15.7768 5.33051 15.3266 5.2093 14.7661 5.2093C13.3283 5.2093 12.3171 5.96764 12.309 7.05313ZM18.5836 5.3112C18.3047 5.3112 18.0696 5.47263 17.9647 5.7204L15.7827 10.8899H17.3091L17.6129 10.057H19.4781L19.6543 10.8899H20.9996L19.8257 5.3112H18.5836ZM18.7971 6.81822L19.2376 8.91304H18.0312L18.7971 6.81822ZM10.4583 5.3112L9.25517 10.8899H10.7096L11.9122 5.3112H10.4583ZM8.3066 5.3112L6.79266 9.10825L6.18028 5.87969C6.1084 5.51929 5.82464 5.3112 5.50953 5.3112H3.03459L3 5.47317C3.50807 5.58257 4.08532 5.75902 4.43502 5.9478C4.64906 6.0631 4.71013 6.16393 4.7804 6.43798L5.9403 10.8899H7.47747L9.83404 5.3112H8.3066Z" fill="white" /><defs><linearGradient id="visa-grad-pay-modal" x1="10.7812" y1="16" x2="15.6708" y2="0.32624" gradientUnits="userSpaceOnUse"><stop stop-color="#222357" /><stop offset="1" stop-color="#254AA5" /></linearGradient></defs></svg>';
     }
     return '<svg class="h-4 w-8 rounded-[2px]" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M0 0h32v32H0z" fill="#00579f"></path><g fill="#fff" fill-rule="nonzero"><path d="M13.823 19.876H11.8l1.265-7.736h2.023zm7.334-7.546a5.036 5.036 0 0 0-1.814-.33c-1.998 0-3.405 1.053-3.414 2.56-.016 1.11 1.007 1.728 1.773 2.098.783.379 1.05.626 1.05.963-.009.518-.633.757-1.216.757-.808 0-1.24-.123-1.898-.411l-.267-.124-.283 1.737c.475.213 1.349.403 2.257.411 2.123 0 3.505-1.037 3.521-2.641.008-.881-.532-1.556-1.698-2.107-.708-.354-1.141-.593-1.141-.955.008-.33.366-.667 1.165-.667a3.471 3.471 0 0 1 1.507.297l.183.082zm2.69 4.806.807-2.165c-.008.017.167-.452.266-.74l.142.666s.383 1.852.466 2.239h-1.682zm2.497-4.996h-1.565c-.483 0-.85.14-1.058.642l-3.005 7.094h2.123l.425-1.16h2.597c.059.271.242 1.16.242 1.16h1.873zm-16.234 0-1.982 5.275-.216-1.07c-.366-1.234-1.515-2.575-2.797-3.242l1.815 6.765h2.14l3.18-7.728z"></path><path d="M6.289 12.14H3.033L3 12.297c2.54.641 4.221 2.189 4.912 4.049l-.708-3.556c-.116-.494-.474-.633-.915-.65z"></path></g></svg>';
+  }
+
+  function getSuccessCardBrandLogo(brand) {
+    return getCardBrandLogoMarkup(brand, 'medium');
   }
 
   function getCardDisplayLabel(card) {
@@ -761,9 +778,9 @@
             var minute = idx % 2 === 0 ? '45' : '15';
             next.scheduledFor = '2026-07-' + String(day).padStart(2, '0') + 'T00:' + minute + ':00';
           }
-          next.statusLabel = 'Scheduled';
+          next.statusLabel = 'In Progress';
         } else {
-          next.statusLabel = 'Processing';
+          next.statusLabel = 'In Progress';
         }
       }
 
@@ -1401,6 +1418,7 @@
     var deliveryBadgeTexts = getSmartBadgeTexts(deliveryTokens);
     var formattedProjectedBalance = formatMoney(getCardProjectedBalance(card), card.currency || 'USD');
     var formattedFundingAmount = formatMoney(fundingMethod === 'spend_balance' ? 0 : parseMoneyInput(_cardFundingState.fundingAmount), card.currency || 'USD');
+    var formattedCurrentBalance = formatMoney(Number((card && card.currentBalance) || 0), card.currency || 'USD');
     return {
       methodId: 'card',
       methodLabel: 'Pay with a Card',
@@ -1424,6 +1442,7 @@
       fundingMethodLabel: fundingLabels[fundingMethod] || 'Funding',
       fundingAmount: fundingMethod === 'spend_balance' ? 0 : parseMoneyInput(_cardFundingState.fundingAmount),
       fundingAmountText: formattedFundingAmount,
+      currentBalanceText: formattedCurrentBalance,
       isSpendBalance: fundingMethod === 'spend_balance',
       sendingMethod: String(_cardFundingState.sendingMethod || 'on_file'),
       sendingMethodLabel: sendingLabels[String(_cardFundingState.sendingMethod || 'on_file')] || 'Card on file with vendor',
@@ -1450,6 +1469,7 @@
       ? 0
       : parseMoneyInput(savedState.cardFundingAmount || _cardFundingState.fundingAmount || formatMoneyInputValue(Number((_payContext.row && _payContext.row.amount) || 0)));
     var projectedBalance = Number((card && card.currentBalance) || 0);
+    var currentBalanceText = formatMoney(Number((card && card.currentBalance) || 0), currency);
 
     return {
       methodId: 'card',
@@ -1474,6 +1494,7 @@
       fundingMethodLabel: fundingMethod === 'spend_balance' ? 'Spend Balance' : 'Add Funds',
       fundingAmount: rawFundingAmount,
       fundingAmountText: formatMoney(rawFundingAmount, currency),
+      currentBalanceText: currentBalanceText,
       isSpendBalance: fundingMethod === 'spend_balance',
       sendingMethod: String(savedState.cardSendingMethod || _cardFundingState.sendingMethod || 'on_file'),
       sendingMethodLabel: String(savedState.cardSendingMethod || _cardFundingState.sendingMethod || 'on_file') === 'delivery_website'
@@ -1485,6 +1506,54 @@
       projectedBalanceText: formatMoney(projectedBalance, currency),
       availableBalance: projectedBalance
     };
+  }
+
+  function getCardConfirmationCopy(selection) {
+    if (!selection || String(selection.methodId || '') !== 'card') return '';
+    var isSpendBalance = String(selection.fundingMethod || '') === 'spend_balance';
+    var isSecure = String(selection.sendingMethod || '') === 'delivery_website';
+    var isNewCard = String(selection.cardSource || '') === 'new';
+
+    if (isSecure) {
+      if (isNewCard) {
+        return 'Review who will receive the secure card-delivery link, the new card, and the payment details before you continue.';
+      }
+      if (isSpendBalance) {
+        return 'Review who will receive the secure card-delivery link, the selected card, and the existing balance being used before you continue.';
+      }
+      return 'Review who will receive the secure card-delivery link, the selected card, and the funding details before you continue.';
+    }
+
+    if (isNewCard) {
+      return 'Review the origination account, the new card, and the payment details before you continue.';
+    }
+    if (isSpendBalance) {
+      return 'Review the origination account, the selected card balance, and the payment details before you continue.';
+    }
+    return 'Review the origination account, the selected card, and the funding details before you continue.';
+  }
+
+  function getCardRevealPrimaryAmountText(selection) {
+    if (!selection || String(selection.methodId || '') !== 'card') {
+      return formatMoney((_payContext.row && _payContext.row.amount) || 0, (_payContext.row && _payContext.row.currency) || 'USD');
+    }
+    if (String(selection.cardSource || '') === 'existing') {
+      return String(selection.currentBalanceText || selection.projectedBalanceText || selection.amount || '--');
+    }
+    return String(selection.fundingAmountText || selection.amount || '--');
+  }
+
+  function getCardRevealHelpText(selection) {
+    if (!selection || String(selection.methodId || '') !== 'card') {
+      return 'Use these card details with your vendor like a regular card payment.';
+    }
+    if (String(selection.cardSource || '') === 'new') {
+      return 'This new virtual card has been created and funded for the payment amount shown. Use these card details with your vendor like a regular card payment.';
+    }
+    if (String(selection.fundingMethod || '') === 'spend_balance') {
+      return 'This existing virtual card already has sufficient balance for the pending payment. Use these card details with your vendor like a regular card payment.';
+    }
+    return 'This existing virtual card has been funded for the pending payment. Use these card details with your vendor like a regular card payment.';
   }
 
   function setPaySelectDisabled(selectEl, disabled) {
@@ -1637,13 +1706,17 @@
     var updated = cloneJson(row) || {};
     updated.status = 'ready_to_pay';
     updated.statusType = '';
-    updated.statusLabel = 'Unprocessed';
+    updated.statusLabel = 'Ready to Pay';
     updated.processingStep = '';
     updated.scheduledFor = '';
     updated.adDate = '';
     updated.details = Object.assign({}, updated.details || {});
     delete updated.details.payPageState;
-    updated.details.activityLog = [];
+    updated.details.activityLog = [{
+      type: 'ready',
+      title: 'Ready to Pay',
+      description: String((updated && updated.billNumber) || 'This payable') + ' is ready for payment initiation.'
+    }];
     persistPayableOverride(updated);
     return updated;
   }
@@ -1894,15 +1967,6 @@
         noteId: 'pp-smart-disburse-test-mode-note',
         flow: 'sd',
         label: 'SMART Disburse'
-      };
-    }
-    if (methodId === 'smart_exchange') {
-      return {
-        buttonId: 'pp-smart-exchange-send-test-email-btn',
-        helpId: 'pp-smart-exchange-send-test-email-help',
-        resultId: 'pp-smart-exchange-send-test-email-result',
-        flow: 'sx',
-        label: 'SMART Exchange'
       };
     }
     return null;
@@ -2452,9 +2516,7 @@
     if (confirmCopy) confirmCopy.textContent = isSmart
       ? 'Review who will receive the payment link before you continue.'
       : (isCard
-          ? (isCardSecure
-              ? 'Review who will receive the secure card-delivery link, the selected card, and the payment details before you continue.'
-              : 'Review the origination account, selected card, and payment details before you continue.')
+          ? getCardConfirmationCopy(selection)
           : 'Review your account and recipient details before you continue.');
     if (headerGrid) {
       headerGrid.classList.toggle('hidden', false);
@@ -2605,17 +2667,31 @@
     }
 
     if (isCard) {
-      setText('gp-submit-success-title', selection.cardSource === 'new' ? 'New Card Created and Funded!' : 'Card Ready to Use!');
-      setText('gp-submit-success-copy', selection.sendingMethod === 'delivery_website'
-        ? ('Your virtual card for ' + selection.payeeName + ' is ready and the secure delivery has been completed.')
-        : ('Your virtual card for ' + selection.payeeName + ' is funded and ready to be used.'));
-      setText('gp-submit-progress-title', selection.cardSource === 'new'
-        ? (selection.amount + ' has been loaded onto the new card and is ready.')
-        : (selection.amount + ' has been loaded onto the selected card and is ready.'));
+      var isNewCard = String(selection.cardSource || '') === 'new';
+      var isSpendBalance = String(selection.fundingMethod || '') === 'spend_balance';
+      var isSecureDelivery = String(selection.sendingMethod || '') === 'delivery_website';
+      setText('gp-submit-success-title', isNewCard ? 'New Card Created and Funded!' : 'Card Ready to Use!');
+      if (isNewCard) {
+        setText('gp-submit-success-copy', isSecureDelivery
+          ? ('Your new virtual card for ' + selection.payeeName + ' is ready and the secure delivery has been completed.')
+          : ('Your new virtual card for ' + selection.payeeName + ' is funded and ready to be used.'));
+        setText('gp-submit-progress-title', selection.amount + ' has been loaded onto the new card and is ready.');
+      } else if (isSpendBalance) {
+        setText('gp-submit-success-copy', isSecureDelivery
+          ? ('Your existing virtual card for ' + selection.payeeName + ' had sufficient balance and the secure delivery has been completed.')
+          : ('Your existing virtual card for ' + selection.payeeName + ' already had sufficient balance and is ready to be used.'));
+        setText('gp-submit-progress-title', selection.amount + ' will be paid using the existing card balance.');
+      } else {
+        setText('gp-submit-success-copy', isSecureDelivery
+          ? ('Your existing virtual card for ' + selection.payeeName + ' is ready and the secure delivery has been completed.')
+          : ('Your existing virtual card for ' + selection.payeeName + ' has been funded and is ready to be used.'));
+        setText('gp-submit-progress-title', selection.amount + ' has been loaded onto the selected card and is ready.');
+      }
       if (progressBar) progressBar.style.width = '100%';
-      setStageState(stage1, selection.cardSource === 'new' ? 'Card Created' : 'Card Selected', true);
+      setStageState(stage1, isNewCard ? 'Card Created' : 'Card Selected', true);
       setStageState(stage2, 'Funded', true);
-      setStageState(stage3, selection.sendingMethod === 'delivery_website' ? 'Delivered' : 'Ready to Use', true);
+      setStageState(stage2, isSpendBalance ? 'Balance Confirmed' : 'Funded', true);
+      setStageState(stage3, isSecureDelivery ? 'Delivered' : 'Ready to Use', true);
       return;
     }
 
@@ -2677,8 +2753,9 @@
     if (!selection || String(selection.methodId || '') !== 'card') return;
     var brandLogo = document.getElementById('gp-vc-brand-logo');
     var typeLogo = document.getElementById('gp-vc-type-logo');
+    var howCopy = document.getElementById('gp-card-how-copy');
     setText('gp-vc-cvv-pill', 'CVV : ' + getResolvedCardCvv(selection));
-    setText('gp-vc-amount', formatMoney((_payContext.row && _payContext.row.amount) || 0, (_payContext.row && _payContext.row.currency) || 'USD'));
+    setText('gp-vc-amount', getCardRevealPrimaryAmountText(selection));
     setText('gp-vc-card-number', getResolvedCardNumber(selection));
     setText('gp-vc-expiry', String(selection.cardExpDate || '--'));
     setText('gp-vc-name', String((selection.cardName || selection.payeeName || 'Virtual Card')).toUpperCase());
@@ -2688,6 +2765,7 @@
     setText('gp-vc-full-number', getResolvedCardNumber(selection));
     setText('gp-vc-full-expiry', String(selection.cardExpDate || '--'));
     setText('gp-vc-cvc2', getResolvedCardCvv(selection));
+    if (howCopy) howCopy.textContent = getCardRevealHelpText(selection);
     if (brandLogo) brandLogo.innerHTML = getCardBrandLogoMarkup(selection.cardBrand, 'large');
     if (typeLogo) typeLogo.innerHTML = getCardBrandLogoMarkup(selection.cardBrand, 'medium');
   }
@@ -2869,17 +2947,17 @@
     updated.details = Object.assign({}, updated.details || {});
     updated.adDate = String(nowIso).slice(0, 10);
     updated.paymentMethod = selection && selection.methodLabel ? selection.methodLabel : updated.paymentMethod;
-    updated.processingStep = isScheduled ? 'Release scheduled' : (isInstantCard ? 'Payment complete' : 'Processing payment');
+    updated.processingStep = isScheduled ? 'Release scheduled' : (isInstantCard ? 'Payment completed' : 'Processing payment');
     updated.status = isInstantCard ? 'paid' : 'in_progress';
     updated.statusType = isScheduled ? 'scheduled' : (isInstantCard ? '' : 'processing');
-    updated.statusLabel = isScheduled ? 'Scheduled' : (isInstantCard ? 'Paid' : 'Processing');
+    updated.statusLabel = isInstantCard ? 'Paid' : 'In Progress';
     updated.scheduledFor = isScheduled && paymentDateIso ? (paymentDateIso + 'T09:00:00') : '';
     updated.details.payPageState = buildConfirmedPayPageState(selection);
     updated.details.activityLog = isScheduled
       ? [
           {
             type: 'scheduled',
-            title: 'Scheduled',
+            title: 'In Progress',
             description: 'Payment is scheduled for ' + formatDate(paymentDateIso) + '.',
           },
           {
@@ -2916,7 +2994,7 @@
       : [
           {
             type: 'processing',
-            title: 'Processing',
+            title: 'In Progress',
             description: amount + ' for ' + payeeName + ' is now in progress.',
           },
           {
@@ -3832,6 +3910,7 @@
       });
       if (!selected) {
         setSelectedContent(cardContent, '', 'Select card');
+        _cardFundingState.cardSource = '';
         _cardFundingState.selectedCardId = '';
         _cardFundingState.pendingNewCard = null;
         _cardFundingState.fundingMethod = '';
@@ -3842,6 +3921,7 @@
         return;
       }
       _cardFundingState.pendingNewCard = null;
+      _cardFundingState.cardSource = 'existing';
       _cardFundingState.selectedCardId = String(selected.id || '');
       cardContent.innerHTML = buildCardSelectContent(selected);
       if (cardContent) cardContent.classList.remove('hidden');
@@ -4489,6 +4569,19 @@
     setText('gp-amount', formatMoney(row.amount, row.currency));
     setText('gp-currency', row.currency || 'USD');
     setText('gp-date', formatDate(row.dueDate));
+    var dueDateField = document.getElementById('gp-date');
+    var dueDateTooltip = document.getElementById('gp-date-past-due-tooltip');
+    var pastDue = isPastDue(row.dueDate);
+    if (dueDateField) {
+      dueDateField.classList.toggle('text-gray-600', !pastDue);
+      dueDateField.classList.toggle('dark:text-gray-400', !pastDue);
+      dueDateField.classList.toggle('text-red-600', pastDue);
+      dueDateField.classList.toggle('dark:text-red-400', pastDue);
+      dueDateField.setAttribute('title', pastDue ? 'Past due' : '');
+    }
+    if (dueDateTooltip) {
+      dueDateTooltip.classList.toggle('hidden', !pastDue);
+    }
     setText('gp-customer', (payeeProfile && payeeProfile.name) || row.payeeName);
     setText('gp-payee-id-copy-source', (payeeProfile && payeeProfile.vendorId) || '');
     setText('gp-invoice', row.billNumber);
@@ -4521,7 +4614,9 @@
       statusDateLabel.textContent = isPaid ? 'Completed on' : 'Initiated on';
     }
     if (statusDateText) {
-      statusDateText.textContent = (isProcessing || isPaid) ? formatDate(row.adDate || row.dueDate) : '--';
+      statusDateText.textContent = isPaid
+        ? formatDate(row.processedDate || row.adDate || row.dueDate)
+        : (isProcessing ? formatDate(row.adDate || row.dueDate) : '--');
     }
     if (headerMeta && isScheduled) {
       headerMeta.classList.add('hidden');
@@ -4827,7 +4922,7 @@
         setText('gp-date', '--');
         setText('gp-customer', '--');
         setText('gp-invoice', '--');
-        setStatusBadge('ready_to_pay', 'Unprocessed');
+        setStatusBadge('ready_to_pay', 'Ready to Pay');
         applyConfirmedScheduleDate('');
         initOriginationAccountSelector([], null);
         initPaymentMethodFlow([], null, [], [], []);

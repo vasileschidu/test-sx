@@ -67,10 +67,10 @@
       "billNumber": "BP-01003",
       "payeeName": "Red Maple Construction",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-03",
-      "adDate": "2026-03-07",
+      "dueDate": "2026-03-21",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -100,20 +100,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill BP-01003 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01003 started on 2026-03-07."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "red-maple-construction"
+      "payeeId": "red-maple-construction",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-2",
@@ -122,10 +116,10 @@
       "billNumber": "GL-01006",
       "payeeName": "Beacon Property Care",
       "source": "Batch Upload",
-      "dueDate": "2026-03-04",
-      "adDate": "2026-03-06",
+      "dueDate": "2026-03-22",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -155,20 +149,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill GL-01006 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01006 started on 2026-03-06."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "beacon-property-care"
+      "payeeId": "beacon-property-care",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-3",
@@ -177,10 +165,10 @@
       "billNumber": "VR-01009",
       "payeeName": "Red Maple Construction",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-05",
-      "adDate": "2026-03-05",
+      "dueDate": "2026-03-23",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -210,20 +198,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill VR-01009 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01009 started on 2026-03-05."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "red-maple-construction"
+      "payeeId": "red-maple-construction",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-4",
@@ -232,10 +214,10 @@
       "billNumber": "PO-01012",
       "payeeName": "Beacon Property Care",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-06",
-      "adDate": "2026-03-04",
+      "dueDate": "2026-03-24",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -265,20 +247,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill PO-01012 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01012 started on 2026-03-04."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "beacon-property-care"
+      "payeeId": "beacon-property-care",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-5",
@@ -287,10 +263,10 @@
       "billNumber": "AP-01015",
       "payeeName": "Red Maple Construction",
       "source": "Manual Entry",
-      "dueDate": "2026-03-07",
-      "adDate": "2026-03-03",
+      "dueDate": "2026-03-25",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -320,20 +296,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill AP-01015 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01015 started on 2026-03-03."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "red-maple-construction"
+      "payeeId": "red-maple-construction",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-6",
@@ -342,10 +312,10 @@
       "billNumber": "BP-01018",
       "payeeName": "Beacon Property Care",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-08",
-      "adDate": "2026-03-02",
+      "dueDate": "2026-03-26",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -375,20 +345,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill BP-01018 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01018 started on 2026-03-02."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "beacon-property-care"
+      "payeeId": "beacon-property-care",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-7",
@@ -397,10 +361,10 @@
       "billNumber": "GL-01021",
       "payeeName": "Red Maple Construction",
       "source": "Batch Upload",
-      "dueDate": "2026-03-09",
-      "adDate": "2026-03-01",
+      "dueDate": "2026-03-27",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -430,20 +394,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill GL-01021 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01021 started on 2026-03-01."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "red-maple-construction"
+      "payeeId": "red-maple-construction",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-8",
@@ -452,10 +410,10 @@
       "billNumber": "VR-01024",
       "payeeName": "Beacon Property Care",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-10",
-      "adDate": "2026-02-28",
+      "dueDate": "2026-03-28",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -485,20 +443,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill VR-01024 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01024 started on 2026-02-28."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "beacon-property-care"
+      "payeeId": "beacon-property-care",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-9",
@@ -507,10 +459,10 @@
       "billNumber": "PO-01027",
       "payeeName": "Red Maple Construction",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-11",
-      "adDate": "2026-02-27",
+      "dueDate": "2026-03-29",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -540,20 +492,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill PO-01027 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01027 started on 2026-02-27."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "red-maple-construction"
+      "payeeId": "red-maple-construction",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-10",
@@ -562,10 +508,10 @@
       "billNumber": "AP-01030",
       "payeeName": "Beacon Property Care",
       "source": "Manual Entry",
-      "dueDate": "2026-03-12",
-      "adDate": "2026-02-26",
+      "dueDate": "2026-03-30",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -595,20 +541,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill AP-01030 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01030 started on 2026-02-26."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "beacon-property-care"
+      "payeeId": "beacon-property-care",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-11",
@@ -617,10 +557,10 @@
       "billNumber": "BP-01033",
       "payeeName": "Red Maple Construction",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-13",
-      "adDate": "2026-02-25",
+      "dueDate": "2026-03-31",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -650,20 +590,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill BP-01033 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01033 started on 2026-02-25."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "red-maple-construction"
+      "payeeId": "red-maple-construction",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-12",
@@ -672,10 +606,10 @@
       "billNumber": "GL-01036",
       "payeeName": "Beacon Property Care",
       "source": "Batch Upload",
-      "dueDate": "2026-03-14",
-      "adDate": "2026-02-24",
+      "dueDate": "2026-04-01",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -705,20 +639,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill GL-01036 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01036 started on 2026-02-24."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "beacon-property-care"
+      "payeeId": "beacon-property-care",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-13",
@@ -727,10 +655,10 @@
       "billNumber": "VR-01039",
       "payeeName": "Red Maple Construction",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-15",
-      "adDate": "2026-02-23",
+      "dueDate": "2026-04-02",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -760,20 +688,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill VR-01039 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01039 started on 2026-02-23."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "red-maple-construction"
+      "payeeId": "red-maple-construction",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-14",
@@ -782,10 +704,10 @@
       "billNumber": "PO-01042",
       "payeeName": "Beacon Property Care",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-16",
-      "adDate": "2026-02-22",
+      "dueDate": "2026-04-03",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -815,20 +737,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill PO-01042 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01042 started on 2026-02-22."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "beacon-property-care"
+      "payeeId": "beacon-property-care",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-15",
@@ -837,10 +753,10 @@
       "billNumber": "AP-01045",
       "payeeName": "Red Maple Construction",
       "source": "Manual Entry",
-      "dueDate": "2026-03-17",
-      "adDate": "2026-02-21",
+      "dueDate": "2026-04-04",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -870,20 +786,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill AP-01045 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01045 started on 2026-02-21."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "red-maple-construction"
+      "payeeId": "red-maple-construction",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-16",
@@ -892,10 +802,10 @@
       "billNumber": "BP-01048",
       "payeeName": "Beacon Property Care",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-18",
-      "adDate": "2026-02-20",
+      "dueDate": "2026-04-05",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -925,20 +835,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill BP-01048 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01048 started on 2026-02-20."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "beacon-property-care"
+      "payeeId": "beacon-property-care",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-17",
@@ -947,10 +851,10 @@
       "billNumber": "GL-01051",
       "payeeName": "Red Maple Construction",
       "source": "Batch Upload",
-      "dueDate": "2026-03-19",
-      "adDate": "2026-02-19",
+      "dueDate": "2026-04-06",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -980,20 +884,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill GL-01051 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01051 started on 2026-02-19."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "red-maple-construction"
+      "payeeId": "red-maple-construction",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-18",
@@ -1002,10 +900,10 @@
       "billNumber": "VR-01054",
       "payeeName": "Beacon Property Care",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-20",
-      "adDate": "2026-02-18",
+      "dueDate": "2026-04-07",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -1035,20 +933,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill VR-01054 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01054 started on 2026-02-18."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "beacon-property-care"
+      "payeeId": "beacon-property-care",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-19",
@@ -1057,10 +949,10 @@
       "billNumber": "PO-01057",
       "payeeName": "Red Maple Construction",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-21",
-      "adDate": "2026-02-17",
+      "dueDate": "2026-04-08",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -1090,20 +982,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill PO-01057 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01057 started on 2026-02-17."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "red-maple-construction"
+      "payeeId": "red-maple-construction",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-20",
@@ -1112,10 +998,10 @@
       "billNumber": "AP-01060",
       "payeeName": "Beacon Property Care",
       "source": "Manual Entry",
-      "dueDate": "2026-03-22",
-      "adDate": "2026-02-16",
+      "dueDate": "2026-04-09",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -1145,20 +1031,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill AP-01060 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01060 started on 2026-02-16."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "beacon-property-care"
+      "payeeId": "beacon-property-care",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-21",
@@ -1167,10 +1047,10 @@
       "billNumber": "BP-01063",
       "payeeName": "Red Maple Construction",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-23",
-      "adDate": "2026-02-15",
+      "dueDate": "2026-04-10",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -1200,20 +1080,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill BP-01063 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01063 started on 2026-02-15."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "red-maple-construction"
+      "payeeId": "red-maple-construction",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-22",
@@ -1222,10 +1096,10 @@
       "billNumber": "GL-01066",
       "payeeName": "Beacon Property Care",
       "source": "Batch Upload",
-      "dueDate": "2026-03-24",
-      "adDate": "2026-02-14",
+      "dueDate": "2026-04-11",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -1255,20 +1129,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill GL-01066 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01066 started on 2026-02-14."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "beacon-property-care"
+      "payeeId": "beacon-property-care",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-23",
@@ -1277,10 +1145,10 @@
       "billNumber": "VR-01069",
       "payeeName": "Red Maple Construction",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-25",
-      "adDate": "2026-02-13",
+      "dueDate": "2026-04-12",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -1310,20 +1178,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill VR-01069 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01069 started on 2026-02-13."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "red-maple-construction"
+      "payeeId": "red-maple-construction",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-24",
@@ -1332,10 +1194,10 @@
       "billNumber": "PO-01072",
       "payeeName": "Beacon Property Care",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-26",
-      "adDate": "2026-02-12",
+      "dueDate": "2026-04-13",
+      "adDate": "",
       "status": "ready_to_pay",
-      "statusLabel": "Unprocessed",
+      "statusLabel": "Ready to Pay",
       "exceptionReason": "",
       "processingStep": "",
       "details": {
@@ -1365,20 +1227,14 @@
             "size": "4.3mb"
           }
         ],
-        "activityLog": [
-          {
-            "type": "pending",
-            "title": "Ready to Pay",
-            "description": "Bill PO-01072 is ready for release."
-          },
-          {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01072 started on 2026-02-12."
-          }
-        ]
+        "activityLog": []
       },
-      "payeeId": "beacon-property-care"
+      "payeeId": "beacon-property-care",
+      "statusType": "",
+      "scheduledFor": "",
+      "paymentMethod": null,
+      "paymentMethodType": null,
+      "processedDate": ""
     },
     {
       "id": "payable-25",
@@ -1387,8 +1243,8 @@
       "billNumber": "AP-01075",
       "payeeName": "Mosaic Printing Co",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-27",
-      "adDate": "2026-02-11",
+      "dueDate": "2026-04-14",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -1409,7 +1265,7 @@
             "value": "$3775.00"
           }
         ],
-        "notes": "Current step: bank handoff.",
+        "notes": "Current step: Bank verification via SMART Exchange.",
         "attachments": [
           {
             "name": "invoice_AP-01075.pdf",
@@ -1422,18 +1278,42 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Bank verification."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Bank account verified",
+            "description": "Verification is in progress"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01075 started on 2026-02-11."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via SMART Exchange"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "SMART Exchange selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #AP-01075 finalized for $3,775.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$3,775.00 payment initiated to Mosaic Printing Co"
           }
         ]
       },
-      "payeeId": "mosaic-printing-co"
+      "payeeId": "mosaic-printing-co",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 2060",
+      "paymentMethodLabel": "Bank \u2022\u2022\u2022\u2022 2060",
+      "method": "ach",
+      "processedDate": "",
+      "paymentMethodEnding": "2060",
+      "bankLast4": "2060",
+      "bankAccountNumber": "0000000002060",
+      "bankRoutingNumber": "091000022"
     },
     {
       "id": "payable-26",
@@ -1442,8 +1322,8 @@
       "billNumber": "BP-01078",
       "payeeName": "Sierra Office Supply",
       "source": "Batch Upload",
-      "dueDate": "2026-03-28",
-      "adDate": "2026-02-10",
+      "dueDate": "2026-04-15",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -1464,7 +1344,7 @@
             "value": "$4037.75"
           }
         ],
-        "notes": "Current step: processing queue.",
+        "notes": "Current step: Payment processor sync via Bank \u2022\u2022\u2022\u2022 3207.",
         "attachments": [
           {
             "name": "invoice_BP-01078.pdf",
@@ -1477,18 +1357,42 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Payment processor sync."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01078 started on 2026-02-10."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20223207 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #BP-01078 finalized for $4,037.75"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$4,037.75 payment initiated to Sierra Office Supply"
           }
         ]
       },
-      "payeeId": "sierra-office-supply"
+      "payeeId": "sierra-office-supply",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 3207",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "3207",
+      "bankLast4": "3207",
+      "method": "ach",
+      "processedDate": "",
+      "bankAccountNumber": "0000000003207",
+      "bankRoutingNumber": "031000503"
     },
     {
       "id": "payable-27",
@@ -1497,8 +1401,8 @@
       "billNumber": "GL-01081",
       "payeeName": "Mosaic Printing Co",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-29",
-      "adDate": "2026-02-09",
+      "dueDate": "2026-04-16",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -1519,7 +1423,7 @@
             "value": "$4300.50"
           }
         ],
-        "notes": "Current step: settlement window.",
+        "notes": "Current step: Release scheduled via Bank \u2022\u2022\u2022\u2022 2060.",
         "attachments": [
           {
             "name": "invoice_GL-01081.pdf",
@@ -1532,18 +1436,42 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Release scheduled."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01081 started on 2026-02-09."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20222060 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #GL-01081 finalized for $4,300.50"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$4,300.50 payment initiated to Mosaic Printing Co"
           }
         ]
       },
-      "payeeId": "mosaic-printing-co"
+      "payeeId": "mosaic-printing-co",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 2060",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "2060",
+      "bankLast4": "2060",
+      "method": "ach",
+      "processedDate": "",
+      "bankAccountNumber": "0000000002060",
+      "bankRoutingNumber": "091000022"
     },
     {
       "id": "payable-28",
@@ -1552,8 +1480,8 @@
       "billNumber": "VR-01084",
       "payeeName": "Sierra Office Supply",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-30",
-      "adDate": "2026-02-08",
+      "dueDate": "2026-04-17",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -1574,7 +1502,7 @@
             "value": "$4563.25"
           }
         ],
-        "notes": "Current step: approval workflow.",
+        "notes": "Current step: Approval queued via Mastercard \u2022\u2022\u2022\u2022 0860.",
         "attachments": [
           {
             "name": "invoice_VR-01084.pdf",
@@ -1587,18 +1515,41 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Approval queued."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01084 started on 2026-02-08."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via card payment"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Card ending \u2022\u2022\u2022\u20220860 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #VR-01084 finalized for $4,563.25"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$4,563.25 payment initiated to Sierra Office Supply"
           }
         ]
       },
-      "payeeId": "sierra-office-supply"
+      "payeeId": "sierra-office-supply",
+      "paymentMethodType": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 0860",
+      "paymentMethodLabel": "Pay with a Card",
+      "paymentMethodEnding": "0860",
+      "cardLast4": "0860",
+      "cardNetwork": "Mastercard",
+      "method": "card",
+      "processedDate": ""
     },
     {
       "id": "payable-29",
@@ -1607,8 +1558,8 @@
       "billNumber": "PO-01087",
       "payeeName": "Mosaic Printing Co",
       "source": "Manual Entry",
-      "dueDate": "2026-03-02",
-      "adDate": "2026-02-07",
+      "dueDate": "2026-04-18",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -1629,7 +1580,7 @@
             "value": "$4826.00"
           }
         ],
-        "notes": "Current step: bank handoff.",
+        "notes": "Current step: Bank verification via Visa \u2022\u2022\u2022\u2022 4532.",
         "attachments": [
           {
             "name": "invoice_PO-01087.pdf",
@@ -1642,18 +1593,41 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Bank verification."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Bank account verified",
+            "description": "Verification is in progress"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01087 started on 2026-02-07."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via card payment"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Card ending \u2022\u2022\u2022\u20224532 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #PO-01087 finalized for $4,826.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$4,826.00 payment initiated to Mosaic Printing Co"
           }
         ]
       },
-      "payeeId": "mosaic-printing-co"
+      "payeeId": "mosaic-printing-co",
+      "paymentMethodType": "card",
+      "paymentMethod": "Visa \u2022\u2022\u2022\u2022 4532",
+      "paymentMethodLabel": "Pay with a Card",
+      "paymentMethodEnding": "4532",
+      "cardLast4": "4532",
+      "cardNetwork": "Visa",
+      "method": "card",
+      "processedDate": ""
     },
     {
       "id": "payable-30",
@@ -1662,8 +1636,8 @@
       "billNumber": "AP-01090",
       "payeeName": "Sierra Office Supply",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-03",
-      "adDate": "2026-02-06",
+      "dueDate": "2026-04-19",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -1684,7 +1658,7 @@
             "value": "$4460.00"
           }
         ],
-        "notes": "Current step: processing queue.",
+        "notes": "Current step: Payment processor sync via Bank \u2022\u2022\u2022\u2022 3207.",
         "attachments": [
           {
             "name": "invoice_AP-01090.pdf",
@@ -1697,18 +1671,42 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Payment processor sync."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01090 started on 2026-02-06."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20223207 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #AP-01090 finalized for $4,460.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$4,460.00 payment initiated to Sierra Office Supply"
           }
         ]
       },
-      "payeeId": "sierra-office-supply"
+      "payeeId": "sierra-office-supply",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 3207",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "3207",
+      "bankLast4": "3207",
+      "method": "ach",
+      "processedDate": "",
+      "bankAccountNumber": "0000000003207",
+      "bankRoutingNumber": "031000503"
     },
     {
       "id": "payable-31",
@@ -1717,8 +1715,8 @@
       "billNumber": "BP-01093",
       "payeeName": "Mosaic Printing Co",
       "source": "Batch Upload",
-      "dueDate": "2026-03-04",
-      "adDate": "2026-02-05",
+      "dueDate": "2026-03-21",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -1739,7 +1737,7 @@
             "value": "$4722.75"
           }
         ],
-        "notes": "Current step: settlement window.",
+        "notes": "Current step: Release scheduled via SMART Exchange.",
         "attachments": [
           {
             "name": "invoice_BP-01093.pdf",
@@ -1752,18 +1750,42 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Release scheduled."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01093 started on 2026-02-05."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via SMART Exchange"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "SMART Exchange selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #BP-01093 finalized for $4,722.75"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$4,722.75 payment initiated to Mosaic Printing Co"
           }
         ]
       },
-      "payeeId": "mosaic-printing-co"
+      "payeeId": "mosaic-printing-co",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 2060",
+      "paymentMethodLabel": "Bank \u2022\u2022\u2022\u2022 2060",
+      "method": "ach",
+      "processedDate": "",
+      "paymentMethodEnding": "2060",
+      "bankLast4": "2060",
+      "bankAccountNumber": "0000000002060",
+      "bankRoutingNumber": "091000022"
     },
     {
       "id": "payable-32",
@@ -1772,8 +1794,8 @@
       "billNumber": "GL-01096",
       "payeeName": "Sierra Office Supply",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-05",
-      "adDate": "2026-02-04",
+      "dueDate": "2026-03-22",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -1794,7 +1816,7 @@
             "value": "$4985.50"
           }
         ],
-        "notes": "Current step: approval workflow.",
+        "notes": "Current step: Approval queued via Mastercard \u2022\u2022\u2022\u2022 0860.",
         "attachments": [
           {
             "name": "invoice_GL-01096.pdf",
@@ -1807,18 +1829,41 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Approval queued."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01096 started on 2026-02-04."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via card payment"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Card ending \u2022\u2022\u2022\u20220860 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #GL-01096 finalized for $4,985.50"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$4,985.50 payment initiated to Sierra Office Supply"
           }
         ]
       },
-      "payeeId": "sierra-office-supply"
+      "payeeId": "sierra-office-supply",
+      "paymentMethodType": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 0860",
+      "paymentMethodLabel": "Pay with a Card",
+      "paymentMethodEnding": "0860",
+      "cardLast4": "0860",
+      "cardNetwork": "Mastercard",
+      "method": "card",
+      "processedDate": ""
     },
     {
       "id": "payable-33",
@@ -1827,8 +1872,8 @@
       "billNumber": "VR-01099",
       "payeeName": "Mosaic Printing Co",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-06",
-      "adDate": "2026-02-03",
+      "dueDate": "2026-03-23",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -1849,7 +1894,7 @@
             "value": "$5248.25"
           }
         ],
-        "notes": "Current step: bank handoff.",
+        "notes": "Current step: Bank verification via Bank \u2022\u2022\u2022\u2022 2060.",
         "attachments": [
           {
             "name": "invoice_VR-01099.pdf",
@@ -1862,18 +1907,42 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Bank verification."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Bank account verified",
+            "description": "Verification is in progress"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01099 started on 2026-02-03."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20222060 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #VR-01099 finalized for $5,248.25"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$5,248.25 payment initiated to Mosaic Printing Co"
           }
         ]
       },
-      "payeeId": "mosaic-printing-co"
+      "payeeId": "mosaic-printing-co",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 2060",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "2060",
+      "bankLast4": "2060",
+      "method": "ach",
+      "processedDate": "",
+      "bankAccountNumber": "0000000002060",
+      "bankRoutingNumber": "091000022"
     },
     {
       "id": "payable-34",
@@ -1882,8 +1951,8 @@
       "billNumber": "PO-01102",
       "payeeName": "Sierra Office Supply",
       "source": "Manual Entry",
-      "dueDate": "2026-03-07",
-      "adDate": "2026-02-02",
+      "dueDate": "2026-03-24",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -1904,7 +1973,7 @@
             "value": "$5511.00"
           }
         ],
-        "notes": "Current step: processing queue.",
+        "notes": "Current step: Payment processor sync via Bank \u2022\u2022\u2022\u2022 3207.",
         "attachments": [
           {
             "name": "invoice_PO-01102.pdf",
@@ -1917,18 +1986,42 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Payment processor sync."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01102 started on 2026-02-02."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20223207 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #PO-01102 finalized for $5,511.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$5,511.00 payment initiated to Sierra Office Supply"
           }
         ]
       },
-      "payeeId": "sierra-office-supply"
+      "payeeId": "sierra-office-supply",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 3207",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "3207",
+      "bankLast4": "3207",
+      "method": "ach",
+      "processedDate": "",
+      "bankAccountNumber": "0000000003207",
+      "bankRoutingNumber": "031000503"
     },
     {
       "id": "payable-35",
@@ -1937,8 +2030,8 @@
       "billNumber": "AP-01105",
       "payeeName": "Mosaic Printing Co",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-08",
-      "adDate": "2026-02-01",
+      "dueDate": "2026-03-25",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -1959,7 +2052,7 @@
             "value": "$5145.00"
           }
         ],
-        "notes": "Current step: settlement window.",
+        "notes": "Current step: Release scheduled via Visa \u2022\u2022\u2022\u2022 4532.",
         "attachments": [
           {
             "name": "invoice_AP-01105.pdf",
@@ -1972,18 +2065,41 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Release scheduled."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01105 started on 2026-02-01."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via card payment"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Card ending \u2022\u2022\u2022\u20224532 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #AP-01105 finalized for $5,145.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$5,145.00 payment initiated to Mosaic Printing Co"
           }
         ]
       },
-      "payeeId": "mosaic-printing-co"
+      "payeeId": "mosaic-printing-co",
+      "paymentMethodType": "card",
+      "paymentMethod": "Visa \u2022\u2022\u2022\u2022 4532",
+      "paymentMethodLabel": "Pay with a Card",
+      "paymentMethodEnding": "4532",
+      "cardLast4": "4532",
+      "cardNetwork": "Visa",
+      "method": "card",
+      "processedDate": ""
     },
     {
       "id": "payable-36",
@@ -1992,8 +2108,8 @@
       "billNumber": "BP-01108",
       "payeeName": "Sierra Office Supply",
       "source": "Batch Upload",
-      "dueDate": "2026-03-09",
-      "adDate": "2026-01-31",
+      "dueDate": "2026-03-26",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -2014,7 +2130,7 @@
             "value": "$5407.75"
           }
         ],
-        "notes": "Current step: approval workflow.",
+        "notes": "Current step: Approval queued via Mastercard \u2022\u2022\u2022\u2022 0860.",
         "attachments": [
           {
             "name": "invoice_BP-01108.pdf",
@@ -2027,18 +2143,41 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Approval queued."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01108 started on 2026-01-31."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via card payment"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Card ending \u2022\u2022\u2022\u20220860 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #BP-01108 finalized for $5,407.75"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$5,407.75 payment initiated to Sierra Office Supply"
           }
         ]
       },
-      "payeeId": "sierra-office-supply"
+      "payeeId": "sierra-office-supply",
+      "paymentMethodType": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 0860",
+      "paymentMethodLabel": "Pay with a Card",
+      "paymentMethodEnding": "0860",
+      "cardLast4": "0860",
+      "cardNetwork": "Mastercard",
+      "method": "card",
+      "processedDate": ""
     },
     {
       "id": "payable-37",
@@ -2047,8 +2186,8 @@
       "billNumber": "GL-01111",
       "payeeName": "Mosaic Printing Co",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-10",
-      "adDate": "2026-01-30",
+      "dueDate": "2026-03-27",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -2069,7 +2208,7 @@
             "value": "$5670.50"
           }
         ],
-        "notes": "Current step: bank handoff.",
+        "notes": "Current step: Bank verification via SMART Exchange.",
         "attachments": [
           {
             "name": "invoice_GL-01111.pdf",
@@ -2082,18 +2221,42 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Bank verification."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Bank account verified",
+            "description": "Verification is in progress"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01111 started on 2026-01-30."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via SMART Exchange"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "SMART Exchange selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #GL-01111 finalized for $5,670.50"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$5,670.50 payment initiated to Mosaic Printing Co"
           }
         ]
       },
-      "payeeId": "mosaic-printing-co"
+      "payeeId": "mosaic-printing-co",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 2060",
+      "paymentMethodLabel": "Bank \u2022\u2022\u2022\u2022 2060",
+      "method": "ach",
+      "processedDate": "",
+      "paymentMethodEnding": "2060",
+      "bankLast4": "2060",
+      "bankAccountNumber": "0000000002060",
+      "bankRoutingNumber": "091000022"
     },
     {
       "id": "payable-38",
@@ -2102,8 +2265,8 @@
       "billNumber": "VR-01114",
       "payeeName": "Sierra Office Supply",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-11",
-      "adDate": "2026-01-29",
+      "dueDate": "2026-03-28",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -2124,7 +2287,7 @@
             "value": "$5933.25"
           }
         ],
-        "notes": "Current step: processing queue.",
+        "notes": "Current step: Payment processor sync via Bank \u2022\u2022\u2022\u2022 3207.",
         "attachments": [
           {
             "name": "invoice_VR-01114.pdf",
@@ -2137,18 +2300,42 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Payment processor sync."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01114 started on 2026-01-29."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20223207 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #VR-01114 finalized for $5,933.25"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$5,933.25 payment initiated to Sierra Office Supply"
           }
         ]
       },
-      "payeeId": "sierra-office-supply"
+      "payeeId": "sierra-office-supply",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 3207",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "3207",
+      "bankLast4": "3207",
+      "method": "ach",
+      "processedDate": "",
+      "bankAccountNumber": "0000000003207",
+      "bankRoutingNumber": "031000503"
     },
     {
       "id": "payable-39",
@@ -2157,8 +2344,8 @@
       "billNumber": "PO-01117",
       "payeeName": "Mosaic Printing Co",
       "source": "Manual Entry",
-      "dueDate": "2026-03-12",
-      "adDate": "2026-01-28",
+      "dueDate": "2026-03-29",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -2179,7 +2366,7 @@
             "value": "$6196.00"
           }
         ],
-        "notes": "Current step: settlement window.",
+        "notes": "Current step: Release scheduled via Bank \u2022\u2022\u2022\u2022 2060.",
         "attachments": [
           {
             "name": "invoice_PO-01117.pdf",
@@ -2192,18 +2379,42 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Release scheduled."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01117 started on 2026-01-28."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20222060 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #PO-01117 finalized for $6,196.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$6,196.00 payment initiated to Mosaic Printing Co"
           }
         ]
       },
-      "payeeId": "mosaic-printing-co"
+      "payeeId": "mosaic-printing-co",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 2060",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "2060",
+      "bankLast4": "2060",
+      "method": "ach",
+      "processedDate": "",
+      "bankAccountNumber": "0000000002060",
+      "bankRoutingNumber": "091000022"
     },
     {
       "id": "payable-40",
@@ -2212,8 +2423,8 @@
       "billNumber": "AP-01120",
       "payeeName": "Sierra Office Supply",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-13",
-      "adDate": "2026-03-08",
+      "dueDate": "2026-03-30",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -2234,7 +2445,7 @@
             "value": "$5830.00"
           }
         ],
-        "notes": "Current step: approval workflow.",
+        "notes": "Current step: Approval queued via Mastercard \u2022\u2022\u2022\u2022 0860.",
         "attachments": [
           {
             "name": "invoice_AP-01120.pdf",
@@ -2247,18 +2458,41 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Approval queued."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01120 started on 2026-03-08."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via card payment"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Card ending \u2022\u2022\u2022\u20220860 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #AP-01120 finalized for $5,830.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$5,830.00 payment initiated to Sierra Office Supply"
           }
         ]
       },
-      "payeeId": "sierra-office-supply"
+      "payeeId": "sierra-office-supply",
+      "paymentMethodType": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 0860",
+      "paymentMethodLabel": "Pay with a Card",
+      "paymentMethodEnding": "0860",
+      "cardLast4": "0860",
+      "cardNetwork": "Mastercard",
+      "method": "card",
+      "processedDate": ""
     },
     {
       "id": "payable-41",
@@ -2267,8 +2501,8 @@
       "billNumber": "BP-01123",
       "payeeName": "Mosaic Printing Co",
       "source": "Batch Upload",
-      "dueDate": "2026-03-14",
-      "adDate": "2026-03-07",
+      "dueDate": "2026-03-31",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -2289,7 +2523,7 @@
             "value": "$6092.75"
           }
         ],
-        "notes": "Current step: bank handoff.",
+        "notes": "Current step: Bank verification via Visa \u2022\u2022\u2022\u2022 4532.",
         "attachments": [
           {
             "name": "invoice_BP-01123.pdf",
@@ -2302,18 +2536,41 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Bank verification."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Bank account verified",
+            "description": "Verification is in progress"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01123 started on 2026-03-07."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via card payment"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Card ending \u2022\u2022\u2022\u20224532 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #BP-01123 finalized for $6,092.75"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$6,092.75 payment initiated to Mosaic Printing Co"
           }
         ]
       },
-      "payeeId": "mosaic-printing-co"
+      "payeeId": "mosaic-printing-co",
+      "paymentMethodType": "card",
+      "paymentMethod": "Visa \u2022\u2022\u2022\u2022 4532",
+      "paymentMethodLabel": "Pay with a Card",
+      "paymentMethodEnding": "4532",
+      "cardLast4": "4532",
+      "cardNetwork": "Visa",
+      "method": "card",
+      "processedDate": ""
     },
     {
       "id": "payable-42",
@@ -2322,8 +2579,8 @@
       "billNumber": "GL-01126",
       "payeeName": "Sierra Office Supply",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-15",
-      "adDate": "2026-03-06",
+      "dueDate": "2026-04-01",
+      "adDate": "2026-03-20",
       "status": "in_progress",
       "statusLabel": "In Progress",
       "exceptionReason": "",
@@ -2344,7 +2601,7 @@
             "value": "$6355.50"
           }
         ],
-        "notes": "Current step: processing queue.",
+        "notes": "Current step: Payment processor sync via Bank \u2022\u2022\u2022\u2022 3207.",
         "attachments": [
           {
             "name": "invoice_GL-01126.pdf",
@@ -2357,18 +2614,42 @@
         ],
         "activityLog": [
           {
-            "type": "pending",
-            "title": "In Progress",
-            "description": "Payment processor sync."
+            "timestamp": "2026-03-20T11:05:00",
+            "title": "Processing payment",
+            "description": "Payment is moving through processing"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01126 started on 2026-03-06."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20223207 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #GL-01126 finalized for $6,355.50"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$6,355.50 payment initiated to Sierra Office Supply"
           }
         ]
       },
-      "payeeId": "sierra-office-supply"
+      "payeeId": "sierra-office-supply",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 3207",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "3207",
+      "bankLast4": "3207",
+      "method": "ach",
+      "processedDate": "",
+      "bankAccountNumber": "0000000003207",
+      "bankRoutingNumber": "031000503"
     },
     {
       "id": "payable-43",
@@ -2377,12 +2658,12 @@
       "billNumber": "VR-01129",
       "payeeName": "TechNova Solutions LLC",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-16",
-      "adDate": "2026-03-05",
+      "dueDate": "2026-04-02",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "TechNova Solutions LLC bill VR-01129 imported from Sage (ERP).",
         "lineItems": [
@@ -2399,7 +2680,7 @@
             "value": "$6241.00"
           }
         ],
-        "notes": "Paid via Card and reconciled automatically.",
+        "notes": "Paid via Bank \u2022\u2022\u2022\u2022 1086 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_VR-01129.pdf",
@@ -2412,18 +2693,42 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill VR-01129 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01129 started on 2026-03-05."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20221086 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #VR-01129 finalized for $6,241.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$6,241.00 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "1086",
+      "bankLast4": "1086",
+      "method": "ach",
+      "processedDate": "2026-03-20",
+      "bankAccountNumber": "0000000001086",
+      "bankRoutingNumber": "121002847"
     },
     {
       "id": "payable-44",
@@ -2432,12 +2737,12 @@
       "billNumber": "PO-01132",
       "payeeName": "Urban Pulse Marketing",
       "source": "Batch Upload",
-      "dueDate": "2026-03-17",
-      "adDate": "2026-03-04",
+      "dueDate": "2026-04-03",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "Urban Pulse Marketing bill PO-01132 imported from Batch Upload.",
         "lineItems": [
@@ -2454,7 +2759,7 @@
             "value": "$6503.75"
           }
         ],
-        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "notes": "Paid via Bank \u2022\u2022\u2022\u2022 7341 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_PO-01132.pdf",
@@ -2467,18 +2772,42 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill PO-01132 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01132 started on 2026-03-04."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20227341 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #PO-01132 finalized for $6,503.75"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$6,503.75 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 7341",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "7341",
+      "bankLast4": "7341",
+      "method": "ach",
+      "processedDate": "2026-03-20",
+      "bankAccountNumber": "0000000007341",
+      "bankRoutingNumber": "026009593"
     },
     {
       "id": "payable-45",
@@ -2487,12 +2816,12 @@
       "billNumber": "AP-01135",
       "payeeName": "TechNova Solutions LLC",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-18",
-      "adDate": "2026-03-03",
+      "dueDate": "2026-04-04",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "TechNova Solutions LLC bill AP-01135 imported from QuickBooks Sync.",
         "lineItems": [
@@ -2509,7 +2838,7 @@
             "value": "$6766.50"
           }
         ],
-        "notes": "Paid via ACH and reconciled automatically.",
+        "notes": "Paid via Visa \u2022\u2022\u2022\u2022 5511 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_AP-01135.pdf",
@@ -2522,18 +2851,41 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill AP-01135 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01135 started on 2026-03-03."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via card payment"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Card ending \u2022\u2022\u2022\u20225511 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #AP-01135 finalized for $6,766.50"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$6,766.50 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "paymentMethodType": "card",
+      "paymentMethod": "Visa \u2022\u2022\u2022\u2022 5511",
+      "paymentMethodLabel": "Pay with a Card",
+      "paymentMethodEnding": "5511",
+      "cardLast4": "5511",
+      "cardNetwork": "Visa",
+      "method": "card",
+      "processedDate": "2026-03-20"
     },
     {
       "id": "payable-46",
@@ -2542,12 +2894,12 @@
       "billNumber": "BP-01138",
       "payeeName": "Urban Pulse Marketing",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-19",
-      "adDate": "2026-03-02",
+      "dueDate": "2026-04-05",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "Urban Pulse Marketing bill BP-01138 imported from NetSuite Import.",
         "lineItems": [
@@ -2564,7 +2916,7 @@
             "value": "$7029.25"
           }
         ],
-        "notes": "Paid via Card and reconciled automatically.",
+        "notes": "Paid via Mastercard \u2022\u2022\u2022\u2022 3423 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_BP-01138.pdf",
@@ -2577,18 +2929,41 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill BP-01138 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01138 started on 2026-03-02."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via card payment"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Card ending \u2022\u2022\u2022\u20223423 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #BP-01138 finalized for $7,029.25"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$7,029.25 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "paymentMethodType": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Pay with a Card",
+      "paymentMethodEnding": "3423",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "method": "card",
+      "processedDate": "2026-03-20"
     },
     {
       "id": "payable-47",
@@ -2597,12 +2972,12 @@
       "billNumber": "GL-01141",
       "payeeName": "TechNova Solutions LLC",
       "source": "Manual Entry",
-      "dueDate": "2026-03-20",
-      "adDate": "2026-03-01",
+      "dueDate": "2026-04-06",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "TechNova Solutions LLC bill GL-01141 imported from Manual Entry.",
         "lineItems": [
@@ -2632,18 +3007,42 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill GL-01141 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01141 started on 2026-03-01."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via SMART Exchange"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "SMART Exchange selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #GL-01141 finalized for $7,292.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$7,292.00 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodLabel": "Bank \u2022\u2022\u2022\u2022 1086",
+      "method": "ach",
+      "processedDate": "2026-03-20",
+      "paymentMethodEnding": "1086",
+      "bankLast4": "1086",
+      "bankAccountNumber": "0000000001086",
+      "bankRoutingNumber": "121002847"
     },
     {
       "id": "payable-48",
@@ -2652,12 +3051,12 @@
       "billNumber": "VR-01144",
       "payeeName": "Urban Pulse Marketing",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-21",
-      "adDate": "2026-02-28",
+      "dueDate": "2026-04-07",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "Urban Pulse Marketing bill VR-01144 imported from Sage (ERP).",
         "lineItems": [
@@ -2674,7 +3073,7 @@
             "value": "$6926.00"
           }
         ],
-        "notes": "Paid via ACH and reconciled automatically.",
+        "notes": "Paid via SMART Disburse and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_VR-01144.pdf",
@@ -2687,18 +3086,43 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill VR-01144 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01144 started on 2026-02-28."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Payment link sent to recipient"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "SMART Disburse selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #VR-01144 finalized for $6,926.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$6,926.00 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "paymentMethodType": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "method": "card",
+      "processedDate": "2026-03-20",
+      "paymentMethodEnding": "3423",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "cardholderName": "Urban Pulse Marketing",
+      "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
     },
     {
       "id": "payable-49",
@@ -2707,12 +3131,12 @@
       "billNumber": "PO-01147",
       "payeeName": "TechNova Solutions LLC",
       "source": "Batch Upload",
-      "dueDate": "2026-03-22",
-      "adDate": "2026-02-27",
+      "dueDate": "2026-04-08",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "TechNova Solutions LLC bill PO-01147 imported from Batch Upload.",
         "lineItems": [
@@ -2729,7 +3153,7 @@
             "value": "$7188.75"
           }
         ],
-        "notes": "Paid via Card and reconciled automatically.",
+        "notes": "Paid via Bank \u2022\u2022\u2022\u2022 1086 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_PO-01147.pdf",
@@ -2742,18 +3166,42 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill PO-01147 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01147 started on 2026-02-27."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20221086 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #PO-01147 finalized for $7,188.75"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$7,188.75 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "1086",
+      "bankLast4": "1086",
+      "method": "ach",
+      "processedDate": "2026-03-20",
+      "bankAccountNumber": "0000000001086",
+      "bankRoutingNumber": "121002847"
     },
     {
       "id": "payable-50",
@@ -2762,12 +3210,12 @@
       "billNumber": "AP-01150",
       "payeeName": "Urban Pulse Marketing",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-23",
-      "adDate": "2026-02-26",
+      "dueDate": "2026-04-09",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "Urban Pulse Marketing bill AP-01150 imported from QuickBooks Sync.",
         "lineItems": [
@@ -2784,7 +3232,7 @@
             "value": "$7451.50"
           }
         ],
-        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "notes": "Paid via Wire \u2022\u2022\u2022\u2022 6688 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_AP-01150.pdf",
@@ -2797,18 +3245,43 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill AP-01150 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01150 started on 2026-02-26."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20226688 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #AP-01150 finalized for $7,451.50"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$7,451.50 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "paymentMethodType": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodEnding": "3423",
+      "method": "card",
+      "processedDate": "2026-03-20",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "cardholderName": "Urban Pulse Marketing",
+      "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
     },
     {
       "id": "payable-51",
@@ -2817,12 +3290,12 @@
       "billNumber": "BP-01153",
       "payeeName": "TechNova Solutions LLC",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-24",
-      "adDate": "2026-02-25",
+      "dueDate": "2026-04-10",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "TechNova Solutions LLC bill BP-01153 imported from NetSuite Import.",
         "lineItems": [
@@ -2839,7 +3312,7 @@
             "value": "$7714.25"
           }
         ],
-        "notes": "Paid via ACH and reconciled automatically.",
+        "notes": "Paid via Visa \u2022\u2022\u2022\u2022 5511 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_BP-01153.pdf",
@@ -2852,18 +3325,41 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill BP-01153 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01153 started on 2026-02-25."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via card payment"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Card ending \u2022\u2022\u2022\u20225511 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #BP-01153 finalized for $7,714.25"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$7,714.25 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "paymentMethodType": "card",
+      "paymentMethod": "Visa \u2022\u2022\u2022\u2022 5511",
+      "paymentMethodLabel": "Pay with a Card",
+      "paymentMethodEnding": "5511",
+      "cardLast4": "5511",
+      "cardNetwork": "Visa",
+      "method": "card",
+      "processedDate": "2026-03-20"
     },
     {
       "id": "payable-52",
@@ -2872,12 +3368,12 @@
       "billNumber": "GL-01156",
       "payeeName": "Urban Pulse Marketing",
       "source": "Manual Entry",
-      "dueDate": "2026-03-25",
-      "adDate": "2026-02-24",
+      "dueDate": "2026-04-11",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "Urban Pulse Marketing bill GL-01156 imported from Manual Entry.",
         "lineItems": [
@@ -2894,7 +3390,7 @@
             "value": "$7977.00"
           }
         ],
-        "notes": "Paid via Card and reconciled automatically.",
+        "notes": "Paid via Mailing Address and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_GL-01156.pdf",
@@ -2907,18 +3403,43 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill GL-01156 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01156 started on 2026-02-24."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Check issued for delivery"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Check delivery selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #GL-01156 finalized for $7,977.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$7,977.00 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "paymentMethodType": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "method": "card",
+      "processedDate": "2026-03-20",
+      "paymentMethodEnding": "3423",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "cardholderName": "Urban Pulse Marketing",
+      "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
     },
     {
       "id": "payable-53",
@@ -2927,12 +3448,12 @@
       "billNumber": "VR-01159",
       "payeeName": "TechNova Solutions LLC",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-26",
-      "adDate": "2026-02-23",
+      "dueDate": "2026-04-12",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "TechNova Solutions LLC bill VR-01159 imported from Sage (ERP).",
         "lineItems": [
@@ -2962,18 +3483,42 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill VR-01159 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01159 started on 2026-02-23."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via SMART Exchange"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "SMART Exchange selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #VR-01159 finalized for $7,611.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$7,611.00 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodLabel": "Bank \u2022\u2022\u2022\u2022 1086",
+      "method": "ach",
+      "processedDate": "2026-03-20",
+      "paymentMethodEnding": "1086",
+      "bankLast4": "1086",
+      "bankAccountNumber": "0000000001086",
+      "bankRoutingNumber": "121002847"
     },
     {
       "id": "payable-54",
@@ -2982,12 +3527,12 @@
       "billNumber": "PO-01162",
       "payeeName": "Urban Pulse Marketing",
       "source": "Batch Upload",
-      "dueDate": "2026-03-27",
-      "adDate": "2026-02-22",
+      "dueDate": "2026-04-13",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "Urban Pulse Marketing bill PO-01162 imported from Batch Upload.",
         "lineItems": [
@@ -3004,7 +3549,7 @@
             "value": "$7873.75"
           }
         ],
-        "notes": "Paid via ACH and reconciled automatically.",
+        "notes": "Paid via Bank \u2022\u2022\u2022\u2022 7341 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_PO-01162.pdf",
@@ -3017,18 +3562,42 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill PO-01162 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01162 started on 2026-02-22."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20227341 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #PO-01162 finalized for $7,873.75"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$7,873.75 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 7341",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "7341",
+      "bankLast4": "7341",
+      "method": "ach",
+      "processedDate": "2026-03-20",
+      "bankAccountNumber": "0000000007341",
+      "bankRoutingNumber": "026009593"
     },
     {
       "id": "payable-55",
@@ -3037,12 +3606,12 @@
       "billNumber": "AP-01165",
       "payeeName": "TechNova Solutions LLC",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-28",
-      "adDate": "2026-02-21",
+      "dueDate": "2026-04-14",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "TechNova Solutions LLC bill AP-01165 imported from QuickBooks Sync.",
         "lineItems": [
@@ -3059,7 +3628,7 @@
             "value": "$8136.50"
           }
         ],
-        "notes": "Paid via Card and reconciled automatically.",
+        "notes": "Paid via Bank \u2022\u2022\u2022\u2022 1086 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_AP-01165.pdf",
@@ -3072,18 +3641,42 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill AP-01165 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01165 started on 2026-02-21."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20221086 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #AP-01165 finalized for $8,136.50"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$8,136.50 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "1086",
+      "bankLast4": "1086",
+      "method": "ach",
+      "processedDate": "2026-03-20",
+      "bankAccountNumber": "0000000001086",
+      "bankRoutingNumber": "121002847"
     },
     {
       "id": "payable-56",
@@ -3092,12 +3685,12 @@
       "billNumber": "BP-01168",
       "payeeName": "Urban Pulse Marketing",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-29",
-      "adDate": "2026-02-20",
+      "dueDate": "2026-04-15",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "Urban Pulse Marketing bill BP-01168 imported from NetSuite Import.",
         "lineItems": [
@@ -3114,7 +3707,7 @@
             "value": "$8399.25"
           }
         ],
-        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "notes": "Paid via Mastercard \u2022\u2022\u2022\u2022 3423 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_BP-01168.pdf",
@@ -3127,18 +3720,41 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill BP-01168 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01168 started on 2026-02-20."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via card payment"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Card ending \u2022\u2022\u2022\u20223423 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #BP-01168 finalized for $8,399.25"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$8,399.25 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "paymentMethodType": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Pay with a Card",
+      "paymentMethodEnding": "3423",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "method": "card",
+      "processedDate": "2026-03-20"
     },
     {
       "id": "payable-57",
@@ -3147,12 +3763,12 @@
       "billNumber": "GL-01171",
       "payeeName": "TechNova Solutions LLC",
       "source": "Manual Entry",
-      "dueDate": "2026-03-30",
-      "adDate": "2026-02-19",
+      "dueDate": "2026-04-16",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "TechNova Solutions LLC bill GL-01171 imported from Manual Entry.",
         "lineItems": [
@@ -3169,7 +3785,7 @@
             "value": "$8662.00"
           }
         ],
-        "notes": "Paid via ACH and reconciled automatically.",
+        "notes": "Paid via Visa \u2022\u2022\u2022\u2022 5511 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_GL-01171.pdf",
@@ -3182,18 +3798,41 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill GL-01171 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01171 started on 2026-02-19."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via card payment"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Card ending \u2022\u2022\u2022\u20225511 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #GL-01171 finalized for $8,662.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$8,662.00 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "paymentMethodType": "card",
+      "paymentMethod": "Visa \u2022\u2022\u2022\u2022 5511",
+      "paymentMethodLabel": "Pay with a Card",
+      "paymentMethodEnding": "5511",
+      "cardLast4": "5511",
+      "cardNetwork": "Visa",
+      "method": "card",
+      "processedDate": "2026-03-20"
     },
     {
       "id": "payable-58",
@@ -3202,12 +3841,12 @@
       "billNumber": "VR-01174",
       "payeeName": "Urban Pulse Marketing",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-02",
-      "adDate": "2026-02-18",
+      "dueDate": "2026-04-17",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "Urban Pulse Marketing bill VR-01174 imported from Sage (ERP).",
         "lineItems": [
@@ -3224,7 +3863,7 @@
             "value": "$8296.00"
           }
         ],
-        "notes": "Paid via Card and reconciled automatically.",
+        "notes": "Paid via SMART Disburse and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_VR-01174.pdf",
@@ -3237,18 +3876,43 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill VR-01174 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01174 started on 2026-02-18."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Payment link sent to recipient"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "SMART Disburse selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #VR-01174 finalized for $8,296.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$8,296.00 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "paymentMethodType": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "method": "card",
+      "processedDate": "2026-03-20",
+      "paymentMethodEnding": "3423",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "cardholderName": "Urban Pulse Marketing",
+      "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
     },
     {
       "id": "payable-59",
@@ -3257,12 +3921,12 @@
       "billNumber": "PO-01177",
       "payeeName": "TechNova Solutions LLC",
       "source": "Batch Upload",
-      "dueDate": "2026-03-03",
-      "adDate": "2026-02-17",
+      "dueDate": "2026-04-18",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "TechNova Solutions LLC bill PO-01177 imported from Batch Upload.",
         "lineItems": [
@@ -3292,18 +3956,42 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill PO-01177 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01177 started on 2026-02-17."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via SMART Exchange"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "SMART Exchange selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #PO-01177 finalized for $8,558.75"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$8,558.75 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodLabel": "Bank \u2022\u2022\u2022\u2022 1086",
+      "method": "ach",
+      "processedDate": "2026-03-20",
+      "paymentMethodEnding": "1086",
+      "bankLast4": "1086",
+      "bankAccountNumber": "0000000001086",
+      "bankRoutingNumber": "121002847"
     },
     {
       "id": "payable-60",
@@ -3312,12 +4000,12 @@
       "billNumber": "AP-01180",
       "payeeName": "Urban Pulse Marketing",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-04",
-      "adDate": "2026-02-16",
+      "dueDate": "2026-04-19",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "Urban Pulse Marketing bill AP-01180 imported from QuickBooks Sync.",
         "lineItems": [
@@ -3334,7 +4022,7 @@
             "value": "$8821.50"
           }
         ],
-        "notes": "Paid via ACH and reconciled automatically.",
+        "notes": "Paid via Wire \u2022\u2022\u2022\u2022 6688 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_AP-01180.pdf",
@@ -3347,18 +4035,43 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill AP-01180 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01180 started on 2026-02-16."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20226688 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #AP-01180 finalized for $8,821.50"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$8,821.50 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "paymentMethodType": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodEnding": "3423",
+      "method": "card",
+      "processedDate": "2026-03-20",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "cardholderName": "Urban Pulse Marketing",
+      "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
     },
     {
       "id": "payable-61",
@@ -3367,12 +4080,12 @@
       "billNumber": "BP-01183",
       "payeeName": "TechNova Solutions LLC",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-05",
-      "adDate": "2026-02-15",
+      "dueDate": "2026-03-21",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "TechNova Solutions LLC bill BP-01183 imported from NetSuite Import.",
         "lineItems": [
@@ -3389,7 +4102,7 @@
             "value": "$9084.25"
           }
         ],
-        "notes": "Paid via Card and reconciled automatically.",
+        "notes": "Paid via Bank \u2022\u2022\u2022\u2022 1086 and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_BP-01183.pdf",
@@ -3402,18 +4115,42 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill BP-01183 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01183 started on 2026-02-15."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent via bank transfer"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Bank account ending \u2022\u2022\u2022\u20221086 selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #BP-01183 finalized for $9,084.25"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$9,084.25 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "paymentMethodType": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodLabel": "ACH",
+      "paymentMethodEnding": "1086",
+      "bankLast4": "1086",
+      "method": "ach",
+      "processedDate": "2026-03-20",
+      "bankAccountNumber": "0000000001086",
+      "bankRoutingNumber": "121002847"
     },
     {
       "id": "payable-62",
@@ -3422,12 +4159,12 @@
       "billNumber": "GL-01186",
       "payeeName": "Urban Pulse Marketing",
       "source": "Manual Entry",
-      "dueDate": "2026-03-06",
-      "adDate": "2026-02-14",
+      "dueDate": "2026-03-22",
+      "adDate": "2026-03-20",
       "status": "paid",
       "statusLabel": "Paid",
       "exceptionReason": "",
-      "processingStep": "",
+      "processingStep": "Payment completed",
       "details": {
         "summary": "Urban Pulse Marketing bill GL-01186 imported from Manual Entry.",
         "lineItems": [
@@ -3444,7 +4181,7 @@
             "value": "$9347.00"
           }
         ],
-        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "notes": "Paid via Mailing Address and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_GL-01186.pdf",
@@ -3457,18 +4194,43 @@
         ],
         "activityLog": [
           {
-            "type": "complete",
-            "title": "Paid",
-            "description": "Bill GL-01186 was processed successfully."
+            "timestamp": "2026-03-20T11:20:00",
+            "title": "Payment completed",
+            "description": "Payment successfully delivered"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01186 started on 2026-02-14."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Check issued for delivery"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Check delivery selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #GL-01186 finalized for $9,347.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$9,347.00 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "paymentMethodType": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "method": "card",
+      "processedDate": "2026-03-20",
+      "paymentMethodEnding": "3423",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "cardholderName": "Urban Pulse Marketing",
+      "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
     },
     {
       "id": "payable-63",
@@ -3477,8 +4239,8 @@
       "billNumber": "VR-01189",
       "payeeName": "TechNova Solutions LLC",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-07",
-      "adDate": "2026-02-13",
+      "dueDate": "2026-03-23",
+      "adDate": "2026-03-20",
       "status": "exception",
       "statusLabel": "Exception",
       "exceptionReason": "Approval required",
@@ -3512,18 +4274,42 @@
         ],
         "activityLog": [
           {
-            "type": "failed",
-            "title": "Payment Exception",
-            "description": "Approval required."
+            "timestamp": "2026-03-20T11:10:00",
+            "title": "Payment failed",
+            "description": "Approval required"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01189 started on 2026-02-13."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent for processing"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Payment method selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #VR-01189 finalized for $8,981.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$8,981.00 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "processedDate": "",
+      "paymentMethodType": "ach",
+      "method": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodLabel": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodEnding": "1086",
+      "bankLast4": "1086",
+      "bankAccountNumber": "0000000001086",
+      "bankRoutingNumber": "121002847"
     },
     {
       "id": "payable-64",
@@ -3532,8 +4318,8 @@
       "billNumber": "PO-01192",
       "payeeName": "Urban Pulse Marketing",
       "source": "Batch Upload",
-      "dueDate": "2026-03-08",
-      "adDate": "2026-02-12",
+      "dueDate": "2026-03-24",
+      "adDate": "2026-03-20",
       "status": "exception",
       "statusLabel": "Exception",
       "exceptionReason": "Missing remittance details",
@@ -3567,18 +4353,43 @@
         ],
         "activityLog": [
           {
-            "type": "failed",
-            "title": "Payment Exception",
-            "description": "Missing remittance details."
+            "timestamp": "2026-03-20T11:10:00",
+            "title": "Payment failed",
+            "description": "Missing remittance details"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01192 started on 2026-02-12."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent for processing"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Payment method selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #PO-01192 finalized for $9,243.75"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$9,243.75 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "processedDate": "",
+      "paymentMethodType": "card",
+      "method": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodEnding": "3423",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "cardholderName": "Urban Pulse Marketing",
+      "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
     },
     {
       "id": "payable-65",
@@ -3587,8 +4398,8 @@
       "billNumber": "AP-01195",
       "payeeName": "TechNova Solutions LLC",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-09",
-      "adDate": "2026-02-11",
+      "dueDate": "2026-03-25",
+      "adDate": "2026-03-20",
       "status": "exception",
       "statusLabel": "Exception",
       "exceptionReason": "Invalid vendor account",
@@ -3622,18 +4433,42 @@
         ],
         "activityLog": [
           {
-            "type": "failed",
-            "title": "Payment Exception",
-            "description": "Invalid vendor account."
+            "timestamp": "2026-03-20T11:10:00",
+            "title": "Payment failed",
+            "description": "Invalid vendor account"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01195 started on 2026-02-11."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent for processing"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Payment method selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #AP-01195 finalized for $9,506.50"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$9,506.50 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "processedDate": "",
+      "paymentMethodType": "ach",
+      "method": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodLabel": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodEnding": "1086",
+      "bankLast4": "1086",
+      "bankAccountNumber": "0000000001086",
+      "bankRoutingNumber": "121002847"
     },
     {
       "id": "payable-66",
@@ -3642,8 +4477,8 @@
       "billNumber": "BP-01198",
       "payeeName": "Urban Pulse Marketing",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-10",
-      "adDate": "2026-02-10",
+      "dueDate": "2026-03-26",
+      "adDate": "2026-03-20",
       "status": "exception",
       "statusLabel": "Exception",
       "exceptionReason": "Duplicate bill detected",
@@ -3677,18 +4512,43 @@
         ],
         "activityLog": [
           {
-            "type": "failed",
-            "title": "Payment Exception",
-            "description": "Duplicate bill detected."
+            "timestamp": "2026-03-20T11:10:00",
+            "title": "Payment failed",
+            "description": "Duplicate bill detected"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01198 started on 2026-02-10."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent for processing"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Payment method selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #BP-01198 finalized for $9,769.25"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$9,769.25 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "processedDate": "",
+      "paymentMethodType": "card",
+      "method": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodEnding": "3423",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "cardholderName": "Urban Pulse Marketing",
+      "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
     },
     {
       "id": "payable-67",
@@ -3697,8 +4557,8 @@
       "billNumber": "GL-01201",
       "payeeName": "TechNova Solutions LLC",
       "source": "Manual Entry",
-      "dueDate": "2026-03-11",
-      "adDate": "2026-02-09",
+      "dueDate": "2026-03-27",
+      "adDate": "2026-03-20",
       "status": "exception",
       "statusLabel": "Exception",
       "exceptionReason": "Approval required",
@@ -3732,18 +4592,42 @@
         ],
         "activityLog": [
           {
-            "type": "failed",
-            "title": "Payment Exception",
-            "description": "Approval required."
+            "timestamp": "2026-03-20T11:10:00",
+            "title": "Payment failed",
+            "description": "Approval required"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01201 started on 2026-02-09."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent for processing"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Payment method selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #GL-01201 finalized for $10,032.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$10,032.00 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "processedDate": "",
+      "paymentMethodType": "ach",
+      "method": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodLabel": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodEnding": "1086",
+      "bankLast4": "1086",
+      "bankAccountNumber": "0000000001086",
+      "bankRoutingNumber": "121002847"
     },
     {
       "id": "payable-68",
@@ -3752,8 +4636,8 @@
       "billNumber": "VR-01204",
       "payeeName": "Urban Pulse Marketing",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-12",
-      "adDate": "2026-02-08",
+      "dueDate": "2026-03-28",
+      "adDate": "2026-03-20",
       "status": "exception",
       "statusLabel": "Exception",
       "exceptionReason": "Missing remittance details",
@@ -3787,18 +4671,43 @@
         ],
         "activityLog": [
           {
-            "type": "failed",
-            "title": "Payment Exception",
-            "description": "Missing remittance details."
+            "timestamp": "2026-03-20T11:10:00",
+            "title": "Payment failed",
+            "description": "Missing remittance details"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for VR-01204 started on 2026-02-08."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent for processing"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Payment method selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #VR-01204 finalized for $9,666.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$9,666.00 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "processedDate": "",
+      "paymentMethodType": "card",
+      "method": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodEnding": "3423",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "cardholderName": "Urban Pulse Marketing",
+      "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
     },
     {
       "id": "payable-69",
@@ -3807,8 +4716,8 @@
       "billNumber": "PO-01207",
       "payeeName": "TechNova Solutions LLC",
       "source": "Batch Upload",
-      "dueDate": "2026-03-13",
-      "adDate": "2026-02-07",
+      "dueDate": "2026-03-29",
+      "adDate": "2026-03-20",
       "status": "exception",
       "statusLabel": "Exception",
       "exceptionReason": "Invalid vendor account",
@@ -3842,18 +4751,42 @@
         ],
         "activityLog": [
           {
-            "type": "failed",
-            "title": "Payment Exception",
-            "description": "Invalid vendor account."
+            "timestamp": "2026-03-20T11:10:00",
+            "title": "Payment failed",
+            "description": "Invalid vendor account"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for PO-01207 started on 2026-02-07."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent for processing"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Payment method selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #PO-01207 finalized for $9,928.75"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$9,928.75 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "processedDate": "",
+      "paymentMethodType": "ach",
+      "method": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodLabel": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodEnding": "1086",
+      "bankLast4": "1086",
+      "bankAccountNumber": "0000000001086",
+      "bankRoutingNumber": "121002847"
     },
     {
       "id": "payable-70",
@@ -3862,8 +4795,8 @@
       "billNumber": "AP-01210",
       "payeeName": "Urban Pulse Marketing",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-14",
-      "adDate": "2026-02-06",
+      "dueDate": "2026-03-30",
+      "adDate": "2026-03-20",
       "status": "exception",
       "statusLabel": "Exception",
       "exceptionReason": "Duplicate bill detected",
@@ -3897,18 +4830,43 @@
         ],
         "activityLog": [
           {
-            "type": "failed",
-            "title": "Payment Exception",
-            "description": "Duplicate bill detected."
+            "timestamp": "2026-03-20T11:10:00",
+            "title": "Payment failed",
+            "description": "Duplicate bill detected"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for AP-01210 started on 2026-02-06."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent for processing"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Payment method selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #AP-01210 finalized for $10,191.50"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$10,191.50 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "processedDate": "",
+      "paymentMethodType": "card",
+      "method": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodEnding": "3423",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "cardholderName": "Urban Pulse Marketing",
+      "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
     },
     {
       "id": "payable-71",
@@ -3917,8 +4875,8 @@
       "billNumber": "BP-01213",
       "payeeName": "TechNova Solutions LLC",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-15",
-      "adDate": "2026-02-05",
+      "dueDate": "2026-03-31",
+      "adDate": "2026-03-20",
       "status": "exception",
       "statusLabel": "Exception",
       "exceptionReason": "Approval required",
@@ -3952,18 +4910,42 @@
         ],
         "activityLog": [
           {
-            "type": "failed",
-            "title": "Payment Exception",
-            "description": "Approval required."
+            "timestamp": "2026-03-20T11:10:00",
+            "title": "Payment failed",
+            "description": "Approval required"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for BP-01213 started on 2026-02-05."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent for processing"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Payment method selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #BP-01213 finalized for $10,454.25"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$10,454.25 payment initiated to TechNova Solutions LLC"
           }
         ]
       },
-      "payeeId": "technova-solutions-llc"
+      "payeeId": "technova-solutions-llc",
+      "processedDate": "",
+      "paymentMethodType": "ach",
+      "method": "ach",
+      "paymentMethod": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodLabel": "Bank \u2022\u2022\u2022\u2022 1086",
+      "paymentMethodEnding": "1086",
+      "bankLast4": "1086",
+      "bankAccountNumber": "0000000001086",
+      "bankRoutingNumber": "121002847"
     },
     {
       "id": "payable-72",
@@ -3972,8 +4954,8 @@
       "billNumber": "GL-01216",
       "payeeName": "Urban Pulse Marketing",
       "source": "Manual Entry",
-      "dueDate": "2026-03-16",
-      "adDate": "2026-02-04",
+      "dueDate": "2026-04-01",
+      "adDate": "2026-03-20",
       "status": "exception",
       "statusLabel": "Exception",
       "exceptionReason": "Missing remittance details",
@@ -4007,18 +4989,43 @@
         ],
         "activityLog": [
           {
-            "type": "failed",
-            "title": "Payment Exception",
-            "description": "Missing remittance details."
+            "timestamp": "2026-03-20T11:10:00",
+            "title": "Payment failed",
+            "description": "Missing remittance details"
           },
           {
-            "type": "event",
-            "title": "Initiated",
-            "description": "Payment workflow for GL-01216 started on 2026-02-04."
+            "timestamp": "2026-03-20T10:45:00",
+            "title": "Payment sent",
+            "description": "Funds sent for processing"
+          },
+          {
+            "timestamp": "2026-03-20T10:35:00",
+            "title": "Payment method confirmed",
+            "description": "Payment method selected"
+          },
+          {
+            "timestamp": "2026-03-20T10:25:00",
+            "title": "Invoice finalized",
+            "description": "Invoice #GL-01216 finalized for $10,717.00"
+          },
+          {
+            "timestamp": "2026-03-20T10:15:00",
+            "title": "Payment created",
+            "description": "$10,717.00 payment initiated to Urban Pulse Marketing"
           }
         ]
       },
-      "payeeId": "urban-pulse-marketing"
+      "payeeId": "urban-pulse-marketing",
+      "processedDate": "",
+      "paymentMethodType": "card",
+      "method": "card",
+      "paymentMethod": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodLabel": "Mastercard \u2022\u2022\u2022\u2022 3423",
+      "paymentMethodEnding": "3423",
+      "cardLast4": "3423",
+      "cardNetwork": "Mastercard",
+      "cardholderName": "Urban Pulse Marketing",
+      "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
     }
   ]
 }
