@@ -42,6 +42,7 @@ function clearSidebarBootState() {
 
 function getSidebarRefs() {
     return {
+        appShell: document.getElementById('app-shell'),
         desktopSidebarShell: document.getElementById('desktop-sidebar-shell'),
         desktopSidebarPanel: document.getElementById('desktop-sidebar-panel'),
         desktopSidebarCollapseBtn: document.getElementById('desktop-sidebar-collapse-btn'),
@@ -55,11 +56,20 @@ function getSidebarRefs() {
     };
 }
 
-function normalizeMainContentWrapperLayout() {
-    var mainContentWrapper = getSidebarRefs().mainContentWrapper;
+function normalizeMainContentWrapperLayout(collapsed) {
+    var refs = getSidebarRefs();
+    var appShell = refs.appShell;
+    var mainContentWrapper = refs.mainContentWrapper;
+    if (appShell) {
+        appShell.style.minHeight = '';
+    }
     if (!mainContentWrapper) return;
+    var isCollapsed = typeof collapsed === 'boolean'
+        ? collapsed
+        : document.documentElement.getAttribute('data-sidebar-collapsed') === 'true';
     mainContentWrapper.classList.remove('lg:pl-[288px]', 'lg:pl-[68px]');
-    mainContentWrapper.classList.add('min-w-0', 'flex', 'flex-1', 'flex-col');
+    mainContentWrapper.classList.add('min-w-0', 'min-h-screen', 'flex', 'flex-col');
+    mainContentWrapper.classList.add(isCollapsed ? 'lg:pl-[68px]' : 'lg:pl-[288px]');
 }
 
 function ensureNavTooltip() {
@@ -330,7 +340,7 @@ function setDesktopSidebarCollapsed(collapsed) {
     desktopSidebarShell.classList.toggle('lg:w-[288px]', !collapsed);
     desktopSidebarShell.classList.toggle('lg:w-[68px]', collapsed);
 
-    normalizeMainContentWrapperLayout();
+    normalizeMainContentWrapperLayout(collapsed);
 
     if (desktopLogoFull) desktopLogoFull.classList.toggle('hidden', collapsed);
     if (desktopLogoMark) {

@@ -531,7 +531,7 @@ ${buildFooter('')}
 </dialog></el-dialog>
 
 <!-- ===== STATIC SIDEBAR FOR DESKTOP (hidden below lg) ===== -->
-<div id="desktop-sidebar-shell" class="hidden lg:sticky lg:top-[calc(var(--stp-alert-height,0px)-1px)] lg:flex lg:h-[calc(100vh-var(--stp-alert-height,0px)+1px)] lg:shrink-0 lg:self-start lg:flex-col ${collapsed ? 'is-collapsed lg:w-[68px]' : 'lg:w-[288px]'}">
+<div id="desktop-sidebar-shell" class="hidden lg:fixed lg:top-[var(--stp-alert-height,0px)] lg:left-0 lg:z-50 lg:flex lg:h-[calc(100vh-var(--stp-alert-height,0px))] lg:flex-col ${collapsed ? 'is-collapsed lg:w-[68px]' : 'lg:w-[288px]'}">
 <div id="desktop-sidebar-panel" class="flex h-full grow flex-col justify-between overflow-y-auto border-r border-gray-200 bg-white px-4 pt-2 pb-4 dark:border-white/10 dark:bg-gray-900">
 <div class="flex flex-col gap-6">
 <div id="desktop-logo-row" class="relative flex min-h-9 items-center justify-start pl-[2px]">

@@ -241,7 +241,7 @@
             this.style.display = 'block';
             this.style.width = '100%';
             this.style.position = 'sticky';
-            this.style.top = 'calc(var(--stp-alert-height,0px) - 1px)';
+            this.style.top = 'var(--stp-alert-height,0px)';
             this.style.zIndex = '40';
             var pagePath = pagePathFromContext.call(this);
             var title = this.getAttribute('data-title') || pageTitleFromPath(pagePath);
@@ -256,7 +256,7 @@
             if (existing) return existing;
             var host = document.createElement('div');
             host.id = 'stp-alert-host';
-            host.className = 'sticky top-0 z-[60]';
+            host.className = 'fixed inset-x-0 top-0 z-[60]';
             document.body.insertBefore(host, document.body.firstChild);
             return host;
         }
@@ -307,11 +307,13 @@
             var host = document.getElementById('stp-alert-host');
             if (!host) {
                 document.documentElement.style.setProperty('--stp-alert-height', '0px');
+                document.body.style.paddingTop = '0px';
                 return;
             }
             var visible = host.querySelector('[data-global-stp-alert-blue]:not(.hidden), [data-global-stp-alert-yellow]:not(.hidden)');
             var height = visible ? host.offsetHeight : 0;
             document.documentElement.style.setProperty('--stp-alert-height', height + 'px');
+            document.body.style.paddingTop = height + 'px';
         }
 
         disconnectedCallback() {
