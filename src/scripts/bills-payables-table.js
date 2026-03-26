@@ -107,6 +107,8 @@
   var tabLoadingTimer = null;
   var initialLoadingTimer = null;
   var searchLoadingTimer = null;
+  var filterDismissHandler = null;
+  var filterResizeHandler = null;
   var refreshHalfTurns = 0;
   var pendingScheduleCancelId = '';
   var ICON_SORT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-70" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-70" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
@@ -1458,18 +1460,24 @@
       });
     }
 
-    document.addEventListener('click', function (event) {
-      if (!refs.filterDropdown || !state.filterMenuOpen) return;
-      if (refs.filterDropdown.contains(event.target)) return;
-      setFilterMenuOpen(false);
-      setFilterPanel('root');
-    });
+    if (!filterDismissHandler) {
+      filterDismissHandler = function (event) {
+        if (!refs.filterDropdown || !state.filterMenuOpen) return;
+        if (refs.filterDropdown.contains(event.target)) return;
+        setFilterMenuOpen(false);
+        setFilterPanel('root');
+      };
+      document.addEventListener('click', filterDismissHandler);
+    }
 
-    window.addEventListener('resize', function () {
-      if (!state.filterMenuOpen) return;
-      applyFilterMenuLayout();
-      setFilterPanel(state.activeFilterPanel || 'root', true);
-    });
+    if (!filterResizeHandler) {
+      filterResizeHandler = function () {
+        if (!state.filterMenuOpen) return;
+        applyFilterMenuLayout();
+        setFilterPanel(state.activeFilterPanel || 'root', true);
+      };
+      window.addEventListener('resize', filterResizeHandler);
+    }
   }
 
   function renderTable() {

@@ -16,30 +16,33 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 
-  <script src="../../../src/scripts/nav-component.js" defer></script>
+  <script src="../../../src/scripts/sidebar-boot.js"></script>
+  <script src="../../../src/scripts/nav-component.js"></script>
+  <script src="../../../src/scripts/stp-state.js"></script>
+  <script src="../../../src/scripts/topbar-component.js"></script>
   <script src="../../../src/scripts/sidebar.js" defer></script>
-  <script src="../../../src/scripts/stp-state.js" defer></script>
-  <script src="../../../src/scripts/topbar-component.js" defer></script>
   <script src="../../../src/scripts/shared.js" defer></script>
+  <script src="../../../src/scripts/shell-navigation.js" defer></script>
   <script src="../../../src/scripts/table-skeleton.js" defer></script>
   <script src="../../../src/scripts/vendors-data.js" defer></script>
   <script src="../../../src/scripts/vendors-page.js" defer></script>
 </head>
 
 <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
-  <app-nav></app-nav>
+  <div id="app-shell" class="min-h-screen lg:flex lg:items-stretch">
+    <app-nav class="lg:block lg:shrink-0"></app-nav>
 
-  <div id="main-content-wrapper" class="lg:pl-[360px]">
+    <div id="main-content-wrapper" class="min-w-0 flex flex-1 flex-col">
     <app-topbar></app-topbar>
 
     <main class="flex w-full justify-center p-2 sm:p-2 lg:p-4">
       <div class="flex w-full max-w-[1280px] flex-col gap-5">
-        <div class="rounded-xl border border-gray-200 bg-white shadow-xs dark:border-white/10 dark:bg-gray-900 overflow-clip">
-          <div class="border-b border-gray-200 px-4 py-4 dark:border-white/10 sm:px-6">
+        <div class="rounded-none sm:rounded-lg bg-white shadow-sm dark:bg-gray-900">
+          <div class="pt-5 sm:pt-6">
+          <div class="px-4 pb-5 sm:px-6">
             <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
               <div class="flex max-w-2xl flex-col gap-2">
                 <h1 class="text-xl font-semibold text-gray-900 dark:text-white">Vendors</h1>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Manage vendor health, payment setup, remittance destinations, and linked payable activity from one operational view.</p>
               </div>
               <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
                 <div class="grid grid-cols-1">
@@ -128,6 +131,8 @@
             <div id="vendors-summary" class="mt-4 flex flex-wrap items-center gap-2"></div>
             <div id="vendors-table-active-filters" class="hidden mt-3 flex flex-wrap items-center justify-end gap-2"></div>
           </div>
+          <div class="h-px bg-gray-200 dark:bg-white/10"></div>
+          </div>
 
           <div class="px-0 sm:px-4">
             <div data-table-scroll class="overflow-x-auto">
@@ -137,10 +142,11 @@
             </div>
           </div>
 
-          <div data-vendors-pagination class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:px-6 rounded-b-xl"></div>
+          <div data-vendors-pagination class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:px-6"></div>
         </div>
       </div>
     </main>
+    </div>
   </div>
 </body>
 </html>

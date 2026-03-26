@@ -33,12 +33,18 @@ function toggleRow(rowId) {
 
 const DESKTOP_SIDEBAR_COLLAPSED_STORAGE_KEY = 'dashboard-sidebar-collapsed-v1';
 
+function clearSidebarBootState() {
+    var root = document.documentElement;
+    root.classList.remove('sidebar-booting');
+    var style = document.getElementById('dashboard-sidebar-boot-style');
+    if (style) style.remove();
+}
+
 function getSidebarRefs() {
     return {
         desktopSidebarShell: document.getElementById('desktop-sidebar-shell'),
         desktopSidebarPanel: document.getElementById('desktop-sidebar-panel'),
-        desktopSidebarToggle: document.getElementById('desktop-sidebar-toggle'),
-        desktopSidebarToggleIcon: document.getElementById('desktop-sidebar-toggle-icon'),
+        desktopSidebarCollapseBtn: document.getElementById('desktop-sidebar-collapse-btn'),
         desktopLogoRow: document.getElementById('desktop-logo-row'),
         desktopLogoFull: document.getElementById('desktop-logo-full'),
         desktopLogoMark: document.getElementById('desktop-logo-mark'),
@@ -49,15 +55,76 @@ function getSidebarRefs() {
     };
 }
 
+function normalizeMainContentWrapperLayout() {
+    var mainContentWrapper = getSidebarRefs().mainContentWrapper;
+    if (!mainContentWrapper) return;
+    mainContentWrapper.classList.remove('lg:pl-[288px]', 'lg:pl-[68px]');
+    mainContentWrapper.classList.add('min-w-0', 'flex', 'flex-1', 'flex-col');
+}
+
 function ensureNavTooltip() {
     var existing = document.getElementById('dashboard-nav-tooltip');
     if (existing) return existing;
 
     var tooltip = document.createElement('div');
     tooltip.id = 'dashboard-nav-tooltip';
-    tooltip.className = 'pointer-events-none fixed z-[80] -translate-y-1/2 rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg opacity-0 -translate-x-1 transition-all duration-200 ease-out';
+    tooltip.className = 'pointer-events-none fixed z-[80] rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg';
+    tooltip.style.opacity = '0';
+    tooltip.style.transform = 'translateY(-50%) translateX(-4px)';
+    tooltip.style.transition = 'opacity 150ms ease-out, transform 150ms ease-out';
     document.body.appendChild(tooltip);
     return tooltip;
+}
+
+function ensureDesktopNavCurrentIndicator() {
+    var desktopNav = getSidebarRefs().desktopNav;
+    if (!desktopNav) return null;
+
+    var existing = desktopNav.querySelector('#desktop-nav-current-indicator');
+    if (existing) return existing;
+
+    var indicator = document.createElement('span');
+    indicator.id = 'desktop-nav-current-indicator';
+    indicator.setAttribute('aria-hidden', 'true');
+    indicator.className = 'pointer-events-none absolute top-0 left-0 z-10 w-0.5 rounded-full bg-blue-600 opacity-0 transition-[transform,height,left,opacity] duration-200 ease-out dark:bg-blue-400';
+    desktopNav.appendChild(indicator);
+    return indicator;
+}
+
+function syncDesktopNavCurrentIndicator(immediate) {
+    var refs = getSidebarRefs();
+    var desktopNav = refs.desktopNav;
+    if (!desktopNav) return;
+
+    var indicator = ensureDesktopNavCurrentIndicator();
+    if (!indicator) return;
+
+    var activeItem = desktopNav.querySelector('.nav-item.is-active');
+    if (!activeItem) {
+        indicator.style.opacity = '0';
+        return;
+    }
+
+    var navRect = desktopNav.getBoundingClientRect();
+    var itemRect = activeItem.getBoundingClientRect();
+    var left = -16;
+    var top = itemRect.top - navRect.top + 8;
+    var height = Math.max(itemRect.height - 16, 8);
+
+    if (immediate) {
+        indicator.style.transition = 'none';
+    }
+
+    indicator.style.left = left + 'px';
+    indicator.style.height = height + 'px';
+    indicator.style.transform = 'translateY(' + top + 'px)';
+    indicator.style.opacity = '1';
+
+    if (immediate) {
+        requestAnimationFrame(function () {
+            indicator.style.transition = '';
+        });
+    }
 }
 
 /* ===== Nav Label Preparation ===== */
@@ -120,8 +187,108 @@ function saveDesktopSidebarCollapsedPreference(collapsed) {
  */
 function hideNavTooltip() {
     var navTooltip = ensureNavTooltip();
-    navTooltip.classList.add('opacity-0', '-translate-x-1');
-    navTooltip.classList.remove('opacity-100', 'translate-x-0');
+    navTooltip.style.opacity = '0';
+    navTooltip.style.transform = 'translateY(-50%) translateX(-4px)';
+}
+
+function bindDashboardSidebarRuntime() {
+    var refs = getSidebarRefs();
+    var desktopNav = refs.desktopNav;
+    var desktopSidebarPanel = refs.desktopSidebarPanel;
+
+    ensureNavTooltip();
+
+    if (desktopSidebarPanel && !desktopSidebarPanel.dataset.btnTooltipBound) {
+        desktopSidebarPanel.addEventListener('mouseover', function (e) {
+            var btn = e.target.closest('[data-sidebar-btn-tooltip]');
+            if (!btn) return;
+            var navTooltip = ensureNavTooltip();
+            var label = btn.getAttribute('data-sidebar-btn-tooltip');
+            if (!label) return;
+            navTooltip.textContent = label;
+            var rect = btn.getBoundingClientRect();
+            navTooltip.style.left = rect.right + 12 + 'px';
+            navTooltip.style.top = rect.top + rect.height / 2 + 'px';
+            requestAnimationFrame(function () {
+                navTooltip.style.opacity = '1';
+                navTooltip.style.transform = 'translateY(-50%) translateX(0)';
+            });
+        });
+        desktopSidebarPanel.addEventListener('mouseout', function (e) {
+            var btn = e.target.closest('[data-sidebar-btn-tooltip]');
+            if (!btn) return;
+            if (e.relatedTarget && btn.contains(e.relatedTarget)) return;
+            hideNavTooltip();
+        });
+        desktopSidebarPanel.dataset.btnTooltipBound = 'true';
+    }
+
+    if (desktopNav && !desktopNav.dataset.sidebarBound) {
+        desktopNav.addEventListener('click', function (e) {
+            const smartExchangeLink = e.target.closest('[data-smart-exchange-trigger] > a');
+            if (!smartExchangeLink) return;
+            if (expandSmartExchangeFromCollapsedLink(smartExchangeLink)) {
+                e.preventDefault();
+            }
+        });
+
+        desktopNav.addEventListener('mouseover', function (e) {
+            const navItem = e.target.closest('.nav-item');
+            if (!navItem) return;
+            showNavTooltip(navItem);
+        });
+
+        desktopNav.addEventListener('mouseout', function (e) {
+            const navItem = e.target.closest('.nav-item');
+            if (!navItem) return;
+            if (e.relatedTarget && navItem.contains(e.relatedTarget)) return;
+            hideNavTooltip();
+        });
+
+        desktopNav.dataset.sidebarBound = 'true';
+    }
+
+    if (!document.body.dataset.sidebarToggleBound) {
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('[data-sidebar-toggle]')) {
+                setDesktopSidebarCollapsed(!isDesktopSidebarCollapsed());
+            }
+        });
+        document.body.dataset.sidebarToggleBound = 'true';
+    }
+
+    if (!document.body.dataset.sidebarClickBound) {
+        document.addEventListener('click', function (e) {
+            if (e.target.closest('[data-chevron-toggle]')) return;
+
+            const navItem = e.target.closest('.nav-item');
+            if (!navItem) return;
+
+            if (navItem.matches('a[href="#"]')) {
+                e.preventDefault();
+            }
+
+            document.querySelectorAll('.nav-item.is-active').forEach(function (item) {
+                item.classList.remove('is-active', 'bg-zinc-950/5', 'text-zinc-950', 'dark:bg-white/5', 'dark:text-white');
+                item.querySelectorAll('svg.nav-icon').forEach(function (icon) {
+                    icon.classList.remove('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
+                    icon.classList.add('text-gray-500', 'dark:text-gray-400');
+                });
+            });
+
+            navItem.classList.add('is-active', 'bg-zinc-950/5', 'text-zinc-950', 'dark:bg-white/5', 'dark:text-white');
+            navItem.querySelectorAll('svg.nav-icon').forEach(function (icon) {
+                icon.classList.remove('text-gray-500', 'dark:text-gray-400');
+                icon.classList.add('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
+            });
+            var href = navItem.getAttribute('href');
+            var isNavigationLink = navItem.tagName === 'A' && href && href !== '#';
+            if (!isNavigationLink) {
+                syncDesktopNavCurrentIndicator();
+            }
+        });
+        document.body.dataset.sidebarClickBound = 'true';
+    }
 }
 
 /**
@@ -148,95 +315,57 @@ function setDesktopSidebarCollapsed(collapsed) {
     var refs = getSidebarRefs();
     var desktopSidebarShell = refs.desktopSidebarShell;
     var desktopSidebarPanel = refs.desktopSidebarPanel;
-    var desktopSidebarToggle = refs.desktopSidebarToggle;
-    var desktopSidebarToggleIcon = refs.desktopSidebarToggleIcon;
-    var desktopLogoRow = refs.desktopLogoRow;
+    var desktopSidebarCollapseBtn = refs.desktopSidebarCollapseBtn;
     var desktopLogoFull = refs.desktopLogoFull;
     var desktopLogoMark = refs.desktopLogoMark;
     var desktopSidebarHelp = refs.desktopSidebarHelp;
     var desktopSidebarFooter = refs.desktopSidebarFooter;
     var mainContentWrapper = refs.mainContentWrapper;
-    var desktopNav = refs.desktopNav;
 
     if (!desktopSidebarShell || !desktopSidebarPanel || !mainContentWrapper) return;
 
+    document.documentElement.setAttribute('data-sidebar-collapsed', collapsed ? 'true' : 'false');
+
     desktopSidebarShell.classList.toggle('is-collapsed', collapsed);
-    desktopSidebarShell.classList.toggle('lg:w-[360px]', !collapsed);
-    desktopSidebarShell.classList.toggle('lg:w-[88px]', collapsed);
+    desktopSidebarShell.classList.toggle('lg:w-[288px]', !collapsed);
+    desktopSidebarShell.classList.toggle('lg:w-[68px]', collapsed);
 
-    desktopSidebarPanel.classList.toggle('px-6', !collapsed);
-    desktopSidebarPanel.classList.toggle('px-3', collapsed);
-
-    mainContentWrapper.classList.toggle('lg:pl-[360px]', !collapsed);
-    mainContentWrapper.classList.toggle('lg:pl-[88px]', collapsed);
+    normalizeMainContentWrapperLayout();
 
     if (desktopLogoFull) desktopLogoFull.classList.toggle('hidden', collapsed);
-    if (desktopLogoMark) desktopLogoMark.classList.toggle('hidden', !collapsed);
+    if (desktopLogoMark) {
+        if (collapsed) {
+            desktopLogoMark.classList.remove('hidden');
+            desktopLogoMark.classList.add('flex');
+        } else {
+            desktopLogoMark.classList.add('hidden');
+            desktopLogoMark.classList.remove('flex');
+        }
+    }
 
-    if (desktopLogoRow) desktopLogoRow.classList.toggle('justify-center', collapsed);
-    if (desktopSidebarToggleIcon) desktopSidebarToggleIcon.classList.toggle('rotate-180', collapsed);
-    if (desktopSidebarToggle) {
-        desktopSidebarToggle.classList.toggle('left-[344px]', !collapsed);
-        desktopSidebarToggle.classList.toggle('left-[72px]', collapsed);
+    if (desktopSidebarCollapseBtn) {
+        desktopSidebarCollapseBtn.classList.toggle('hidden', collapsed);
+        desktopSidebarCollapseBtn.classList.toggle('flex', !collapsed);
     }
 
     if (desktopSidebarHelp) desktopSidebarHelp.classList.toggle('hidden', collapsed);
     if (desktopSidebarFooter) desktopSidebarFooter.classList.toggle('hidden', collapsed);
 
-    if (desktopNav) {
-        desktopNav.querySelectorAll(':scope > .nav-item, :scope > [data-smart-exchange-trigger]').forEach(function (item) {
-            item.classList.toggle('overflow-hidden', collapsed);
-            item.classList.toggle('!justify-center', collapsed);
-            item.classList.toggle('!px-0', collapsed);
-
-            const iconLabelGroup = item.querySelector(':scope > span, :scope > a');
-            if (iconLabelGroup) {
-                const isSmartExchangeTrigger = item.hasAttribute('data-smart-exchange-trigger');
-                if (isSmartExchangeTrigger) {
-                    iconLabelGroup.classList.toggle('overflow-hidden', collapsed);
-                    iconLabelGroup.classList.toggle('justify-center', collapsed);
-                    iconLabelGroup.classList.toggle('px-2', !collapsed);
-                    iconLabelGroup.classList.toggle('px-0', collapsed);
-                    iconLabelGroup.classList.toggle('gap-3', !collapsed);
-                    iconLabelGroup.classList.toggle('gap-0', collapsed);
-                    const innerGroup = iconLabelGroup.querySelector(':scope > span');
-                    if (innerGroup) {
-                        innerGroup.classList.toggle('w-6', collapsed);
-                        innerGroup.classList.toggle('!flex-none', collapsed);
-                        innerGroup.classList.toggle('overflow-hidden', collapsed);
-                        innerGroup.classList.toggle('gap-0', collapsed);
-                        innerGroup.classList.toggle('justify-center', collapsed);
-                        const label = innerGroup.querySelector('.nav-label');
-                        if (label) {
-                            label.classList.toggle('hidden', collapsed);
-                            label.classList.toggle('sr-only', collapsed);
-                        }
-                    }
-                } else {
-                    iconLabelGroup.classList.toggle('w-6', collapsed);
-                    iconLabelGroup.classList.toggle('!flex-none', collapsed);
-                    iconLabelGroup.classList.toggle('overflow-hidden', collapsed);
-                    iconLabelGroup.classList.toggle('gap-0', collapsed);
-                    iconLabelGroup.classList.toggle('justify-center', collapsed);
-                    const label = iconLabelGroup.querySelector('.nav-label');
-                    if (label) {
-                        label.classList.toggle('hidden', collapsed);
-                        label.classList.toggle('sr-only', collapsed);
-                    }
-                }
-            }
-
-            const chevronButton = item.querySelector(':scope > [data-chevron-toggle]');
-            if (chevronButton) chevronButton.classList.toggle('hidden', collapsed);
-
-            const trailingChevron = item.querySelector(':scope > svg.chevron-icon');
-            if (trailingChevron) trailingChevron.classList.toggle('hidden', collapsed);
-        });
+    var appNav = document.querySelector('app-nav');
+    if (appNav && typeof appNav.refreshNav === 'function') {
+        var currentPage = (document.body && document.body.getAttribute('data-page'))
+            || (window.location.pathname.split('/').pop() || '');
+        appNav.refreshNav(currentPage);
+        bindDashboardSidebarRuntime();
+        syncActiveNavItemStyles();
     }
 
     if (collapsed) closeAllDesktopSubmenus();
     hideNavTooltip();
     saveDesktopSidebarCollapsedPreference(collapsed);
+    requestAnimationFrame(function () {
+        syncDesktopNavCurrentIndicator();
+    });
 }
 
 /* ===== Submenu Toggle ===== */
@@ -257,6 +386,9 @@ function toggleSubmenuAnimation(submenu, chevron) {
         submenu.classList.add('max-h-0', 'opacity-0', 'pointer-events-none');
         if (chevron) chevron.classList.remove('rotate-180');
     }
+    requestAnimationFrame(function () {
+        syncDesktopNavCurrentIndicator();
+    });
 }
 
 /**
@@ -355,8 +487,8 @@ function showNavTooltip(navItem) {
     navTooltip.style.top = rect.top + rect.height / 2 + 'px';
 
     requestAnimationFrame(function () {
-        navTooltip.classList.remove('opacity-0', '-translate-x-1');
-        navTooltip.classList.add('opacity-100', 'translate-x-0');
+        navTooltip.style.opacity = '1';
+        navTooltip.style.transform = 'translateY(-50%) translateX(0)';
     });
 }
 
@@ -368,12 +500,13 @@ function showNavTooltip(navItem) {
  */
 function syncActiveNavItemStyles() {
     document.querySelectorAll('.nav-item.is-active').forEach(function (item) {
-        item.classList.add('bg-gray-100', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
+        item.classList.add('bg-zinc-950/5', 'text-zinc-950', 'dark:bg-white/5', 'dark:text-white');
         item.querySelectorAll('svg.nav-icon').forEach(function (icon) {
-            icon.classList.remove('text-gray-500', 'dark:text-gray-400');
+            icon.classList.remove('text-gray-500', 'dark:text-gray-400', 'group-hover:text-zinc-950', 'group-focus-visible:text-zinc-950', 'dark:group-hover:text-white', 'dark:group-focus-visible:text-white');
             icon.classList.add('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
         });
     });
+    syncDesktopNavCurrentIndicator(document.documentElement.classList.contains('sidebar-booting'));
 }
 
 syncActiveNavItemStyles();
@@ -385,76 +518,21 @@ syncActiveNavItemStyles();
  * Only one nav item can be active at a time. Prevents default on # links.
  */
 function initDashboardSidebar() {
-    var refs = getSidebarRefs();
-    var desktopNav = refs.desktopNav;
-    var desktopSidebarToggle = refs.desktopSidebarToggle;
-
-    ensureNavTooltip();
-
-    if (desktopNav && !desktopNav.dataset.sidebarBound) {
-        desktopNav.addEventListener('click', function (e) {
-            const smartExchangeLink = e.target.closest('[data-smart-exchange-trigger] > a');
-            if (!smartExchangeLink) return;
-            if (expandSmartExchangeFromCollapsedLink(smartExchangeLink)) {
-                e.preventDefault();
-            }
-        });
-
-        desktopNav.addEventListener('mouseover', function (e) {
-            const navItem = e.target.closest('.nav-item');
-            if (!navItem) return;
-            showNavTooltip(navItem);
-        });
-
-        desktopNav.addEventListener('mouseout', function (e) {
-            const navItem = e.target.closest('.nav-item');
-            if (!navItem) return;
-            if (e.relatedTarget && navItem.contains(e.relatedTarget)) return;
-            hideNavTooltip();
-        });
-
-        desktopNav.dataset.sidebarBound = 'true';
-    }
-
-    if (desktopSidebarToggle && !desktopSidebarToggle.dataset.sidebarBound) {
-        desktopSidebarToggle.addEventListener('click', function () {
-            setDesktopSidebarCollapsed(!isDesktopSidebarCollapsed());
-        });
-        desktopSidebarToggle.dataset.sidebarBound = 'true';
-    }
-
-    if (!document.body.dataset.sidebarClickBound) {
-        document.addEventListener('click', function (e) {
-            if (e.target.closest('[data-chevron-toggle]')) return;
-
-            const navItem = e.target.closest('.nav-item');
-            if (!navItem) return;
-
-            if (navItem.matches('a[href="#"]')) {
-                e.preventDefault();
-            }
-
-            document.querySelectorAll('.nav-item.is-active').forEach(function (item) {
-                item.classList.remove('is-active', 'bg-gray-100', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
-                item.querySelectorAll('svg.nav-icon').forEach(function (icon) {
-                    icon.classList.remove('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
-                    icon.classList.add('text-gray-500', 'dark:text-gray-400');
-                });
-            });
-
-            navItem.classList.add('is-active', 'bg-gray-100', 'text-gray-900', 'dark:bg-white/10', 'dark:text-white');
-            navItem.querySelectorAll('svg.nav-icon').forEach(function (icon) {
-                icon.classList.remove('text-gray-500', 'dark:text-gray-400');
-                icon.classList.add('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
-            });
-        });
-        document.body.dataset.sidebarClickBound = 'true';
-    }
-
+    bindDashboardSidebarRuntime();
+    normalizeMainContentWrapperLayout();
     prepareDesktopNavLabels();
     setDesktopSidebarCollapsed(loadDesktopSidebarCollapsedPreference());
     syncActiveNavItemStyles();
+    requestAnimationFrame(function () {
+        clearSidebarBootState();
+    });
 }
 
+window.bindDashboardSidebarRuntime = bindDashboardSidebarRuntime;
 window.initDashboardSidebar = initDashboardSidebar;
 initDashboardSidebar();
+
+window.addEventListener('load', function () { syncDesktopNavCurrentIndicator(true); });
+if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(function () { syncDesktopNavCurrentIndicator(true); });
+}

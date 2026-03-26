@@ -30,11 +30,13 @@
 
     <!-- Tailwind Plus Elements (for el-dialog, el-dropdown) -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-    <script src="../../../src/scripts/nav-component.js" defer></script>
+    <script src="../../../src/scripts/sidebar-boot.js"></script>
+    <script src="../../../src/scripts/nav-component.js"></script>
+    <script src="../../../src/scripts/stp-state.js"></script>
+    <script src="../../../src/scripts/topbar-component.js"></script>
     <script src="../../../src/scripts/sidebar.js" defer></script>
-    <script src="../../../src/scripts/stp-state.js" defer></script>
-    <script src="../../../src/scripts/topbar-component.js" defer></script>
     <script src="../../../src/scripts/shared.js" defer></script>
+    <script src="../../../src/scripts/shell-navigation.js" defer></script>
     <script src="../../../src/scripts/table-skeleton.js" defer></script>
     <style>
         #gp-signature-canvas {
@@ -51,10 +53,11 @@
 
 <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
 
-    <app-nav></app-nav>
+    <div id="app-shell" class="min-h-screen lg:flex lg:items-stretch">
+    <app-nav class="lg:block lg:shrink-0"></app-nav>
 
-    <!-- ===== MAIN CONTENT (offset by sidebar on lg+) ===== -->
-    <div id="main-content-wrapper" class="lg:pl-[360px]">
+    <!-- ===== MAIN CONTENT ===== -->
+    <div id="main-content-wrapper" class="min-w-0 flex flex-1 flex-col">
 
         <!-- ===== TOP HEADER BAR ===== -->
         <app-topbar></app-topbar>
@@ -1540,6 +1543,7 @@
         </main>
 
     </div>
+    </div>
 
 
     <!-- ===== GET PAID: PDF REVIEW MODAL ===== -->
@@ -1752,7 +1756,7 @@
                                 <div class="grid grid-cols-2 gap-4">
                                     <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">
                                         <span class="inline-flex items-center gap-1.5">
-                                            <span>Amount</span>
+                                            <span>Transfer Amount</span>
                                             <span id="pp-confirm-amount-info" class="group relative inline-flex invisible opacity-0 pointer-events-none transition-opacity">
                                                 <button type="button" class="inline-flex rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">
                                                     <span class="sr-only">Explain amount</span>
@@ -1780,7 +1784,7 @@
                                                     </svg>
                                                 </button>
                                                 <span role="tooltip" class="pointer-events-none invisible absolute bottom-full left-0 z-50 mb-2 w-64 rounded-md bg-gray-900 px-3 py-2 text-xs font-medium leading-5 text-white opacity-0 shadow-lg transition duration-100 ease-out group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 dark:bg-black">
-                                                    Balance on the card after the selected funding method is applied and this payment is completed.
+                                                    Balance on the card after this payment flow is completed.
                                                 </span>
                                             </span>
                                         </span>
@@ -2141,8 +2145,25 @@
                         <div id="gp-card-copy-details-section"
                             class="flex flex-col gap-2 self-stretch rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">
                             <div class="grid grid-cols-2 gap-4 self-stretch">
-                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Pending
-                                    Payment</span>
+                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Amount</span>
+                                <span id="gp-vc-card-amount"
+                                    class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
+                            </div>
+                            <div class="grid grid-cols-2 gap-4 self-stretch">
+                                <span class="inline-flex items-center gap-1.5 text-sm font-medium text-gray-900 dark:text-gray-100">
+                                    <span>Pending Payment</span>
+                                    <span class="group relative inline-flex">
+                                        <button type="button" class="inline-flex rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">
+                                            <span class="sr-only">Explain pending payment</span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                                                <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" />
+                                            </svg>
+                                        </button>
+                                        <span role="tooltip" class="pointer-events-none invisible absolute bottom-full left-0 z-50 mb-2 w-64 rounded-md bg-gray-900 px-3 py-2 text-xs font-medium leading-5 text-white opacity-0 shadow-lg transition duration-100 ease-out group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 dark:bg-black">
+                                            This is the amount we expect the payee will charge.
+                                        </span>
+                                    </span>
+                                </span>
                                 <span id="gp-vc-pending-amount"
                                     class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
                             </div>

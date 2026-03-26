@@ -106,21 +106,24 @@
 
     <!-- Tailwind Plus Elements -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-    <script src="../../../src/scripts/nav-component.js" defer></script>
+    <script src="../../../src/scripts/sidebar-boot.js"></script>
+    <script src="../../../src/scripts/nav-component.js"></script>
+    <script src="../../../src/scripts/stp-state.js"></script>
+    <script src="../../../src/scripts/topbar-component.js"></script>
     <script src="../../../src/scripts/sidebar.js" defer></script>
-    <script src="../../../src/scripts/stp-state.js" defer></script>
-    <script src="../../../src/scripts/topbar-component.js" defer></script>
     <script src="../../../src/scripts/shared.js" defer></script>
+    <script src="../../../src/scripts/shell-navigation.js" defer></script>
     <script src="../../../src/scripts/payment-preferences-components.js"></script>
     <script src="../../../src/scripts/payment-preferences-tabs.js" defer></script>
 </head>
 
 <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
 
-    <app-nav></app-nav>
+    <div id="app-shell" class="min-h-screen lg:flex lg:items-stretch">
+    <app-nav class="lg:block lg:shrink-0"></app-nav>
 
     <!-- ===== MAIN CONTENT ===== -->
-    <div id="main-content-wrapper" class="lg:pl-[360px]">
+    <div id="main-content-wrapper" class="min-w-0 flex flex-1 flex-col">
 
         <!-- ===== TOP HEADER BAR ===== -->
         <app-topbar></app-topbar>
@@ -1368,6 +1371,7 @@
 
             </div>
         </main>
+    </div>
     </div>
     <!-- /main-content-wrapper -->
 

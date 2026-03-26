@@ -17,27 +17,31 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 
-  <script src="../../../src/scripts/nav-component.js" defer></script>
+  <script src="../../../src/scripts/sidebar-boot.js"></script>
+  <script src="../../../src/scripts/nav-component.js"></script>
+  <script src="../../../src/scripts/stp-state.js"></script>
+  <script src="../../../src/scripts/topbar-component.js"></script>
   <script src="../../../src/scripts/sidebar.js" defer></script>
-  <script src="../../../src/scripts/stp-state.js" defer></script>
-  <script src="../../../src/scripts/topbar-component.js" defer></script>
   <script src="../../../src/scripts/shared.js" defer></script>
+  <script src="../../../src/scripts/shell-navigation.js" defer></script>
   <script src="../../../src/scripts/table-skeleton.js" defer></script>
 </head>
 
 <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
-  <app-nav></app-nav>
+  <div id="app-shell" class="min-h-screen lg:flex lg:items-stretch">
+    <app-nav class="lg:block lg:shrink-0"></app-nav>
 
-  <div id="main-content-wrapper" class="lg:pl-[360px]">
+    <div id="main-content-wrapper" class="min-w-0 flex flex-1 flex-col">
     <app-topbar></app-topbar>
 
-    <main class="w-full flex justify-center p-2 sm:p-2 lg:p-4">
+    <main class="flex w-full justify-center p-0 sm:p-2 lg:p-4">
       <div class="flex w-full max-w-[1280px] flex-col gap-5">
-        <div class="rounded-xl border border-gray-200 dark:border-white/10 bg-white shadow-xs dark:bg-gray-900 overflow-clip mb-4">
-          <div class="px-4 py-3 border-b border-gray-200 dark:border-white/10">
+        <div class="rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900">
+          <div class="pt-5 sm:pt-6">
+          <div class="px-4 pb-5 sm:px-6">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div class="flex items-center gap-4">
-                <h3 class="text-base font-semibold text-gray-900 dark:text-white whitespace-nowrap">Bills and Payables</h3>
+                <h1 class="text-xl font-semibold text-gray-900 dark:text-white whitespace-nowrap">Bills and Payables</h1>
 
                 <button id="bp-refresh-btn" type="button" class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:focus-visible:outline-blue-500 transition-colors cursor-pointer">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
@@ -157,8 +161,10 @@
             </div>
             <div id="bp-table-active-filters" class="hidden mt-3 flex flex-wrap items-center justify-end gap-2"></div>
           </div>
+          <div class="h-px bg-gray-200 dark:bg-white/10"></div>
+          </div>
 
-          <div class="border-b border-gray-200 px-4 py-4 dark:border-white/10">
+          <div class="border-b border-gray-200 px-4 py-4 dark:border-white/10 sm:px-6">
             <div class="grid grid-cols-1 sm:hidden">
               <select id="bp-tab-select" aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-gray-800/50 dark:text-gray-100 dark:*:bg-gray-800 dark:outline-white/10 dark:focus:outline-indigo-500">
                 <option value="ready_to_pay">Ready to Pay</option>
@@ -201,10 +207,11 @@
             </div>
           </div>
 
-          <div data-pagination class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:px-6 rounded-b-xl"></div>
+          <div data-pagination class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:px-6"></div>
         </div>
       </div>
     </main>
+    </div>
   </div>
 
   <dialog id="bp-schedule-cancel-dialog"

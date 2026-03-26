@@ -1,0 +1,9 @@
+@import 'tailwindcss';
+@source "../../src/scripts/**/*.js";
+@source "../../src/pages/dashboard/**/*.html";
+@source inline("lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-[360px] lg:w-[88px] lg:pl-[360px] lg:pl-[88px] lg:hidden top-[30px] left-[344px] left-[72px] z-[70] max-w-[360px] size-8 w-11 size-full sm:ml-6 w-48 sm:text-2xl sm:gap-4 sm:flex sm:items-center sm:w-auto gap-9 pb-6 ml-9");
+
+@theme {
+  --font-sans: Inter, sans-serif;
+  --font-sans--font-feature-settings: 'cv11';
+}

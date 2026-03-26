@@ -30,11 +30,13 @@
 
     <!-- Tailwind Plus Elements (for el-dialog, el-dropdown) -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-    <script src="../../../src/scripts/nav-component.js" defer></script>
+    <script src="../../../src/scripts/sidebar-boot.js"></script>
+    <script src="../../../src/scripts/nav-component.js"></script>
+    <script src="../../../src/scripts/stp-state.js"></script>
+    <script src="../../../src/scripts/topbar-component.js"></script>
     <script src="../../../src/scripts/sidebar.js" defer></script>
-    <script src="../../../src/scripts/stp-state.js" defer></script>
-    <script src="../../../src/scripts/topbar-component.js" defer></script>
     <script src="../../../src/scripts/shared.js" defer></script>
+    <script src="../../../src/scripts/shell-navigation.js" defer></script>
     <script src="../../../src/scripts/table-skeleton.js" defer></script>
     <style>
         #gp-signature-canvas {
@@ -50,16 +52,17 @@
 
 <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
 
-    <app-nav></app-nav>
+    <div id="app-shell" class="min-h-screen lg:flex lg:items-stretch">
+    <app-nav class="lg:block lg:shrink-0"></app-nav>
 
-    <!-- ===== MAIN CONTENT (offset by sidebar on lg+) ===== -->
-    <div id="main-content-wrapper" class="lg:pl-[360px]">
+    <!-- ===== MAIN CONTENT ===== -->
+    <div id="main-content-wrapper" class="min-w-0 flex flex-1 flex-col">
 
         <!-- ===== TOP HEADER BAR ===== -->
         <app-topbar></app-topbar>
 
         <!-- ===== MAIN CONTENT AREA ===== -->
-        <main class="w-full flex justify-center p-2 sm:p-2 lg:p-4">
+        <main class="flex w-full justify-center p-0 sm:p-2 lg:p-4">
 
 
 
@@ -893,14 +896,15 @@
                 <!-- ===== END GET PAID PANEL ===== -->
 
                 <div id="table-section"
-                    class="rounded-xl border border-gray-200 dark:border-white/1 bg-white shadow-xs dark:bg-gray-900 overflow-clip mb-4">
+                    class="rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900">
 
                     <!-- ===== CARD HEADER ===== -->
-                    <div class="px-4 py-3 border-b border-gray-200 dark:border-white/10">
+                    <div class="pt-5 sm:pt-6">
+                    <div class="px-4 pb-5 sm:px-6">
                         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <div class="flex items-center gap-4">
-                                <h3 class="text-base font-semibold text-gray-900 dark:text-white whitespace-nowrap">
-                                    Payments</h3>
+                                <h1 class="text-xl font-semibold text-gray-900 dark:text-white whitespace-nowrap">
+                                    Payments</h1>
 
                                 <button id="sx-table-refresh-btn" type="button"
                                     class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:focus-visible:outline-blue-500 transition-colors">
@@ -1144,7 +1148,7 @@
                     </div>
 
                     <!-- ===== STATUS TABS ===== -->
-                    <div class="border-b border-gray-200 px-4  py-4 dark:border-white/10">
+                    <div class="border-t border-b border-gray-200 px-4 py-4 sm:px-6 dark:border-white/10">
 
                         <div class="grid grid-cols-1 sm:hidden">
                             <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
@@ -1198,19 +1202,22 @@
                             </div>
                         </div>
                     </div>
+                    <div class="h-px bg-gray-200 dark:bg-white/10"></div>
+                    </div>
 
 
 
 
                     <!-- ===== PAGINATION (rendered by exchanges-table.js) ===== -->
                     <div data-pagination
-                        class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:px-6 rounded-b-xl">
+                        class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:px-6">
                     </div>
 
                 </div>
             </div>
         </main>
 
+    </div>
     </div>
 
 

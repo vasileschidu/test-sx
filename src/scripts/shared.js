@@ -18,12 +18,27 @@
 function initThemeToggle() {
     var root = document.documentElement;
     var toggle = document.getElementById('theme-toggle');
-    if (!toggle) return;
+    var toggleButton = document.querySelector('[data-theme-toggle-button]');
+    if (!toggle && !toggleButton) return;
+
+    function syncThemeControls(isDark) {
+        if (toggle) toggle.checked = isDark;
+        if (toggleButton) {
+            toggleButton.setAttribute('aria-pressed', isDark ? 'true' : 'false');
+            toggleButton.querySelectorAll('[data-theme-icon="light"]').forEach(function (icon) {
+                icon.classList.toggle('hidden', isDark);
+            });
+            toggleButton.querySelectorAll('[data-theme-icon="dark"]').forEach(function (icon) {
+                icon.classList.toggle('hidden', !isDark);
+            });
+        }
+    }
 
     function setTheme(isDark) {
         root.classList.toggle('dark', isDark);
         try { localStorage.setItem('theme', isDark ? 'dark' : 'light'); } catch (e) {}
-        toggle.checked = isDark;
+        syncThemeControls(isDark);
+        window.dispatchEvent(new CustomEvent('app-theme-change', { detail: { isDark: isDark } }));
     }
 
     var savedTheme = null;
@@ -31,12 +46,20 @@ function initThemeToggle() {
     if (savedTheme === 'dark' || savedTheme === 'light') {
         setTheme(savedTheme === 'dark');
     } else {
-        toggle.checked = root.classList.contains('dark');
+        syncThemeControls(root.classList.contains('dark'));
     }
 
-    toggle.addEventListener('change', function () {
-        setTheme(toggle.checked);
-    });
+    if (toggle) {
+        toggle.addEventListener('change', function () {
+            setTheme(toggle.checked);
+        });
+    }
+
+    if (toggleButton) {
+        toggleButton.addEventListener('click', function () {
+            setTheme(!root.classList.contains('dark'));
+        });
+    }
 }
 
 /* ===== Breadcrumbs ===== */
@@ -91,28 +114,46 @@ function initBreadcrumbs() {
     var nav = document.getElementById('dynamic-breadcrumbs');
     if (!nav) return;
 
-    var path = document.body && document.body.getAttribute('data-page')
-        ? document.body.getAttribute('data-page')
-        : ((window.location.pathname || '').split('/').pop() || '');
+    var path = nav.getAttribute('data-page')
+        ? nav.getAttribute('data-page')
+        : (document.body && document.body.getAttribute('data-page')
+            ? document.body.getAttribute('data-page')
+            : ((window.location.pathname || '').split('/').pop() || ''));
     var items = BREADCRUMB_CONFIGS[path] || [];
     if (!items.length) return;
 
     var html = '' +
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-400 dark:text-gray-500">' +
-        '  <path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd" />' +
-        '</svg>';
+        '<ol role="list" class="flex items-center space-x-4">' +
+        '  <li>' +
+        '    <div>' +
+        '      <a href="' + resolveBreadcrumbHref('smart-exchange.html') + '" class="text-gray-400 transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">' +
+        '        <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5 shrink-0">' +
+        '          <path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd" />' +
+        '        </svg>' +
+        '        <span class="sr-only">Home</span>' +
+        '      </a>' +
+        '    </div>' +
+        '  </li>';
 
     items.forEach(function (item, index) {
+        var isLast = index === items.length - 1;
         html += '' +
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-300 dark:text-gray-600">' +
-            '  <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
-            '</svg>';
-        if (item.href && index !== items.length - 1) {
-            html += '<a href="' + resolveBreadcrumbHref(item.href) + '" class="text-sm font-medium text-gray-500 hover:text-gray-700 transition-colors dark:text-gray-400 dark:hover:text-gray-200">' + item.label + '</a>';
+            '<li>' +
+            '  <div class="flex items-center">' +
+            '    <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500">' +
+            '      <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
+            '    </svg>';
+        if (item.href && !isLast) {
+            html += '<a href="' + resolveBreadcrumbHref(item.href) + '" class="ml-4 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">' + item.label + '</a>';
         } else {
-            html += '<span class="text-sm font-medium text-gray-900 dark:text-white">' + item.label + '</span>';
+            html += '<a href="#" aria-current="page" class="ml-4 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100">' + item.label + '</a>';
         }
+        html += '' +
+            '  </div>' +
+            '</li>';
     });
+
+    html += '</ol>';
 
     nav.innerHTML = html;
 }
@@ -1034,6 +1075,83 @@ function initMobileOverlayScrollLock() {
     }
 }
 
+/* ===== Dev Auto Reload ===== */
+
+function initDevAutoReload() {
+    var hostname = window.location.hostname || '';
+    var isLocalhost = hostname === '127.0.0.1' || hostname === 'localhost';
+    if (!isLocalhost) return;
+    if (window.__STATIC_DEV_AUTO_RELOAD_INITIALIZED__) return;
+    window.__STATIC_DEV_AUTO_RELOAD_INITIALIZED__ = true;
+
+    var assetUrls = [];
+    var seen = Object.create(null);
+
+    function pushUrl(rawUrl) {
+        if (!rawUrl) return;
+        try {
+            var parsed = new URL(rawUrl, window.location.href);
+            if (parsed.origin !== window.location.origin) return;
+            if (seen[parsed.href]) return;
+            seen[parsed.href] = true;
+            assetUrls.push(parsed.href);
+        } catch (error) {}
+    }
+
+    pushUrl(window.location.href);
+    document.querySelectorAll('script[src], link[rel="stylesheet"][href]').forEach(function (node) {
+        pushUrl(node.src || node.href);
+    });
+
+    var signatures = new Map();
+    var isReloading = false;
+
+    function buildSignature(response) {
+        return [
+            response.headers.get('etag') || '',
+            response.headers.get('last-modified') || '',
+            response.headers.get('content-length') || ''
+        ].join('|');
+    }
+
+    function reloadPage() {
+        if (isReloading) return;
+        isReloading = true;
+        window.location.reload();
+    }
+
+    function checkAsset(url) {
+        return fetch(url, {
+            method: 'HEAD',
+            cache: 'no-store'
+        }).then(function (response) {
+            if (!response.ok) throw new Error('HTTP ' + response.status);
+            var nextSignature = buildSignature(response);
+            if (!nextSignature || nextSignature === '||') return;
+
+            if (!signatures.has(url)) {
+                signatures.set(url, nextSignature);
+                return;
+            }
+
+            if (signatures.get(url) !== nextSignature) {
+                reloadPage();
+            }
+        }).catch(function () {});
+    }
+
+    assetUrls.forEach(function (url) {
+        checkAsset(url);
+    });
+
+    window.setInterval(function () {
+        if (document.visibilityState === 'hidden' || isReloading) return;
+        assetUrls.forEach(function (url) {
+            checkAsset(url);
+        });
+    }, 1200);
+}
+
 /* ===== Init ===== */
 
 initThemeToggle();
@@ -1044,3 +1162,4 @@ initCountryFlag();
 initFilledFieldTypography();
 initDialogDismissGuard();
 initMobileOverlayScrollLock();
+initDevAutoReload();

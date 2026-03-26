@@ -75,6 +75,7 @@
     fundingAmount: '',
     sendingMethod: 'on_file',
   };
+  var _lastSubmittedPayableSelection = null;
   var _smartTestEmailState = {
     smart_disburse: { sending: false },
     smart_exchange: { sending: false },
@@ -307,6 +308,40 @@
   function getCardDisplayLabel(card) {
     if (!card) return '';
     return String(card.cardName || 'Virtual Card').trim() + ' •••• ' + String(card.last4 || '').trim();
+  }
+
+  function getMyCompanyProfileSnapshot() {
+    return window.__myCompanyProfileCache && typeof window.__myCompanyProfileCache === 'object'
+      ? window.__myCompanyProfileCache
+      : null;
+  }
+
+  function getMyCardholderName() {
+    var profile = getMyCompanyProfileSnapshot();
+    return String(
+      (profile && profile.cardholderName) ||
+      'My Card'
+    ).trim();
+  }
+
+  function getMyCardholderAddress() {
+    var profile = getMyCompanyProfileSnapshot();
+    var mailing = profile && profile.mailingAddress ? String(profile.mailingAddress.address || '').trim() : '';
+    if (mailing) return mailing;
+    var legal = profile && profile.legalAddress ? profile.legalAddress : null;
+    if (!legal) return '--';
+    return [
+      legal.line1,
+      legal.line2,
+      [legal.city, legal.state].filter(Boolean).join(', '),
+      [legal.postalCode, legal.country || legal.countryCode].filter(Boolean).join(' ')
+    ].filter(Boolean).join('\n') || '--';
+  }
+
+  function isSelectionNewCard(selection) {
+    if (!selection) return false;
+    if (selection.isNewCardCreated === true) return true;
+    return String(selection.cardSource || '') === 'new';
   }
 
   function getCardSearchDisplayLabel(card) {
@@ -1419,6 +1454,7 @@
     var formattedProjectedBalance = formatMoney(getCardProjectedBalance(card), card.currency || 'USD');
     var formattedFundingAmount = formatMoney(fundingMethod === 'spend_balance' ? 0 : parseMoneyInput(_cardFundingState.fundingAmount), card.currency || 'USD');
     var formattedCurrentBalance = formatMoney(Number((card && card.currentBalance) || 0), card.currency || 'USD');
+    var isNewCard = String(_cardFundingState.cardSource || '') === 'new' && !!_cardFundingState.pendingNewCard;
     return {
       methodId: 'card',
       methodLabel: 'Pay with a Card',
@@ -1427,9 +1463,9 @@
       paymentDateIso: getEffectivePaymentDateIso(),
       originName: origin ? String(origin.displayName || origin.name || origin.bankName || 'Origination account').trim() : 'Origination account',
       originSub: origin ? ('••••' + getAccountLast4(origin)) : '--',
-      recipientName: String(_cardFundingState.cardSource || '') === 'new' ? String(card.cardName || 'Virtual Card').trim() + ' •••• ••••' : getCardDisplayLabel(card),
-      recipientSub: String(_cardFundingState.cardSource || '') === 'new' ? 'New card will be created after confirmation' : ('Expires ' + String(card.expDate || '').trim()),
-      confirmTitle: String(_cardFundingState.cardSource || '') === 'new'
+      recipientName: isNewCard ? String(card.cardName || 'Virtual Card').trim() + ' •••• ••••' : getCardDisplayLabel(card),
+      recipientSub: isNewCard ? 'New card will be created after confirmation' : ('Expires ' + String(card.expDate || '').trim()),
+      confirmTitle: isNewCard
         ? ('Create and fund new card with ' + formatMoney(_payContext.row && _payContext.row.amount, (_payContext.row && _payContext.row.currency) || 'USD'))
         : ('Confirm ' + formatMoney(_payContext.row && _payContext.row.amount, (_payContext.row && _payContext.row.currency) || 'USD') + ' payment'),
       cardId: card.id,
@@ -1437,7 +1473,10 @@
       cardBrand: card.brand,
       cardLast4: card.last4,
       cardExpDate: card.expDate,
-      cardSource: String(_cardFundingState.cardSource || ''),
+      cardSource: isNewCard ? 'new' : 'existing',
+      isNewCardCreated: isNewCard,
+      cardholderName: getMyCardholderName(),
+      cardholderAddress: getMyCardholderAddress(),
       fundingMethod: fundingMethod,
       fundingMethodLabel: fundingLabels[fundingMethod] || 'Funding',
       fundingAmount: fundingMethod === 'spend_balance' ? 0 : parseMoneyInput(_cardFundingState.fundingAmount),
@@ -1490,6 +1529,9 @@
       cardLast4: String(card.last4 || getRowCardLast4(_payContext.row) || ''),
       cardExpDate: String(card.expDate || '').trim(),
       cardSource: 'existing',
+      isNewCardCreated: false,
+      cardholderName: String(card.cardholderName || '').trim() || getMyCardholderName(),
+      cardholderAddress: String(card.cardholderAddress || '').trim() || getMyCardholderAddress(),
       fundingMethod: fundingMethod,
       fundingMethodLabel: fundingMethod === 'spend_balance' ? 'Spend Balance' : 'Add Funds',
       fundingAmount: rawFundingAmount,
@@ -1512,7 +1554,7 @@
     if (!selection || String(selection.methodId || '') !== 'card') return '';
     var isSpendBalance = String(selection.fundingMethod || '') === 'spend_balance';
     var isSecure = String(selection.sendingMethod || '') === 'delivery_website';
-    var isNewCard = String(selection.cardSource || '') === 'new';
+    var isNewCard = isSelectionNewCard(selection);
 
     if (isSecure) {
       if (isNewCard) {
@@ -1537,7 +1579,7 @@
     if (!selection || String(selection.methodId || '') !== 'card') {
       return formatMoney((_payContext.row && _payContext.row.amount) || 0, (_payContext.row && _payContext.row.currency) || 'USD');
     }
-    if (String(selection.cardSource || '') === 'existing') {
+    if (!isSelectionNewCard(selection)) {
       return String(selection.currentBalanceText || selection.projectedBalanceText || selection.amount || '--');
     }
     return String(selection.fundingAmountText || selection.amount || '--');
@@ -1547,7 +1589,7 @@
     if (!selection || String(selection.methodId || '') !== 'card') {
       return 'Use these card details with your vendor like a regular card payment.';
     }
-    if (String(selection.cardSource || '') === 'new') {
+    if (isSelectionNewCard(selection)) {
       return 'This new virtual card has been created and funded for the payment amount shown. Use these card details with your vendor like a regular card payment.';
     }
     if (String(selection.fundingMethod || '') === 'spend_balance') {
@@ -2507,7 +2549,7 @@
     var isCard = selection.methodId === 'card';
     var isSpendBalance = isCard && (selection.fundingMethod === 'spend_balance');
     var isCardSecure = isCard && selection.sendingMethod === 'delivery_website';
-    var isNewCard = isCard && String(selection.cardSource || '') === 'new';
+    var isNewCard = isCard && isSelectionNewCard(selection);
     var buildingIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path fill-rule="evenodd" d="M4 16.5v-13h-.25a.75.75 0 0 1 0-1.5h12.5a.75.75 0 0 1 0 1.5H16v13h.25a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75v-2.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75v2.5a.75.75 0 0 1-.75.75h-3.5a.75.75 0 0 1 0-1.5H4Zm3-11a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM7.5 9a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1ZM11 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm.5 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z" clip-rule="evenodd" /></svg>';
     var contactIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z" /></svg>';
     var cardIconSvg = isCard ? getCardBrandIcon(selection.cardBrand) : '';
@@ -2547,8 +2589,16 @@
     }
     if (recipientLabel) recipientLabel.textContent = isSmartExchange ? '' : (isCard ? 'Card' : 'Recipient');
     if (recipientMobileLabel) recipientMobileLabel.textContent = isCard ? 'Card' : (isSmart ? 'Send to' : 'Recipient');
-    if (recipientNewCardBadge) recipientNewCardBadge.classList.toggle('hidden', !isNewCard);
-    if (recipientMobileNewCardBadge) recipientMobileNewCardBadge.classList.toggle('hidden', !isNewCard);
+    if (recipientNewCardBadge) {
+      recipientNewCardBadge.classList.toggle('hidden', !isNewCard);
+      recipientNewCardBadge.style.display = isNewCard ? '' : 'none';
+      recipientNewCardBadge.setAttribute('aria-hidden', isNewCard ? 'false' : 'true');
+    }
+    if (recipientMobileNewCardBadge) {
+      recipientMobileNewCardBadge.classList.toggle('hidden', !isNewCard);
+      recipientMobileNewCardBadge.style.display = isNewCard ? '' : 'none';
+      recipientMobileNewCardBadge.setAttribute('aria-hidden', isNewCard ? 'false' : 'true');
+    }
     if (recipientCards) {
       recipientCards.classList.toggle('sm:flex-row', isSmart);
       recipientCards.classList.toggle('sm:flex-wrap', isSmart);
@@ -2667,7 +2717,7 @@
     }
 
     if (isCard) {
-      var isNewCard = String(selection.cardSource || '') === 'new';
+      var isNewCard = isSelectionNewCard(selection);
       var isSpendBalance = String(selection.fundingMethod || '') === 'spend_balance';
       var isSecureDelivery = String(selection.sendingMethod || '') === 'delivery_website';
       setText('gp-submit-success-title', isNewCard ? 'New Card Created and Funded!' : 'Card Ready to Use!');
@@ -2736,17 +2786,8 @@
     return prefix + ' ' + middle.slice(0, 4) + ' ' + middle.slice(4, 6) + last4.slice(0, 2) + ' ' + last4;
   }
 
-  function getResolvedCardAddress() {
-    var row = _payContext && _payContext.row ? _payContext.row : null;
-    var payeeProfile = _payContext && _payContext.payeeProfile ? _payContext.payeeProfile : null;
-    var address = '';
-    if (payeeProfile) {
-      address = String(payeeProfile.address || payeeProfile.remittanceAddress || payeeProfile.billingAddress || '').trim();
-    }
-    if (!address && row && row.details) {
-      address = String(row.details.address || row.details.remittanceAddress || '').trim();
-    }
-    return address || '--';
+  function getResolvedCardAddress(selection) {
+    return String((selection && selection.cardholderAddress) || '').trim() || getMyCardholderAddress();
   }
 
   function populatePayablesCardDetailsModal(selection) {
@@ -2754,14 +2795,16 @@
     var brandLogo = document.getElementById('gp-vc-brand-logo');
     var typeLogo = document.getElementById('gp-vc-type-logo');
     var howCopy = document.getElementById('gp-card-how-copy');
+    var pendingAmount = String(selection.amount || formatMoney((_payContext.row && _payContext.row.amount) || 0, (_payContext.row && _payContext.row.currency) || 'USD'));
     setText('gp-vc-cvv-pill', 'CVV : ' + getResolvedCardCvv(selection));
     setText('gp-vc-amount', getCardRevealPrimaryAmountText(selection));
+    setText('gp-vc-card-amount', getCardRevealPrimaryAmountText(selection));
     setText('gp-vc-card-number', getResolvedCardNumber(selection));
     setText('gp-vc-expiry', String(selection.cardExpDate || '--'));
     setText('gp-vc-name', String((selection.cardName || selection.payeeName || 'Virtual Card')).toUpperCase());
-    setText('gp-vc-pending-amount', formatMoney((_payContext.row && _payContext.row.amount) || 0, (_payContext.row && _payContext.row.currency) || 'USD'));
-    setText('gp-vc-holder-name', String(selection.payeeName || selection.cardName || '--'));
-    setText('gp-vc-card-address', getResolvedCardAddress());
+    setText('gp-vc-pending-amount', pendingAmount);
+    setText('gp-vc-holder-name', String(selection.cardholderName || getMyCardholderName() || '--'));
+    setText('gp-vc-card-address', getResolvedCardAddress(selection));
     setText('gp-vc-full-number', getResolvedCardNumber(selection));
     setText('gp-vc-full-expiry', String(selection.cardExpDate || '--'));
     setText('gp-vc-cvc2', getResolvedCardCvv(selection));
@@ -2774,7 +2817,10 @@
     document.addEventListener('click', function (event) {
       var trigger = event.target && event.target.closest('[commandfor="gp-card-details-dialog"]');
       if (!trigger) return;
-      var selection = getResolvedPayablesCardSelection();
+      var fromSuccessDialog = !!trigger.closest('#gp-submit-success-dialog');
+      var selection = fromSuccessDialog && _lastSubmittedPayableSelection
+        ? cloneJson(_lastSubmittedPayableSelection)
+        : getResolvedPayablesCardSelection();
       if (!selection) return;
       var howContent = document.getElementById('gp-card-how-content');
       var howToggle = document.getElementById('gp-card-how-toggle');
@@ -2896,6 +2942,8 @@
       var postPaymentBalance = Number(selection.availableBalance || 0) - Number((updatedRow && updatedRow.amount) || 0);
       cards[i].currentBalance = postPaymentBalance;
       cards[i].projectedBalance = postPaymentBalance;
+      cards[i].cardholderName = String(selection.cardholderName || cards[i].cardholderName || getMyCardholderName()).trim();
+      cards[i].cardholderAddress = String(selection.cardholderAddress || cards[i].cardholderAddress || getMyCardholderAddress()).trim();
       if (!Array.isArray(cards[i].payments)) cards[i].payments = [];
       cards[i].payments.unshift({
         payableId: String((updatedRow && (updatedRow.id || updatedRow.billNumber)) || ''),
@@ -2920,6 +2968,8 @@
         expDate: String(selection.cardExpDate || '').trim(),
         currentBalance: postPaymentBalanceNew,
         projectedBalance: postPaymentBalanceNew,
+        cardholderName: String(selection.cardholderName || getMyCardholderName()).trim(),
+        cardholderAddress: String(selection.cardholderAddress || getMyCardholderAddress()).trim(),
         currency: String((updatedRow && updatedRow.currency) || 'USD'),
         payments: [{
           payableId: String((updatedRow && (updatedRow.id || updatedRow.billNumber)) || ''),
@@ -2978,10 +3028,10 @@
         ]
       : isInstantCard
         ? [
-            {
-              type: 'success',
-              title: selection && selection.cardSource === 'new' ? 'New Card Created' : 'Card Ready',
-              description: selection && selection.cardSource === 'new'
+          {
+            type: 'success',
+            title: isSelectionNewCard(selection) ? 'New Card Created' : 'Card Ready',
+            description: isSelectionNewCard(selection)
                 ? 'A new virtual card was created and funded for this payment.'
                 : 'The selected virtual card was funded and is ready for use.'
             },
@@ -3110,6 +3160,7 @@
       event.preventDefault();
       var selection = getCurrentPaymentConfirmSelection();
       if (!selection) return;
+      _lastSubmittedPayableSelection = cloneJson(selection);
       var updatedRow = createUpdatedPayableRow(selection);
       if (updatedRow) {
         persistCardPaymentSelection(updatedRow, selection);
@@ -3460,8 +3511,8 @@
     var card = Array.isArray(methods.card) && methods.card.length ? methods.card : [{
       id: 'card-fallback',
       label: 'Visa •••• 5511',
-      cardholderName: _payContext.row ? _payContext.row.payeeName : 'Payee',
-      cardholderAddress: '--'
+      cardholderName: getMyCardholderName(),
+      cardholderAddress: getMyCardholderAddress()
     }];
     var check = Array.isArray(methods.check) ? methods.check : [];
     var smartDisburse = Array.isArray(methods.smartDisburse) ? methods.smartDisburse : [];

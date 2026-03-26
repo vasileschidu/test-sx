@@ -21,7 +21,12 @@
       "Bash(wc:*)",
       "Bash(test:*)",
       "Bash(git checkout:*)",
-      "WebFetch(domain:cdn.jsdelivr.net)"
+      "WebFetch(domain:cdn.jsdelivr.net)",
+      "Bash(sed -i '' 's/<h1 class=\"\"text-3xl font-bold/<h1 class=\"\"text-3xl font-semibold/g' /Users/user/Desktop/test-sx/src/pages/onboarding-sd/confirm-identity.html /Users/user/Desktop/test-sx/src/pages/onboarding-sd/review-documents.html /Users/user/Desktop/test-sx/src/pages/onboarding-sd/signature.html /Users/user/Desktop/test-sx/src/pages/onboarding-sd/instant-virtual-card.html)",
+      "Bash(sed -i '' 's/<h1 class=\"\"text-white text-2xl font-bold/<h1 class=\"\"text-white text-2xl font-semibold/g' /Users/user/Desktop/test-sx/src/pages/onboarding-sd/index.html)",
+      "Bash(sed -i '' 's/<h3 class=\"\"text-xl font-bold/<h3 class=\"\"text-xl font-semibold/g' /Users/user/Desktop/test-sx/src/pages/onboarding-sd/index.html)",
+      "Bash(head -20 grep -n \"input-phone\\\\|phone\\\\|flag\\\\|prefix\" /Users/user/Desktop/design-system/Components/input-phone-number.html)",
+      "Bash(open /Users/user/Desktop/design-system/Components/ana-form.html)"
     ]
   }
 }

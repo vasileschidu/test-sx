@@ -38,6 +38,11 @@
 
   var refs = {};
   var syncFilterUi = function () {};
+  var globalHandlersBound = false;
+  var filterDismissHandler = null;
+  var filterResizeHandler = null;
+  var sortAndPageClickHandler = null;
+  var pageSizeChangeHandler = null;
 
   function initRefs() {
     refs.table = document.getElementById('vendors-table');
@@ -529,8 +534,8 @@
 
     if (!filtered.length) {
       refs.table.innerHTML = '<thead><tr>' + columns.map(function (col) {
-        if (col.type === 'action') return '<th class="w-px px-3 py-3.5"></th>';
-        return '<th class="border-b border-gray-200 px-2 py-3.5 text-left text-sm font-semibold text-gray-900 dark:border-white/10 dark:text-white">' + escapeHtml(col.label) + '</th>';
+        if (col.type === 'action') return '<th class="w-px px-4 py-3"></th>';
+        return '<th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:border-white/10 dark:text-white">' + escapeHtml(col.label) + '</th>';
       }).join('') + '</tr></thead><tbody>' +
         '<tr><td colspan="6" class="px-0 py-6"><div class="mx-4 rounded-2xl border border-dashed border-gray-300 bg-gray-50/80 px-6 py-10 text-center dark:border-white/10 dark:bg-white/5"><h3 class="text-sm font-semibold text-gray-900 dark:text-white">No vendors found</h3><p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Adjust the search or filters to find a vendor.</p></div></td></tr>' +
         '</tbody>';
@@ -548,23 +553,23 @@
     }
 
     var headerHtml = '<thead><tr>' + columns.map(function (col) {
-      if (col.type === 'action') return '<th class="w-px border-b border-gray-200 bg-white px-3 py-3.5 dark:border-white/10 dark:bg-gray-900"></th>';
+      if (col.type === 'action') return '<th class="w-px border-b border-gray-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-gray-900"></th>';
       var direction = state.sortKey === col.key ? state.sortDirection : '';
       var content = col.sortable
         ? '<button type="button" data-sort-key="' + escapeHtml(col.key) + '" class="group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white"><span>' + escapeHtml(col.label) + '</span>' + buildSortBadgeHTML(direction) + '</button>'
         : escapeHtml(col.label);
-      return '<th class="border-b border-gray-200 px-2 py-3.5 text-left text-sm font-semibold text-gray-900 dark:border-white/10 dark:text-white">' + content + '</th>';
+      return '<th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:border-white/10 dark:text-white">' + content + '</th>';
     }).join('') + '</tr></thead>';
 
     var bodyHtml = vendors.map(function (vendor) {
       return '' +
         '<tr class="group hover:bg-gray-50 dark:hover:bg-white/5">' +
-          '<td class="border-b border-gray-200 px-2 py-3 align-top dark:border-white/10"><a href="vendor-profile.html?id=' + encodeURIComponent(vendor.id) + '" class="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400">' + escapeHtml(vendor.displayName) + '</a><p class="mt-1 text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(vendor.legalName) + '</p></td>' +
-          '<td class="border-b border-gray-200 px-2 py-3 align-top text-sm text-gray-700 dark:border-white/10 dark:text-gray-300">' + escapeHtml(vendor.vendorId) + '</td>' +
-          '<td class="border-b border-gray-200 px-2 py-3 align-top dark:border-white/10">' + getStatusBadge(vendor.status, vendor.statusLabel) + '</td>' +
-          '<td class="border-b border-gray-200 px-2 py-3 align-top text-sm font-medium text-gray-900 dark:border-white/10 dark:text-white">' + escapeHtml(formatMoney(vendor.outstandingAmount)) + '</td>' +
-          '<td class="border-b border-gray-200 px-2 py-3 align-top text-sm font-medium text-gray-900 dark:border-white/10 dark:text-white">' + escapeHtml(formatMoney(vendor.totalPaid)) + '</td>' +
-          '<td class="border-b border-gray-200 bg-white px-3 py-3 align-top text-right dark:border-white/10 dark:bg-gray-900"><a href="vendor-profile.html?id=' + encodeURIComponent(vendor.id) + '" class="inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10">View</a></td>' +
+          '<td class="border-b border-gray-200 px-4 py-3 align-top dark:border-white/10"><a href="vendor-profile.html?id=' + encodeURIComponent(vendor.id) + '" class="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400">' + escapeHtml(vendor.displayName) + '</a><p class="mt-1 text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(vendor.legalName) + '</p></td>' +
+          '<td class="border-b border-gray-200 px-4 py-3 align-top text-sm text-gray-700 dark:border-white/10 dark:text-gray-300">' + escapeHtml(vendor.vendorId) + '</td>' +
+          '<td class="border-b border-gray-200 px-4 py-3 align-top dark:border-white/10">' + getStatusBadge(vendor.status, vendor.statusLabel) + '</td>' +
+          '<td class="border-b border-gray-200 px-4 py-3 align-top text-sm font-medium text-gray-900 dark:border-white/10 dark:text-white">' + escapeHtml(formatMoney(vendor.outstandingAmount)) + '</td>' +
+          '<td class="border-b border-gray-200 px-4 py-3 align-top text-sm font-medium text-gray-900 dark:border-white/10 dark:text-white">' + escapeHtml(formatMoney(vendor.totalPaid)) + '</td>' +
+          '<td class="border-b border-gray-200 bg-white px-4 py-3 align-top text-right dark:border-white/10 dark:bg-gray-900"><a href="vendor-profile.html?id=' + encodeURIComponent(vendor.id) + '" class="inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10">View</a></td>' +
         '</tr>';
     }).join('');
 
@@ -764,50 +769,60 @@
         });
       }
 
-      document.addEventListener('click', function (event) {
-        if (!refs.filterDropdown || !state.filterMenuOpen) return;
-        if (refs.filterDropdown.contains(event.target)) return;
-        setFilterMenuOpen(false);
-        setFilterPanel('root');
-      });
+      if (!filterDismissHandler) {
+        filterDismissHandler = function (event) {
+          if (!refs.filterDropdown || !state.filterMenuOpen) return;
+          if (refs.filterDropdown.contains(event.target)) return;
+          setFilterMenuOpen(false);
+          setFilterPanel('root');
+        };
+        document.addEventListener('click', filterDismissHandler);
+      }
 
-      window.addEventListener('resize', function () {
-        if (!state.filterMenuOpen) return;
-        applyFilterMenuLayout();
-        setFilterPanel(state.activeFilterPanel || 'root', true);
-      });
+      if (!filterResizeHandler) {
+        filterResizeHandler = function () {
+          if (!state.filterMenuOpen) return;
+          applyFilterMenuLayout();
+          setFilterPanel(state.activeFilterPanel || 'root', true);
+        };
+        window.addEventListener('resize', filterResizeHandler);
+      }
     }
 
-    document.addEventListener('click', function (event) {
-      var sortTrigger = event.target.closest('[data-sort-key]');
-      if (sortTrigger) {
-        var key = sortTrigger.getAttribute('data-sort-key');
-        if (state.sortKey === key) {
-          state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
-        } else {
-          state.sortKey = key;
-          state.sortDirection = 'asc';
+    if (!globalHandlersBound) {
+      sortAndPageClickHandler = function (event) {
+        var sortTrigger = event.target.closest('[data-sort-key]');
+        if (sortTrigger) {
+          var key = sortTrigger.getAttribute('data-sort-key');
+          if (state.sortKey === key) {
+            state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
+          } else {
+            state.sortKey = key;
+            state.sortDirection = 'asc';
+          }
+          render();
+          return;
         }
-        render();
-        return;
-      }
-      var pageTrigger = event.target.closest('[data-page-nav]');
-      if (pageTrigger) {
-        var direction = pageTrigger.getAttribute('data-page-nav');
-        var totalPages = Math.max(1, Math.ceil(getFilteredVendors().length / state.pageSize));
-        if (direction === 'prev' && state.currentPage > 1) state.currentPage -= 1;
-        if (direction === 'next' && state.currentPage < totalPages) state.currentPage += 1;
-        render();
-      }
-    });
-
-    document.addEventListener('change', function (event) {
-      if (event.target && event.target.id === 'vendors-page-size-inline') {
-        state.pageSize = Number(event.target.value || DEFAULT_PAGE_SIZE);
-        state.currentPage = 1;
-        render();
-      }
-    });
+        var pageTrigger = event.target.closest('[data-page-nav]');
+        if (pageTrigger) {
+          var direction = pageTrigger.getAttribute('data-page-nav');
+          var totalPages = Math.max(1, Math.ceil(getFilteredVendors().length / state.pageSize));
+          if (direction === 'prev' && state.currentPage > 1) state.currentPage -= 1;
+          if (direction === 'next' && state.currentPage < totalPages) state.currentPage += 1;
+          render();
+        }
+      };
+      pageSizeChangeHandler = function (event) {
+        if (event.target && event.target.id === 'vendors-page-size-inline') {
+          state.pageSize = Number(event.target.value || DEFAULT_PAGE_SIZE);
+          state.currentPage = 1;
+          render();
+        }
+      };
+      document.addEventListener('click', sortAndPageClickHandler);
+      document.addEventListener('change', pageSizeChangeHandler);
+      globalHandlersBound = true;
+    }
   }
 
   function renderLoadingState() {
@@ -842,6 +857,8 @@
         render();
       });
   }
+
+  window.initVendorsPage = init;
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);

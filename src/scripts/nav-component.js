@@ -96,6 +96,19 @@ const APP_NAV_REACT_ROUTE_MAP = {
     'my-company-profile.html': '#/smart-exchange'
 };
 
+function getInitialSidebarCollapsed() {
+    var collapsedAttr = document.documentElement.getAttribute('data-sidebar-collapsed');
+    if (collapsedAttr === 'true' || collapsedAttr === 'false') {
+        return collapsedAttr === 'true';
+    }
+
+    try {
+        return localStorage.getItem('dashboard-sidebar-collapsed-v1') === 'true';
+    } catch (error) {
+        return false;
+    }
+}
+
 /* ===== Icon Registry ===== */
 
 const APP_NAV_ICONS = {
@@ -133,10 +146,90 @@ function getShellAssetUrl(key, fallback) {
     return assets[key] || fallback;
 }
 
-function buildLogoHtml() {
-    return '' +
-        '<img src="' + getShellAssetUrl('logoLight', '../../../assets/img/smart-hub.svg') + '" alt="SMART Hub" class="h-8 w-auto dark:hidden"/>' +
-        '<img src="' + getShellAssetUrl('logoDark', '../../../assets/img/smart-hub-dark.svg') + '" alt="SMART Hub" class="hidden h-8 w-auto dark:block"/>';
+const SMART_HUB_LOGO_LIGHT_SVG = `<svg width="189" height="40" viewBox="0 0 189 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M11.2946 20L6.46696 7.15304C6.22125 6.49918 6.70455 5.80127 7.40304 5.80127H30.7298C31.7703 5.80127 32.7019 6.44566 33.069 7.41918L38.5681 22.0021H33.6516L29.2773 10.4013L12.6066 10.4013L16.2106 20H11.2946Z" fill="url(#paint0_linear_1_52391)"/>
+<path d="M28.7054 20L33.533 32.847C33.7788 33.5008 33.2955 34.1987 32.597 34.1987L9.27017 34.1987C8.22974 34.1987 7.29807 33.5543 6.93096 32.5808L1.43192 17.9979L6.34843 17.9979L10.7227 29.5987L27.3934 29.5987L23.7894 20L28.7054 20Z" fill="url(#paint1_linear_1_52391)"/>
+<path d="M57.5668 30.0519C56.1521 30.0519 54.8677 29.7633 53.7136 29.1863C52.5595 28.5906 51.6474 27.7902 50.9773 26.785C50.3258 25.7612 50 24.6537 50 23.4623C50 23.2762 50.0931 23.1831 50.2792 23.1831H53.211C53.3041 23.1831 53.3692 23.211 53.4064 23.2669C53.4437 23.3041 53.4716 23.3693 53.4902 23.4623C53.5833 24.5606 54.0021 25.3982 54.7467 25.9753C55.5099 26.5337 56.5058 26.8129 57.7343 26.8129C58.907 26.8129 59.8377 26.5803 60.5265 26.1149C61.2338 25.6309 61.5875 24.998 61.5875 24.2162C61.5875 23.5461 61.2059 22.9784 60.4427 22.513C59.6795 22.029 58.5813 21.6102 57.1479 21.2565C54.8956 20.6795 53.2203 19.9628 52.122 19.1066C51.0238 18.2317 50.4747 17.031 50.4747 15.5047C50.4747 14.3506 50.7911 13.3547 51.424 12.517C52.0569 11.6794 52.8945 11.0465 53.937 10.6184C54.9794 10.1716 56.1055 9.94824 57.3155 9.94824C58.7116 9.94824 59.9494 10.2182 61.0291 10.758C62.1087 11.2978 62.9464 12.0144 63.542 12.9079C64.1563 13.8014 64.482 14.7601 64.5193 15.7839C64.5193 15.97 64.4262 16.0631 64.2401 16.0631H61.2804C61.1873 16.0631 61.1221 16.0445 61.0849 16.0072C61.0477 15.9514 61.0198 15.8769 61.0011 15.7839C60.8708 14.9462 60.4613 14.304 59.7726 13.8573C59.1025 13.4105 58.2648 13.1872 57.2596 13.1872C56.3103 13.1872 55.5285 13.3733 54.9142 13.7456C54.2999 14.1179 53.9928 14.6484 53.9928 15.3371C53.9928 16.0817 54.3837 16.6774 55.1655 17.1241C55.9659 17.5709 57.12 18.0083 58.6278 18.4364C60.6195 18.9949 62.1925 19.6836 63.3466 20.5026C64.5193 21.3217 65.1056 22.4385 65.1056 23.8532C65.1056 25.8078 64.4262 27.3341 63.0673 28.4324C61.7085 29.512 59.875 30.0519 57.5668 30.0519Z" fill="#151515"/>
+<path d="M67.655 29.7726C67.4689 29.7726 67.3758 29.6796 67.3758 29.4934V10.5067C67.3758 10.3205 67.4689 10.2275 67.655 10.2275H71.0335C71.2569 10.2275 71.4058 10.3205 71.4803 10.5067L76.6179 22.2059L81.7555 10.5067C81.8299 10.3205 81.9788 10.2275 82.2022 10.2275H85.5807C85.7669 10.2275 85.8599 10.3205 85.8599 10.5067V29.4934C85.8599 29.6796 85.7669 29.7726 85.5807 29.7726H82.6769C82.4907 29.7726 82.3977 29.6796 82.3977 29.4934V16.4261L78.1536 26.1987C78.0605 26.4034 77.9302 26.5058 77.7627 26.5058H75.4731C75.3055 26.5058 75.1752 26.4034 75.0822 26.1987L70.8381 16.4261V29.4934C70.8381 29.6796 70.745 29.7726 70.5589 29.7726H67.655Z" fill="#151515"/>
+<path d="M87.4142 29.7726C87.1163 29.7726 87.0233 29.6237 87.135 29.3259L94.0037 10.5067C94.0781 10.3205 94.2178 10.2275 94.4225 10.2275H97.4381C97.6428 10.2275 97.7824 10.3205 97.8569 10.5067L104.726 29.3259C104.763 29.4376 104.781 29.5027 104.781 29.5213C104.781 29.6889 104.67 29.7726 104.446 29.7726H101.403C101.291 29.7726 101.217 29.754 101.18 29.7168C101.142 29.6796 101.105 29.6051 101.068 29.4934L99.3926 24.6071H92.468L90.7927 29.4934C90.7555 29.6051 90.7182 29.6796 90.681 29.7168C90.6438 29.754 90.5693 29.7726 90.4576 29.7726H87.4142ZM98.2757 21.3682L95.9303 14.5553L93.5849 21.3682H98.2757Z" fill="#151515"/>
+<path d="M106.281 29.7726C106.095 29.7726 106.002 29.6796 106.002 29.4934V10.5067C106.002 10.3205 106.095 10.2275 106.281 10.2275H113.903C115.709 10.2275 117.152 10.7021 118.231 11.6515C119.329 12.5822 119.879 13.8852 119.879 15.5605C119.879 16.7332 119.534 17.7756 118.845 18.6877C118.157 19.5812 117.3 20.242 116.277 20.6702L120.437 29.4934L120.465 29.6051C120.465 29.7168 120.381 29.7726 120.214 29.7726H117.003C116.91 29.7726 116.835 29.754 116.779 29.7168C116.723 29.6796 116.668 29.6051 116.612 29.4934L112.423 20.8935H109.52V29.4934C109.52 29.6796 109.427 29.7726 109.24 29.7726H106.281ZM114.043 17.6546C114.75 17.6546 115.309 17.4685 115.718 17.0962C116.146 16.7239 116.36 16.212 116.36 15.5605C116.36 14.909 116.146 14.3971 115.718 14.0248C115.309 13.6525 114.75 13.4664 114.043 13.4664H109.52V17.6546H114.043Z" fill="#151515"/>
+<path d="M126.447 29.7726C126.261 29.7726 126.168 29.6796 126.168 29.4934V13.4664H120.695C120.509 13.4664 120.416 13.3733 120.416 13.1872V10.5067C120.416 10.3205 120.509 10.2275 120.695 10.2275H135.159C135.345 10.2275 135.438 10.3205 135.438 10.5067V13.1872C135.438 13.3733 135.345 13.4664 135.159 13.4664H129.686V29.4934C129.686 29.6796 129.593 29.7726 129.407 29.7726H126.447Z" fill="#151515"/>
+<path d="M142.405 29.7726C142.219 29.7726 142.126 29.6796 142.126 29.4934V10.5067C142.126 10.3205 142.219 10.2275 142.405 10.2275H145.365C145.551 10.2275 145.644 10.3205 145.644 10.5067V17.9618H153.742V10.5067C153.742 10.3205 153.835 10.2275 154.021 10.2275H156.981C157.167 10.2275 157.26 10.3205 157.26 10.5067V29.4934C157.26 29.6796 157.167 29.7726 156.981 29.7726H154.021C153.835 29.7726 153.742 29.6796 153.742 29.4934V21.2007H145.644V29.4934C145.644 29.6796 145.551 29.7726 145.365 29.7726H142.405Z" fill="#151515"/>
+<path d="M165.009 30.0519C163.483 30.0519 162.282 29.633 161.407 28.7954C160.551 27.9391 160.123 26.785 160.123 25.3331V16.0352C160.123 15.849 160.216 15.756 160.402 15.756H163.194C163.381 15.756 163.474 15.849 163.474 16.0352V24.1325C163.474 25.1562 163.669 25.9008 164.06 26.3662C164.47 26.8129 165.075 27.0363 165.875 27.0363C166.843 27.0363 167.643 26.6547 168.276 25.8915C168.909 25.1097 169.226 23.937 169.226 22.3734V16.0352C169.226 15.849 169.319 15.756 169.505 15.756H172.297C172.483 15.756 172.576 15.849 172.576 16.0352V29.4934C172.576 29.6796 172.483 29.7726 172.297 29.7726H169.505C169.319 29.7726 169.226 29.6796 169.226 29.4934V28.4882C168.611 28.9908 167.969 29.3817 167.299 29.6609C166.629 29.9216 165.866 30.0519 165.009 30.0519Z" fill="#151515"/>
+<path d="M182.526 30.0519C181.019 30.0519 179.678 29.5772 178.506 28.6278V29.4934C178.506 29.6796 178.413 29.7726 178.226 29.7726H175.434C175.248 29.7726 175.155 29.6796 175.155 29.4934V10.5067C175.155 10.3205 175.248 10.2275 175.434 10.2275H178.226C178.413 10.2275 178.506 10.3205 178.506 10.5067V16.8728C179.678 15.9421 181.019 15.4767 182.526 15.4767C183.773 15.4767 184.881 15.7746 185.849 16.3702C186.817 16.9659 187.562 17.8128 188.083 18.9111C188.623 20.0094 188.892 21.2938 188.892 22.7643C188.892 24.2348 188.623 25.5192 188.083 26.6175C187.562 27.7157 186.817 28.5627 185.849 29.1584C184.881 29.754 183.773 30.0519 182.526 30.0519ZM181.856 27.0363C182.936 27.0363 183.792 26.6361 184.425 25.8357C185.058 25.0166 185.374 23.9928 185.374 22.7643C185.374 21.5357 185.058 20.5213 184.425 19.7208C183.792 18.9018 182.936 18.4923 181.856 18.4923C180.777 18.4923 179.92 18.9018 179.287 19.7208C178.655 20.5213 178.338 21.5357 178.338 22.7643C178.338 23.9928 178.655 25.0166 179.287 25.8357C179.92 26.6361 180.777 27.0363 181.856 27.0363Z" fill="#151515"/>
+<defs>
+<linearGradient id="paint0_linear_1_52391" x1="38.5681" y1="13.8167" x2="5.95898" y2="13.8167" gradientUnits="userSpaceOnUse">
+<stop stop-color="#406AFF"/>
+<stop offset="1" stop-color="#D6CCFF"/>
+</linearGradient>
+<linearGradient id="paint1_linear_1_52391" x1="1.60182" y1="26.1833" x2="33.8711" y2="26.1833" gradientUnits="userSpaceOnUse">
+<stop stop-color="#406AFF"/>
+<stop offset="1" stop-color="#D6CCFF"/>
+</linearGradient>
+</defs>
+</svg>`;
+
+const SMART_HUB_LOGO_DARK_SVG = `<svg width="189" height="40" viewBox="0 0 189 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M11.2946 20L6.46696 7.15304C6.22125 6.49918 6.70455 5.80127 7.40304 5.80127H30.7298C31.7703 5.80127 32.7019 6.44566 33.069 7.41918L38.5681 22.0021H33.6516L29.2773 10.4013L12.6066 10.4013L16.2106 20H11.2946Z" fill="url(#paint0_linear_1_52413)"/>
+<path d="M28.7054 20L33.533 32.847C33.7788 33.5008 33.2955 34.1987 32.597 34.1987L9.27017 34.1987C8.22974 34.1987 7.29807 33.5543 6.93096 32.5808L1.43192 17.9979L6.34843 17.9979L10.7227 29.5987L27.3934 29.5987L23.7894 20L28.7054 20Z" fill="url(#paint1_linear_1_52413)"/>
+<path d="M57.5668 30.0519C56.1521 30.0519 54.8677 29.7633 53.7136 29.1863C52.5595 28.5906 51.6474 27.7902 50.9773 26.785C50.3258 25.7612 50 24.6537 50 23.4623C50 23.2762 50.0931 23.1831 50.2792 23.1831H53.211C53.3041 23.1831 53.3692 23.211 53.4064 23.2669C53.4437 23.3041 53.4716 23.3693 53.4902 23.4623C53.5833 24.5606 54.0021 25.3982 54.7467 25.9753C55.5099 26.5337 56.5058 26.8129 57.7343 26.8129C58.907 26.8129 59.8377 26.5803 60.5265 26.1149C61.2338 25.6309 61.5875 24.998 61.5875 24.2162C61.5875 23.5461 61.2059 22.9784 60.4427 22.513C59.6795 22.029 58.5813 21.6102 57.1479 21.2565C54.8956 20.6795 53.2203 19.9628 52.122 19.1066C51.0238 18.2317 50.4747 17.031 50.4747 15.5047C50.4747 14.3506 50.7911 13.3547 51.424 12.517C52.0569 11.6794 52.8945 11.0465 53.937 10.6184C54.9794 10.1716 56.1055 9.94824 57.3155 9.94824C58.7116 9.94824 59.9494 10.2182 61.0291 10.758C62.1087 11.2978 62.9464 12.0144 63.542 12.9079C64.1563 13.8014 64.482 14.7601 64.5193 15.7839C64.5193 15.97 64.4262 16.0631 64.2401 16.0631H61.2804C61.1873 16.0631 61.1221 16.0445 61.0849 16.0072C61.0477 15.9514 61.0198 15.8769 61.0011 15.7839C60.8708 14.9462 60.4613 14.304 59.7726 13.8573C59.1025 13.4105 58.2648 13.1872 57.2596 13.1872C56.3103 13.1872 55.5285 13.3733 54.9142 13.7456C54.2999 14.1179 53.9928 14.6484 53.9928 15.3371C53.9928 16.0817 54.3837 16.6774 55.1655 17.1241C55.9659 17.5709 57.12 18.0083 58.6278 18.4364C60.6195 18.9949 62.1925 19.6836 63.3466 20.5026C64.5193 21.3217 65.1056 22.4385 65.1056 23.8532C65.1056 25.8078 64.4262 27.3341 63.0673 28.4324C61.7085 29.512 59.875 30.0519 57.5668 30.0519Z" fill="white"/>
+<path d="M67.655 29.7726C67.4689 29.7726 67.3758 29.6796 67.3758 29.4934V10.5067C67.3758 10.3205 67.4689 10.2275 67.655 10.2275H71.0335C71.2569 10.2275 71.4058 10.3205 71.4803 10.5067L76.6179 22.2059L81.7555 10.5067C81.8299 10.3205 81.9788 10.2275 82.2022 10.2275H85.5807C85.7669 10.2275 85.8599 10.3205 85.8599 10.5067V29.4934C85.8599 29.6796 85.7669 29.7726 85.5807 29.7726H82.6769C82.4907 29.7726 82.3977 29.6796 82.3977 29.4934V16.4261L78.1536 26.1987C78.0605 26.4034 77.9302 26.5058 77.7627 26.5058H75.4731C75.3055 26.5058 75.1752 26.4034 75.0822 26.1987L70.8381 16.4261V29.4934C70.8381 29.6796 70.745 29.7726 70.5589 29.7726H67.655Z" fill="white"/>
+<path d="M87.4142 29.7726C87.1163 29.7726 87.0233 29.6237 87.135 29.3259L94.0037 10.5067C94.0781 10.3205 94.2178 10.2275 94.4225 10.2275H97.4381C97.6428 10.2275 97.7824 10.3205 97.8569 10.5067L104.726 29.3259C104.763 29.4376 104.781 29.5027 104.781 29.5213C104.781 29.6889 104.67 29.7726 104.446 29.7726H101.403C101.291 29.7726 101.217 29.754 101.18 29.7168C101.142 29.6796 101.105 29.6051 101.068 29.4934L99.3926 24.6071H92.468L90.7927 29.4934C90.7555 29.6051 90.7182 29.6796 90.681 29.7168C90.6438 29.754 90.5693 29.7726 90.4576 29.7726H87.4142ZM98.2757 21.3682L95.9303 14.5553L93.5849 21.3682H98.2757Z" fill="white"/>
+<path d="M106.281 29.7726C106.095 29.7726 106.002 29.6796 106.002 29.4934V10.5067C106.002 10.3205 106.095 10.2275 106.281 10.2275H113.903C115.709 10.2275 117.152 10.7021 118.231 11.6515C119.329 12.5822 119.879 13.8852 119.879 15.5605C119.879 16.7332 119.534 17.7756 118.845 18.6877C118.157 19.5812 117.3 20.242 116.277 20.6702L120.437 29.4934L120.465 29.6051C120.465 29.7168 120.381 29.7726 120.214 29.7726H117.003C116.91 29.7726 116.835 29.754 116.779 29.7168C116.723 29.6796 116.668 29.6051 116.612 29.4934L112.423 20.8935H109.52V29.4934C109.52 29.6796 109.427 29.7726 109.24 29.7726H106.281ZM114.043 17.6546C114.75 17.6546 115.309 17.4685 115.718 17.0962C116.146 16.7239 116.36 16.212 116.36 15.5605C116.36 14.909 116.146 14.3971 115.718 14.0248C115.309 13.6525 114.75 13.4664 114.043 13.4664H109.52V17.6546H114.043Z" fill="white"/>
+<path d="M126.447 29.7726C126.261 29.7726 126.168 29.6796 126.168 29.4934V13.4664H120.695C120.509 13.4664 120.416 13.3733 120.416 13.1872V10.5067C120.416 10.3205 120.509 10.2275 120.695 10.2275H135.159C135.345 10.2275 135.438 10.3205 135.438 10.5067V13.1872C135.438 13.3733 135.345 13.4664 135.159 13.4664H129.686V29.4934C129.686 29.6796 129.593 29.7726 129.407 29.7726H126.447Z" fill="white"/>
+<path d="M142.405 29.7726C142.219 29.7726 142.126 29.6796 142.126 29.4934V10.5067C142.126 10.3205 142.219 10.2275 142.405 10.2275H145.365C145.551 10.2275 145.644 10.3205 145.644 10.5067V17.9618H153.742V10.5067C153.742 10.3205 153.835 10.2275 154.021 10.2275H156.981C157.167 10.2275 157.26 10.3205 157.26 10.5067V29.4934C157.26 29.6796 157.167 29.7726 156.981 29.7726H154.021C153.835 29.7726 153.742 29.6796 153.742 29.4934V21.2007H145.644V29.4934C145.644 29.6796 145.551 29.7726 145.365 29.7726H142.405Z" fill="white"/>
+<path d="M165.009 30.0519C163.483 30.0519 162.282 29.633 161.407 28.7954C160.551 27.9391 160.123 26.785 160.123 25.3331V16.0352C160.123 15.849 160.216 15.756 160.402 15.756H163.194C163.381 15.756 163.474 15.849 163.474 16.0352V24.1325C163.474 25.1562 163.669 25.9008 164.06 26.3662C164.47 26.8129 165.075 27.0363 165.875 27.0363C166.843 27.0363 167.643 26.6547 168.276 25.8915C168.909 25.1097 169.226 23.937 169.226 22.3734V16.0352C169.226 15.849 169.319 15.756 169.505 15.756H172.297C172.483 15.756 172.576 15.849 172.576 16.0352V29.4934C172.576 29.6796 172.483 29.7726 172.297 29.7726H169.505C169.319 29.7726 169.226 29.6796 169.226 29.4934V28.4882C168.611 28.9908 167.969 29.3817 167.299 29.6609C166.629 29.9216 165.866 30.0519 165.009 30.0519Z" fill="white"/>
+<path d="M182.526 30.0519C181.019 30.0519 179.678 29.5772 178.506 28.6278V29.4934C178.506 29.6796 178.413 29.7726 178.226 29.7726H175.434C175.248 29.7726 175.155 29.6796 175.155 29.4934V10.5067C175.155 10.3205 175.248 10.2275 175.434 10.2275H178.226C178.413 10.2275 178.506 10.3205 178.506 10.5067V16.8728C179.678 15.9421 181.019 15.4767 182.526 15.4767C183.773 15.4767 184.881 15.7746 185.849 16.3702C186.817 16.9659 187.562 17.8128 188.083 18.9111C188.623 20.0094 188.892 21.2938 188.892 22.7643C188.892 24.2348 188.623 25.5192 188.083 26.6175C187.562 27.7157 186.817 28.5627 185.849 29.1584C184.881 29.754 183.773 30.0519 182.526 30.0519ZM181.856 27.0363C182.936 27.0363 183.792 26.6361 184.425 25.8357C185.058 25.0166 185.374 23.9928 185.374 22.7643C185.374 21.5357 185.058 20.5213 184.425 19.7208C183.792 18.9018 182.936 18.4923 181.856 18.4923C180.777 18.4923 179.92 18.9018 179.287 19.7208C178.655 20.5213 178.338 21.5357 178.338 22.7643C178.338 23.9928 178.655 25.0166 179.287 25.8357C179.92 26.6361 180.777 27.0363 181.856 27.0363Z" fill="white"/>
+<defs>
+<linearGradient id="paint0_linear_1_52413" x1="38.5681" y1="13.8167" x2="5.95898" y2="13.8167" gradientUnits="userSpaceOnUse">
+<stop stop-color="#406AFF"/>
+<stop offset="1" stop-color="#D6CCFF"/>
+</linearGradient>
+<linearGradient id="paint1_linear_1_52413" x1="1.60182" y1="26.1833" x2="33.8711" y2="26.1833" gradientUnits="userSpaceOnUse">
+<stop stop-color="#406AFF"/>
+<stop offset="1" stop-color="#D6CCFF"/>
+</linearGradient>
+</defs>
+</svg>`;
+
+const SMART_HUB_MARK_SVG = `<svg width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M8.47098 15L4.97721 5.70272C4.7315 5.04886 5.2148 4.35095 5.9133 4.35095H22.6151C23.6555 4.35095 24.5872 4.99534 24.9543 5.96886L28.9261 16.5015H25.2387L21.958 7.80095L9.45496 7.80095L12.158 15H8.47098Z" fill="url(#paint0_linear_3180_183058)"/>
+<path d="M21.529 15L25.0228 24.2973C25.2685 24.9511 24.7852 25.649 24.0867 25.649L7.38491 25.649C6.34447 25.649 5.4128 25.0047 5.0457 24.0311L1.07394 13.4985L4.76132 13.4985L8.04203 22.199L20.545 22.199L17.842 15L21.529 15Z" fill="url(#paint1_linear_3180_183058)"/>
+<defs>
+<linearGradient id="paint0_linear_3180_183058" x1="28.9261" y1="10.3625" x2="4.46924" y2="10.3625" gradientUnits="userSpaceOnUse">
+<stop stop-color="#406AFF"/>
+<stop offset="1" stop-color="#D6CCFF"/>
+</linearGradient>
+<linearGradient id="paint1_linear_3180_183058" x1="1.20136" y1="19.6375" x2="25.4033" y2="19.6375" gradientUnits="userSpaceOnUse">
+<stop stop-color="#406AFF"/>
+<stop offset="1" stop-color="#D6CCFF"/>
+</linearGradient>
+</defs>
+</svg>`;
+
+function namespaceInlineSvg(svg, prefix) {
+    return svg
+        .replace(/id="([^"]+)"/g, 'id="' + prefix + '-$1"')
+        .replace(/url\(#([^)]+)\)/g, 'url(#' + prefix + '-$1)');
+}
+
+let smartHubLogoInstanceCount = 0;
+
+function isDarkThemeActive() {
+    return document.documentElement.classList.contains('dark');
+}
+
+function buildFullLogoSvgHtml() {
+    smartHubLogoInstanceCount += 1;
+    var prefix = 'smart-hub-logo-' + smartHubLogoInstanceCount;
+    var svg = isDarkThemeActive() ? SMART_HUB_LOGO_DARK_SVG : SMART_HUB_LOGO_LIGHT_SVG;
+    return namespaceInlineSvg(svg, prefix).replace('<svg ', '<svg class="h-8 w-auto" ');
+}
+
+function buildLogoHtml(justifyClass) {
+    return '<div class="flex h-9 w-full items-center ' + (justifyClass || 'justify-center') + '" data-smart-hub-logo>' +
+        buildFullLogoSvgHtml() +
+        '</div>';
 }
 
 const TRANSCARD_LOGO_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="64" height="12" viewBox="0 0 64 12" fill="none" class="mb-0.5 text-black dark:text-white"><path d="M0 2.8782H3.2576V7.37029V11.8624H5.19674V7.37029V2.8782H8.45435V1.19781H0V2.8782Z" fill="currentColor"/><path d="M12.598 3.69985C12.4327 3.67405 12.2675 3.65194 12.1059 3.6372C11.9443 3.62246 11.801 3.61509 11.6799 3.61509C11.0775 3.61141 10.4789 3.67037 9.89129 3.79197C9.43589 3.88779 8.98783 4.01308 8.54712 4.17154V11.8696H10.4018V5.39498C10.5597 5.34707 10.7213 5.3139 10.8866 5.28811C11.1033 5.24757 11.3199 5.22546 11.5403 5.22546C11.8561 5.22178 12.172 5.25126 12.4842 5.31022C12.7008 5.35075 12.9138 5.40603 13.1232 5.47236L13.4427 3.89147C13.3509 3.85831 13.2297 3.82514 13.0754 3.79197C12.9175 3.75512 12.7596 3.72564 12.598 3.69985Z" fill="currentColor"/><path d="M19.5607 4.48129C19.2889 4.19017 18.9437 3.96906 18.5691 3.84009C18.0806 3.67794 17.5701 3.60056 17.0597 3.6153C16.5932 3.61161 16.1231 3.65583 15.6641 3.73691C15.3299 3.79218 14.9956 3.87325 14.6651 3.97643L14.621 3.99117L14.8598 5.56101L14.9222 5.5389C15.194 5.44677 15.4768 5.37676 15.7559 5.33622C16.1268 5.27357 16.5088 5.24409 16.887 5.24778C17.1405 5.24041 17.3902 5.27726 17.6289 5.36202C17.9852 5.49099 18.2496 5.78948 18.3414 6.15799C18.3891 6.34593 18.4148 6.54492 18.4148 6.74023V6.9687C18.2055 6.9208 17.9925 6.88395 17.7795 6.85815C17.5701 6.83236 17.3608 6.8213 17.1515 6.8213C17.1441 6.8213 17.1405 6.8213 17.1331 6.8213C16.7254 6.8213 16.3178 6.86552 15.9211 6.94659C15.5502 7.02029 15.1976 7.16401 14.8745 7.36669C14.577 7.562 14.3272 7.82732 14.1546 8.14055C13.9673 8.498 13.8755 8.89599 13.8902 9.29766C13.8755 9.7067 13.9526 10.1194 14.1179 10.499C14.2648 10.8122 14.4925 11.0886 14.7716 11.295C15.0764 11.5087 15.4107 11.6561 15.7742 11.7372C16.1966 11.8293 16.6263 11.8772 17.056 11.8735C17.089 11.8735 17.1184 11.8735 17.1515 11.8735C17.7501 11.8735 18.3561 11.8293 18.951 11.7445C19.5203 11.6598 19.9316 11.5898 20.2034 11.5271L20.2475 11.5161V6.75128C20.2512 6.32382 20.1997 5.89635 20.0896 5.47994C19.9941 5.11143 19.8141 4.76504 19.5607 4.48129ZM18.4112 8.33955V10.2484C18.0145 10.3111 17.6105 10.3405 17.2102 10.3295H17.1551C16.7401 10.3221 16.4096 10.241 16.1635 10.0936C15.9175 9.94255 15.7889 9.6588 15.7889 9.25344C15.7816 9.07287 15.8293 8.89599 15.9285 8.74122C16.024 8.60487 16.1525 8.49432 16.2994 8.4243C16.4684 8.34323 16.6446 8.29164 16.832 8.26584C17.2286 8.20688 17.6326 8.20688 18.0329 8.26584C18.1541 8.28058 18.2826 8.30638 18.4112 8.33955Z" fill="currentColor"/><path d="M27.6177 4.63596C27.3386 4.30062 26.975 4.04266 26.5673 3.88421C26.0422 3.6889 25.4839 3.59677 24.9257 3.61151C24.2903 3.60783 23.6513 3.65573 23.0233 3.75154C22.5532 3.82156 22.0868 3.92106 21.6277 4.04635V11.866H23.4824V5.34717C23.6072 5.32506 23.7945 5.29927 24.0516 5.26979C24.294 5.24031 24.5401 5.22557 24.7898 5.22188C25.0652 5.21451 25.337 5.25873 25.5941 5.35086C25.8071 5.43193 25.9871 5.57933 26.1156 5.76727C26.2552 5.99206 26.3507 6.24633 26.3911 6.50797C26.4535 6.87279 26.4792 7.2413 26.4755 7.61349V11.855H28.3339V7.31868C28.3375 6.81383 28.2825 6.30897 28.1723 5.81518C28.0768 5.38771 27.8895 4.98235 27.6177 4.63596Z" fill="currentColor"/><path d="M35.1506 8.64496C35.0588 8.39069 34.9082 8.15485 34.7173 7.96691C34.4969 7.75317 34.2472 7.57629 33.9754 7.44363C33.6228 7.26675 33.2592 7.10829 32.892 6.97194C32.6753 6.89824 32.4623 6.81348 32.2493 6.71399C32.1024 6.64766 31.9591 6.5629 31.8306 6.46709C31.7425 6.40076 31.669 6.31232 31.6213 6.2165C31.5772 6.11701 31.5588 6.00646 31.5588 5.8959C31.5515 5.6748 31.6727 5.47212 31.8673 5.37631C32.1317 5.24733 32.4292 5.18469 32.7304 5.19574C33.083 5.19206 33.4355 5.22891 33.7807 5.30629C34.0342 5.36525 34.2839 5.44633 34.5226 5.54951L34.5814 5.5753L34.9303 4.00915L34.8862 3.99441C34.5814 3.88755 34.2655 3.80648 33.9497 3.74751C33.52 3.66276 33.0793 3.61854 32.6422 3.62222C31.7388 3.62222 31.0153 3.83596 30.4864 4.25237C29.9539 4.67246 29.6858 5.25102 29.6858 5.97698C29.6748 6.30495 29.7335 6.62555 29.8584 6.92772C29.9686 7.18199 30.1302 7.40678 30.3358 7.59103C30.5489 7.78265 30.7912 7.94111 31.0483 8.0664C31.3385 8.21012 31.6433 8.33541 31.9444 8.44596C32.4696 8.64127 32.8479 8.82553 33.0756 8.99135C33.2776 9.12033 33.3951 9.34143 33.3951 9.58465V9.58833C33.4135 9.80944 33.296 10.0195 33.1013 10.1227C32.8956 10.2332 32.5541 10.2885 32.095 10.2885C32.084 10.2885 32.0767 10.2885 32.0656 10.2885C31.6543 10.2885 31.243 10.2369 30.8463 10.1337C30.5231 10.049 30.2073 9.94578 29.9025 9.82786L29.8437 9.80207L29.5132 11.4088L29.5573 11.4235C29.8437 11.5304 30.1375 11.6262 30.435 11.6999C30.9198 11.8141 31.4193 11.8731 31.9187 11.8731C31.9738 11.8731 32.0289 11.8731 32.084 11.8694H32.0877C33.105 11.8694 33.8983 11.6741 34.4528 11.2871C35.0111 10.8965 35.2939 10.3143 35.2939 9.55885C35.2939 9.24562 35.2498 8.93976 35.1506 8.64496Z" fill="currentColor"/><path d="M41.8496 9.89443C41.6366 9.98287 41.3795 10.0566 41.0894 10.1155C40.7992 10.1745 40.4981 10.204 40.1969 10.204C39.4 10.204 38.827 9.98287 38.4965 9.55172C38.1623 9.1132 37.9897 8.50885 37.9897 7.75341C37.9897 6.96849 38.1696 6.35309 38.5259 5.92562C38.8784 5.50184 39.4 5.28442 40.0794 5.28442C40.3695 5.28442 40.645 5.3139 40.9021 5.37286C41.1591 5.43182 41.3942 5.50552 41.5962 5.59397L41.6549 5.61976L42.0663 4.04256L42.0222 4.02413C41.3685 3.75512 40.6633 3.61877 39.9325 3.61877C39.3375 3.61877 38.7903 3.72564 38.3129 3.93569C37.8354 4.14574 37.4241 4.44054 37.0899 4.80905C36.7557 5.17755 36.4949 5.61976 36.3186 6.12461C36.1387 6.62947 36.0505 7.17486 36.0505 7.75341C36.0505 8.33933 36.1313 8.89209 36.2893 9.39326C36.4472 9.89811 36.6932 10.3403 37.0164 10.7051C37.3396 11.07 37.7546 11.3611 38.2504 11.5638C38.7426 11.7701 39.3302 11.8733 39.9949 11.8733C40.4209 11.8733 40.8396 11.8328 41.2399 11.7554C41.6403 11.6743 41.9487 11.5859 42.1471 11.4827L42.1838 11.4643L41.9157 9.87232L41.8496 9.89443Z" fill="currentColor"/><path d="M48.7158 4.48129C48.444 4.19017 48.0988 3.96906 47.7242 3.84009C47.2357 3.67794 46.7252 3.60056 46.2147 3.6153C45.7483 3.61161 45.2782 3.65215 44.8154 3.73322C44.4812 3.7885 44.147 3.86957 43.8202 3.97275L43.7761 3.98749L44.0111 5.55732L44.0736 5.53521C44.3454 5.44309 44.6245 5.37307 44.9073 5.33254C45.2782 5.26989 45.6601 5.24041 46.0384 5.24409C46.2918 5.23672 46.5416 5.27358 46.7803 5.35833C47.1365 5.48731 47.401 5.7858 47.4928 6.1543C47.5405 6.34224 47.5662 6.54124 47.5662 6.73654V6.96502C47.3569 6.91711 47.1439 6.88026 46.9309 6.85447C46.7179 6.82867 46.5085 6.81762 46.3029 6.81762C46.2992 6.81762 46.2992 6.81762 46.2955 6.81762C45.8842 6.81762 45.4692 6.86184 45.0689 6.94659C44.6979 7.02029 44.3454 7.16401 44.0222 7.36669C43.7247 7.562 43.4749 7.82732 43.3023 8.14055C43.115 8.498 43.0232 8.89599 43.0379 9.29766C43.0269 9.7067 43.104 10.1231 43.2729 10.499C43.4199 10.8122 43.6476 11.0886 43.9267 11.295C44.2315 11.5087 44.5694 11.6561 44.9293 11.7372C45.348 11.8293 45.7813 11.8772 46.211 11.8735C46.2441 11.8735 46.2735 11.8735 46.3065 11.8735C46.9052 11.8735 47.5111 11.8293 48.1061 11.7445C48.6754 11.6598 49.0867 11.5898 49.3585 11.5271L49.4025 11.5161V6.75128C49.4062 6.32382 49.3548 5.89267 49.2446 5.47994C49.1455 5.11143 48.9655 4.76504 48.7158 4.48129ZM47.5626 8.33955V10.2484C47.1659 10.3111 46.7619 10.3405 46.3616 10.3295H46.3065C45.8915 10.3221 45.561 10.241 45.3149 10.0936C45.0689 9.94255 44.9403 9.6588 44.9403 9.25344C44.933 9.07287 44.9807 8.89599 45.0799 8.74122C45.1754 8.60487 45.3039 8.49432 45.4508 8.4243C45.6198 8.34323 45.796 8.29164 45.9833 8.26584C46.38 8.20688 46.784 8.20688 47.1843 8.26584C47.3092 8.28058 47.4377 8.30638 47.5626 8.33955Z" fill="currentColor"/><path d="M54.829 3.69985C54.6637 3.67405 54.4984 3.65194 54.3368 3.6372C54.1752 3.62246 54.032 3.61509 53.9108 3.61509C53.3085 3.61141 52.7099 3.67037 52.1222 3.79197C51.6668 3.88779 51.2188 4.01308 50.7781 4.17154V11.8696H52.6327V5.39498C52.7907 5.34707 52.9523 5.3139 53.1175 5.28811C53.3342 5.24757 53.5509 5.22546 53.7713 5.22546C54.0871 5.22178 54.4029 5.25126 54.7151 5.31022C54.9318 5.35075 55.1448 5.40603 55.3541 5.47236L55.6737 3.89147C55.5818 3.85831 55.4606 3.82514 55.3064 3.79197C55.1485 3.75512 54.9942 3.72564 54.829 3.69985Z" fill="currentColor"/><path d="M63.1198 11.3242V10.7714L63.1235 0L61.2247 0.316915V4.01303C61.0081 3.90985 60.784 3.82141 60.5563 3.75139C60.2295 3.65558 59.8879 3.60767 59.55 3.61504C59.0359 3.60399 58.5364 3.70349 58.0626 3.90985C57.6403 4.10147 57.2583 4.39259 56.9645 4.75373C56.6487 5.14066 56.421 5.57918 56.2814 6.05824C56.1198 6.60731 56.0427 7.1785 56.05 7.74968C56.0427 8.33192 56.1345 8.90679 56.3255 9.45955C56.4981 9.94598 56.7662 10.3845 57.1224 10.7604C57.4713 11.1215 57.9047 11.4053 58.3748 11.5858C58.8853 11.7775 59.4178 11.8733 59.9614 11.8733C59.9871 11.8733 60.0128 11.8733 60.0385 11.8733C60.6077 11.8733 61.1807 11.829 61.7389 11.7406C62.1906 11.6706 62.6424 11.5711 63.0794 11.4421L63.1198 11.4311V11.3242ZM61.2211 10.086C61.0742 10.1155 60.9236 10.1413 60.773 10.156C60.5343 10.1818 60.2882 10.1966 60.0458 10.1929C59.4068 10.1929 58.8963 9.97177 58.5364 9.53694C58.1802 9.10947 57.9965 8.5088 57.9892 7.75705H57.9929V7.70178C57.9929 6.95371 58.1398 6.35304 58.4299 5.91821C58.72 5.49074 59.1828 5.27332 59.8145 5.27332C59.8181 5.27332 59.8255 5.27332 59.8292 5.27332C60.1046 5.27332 60.3727 5.32123 60.6335 5.41335C60.8428 5.48337 61.0411 5.57918 61.2247 5.6971V10.086H61.2211Z" fill="currentColor"/></svg>';
@@ -148,14 +241,18 @@ const HELP_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height
 /* ===== Helpers ===== */
 
 function navLinkCls(id, activeId, extra) {
-    const base = 'nav-item group flex h-10 items-center justify-between rounded-md px-2 text-base font-medium transition-colors cursor-pointer focus-visible:outline-none';
-    const active = 'is-active bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 dark:bg-white/10 dark:text-white dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white';
-    const inactive = 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white';
+    const base = 'nav-item group relative flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-[14px] leading-5 font-medium transition-colors cursor-pointer focus-visible:outline-none';
+    const active = 'is-active bg-zinc-950/5 text-zinc-950 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:bg-zinc-950/5 focus-visible:text-zinc-950 dark:bg-white/5 dark:text-white dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white';
+    const inactive = 'text-gray-700 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:bg-zinc-950/5 focus-visible:text-zinc-950 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white';
     return `${base} ${id === activeId ? active : inactive}${extra ? ' ' + extra : ''}`;
 }
 
+function collapsedNavItemSizeCls(isDesktopCollapsed) {
+    return isDesktopCollapsed ? ' size-9 justify-center px-0 py-0' : '';
+}
+
 function navIconCls(id, activeId) {
-    const base = 'nav-icon size-6 shrink-0';
+    const base = 'nav-icon size-5 shrink-0';
     const active = 'text-blue-600 dark:text-blue-400';
     const inactive = 'text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400';
     return `${base} ${id === activeId ? active : inactive}`;
@@ -174,86 +271,109 @@ function resolveNavHref(href, routerMode) {
 /* ===== Item Builders ===== */
 
 function buildDivider() {
-    return '<div class="my-1 h-px bg-gray-200 dark:bg-white/10"></div>';
+    return '';
 }
 
 function buildSubmenuItems(children, activeId, routerMode) {
     return children.map(child => {
         const isActive = child.id === activeId;
-        const cls = 'nav-item group flex h-10 items-center rounded-md px-3 text-base font-medium transition-colors cursor-pointer focus-visible:outline-none ' +
+        const cls = 'nav-item group relative flex w-full items-center rounded-lg px-2 py-2 text-[14px] leading-5 font-medium transition-colors cursor-pointer focus-visible:outline-none ' +
             (isActive
-                ? 'is-active bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 dark:bg-white/10 dark:text-white dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white'
-                : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white');
+                ? 'is-active bg-zinc-950/5 text-zinc-950 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:bg-zinc-950/5 focus-visible:text-zinc-950 dark:bg-white/5 dark:text-white dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white'
+                : 'text-gray-600 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:bg-zinc-950/5 focus-visible:text-zinc-950 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white');
         const ariaCurrent = isActive ? ' aria-current="page"' : '';
-        return `<a href="${resolveNavHref(child.href || '#', routerMode)}" class="${cls}"${ariaCurrent}>${child.label}</a>`;
+        return `<a href="${resolveNavHref(child.href || '#', routerMode)}" class="${cls}"${ariaCurrent}><span class="block truncate">${child.label}</span></a>`;
     }).join('\n');
 }
 
 function buildSubmenu(children, activeId, expanded, routerMode) {
     const openCls = expanded
-        ? 'nav-submenu ml-9 flex flex-col overflow-hidden max-h-96 opacity-100 pointer-events-auto transition-all duration-400 ease-in-out'
-        : 'nav-submenu ml-9 flex flex-col overflow-hidden max-h-0 opacity-0 pointer-events-none transition-all duration-400 ease-in-out';
+        ? 'nav-submenu ml-9 flex flex-col gap-0.5 overflow-hidden max-h-96 opacity-100 pointer-events-auto transition-all duration-400 ease-in-out'
+        : 'nav-submenu ml-9 flex flex-col gap-0.5 overflow-hidden max-h-0 opacity-0 pointer-events-none transition-all duration-400 ease-in-out';
     return `<div class="${openCls}">${buildSubmenuItems(children, activeId, routerMode)}</div>`;
 }
 
-function buildNavLink(item, activeId, routerMode) {
+function buildNavLink(item, activeId, routerMode, isDesktopCollapsed) {
     const ariaCurrent = item.id === activeId ? ' aria-current="page"' : '';
-    return `<a href="${resolveNavHref(item.href, routerMode)}" class="${navLinkCls(item.id, activeId)}"${ariaCurrent}>
-<span class="flex items-center gap-3">${renderIcon(item.icon, navIconCls(item.id, activeId))} ${item.label}</span>
+    const rowCls = navLinkCls(item.id, activeId, collapsedNavItemSizeCls(isDesktopCollapsed));
+    const contentCls = 'flex min-w-0 items-center gap-3';
+    const labelCls = 'nav-label truncate' + (isDesktopCollapsed ? ' hidden sr-only' : '');
+    return `<a href="${resolveNavHref(item.href, routerMode)}" class="${rowCls}"${ariaCurrent}>
+<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId))}<span class="${labelCls}">${item.label}</span></span>
 </a>`;
 }
 
-function buildNavLinkArrow(item, activeId, isDesktop, routerMode) {
+function buildNavLinkArrow(item, activeId, isDesktop, routerMode, isDesktopCollapsed) {
     const ariaCurrent = item.id === activeId ? ' aria-current="page"' : '';
     const trailingIcon = isDesktop ? SVG_ARROW_UP_RIGHT : SVG_CHEVRON_RIGHT;
-    return `<a href="${resolveNavHref(item.href, routerMode)}" class="${navLinkCls(item.id, activeId)}"${ariaCurrent}>
-<span class="flex items-center gap-3">${renderIcon(item.icon, navIconCls(item.id, activeId))} ${item.label}</span>
-${trailingIcon}
+    const rowCls = navLinkCls(item.id, activeId, collapsedNavItemSizeCls(isDesktopCollapsed));
+    const contentCls = 'flex min-w-0 items-center gap-3';
+    const labelCls = 'nav-label truncate' + (isDesktopCollapsed ? ' hidden sr-only' : '');
+    const trailingIconCls = isDesktopCollapsed ? ' hidden' : '';
+    return `<a href="${resolveNavHref(item.href, routerMode)}" class="${rowCls}"${ariaCurrent}>
+<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId))}<span class="${labelCls}">${item.label}</span></span>
+<span class="${trailingIconCls}">${trailingIcon}</span>
 </a>`;
 }
 
-function buildSmartExchangeItem(item, activeId, expand, routerMode) {
+function buildSmartExchangeItem(item, activeId, expand, routerMode, isDesktopCollapsed) {
     const isActive = item.id === activeId;
     const linkCls = 'nav-item ' + (isActive ? 'is-active ' : '') +
-        'flex flex-1 h-full items-center gap-3 rounded-md px-2 text-base font-medium transition-colors cursor-pointer focus-visible:outline-none ' +
+        'relative flex h-full flex-1 min-w-0 items-center gap-3 rounded-lg px-2 py-2 text-[14px] leading-5 font-medium transition-colors cursor-pointer focus-visible:outline-none ' +
         (isActive
-            ? 'bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 dark:bg-white/10 dark:text-white dark:hover:bg-white/10 dark:hover:text-white'
-            : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white');
+            ? 'bg-zinc-950/5 text-zinc-950 hover:bg-zinc-950/5 hover:text-zinc-950 dark:bg-white/5 dark:text-white dark:hover:bg-white/5 dark:hover:text-white'
+            : 'text-gray-700 hover:bg-zinc-950/5 hover:text-zinc-950 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white') +
+        collapsedNavItemSizeCls(isDesktopCollapsed);
     const iconCls = isActive
-        ? 'nav-icon size-6 shrink-0 text-blue-600 dark:text-blue-400'
-        : 'nav-icon size-6 shrink-0 text-gray-500 dark:text-gray-400';
+        ? 'nav-icon size-5 shrink-0 text-blue-600 dark:text-blue-400'
+        : 'nav-icon size-5 shrink-0 text-gray-500 dark:text-gray-400';
     const ariaCurrent = isActive ? ' aria-current="page"' : '';
     const chevron = SVG_CHEVRON_DOWN_TPL.replace('{ROT}', expand ? 'rotate-180' : '');
-    return `<div class="nav-item group flex h-10 w-full items-center gap-1 rounded-md" data-smart-exchange-trigger>
-<a href="${resolveNavHref(item.href, routerMode)}" class="${linkCls}"${ariaCurrent}><span class="flex items-center gap-3">${renderIcon(item.icon, iconCls)} <span class="nav-label">${item.label}</span></span></a>
+    const rowCls = 'nav-item group relative flex ' + (isDesktopCollapsed ? 'w-9' : 'w-full') + ' items-center gap-1 rounded-lg';
+    const contentCls = 'flex min-w-0 items-center gap-3';
+    const labelCls = 'nav-label truncate' + (isDesktopCollapsed ? ' hidden sr-only' : '');
+    const chevronButtonCls = 'flex size-8 items-center justify-center rounded-lg text-gray-600 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/30 transition-colors dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white cursor-pointer' + (isDesktopCollapsed ? ' hidden' : '');
+    return `<div class="${rowCls}" data-smart-exchange-trigger>
+<a href="${resolveNavHref(item.href, routerMode)}" class="${linkCls}"${ariaCurrent}><span class="${contentCls}">${renderIcon(item.icon, iconCls)}<span class="${labelCls}">${item.label}</span></span></a>
 <button type="button" data-chevron-toggle aria-label="Toggle SMART Exchange submenu"
-  class="flex size-8 items-center justify-center rounded-md text-gray-600 hover:bg-gray-200 hover:text-gray-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/30 transition-colors dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-300 cursor-pointer">
+  class="${chevronButtonCls}">
 ${chevron}
 </button>
 </div>
 ${buildSubmenu(item.children, activeId, expand, routerMode)}`;
 }
 
-function buildExpandableItem(item, activeId, routerMode) {
+function buildExpandableItem(item, activeId, routerMode, isDesktopCollapsed) {
     const chevronCls = 'chevron-icon size-5 text-gray-500 transition-transform dark:text-gray-400';
-    return `<button type="button" class="${navLinkCls(item.id, activeId, 'w-full')}" data-expandable-trigger>
-<span class="flex items-center gap-3">${renderIcon(item.icon, navIconCls(item.id, activeId))} ${item.label}</span>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="${chevronCls}"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+    const rowCls = navLinkCls(item.id, activeId, collapsedNavItemSizeCls(isDesktopCollapsed));
+    const contentCls = 'flex min-w-0 items-center gap-3';
+    const labelCls = 'nav-label truncate' + (isDesktopCollapsed ? ' hidden sr-only' : '');
+    const chevronHiddenCls = isDesktopCollapsed ? ' hidden' : '';
+    return `<button type="button" class="${rowCls}" data-expandable-trigger data-item-id="${item.id}">
+<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId))}<span class="${labelCls}">${item.label}</span></span>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="${chevronCls}${chevronHiddenCls}"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
 </button>
 ${buildSubmenu(item.children, activeId, false, routerMode)}`;
 }
 
-function buildNavItems(isDesktop, activeId, expand, routerMode) {
+function buildNavItems(isDesktop, activeId, expand, routerMode, isDesktopCollapsed) {
     return APP_NAV_DATA.map(item => {
         switch (item.type) {
             case 'divider':        return buildDivider();
-            case 'link':           return buildNavLink(item, activeId, routerMode);
-            case 'link-arrow':     return buildNavLinkArrow(item, activeId, isDesktop, routerMode);
-            case 'smart-exchange': return buildSmartExchangeItem(item, activeId, expand, routerMode);
-            case 'expandable':     return buildExpandableItem(item, activeId, routerMode);
+            case 'link':           return buildNavLink(item, activeId, routerMode, isDesktop && isDesktopCollapsed);
+            case 'link-arrow':     return buildNavLinkArrow(item, activeId, isDesktop, routerMode, isDesktop && isDesktopCollapsed);
+            case 'smart-exchange': return buildSmartExchangeItem(item, activeId, expand && !(isDesktop && isDesktopCollapsed), routerMode, isDesktop && isDesktopCollapsed);
+            case 'expandable':     return buildExpandableItem(item, activeId, routerMode, isDesktop && isDesktopCollapsed);
             default:               return '';
         }
     }).join('\n');
+}
+
+function getPagePathForNavContext(component, overridePagePath) {
+    if (overridePagePath) return overridePagePath;
+    return (component && component.getAttribute && component.getAttribute('data-page'))
+        || (document.body && document.body.getAttribute('data-page'))
+        || (window.location.pathname.split('/').pop() || '');
 }
 
 /* ===== Shared Block HTML ===== */
@@ -285,21 +405,106 @@ ${TRANSCARD_LOGO_SVG}
 
 class AppNav extends HTMLElement {
     connectedCallback() {
-        const filename = this.getAttribute('data-page') || window.location.pathname.split('/').pop() || '';
+        this.style.display = 'block';
+        const filename = getPagePathForNavContext(this);
         const activeId = APP_NAV_PAGE_MAP[filename] || null;
         const routerMode = this.getAttribute('data-router') || 'static';
+        const collapsed = getInitialSidebarCollapsed();
         const expandAttr = this.getAttribute('data-expand-smart-exchange');
         const expand = expandAttr == null
             ? (filename === 'smart-exchange.html' || filename === 'payment-preferences.html')
             : expandAttr === 'true';
 
-        this.innerHTML = this._buildHTML(activeId, expand, routerMode);
+        this.innerHTML = this._buildHTML(activeId, expand, routerMode, collapsed);
+        this._attachEventListeners();
+        this._refreshThemeLogos = this._refreshThemeLogos.bind(this);
+        window.addEventListener('app-theme-change', this._refreshThemeLogos);
+    }
+
+    disconnectedCallback() {
+        if (this._refreshThemeLogos) {
+            window.removeEventListener('app-theme-change', this._refreshThemeLogos);
+        }
+    }
+
+    _refreshNavTrees(pagePath) {
+        var filename = getPagePathForNavContext(this, pagePath);
+        var activeId = APP_NAV_PAGE_MAP[filename] || null;
+        var routerMode = this.getAttribute('data-router') || 'static';
+        var collapsed = getInitialSidebarCollapsed();
+
+        // Capture current submenu open states before rebuild
+        var expandSE = false;
+        var openExpandableIds = new Set();
+        var desktopNav = this.querySelector('[data-nav="desktop"]');
+        if (desktopNav) {
+            var seTriggerEl = desktopNav.querySelector('[data-smart-exchange-trigger]');
+            if (seTriggerEl) {
+                var seSubEl = seTriggerEl.nextElementSibling;
+                if (seSubEl && seSubEl.classList.contains('nav-submenu') && !seSubEl.classList.contains('max-h-0')) expandSE = true;
+            }
+            desktopNav.querySelectorAll('[data-expandable-trigger][data-item-id]').forEach(function (btn) {
+                var sub = btn.nextElementSibling;
+                if (sub && sub.classList.contains('nav-submenu') && !sub.classList.contains('max-h-0')) {
+                    openExpandableIds.add(btn.getAttribute('data-item-id'));
+                }
+            });
+        }
+
+        // SE expand: open if navigating to SE/PP page OR was already open
+        var expandAttr = this.getAttribute('data-expand-smart-exchange');
+        var pageExpand = (filename === 'smart-exchange.html' || filename === 'payment-preferences.html');
+        var expand = expandAttr == null ? (pageExpand || expandSE) : expandAttr === 'true';
+
+        this.setAttribute('data-page', filename);
+
+        var mobileNav = this.querySelector('[data-nav="mobile"]');
+        if (mobileNav) {
+            mobileNav.innerHTML = buildNavItems(false, activeId, expand, routerMode, false);
+        }
+
+        desktopNav = this.querySelector('[data-nav="desktop"]');
+        if (desktopNav) {
+            var indicator = desktopNav.querySelector('#desktop-nav-current-indicator');
+            if (indicator) indicator.remove();
+            desktopNav.innerHTML = buildNavItems(true, activeId, expand, routerMode, collapsed);
+
+            // Restore previously-open expandable submenus (without animation)
+            if (openExpandableIds.size > 0) {
+                desktopNav.querySelectorAll('[data-expandable-trigger][data-item-id]').forEach(function (btn) {
+                    if (!openExpandableIds.has(btn.getAttribute('data-item-id'))) return;
+                    var sub = btn.nextElementSibling;
+                    if (!sub || !sub.classList.contains('nav-submenu')) return;
+                    sub.classList.remove('max-h-0', 'opacity-0', 'pointer-events-none');
+                    sub.classList.add('max-h-96', 'opacity-100', 'pointer-events-auto');
+                    var chevron = btn.querySelector('.chevron-icon');
+                    if (chevron) chevron.classList.add('rotate-180');
+                });
+            }
+
+            if (indicator) {
+                desktopNav.appendChild(indicator);
+                void indicator.offsetHeight; // force reflow so browser records current position as transition "from"
+            }
+        }
+
         this._attachEventListeners();
     }
 
-    _buildHTML(activeId, expand, routerMode) {
-        const mobileItems = buildNavItems(false, activeId, expand, routerMode);
-        const desktopItems = buildNavItems(true, activeId, expand, routerMode);
+    refreshNav(pagePath) {
+        this._refreshNavTrees(pagePath);
+    }
+
+    refresh(pagePath) {
+        this._refreshNavTrees(pagePath);
+        if (typeof window.initDashboardSidebar === 'function') {
+            window.initDashboardSidebar();
+        }
+    }
+
+    _buildHTML(activeId, expand, routerMode, collapsed) {
+        const mobileItems = buildNavItems(false, activeId, expand, routerMode, false);
+        const desktopItems = buildNavItems(true, activeId, expand, routerMode, collapsed);
 
         return `<!-- ===== MOBILE SIDEBAR (off-canvas drawer, hidden on lg+) ===== -->
 <el-dialog>
@@ -312,10 +517,10 @@ class AppNav extends HTMLElement {
 <span class="sr-only">Close sidebar</span>
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6 text-white"><path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </button></div>
-<div class="flex grow flex-col justify-between overflow-y-auto bg-white dark:bg-gray-900 px-6 pt-6 pb-6">
+<div class="flex grow flex-col justify-between overflow-y-auto bg-white px-4 pt-2 pb-4 dark:bg-gray-900">
 <div class="flex flex-col gap-9">
-<div class="flex items-center justify-between px-1">${buildLogoHtml()}</div>
-<nav class="flex flex-col" data-nav="mobile">
+<div class="flex items-center justify-center px-[2px]">${buildLogoHtml()}</div>
+<nav class="relative flex w-full flex-col gap-0.5" data-nav="mobile">
 ${mobileItems}
 </nav>
 ${buildHelpBlock('')}
@@ -326,29 +531,29 @@ ${buildFooter('')}
 </dialog></el-dialog>
 
 <!-- ===== STATIC SIDEBAR FOR DESKTOP (hidden below lg) ===== -->
-<div id="desktop-sidebar-shell" class="hidden lg:fixed lg:inset-y-0 lg:z-50 lg:flex lg:w-[360px] lg:flex-col">
-<div id="desktop-sidebar-panel" class="flex grow flex-col justify-between overflow-y-auto border-r border-gray-200 bg-white px-6 pt-6 pb-6 dark:border-white/10 dark:bg-gray-900">
-<div class="flex flex-col gap-9">
-<div id="desktop-logo-row" class="relative flex items-center justify-between px-1">
-<div id="desktop-logo-full">${buildLogoHtml()}</div>
-<img id="desktop-logo-mark" src="${getShellAssetUrl('logoMark', '../../../assets/img/smart-hub-mark.svg')}" alt="SMART Hub" class="hidden h-8 w-8 shrink-0"/>
+<div id="desktop-sidebar-shell" class="hidden lg:sticky lg:top-[calc(var(--stp-alert-height,0px)-1px)] lg:flex lg:h-[calc(100vh-var(--stp-alert-height,0px)+1px)] lg:shrink-0 lg:self-start lg:flex-col ${collapsed ? 'is-collapsed lg:w-[68px]' : 'lg:w-[288px]'}">
+<div id="desktop-sidebar-panel" class="flex h-full grow flex-col justify-between overflow-y-auto border-r border-gray-200 bg-white px-4 pt-2 pb-4 dark:border-white/10 dark:bg-gray-900">
+<div class="flex flex-col gap-6">
+<div id="desktop-logo-row" class="relative flex min-h-9 items-center justify-start pl-[2px]">
+<div id="desktop-logo-full" class="${collapsed ? 'hidden' : ''} flex min-w-0 flex-1 items-center pr-10">${buildLogoHtml('justify-start')}</div>
+<button type="button" id="desktop-sidebar-collapse-btn" data-sidebar-toggle data-sidebar-btn-tooltip="Collapse" aria-label="Collapse sidebar" class="${collapsed ? 'hidden ' : ''}absolute right-0 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-lg text-gray-500 hover:bg-zinc-950/5 hover:text-gray-700 dark:hover:bg-white/5 dark:hover:text-gray-300 transition-colors cursor-pointer">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/></svg>
+</button>
+<div id="desktop-logo-mark" class="${collapsed ? 'flex' : 'hidden'} group/logomark relative size-9 shrink-0 items-center justify-start overflow-hidden">
+${namespaceInlineSvg(SMART_HUB_MARK_SVG, 'smart-hub-mark-' + smartHubLogoInstanceCount).replace('<svg ', '<svg class="h-8 w-8 shrink-0" ')}
+<button type="button" data-sidebar-toggle data-sidebar-btn-tooltip="Expand" aria-label="Expand sidebar" class="absolute inset-0 flex items-center justify-center rounded-lg text-gray-500 bg-white dark:bg-gray-900 opacity-0 group-hover/logomark:opacity-100 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-opacity cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></button>
 </div>
-<nav class="flex flex-col" data-nav="desktop">
+</div>
+<nav class="relative flex w-full flex-col gap-0.5" data-nav="desktop">
 ${desktopItems}
 </nav>
-${buildHelpBlock('desktop-sidebar-help')}
+${buildHelpBlock('desktop-sidebar-help').replace('class="flex flex-col gap-2"', 'class="' + (collapsed ? 'hidden ' : '') + 'flex flex-col gap-2"')}
 </div>
-${buildFooter('desktop-sidebar-footer')}
+${buildFooter('desktop-sidebar-footer').replace('class="flex flex-col items-center gap-2 pt-4 pb-4"', 'class="' + (collapsed ? 'hidden ' : '') + 'flex flex-col items-center gap-2 pt-4 pb-4"')}
 </div>
 </div>
 
-<!-- ===== SIDEBAR COLLAPSE TOGGLE BUTTON ===== -->
-<button id="desktop-sidebar-toggle" type="button"
-  class="hidden lg:flex fixed top-[30px] left-[344px] z-[70] rounded-sm bg-white px-1 py-1 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:shadow-none dark:inset-ring-gray-700 dark:hover:bg-gray-700 items-center justify-center transition-colors cursor-pointer">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-700 dark:text-gray-300 transition-transform duration-200 ease-out" id="desktop-sidebar-toggle-icon">
-<path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/>
-</svg>
-</button>`;
+`;
     }
 
     _attachEventListeners() {
@@ -364,6 +569,12 @@ ${buildFooter('desktop-sidebar-footer')}
             btn.addEventListener('click', () => {
                 if (typeof toggleSmartExchangeSubmenu === 'function') toggleSmartExchangeSubmenu(btn);
             });
+        });
+    }
+
+    _refreshThemeLogos() {
+        this.querySelectorAll('[data-smart-hub-logo]').forEach(function (node) {
+            node.innerHTML = buildFullLogoSvgHtml();
         });
     }
 }
