@@ -247,6 +247,7 @@
             var title = this.getAttribute('data-title') || pageTitleFromPath(pagePath);
             this.innerHTML = this.render(title, pagePath);
             this._renderAlerts();
+            this._observeAlertHost();
             this.bindStp();
             this.bindProfileData();
         }
@@ -259,6 +260,39 @@
             host.className = 'fixed inset-x-0 top-0 z-[60]';
             document.body.insertBefore(host, document.body.firstChild);
             return host;
+        }
+
+        _observeAlertHost() {
+            var host = document.getElementById('stp-alert-host');
+            if (!host) return;
+
+            var self = this;
+
+            if (!this._alertResizeObserver && typeof ResizeObserver !== 'undefined') {
+                this._alertResizeObserver = new ResizeObserver(function () {
+                    self._updateAlertSpacing();
+                });
+                this._alertResizeObserver.observe(host);
+            }
+
+            if (!this._alertWindowResizeHandler) {
+                this._alertWindowResizeHandler = function () {
+                    self._updateAlertSpacing();
+                };
+                window.addEventListener('resize', this._alertWindowResizeHandler);
+                window.addEventListener('load', this._alertWindowResizeHandler);
+            }
+
+            if (!this._alertFontsReadyBound && document.fonts && document.fonts.ready) {
+                this._alertFontsReadyBound = true;
+                document.fonts.ready.then(function () {
+                    self._updateAlertSpacing();
+                });
+            }
+
+            requestAnimationFrame(function () {
+                self._updateAlertSpacing();
+            });
         }
 
         _renderAlerts() {
@@ -311,13 +345,22 @@
                 return;
             }
             var visible = host.querySelector('[data-global-stp-alert-blue]:not(.hidden), [data-global-stp-alert-yellow]:not(.hidden)');
-            var height = visible ? host.offsetHeight : 0;
+            var height = visible ? Math.ceil(host.getBoundingClientRect().height) : 0;
             document.documentElement.style.setProperty('--stp-alert-height', height + 'px');
             document.body.style.paddingTop = height + 'px';
         }
 
         disconnectedCallback() {
             if (this._stpUnsubscribe) this._stpUnsubscribe();
+            if (this._alertResizeObserver) {
+                this._alertResizeObserver.disconnect();
+                this._alertResizeObserver = null;
+            }
+            if (this._alertWindowResizeHandler) {
+                window.removeEventListener('resize', this._alertWindowResizeHandler);
+                window.removeEventListener('load', this._alertWindowResizeHandler);
+                this._alertWindowResizeHandler = null;
+            }
             if (this._profileReadyHandler) {
                 document.removeEventListener('DOMContentLoaded', this._profileReadyHandler);
                 this._profileReadyHandler = null;
