@@ -140,18 +140,18 @@
   function getDisplayStatus(row) {
     var status = String((row && row.status) || 'ready_to_pay');
     if (status === 'in_progress') {
-      return { key: 'in_progress', label: 'In Progress' };
+      return { key: 'in_progress', label: String((row && row.statusLabel) || 'In Progress') };
     }
     if (status === 'paid') {
-      return { key: 'paid', label: 'Paid' };
+      return { key: 'paid', label: String((row && row.statusLabel) || 'Paid') };
     }
     if (status === 'exception') {
-      return { key: 'exception', label: 'Exception' };
+      return { key: 'exception', label: String((row && row.statusLabel) || 'Exception') };
     }
     if (status === 'scheduled') {
-      return { key: 'in_progress', label: 'In Progress' };
+      return { key: 'in_progress', label: String((row && row.statusLabel) || 'In Progress') };
     }
-    return { key: 'ready_to_pay', label: 'Ready to Pay' };
+    return { key: 'ready_to_pay', label: String((row && row.statusLabel) || 'Ready to Pay') };
   }
 
   function isConfirmedPayableRow(row) {
@@ -165,6 +165,12 @@
     var status = String(row.status || '').toLowerCase();
     var statusType = String(row.statusType || '').toLowerCase();
     return status === 'scheduled' || (status === 'in_progress' && statusType === 'scheduled');
+  }
+
+  function isPendingSmartDisburseRow(row) {
+    if (!row) return false;
+    return String(row.status || '').toLowerCase() === 'in_progress'
+      && String(row.statusType || '').toLowerCase() === 'smart_disburse_pending';
   }
 
   function formatMoney(amount, currency) {
@@ -355,6 +361,58 @@
       }
     }
     return null;
+  }
+
+  function persistSmartDisburseBalanceFunding(updatedRow, selection) {
+    if (!updatedRow || !selection) return;
+    if (isScheduledPayableRow(updatedRow)) return;
+    if (String(selection.methodId || '').toLowerCase() !== 'smart_disburse') return;
+    var amount = Number((updatedRow && updatedRow.amount) || 0);
+    if (!(amount > 0)) return;
+
+    var balanceAccount = getSmartDisburseBalanceAccount();
+    if (!balanceAccount) return;
+
+    var accounts = normalizeOriginationAccounts(_originationAccountsState.accounts);
+    var matched = null;
+    accounts = accounts.map(function (account) {
+      if (String(account.id || '') !== String(balanceAccount.id || '')) return account;
+      matched = Object.assign({}, account, {
+        availableAmount: Number(account.availableAmount || 0) + amount
+      });
+      return matched;
+    });
+    if (!matched) return;
+    _originationAccountsState.accounts = accounts;
+    persistOriginationAccounts(accounts);
+  }
+
+  function reversePendingSmartDisburseFunds(row) {
+    if (!isPendingSmartDisburseRow(row)) return;
+    var payPageState = row && row.details && row.details.payPageState ? row.details.payPageState : null;
+    var originationAccountId = String((payPageState && payPageState.originationAccountId) || '').trim();
+    if (!originationAccountId) return;
+    var amount = Number((row && row.amount) || 0);
+    if (!(amount > 0)) return;
+
+    var balanceAccount = getSmartDisburseBalanceAccount();
+    var accounts = normalizeOriginationAccounts(_originationAccountsState.accounts);
+    var updatedAccounts = accounts.map(function (account) {
+      if (balanceAccount && String(account.id || '') === String(balanceAccount.id || '')) {
+        return Object.assign({}, account, {
+          availableAmount: Math.max(0, Number(account.availableAmount || 0) - amount)
+        });
+      }
+      if (String(account.id || '') === originationAccountId) {
+        return Object.assign({}, account, {
+          availableAmount: Number(account.availableAmount || 0) + amount
+        });
+      }
+      return account;
+    });
+
+    _originationAccountsState.accounts = updatedAccounts;
+    persistOriginationAccounts(updatedAccounts);
   }
 
   function getCardBrandIcon(brand) {
@@ -1756,7 +1814,7 @@
     }
 
     if (submitBtn) submitBtn.classList.toggle('hidden', isConfirmed);
-    if (headerCancelBtn) headerCancelBtn.classList.toggle('hidden', !isScheduled);
+    if (headerCancelBtn) headerCancelBtn.classList.toggle('hidden', !(isScheduled || isPendingSmartDisburseRow(row)));
 
     if (scheduleWrap) {
       if (isConfirmed && !hasScheduledDate) {
@@ -1817,6 +1875,8 @@
 
   function movePayableBackToReady(row) {
     if (!row || row.id == null) return null;
+    var wasPendingSmartDisburse = isPendingSmartDisburseRow(row);
+    if (wasPendingSmartDisburse) reversePendingSmartDisburseFunds(row);
     var updated = cloneJson(row) || {};
     updated.status = 'ready_to_pay';
     updated.statusType = '';
@@ -1829,7 +1889,9 @@
     updated.details.activityLog = [{
       type: 'ready',
       title: 'Ready to Pay',
-      description: String((updated && updated.billNumber) || 'This payable') + ' is ready for payment initiation.'
+      description: wasPendingSmartDisburse
+        ? ('SMART Disburse was canceled. Funds were returned from the Balance Account to the origination account.')
+        : (String((updated && updated.billNumber) || 'This payable') + ' is ready for payment initiation.')
     }];
     persistPayableOverride(updated);
     return updated;
@@ -2889,12 +2951,18 @@
 
     if (isScheduled) {
       if (isSmart) {
-        setText('gp-submit-success-title', 'Payment Link Scheduled!');
-        setText('gp-submit-success-copy', 'Your payment link will be sent on ' + formatDate(selection.paymentDateIso) + '. The payee will choose how to pay after opening the link.');
-        setText('gp-submit-progress-title', 'Payment link send is scheduled for ' + formatDate(selection.paymentDateIso) + '.');
+        if (isSmartDisburse) {
+          setText('gp-submit-success-title', 'SMART Disburse Scheduled!');
+          setText('gp-submit-success-copy', 'The SMART Disburse email will be sent on ' + formatDate(selection.paymentDateIso) + '. The payable will remain in progress until the recipient claims the link and chooses a payout method.');
+          setText('gp-submit-progress-title', 'SMART Disburse send is scheduled for ' + formatDate(selection.paymentDateIso) + '.');
+        } else {
+          setText('gp-submit-success-title', 'Payment Link Scheduled!');
+          setText('gp-submit-success-copy', 'Your payment link will be sent on ' + formatDate(selection.paymentDateIso) + '. The payee will choose how to pay after opening the link.');
+          setText('gp-submit-progress-title', 'Payment link send is scheduled for ' + formatDate(selection.paymentDateIso) + '.');
+        }
         if (progressBar) progressBar.style.width = '12.5%';
         setStageState(stage1, 'Link Scheduled', true);
-        setStageState(stage2, 'Pending Payee Action', false);
+        setStageState(stage2, isSmartDisburse ? 'Pending Recipient Claim' : 'Pending Payee Action', false);
         setStageState(stage3, 'Paid', false);
         return;
       }
@@ -2942,13 +3010,13 @@
       var recipientSummary = sentRecipients.length > 1
         ? sentRecipients.join(', ')
         : (sentRecipients[0] || selection.recipientSub || selection.payeeName);
-      setText('gp-submit-success-title', 'Payment Sent!');
-      setText('gp-submit-success-copy', 'The SMART Disburse payment email was sent to ' + recipientSummary + ' and this payable has been marked as paid.');
-      setText('gp-submit-progress-title', selection.amount + ' for ' + selection.payeeName + ' is complete.');
-      if (progressBar) progressBar.style.width = '100%';
+      setText('gp-submit-success-title', 'Pending Recipient Action');
+      setText('gp-submit-success-copy', 'The SMART Disburse email was sent to ' + recipientSummary + '. This payable will remain in progress until the recipient claims the link and chooses a payout method.');
+      setText('gp-submit-progress-title', 'Waiting for the recipient to claim SMART Disburse and choose a payout method.');
+      if (progressBar) progressBar.style.width = '50%';
       setStageState(stage1, 'Email Sent', true);
-      setStageState(stage2, 'Marked Paid', true);
-      setStageState(stage3, 'Paid', true);
+      setStageState(stage2, 'Pending SMART Disburse Claim', true);
+      setStageState(stage3, 'Paid', false);
       return;
     }
 
@@ -3208,10 +3276,14 @@
     updated.details = Object.assign({}, updated.details || {});
     updated.adDate = String(nowIso).slice(0, 10);
     updated.paymentMethod = selection && selection.methodLabel ? selection.methodLabel : updated.paymentMethod;
-    updated.processingStep = isScheduled ? 'Release scheduled' : ((isInstantCard || isInstantSmartDisburse) ? 'Payment completed' : 'Processing payment');
-    updated.status = (isInstantCard || isInstantSmartDisburse) ? 'paid' : 'in_progress';
-    updated.statusType = isScheduled ? 'scheduled' : ((isInstantCard || isInstantSmartDisburse) ? '' : 'processing');
-    updated.statusLabel = (isInstantCard || isInstantSmartDisburse) ? 'Paid' : 'In Progress';
+    updated.processingStep = isScheduled
+      ? 'Release scheduled'
+      : (isInstantCard
+          ? 'Payment completed'
+          : (isInstantSmartDisburse ? 'Pending recipient action' : 'Processing payment'));
+    updated.status = isInstantCard ? 'paid' : 'in_progress';
+    updated.statusType = isScheduled ? 'scheduled' : (isInstantCard ? '' : (isInstantSmartDisburse ? 'smart_disburse_pending' : 'processing'));
+    updated.statusLabel = isInstantCard ? 'Paid' : (isInstantSmartDisburse ? 'Pending Recipient Action' : 'In Progress');
     updated.scheduledFor = isScheduled && paymentDateIso ? (paymentDateIso + 'T09:00:00') : '';
     updated.details.payPageState = buildConfirmedPayPageState(selection);
     updated.details.activityLog = isScheduled
@@ -3255,16 +3327,21 @@
       : isInstantSmartDisburse
         ? [
           {
-            type: 'success',
+            type: 'processing',
             title: 'SMART Disburse Email Sent',
             description: smartRecipientSummary
               ? ('Payment email sent to ' + smartRecipientSummary + '.')
               : 'SMART Disburse payment email sent successfully.',
           },
           {
-            type: 'success',
-            title: 'Payment Completed',
-            description: amount + ' for ' + payeeName + ' was marked as paid.',
+            type: 'pending',
+            title: 'Pending SMART Disburse Claim',
+            description: 'This payable remains in progress until the recipient claims the link and chooses a payout method.',
+          },
+          {
+            type: 'event',
+            title: 'Cancel',
+            description: 'If needed, cancel SMART Disburse to void the token and return the funds from the Balance Account to the origination account.',
           },
         ]
       : [
@@ -3394,6 +3471,7 @@
         var updatedRow = createUpdatedPayableRow(finalSelection);
         if (updatedRow) {
           persistOriginationPaymentSelection(updatedRow, finalSelection);
+          persistSmartDisburseBalanceFunding(updatedRow, finalSelection);
           persistCardPaymentSelection(updatedRow, finalSelection);
           _payContext.row = updatedRow;
           persistPayableOverride(updatedRow);
@@ -3420,9 +3498,6 @@
         .then(function (emails) {
           selection.smartEmailRecipients = Array.isArray(emails) ? emails.slice() : [];
           finalizePayment(selection);
-          if (typeof window.showGlobalTopToast === 'function') {
-            window.showGlobalTopToast('SMART Disburse email sent and payment marked as paid.');
-          }
         })
         .catch(function (error) {
           var message = error && error.message ? error.message : 'Failed to send SMART Disburse email.';
@@ -3443,10 +3518,26 @@
   function initHeaderCancelAction() {
     var cancelBtn = document.getElementById('pp-header-cancel-btn');
     var confirmBtn = document.getElementById('pp-schedule-cancel-confirm-btn');
+    var titleEl = document.getElementById('pp-cancel-dialog-title');
+    var copyEl = document.getElementById('pp-cancel-dialog-copy');
+    var keepBtn = document.getElementById('pp-cancel-dialog-keep-btn');
     if (!cancelBtn || !confirmBtn) return;
 
-    function cancelScheduledPayment() {
-      if (!isScheduledPayableRow(_payContext.row)) return;
+    function syncCancelDialogContent(row) {
+      var isScheduled = isScheduledPayableRow(row);
+      var isPendingSmartDisburse = isPendingSmartDisburseRow(row);
+      if (titleEl) titleEl.textContent = isPendingSmartDisburse ? 'Cancel SMART Disburse' : 'Cancel Scheduled Payment';
+      if (copyEl) {
+        copyEl.textContent = isPendingSmartDisburse
+          ? 'Are you sure you want to cancel this SMART Disburse payment? This will void the SMART Disburse token and move the funds from the Balance Account back to the origination account.'
+          : 'This will cancel the scheduled payment and move it back to Ready to Pay. Are you sure you want to continue?';
+      }
+      if (keepBtn) keepBtn.textContent = isPendingSmartDisburse ? 'Keep In Progress' : 'Keep Scheduled';
+      if (confirmBtn) confirmBtn.textContent = isPendingSmartDisburse ? 'Cancel SMART Disburse' : 'Cancel Schedule';
+    }
+
+    function cancelActivePayment() {
+      if (!isScheduledPayableRow(_payContext.row) && !isPendingSmartDisburseRow(_payContext.row)) return;
       var updatedRow = movePayableBackToReady(_payContext.row);
       if (!updatedRow) return;
       _payContext.row = updatedRow;
@@ -3458,12 +3549,13 @@
 
     cancelBtn.addEventListener('click', function (event) {
       event.preventDefault();
-      if (!isScheduledPayableRow(_payContext.row)) return;
+      if (!isScheduledPayableRow(_payContext.row) && !isPendingSmartDisburseRow(_payContext.row)) return;
+      syncCancelDialogContent(_payContext.row);
       openDialogById('pp-schedule-cancel-dialog');
     });
 
     confirmBtn.addEventListener('click', function () {
-      cancelScheduledPayment();
+      cancelActivePayment();
       closeDialogById('pp-schedule-cancel-dialog');
     });
   }

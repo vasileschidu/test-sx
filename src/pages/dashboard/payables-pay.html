@@ -2047,17 +2047,17 @@
                                     clip-rule="evenodd" />
                             </svg>
                             <div class="mt-6 flex flex-col items-center gap-2">
-                                <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">
+                                <h2 id="pp-cancel-dialog-title" class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">
                                     Cancel Scheduled Payment
                                 </h2>
-                                <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
+                                <p id="pp-cancel-dialog-copy" class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
                                     This will cancel the scheduled payment and move it back to Ready to Pay. Are you sure you want to continue?
                                 </p>
                             </div>
                         </div>
                     </div>
                     <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
-                        <button type="button" command="close" commandfor="pp-schedule-cancel-dialog"
+                        <button id="pp-cancel-dialog-keep-btn" type="button" command="close" commandfor="pp-schedule-cancel-dialog"
                             class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
                             Keep Scheduled
                         </button>

@@ -18,6 +18,7 @@
   ]);
   var PAYABLE_ROW_OVERRIDES_STORAGE_KEY = 'bp-row-overrides-v1';
   var PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY = 'bp-pay-page-view-context-v1';
+  var ORIGINATION_ACCOUNTS_STORAGE_KEY = 'bp-origination-accounts-v1';
 
   var DEFAULT_PAGE_SIZE = 16;
   var PAGE_SIZE_OPTIONS = [10, 16, 25, 50];
@@ -127,6 +128,81 @@
     var month = String(localMidnight.getMonth() + 1).padStart(2, '0');
     var day = String(localMidnight.getDate()).padStart(2, '0');
     return year + '-' + month + '-' + day;
+  }
+
+  function normalizeOriginationAccounts(payload) {
+    var list = Array.isArray(payload) ? payload : ((payload && Array.isArray(payload.data)) ? payload.data : []);
+    var fallbackBalances = [184250, 96740, 128500, 75200];
+    return list.map(function (account, idx) {
+      var next = cloneJson(account) || {};
+      next.id = String(next.id || ('origination_' + String(idx + 1).padStart(3, '0')));
+      next.displayName = String(next.displayName || next.bankName || next.name || ('Origination Account ' + (idx + 1)));
+      next.name = String(next.name || next.displayName || next.bankName || 'Origination Account');
+      next.bankName = String(next.bankName || next.displayName || next.name || 'Bank Account');
+      next.accountType = String(next.accountType || next.type || 'origination');
+      next.currency = String(next.currency || 'USD');
+      next.availableAmount = Number(next.availableAmount != null ? next.availableAmount : fallbackBalances[idx % fallbackBalances.length]);
+      return next;
+    });
+  }
+
+  function getStoredOriginationAccounts() {
+    try {
+      var raw = window.localStorage.getItem(ORIGINATION_ACCOUNTS_STORAGE_KEY);
+      if (!raw) return [];
+      return normalizeOriginationAccounts(JSON.parse(raw));
+    } catch (err) {
+      return [];
+    }
+  }
+
+  function persistOriginationAccounts(accounts) {
+    try {
+      window.localStorage.setItem(ORIGINATION_ACCOUNTS_STORAGE_KEY, JSON.stringify(normalizeOriginationAccounts(accounts)));
+    } catch (err) {
+      // Ignore storage failures.
+    }
+  }
+
+  function isPendingSmartDisburseRow(row) {
+    return !!row
+      && String(row.status || '').toLowerCase() === 'in_progress'
+      && String(row.statusType || '').toLowerCase() === 'smart_disburse_pending';
+  }
+
+  function reversePendingSmartDisburseFunds(row) {
+    if (!isPendingSmartDisburseRow(row)) return;
+    var payPageState = row && row.details && row.details.payPageState ? row.details.payPageState : null;
+    var originationAccountId = String((payPageState && payPageState.originationAccountId) || '').trim();
+    if (!originationAccountId) return;
+    var amount = Number((row && row.amount) || 0);
+    if (!(amount > 0)) return;
+
+    var accounts = getStoredOriginationAccounts();
+    if (!accounts.length) return;
+    var balanceAccount = null;
+    for (var i = 0; i < accounts.length; i += 1) {
+      if (String(accounts[i].accountType || '').toLowerCase() === 'balance_account') {
+        balanceAccount = accounts[i];
+        break;
+      }
+    }
+
+    var updatedAccounts = accounts.map(function (account) {
+      if (balanceAccount && String(account.id || '') === String(balanceAccount.id || '')) {
+        return Object.assign({}, account, {
+          availableAmount: Math.max(0, Number(account.availableAmount || 0) - amount)
+        });
+      }
+      if (String(account.id || '') === originationAccountId) {
+        return Object.assign({}, account, {
+          availableAmount: Number(account.availableAmount || 0) + amount
+        });
+      }
+      return account;
+    });
+
+    persistOriginationAccounts(updatedAccounts);
   }
 
   function isPastDue(dueDate) {
@@ -761,6 +837,8 @@
   function moveRowBackToReady(rowId) {
     state.allRows = state.allRows.map(function (row) {
       if (row.id !== rowId) return row;
+      var wasPendingSmartDisburse = isPendingSmartDisburseRow(row);
+      if (wasPendingSmartDisburse) reversePendingSmartDisburseFunds(row);
       var updated = Object.assign({}, row);
       updated.status = 'ready_to_pay';
       updated.statusType = '';
@@ -774,7 +852,9 @@
         {
           type: 'ready',
           title: 'Ready to Pay',
-          description: 'Payment was returned to Ready to Pay.',
+          description: wasPendingSmartDisburse
+            ? 'SMART Disburse was canceled. Funds were returned from the Balance Account to the origination account.'
+            : 'Payment was returned to Ready to Pay.',
         },
       ];
       persistPayableOverride(updated);
@@ -798,7 +878,22 @@
   function initScheduledCancelDialog() {
     var dialog = document.getElementById('bp-schedule-cancel-dialog');
     var confirmBtn = document.getElementById('bp-schedule-cancel-confirm-btn');
+    var titleEl = document.getElementById('bp-cancel-dialog-title');
+    var copyEl = document.getElementById('bp-cancel-dialog-copy');
+    var keepBtn = document.getElementById('bp-cancel-dialog-keep-btn');
     if (!dialog || !confirmBtn) return;
+
+    function syncCancelDialogContent(row) {
+      var isPendingSmartDisburse = isPendingSmartDisburseRow(row);
+      if (titleEl) titleEl.textContent = isPendingSmartDisburse ? 'Cancel SMART Disburse' : 'Cancel Scheduled Payment';
+      if (copyEl) {
+        copyEl.textContent = isPendingSmartDisburse
+          ? 'Are you sure you want to cancel this SMART Disburse payment? This will void the SMART Disburse token and move the funds from the Balance Account back to the origination account.'
+          : 'This will cancel the scheduled payment and move it back to Ready to Pay. Are you sure you want to continue?';
+      }
+      if (keepBtn) keepBtn.textContent = isPendingSmartDisburse ? 'Keep In Progress' : 'Keep Scheduled';
+      if (confirmBtn) confirmBtn.textContent = isPendingSmartDisburse ? 'Cancel SMART Disburse' : 'Cancel Schedule';
+    }
 
     dialog.querySelectorAll('[data-bp-cancel-close]').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -1575,7 +1670,8 @@
         }
         if (col.type === 'action') {
           var isScheduledAction = row.status === 'scheduled' || (row.status === 'in_progress' && row.statusType === 'scheduled');
-          var actionButton = isScheduledAction
+          var isPendingSmartDisburseAction = isPendingSmartDisburseRow(row);
+          var actionButton = (isScheduledAction || isPendingSmartDisburseAction)
             ? '<button type="button" data-cancel-id="' + row.id + '" class="rounded-md bg-gray-100 px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40">Cancel</button>'
             : (row.status === 'in_progress'
               ? '<span class="inline-flex h-8"></span>'
@@ -2014,6 +2110,14 @@
         if (cancelBtn) {
           pendingScheduleCancelId = String(cancelBtn.getAttribute('data-cancel-id') || '').trim();
           if (!pendingScheduleCancelId) return;
+          var pendingRow = null;
+          for (var i = 0; i < state.allRows.length; i += 1) {
+            if (String(state.allRows[i] && state.allRows[i].id || '') === pendingScheduleCancelId) {
+              pendingRow = state.allRows[i];
+              break;
+            }
+          }
+          syncCancelDialogContent(pendingRow);
           openDialogById('bp-schedule-cancel-dialog');
           return;
         }
