@@ -31,6 +31,23 @@
                 return '999';
             }
 
+            function deriveCardBrand(source) {
+                var normalized = String(source || '').trim().toLowerCase();
+                if (normalized) {
+                    if (normalized === 'master card') return 'mastercard';
+                    if (normalized === 'american express') return 'amex';
+                    return normalized;
+                }
+
+                var digits = getDigits(source);
+                if (!digits) return 'card';
+                if (digits.charAt(0) === '4') return 'visa';
+                if (/^(5[1-5]|2(2[2-9]|[3-6]\d|7[01]|720))/.test(digits)) return 'mastercard';
+                if (/^(34|37)/.test(digits)) return 'amex';
+                if (/^(6011|65|64[4-9])/.test(digits)) return 'discover';
+                return 'card';
+            }
+
             function formatCurrency(amount, currency) {
                 try {
                     return Number(amount).toLocaleString('en-US', {
@@ -69,6 +86,7 @@
                     cards.push({
                         id: String(entry.invoice || ('card-' + (index + 1))),
                         ownerId: isMyCard ? myCompanyId : String(entry.payeeId || ''),
+                        brand: deriveCardBrand(paymentInfo.brand || paymentInfo.network || paymentInfo.cardBrand || paymentInfo.cardNumber || entry.paymentMethodEnding || ''),
                         vendorName: String(entry.customer || paymentInfo.cardholderName || 'Customer'),
                         holderName: String((isMyCard && myCardholderName) || paymentInfo.cardholderName || entry.customer || ''),
                         fullNumber: String(getRevealedCardNumber(paymentInfo, entry.paymentMethodEnding || '').replace(/\s/g, '')),
@@ -226,53 +244,41 @@
                     .replace(/'/g, '&#39;');
             }
 
-            function buildVisaBadge(index) {
-                var gradId = 'visa-grad-pp-' + index;
+            function buildCardActionMenu(card) {
                 return '' +
-                    '<svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg">' +
-                    '  <rect width="24" height="16" rx="1.2" fill="url(#' + gradId + ')" />' +
-                    '  <path d="M12.309 7.05313C12.2987 7.85651 13.0305 8.30487 13.5818 8.57141C14.1483 8.84493 14.3385 9.0203 14.3364 9.26485C14.3321 9.6392 13.8845 9.80438 13.4656 9.81081C12.7349 9.82208 12.3101 9.61506 11.9722 9.45846L11.709 10.6807C12.0479 10.8357 12.6754 10.9708 13.3262 10.9767C14.8536 10.9767 15.853 10.2286 15.8584 9.06857C15.8644 7.5964 13.8061 7.51489 13.8202 6.85684C13.8251 6.65733 14.0169 6.44442 14.4374 6.39025C14.6455 6.3629 15.2201 6.34198 15.8714 6.63963L16.127 5.45708C15.7768 5.33051 15.3266 5.2093 14.7661 5.2093C13.3283 5.2093 12.3171 5.96764 12.309 7.05313ZM18.5836 5.3112C18.3047 5.3112 18.0696 5.47263 17.9647 5.7204L15.7827 10.8899H17.3091L17.6129 10.057H19.4781L19.6543 10.8899H20.9996L19.8257 5.3112H18.5836ZM18.7971 6.81822L19.2376 8.91304H18.0312L18.7971 6.81822ZM10.4583 5.3112L9.25517 10.8899H10.7096L11.9122 5.3112H10.4583ZM8.3066 5.3112L6.79266 9.10825L6.18028 5.87969C6.1084 5.51929 5.82464 5.3112 5.50953 5.3112H3.03459L3 5.47317C3.50807 5.58257 4.08532 5.75902 4.43502 5.9478C4.64906 6.0631 4.71013 6.16393 4.7804 6.43798L5.9403 10.8899H7.47747L9.83404 5.3112H8.3066Z" fill="white" />' +
-                    '  <defs>' +
-                    '    <linearGradient id="' + gradId + '" x1="10.7812" y1="16" x2="15.6708" y2="0.32624" gradientUnits="userSpaceOnUse">' +
-                    '      <stop stop-color="#222357" />' +
-                    '      <stop offset="1" stop-color="#254AA5" />' +
-                    '    </linearGradient>' +
-                    '  </defs>' +
-                    '</svg>';
+                    '<el-dropdown class="shrink-0 inline-block">' +
+                    '  <button type="button" class="rounded-md p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-600 transition-colors dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">' +
+                    '    <span class="sr-only">Open card actions</span>' +
+                    '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">' +
+                    '      <path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />' +
+                    '    </svg>' +
+                    '  </button>' +
+                    '  <el-menu anchor="bottom end" popover class="min-w-56 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
+                    '    <div class="py-1">' +
+                    '      <button type="button" data-view-card-details="' + escapeHtml(card.id) + '" class="flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:focus:text-white cursor-pointer">' +
+                    '        <span>View card details</span>' +
+                    '      </button>' +
+                    '      <button type="button" data-view-card-payables="' + escapeHtml(card.id) + '" class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:focus:text-white cursor-pointer">' +
+                    '        <span>View associated payable(s)</span>' +
+                    '        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>' +
+                    '      </button>' +
+                    '    </div>' +
+                    '  </el-menu>' +
+                    '</el-dropdown>';
             }
 
-            function buildCardRow(card, index) {
-                var isInactive = card && card.status === 'inactive';
-                var rowBgClass = isInactive ? ' bg-gray-100 dark:bg-white/10' : ' bg-gray-50 dark:bg-white/5';
-                return '' +
-                    '<div class="flex items-center gap-3 p-3 self-stretch rounded-lg' + rowBgClass + '">' +
-                    '  <div class="flex items-center gap-3 grow shrink-0 basis-0 min-w-0' + (isInactive ? ' opacity-40' : '') + '">' +
-                    '    <div class="flex flex-col items-start p-2">' + buildVisaBadge(index) + '</div>' +
-                    '    <div class="flex flex-col gap-1 grow shrink-0 basis-0 min-w-0">' +
-                    '      <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">' + escapeHtml(card.vendorName) + ' •••• ' + escapeHtml(card.last4) + '</span>' +
-                    '      <span class="text-sm font-normal text-gray-500 dark:text-gray-400">Expiration ' + escapeHtml(card.expiration) + '</span>' +
-                    '    </div>' +
-                    '  </div>' +
-                    '  <el-dropdown class="shrink-0 inline-block">' +
-                    '    <button type="button" class="rounded-md p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-600 transition-colors dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">' +
-                    '      <span class="sr-only">Open card actions</span>' +
-                    '      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">' +
-                    '        <path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />' +
-                    '      </svg>' +
-                    '    </button>' +
-                    '    <el-menu anchor="bottom end" popover class="min-w-56 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
-                    '      <div class="py-1">' +
-                    '        <button type="button" data-view-card-details="' + escapeHtml(card.id) + '" class="flex w-full items-center gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:focus:text-white cursor-pointer">' +
-                    '          <span>View card details</span>' +
-                    '        </button>' +
-                    '        <button type="button" data-view-card-payables="' + escapeHtml(card.id) + '" class="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:focus:text-white cursor-pointer">' +
-                    '          <span>View associated payable(s)</span>' +
-                    '          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>' +
-                    '        </button>' +
-                    '      </div>' +
-                    '    </el-menu>' +
-                    '  </el-dropdown>' +
-                    '</div>';
+            function createCardRow(card) {
+                if (!window.PPComponents || typeof window.PPComponents.createCardAccountRow !== 'function') {
+                    return null;
+                }
+
+                return window.PPComponents.createCardAccountRow(card, {
+                    actionsHtml: buildCardActionMenu(card),
+                    afterRender: function (row) {
+                        if (!card || card.status !== 'inactive') return;
+                        row.classList.add('opacity-40');
+                    }
+                });
             }
 
             function buildFilterCheckbox(id, text, countText, value, checked) {
@@ -306,6 +312,7 @@
                         return {
                             id: String(card.id || ('card-' + (index + 1))),
                             ownerId: ownerId,
+                            brand: deriveCardBrand(card.brand || card.network || card.type || card.fullNumber || card.last4),
                             vendorName: String(card.vendorName || card.holderName || 'Customer'),
                             holderName: String((isMyCard && myCardholderName) || card.holderName || card.vendorName || 'Customer'),
                             fullNumber: fullNumberDigits || ('424242424242' + (last4 || '4242')).slice(-16),
@@ -344,6 +351,7 @@
                     cards.push({
                         id: 'fallback-card-' + (i + 1),
                         ownerId: myCompanyId,
+                        brand: i % 2 === 0 ? 'visa' : 'mastercard',
                         vendorName: names[i % names.length],
                         holderName: myCardholderName,
                         fullNumber: fullNumber,
@@ -651,10 +659,13 @@
                 allCards.forEach(function (card) { cardsById.set(card.id, card); });
                 renderActiveFilterTags();
                 var visibleCount = isExpanded ? filteredCards.length : Math.min(INITIAL_VISIBLE, filteredCards.length);
-                cardsListEl.innerHTML = filteredCards
+                cardsListEl.innerHTML = '';
+                filteredCards
                     .slice(0, visibleCount)
-                    .map(function (card, index) { return buildCardRow(card, index); })
-                    .join('');
+                    .forEach(function (card) {
+                        var row = createCardRow(card);
+                        if (row) cardsListEl.appendChild(row);
+                    });
 
                 var hiddenCount = Math.max(filteredCards.length - INITIAL_VISIBLE, 0);
                 if (!isExpanded && hiddenCount > 0) {

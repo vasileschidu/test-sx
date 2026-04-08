@@ -12,14 +12,6 @@
             scripts: ['/src/scripts/vendors-data.js', '/src/scripts/vendor-profile-page.js'],
             init: 'initVendorProfilePage'
         },
-        'payment-preferences.html': {
-            preScripts: [
-                '/src/scripts/payment-preferences-components.js',
-                '/src/scripts/payment-preferences-tabs.js'
-            ],
-            scripts: [],
-            init: null
-        },
         'my-company-profile.html': {
             preScripts: [],
             scripts: [],

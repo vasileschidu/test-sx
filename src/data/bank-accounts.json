@@ -4,6 +4,8 @@
     "displayName": "Wells Fargo Account",
     "name": "Nexus Financial Group",
     "bankName": "Wells Fargo",
+    "availableAmount": 184250,
+    "currency": "USD",
     "last4": "8419",
     "maskedAccount": "•••••••••••••8419",
     "accountNumber": "000048390108419",
@@ -16,11 +18,28 @@
     "displayName": "Citibank Account",
     "name": "Nexus Financial Group",
     "bankName": "Citibank",
+    "availableAmount": 96740,
+    "currency": "USD",
     "last4": "3674",
     "maskedAccount": "•••••••••••••3674",
     "accountNumber": "000040198913674",
     "maskedRouting": "•••••0089",
     "routingNumber": "021000089",
     "address": "388 Greenwich Street\nNew York, NY 10013\nUS"
+  },
+  {
+    "id": "sd-balance-2230",
+    "accountType": "balance_account",
+    "displayName": "Balance Account",
+    "name": "Nexus Financial Group",
+    "bankName": "Balance Account",
+    "availableAmount": 150000,
+    "currency": "USD",
+    "last4": "2230",
+    "maskedAccount": "•••••••••••••2230",
+    "accountNumber": "000071420452230",
+    "maskedRouting": "•••••5230",
+    "routingNumber": "122105230",
+    "address": "1200 Market Street\nSuite 400\nSan Francisco, CA 94102\nUS"
   }
 ]

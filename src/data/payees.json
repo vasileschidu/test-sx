@@ -172,6 +172,12 @@
             "label": "Mastercard \u2022\u2022\u2022\u2022 6291",
             "cardholderName": "Beacon Property Care",
             "cardholderAddress": "902 Market Street\nDallas, TX 75201\nUnited States"
+          },
+          {
+            "id": "card-bpc-2",
+            "label": "Visa \u2022\u2022\u2022\u2022 8076",
+            "cardholderName": "Beacon Property Care",
+            "cardholderAddress": "902 Market Street\nDallas, TX 75201\nUnited States"
           }
         ],
         "check": [],

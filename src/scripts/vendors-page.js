@@ -508,15 +508,8 @@
 
   function renderSummary() {
     if (!refs.summary) return;
-    var vendors = getFilteredVendors();
-    var activeCount = vendors.filter(function (vendor) { return vendor.status === 'active'; }).length;
-    var issuesCount = vendors.filter(function (vendor) { return vendor.status !== 'active'; }).length;
-    var totalOutstanding = vendors.reduce(function (sum, vendor) { return sum + Number(vendor.outstandingAmount || 0); }, 0);
-    refs.summary.innerHTML =
-      '<div class="inline-flex items-center rounded-md bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 dark:bg-white/5 dark:text-gray-300">' + vendors.length + ' vendors</div>' +
-      '<div class="inline-flex items-center rounded-md bg-green-50 px-3 py-2 text-sm font-medium text-green-700 dark:bg-green-500/10 dark:text-green-400">' + activeCount + ' active</div>' +
-      '<div class="inline-flex items-center rounded-md bg-amber-50 px-3 py-2 text-sm font-medium text-amber-700 dark:bg-amber-500/10 dark:text-amber-300">' + issuesCount + ' need attention</div>' +
-      '<div class="inline-flex items-center rounded-md bg-blue-50 px-3 py-2 text-sm font-medium text-blue-700 dark:bg-blue-500/10 dark:text-blue-300">' + escapeHtml(formatMoney(totalOutstanding)) + ' outstanding</div>';
+    refs.summary.innerHTML = '';
+    refs.summary.classList.add('hidden');
   }
 
   function buildTable() {
@@ -561,15 +554,17 @@
       return '<th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:border-white/10 dark:text-white">' + content + '</th>';
     }).join('') + '</tr></thead>';
 
-    var bodyHtml = vendors.map(function (vendor) {
+    var bodyHtml = vendors.map(function (vendor, index) {
+      var isLastRow = index === vendors.length - 1;
+      var cellBorder = isLastRow ? '' : ' border-b border-gray-200 dark:border-white/10';
       return '' +
         '<tr class="group hover:bg-gray-50 dark:hover:bg-white/5">' +
-          '<td class="border-b border-gray-200 px-4 py-3 align-top dark:border-white/10"><a href="vendor-profile.html?id=' + encodeURIComponent(vendor.id) + '" class="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400">' + escapeHtml(vendor.displayName) + '</a><p class="mt-1 text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(vendor.legalName) + '</p></td>' +
-          '<td class="border-b border-gray-200 px-4 py-3 align-top text-sm text-gray-700 dark:border-white/10 dark:text-gray-300">' + escapeHtml(vendor.vendorId) + '</td>' +
-          '<td class="border-b border-gray-200 px-4 py-3 align-top dark:border-white/10">' + getStatusBadge(vendor.status, vendor.statusLabel) + '</td>' +
-          '<td class="border-b border-gray-200 px-4 py-3 align-top text-sm font-medium text-gray-900 dark:border-white/10 dark:text-white">' + escapeHtml(formatMoney(vendor.outstandingAmount)) + '</td>' +
-          '<td class="border-b border-gray-200 px-4 py-3 align-top text-sm font-medium text-gray-900 dark:border-white/10 dark:text-white">' + escapeHtml(formatMoney(vendor.totalPaid)) + '</td>' +
-          '<td class="border-b border-gray-200 bg-white px-4 py-3 align-top text-right dark:border-white/10 dark:bg-gray-900"><a href="vendor-profile.html?id=' + encodeURIComponent(vendor.id) + '" class="inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10">View</a></td>' +
+          '<td class="px-4 py-3 align-top' + cellBorder + '"><a href="vendor-profile.html?id=' + encodeURIComponent(vendor.id) + '" class="text-sm font-semibold text-gray-900 hover:text-blue-600 dark:text-white dark:hover:text-blue-400">' + escapeHtml(vendor.displayName) + '</a><p class="mt-1 text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(vendor.legalName) + '</p></td>' +
+          '<td class="px-4 py-3 align-top text-sm text-gray-700 dark:text-gray-300' + cellBorder + '">' + escapeHtml(vendor.vendorId) + '</td>' +
+          '<td class="px-4 py-3 align-top' + cellBorder + '">' + getStatusBadge(vendor.status, vendor.statusLabel) + '</td>' +
+          '<td class="px-4 py-3 align-top text-sm font-medium text-gray-900 dark:text-white' + cellBorder + '">' + escapeHtml(formatMoney(vendor.outstandingAmount)) + '</td>' +
+          '<td class="px-4 py-3 align-top text-sm font-medium text-gray-900 dark:text-white' + cellBorder + '">' + escapeHtml(formatMoney(vendor.totalPaid)) + '</td>' +
+          '<td class="bg-white px-4 py-3 align-top text-right dark:bg-gray-900' + cellBorder + '"><a href="vendor-profile.html?id=' + encodeURIComponent(vendor.id) + '" class="inline-flex items-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10">View</a></td>' +
         '</tr>';
     }).join('');
 

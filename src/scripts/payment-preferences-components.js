@@ -1,4 +1,6 @@
 (function () {
+  var sharedSvgIdCounter = 0;
+
   function escapeHtml(value) {
     return String(value == null ? '' : value)
       .replace(/&/g, '&amp;')
@@ -51,13 +53,143 @@
       '<svg data-icon="hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5 hidden"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.28033 2.21967C2.98744 1.92678 2.51256 1.92678 2.21967 2.21967C1.92678 2.51256 1.92678 2.98744 2.21967 3.28033L12.7197 13.7803C13.0126 14.0732 13.4874 14.0732 13.7803 13.7803C14.0732 13.4874 14.0732 13.0126 13.7803 12.7197L12.4577 11.397C13.438 10.5863 14.1937 9.51366 14.6176 8.2863C14.681 8.10274 14.6811 7.90313 14.6179 7.71951C13.672 4.97316 11.0653 3 7.99777 3C6.85414 3 5.77457 3.27425 4.82123 3.76057L3.28033 2.21967Z" /><path d="M6.47602 5.41536L7.61147 6.55081C7.73539 6.51767 7.86563 6.5 8 6.5C8.82843 6.5 9.5 7.17157 9.5 8C9.5 8.13437 9.48233 8.26461 9.44919 8.38853L10.5846 9.52398C10.8486 9.07734 11 8.55636 11 8C11 6.34315 9.65685 5 8 5C7.44364 5 6.92266 5.15145 6.47602 5.41536Z" /><path d="M7.81206 10.9942L9.62754 12.8097C9.10513 12.9341 8.56002 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C1.63675 6.96935 2.01588 6.28191 2.49314 5.67529L5.00579 8.18794C5.09895 9.69509 6.30491 10.901 7.81206 10.9942Z" /></svg>';
   }
 
+  function nextSharedSvgId(prefix) {
+    sharedSvgIdCounter += 1;
+    return prefix + '-' + sharedSvgIdCounter;
+  }
+
+  function formatCardNumber(value) {
+    return String(value || '')
+      .replace(/\D/g, '')
+      .replace(/(\d{4})(?=\d)/g, '$1 ')
+      .trim();
+  }
+
+  function toDomIdSuffix(value) {
+    return String(value || 'item').replace(/[^a-zA-Z0-9_-]/g, '-');
+  }
+
+  function getCardBrandLogoMarkup(brand, size) {
+    var normalized = String(brand || '').toLowerCase();
+    if (normalized === 'american express') normalized = 'amex';
+    if (normalized === 'master card') normalized = 'mastercard';
+
+    if (normalized === 'mastercard') {
+      if (size === 'small') {
+        return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 17 11" fill="none" aria-label="Mastercard" role="img" class="block h-[6px] w-auto"><path d="M10.3235 1.07422H5.92871V8.97237H10.3235V1.07422Z" fill="#FF5F00"/><path d="M6.20784 5.02337C6.20703 4.26262 6.37933 3.51165 6.7117 2.82733C7.04407 2.14302 7.52779 1.5433 8.12622 1.0736C7.38526 0.491278 6.49541 0.129168 5.55838 0.028653C4.62135 -0.0718617 3.67494 0.0932747 2.82732 0.505189C1.97971 0.917103 1.26507 1.55918 0.765105 2.35803C0.265136 3.15687 0 4.08027 0 5.02268C0 5.96508 0.265136 6.88848 0.765105 7.68733C1.26507 8.48617 1.97971 9.12825 2.82732 9.54016C3.67494 9.95208 4.62135 10.1172 5.55838 10.0167C6.49541 9.91618 7.38526 9.55407 8.12622 8.97175C7.52797 8.50219 7.04436 7.9027 6.71201 7.21865C6.37965 6.53459 6.20724 5.7839 6.20784 5.02337V5.02337Z" fill="#EB001B"/><path d="M16.2529 5.02395C16.2529 5.96643 15.9877 6.88988 15.4877 7.68876C14.9876 8.48764 14.2729 9.1297 13.4251 9.54155C12.5774 9.95341 11.6309 10.1184 10.6938 10.0178C9.75675 9.91712 8.86689 9.55483 8.12598 8.97233C8.72399 8.50235 9.20746 7.9027 9.53991 7.2186C9.87236 6.53451 10.0451 5.78385 10.0451 5.02326C10.0451 4.26266 9.87236 3.512 9.53991 2.82791C9.20746 2.14381 8.72399 1.54416 8.12598 1.07418C8.86689 0.491677 9.75675 0.12939 10.6938 0.0287313C11.6309 -0.0719277 12.5774 0.0931024 13.4251 0.504958C14.2729 0.916813 14.9876 1.55888 15.4877 2.35775C15.9877 3.15663 16.2529 4.08008 16.2529 5.02256V5.02395Z" fill="#F79E1B"/></svg>';
+      }
+      var mcSizeClass = size === 'small' ? 'h-3.5 w-5' : 'h-4 w-6';
+      return '<img src="../../../src/assets/illustrations/ma_symbol.svg" alt="Mastercard" class="' + mcSizeClass + '" />';
+    }
+
+    if (normalized === 'visa') {
+      if (size === 'small') {
+        return '<svg xmlns="http://www.w3.org/2000/svg" width="18" height="6" viewBox="0 0 18 6" fill="none" aria-label="Visa" role="img"><path d="M9.30897 1.84396C9.2987 2.64735 10.0305 3.0957 10.5818 3.36224C11.1483 3.63576 11.3385 3.81113 11.3364 4.05569C11.332 4.43003 10.8845 4.59521 10.4656 4.60165C9.73488 4.61291 9.31005 4.4059 8.97224 4.24929L8.70902 5.47154C9.04791 5.62653 9.67543 5.76168 10.3262 5.76758C11.8536 5.76758 12.853 5.01943 12.8584 3.8594C12.8644 2.38724 10.8061 2.30572 10.8202 1.64767C10.8251 1.44816 11.0169 1.23525 11.4374 1.18108C11.6455 1.15373 12.2201 1.13282 12.8714 1.43047L13.127 0.24791C12.7768 0.121342 12.3266 0.000136286 11.7661 0.000136286C10.3283 0.000136286 9.31708 0.758474 9.30897 1.84396ZM15.5836 0.102034C15.3047 0.102034 15.0696 0.263463 14.9647 0.511237L12.7827 5.6807H14.3091L14.6129 4.84781H16.4781L16.6543 5.6807H17.9996L16.8257 0.102034H15.5836ZM15.7971 1.60906L16.2376 3.70387H15.0312L15.7971 1.60906ZM7.45831 0.102034L6.25517 5.6807H7.70964L8.91225 0.102034H7.45831ZM5.30659 0.102034L3.79266 3.89909L3.18028 0.670519C3.1084 0.310121 2.82463 0.102034 2.50953 0.102034H0.0345918L0 0.263999C0.508067 0.373406 1.08532 0.549851 1.43502 0.738631C1.64905 0.853937 1.71013 0.954762 1.7804 1.22881L2.9403 5.6807H4.47747L6.83404 0.102034H5.30659Z" fill="white"/></svg>';
+      }
+      var visaWidth = '24';
+      var visaHeight = size === 'small' ? '12' : '16';
+      var visaId = nextSharedSvgId(size === 'small' ? 'visa-grad-mini-card' : 'visa-grad-account-details');
+      return '<svg width="' + visaWidth + '" height="' + visaHeight + '" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Visa" role="img"><rect width="24" height="16" rx="1.2" fill="url(#' + visaId + ')" /><path d="M12.309 7.05313C12.2987 7.85651 13.0305 8.30487 13.5818 8.57141C14.1483 8.84493 14.3385 9.0203 14.3364 9.26485C14.3321 9.6392 13.8845 9.80438 13.4656 9.81081C12.7349 9.82208 12.3101 9.61506 11.9722 9.45846L11.709 10.6807C12.0479 10.8357 12.6754 10.9708 13.3262 10.9767C14.8536 10.9767 15.853 10.2286 15.8584 9.06857C15.8644 7.5964 13.8061 7.51489 13.8202 6.85684C13.8251 6.65733 14.0169 6.44442 14.4374 6.39025C14.6455 6.3629 15.2201 6.34198 15.8714 6.63963L16.127 5.45708C15.7768 5.33051 15.3266 5.2093 14.7661 5.2093C13.3283 5.2093 12.3171 5.96764 12.309 7.05313ZM18.5836 5.3112C18.3047 5.3112 18.0696 5.47263 17.9647 5.7204L15.7827 10.8899H17.3091L17.6129 10.057H19.4781L19.6543 10.8899H20.9996L19.8257 5.3112H18.5836ZM18.7971 6.81822L19.2376 8.91304H18.0312L18.7971 6.81822ZM10.4583 5.3112L9.25517 10.8899H10.7096L11.9122 5.3112H10.4583ZM8.3066 5.3112L6.79266 9.10825L6.18028 5.87969C6.1084 5.51929 5.82464 5.3112 5.50953 5.3112H3.03459L3 5.47317C3.50807 5.58257 4.08532 5.75902 4.43502 5.9478C4.64906 6.0631 4.71013 6.16393 4.7804 6.43798L5.9403 10.8899H7.47747L9.83404 5.3112H8.3066Z" fill="white" /><defs><linearGradient id="' + visaId + '" x1="10.7812" y1="16" x2="15.6708" y2="0.32624" gradientUnits="userSpaceOnUse"><stop stop-color="#222357" /><stop offset="1" stop-color="#254AA5" /></linearGradient></defs></svg>';
+    }
+
+    return '<span class="inline-flex w-fit items-center rounded-[4px] bg-white/12 px-1.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white">' + escapeHtml(brand || 'Card') + '</span>';
+  }
+
+  function createMiniCardComponent(config) {
+    var brand = config && config.brand;
+    var last4 = escapeHtml((config && config.last4) || '0000');
+    return '' +
+      '<div class="relative h-8 w-10 overflow-hidden rounded-[6px] bg-[linear-gradient(160deg,#060B18_0%,#111933_58%,#18224A_100%)] p-1 shadow-sm">' +
+      '  <div class="absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(96,165,250,0.18),_transparent_42%)]"></div>' +
+      '  <div class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_left,_rgba(59,130,246,0.12),_transparent_48%)]"></div>' +
+      '  <div class="relative flex h-full flex-col">' +
+      '    <div class="flex justify-end">' + getCardBrandLogoMarkup(brand, 'small') + '</div>' +
+      '    <div class="mt-auto flex items-end justify-end text-white">' +
+      '      <span class="w-full self-end text-right font-mono text-[8px] font-medium leading-none tracking-[0.04em]">' + last4 + '</span>' +
+      '    </div>' +
+      '  </div>' +
+      '</div>';
+  }
+
+  function buildDescriptionListItem(label, value, options) {
+    options = options || {};
+    return '' +
+      '<div class="flex flex-col gap-1 self-stretch py-4">' +
+        '<dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">' + escapeHtml(label) + '</dt>' +
+        '<dd class="text-sm/6 font-normal text-gray-700 dark:text-gray-300' + (options.multiline ? ' whitespace-pre-line' : '') + '">' + value + '</dd>' +
+      '</div>';
+  }
+
+  function buildCardDetailBody(card) {
+    var fullCardNumber = formatCardNumber(card.fullNumber);
+    var idSuffix = toDomIdSuffix(card.id);
+    var numberCopyId = 'pp-card-detail-number-' + idSuffix;
+    var expiryCopyId = 'pp-card-detail-expiry-' + idSuffix;
+    var cvcCopyId = 'pp-card-detail-cvc-' + idSuffix;
+    var copyIcon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>';
+    return '' +
+      '<div class="flex flex-col items-start gap-2 self-stretch rounded-md bg-gray-50 px-4 py-3 dark:bg-white/5">' +
+        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Name</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(card.holderName || '--') + '</span></div>' +
+        '<div class="grid grid-cols-2 gap-4 self-stretch items-start"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Address</span><span class="whitespace-pre-line text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(card.billingAddress || '--') + '</span></div>' +
+        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Type</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + getCardBrandLogoMarkup(card.brand, 'medium') + '</span></div>' +
+        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Number</span><button type="button" data-copy-id="' + numberCopyId + '" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer"><span id="' + numberCopyId + '" class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(fullCardNumber || '--') + '</span>' + copyIcon + '</button></div>' +
+        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Expires</span><button type="button" data-copy-id="' + expiryCopyId + '" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer"><span id="' + expiryCopyId + '" class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(card.expiration || '--') + '</span>' + copyIcon + '</button></div>' +
+        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">CVC2</span><button type="button" data-copy-id="' + cvcCopyId + '" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer"><span id="' + cvcCopyId + '" class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(card.cvc2 || '--') + '</span>' + copyIcon + '</button></div>' +
+      '</div>';
+  }
+
+  function createCardAccountRow(card, options) {
+    options = options || {};
+    return createAccountDetailsComponent({
+      id: card.id,
+      mediaHtml: createMiniCardComponent({
+        brand: card.brand,
+        last4: card.last4
+      }),
+      mediaClass: 'flex h-8 w-10 shrink-0 items-center justify-center',
+      title: card.vendorName || card.holderName || 'Card',
+      subtitle: card.expiration ? ('Expires ' + card.expiration) : ('••••' + escapeHtml(card.last4 || '')),
+      actionsHtml: options.actionsHtml || '',
+      bodyHtml: options.bodyHtml || buildCardDetailBody(card),
+      afterRender: options.afterRender
+    });
+  }
+
+  function createAccountDetailsComponent(config) {
+    var row = document.createElement('div');
+    row.className = 'flex flex-col self-stretch rounded-lg bg-gray-50 dark:bg-white/5';
+    if (config && config.id) row.setAttribute('data-account-details-id', config.id);
+    row.innerHTML =
+      '<div data-method-header class="flex items-center justify-between gap-3 rounded-lg p-3">' +
+        '<div data-method-click-target class="flex min-w-0 grow items-center gap-3">' +
+          buildExpandableHeader({
+            mediaHtml: config.mediaHtml || '',
+            mediaClass: config.mediaClass || '',
+            iconHtml: config.iconHtml || '',
+            title: escapeHtml(config.title || ''),
+            subtitle: escapeHtml(config.subtitle || ''),
+            actionsHtml: config.actionsHtml || ''
+          }) +
+        '</div>' +
+      '</div>' +
+      '<div data-method-body class="hidden px-3 pb-3">' +
+        '<div class="min-w-0">' + (config.bodyHtml || '') + '</div>' +
+      '</div>';
+    attachAccordionBehavior(row);
+    attachCopyBehavior(row);
+    if (typeof config.afterRender === 'function') config.afterRender(row);
+    return row;
+  }
+
   function buildExpandableHeader(config) {
+    var mediaHtml = config.mediaHtml || config.iconHtml || '';
+    var mediaClass = config.mediaClass || 'flex size-10 items-center justify-center';
     return '' +
       '<div class="grid min-w-0 grow grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-3">' +
       '  <button type="button" data-method-toggle class="shrink-0 rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300" aria-expanded="false">' +
            createChevronIcon() +
       '  </button>' +
-      '  <div class="flex size-10 items-center justify-center">' + config.iconHtml + '</div>' +
+      '  <div class="' + mediaClass + '">' + mediaHtml + '</div>' +
       '  <div class="flex min-w-0 flex-col gap-1">' +
       '    <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">' + config.title + '</span>' +
       '    <span class="text-sm font-normal text-gray-500 dark:text-gray-400">' + config.subtitle + '</span>' +
@@ -161,43 +293,34 @@
   }
 
   function createBankAccountRow(account) {
-    var row = document.createElement('div');
-    row.className = 'flex flex-col self-stretch rounded-lg bg-gray-50 dark:bg-white/5';
-    row.setAttribute('data-bank-account-id', account.id);
     var accountCopyId = 'pp-bank-detail-copy-account-' + escapeHtml(account.id);
     var routingCopyId = 'pp-bank-detail-copy-routing-' + escapeHtml(account.id);
-    row.innerHTML =
-      '<div data-method-header class="flex items-center justify-between gap-3 rounded-lg p-3">' +
-        '<div data-method-click-target class="flex min-w-0 grow items-center gap-3">' +
-          buildExpandableHeader({
-            iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>',
-            title: escapeHtml(account.displayName || account.name),
-            subtitle: '••••' + escapeHtml(account.last4),
-            actionsHtml: buildAccountActionMenu('bank', account.id)
-          }) +
-        '</div>' +
-      '</div>' +
-      '<div data-method-body class="hidden px-3 pb-3">' +
-        '<div class="min-w-0">' +
-          '<div class="flex flex-col items-start gap-2 self-stretch rounded-md bg-gray-50 px-4 py-3 dark:bg-white/5">' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(account.accountHolderName || account.name) + '</span></div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Bank</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(account.bankName || account.displayName || '--') + '</span></div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span><button type="button" data-bank-account-copy data-copy-id="' + accountCopyId + '" data-copy-enabled="false" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' + accountCopyId + '" data-bank-account-value class="text-sm font-normal text-gray-700 dark:text-gray-300"></span><span data-copy-icon class="hidden"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg></span></button></div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span><button type="button" data-bank-routing-copy data-copy-id="' + routingCopyId + '" data-copy-enabled="false" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' + routingCopyId + '" data-bank-routing-value class="text-sm font-normal text-gray-700 dark:text-gray-300"></span><span data-copy-icon class="hidden"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg></span></button></div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch items-start"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Address</span><div class="flex flex-col items-start gap-1.5">' +
-              (account.address ? '<span class="whitespace-pre-line text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(account.address) + '</span>' : '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">--</span>') +
-              '<button type="button" data-bank-reveal-btn data-revealed="false" class="inline-flex w-fit self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
-                createRevealIcons() +
-                '<span data-reveal-text>Reveal Details</span>' +
-              '</button>' +
-            '</div></div>' +
-          '</div>' +
-        '</div>' +
-      '</div>';
-    attachAccordionBehavior(row);
-    attachRevealBehavior(row, account);
-    attachCopyBehavior(row);
-    return row;
+    return createAccountDetailsComponent({
+      id: account.id,
+      iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>',
+      mediaClass: 'flex size-10 shrink-0 items-center justify-center rounded-lg bg-gray-200 dark:bg-white/10',
+      title: account.displayName || account.name,
+      subtitle: '••••' + escapeHtml(account.last4),
+      actionsHtml: buildAccountActionMenu('bank', account.id),
+      bodyHtml:
+        '<div class="flex flex-col items-start gap-2 self-stretch rounded-md bg-gray-50 px-4 py-3 dark:bg-white/5">' +
+          '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(account.accountHolderName || account.name) + '</span></div>' +
+          '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Bank</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(account.bankName || account.displayName || '--') + '</span></div>' +
+          '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span><button type="button" data-bank-account-copy data-copy-id="' + accountCopyId + '" data-copy-enabled="false" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' + accountCopyId + '" data-bank-account-value class="text-sm font-normal text-gray-700 dark:text-gray-300"></span><span data-copy-icon class="hidden"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg></span></button></div>' +
+          '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span><button type="button" data-bank-routing-copy data-copy-id="' + routingCopyId + '" data-copy-enabled="false" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' + routingCopyId + '" data-bank-routing-value class="text-sm font-normal text-gray-700 dark:text-gray-300"></span><span data-copy-icon class="hidden"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg></span></button></div>' +
+          '<div class="grid grid-cols-2 gap-4 self-stretch items-start"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Address</span><div class="flex flex-col items-start gap-1.5">' +
+            (account.address ? '<span class="whitespace-pre-line text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(account.address) + '</span>' : '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">--</span>') +
+            '<button type="button" data-bank-reveal-btn data-revealed="false" class="inline-flex w-fit self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
+              createRevealIcons() +
+              '<span data-reveal-text>Reveal Details</span>' +
+            '</button>' +
+          '</div></div>' +
+        '</div>',
+      afterRender: function (row) {
+        row.setAttribute('data-bank-account-id', account.id);
+        attachRevealBehavior(row, account);
+      }
+    });
   }
 
   function createCheckAddressRow(address) {
@@ -210,6 +333,7 @@
         '<div data-method-click-target class="flex min-w-0 grow items-center gap-3">' +
           buildExpandableHeader({
             iconHtml: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z" fill="#6B7280"/></svg>',
+            mediaClass: 'flex size-10 shrink-0 items-center justify-center rounded-lg bg-gray-200 dark:bg-white/10',
             title: escapeHtml(address.displayName),
             subtitle: escapeHtml(address.summary),
             actionsHtml: buildAccountActionMenu('check', address.id)
@@ -231,7 +355,12 @@
 
   window.PPComponents = Object.assign({}, window.PPComponents || {}, {
     buildAccountActionMenu: buildAccountActionMenu,
+    buildDescriptionListItem: buildDescriptionListItem,
+    createMiniCardComponent: createMiniCardComponent,
+    createAccountDetailsComponent: createAccountDetailsComponent,
+    createCardAccountRow: createCardAccountRow,
     createBankAccountRow: createBankAccountRow,
-    createCheckAddressRow: createCheckAddressRow
+    createCheckAddressRow: createCheckAddressRow,
+    getCardBrandLogoMarkup: getCardBrandLogoMarkup
   });
 })();

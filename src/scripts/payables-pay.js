@@ -43,6 +43,7 @@
   var PAYABLE_ROW_OVERRIDES_STORAGE_KEY = 'bp-row-overrides-v1';
   var PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY = 'bp-pay-page-view-context-v1';
   var PAYABLE_CARDS_STORAGE_KEY = 'bp-cards-dataset-v1';
+  var ORIGINATION_ACCOUNTS_STORAGE_KEY = 'bp-origination-accounts-v1';
   var TOKEN_SERVICE_CONFIG_STORAGE_KEY = 'sd-sx-token-test-config-v1';
   var _tokenServiceConfigPromise = null;
   var _origDetailsState = {
@@ -50,6 +51,9 @@
     expanded: false,
     revealed: false,
     bound: false,
+  };
+  var _originationAccountsState = {
+    accounts: [],
   };
   var _payContext = {
     row: null,
@@ -280,6 +284,77 @@
     } catch (err) {
       // Ignore storage failures.
     }
+  }
+
+  function normalizeOriginationAccounts(payload) {
+    var list = Array.isArray(payload) ? payload : ((payload && Array.isArray(payload.data)) ? payload.data : []);
+    var fallbackBalances = [184250, 96740, 128500, 75200];
+    return list.map(function (account, idx) {
+      var next = cloneJson(account) || {};
+      next.id = String(next.id || ('origination_' + String(idx + 1).padStart(3, '0')));
+      next.displayName = String(next.displayName || next.bankName || next.name || ('Origination Account ' + (idx + 1)));
+      next.name = String(next.name || next.displayName || next.bankName || 'Origination Account');
+      next.bankName = String(next.bankName || next.displayName || next.name || 'Bank Account');
+      next.accountType = String(next.accountType || next.type || 'origination');
+      next.currency = String(next.currency || 'USD');
+      next.availableAmount = Number(next.availableAmount != null ? next.availableAmount : fallbackBalances[idx % fallbackBalances.length]);
+      return next;
+    });
+  }
+
+  function mergeOriginationAccounts(seedAccounts, storedAccounts) {
+    var base = normalizeOriginationAccounts(seedAccounts);
+    var storedById = {};
+    normalizeOriginationAccounts(storedAccounts).forEach(function (account) {
+      storedById[String(account.id || '')] = account;
+    });
+    return base.map(function (account) {
+      var stored = storedById[String(account.id || '')];
+      if (!stored) return account;
+      return Object.assign({}, account, {
+        availableAmount: Number(stored.availableAmount != null ? stored.availableAmount : account.availableAmount),
+        currency: String(stored.currency || account.currency || 'USD')
+      });
+    });
+  }
+
+  function getStoredOriginationAccounts(seedAccounts) {
+    var fallback = normalizeOriginationAccounts(seedAccounts);
+    try {
+      var raw = window.localStorage.getItem(ORIGINATION_ACCOUNTS_STORAGE_KEY);
+      if (!raw) return fallback;
+      return mergeOriginationAccounts(fallback, JSON.parse(raw));
+    } catch (err) {
+      return fallback;
+    }
+  }
+
+  function persistOriginationAccounts(accounts) {
+    try {
+      window.localStorage.setItem(ORIGINATION_ACCOUNTS_STORAGE_KEY, JSON.stringify(normalizeOriginationAccounts(accounts)));
+    } catch (err) {
+      // Ignore storage failures.
+    }
+  }
+
+  function getOriginationAccountById(accountId) {
+    var id = String(accountId || '');
+    for (var i = 0; i < _originationAccountsState.accounts.length; i += 1) {
+      if (String(_originationAccountsState.accounts[i] && _originationAccountsState.accounts[i].id || '') === id) {
+        return _originationAccountsState.accounts[i];
+      }
+    }
+    return null;
+  }
+
+  function getSmartDisburseBalanceAccount() {
+    for (var i = 0; i < _originationAccountsState.accounts.length; i += 1) {
+      var account = _originationAccountsState.accounts[i];
+      if (String(account && account.accountType || '').toLowerCase() === 'balance_account') {
+        return account;
+      }
+    }
+    return null;
   }
 
   function getCardBrandIcon(brand) {
@@ -1403,10 +1478,7 @@
     } else if (selectedMethod === 'check') {
       step2Done = !!getSelectedOptionValueByOptionsId('gp-check-address-select');
     } else if (selectedMethod === 'smart_disburse') {
-      var sdWrap = document.getElementById('pp-smart-disburse-contact-combobox');
-      var sdInput = document.getElementById('pp-smart-disburse-contact-input');
-      var tokenCount = sdWrap ? Number(sdWrap.getAttribute('data-token-count') || '0') : 0;
-      step2Done = tokenCount > 0 || !!(sdInput && String(sdInput.value || '').trim());
+      step2Done = getSmartEmailDestinations('smart_disburse').length > 0;
     } else if (selectedMethod === 'smart_exchange') {
       var sxWrap = document.getElementById('pp-smart-exchange-contact-combobox');
       var sxInput = document.getElementById('pp-smart-exchange-contact-input');
@@ -2001,17 +2073,15 @@
   }
 
   function getSmartTestEmailUi(methodId) {
-    if (methodId === 'smart_disburse') {
-      return {
-        buttonId: 'pp-smart-disburse-send-test-email-btn',
-        helpId: 'pp-smart-disburse-send-test-email-help',
-        resultId: 'pp-smart-disburse-send-test-email-result',
-        noteId: 'pp-smart-disburse-test-mode-note',
-        flow: 'sd',
-        label: 'SMART Disburse'
-      };
-    }
-    return null;
+    if (methodId !== 'smart_exchange') return null;
+    return {
+      buttonId: 'pp-smart-exchange-send-test-email-btn',
+      helpId: 'pp-smart-exchange-send-test-email-help',
+      resultId: 'pp-smart-exchange-send-test-email-result',
+      noteId: '',
+      flow: 'sx',
+      label: 'SMART Exchange'
+    };
   }
 
   function getSmartTestEmailDestination(methodId) {
@@ -2066,6 +2136,38 @@
       allowed.push(value);
     });
     return allowed;
+  }
+
+  function getSmartEmailDestinations(methodId) {
+    var isDisburse = methodId === 'smart_disburse';
+    var isExchange = methodId === 'smart_exchange';
+    if (!isDisburse && !isExchange) return [];
+    var seen = {};
+    var destinations = [];
+    var input = document.getElementById(isDisburse ? 'pp-smart-disburse-contact-input' : 'pp-smart-exchange-contact-input');
+    var pendingValue = String(input && input.value || '').trim();
+    if (isValidEmailAddress(pendingValue)) {
+      seen[pendingValue.toLowerCase()] = true;
+      destinations.push({
+        email: pendingValue,
+        label: String((_payContext.row && _payContext.row.payeeName) || 'Payee').trim()
+      });
+    }
+    var tokens = getSelectedDestinationTokens(
+      isDisburse ? 'pp-smart-disburse-contact-tokens' : 'pp-smart-exchange-contact-tokens',
+      isDisburse ? 'pp-smart-disburse-contact-input' : 'pp-smart-exchange-contact-input'
+    );
+    tokens.forEach(function (token) {
+      var value = String((token && token.value) || '').trim();
+      var normalizedValue = value.toLowerCase();
+      if (!isValidEmailAddress(value) || seen[normalizedValue]) return;
+      seen[normalizedValue] = true;
+      destinations.push({
+        email: value,
+        label: String((token && token.label) || (_payContext.row && _payContext.row.payeeName) || 'Payee').trim()
+      });
+    });
+    return destinations;
   }
 
   function getTokenTestPageUrl() {
@@ -2151,7 +2253,8 @@
     }
   }
 
-  function buildSmartTestEmailPayload(methodId, destination) {
+  function buildSmartTestEmailPayload(methodId, destination, options) {
+    options = options || {};
     var row = _payContext && _payContext.row ? _payContext.row : null;
     var payeeProfile = _payContext && _payContext.payeeProfile ? _payContext.payeeProfile : null;
     var amountValue = Number((row && row.amount) || 0);
@@ -2199,8 +2302,8 @@
             (Array.isArray(methodProfiles) && methodProfiles[0] && methodProfiles[0].contactPerson) ||
             destination.label
           ).trim(),
-          sandbox: true,
-          verifyBaseUrl: getTokenTestPageUrl(),
+          sandbox: options.sandbox === true,
+          verifyBaseUrl: String(options.verifyBaseUrl || getTokenTestPageUrl()),
           senderName: senderName,
           supportEmail: supportEmail,
           supportPhone: supportPhone,
@@ -2223,6 +2326,56 @@
       });
   }
 
+  function postSmartTokenEmailRequest(methodId, destination, options) {
+    return Promise.all([
+      getTokenServiceConfig(),
+      buildSmartTestEmailPayload(methodId, destination, options)
+    ])
+      .then(function (results) {
+        var serviceConfig = results[0];
+        var emailPayload = results[1];
+        var baseUrl = normalizeServiceBaseUrl(serviceConfig && serviceConfig.tokenServiceBaseUrl);
+        if (!baseUrl) throw new Error('Token service is not configured for this environment.');
+        return fetch(baseUrl + '/send-test-token', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(emailPayload)
+        });
+      })
+      .then(function (response) {
+        return response.json()
+          .catch(function () { return {}; })
+          .then(function (payload) {
+            if (!response.ok || payload.ok === false) {
+              throw new Error(payload.error || ('Request failed with ' + response.status));
+            }
+            return payload;
+          });
+      });
+  }
+
+  function sendSmartDisbursePaymentEmails() {
+    var destinations = getSmartEmailDestinations('smart_disburse');
+    if (!destinations.length) {
+      return Promise.reject(new Error('Add at least one valid email destination for SMART Disburse before paying.'));
+    }
+    return Promise.all(destinations.map(function (destination) {
+      return postSmartTokenEmailRequest('smart_disburse', destination, {
+        sandbox: false,
+        verifyBaseUrl: getTokenTestPageUrl()
+      }).then(function (payload) {
+        var mode = String((payload && payload.mode) || '').toLowerCase();
+        var delivery = String((payload && payload.delivery) || '').toLowerCase();
+        if (mode === 'sandbox' || delivery === 'preview_only') {
+          throw new Error('Live SMART Disburse email sending is not enabled for this environment yet.');
+        }
+        return String((payload && payload.email) || destination.email || '').trim();
+      });
+    })).then(function (emails) {
+      return emails.filter(Boolean);
+    });
+  }
+
   function bindSmartTestEmailButton(methodId) {
     var config = getSmartTestEmailUi(methodId);
     if (!config) return;
@@ -2239,31 +2392,7 @@
       _smartTestEmailState[methodId].sending = true;
       updateSmartTestEmailUi(methodId);
 
-      Promise.all([
-        getTokenServiceConfig(),
-        buildSmartTestEmailPayload(methodId, destination)
-      ])
-        .then(function (results) {
-          var serviceConfig = results[0];
-          var emailPayload = results[1];
-          var baseUrl = normalizeServiceBaseUrl(serviceConfig && serviceConfig.tokenServiceBaseUrl);
-          if (!baseUrl) throw new Error('Token service is not configured for this environment.');
-          return fetch(baseUrl + '/send-test-token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(emailPayload)
-          });
-        })
-        .then(function (response) {
-          return response.json()
-            .catch(function () { return {}; })
-            .then(function (payload) {
-              if (!response.ok || payload.ok === false) {
-                throw new Error(payload.error || ('Request failed with ' + response.status));
-              }
-              return payload;
-            });
-        })
+      postSmartTokenEmailRequest(methodId, destination, { sandbox: true, verifyBaseUrl: getTokenTestPageUrl() })
         .then(function (payload) {
           var lines = [
             config.label + ' test email request accepted.',
@@ -2316,6 +2445,7 @@
     if (!groups.length) return null;
 
     var origin = _origDetailsState && _origDetailsState.account ? _origDetailsState.account : null;
+    var balanceAccount = isDisburse ? getSmartDisburseBalanceAccount() : null;
     var originName = origin ? String(origin.displayName || origin.name || origin.bankName || 'My account').trim() : 'My account';
     var originSub = origin ? ('••••' + getAccountLast4(origin)) : '--';
     var amount = formatMoney(_payContext.row && _payContext.row.amount, (_payContext.row && _payContext.row.currency) || 'USD');
@@ -2328,22 +2458,32 @@
       paymentDateIso: getEffectivePaymentDateIso(),
       originName: originName,
       originSub: originSub,
-      recipientName: groups[0].name,
-      recipientSub: groups[0].sub,
-      recipientSecondaryName: groups[1] ? groups[1].name : '',
-      recipientSecondarySub: groups[1] ? groups[1].sub : '',
-      confirmTitle: 'Send payment link for ' + amount,
+      recipientName: isDisburse
+        ? String((balanceAccount && (balanceAccount.displayName || balanceAccount.bankName || balanceAccount.name)) || 'Balance Account').trim()
+        : groups[0].name,
+      recipientSub: isDisburse
+        ? String((balanceAccount && (balanceAccount.maskedRouting || getMaskedValue(balanceAccount.routingNumber, 4))) || '--').trim()
+        : groups[0].sub,
+      recipientSecondaryName: isDisburse ? '' : (groups[1] ? groups[1].name : ''),
+      recipientSecondarySub: isDisburse ? '' : (groups[1] ? groups[1].sub : ''),
+      confirmTitle: isDisburse ? ('Confirm ' + amount + ' payment') : ('Send payment link for ' + amount),
       smartBadgeTexts: getSmartBadgeTexts(tokens)
     };
   }
 
   function getCurrentPaymentConfirmSelection() {
     var methodId = getSelectedOptionValueByOptionsId('pp-pay-method-options');
-    if (methodId === 'card') return getCurrentCardPaymentSelection();
-    if (methodId === 'ach' || methodId === 'wire') return getCurrentBankRecipientDetails();
-    if (methodId === 'check') return getCurrentCheckRecipientDetails();
-    if (methodId === 'smart_disburse' || methodId === 'smart_exchange') return getCurrentSmartRecipientDetails(methodId);
-    return null;
+    var selection = null;
+    if (methodId === 'card') selection = getCurrentCardPaymentSelection();
+    else if (methodId === 'ach' || methodId === 'wire') selection = getCurrentBankRecipientDetails();
+    else if (methodId === 'check') selection = getCurrentCheckRecipientDetails();
+    else if (methodId === 'smart_disburse' || methodId === 'smart_exchange') selection = getCurrentSmartRecipientDetails(methodId);
+    if (!selection) return null;
+
+    selection.originationAccountId = _origDetailsState && _origDetailsState.account ? String(_origDetailsState.account.id || '') : '';
+    selection.originationAvailableAmount = _origDetailsState && _origDetailsState.account ? getOriginationAvailableAmount(_origDetailsState.account) : 0;
+    selection.originationAvailableAmountText = _origDetailsState && _origDetailsState.account ? formatOriginationAvailableAmount(_origDetailsState.account) : '--';
+    return selection;
   }
 
   function buildFallbackPaidPayPageState(row, normalized, accounts) {
@@ -2528,6 +2668,9 @@
     var smartBadges = document.getElementById('pp-confirm-smart-badges');
     var recipientCardsLabel = document.getElementById('pp-confirm-recipient-cards-label');
     var recipientCards = document.getElementById('pp-confirm-recipient-cards');
+    var recipientPrimaryCard = document.getElementById('pp-confirm-recipient-primary-card');
+    var recipientNameEl = document.getElementById('pp-confirm-recipient-name');
+    var recipientSubEl = document.getElementById('pp-confirm-recipient-sub');
     var dateLabel = document.getElementById('pp-confirm-date-label');
     var dateIcon = document.getElementById('pp-confirm-date-icon');
     var genericDetails = document.getElementById('pp-confirm-generic-details');
@@ -2539,6 +2682,7 @@
     var recipientSecondaryIcon = document.getElementById('pp-confirm-recipient-secondary-icon');
     var amountEl = document.getElementById('pp-confirm-amount');
     var amountInfo = document.getElementById('pp-confirm-amount-info');
+    var amountTooltip = document.getElementById('pp-confirm-amount-tooltip');
     var projectedRow = document.getElementById('pp-confirm-projected-row');
     var projectedBalanceEl = document.getElementById('pp-confirm-projected-balance');
     var isScheduled = !!(_schedulePickerState && _schedulePickerState.confirmedDate);
@@ -2550,13 +2694,15 @@
     var isSpendBalance = isCard && (selection.fundingMethod === 'spend_balance');
     var isCardSecure = isCard && selection.sendingMethod === 'delivery_website';
     var isNewCard = isCard && isSelectionNewCard(selection);
-    var buildingIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path fill-rule="evenodd" d="M4 16.5v-13h-.25a.75.75 0 0 1 0-1.5h12.5a.75.75 0 0 1 0 1.5H16v13h.25a.75.75 0 0 1 0 1.5h-3.5a.75.75 0 0 1-.75-.75v-2.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75v2.5a.75.75 0 0 1-.75.75h-3.5a.75.75 0 0 1 0-1.5H4Zm3-11a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM7.5 9a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1ZM11 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm.5 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z" clip-rule="evenodd" /></svg>';
+    var buildingIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>';
     var contactIconSvg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5"><path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z" /></svg>';
     var cardIconSvg = isCard ? getCardBrandIcon(selection.cardBrand) : '';
     if (defaultMethodCheckbox) defaultMethodCheckbox.checked = false;
     if (defaultMethodLabel) defaultMethodLabel.textContent = 'Make this the default payment method for ' + selection.payeeName;
     if (confirmCopy) confirmCopy.textContent = isSmart
-      ? 'Review who will receive the payment link before you continue.'
+      ? (isSmartDisburse
+          ? 'Review who will receive the SMART Disburse payment email before you continue.'
+          : 'Review who will receive the payment link before you continue.')
       : (isCard
           ? getCardConfirmationCopy(selection)
           : 'Review your account and recipient details before you continue.');
@@ -2587,8 +2733,14 @@
       arrowIcon.classList.toggle('invisible', isSpendBalance);
       arrowIcon.classList.toggle('opacity-0', isSpendBalance);
     }
-    if (recipientLabel) recipientLabel.textContent = isSmartExchange ? '' : (isCard ? 'Card' : 'Recipient');
-    if (recipientMobileLabel) recipientMobileLabel.textContent = isCard ? 'Card' : (isSmart ? 'Send to' : 'Recipient');
+    if (recipientLabel) {
+      recipientLabel.textContent = isSmartExchange
+        ? ''
+        : (isCard ? 'Card' : 'Recipient');
+    }
+    if (recipientMobileLabel) {
+      recipientMobileLabel.textContent = isCard ? 'Card' : 'Recipient';
+    }
     if (recipientNewCardBadge) {
       recipientNewCardBadge.classList.toggle('hidden', !isNewCard);
       recipientNewCardBadge.style.display = isNewCard ? '' : 'none';
@@ -2606,6 +2758,32 @@
       recipientCards.classList.toggle('sm:justify-start', isSmart);
       recipientCards.classList.remove('mt-3', 'sm:mt-3');
     }
+    if (recipientPrimaryCard) {
+      recipientPrimaryCard.classList.toggle('bg-gray-100', !isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('ring-1', !isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('ring-inset', !isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('ring-gray-200', !isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('dark:bg-white/10', !isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('dark:ring-white/10', !isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('border', isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('border-dashed', isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('border-gray-300', isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('bg-gray-100', isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('ring-0', isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('dark:border-white/15', isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('dark:bg-white/10', isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('dark:ring-0', isSmartDisburse);
+      recipientPrimaryCard.classList.toggle('w-full', isSmartDisburse);
+    }
+    if (recipientNameEl) {
+      recipientNameEl.classList.toggle('truncate', !isSmartDisburse);
+      recipientNameEl.classList.toggle('whitespace-normal', isSmartDisburse);
+    }
+    if (recipientSubEl) {
+      recipientSubEl.classList.toggle('truncate', !isSmartDisburse);
+      recipientSubEl.classList.toggle('whitespace-normal', isSmartDisburse);
+      recipientSubEl.classList.toggle('leading-5', isSmartDisburse);
+    }
     if (payeeRow) payeeRow.classList.toggle('hidden', isSmart);
     if (methodRow) methodRow.classList.remove('hidden');
     if (dateLabel) dateLabel.textContent = isScheduled ? 'Scheduled for' : (isSmart ? 'Send on' : 'Payment date');
@@ -2619,9 +2797,10 @@
     if (smartBadges) {
       var showRecipientChips = isSmart;
       var badgeTexts = isSmart ? (selection.smartBadgeTexts || []) : [];
-      smartBadges.classList.toggle('hidden', !showRecipientChips);
-      smartBadges.classList.toggle('flex', showRecipientChips);
-      smartBadges.innerHTML = showRecipientChips ? badgeTexts.map(function (text) {
+      var shouldShowSmartBadges = showRecipientChips && !isSmartDisburse;
+      smartBadges.classList.toggle('hidden', !shouldShowSmartBadges);
+      smartBadges.classList.toggle('flex', shouldShowSmartBadges);
+      smartBadges.innerHTML = shouldShowSmartBadges ? badgeTexts.map(function (text) {
         return '<span class="inline-flex max-w-full items-center rounded-md bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-700 dark:bg-white/10 dark:text-gray-200"><span class="truncate">' + escapeHtml(text) + '</span></span>';
       }).join('') : '';
     }
@@ -2630,8 +2809,14 @@
       recipientCardsLabel.textContent = 'Card';
     }
     if (recipientCards) recipientCards.classList.toggle('hidden', isSmartExchange);
-    if (recipientIcon) recipientIcon.innerHTML = isSmart ? contactIconSvg : (isCard ? cardIconSvg : buildingIconSvg);
-    if (recipientSecondaryIcon) recipientSecondaryIcon.innerHTML = isSmart ? contactIconSvg : (isCard ? contactIconSvg : buildingIconSvg);
+    if (recipientIcon) {
+      recipientIcon.innerHTML = isSmartDisburse
+        ? buildingIconSvg
+        : (isSmart ? contactIconSvg : (isCard ? cardIconSvg : buildingIconSvg));
+    }
+    if (recipientSecondaryIcon) {
+      recipientSecondaryIcon.innerHTML = isSmart ? contactIconSvg : (isCard ? contactIconSvg : buildingIconSvg);
+    }
     if (recipientSecondaryCard) {
       recipientSecondaryCard.classList.toggle('hidden', !selection.recipientSecondaryName);
       recipientSecondaryCard.classList.toggle('flex', !!selection.recipientSecondaryName);
@@ -2639,9 +2824,15 @@
     setText('pp-payment-confirm-title', selection.confirmTitle || ('Confirm ' + selection.amount + ' payment'));
     if (amountEl) amountEl.textContent = isCard ? String(selection.fundingAmountText || '--') : String(selection.amount || '--');
     if (amountInfo) {
-      amountInfo.classList.toggle('invisible', !isSpendBalance);
-      amountInfo.classList.toggle('opacity-0', !isSpendBalance);
-      amountInfo.classList.toggle('pointer-events-none', !isSpendBalance);
+      var showAmountInfo = isSpendBalance || isSmartDisburse;
+      amountInfo.classList.toggle('invisible', !showAmountInfo);
+      amountInfo.classList.toggle('opacity-0', !showAmountInfo);
+      amountInfo.classList.toggle('pointer-events-none', !showAmountInfo);
+    }
+    if (amountTooltip) {
+      amountTooltip.textContent = isSmartDisburse
+        ? ('This transfers ' + String(selection.amount || '--') + ' into the Balance Account first. After the recipient claims the SMART Disburse link, they choose how to receive the funds. If the link is not claimed, the funds can be transferred back to the origination account.')
+        : 'No funds will be transferred because this payment will use the existing balance on the card.';
     }
     setText('pp-confirm-payee', selection.payeeName);
     setText('pp-confirm-date', formatDate(selection.paymentDateIso));
@@ -2670,6 +2861,7 @@
     var isScheduled = !!(_schedulePickerState && _schedulePickerState.confirmedDate);
     var isCheck = selection.methodId === 'check';
     var isSmart = selection.methodId === 'smart_disburse' || selection.methodId === 'smart_exchange';
+    var isSmartDisburse = selection.methodId === 'smart_disburse';
     var isCard = selection.methodId === 'card';
     var successCopy = document.getElementById('gp-submit-success-copy');
     var progressBar = document.getElementById('gp-submit-progress-bar');
@@ -2742,6 +2934,21 @@
       setStageState(stage2, 'Funded', true);
       setStageState(stage2, isSpendBalance ? 'Balance Confirmed' : 'Funded', true);
       setStageState(stage3, isSecureDelivery ? 'Delivered' : 'Ready to Use', true);
+      return;
+    }
+
+    if (isSmartDisburse) {
+      var sentRecipients = Array.isArray(selection.smartEmailRecipients) ? selection.smartEmailRecipients.filter(Boolean) : [];
+      var recipientSummary = sentRecipients.length > 1
+        ? sentRecipients.join(', ')
+        : (sentRecipients[0] || selection.recipientSub || selection.payeeName);
+      setText('gp-submit-success-title', 'Payment Sent!');
+      setText('gp-submit-success-copy', 'The SMART Disburse payment email was sent to ' + recipientSummary + ' and this payable has been marked as paid.');
+      setText('gp-submit-progress-title', selection.amount + ' for ' + selection.payeeName + ' is complete.');
+      if (progressBar) progressBar.style.width = '100%';
+      setStageState(stage1, 'Email Sent', true);
+      setStageState(stage2, 'Marked Paid', true);
+      setStageState(stage3, 'Paid', true);
       return;
     }
 
@@ -2990,17 +3197,21 @@
     var paymentDateIso = selection && selection.paymentDateIso ? String(selection.paymentDateIso) : '';
     var isScheduled = !!(_schedulePickerState && _schedulePickerState.confirmedDate);
     var isInstantCard = !isScheduled && selection && String(selection.methodId || '') === 'card';
+    var isInstantSmartDisburse = !isScheduled && selection && String(selection.methodId || '') === 'smart_disburse';
     var transferLabel = getSelectionTransferLabel(selection);
     var payeeName = String((updated && updated.payeeName) || (selection && selection.payeeName) || 'payee').trim();
     var amount = formatMoney(updated.amount, updated.currency || 'USD');
+    var smartRecipientSummary = Array.isArray(selection && selection.smartEmailRecipients)
+      ? selection.smartEmailRecipients.filter(Boolean).join(', ')
+      : '';
 
     updated.details = Object.assign({}, updated.details || {});
     updated.adDate = String(nowIso).slice(0, 10);
     updated.paymentMethod = selection && selection.methodLabel ? selection.methodLabel : updated.paymentMethod;
-    updated.processingStep = isScheduled ? 'Release scheduled' : (isInstantCard ? 'Payment completed' : 'Processing payment');
-    updated.status = isInstantCard ? 'paid' : 'in_progress';
-    updated.statusType = isScheduled ? 'scheduled' : (isInstantCard ? '' : 'processing');
-    updated.statusLabel = isInstantCard ? 'Paid' : 'In Progress';
+    updated.processingStep = isScheduled ? 'Release scheduled' : ((isInstantCard || isInstantSmartDisburse) ? 'Payment completed' : 'Processing payment');
+    updated.status = (isInstantCard || isInstantSmartDisburse) ? 'paid' : 'in_progress';
+    updated.statusType = isScheduled ? 'scheduled' : ((isInstantCard || isInstantSmartDisburse) ? '' : 'processing');
+    updated.statusLabel = (isInstantCard || isInstantSmartDisburse) ? 'Paid' : 'In Progress';
     updated.scheduledFor = isScheduled && paymentDateIso ? (paymentDateIso + 'T09:00:00') : '';
     updated.details.payPageState = buildConfirmedPayPageState(selection);
     updated.details.activityLog = isScheduled
@@ -3037,10 +3248,25 @@
             },
             {
               type: 'success',
-              title: 'Payment Completed',
-              description: amount + ' for ' + payeeName + ' was completed successfully.',
-            },
-          ]
+            title: 'Payment Completed',
+            description: amount + ' for ' + payeeName + ' was completed successfully.',
+          },
+        ]
+      : isInstantSmartDisburse
+        ? [
+          {
+            type: 'success',
+            title: 'SMART Disburse Email Sent',
+            description: smartRecipientSummary
+              ? ('Payment email sent to ' + smartRecipientSummary + '.')
+              : 'SMART Disburse payment email sent successfully.',
+          },
+          {
+            type: 'success',
+            title: 'Payment Completed',
+            description: amount + ' for ' + payeeName + ' was marked as paid.',
+          },
+        ]
       : [
           {
             type: 'processing',
@@ -3160,22 +3386,57 @@
       event.preventDefault();
       var selection = getCurrentPaymentConfirmSelection();
       if (!selection) return;
-      _lastSubmittedPayableSelection = cloneJson(selection);
-      var updatedRow = createUpdatedPayableRow(selection);
-      if (updatedRow) {
-        persistCardPaymentSelection(updatedRow, selection);
-        _payContext.row = updatedRow;
-        persistPayableOverride(updatedRow);
-        if (selection.methodId === 'card') syncCardPanelAfterConfirm(selection);
-        var updatedStatus = getDisplayStatus(updatedRow);
-        setStatusBadge(updatedStatus.key, updatedStatus.label);
-        renderPayPageActivityLog(updatedRow);
-        applyConfirmedScheduleDate(getScheduledPaymentDateIso(updatedRow));
-        applyConfirmedPayPageReadOnlyState(updatedRow);
+      var isImmediateSmartDisburse = String(selection.methodId || '') === 'smart_disburse' && !(_schedulePickerState && _schedulePickerState.confirmedDate);
+      var originalText = confirmBtn.textContent;
+
+      function finalizePayment(finalSelection) {
+        _lastSubmittedPayableSelection = cloneJson(finalSelection);
+        var updatedRow = createUpdatedPayableRow(finalSelection);
+        if (updatedRow) {
+          persistOriginationPaymentSelection(updatedRow, finalSelection);
+          persistCardPaymentSelection(updatedRow, finalSelection);
+          _payContext.row = updatedRow;
+          persistPayableOverride(updatedRow);
+          if (finalSelection.methodId === 'card') syncCardPanelAfterConfirm(finalSelection);
+          var updatedStatus = getDisplayStatus(updatedRow);
+          setStatusBadge(updatedStatus.key, updatedStatus.label);
+          renderPayPageActivityLog(updatedRow);
+          applyConfirmedScheduleDate(getScheduledPaymentDateIso(updatedRow));
+          applyConfirmedPayPageReadOnlyState(updatedRow);
+        }
+        populateSubmitSuccessModal(finalSelection);
+        closeDialogById('pp-payment-confirm-dialog');
+        openDialogById('gp-submit-success-dialog');
       }
-      populateSubmitSuccessModal(selection);
-      closeDialogById('pp-payment-confirm-dialog');
-      openDialogById('gp-submit-success-dialog');
+
+      if (!isImmediateSmartDisburse) {
+        finalizePayment(selection);
+        return;
+      }
+
+      confirmBtn.disabled = true;
+      confirmBtn.textContent = 'Sending...';
+      sendSmartDisbursePaymentEmails()
+        .then(function (emails) {
+          selection.smartEmailRecipients = Array.isArray(emails) ? emails.slice() : [];
+          finalizePayment(selection);
+          if (typeof window.showGlobalTopToast === 'function') {
+            window.showGlobalTopToast('SMART Disburse email sent and payment marked as paid.');
+          }
+        })
+        .catch(function (error) {
+          var message = error && error.message ? error.message : 'Failed to send SMART Disburse email.';
+          if (message === 'Failed to fetch') {
+            message = 'Could not reach the token service. Refresh the page and try again.';
+          }
+          if (typeof window.showGlobalTopToast === 'function') {
+            window.showGlobalTopToast(message);
+          }
+        })
+        .finally(function () {
+          confirmBtn.disabled = false;
+          confirmBtn.textContent = originalText;
+        });
     });
   }
 
@@ -3238,23 +3499,40 @@
     return '•'.repeat(Math.max(4, digits.length - tailSize)) + digits.slice(-tailSize);
   }
 
+  function getOriginationAvailableAmount(account) {
+    return Number((account && account.availableAmount) || 0);
+  }
+
+  function formatOriginationAvailableAmount(account) {
+    return formatMoney(getOriginationAvailableAmount(account), String((account && account.currency) || 'USD'));
+  }
+
   function buildBankOptionHtml(account) {
     var rawLabel = String(account.displayName || account.bankName || 'My Bank Account');
     var cleanLabel = rawLabel.replace(/\s+[•*xX.]{3,}\s*\d{2,6}\s*$/, '').trim();
     var label = escapeHtml(cleanLabel || rawLabel);
     var last4 = getAccountLast4(account);
     var summary = escapeHtml(last4 ? ('••••' + last4) : 'Bank account');
+    var amount = escapeHtml(formatOriginationAvailableAmount(account));
     return (
       '<el-option value="' + escapeHtml(String(account.id || '')) + '" class="group/option relative block cursor-default select-none border-b border-gray-200 py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
-        '<div class="flex items-center gap-3">' +
-          '<div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">' +
-            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>' +
+        '<div class="flex items-center gap-3 pr-8">' +
+          '<div class="min-w-0 flex flex-1 items-center justify-between gap-4">' +
+            '<div class="flex min-w-0 items-center gap-3">' +
+            '<div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">' +
+              '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>' +
+            '</div>' +
+            '<div class="min-w-0 in-[el-selectedcontent]:hidden">' +
+              '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' + label + '</span>' +
+              '<span class="block text-sm text-gray-500 dark:text-gray-400">' + summary + '</span>' +
+            '</div>' +
+            '<span class="hidden min-w-0 truncate font-medium in-[el-selectedcontent]:block">' + label + (last4 ? (' ••••' + last4) : '') + '</span>' +
+            '</div>' +
+            '<div class="shrink-0 flex flex-col gap-0.5 text-right in-[el-selectedcontent]:hidden">' +
+              '<span class="text-sm text-gray-500 dark:text-gray-400">Available Amount</span>' +
+              '<span class="text-sm font-medium text-gray-900 dark:text-white">' + amount + '</span>' +
+            '</div>' +
           '</div>' +
-          '<div class="in-[el-selectedcontent]:hidden">' +
-            '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' + label + '</span>' +
-            '<span class="block text-sm text-gray-500 dark:text-gray-400">' + summary + '</span>' +
-          '</div>' +
-          '<span class="hidden in-[el-selectedcontent]:block truncate font-medium">' + label + (last4 ? (' ••••' + last4) : '') + '</span>' +
         '</div>' +
         '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
           '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
@@ -3268,12 +3546,17 @@
     var cleanLabel = rawLabel.replace(/\s+[•*xX.]{3,}\s*\d{2,6}\s*$/, '').trim();
     var label = escapeHtml(cleanLabel || rawLabel);
     var last4 = getAccountLast4(account);
-    var summary = escapeHtml(last4 ? ('••••' + last4) : 'Bank account');
+    var amount = escapeHtml(formatOriginationAvailableAmount(account));
     return (
-      '<span class="shrink-0 text-gray-500 dark:text-gray-400">' +
-        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>' +
-      '</span>' +
-      '<span class="truncate font-medium">' + label + (last4 ? (' ••••' + escapeHtml(last4)) : '') + '</span>'
+      '<span class="inline-flex min-w-0 items-center justify-between gap-4 w-full pr-6">' +
+        '<span class="flex min-w-0 items-center gap-3">' +
+          '<span class="shrink-0 text-gray-500 dark:text-gray-400">' +
+            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>' +
+          '</span>' +
+          '<span class="min-w-0 truncate font-medium">' + label + (last4 ? (' ••••' + escapeHtml(last4)) : '') + '</span>' +
+        '</span>' +
+        '<span class="shrink-0 text-sm font-semibold text-gray-700 dark:text-gray-300">' + amount + '</span>' +
+      '</span>'
     );
   }
 
@@ -4523,6 +4806,7 @@
     _origDetailsState.account = account || null;
     _origDetailsState.revealed = false;
 
+    setText('pp-orig-bank-available-amount', account ? formatOriginationAvailableAmount(account) : '--');
     setText('pp-orig-bank-name', account && account.name);
     setText('pp-orig-bank-bank', account && account.bankName);
     setText('pp-orig-bank-address', account && account.address);
@@ -4545,7 +4829,9 @@
   }
 
   function initOriginationAccountSelector(accounts, row) {
-    var list = Array.isArray(accounts) ? accounts.filter(function (a) { return a && a.id; }) : [];
+    var list = Array.isArray(accounts) ? accounts.filter(function (a) {
+      return a && a.id && String(a.accountType || '').toLowerCase() !== 'balance_account';
+    }) : [];
     var selectEl = document.getElementById('pp-orig-bank-select');
     var optionsEl = document.getElementById('pp-orig-bank-options');
     var selectedEl = document.getElementById('pp-orig-bank-selected');
@@ -4609,6 +4895,46 @@
     }
 
     resetSelection();
+  }
+
+  function getOriginationTransferAmount(selection, updatedRow) {
+    if (!selection || !updatedRow) return 0;
+    if (isScheduledPayableRow(updatedRow)) return 0;
+    var methodId = String(selection.methodId || '').toLowerCase();
+    if (methodId === 'card') {
+      return String(selection.fundingMethod || '') === 'add_funds'
+        ? Number(selection.fundingAmount || 0)
+        : 0;
+    }
+    if (methodId === 'ach' || methodId === 'wire' || methodId === 'check' || methodId === 'smart_disburse' || methodId === 'smart_exchange') {
+      return Number((updatedRow && updatedRow.amount) || 0);
+    }
+    return 0;
+  }
+
+  function persistOriginationPaymentSelection(updatedRow, selection) {
+    var accountId = String((selection && selection.originationAccountId) || (_origDetailsState.account && _origDetailsState.account.id) || '');
+    if (!accountId) return;
+    var transferAmount = getOriginationTransferAmount(selection, updatedRow);
+    if (!(transferAmount > 0)) return;
+
+    var accounts = normalizeOriginationAccounts(_originationAccountsState.accounts);
+    var matchedAccount = null;
+    accounts = accounts.map(function (account) {
+      if (String(account.id || '') !== accountId) return account;
+      matchedAccount = Object.assign({}, account, {
+        availableAmount: Math.max(0, Number(account.availableAmount || 0) - transferAmount)
+      });
+      return matchedAccount;
+    });
+
+    if (!matchedAccount) return;
+
+    _originationAccountsState.accounts = accounts;
+    persistOriginationAccounts(accounts);
+    if (_origDetailsState.account && String(_origDetailsState.account.id || '') === accountId) {
+      setOriginationDetails(matchedAccount);
+    }
   }
 
   function populatePage(row, payeeProfile) {
@@ -4960,7 +5286,9 @@
         var row = applyStoredPayPageViewContext(findSelectedPayable(rows, params), params);
         var payeeProfile = findPayeeProfile(payeesList, row);
         populatePage(row, payeeProfile);
-        var bankAccounts = (prefs && Array.isArray(prefs.bankAccounts) ? prefs.bankAccounts : null) || (Array.isArray(banksFallback) ? banksFallback : []);
+        var seedBankAccounts = (prefs && Array.isArray(prefs.bankAccounts) ? prefs.bankAccounts : null) || (Array.isArray(banksFallback) ? banksFallback : []);
+        var bankAccounts = getStoredOriginationAccounts(seedBankAccounts);
+        _originationAccountsState.accounts = bankAccounts.slice();
         applyConfirmedScheduleDate(getScheduledPaymentDateIso(row));
         initOriginationAccountSelector(bankAccounts, row);
         initPaymentMethodFlow(payeesList, row, bankAccounts, Array.isArray(checkAddresses) ? checkAddresses : [], cardsPayload);
@@ -4975,6 +5303,7 @@
         setText('gp-invoice', '--');
         setStatusBadge('ready_to_pay', 'Ready to Pay');
         applyConfirmedScheduleDate('');
+        _originationAccountsState.accounts = [];
         initOriginationAccountSelector([], null);
         initPaymentMethodFlow([], null, [], [], []);
         updatePayStepStates();

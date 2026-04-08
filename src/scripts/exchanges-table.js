@@ -1441,11 +1441,14 @@
     return items;
   }
 
-  function buildDetailRowHTML(entry, colCount) {
+  function buildDetailRowHTML(entry, colCount, isLast) {
     var paymentSection = buildPaymentInfoSection(entry);
+    var detailCellClass = isLast
+      ? 'bg-white dark:bg-gray-900'
+      : CLASS_NAMES.detailCell;
     return (
       '<tr data-detail class="hidden">' +
-        '<td colspan="' + colCount + '" class="' + CLASS_NAMES.detailCell + '">' +
+        '<td colspan="' + colCount + '" class="' + detailCellClass + '">' +
           buildNotesSection(entry) +
           buildStatusSection(entry) +
           buildAttachmentsSection(entry) +
@@ -1461,7 +1464,7 @@
     return (
       '<tbody class="' + CLASS_NAMES.tbody + (rowHighlightClass ? (' ' + rowHighlightClass) : '') + '">' +
         buildMainRowHTML(entry, columns, isLast) +
-        buildDetailRowHTML(entry, columns.length) +
+        buildDetailRowHTML(entry, columns.length, isLast) +
       '</tbody>'
     );
   }

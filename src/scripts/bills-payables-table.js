@@ -764,17 +764,20 @@
       var updated = Object.assign({}, row);
       updated.status = 'ready_to_pay';
       updated.statusType = '';
-      updated.statusLabel = 'Unprocessed';
+      updated.statusLabel = 'Ready to Pay';
+      updated.processingStep = '';
+      updated.scheduledFor = '';
       updated.adDate = '';
       updated.details = Object.assign({}, updated.details || {});
+      delete updated.details.payPageState;
       updated.details.activityLog = [
         {
-          type: 'pending',
+          type: 'ready',
           title: 'Ready to Pay',
           description: 'Payment was returned to Ready to Pay.',
         },
       ];
-      clearPayableOverride(updated.id);
+      persistPayableOverride(updated);
       return updated;
     });
   }
