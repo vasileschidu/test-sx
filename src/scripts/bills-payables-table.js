@@ -885,25 +885,26 @@
     if (dialog.open) dialog.close();
   }
 
-  function initScheduledCancelDialog() {
-    var dialog = document.getElementById('bp-schedule-cancel-dialog');
+  function syncScheduledCancelDialogContent(row) {
     var confirmBtn = document.getElementById('bp-schedule-cancel-confirm-btn');
     var titleEl = document.getElementById('bp-cancel-dialog-title');
     var copyEl = document.getElementById('bp-cancel-dialog-copy');
     var keepBtn = document.getElementById('bp-cancel-dialog-keep-btn');
-    if (!dialog || !confirmBtn) return;
-
-    function syncCancelDialogContent(row) {
-      var isPendingSmartDisburse = isPendingSmartDisburseRow(row);
-      if (titleEl) titleEl.textContent = isPendingSmartDisburse ? 'Cancel SMART Disburse' : 'Cancel Scheduled Payment';
-      if (copyEl) {
-        copyEl.textContent = isPendingSmartDisburse
-          ? 'Are you sure you want to cancel this SMART Disburse payment? This will void the SMART Disburse token and move the funds from the Balance Account back to the origination account.'
-          : 'This will cancel the scheduled payment and move it back to Ready to Pay. Are you sure you want to continue?';
-      }
-      if (keepBtn) keepBtn.textContent = isPendingSmartDisburse ? 'Keep In Progress' : 'Keep Scheduled';
-      if (confirmBtn) confirmBtn.textContent = isPendingSmartDisburse ? 'Cancel SMART Disburse' : 'Cancel Schedule';
+    var isPendingSmartDisburse = isPendingSmartDisburseRow(row);
+    if (titleEl) titleEl.textContent = isPendingSmartDisburse ? 'Cancel SMART Disburse' : 'Cancel Scheduled Payment';
+    if (copyEl) {
+      copyEl.textContent = isPendingSmartDisburse
+        ? 'Are you sure you want to cancel this SMART Disburse payment? This will void the SMART Disburse token and move the funds from the Balance Account back to the origination account.'
+        : 'This will cancel the scheduled payment and move it back to Ready to Pay. Are you sure you want to continue?';
     }
+    if (keepBtn) keepBtn.textContent = isPendingSmartDisburse ? 'Keep In Progress' : 'Keep Scheduled';
+    if (confirmBtn) confirmBtn.textContent = isPendingSmartDisburse ? 'Cancel SMART Disburse' : 'Cancel Schedule';
+  }
+
+  function initScheduledCancelDialog() {
+    var dialog = document.getElementById('bp-schedule-cancel-dialog');
+    var confirmBtn = document.getElementById('bp-schedule-cancel-confirm-btn');
+    if (!dialog || !confirmBtn) return;
 
     dialog.querySelectorAll('[data-bp-cancel-close]').forEach(function (btn) {
       btn.addEventListener('click', function () {
@@ -2127,7 +2128,7 @@
               break;
             }
           }
-          syncCancelDialogContent(pendingRow);
+          syncScheduledCancelDialogContent(pendingRow);
           openDialogById('bp-schedule-cancel-dialog');
           return;
         }

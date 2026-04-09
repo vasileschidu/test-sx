@@ -1177,11 +1177,12 @@
   }
 
   function getScheduledPaymentDateIso(row) {
+    if (!isScheduledPayableRow(row)) return '';
     var savedState = getSavedPayPageState(row);
     if (savedState && savedState.paymentDateIso) return String(savedState.paymentDateIso);
     var scheduledFor = String((row && row.scheduledFor) || '').trim();
     if (/^\d{4}-\d{2}-\d{2}/.test(scheduledFor)) return scheduledFor.slice(0, 10);
-    if (row && (row.status === 'scheduled' || (row.status === 'in_progress' && String(row.statusType || '').toLowerCase() === 'scheduled')) && row.dueDate) {
+    if (row && row.dueDate) {
       return String(row.dueDate);
     }
     return '';
@@ -1780,7 +1781,7 @@
     var cardSectionTitle = document.getElementById('pp-card-section-title');
     var cardSectionDescription = document.getElementById('pp-card-section-description');
     var cardSourceRadios = document.getElementById('pp-card-source-radios');
-    var hasScheduledDate = !!getScheduledPaymentDateIso(row);
+    var hasScheduledDate = isScheduled && !!getScheduledPaymentDateIso(row);
     var isConfirmedCard = isConfirmed && getSelectedOptionValueByOptionsId('pp-pay-method-options') === 'card';
 
     setPaySelectDisabled(originationSelect, isConfirmed);
@@ -1821,7 +1822,7 @@
     if (headerCancelBtn) headerCancelBtn.classList.toggle('hidden', !(isScheduled || isPendingSmartDisburseRow(row)));
 
     if (scheduleWrap) {
-      if (isConfirmed && !hasScheduledDate) {
+      if ((isConfirmed && !isScheduled) || (isConfirmed && !hasScheduledDate)) {
         scheduleWrap.classList.add('hidden');
       } else {
         scheduleWrap.classList.remove('hidden');
