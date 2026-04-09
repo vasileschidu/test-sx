@@ -2426,11 +2426,6 @@
         sandbox: false,
         verifyBaseUrl: getTokenTestPageUrl()
       }).then(function (payload) {
-        var mode = String((payload && payload.mode) || '').toLowerCase();
-        var delivery = String((payload && payload.delivery) || '').toLowerCase();
-        if (mode === 'sandbox' || delivery === 'preview_only') {
-          throw new Error('Live SMART Disburse email sending is not enabled for this environment yet.');
-        }
         return String((payload && payload.email) || destination.email || '').trim();
       });
     })).then(function (emails) {
@@ -3995,18 +3990,6 @@
         contacts.push(Object.assign({}, entry, {
           id: String((entry && entry.id) || (profile.id || 'sd') + '-contact-' + idx)
         }));
-      });
-    });
-    _allowedTestEmails.forEach(function (email, idx) {
-      var value = String(email || '').trim().toLowerCase();
-      if (!value || seen[value]) return;
-      seen[value] = true;
-      contacts.push({
-        id: 'master-allow-email-' + idx,
-        type: 'email',
-        label: value,
-        value: value,
-        source: 'master_allowlist'
       });
     });
     return contacts;

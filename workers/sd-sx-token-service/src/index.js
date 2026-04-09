@@ -429,7 +429,7 @@ async function handleSendToken(request, env) {
   if (!env.TOKEN_STORE) {
     return json({ ok: false, error: 'TOKEN_STORE KV binding is missing.' }, 500);
   }
-  if (!isAllowedEmail(env, email)) {
+  if (sandbox && !isAllowedEmail(env, email)) {
     return json({ ok: false, error: 'This email is not allowed for test sending.' }, 403);
   }
 
