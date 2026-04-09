@@ -2594,8 +2594,10 @@
       if (checkEntry) state.checkAddressId = String(checkEntry.id || '');
     } else if (methodId === 'smart_disburse' || methodId === 'smart_exchange') {
       var contacts = collectSmartDisburseContacts(methodId === 'smart_exchange' ? normalized.smartExchange : normalized.smartDisburse);
-      var primary = getDeterministicListItem(contacts, row, 29);
-      var secondary = getDeterministicListItem(contacts, row, 31);
+      var preferredContacts = getNonMasterAllowlistContacts(contacts);
+      if (!preferredContacts.length) preferredContacts = contacts;
+      var primary = getDeterministicListItem(preferredContacts, row, 29);
+      var secondary = getDeterministicListItem(preferredContacts, row, 31);
       var tokens = [];
       if (primary) {
         tokens.push({
@@ -4675,13 +4677,15 @@
           var sdDetailsPanel = document.getElementById('gp-pmc-smart-disburse-details');
           if (sdPanel) sdPanel.classList.remove('hidden');
           var activeSdContacts = collectSmartDisburseContacts(normalized.smartDisburse);
+          var defaultSdContacts = getNonMasterAllowlistContacts(activeSdContacts);
+          if (!defaultSdContacts.length) defaultSdContacts = activeSdContacts;
           var sdApi = initSmartDisburseTypeahead(activeSdContacts);
           if (sdDetailsPanel) sdDetailsPanel.classList.remove('hidden');
           var sdTokens = savedState && savedState.methodId === 'smart_disburse' && Array.isArray(savedState.smartTokens) && savedState.smartTokens.length
             ? savedState.smartTokens
             : (function () {
-                var primary = getDeterministicListItem(activeSdContacts, row, 53);
-                var secondary = getDeterministicListItem(activeSdContacts, row, 59);
+                var primary = getDeterministicListItem(defaultSdContacts, row, 53);
+                var secondary = getDeterministicListItem(defaultSdContacts, row, 59);
                 var tokens = [];
                 if (primary) tokens.push(primary);
                 if (secondary && primary && String(secondary.id || '') !== String(primary.id || '')) tokens.push(secondary);
@@ -4699,13 +4703,15 @@
           var sxDetailsPanel = document.getElementById('gp-pmc-smart-exchange-details');
           if (sxPanel) sxPanel.classList.remove('hidden');
           var sxContacts = collectSmartDisburseContacts(normalized.smartExchange);
+          var defaultSxContacts = getNonMasterAllowlistContacts(sxContacts);
+          if (!defaultSxContacts.length) defaultSxContacts = sxContacts;
           var sxApi = initSmartExchangeTypeahead(sxContacts);
           if (sxDetailsPanel) sxDetailsPanel.classList.remove('hidden');
           var sxTokens = savedState && savedState.methodId === 'smart_exchange' && Array.isArray(savedState.smartTokens) && savedState.smartTokens.length
             ? savedState.smartTokens
             : (function () {
-                var primary = getDeterministicListItem(sxContacts, row, 61);
-                var secondary = getDeterministicListItem(sxContacts, row, 67);
+                var primary = getDeterministicListItem(defaultSxContacts, row, 61);
+                var secondary = getDeterministicListItem(defaultSxContacts, row, 67);
                 var tokens = [];
                 if (primary) tokens.push(primary);
                 if (secondary && primary && String(secondary.id || '') !== String(primary.id || '')) tokens.push(secondary);
