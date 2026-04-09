@@ -85,6 +85,7 @@
     smart_exchange: { sending: false },
   };
   var _allowedTestEmails = [];
+  var SMART_DISBURSE_PENDING_STATUS_LABEL = 'Pending Payee Action';
   var STEP_BADGE_NUMBER_CLASS =
     'inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300';
   var STEP_BADGE_COMPLETE_CLASS =
@@ -139,6 +140,9 @@
 
   function getDisplayStatus(row) {
     var status = String((row && row.status) || 'ready_to_pay');
+    if (isPendingSmartDisburseRow(row)) {
+      return { key: 'in_progress', label: SMART_DISBURSE_PENDING_STATUS_LABEL };
+    }
     if (status === 'in_progress') {
       return { key: 'in_progress', label: String((row && row.statusLabel) || 'In Progress') };
     }
@@ -2949,7 +2953,7 @@
     if (isScheduled) {
       if (isSmart) {
         if (isSmartDisburse) {
-          setText('gp-submit-success-title', 'SMART Disburse Scheduled!');
+          setText('gp-submit-success-title', SMART_DISBURSE_PENDING_STATUS_LABEL);
           setText('gp-submit-success-copy', 'The SMART Disburse email will be sent on ' + formatDate(selection.paymentDateIso) + '. The payable will remain in progress until the recipient claims the link and chooses a payout method.');
           setText('gp-submit-progress-title', 'SMART Disburse send is scheduled for ' + formatDate(selection.paymentDateIso) + '.');
         } else {
@@ -2959,7 +2963,7 @@
         }
         if (progressBar) progressBar.style.width = '12.5%';
         setStageState(stage1, 'Link Scheduled', true);
-        setStageState(stage2, isSmartDisburse ? 'Pending Recipient Claim' : 'Pending Payee Action', false);
+        setStageState(stage2, isSmartDisburse ? SMART_DISBURSE_PENDING_STATUS_LABEL : 'Pending Payee Action', false);
         setStageState(stage3, 'Paid', false);
         return;
       }
@@ -3007,12 +3011,12 @@
       var recipientSummary = sentRecipients.length > 1
         ? sentRecipients.join(', ')
         : (sentRecipients[0] || selection.recipientSub || selection.payeeName);
-      setText('gp-submit-success-title', 'Pending Recipient Action');
+      setText('gp-submit-success-title', SMART_DISBURSE_PENDING_STATUS_LABEL);
       setText('gp-submit-success-copy', 'The SMART Disburse email was sent to ' + recipientSummary + '. This payable will remain in progress until the recipient claims the link and chooses a payout method.');
       setText('gp-submit-progress-title', 'Waiting for the recipient to claim SMART Disburse and choose a payout method.');
       if (progressBar) progressBar.style.width = '50%';
       setStageState(stage1, 'Email Sent', true);
-      setStageState(stage2, 'Pending SMART Disburse Claim', true);
+      setStageState(stage2, SMART_DISBURSE_PENDING_STATUS_LABEL, true);
       setStageState(stage3, 'Paid', false);
       return;
     }
@@ -3277,10 +3281,10 @@
       ? 'Release scheduled'
       : (isInstantCard
           ? 'Payment completed'
-          : (isInstantSmartDisburse ? 'Pending recipient action' : 'Processing payment'));
+          : (isInstantSmartDisburse ? 'Pending payee action' : 'Processing payment'));
     updated.status = isInstantCard ? 'paid' : 'in_progress';
     updated.statusType = isScheduled ? 'scheduled' : (isInstantCard ? '' : (isInstantSmartDisburse ? 'smart_disburse_pending' : 'processing'));
-    updated.statusLabel = isInstantCard ? 'Paid' : (isInstantSmartDisburse ? 'Pending Recipient Action' : 'In Progress');
+    updated.statusLabel = isInstantCard ? 'Paid' : (isInstantSmartDisburse ? SMART_DISBURSE_PENDING_STATUS_LABEL : 'In Progress');
     updated.scheduledFor = isScheduled && paymentDateIso ? (paymentDateIso + 'T09:00:00') : '';
     updated.details.payPageState = buildConfirmedPayPageState(selection);
     updated.details.activityLog = isScheduled
@@ -3332,7 +3336,7 @@
           },
           {
             type: 'pending',
-            title: 'Pending SMART Disburse Claim',
+            title: SMART_DISBURSE_PENDING_STATUS_LABEL,
             description: 'This payable remains in progress until the recipient claims the link and chooses a payout method.',
           },
           {

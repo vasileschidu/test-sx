@@ -19,6 +19,7 @@
   var PAYABLE_ROW_OVERRIDES_STORAGE_KEY = 'bp-row-overrides-v1';
   var PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY = 'bp-pay-page-view-context-v1';
   var ORIGINATION_ACCOUNTS_STORAGE_KEY = 'bp-origination-accounts-v1';
+  var SMART_DISBURSE_PENDING_STATUS_LABEL = 'Pending Payee Action';
 
   var DEFAULT_PAGE_SIZE = 16;
   var PAGE_SIZE_OPTIONS = [10, 16, 25, 50];
@@ -354,6 +355,12 @@
     return row && row.status ? row.status : 'ready_to_pay';
   }
 
+  function getDisplayStatusLabel(row) {
+    if (isPendingSmartDisburseRow(row)) return SMART_DISBURSE_PENDING_STATUS_LABEL;
+    var status = getDisplayStatusKey(row);
+    return (row && row.statusLabel) || STATUS_LABELS[status] || status || '';
+  }
+
   var DETAIL_LABEL = 'w-[156px] shrink-0 p-4 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400';
   var DETAIL_SEPARATOR = '<div class="border-t border-gray-200 dark:border-white/10"></div>';
   var ATTACHMENT_ICON =
@@ -390,7 +397,7 @@
 
   function buildStatusSection(row) {
     var status = getDisplayStatusKey(row);
-    var label = (row && row.statusLabel) || STATUS_LABELS[status] || status || '';
+    var label = getDisplayStatusLabel(row);
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Status</div>' +
@@ -739,6 +746,9 @@
               },
             ];
           }
+        } else if (statusType === 'smart_disburse_pending') {
+          next.statusLabel = SMART_DISBURSE_PENDING_STATUS_LABEL;
+          next.processingStep = 'Pending payee action';
         } else {
           next.statusLabel = 'Processing';
           next.details = next.details || {};
@@ -1716,7 +1726,7 @@
           }
           return '<td class="h-12 align-middle px-2 py-2 whitespace-nowrap' + cb + '">' +
             '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + (STATUS_STYLES[status] || STATUS_STYLES.ready_to_pay) + '">' +
-            escapeHtml(row.statusLabel || STATUS_LABELS[status] || status) +
+            escapeHtml(getDisplayStatusLabel(row)) +
             '</span></td>';
         }
         if (col.key === 'billNumber') {
@@ -1925,7 +1935,7 @@
           : key === 'dueDate' || key === 'adDate'
             ? formatDate(row[key])
             : key === 'statusLabel'
-              ? (row.statusLabel || STATUS_LABELS[row.status] || row.status)
+              ? getDisplayStatusLabel(row)
               : row[key];
         var safe = String(value == null ? '' : value).replace(/"/g, '""');
         return '"' + safe + '"';
