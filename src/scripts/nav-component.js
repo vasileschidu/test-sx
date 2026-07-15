@@ -329,7 +329,7 @@ function buildSmartExchangeItem(item, activeId, expand, routerMode, isDesktopCol
         : 'nav-icon size-5 shrink-0 text-gray-500 dark:text-gray-400';
     const ariaCurrent = isActive ? ' aria-current="page"' : '';
     const chevron = SVG_CHEVRON_DOWN_TPL.replace('{ROT}', expand ? 'rotate-180' : '');
-    const rowCls = 'nav-item group relative flex ' + (isDesktopCollapsed ? 'w-9' : 'w-full') + ' items-center gap-1 rounded-lg';
+    const rowCls = 'group relative flex ' + (isDesktopCollapsed ? 'w-9' : 'w-full') + ' items-center gap-1 rounded-lg';
     const contentCls = 'flex min-w-0 items-center gap-3';
     const labelCls = 'nav-label truncate' + (isDesktopCollapsed ? ' hidden sr-only' : '');
     const chevronButtonCls = 'flex size-8 items-center justify-center rounded-lg text-gray-600 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/30 transition-colors dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white cursor-pointer' + (isDesktopCollapsed ? ' hidden' : '');

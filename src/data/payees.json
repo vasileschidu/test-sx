@@ -55,6 +55,10 @@
           {
             "id": "card-rmc-1",
             "label": "Visa \u2022\u2022\u2022\u2022 5511",
+            "brand": "visa",
+            "cardNumber": "4111 2222 3333 5511",
+            "expDate": "10/2027",
+            "cvc2": "429",
             "cardholderName": "Red Maple Construction",
             "cardholderAddress": "1845 Willow Creek Rd\nAustin, TX 78701\nUnited States"
           }
@@ -170,12 +174,20 @@
           {
             "id": "card-bpc-1",
             "label": "Mastercard \u2022\u2022\u2022\u2022 6291",
+            "brand": "mastercard",
+            "cardNumber": "5555 2300 0000 6291",
+            "expDate": "05/2027",
+            "cvc2": "318",
             "cardholderName": "Beacon Property Care",
             "cardholderAddress": "902 Market Street\nDallas, TX 75201\nUnited States"
           },
           {
             "id": "card-bpc-2",
             "label": "Visa \u2022\u2022\u2022\u2022 8076",
+            "brand": "visa",
+            "cardNumber": "4000 1200 0000 8076",
+            "expDate": "12/2028",
+            "cvc2": "742",
             "cardholderName": "Beacon Property Care",
             "cardholderAddress": "902 Market Street\nDallas, TX 75201\nUnited States"
           }
@@ -262,6 +274,10 @@
           {
             "id": "card-mpc-1",
             "label": "Visa \u2022\u2022\u2022\u2022 4532",
+            "brand": "visa",
+            "cardNumber": "4000 3300 0000 4532",
+            "expDate": "03/2028",
+            "cvc2": "905",
             "cardholderName": "Mosaic Printing Co",
             "cardholderAddress": "411 Harbor Ave\nNashville, TN 37203\nUnited States"
           }
@@ -377,6 +393,10 @@
           {
             "id": "card-sos-1",
             "label": "Mastercard \u2022\u2022\u2022\u2022 0860",
+            "brand": "mastercard",
+            "cardNumber": "5555 4100 0000 0860",
+            "expDate": "08/2027",
+            "cvc2": "611",
             "cardholderName": "Sierra Office Supply",
             "cardholderAddress": "1201 Midtown Blvd\nDenver, CO 80202\nUnited States"
           }
@@ -463,6 +483,10 @@
           {
             "id": "card-tns-1",
             "label": "Visa \u2022\u2022\u2022\u2022 5511",
+            "brand": "visa",
+            "cardNumber": "4111 9200 0000 5511",
+            "expDate": "11/2028",
+            "cvc2": "284",
             "cardholderName": "TechNova Solutions LLC",
             "cardholderAddress": "892 Innovation Blvd\nAustin, TX 78701\nUnited States"
           }
@@ -578,6 +602,10 @@
           {
             "id": "card-upm-1",
             "label": "Mastercard \u2022\u2022\u2022\u2022 3423",
+            "brand": "mastercard",
+            "cardNumber": "5555 7800 0000 3423",
+            "expDate": "09/2027",
+            "cvc2": "736",
             "cardholderName": "Urban Pulse Marketing",
             "cardholderAddress": "55 Madison Ave\nNew York, NY 10010\nUnited States"
           }

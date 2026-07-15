@@ -334,6 +334,8 @@ function setDesktopSidebarCollapsed(collapsed) {
 
     if (!desktopSidebarShell || !desktopSidebarPanel || !mainContentWrapper) return;
 
+    var wasCollapsed = desktopSidebarShell.classList.contains('is-collapsed');
+
     document.documentElement.setAttribute('data-sidebar-collapsed', collapsed ? 'true' : 'false');
 
     desktopSidebarShell.classList.toggle('is-collapsed', collapsed);
@@ -362,7 +364,7 @@ function setDesktopSidebarCollapsed(collapsed) {
     if (desktopSidebarFooter) desktopSidebarFooter.classList.toggle('hidden', collapsed);
 
     var appNav = document.querySelector('app-nav');
-    if (appNav && typeof appNav.refreshNav === 'function') {
+    if (wasCollapsed !== collapsed && appNav && typeof appNav.refreshNav === 'function') {
         var currentPage = (document.body && document.body.getAttribute('data-page'))
             || (window.location.pathname.split('/').pop() || '');
         appNav.refreshNav(currentPage);
@@ -370,7 +372,7 @@ function setDesktopSidebarCollapsed(collapsed) {
         syncActiveNavItemStyles();
     }
 
-    if (collapsed) closeAllDesktopSubmenus();
+    if (collapsed && wasCollapsed !== collapsed) closeAllDesktopSubmenus();
     hideNavTooltip();
     saveDesktopSidebarCollapsedPreference(collapsed);
     requestAnimationFrame(function () {

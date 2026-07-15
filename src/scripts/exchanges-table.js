@@ -40,6 +40,7 @@
   var PAGINATION_SELECTOR = '[data-pagination]';
   var TAB_COUNT_SELECTOR = '[data-tab-count]';
   var TAB_NAV_SELECTOR = 'nav[aria-label="Tabs"]';
+  var TAB_SELECT_SELECTOR = '[data-sx-tab-select]';
 
   var ACTIVE_TAB_LINK_CLASSES = ['bg-blue-100', 'text-blue-700', 'dark:bg-blue-500/20', 'dark:text-blue-300'];
   var INACTIVE_TAB_LINK_CLASSES = ['text-gray-500', 'dark:text-gray-400'];
@@ -66,6 +67,8 @@
   var INITIAL_TABLE_SKELETON_MS = 500;
   var MANUAL_REFRESH_SKELETON_MS = 1000;
   var SEARCH_SKELETON_MS = 200;
+  var FILTER_APPLY_SKELETON_MIN_MS = 100;
+  var FILTER_APPLY_SKELETON_MAX_MS = 400;
 
   // Suppress history.pushState when responding to a popstate event
   var _suppressUrlUpdate = false;
@@ -93,6 +96,7 @@
     allEntries: [],
     sourceEntries: [],
     columns: [],
+    allColumns: [],
   };
   var tabSwitchLoadingState = {
     active: false,
@@ -106,6 +110,10 @@
     active: false,
     timer: null,
   };
+  var filterApplyLoadingState = {
+    active: false,
+    timer: null,
+  };
   var manualRefreshHalfTurns = 0;
   var sortState = {
     key: '',
@@ -116,6 +124,7 @@
     selectedCustomers: new Set(),
     selectedStatuses: new Set(),
     selectedMethods: new Set(),
+    selectedFailureReasons: new Set(),
     initiatedDateFrom: '',
     initiatedDateTo: '',
     initiatedDateFromDraft: '',
@@ -124,30 +133,50 @@
     initiatedDateMonth: null,
     menuOpen: false,
     activePanel: 'root',
+    appliedSelectedCustomers: new Set(),
+    appliedSelectedStatuses: new Set(),
+    appliedSelectedMethods: new Set(),
+    appliedSelectedFailureReasons: new Set(),
+    appliedInitiatedDateFrom: '',
+    appliedInitiatedDateTo: '',
+  };
+  var columnVisibilityState = {
+    initialized: false,
+    visibleKeys: new Set(),
+    orderedKeys: [],
+    draftVisibleKeys: new Set(),
+    draftOrderedKeys: [],
   };
   var syncTableFilterUi = function () {};
+  var syncManageColumnsUi = function () {};
 
   // Maps tab key (from data-tab-count) to the status values shown in that tab.
   // null means no filter — show all entries.
   var TAB_STATUS_FILTER = {
-    pending: ['pending'],
+    pending: ['pending', 'processing'],
     paid: ['paid'],
-    exceptions: ['exception'],
+    exceptions: ['exception', 'declined'],
   };
 
   var STATUS_STYLES = {
     pending:
       'bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20',
+    processing:
+      'bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/20',
     paid:
       'bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20',
     exception:
+      'bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20',
+    declined:
       'bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20',
   };
 
   var STATUS_LABELS = {
     pending: 'Pending',
+    processing: 'Processing',
     paid: 'Paid',
     exception: 'Exception',
+    declined: 'Declined',
   };
 
   var METHOD_TYPE_LABELS = {
@@ -161,7 +190,7 @@
     row: 'transition-colors duration-300 motion-reduce:transition-none',
     cellBorder: ' border-b border-gray-200 dark:border-white/10',
     actionCell:
-      'bg-white h-12 align-middle py-2 pr-4 pl-3 whitespace-nowrap w-24 min-w-24 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2',
+      'bg-white h-12 align-middle py-2 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2',
     detailCell: 'bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10',
   };
   var ACTION_GUIDE_PARAM = 'card-rows';
@@ -185,6 +214,7 @@
   };
   var pendingMarkPaidInvoice = '';
   var pendingMarkPaidCloseCardDialog = false;
+  var pendingDeclineInvoice = '';
   var topActionToast = {
     el: null,
     removeTimer: null,
@@ -372,30 +402,37 @@
         var vendorEntry = String(entry && entry.vendorEntry || '').toLowerCase();
         var invoice = String(entry && entry.invoice || '').toLowerCase();
         var customer = String(entry && entry.customer || '').toLowerCase();
+        var failureReason = String(getFailureReason(entry) || '').toLowerCase();
         return vendorEntry.indexOf(search) !== -1 ||
           invoice.indexOf(search) !== -1 ||
           ('#' + invoice).indexOf(search) !== -1 ||
-          customer.indexOf(search) !== -1;
+          customer.indexOf(search) !== -1 ||
+          failureReason.indexOf(search) !== -1;
       });
     }
-    if (tableFilterState.selectedCustomers.size) {
+    if (tableFilterState.appliedSelectedCustomers.size) {
       list = list.filter(function (entry) {
-        return tableFilterState.selectedCustomers.has(String(entry && entry.customer || ''));
+        return tableFilterState.appliedSelectedCustomers.has(String(entry && entry.customer || ''));
       });
     }
-    if (tableFilterState.selectedStatuses.size) {
+    if (tableFilterState.appliedSelectedStatuses.size) {
       list = list.filter(function (entry) {
-        return tableFilterState.selectedStatuses.has(String(entry && entry.status || ''));
+        return tableFilterState.appliedSelectedStatuses.has(String(entry && entry.status || ''));
       });
     }
-    if (tableFilterState.selectedMethods.size) {
+    if (tableFilterState.appliedSelectedMethods.size) {
       list = list.filter(function (entry) {
-        return tableFilterState.selectedMethods.has(String(entry && entry.methodType || ''));
+        return tableFilterState.appliedSelectedMethods.has(String(entry && entry.methodType || ''));
       });
     }
-    if (tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo) {
-      var from = tableFilterState.initiatedDateFrom || '';
-      var to = tableFilterState.initiatedDateTo || '';
+    if (tableFilterState.appliedSelectedFailureReasons.size) {
+      list = list.filter(function (entry) {
+        return tableFilterState.appliedSelectedFailureReasons.has(String(getFailureReason(entry) || ''));
+      });
+    }
+    if (tableFilterState.appliedInitiatedDateFrom || tableFilterState.appliedInitiatedDateTo) {
+      var from = tableFilterState.appliedInitiatedDateFrom || '';
+      var to = tableFilterState.appliedInitiatedDateTo || '';
       list = list.filter(function (entry) {
         var dateKey = String(entry && entry.dateInitiated || '').slice(0, 10);
         if (!dateKey) return false;
@@ -411,6 +448,232 @@
     var base = filterEntriesByTab(_activeTableTabKey || 'pending');
     var filtered = applyTableFilters(base);
     return getSortedEntries(filtered);
+  }
+
+  function isFailureReasonTabActive() {
+    return (_activeTableTabKey || 'pending') === 'exceptions';
+  }
+
+  function normalizeTabKey(tabKey) {
+    var key = String(tabKey || '').trim();
+    return Object.prototype.hasOwnProperty.call(TAB_STATUS_FILTER, key) ? key : 'pending';
+  }
+
+  function isAlwaysVisibleColumn(col) {
+    return !!(col && (col.type === 'expand' || col.type === 'action'));
+  }
+
+  function getManageableColumns(columns) {
+    return (Array.isArray(columns) ? columns : []).filter(function (col) {
+      return col && col.key && !isAlwaysVisibleColumn(col);
+    });
+  }
+
+  function ensureColumnVisibilityState(columns) {
+    var manageableColumns = getManageableColumns(columns);
+    var defaultKeys = getDefaultManageableColumnKeys(columns);
+    if (!columnVisibilityState.initialized) {
+      columnVisibilityState.visibleKeys = new Set(defaultKeys);
+      columnVisibilityState.orderedKeys = manageableColumns.map(function (col) { return col.key; });
+      columnVisibilityState.draftVisibleKeys = new Set(defaultKeys);
+      columnVisibilityState.draftOrderedKeys = manageableColumns.map(function (col) { return col.key; });
+      columnVisibilityState.initialized = true;
+      return;
+    }
+    var validKeys = new Set(manageableColumns.map(function (col) { return col.key; }));
+    Array.from(columnVisibilityState.visibleKeys).forEach(function (key) {
+      if (!validKeys.has(key)) columnVisibilityState.visibleKeys.delete(key);
+    });
+    Array.from(columnVisibilityState.draftVisibleKeys).forEach(function (key) {
+      if (!validKeys.has(key)) columnVisibilityState.draftVisibleKeys.delete(key);
+    });
+    columnVisibilityState.orderedKeys = columnVisibilityState.orderedKeys.filter(function (key) {
+      return validKeys.has(key);
+    });
+    columnVisibilityState.draftOrderedKeys = columnVisibilityState.draftOrderedKeys.filter(function (key) {
+      return validKeys.has(key);
+    });
+    manageableColumns.forEach(function (col) {
+      if (columnVisibilityState.orderedKeys.indexOf(col.key) === -1) {
+        columnVisibilityState.orderedKeys.push(col.key);
+      }
+      if (columnVisibilityState.draftOrderedKeys.indexOf(col.key) === -1) {
+        columnVisibilityState.draftOrderedKeys.push(col.key);
+      }
+    });
+    if (!columnVisibilityState.visibleKeys.size && manageableColumns.length) {
+      defaultKeys.forEach(function (key) {
+        columnVisibilityState.visibleKeys.add(key);
+      });
+    }
+    if (!columnVisibilityState.draftVisibleKeys.size && manageableColumns.length) {
+      defaultKeys.forEach(function (key) {
+        columnVisibilityState.draftVisibleKeys.add(key);
+      });
+    }
+  }
+
+  function getDefaultManageableColumnKeys(columns) {
+    return getManageableColumns(columns)
+      .filter(function (col) { return col.key !== 'failureReason'; })
+      .map(function (col) { return col.key; });
+  }
+
+  function cloneColumnDraftFromApplied(columns) {
+    ensureColumnVisibilityState(columns);
+    columnVisibilityState.draftVisibleKeys = new Set(Array.from(columnVisibilityState.visibleKeys));
+    columnVisibilityState.draftOrderedKeys = columnVisibilityState.orderedKeys.slice();
+  }
+
+  function resetColumnDraftToDefault(columns) {
+    var defaultKeys = getDefaultManageableColumnKeys(columns);
+    columnVisibilityState.draftVisibleKeys = new Set(defaultKeys);
+    columnVisibilityState.draftOrderedKeys = defaultKeys.slice();
+  }
+
+  function commitColumnDraft() {
+    columnVisibilityState.visibleKeys = new Set(Array.from(columnVisibilityState.draftVisibleKeys));
+    columnVisibilityState.orderedKeys = columnVisibilityState.draftOrderedKeys.slice();
+  }
+
+  function setsMatch(a, b) {
+    if (a.size !== b.size) return false;
+    var isEqual = true;
+    a.forEach(function (value) {
+      if (!b.has(value)) isEqual = false;
+    });
+    return isEqual;
+  }
+
+  function arraysMatch(a, b) {
+    if (a.length !== b.length) return false;
+    for (var i = 0; i < a.length; i += 1) {
+      if (a[i] !== b[i]) return false;
+    }
+    return true;
+  }
+
+  function isColumnDraftDirty() {
+    return !setsMatch(columnVisibilityState.draftVisibleKeys, columnVisibilityState.visibleKeys) ||
+      !arraysMatch(columnVisibilityState.draftOrderedKeys, columnVisibilityState.orderedKeys);
+  }
+
+  function isColumnDraftDefault(columns) {
+    var defaultKeys = getDefaultManageableColumnKeys(columns);
+    return setsMatch(columnVisibilityState.draftVisibleKeys, new Set(defaultKeys)) &&
+      arraysMatch(columnVisibilityState.draftOrderedKeys, defaultKeys);
+  }
+
+  function getVisibleColumns(columns) {
+    ensureColumnVisibilityState(columns);
+    var originalColumns = Array.isArray(columns) ? columns : [];
+    var manageableColumns = getManageableColumns(originalColumns);
+    var manageableByKey = new Map();
+    var manageColumnsDialog = document.getElementById('sx-manage-columns-dialog');
+    var useDraftState = !!(manageColumnsDialog && manageColumnsDialog.open);
+    var orderedKeys = useDraftState ? columnVisibilityState.draftOrderedKeys : columnVisibilityState.orderedKeys;
+    var visibleKeys = useDraftState ? columnVisibilityState.draftVisibleKeys : columnVisibilityState.visibleKeys;
+    manageableColumns.forEach(function (col) {
+      manageableByKey.set(col.key, col);
+    });
+    var orderedVisibleManageable = orderedKeys
+      .filter(function (key) {
+        return manageableByKey.has(key) && visibleKeys.has(key);
+      })
+      .map(function (key) { return manageableByKey.get(key); });
+    var merged = [];
+    var insertedManageable = false;
+    originalColumns.forEach(function (col) {
+      if (isAlwaysVisibleColumn(col)) {
+        merged.push(col);
+        return;
+      }
+      if (!insertedManageable) {
+        Array.prototype.push.apply(merged, orderedVisibleManageable);
+        insertedManageable = true;
+      }
+    });
+    if (!insertedManageable) {
+      Array.prototype.push.apply(merged, orderedVisibleManageable);
+    }
+    return merged;
+  }
+
+  function getRenderableColumns(columns) {
+    var list = getVisibleColumns(columns);
+    if (isFailureReasonTabActive()) return list;
+    return list.filter(function (col) {
+      return col && col.key !== 'failureReason';
+    });
+  }
+
+  function getOrderedManageableColumns(columns) {
+    ensureColumnVisibilityState(columns);
+    var manageableColumns = getManageableColumns(columns);
+    var manageableByKey = new Map();
+    manageableColumns.forEach(function (col) {
+      manageableByKey.set(col.key, col);
+    });
+    return columnVisibilityState.draftOrderedKeys
+      .filter(function (key) { return manageableByKey.has(key); })
+      .map(function (key) { return manageableByKey.get(key); });
+  }
+
+  function moveDraftColumnKeyBefore(movingKey, targetKey) {
+    if (!movingKey || !targetKey || movingKey === targetKey) return false;
+    var currentOrder = columnVisibilityState.draftOrderedKeys.slice();
+    var fromIndex = currentOrder.indexOf(movingKey);
+    var toIndex = currentOrder.indexOf(targetKey);
+    if (fromIndex === -1 || toIndex === -1) return false;
+    currentOrder.splice(fromIndex, 1);
+    var nextTargetIndex = currentOrder.indexOf(targetKey);
+    currentOrder.splice(nextTargetIndex, 0, movingKey);
+    columnVisibilityState.draftOrderedKeys = currentOrder;
+    return true;
+  }
+
+  function buildManageColumnsRowHTML(col, checked, disabled) {
+    return '' +
+      '<div data-column-order-row="' + escapeHtml(col.key) + '" class="group flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 dark:hover:bg-white/5' + (disabled ? ' opacity-60' : '') + '">' +
+      '  <button type="button" draggable="true" data-column-drag-handle="' + escapeHtml(col.key) + '" class="inline-flex size-5 shrink-0 cursor-grab items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-500 active:cursor-grabbing dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
+      '    <span class="sr-only">Reorder column</span>' +
+      '    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-4" aria-hidden="true">' +
+      '      <path fill-rule="evenodd" clip-rule="evenodd" d="M6.00007 3.26641C5.96325 3.26641 5.9334 3.29625 5.9334 3.33307C5.9334 3.36989 5.96325 3.39974 6.00007 3.39974C6.03688 3.39974 6.06673 3.36989 6.06673 3.33307C6.06673 3.29625 6.03688 3.26641 6.00007 3.26641ZM4.7334 3.33307C4.7334 2.63351 5.3005 2.06641 6.00007 2.06641C6.69963 2.06641 7.26673 2.63351 7.26673 3.33307C7.26673 4.03263 6.69963 4.59974 6.00007 4.59974C5.3005 4.59974 4.7334 4.03263 4.7334 3.33307ZM10.0001 3.26641C9.96325 3.26641 9.9334 3.29625 9.9334 3.33307C9.9334 3.36989 9.96325 3.39974 10.0001 3.39974C10.0369 3.39974 10.0667 3.36989 10.0667 3.33307C10.0667 3.29625 10.0369 3.26641 10.0001 3.26641ZM8.7334 3.33307C8.7334 2.63351 9.3005 2.06641 10.0001 2.06641C10.6996 2.06641 11.2667 2.63351 11.2667 3.33307C11.2667 4.03263 10.6996 4.59974 10.0001 4.59974C9.3005 4.59974 8.7334 4.03263 8.7334 3.33307ZM6.00007 7.93307C5.96325 7.93307 5.9334 7.96292 5.9334 7.99974C5.9334 8.03656 5.96325 8.06641 6.00007 8.06641C6.03688 8.06641 6.06673 8.03656 6.06673 7.99974C6.06673 7.96292 6.03688 7.93307 6.00007 7.93307ZM4.7334 7.99974C4.7334 7.30018 5.3005 6.73307 6.00007 6.73307C6.69963 6.73307 7.26673 7.30018 7.26673 7.99974C7.26673 8.6993 6.69963 9.26641 6.00007 9.26641C5.3005 9.26641 4.7334 8.6993 4.7334 7.99974ZM10.0001 7.93307C9.96325 7.93307 9.9334 7.96292 9.9334 7.99974C9.9334 8.03656 9.96325 8.06641 10.0001 8.06641C10.0369 8.06641 10.0667 8.03656 10.0667 7.99974C10.0667 7.96292 10.0369 7.93307 10.0001 7.93307ZM8.7334 7.99974C8.7334 7.30018 9.3005 6.73307 10.0001 6.73307C10.6996 6.73307 11.2667 7.30018 11.2667 7.99974C11.2667 8.6993 10.6996 9.26641 10.0001 9.26641C9.3005 9.26641 8.7334 8.6993 8.7334 7.99974ZM6.00007 12.5997C5.96325 12.5997 5.9334 12.6296 5.9334 12.6664C5.9334 12.7032 5.96325 12.7331 6.00007 12.7331C6.03688 12.7331 6.06673 12.7032 6.06673 12.6664C6.06673 12.6296 6.03688 12.5997 6.00007 12.5997ZM4.7334 12.6664C4.7334 11.9668 5.3005 11.3997 6.00007 11.3997C6.69963 11.3997 7.26673 11.9668 7.26673 12.6664C7.26673 13.366 6.69963 13.9331 6.00007 13.9331C5.3005 13.9331 4.7334 13.366 4.7334 12.6664ZM10.0001 12.5997C9.96325 12.5997 9.9334 12.6296 9.9334 12.6664C9.9334 12.7032 9.96325 12.7331 10.0001 12.7331C10.0369 12.7331 10.0667 12.7032 10.0667 12.6664C10.0667 12.6296 10.0369 12.5997 10.0001 12.5997ZM8.7334 12.6664C8.7334 11.9668 9.3005 11.3997 10.0001 11.3997C10.6996 11.3997 11.2667 11.9668 11.2667 12.6664C11.2667 13.366 10.6996 13.9331 10.0001 13.9331C9.3005 13.9331 8.7334 13.366 8.7334 12.6664Z" fill="#757575"/>' +
+      '    </svg>' +
+      '  </button>' +
+      '  <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3">' +
+      '  <div class="grid size-4 grid-cols-1">' +
+      '    <input type="checkbox" data-column-visibility-toggle="' + escapeHtml(col.key) + '"' + (checked ? ' checked' : '') + (disabled ? ' disabled' : '') +
+      '      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500 dark:disabled:bg-white/10" />' +
+      '    <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
+      '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
+      '    </svg>' +
+      '  </div>' +
+      '  <span class="min-w-0 flex-1">' +
+      '    <span class="block text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(col.label || col.key) + '</span>' +
+      '  </span>' +
+      '  </label>' +
+      '</div>';
+  }
+
+  function getUrlTabKey() {
+    try {
+      var params = new URLSearchParams(window.location.search || '');
+      return normalizeTabKey(params.get('tab'));
+    } catch (err) {
+      return 'pending';
+    }
+  }
+
+  function setUrlTabKey(tabKey) {
+    try {
+      var nextTabKey = normalizeTabKey(tabKey);
+      var url = new URL(window.location.href);
+      url.searchParams.set('tab', nextTabKey);
+      window.history.replaceState({}, '', url.toString());
+    } catch (err) {
+      // Ignore URL update failures; tab state still changes in memory.
+    }
   }
 
   function getSortDirectionForKey(key) {
@@ -489,15 +752,14 @@
   }
 
   function isPendingLikeStatus(status) {
-    return status === 'pending';
+    return status === 'pending' || status === 'processing';
   }
 
   function normalizeStatusValue(status) {
     var value = String(status || '').trim().toLowerCase();
     if (value === 'completed') return 'paid';
     if (value === 'failed') return 'exception';
-    if (value === 'processing') return 'pending';
-    if (value === 'pending' || value === 'paid' || value === 'exception') return value;
+    if (value === 'pending' || value === 'processing' || value === 'paid' || value === 'exception' || value === 'declined') return value;
     return 'pending';
   }
 
@@ -524,6 +786,63 @@
     return STATUS_LABELS[status] || 'Pending';
   }
 
+  function getDeclineReason(entry) {
+    if (!entry || !entry.details) return '';
+    if (typeof entry.details.declineReason === 'string' && entry.details.declineReason.trim()) {
+      return entry.details.declineReason.trim();
+    }
+    var log = Array.isArray(entry.details.activityLog) ? entry.details.activityLog : [];
+    for (var i = log.length - 1; i >= 0; i -= 1) {
+      var item = log[i];
+      if (item && item.comment && String(item.action || '').toLowerCase().indexOf('declined') !== -1) {
+        return String(item.comment).trim();
+      }
+    }
+    return '';
+  }
+
+  function getFailureReason(entry) {
+    if (!entry) return '';
+    var declineReason = getDeclineReason(entry);
+    if (declineReason) return declineReason;
+    var details = entry.details && typeof entry.details === 'object' ? entry.details : {};
+    var directReason = [
+      entry.failureReason,
+      entry.exceptionReason,
+      details.failureReason,
+      details.exceptionReason,
+      details.error,
+      details.errorMessage,
+      details.declineReason
+    ].find(function (value) {
+      return typeof value === 'string' && value.trim();
+    });
+    if (directReason) return String(directReason).trim();
+    var log = Array.isArray(entry && entry.details && entry.details.activityLog) ? entry.details.activityLog : [];
+    for (var i = log.length - 1; i >= 0; i -= 1) {
+      var item = log[i];
+      var action = String(item && item.action || '').trim();
+      var comment = String(item && (item.comment || item.description) || '').trim();
+      var lower = action.toLowerCase();
+      if (lower.indexOf('failed') !== -1 || lower.indexOf('declined') !== -1 || lower.indexOf('revoked') !== -1 || lower.indexOf('rejected') !== -1 || lower.indexOf('error') !== -1) {
+        return comment || action;
+      }
+    }
+    return '';
+  }
+
+  function getDeclineDate(entry) {
+    if (!entry || !entry.details || !Array.isArray(entry.details.activityLog)) return '';
+    var log = entry.details.activityLog;
+    for (var i = log.length - 1; i >= 0; i -= 1) {
+      var item = log[i];
+      if (item && item.date && String(item.action || '').toLowerCase().indexOf('declined') !== -1) {
+        return formatDate(String(item.date).split('T')[0]);
+      }
+    }
+    return '';
+  }
+
   function normalizeDetails(details) {
     if (!details || typeof details !== 'object') {
       return { notes: '', paymentInfo: null, attachments: [], activityLog: [] };
@@ -533,7 +852,87 @@
       paymentInfo: details.paymentInfo && typeof details.paymentInfo === 'object' ? details.paymentInfo : null,
       attachments: Array.isArray(details.attachments) ? details.attachments : [],
       activityLog: Array.isArray(details.activityLog) ? details.activityLog : [],
+      declineReason: typeof details.declineReason === 'string' ? details.declineReason : '',
+      requiresSignature: details.requiresSignature === true,
+      requiresDocumentReview: details.requiresDocumentReview === true,
+      processing: details.processing && typeof details.processing === 'object' ? details.processing : null,
     };
+  }
+
+  function getEntryAttachments(entry) {
+    return entry && entry.details && Array.isArray(entry.details.attachments) ? entry.details.attachments : [];
+  }
+
+  function requiresDocumentReview(entry) {
+    if (!entry || !entry.details) return false;
+    return entry.details.requiresDocumentReview === true || getEntryAttachments(entry).length > 0;
+  }
+
+  function requiresSignature(entry) {
+    return !!(entry && entry.details && entry.details.requiresSignature === true);
+  }
+
+  function requiresGetPaidAction(entry) {
+    return !!(entry && isPendingLikeStatus(entry.status) && (requiresDocumentReview(entry) || requiresSignature(entry)));
+  }
+
+  function isPendingManualReviewEntry(entry) {
+    if (!entry || !isPendingLikeStatus(entry.status) || requiresGetPaidAction(entry)) return false;
+    return String(entry.methodType || '').toLowerCase() === 'card';
+  }
+
+  function isPendingAutoProcessingEntry(entry) {
+    if (!entry || !isPendingLikeStatus(entry.status) || requiresGetPaidAction(entry)) return false;
+    return String(entry.methodType || '').toLowerCase() === 'ach';
+  }
+
+  function parseEntryDate(value) {
+    var raw = String(value || '').trim();
+    if (!raw) return null;
+    var normalized = raw.indexOf('T') === -1 ? (raw + 'T00:00:00') : raw;
+    var date = new Date(normalized);
+    return isNaN(date.getTime()) ? null : date;
+  }
+
+  function getAutoSettleDays(entry) {
+    var configured = entry && entry.details && entry.details.processing
+      ? Number(entry.details.processing.autoSettleAfterDays)
+      : NaN;
+    return Number.isFinite(configured) && configured > 0 ? configured : 2;
+  }
+
+  function shouldAutoSettlePendingAch(entry) {
+    if (!isPendingAutoProcessingEntry(entry)) return false;
+    var processing = entry.details && entry.details.processing ? entry.details.processing : {};
+    var now = new Date();
+    var expectedDate = parseEntryDate(processing.expectedSettlementDate);
+    if (expectedDate) return now.getTime() >= expectedDate.getTime();
+    var initiatedDate = parseEntryDate(entry.dateInitiated);
+    if (!initiatedDate) return false;
+    var elapsedDays = (now.getTime() - initiatedDate.getTime()) / 86400000;
+    return elapsedDays >= getAutoSettleDays(entry);
+  }
+
+  function autoSettlePendingAchIfReady(entry) {
+    if (!shouldAutoSettlePendingAch(entry)) return entry;
+    entry.status = 'paid';
+    if (entry.details && Array.isArray(entry.details.activityLog)) {
+      var hasComplete = entry.details.activityLog.some(function (logItem) {
+        return logItem && logItem.type === 'complete';
+      });
+      if (!hasComplete) {
+        var expectedDate = entry.details.processing && entry.details.processing.expectedSettlementDate
+          ? entry.details.processing.expectedSettlementDate
+          : new Date().toISOString();
+        entry.details.activityLog.push({
+          user: 'System',
+          action: 'completed ACH settlement',
+          date: expectedDate,
+          type: 'complete'
+        });
+      }
+    }
+    return entry;
   }
 
   var EXCHANGE_OVERRIDES_STORAGE_KEY = 'sx_exchange_entry_overrides_v1';
@@ -582,15 +981,21 @@
     var saved = overrides[normalized.invoice];
     if (saved && typeof saved === 'object') {
       if (saved.status) normalized.status = normalizeStatusValue(saved.status);
-      if (saved.methodType) normalized.methodType = normalizeMethodTypeValue(saved.methodType);
+      if (saved.methodType) normalized.methodType = normalizeMethodTypeValue({ methodType: saved.methodType });
       if (typeof saved.paymentMethodEnding === 'string') normalized.paymentMethodEnding = saved.paymentMethodEnding;
       if (typeof saved.paymentMethod === 'string') normalized.paymentMethod = saved.paymentMethod;
       if (saved.details && typeof saved.details === 'object') {
         normalized.details = Object.assign({}, normalized.details, {
-          activityLog: Array.isArray(saved.details.activityLog) ? saved.details.activityLog : normalized.details.activityLog
+          activityLog: Array.isArray(saved.details.activityLog) ? saved.details.activityLog : normalized.details.activityLog,
+          declineReason: typeof saved.details.declineReason === 'string' ? saved.details.declineReason : normalized.details.declineReason
         });
       }
     }
+    if (normalized.status === 'pending' && isPendingAutoProcessingEntry(normalized)) {
+      normalized.status = 'processing';
+    }
+    normalized = autoSettlePendingAchIfReady(normalized);
+    normalized.failureReason = getFailureReason(normalized);
     return normalized;
   }
 
@@ -608,7 +1013,7 @@
       }
 
       if (col.type === 'action') {
-        html += '<th data-action-column scope="col" class="' + base + ' bg-white py-3.5 pr-4 pl-3 whitespace-nowrap w-24 min-w-24 dark:bg-gray-900 sm:pr-2"><span class="sr-only">Action</span></th>';
+        html += '<th data-action-column scope="col" class="' + base + ' bg-white py-3.5 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 dark:bg-gray-900 sm:pr-2"><span class="sr-only">Action</span></th>';
         return;
       }
 
@@ -687,6 +1092,8 @@
         return '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer p-0 text-sm font-medium text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">#' + escapeHtml(entry.invoice) + '</button>';
       case 'dateInitiated':
         return formatDate(entry.dateInitiated);
+      case 'failureReason':
+        return escapeHtml(getFailureReason(entry) || '--');
       default:
         return escapeHtml(entry[col.key] || '');
     }
@@ -739,48 +1146,94 @@
 
   function renderStatus(status) {
     var badgeClasses = STATUS_STYLES[status] || STATUS_STYLES.pending;
+    if (status === 'processing') {
+      return '<span data-processing-tooltip="true" class="inline-flex cursor-default items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + badgeClasses + '">' +
+        escapeHtml(getStatusLabel(status)) +
+      '</span>';
+    }
     return '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + badgeClasses + '">' +
       escapeHtml(getStatusLabel(status)) +
       '</span>';
   }
 
-  function renderActionCell(entry) {
-    var isCard = entry.methodType === 'card';
-    var isAch = entry.methodType === 'ach';
-    if (entry.status === 'pending' && entry.methodType === 'smart_exchange') {
-      return '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>';
+  function initProcessingStatusTooltip() {
+    var tooltip = null;
+    var tooltipText = 'ACH is processing automatically. Standard ACH processing time is typically 1-2 business days.';
+
+    function ensureTooltip() {
+      if (tooltip) return tooltip;
+      tooltip = document.createElement('div');
+      tooltip.className = 'pointer-events-none fixed z-[240] hidden w-72 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium leading-5 text-white shadow-lg dark:bg-gray-950';
+      tooltip.textContent = tooltipText;
+      document.body.appendChild(tooltip);
+      return tooltip;
     }
 
-    if (_activeTableTabKey === 'pending' && isPendingLikeStatus(entry.status) && (isCard || isAch)) {
-      var pendingItemsHtml =
-        '<a href="#" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>';
-      return '<el-dropdown class="inline-block">' +
-        '<button data-action-menu-trigger="true" class="flex items-center justify-center rounded-sm bg-white p-1 text-gray-500 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:hover:text-gray-300">' +
-          '<span class="sr-only">Open options</span>' +
-          ICON_THREE_DOTS +
-        '</button>' +
-        '<el-menu anchor="bottom end" popover class=" min-w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
-          '<div class="py-1">' +
-            pendingItemsHtml +
-          '</div>' +
-        '</el-menu>' +
-      '</el-dropdown>';
+    function positionTooltip(target) {
+      var el = ensureTooltip();
+      el.classList.remove('hidden');
+      var rect = target.getBoundingClientRect();
+      var tipRect = el.getBoundingClientRect();
+      var left = rect.left + (rect.width / 2) - (tipRect.width / 2);
+      left = Math.max(8, Math.min(left, window.innerWidth - tipRect.width - 8));
+      var top = rect.top - tipRect.height - 10;
+      if (top < 8) top = rect.bottom + 10;
+      el.style.left = left + 'px';
+      el.style.top = top + 'px';
     }
 
-    // 3-dot dropdown for ACH / Card
-    var defaultItemsHtml =
-      '<a href="#" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>';
+    document.addEventListener('mouseover', function (event) {
+      var target = event.target.closest('[data-processing-tooltip="true"]');
+      if (!target) return;
+      positionTooltip(target);
+    });
+
+    document.addEventListener('mouseout', function (event) {
+      var target = event.target.closest('[data-processing-tooltip="true"]');
+      if (!target || (event.relatedTarget && target.contains(event.relatedTarget))) return;
+      if (tooltip) tooltip.classList.add('hidden');
+    });
+  }
+
+  function renderActionMenu(entry, includeDecline) {
+    var itemsHtml =
+      '<a href="#" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block cursor-pointer px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>';
+    if (includeDecline) {
+      itemsHtml +=
+        '<a href="#" data-decline-invoice="' + escapeHtml(entry.invoice) + '" class="block cursor-pointer px-3 py-1.5 text-sm font-medium whitespace-nowrap text-red-600 focus:bg-red-50 focus:text-red-700 focus:outline-hidden dark:text-red-400 dark:focus:bg-red-500/10 dark:focus:text-red-300">Decline</a>';
+    }
+
     return '<el-dropdown class="inline-block">' +
-      '<button data-action-menu-trigger="true" class="flex items-center justify-center rounded-sm bg-white p-1 text-gray-500 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:hover:text-gray-300">' +
+      '<button data-action-menu-trigger="true" class="flex cursor-pointer items-center justify-center rounded-md bg-white p-1 text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 dark:hover:text-white">' +
         '<span class="sr-only">Open options</span>' +
         ICON_THREE_DOTS +
       '</button>' +
       '<el-menu anchor="bottom end" popover class=" min-w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
         '<div class="py-1">' +
-          defaultItemsHtml +
+          itemsHtml +
         '</div>' +
       '</el-menu>' +
     '</el-dropdown>';
+  }
+
+  function renderActionCell(entry) {
+    if (requiresGetPaidAction(entry) || (entry.status === 'pending' && entry.methodType === 'smart_exchange')) {
+      return '<div class="inline-flex items-center justify-end gap-2">' +
+        '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>' +
+        renderActionMenu(entry, true) +
+      '</div>';
+    }
+
+    if (_activeTableTabKey === 'pending' && isPendingManualReviewEntry(entry)) {
+      return '<button type="button" data-mark-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 dark:hover:text-white">Mark as paid</button>';
+    }
+
+    if (_activeTableTabKey === 'pending' && isPendingLikeStatus(entry.status)) {
+      return renderActionMenu(entry, false);
+    }
+
+    // 3-dot dropdown for ACH / Card
+    return renderActionMenu(entry, false);
   }
 
   // ── Row builders ──
@@ -845,13 +1298,17 @@
 
   function buildStatusSection(entry) {
     var statusClass = STATUS_STYLES[entry.status] || STATUS_STYLES.pending;
+    var declineReason = entry.status === 'declined' ? getDeclineReason(entry) : '';
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Status</div>' +
-        '<div class="flex-1 flex items-center p-4">' +
+        '<div class="flex-1 flex flex-col items-start gap-2 p-4">' +
           '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + statusClass + '">' +
             escapeHtml(getStatusLabel(entry.status)) +
           '</span>' +
+          (declineReason
+            ? '<div class="max-w-2xl rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300"><span class="font-medium">Decline reason:</span> ' + escapeHtml(declineReason) + '</div>'
+            : '') +
         '</div>' +
       '</div>'
     );
@@ -1000,6 +1457,10 @@
   }
 
   function getExceptionContextMessage(entry) {
+    if (entry && entry.status === 'declined') {
+      var declineReason = getDeclineReason(entry);
+      return declineReason ? ('Declined: ' + declineReason) : 'Payment was declined and needs review.';
+    }
     var log = entry && entry.details && Array.isArray(entry.details.activityLog) ? entry.details.activityLog : [];
     for (var i = log.length - 1; i >= 0; i--) {
       var item = log[i];
@@ -1140,14 +1601,14 @@
           '</div>' +
         '</div>';
       var achRows = achCardHtml;
-      if (status === 'exception') {
+      if (status === 'exception' || status === 'declined') {
         achRows +=
           '<div class="mt-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300">' +
             escapeHtml(getExceptionContextMessage(entry)) +
           '</div>';
       }
       return {
-        key: status === 'exception' ? 'exception_ach' : 'ach',
+        key: (status === 'exception' || status === 'declined') ? 'exception_ach' : 'ach',
         typeLabel: 'ACH',
         titleLabel: '',
         revealKind: '',
@@ -1211,14 +1672,14 @@
             '</div>' +
           '</div>' +
         '</div>';
-      if (status === 'exception') {
+      if (status === 'exception' || status === 'declined') {
         cardRows +=
           '<div class="mt-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300">' +
             escapeHtml(getExceptionContextMessage(entry)) +
           '</div>';
       }
       return {
-        key: status === 'exception' ? 'exception_card' : 'card',
+        key: (status === 'exception' || status === 'declined') ? 'exception_card' : 'card',
         typeLabel: 'Card',
         titleLabel: '',
         revealKind: '',
@@ -1226,7 +1687,7 @@
       };
     }
 
-    if (status === 'exception') {
+    if (status === 'exception' || status === 'declined') {
       return {
         key: 'exception_smart_exchange_unselected',
         typeLabel: 'SMART Exchange',
@@ -1400,14 +1861,23 @@
         false
       );
 
-    } else if (entry.status === 'exception') {
+    } else if (entry.status === 'exception' || entry.status === 'declined') {
       var initiatedDateF = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
-      var failedDate = log[log.length - 1] ? formatActivityDate(log[log.length - 1].date) : '';
+      var failedLogEntry = log[log.length - 1] || null;
+      var failedDate = failedLogEntry ? formatActivityDate(failedLogEntry.date) : '';
+      var declined = entry.status === 'declined';
+      var reason = getDeclineReason(entry);
+      var exceptionDescription = declined
+        ? 'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> was declined.'
+        : 'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has an exception and needs review.';
+      if (reason) {
+        exceptionDescription += '<span class="mt-1 block text-gray-700 dark:text-gray-300">Reason: ' + escapeHtml(reason) + '</span>';
+      }
 
       items += buildActivityLogItem(
         'bg-red-100 ring-1 ring-red-700/60 dark:bg-red-400/10 dark:ring-red-400/20',
-        'Payment Exception',
-        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has an exception and needs review.',
+        declined ? 'Declined' : 'Payment Exception',
+        exceptionDescription,
         failedDate,
         true
       );
@@ -1422,10 +1892,23 @@
     } else {
       // Pending/default
       var pendingDate = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
+      var pendingTitle = 'Pending Your Action';
+      var pendingDescription = 'Please review the required items before you get paid.';
+      if (isPendingAutoProcessingEntry(entry)) {
+        var processing = entry.details && entry.details.processing ? entry.details.processing : {};
+        var expectedLabel = processing.expectedSettlementDate ? formatDate(processing.expectedSettlementDate) : '';
+        pendingTitle = 'Pending ACH Settlement';
+        pendingDescription = expectedLabel
+          ? 'ACH settlement is processing and is expected to complete by <span class="font-medium text-gray-900 dark:text-white">' + escapeHtml(expectedLabel) + '</span>.'
+          : 'ACH settlement is processing and will complete automatically after the standard ACH window.';
+      } else if (isPendingManualReviewEntry(entry)) {
+        pendingTitle = 'Pending Manual Confirmation';
+        pendingDescription = 'Card details have been provided. Mark this payment as paid once funds are confirmed.';
+      }
       items += buildActivityLogItem(
         'bg-yellow-100 ring-1 ring-yellow-700/60 dark:bg-yellow-400/10 dark:ring-yellow-400/20',
-        'Pending Your Action',
-        'Please make sure to process your card.',
+        pendingTitle,
+        pendingDescription,
         pendingDate,
         true
       );
@@ -1838,7 +2321,7 @@
   function renderTabSwitchSkeleton() {
     var table = document.getElementById(TABLE_ID);
     if (!table) return;
-    var columns = Array.isArray(paginationState.columns) ? paginationState.columns : [];
+    var columns = getRenderableColumns(paginationState.allColumns && paginationState.allColumns.length ? paginationState.allColumns : paginationState.columns);
     if (window.TableSkeleton && typeof window.TableSkeleton.render === 'function' && columns.length) {
       window.TableSkeleton.render({
         tableEl: table,
@@ -1858,7 +2341,7 @@
     var refreshBtn = document.getElementById('sx-table-refresh-btn');
     if (!refreshBtn) return;
     refreshBtn.addEventListener('click', function () {
-      if (tabSwitchLoadingState.active || initialTableLoadingState.active) return;
+      if (tabSwitchLoadingState.active || initialTableLoadingState.active || filterApplyLoadingState.active) return;
       if (tabSwitchLoadingState.timer) {
         clearTimeout(tabSwitchLoadingState.timer);
         tabSwitchLoadingState.timer = null;
@@ -1888,7 +2371,7 @@
     if (!input) return;
     input.value = tableFilterState.search || '';
     input.addEventListener('input', function () {
-      if (tabSwitchLoadingState.active || initialTableLoadingState.active) return;
+      if (tabSwitchLoadingState.active || initialTableLoadingState.active || filterApplyLoadingState.active) return;
       tableFilterState.search = String(input.value || '');
       if (searchLoadingState.timer) {
         clearTimeout(searchLoadingState.timer);
@@ -1905,7 +2388,7 @@
   }
 
   function startTabSwitchLoading(tabKey) {
-    var nextTabKey = tabKey || 'pending';
+    var nextTabKey = normalizeTabKey(tabKey);
     if (initialTableLoadingState.timer) {
       clearTimeout(initialTableLoadingState.timer);
       initialTableLoadingState.timer = null;
@@ -1916,6 +2399,7 @@
       tabSwitchLoadingState.timer = null;
     }
     _activeTableTabKey = nextTabKey;
+    setUrlTabKey(nextTabKey);
     tabSwitchLoadingState.active = true;
     renderTabSwitchSkeleton();
     syncTableFilterUi();
@@ -1938,11 +2422,11 @@
       var status = String(entry.status || '');
       if (status === 'paid') {
         counts.paid += 1;
-      } else if (status === 'exception') {
+      } else if (status === 'exception' || status === 'declined') {
         counts.exceptions += 1;
-      } else if (status === 'pending') {
-        counts.pending += 1;
-      }
+    } else if (status === 'pending' || status === 'processing') {
+      counts.pending += 1;
+    }
     });
 
     return counts;
@@ -1992,35 +2476,60 @@
 
   function initTabBadges() {
     var nav = document.querySelector(TAB_NAV_SELECTOR);
-    if (!nav) return;
+    var tabSelect = document.querySelector(TAB_SELECT_SELECTOR);
+    if (!nav && !tabSelect) return;
 
-    syncTabBadgeStyles(nav);
-    var activeBadge = nav.querySelector('a[aria-current="page"] ' + TAB_COUNT_SELECTOR);
-    _activeTableTabKey = activeBadge ? (activeBadge.getAttribute('data-tab-count') || 'pending') : 'pending';
+    _activeTableTabKey = getUrlTabKey();
 
-    if (nav.dataset.tabBound === '1') return;
-    nav.dataset.tabBound = '1';
+    function getTabKeyFromTab(tab) {
+      if (!tab) return 'pending';
+      var explicitKey = tab.getAttribute('data-tab');
+      if (explicitKey) return normalizeTabKey(explicitKey);
+      var tabCountEl = tab.querySelector(TAB_COUNT_SELECTOR);
+      return tabCountEl ? normalizeTabKey(tabCountEl.getAttribute('data-tab-count')) : 'pending';
+    }
 
-    nav.addEventListener('click', function (event) {
-      var clicked = event.target.closest('a');
-      if (!clicked || !nav.contains(clicked)) return;
-      if (clicked.getAttribute('aria-current') === 'page') return;
+    function syncTabs(tabKey) {
+      if (nav) {
+        nav.querySelectorAll('a').forEach(function (tab) {
+          if (getTabKeyFromTab(tab) === tabKey) tab.setAttribute('aria-current', 'page');
+          else tab.removeAttribute('aria-current');
+        });
+        syncTabBadgeStyles(nav);
+      }
+      if (tabSelect) tabSelect.value = tabKey;
+    }
 
-      nav.querySelectorAll('a').forEach(function (tab) {
-        if (tab === clicked) {
-          tab.setAttribute('aria-current', 'page');
-        } else {
-          tab.removeAttribute('aria-current');
-        }
+    syncTabs(_activeTableTabKey);
+
+    if (nav && nav.dataset.tabBound !== '1') {
+      nav.dataset.tabBound = '1';
+      nav.addEventListener('click', function (event) {
+        var clicked = event.target.closest('[data-tab], a');
+        if (!clicked || !nav.contains(clicked)) return;
+        event.preventDefault();
+        event.stopPropagation();
+        if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+
+        var tabKey = getTabKeyFromTab(clicked);
+        if (tabKey === _activeTableTabKey) return;
+
+        syncTabs(tabKey);
+
+        // Filter table to the selected tab
+        startTabSwitchLoading(tabKey);
       });
+    }
 
-      syncTabBadgeStyles(nav);
-
-      // Filter table to the selected tab
-      var tabCountEl = clicked.querySelector(TAB_COUNT_SELECTOR);
-      var tabKey = tabCountEl ? tabCountEl.getAttribute('data-tab-count') : 'pending';
-      startTabSwitchLoading(tabKey || 'pending');
-    });
+    if (tabSelect && tabSelect.dataset.tabBound !== '1') {
+      tabSelect.dataset.tabBound = '1';
+      tabSelect.addEventListener('change', function (event) {
+        var tabKey = normalizeTabKey(event.target.value);
+        if (tabKey === _activeTableTabKey) return;
+        syncTabs(tabKey);
+        startTabSwitchLoading(tabKey);
+      });
+    }
   }
 
   function attachPaginationListeners() {
@@ -2082,16 +2591,18 @@
     var filterBtn = document.getElementById('sx-table-filter-btn');
     var filterDropdown = document.getElementById('sx-table-filter-dropdown');
     var filterMenu = document.getElementById('sx-table-filter-menu');
-    var filterTrack = document.getElementById('sx-table-filter-track');
     var filterRootPanel = document.getElementById('sx-table-filter-panel-root');
-    var filterDetailSlot = document.getElementById('sx-table-filter-detail-slot');
+    var filterNavButtons = filterMenu ? Array.from(filterMenu.querySelectorAll('[data-filter-nav][data-filter-open]')) : [];
+    var filterCountBadges = filterMenu ? Array.from(filterMenu.querySelectorAll('[data-filter-count-badge]')) : [];
     var filterCustomerPanel = document.getElementById('sx-table-filter-panel-customer');
     var filterStatusPanel = document.getElementById('sx-table-filter-panel-status');
     var filterMethodPanel = document.getElementById('sx-table-filter-panel-method');
+    var filterFailureReasonPanel = document.getElementById('sx-table-filter-panel-failure-reason');
     var filterInitiatedDatePanel = document.getElementById('sx-table-filter-panel-initiated-date');
     var filterCustomersWrap = document.getElementById('sx-table-filter-customers');
     var filterStatusesWrap = document.getElementById('sx-table-filter-statuses');
     var filterMethodsWrap = document.getElementById('sx-table-filter-methods');
+    var filterFailureReasonsWrap = document.getElementById('sx-table-filter-failure-reasons');
     var filterDateFromInput = document.getElementById('sx-table-filter-date-from-input');
     var filterDateToInput = document.getElementById('sx-table-filter-date-to-input');
     var filterDateFromMaskFilled = document.getElementById('sx-table-filter-date-from-mask-filled');
@@ -2103,17 +2614,28 @@
     var filterDateNextBtn = document.getElementById('sx-table-filter-date-next');
     var filterDateGrid = document.getElementById('sx-table-filter-date-grid');
     var filterDateCalendarWrap = document.getElementById('sx-table-filter-date-calendar');
-    var filterApplyBtn = document.getElementById('sx-table-filter-apply-btn');
-    var filterApplyStatusBtn = document.getElementById('sx-table-filter-apply-status-btn');
-    var filterApplyMethodBtn = document.getElementById('sx-table-filter-apply-method-btn');
-    var filterApplyDateBtn = document.getElementById('sx-table-filter-apply-date-btn');
+    var filterClearBtn = document.getElementById('sx-table-filter-clear-btn');
+    var filterApplyActiveBtn = document.getElementById('sx-table-filter-apply-active-btn');
     var filterBackdrop = document.getElementById('sx-table-filter-backdrop');
     var activeFiltersWrap = document.getElementById('sx-table-active-filters');
-    if (!filterBtn || !filterMenu || !filterTrack || !filterRootPanel || !filterDetailSlot || !filterCustomerPanel || !filterStatusPanel || !filterMethodPanel || !filterInitiatedDatePanel || !filterCustomersWrap || !filterStatusesWrap || !filterMethodsWrap || !filterDateFromInput || !filterDateToInput || !filterDateFromMaskFilled || !filterDateFromMaskEmpty || !filterDateToMaskFilled || !filterDateToMaskEmpty || !filterDateMonthLabel || !filterDatePrevBtn || !filterDateNextBtn || !filterDateGrid || !filterDateCalendarWrap) return;
+    if (!filterBtn || !filterMenu || !filterRootPanel || !filterNavButtons.length || !filterCustomerPanel || !filterStatusPanel || !filterMethodPanel || !filterFailureReasonPanel || !filterInitiatedDatePanel || !filterCustomersWrap || !filterStatusesWrap || !filterMethodsWrap || !filterFailureReasonsWrap || !filterDateFromInput || !filterDateToInput || !filterDateFromMaskFilled || !filterDateFromMaskEmpty || !filterDateToMaskFilled || !filterDateToMaskEmpty || !filterDateMonthLabel || !filterDatePrevBtn || !filterDateNextBtn || !filterDateGrid || !filterDateCalendarWrap || !filterClearBtn || !filterApplyActiveBtn) return;
+
+    function cloneSet(source) {
+      return new Set(Array.from(source || []));
+    }
+
+    function setsEqual(a, b) {
+      if (a.size !== b.size) return false;
+      var same = true;
+      a.forEach(function (value) {
+        if (!b.has(value)) same = false;
+      });
+      return same;
+    }
 
     function buildFilterCheckbox(id, label, countText, value, checked) {
       return '' +
-        '<label class="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-gray-100 group-has-checked:bg-gray-100 dark:hover:bg-white/5 dark:group-has-checked:bg-white/10">' +
+        '<label class="group flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5">' +
         '  <div class="grid size-4 grid-cols-1">' +
         '    <input type="checkbox" data-filter-value="' + escapeHtml(value) + '" id="' + escapeHtml(id) + '"' + (checked ? ' checked' : '') +
         '      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
@@ -2121,9 +2643,34 @@
         '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
         '    </svg>' +
         '  </div>' +
-        '  <span class="text-sm font-medium text-gray-900 dark:text-gray-100">' + escapeHtml(label) + '</span>' +
-        (countText ? ('<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(countText) + '</span>') : '') +
+        '  <span class="min-w-0 flex-1 text-sm font-medium text-gray-700 dark:text-gray-200">' + escapeHtml(label) + '</span>' +
+        (countText ? ('<span class="shrink-0 text-sm font-normal text-gray-500 dark:text-gray-400">' + escapeHtml(countText) + '</span>') : '') +
         '</label>';
+    }
+
+    function normalizeFilterPanel(panel) {
+      return panel === 'status' || panel === 'method' || panel === 'failure_reason' || panel === 'initiated_date' ? panel : 'customer';
+    }
+
+    function copyAppliedFiltersToDraft() {
+      tableFilterState.selectedCustomers = cloneSet(tableFilterState.appliedSelectedCustomers);
+      tableFilterState.selectedStatuses = cloneSet(tableFilterState.appliedSelectedStatuses);
+      tableFilterState.selectedMethods = cloneSet(tableFilterState.appliedSelectedMethods);
+      tableFilterState.selectedFailureReasons = cloneSet(tableFilterState.appliedSelectedFailureReasons);
+      tableFilterState.initiatedDateFrom = tableFilterState.appliedInitiatedDateFrom || '';
+      tableFilterState.initiatedDateTo = tableFilterState.appliedInitiatedDateTo || '';
+      tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(tableFilterState.initiatedDateFrom);
+      tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(tableFilterState.initiatedDateTo);
+      tableFilterState.initiatedDateActiveField = 'from';
+    }
+
+    function commitDraftFilters() {
+      tableFilterState.appliedSelectedCustomers = cloneSet(tableFilterState.selectedCustomers);
+      tableFilterState.appliedSelectedStatuses = cloneSet(tableFilterState.selectedStatuses);
+      tableFilterState.appliedSelectedMethods = cloneSet(tableFilterState.selectedMethods);
+      tableFilterState.appliedSelectedFailureReasons = cloneSet(tableFilterState.selectedFailureReasons);
+      tableFilterState.appliedInitiatedDateFrom = tableFilterState.initiatedDateFrom || '';
+      tableFilterState.appliedInitiatedDateTo = tableFilterState.initiatedDateTo || '';
     }
 
     function getBaseFilterEntries() {
@@ -2302,31 +2849,110 @@
       if (visible) renderInitiatedDateCalendar();
     }
 
+    function clearPanelSelection(panel) {
+      if (panel === 'status') {
+        tableFilterState.selectedStatuses.clear();
+      } else if (panel === 'method') {
+        tableFilterState.selectedMethods.clear();
+      } else if (panel === 'failure_reason') {
+        tableFilterState.selectedFailureReasons.clear();
+      } else if (panel === 'initiated_date') {
+        tableFilterState.initiatedDateFrom = '';
+        tableFilterState.initiatedDateTo = '';
+        tableFilterState.initiatedDateFromDraft = '';
+        tableFilterState.initiatedDateToDraft = '';
+        tableFilterState.initiatedDateActiveField = 'from';
+      } else {
+        tableFilterState.selectedCustomers.clear();
+      }
+    }
+
+    function getPanelDraftCount(panel) {
+      if (panel === 'status') return tableFilterState.selectedStatuses.size;
+      if (panel === 'method') return tableFilterState.selectedMethods.size;
+      if (panel === 'failure_reason') return tableFilterState.selectedFailureReasons.size;
+      if (panel === 'initiated_date') return tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo ? 1 : 0;
+      return tableFilterState.selectedCustomers.size;
+    }
+
+    function panelHasDraftSelection(panel) {
+      return getPanelDraftCount(panel) > 0;
+    }
+
+    function panelDraftChanged(panel) {
+      if (panel === 'status') {
+        return !setsEqual(tableFilterState.selectedStatuses, tableFilterState.appliedSelectedStatuses);
+      }
+      if (panel === 'method') {
+        return !setsEqual(tableFilterState.selectedMethods, tableFilterState.appliedSelectedMethods);
+      }
+      if (panel === 'failure_reason') {
+        return !setsEqual(tableFilterState.selectedFailureReasons, tableFilterState.appliedSelectedFailureReasons);
+      }
+      if (panel === 'initiated_date') {
+        return tableFilterState.initiatedDateFrom !== tableFilterState.appliedInitiatedDateFrom ||
+          tableFilterState.initiatedDateTo !== tableFilterState.appliedInitiatedDateTo;
+      }
+      return !setsEqual(tableFilterState.selectedCustomers, tableFilterState.appliedSelectedCustomers);
+    }
+
+    function hasAnyDraftChanges() {
+      return panelDraftChanged('customer') ||
+        panelDraftChanged('status') ||
+        panelDraftChanged('method') ||
+        panelDraftChanged('failure_reason') ||
+        panelDraftChanged('initiated_date');
+    }
+
     function syncSelectedFiltersToAvailable() {
       var baseEntries = getBaseFilterEntries();
       var customerSet = new Set();
       var statusSet = new Set();
       var methodSet = new Set();
+      var failureReasonSet = new Set();
       baseEntries.forEach(function (entry) {
         customerSet.add(String(entry && entry.customer || ''));
         statusSet.add(String(entry && entry.status || ''));
         methodSet.add(String(entry && entry.methodType || ''));
       });
+      (Array.isArray(paginationState.sourceEntries) ? paginationState.sourceEntries : []).forEach(function (entry) {
+        if (getFailureReason(entry)) failureReasonSet.add(getFailureReason(entry));
+      });
       Array.from(tableFilterState.selectedCustomers).forEach(function (customer) {
         if (!customerSet.has(customer)) tableFilterState.selectedCustomers.delete(customer);
+      });
+      Array.from(tableFilterState.appliedSelectedCustomers).forEach(function (customer) {
+        if (!customerSet.has(customer)) tableFilterState.appliedSelectedCustomers.delete(customer);
       });
       Array.from(tableFilterState.selectedStatuses).forEach(function (status) {
         if (!statusSet.has(status)) tableFilterState.selectedStatuses.delete(status);
       });
+      Array.from(tableFilterState.appliedSelectedStatuses).forEach(function (status) {
+        if (!statusSet.has(status)) tableFilterState.appliedSelectedStatuses.delete(status);
+      });
       Array.from(tableFilterState.selectedMethods).forEach(function (method) {
         if (!methodSet.has(method)) tableFilterState.selectedMethods.delete(method);
       });
+      Array.from(tableFilterState.appliedSelectedMethods).forEach(function (method) {
+        if (!methodSet.has(method)) tableFilterState.appliedSelectedMethods.delete(method);
+      });
+      Array.from(tableFilterState.selectedFailureReasons).forEach(function (reason) {
+        if (!failureReasonSet.has(reason)) tableFilterState.selectedFailureReasons.delete(reason);
+      });
+      Array.from(tableFilterState.appliedSelectedFailureReasons).forEach(function (reason) {
+        if (!failureReasonSet.has(reason)) tableFilterState.appliedSelectedFailureReasons.delete(reason);
+      });
       tableFilterState.initiatedDateFrom = toIsoDate(tableFilterState.initiatedDateFrom);
       tableFilterState.initiatedDateTo = toIsoDate(tableFilterState.initiatedDateTo);
+      tableFilterState.appliedInitiatedDateFrom = toIsoDate(tableFilterState.appliedInitiatedDateFrom);
+      tableFilterState.appliedInitiatedDateTo = toIsoDate(tableFilterState.appliedInitiatedDateTo);
       tableFilterState.initiatedDateFromDraft = formatUsInput(tableFilterState.initiatedDateFromDraft);
       tableFilterState.initiatedDateToDraft = formatUsInput(tableFilterState.initiatedDateToDraft);
       if (tableFilterState.initiatedDateFrom && tableFilterState.initiatedDateTo && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
         tableFilterState.initiatedDateTo = tableFilterState.initiatedDateFrom;
+      }
+      if (tableFilterState.appliedInitiatedDateFrom && tableFilterState.appliedInitiatedDateTo && tableFilterState.appliedInitiatedDateFrom > tableFilterState.appliedInitiatedDateTo) {
+        tableFilterState.appliedInitiatedDateTo = tableFilterState.appliedInitiatedDateFrom;
       }
     }
 
@@ -2357,8 +2983,8 @@
         if (!key) return;
         counts[key] = (counts[key] || 0) + 1;
       });
-      var statusOrder = ['pending', 'paid', 'exception'];
-      var statusLabels = { pending: 'Pending', paid: 'Paid', exception: 'Exception' };
+      var statusOrder = ['pending', 'processing', 'paid', 'exception', 'declined'];
+      var statusLabels = { pending: 'Pending', processing: 'Processing', paid: 'Paid', exception: 'Exception', declined: 'Declined' };
       var rows = statusOrder
         .filter(function (key) { return counts[key] > 0; })
         .map(function (key) {
@@ -2399,20 +3025,49 @@
       }).join('');
     }
 
+    function renderFailureReasonFilters() {
+      var counts = new Map();
+      (Array.isArray(paginationState.sourceEntries) ? paginationState.sourceEntries : []).forEach(function (entry) {
+        var reason = getFailureReason(entry);
+        if (!reason) return;
+        counts.set(reason, (counts.get(reason) || 0) + 1);
+      });
+      filterFailureReasonsWrap.innerHTML = Array.from(counts.entries())
+        .sort(function (a, b) { return a[0].localeCompare(b[0]); })
+        .map(function (entry, idx) {
+          return buildFilterCheckbox(
+            'sx-table-filter-failure-reason-' + idx,
+            entry[0],
+            String(entry[1]),
+            entry[0],
+            tableFilterState.selectedFailureReasons.has(entry[0])
+          );
+        }).join('');
+    }
+
+    function renderFilterNavBadges() {
+      filterCountBadges.forEach(function (badge) {
+        var panel = normalizeFilterPanel(badge.getAttribute('data-filter-count-badge'));
+        var count = getPanelDraftCount(panel);
+        badge.textContent = String(count);
+        badge.classList.toggle('hidden', count <= 0);
+        badge.classList.toggle('inline-flex', count > 0);
+      });
+    }
+
     function syncApplyButtonState() {
-      if (filterApplyBtn) filterApplyBtn.disabled = tableFilterState.selectedCustomers.size === 0;
-      if (filterApplyStatusBtn) filterApplyStatusBtn.disabled = tableFilterState.selectedStatuses.size === 0;
-      if (filterApplyMethodBtn) filterApplyMethodBtn.disabled = tableFilterState.selectedMethods.size === 0;
-      if (filterApplyDateBtn) filterApplyDateBtn.disabled = !tableFilterState.initiatedDateFrom && !tableFilterState.initiatedDateTo;
+      var activePanel = normalizeFilterPanel(tableFilterState.activePanel);
+      filterClearBtn.disabled = !panelHasDraftSelection(activePanel);
+      filterApplyActiveBtn.disabled = !hasAnyDraftChanges();
     }
 
     function renderActiveFilterTags() {
       if (!activeFiltersWrap) return;
       var tags = [];
-      var selectedCustomers = Array.from(tableFilterState.selectedCustomers)
+      var selectedCustomers = Array.from(tableFilterState.appliedSelectedCustomers)
         .filter(function (customer) { return customer && customer.trim(); })
         .sort(function (a, b) { return a.localeCompare(b); });
-      var selectedStatuses = Array.from(tableFilterState.selectedStatuses)
+      var selectedStatuses = Array.from(tableFilterState.appliedSelectedStatuses)
         .filter(function (status) { return status && status.trim(); })
         .sort(function (a, b) { return a.localeCompare(b); });
 
@@ -2433,7 +3088,7 @@
           value: statusText,
         });
       }
-      var selectedMethods = Array.from(tableFilterState.selectedMethods)
+      var selectedMethods = Array.from(tableFilterState.appliedSelectedMethods)
         .filter(function (method) { return method && method.trim(); })
         .sort(function (a, b) { return a.localeCompare(b); });
       if (selectedMethods.length) {
@@ -2446,9 +3101,19 @@
           value: methodText,
         });
       }
-      if (tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo) {
-        var fromLabel = tableFilterState.initiatedDateFrom ? formatDate(tableFilterState.initiatedDateFrom) : 'Any';
-        var toLabel = tableFilterState.initiatedDateTo ? formatDate(tableFilterState.initiatedDateTo) : 'Any';
+      var selectedFailureReasons = Array.from(tableFilterState.appliedSelectedFailureReasons)
+        .filter(function (reason) { return reason && reason.trim(); })
+        .sort(function (a, b) { return a.localeCompare(b); });
+      if (selectedFailureReasons.length) {
+        tags.push({
+          type: 'failure_reason',
+          label: 'Failure reason',
+          value: selectedFailureReasons.join(', '),
+        });
+      }
+      if (tableFilterState.appliedInitiatedDateFrom || tableFilterState.appliedInitiatedDateTo) {
+        var fromLabel = tableFilterState.appliedInitiatedDateFrom ? formatDate(tableFilterState.appliedInitiatedDateFrom) : 'Any';
+        var toLabel = tableFilterState.appliedInitiatedDateTo ? formatDate(tableFilterState.appliedInitiatedDateTo) : 'Any';
         tags.push({
           type: 'initiated_date',
           label: 'Initiated date',
@@ -2490,6 +3155,8 @@
       filterStatusPanel.classList.remove('flex');
       filterMethodPanel.classList.add('hidden');
       filterMethodPanel.classList.remove('flex');
+      filterFailureReasonPanel.classList.add('hidden');
+      filterFailureReasonPanel.classList.remove('flex');
       filterInitiatedDatePanel.classList.add('hidden');
       filterInitiatedDatePanel.classList.remove('flex');
       if (panel === 'customer') {
@@ -2501,34 +3168,39 @@
       } else if (panel === 'method') {
         filterMethodPanel.classList.remove('hidden');
         filterMethodPanel.classList.add('flex');
+      } else if (panel === 'failure_reason') {
+        filterFailureReasonPanel.classList.remove('hidden');
+        filterFailureReasonPanel.classList.add('flex');
       } else if (panel === 'initiated_date') {
         filterInitiatedDatePanel.classList.remove('hidden');
         filterInitiatedDatePanel.classList.add('flex');
       }
     }
 
+    function syncFilterNavState(panel) {
+      filterNavButtons.forEach(function (button) {
+        var isActive = button.getAttribute('data-filter-open') === panel;
+        button.classList.toggle('bg-gray-100', isActive);
+        button.classList.toggle('text-gray-900', isActive);
+        button.classList.toggle('dark:bg-white/10', isActive);
+        button.classList.toggle('dark:text-white', isActive);
+      });
+    }
+
     function applyFilterMenuLayout() {
       var isMobileView = window.matchMedia('(max-width: 639px)').matches;
       if (isMobileView) {
         filterMenu.style.position = 'fixed';
-        filterMenu.style.left = '0';
-        filterMenu.style.right = '0';
-        filterMenu.style.bottom = '0';
+        filterMenu.style.left = '1rem';
+        filterMenu.style.right = '1rem';
+        filterMenu.style.bottom = '1rem';
         filterMenu.style.top = 'auto';
         filterMenu.style.marginTop = '0';
         filterMenu.style.margin = '0';
         filterMenu.style.zIndex = '50';
-        filterMenu.style.maxWidth = '100dvw';
-        filterMenu.style.borderBottomLeftRadius = '0';
-        filterMenu.style.borderBottomRightRadius = '0';
-        filterMenu.style.borderTopLeftRadius = '0';
-        filterMenu.style.borderTopRightRadius = '0';
-        filterMenu.style.width = '100dvw';
-        filterRootPanel.style.width = '100dvw';
-        filterDetailSlot.style.width = '100dvw';
-        filterTrack.classList.remove('transition-transform', 'duration-250', 'ease-[cubic-bezier(0.22,1,0.36,1)]');
-        filterMenu.classList.remove('origin-top-right');
-        filterMenu.classList.add('origin-bottom');
+        filterMenu.style.maxWidth = 'none';
+        filterMenu.style.width = 'auto';
+        filterMenu.style.maxHeight = 'calc(100dvh - 2rem)';
       } else {
         filterMenu.style.position = '';
         filterMenu.style.left = '';
@@ -2539,110 +3211,84 @@
         filterMenu.style.margin = '';
         filterMenu.style.zIndex = '';
         filterMenu.style.maxWidth = '';
-        filterMenu.style.borderBottomLeftRadius = '';
-        filterMenu.style.borderBottomRightRadius = '';
-        filterMenu.style.borderTopLeftRadius = '';
-        filterMenu.style.borderTopRightRadius = '';
         filterMenu.style.width = '';
-        filterRootPanel.style.width = '';
-        filterDetailSlot.style.width = '';
-        filterTrack.classList.add('transition-transform', 'duration-250', 'ease-[cubic-bezier(0.22,1,0.36,1)]');
-        filterMenu.classList.remove('origin-bottom');
-        filterMenu.classList.add('origin-top-right');
+        filterMenu.style.maxHeight = '';
       }
     }
 
-    function setFilterPanel(panel, immediate) {
-      tableFilterState.activePanel = panel;
-      var targetPanel = filterRootPanel;
-      if (panel === 'customer' || panel === 'status' || panel === 'method' || panel === 'initiated_date') {
-        setDetailPanelVisibility(panel);
-        targetPanel = filterDetailSlot;
-        if (panel === 'initiated_date') {
-          setInitiatedDateMonthFromIso(getSelectedDateForActiveField() || tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo);
-          renderInitiatedDateInputs();
-          renderInitiatedDateCalendar();
-          setDateCalendarVisible(false);
-        }
+    function setFilterPanel(panel) {
+      var activePanel = normalizeFilterPanel(panel);
+      tableFilterState.activePanel = activePanel;
+      setDetailPanelVisibility(activePanel);
+      syncFilterNavState(activePanel);
+      if (activePanel === 'initiated_date') {
+        setInitiatedDateMonthFromIso(getSelectedDateForActiveField() || tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo);
+        renderInitiatedDateInputs();
+        renderInitiatedDateCalendar();
+        setDateCalendarVisible(true);
       } else {
-        setDetailPanelVisibility('root');
+        setDateCalendarVisible(false);
       }
-      var offset = targetPanel ? targetPanel.offsetLeft : 0;
-      var width = targetPanel ? targetPanel.offsetWidth : 0;
-      var height = targetPanel ? targetPanel.offsetHeight : 0;
-      var isMobileView = window.matchMedia('(max-width: 639px)').matches;
-      if (isMobileView) {
-        filterTrack.style.transform = 'translateX(' + (-offset) + 'px)';
-        filterMenu.style.width = '100dvw';
-        if (height > 0) filterMenu.style.height = height + 'px';
-        return;
-      }
-      if (immediate) {
-        filterTrack.style.transform = 'translateX(' + (-offset) + 'px)';
-        if (width > 0) filterMenu.style.width = width + 'px';
-        if (height > 0) filterMenu.style.height = height + 'px';
-        return;
-      }
-      var currentRect = filterMenu.getBoundingClientRect();
-      if (!isMobileView && currentRect.width > 0) filterMenu.style.width = currentRect.width + 'px';
-      if (currentRect.height > 0) filterMenu.style.height = currentRect.height + 'px';
-      requestAnimationFrame(function () {
-        filterTrack.style.transform = 'translateX(' + (-offset) + 'px)';
-        if (isMobileView) {
-          filterMenu.style.width = '100dvw';
-        } else if (width > 0) {
-          filterMenu.style.width = width + 'px';
-        }
-        if (height > 0) filterMenu.style.height = height + 'px';
-      });
+      syncApplyButtonState();
     }
 
     function setFilterMenuOpen(nextOpen) {
       tableFilterState.menuOpen = !!nextOpen;
       applyFilterMenuLayout();
       if (tableFilterState.menuOpen) {
-        setFilterPanel(tableFilterState.activePanel || 'root', true);
+        copyAppliedFiltersToDraft();
+        syncTableFilterUi();
+        setFilterPanel(tableFilterState.activePanel || 'customer');
         filterMenu.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
         if (filterBackdrop && window.matchMedia('(max-width: 639px)').matches) {
           filterBackdrop.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
         }
       } else {
         filterMenu.classList.add('invisible', 'opacity-0', 'pointer-events-none');
-        filterMenu.style.width = '';
-        filterMenu.style.height = '';
         if (filterBackdrop) {
           filterBackdrop.classList.add('invisible', 'opacity-0', 'pointer-events-none');
         }
       }
     }
 
+    function startFilterApplyLoading() {
+      if (filterApplyLoadingState.timer) {
+        clearTimeout(filterApplyLoadingState.timer);
+        filterApplyLoadingState.timer = null;
+      }
+      filterApplyLoadingState.active = true;
+      setFilterMenuOpen(false);
+      renderTabSwitchSkeleton();
+      filterApplyLoadingState.timer = window.setTimeout(function () {
+        filterApplyLoadingState.active = false;
+        filterApplyLoadingState.timer = null;
+        commitDraftFilters();
+        refreshTableForActiveTab({ forceTableShell: true });
+      }, Math.floor(Math.random() * (FILTER_APPLY_SKELETON_MAX_MS - FILTER_APPLY_SKELETON_MIN_MS + 1)) + FILTER_APPLY_SKELETON_MIN_MS);
+    }
+
     filterBtn.addEventListener('click', function (event) {
       event.stopPropagation();
       var nextOpen = !tableFilterState.menuOpen;
-      if (nextOpen) tableFilterState.activePanel = 'root';
+      if (nextOpen) tableFilterState.activePanel = normalizeFilterPanel(tableFilterState.activePanel);
       setFilterMenuOpen(nextOpen);
       syncApplyButtonState();
     });
 
-    filterTrack.addEventListener('click', function (event) {
+    filterMenu.addEventListener('click', function (event) {
       event.stopPropagation();
       var openBtn = event.target.closest('[data-filter-open]');
       if (openBtn) {
         event.preventDefault();
         setFilterPanel(openBtn.getAttribute('data-filter-open'));
-        return;
-      }
-      if (event.target.closest('[data-filter-back]')) {
-        event.preventDefault();
-        setFilterPanel('root');
       }
     });
 
-    filterTrack.addEventListener('change', function (event) {
+    filterMenu.addEventListener('change', function (event) {
       var checkbox = event.target.closest('input[type="checkbox"][data-filter-value]');
       if (!checkbox) return;
       var panelEl = checkbox.closest('#sx-table-filter-customers, #sx-table-filter-statuses');
-      if (!panelEl) panelEl = checkbox.closest('#sx-table-filter-methods');
+      if (!panelEl) panelEl = checkbox.closest('#sx-table-filter-methods, #sx-table-filter-failure-reasons');
       var value = checkbox.getAttribute('data-filter-value');
       if (!panelEl || !value) return;
       if (panelEl.id === 'sx-table-filter-customers') {
@@ -2651,19 +3297,22 @@
       } else if (panelEl.id === 'sx-table-filter-statuses') {
         if (checkbox.checked) tableFilterState.selectedStatuses.add(value);
         else tableFilterState.selectedStatuses.delete(value);
+      } else if (panelEl.id === 'sx-table-filter-failure-reasons') {
+        if (checkbox.checked) tableFilterState.selectedFailureReasons.add(value);
+        else tableFilterState.selectedFailureReasons.delete(value);
       } else {
         if (checkbox.checked) tableFilterState.selectedMethods.add(value);
         else tableFilterState.selectedMethods.delete(value);
       }
+      renderFilterNavBadges();
       syncApplyButtonState();
-      refreshTableForActiveTab();
     });
 
     function setActiveDateField(field) {
       tableFilterState.initiatedDateActiveField = field === 'to' ? 'to' : 'from';
       setInitiatedDateMonthFromIso(getSelectedDateForActiveField() || tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo);
       renderInitiatedDateInputs();
-      setDateCalendarVisible(false);
+      setDateCalendarVisible(tableFilterState.activePanel === 'initiated_date');
     }
 
     function setDateFieldFromInput(field, rawInput) {
@@ -2687,7 +3336,7 @@
         }
       }
       syncApplyButtonState();
-      if (!formatted || iso) refreshTableForActiveTab();
+      renderFilterNavBadges();
       return formatted;
     }
 
@@ -2792,57 +3441,32 @@
       syncApplyButtonState();
       renderInitiatedDateInputs();
       renderInitiatedDateCalendar();
-      refreshTableForActiveTab();
+      renderFilterNavBadges();
     });
 
-    if (filterApplyBtn) {
-      filterApplyBtn.addEventListener('click', function (event) {
-        event.stopPropagation();
-        if (filterApplyBtn.disabled) return;
-        setFilterMenuOpen(false);
-        setFilterPanel('root');
-      });
-    }
+    filterClearBtn.addEventListener('click', function (event) {
+      event.stopPropagation();
+      if (filterClearBtn.disabled) return;
+      clearPanelSelection(normalizeFilterPanel(tableFilterState.activePanel));
+      syncTableFilterUi();
+    });
 
-    if (filterApplyStatusBtn) {
-      filterApplyStatusBtn.addEventListener('click', function (event) {
-        event.stopPropagation();
-        if (filterApplyStatusBtn.disabled) return;
-        setFilterMenuOpen(false);
-        setFilterPanel('root');
-      });
-    }
-
-    if (filterApplyMethodBtn) {
-      filterApplyMethodBtn.addEventListener('click', function (event) {
-        event.stopPropagation();
-        if (filterApplyMethodBtn.disabled) return;
-        setFilterMenuOpen(false);
-        setFilterPanel('root');
-      });
-    }
-
-    if (filterApplyDateBtn) {
-      filterApplyDateBtn.addEventListener('click', function (event) {
-        event.stopPropagation();
-        if (filterApplyDateBtn.disabled) return;
-        setFilterMenuOpen(false);
-        setFilterPanel('root');
-      });
-    }
+    filterApplyActiveBtn.addEventListener('click', function (event) {
+      event.stopPropagation();
+      if (filterApplyActiveBtn.disabled) return;
+      startFilterApplyLoading();
+    });
 
     document.addEventListener('click', function (event) {
       if (!filterDropdown || !tableFilterState.menuOpen) return;
       if (filterDropdown.contains(event.target)) return;
       setFilterMenuOpen(false);
-      setFilterPanel('root');
     });
 
     if (filterBackdrop) {
       filterBackdrop.addEventListener('click', function () {
         if (!tableFilterState.menuOpen) return;
         setFilterMenuOpen(false);
-        setFilterPanel('root');
       });
     }
 
@@ -2854,10 +3478,9 @@
           event.stopPropagation();
           var panelType = openBtn.getAttribute('data-filter-tag-open');
           if (panelType === 'customer' || panelType === 'status' || panelType === 'method' || panelType === 'initiated_date') {
-            tableFilterState.activePanel = panelType;
             syncTableFilterUi();
             setFilterMenuOpen(true);
-            setFilterPanel(panelType, true);
+            setFilterPanel(panelType);
             syncApplyButtonState();
           }
           return;
@@ -2868,15 +3491,30 @@
         event.stopPropagation();
         var type = removeBtn.getAttribute('data-filter-tag-remove');
         if (!type) return;
-        if (type === 'customer') tableFilterState.selectedCustomers.clear();
-        if (type === 'status') tableFilterState.selectedStatuses.clear();
-        if (type === 'method') tableFilterState.selectedMethods.clear();
+        if (type === 'customer') {
+          tableFilterState.selectedCustomers.clear();
+          tableFilterState.appliedSelectedCustomers.clear();
+        }
+        if (type === 'status') {
+          tableFilterState.selectedStatuses.clear();
+          tableFilterState.appliedSelectedStatuses.clear();
+        }
+        if (type === 'method') {
+          tableFilterState.selectedMethods.clear();
+          tableFilterState.appliedSelectedMethods.clear();
+        }
+        if (type === 'failure_reason') {
+          tableFilterState.selectedFailureReasons.clear();
+          tableFilterState.appliedSelectedFailureReasons.clear();
+        }
         if (type === 'initiated_date') {
           tableFilterState.initiatedDateFrom = '';
           tableFilterState.initiatedDateTo = '';
           tableFilterState.initiatedDateFromDraft = '';
           tableFilterState.initiatedDateToDraft = '';
           tableFilterState.initiatedDateActiveField = 'from';
+          tableFilterState.appliedInitiatedDateFrom = '';
+          tableFilterState.appliedInitiatedDateTo = '';
         }
         refreshTableForActiveTab();
       });
@@ -2885,7 +3523,7 @@
     window.addEventListener('resize', function () {
       if (!tableFilterState.menuOpen) return;
       applyFilterMenuLayout();
-      setFilterPanel(tableFilterState.activePanel || 'root');
+      setFilterPanel(tableFilterState.activePanel || 'customer');
     });
 
     syncTableFilterUi = function () {
@@ -2893,13 +3531,15 @@
       renderCustomerFilters();
       renderStatusFilters();
       renderMethodFilters();
+      renderFailureReasonFilters();
       renderInitiatedDateInputs();
       renderInitiatedDateCalendar();
+      renderFilterNavBadges();
       renderActiveFilterTags();
       syncApplyButtonState();
       if (tableFilterState.menuOpen) {
         applyFilterMenuLayout();
-        setFilterPanel(tableFilterState.activePanel || 'root', true);
+        setFilterPanel(tableFilterState.activePanel || 'customer');
       }
     };
 
@@ -2939,14 +3579,14 @@
     if (!table) return;
 
     var pageEntries = getPageSlice();
-    renderTableBody(table, paginationState.columns, pageEntries);
+    renderTableBody(table, getRenderableColumns(paginationState.allColumns && paginationState.allColumns.length ? paginationState.allColumns : paginationState.columns), pageEntries);
     renderPagination();
     refreshStickyAction();
     syncActionColumnGuide();
   }
 
   function refreshTableForActiveTab(options) {
-    if (tabSwitchLoadingState.active || initialTableLoadingState.active || searchLoadingState.active) return;
+    if (tabSwitchLoadingState.active || initialTableLoadingState.active || searchLoadingState.active || filterApplyLoadingState.active) return;
     var forceTableShell = !!(options && options.forceTableShell);
     var filtered = getVisibleEntriesForActiveTab();
     paginationState.allEntries = filtered;
@@ -2956,7 +3596,7 @@
     if (forceTableShell) {
       var table = document.getElementById(TABLE_ID);
       if (table) {
-        renderTable(table, paginationState.columns, filtered);
+        renderTable(table, getRenderableColumns(paginationState.allColumns), filtered);
       } else {
         renderCurrentPage();
       }
@@ -2969,22 +3609,165 @@
   function renderTable(table, columns, entries) {
     // Store in pagination state
     paginationState.allEntries = entries;
-    paginationState.columns = columns;
+    paginationState.columns = getRenderableColumns(columns);
     paginationState.totalItems = entries.length;
     paginationState.currentPage = 1;
 
     // Clear everything and build thead
-    table.innerHTML = buildTheadHTML(columns);
+    table.innerHTML = buildTheadHTML(paginationState.columns);
 
     // Render first page of rows
     var pageEntries = getPageSlice();
-    renderTableBody(table, columns, pageEntries);
+    renderTableBody(table, paginationState.columns, pageEntries);
     attachToggleListeners(table);
 
     // Render pagination controls
     renderPagination();
     attachPaginationListeners();
     syncActionColumnGuide();
+    syncManageColumnsUi();
+  }
+
+  function rerenderVisibleColumns() {
+    var table = document.getElementById(TABLE_ID);
+    if (!table) return;
+    if (sortState.key && !columnVisibilityState.visibleKeys.has(sortState.key)) {
+      var sortColumn = (paginationState.allColumns || []).find(function (col) { return col && col.key === sortState.key; });
+      if (sortColumn && !isAlwaysVisibleColumn(sortColumn)) {
+        sortState.key = '';
+        sortState.direction = '';
+        paginationState.allEntries = getVisibleEntriesForActiveTab();
+      }
+    }
+    paginationState.columns = getRenderableColumns(paginationState.allColumns);
+    paginationState.totalItems = paginationState.allEntries.length;
+    paginationState.currentPage = Math.min(paginationState.currentPage, getTotalPages());
+    table.innerHTML = buildTheadHTML(paginationState.columns);
+    renderCurrentPage();
+    attachToggleListeners(table);
+    syncManageColumnsUi();
+  }
+
+  function initManageColumnsModal() {
+    var manageColumnsDialog = document.getElementById('sx-manage-columns-dialog');
+    var manageColumnsList = document.getElementById('sx-manage-columns-list');
+    var manageColumnsApplyBtn = document.getElementById('sx-manage-columns-apply-btn');
+    var manageColumnsResetBtn = document.getElementById('sx-manage-columns-reset-btn');
+    var draggingColumnKey = '';
+    if (!manageColumnsDialog || !manageColumnsList || !manageColumnsApplyBtn || !manageColumnsResetBtn) return;
+
+    syncManageColumnsUi = function () {
+      var allColumns = paginationState.allColumns || paginationState.columns || [];
+      var manageableColumns = getOrderedManageableColumns(allColumns).filter(function (col) {
+        return isFailureReasonTabActive() || !col || col.key !== 'failureReason';
+      });
+      ensureColumnVisibilityState(allColumns);
+      var visibleCount = manageableColumns.filter(function (col) {
+        return columnVisibilityState.draftVisibleKeys.has(col.key);
+      }).length;
+      manageColumnsList.innerHTML = manageableColumns.map(function (col) {
+        var checked = columnVisibilityState.draftVisibleKeys.has(col.key);
+        var disabled = checked && visibleCount <= 1;
+        return buildManageColumnsRowHTML(col, checked, disabled);
+      }).join('');
+      manageColumnsApplyBtn.disabled = !isColumnDraftDirty();
+      manageColumnsResetBtn.disabled = isColumnDraftDefault(allColumns);
+    };
+
+    manageColumnsList.addEventListener('dragstart', function (event) {
+      var handle = event.target.closest('[data-column-drag-handle]');
+      if (!handle) return;
+      var row = handle.closest('[data-column-order-row]');
+      if (!row) return;
+      draggingColumnKey = row.getAttribute('data-column-order-row') || '';
+      if (!draggingColumnKey) return;
+      row.classList.add('opacity-60');
+      if (event.dataTransfer) {
+        event.dataTransfer.effectAllowed = 'move';
+        event.dataTransfer.setData('text/plain', draggingColumnKey);
+      }
+    });
+
+    manageColumnsList.addEventListener('dragend', function (event) {
+      var row = event.target.closest('[data-column-order-row]');
+      if (row) row.classList.remove('opacity-60');
+      draggingColumnKey = '';
+      Array.from(manageColumnsList.querySelectorAll('[data-column-order-row]')).forEach(function (item) {
+        item.classList.remove('ring-2', 'ring-blue-500');
+      });
+    });
+
+    manageColumnsList.addEventListener('dragover', function (event) {
+      var row = event.target.closest('[data-column-order-row]');
+      if (!draggingColumnKey) return;
+      event.preventDefault();
+      Array.from(manageColumnsList.querySelectorAll('[data-column-order-row]')).forEach(function (item) {
+        item.classList.remove('ring-2', 'ring-blue-500');
+      });
+      if (row) row.classList.add('ring-2', 'ring-blue-500');
+      if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+    });
+
+    manageColumnsList.addEventListener('drop', function (event) {
+      var row = event.target.closest('[data-column-order-row]');
+      if (!draggingColumnKey) return;
+      event.preventDefault();
+      if (!row) {
+        var currentOrder = columnVisibilityState.draftOrderedKeys.slice().filter(function (key) { return key !== draggingColumnKey; });
+        currentOrder.push(draggingColumnKey);
+        columnVisibilityState.draftOrderedKeys = currentOrder;
+        syncManageColumnsUi();
+        rerenderVisibleColumns();
+        return;
+      }
+      var targetKey = row.getAttribute('data-column-order-row') || '';
+      if (moveDraftColumnKeyBefore(draggingColumnKey, targetKey)) {
+        syncManageColumnsUi();
+        rerenderVisibleColumns();
+      } else {
+        syncManageColumnsUi();
+        rerenderVisibleColumns();
+      }
+    });
+
+    manageColumnsList.addEventListener('change', function (event) {
+      var checkbox = event.target.closest('input[type="checkbox"][data-column-visibility-toggle]');
+      if (!checkbox) return;
+      var key = checkbox.getAttribute('data-column-visibility-toggle');
+      if (!key) return;
+      if (checkbox.checked) {
+        columnVisibilityState.draftVisibleKeys.add(key);
+      } else {
+        columnVisibilityState.draftVisibleKeys.delete(key);
+      }
+      syncManageColumnsUi();
+      rerenderVisibleColumns();
+    });
+
+    manageColumnsApplyBtn.addEventListener('click', function () {
+      if (manageColumnsApplyBtn.disabled) return;
+      commitColumnDraft();
+      rerenderVisibleColumns();
+      if (typeof manageColumnsDialog.close === 'function') manageColumnsDialog.close();
+    });
+
+    manageColumnsResetBtn.addEventListener('click', function () {
+      if (manageColumnsResetBtn.disabled) return;
+      var allColumns = paginationState.allColumns || paginationState.columns || [];
+      resetColumnDraftToDefault(allColumns);
+      syncManageColumnsUi();
+      rerenderVisibleColumns();
+    });
+
+    manageColumnsDialog.addEventListener('close', function () {
+      var allColumns = paginationState.allColumns || paginationState.columns || [];
+      cloneColumnDraftFromApplied(allColumns);
+      syncManageColumnsUi();
+      rerenderVisibleColumns();
+    });
+
+    cloneColumnDraftFromApplied(paginationState.allColumns || paginationState.columns || []);
+    syncManageColumnsUi();
   }
 
   function shouldShowActionColumnGuide() {
@@ -4053,11 +4836,6 @@
     return buildEntryActivityLogItems(entry);
   }
 
-  var SAMPLE_ATTACHMENTS = [
-    { name: 'Adjuster Report1', size: 'PDF · 1.3 MB' },
-    { name: 'Adjuster Report2', size: 'PDF · 980.5 KB' },
-  ];
-
   var ATTACHMENT_ICON =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500">' +
       '<path fill-rule="evenodd" clip-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" />' +
@@ -4088,15 +4866,22 @@
   function setGetPaidStepBadge(stepNum, isComplete) {
     var badge = document.getElementById('gp-step-' + stepNum + '-badge');
     if (!badge) return;
+    var displayNum = badge.getAttribute('data-step-display') || String(stepNum);
     if (isComplete) {
       badge.className = STEP_BADGE_COMPLETE_CLASS;
       badge.innerHTML = STEP_BADGE_CHECK_ICON;
-      badge.setAttribute('aria-label', 'Step ' + stepNum + ' complete');
+      badge.setAttribute('aria-label', 'Step ' + displayNum + ' complete');
     } else {
       badge.className = STEP_BADGE_NUMBER_CLASS;
-      badge.textContent = String(stepNum);
-      badge.setAttribute('aria-label', 'Step ' + stepNum);
+      badge.textContent = displayNum;
+      badge.setAttribute('aria-label', 'Step ' + displayNum);
     }
+  }
+
+  function setGetPaidStepDisplayNumber(stepNum, displayNum) {
+    var badge = document.getElementById('gp-step-' + stepNum + '-badge');
+    if (!badge) return;
+    badge.setAttribute('data-step-display', String(displayNum));
   }
 
   function getSelectedOptionValue(sel) {
@@ -4152,7 +4937,7 @@
 
     var footer = document.getElementById('gp-card-details-footer');
     var markPaidBtn = document.getElementById('gp-card-mark-paid-btn');
-    var showMarkPaid = _activeTableTabKey === 'pending' && isPendingLikeStatus(entry.status) && entry.methodType === 'card';
+    var showMarkPaid = _activeTableTabKey === 'pending' && isPendingManualReviewEntry(entry);
     if (footer) footer.classList.toggle('hidden', !showMarkPaid);
     if (markPaidBtn) {
       if (showMarkPaid) markPaidBtn.setAttribute('data-mark-paid-invoice', entry.invoice || '');
@@ -4194,14 +4979,29 @@
   }
 
   function updateGetPaidStepStates() {
+    if (_activeGetPaidEntry && _activeGetPaidEntry.status === 'declined') {
+      setGetPaidStepBadge(1, false);
+      setGetPaidStepBadge(2, false);
+      setGetPaidStepBadge(3, false);
+      var declinedSubmitBtn = document.getElementById('gp-submit-btn');
+      if (declinedSubmitBtn) {
+        declinedSubmitBtn.disabled = true;
+        declinedSubmitBtn.setAttribute('aria-disabled', 'true');
+      }
+      return;
+    }
+
+    var docRequired = requiresDocumentReview(_activeGetPaidEntry);
+    var signatureRequired = requiresSignature(_activeGetPaidEntry);
+
     // Step 1: all document review actions are complete
     var openReviewBtns = document.querySelectorAll('#gp-attachments .gp-review-trigger:not(.hidden)');
     var statusChecks = document.querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"] input[type="checkbox"]');
-    var step1Done = statusChecks.length > 0 && openReviewBtns.length === 0;
+    var step1Done = !docRequired || (statusChecks.length > 0 && openReviewBtns.length === 0);
 
     // Step 2: signature has been completed
     var signedBadge = document.getElementById('gp-signed-badge');
-    var step2Done = !!(signedBadge && !signedBadge.classList.contains('hidden'));
+    var step2Done = !signatureRequired || !!(signedBadge && !signedBadge.classList.contains('hidden'));
 
     // Step 3: payment method selected; bank account method also requires bank selection
     var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
@@ -4253,10 +5053,32 @@
   }
 
   function buildGetPaidAttachments(attachments) {
-    var list = (attachments && attachments.length) ? attachments : SAMPLE_ATTACHMENTS;
+    var list = Array.isArray(attachments) ? attachments : [];
+    if (!list.length) {
+      return '<div class="rounded-md border border-dashed border-gray-300 bg-white px-4 py-3 text-sm text-gray-500 dark:border-white/15 dark:bg-white/5 dark:text-gray-400">No document review is required for this payment.</div>';
+    }
     var items = '';
     list.forEach(function (att, idx) { items += buildAttachmentItem(att, idx); });
     return '<ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200 dark:divide-white/5 dark:border-white/10">' + items + '</ul>';
+  }
+
+  function syncGetPaidRequirementSections(entry) {
+    var docStep = document.getElementById('gp-documents-step');
+    var signatureStep = document.getElementById('gp-signature-step');
+    var docRequired = requiresDocumentReview(entry);
+    var signatureRequired = requiresSignature(entry);
+
+    if (docStep) {
+      docStep.classList.toggle('hidden', !docRequired);
+      docStep.classList.toggle('sm:grid', docRequired);
+    }
+    if (signatureStep) {
+      signatureStep.classList.toggle('hidden', !signatureRequired);
+      signatureStep.classList.toggle('sm:grid', signatureRequired);
+    }
+    setGetPaidStepDisplayNumber(1, 1);
+    setGetPaidStepDisplayNumber(2, docRequired ? 2 : 1);
+    setGetPaidStepDisplayNumber(3, 1 + (docRequired ? 1 : 0) + (signatureRequired ? 1 : 0));
   }
 
   function setGetPaidMethodSelection(value, entry, displayLabel) {
@@ -4324,12 +5146,6 @@
     if (paymentValue === 'bank-account') return 'Send to Bank Account';
     if (paymentValue === 'paper-check') return 'Request a Paper Check';
     return "Accept Payer's Card";
-  }
-
-  function isPendingManualReviewEntry(entry) {
-    if (!entry || !isPendingLikeStatus(entry.status)) return false;
-    var methodType = String(entry.methodType || '').toLowerCase();
-    return methodType === 'card' || methodType === 'ach';
   }
 
   function getManualPendingGetPaidMethodLabel(paymentValue) {
@@ -4436,6 +5252,7 @@
 
   function applyPaidGetPaidPanelState(entry) {
     var submitBtn = document.getElementById('gp-submit-btn');
+    var declineBtn = document.getElementById('gp-decline-btn');
     var sigTrigger = document.getElementById('gp-signature-trigger');
     var sigBadge = document.getElementById('gp-signed-badge');
     var paymentValue = getPaidGetPaidMethodValue(entry);
@@ -4461,6 +5278,10 @@
     if (sigTrigger) sigTrigger.classList.add('hidden');
     if (sigBadge) sigBadge.classList.remove('hidden');
     if (submitBtn) submitBtn.classList.add('hidden');
+    if (declineBtn) {
+      declineBtn.classList.add('hidden');
+      declineBtn.removeAttribute('data-decline-invoice');
+    }
 
     if (paymentValue) setGetPaidMethodSelection(paymentValue, entry, paymentLabel);
     applyResolvedMethodDetailsSelection(entry, paymentValue);
@@ -4487,6 +5308,7 @@
 
   function applyPendingManualGetPaidPanelState(entry) {
     var submitBtn = document.getElementById('gp-submit-btn');
+    var declineBtn = document.getElementById('gp-decline-btn');
     var paymentValue = getPaidGetPaidMethodValue(entry);
     var paymentMethodSelect = document.querySelector('el-select[name="paymentMethod"]');
     var bankAccountSelect = document.getElementById('gp-bank-account-select');
@@ -4503,6 +5325,10 @@
       submitBtn.classList.remove('hidden');
       submitBtn.textContent = 'Mark as Paid';
       submitBtn.disabled = false;
+    }
+    if (declineBtn) {
+      declineBtn.classList.add('hidden');
+      declineBtn.removeAttribute('data-decline-invoice');
     }
 
     setGetPaidSelectDisabled(paymentMethodSelect, true);
@@ -4526,17 +5352,150 @@
     }
   }
 
+  function applyPendingRequiredActionGetPaidPanelState(entry) {
+    var methodType = String(entry && entry.methodType || '').toLowerCase();
+    if (methodType === 'smart_exchange') return;
+    var paymentValue = getPaidGetPaidMethodValue(entry);
+    var paymentMethodSelect = document.querySelector('el-select[name="paymentMethod"]');
+    var bankAccountSelect = document.getElementById('gp-bank-account-select');
+    var checkAddressSelect = document.getElementById('gp-check-address-select');
+    var declineBtn = document.getElementById('gp-decline-btn');
+
+    if (paymentValue) {
+      setGetPaidMethodSelection(paymentValue, entry, getPaidGetPaidMethodLabel(entry, paymentValue));
+      applyResolvedMethodDetailsSelection(entry, paymentValue);
+    }
+    setGetPaidSelectDisabled(paymentMethodSelect, true);
+    setGetPaidSelectDisabled(bankAccountSelect, true);
+    setGetPaidSelectDisabled(checkAddressSelect, true);
+    syncGetPaidBankEditVisibility(entry);
+    if (declineBtn) {
+      declineBtn.classList.remove('hidden');
+      declineBtn.setAttribute('data-decline-invoice', entry.invoice || '');
+    }
+
+    if (paymentValue === 'bank-account') {
+      window.requestAnimationFrame(function () {
+        if (!_activeGetPaidEntry || String(_activeGetPaidEntry.invoice || '') !== String(entry.invoice || '')) return;
+        var fallbackBank = findMatchingBusinessBankAccountForEntry(entry);
+        if (!fallbackBank || !bankAccountSelect) return;
+        setSelectOptionByValue(bankAccountSelect, fallbackBank.id, buildSelectedBankContent(fallbackBank));
+        updateBankDetails(fallbackBank.id);
+        setGetPaidSelectDisabled(bankAccountSelect, true);
+        syncGetPaidBankEditVisibility(entry);
+        updateGetPaidStepStates();
+      });
+    }
+  }
+
+  function applyPendingAutoProcessingGetPaidPanelState(entry) {
+    applyPaidGetPaidPanelState(entry);
+    var submitBtn = document.getElementById('gp-submit-btn');
+    var declineBtn = document.getElementById('gp-decline-btn');
+    var paymentValue = getPaidGetPaidMethodValue(entry);
+    if (paymentValue) {
+      setGetPaidMethodSelection(paymentValue, entry, getPaidGetPaidMethodLabel(entry, paymentValue));
+      applyResolvedMethodDetailsSelection(entry, paymentValue);
+    }
+    if (submitBtn) {
+      submitBtn.classList.add('hidden');
+      submitBtn.textContent = 'Submit and Get Paid';
+    }
+    if (declineBtn) {
+      declineBtn.classList.add('hidden');
+      declineBtn.removeAttribute('data-decline-invoice');
+    }
+    syncGetPaidHeaderStatus(entry);
+    updateGetPaidStepStates();
+  }
+
+  function syncGetPaidDeclineMessage(entry) {
+    var messageEl = document.getElementById('gp-decline-message');
+    var messageTextEl = document.getElementById('gp-decline-message-text');
+    var dateItem = document.getElementById('gp-decline-date-item');
+    var dateSeparator = document.getElementById('gp-decline-date-separator');
+    var dateEl = document.getElementById('gp-decline-date');
+    var reasonItem = document.getElementById('gp-decline-reason-item');
+    var reasonSeparator = document.getElementById('gp-decline-reason-separator');
+    var reasonSummaryEl = document.getElementById('gp-decline-reason-summary');
+    var reason = entry && entry.status === 'declined' ? getDeclineReason(entry) : '';
+    var declineDate = reason ? getDeclineDate(entry) : '';
+
+    if (messageEl) {
+      if (messageTextEl) messageTextEl.textContent = '';
+      messageEl.classList.add('hidden');
+    }
+
+    if (dateEl) dateEl.textContent = declineDate || '';
+    if (reasonSummaryEl) reasonSummaryEl.textContent = reason || '';
+
+    [dateItem, dateSeparator].forEach(function (el) {
+      if (!el) return;
+      el.classList.toggle('hidden', !declineDate);
+      if (el === dateItem) el.classList.toggle('flex', !!declineDate);
+    });
+    [reasonItem, reasonSeparator].forEach(function (el) {
+      if (!el) return;
+      el.classList.toggle('hidden', !reason);
+      if (el === reasonItem) el.classList.toggle('flex', !!reason);
+    });
+  }
+
+  function applyDeclinedGetPaidPanelState(entry) {
+    applyPaidGetPaidPanelState(entry);
+    var submitBtn = document.getElementById('gp-submit-btn');
+    var declineBtn = document.getElementById('gp-decline-btn');
+    document.querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"]').forEach(function (status) {
+      status.classList.add('hidden');
+      var checkbox = status.querySelector('input[type="checkbox"]');
+      if (checkbox) {
+        checkbox.checked = false;
+        checkbox.disabled = true;
+      }
+    });
+    document.querySelectorAll('#gp-attachments .gp-review-trigger').forEach(function (btn) {
+      btn.classList.add('hidden');
+      btn.classList.remove('inline-flex');
+      btn.style.display = 'none';
+      btn.disabled = true;
+    });
+    if (submitBtn) submitBtn.classList.add('hidden');
+    if (declineBtn) {
+      declineBtn.classList.add('hidden');
+      declineBtn.removeAttribute('data-decline-invoice');
+    }
+    syncGetPaidHeaderStatus(entry);
+    syncGetPaidDeclineMessage(entry);
+  }
+
   function syncGetPaidHeaderStatus(entry) {
     var badge = document.getElementById('gp-status-badge');
     if (!badge || !entry) return;
+    badge.removeAttribute('title');
     if (entry.status === 'paid') {
       badge.textContent = 'Paid';
       badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:inset-ring-green-400/30';
       return;
     }
+    if (entry.status === 'declined') {
+      badge.textContent = 'Declined';
+      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-red-50 text-red-700 inset-ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:inset-ring-red-400/30';
+      return;
+    }
     if (entry.status === 'exception') {
       badge.textContent = 'Exception';
       badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-red-50 text-red-700 inset-ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:inset-ring-red-400/30';
+      return;
+    }
+    if (entry.status === 'processing') {
+      badge.textContent = 'Processing';
+      badge.title = 'ACH is processing automatically. Standard ACH processing time is typically 1-2 business days.';
+      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/20';
+      return;
+    }
+    if (isPendingAutoProcessingEntry(entry)) {
+      badge.textContent = 'Pending';
+      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20';
       return;
     }
     badge.textContent = 'Pending Your Action';
@@ -4553,15 +5512,40 @@
     var invoiceEl = document.getElementById('gp-invoice');
     var attachEl = document.getElementById('gp-attachments');
     var activityEl = document.getElementById('gp-activity-content');
+    var declineMessageEl = document.getElementById('gp-decline-message');
+    var declineDateItem = document.getElementById('gp-decline-date-item');
+    var declineDateSeparator = document.getElementById('gp-decline-date-separator');
+    var declineDateEl = document.getElementById('gp-decline-date');
+    var declineReasonItem = document.getElementById('gp-decline-reason-item');
+    var declineReasonSeparator = document.getElementById('gp-decline-reason-separator');
+    var declineReasonSummaryEl = document.getElementById('gp-decline-reason-summary');
 
     if (amountEl) amountEl.textContent = formatCurrency(entry.amount, entry.currency);
     if (currencyEl) currencyEl.textContent = entry.currency;
+    if (declineMessageEl) {
+      var declineMessageTextEl = document.getElementById('gp-decline-message-text');
+      if (declineMessageTextEl) declineMessageTextEl.textContent = '';
+      declineMessageEl.classList.add('hidden');
+    }
+    [
+      declineDateItem,
+      declineDateSeparator,
+      declineReasonItem,
+      declineReasonSeparator
+    ].forEach(function (el) {
+      if (!el) return;
+      el.classList.add('hidden');
+      el.classList.remove('flex');
+    });
+    if (declineDateEl) declineDateEl.textContent = '';
+    if (declineReasonSummaryEl) declineReasonSummaryEl.textContent = '';
     if (dateEl) dateEl.textContent = formatDate(entry.dateInitiated);
     if (customerEl) customerEl.textContent = entry.vendorEntry;
     if (invoiceEl) invoiceEl.textContent = '#' + entry.invoice;
     syncGetPaidHeaderStatus(entry);
 
-    if (attachEl) attachEl.innerHTML = buildGetPaidAttachments(entry.details.attachments);
+    syncGetPaidRequirementSections(entry);
+    if (attachEl) attachEl.innerHTML = buildGetPaidAttachments(getEntryAttachments(entry));
     if (activityEl) activityEl.innerHTML = buildGetPaidActivityLog(entry);
     var activityToggle = document.getElementById('gp-activity-toggle');
     if (activityEl) activityEl.classList.add('hidden');
@@ -4592,6 +5576,7 @@
 
     initPaymentMethodDetails(entry);
     var submitBtn = document.getElementById('gp-submit-btn');
+    var declineBtn = document.getElementById('gp-decline-btn');
     setGetPaidSelectDisabled(document.querySelector('el-select[name="paymentMethod"]'), false);
     setGetPaidSelectDisabled(document.getElementById('gp-bank-account-select'), false);
     setGetPaidSelectDisabled(document.getElementById('gp-check-address-select'), false);
@@ -4599,8 +5584,15 @@
       submitBtn.classList.remove('hidden');
       submitBtn.textContent = 'Submit and Get Paid';
     }
+    if (declineBtn) {
+      declineBtn.classList.add('hidden');
+      declineBtn.removeAttribute('data-decline-invoice');
+    }
     if (entry.status === 'paid') applyPaidGetPaidPanelState(entry);
+    else if (entry.status === 'declined') applyDeclinedGetPaidPanelState(entry);
+    else if (requiresGetPaidAction(entry)) applyPendingRequiredActionGetPaidPanelState(entry);
     else if (isPendingManualReviewEntry(entry)) applyPendingManualGetPaidPanelState(entry);
+    else if (isPendingAutoProcessingEntry(entry)) applyPendingAutoProcessingGetPaidPanelState(entry);
     updateGetPaidStepStates();
   }
 
@@ -5521,6 +6513,70 @@
       pendingMarkPaidCloseCardDialog = false;
     }
 
+    function openDeclineConfirm(invoice) {
+      var normalizedInvoice = String(invoice || '').trim();
+      if (!normalizedInvoice) return;
+      pendingDeclineInvoice = normalizedInvoice;
+      var reasonEl = document.getElementById('gp-decline-reason');
+      var confirmBtn = document.getElementById('gp-decline-confirm-btn');
+      var dialog = document.getElementById('gp-decline-confirm-dialog');
+      if (reasonEl) reasonEl.value = '';
+      if (confirmBtn) confirmBtn.disabled = true;
+      if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
+        dialog.showModal();
+        window.setTimeout(function () {
+          if (reasonEl) reasonEl.focus();
+        }, 50);
+      }
+    }
+
+    function declinePendingPayment(invoice, reason) {
+      var normalizedInvoice = String(invoice || '').trim();
+      var normalizedReason = String(reason || '').trim();
+      if (!normalizedInvoice || !normalizedReason) return;
+      var targetEntry = findEntryByInvoice(normalizedInvoice);
+      if (!targetEntry) return;
+      targetEntry.status = 'declined';
+      if (targetEntry.details) targetEntry.details.declineReason = normalizedReason;
+      if (targetEntry.details && Array.isArray(targetEntry.details.activityLog)) {
+        targetEntry.details.activityLog.push({
+          user: 'You',
+          action: 'declined the payment',
+          comment: normalizedReason,
+          date: new Date().toISOString(),
+          type: 'failed'
+        });
+      }
+      writeExchangeEntryOverride(targetEntry.invoice, {
+        status: targetEntry.status,
+        methodType: targetEntry.methodType,
+        paymentMethod: targetEntry.paymentMethod,
+        paymentMethodEnding: targetEntry.paymentMethodEnding,
+        details: {
+          activityLog: targetEntry.details && Array.isArray(targetEntry.details.activityLog)
+            ? targetEntry.details.activityLog
+            : [],
+          declineReason: normalizedReason
+        }
+      });
+      refreshTableForActiveTab();
+      if (_activeGetPaidEntry && String(_activeGetPaidEntry.invoice || '') === normalizedInvoice) {
+        _activeGetPaidEntry = targetEntry;
+        syncGetPaidHeaderStatus(targetEntry);
+        syncGetPaidDeclineMessage(targetEntry);
+        var submitBtn = document.getElementById('gp-submit-btn');
+        var declineBtn = document.getElementById('gp-decline-btn');
+        if (submitBtn) submitBtn.classList.add('hidden');
+        if (declineBtn) {
+          declineBtn.classList.add('hidden');
+          declineBtn.removeAttribute('data-decline-invoice');
+        }
+        var updatedActivityEl = document.getElementById('gp-activity-content');
+        if (updatedActivityEl) updatedActivityEl.innerHTML = buildGetPaidActivityLog(targetEntry);
+      }
+      showTopActionToast('Payment declined.');
+    }
+
     var markPaidConfirmDialog = document.getElementById('gp-mark-paid-confirm-dialog');
     var markPaidConfirmBtn = document.getElementById('gp-mark-paid-confirm-btn');
     if (markPaidConfirmBtn) {
@@ -5535,6 +6591,33 @@
       markPaidConfirmDialog.addEventListener('close', function () {
         pendingMarkPaidInvoice = '';
         pendingMarkPaidCloseCardDialog = false;
+      });
+    }
+
+    var declineConfirmDialog = document.getElementById('gp-decline-confirm-dialog');
+    var declineConfirmBtn = document.getElementById('gp-decline-confirm-btn');
+    var declineReasonEl = document.getElementById('gp-decline-reason');
+    if (declineReasonEl && declineConfirmBtn) {
+      declineReasonEl.addEventListener('input', function () {
+        declineConfirmBtn.disabled = String(declineReasonEl.value || '').trim().length === 0;
+      });
+    }
+    if (declineConfirmBtn) {
+      declineConfirmBtn.addEventListener('click', function () {
+        var reason = declineReasonEl ? declineReasonEl.value : '';
+        if (!String(reason || '').trim()) return;
+        declinePendingPayment(pendingDeclineInvoice, reason);
+        pendingDeclineInvoice = '';
+        if (declineConfirmDialog && declineConfirmDialog.open && typeof declineConfirmDialog.close === 'function') {
+          declineConfirmDialog.close();
+        }
+      });
+    }
+    if (declineConfirmDialog) {
+      declineConfirmDialog.addEventListener('close', function () {
+        pendingDeclineInvoice = '';
+        if (declineReasonEl) declineReasonEl.value = '';
+        if (declineConfirmBtn) declineConfirmBtn.disabled = true;
       });
     }
 
@@ -5568,6 +6651,14 @@
         e.preventDefault();
         var invoiceToMark = markPaidLink.getAttribute('data-mark-paid-invoice');
         openMarkPaidConfirm(invoiceToMark);
+        return;
+      }
+
+      var declineLink = e.target.closest('[data-decline-invoice]');
+      if (declineLink) {
+        e.preventDefault();
+        var invoiceToDecline = declineLink.getAttribute('data-decline-invoice');
+        openDeclineConfirm(invoiceToDecline);
         return;
       }
 
@@ -5614,10 +6705,21 @@
 
     document.addEventListener('click', function (e) {
       var trigger = e.target.closest('.gp-review-trigger, .gp-review-name-trigger');
-      if (trigger) activeAttachIdx = trigger.getAttribute('data-attach-idx');
+      if (trigger) {
+        activeAttachIdx = trigger.getAttribute('data-attach-idx');
+        var isDeclined = !!(_activeGetPaidEntry && _activeGetPaidEntry.status === 'declined');
+        markReadBtn.textContent = isDeclined ? 'Close' : 'I have read';
+        markReadBtn.className = isDeclined
+          ? 'inline-flex items-center gap-x-2 rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer'
+          : 'inline-flex items-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer';
+      }
     });
 
     markReadBtn.addEventListener('click', function () {
+      if (_activeGetPaidEntry && _activeGetPaidEntry.status === 'declined') {
+        activeAttachIdx = null;
+        return;
+      }
       if (activeAttachIdx === null) return;
       var btn = document.querySelector('.gp-review-trigger[data-attach-idx="' + activeAttachIdx + '"]');
       var status = document.getElementById('gp-attach-' + activeAttachIdx + '-status');
@@ -5914,6 +7016,7 @@
     renderTabSwitchSkeleton();
     initTabBadges();
     initTableFilterDropdown();
+    initManageColumnsModal();
     initGetPaidPanel();
     initGetPaidCardDetailsTrigger();
     initCardDetailsHowItWorksToggle();
@@ -5923,6 +7026,7 @@
     initCardDetailsDialogGuards();
     initTableRefreshButton();
     initTableSearchInput();
+    initProcessingStatusTooltip();
     var shouldOpenActionGuide = shouldShowActionColumnGuide();
     if (shouldOpenActionGuide) removeGuideUrlParam();
 
@@ -5996,7 +7100,8 @@
         }
 
         if (columns) {
-          paginationState.columns = columns;
+          paginationState.allColumns = columns;
+          paginationState.columns = getRenderableColumns(columns);
           paginationState.allEntries = initialFilteredEntries;
           paginationState.totalItems = initialFilteredEntries.length;
           paginationState.currentPage = 1;
@@ -6012,12 +7117,12 @@
             initialTableLoadingState.timer = window.setTimeout(function () {
               initialTableLoadingState.active = false;
               initialTableLoadingState.timer = null;
-              renderTable(table, columns, initialFilteredEntries);
+              renderTable(table, paginationState.allColumns, initialFilteredEntries);
               afterInitialTableRender();
             }, remaining);
           } else {
             initialTableLoadingState.active = false;
-            renderTable(table, columns, initialFilteredEntries);
+            renderTable(table, paginationState.allColumns, initialFilteredEntries);
             afterInitialTableRender();
           }
         } else {
@@ -6031,5 +7136,6 @@
       });
   }
 
+  window.initSmartExchangePage = init;
   init();
 })();

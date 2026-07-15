@@ -103,14 +103,14 @@
                     </div>
 
                     <!-- Panel Body -->
-                    <div id="pp-pay-refresh-surface" class="grid grid-cols-1 p-4 sm:p-6">
+                    <div id="pp-pay-refresh-surface" class="grid grid-cols-1">
 
                         <!-- Main content -->
                         <div>
 
                             <!-- Amount + Badge + Button (single row) -->
                             <div id="pp-pay-hero-row"
-                                class="flex flex-col gap-3 px-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+                                class="sticky top-[calc(var(--stp-alert-height,0px)+96px)] z-30 flex flex-col gap-3 border-b border-gray-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-gray-900 sm:flex-row sm:items-center sm:justify-between sm:gap-4 sm:px-6">
                                 <div class="flex items-center gap-3 flex-wrap">
                                     <div class="flex items-baseline gap-1.5">
                                         <span id="gp-amount"
@@ -218,8 +218,9 @@
                                 </div>
                             </div>
 
+                            <div class="px-4 pb-4 pt-6 sm:px-6 sm:pb-6">
                             <!-- Payment Info -->
-                            <div id="pp-pay-info-section" class="mt-6 overflow-hidden rounded-md bg-gray-50 dark:bg-white/5">
+                            <div id="pp-pay-info-section" class="overflow-hidden rounded-md bg-gray-50 dark:bg-white/5">
                                 <button id="pp-pay-info-toggle" type="button"
                                     class="flex w-full cursor-pointer items-center justify-between pl-4 pr-[6px] py-2 text-left transition-colors hover:bg-gray-100 dark:hover:bg-white/10 lg:hidden">
                                     <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Payment Details</span>
@@ -447,7 +448,7 @@
                                                     </svg>
                                                 </button>
                                                 <el-options id="pp-pay-method-options" anchor="bottom start" popover
-                                                    class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
+                                                    class="max-h-80 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
                                                     <!-- Accept Payer's Card -->
                                                     <el-option value="payers-card"
                                                         class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
@@ -1155,7 +1156,7 @@
                             <!-- Payable Summary (collapsible, collapsed by default) -->
                             <div class="border-t border-gray-200 dark:border-white/10">
                                 <button type="button" id="gp-receivable-toggle"
-                                    class="w-full cursor-pointer rounded-md px-1 flex items-center justify-between py-4 text-left transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
+                                    class="w-full cursor-pointer flex items-center justify-between px-5 py-4 text-left transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue-600 dark:hover:bg-white/5 sm:px-8">
                                     <span class="text-base font-semibold text-gray-900 dark:text-white">Payable
                                         Summary</span>
                                     <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
@@ -1166,7 +1167,7 @@
                                             clip-rule="evenodd" />
                                     </svg>
                                 </button>
-                                <div id="gp-receivable-content" class="hidden pb-4">
+                                <div id="gp-receivable-content" class="hidden px-5 pb-6 pt-4 sm:px-8">
                                     <div class="rounded-lg border border-dashed border-gray-300 bg-gray-50/70 px-4 py-5 text-center dark:border-white/15 dark:bg-white/5">
                                         <div class="mx-auto mb-2 inline-flex size-8 items-center justify-center rounded-full bg-white text-gray-500 ring-1 ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:ring-white/10">
                                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-4">
@@ -1183,7 +1184,7 @@
                             <!-- Activity Log (collapsed by default) -->
                             <div class="border-t border-b border-gray-200 dark:border-white/10">
                                 <button type="button" id="gp-activity-toggle"
-                                    class="w-full cursor-pointer rounded-md px-1 flex items-center justify-between py-4 text-left transition-colors hover:bg-gray-50 dark:hover:bg-white/5">
+                                    class="w-full cursor-pointer flex items-center justify-between px-5 py-4 text-left transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-blue-600 dark:hover:bg-white/5 sm:px-8">
                                     <span class="text-base font-semibold text-gray-900 dark:text-white">Activity
                                         Log</span>
                                     <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
@@ -1194,7 +1195,7 @@
                                             clip-rule="evenodd" />
                                     </svg>
                                 </button>
-                                <div id="gp-activity-content" class="hidden pb-6">
+                                <div id="gp-activity-content" class="hidden px-5 pb-6 pt-4 sm:px-8">
                                     <div class="rounded-lg border border-dashed border-gray-300 bg-gray-50/70 px-4 py-5 text-center dark:border-white/15 dark:bg-white/5">
                                         <div class="mx-auto mb-2 inline-flex size-8 items-center justify-center rounded-full bg-white text-gray-500 ring-1 ring-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:ring-white/10">
                                             <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-4">
@@ -1207,6 +1208,7 @@
                                 </div>
                             </div>
 
+                            </div>
                         </div>
 
                     </div>

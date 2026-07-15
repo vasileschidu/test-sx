@@ -45,6 +45,11 @@
         "filterable": true
       },
       {
+        "key": "failureReason",
+        "label": "Failure Reason",
+        "sortable": true
+      },
+      {
         "key": "_action",
         "label": "",
         "type": "action"
@@ -122,6 +127,7 @@
       "status": "pending",
       "details": {
         "notes": "Architectural design services for the downtown office renovation project, phase 2.",
+        "requiresSignature": true,
         "paymentInfo": {
           "type": "ach",
           "accountHolder": "BluePrint Architecture Inc",
@@ -166,6 +172,185 @@
         ]
       },
       "methodType": "ach",
+      "payeeId": "my-business"
+    },
+    {
+      "amount": 6420,
+      "currency": "USD",
+      "vendorEntry": "Northstar Logistics",
+      "invoice": "NL-2401",
+      "customer": "Northstar",
+      "dateInitiated": "2026-05-11",
+      "paymentMethod": "ACH",
+      "paymentMethodEnding": "9134",
+      "status": "processing",
+      "details": {
+        "notes": "ACH payment has been accepted by the payer and is waiting for normal bank settlement. No document review or signature is required.",
+        "paymentInfo": {
+          "type": "ach",
+          "accountHolder": "Northstar Logistics",
+          "bankName": "Bank of America",
+          "routingNumber": "••••1172",
+          "accountNumber": "••••9134",
+          "accountType": "Business Checking"
+        },
+        "attachments": [],
+        "processing": {
+          "autoSettleAfterDays": 2,
+          "expectedSettlementDate": "2026-05-13"
+        },
+        "activityLog": [
+          {
+            "user": "System",
+            "action": "received ACH payment instructions",
+            "date": "2026-05-11T09:15",
+            "type": "event"
+          },
+          {
+            "user": "System",
+            "action": "ACH settlement window started",
+            "date": "2026-05-11T09:20",
+            "type": "event"
+          }
+        ]
+      },
+      "methodType": "ach",
+      "payeeId": "my-business"
+    },
+    {
+      "amount": 2765.8,
+      "currency": "USD",
+      "vendorEntry": "Harbor Point Supplies",
+      "invoice": "HP-2402",
+      "customer": "Harbor Point",
+      "dateInitiated": "2026-05-10",
+      "paymentMethod": "Card",
+      "paymentMethodEnding": "3842",
+      "status": "pending",
+      "details": {
+        "notes": "Customer card details were provided without document review or signature requirements. Confirm funds manually once the card payment is processed.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "Harbor Point Supplies",
+          "cardholderAddress": "88 Pier Avenue\nCharleston, SC 29401\nUnited States",
+          "cardType": "Visa",
+          "cardNumber": "4000 1200 0000 3842",
+          "expires": "09/2027",
+          "cvc": "•••"
+        },
+        "attachments": [],
+        "activityLog": [
+          {
+            "user": "System",
+            "action": "received customer card details",
+            "date": "2026-05-10T11:00",
+            "type": "event"
+          }
+        ]
+      },
+      "methodType": "card",
+      "payeeId": "my-business"
+    },
+    {
+      "amount": 1890.25,
+      "currency": "USD",
+      "vendorEntry": "Pacific Office Rentals",
+      "invoice": "POR-2403",
+      "customer": "Pacific Office",
+      "dateInitiated": "2026-05-09",
+      "paymentMethod": "Card",
+      "paymentMethodEnding": "7196",
+      "status": "pending",
+      "details": {
+        "notes": "Customer card is available for a completed office rental payment. No documents or signature are required; confirm manually after processing.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "Pacific Office Rentals",
+          "cardholderAddress": "420 Market Street\nSuite 300\nSan Diego, CA 92101\nUnited States",
+          "cardType": "Mastercard",
+          "cardNumber": "5555 2300 0000 7196",
+          "expires": "02/2028",
+          "cvc": "•••"
+        },
+        "attachments": [],
+        "activityLog": [
+          {
+            "user": "System",
+            "action": "received customer card details",
+            "date": "2026-05-09T13:45",
+            "type": "event"
+          }
+        ]
+      },
+      "methodType": "card",
+      "payeeId": "my-business"
+    },
+    {
+      "amount": 432.9,
+      "currency": "USD",
+      "vendorEntry": "Mason Field Services",
+      "invoice": "MFS-2404",
+      "customer": "Mason Field",
+      "dateInitiated": "2026-05-12",
+      "paymentMethod": "Card",
+      "paymentMethodEnding": "0265",
+      "status": "pending",
+      "details": {
+        "notes": "Small card payment ready for manual confirmation. No review packet or signature is attached.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "Mason Field Services",
+          "cardholderAddress": "611 Oak Ridge Road\nAustin, TX 78704\nUnited States",
+          "cardType": "Visa",
+          "cardNumber": "4000 3300 0000 0265",
+          "expires": "06/2027",
+          "cvc": "•••"
+        },
+        "attachments": [],
+        "activityLog": [
+          {
+            "user": "System",
+            "action": "received customer card details",
+            "date": "2026-05-12T08:30",
+            "type": "event"
+          }
+        ]
+      },
+      "methodType": "card",
+      "payeeId": "my-business"
+    },
+    {
+      "amount": 7280,
+      "currency": "USD",
+      "vendorEntry": "Atlas Brand Studio",
+      "invoice": "ABS-2405",
+      "customer": "Atlas Brand",
+      "dateInitiated": "2026-05-08",
+      "paymentMethod": "Card",
+      "paymentMethodEnding": "5581",
+      "status": "pending",
+      "details": {
+        "notes": "Card payment details have been delivered without additional acceptance requirements.",
+        "paymentInfo": {
+          "type": "card",
+          "cardholderName": "Atlas Brand Studio",
+          "cardholderAddress": "90 Hudson Avenue\nBrooklyn, NY 11201\nUnited States",
+          "cardType": "Mastercard",
+          "cardNumber": "5555 4100 0000 5581",
+          "expires": "11/2027",
+          "cvc": "•••"
+        },
+        "attachments": [],
+        "activityLog": [
+          {
+            "user": "System",
+            "action": "received customer card details",
+            "date": "2026-05-08T16:10",
+            "type": "event"
+          }
+        ]
+      },
+      "methodType": "card",
       "payeeId": "my-business"
     },
     {

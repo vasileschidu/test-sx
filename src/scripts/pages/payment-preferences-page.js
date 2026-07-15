@@ -3045,9 +3045,15 @@
                 observer.observe(sel, { subtree: true, attributes: true, attributeFilter: ['aria-selected'] });
             }
 
-            window.addEventListener('load', function () {
+            function initGpSlots() {
                 initGpSlot(1);
                 initGpSlot(2);
                 initGpSlot(3);
-            });
+            }
+
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initGpSlots, { once: true });
+            } else {
+                initGpSlots();
+            }
         })();

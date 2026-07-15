@@ -161,13 +161,20 @@
     return (Array.isArray(methods && methods.card) ? methods.card : []).map(function (item) {
       var label = String(item.label || '');
       var match = label.match(/(Visa|Mastercard|Amex|American Express)/i);
-      var brand = match ? match[1] : 'Card';
-      var last4 = getDigits(label).slice(-4) || '0000';
+      var brand = item.brand || item.cardBrand || item.network || (match ? match[1] : 'Card');
+      var cardDigits = getDigits(item.fullNumber || item.cardNumber || item.pan || label);
+      var last4 = cardDigits.slice(-4) || getDigits(label).slice(-4) || '0000';
       return {
         id: item.id,
         label: item.label,
         brand: brand,
         last4: last4,
+        fullNumber: item.fullNumber || item.cardNumber || item.pan || '',
+        cardNumber: item.cardNumber || item.fullNumber || item.pan || '',
+        expDate: item.expDate || item.expiry || item.expiration || '',
+        expiry: item.expiry || item.expDate || item.expiration || '',
+        cvc2: item.cvc2 || item.cvv || item.cvc || '',
+        cvv: item.cvv || item.cvc2 || item.cvc || '',
         cardholderName: item.cardholderName || '',
         cardholderAddress: item.cardholderAddress || ''
       };

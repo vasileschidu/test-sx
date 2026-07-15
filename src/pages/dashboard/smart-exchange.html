@@ -109,25 +109,37 @@
                             <!-- Amount + Badge + Button (single row) -->
                             <div
                                 class="flex flex-col gap-3 px-0 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
-                                <div class="flex items-center gap-3 flex-wrap">
-                                    <div class="flex items-baseline gap-1.5">
-                                        <span id="gp-amount"
-                                            class="text-2xl font-bold text-gray-900 dark:text-white"></span>
-                                        <span id="gp-currency" class="text-2xl text-gray-500 dark:text-gray-400"></span>
+                                <div class="flex min-w-0 flex-col gap-3">
+                                    <div class="flex items-center gap-3 flex-wrap">
+                                        <div class="flex items-baseline gap-1.5">
+                                            <span id="gp-amount"
+                                                class="text-2xl font-bold text-gray-900 dark:text-white"></span>
+                                            <span id="gp-currency" class="text-2xl text-gray-500 dark:text-gray-400"></span>
+                                        </div>
+                                        <span id="gp-status-badge"
+                                            class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20">Pending
+                                            Your Action</span>
                                     </div>
-                                    <span id="gp-status-badge"
-                                        class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20">Pending
-                                        Your Action</span>
+                                    <div id="gp-decline-message" class="hidden max-w-2xl">
+                                        <p class="text-sm/5 font-semibold text-red-600 dark:text-red-400">Declining reason</p>
+                                        <p id="gp-decline-message-text" class="mt-1 text-sm/5 font-normal text-gray-700 dark:text-gray-300"></p>
+                                    </div>
                                 </div>
-                                <button id="gp-submit-btn" type="button" disabled
-                                    class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-blue-600 sm:w-auto sm:shrink-0">
-                                    Submit and Get Paid
-                                </button>
+                                <div class="flex w-full flex-col-reverse gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
+                                    <button id="gp-decline-btn" type="button"
+                                        class="hidden w-full rounded-md bg-white px-4 py-2 text-sm font-semibold text-red-600 shadow-xs inset-ring inset-ring-gray-300 hover:bg-red-50 hover:text-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 sm:w-auto sm:shrink-0 dark:bg-white/10 dark:text-red-400 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-red-500/10 dark:hover:text-red-300">
+                                        Decline
+                                    </button>
+                                    <button id="gp-submit-btn" type="button" disabled
+                                        class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-blue-600 sm:w-auto sm:shrink-0">
+                                        Submit and Get Paid
+                                    </button>
+                                </div>
                             </div>
 
                             <!-- Payment Info: horizontal pill -->
                             <div
-                                class="mt-6 flex flex-col items-stretch gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5 sm:flex-row sm:items-center sm:gap-6">
+                                class="mt-6 flex flex-col items-stretch gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-6">
 
                                 <!-- Date Initiated -->
                                 <div class="flex flex-col items-start gap-1">
@@ -167,6 +179,28 @@
                                     </button>
                                 </div>
 
+                                <div id="gp-decline-date-separator"
+                                    class="hidden h-px w-full shrink-0 bg-gray-200 dark:bg-white/10 sm:h-8 sm:w-px"></div>
+
+                                <!-- Declining Date -->
+                                <div id="gp-decline-date-item" class="hidden flex-col items-start gap-1">
+                                    <span class="text-sm font-medium leading-5 text-red-600 dark:text-red-400">Declining
+                                        Date</span>
+                                    <span id="gp-decline-date"
+                                        class="text-sm font-normal leading-5 text-gray-600 dark:text-gray-400"></span>
+                                </div>
+
+                                <div id="gp-decline-reason-separator"
+                                    class="hidden h-px w-full shrink-0 bg-gray-200 dark:bg-white/10 sm:h-8 sm:w-px"></div>
+
+                                <!-- Declining Reason -->
+                                <div id="gp-decline-reason-item" class="hidden min-w-0 flex-col items-start gap-1">
+                                    <span class="text-sm font-medium leading-5 text-red-600 dark:text-red-400">Declining
+                                        Reason</span>
+                                    <span id="gp-decline-reason-summary"
+                                        class="max-w-[360px] truncate text-sm font-normal leading-5 text-gray-600 dark:text-gray-400"></span>
+                                </div>
+
                             </div>
 
                             <!-- Steps -->
@@ -178,7 +212,7 @@
                                 <dl class="divide-y divide-gray-200 dark:divide-white/10">
 
                                     <!-- Step 1: Review Documents -->
-                                    <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+                                    <div id="gp-documents-step" class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
                                         <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
                                             <div class="flex items-center gap-2">
                                                 <span id="gp-step-1-badge"
@@ -276,7 +310,7 @@
                                     </div>
 
                                     <!-- Step 2: Signature -->
-                                    <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
+                                    <div id="gp-signature-step" class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
                                         <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
                                             <div class="flex items-center gap-2">
                                                 <span id="gp-step-2-badge"
@@ -896,7 +930,7 @@
                 <!-- ===== END GET PAID PANEL ===== -->
 
                 <div id="table-section"
-                    class="overflow-hidden rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900">
+                    class="relative overflow-visible rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900">
 
                     <!-- ===== CARD HEADER ===== -->
                     <div class="pt-5 sm:pt-6">
@@ -951,184 +985,154 @@
                                             Filter
                                         </button>
                                     <div id="sx-table-filter-menu"
-                                        class="pointer-events-none invisible absolute right-0 z-30 mt-2 origin-top-right overflow-hidden rounded-md bg-white opacity-0 shadow-lg outline-1 outline-black/5 transition-[width,height,opacity] duration-250 ease-[cubic-bezier(0.22,1,0.36,1)] dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
-                                        <div id="sx-table-filter-track"
-                                            class="flex w-max items-start transition-transform duration-250 ease-[cubic-bezier(0.22,1,0.36,1)]"
-                                            style="transform: translateX(0);">
-                                            <div id="sx-table-filter-panel-root" class="w-full min-w-0 shrink-0 py-1 sm:w-fit sm:min-w-[168px]">
-                                                <div role="button" tabindex="0" data-filter-open="customer"
-                                                    class="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
-                                                    <span class="min-w-0 flex-1">By customer</span>
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 20 20" fill="currentColor"
-                                                        class="size-4 text-gray-500 dark:text-gray-400">
-                                                        <path fill-rule="evenodd"
-                                                            d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                                            clip-rule="evenodd" />
-                                                    </svg>
+                                        class="pointer-events-none invisible absolute right-0 z-[60] mt-2 w-[628px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-md bg-white opacity-0 shadow-lg outline-1 outline-black/5 transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+                                        <div class="flex max-h-[470px] min-h-0 flex-col">
+                                            <div class="flex min-h-0 flex-1 flex-col sm:flex-row">
+                                                <div id="sx-table-filter-panel-root" class="shrink-0 border-b border-gray-200 bg-gray-50 p-3 dark:border-white/10 dark:bg-gray-900/40 sm:w-72 sm:border-r sm:border-b-0">
+                                                    <div class="grid gap-1">
+                                                        <button type="button" data-filter-open="customer" data-filter-nav
+                                                            class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                                            <span class="min-w-0 flex-1">By customer</span>
+                                                            <span data-filter-count-badge="customer" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                                                class="size-4 text-gray-500 dark:text-gray-400">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                                                    clip-rule="evenodd" />
+                                                            </svg>
+                                                        </button>
+                                                        <button type="button" data-filter-open="status" data-filter-nav
+                                                            class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                                            <span class="min-w-0 flex-1">By status</span>
+                                                            <span data-filter-count-badge="status" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                                                class="size-4 text-gray-500 dark:text-gray-400">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                                                    clip-rule="evenodd" />
+                                                            </svg>
+                                                        </button>
+                                                        <button type="button" data-filter-open="method" data-filter-nav
+                                                            class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                                            <span class="min-w-0 flex-1">By method of payment</span>
+                                                            <span data-filter-count-badge="method" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                                                class="size-4 text-gray-500 dark:text-gray-400">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                                                    clip-rule="evenodd" />
+                                                            </svg>
+                                                        </button>
+                                                        <button type="button" data-filter-open="failure_reason" data-filter-nav
+                                                            class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                                            <span class="min-w-0 flex-1">Failure reason</span>
+                                                            <span data-filter-count-badge="failure_reason" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                                                class="size-4 text-gray-500 dark:text-gray-400">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                                                    clip-rule="evenodd" />
+                                                            </svg>
+                                                        </button>
+                                                        <button type="button" data-filter-open="initiated_date" data-filter-nav
+                                                            class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                                            <span class="min-w-0 flex-1">By initiated date</span>
+                                                            <span data-filter-count-badge="initiated_date" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                                                class="size-4 text-gray-500 dark:text-gray-400">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                                                    clip-rule="evenodd" />
+                                                            </svg>
+                                                        </button>
+                                                    </div>
                                                 </div>
-                                                <div role="button" tabindex="0" data-filter-open="status"
-                                                    class="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
-                                                    <span class="min-w-0 flex-1">By status</span>
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 20 20" fill="currentColor"
-                                                        class="size-4 text-gray-500 dark:text-gray-400">
-                                                        <path fill-rule="evenodd"
-                                                            d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                                            clip-rule="evenodd" />
-                                                    </svg>
-                                                </div>
-                                                <div role="button" tabindex="0" data-filter-open="method"
-                                                    class="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
-                                                    <span class="min-w-0 flex-1">By method of payment</span>
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 20 20" fill="currentColor"
-                                                        class="size-4 text-gray-500 dark:text-gray-400">
-                                                        <path fill-rule="evenodd"
-                                                            d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                                            clip-rule="evenodd" />
-                                                    </svg>
-                                                </div>
-                                                <div role="button" tabindex="0" data-filter-open="initiated_date"
-                                                    class="flex w-full cursor-pointer items-center justify-between gap-3 px-3 py-2 text-left text-sm font-medium text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
-                                                    <span class="min-w-0 flex-1">By initiated date</span>
-                                                    <svg xmlns="http://www.w3.org/2000/svg"
-                                                        viewBox="0 0 20 20" fill="currentColor"
-                                                        class="size-4 text-gray-500 dark:text-gray-400">
-                                                        <path fill-rule="evenodd"
-                                                            d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                                            clip-rule="evenodd" />
-                                                    </svg>
+                                                <div class="min-h-0 min-w-0 flex-1 bg-white dark:bg-gray-800">
+                                                    <div id="sx-table-filter-panel-customer" class="hidden h-full min-h-0 flex-col">
+                                                        <div class="border-b border-gray-200 px-3 py-3 dark:border-white/10">
+                                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">By customer</p>
+                                                        </div>
+                                                        <div id="sx-table-filter-customers" class="min-h-0 flex-1 overflow-auto px-3 py-3"></div>
+                                                    </div>
+                                                    <div id="sx-table-filter-panel-status" class="hidden h-full min-h-0 flex-col">
+                                                        <div class="border-b border-gray-200 px-3 py-3 dark:border-white/10">
+                                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">By status</p>
+                                                        </div>
+                                                        <div id="sx-table-filter-statuses" class="min-h-0 flex-1 overflow-auto px-3 py-3"></div>
+                                                    </div>
+                                                    <div id="sx-table-filter-panel-method" class="hidden h-full min-h-0 flex-col">
+                                                        <div class="border-b border-gray-200 px-3 py-3 dark:border-white/10">
+                                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">By method of payment</p>
+                                                        </div>
+                                                        <div id="sx-table-filter-methods" class="min-h-0 flex-1 overflow-auto px-3 py-3"></div>
+                                                    </div>
+                                                    <div id="sx-table-filter-panel-failure-reason" class="hidden h-full min-h-0 flex-col">
+                                                        <div class="border-b border-gray-200 px-3 py-3 dark:border-white/10">
+                                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Failure reason</p>
+                                                        </div>
+                                                        <div id="sx-table-filter-failure-reasons" class="min-h-0 flex-1 overflow-auto px-3 py-3"></div>
+                                                    </div>
+                                                    <div id="sx-table-filter-panel-initiated-date" class="hidden h-full min-h-0 flex-col">
+                                                        <div class="border-b border-gray-200 px-3 py-3 dark:border-white/10">
+                                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">By initiated date</p>
+                                                        </div>
+                                                        <div class="space-y-3 px-3 py-3">
+                                                            <div>
+                                                                <label class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">From</label>
+                                                                <div class="relative mt-2">
+                                                                    <span aria-hidden="true" id="sx-table-filter-date-from-mask"
+                                                                        class="pointer-events-none absolute inset-y-0 left-3 z-0 flex items-center text-sm/6">
+                                                                        <span id="sx-table-filter-date-from-mask-filled" class="font-medium text-gray-900 dark:text-white"></span><span id="sx-table-filter-date-from-mask-empty" class="font-normal text-gray-400 dark:text-gray-500">MM / DD / YYYY</span>
+                                                                    </span>
+                                                                    <input id="sx-table-filter-date-from-input" type="text" inputmode="numeric" placeholder="MM / DD / YYYY"
+                                                                        class="relative z-10 block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-transparent caret-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-transparent focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:caret-white dark:outline-white/10 dark:placeholder:text-transparent" />
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <label class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">To</label>
+                                                                <div class="relative mt-2">
+                                                                    <span aria-hidden="true" id="sx-table-filter-date-to-mask"
+                                                                        class="pointer-events-none absolute inset-y-0 left-3 z-0 flex items-center text-sm/6">
+                                                                        <span id="sx-table-filter-date-to-mask-filled" class="font-medium text-gray-900 dark:text-white"></span><span id="sx-table-filter-date-to-mask-empty" class="font-normal text-gray-400 dark:text-gray-500">MM / DD / YYYY</span>
+                                                                    </span>
+                                                                    <input id="sx-table-filter-date-to-input" type="text" inputmode="numeric" placeholder="MM / DD / YYYY"
+                                                                        class="relative z-10 block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-transparent caret-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-transparent focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:caret-white dark:outline-white/10 dark:placeholder:text-transparent" />
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div id="sx-table-filter-date-calendar" class="border-t border-gray-200 px-3 py-3 dark:border-white/10">
+                                                            <div class="flex items-center">
+                                                                <h2 id="sx-table-filter-date-month-label" class="flex-auto text-sm font-semibold text-gray-900 dark:text-gray-100">Month</h2>
+                                                                <button id="sx-table-filter-date-prev" type="button" class="-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">
+                                                                    <span class="sr-only">Previous month</span>
+                                                                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
+                                                                        <path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                                                    </svg>
+                                                                </button>
+                                                                <button id="sx-table-filter-date-next" type="button" class="-my-1.5 -mr-1.5 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">
+                                                                    <span class="sr-only">Next month</span>
+                                                                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
+                                                                        <path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                                                    </svg>
+                                                                </button>
+                                                            </div>
+                                                            <div class="mt-4 grid grid-cols-7 text-center text-xs text-gray-500 dark:text-gray-400">
+                                                                <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+                                                            </div>
+                                                            <div id="sx-table-filter-date-grid" class="mt-2 grid grid-cols-7 text-sm"></div>
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
-                                            <div id="sx-table-filter-detail-slot" class="w-full shrink-0 sm:w-72">
-                                                <div id="sx-table-filter-panel-customer" class="hidden w-full shrink-0 flex-col sm:w-72">
-                                                    <div role="button" tabindex="0" data-filter-back
-                                                        class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            viewBox="0 0 20 20" fill="currentColor"
-                                                            class="size-4">
-                                                            <path fill-rule="evenodd"
-                                                                d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                                                                clip-rule="evenodd" />
-                                                        </svg>
-                                                        By customer
-                                                    </div>
-                                                    <div id="sx-table-filter-customers"
-                                                        class="grow max-h-[60vh] overflow-auto px-2 py-2 sm:max-h-56"></div>
-                                                    <div class="border-t border-gray-200 p-2 dark:border-white/10">
-                                                        <button id="sx-table-filter-apply-btn" type="button" disabled
-                                                            class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer">
-                                                            Apply
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div id="sx-table-filter-panel-status" class="hidden w-full shrink-0 flex-col sm:w-72">
-                                                    <div role="button" tabindex="0" data-filter-back
-                                                        class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            viewBox="0 0 20 20" fill="currentColor"
-                                                            class="size-4">
-                                                            <path fill-rule="evenodd"
-                                                                d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                                                                clip-rule="evenodd" />
-                                                        </svg>
-                                                        By status
-                                                    </div>
-                                                    <div id="sx-table-filter-statuses"
-                                                        class="max-h-56 grow overflow-auto px-2 py-2"></div>
-                                                    <div class="border-t border-gray-200 p-2 dark:border-white/10">
-                                                        <button id="sx-table-filter-apply-status-btn" type="button" disabled
-                                                            class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer">
-                                                            Apply
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div id="sx-table-filter-panel-method" class="hidden w-full shrink-0 flex-col sm:w-72">
-                                                    <div role="button" tabindex="0" data-filter-back
-                                                        class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            viewBox="0 0 20 20" fill="currentColor"
-                                                            class="size-4">
-                                                            <path fill-rule="evenodd"
-                                                                d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                                                                clip-rule="evenodd" />
-                                                        </svg>
-                                                        By method of payment
-                                                    </div>
-                                                    <div id="sx-table-filter-methods"
-                                                        class="max-h-56 grow overflow-auto px-2 py-2"></div>
-                                                    <div class="border-t border-gray-200 p-2 dark:border-white/10">
-                                                        <button id="sx-table-filter-apply-method-btn" type="button" disabled
-                                                            class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer">
-                                                            Apply
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                                <div id="sx-table-filter-panel-initiated-date" class="hidden w-full shrink-0 flex-col sm:w-72">
-                                                    <div role="button" tabindex="0" data-filter-back
-                                                        class="flex w-full cursor-pointer items-center gap-3 self-stretch border-b border-gray-200 bg-gray-50 px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
-                                                        <svg xmlns="http://www.w3.org/2000/svg"
-                                                            viewBox="0 0 20 20" fill="currentColor"
-                                                            class="size-4">
-                                                            <path fill-rule="evenodd"
-                                                                d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z"
-                                                                clip-rule="evenodd" />
-                                                        </svg>
-                                                        By initiated date
-                                                    </div>
-                                                    <div class="space-y-2 p-2">
-                                                        <div>
-                                                            <label class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">From</label>
-                                                            <div class="relative mt-2">
-                                                                <span aria-hidden="true" id="sx-table-filter-date-from-mask"
-                                                                    class="pointer-events-none absolute inset-y-0 left-3 z-0 flex items-center text-sm/6">
-                                                                    <span id="sx-table-filter-date-from-mask-filled" class="font-medium text-gray-900 dark:text-white"></span><span id="sx-table-filter-date-from-mask-empty" class="font-normal text-gray-400 dark:text-gray-500">MM / DD / YYYY</span>
-                                                                </span>
-                                                                <input id="sx-table-filter-date-from-input" type="text" inputmode="numeric" placeholder="MM / DD / YYYY"
-                                                                    class="relative z-10 block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-transparent caret-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-transparent focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:caret-white dark:outline-white/10 dark:placeholder:text-transparent" />
-                                                            </div>
-                                                        </div>
-                                                        <div>
-                                                            <label class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">To</label>
-                                                            <div class="relative mt-2">
-                                                                <span aria-hidden="true" id="sx-table-filter-date-to-mask"
-                                                                    class="pointer-events-none absolute inset-y-0 left-3 z-0 flex items-center text-sm/6">
-                                                                    <span id="sx-table-filter-date-to-mask-filled" class="font-medium text-gray-900 dark:text-white"></span><span id="sx-table-filter-date-to-mask-empty" class="font-normal text-gray-400 dark:text-gray-500">MM / DD / YYYY</span>
-                                                                </span>
-                                                                <input id="sx-table-filter-date-to-input" type="text" inputmode="numeric" placeholder="MM / DD / YYYY"
-                                                                    class="relative z-10 block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-transparent caret-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-transparent focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:caret-white dark:outline-white/10 dark:placeholder:text-transparent" />
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                    <div id="sx-table-filter-date-calendar" class="hidden border-t border-gray-200 px-3 py-3 dark:border-white/10">
-                                                        <div class="flex items-center">
-                                                            <h2 id="sx-table-filter-date-month-label" class="flex-auto text-sm font-semibold text-gray-900 dark:text-gray-100">Month</h2>
-                                                            <button id="sx-table-filter-date-prev" type="button" class="-my-1.5 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">
-                                                                <span class="sr-only">Previous month</span>
-                                                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
-                                                                    <path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" fill-rule="evenodd" />
-                                                                </svg>
-                                                            </button>
-                                                            <button id="sx-table-filter-date-next" type="button" class="-my-1.5 -mr-1.5 ml-2 flex flex-none items-center justify-center p-1.5 text-gray-400 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">
-                                                                <span class="sr-only">Next month</span>
-                                                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">
-                                                                    <path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
-                                                                </svg>
-                                                            </button>
-                                                        </div>
-                                                        <div class="mt-4 grid grid-cols-7 text-center text-xs text-gray-500 dark:text-gray-400">
-                                                            <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
-                                                        </div>
-                                                        <div id="sx-table-filter-date-grid" class="mt-2 grid grid-cols-7 text-sm"></div>
-                                                    </div>
-                                                    <div class="border-t border-gray-200 p-2 dark:border-white/10">
-                                                        <button id="sx-table-filter-apply-date-btn" type="button" disabled
-                                                            class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer">
-                                                            Apply
-                                                        </button>
-                                                    </div>
-                                                </div>
+                                            <div class="flex items-center justify-end gap-3 border-t border-gray-200 bg-white px-3 py-3 dark:border-white/10 dark:bg-gray-800">
+                                                <button id="sx-table-filter-clear-btn" type="button" disabled
+                                                    class="rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+                                                    Clear
+                                                </button>
+                                                <button id="sx-table-filter-apply-active-btn" type="button" disabled
+                                                    class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300">
+                                                    Apply
+                                                </button>
                                             </div>
                                         </div>
                                     </div>
@@ -1138,8 +1142,16 @@
 
                                     <!-- Export -->
                                     <button
-                                        class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 sm:w-auto">
+                                        class="inline-flex w-full items-center justify-center self-start gap-x-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 sm:w-auto">
                                         Export
+                                    </button>
+
+                                    <button id="sx-manage-columns-btn" type="button" command="show-modal" commandfor="sx-manage-columns-dialog"
+                                        class="inline-flex h-8 w-full items-center justify-center self-start rounded-md bg-white px-0 py-0 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 sm:w-8"
+                                        aria-label="Manage columns" title="Manage columns">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+                                        </svg>
                                     </button>
                                 </div>
                             </div>
@@ -1152,11 +1164,11 @@
 
                         <div class="grid grid-cols-1 sm:hidden">
                             <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
-                            <select aria-label="Select a tab"
+                            <select id="sx-tab-select" aria-label="Select a tab" data-sx-tab-select
                                 class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-gray-800/50 dark:text-gray-100 dark:outline-white/10 dark:*:bg-gray-800 dark:focus:outline-indigo-500">
-                                <option selected>Pending</option>
-                                <option>Paid</option>
-                                <option>Exceptions</option>
+                                <option value="pending" selected>Pending</option>
+                                <option value="paid">Paid</option>
+                                <option value="exceptions">Exceptions</option>
                             </select>
                             <svg viewBox="0 0 16 16" fill="currentColor" data-slot="icon" aria-hidden="true"
                                 class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500 dark:fill-gray-400">
@@ -1165,22 +1177,22 @@
                                     clip-rule="evenodd" fill-rule="evenodd" />
                             </svg>
                         </div>
-                        <div class="hidden sm:block">
+                        <div class="hidden sm:flex sm:items-center sm:justify-between sm:gap-4">
                             <nav aria-label="Tabs" class="flex space-x-4">
                                 <!-- Current: "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300", Default: "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" -->
-                                <a href="#" aria-current="page"
+                                <a href="#" data-tab="pending" aria-current="page"
                                     class="inline-flex items-center gap-2 rounded-md bg-blue-100 px-3 py-2 text-sm font-medium text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
                                     <span>Pending</span>
                                     <span data-tab-count="pending"
                                         class="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30">0</span>
                                 </a>
-                                <a href="#"
+                                <a href="#" data-tab="paid"
                                     class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                                     <span>Paid</span>
                                     <span data-tab-count="paid"
                                         class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">0</span>
                                 </a>
-                                <a href="#"
+                                <a href="#" data-tab="exceptions"
                                     class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                                     <span>Exceptions</span>
                                     <span data-tab-count="exceptions"
@@ -1220,6 +1232,49 @@
     </div>
     </div>
 
+
+    <el-dialog>
+        <dialog id="sx-manage-columns-dialog" aria-labelledby="sx-manage-columns-title"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/30 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-white/10">
+                        <div>
+                            <h3 id="sx-manage-columns-title" class="text-xl font-semibold text-gray-900 dark:text-white">Manage columns</h3>
+                            <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Choose which columns appear in the payments table.</p>
+                        </div>
+                        <button type="button" command="close" commandfor="sx-manage-columns-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="px-4 py-5">
+                        <div id="sx-manage-columns-list" class="space-y-3">
+                            <!-- populated by exchanges-table.js -->
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-end gap-3 border-t border-gray-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-gray-900">
+                        <button id="sx-manage-columns-reset-btn" type="button"
+                            class="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+                            Reset default
+                        </button>
+                        <button id="sx-manage-columns-apply-btn" type="button"
+                            class="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300">
+                            Apply changes
+                        </button>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
 
     <!-- ===== GET PAID: PDF REVIEW MODAL ===== -->
     <el-dialog>
@@ -1490,6 +1545,70 @@
                         <button id="gp-mark-paid-confirm-btn" type="button"
                             class="w-full rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                             Confirm
+                        </button>
+                    </div>
+                </el-dialog-panel>
+            </div>
+        </dialog>
+    </el-dialog>
+
+    <!-- ===== DECLINE PAYMENT CONFIRM MODAL ===== -->
+    <el-dialog>
+        <dialog id="gp-decline-confirm-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
+                        <button type="button" command="close" commandfor="gp-decline-confirm-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+                        <div class="flex flex-col items-center text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44"
+                                fill="none" aria-hidden="true">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M18.6667 5.48896C20.1486 2.92229 23.8532 2.9223 25.3351 5.48897L39.1482 29.414C40.6301 31.9806 38.7777 35.189 35.814 35.189H8.18777C5.22404 35.189 3.37171 31.9806 4.85358 29.414L18.6667 5.48896ZM22.0008 11C22.9121 11 23.6508 11.7387 23.6508 12.65V20.35C23.6508 21.2612 22.9121 22 22.0008 22C21.0895 22 20.3508 21.2612 20.3508 20.35L20.3508 12.65C20.3508 11.7387 21.0895 11 22.0008 11ZM22.0008 30.8C23.2158 30.8 24.2008 29.815 24.2008 28.6C24.2008 27.3849 23.2158 26.4 22.0008 26.4C20.7858 26.4 19.8008 27.3849 19.8008 28.6C19.8008 29.815 20.7858 30.8 22.0008 30.8Z"
+                                    fill="#EF4444" />
+                            </svg>
+                            <div class="mt-6 flex flex-col items-center gap-2">
+                                <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">
+                                    Decline Payment
+                                </h2>
+                                <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
+                                    This will move the payment to Exceptions. Add a reason so the team knows what needs
+                                    to be corrected.
+                                </p>
+                            </div>
+                        </div>
+                        <div>
+                            <label for="gp-decline-reason"
+                                class="block text-sm/6 font-medium text-gray-900 dark:text-white">Reason for
+                                decline</label>
+                            <div class="mt-2">
+                                <textarea id="gp-decline-reason" rows="4"
+                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                    placeholder="Example: Supporting document does not match the invoice amount."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                        <button type="button" command="close" commandfor="gp-decline-confirm-dialog"
+                            class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+                            Cancel
+                        </button>
+                        <button id="gp-decline-confirm-btn" type="button" disabled
+                            class="w-full rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 cursor-pointer">
+                            Decline Payment
                         </button>
                     </div>
                 </el-dialog-panel>

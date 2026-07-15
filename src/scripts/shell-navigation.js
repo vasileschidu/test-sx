@@ -1,8 +1,17 @@
 (function () {
     var PAGE_CONFIGS = {
+        'smart-exchange.html': {
+            scripts: ['/src/scripts/table-skeleton.js', '/src/scripts/exchanges-table.js?v=20260309d'],
+            init: 'initSmartExchangePage'
+        },
         'bills-and-payables.html': {
             scripts: ['/src/scripts/bills-payables-table.js'],
             init: 'initBillsPayablesTable'
+        },
+        'payment-preferences.html': {
+            scripts: ['/src/scripts/payment-preferences-components.js'],
+            reloadScripts: ['/src/scripts/payment-preferences-tabs.js', '/src/scripts/pages/payment-preferences-page.js'],
+            init: null
         },
         'vendors.html': {
             scripts: ['/src/scripts/vendors-data.js', '/src/scripts/vendors-page.js'],
@@ -15,6 +24,7 @@
         'my-company-profile.html': {
             preScripts: [],
             scripts: [],
+            reloadScripts: ['/src/scripts/pages/my-company-profile-page.js'],
             init: null
         },
         'payables-pay.html': {
@@ -115,6 +125,16 @@
         }
 
         return missing.reduce(function (promise, src) {
+            return promise.then(function () { return loadScript(src); });
+        }, Promise.resolve()).then(function () {
+            return true;
+        });
+    }
+
+    function reloadPageScripts(pageFile) {
+        var config = PAGE_CONFIGS[pageFile];
+        if (!config || !config.reloadScripts || !config.reloadScripts.length) return Promise.resolve(false);
+        return config.reloadScripts.reduce(function (promise, src) {
             return promise.then(function () { return loadScript(src); });
         }, Promise.resolve()).then(function () {
             return true;
@@ -239,7 +259,11 @@
                 if (!finalizePageSwap(url, targetDoc)) return;
 
                 return ensurePageScripts(pageFile).then(function (loadedScriptsNow) {
-                    if (!loadedScriptsNow) {
+                    return reloadPageScripts(pageFile).then(function (reloadedScriptsNow) {
+                        return { loadedScriptsNow: loadedScriptsNow, reloadedScriptsNow: reloadedScriptsNow };
+                    });
+                }).then(function (scriptState) {
+                    if (!scriptState.loadedScriptsNow && !scriptState.reloadedScriptsNow) {
                         runPageInit(pageFile);
                     }
                 });

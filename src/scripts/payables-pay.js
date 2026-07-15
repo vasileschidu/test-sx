@@ -140,22 +140,23 @@
 
   function getDisplayStatus(row) {
     var status = String((row && row.status) || 'ready_to_pay');
+    var statusType = String((row && row.statusType) || '').toLowerCase();
+    if (status === 'scheduled' || (status === 'in_progress' && statusType === 'scheduled')) {
+      return { key: 'scheduled', label: 'Scheduled' };
+    }
     if (isPendingSmartDisburseRow(row)) {
       return { key: 'in_progress', label: SMART_DISBURSE_PENDING_STATUS_LABEL };
     }
     if (status === 'in_progress') {
-      return { key: 'in_progress', label: String((row && row.statusLabel) || 'In Progress') };
+      return { key: 'in_progress', label: 'In Progress' };
     }
     if (status === 'paid') {
-      return { key: 'paid', label: String((row && row.statusLabel) || 'Paid') };
+      return { key: 'paid', label: 'Paid' };
     }
     if (status === 'exception') {
-      return { key: 'exception', label: String((row && row.statusLabel) || 'Exception') };
+      return { key: 'exception', label: 'Exception' };
     }
-    if (status === 'scheduled') {
-      return { key: 'in_progress', label: String((row && row.statusLabel) || 'In Progress') };
-    }
-    return { key: 'ready_to_pay', label: String((row && row.statusLabel) || 'Ready to Pay') };
+    return { key: 'ready_to_pay', label: 'Ready to Pay' };
   }
 
   function isConfirmedPayableRow(row) {

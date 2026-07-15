@@ -343,7 +343,7 @@
       '          <div class="flex flex-col gap-0">' +
       '            <div class="flex gap-3">' +
       '              <div class="flex w-5 shrink-0 flex-col items-center"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#ffffff"/></svg></span><span class="w-[1.5px] flex-1 bg-blue-600"></span></div>' +
-      '              <div class="flex flex-col gap-2 pb-6"><p class="text-sm font-semibold leading-5 text-slate-950 dark:text-white">Process Any Payment</p></div>' +
+      '              <div class="flex flex-col gap-2 pb-6"><p class="text-sm font-semibold leading-5 text-slate-950 dark:text-white">Process Any Payment</p><p class="text-sm font-normal leading-5 text-gray-700 dark:text-gray-300">Go to Payments and process any available virtual card using your terminal.</p><a href="smart-exchange.html?guide=card-rows" data-stp-go-to-payments class="inline-flex w-fit max-w-fit shrink-0 items-center justify-center self-start rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Go to Payments</a></div>' +
       '            </div>' +
       '            <div class="flex gap-3">' +
       '              <div class="flex w-5 shrink-0 flex-col items-center"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#ffffff"/></svg></span><span class="w-[1.5px] flex-1 bg-blue-600"></span></div>' +
@@ -578,15 +578,24 @@
     return dialog;
   }
 
+  function safelyShowDialog(dialog) {
+    if (!dialog || typeof dialog.showModal !== 'function') return false;
+    if (dialog.open) return true;
+    try {
+      dialog.showModal();
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
+
   function openOptInModal() {
     var dialog = document.getElementById('pp-enable-stp-dialog');
-    if (dialog && typeof dialog.showModal === 'function') {
-      if (!dialog.open) dialog.showModal();
+    if (safelyShowDialog(dialog)) {
       return true;
     }
     var inlineDialog = ensureInlineOptInDialog();
-    if (inlineDialog && typeof inlineDialog.showModal === 'function') {
-      if (!inlineDialog.open) inlineDialog.showModal();
+    if (safelyShowDialog(inlineDialog)) {
       return true;
     }
     return false;
@@ -594,25 +603,68 @@
 
   function openSetupStepsModal() {
     var dialog = ensureInlineNextStepsDialog();
-    if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
-      dialog.showModal();
-      return true;
-    }
-    return false;
+    return safelyShowDialog(dialog);
   }
 
   function openVerifyModal() {
     var existing = document.getElementById('pp-verify-deposit-dialog');
-    if (existing && typeof existing.showModal === 'function') {
-      if (!existing.open) existing.showModal();
+    if (safelyShowDialog(existing)) {
       return true;
     }
     var dialog = ensureInlineVerifyDialog();
-    if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
-      dialog.showModal();
-      return true;
-    }
-    return false;
+    return safelyShowDialog(dialog);
+  }
+
+  function bindDelegatedStpTriggers() {
+    if (document.documentElement.getAttribute('data-stp-trigger-bound') === 'true') return;
+    document.documentElement.setAttribute('data-stp-trigger-bound', 'true');
+    document.addEventListener('click', function (event) {
+      var target = event.target;
+      if (!target || typeof target.closest !== 'function') return;
+
+      var goToPaymentsTrigger = target.closest('[data-stp-go-to-payments], #pp-stp-go-to-payments-btn, a[href*="smart-exchange.html?guide=card-rows"]');
+      if (goToPaymentsTrigger) {
+        closeOpenStpDialogs();
+        if (typeof setStpStep === 'function') setStpStep(STEP_TERMINAL_COMPLETED);
+        return;
+      }
+
+      var optInTrigger = target.closest('[data-stp-opt-in-trigger]');
+      if (optInTrigger) {
+        event.preventDefault();
+        openOptInModal();
+        return;
+      }
+
+      var verifyTrigger = target.closest('[data-stp-verify-trigger]');
+      if (verifyTrigger) {
+        event.preventDefault();
+        openVerifyModal();
+        return;
+      }
+
+      var learnMoreTrigger = target.closest('[data-stp-learn-more-trigger]');
+      if (learnMoreTrigger) {
+        event.preventDefault();
+        openSetupStepsModal();
+      }
+    });
+  }
+
+  function closeOpenStpDialogs() {
+    [
+      'pp-enable-stp-dialog',
+      'pp-stp-next-steps-dialog',
+      'sx-inline-stp-dialog',
+      'sx-inline-stp-next-steps-dialog',
+      'sx-inline-stp-verify-dialog',
+      'sx-inline-stp-verify-success-dialog'
+    ].forEach(function (id) {
+      var dialog = document.getElementById(id);
+      if (dialog && dialog.open && typeof dialog.close === 'function') {
+        try { dialog.close(); } catch (error) {}
+      }
+    });
   }
 
   window.addEventListener('storage', function (event) {
@@ -640,4 +692,6 @@
     STEP_BANK_VERIFICATION_REQUIRED: STEP_BANK_VERIFICATION_REQUIRED,
     STEP_COMPLETED: STEP_COMPLETED
   };
+
+  bindDelegatedStpTriggers();
 })();

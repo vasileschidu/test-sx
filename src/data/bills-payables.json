@@ -53,6 +53,11 @@
         "type": "status"
       },
       {
+        "key": "failureReason",
+        "label": "Failure Reason",
+        "sortable": true
+      },
+      {
         "key": "_action",
         "label": "",
         "type": "action"
