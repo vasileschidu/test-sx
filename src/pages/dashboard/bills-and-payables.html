@@ -35,10 +35,10 @@
     <app-topbar></app-topbar>
 
     <main class="flex w-full justify-center p-0 sm:p-2 lg:p-4">
-      <div class="flex w-full max-w-[1280px] flex-col gap-5">
-        <div class="flex min-h-[calc(100vh-12rem)] flex-col overflow-hidden rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900">
-          <div class="pt-5 sm:pt-6">
-          <div class="px-4 pb-5 sm:px-6">
+      <div class="flex w-full min-w-0 flex-col gap-5">
+        <div class="flex flex-col overflow-hidden rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900">
+          <div class="pt-3">
+          <div class="px-4 pb-3 sm:px-6">
             <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <div class="flex items-center gap-4">
                 <h1 class="text-xl font-semibold text-gray-900 dark:text-white whitespace-nowrap">Bills and Payables</h1>
@@ -177,7 +177,7 @@
           <div class="h-px bg-gray-200 dark:bg-white/10"></div>
           </div>
 
-          <div class="border-b border-gray-200 px-4 py-4 dark:border-white/10 sm:px-6">
+          <div class="border-b border-gray-200 px-4 py-2 dark:border-white/10 sm:px-6">
             <div class="grid grid-cols-1 sm:hidden">
               <select id="bp-tab-select" aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-gray-800/50 dark:text-gray-100 dark:*:bg-gray-800 dark:outline-white/10 dark:focus:outline-indigo-500">
                 <option value="ready_to_pay">Ready to Pay</option>
@@ -212,22 +212,122 @@
             </div>
           </div>
 
-          <div class="flex min-h-0 flex-1 flex-col">
-            <div class="flex-1 px-0 sm:px-4">
-              <div data-table-scroll class="overflow-x-auto">
-                <div class="inline-block min-w-full align-middle">
-                  <table id="bills-payables-table" class="min-w-full table-fixed border-separate border-spacing-0 divide-y divide-gray-200 dark:divide-white/10"></table>
+          <div class="flex flex-col">
+            <div class="px-0 sm:px-4">
+              <div data-table-scroll class="w-full max-w-full overflow-x-auto">
+                <div class="min-w-full align-middle">
+                  <table id="bills-payables-table" class="w-full min-w-max table-auto border-separate border-spacing-0 divide-y divide-gray-200 dark:divide-white/10"></table>
                 </div>
               </div>
             </div>
 
-            <div data-pagination class="sticky bottom-0 z-20 mt-auto border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:px-6"></div>
+            <div data-pagination class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:rounded-b-lg sm:px-6"></div>
           </div>
         </div>
       </div>
     </main>
     </div>
   </div>
+
+  <dialog id="bp-rerun-confirm-dialog" aria-labelledby="bp-rerun-confirm-title"
+    class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-gray-900/75">
+    <div tabindex="0" class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+      <div class="relative w-full max-w-[600px] transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+        <div class="flex justify-end px-4 pt-4">
+          <button type="button" data-bp-rerun-close
+            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+            <span class="sr-only">Close</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="px-6 pb-6 sm:px-8">
+          <h3 id="bp-rerun-confirm-title" class="text-xl font-semibold text-gray-900 dark:text-white">Re-run payment</h3>
+          <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Review the account and recipient details before re-running this payment.</p>
+
+          <div class="mt-6 hidden sm:grid sm:grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)] sm:items-start sm:gap-2">
+            <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Origination Account</p>
+            <span aria-hidden="true"></span>
+            <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Recipient</p>
+          </div>
+
+          <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-2">
+            <div class="min-w-0 flex-1">
+              <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100 sm:hidden">Origination Account</p>
+              <div class="mt-2 flex min-h-[74px] items-center gap-3 rounded-md bg-gray-100 px-4 py-3 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10 sm:mt-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0 text-gray-500 dark:text-gray-400" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" />
+                </svg>
+                <div class="min-w-0 flex-1">
+                  <p id="bp-rerun-origin-name" class="truncate text-sm font-medium text-gray-900 dark:text-white">--</p>
+                  <p id="bp-rerun-origin-sub" class="mt-1 text-sm text-gray-500 dark:text-gray-400">--</p>
+                </div>
+              </div>
+            </div>
+
+            <span class="hidden shrink-0 sm:inline-flex sm:items-center sm:justify-center">
+              <span class="inline-flex items-center justify-center rounded-full bg-gray-50 p-2 dark:bg-white/5">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
+                </svg>
+              </span>
+            </span>
+
+            <div class="min-w-0 flex-1">
+              <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100 sm:hidden">Recipient</p>
+              <div class="mt-2 flex min-h-[74px] items-center gap-3 rounded-md bg-gray-100 px-4 py-3 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10 sm:mt-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0 text-gray-500 dark:text-gray-400" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" />
+                </svg>
+                <div class="min-w-0 flex-1">
+                  <p id="bp-rerun-recipient-name" class="truncate text-sm font-medium text-gray-900 dark:text-white">--</p>
+                  <p id="bp-rerun-recipient-sub" class="mt-1 truncate text-sm text-gray-500 dark:text-gray-400">--</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="mt-3 rounded-md bg-gray-100 p-4 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10">
+            <dl class="space-y-2">
+              <div class="grid grid-cols-2 gap-4">
+                <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Transfer Amount</dt>
+                <dd id="bp-rerun-amount" class="text-right text-sm/6 text-gray-700 dark:text-gray-300">--</dd>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Payee</dt>
+                <dd id="bp-rerun-payee" class="truncate text-right text-sm/6 text-gray-700 dark:text-gray-300">--</dd>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Payment method</dt>
+                <dd id="bp-rerun-method" class="truncate text-right text-sm/6 text-gray-700 dark:text-gray-300">--</dd>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Payment date</dt>
+                <dd id="bp-rerun-date" class="text-right text-sm/6 text-gray-700 dark:text-gray-300">--</dd>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Failure reason</dt>
+                <dd id="bp-rerun-failure-reason" class="text-right text-sm/6 text-gray-700 dark:text-gray-300">--</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="flex w-full justify-end gap-3 px-6 py-5">
+          <button type="button" data-bp-rerun-close
+            class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+            Cancel
+          </button>
+          <button id="bp-rerun-confirm-btn" type="button"
+            class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
+            Re-run payment
+          </button>
+        </div>
+      </div>
+    </div>
+  </dialog>
 
   <dialog id="bp-schedule-cancel-dialog"
     class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-gray-900/75">
@@ -311,7 +411,7 @@
     </dialog>
   </el-dialog>
 
-  <script src="../../../src/scripts/bills-payables-table.js?v=20260715a"></script>
+  <script src="../../../src/scripts/bills-payables-table.js?v=20260806f"></script>
 </body>
 
 </html>

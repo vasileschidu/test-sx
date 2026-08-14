@@ -137,6 +137,7 @@
   var filterResizeHandler = null;
   var refreshHalfTurns = 0;
   var pendingScheduleCancelId = '';
+  var pendingRerunId = '';
   var draggingColumnKey = '';
   var ICON_SORT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-70" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-70" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
   var ICON_SORT_ASC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path transform="translate(10 5.6) scale(1.2) translate(-10 -5.6)" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-40" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
@@ -587,9 +588,27 @@
     return true;
   }
 
+  function moveDraftColumnKeyToPosition(movingKey, targetKey, position) {
+    if (!movingKey || !targetKey || movingKey === targetKey) return false;
+    var currentOrder = columnVisibilityState.draftOrderedKeys.slice();
+    var fromIndex = currentOrder.indexOf(movingKey);
+    var targetIndex = currentOrder.indexOf(targetKey);
+    if (fromIndex === -1 || targetIndex === -1) return false;
+    currentOrder.splice(fromIndex, 1);
+    targetIndex = currentOrder.indexOf(targetKey);
+    currentOrder.splice(position === 'after' ? targetIndex + 1 : targetIndex, 0, movingKey);
+    columnVisibilityState.draftOrderedKeys = currentOrder;
+    return true;
+  }
+
   function buildManageColumnsRowHTML(col, checked, disabled) {
+    var scopeBadge = col && col.key === 'failureReason'
+      ? '<span class="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 inset-ring inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-300 dark:inset-ring-red-400/20">Exceptions</span>'
+      : '';
     return '' +
-      '<div data-column-order-row="' + escapeHtml(col.key) + '" class="group flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 group-has-checked:bg-blue-50 dark:hover:bg-white/5 dark:group-has-checked:bg-blue-500/10' + (disabled ? ' opacity-60' : '') + '">' +
+      '<div data-column-order-row="' + escapeHtml(col.key) + '" class="group relative flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 group-has-checked:bg-blue-50 dark:hover:bg-white/5 dark:group-has-checked:bg-blue-500/10' + (disabled ? ' opacity-60' : '') + '">' +
+      '  <span data-drop-line="before" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="top:0;transform:translateY(-50%);"></span>' +
+      '  <span data-drop-line="after" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="bottom:0;transform:translateY(50%);"></span>' +
       '  <button type="button" draggable="true" data-column-drag-handle="' + escapeHtml(col.key) + '" class="inline-flex size-5 shrink-0 cursor-grab items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-500 active:cursor-grabbing dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
       '    <span class="sr-only">Reorder column</span>' +
       '    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-4" aria-hidden="true">' +
@@ -604,7 +623,10 @@
       '        <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
       '      </svg>' +
       '    </div>' +
-      '    <span class="min-w-0 flex-1 text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(col.label || col.key) + '</span>' +
+      '    <span class="flex min-w-0 flex-1 items-center gap-2">' +
+      '      <span class="truncate text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(col.label || col.key) + '</span>' +
+             scopeBadge +
+      '    </span>' +
       '  </label>' +
       '</div>';
   }
@@ -899,10 +921,6 @@
     });
   }
 
-  function isFailureReasonTabActive() {
-    return state.activeTab === 'exception';
-  }
-
   function getFilteredRows() {
     return sortRows(getTabRows().filter(function (row) {
       return matchesSearch(row, state.search) && matchesFilters(row);
@@ -911,10 +929,8 @@
 
   function getRenderableColumns() {
     var cols = getVisibleColumns(state.columns);
-    if (!isFailureReasonTabActive()) {
-      cols = cols.filter(function (col) {
-        return col && col.key !== 'failureReason';
-      });
+    if (state.activeTab !== 'exception') {
+      cols = cols.filter(function (col) { return col && col.key !== 'failureReason'; });
     }
     if (state.activeTab === 'ready_to_pay') {
       cols = cols.filter(function (col) {
@@ -1064,25 +1080,26 @@
   function moveRowToInProgress(rowId) {
     var today = getTodayIsoDate();
     state.allRows = state.allRows.map(function (row) {
-      if (row.id !== rowId) return row;
+      if (String(row.id || '') !== String(rowId || '')) return row;
       var updated = Object.assign({}, row);
       updated.status = 'in_progress';
       updated.statusType = 'processing';
       updated.statusLabel = 'Processing';
       updated.adDate = today;
       updated.details = Object.assign({}, updated.details || {});
+      var previousActivity = Array.isArray(updated.details.activityLog) ? updated.details.activityLog : [];
       updated.details.activityLog = [
         {
           type: 'processing',
           title: 'Processing',
-          description: 'Payment was initiated on ' + formatDate(today) + ' and is currently processing.',
+          description: 'Payment was re-run on ' + formatDate(today) + ' and is currently processing.',
         },
         {
           type: 'event',
-          title: 'Initiated',
-          description: 'Payment was initiated on ' + formatDate(today) + '.',
+          title: 'Re-run confirmed',
+          description: 'Payment re-run was confirmed on ' + formatDate(today) + '.',
         },
-      ];
+      ].concat(previousActivity);
       persistPayableOverride(updated);
       return updated;
     });
@@ -1144,6 +1161,111 @@
     var dialog = document.getElementById(id);
     if (!dialog || typeof dialog.close !== 'function') return;
     if (dialog.open) dialog.close();
+  }
+
+  function findRowById(rowId) {
+    for (var i = 0; i < state.allRows.length; i += 1) {
+      if (String(state.allRows[i] && state.allRows[i].id || '') === String(rowId || '')) {
+        return state.allRows[i];
+      }
+    }
+    return null;
+  }
+
+  function setRerunDialogText(id, value) {
+    var element = document.getElementById(id);
+    if (element) element.textContent = String(value || '--');
+  }
+
+  function getRerunOriginationAccount(row) {
+    var payPageState = row && row.details && row.details.payPageState ? row.details.payPageState : {};
+    var selectedId = String(payPageState.originationAccountId || '').trim();
+    var accounts = getStoredOriginationAccounts();
+    var selected = null;
+
+    for (var i = 0; i < accounts.length; i += 1) {
+      if (selectedId && String(accounts[i] && accounts[i].id || '') === selectedId) {
+        selected = accounts[i];
+        break;
+      }
+    }
+    if (!selected) {
+      for (var j = 0; j < accounts.length; j += 1) {
+        if (String(accounts[j] && accounts[j].accountType || '').toLowerCase() !== 'balance_account') {
+          selected = accounts[j];
+          break;
+        }
+      }
+    }
+
+    var name = selected
+      ? String(selected.displayName || selected.bankName || selected.name || 'Origination Account')
+      : 'Wells Fargo Account';
+    var last4 = selected
+      ? getDigits(selected.last4 || selected.accountNumber || selected.maskedAccount || '').slice(-4)
+      : '8419';
+    return {
+      name: name,
+      sub: last4 ? ('••••' + last4) : 'Bank account',
+    };
+  }
+
+  function getRerunRecipientSummary(row) {
+    var type = String(row && (row.paymentMethodType || row.method) || '').toLowerCase();
+    var last4 = getDigits(row && (row.paymentMethodEnding || row.bankLast4 || row.cardLast4) || '').slice(-4);
+    if (type === 'card') {
+      return String(row.cardNetwork || 'Card') + (last4 ? (' ••••' + last4) : '');
+    }
+    if (type === 'ach' || type === 'wire') {
+      return (type === 'wire' ? 'Wire account' : 'Bank account') + (last4 ? (' ••••' + last4) : '');
+    }
+    return String(row && (row.paymentMethodLabel || row.paymentMethod) || 'Payment recipient');
+  }
+
+  function syncRerunConfirmDialogContent(row) {
+    if (!row) return;
+    var origin = getRerunOriginationAccount(row);
+    var method = String(row.paymentMethodLabel || row.paymentMethod || 'Payment method');
+    var amount = formatMoney(row.amount, row.currency);
+    setRerunDialogText('bp-rerun-confirm-title', 'Re-run ' + amount + ' payment');
+    setRerunDialogText('bp-rerun-origin-name', origin.name);
+    setRerunDialogText('bp-rerun-origin-sub', origin.sub);
+    setRerunDialogText('bp-rerun-recipient-name', row.payeeName || 'Payee');
+    setRerunDialogText('bp-rerun-recipient-sub', getRerunRecipientSummary(row));
+    setRerunDialogText('bp-rerun-amount', amount);
+    setRerunDialogText('bp-rerun-payee', row.payeeName || 'Payee');
+    setRerunDialogText('bp-rerun-method', method);
+    setRerunDialogText('bp-rerun-date', formatDate(getTodayIsoDate()));
+    setRerunDialogText('bp-rerun-failure-reason', getFailureReason(row));
+  }
+
+  function initRerunConfirmDialog() {
+    var dialog = document.getElementById('bp-rerun-confirm-dialog');
+    var confirmBtn = document.getElementById('bp-rerun-confirm-btn');
+    if (!dialog || !confirmBtn) return;
+
+    dialog.querySelectorAll('[data-bp-rerun-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        pendingRerunId = '';
+        closeDialogById('bp-rerun-confirm-dialog');
+      });
+    });
+
+    dialog.addEventListener('close', function () {
+      pendingRerunId = '';
+    });
+
+    confirmBtn.addEventListener('click', function () {
+      if (!pendingRerunId) {
+        closeDialogById('bp-rerun-confirm-dialog');
+        return;
+      }
+      moveRowToInProgress(pendingRerunId);
+      pendingRerunId = '';
+      state.currentPage = 1;
+      renderAll();
+      closeDialogById('bp-rerun-confirm-dialog');
+    });
   }
 
   function syncScheduledCancelDialogContent(row) {
@@ -1256,6 +1378,10 @@
     return list;
   }
 
+  function getCompleteManageColumnsSchema() {
+    return ensurePaymentMethodColumn(state.columns);
+  }
+
   function getVisibleRows(filteredRows) {
     var start = (state.currentPage - 1) * state.pageSize;
     return filteredRows.slice(start, start + state.pageSize);
@@ -1292,7 +1418,7 @@
   }
 
   function getBaseFilterRows() {
-    return getTabRows();
+    return Array.isArray(state.allRows) ? state.allRows : [];
   }
 
   function buildFilterCheckbox(id, label, countText, value, checked) {
@@ -1956,6 +2082,7 @@
         var openBtn = event.target.closest('button[data-filter-tag-open]');
         if (openBtn) {
           event.preventDefault();
+          event.stopPropagation();
           var panelType = openBtn.getAttribute('data-filter-tag-open');
           state.activeFilterPanel = panelType || 'source';
           setFilterMenuOpen(true);
@@ -2006,11 +2133,43 @@
 
   function initManageColumnsModal() {
     if (!refs.manageColumnsBtn || !refs.manageColumnsDialog || !refs.manageColumnsList || !refs.manageColumnsApplyBtn || !refs.manageColumnsResetBtn) return;
+    var dragTargetPosition = 'before';
+    var dragTargetKey = '';
+
+    function clearDropIndicators() {
+      Array.from(refs.manageColumnsList.querySelectorAll('[data-drop-line]')).forEach(function (line) {
+        line.classList.remove('opacity-100');
+        line.classList.add('opacity-0');
+      });
+    }
+
+    function setDropIndicator(row, position) {
+      clearDropIndicators();
+      if (!row) return;
+      var indicator = row.querySelector('[data-drop-line="' + (position === 'after' ? 'after' : 'before') + '"]');
+      if (indicator) {
+        indicator.classList.remove('opacity-0');
+        indicator.classList.add('opacity-100');
+      }
+      dragTargetKey = row.getAttribute('data-column-order-row') || '';
+      dragTargetPosition = position === 'after' ? 'after' : 'before';
+    }
+
+    function getNearestDropTarget(clientY) {
+      var rows = Array.from(refs.manageColumnsList.querySelectorAll('[data-column-order-row]')).filter(function (row) {
+        return row.getAttribute('data-column-order-row') !== draggingColumnKey;
+      });
+      if (!rows.length) return null;
+      for (var i = 0; i < rows.length; i += 1) {
+        var rect = rows[i].getBoundingClientRect();
+        if (clientY < rect.top + (rect.height / 2)) return { row: rows[i], position: 'before' };
+      }
+      return { row: rows[rows.length - 1], position: 'after' };
+    }
 
     syncManageColumnsUi = function () {
-      var orderedColumns = getOrderedManageableColumns(state.columns).filter(function (col) {
-        return isFailureReasonTabActive() || !col || col.key !== 'failureReason';
-      });
+      var allColumns = getCompleteManageColumnsSchema();
+      var orderedColumns = getOrderedManageableColumns(allColumns);
       refs.manageColumnsList.innerHTML = orderedColumns.map(function (col) {
         var checked = columnVisibilityState.draftVisibleKeys.has(col.key);
         var visibleCount = orderedColumns.reduce(function (count, item) {
@@ -2020,17 +2179,20 @@
         return buildManageColumnsRowHTML(col, checked, disabled);
       }).join('');
       refs.manageColumnsApplyBtn.disabled = !isColumnDraftDirty();
-      refs.manageColumnsResetBtn.disabled = isColumnDraftDefault(state.columns);
+      refs.manageColumnsResetBtn.disabled = isColumnDraftDefault(allColumns);
     };
 
     refs.manageColumnsBtn.addEventListener('click', function () {
-      cloneColumnDraftFromApplied(state.columns);
+      cloneColumnDraftFromApplied(getCompleteManageColumnsSchema());
       syncManageColumnsUi();
     });
 
     refs.manageColumnsDialog.addEventListener('close', function () {
       draggingColumnKey = '';
-      cloneColumnDraftFromApplied(state.columns);
+      dragTargetKey = '';
+      dragTargetPosition = 'before';
+      clearDropIndicators();
+      cloneColumnDraftFromApplied(getCompleteManageColumnsSchema());
       syncManageColumnsUi();
       renderTable();
     });
@@ -2044,7 +2206,7 @@
     });
 
     refs.manageColumnsResetBtn.addEventListener('click', function () {
-      resetColumnDraftToDefault(state.columns);
+      resetColumnDraftToDefault(getCompleteManageColumnsSchema());
       syncManageColumnsUi();
       renderTable();
     });
@@ -2056,6 +2218,10 @@
       if (!key) return;
       if (input.checked) columnVisibilityState.draftVisibleKeys.add(key);
       else columnVisibilityState.draftVisibleKeys.delete(key);
+      if (input.checked && key === 'failureReason' && state.activeTab !== 'exception') {
+        startTabSwitchLoading('exception');
+        return;
+      }
       syncManageColumnsUi();
       renderTable();
     });
@@ -2064,6 +2230,8 @@
       var handle = event.target.closest('[data-column-drag-handle]');
       if (!handle) return;
       draggingColumnKey = handle.getAttribute('data-column-drag-handle') || '';
+      dragTargetKey = '';
+      dragTargetPosition = 'before';
       event.dataTransfer.effectAllowed = 'move';
       try {
         event.dataTransfer.setData('text/plain', draggingColumnKey);
@@ -2071,28 +2239,37 @@
     });
 
     refs.manageColumnsList.addEventListener('dragover', function (event) {
-      var row = event.target.closest('[data-column-order-row]');
-      if (!draggingColumnKey || !row) return;
+      if (!draggingColumnKey) return;
       event.preventDefault();
+      var target = getNearestDropTarget(event.clientY);
+      if (!target) {
+        clearDropIndicators();
+        return;
+      }
+      setDropIndicator(target.row, target.position);
       event.dataTransfer.dropEffect = 'move';
     });
 
     refs.manageColumnsList.addEventListener('drop', function (event) {
-      var row = event.target.closest('[data-column-order-row]');
-      if (!draggingColumnKey || !row) return;
+      if (!draggingColumnKey) return;
       event.preventDefault();
-      var targetKey = row.getAttribute('data-column-order-row') || '';
-      if (moveDraftColumnKeyBefore(draggingColumnKey, targetKey)) {
+      var targetKey = dragTargetKey;
+      clearDropIndicators();
+      if (moveDraftColumnKeyToPosition(draggingColumnKey, targetKey, dragTargetPosition)) {
         syncManageColumnsUi();
         renderTable();
       }
+      dragTargetKey = '';
     });
 
     refs.manageColumnsList.addEventListener('dragend', function () {
       draggingColumnKey = '';
+      dragTargetKey = '';
+      dragTargetPosition = 'before';
+      clearDropIndicators();
     });
 
-    cloneColumnDraftFromApplied(state.columns);
+    cloneColumnDraftFromApplied(getCompleteManageColumnsSchema());
     syncManageColumnsUi();
   }
 
@@ -2649,9 +2826,15 @@
 
         var rerunBtn = e.target.closest('[data-rerun-id]');
         if (rerunBtn) {
-          moveRowToInProgress(rerunBtn.getAttribute('data-rerun-id'));
-          state.currentPage = 1;
-          renderAll();
+          pendingRerunId = String(rerunBtn.getAttribute('data-rerun-id') || '').trim();
+          if (!pendingRerunId) return;
+          var rerunRow = findRowById(pendingRerunId);
+          if (!rerunRow) {
+            pendingRerunId = '';
+            return;
+          }
+          syncRerunConfirmDialogContent(rerunRow);
+          openDialogById('bp-rerun-confirm-dialog');
           return;
         }
 
@@ -2790,6 +2973,7 @@
         return;
       }
       bindEvents();
+      initRerunConfirmDialog();
       initScheduledCancelDialog();
       initTableFilterDropdown();
       initManageColumnsModal();

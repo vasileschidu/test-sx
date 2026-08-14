@@ -66,7 +66,7 @@
 
 
 
-            <div class="flex w-full max-w-[1280px] flex-col 0 gap-5">
+            <div class="flex w-full min-w-0 flex-col gap-5">
 
                 <!-- ===== GET PAID PANEL ===== -->
                 <div id="get-paid-panel"
@@ -933,8 +933,8 @@
                     class="relative overflow-visible rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900">
 
                     <!-- ===== CARD HEADER ===== -->
-                    <div class="pt-5 sm:pt-6">
-                    <div class="px-4 pb-5 sm:px-6">
+                    <div class="pt-3">
+                    <div class="px-4 pb-3 sm:px-6">
                         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                             <div class="flex items-center gap-4">
                                 <h1 class="text-xl font-semibold text-gray-900 dark:text-white whitespace-nowrap">
@@ -1160,7 +1160,7 @@
                     </div>
 
                     <!-- ===== STATUS TABS ===== -->
-                    <div class="border-t border-b border-gray-200 px-4 py-4 sm:px-6 dark:border-white/10">
+                    <div class="border-t border-b border-gray-200 px-4 py-2 sm:px-6 dark:border-white/10">
 
                         <div class="grid grid-cols-1 sm:hidden">
                             <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
@@ -1204,10 +1204,10 @@
 
                     <!-- ===== TABLE ===== -->
                     <div class="px-0 sm:px-4">
-                        <div data-table-scroll class="overflow-x-auto">
-                            <div class="inline-block min-w-full align-middle">
+                        <div data-table-scroll class="w-full max-w-full overflow-x-auto">
+                            <div class="min-w-full align-middle">
                                 <table id="exchanges-table"
-                                    class="min-w-full table-fixed border-separate border-spacing-0 divide-y divide-gray-200 dark:divide-white/10">
+                                    class="w-full min-w-max table-auto border-separate border-spacing-0 divide-y divide-gray-200 dark:divide-white/10">
                                     <!-- Table header and rows are rendered dynamically by exchanges-table.js -->
                                     <!-- Config + data source: src/data/exchanges.json -->
                                 </table>
@@ -1222,7 +1222,7 @@
 
                     <!-- ===== PAGINATION (rendered by exchanges-table.js) ===== -->
                     <div data-pagination
-                        class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:px-6">
+                        class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:rounded-b-lg sm:px-6">
                     </div>
 
                 </div>
@@ -1978,7 +1978,7 @@
     </el-dialog>
 
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
-    <script src="../../../src/scripts/exchanges-table.js?v=20260715a"></script>
+    <script src="../../../src/scripts/exchanges-table.js?v=20260806e"></script>
 
 </body>
 

@@ -450,10 +450,6 @@
     return getSortedEntries(filtered);
   }
 
-  function isFailureReasonTabActive() {
-    return (_activeTableTabKey || 'pending') === 'exceptions';
-  }
-
   function normalizeTabKey(tabKey) {
     var key = String(tabKey || '').trim();
     return Object.prototype.hasOwnProperty.call(TAB_STATUS_FILTER, key) ? key : 'pending';
@@ -528,7 +524,7 @@
   function resetColumnDraftToDefault(columns) {
     var defaultKeys = getDefaultManageableColumnKeys(columns);
     columnVisibilityState.draftVisibleKeys = new Set(defaultKeys);
-    columnVisibilityState.draftOrderedKeys = defaultKeys.slice();
+    columnVisibilityState.draftOrderedKeys = getManageableColumns(columns).map(function (col) { return col.key; });
   }
 
   function commitColumnDraft() {
@@ -560,8 +556,9 @@
 
   function isColumnDraftDefault(columns) {
     var defaultKeys = getDefaultManageableColumnKeys(columns);
+    var defaultOrder = getManageableColumns(columns).map(function (col) { return col.key; });
     return setsMatch(columnVisibilityState.draftVisibleKeys, new Set(defaultKeys)) &&
-      arraysMatch(columnVisibilityState.draftOrderedKeys, defaultKeys);
+      arraysMatch(columnVisibilityState.draftOrderedKeys, defaultOrder);
   }
 
   function getVisibleColumns(columns) {
@@ -600,11 +597,27 @@
   }
 
   function getRenderableColumns(columns) {
-    var list = getVisibleColumns(columns);
-    if (isFailureReasonTabActive()) return list;
-    return list.filter(function (col) {
-      return col && col.key !== 'failureReason';
+    var visibleColumns = getVisibleColumns(columns);
+    if (normalizeTabKey(_activeTableTabKey || 'pending') !== 'exceptions') {
+      visibleColumns = visibleColumns.filter(function (col) {
+        return col && col.key !== 'failureReason';
+      });
+    }
+    return visibleColumns;
+  }
+
+  function ensureCompleteExchangeColumns(columns) {
+    var list = Array.isArray(columns) ? columns.slice() : [];
+    var hasFailureReason = list.some(function (col) {
+      return col && col.key === 'failureReason';
     });
+    if (!hasFailureReason) {
+      var statusIndex = list.findIndex(function (col) { return col && col.key === 'status'; });
+      var failureReasonColumn = { key: 'failureReason', label: 'Failure Reason', sortable: true };
+      if (statusIndex >= 0) list.splice(statusIndex + 1, 0, failureReasonColumn);
+      else list.push(failureReasonColumn);
+    }
+    return list;
   }
 
   function getOrderedManageableColumns(columns) {
@@ -632,9 +645,27 @@
     return true;
   }
 
+  function moveDraftColumnKeyToPosition(movingKey, targetKey, position) {
+    if (!movingKey || !targetKey || movingKey === targetKey) return false;
+    var currentOrder = columnVisibilityState.draftOrderedKeys.slice();
+    var fromIndex = currentOrder.indexOf(movingKey);
+    var targetIndex = currentOrder.indexOf(targetKey);
+    if (fromIndex === -1 || targetIndex === -1) return false;
+    currentOrder.splice(fromIndex, 1);
+    targetIndex = currentOrder.indexOf(targetKey);
+    currentOrder.splice(position === 'after' ? targetIndex + 1 : targetIndex, 0, movingKey);
+    columnVisibilityState.draftOrderedKeys = currentOrder;
+    return true;
+  }
+
   function buildManageColumnsRowHTML(col, checked, disabled) {
+    var scopeBadge = col && col.key === 'failureReason'
+      ? '<span class="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 inset-ring inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-300 dark:inset-ring-red-400/20">Exceptions</span>'
+      : '';
     return '' +
-      '<div data-column-order-row="' + escapeHtml(col.key) + '" class="group flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 dark:hover:bg-white/5' + (disabled ? ' opacity-60' : '') + '">' +
+      '<div data-column-order-row="' + escapeHtml(col.key) + '" class="group relative flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 dark:hover:bg-white/5' + (disabled ? ' opacity-60' : '') + '">' +
+      '  <span data-drop-line="before" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="top:0;transform:translateY(-50%);"></span>' +
+      '  <span data-drop-line="after" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="bottom:0;transform:translateY(50%);"></span>' +
       '  <button type="button" draggable="true" data-column-drag-handle="' + escapeHtml(col.key) + '" class="inline-flex size-5 shrink-0 cursor-grab items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-500 active:cursor-grabbing dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
       '    <span class="sr-only">Reorder column</span>' +
       '    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-4" aria-hidden="true">' +
@@ -649,8 +680,9 @@
       '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
       '    </svg>' +
       '  </div>' +
-      '  <span class="min-w-0 flex-1">' +
-      '    <span class="block text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(col.label || col.key) + '</span>' +
+      '  <span class="flex min-w-0 flex-1 items-center gap-2">' +
+      '    <span class="truncate text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(col.label || col.key) + '</span>' +
+           scopeBadge +
       '  </span>' +
       '  </label>' +
       '</div>';
@@ -2674,7 +2706,7 @@
     }
 
     function getBaseFilterEntries() {
-      return filterEntriesByTab(_activeTableTabKey || 'pending');
+      return Array.isArray(paginationState.sourceEntries) ? paginationState.sourceEntries : [];
     }
 
     function isIsoDateString(value) {
@@ -3477,7 +3509,7 @@
           event.preventDefault();
           event.stopPropagation();
           var panelType = openBtn.getAttribute('data-filter-tag-open');
-          if (panelType === 'customer' || panelType === 'status' || panelType === 'method' || panelType === 'initiated_date') {
+          if (panelType === 'customer' || panelType === 'status' || panelType === 'method' || panelType === 'failure_reason' || panelType === 'initiated_date') {
             syncTableFilterUi();
             setFilterMenuOpen(true);
             setFilterPanel(panelType);
@@ -3654,13 +3686,44 @@
     var manageColumnsApplyBtn = document.getElementById('sx-manage-columns-apply-btn');
     var manageColumnsResetBtn = document.getElementById('sx-manage-columns-reset-btn');
     var draggingColumnKey = '';
+    var dragTargetPosition = 'before';
+    var dragTargetKey = '';
     if (!manageColumnsDialog || !manageColumnsList || !manageColumnsApplyBtn || !manageColumnsResetBtn) return;
+
+    function clearDropIndicators() {
+      Array.from(manageColumnsList.querySelectorAll('[data-drop-line]')).forEach(function (line) {
+        line.classList.remove('opacity-100');
+        line.classList.add('opacity-0');
+      });
+    }
+
+    function setDropIndicator(row, position) {
+      clearDropIndicators();
+      if (!row) return;
+      var indicator = row.querySelector('[data-drop-line="' + (position === 'after' ? 'after' : 'before') + '"]');
+      if (indicator) {
+        indicator.classList.remove('opacity-0');
+        indicator.classList.add('opacity-100');
+      }
+      dragTargetKey = row.getAttribute('data-column-order-row') || '';
+      dragTargetPosition = position === 'after' ? 'after' : 'before';
+    }
+
+    function getNearestDropTarget(clientY) {
+      var rows = Array.from(manageColumnsList.querySelectorAll('[data-column-order-row]')).filter(function (row) {
+        return row.getAttribute('data-column-order-row') !== draggingColumnKey;
+      });
+      if (!rows.length) return null;
+      for (var i = 0; i < rows.length; i += 1) {
+        var rect = rows[i].getBoundingClientRect();
+        if (clientY < rect.top + (rect.height / 2)) return { row: rows[i], position: 'before' };
+      }
+      return { row: rows[rows.length - 1], position: 'after' };
+    }
 
     syncManageColumnsUi = function () {
       var allColumns = paginationState.allColumns || paginationState.columns || [];
-      var manageableColumns = getOrderedManageableColumns(allColumns).filter(function (col) {
-        return isFailureReasonTabActive() || !col || col.key !== 'failureReason';
-      });
+      var manageableColumns = getOrderedManageableColumns(allColumns);
       ensureColumnVisibilityState(allColumns);
       var visibleCount = manageableColumns.filter(function (col) {
         return columnVisibilityState.draftVisibleKeys.has(col.key);
@@ -3680,6 +3743,8 @@
       var row = handle.closest('[data-column-order-row]');
       if (!row) return;
       draggingColumnKey = row.getAttribute('data-column-order-row') || '';
+      dragTargetKey = '';
+      dragTargetPosition = 'before';
       if (!draggingColumnKey) return;
       row.classList.add('opacity-60');
       if (event.dataTransfer) {
@@ -3692,42 +3757,36 @@
       var row = event.target.closest('[data-column-order-row]');
       if (row) row.classList.remove('opacity-60');
       draggingColumnKey = '';
-      Array.from(manageColumnsList.querySelectorAll('[data-column-order-row]')).forEach(function (item) {
-        item.classList.remove('ring-2', 'ring-blue-500');
-      });
+      dragTargetKey = '';
+      dragTargetPosition = 'before';
+      clearDropIndicators();
     });
 
     manageColumnsList.addEventListener('dragover', function (event) {
-      var row = event.target.closest('[data-column-order-row]');
       if (!draggingColumnKey) return;
       event.preventDefault();
-      Array.from(manageColumnsList.querySelectorAll('[data-column-order-row]')).forEach(function (item) {
-        item.classList.remove('ring-2', 'ring-blue-500');
-      });
-      if (row) row.classList.add('ring-2', 'ring-blue-500');
+      var target = getNearestDropTarget(event.clientY);
+      if (!target) {
+        clearDropIndicators();
+        return;
+      }
+      setDropIndicator(target.row, target.position);
       if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
     });
 
     manageColumnsList.addEventListener('drop', function (event) {
-      var row = event.target.closest('[data-column-order-row]');
       if (!draggingColumnKey) return;
       event.preventDefault();
-      if (!row) {
-        var currentOrder = columnVisibilityState.draftOrderedKeys.slice().filter(function (key) { return key !== draggingColumnKey; });
-        currentOrder.push(draggingColumnKey);
-        columnVisibilityState.draftOrderedKeys = currentOrder;
-        syncManageColumnsUi();
-        rerenderVisibleColumns();
-        return;
-      }
-      var targetKey = row.getAttribute('data-column-order-row') || '';
-      if (moveDraftColumnKeyBefore(draggingColumnKey, targetKey)) {
+      var targetKey = dragTargetKey;
+      clearDropIndicators();
+      if (moveDraftColumnKeyToPosition(draggingColumnKey, targetKey, dragTargetPosition)) {
         syncManageColumnsUi();
         rerenderVisibleColumns();
       } else {
         syncManageColumnsUi();
         rerenderVisibleColumns();
       }
+      dragTargetKey = '';
     });
 
     manageColumnsList.addEventListener('change', function (event) {
@@ -3739,6 +3798,13 @@
         columnVisibilityState.draftVisibleKeys.add(key);
       } else {
         columnVisibilityState.draftVisibleKeys.delete(key);
+      }
+      if (checkbox.checked && key === 'failureReason' && normalizeTabKey(_activeTableTabKey || 'pending') !== 'exceptions') {
+        syncManageColumnsUi();
+        var exceptionsTab = document.querySelector(TAB_NAV_SELECTOR + ' [data-tab="exceptions"]');
+        if (exceptionsTab) exceptionsTab.click();
+        else startTabSwitchLoading('exceptions');
+        return;
       }
       syncManageColumnsUi();
       rerenderVisibleColumns();
@@ -3761,6 +3827,10 @@
 
     manageColumnsDialog.addEventListener('close', function () {
       var allColumns = paginationState.allColumns || paginationState.columns || [];
+      draggingColumnKey = '';
+      dragTargetKey = '';
+      dragTargetPosition = 'before';
+      clearDropIndicators();
       cloneColumnDraftFromApplied(allColumns);
       syncManageColumnsUi();
       rerenderVisibleColumns();
@@ -4813,7 +4883,7 @@
       var rawData;
 
       if (payload && payload.tableConfig && Array.isArray(payload.data)) {
-        columns = payload.tableConfig.columns;
+        columns = ensureCompleteExchangeColumns(payload.tableConfig.columns);
         rawData = payload.data;
       } else if (Array.isArray(payload)) {
         columns = null;
