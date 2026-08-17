@@ -8,11 +8,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var pageLoader = window.SDOnboardingContext && window.SDOnboardingContext.createLoadingOverlay
         ? window.SDOnboardingContext.createLoadingOverlay({
-            targets: ['#instant-card-description', '#firstName', '#lastName', '#phoneNumber', '#email', '#addressLine1', '#addressLine2', '#city', '#state', '#zipCode', '#country']
+            targets: ['#instant-card-description']
           })
         : { done: function () {} };
       var REQUIRED_IDS = ['firstName', 'lastName', 'addressLine1', 'city', 'state', 'zipCode', 'country', 'phoneNumber', 'email'];
@@ -115,15 +116,13 @@
   <div class="mx-auto max-w-[1024px] w-full h-screen bg-white flex flex-row overflow-hidden">
 
     <!-- LEFT SIDEBAR -->
-    <div class="bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex flex-col p-[56px] gap-[35px]">
+    <div class="bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex flex-col px-10 py-[56px] gap-[35px]">
 
-      <!-- Logo -->
-      <button class="ml-auto flex items-center gap-2 p-2.5 rounded-lg bg-gray-900/25 hover:bg-gray-900/35">
-        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
-          <path d="M18.6709 15.8289L15.1834 13.8033L8.12004 17.9137L18.5088 23.9562C18.666 24.0449 18.8625 23.9956 18.9558 23.8379C18.9853 23.7886 19 23.7295 19 23.6703L19 16.4007C19 16.1641 18.8772 15.9472 18.6709 15.8289Z" fill="white"/>
-          <path d="M18.6709 10.171C18.8772 10.0527 19 9.83584 19 9.59926L19 2.32958C19 2.27044 18.9853 2.2113 18.9558 2.16201C18.8674 2.0043 18.666 1.95501 18.5088 2.04372L6.92153 8.78112C6.81838 8.84026 6.75453 8.94869 6.74961 9.06697L6.74961 17.1006L18.6709 10.171Z" fill="white"/>
-        </svg>
-      </button>
+      <!-- Logo (placeholder) -->
+      <div class="h-[60px] w-full max-w-[246px] shrink-0 overflow-hidden rounded-xl bg-white px-4 py-2">
+        <img src="https://tailwindcss.com/plus-assets/img/logos/158x48/transistor-logo-gray-900.svg"
+          alt="Transistor" width="158" height="48" class="h-full w-full object-contain" />
+      </div>
 
       <!-- Stepper Nav -->
       <nav aria-label="Progress">
@@ -210,6 +209,29 @@
           </li>
         </ol>
       </nav>
+
+      <!-- Contact / Decline -->
+      <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
+
+        <button type="button"
+          class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+          </svg>
+          <span class="flex-1 text-xs font-medium">Contact us</span>
+        </button>
+
+        <div class="h-px w-full self-stretch bg-white/10"></div>
+
+        <button type="button"
+          class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+          <span class="flex-1 text-xs font-medium">Decline Payment</span>
+        </button>
+
+      </div>
     </div>
 
     <!-- RIGHT COLUMN (scrolls) -->
@@ -217,13 +239,13 @@
       <div class="min-h-screen flex flex-col">
 
         <!-- Content area -->
-        <div class="flex-1 flex flex-col items-center px-10 pt-12 pb-8">
+        <div data-ob-content class="flex-1 flex flex-col items-center px-10 pt-12 pb-8">
           <div class="w-full max-w-[640px]">
 
             <h1 class="text-3xl font-semibold text-gray-900">Get an Instant Virtual Card</h1>
             <p id="instant-card-description" class="mt-2 text-sm text-gray-500">$3,526.00 will be deposited on an instantly issued Virtual Card.</p>
 
-            <div class="mt-10 space-y-8">
+            <div data-ob-skeleton-region class="mt-10 space-y-8">
 
               <!-- Name + Contact (no section header) -->
               <div>

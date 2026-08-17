@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var KEY = 'sd-onboarding-state';
@@ -42,7 +43,7 @@
 
 <body class="min-h-screen bg-white antialiased font-['Inter'] flex flex-col px-6">
 
-  <main class="flex-1 flex flex-col items-center justify-center py-12 gap-6">
+  <main data-ob-content class="flex-1 flex flex-col items-center justify-center py-12 gap-6">
 
     <!-- Success header -->
     <div class="flex flex-col items-center text-center gap-3">
@@ -92,11 +93,11 @@
       <dl class="p-4">
         <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt class="text-sm/6 font-medium text-gray-900">Full Name</dt>
-          <dd id="rcpt-name" class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+          <dd data-ob-skeleton id="rcpt-name" class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
         </div>
         <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt class="text-sm/6 font-medium text-gray-900">Receipt Date</dt>
-          <dd id="rcpt-date" class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+          <dd data-ob-skeleton id="rcpt-date" class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
         </div>
         <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
           <dt class="text-sm/6 font-medium text-gray-900">Transaction ID</dt>

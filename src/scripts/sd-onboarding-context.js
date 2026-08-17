@@ -119,6 +119,11 @@ window.SDOnboardingContext = (function () {
         if (rows[j] && String(rows[j].billNumber) === billNumber) return rows[j];
       }
     }
+    // No link parameters and nothing saved yet: fall back to the first payable
+    // so the flow always opens with vendor data, the way a real invite would.
+    for (var k = 0; k < rows.length; k += 1) {
+      if (rows[k] && rows[k].payeeId) return rows[k];
+    }
     return null;
   }
 
@@ -143,6 +148,7 @@ window.SDOnboardingContext = (function () {
     if (!payable || !payee) return null;
     var contact = payee.contact || {};
     var accountInfo = payee.accountInformation || {};
+    var ach = (payee.paymentMethods && payee.paymentMethods.ach && payee.paymentMethods.ach[0]) || {};
     var fallbackAddress = parseAddressBlock(
       (payee.paymentMethods && payee.paymentMethods.ach && payee.paymentMethods.ach[0] && payee.paymentMethods.ach[0].address) ||
       (payee.paymentMethods && payee.paymentMethods.check && payee.paymentMethods.check[0] && payee.paymentMethods.check[0].address) ||
@@ -179,7 +185,17 @@ window.SDOnboardingContext = (function () {
         email: String(contact.email || '').trim(),
         phone: String(contact.phone || '').trim()
       },
-      accountInformation: normalizedAccountInfo
+      accountInformation: normalizedAccountInfo,
+      // Standing bank details from the vendor master record, so the bank step
+      // opens prefilled rather than as an empty form.
+      bankAccount: {
+        accountType: 'checking',
+        accountHolderName: String(ach.accountName || payee.name || '').trim(),
+        bankName: String(ach.bankName || '').trim(),
+        routingNumber: String(ach.routingNumber || '').trim(),
+        accountNumber: String(ach.accountNumber || '').trim(),
+        verifyAccountNumber: String(ach.accountNumber || '').trim()
+      }
     };
   }
 
@@ -217,11 +233,20 @@ window.SDOnboardingContext = (function () {
     var style = document.createElement('style');
     style.id = SKELETON_STYLE_ID;
     style.textContent = [
-      '.sd-context-skeleton-target{position:relative;overflow:hidden;color:transparent !important;caret-color:transparent;}',
-      '.sd-context-skeleton-target::after{content:"";position:absolute;inset:0;border-radius:inherit;background:#e5e7eb;transform:translateX(-100%);animation:sdContextShimmer 1.25s infinite;pointer-events:none;}',
-      '.sd-context-skeleton-target::before{content:"";position:absolute;inset:0;border-radius:inherit;background:linear-gradient(90deg,transparent,rgba(255,255,255,.72),transparent);z-index:1;transform:translateX(-100%);animation:sdContextShimmer 1.25s infinite;pointer-events:none;}',
-      '.sd-context-skeleton-input{background-color:#f3f4f6 !important;border-color:#e5e7eb !important;}',
-      '@keyframes sdContextShimmer{100%{transform:translateX(100%)}}'
+      // Same flat tone, radius and pulse as onboarding-transitions.js, so a page
+      // never shows two different kinds of placeholder side by side.
+      '.sd-context-skeleton-target{position:relative;overflow:hidden;color:transparent !important;caret-color:transparent;border-radius:var(--ob-skel-radius,0.375rem) !important;}',
+      // Nested spans carry their own colour, so transparent text is not enough.
+      '.sd-context-skeleton-target>*{visibility:hidden !important;}',
+      '.sd-context-skeleton-target::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--ob-skel-bg,#e8eaed);pointer-events:none;}',
+      // Replaced elements grow no ::before/::after boxes, so form controls are
+      // masked with their own background instead of a pseudo-element overlay.
+      '.sd-context-skeleton-input{color:transparent !important;-webkit-text-fill-color:transparent !important;border-color:transparent !important;box-shadow:none !important;outline:none !important;appearance:none !important;-webkit-appearance:none !important;background:var(--ob-skel-bg,#e8eaed) !important;border-radius:var(--ob-skel-radius,0.375rem) !important;}',
+      '.sd-context-skeleton-input::placeholder{color:transparent !important;}',
+      '.sd-context-skeleton-hide{visibility:hidden !important;}',
+      '.sd-context-skeleton-target,.sd-context-skeleton-input{animation:sdContextPulse 1.6s ease-in-out infinite;}',
+      '@keyframes sdContextPulse{0%,100%{opacity:1}50%{opacity:.55}}',
+      '@media (prefers-reduced-motion: reduce){.sd-context-skeleton-target,.sd-context-skeleton-input{animation:none;}}'
     ].join('');
     document.head.appendChild(style);
   }
@@ -242,6 +267,14 @@ window.SDOnboardingContext = (function () {
           node.classList.add('sd-context-skeleton-input');
           node.setAttribute('readonly', 'readonly');
         }
+        if (node.tagName === 'SELECT' && node.parentElement) {
+          // The chevron is a sibling svg and would float over the placeholder.
+          var chevrons = node.parentElement.querySelectorAll(':scope > svg');
+          for (var c = 0; c < chevrons.length; c += 1) {
+            chevrons[c].classList.add('sd-context-skeleton-hide');
+            targets.push(chevrons[c]);
+          }
+        }
         targets.push(node);
       }
     });
@@ -250,6 +283,7 @@ window.SDOnboardingContext = (function () {
         targets.forEach(function (node) {
           node.classList.remove('sd-context-skeleton-target');
           node.classList.remove('sd-context-skeleton-input');
+          node.classList.remove('sd-context-skeleton-hide');
           node.removeAttribute('data-sd-skeleton');
           if ((node.tagName === 'INPUT' || node.tagName === 'TEXTAREA' || node.tagName === 'SELECT') && node.hasAttribute('readonly')) {
             node.removeAttribute('readonly');

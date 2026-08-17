@@ -8,6 +8,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="../../scripts/sd-onboarding-context.js"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
       var pageLoader = window.SDOnboardingContext && window.SDOnboardingContext.createLoadingOverlay
@@ -159,13 +160,12 @@
   <div class="mx-auto max-w-[1024px] w-full h-screen bg-white flex flex-row overflow-hidden">
 
     <!-- LEFT SIDEBAR -->
-    <div class="bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex flex-col p-[56px] gap-[35px]">
-      <button class="ml-auto flex items-center gap-2 p-2.5 rounded-lg bg-gray-900/25 hover:bg-gray-900/35">
-        <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" viewBox="0 0 26 26" fill="none">
-          <path d="M18.6709 15.8289L15.1834 13.8033L8.12004 17.9137L18.5088 23.9562C18.666 24.0449 18.8625 23.9956 18.9558 23.8379C18.9853 23.7886 19 23.7295 19 23.6703L19 16.4007C19 16.1641 18.8772 15.9472 18.6709 15.8289Z" fill="white"/>
-          <path d="M18.6709 10.171C18.8772 10.0527 19 9.83584 19 9.59926L19 2.32958C19 2.27044 18.9853 2.2113 18.9558 2.16201C18.8674 2.0043 18.666 1.95501 18.5088 2.04372L6.92153 8.78112C6.81838 8.84026 6.75453 8.94869 6.74961 9.06697L6.74961 17.1006L18.6709 10.171Z" fill="white"/>
-        </svg>
-      </button>
+    <div class="bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex flex-col px-10 py-[56px] gap-[35px]">
+      <!-- Logo (placeholder) -->
+      <div class="h-[60px] w-full max-w-[246px] shrink-0 overflow-hidden rounded-xl bg-white px-4 py-2">
+        <img src="https://tailwindcss.com/plus-assets/img/logos/158x48/transistor-logo-gray-900.svg"
+          alt="Transistor" width="158" height="48" class="h-full w-full object-contain" />
+      </div>
 
       <nav aria-label="Progress">
         <ol role="list" class="space-y-6">
@@ -248,13 +248,36 @@
           </li>
         </ol>
       </nav>
+
+      <!-- Contact / Decline -->
+      <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
+
+        <button type="button"
+          class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+          </svg>
+          <span class="flex-1 text-xs font-medium">Contact us</span>
+        </button>
+
+        <div class="h-px w-full self-stretch bg-white/10"></div>
+
+        <button type="button"
+          class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0">
+            <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+          </svg>
+          <span class="flex-1 text-xs font-medium">Decline Payment</span>
+        </button>
+
+      </div>
     </div>
 
     <!-- RIGHT COLUMN (scrolls) -->
     <div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
       <div class="min-h-screen flex flex-col">
 
-        <div class="flex-1 flex flex-col items-center px-10 pt-12 pb-8">
+        <div data-ob-content class="flex-1 flex flex-col items-center px-10 pt-12 pb-8">
           <div class="w-full max-w-[640px] flex flex-col gap-4">
 
             <!-- Page header -->
@@ -286,7 +309,7 @@
                     </div>
                   </div>
                   <div class="flex h-9 items-end gap-4 self-stretch">
-                    <p id="card-preview-name" class="flex-1 font-['Roboto_Mono'] text-sm font-normal uppercase leading-5 tracking-wide text-white"></p>
+                    <p data-ob-skeleton id="card-preview-name" class="flex-1 font-['Roboto_Mono'] text-sm font-normal uppercase leading-5 tracking-wide text-white"></p>
                     <svg width="48" height="30" viewBox="0 0 52 32" fill="none" xmlns="http://www.w3.org/2000/svg" class="shrink-0" aria-hidden="true"><path d="M32.8867 28.5803H18.8867V3.42188H32.8867V28.5803Z" fill="#F14D1C"/><path d="M19.7765 15.9999C19.7745 18.4228 20.3233 20.8143 21.3829 22.9941C22.4416 25.1734 23.9824 27.0836 25.8876 28.5796C23.5272 30.4349 20.6927 31.5884 17.7079 31.9089C14.723 32.2287 11.7073 31.7027 9.00732 30.3913C6.30731 29.0782 4.03059 27.0338 2.43807 24.488C0.844559 21.9437 0 19.0025 0 15.9999C0 12.998 0.844559 10.0557 2.43807 7.51144C4.03059 4.96671 6.30731 2.92113 9.00732 1.60928C11.7073 0.296621 14.723 -0.229337 17.7079 0.091656C20.6927 0.412151 23.5272 1.56526 25.8876 3.421C23.9824 4.91691 22.4416 6.82593 21.3829 9.00606C20.3243 11.1851 19.7745 13.5765 19.7765 15.9999Z" fill="#EB1C24"/><path d="M51.7733 15.9999C51.7733 12.998 50.9287 10.0557 49.3362 7.51144C47.7427 4.96671 45.467 2.92113 42.766 1.60928C40.066 0.296621 37.0512 -0.229337 34.0664 0.091656C31.0816 0.412151 28.2461 1.56526 25.8867 3.421C27.791 4.91771 29.3297 6.82783 30.3884 9.00725C31.4471 11.1863 31.9968 13.5777 31.9968 15.9999C31.9968 18.4228 31.4471 20.8131 30.3884 22.9921C29.3297 25.1715 27.791 27.0818 25.8867 28.5796C28.2461 30.4349 31.0816 31.5884 34.0664 31.9089C37.0512 32.2287 40.066 31.7027 42.766 30.3913C45.467 29.0782 47.7427 27.0338 49.3362 24.488C50.9287 21.9437 51.7733 19.0025 51.7733 15.9999Z" fill="#F59412"/></svg>
                   </div>
                 </div>
@@ -304,7 +327,7 @@
                   </div>
                   <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm/6 font-medium text-gray-900">Method of Payment</dt>
-                    <dd id="sum-method" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    <dd data-ob-skeleton id="sum-method" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
                   </div>
                 </dl>
               </div>
@@ -320,21 +343,21 @@
                   <dl class="w-full">
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                       <dt class="text-sm/6 font-medium text-gray-900">Card Number</dt>
-                      <dd id="sum-dc-number" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0">—</dd>
+                      <dd data-ob-skeleton id="sum-dc-number" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0">—</dd>
                     </div>
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                       <dt class="text-sm/6 font-medium text-gray-900">Name on Card</dt>
-                      <dd id="sum-dc-name" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                      <dd data-ob-skeleton id="sum-dc-name" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
                     </div>
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                       <dt class="text-sm/6 font-medium text-gray-900">Expiry</dt>
-                      <dd id="sum-dc-expiry" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                      <dd data-ob-skeleton id="sum-dc-expiry" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
                     </div>
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                       <dt class="text-sm/6 font-medium text-gray-900">Security Code</dt>
                       <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                         <span class="inline-flex items-center gap-2">
-                          <span id="sum-dc-cvv" class="font-['Roboto_Mono'] tracking-wider">•••</span>
+                          <span data-ob-skeleton id="sum-dc-cvv" class="font-['Roboto_Mono'] tracking-wider">•••</span>
                           <button id="btn-reveal-cvv" type="button" aria-label="Reveal security code" aria-pressed="false"
                             class="rounded p-0.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700">
                             <svg id="cvv-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
@@ -364,19 +387,19 @@
                   <dl class="w-full">
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                       <dt class="text-sm/6 font-medium text-gray-900">Account Type</dt>
-                      <dd id="sum-ba-type" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                      <dd data-ob-skeleton id="sum-ba-type" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
                     </div>
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                       <dt class="text-sm/6 font-medium text-gray-900">Account Holder Name</dt>
-                      <dd id="sum-ba-holder" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                      <dd data-ob-skeleton id="sum-ba-holder" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
                     </div>
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                       <dt class="text-sm/6 font-medium text-gray-900">Routing Number</dt>
-                      <dd id="sum-ba-routing" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0">—</dd>
+                      <dd data-ob-skeleton id="sum-ba-routing" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0">—</dd>
                     </div>
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                       <dt class="text-sm/6 font-medium text-gray-900">Account Number</dt>
-                      <dd id="sum-ba-number" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0">—</dd>
+                      <dd data-ob-skeleton id="sum-ba-number" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0">—</dd>
                     </div>
                   </dl>
                 </div>
@@ -392,19 +415,19 @@
                 <dl class="w-full">
                   <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm/6 font-medium text-gray-900">Full Name</dt>
-                    <dd id="sum-name" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    <dd data-ob-skeleton id="sum-name" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
                   </div>
                   <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm/6 font-medium text-gray-900">Email</dt>
-                    <dd id="sum-email" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    <dd data-ob-skeleton id="sum-email" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
                   </div>
                   <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm/6 font-medium text-gray-900">Phone</dt>
-                    <dd id="sum-phone" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    <dd data-ob-skeleton id="sum-phone" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
                   </div>
                   <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
                     <dt class="text-sm/6 font-medium text-gray-900">Mailing Address</dt>
-                    <dd id="sum-address" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    <dd data-ob-skeleton id="sum-address" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
                   </div>
                 </dl>
               </div>
