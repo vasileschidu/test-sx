@@ -3,10 +3,10 @@
  * Step-enter / step-exit motion plus simulated-latency skeletons for both
  * onboarding flows (`onboarding/` and `onboarding-sd/`).
  *
- * On every step the dynamic values are masked with a shimmering skeleton for a
- * random 1000-1500ms, then the content fades and rises in with a stagger.
- * Static chrome — headings, labels, body copy, buttons — is never masked, so a
- * step reads as itself while its data loads.
+ * A step fades in once, as a whole. Its dynamic values are masked for a random
+ * 1000-1500ms and then crossfade to the real thing; nothing that was already on
+ * screen animates a second time. Static chrome — headings, labels, body copy,
+ * buttons — is never masked, so a step reads as itself while its data loads.
  * Navigating to the next step fades the current page out first, so the two
  * pages read as one continuous cross-fade.
  *
@@ -17,8 +17,8 @@
  *                            never masked. Form controls are masked
  *                            automatically, as are fields SDOnboardingContext
  *                            registers via createLoadingOverlay()
- *   [data-ob-reveal]         explicit reveal blocks; defaults to the content
- *                            area's direct children
+ *   [data-ob-skeleton-region] mask a whole area with a generic placeholder,
+ *                            for when the field count is not known up front
  *   [data-ob-tone="dark"]    switches skeleton colours for dark backgrounds
  *   [data-ob-no-skeleton]    opts an element and its subtree out of masking;
  *                            on the content area itself it drops the simulated
@@ -31,8 +31,6 @@
   var MIN_DELAY_MS = 1000;
   var MAX_DELAY_MS = 1500;
   var EXIT_DURATION_MS = 200;
-  var STAGGER_MS = 70;
-  var MAX_STAGGER_STEPS = 10;
 
   // Replaced elements grow no ::before/::after boxes, so form controls are
   // masked with their own background instead of a pseudo-element overlay.
@@ -42,6 +40,7 @@
   var SKIP_SELECTOR = 'script,style,template,noscript,el-dialog,dialog,[data-ob-no-skeleton],[hidden]';
   // Deliberately a fixed, small set — the point is not to mirror the layout.
   var REGION_BARS = ['45%', '100%', '70%'];
+  var MIN_REGION_INSET = 12;
 
   var readyCallbacks = [];
   var isReady = false;
@@ -55,39 +54,57 @@
     var style = document.createElement('style');
     style.id = STYLE_ID;
     style.textContent = [
-      ':root{--ob-skel-bg:#e8eaed;--ob-skel-radius:0.375rem;}',
-      '[data-ob-tone="dark"]{--ob-skel-bg:rgba(255,255,255,.16);}',
-      // Content stays hidden until the skeleton is in place, so the real values
-      // never flash before the simulated load starts.
-      '[data-ob-content]:not(.ob-scanned){opacity:0;}',
+      ':root{--ob-skel-bg:#e8eaed;--ob-skel-bg-strong:#d6dae1;--ob-skel-radius:0.375rem;}',
+      '[data-ob-tone="dark"]{--ob-skel-bg:rgba(255,255,255,.16);--ob-skel-bg-strong:rgba(255,255,255,.28);}',
+      // Only the values that are about to be masked are held back until the
+      // scan runs — hiding the whole area instead would fade every heading,
+      // label and button back in, which reads as the page loading twice.
+      '[data-ob-content]:not(.ob-scanned) [data-ob-skeleton],'
+        + '[data-ob-content]:not(.ob-scanned) [data-ob-skeleton-region]{opacity:0;}',
       // One flat tone, one radius, one breathing rhythm for every placeholder.
       // Travelling shimmers read as busy once there is more than one on screen;
       // a synchronised pulse keeps a form full of them calm.
-      '.ob-skel{position:relative!important;overflow:hidden!important;pointer-events:none!important;color:transparent!important;caret-color:transparent;text-shadow:none!important;border-radius:var(--ob-skel-radius)!important;}',
+      '.ob-skel{position:relative!important;overflow:hidden!important;pointer-events:none!important;color:transparent!important;caret-color:transparent;text-shadow:none!important;border-color:var(--ob-skel-bg)!important;border-radius:var(--ob-skel-radius)!important;}',
       '.ob-skel>*{visibility:hidden!important;}',
       '.ob-skel::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--ob-skel-bg);pointer-events:none;}',
       '.ob-skel-field{color:transparent!important;-webkit-text-fill-color:transparent!important;caret-color:transparent!important;border-color:transparent!important;box-shadow:none!important;outline:none!important;appearance:none!important;-webkit-appearance:none!important;background:var(--ob-skel-bg)!important;border-radius:var(--ob-skel-radius)!important;}',
       '.ob-skel-field::placeholder{color:transparent!important;}',
       '.ob-skel-hide{visibility:hidden!important;}',
+      // Row template: a masked list still hints at one row's anatomy — a name
+      // and its action — in a stronger tone, so it reads as an item rather
+      // than an empty slab.
+      '.ob-skel>.ob-skel-rows{visibility:visible!important;}',
+      '.ob-skel-rows{position:absolute;inset:0;z-index:1;display:flex;flex-direction:column;pointer-events:none;}',
+      '.ob-skel-row{display:flex;flex:1 1 0;align-items:center;justify-content:space-between;gap:1rem;padding:0 .75rem;}',
+      '.ob-skel-row>span{display:block;border-radius:var(--ob-skel-radius);background:var(--ob-skel-bg-strong);}',
+      '.ob-skel-row>span:first-child{height:.875rem;flex:0 1 45%;max-width:14rem;}',
+      '.ob-skel-row>span:last-child{height:2rem;width:4.5rem;flex:none;}',
       // Region mode: a fixed, light placeholder that makes no claim about how
       // many fields are coming. Real children keep their space (visibility,
       // not display) so nothing jumps when the content arrives.
       '.ob-skel-hosting{position:relative!important;}',
       '.ob-skel-hosting>*:not(.ob-skel-region){visibility:hidden!important;}',
-      '.ob-skel-region{position:absolute;inset:0;display:flex;flex-direction:column;gap:1rem;pointer-events:none;}',
-      '.ob-skel-region>span{display:block;height:2.25rem;flex:none;border-radius:var(--ob-skel-radius);background:var(--ob-skel-bg);animation:obPulse 1.6s ease-in-out infinite;}',
+      '.ob-skel-region{position:absolute;inset:0;overflow:hidden;display:flex;flex-direction:column;gap:1rem;pointer-events:none;}',
+      '.ob-skel-region>span{display:block;flex:1 1 0;min-height:.5rem;max-height:2.25rem;border-radius:var(--ob-skel-radius);background:var(--ob-skel-bg);animation:obPulse 1.6s ease-in-out infinite;}',
       '.ob-skel,.ob-skel-field{animation:obPulse 1.6s ease-in-out infinite;}',
       '@keyframes obPulse{0%,100%{opacity:1}50%{opacity:.55}}',
-      '.ob-reveal{animation:obRise .5s cubic-bezier(.22,1,.36,1) both;}',
-      '@keyframes obRise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}',
-      '.ob-enter{animation:obEnter .45s cubic-bezier(.22,1,.36,1) both;}',
-      '@keyframes obEnter{from{opacity:0;transform:scale(.995)}to{opacity:1;transform:none}}',
-      'html.ob-leaving body{opacity:0;transform:translateY(-8px);transition:opacity ' + EXIT_DURATION_MS + 'ms ease-in,transform ' + EXIT_DURATION_MS + 'ms ease-in;}',
+      // A plain crossfade, no travel: moving already-settled layout is what
+      // makes the step look like it loads twice.
+      '.ob-settle{animation:obSettle .3s ease-out both;}',
+      '@keyframes obSettle{from{opacity:0}to{opacity:1}}',
+      // The page-enter fade is a plain CSS rule, not a class added from JS:
+      // by the time a script can add a class the browser has already painted,
+      // so an animation starting at opacity 0 blinks the whole page out first.
+      // No transform either — it would make <body> a containing block for
+      // fixed-position dialogs while it runs.
+      'body{animation:obEnter .4s ease-out both;}',
+      '@keyframes obEnter{from{opacity:0}to{opacity:1}}',
+      'html.ob-leaving body{opacity:0;transition:opacity ' + EXIT_DURATION_MS + 'ms ease-in;}',
       '@media (prefers-reduced-motion: reduce){',
       '.ob-skel,.ob-skel-field{animation:none;}',
-      '.ob-reveal,.ob-enter{animation:obFade .01s both;}',
+      '.ob-settle,body{animation:obFade .01s both;}',
       '@keyframes obFade{to{opacity:1}}',
-      'html.ob-leaving body{transform:none;transition:none;}',
+      'html.ob-leaving body{transition:none;}',
       '}'
     ].join('');
     document.head.appendChild(style);
@@ -102,6 +119,35 @@
   }
 
   function markSkeleton(el, targets) {
+    // `data-ob-skeleton-rows` collapses a list to N rows' worth of height while
+    // it loads. A list of unknown length shouldn't claim to be three items tall
+    // when it might return one — measured before masking, while rows still lay
+    // themselves out.
+    var rows = parseInt(el.getAttribute('data-ob-skeleton-rows'), 10);
+    if (rows > 0 && el.children.length) {
+      var height = 0;
+      for (var i = 0; i < Math.min(rows, el.children.length); i += 1) {
+        height += el.children[i].getBoundingClientRect().height;
+      }
+      var box = window.getComputedStyle(el);
+      ['paddingTop', 'paddingBottom', 'borderTopWidth', 'borderBottomWidth'].forEach(function (side) {
+        height += parseFloat(box[side]) || 0;
+      });
+      el.style.height = Math.round(height) + 'px';
+      el.setAttribute('data-ob-skel-height', 'true');
+
+      var template = document.createElement('div');
+      template.className = 'ob-skel-rows';
+      template.setAttribute('aria-hidden', 'true');
+      for (var r = 0; r < rows; r += 1) {
+        var row = document.createElement('div');
+        row.className = 'ob-skel-row';
+        row.appendChild(document.createElement('span'));
+        row.appendChild(document.createElement('span'));
+        template.appendChild(row);
+      }
+      el.appendChild(template);
+    }
     el.classList.add('ob-skel');
     targets.push(el);
   }
@@ -120,6 +166,13 @@
       bar.style.width = REGION_BARS[i];
       placeholder.appendChild(bar);
     }
+    // Sit inside the host's own padding, but never flush against its edge —
+    // a bordered list has no padding of its own and the bars would touch it.
+    var hostStyle = window.getComputedStyle(el);
+    placeholder.style.padding = ['Top', 'Right', 'Bottom', 'Left'].map(function (side) {
+      return Math.max(parseFloat(hostStyle['padding' + side]) || 0, MIN_REGION_INSET) + 'px';
+    }).join(' ');
+
     el.classList.add('ob-skel-hosting');
     el.insertBefore(placeholder, el.firstChild);
     targets.push(el);
@@ -194,6 +247,12 @@
         var placeholder = el.querySelector(':scope > .ob-skel-region');
         if (placeholder) placeholder.remove();
       }
+      if (el.getAttribute('data-ob-skel-height') === 'true') {
+        el.style.removeProperty('height');
+        el.removeAttribute('data-ob-skel-height');
+        var rowsTemplate = el.querySelector(':scope > .ob-skel-rows');
+        if (rowsTemplate) rowsTemplate.remove();
+      }
       if (el.getAttribute('data-ob-skel-readonly') === 'true') {
         el.removeAttribute('readonly');
         el.removeAttribute('data-ob-skel-readonly');
@@ -205,23 +264,20 @@
     });
   }
 
-  function getRevealBlocks(root) {
-    var explicit = root.querySelectorAll('[data-ob-reveal]');
-    if (explicit.length) return Array.prototype.slice.call(explicit);
-    return Array.prototype.slice.call(root.children);
-  }
-
   function revealContent(root, targets) {
+    // Only what was actually masked fades in. Everything else has been on
+    // screen since first paint and must not animate again — re-running a fade
+    // over already-visible content is what reads as a second load.
     clearSkeletonTargets(targets);
     root.classList.add('ob-scanned');
     root.classList.remove('ob-loading');
-    getRevealBlocks(root).forEach(function (block, index) {
-      block.style.animationDelay = Math.min(index, MAX_STAGGER_STEPS) * STAGGER_MS + 'ms';
-      block.classList.add('ob-reveal');
-      block.addEventListener('animationend', function handler() {
-        block.removeEventListener('animationend', handler);
-        block.classList.remove('ob-reveal');
-        block.style.removeProperty('animation-delay');
+
+    targets.forEach(function (el) {
+      if (!el || !el.isConnected) return;
+      el.classList.add('ob-settle');
+      el.addEventListener('animationend', function handler() {
+        el.removeEventListener('animationend', handler);
+        el.classList.remove('ob-settle');
       });
     });
   }
@@ -322,7 +378,6 @@
       // the reveal, otherwise the content would flash before it animates in.
       root.classList.add('ob-scanned');
     }
-    document.body.classList.add('ob-enter');
 
     var bootstrap = window.SDOnboardingContext && window.SDOnboardingContext.bootstrap
       ? Promise.resolve(window.SDOnboardingContext.bootstrap()).catch(function () {})

@@ -15,12 +15,14 @@
   <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <script src="../../../src/scripts/onboarding-transitions.js"></script>
   <style>
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(8px); }
-      to   { opacity: 1; transform: translateY(0); }
+    /* One crossfade for the whole result, matching the rest of the flow.
+       A per-item slide-up reads as the screen loading a second time. */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to   { opacity: 1; }
     }
     .stagger-item { opacity: 0; }
-    .stagger-item.visible { animation: fadeInUp 300ms ease forwards; }
+    .stagger-item.visible { animation: fadeIn 300ms ease forwards; }
   </style>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -339,10 +341,10 @@
           loadingEl.style.display = 'none';
           contentEl.style.display = 'flex';
 
-          // Stagger items in
-          var items = contentEl.querySelectorAll('.stagger-item');
-          items.forEach(function (item, i) {
-            setTimeout(function () { item.classList.add('visible'); }, i * 100);
+          // Fade the result in as one piece — no per-item delay, so the
+          // screen resolves once instead of assembling itself.
+          contentEl.querySelectorAll('.stagger-item').forEach(function (item) {
+            item.classList.add('visible');
           });
         }, 300);
       }, 2000);
@@ -433,7 +435,7 @@
   </script>
 </head>
 
-<body class="min-h-screen bg-gray-200 px-6 antialiased font-['Inter']">
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
 
   <div class="mx-auto max-w-[1024px] w-full min-h-screen bg-white flex flex-col">
 

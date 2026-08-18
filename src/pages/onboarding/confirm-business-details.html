@@ -15,16 +15,17 @@
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   <script src="../../../src/scripts/onboarding-transitions.js"></script>
+  <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
   <script src="../../../src/scripts/confirm-business-details.js" defer></script>
 </head>
 
-<body class="min-h-screen bg-gray-200 px-6 antialiased font-['Inter']">
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
 
   <!-- CONTAINER -->
-  <div class="mx-auto max-w-[1024px] w-full h-screen bg-white flex flex-row overflow-hidden">
+  <div class="mx-auto max-w-[1024px] w-full min-h-screen bg-white flex flex-col lg:h-screen lg:flex-row lg:overflow-hidden">
 
     <!-- LEFT SIDEBAR -->
-    <div class="bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex flex-col px-10 py-[56px] gap-[35px]">
+    <div class="hidden lg:flex bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex-col px-10 py-[56px] gap-[35px]">
 
       <!-- Logo (placeholder) -->
       <div class="h-[60px] w-full max-w-[246px] shrink-0 overflow-hidden rounded-xl bg-white px-4 py-2">
@@ -95,7 +96,7 @@
           </li>
 
           <li>
-            <a href="#" class="group">
+            <a href="create-account.html" class="group">
               <div class="flex items-start">
                 <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
                   <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
@@ -143,17 +144,17 @@
     </div>
 
     <!-- RIGHT COLUMN -->
-    <div class="flex-1 flex flex-col min-h-0 overflow-y-auto">
-      <div class="min-h-screen flex flex-col">
+    <div class="flex-1 flex flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col lg:min-h-screen">
 
         <!-- Content area -->
-        <div data-ob-content class="flex-1 flex flex-col items-center px-10 pt-12 pb-8">
+        <div data-ob-content class="flex-1 flex flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
           <div class="w-full max-w-[640px]">
             <h1 class="text-3xl font-bold text-gray-900">Business Information on File</h1>
             <p class="mt-2 text-sm text-gray-500">You will have an opportunity to update this information later, if
               necessary.</p>
 
-            <div class="mt-8 rounded-lg bg-gray-50 p-6">
+            <div data-ob-skeleton-region class="mt-8 rounded-lg bg-gray-50 p-6">
 
               <div class="px-2 py-2 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                 <dt class="text-sm/6 font-medium text-gray-900">Full Name</dt>
@@ -170,7 +171,7 @@
                 <dt class="text-sm/6 font-medium text-gray-900">Taxpayer Identification Number (TIN)</dt>
                 <dd class="mt-1 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
                   <span class="inline-flex items-center gap-2">
-                    <span data-ob-skeleton id="tin-value">&bull;&bull;&bull;&bull;&bull; 0001</span>
+                    <span id="tin-value">&bull;&bull;&bull;&bull;&bull; 0001</span>
                     <button id="tin-toggle" type="button" aria-label="Show TIN" aria-pressed="false"
                       class="rounded p-0.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700">
                       <svg id="tin-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
