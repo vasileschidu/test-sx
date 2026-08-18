@@ -977,13 +977,10 @@
                                     <div id="sx-table-filter-dropdown" class="relative inline-block w-full sm:w-auto">
                                         <button id="sx-table-filter-btn" type="button"
                                             class="whitespace-nowrap inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10 cursor-pointer sm:w-auto">
-                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                                fill="currentColor" class="size-4">
-                                                <path
-                                                    d="M10 4.75a.75.75 0 0 1 .75.75v3.75h3.75a.75.75 0 0 1 0 1.5h-3.75v3.75a.75.75 0 0 1-1.5 0v-3.75H5.5a.75.75 0 0 1 0-1.5h3.75V5.5a.75.75 0 0 1 .75-.75Z" />
-                                            </svg>
                                             Filter
-                                        </button>
+                                            <span data-filter-count class="hidden items-center rounded-full bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 tabular-nums dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10"></span>
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-filter-chevron class="chevron-icon -mr-0.5 size-5 transition-transform"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+                                          </button>
                                     <div id="sx-table-filter-menu"
                                         class="pointer-events-none invisible absolute right-0 z-[60] mt-2 w-[628px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-md bg-white opacity-0 shadow-lg outline-1 outline-black/5 transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
                                         <div class="flex max-h-[470px] min-h-0 flex-col">
@@ -1144,6 +1141,7 @@
                                     <button
                                         class="inline-flex w-full items-center justify-center self-start gap-x-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 sm:w-auto">
                                         Export
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="-mr-0.5 size-[18px]"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z" /><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z" /></svg>
                                     </button>
 
                                     <button id="sx-manage-columns-btn" type="button" command="show-modal" commandfor="sx-manage-columns-dialog"

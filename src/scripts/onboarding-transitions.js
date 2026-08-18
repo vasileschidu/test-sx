@@ -1,7 +1,7 @@
 /**
  * onboarding-transitions.js
  * Step-enter / step-exit motion plus simulated-latency skeletons for both
- * onboarding flows (`onboarding/` and `onboarding-sd/`).
+ * the onboarding flow (`src/pages/onboarding/`).
  *
  * A step fades in once, as a whole. Its dynamic values are masked for a random
  * 1000-1500ms and then crossfade to the real thing; nothing that was already on

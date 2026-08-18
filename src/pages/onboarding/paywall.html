@@ -11,9 +11,94 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <script src="../../../src/scripts/onboarding-transitions.js"></script>
+  <script src="../../../src/scripts/onboarding-stepper.js"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
-  <script src="../../../src/scripts/paywall.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var pageLoader = window.SDOnboardingContext && window.SDOnboardingContext.createLoadingOverlay
+        ? window.SDOnboardingContext.createLoadingOverlay({ targets: ['#paywall-amount-integer', '#paywall-amount-decimal', '#paywall-sender-name'] })
+        : { done: function () {} };
+      function getState() {
+        return window.SDOnboardingContext ? window.SDOnboardingContext.getState() : {};
+      }
+      function saveState(p) {
+        if (window.SDOnboardingContext) window.SDOnboardingContext.saveState(p);
+      }
+      function formatAmountParts(value, currency) {
+        var amount = Number(value || 0);
+        if (!Number.isFinite(amount)) amount = 0;
+        var fixed = amount.toFixed(2);
+        var parts = fixed.split('.');
+        try {
+          var formatted = new Intl.NumberFormat('en-US', {
+            style: 'currency',
+            currency: currency || 'USD',
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2
+          }).format(amount);
+          var match = formatted.match(/^([^0-9-]*)([0-9,]+)\.(\d{2})$/);
+          if (match) return { integer: match[1] + match[2], decimal: '.' + match[3] };
+        } catch (error) {}
+        return { integer: '$' + parts[0], decimal: '.' + parts[1] };
+      }
+
+      var substepVC  = document.getElementById('substep-account-info');
+      var substepDC1 = document.getElementById('substep-debit-card-details');
+      var substepDC2 = document.getElementById('substep-debit-account-info');
+      var substepBank1 = document.getElementById('substep-bank-details');
+      var substepBank2 = document.getElementById('substep-bank-account-info');
+      var amountInteger = document.getElementById('paywall-amount-integer');
+      var amountDecimal = document.getElementById('paywall-amount-decimal');
+      var senderNode = document.getElementById('paywall-sender-name');
+
+      function showSubstepFor(method) {
+        var isVirtual = method === 'instant-virtual-card';
+        var isDebit = method === 'debit-card';
+        var isBank = method === 'bank-account';
+        if (substepVC)  substepVC.classList.toggle('hidden',  !isVirtual);
+        if (substepDC1) substepDC1.classList.toggle('hidden', !isDebit);
+        if (substepDC2) substepDC2.classList.toggle('hidden', !isDebit);
+        if (substepBank1) substepBank1.classList.toggle('hidden', !isBank);
+        if (substepBank2) substepBank2.classList.toggle('hidden', !isBank);
+      }
+
+      Promise.resolve(window.SDOnboardingContext && window.SDOnboardingContext.bootstrap ? window.SDOnboardingContext.bootstrap() : null)
+        .then(function () {
+          var state = getState();
+          var context = state.payableContext || {};
+          var amountParts = formatAmountParts(context.amount || state.amount || 0, context.currency || state.paymentCurrency || 'USD');
+          if (amountInteger) amountInteger.textContent = amountParts.integer;
+          if (amountDecimal) amountDecimal.textContent = amountParts.decimal;
+          if (senderNode) senderNode.textContent = context.senderName || 'SMART Hub';
+
+          showSubstepFor(state.paymentMethod);
+
+          document.getElementById('btn-instant-card').addEventListener('click', function () {
+            saveState({ paymentMethod: 'instant-virtual-card' });
+            showSubstepFor('instant-virtual-card');
+            setTimeout(function () { window.location.href = 'instant-virtual-card.html'; }, 80);
+          });
+
+          document.getElementById('btn-debit-card').addEventListener('click', function () {
+            saveState({ paymentMethod: 'debit-card' });
+            showSubstepFor('debit-card');
+            setTimeout(function () { window.location.href = 'debit-card-details.html'; }, 80);
+          });
+
+          document.getElementById('btn-bank-account').addEventListener('click', function () {
+            saveState({ paymentMethod: 'bank-account', bankFlowStep: 'bank-details' });
+            showSubstepFor('bank-account');
+            setTimeout(function () { window.location.href = 'debit-account-info.html'; }, 80);
+          });
+        })
+        .catch(function () {})
+        .then(function () {
+          pageLoader.done();
+        });
+    });
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Meow+Script&display=swap" rel="stylesheet">
@@ -34,111 +119,7 @@
       </div>
 
       <!-- Stepper Nav -->
-      <nav aria-label="Progress">
-        <ol role="list" class="space-y-6">
-          <li>
-            <a href="confirm-identity.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
-                    class="size-full text-white group-hover:text-blue-300">
-                    <path
-                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                      clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Confirm Identity</span>
-              </span>
-            </a>
-          </li>
-
-          <li>
-            <a href="confirm-identity.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
-                    class="size-full text-white group-hover:text-blue-300">
-                    <path
-                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                      clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Confirm Business Details</span>
-              </span>
-            </a>
-          </li>
-
-          <li>
-            <a href="confirm-identity.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
-                    class="size-full text-white group-hover:text-blue-300">
-                    <path
-                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                      clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Review Documents</span>
-              </span>
-            </a>
-          </li>
-
-          <li>
-            <a href="confirm-identity.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
-                    class="size-full text-white group-hover:text-blue-300">
-                    <path
-                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                      clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Provide Signature</span>
-              </span>
-            </a>
-          </li>
-
-
-          
-
-
-          <li>
-            <a href="#" aria-current="step" class="flex items-start">
-              <span aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                <span class="absolute size-4 rounded-full bg-white/20"></span>
-                <span class="relative block size-2 rounded-full bg-white"></span>
-              </span>
-              <span class="ml-3 text-sm font-medium text-white">Confirm Payment</span>
-            </a>
-          </li> 
-
-          
-
-          <li>
-            <a href="create-account.html" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Create an Account</p>
-              </div>
-            </a>
-          </li>
-
-          <li>
-            <a href="#" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Complete</p>
-              </div>
-            </a>
-          </li>
-        </ol>
-      </nav>
+      <nav aria-label="Progress" data-ob-stepper></nav>
 
       <!-- Contact / Decline -->
       <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
@@ -218,14 +199,14 @@
               </p>
 
               <div class="flex items-baseline">
-                <span data-ob-skeleton class="text-white text-[48px] font-normal leading-[48px]">$3,526</span>
-                <span class="text-[#3B82F6] text-[48px] font-normal leading-[48px]">.00</span>
+                <span id="paywall-amount-integer" class="text-white text-[48px] font-normal leading-[48px]">$3,526</span>
+                <span id="paywall-amount-decimal" class="text-[#3B82F6] text-[48px] font-normal leading-[48px]">.00</span>
               </div>
 
               <div class="mt-2 inline-flex items-center gap-[6px] rounded-[512px] bg-[#1E40AF] px-[16px] py-[4px]">
                 <span
                   class="text-[#60A5FA] text-[10px] font-medium leading-[16px] tracking-[0.7px] uppercase">FROM</span>
-                <span class="text-white text-[14px] font-normal leading-[20px]">Rad Roofing Ltd</span>
+                <span id="paywall-sender-name" class="text-white text-[14px] font-normal leading-[20px]">Rad Roofing Ltd</span>
               </div>
             </div>
 
@@ -277,119 +258,83 @@
 
           <div class="mt-9 w-full sm:px-0">
             <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Choose your payment method</h3>
-            <p class="mt-1 max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">For this payment only, or you can save
-              as your default for future payments.</p>
           </div>
-
 
           <div data-ob-skeleton-region class="mt-6 w-full space-y-2">
 
-            <!-- Option -->
-            <button id="btn-accept-card" type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition
-           hover:bg-gray-50
-         focus-visible:outline-none">
-
+            <!-- Option 1: Instant Virtual Card -->
+            <button id="btn-instant-card" type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition hover:bg-gray-50 focus-visible:outline-none">
               <div class="flex justify-between items-center">
-
-                <!-- LEFT SIDE -->
                 <div class="flex items-center gap-4">
-
-                  <!-- ICON CONTAINER -->
                   <div class="flex w-8 h-8 items-center justify-center rounded-md bg-gray-50">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z"
-                        stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                   </div>
-
-                  <!-- TEXT -->
                   <div>
-                    <p class="text-sm font-semibold text-gray-900">Accept Payer's Card</p>
-                    <p class="text-sm text-gray-500">No bank account details required, immediate</p>
+                    <p class="text-sm font-semibold text-gray-900">Instant Virtual Card</p>
+                    <p class="text-sm text-gray-500">Funds expected instantly</p>
                   </div>
-
                 </div>
-
-                <!-- CHEVRON -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-400 transition-all duration-200 ease-out
-             group-hover:text-gray-600 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                    clip-rule="evenodd" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-400 transition-all duration-200 ease-out group-hover:text-gray-600 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                 </svg>
-
               </div>
-
             </button>
 
-            <!-- Option -->
-            <button id="btn-bank-account" type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition
-           hover:bg-gray-50
-         focus-visible:outline-none">
-
+            <!-- Option 2: Send to my Debit Card -->
+            <button id="btn-debit-card" type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition hover:bg-gray-50 focus-visible:outline-none">
               <div class="flex justify-between items-center">
-
-                <!-- LEFT SIDE -->
                 <div class="flex items-center gap-4">
-
-                  <!-- ICON CONTAINER -->
                   <div class="flex w-8 h-8 items-center justify-center rounded-md bg-gray-50">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                      <path
-                        d="M12 21V12.75M15.75 21V12.75M8.25 21V12.75M3 9L12 3L21 9M19.5 21V10.3325C17.0563 9.94906 14.5514 9.75 12 9.75C9.44861 9.75 6.94372 9.94906 4.5 10.3325V21M3 21H21M12 6.75H12.0075V6.7575H12V6.75Z"
-                        stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M4.5 19.5H19.5C20.7426 19.5 21.75 18.4926 21.75 17.25V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5Z" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
                     </svg>
                   </div>
-
-                  <!-- TEXT -->
                   <div>
-                    <p class="text-sm font-semibold text-gray-900">Send to Bank Account</p>
-                    <p class="text-sm text-gray-500">Typically processed in 1-3 business days</p>
+                    <p class="text-sm font-semibold text-gray-900">Send to my Debit Card</p>
+                    <p class="text-sm text-gray-500">Funds expected instantly</p>
                   </div>
-
                 </div>
-
-                <!-- CHEVRON -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-400 transition-all duration-200 ease-out
-             group-hover:text-gray-600 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                    clip-rule="evenodd" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-400 transition-all duration-200 ease-out group-hover:text-gray-600 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                 </svg>
-
               </div>
-
             </button>
 
-            <!-- Option -->
-            <button id="btn-paper-check" type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition hover:bg-gray-50
-        
-         focus-visible:outline-none">
-
+            <!-- Option 3: Send to my Bank Account -->
+            <button id="btn-bank-account" type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition hover:bg-gray-50 focus-visible:outline-none">
               <div class="flex justify-between items-center">
+                <div class="flex items-center gap-4">
+                  <div class="flex w-8 h-8 items-center justify-center rounded-md bg-gray-50">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M12 21V12.75M15.75 21V12.75M8.25 21V12.75M3 9L12 3L21 9M19.5 21V10.3325C17.0563 9.94906 14.5514 9.75 12 9.75C9.44861 9.75 6.94372 9.94906 4.5 10.3325V21M3 21H21M12 6.75H12.0075V6.7575H12V6.75Z" stroke="#2563EB" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div>
+                    <p class="text-sm font-semibold text-gray-900">Send to my Bank Account</p>
+                    <p class="text-sm text-gray-500">Expected from instantly up to 3 days</p>
+                  </div>
+                </div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-400 transition-all duration-200 ease-out group-hover:text-gray-600 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                </svg>
+              </div>
+            </button>
 
-                <!-- LEFT SIDE -->
+            <!-- Option 4: Request a Paper Check -->
+            <button type="button" class="group w-full rounded-lg border border-gray-200 bg-white p-3 text-left transition hover:bg-gray-50 focus-visible:outline-none">
+              <div class="flex justify-between items-center">
                 <div class="flex-1 items-center gap-4">
-
-                  <!-- TEXT -->
                   <div class="flex gap-2">
                     <p class="text-xs font-semibold text-gray-900">Request a Paper Check</p>
                     <p class="text-xs text-gray-500">(Slowest payment method, approximately 7-10 days)</p>
                   </div>
-
                 </div>
-
-                <!-- CHEVRON -->
-                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-400 transition-all duration-200 ease-out
-             group-hover:text-gray-600 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd"
-                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                    clip-rule="evenodd" />
+                <svg xmlns="http://www.w3.org/2000/svg" class="size-5 text-gray-400 transition-all duration-200 ease-out group-hover:text-gray-600 group-hover:translate-x-1" viewBox="0 0 20 20" fill="currentColor">
+                  <path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
                 </svg>
-
               </div>
-
             </button>
 
 

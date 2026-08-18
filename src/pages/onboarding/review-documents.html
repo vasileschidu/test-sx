@@ -14,9 +14,77 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <script src="../../../src/scripts/onboarding-transitions.js"></script>
+  <script src="../../../src/scripts/onboarding-stepper.js"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
   <script src="../../../src/scripts/review-documents.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var pageLoader = window.SDOnboardingContext && window.SDOnboardingContext.createLoadingOverlay
+        ? window.SDOnboardingContext.createLoadingOverlay({
+            targets: []
+          })
+        : { done: function () {} };
+      var DOC_IDS = ['doc-1', 'doc-2', 'doc-3'];
+
+      function getState() {
+        return window.SDOnboardingContext ? window.SDOnboardingContext.getState() : {};
+      }
+      function saveState(patch) {
+        if (window.SDOnboardingContext) window.SDOnboardingContext.saveState(patch);
+      }
+
+      Promise.resolve(window.SDOnboardingContext && window.SDOnboardingContext.bootstrap ? window.SDOnboardingContext.bootstrap() : null)
+        .then(function () {
+          var state = getState();
+          var context = state.payableContext || {};
+          var attachments = Array.isArray(context.attachments) ? context.attachments.slice(0, DOC_IDS.length) : [];
+          DOC_IDS.forEach(function (docId, index) {
+            var row = document.getElementById(docId + '-row');
+            var name = document.getElementById(docId + '-name');
+            var size = document.getElementById(docId + '-size');
+            var attachment = attachments[index];
+            if (!row) return;
+            if (!attachment) {
+              row.classList.add('hidden');
+              return;
+            }
+            row.classList.remove('hidden');
+            if (name) name.textContent = attachment.name || ('Attachment ' + (index + 1));
+            if (size) size.textContent = attachment.size || '--';
+          });
+
+          var reviewed = getState().reviewedDocs || [];
+          reviewed.forEach(function (docId) {
+            var btn = document.querySelector('.review-trigger[data-doc-id="' + docId + '"]');
+            var status = document.getElementById(docId + '-status');
+            var checkbox = document.getElementById(docId + '-checkbox');
+            if (btn) btn.classList.add('hidden');
+            if (status) status.classList.remove('hidden');
+            if (checkbox) checkbox.checked = true;
+          });
+
+          var markReadBtn = document.getElementById('mark-read-btn');
+          if (markReadBtn) {
+            markReadBtn.addEventListener('click', function () {
+              setTimeout(function () {
+                var nowReviewed = DOC_IDS.filter(function (id) {
+                  var row = document.getElementById(id + '-row');
+                  var cb = document.getElementById(id + '-checkbox');
+                  return row && !row.classList.contains('hidden') && cb && cb.checked;
+                });
+                saveState({ reviewedDocs: nowReviewed });
+              }, 0);
+            });
+          }
+        })
+        .catch(function () {})
+        .then(function () {
+          pageLoader.done();
+        });
+    });
+  </script>
 </head>
 
 <body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
@@ -34,97 +102,7 @@
       </div>
 
       <!-- Stepper Nav -->
-      <nav aria-label="Progress">
-        <ol role="list" class="space-y-6">
-          <li>
-            <a href="confirm-identity.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
-                    class="size-full text-white group-hover:text-blue-300">
-                    <path
-                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                      clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Confirm Identity</span>
-              </span>
-            </a>
-          </li>
-
-          <li>
-            <a href="confirm-identity.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
-                    class="size-full text-white group-hover:text-blue-300">
-                    <path
-                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                      clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Confirm Business Details</span>
-              </span>
-            </a>
-          </li>
-
-          <li>
-            <a href="#" aria-current="step" class="flex items-start">
-              <span aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                <span class="absolute size-4 rounded-full bg-white/20"></span>
-                <span class="relative block size-2 rounded-full bg-white"></span>
-              </span>
-              <span class="ml-3 text-sm font-medium text-white">Review Documents</span>
-            </a>
-          </li>
-
-         
-
-          <li>
-            <a href="#" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Provide Signature</p>
-              </div>
-            </a>
-          </li>
-
-          <li>
-            <a href="#" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Confirm Payment</p>
-              </div>
-            </a>
-          </li>
-
-          <li>
-            <a href="create-account.html" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Create an Account</p>
-              </div>
-            </a>
-          </li>
-
-          <li>
-            <a href="#" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Complete</p>
-              </div>
-            </a>
-          </li>
-        </ol>
-      </nav>
+      <nav aria-label="Progress" data-ob-stepper></nav>
 
       <!-- Contact / Decline -->
       <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
@@ -157,7 +135,7 @@
         <!-- Content area -->
         <div data-ob-content class="flex-1 flex flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
           <div class="w-full max-w-[640px]">
-            <h1 class="text-3xl font-bold text-gray-900">Review Documents</h1>
+            <h1 class="text-3xl font-semibold text-gray-900">Review Documents</h1>
             <p class="mt-2 text-sm text-gray-500">Please review the document(s) below before proceeding with your
               payment.</p>
 
@@ -167,7 +145,7 @@
               <ul role="list" data-ob-skeleton data-ob-skeleton-rows="1" class="mt-4 divide-y divide-gray-100 rounded-md border border-gray-200">
 
                 <!-- Document 1 -->
-                <li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
+                <li id="doc-1-row" class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
                   <div class="flex w-0 flex-1 items-center">
                     <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
                       class="size-5 shrink-0 text-gray-400">
@@ -176,8 +154,8 @@
                         clip-rule="evenodd" fill-rule="evenodd" />
                     </svg>
                     <div class="ml-4 flex min-w-0 flex-1 flex-col">
-                      <span data-ob-skeleton class="truncate font-medium text-gray-900">resume_back_end_developer.pdf</span>
-                      <span data-ob-skeleton class="text-xs text-gray-400">2.4mb</span>
+                      <span id="doc-1-name" class="truncate font-medium text-gray-900">resume_back_end_developer.pdf</span>
+                      <span id="doc-1-size" class="text-xs text-gray-400">2.4mb</span>
                     </div>
                   </div>
                   <div class="ml-4 shrink-0">
@@ -200,7 +178,7 @@
                 </li>
 
                 <!-- Document 2 -->
-                <li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
+                <li id="doc-2-row" class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
                   <div class="flex w-0 flex-1 items-center">
                     <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
                       class="size-5 shrink-0 text-gray-400">
@@ -209,8 +187,8 @@
                         clip-rule="evenodd" fill-rule="evenodd" />
                     </svg>
                     <div class="ml-4 flex min-w-0 flex-1 flex-col">
-                      <span data-ob-skeleton class="truncate font-medium text-gray-900">coverletter_back_end_developer.pdf</span>
-                      <span data-ob-skeleton class="text-xs text-gray-400">4.5mb</span>
+                      <span id="doc-2-name" class="truncate font-medium text-gray-900">coverletter_back_end_developer.pdf</span>
+                      <span id="doc-2-size" class="text-xs text-gray-400">4.5mb</span>
                     </div>
                   </div>
                   <div class="ml-4 shrink-0">
@@ -233,7 +211,7 @@
                 </li>
 
                 <!-- Document 3 -->
-                <li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
+                <li id="doc-3-row" class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
                   <div class="flex w-0 flex-1 items-center">
                     <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
                       class="size-5 shrink-0 text-gray-400">
@@ -242,8 +220,8 @@
                         clip-rule="evenodd" fill-rule="evenodd" />
                     </svg>
                     <div class="ml-4 flex min-w-0 flex-1 flex-col">
-                      <span data-ob-skeleton class="truncate font-medium text-gray-900">business_registration_certificate.pdf</span>
-                      <span data-ob-skeleton class="text-xs text-gray-400">3.1mb</span>
+                      <span id="doc-3-name" class="truncate font-medium text-gray-900">business_registration_certificate.pdf</span>
+                      <span id="doc-3-size" class="text-xs text-gray-400">3.1mb</span>
                     </div>
                   </div>
                   <div class="ml-4 shrink-0">

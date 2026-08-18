@@ -12,8 +12,71 @@
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   <script src="../../../src/scripts/onboarding-transitions.js"></script>
+  <script src="../../../src/scripts/onboarding-stepper.js"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
   <script src="../../../src/scripts/signature.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var KEY = 'sd-onboarding-state';
+
+      function getState() {
+        try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
+      }
+      function saveState(patch) {
+        var s = getState();
+        Object.assign(s, patch);
+        sessionStorage.setItem(KEY, JSON.stringify(s));
+      }
+
+      // Restore after signature.js has initialized
+      setTimeout(function () {
+        var saved = getState();
+        var canvas = document.getElementById('signature-canvas');
+        var tabType = document.getElementById('tab-type');
+        var fullName = document.getElementById('fullName');
+        var nextBtn = document.getElementById('next-button');
+
+        if (saved.signatureMode === 'type' && saved.signatureName) {
+          if (tabType) tabType.click();
+          if (fullName) {
+            fullName.value = saved.signatureName;
+            fullName.dispatchEvent(new Event('input'));
+          }
+        } else if (saved.signatureDataUrl && canvas) {
+          var img = new Image();
+          img.onload = function () {
+            var ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.getBoundingClientRect().width, canvas.getBoundingClientRect().height);
+            if (nextBtn) nextBtn.disabled = false;
+          };
+          img.src = saved.signatureDataUrl;
+        }
+      }, 0);
+
+      // Save mode and typed name on changes
+      var tabDraw = document.getElementById('tab-draw');
+      var tabType = document.getElementById('tab-type');
+      var fullName = document.getElementById('fullName');
+      var canvas = document.getElementById('signature-canvas');
+
+      if (tabDraw) tabDraw.addEventListener('click', function () {
+        saveState({ signatureMode: 'draw', signatureDataUrl: null, signatureName: '' });
+      });
+      if (tabType) tabType.addEventListener('click', function () {
+        saveState({ signatureMode: 'type', signatureDataUrl: null });
+      });
+      if (fullName) fullName.addEventListener('input', function () {
+        saveState({ signatureMode: 'type', signatureName: fullName.value });
+      });
+
+      // Save canvas drawing on pointer up
+      if (canvas) canvas.addEventListener('pointerup', function () {
+        setTimeout(function () {
+          saveState({ signatureMode: 'draw', signatureDataUrl: canvas.toDataURL() });
+        }, 0);
+      });
+    });
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Meow+Script&display=swap" rel="stylesheet">
@@ -34,101 +97,7 @@
       </div>
 
       <!-- Stepper Nav -->
-      <nav aria-label="Progress">
-        <ol role="list" class="space-y-6">
-          <li>
-            <a href="confirm-identity.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
-                    class="size-full text-white group-hover:text-blue-300">
-                    <path
-                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                      clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Confirm Identity</span>
-              </span>
-            </a>
-          </li>
-
-          <li>
-            <a href="confirm-identity.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
-                    class="size-full text-white group-hover:text-blue-300">
-                    <path
-                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                      clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Confirm Business Details</span>
-              </span>
-            </a>
-          </li>
-
-          <li>
-            <a href="confirm-identity.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"
-                    class="size-full text-white group-hover:text-blue-300">
-                    <path
-                      d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-                      clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Review Documents</span>
-              </span>
-            </a>
-          </li>
-
-          <li>
-            <a href="#" aria-current="step" class="flex items-start">
-              <span aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                <span class="absolute size-4 rounded-full bg-white/20"></span>
-                <span class="relative block size-2 rounded-full bg-white"></span>
-              </span>
-              <span class="ml-3 text-sm font-medium text-white">Provide Signature</span>
-            </a>
-          </li>
-
-
-          <li>
-            <a href="#" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Confirm Payment</p>
-              </div>
-            </a>
-          </li>
-
-          <li>
-            <a href="create-account.html" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Create an Account</p>
-              </div>
-            </a>
-          </li>
-
-          <li>
-            <a href="#" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Complete</p>
-              </div>
-            </a>
-          </li>
-        </ol>
-      </nav>
+      <nav aria-label="Progress" data-ob-stepper></nav>
 
       <!-- Contact / Decline -->
       <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
@@ -161,7 +130,7 @@
         <!-- Content area -->
         <div data-ob-content class="flex-1 flex flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
           <div class="w-full max-w-[640px]">
-            <h1 class="text-3xl font-bold text-gray-900">Sign for Payment</h1>
+            <h1 class="text-3xl font-semibold text-gray-900">Sign for Payment</h1>
 
 
             <!-- Canvas -->

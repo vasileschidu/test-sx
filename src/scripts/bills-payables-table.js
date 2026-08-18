@@ -603,7 +603,7 @@
 
   function buildManageColumnsRowHTML(col, checked, disabled) {
     var scopeBadge = col && col.key === 'failureReason'
-      ? '<span class="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-xs font-medium text-red-700 inset-ring inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-300 dark:inset-ring-red-400/20">Exceptions</span>'
+      ? '<span class="shrink-0 rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10">Exceptions</span>'
       : '';
     return '' +
       '<div data-column-order-row="' + escapeHtml(col.key) + '" class="group relative flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 group-has-checked:bg-blue-50 dark:hover:bg-white/5 dark:group-has-checked:bg-blue-500/10' + (disabled ? ' opacity-60' : '') + '">' +
@@ -611,8 +611,8 @@
       '  <span data-drop-line="after" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="bottom:0;transform:translateY(50%);"></span>' +
       '  <button type="button" draggable="true" data-column-drag-handle="' + escapeHtml(col.key) + '" class="inline-flex size-5 shrink-0 cursor-grab items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-500 active:cursor-grabbing dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
       '    <span class="sr-only">Reorder column</span>' +
-      '    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-4" aria-hidden="true">' +
-      '      <path fill-rule="evenodd" clip-rule="evenodd" d="M6.00007 3.26641C5.96325 3.26641 5.9334 3.29625 5.9334 3.33307C5.9334 3.36989 5.96325 3.39974 6.00007 3.39974C6.03688 3.39974 6.06673 3.36989 6.06673 3.33307C6.06673 3.29625 6.03688 3.26641 6.00007 3.26641ZM4.7334 3.33307C4.7334 2.63351 5.3005 2.06641 6.00007 2.06641C6.69963 2.06641 7.26673 2.63351 7.26673 3.33307C7.26673 4.03263 6.69963 4.59974 6.00007 4.59974C5.3005 4.59974 4.7334 4.03263 4.7334 3.33307ZM10.0001 3.26641C9.96325 3.26641 9.9334 3.29625 9.9334 3.33307C9.9334 3.36989 9.96325 3.39974 10.0001 3.39974C10.0369 3.39974 10.0667 3.36989 10.0667 3.33307C10.0667 3.29625 10.0369 3.26641 10.0001 3.26641ZM8.7334 3.33307C8.7334 2.63351 9.3005 2.06641 10.0001 2.06641C10.6996 2.06641 11.2667 2.63351 11.2667 3.33307C11.2667 4.03263 10.6996 4.59974 10.0001 4.59974C9.3005 4.59974 8.7334 4.03263 8.7334 3.33307ZM6.00007 7.93307C5.96325 7.93307 5.9334 7.96292 5.9334 7.99974C5.9334 8.03656 5.96325 8.06641 6.00007 8.06641C6.03688 8.06641 6.06673 8.03656 6.06673 7.99974C6.06673 7.96292 6.03688 7.93307 6.00007 7.93307ZM4.7334 7.99974C4.7334 7.30018 5.3005 6.73307 6.00007 6.73307C6.69963 6.73307 7.26673 7.30018 7.26673 7.99974C7.26673 8.6993 6.69963 9.26641 6.00007 9.26641C5.3005 9.26641 4.7334 8.6993 4.7334 7.99974ZM10.0001 7.93307C9.96325 7.93307 9.9334 7.96292 9.9334 7.99974C9.9334 8.03656 9.96325 8.06641 10.0001 8.06641C10.0369 8.06641 10.0667 8.03656 10.0667 7.99974C10.0667 7.96292 10.0369 7.93307 10.0001 7.93307ZM8.7334 7.99974C8.7334 7.30018 9.3005 6.73307 10.0001 6.73307C10.6996 6.73307 11.2667 7.30018 11.2667 7.99974C11.2667 8.6993 10.6996 9.26641 10.0001 9.26641C9.3005 9.26641 8.7334 8.6993 8.7334 7.99974ZM6.00007 12.5997C5.96325 12.5997 5.9334 12.6296 5.9334 12.6664C5.9334 12.7032 5.96325 12.7331 6.00007 12.7331C6.03688 12.7331 6.06673 12.7032 6.06673 12.6664C6.06673 12.6296 6.03688 12.5997 6.00007 12.5997ZM4.7334 12.6664C4.7334 11.9668 5.3005 11.3997 6.00007 11.3997C6.69963 11.3997 7.26673 11.9668 7.26673 12.6664C7.26673 13.366 6.69963 13.9331 6.00007 13.9331C5.3005 13.9331 4.7334 13.366 4.7334 12.6664ZM10.0001 12.5997C9.96325 12.5997 9.9334 12.6296 9.9334 12.6664C9.9334 12.7032 9.96325 12.7331 10.0001 12.7331C10.0369 12.7331 10.0667 12.7032 10.0667 12.6664C10.0667 12.6296 10.0369 12.5997 10.0001 12.5997ZM8.7334 12.6664C8.7334 11.9668 9.3005 11.3997 10.0001 11.3997C10.6996 11.3997 11.2667 11.9668 11.2667 12.6664C11.2667 13.366 10.6996 13.9331 10.0001 13.9331C9.3005 13.9331 8.7334 13.366 8.7334 12.6664Z" fill="#757575"/>' +
+      '    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4">' +
+      '      <path d="M2.40039 10.8001C2.40039 10.1374 2.93765 9.6001 3.60039 9.6001C4.26313 9.6001 4.80039 10.1374 4.80039 10.8001C4.80039 11.4628 4.26313 12.0001 3.60039 12.0001C2.93765 12.0001 2.40039 11.4628 2.40039 10.8001Z" /><path d="M6.80039 10.8001C6.80039 10.1374 7.33765 9.6001 8.00039 9.6001C8.66313 9.6001 9.20039 10.1374 9.20039 10.8001C9.20039 11.4628 8.66313 12.0001 8.00039 12.0001C7.33765 12.0001 6.80039 11.4628 6.80039 10.8001Z" /><path d="M12.4004 9.6001C11.7376 9.6001 11.2004 10.1374 11.2004 10.8001C11.2004 11.4628 11.7376 12.0001 12.4004 12.0001C13.0631 12.0001 13.6004 11.4628 13.6004 10.8001C13.6004 10.1374 13.0631 9.6001 12.4004 9.6001Z" /><path d="M2.40039 6.00005C2.40039 5.33731 2.93765 4.80005 3.60039 4.80005C4.26313 4.80005 4.80039 5.33731 4.80039 6.00005C4.80039 6.66279 4.26313 7.20005 3.60039 7.20005C2.93765 7.20005 2.40039 6.66279 2.40039 6.00005Z" /><path d="M6.80039 6.00005C6.80039 5.33731 7.33765 4.80005 8.00039 4.80005C8.66313 4.80005 9.20039 5.33731 9.20039 6.00005C9.20039 6.66279 8.66313 7.20005 8.00039 7.20005C7.33765 7.20005 6.80039 6.66279 6.80039 6.00005Z" /><path d="M12.4004 4.80005C11.7376 4.80005 11.2004 5.33731 11.2004 6.00005C11.2004 6.66279 11.7376 7.20005 12.4004 7.20005C13.0631 7.20005 13.6004 6.66279 13.6004 6.00005C13.6004 5.33731 13.0631 4.80005 12.4004 4.80005Z" />' +
       '    </svg>' +
       '  </button>' +
       '  <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3">' +
@@ -1665,7 +1665,32 @@
     });
   }
 
+
+  /** Total applied filter values across every category, for the Filter button badge. */
+  function countAppliedFilters(sets, fromKey, toKey) {
+    var total = 0;
+    sets.forEach(function (set) { total += set ? set.size : 0; });
+    if (fromKey || toKey) total += 1;
+    return total;
+  }
+
+  function renderFilterCountBadge(total) {
+    var badges = document.querySelectorAll('[data-filter-count]');
+    Array.prototype.forEach.call(badges, function (badge) {
+      badge.textContent = total > 0 ? String(total) : '';
+      badge.classList.toggle('hidden', total === 0);
+      badge.classList.toggle('inline-flex', total > 0);
+    });
+  }
+
   function renderActiveFilters() {
+    renderFilterCountBadge(countAppliedFilters([
+      state.appliedSelectedSources,
+      state.appliedSelectedStatuses,
+      state.appliedSelectedMethods,
+      state.appliedSelectedFailureReasons
+    ], state.appliedInitiatedDateFrom, state.appliedInitiatedDateTo));
+
     if (!refs.activeFilters) return;
     var tags = [];
     if (state.appliedSelectedSources.size) {
@@ -1929,9 +1954,16 @@
     syncFilterApplyButtonState();
   }
 
+
+  /** Rotate the Filter chevron while its menu is open, as the sidebar submenu does. */
+  function setFilterChevron(open) {
+    var chevrons = document.querySelectorAll('[data-filter-chevron]');
+    Array.prototype.forEach.call(chevrons, function (c) { c.classList.toggle('rotate-180', !!open); });
+  }
   function setFilterMenuOpen(nextOpen) {
     if (!refs.filterMenu) return;
     state.filterMenuOpen = !!nextOpen;
+    setFilterChevron(state.filterMenuOpen);
     applyFilterMenuLayout();
     if (state.filterMenuOpen) {
       copyAppliedFiltersToDraft();
@@ -2133,6 +2165,15 @@
 
   function initManageColumnsModal() {
     if (!refs.manageColumnsBtn || !refs.manageColumnsDialog || !refs.manageColumnsList || !refs.manageColumnsApplyBtn || !refs.manageColumnsResetBtn) return;
+    var LIFT_CLASSES = ['bg-white', 'shadow-lg', 'ring-1', 'ring-gray-900/10', 'dark:bg-gray-800', 'dark:ring-white/15'];
+    function liftRow(row, on) {
+      if (!row) return;
+      LIFT_CLASSES.forEach(function (c) { row.classList.toggle(c, on); });
+    }
+    function clearAllLifts(scope) {
+      Array.prototype.forEach.call(scope.querySelectorAll('[data-column-order-row]'), function (r) { liftRow(r, false); });
+    }
+
     var dragTargetPosition = 'before';
     var dragTargetKey = '';
 
@@ -2232,9 +2273,16 @@
       draggingColumnKey = handle.getAttribute('data-column-drag-handle') || '';
       dragTargetKey = '';
       dragTargetPosition = 'before';
+      // Lift the whole row, not just the grip, and drag the row as the ghost.
+      var row = handle.closest('[data-column-order-row]');
+      liftRow(row, true);
       event.dataTransfer.effectAllowed = 'move';
       try {
         event.dataTransfer.setData('text/plain', draggingColumnKey);
+        if (row && event.dataTransfer.setDragImage) {
+          var box = row.getBoundingClientRect();
+          event.dataTransfer.setDragImage(row, event.clientX - box.left, event.clientY - box.top);
+        }
       } catch (error) {}
     });
 
@@ -2263,6 +2311,7 @@
     });
 
     refs.manageColumnsList.addEventListener('dragend', function () {
+      clearAllLifts(refs.manageColumnsList);
       draggingColumnKey = '';
       dragTargetKey = '';
       dragTargetPosition = 'before';

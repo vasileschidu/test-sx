@@ -12,9 +12,127 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <script src="../../../src/scripts/onboarding-transitions.js"></script>
+  <script src="../../../src/scripts/onboarding-stepper.js"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
-  <script src="../../../src/scripts/confirm-identity.js" defer></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var pageLoader = window.SDOnboardingContext && window.SDOnboardingContext.createLoadingOverlay
+        ? window.SDOnboardingContext.createLoadingOverlay({ targets: ['#identity-intro-line', '#invoice-number', '#vendor-id'] })
+        : { done: function () {} };
+      var invoiceInput = document.getElementById('invoice-number');
+      var vendorInput = document.getElementById('vendor-id');
+      var nextButton = document.getElementById('next-button');
+      var introLine = document.getElementById('identity-intro-line');
+      var identityError = document.getElementById('identity-error');
+      var invoiceIcon = document.getElementById('invoice-error-icon');
+      var vendorIcon = document.getElementById('vendor-error-icon');
+      var MAX_ATTEMPTS = 3;
+
+      function getState() {
+        return window.SDOnboardingContext ? window.SDOnboardingContext.getState() : {};
+      }
+      function saveState(patch) {
+        return window.SDOnboardingContext ? window.SDOnboardingContext.saveState(patch) : getState();
+      }
+      function formatMoney(amount, currency) {
+        var numeric = Number(amount || 0);
+        if (!Number.isFinite(numeric)) numeric = 0;
+        try {
+          return new Intl.NumberFormat('en-US', { style: 'currency', currency: currency || 'USD' }).format(numeric);
+        } catch (error) {
+          return '$' + numeric.toFixed(2);
+        }
+      }
+      function applyErrorState(active) {
+        [invoiceInput, vendorInput].forEach(function (input) {
+          input.setAttribute('aria-invalid', active ? 'true' : 'false');
+          input.classList.toggle('text-red-900', active);
+          input.classList.toggle('outline-red-300', active);
+          input.classList.toggle('placeholder:text-red-300', active);
+          input.classList.toggle('focus:outline-red-600', active);
+          input.classList.toggle('text-gray-900', !active);
+          input.classList.toggle('outline-gray-300', !active);
+          input.classList.toggle('placeholder:text-gray-400', !active);
+          input.classList.toggle('focus:outline-blue-600', !active);
+        });
+        if (invoiceIcon) invoiceIcon.classList.toggle('hidden', !active);
+        if (vendorIcon) vendorIcon.classList.toggle('hidden', !active);
+      }
+      function updateNextState() {
+        nextButton.disabled = invoiceInput.value.trim() === '' || vendorInput.value.trim() === '';
+      }
+
+      Promise.resolve(window.SDOnboardingContext && window.SDOnboardingContext.bootstrap ? window.SDOnboardingContext.bootstrap() : null)
+        .then(function () {
+          var saved = getState();
+          var context = saved.payableContext || {};
+          var expectedInvoice = String((context.billNumber || '')).trim().toUpperCase();
+          var expectedVendorId = String((context.vendorId || '')).trim().toUpperCase();
+          var attemptsUsed = Number(saved.identityAttemptsUsed || 0);
+
+          if (introLine && context.amount) {
+            introLine.textContent = formatMoney(context.amount, context.currency) + ' from ' + String(context.senderName || 'SMART Hub') + ' is ready to collect.';
+          }
+          if (expectedInvoice) invoiceInput.placeholder = expectedInvoice;
+          if (expectedVendorId) vendorInput.placeholder = expectedVendorId;
+          if (saved.invoiceNumber) invoiceInput.value = String(saved.invoiceNumber || '').toUpperCase();
+          if (saved.vendorId) vendorInput.value = String(saved.vendorId || '').toUpperCase();
+
+          function clearErrorState() {
+            applyErrorState(false);
+            if (identityError) {
+              identityError.classList.add('hidden');
+              identityError.textContent = '';
+            }
+          }
+
+          invoiceInput.addEventListener('input', function () {
+            invoiceInput.value = invoiceInput.value.toUpperCase();
+            saveState({ invoiceNumber: invoiceInput.value, identityValidated: false });
+            clearErrorState();
+            updateNextState();
+          });
+
+          vendorInput.addEventListener('input', function () {
+            vendorInput.value = vendorInput.value.toUpperCase();
+            saveState({ vendorId: vendorInput.value, identityValidated: false });
+            clearErrorState();
+            updateNextState();
+          });
+
+          nextButton.addEventListener('click', function () {
+            if (nextButton.disabled) return;
+            var invoiceValue = invoiceInput.value.trim().toUpperCase();
+            var vendorValue = vendorInput.value.trim().toUpperCase();
+            var matches = invoiceValue && vendorValue && invoiceValue === expectedInvoice && vendorValue === expectedVendorId;
+            if (matches) {
+              saveState({ invoiceNumber: invoiceValue, vendorId: vendorValue, identityValidated: true, identityAttemptsUsed: attemptsUsed });
+              window.location.href = 'confirm-business-details.html';
+              return;
+            }
+
+            attemptsUsed = Math.min(MAX_ATTEMPTS, attemptsUsed + 1);
+            saveState({ invoiceNumber: invoiceValue, vendorId: vendorValue, identityValidated: false, identityAttemptsUsed: attemptsUsed });
+            applyErrorState(true);
+            if (identityError) {
+              var remaining = Math.max(0, MAX_ATTEMPTS - attemptsUsed);
+              identityError.textContent = remaining > 0
+                ? (remaining + ' out of ' + MAX_ATTEMPTS + ' attempts remain. Re-enter your invoice number and Payee ID to continue.')
+                : 'No attempts remain. Request a new payment link and try again.';
+              identityError.classList.remove('hidden');
+            }
+          });
+
+          updateNextState();
+        })
+        .catch(function () {})
+        .then(function () {
+          pageLoader.done();
+        });
+    });
+  </script>
 </head>
 
 <body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
@@ -32,89 +150,7 @@
       </div>
 
       <!-- Stepper Nav -->
-      <nav aria-label="Progress">
-        <ol role="list" class="space-y-6">
-
-          <!-- Current Step -->
-          <li>
-            <a href="#" aria-current="step" class="flex items-start">
-              <span aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                <span class="absolute size-4 rounded-full bg-white/20"></span>
-                <span class="relative block size-2 rounded-full bg-white"></span>
-              </span>
-              <span class="ml-3 text-sm font-medium text-white">Confirm Identity</span>
-            </a>
-          </li>
-
-          <!-- Upcoming Steps -->
-          <li>
-            <a href="#" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Confirm Business Details</p>
-              </div>
-            </a>
-          </li>
-
-          <li>
-            <a href="#" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Review Documents</p>
-              </div>
-            </a>
-          </li>
-
-          <li>
-            <a href="#" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Provide Signature</p>
-              </div>
-            </a>
-          </li>
-
-          <li>
-            <a href="#" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Confirm Payment</p>
-              </div>
-            </a>
-          </li>
-
-          <li>
-            <a href="create-account.html" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Create an Account</p>
-              </div>
-            </a>
-          </li>
-
-          <li>
-            <a href="#" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Complete</p>
-              </div>
-            </a>
-          </li>
-
-        </ol>
-      </nav>
+      <nav aria-label="Progress" data-ob-stepper></nav>
 
       <!-- Contact / Decline -->
       <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
@@ -153,24 +189,32 @@
 
           <!-- Page Title -->
           <div class="w-full max-w-[640px]">
-            <h1 class="text-3xl font-bold text-gray-900">Let's make sure it's you!</h1>
+            <h1 class="text-3xl font-semibold text-gray-900">Let's make sure it's you!</h1>
             <p class="mt-2 text-sm text-gray-500">To collect your payment, please confirm the following.</p>
+            <p id="identity-intro-line" class="mt-1 text-sm text-gray-500"></p>
 
-            <!-- Form Card -->
-            <div class="mt-8 flex w-full max-w-[560px] flex-col gap-4 rounded-xl border border-gray-200 bg-white p-6">
-              <div>
+            <div class="mt-8 flex w-full flex-col gap-4">
+              <div class="sm:max-w-[430px]">
                 <label for="invoice-number" class="block text-sm/6 font-medium text-gray-900">Invoice Number</label>
-                <div class="mt-2">
-                  <input data-ob-skeleton id="invoice-number" type="text" name="invoice-number" placeholder="INV-2026-10458" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                <div class="mt-2 grid grid-cols-1">
+                  <input id="invoice-number" type="text" name="invoice-number" placeholder="INV-2026-10458" aria-invalid="false" aria-describedby="identity-error" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pr-10 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                  <svg id="invoice-error-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-3 hidden size-5 self-center justify-self-end text-red-500 sm:size-4">
+                    <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" fill-rule="evenodd" />
+                  </svg>
                 </div>
               </div>
 
-              <div>
+              <div class="sm:max-w-[430px]">
                 <label for="vendor-id" class="block text-sm/6 font-medium text-gray-900">Your Vendor ID</label>
-                <div class="mt-2">
-                  <input data-ob-skeleton id="vendor-id" type="text" name="vendor-id" placeholder="US-VND-483920" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                <div class="mt-2 grid grid-cols-1">
+                  <input id="vendor-id" type="text" name="vendor-id" placeholder="PAYEE-123456" aria-invalid="false" aria-describedby="identity-error" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pr-10 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                  <svg id="vendor-error-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-3 hidden size-5 self-center justify-self-end text-red-500 sm:size-4">
+                    <path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" fill-rule="evenodd" />
+                  </svg>
                 </div>
               </div>
+
+              <p id="identity-error" class="hidden max-w-[430px] rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm font-medium text-red-700"></p>
             </div>
 
           </div>

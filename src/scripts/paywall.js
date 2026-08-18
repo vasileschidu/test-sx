@@ -16,11 +16,11 @@
 
   var OPTIONS = {
     'btn-accept-card': {
-      href: '../onboarding-sd/instant-virtual-card.html',
+      href: 'instant-virtual-card.html',
       state: { paymentMethod: 'instant-virtual-card' }
     },
     'btn-bank-account': {
-      href: '../onboarding-sd/debit-account-info.html',
+      href: 'debit-account-info.html',
       state: { paymentMethod: 'bank-account', bankFlowStep: 'bank-details' }
     }
     // "Request a Paper Check" has no follow-up screen in either flow yet.

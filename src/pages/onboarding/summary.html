@@ -9,6 +9,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="../../scripts/sd-onboarding-context.js"></script>
   <script src="../../../src/scripts/onboarding-transitions.js"></script>
+  <script src="../../../src/scripts/onboarding-stepper.js"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
   <script>
     document.addEventListener('DOMContentLoaded', function () {
@@ -168,87 +169,7 @@
           alt="Transistor" width="158" height="48" class="h-full w-full object-contain" />
       </div>
 
-      <nav aria-label="Progress">
-        <ol role="list" class="space-y-6">
-          <li>
-            <a href="confirm-identity.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-full text-white group-hover:text-blue-300">
-                    <path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Confirm Identity</span>
-              </span>
-            </a>
-          </li>
-          <li>
-            <a href="review-documents.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-full text-white group-hover:text-blue-300">
-                    <path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Review Documents</span>
-              </span>
-            </a>
-          </li>
-          <li>
-            <a href="signature.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-full text-white group-hover:text-blue-300">
-                    <path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Provide Signature</span>
-              </span>
-            </a>
-          </li>
-          <li>
-            <a href="paywall.html" class="group">
-              <span class="flex items-start">
-                <span class="relative flex size-5 shrink-0 items-center justify-center">
-                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-full text-white group-hover:text-blue-300">
-                    <path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" />
-                  </svg>
-                </span>
-                <span class="ml-3 text-sm font-medium text-white group-hover:text-white">Method of Payment</span>
-              </span>
-            </a>
-          </li>
-          <li id="substep-account-info" class="hidden pl-6">
-            <a href="instant-virtual-card.html" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Account Information</p>
-              </div>
-            </a>
-          </li>
-          <li>
-            <a href="#" aria-current="step" class="flex items-start">
-              <span aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                <span class="absolute size-4 rounded-full bg-white/20"></span>
-                <span class="relative block size-2 rounded-full bg-white"></span>
-              </span>
-              <span class="ml-3 text-sm font-medium text-white">Summary</span>
-            </a>
-          </li>
-          <li>
-            <a href="complete.html" class="group">
-              <div class="flex items-start">
-                <div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">
-                  <div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>
-                </div>
-                <p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">Complete</p>
-              </div>
-            </a>
-          </li>
-        </ol>
-      </nav>
+      <nav aria-label="Progress" data-ob-stepper></nav>
 
       <!-- Contact / Decline -->
       <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
@@ -442,7 +363,7 @@
               <a id="summary-back-link" href="instant-virtual-card.html" class="h-11 flex-1 inline-flex items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">
                 Back
               </a>
-              <button type="button" onclick="window.location.href='complete.html'" class="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+              <button type="button" onclick="window.location.href='create-account.html'" class="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                 Confirm and Submit
               </button>
             </div>

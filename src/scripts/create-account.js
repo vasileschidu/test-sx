@@ -11,7 +11,7 @@
   'use strict';
 
   var STATE_KEY = 'sd-onboarding-state';
-  var NEXT_URL = '../onboarding-sd/complete.html';
+  var NEXT_URL = 'complete.html';
 
   var RULES = {
     length: function (value) { return value.length >= 8; },
