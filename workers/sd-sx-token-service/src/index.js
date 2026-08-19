@@ -121,7 +121,10 @@ function buildOnboardingUrl(baseUrl, flow, email, extraParams) {
   const rawBaseUrl = String(baseUrl || '').trim();
   if (!rawBaseUrl) return '';
 
-  const onboardingFolder = flow === 'sd' ? 'onboarding-sd' : 'onboarding';
+  // Both flows were merged into src/pages/onboarding/; onboarding-sd/ no longer
+  // exists, so a link built against it 404s. `flow` still rides along as a
+  // query parameter for anything that wants to branch on it.
+  const onboardingFolder = 'onboarding';
 
   try {
     const url = new URL(rawBaseUrl);

@@ -1172,7 +1172,15 @@
       }
     }
 
-    // SMART Exchange or any other — normal value
+    // A SMART Exchange row that has not settled has no method yet — printing
+    // "SMART Exchange" here reads as a chosen method. An em dash says empty.
+    if (entry.methodType === 'smart_exchange' && entry.status !== 'paid') {
+      return '<span class="text-sm text-gray-400 dark:text-gray-500" title="No payment method selected">' +
+        '<span aria-hidden="true">&mdash;</span>' +
+        '<span class="sr-only">No payment method selected</span>' +
+      '</span>';
+    }
+
     return '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(method) + '</span>';
   }
 
@@ -1227,9 +1235,13 @@
     });
   }
 
-  function renderActionMenu(entry, includeDecline) {
+  function renderActionMenu(entry, includeDecline, includeCardDetails) {
     var itemsHtml =
       '<a href="#" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block cursor-pointer px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>';
+    if (includeCardDetails) {
+      itemsHtml +=
+        '<a href="#" data-view-card-invoice="' + escapeHtml(entry.invoice) + '" class="block cursor-pointer px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View card details</a>';
+    }
     if (includeDecline) {
       itemsHtml +=
         '<a href="#" data-decline-invoice="' + escapeHtml(entry.invoice) + '" class="block cursor-pointer px-3 py-1.5 text-sm font-medium whitespace-nowrap text-red-600 focus:bg-red-50 focus:text-red-700 focus:outline-hidden dark:text-red-400 dark:focus:bg-red-500/10 dark:focus:text-red-300">Decline</a>';
@@ -1257,7 +1269,10 @@
     }
 
     if (_activeTableTabKey === 'pending' && isPendingManualReviewEntry(entry)) {
-      return '<button type="button" data-mark-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 dark:hover:text-white">Mark as paid</button>';
+      return '<div class="inline-flex items-center justify-end gap-2">' +
+        '<button type="button" data-mark-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 dark:hover:text-white">Mark as paid</button>' +
+        renderActionMenu(entry, false, true) +
+      '</div>';
     }
 
     if (_activeTableTabKey === 'pending' && isPendingLikeStatus(entry.status)) {
@@ -5473,36 +5488,18 @@
   function applyPendingRequiredActionGetPaidPanelState(entry) {
     var methodType = String(entry && entry.methodType || '').toLowerCase();
     if (methodType === 'smart_exchange') return;
-    var paymentValue = getPaidGetPaidMethodValue(entry);
-    var paymentMethodSelect = document.querySelector('el-select[name="paymentMethod"]');
-    var bankAccountSelect = document.getElementById('gp-bank-account-select');
-    var checkAddressSelect = document.getElementById('gp-check-address-select');
     var declineBtn = document.getElementById('gp-decline-btn');
 
-    if (paymentValue) {
-      setGetPaidMethodSelection(paymentValue, entry, getPaidGetPaidMethodLabel(entry, paymentValue));
-      applyResolvedMethodDetailsSelection(entry, paymentValue);
-    }
-    setGetPaidSelectDisabled(paymentMethodSelect, true);
-    setGetPaidSelectDisabled(bankAccountSelect, true);
-    setGetPaidSelectDisabled(checkAddressSelect, true);
+    // This row still needs the payee to act, so the method is theirs to choose:
+    // review the documents, sign, then pick how to get paid. Pre-selecting it
+    // from the stored preference and locking the selects completed step 3
+    // before steps 1 and 2 had been touched. The caller has already reset the
+    // select to its placeholder and enabled all three, so there is nothing to
+    // undo here — only the decline affordance to add.
     syncGetPaidBankEditVisibility(entry);
     if (declineBtn) {
       declineBtn.classList.remove('hidden');
       declineBtn.setAttribute('data-decline-invoice', entry.invoice || '');
-    }
-
-    if (paymentValue === 'bank-account') {
-      window.requestAnimationFrame(function () {
-        if (!_activeGetPaidEntry || String(_activeGetPaidEntry.invoice || '') !== String(entry.invoice || '')) return;
-        var fallbackBank = findMatchingBusinessBankAccountForEntry(entry);
-        if (!fallbackBank || !bankAccountSelect) return;
-        setSelectOptionByValue(bankAccountSelect, fallbackBank.id, buildSelectedBankContent(fallbackBank));
-        updateBankDetails(fallbackBank.id);
-        setGetPaidSelectDisabled(bankAccountSelect, true);
-        syncGetPaidBankEditVisibility(entry);
-        updateGetPaidStepStates();
-      });
     }
   }
 
@@ -6753,6 +6750,14 @@
           if (actionGuideState.step === 2) goToGuideStep3();
           else if (actionGuideState.step !== 3) closeActionColumnGuide();
         }
+        return;
+      }
+
+      var viewCardLink = e.target.closest('[data-view-card-invoice]');
+      if (viewCardLink) {
+        e.preventDefault();
+        var cardEntry = findEntryByInvoice(viewCardLink.getAttribute('data-view-card-invoice'));
+        if (cardEntry) openCardDetailsModalForEntry(cardEntry);
         return;
       }
 

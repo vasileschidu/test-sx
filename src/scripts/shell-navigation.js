@@ -141,25 +141,43 @@
         });
     }
 
-    function replaceBodyExtras(targetDoc) {
-        var currentWrapper = document.getElementById('main-content-wrapper');
-        var targetWrapper = targetDoc.getElementById('main-content-wrapper');
-        if (!currentWrapper || !targetWrapper) return;
+    var PAGE_DIALOG_SELECTOR = 'el-dialog, dialog';
 
-        var node = currentWrapper.nextSibling;
-        while (node) {
-            var next = node.nextSibling;
-            node.remove();
-            node = next;
+    /** The body-level element that contains the main wrapper (currently #app-shell). */
+    function shellRoot(doc) {
+        var node = doc.getElementById('main-content-wrapper');
+        if (!node) return null;
+        while (node.parentElement && node.parentElement !== doc.body) {
+            node = node.parentElement;
         }
+        return node.parentElement === doc.body ? node : null;
+    }
 
-        var targetNode = targetWrapper.nextSibling;
-        while (targetNode) {
-            var nextTarget = targetNode.nextSibling;
-            if (targetNode.nodeType === Node.ELEMENT_NODE) {
-                document.body.appendChild(document.importNode(targetNode, true));
+    /**
+     * Swap the page's modals, which live at body level next to the shell — not
+     * next to #main-content-wrapper, which has no siblings at all. Only dialogs
+     * are touched: <script> tags must not re-execute, and shell furniture added
+     * at runtime (the nav tooltip, the alert host) has to survive the swap.
+     */
+    function replaceBodyExtras(targetDoc) {
+        var currentShell = shellRoot(document);
+        var targetShell = shellRoot(targetDoc);
+        if (!currentShell || !targetShell) return;
+
+        var stale = [];
+        var node = currentShell.nextElementSibling;
+        while (node) {
+            if (node.matches(PAGE_DIALOG_SELECTOR)) stale.push(node);
+            node = node.nextElementSibling;
+        }
+        stale.forEach(function (dialog) { dialog.remove(); });
+
+        var incoming = targetShell.nextElementSibling;
+        while (incoming) {
+            if (incoming.matches(PAGE_DIALOG_SELECTOR)) {
+                document.body.appendChild(document.importNode(incoming, true));
             }
-            targetNode = nextTarget;
+            incoming = incoming.nextElementSibling;
         }
     }
 
