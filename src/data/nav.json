@@ -50,7 +50,7 @@
       "type": "smart-exchange",
       "id": "smart-exchange",
       "label": "SMART Exchange",
-      "href": "smart-exchange.html",
+      "href": "supplier-portal.html",
       "icon": "smart-exchange",
       "children": [
         { "id": "payment-preferences", "label": "Payment Preferences", "href": "payment-preferences.html" }
@@ -92,7 +92,7 @@
     }
   ],
   "pageActiveIds": {
-    "smart-exchange.html": "smart-exchange",
+    "supplier-portal.html": "smart-exchange",
     "bills-and-payables.html": "bills",
     "payables-pay.html": "bills",
     "vendors.html": "vendors",

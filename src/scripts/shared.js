@@ -65,8 +65,8 @@ function initThemeToggle() {
 /* ===== Breadcrumbs ===== */
 
 var BREADCRUMB_CONFIGS = {
-    'smart-exchange.html': [
-        { label: 'SMART Exchange', href: null }
+    'supplier-portal.html': [
+        { label: 'Supplier Portal', href: null }
     ],
     'bills-and-payables.html': [
         { label: 'Bills and Payables', href: null }
@@ -83,8 +83,11 @@ var BREADCRUMB_CONFIGS = {
         { label: 'Pay Page', href: null }
     ],
     'payment-preferences.html': [
-        { label: 'SMART Exchange', href: 'smart-exchange.html' },
+        { label: 'Supplier Portal', href: 'supplier-portal.html' },
         { label: 'Payment Preferences', href: null }
+    ],
+    'payment-program-configuration.html': [
+        { label: 'Payment Program Configuration', href: null }
     ],
     'my-company-profile.html': [
         { label: 'My Company Profile', href: null }
@@ -92,7 +95,7 @@ var BREADCRUMB_CONFIGS = {
 };
 
 var BREADCRUMB_REACT_ROUTE_MAP = {
-    'smart-exchange.html': '#/smart-exchange',
+    'supplier-portal.html': '#/smart-exchange',
     'bills-and-payables.html': '#/payables',
     'payables-pay.html': '#/payables',
     'vendors.html': '#/vendors',
@@ -126,7 +129,7 @@ function initBreadcrumbs() {
         '<ol role="list" class="flex items-center space-x-4">' +
         '  <li>' +
         '    <div>' +
-        '      <a href="' + resolveBreadcrumbHref('smart-exchange.html') + '" class="text-gray-400 transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">' +
+        '      <a href="' + resolveBreadcrumbHref('supplier-portal.html') + '" class="text-gray-400 transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">' +
         '        <svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5 shrink-0">' +
         '          <path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd" />' +
         '        </svg>' +
@@ -175,20 +178,8 @@ var MY_COMPANY_PROFILE_PATHS = [
 var _myCompanyProfilePromise = null;
 
 function loadSharedJsonWithFallbacks(paths) {
-    var index = 0;
-    function tryNext() {
-        if (index >= paths.length) return Promise.reject(new Error('Failed to load JSON.'));
-        var path = paths[index++];
-        return fetch(path, { cache: 'no-store' })
-            .then(function (response) {
-                if (!response.ok) throw new Error('HTTP ' + response.status + ' for ' + path);
-                return response.json();
-            })
-            .catch(function () {
-                return tryNext();
-            });
-    }
-    return tryNext();
+  // Single implementation lives in data-source.js.
+  return window.DataSource.load(paths);
 }
 
 function buildMyCompanyAddressText(legalAddress, fallbackAddress) {
@@ -706,7 +697,7 @@ function initMaskedCopySync() {
     });
 }
 
-/* ===== Country Flag (SMART Exchange — guard prevents activation on other pages) ===== */
+/* ===== Country Flag (Supplier Portal — guard prevents activation on other pages) ===== */
 
 function initCountryFlag() {
     var sel = document.getElementById('gp-edit-check-country');

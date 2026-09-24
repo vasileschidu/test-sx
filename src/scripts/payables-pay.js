@@ -4847,20 +4847,8 @@
   }
 
   function loadJsonWithFallbacks(paths) {
-    var i = 0;
-    function tryNext() {
-      if (i >= paths.length) {
-        return Promise.reject(new Error('Failed to load payables JSON from all known paths.'));
-      }
-      var path = paths[i++];
-      return fetch(path, { cache: 'no-store' }).then(function (res) {
-        if (!res.ok) throw new Error('HTTP ' + res.status + ' for ' + path);
-        return res.json();
-      }).catch(function () {
-        return tryNext();
-      });
-    }
-    return tryNext();
+    // Single implementation lives in data-source.js.
+    return window.DataSource.load(paths);
   }
 
   function findSelectedPayable(items, params) {

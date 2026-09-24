@@ -12,6 +12,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+  <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <script src="../../../src/scripts/onboarding-transitions.js"></script>
   <style>
@@ -79,18 +80,8 @@
         });
       }
       function loadJsonWithFallbacks(paths) {
-        var index = 0;
-        function tryNext() {
-          if (index >= paths.length) return Promise.reject(new Error('Failed to load payables JSON.'));
-          var path = paths[index++];
-          return fetch(path, { cache: 'no-store' }).then(function (response) {
-            if (!response.ok) throw new Error('HTTP ' + response.status + ' for ' + path);
-            return response.json();
-          }).catch(function () {
-            return tryNext();
-          });
-        }
-        return tryNext();
+        // Single implementation lives in data-source.js.
+        return window.DataSource.load(paths);
       }
       function syncPayableCompletion(stateSnapshot, amountText) {
         var context = stateSnapshot && stateSnapshot.payableContext ? stateSnapshot.payableContext : null;

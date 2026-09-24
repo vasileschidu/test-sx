@@ -1,6 +1,6 @@
 <!--
   @file dashboard/payment-preferences.html
-  @description Payment Preferences — sub-page of SMART Exchange.
+  @description Payment Preferences — sub-page of Supplier Portal.
     Tabs: Payment Methods (active), Global Preferences, Advanced Settings.
     Sections: Payers' Cards (STP + card list) and Payment Account Details
     (bank accounts + address for checks).
@@ -11,7 +11,7 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SMART Exchange - Payment Preferences</title>
+    <title>Supplier Portal - Payment Preferences</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -107,10 +107,13 @@
     <!-- Tailwind Plus Elements -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
     <script src="../../../src/scripts/sidebar-boot.js"></script>
+    <script src="../../../src/scripts/app-plans.js"></script>
     <script src="../../../src/scripts/nav-component.js"></script>
     <script src="../../../src/scripts/stp-state.js"></script>
+    <script src="../../../src/scripts/app-switch.js"></script>
     <script src="../../../src/scripts/topbar-component.js"></script>
     <script src="../../../src/scripts/sidebar.js" defer></script>
+    <script src="../../../src/scripts/data-source.js"></script>
     <script src="../../../src/scripts/shared.js" defer></script>
     <script src="../../../src/scripts/shell-navigation.js" defer></script>
     <script src="../../../src/scripts/payment-preferences-components.js"></script>
@@ -1494,7 +1497,7 @@
                             class="flex flex-col gap-2 self-stretch rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">
                             <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">How can you use the payer's card?</p>
                             <p class="text-xs font-normal text-gray-500 dark:text-gray-400">The payer has provided their card to cover a specific amount. You are only authorized to charge the amount indicated. To process the payment, enter the card details into your card terminal.</p>
-                            <p class="text-xs font-normal text-gray-500 dark:text-gray-400">The card may also be used for future authorized payments. It can be securely stored under the Payment Preference tab in the SMART Exchange.</p>
+                            <p class="text-xs font-normal text-gray-500 dark:text-gray-400">The card may also be used for future authorized payments. It can be securely stored under the Payment Preference tab in the Supplier Portal.</p>
                         </div>
 
                     </div>
@@ -2235,10 +2238,10 @@
                                             <div class="flex flex-col gap-2 pb-6">
                                                 <p class="text-sm font-medium leading-5 text-slate-950 dark:text-white">Process Any Payment</p>
                                                 <p class="text-sm font-normal leading-5 text-gray-700 dark:text-gray-300">
-                                                    Go to your <a href="smart-exchange.html" class="font-medium text-blue-600 underline decoration-solid dark:text-blue-400">Payments</a> and process any available virtual card using your terminal.<br />
+                                                    Go to your <a href="supplier-portal.html" class="font-medium text-blue-600 underline decoration-solid dark:text-blue-400">Payments</a> and process any available virtual card using your terminal.<br />
                                                     This links your Merchant and Terminal IDs.
                                                 </p>
-                                                <a id="pp-stp-go-to-payments-btn" href="smart-exchange.html?guide=card-rows"
+                                                <a id="pp-stp-go-to-payments-btn" href="supplier-portal.html?guide=card-rows"
                                                     class="inline-flex w-fit max-w-fit shrink-0 items-center justify-center self-start rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                                                     Go to Payments
                                                 </a>

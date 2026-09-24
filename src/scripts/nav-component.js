@@ -32,8 +32,8 @@ const APP_NAV_DATA = [
     {
         type: 'smart-exchange',
         id: 'smart-exchange',
-        label: 'SMART Exchange',
-        href: 'smart-exchange.html',
+        label: 'Supplier Portal',
+        href: 'supplier-portal.html',
         icon: 'smart-exchange',
         children: [
             { id: 'payment-preferences', label: 'Payment Preferences', href: 'payment-preferences.html' }
@@ -63,31 +63,34 @@ const APP_NAV_DATA = [
         icon: 'transcard-only',
         children: [
             { id: 'businesses', label: 'Businesses', href: '#' },
-            { id: 'se-recipients', label: 'SMART Exchange Recipients', href: '#' },
+            { id: 'se-recipients', label: 'Supplier Portal Recipients', href: '#' },
             { id: 'tenants', label: 'Tenants', href: '#' },
             { id: 'connections', label: 'Connections', href: '#' },
             { id: 'connectors', label: 'Connectors', href: '#' },
             { id: 'integrations', label: 'Integrations', href: '#' },
             { id: 'message-templates', label: 'Message Templates', href: '#' },
             { id: 'statement-templates', label: 'Statement Templates', href: '#' },
-            { id: 'reports', label: 'Reports', href: '#' }
+            { id: 'reports', label: 'Reports', href: '#' },
+            { id: 'payment-program-config', label: 'Payment Program Configuration', href: 'payment-program-configuration.html' }
         ]
     }
 ];
 
 /** Maps page filenames to active nav-item IDs. */
 const APP_NAV_PAGE_MAP = {
-    'smart-exchange.html': 'smart-exchange',
+    'supplier-portal.html': 'supplier-portal',
+    'ap-ar-payments.html': 'ap-ar',
     'bills-and-payables.html': 'bills',
     'payables-pay.html': 'bills',
     'vendors.html': 'vendors',
     'vendor-profile.html': 'vendors',
     'payment-preferences.html': 'payment-preferences',
+    'payment-program-configuration.html': 'payment-program-config',
     'my-company-profile.html': 'my-company-profile'
 };
 
 const APP_NAV_REACT_ROUTE_MAP = {
-    'smart-exchange.html': '#/smart-exchange',
+    'supplier-portal.html': '#/smart-exchange',
     'bills-and-payables.html': '#/payables',
     'payables-pay.html': '#/payables',
     'vendors.html': '#/vendors',
@@ -282,7 +285,7 @@ function buildSubmenuItems(children, activeId, routerMode) {
                 ? 'is-active bg-zinc-950/5 text-zinc-950 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:bg-zinc-950/5 focus-visible:text-zinc-950 dark:bg-white/5 dark:text-white dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white'
                 : 'text-gray-600 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:bg-zinc-950/5 focus-visible:text-zinc-950 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white');
         const ariaCurrent = isActive ? ' aria-current="page"' : '';
-        return `<a href="${resolveNavHref(child.href || '#', routerMode)}" class="${cls}"${ariaCurrent}><span class="block truncate">${child.label}</span></a>`;
+        return `<a href="${resolveNavHref(child.href || '#', routerMode)}" title="${child.label}" class="${cls}"${ariaCurrent}><span class="block truncate">${child.label}</span></a>`;
     }).join('\n');
 }
 
@@ -299,8 +302,14 @@ function buildNavLink(item, activeId, routerMode, isDesktopCollapsed) {
     const contentCls = 'flex min-w-0 items-center gap-3';
     const labelCls = 'nav-label truncate' + (isDesktopCollapsed ? ' hidden sr-only' : '');
     return `<a href="${resolveNavHref(item.href, routerMode)}" class="${rowCls}"${ariaCurrent}>
-<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId))}<span class="${labelCls}">${item.label}</span></span>
+<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId))}<span class="${labelCls}">${item.label}</span>${buildNavBadge(item, isDesktopCollapsed)}</span>
 </a>`;
+}
+
+/** Locked modules stay visible and carry the plan's upgrade affordance. */
+function buildNavBadge(item, isDesktopCollapsed) {
+    if (!item || !item.badge || isDesktopCollapsed) return '';
+    return `<span class="ml-auto shrink-0 rounded-sm bg-blue-50 px-1.5 py-0.5 text-[11px] font-semibold text-blue-700 dark:bg-blue-400/10 dark:text-blue-300">${item.badge}</span>`;
 }
 
 function buildNavLinkArrow(item, activeId, isDesktop, routerMode, isDesktopCollapsed) {
@@ -335,7 +344,7 @@ function buildSmartExchangeItem(item, activeId, expand, routerMode, isDesktopCol
     const chevronButtonCls = 'flex size-8 items-center justify-center rounded-lg text-gray-600 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600/30 transition-colors dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white cursor-pointer' + (isDesktopCollapsed ? ' hidden' : '');
     return `<div class="${rowCls}" data-smart-exchange-trigger>
 <a href="${resolveNavHref(item.href, routerMode)}" class="${linkCls}"${ariaCurrent}><span class="${contentCls}">${renderIcon(item.icon, iconCls)}<span class="${labelCls}">${item.label}</span></span></a>
-<button type="button" data-chevron-toggle aria-label="Toggle SMART Exchange submenu"
+<button type="button" data-chevron-toggle aria-label="Toggle Supplier Portal submenu"
   class="${chevronButtonCls}">
 ${chevron}
 </button>
@@ -353,11 +362,39 @@ function buildExpandableItem(item, activeId, routerMode, isDesktopCollapsed) {
 <span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId))}<span class="${labelCls}">${item.label}</span></span>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="${chevronCls}${chevronHiddenCls}"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
 </button>
-${buildSubmenu(item.children, activeId, false, routerMode)}`;
+${buildSubmenu(item.children, activeId, item.children.some(child => child.id === activeId), routerMode)}`;
+}
+
+/**
+ * Turns the active business's visible modules into sidebar items. Nesting,
+ * dividers and per-plan labels all come from the module registry, so this
+ * function never needs to know which plan is active.
+ */
+function composeNavItems() {
+    if (!window.AppPlans) return APP_NAV_DATA;
+    const modules = window.AppPlans.visibleModules();
+    const byId = {};
+    modules.forEach(m => {
+        const item = Object.assign({ id: m.id }, m.nav);
+        if (m.state === 'locked') item.badge = 'Upgrade';
+        byId[m.id] = item;
+    });
+    const items = [];
+    modules.forEach(m => {
+        const item = byId[m.id];
+        if (m.parent && byId[m.parent]) {
+            const parent = byId[m.parent];
+            parent.children = (parent.children || []).concat([{ id: item.id, label: item.label, href: item.href }]);
+            return;
+        }
+        if (m.dividerBefore && items.length) items.push({ type: 'divider' });
+        items.push(item);
+    });
+    return items;
 }
 
 function buildNavItems(isDesktop, activeId, expand, routerMode, isDesktopCollapsed) {
-    return APP_NAV_DATA.map(item => {
+    return composeNavItems().map(item => {
         switch (item.type) {
             case 'divider':        return buildDivider();
             case 'link':           return buildNavLink(item, activeId, routerMode, isDesktop && isDesktopCollapsed);
@@ -412,7 +449,7 @@ class AppNav extends HTMLElement {
         const collapsed = getInitialSidebarCollapsed();
         const expandAttr = this.getAttribute('data-expand-smart-exchange');
         const expand = expandAttr == null
-            ? (filename === 'smart-exchange.html' || filename === 'payment-preferences.html')
+            ? (filename === 'supplier-portal.html' || filename === 'payment-preferences.html')
             : expandAttr === 'true';
 
         this.innerHTML = this._buildHTML(activeId, expand, routerMode, collapsed);
@@ -453,7 +490,7 @@ class AppNav extends HTMLElement {
 
         // SE expand: open if navigating to SE/PP page OR was already open
         var expandAttr = this.getAttribute('data-expand-smart-exchange');
-        var pageExpand = (filename === 'smart-exchange.html' || filename === 'payment-preferences.html');
+        var pageExpand = (filename === 'supplier-portal.html' || filename === 'payment-preferences.html');
         var expand = expandAttr == null ? (pageExpand || expandSE) : expandAttr === 'true';
 
         this.setAttribute('data-page', filename);
@@ -564,7 +601,7 @@ ${buildFooter('desktop-sidebar-footer').replace('class="flex flex-col items-cent
             });
         });
 
-        /* SMART Exchange chevron */
+        /* Supplier Portal chevron */
         this.querySelectorAll('[data-chevron-toggle]').forEach(btn => {
             btn.addEventListener('click', () => {
                 if (typeof toggleSmartExchangeSubmenu === 'function') toggleSmartExchangeSubmenu(btn);

@@ -150,10 +150,20 @@
   var syncTableFilterUi = function () {};
   var syncManageColumnsUi = function () {};
 
-  // Maps tab key (from data-tab-count) to the status values shown in that tab.
-  // null means no filter — show all entries.
+  // Maps tab key (from data-tab-count) to what that tab shows: either a list of
+  // status values, or a predicate over the whole entry for tabs that cannot be
+  // expressed as a status alone. null means no filter — show all entries.
+  //
+  // Tabs are mutually exclusive: every entry lands in exactly one. 'action-required'
+  // is the subset of pending work only the supplier can clear by hand, so 'pending'
+  // is a predicate too — it holds everything pending-like that is NOT on that worklist.
   var TAB_STATUS_FILTER = {
-    pending: ['pending', 'processing'],
+    pending: function (entry) {
+      return isPendingLikeStatus(entry.status) && !isPendingManualReviewEntry(entry);
+    },
+    'action-required': function (entry) {
+      return isPendingManualReviewEntry(entry);
+    },
     paid: ['paid'],
     exceptions: ['exception', 'declined'],
   };
@@ -173,11 +183,17 @@
 
   var STATUS_LABELS = {
     pending: 'Pending',
+    'action-required': 'Action Required',
     processing: 'Processing',
     paid: 'Paid',
     exception: 'Exception',
     declined: 'Declined',
   };
+
+  // 'action-required' is a display-only status: the data still says 'pending', but
+  // the row needs the supplier to confirm funds by hand. It borrows the pending
+  // palette rather than introducing another badge variant.
+  STATUS_STYLES['action-required'] = STATUS_STYLES.pending;
 
   var METHOD_TYPE_LABELS = {
     smart_exchange: 'SMART Exchange',
@@ -385,12 +401,24 @@
     return String(value || '').replace(/\D/g, '');
   }
 
+  // True when `entry` belongs in the given tab. Handles both TAB_STATUS_FILTER
+  // shapes: a status list, or a predicate over the entry.
+  function entryMatchesTab(entry, tabKey) {
+    if (!entry) return false;
+    var filter = TAB_STATUS_FILTER[tabKey];
+    if (typeof filter === 'function') return !!filter(entry);
+    if (!filter || !filter.length) return true;
+    return filter.indexOf(entry.status) !== -1;
+  }
+
   // Returns entries filtered to the given tab key using TAB_STATUS_FILTER.
   function filterEntriesByTab(tabKey) {
     var filter = TAB_STATUS_FILTER[tabKey];
-    if (!filter || !filter.length) return paginationState.sourceEntries.slice();
+    if (!filter || (Array.isArray(filter) && !filter.length)) {
+      return paginationState.sourceEntries.slice();
+    }
     return paginationState.sourceEntries.filter(function (entry) {
-      return filter.indexOf(entry.status) !== -1;
+      return entryMatchesTab(entry, tabKey);
     });
   }
 
@@ -818,6 +846,13 @@
     return STATUS_LABELS[status] || 'Pending';
   }
 
+  // The status to show for an entry. Rows on the Action Required worklist read
+  // 'Action Required' instead of the bare 'Pending' the data carries.
+  function getDisplayStatus(entry) {
+    if (isPendingManualReviewEntry(entry)) return 'action-required';
+    return entry ? entry.status : 'pending';
+  }
+
   function getDeclineReason(entry) {
     if (!entry || !entry.details) return '';
     if (typeof entry.details.declineReason === 'string' && entry.details.declineReason.trim()) {
@@ -906,6 +941,14 @@
 
   function requiresGetPaidAction(entry) {
     return !!(entry && isPendingLikeStatus(entry.status) && (requiresDocumentReview(entry) || requiresSignature(entry)));
+  }
+
+  // Tabs that surface the inline "Mark as paid" action. Manual-review rows now live
+  // only on 'action-required'; 'pending' stays listed so the Get Paid panel opened
+  // from a deep link still offers the action. Paid and Exceptions stay read-only.
+  function activeTabShowsManualActions() {
+    var key = normalizeTabKey(_activeTableTabKey || 'pending');
+    return key === 'pending' || key === 'action-required';
   }
 
   function isPendingManualReviewEntry(entry) {
@@ -1111,7 +1154,7 @@
       case 'paymentMethod':
         return renderPaymentMethod(entry);
       case 'status':
-        return renderStatus(entry.status);
+        return renderStatus(getDisplayStatus(entry));
       default:
         break;
     }
@@ -1268,14 +1311,14 @@
       '</div>';
     }
 
-    if (_activeTableTabKey === 'pending' && isPendingManualReviewEntry(entry)) {
+    if (activeTabShowsManualActions() && isPendingManualReviewEntry(entry)) {
       return '<div class="inline-flex items-center justify-end gap-2">' +
         '<button type="button" data-mark-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 dark:hover:text-white">Mark as paid</button>' +
         renderActionMenu(entry, false, true) +
       '</div>';
     }
 
-    if (_activeTableTabKey === 'pending' && isPendingLikeStatus(entry.status)) {
+    if (activeTabShowsManualActions() && isPendingLikeStatus(entry.status)) {
       return renderActionMenu(entry, false);
     }
 
@@ -1344,14 +1387,15 @@
   }
 
   function buildStatusSection(entry) {
-    var statusClass = STATUS_STYLES[entry.status] || STATUS_STYLES.pending;
+    var displayStatus = getDisplayStatus(entry);
+    var statusClass = STATUS_STYLES[displayStatus] || STATUS_STYLES.pending;
     var declineReason = entry.status === 'declined' ? getDeclineReason(entry) : '';
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Status</div>' +
         '<div class="flex-1 flex flex-col items-start gap-2 p-4">' +
           '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + statusClass + '">' +
-            escapeHtml(getStatusLabel(entry.status)) +
+            escapeHtml(getStatusLabel(displayStatus)) +
           '</span>' +
           (declineReason
             ? '<div class="max-w-2xl rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300"><span class="font-medium">Decline reason:</span> ' + escapeHtml(declineReason) + '</div>'
@@ -1999,15 +2043,48 @@
     );
   }
 
+  var EMPTY_STATE_DOCUMENT_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-gray-400 dark:text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>';
+
+  var EMPTY_STATE_CHECK_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-green-500 dark:text-green-400"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>';
+
+  /** True when a search term or any applied filter is narrowing the table. */
+  function hasNarrowingTableFilters() {
+    if (String(tableFilterState.search || '').trim()) return true;
+    var sets = [
+      tableFilterState.appliedSelectedCustomers,
+      tableFilterState.appliedSelectedStatuses,
+      tableFilterState.appliedSelectedMethods,
+      tableFilterState.appliedSelectedFailureReasons,
+    ];
+    for (var i = 0; i < sets.length; i += 1) {
+      if (sets[i] && sets[i].size) return true;
+    }
+    return !!(tableFilterState.appliedInitiatedDateFrom || tableFilterState.appliedInitiatedDateTo);
+  }
+
   function buildEmptyStateHTML(colspan) {
+    // An empty Action Required tab means the work is done, not that the search
+    // came up short — say so, unless a filter is what emptied it.
+    var isClearedWorklist =
+      normalizeTabKey(_activeTableTabKey || 'pending') === 'action-required' &&
+      !hasNarrowingTableFilters();
+
+    var icon = isClearedWorklist ? EMPTY_STATE_CHECK_ICON : EMPTY_STATE_DOCUMENT_ICON;
+    var heading = isClearedWorklist ? 'You are all caught up' : 'No exchange records found';
+    var body = isClearedWorklist
+      ? 'No payments are waiting on your confirmation right now.'
+      : 'Try a different search or adjust the active filters to see matching invoices.';
+
     return (
       '<tbody class="' + CLASS_NAMES.tbody + '">' +
         '<tr>' +
           '<td colspan="' + colspan + '" class="px-0 py-4">' +
             '<div class="flex w-full flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-gray-50/80 px-6 py-8 text-center dark:border-white/10 dark:bg-white/5">' +
-              '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-gray-400 dark:text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>' +
-              '<h3 class="mt-3 text-sm font-semibold text-gray-900 dark:text-white">No exchange records found</h3>' +
-              '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Try a different search or adjust the active filters to see matching invoices.</p>' +
+              icon +
+              '<h3 class="mt-3 text-sm font-semibold text-gray-900 dark:text-white">' + escapeHtml(heading) + '</h3>' +
+              '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(body) + '</p>' +
             '</div>' +
           '</td>' +
         '</tr>' +
@@ -2459,21 +2536,16 @@
   }
 
   function calculateTabCounts(entries) {
-    var counts = {
-      pending: 0,
-      paid: 0,
-      exceptions: 0,
-    };
+    var tabKeys = Object.keys(TAB_STATUS_FILTER);
+    var counts = {};
+    tabKeys.forEach(function (key) {
+      counts[key] = 0;
+    });
 
     entries.forEach(function (entry) {
-      var status = String(entry.status || '');
-      if (status === 'paid') {
-        counts.paid += 1;
-      } else if (status === 'exception' || status === 'declined') {
-        counts.exceptions += 1;
-    } else if (status === 'pending' || status === 'processing') {
-      counts.pending += 1;
-    }
+      tabKeys.forEach(function (key) {
+        if (entryMatchesTab(entry, key)) counts[key] += 1;
+      });
     });
 
     return counts;
@@ -4673,12 +4745,8 @@
   }
 
   function fetchJsonFromPath(path) {
-    return fetch(path).then(function (response) {
-      if (!response.ok) {
-        throw new Error('HTTP ' + response.status + ' while loading ' + path);
-      }
-      return response.json();
-    });
+    // Single implementation lives in data-source.js.
+    return window.DataSource.load(path);
   }
 
   function getCheckAddressPathCandidates() {
@@ -5070,7 +5138,7 @@
 
     var footer = document.getElementById('gp-card-details-footer');
     var markPaidBtn = document.getElementById('gp-card-mark-paid-btn');
-    var showMarkPaid = _activeTableTabKey === 'pending' && isPendingManualReviewEntry(entry);
+    var showMarkPaid = activeTabShowsManualActions() && isPendingManualReviewEntry(entry);
     if (footer) footer.classList.toggle('hidden', !showMarkPaid);
     if (markPaidBtn) {
       if (showMarkPaid) markPaidBtn.setAttribute('data-mark-paid-invoice', entry.invoice || '');
@@ -5116,6 +5184,7 @@
       setGetPaidStepBadge(1, false);
       setGetPaidStepBadge(2, false);
       setGetPaidStepBadge(3, false);
+      setGetPaidStepBadge(4, false);
       var declinedSubmitBtn = document.getElementById('gp-submit-btn');
       if (declinedSubmitBtn) {
         declinedSubmitBtn.disabled = true;
@@ -5149,16 +5218,71 @@
       }
     }
 
+    // Step 4: confirmation checkbox ticked
+    var confirmCheckbox = document.getElementById('gp-confirm-checkbox');
+    var step4Done = !!(confirmCheckbox && confirmCheckbox.checked);
+
     setGetPaidStepBadge(1, step1Done);
     setGetPaidStepBadge(2, step2Done);
     setGetPaidStepBadge(3, step3Done);
+    setGetPaidStepBadge(4, step4Done);
+
+    updateGetPaidConfirmSummary();
 
     var submitBtn = document.getElementById('gp-submit-btn');
     if (submitBtn) {
-      var canSubmit = step1Done && step2Done && step3Done;
+      var canSubmit = step1Done && step2Done && step3Done && step4Done;
       submitBtn.disabled = !canSubmit;
       submitBtn.setAttribute('aria-disabled', canSubmit ? 'false' : 'true');
     }
+  }
+
+  // Destination shown in the Step 4 summary for the currently selected payment
+  // method. Reuses the exact bank/check lookups the submit handler already
+  // performs — no new data, just read earlier.
+  function getConfirmSummaryDestination(paymentValue) {
+    if (paymentValue === 'bank-account') {
+      var bankSel = document.getElementById('gp-bank-account-select');
+      var selectedBank = bankSel && bankSel.querySelector('el-option[aria-selected="true"]');
+      var bankId = selectedBank && selectedBank.getAttribute('value');
+      var bankAccounts = _myBusiness && _myBusiness.bankAccounts;
+      if (bankAccounts && bankId) {
+        for (var bi = 0; bi < bankAccounts.length; bi++) {
+          if (bankAccounts[bi].id === bankId) return bankAccounts[bi].displayName;
+        }
+      }
+      return '';
+    }
+    if (paymentValue === 'paper-check') {
+      var checkSel = document.getElementById('gp-check-address-select');
+      var selectedCheck = checkSel && checkSel.querySelector('el-option[aria-selected="true"]');
+      var checkId = selectedCheck && selectedCheck.getAttribute('value');
+      var checkAddresses = _myBusiness && _myBusiness.checkAddresses;
+      if (checkAddresses && checkId) {
+        for (var ci = 0; ci < checkAddresses.length; ci++) {
+          if (checkAddresses[ci].id === checkId) return checkAddresses[ci].displayName;
+        }
+      }
+      return '';
+    }
+    if (paymentValue === 'payers-card') return "Payer's Card";
+    return '';
+  }
+
+  function updateGetPaidConfirmSummary() {
+    var amountEl = document.getElementById('gp-confirm-amount');
+    var methodEl = document.getElementById('gp-confirm-method');
+    var destinationEl = document.getElementById('gp-confirm-destination');
+    if (!amountEl || !methodEl || !destinationEl) return;
+
+    var entry = _activeGetPaidEntry;
+    amountEl.textContent = entry ? formatCurrency(entry.amount, entry.currency) : '';
+
+    var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
+    var paymentValue = getSelectedOptionValue(paymentSel);
+    var methodLabels = { 'payers-card': "Payer's Card", 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
+    methodEl.textContent = methodLabels[paymentValue] || '—';
+    destinationEl.textContent = getConfirmSummaryDestination(paymentValue) || '—';
   }
 
   function buildAttachmentItem(att, idx) {
@@ -5209,9 +5333,11 @@
       signatureStep.classList.toggle('hidden', !signatureRequired);
       signatureStep.classList.toggle('sm:grid', signatureRequired);
     }
+    var step3DisplayNum = 1 + (docRequired ? 1 : 0) + (signatureRequired ? 1 : 0);
     setGetPaidStepDisplayNumber(1, 1);
     setGetPaidStepDisplayNumber(2, docRequired ? 2 : 1);
-    setGetPaidStepDisplayNumber(3, 1 + (docRequired ? 1 : 0) + (signatureRequired ? 1 : 0));
+    setGetPaidStepDisplayNumber(3, step3DisplayNum);
+    setGetPaidStepDisplayNumber(4, step3DisplayNum + 1);
   }
 
   function setGetPaidMethodSelection(value, entry, displayLabel) {
@@ -5674,6 +5800,11 @@
     var sigBadge = document.getElementById('gp-signed-badge');
     if (sigTrigger) sigTrigger.classList.remove('hidden');
     if (sigBadge) sigBadge.classList.add('hidden');
+
+    // Reset confirm checkbox (Step 4) — every open, including returning to
+    // an entry already visited, starts unticked.
+    var confirmCheckboxReset = document.getElementById('gp-confirm-checkbox');
+    if (confirmCheckboxReset) confirmCheckboxReset.checked = false;
 
     if (!_suppressUrlUpdate) {
       history.pushState(
@@ -6404,6 +6535,12 @@
         var icon = activityToggle.querySelector('[data-collapse-icon]');
         if (icon) icon.classList.toggle('rotate-180');
       });
+    }
+
+    // Confirm checkbox (Step 4) — gates the Submit button
+    var confirmCheckboxToggle = document.getElementById('gp-confirm-checkbox');
+    if (confirmCheckboxToggle) {
+      confirmCheckboxToggle.addEventListener('change', updateGetPaidStepStates);
     }
 
     var stpEnableToggle = document.getElementById('gp-stp-enable-toggle');

@@ -1,6 +1,6 @@
 /**
  * @file sidebar.js
- * @description Handles the SMART Exchange dashboard sidebar behavior including:
+ * @description Handles the Supplier Portal dashboard sidebar behavior including:
  *   - Desktop sidebar collapse/expand with smooth transitions
  *   - Submenu expand/collapse animations
  *   - Nav tooltip display on collapsed sidebar hover
@@ -440,7 +440,7 @@ function toggleExpandableItem(trigger) {
 }
 
 /**
- * Toggles the SMART Exchange submenu via the dedicated chevron button.
+ * Toggles the Supplier Portal submenu via the dedicated chevron button.
  * Called from HTML onclick attributes on the chevron toggle button.
  * @param {HTMLElement} chevronBtn - The chevron button element that was clicked.
  */

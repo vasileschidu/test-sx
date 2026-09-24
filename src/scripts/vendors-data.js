@@ -20,22 +20,8 @@
   var vendorCachePromise = null;
 
   function loadJsonWithFallbacks(paths) {
-    var index = 0;
-    function tryNext() {
-      if (index >= paths.length) {
-        return Promise.reject(new Error('Failed to load vendor data.'));
-      }
-      var path = paths[index++];
-      return fetch(path, { cache: 'no-store' })
-        .then(function (response) {
-          if (!response.ok) throw new Error('HTTP ' + response.status + ' for ' + path);
-          return response.json();
-        })
-        .catch(function () {
-          return tryNext();
-        });
-    }
-    return tryNext();
+    // Single implementation lives in data-source.js.
+    return window.DataSource.load(paths);
   }
 
   function formatMoney(amount, currency) {

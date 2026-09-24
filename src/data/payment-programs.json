@@ -1,0 +1,177 @@
+{
+  "defaultDurationDays": 45,
+  "durationRange": {
+    "min": 1,
+    "max": 90
+  },
+  "methods": [
+    {
+      "id": "virtual-card",
+      "label": "Virtual Card",
+      "fee": "No fee",
+      "feeLong": "No supplier fee",
+      "icon": "card"
+    },
+    {
+      "id": "managed-card",
+      "label": "Managed Card Acceptance",
+      "fee": "2.99%",
+      "feeLong": "2.99% service fee",
+      "icon": "card-plus"
+    },
+    {
+      "id": "qualified-settlement",
+      "label": "Qualified Settlement",
+      "fee": "1.50%",
+      "feeLong": "1.50% service fee",
+      "icon": "card-plus"
+    },
+    {
+      "id": "bank-transfer",
+      "label": "Bank Transfer",
+      "fee": "No fee",
+      "feeLong": "No fee",
+      "icon": "bank"
+    }
+  ],
+  "paperCheck": {
+    "label": "Check",
+    "fee": "No fee"
+  },
+  "progressionConditions": [
+    {
+      "id": "no-response",
+      "label": "Supplier does not respond"
+    },
+    {
+      "id": "selects-check",
+      "label": "Supplier selects Paper Check"
+    },
+    {
+      "id": "rejects-option",
+      "label": "Supplier rejects the payment option"
+    },
+    {
+      "id": "no-setup",
+      "label": "Supplier does not complete setup"
+    },
+    {
+      "id": "duration-expires",
+      "label": "Cohort duration expires"
+    }
+  ],
+  "defaultWaterfall": [
+    {
+      "name": "Managed Card Acceptance",
+      "rate": "2.99%",
+      "methods": [
+        "virtual-card",
+        "managed-card"
+      ],
+      "paperCheck": true
+    },
+    {
+      "name": "Qualified Settlement",
+      "rate": "1.50%",
+      "methods": [
+        "virtual-card",
+        "managed-card",
+        "qualified-settlement"
+      ],
+      "fallback": "qualified-settlement",
+      "paperCheck": false
+    },
+    {
+      "name": "Buyer Funded Account",
+      "rate": "0.00%",
+      "methods": [
+        "bank-transfer"
+      ],
+      "paperCheck": true
+    }
+  ],
+  "programs": [
+    {
+      "id": "prog-recommended-3-stage",
+      "name": "Recommended 3-Stage Waterfall",
+      "status": "active",
+      "updatedAt": "2026-07-18",
+      "suppliers": 1840,
+      "clients": 12,
+      "cohorts": [
+        {
+          "id": "co-mca",
+          "name": "Managed Card Acceptance",
+          "durationDays": 45,
+          "methods": [
+            "virtual-card",
+            "managed-card"
+          ],
+          "paperCheck": true,
+          "enabled": true,
+          "activeSuppliers": 567
+        },
+        {
+          "id": "co-qs",
+          "name": "Qualified Settlement",
+          "durationDays": 45,
+          "methods": [
+            "virtual-card",
+            "managed-card",
+            "qualified-settlement"
+          ],
+          "fallback": "qualified-settlement",
+          "paperCheck": false,
+          "enabled": true,
+          "activeSuppliers": 102
+        },
+        {
+          "id": "co-bfa",
+          "name": "Buyer Funded Account",
+          "durationDays": 45,
+          "methods": [
+            "bank-transfer"
+          ],
+          "paperCheck": true,
+          "enabled": true,
+          "activeSuppliers": 1171
+        }
+      ]
+    },
+    {
+      "id": "prog-two-stage",
+      "name": "Two-Stage Settlement",
+      "status": "active",
+      "updatedAt": "2026-06-02",
+      "suppliers": 240,
+      "clients": 4,
+      "cohorts": [
+        {
+          "id": "co-ts-qs",
+          "name": "Qualified Settlement",
+          "durationDays": 30,
+          "methods": [
+            "virtual-card",
+            "qualified-settlement"
+          ],
+          "fallback": "qualified-settlement",
+          "paperCheck": true,
+          "enabled": true,
+          "activeSuppliers": 180
+        },
+        {
+          "id": "co-ts-bfa",
+          "name": "Buyer Funded Account",
+          "durationDays": 45,
+          "methods": [
+            "bank-transfer"
+          ],
+          "paperCheck": true,
+          "enabled": true,
+          "activeSuppliers": 60
+        }
+      ]
+    }
+  ],
+  "unassignedSuppliers": 64
+}

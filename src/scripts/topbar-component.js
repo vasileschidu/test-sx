@@ -6,8 +6,8 @@
 
 (function () {
     var TOPBAR_BREADCRUMB_CONFIGS = {
-        'smart-exchange.html': [
-            { label: 'SMART Exchange', href: null }
+        'supplier-portal.html': [
+            { label: 'Supplier Portal', href: null }
         ],
         'bills-and-payables.html': [
             { label: 'Bills and Payables', href: null }
@@ -24,8 +24,11 @@
             { label: 'Pay Page', href: null }
         ],
         'payment-preferences.html': [
-            { label: 'SMART Exchange', href: 'smart-exchange.html' },
+            { label: 'Supplier Portal', href: 'supplier-portal.html' },
             { label: 'Payment Preferences', href: null }
+        ],
+        'payment-program-configuration.html': [
+            { label: 'Payment Program Configuration', href: null }
         ],
         'my-company-profile.html': [
             { label: 'My Company Profile', href: null }
@@ -35,12 +38,13 @@
     function pageTitleFromPath(overridePath) {
         var file = overridePath || (window.location.pathname || '').split('/').pop() || '';
         var map = {
-            'smart-exchange.html': 'SMART Exchange',
+            'supplier-portal.html': 'Supplier Portal',
             'bills-and-payables.html': 'Bills and Payables',
             'payables-pay.html': 'Pay Page',
             'vendors.html': 'Vendors',
             'vendor-profile.html': 'Vendor Profile',
             'payment-preferences.html': 'Payment Preferences',
+            'payment-program-configuration.html': 'Transcard Only',
             'my-company-profile.html': 'My Company Profile'
         };
         return map[file] || 'Dashboard';
@@ -65,7 +69,7 @@
         if (!href) return href;
         var routerMode = document.body && document.body.getAttribute('data-router');
         var routeMap = {
-            'smart-exchange.html': '#/smart-exchange',
+            'supplier-portal.html': '#/smart-exchange',
             'bills-and-payables.html': '#/payables',
             'payables-pay.html': '#/payables',
             'vendors.html': '#/vendors',
@@ -87,7 +91,7 @@
             '<ol role="list" class="flex items-center space-x-4">' +
             '<li>' +
             '<div>' +
-            '<a href="' + resolveBreadcrumbHref('smart-exchange.html') + '" class="text-gray-400 transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">' +
+            '<a href="' + resolveBreadcrumbHref('supplier-portal.html') + '" class="text-gray-400 transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">' +
             '<svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5 shrink-0">' +
             '<path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd" />' +
             '</svg>' +
@@ -216,11 +220,28 @@
             catalystMenuLink('my-company-profile.html', iconBuilding('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400'), 'My Company Profile') +
             catalystMenuLink('payment-preferences.html', iconCog('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400'), 'Payment Preferences') +
             catalystDivider() +
-            '<div class="px-3 py-2 text-xs/5 font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Organizations</div>' +
-            catalystMenuLink('#', iconBuilding('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400'), '<span data-topbar-org-primary>ABC Corporation Ltd.</span>') +
-            '<div data-topbar-org-secondary-wrap>' +
-            catalystMenuLink('#', iconBuilding('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400'), '<span data-topbar-org-secondary>Lorem Business</span>') +
-            '</div>';
+            '<div class="px-3 py-2 text-xs/5 font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Switch view</div>' +
+            businessOptionsHtml();
+    }
+
+    /** One entry per business/view, driven by the plan model. */
+    function businessOptionsHtml() {
+        var plans = window.AppPlans;
+        if (!plans) return '';
+        var activeId = plans.getActiveBusiness().id;
+        return plans.getBusinesses().map(function (business) {
+            var isActive = business.id === activeId;
+            var check = isActive
+                ? '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="ml-auto size-4 shrink-0 text-blue-600 group-focus:text-white dark:text-blue-400"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd"/></svg>'
+                : '';
+            var label = '<span class="flex min-w-0 flex-1 flex-col">' +
+                '<span class="truncate">' + business.name + '</span>' +
+                '<span class="truncate text-xs text-zinc-500 dark:text-zinc-400">' + (business.view || '') + '</span>' +
+                '</span>' + check;
+            return '<button type="button" data-topbar-business="' + business.id + '" ' +
+                'class="group flex w-full cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left text-sm/6 text-zinc-950 focus:bg-blue-600 focus:text-white focus:outline-none dark:text-white">' +
+                iconBuilding('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400') + label + '</button>';
+        }).join('');
     }
 
     function actionsButton(label, iconHtml, extraAttrs) {
@@ -236,6 +257,36 @@
             ' origin-top-right rounded-xl bg-white/85 p-1 shadow-lg ring-1 ring-zinc-950/10 outline outline-transparent backdrop-blur-xl transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800/85 dark:ring-white/10';
     }
 
+    function activeBusinessName() {
+        return window.AppPlans ? window.AppPlans.getActiveBusiness().name : 'ABC Corporation Ltd.';
+    }
+
+    /** Switching view re-renders the sidebar in place; no reload. */
+    function bindBusinessSwitcher(host) {
+        host.addEventListener('click', function (event) {
+            var button = event.target.closest('[data-topbar-business]');
+            if (!button || !window.AppPlans) return;
+            var nextId = button.getAttribute('data-topbar-business');
+            var menu = button.closest('el-menu');
+            if (menu && typeof menu.hidePopover === 'function') { try { menu.hidePopover(); } catch (e) {} }
+
+            function applySwitch() {
+                window.AppPlans.setActiveBusiness(nextId);
+                host.querySelectorAll('[data-topbar-org-name]').forEach(function (n) { n.textContent = activeBusinessName(); });
+            }
+            // Changing view swaps the whole instance, so it gets a real loading
+            // state rather than items rearranging under the cursor.
+            if (window.AppSwitch) {
+                window.AppSwitch.run(applySwitch);
+            } else {
+                applySwitch();
+                document.querySelectorAll('app-nav').forEach(function (nav) {
+                    if (typeof nav.connectedCallback === 'function') nav.connectedCallback();
+                });
+            }
+        });
+    }
+
     class AppTopbar extends HTMLElement {
         connectedCallback() {
             this.style.display = 'block';
@@ -246,6 +297,7 @@
             var pagePath = pagePathFromContext.call(this);
             var title = this.getAttribute('data-title') || pageTitleFromPath(pagePath);
             this.innerHTML = this.render(title, pagePath);
+            bindBusinessSwitcher(this);
             this._renderAlerts();
             this._observeAlertHost();
             this.bindStp();
@@ -405,7 +457,13 @@
                 : (String(profile.businessEmail || '').trim() || 'j.anderson@mail.com');
             var initials = buildInitials(personName);
 
-            this.querySelectorAll('[data-topbar-org-name], [data-topbar-org-primary]').forEach(function (node) {
+            // The switcher label names the active business/view; the company
+            // profile only supplies it when no plan model is present.
+            var switcherLabel = window.AppPlans ? activeBusinessName() : organizationName;
+            this.querySelectorAll('[data-topbar-org-name]').forEach(function (node) {
+                node.textContent = switcherLabel;
+            });
+            this.querySelectorAll('[data-topbar-org-primary]').forEach(function (node) {
                 node.textContent = organizationName;
             });
             this.querySelectorAll('[data-topbar-profile-name], [data-topbar-greeting-name]').forEach(function (node) {
@@ -534,7 +592,7 @@
                 '      <el-dropdown class="relative hidden sm:block">' +
                 '        <button type="button" class="flex min-w-0 items-center gap-3 rounded-lg bg-white p-2 text-left text-sm font-medium text-zinc-950 transition-colors hover:bg-zinc-950/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 cursor-pointer">' +
                 '          ' + iconBuilding('size-5 shrink-0 text-zinc-500 dark:text-zinc-400') +
-                '          <span data-topbar-org-name class="max-w-56 truncate">ABC Corporation Ltd.</span>' +
+                '          <span data-topbar-org-name class="max-w-56 truncate">' + activeBusinessName() + '</span>' +
                 '          ' + iconChevronDown('size-4 shrink-0 text-zinc-400 dark:text-zinc-500') +
                 '        </button>' +
                 '        <el-menu anchor="bottom end" popover class="' + headerMenuClass('min-w-72') + '">' +

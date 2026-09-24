@@ -1,6 +1,6 @@
 (function () {
     var PAGE_CONFIGS = {
-        'smart-exchange.html': {
+        'supplier-portal.html': {
             scripts: ['/src/scripts/table-skeleton.js', '/src/scripts/exchanges-table.js?v=20260309d'],
             init: 'initSmartExchangePage'
         },
