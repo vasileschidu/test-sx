@@ -215,6 +215,34 @@
         return '<div class="mx-3 my-1 h-px bg-zinc-950/5 dark:bg-white/10"></div>';
     }
 
+    function currentAccountLinks() {
+        return window.AppPlans && window.AppPlans.accountLinks
+            ? window.AppPlans.accountLinks()
+            : {
+                profile: { href: 'my-company-profile.html', label: 'My Company Profile' },
+                preferences: { href: 'payment-preferences.html', label: 'Payment Preferences' }
+            };
+    }
+
+    /** A profile/preferences link that follows the active product. */
+    function accountLink(kind, iconHtml) {
+        var link = currentAccountLinks()[kind];
+        return catalystMenuLink(link.href, iconHtml, link.label)
+            .replace('<a ', '<a data-topbar-account-link="' + kind + '" ');
+    }
+
+    /** Re-point the menus after a view switch, without re-rendering them. */
+    function syncAccountLinks(host) {
+        var links = currentAccountLinks();
+        host.querySelectorAll('[data-topbar-account-link]').forEach(function (anchor) {
+            var link = links[anchor.getAttribute('data-topbar-account-link')];
+            if (!link) return;
+            anchor.setAttribute('href', link.href);
+            var labels = anchor.querySelectorAll('span');
+            if (labels.length) labels[labels.length - 1].textContent = link.label;
+        });
+    }
+
     function accountMenuHtml() {
         return '' +
             '<div class="px-3 py-2">' +
@@ -222,8 +250,8 @@
             '  <p data-topbar-profile-email class="mt-0.5 text-xs/5 text-zinc-500 dark:text-zinc-400">j.anderson@mail.com</p>' +
             '</div>' +
             catalystDivider() +
-            catalystMenuLink('my-company-profile.html', iconUser('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400'), 'My Company Profile') +
-            catalystMenuLink('payment-preferences.html', iconCog('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400'), 'Payment Preferences') +
+            accountLink('profile', iconUser('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400')) +
+            accountLink('preferences', iconCog('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400')) +
             catalystDivider() +
             catalystMenuLink('#', iconShield('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400'), 'Privacy Policy') +
             catalystMenuLink('#', iconLightBulb('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400'), 'Share Feedback') +
@@ -233,8 +261,8 @@
 
     function organizationMenuHtml() {
         return '' +
-            catalystMenuLink('my-company-profile.html', iconBuilding('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400'), 'My Company Profile') +
-            catalystMenuLink('payment-preferences.html', iconCog('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400'), 'Payment Preferences') +
+            accountLink('profile', iconBuilding('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400')) +
+            accountLink('preferences', iconCog('size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400')) +
             catalystDivider() +
             '<div class="px-3 py-2 text-xs/5 font-medium uppercase tracking-wide text-zinc-500 dark:text-zinc-400">Switch view</div>' +
             businessOptionsHtml();
@@ -285,10 +313,21 @@
             var nextId = button.getAttribute('data-topbar-business');
             var menu = button.closest('el-menu');
             if (menu && typeof menu.hidePopover === 'function') { try { menu.hidePopover(); } catch (e) {} }
+            // Picking the view you're already in is not a switch.
+            if (nextId === window.AppPlans.getActiveBusiness().id) return;
 
             function applySwitch() {
                 window.AppPlans.setActiveBusiness(nextId);
-                host.querySelectorAll('[data-topbar-org-name]').forEach(function (n) { n.textContent = activeBusinessName(); });
+                document.querySelectorAll('app-topbar').forEach(function (bar) {
+                    bar.querySelectorAll('[data-topbar-org-name]').forEach(function (n) { n.textContent = activeBusinessName(); });
+                    bar.querySelectorAll('[data-topbar-business]').forEach(function (b) {
+                        var active = b.getAttribute('data-topbar-business') === nextId;
+                        var check = b.querySelector('svg.ml-auto');
+                        if (active && !check) b.insertAdjacentHTML('beforeend', '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="ml-auto size-4 shrink-0 text-blue-600 group-focus:text-white dark:text-blue-400"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd"/></svg>');
+                        if (!active && check) check.remove();
+                    });
+                    syncAccountLinks(bar);
+                });
             }
             // Changing view swaps the whole instance, so it gets a real loading
             // state rather than items rearranging under the cursor.

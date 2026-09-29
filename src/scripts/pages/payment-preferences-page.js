@@ -2700,6 +2700,7 @@
             var CHECK_KEY = window.__ppStorageKey('my_check_addresses_v1');
             var cardsCachePromise = null;
             var cardCopyMapBySlot = {};
+            var lastSelectedBySlot = {};
 
             function getStored(key) {
                 try { return JSON.parse(localStorage.getItem(key) || '[]'); } catch (e) { return []; }
@@ -2845,6 +2846,8 @@
                     '</div>';
 
                 anchor.parentNode.insertBefore(panel, anchor);
+                makeCollapsible(panel);
+                setExpanded(panel, false);
                 return panel;
             }
 
@@ -2995,6 +2998,76 @@
                 };
             }
 
+            /* Collapsible detail cards — same pattern as "My Account Details" on the
+               pay page: a header button with a chevron, body collapsed by default. */
+            var CHEVRON_SVG = '<svg data-gp-collapse-chevron xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 transition-transform dark:text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>';
+
+            function makeCollapsible(panel) {
+                if (!panel || panel.getAttribute('data-gp-collapsible') === 'true') return;
+                var wrap = panel.firstElementChild;
+                if (!wrap || wrap.children.length < 2) return;
+                var header = wrap.children[0];
+                var body = wrap.children[1];
+                var title = header.querySelector('span');
+
+                var btn = document.createElement('button');
+                btn.type = 'button';
+                btn.setAttribute('data-gp-collapse-toggle', '');
+                btn.setAttribute('aria-expanded', 'false');
+                btn.className = 'flex w-full cursor-pointer items-center justify-between rounded-md border border-gray-200 bg-gray-50 pl-4 pr-[6px] py-2 text-left transition-colors hover:bg-gray-100 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10';
+                btn.innerHTML = '<span class="text-sm font-semibold text-gray-900 dark:text-gray-100"></span>' + CHEVRON_SVG;
+                btn.firstChild.textContent = title ? title.textContent : 'Details';
+                wrap.replaceChild(btn, header);
+
+                var collapse = document.createElement('div');
+                collapse.setAttribute('data-gp-collapse-body', '');
+                collapse.className = 'w-full max-h-0 overflow-hidden rounded-b-md border-r border-b border-l border-transparent bg-gray-50 opacity-0 transition-all duration-300 ease-out pointer-events-none dark:bg-white/5';
+                ['rounded-b-md', 'border-r', 'border-b', 'border-l', 'border-gray-200', 'bg-gray-50', 'dark:border-white/10', 'dark:bg-white/5'].forEach(function (c) { body.classList.remove(c); });
+                wrap.replaceChild(collapse, body);
+                collapse.appendChild(body);
+
+                btn.addEventListener('click', function () {
+                    setExpanded(panel, btn.getAttribute('aria-expanded') !== 'true');
+                });
+                panel.setAttribute('data-gp-collapsible', 'true');
+            }
+
+            function setExpanded(panel, expanded) {
+                if (!panel) return;
+                var btn = panel.querySelector('[data-gp-collapse-toggle]');
+                var body = panel.querySelector('[data-gp-collapse-body]');
+                var chevron = panel.querySelector('[data-gp-collapse-chevron]');
+                if (btn) {
+                    btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+                    btn.classList.toggle('rounded-md', !expanded);
+                    btn.classList.toggle('rounded-t-md', expanded);
+                    btn.classList.toggle('bg-gray-50', !expanded);
+                    btn.classList.toggle('bg-gray-100', expanded);
+                    btn.classList.toggle('dark:bg-white/5', !expanded);
+                    btn.classList.toggle('dark:bg-white/10', expanded);
+                }
+                if (body) {
+                    body.classList.toggle('max-h-0', !expanded);
+                    body.classList.toggle('opacity-0', !expanded);
+                    body.classList.toggle('pointer-events-none', !expanded);
+                    body.classList.toggle('border-transparent', !expanded);
+                    body.classList.toggle('max-h-[560px]', expanded);
+                    body.classList.toggle('opacity-100', expanded);
+                    body.classList.toggle('pointer-events-auto', expanded);
+                    body.classList.toggle('border-gray-200', expanded);
+                    body.classList.toggle('dark:border-white/10', expanded);
+                }
+                if (chevron) chevron.classList.toggle('rotate-180', expanded);
+            }
+
+            function collapseSlot(n) {
+                ['card', 'bank', 'check'].forEach(function (kind) {
+                    var panel = document.getElementById('gp-details-' + kind + '-' + n);
+                    makeCollapsible(panel);
+                    setExpanded(panel, false);
+                });
+            }
+
             function showCard(n, opt) {
                 var cardCard = document.getElementById('gp-details-card-' + n);
                 var bankCard  = document.getElementById('gp-details-bank-'  + n);
@@ -3002,6 +3075,11 @@
                 if (cardCard) cardCard.classList.add('hidden');
                 if (bankCard)  bankCard.classList.add('hidden');
                 if (checkCard) checkCard.classList.add('hidden');
+                var selectedValue = opt ? (opt.getAttribute('value') || '') : '';
+                if (lastSelectedBySlot[n] !== selectedValue) {
+                    lastSelectedBySlot[n] = selectedValue;
+                    collapseSlot(n);
+                }
                 if (!opt) return;
 
                 var val    = opt.getAttribute('value') || '';

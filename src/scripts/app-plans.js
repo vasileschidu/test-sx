@@ -111,7 +111,12 @@ window.AppPlans = (function () {
       brand: 'consumer-portal',
       // Card processing (STP) is a supplier concern; a consumer never sees it.
       hideStp: true,
-      home: 'consumer-payments-received.html'
+      home: 'consumer-payments-received.html',
+      // The account/switcher menus point at this product's own pages.
+      accountLinks: {
+        profile: { href: 'consumer-my-profile.html', label: 'My Profile' },
+        preferences: { href: 'consumer-payment-preferences.html', label: 'Payment Preferences' }
+      }
     },
     'full': {
       label: 'Full Platform',
@@ -263,9 +268,32 @@ window.AppPlans = (function () {
    * After a switch: if the page on screen belongs to a module the new view
    * can't see, the page it should go to instead. Null when it can stay.
    */
+  var DEFAULT_ACCOUNT_LINKS = {
+    profile: { href: 'my-company-profile.html', label: 'My Company Profile' },
+    preferences: { href: 'payment-preferences.html', label: 'Payment Preferences' }
+  };
+
+  /** Profile + preferences links for the account menus, per product. */
+  function accountLinks(business) {
+    return getPlan(business).accountLinks || DEFAULT_ACCOUNT_LINKS;
+  }
+
+  // The same screen in the other product: switching view while on Payment
+  // Preferences lands on the new product's Payment Preferences, not its home.
+  var COUNTERPARTS = {
+    'payment-preferences.html': 'consumer-payment-preferences.html',
+    'consumer-payment-preferences.html': 'payment-preferences.html',
+    'my-company-profile.html': 'consumer-my-profile.html',
+    'consumer-my-profile.html': 'my-company-profile.html'
+  };
+
   function redirectForCurrentPage() {
-    var owner = moduleForPage(currentPageFile());
+    var file = currentPageFile();
+    var owner = moduleForPage(file);
     if (!owner || moduleState(owner) !== 'hidden') return null;
+    var twin = COUNTERPARTS[String(file || '').split('/').pop().split('?')[0]];
+    var twinOwner = twin && moduleForPage(twin);
+    if (twinOwner && moduleState(twinOwner) !== 'hidden') return twin + (window.location.search || '');
     return homeFor();
   }
 
@@ -284,6 +312,7 @@ window.AppPlans = (function () {
     modules: MODULES,
     homeFor: homeFor,
     redirectForCurrentPage: redirectForCurrentPage,
+    accountLinks: accountLinks,
     plans: PLANS,
     getBusinesses: getBusinesses,
     getActiveBusiness: getActiveBusiness,
