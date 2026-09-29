@@ -106,6 +106,11 @@ window.AppSwitch = (function () {
 
     var wait = MIN_MS + Math.random() * (MAX_MS - MIN_MS);
     window.setTimeout(function () {
+      // Switching product (e.g. into the Consumer Portal) can leave the page on
+      // screen outside the new view. Go to that view's home under the veil
+      // instead of drawing its sidebar around another product's page.
+      var redirect = window.AppPlans && window.AppPlans.redirectForCurrentPage && window.AppPlans.redirectForCurrentPage();
+      if (redirect) { window.location.href = redirect; return; }
       rerenderNav();
       clearVeil();
       document.documentElement.removeAttribute('data-app-switching');

@@ -1,0 +1,10 @@
+{
+  "fullName": "Johnny Anderson",
+  "username": "j.anderson",
+  "email": "johnny@example.com",
+  "phone": "",
+  "alerts": {
+    "critical": { "email": true, "sms": false },
+    "account": { "email": true, "sms": false }
+  }
+}

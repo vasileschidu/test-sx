@@ -30,6 +30,18 @@
         'payment-program-configuration.html': [
             { label: 'Payment Program Configuration', href: null }
         ],
+        'consumer-payments-received.html': [
+            { label: 'Payments Received', href: null }
+        ],
+        'consumer-my-cards.html': [
+            { label: 'My Cards', href: null }
+        ],
+        'consumer-payment-preferences.html': [
+            { label: 'Payment Preferences', href: null }
+        ],
+        'consumer-my-profile.html': [
+            { label: 'My Profile', href: null }
+        ],
         'my-company-profile.html': [
             { label: 'My Company Profile', href: null }
         ]
@@ -45,6 +57,10 @@
             'vendor-profile.html': 'Vendor Profile',
             'payment-preferences.html': 'Payment Preferences',
             'payment-program-configuration.html': 'Transcard Only',
+            'consumer-payments-received.html': 'Payments Received',
+            'consumer-my-cards.html': 'My Cards',
+            'consumer-payment-preferences.html': 'Payment Preferences',
+            'consumer-my-profile.html': 'My Profile',
             'my-company-profile.html': 'My Company Profile'
         };
         return map[file] || 'Dashboard';
@@ -91,7 +107,7 @@
             '<ol role="list" class="flex items-center space-x-4">' +
             '<li>' +
             '<div>' +
-            '<a href="' + resolveBreadcrumbHref('supplier-portal.html') + '" class="text-gray-400 transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">' +
+            '<a href="' + resolveBreadcrumbHref(window.AppPlans ? window.AppPlans.homeFor() : 'supplier-portal.html') + '" class="text-gray-400 transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">' +
             '<svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5 shrink-0">' +
             '<path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd" />' +
             '</svg>' +
@@ -300,6 +316,11 @@
             bindBusinessSwitcher(this);
             this._renderAlerts();
             this._observeAlertHost();
+            if (window.AppPlans && !this._planAlertBound) {
+                this._planAlertBound = true;
+                var selfTopbar = this;
+                window.AppPlans.onChange(function () { selfTopbar._updateAlertSpacing(); });
+            }
             this.bindStp();
             this.bindProfileData();
         }
@@ -391,7 +412,11 @@
 
         _updateAlertSpacing() {
             var host = document.getElementById('stp-alert-host');
-            if (!host) {
+            // Plans that don't process cards (the Consumer Portal) never show the STP banner.
+            var hidden = false;
+            try { hidden = !!(window.AppPlans && window.AppPlans.getPlan().hideStp); } catch (error) {}
+            if (host) host.classList.toggle('hidden', hidden);
+            if (!host || hidden) {
                 document.documentElement.style.setProperty('--stp-alert-height', '0px');
                 document.body.style.paddingTop = '0px';
                 return;

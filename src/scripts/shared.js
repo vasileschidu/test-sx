@@ -13,6 +13,26 @@
  *   nav-component.js → sidebar.js → shared.js → [page-specific scripts]
  */
 
+/* ===== Field Focus & Cursor (shell-wide) ===== */
+// Dropdowns across every product: a hand cursor, and a visible focus ring on
+// click and while the list is open — not only on keyboard focus. Text inputs
+// keep their own focus styles and the text cursor. One rule set here, so no
+// page has to repeat it and none can drift.
+(function injectFieldFocusStyles() {
+    if (document.getElementById('shell-field-focus-styles')) return;
+    var style = document.createElement('style');
+    style.id = 'shell-field-focus-styles';
+    style.textContent = [
+        'el-select > button, select, el-option { cursor: pointer; }',
+        'el-select > button:disabled, el-select[disabled] > button, select:disabled { cursor: not-allowed; }',
+        'el-select > button:focus, el-select > button[aria-expanded="true"], select:focus {',
+        '  outline: 2px solid #2563eb !important; outline-offset: -2px !important;',
+        '}',
+        '.dark el-select > button:focus, .dark el-select > button[aria-expanded="true"], .dark select:focus { outline-color: #3b82f6 !important; }'
+    ].join('\n');
+    (document.head || document.documentElement).appendChild(style);
+})();
+
 /* ===== Theme Toggle ===== */
 
 function initThemeToggle() {
@@ -88,6 +108,18 @@ var BREADCRUMB_CONFIGS = {
     ],
     'payment-program-configuration.html': [
         { label: 'Payment Program Configuration', href: null }
+    ],
+    'consumer-payments-received.html': [
+        { label: 'Payments Received', href: null }
+    ],
+    'consumer-my-cards.html': [
+        { label: 'My Cards', href: null }
+    ],
+    'consumer-payment-preferences.html': [
+        { label: 'Payment Preferences', href: null }
+    ],
+    'consumer-my-profile.html': [
+        { label: 'My Profile', href: null }
     ],
     'my-company-profile.html': [
         { label: 'My Company Profile', href: null }

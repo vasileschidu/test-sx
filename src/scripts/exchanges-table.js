@@ -9,6 +9,27 @@
 (function () {
   'use strict';
 
+  /**
+   * Per-page configuration, set by the page before this script loads, so the
+   * same table serves more than one product. The Consumer Portal uses it to
+   * point at its own data and storage and to use its own wording; the Supplier
+   * Portal sets nothing and keeps every default below.
+   *   dataset       data file name under src/data (default 'exchanges')
+   *   storageKey    localStorage key for row overrides
+   *   methodLabels  { methodType: label }  e.g. { smart_exchange: 'Smart Disburse' }
+   *   statusLabels  { status: label }      e.g. { pending: 'Pending Your Action' }
+   *   showTokenMethod  show the token label (not a dash) before a method is chosen
+   * Setting a dataset also means only that file's payee details are used —
+   * no shared payment preferences, bank accounts, check addresses or profile.
+   */
+  var PAGE_CONFIG = window.EXCHANGES_TABLE_CONFIG || {};
+
+  // Get Paid "Confirm and Submit" step (step 4) came from the demo-speedbump
+  // test. The product Get Paid is three steps, so it stays off unless a demo
+  // asks for it with ?speedbump=1 (or a page sets speedbump: true).
+  var SPEEDBUMP_ENABLED = PAGE_CONFIG.speedbump === true ||
+    /(?:^|[?&])speedbump=1(?:&|$)/.test(String(window.location.search || ''));
+
   var JSON_PATH_FALLBACKS = [
     '../../../src/data/exchanges.json',
     '/src/data/exchanges.json',
@@ -200,6 +221,8 @@
     card: 'Card',
     ach: 'ACH',
   };
+  Object.assign(STATUS_LABELS, PAGE_CONFIG.statusLabels || {});
+  Object.assign(METHOD_TYPE_LABELS, PAGE_CONFIG.methodLabels || {});
 
   var CLASS_NAMES = {
     tbody: 'bg-white dark:bg-gray-900',
@@ -1010,7 +1033,7 @@
     return entry;
   }
 
-  var EXCHANGE_OVERRIDES_STORAGE_KEY = 'sx_exchange_entry_overrides_v1';
+  var EXCHANGE_OVERRIDES_STORAGE_KEY = PAGE_CONFIG.storageKey || 'sx_exchange_entry_overrides_v1';
 
   function readExchangeEntryOverrides() {
     try {
@@ -1217,6 +1240,11 @@
 
     // A SMART Exchange row that has not settled has no method yet — printing
     // "SMART Exchange" here reads as a chosen method. An em dash says empty.
+    // Where the token itself is the rail (Consumer Portal: "Smart Disburse"),
+    // it is the method — show it, as the design does.
+    if (entry.methodType === 'smart_exchange' && entry.status !== 'paid' && PAGE_CONFIG.showTokenMethod) {
+      return '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(METHOD_TYPE_LABELS.smart_exchange) + '</span>';
+    }
     if (entry.methodType === 'smart_exchange' && entry.status !== 'paid') {
       return '<span class="text-sm text-gray-400 dark:text-gray-500" title="No payment method selected">' +
         '<span aria-hidden="true">&mdash;</span>' +
@@ -1618,7 +1646,7 @@
     if (status === 'pending' && methodType === 'smart_exchange') {
       return {
         key: 'smart_exchange_unselected',
-        typeLabel: 'SMART Exchange',
+        typeLabel: METHOD_TYPE_LABELS.smart_exchange,
         titleLabel: 'No Payment Method Selected',
         revealKind: '',
         rowsHtml:
@@ -1781,7 +1809,7 @@
     if (status === 'exception' || status === 'declined') {
       return {
         key: 'exception_smart_exchange_unselected',
-        typeLabel: 'SMART Exchange',
+        typeLabel: METHOD_TYPE_LABELS.smart_exchange,
         titleLabel: 'No Payment Method Selected',
         revealKind: '',
         rowsHtml:
@@ -1793,7 +1821,7 @@
 
     return {
       key: 'smart_exchange',
-      typeLabel: 'SMART Exchange',
+      typeLabel: METHOD_TYPE_LABELS.smart_exchange,
       titleLabel: 'Exchange Details',
       revealKind: '',
       rowsHtml:
@@ -4733,6 +4761,10 @@
   // ── Data fetching ──
 
   function getJsonPathCandidates() {
+    if (PAGE_CONFIG.dataset) {
+      var file = PAGE_CONFIG.dataset + '.json';
+      return ['../../../src/data/' + file, '/src/data/' + file, './src/data/' + file];
+    }
     var candidates = JSON_PATH_FALLBACKS.slice();
     if (document.currentScript && document.currentScript.src) {
       try {
@@ -5218,9 +5250,9 @@
       }
     }
 
-    // Step 4: confirmation checkbox ticked
+    // Step 4: confirmation checkbox ticked (only when the speedbump demo is on)
     var confirmCheckbox = document.getElementById('gp-confirm-checkbox');
-    var step4Done = !!(confirmCheckbox && confirmCheckbox.checked);
+    var step4Done = !SPEEDBUMP_ENABLED || !!(confirmCheckbox && confirmCheckbox.checked);
 
     setGetPaidStepBadge(1, step1Done);
     setGetPaidStepBadge(2, step2Done);
@@ -5338,6 +5370,11 @@
     setGetPaidStepDisplayNumber(2, docRequired ? 2 : 1);
     setGetPaidStepDisplayNumber(3, step3DisplayNum);
     setGetPaidStepDisplayNumber(4, step3DisplayNum + 1);
+    var confirmStep = document.getElementById('gp-confirm-step');
+    if (confirmStep) {
+      confirmStep.classList.toggle('hidden', !SPEEDBUMP_ENABLED);
+      confirmStep.classList.toggle('sm:grid', SPEEDBUMP_ENABLED);
+    }
   }
 
   function setGetPaidMethodSelection(value, entry, displayLabel) {
@@ -6656,7 +6693,7 @@
         var selectedMethodType = paymentValue === 'payers-card' ? 'card' : 'ach';
         if (originalMethodType === 'smart_exchange' && paymentValue === 'payers-card') {
           _activeGetPaidEntry.methodType = 'smart_exchange';
-          _activeGetPaidEntry.paymentMethod = 'SMART Exchange';
+          _activeGetPaidEntry.paymentMethod = METHOD_TYPE_LABELS.smart_exchange;
         } else {
           _activeGetPaidEntry.methodType = selectedMethodType;
           _activeGetPaidEntry.paymentMethod = getMethodLabelFromType(selectedMethodType);
@@ -7298,13 +7335,16 @@
       });
     }
 
+    // A page with its own dataset (the Consumer Portal) uses only the payee
+    // details in that file; the supplier's shared banks and addresses aren't its.
+    var ownDataOnly = !!PAGE_CONFIG.dataset;
     Promise.all([
       fetchExchangesData(),
-      fetchPaymentPreferencesData().catch(function () { return { bankAccounts: [] }; }),
-      fetchCheckAddressesData().catch(function () { return []; }),
-      fetchBankAccountsData().catch(function () { return []; }),
-      fetchCustomersData().catch(function () { return []; }),
-      typeof window.getMyCompanyProfile === 'function' ? window.getMyCompanyProfile().catch(function () { return null; }) : Promise.resolve(null),
+      ownDataOnly ? Promise.resolve({ bankAccounts: [] }) : fetchPaymentPreferencesData().catch(function () { return { bankAccounts: [] }; }),
+      ownDataOnly ? Promise.resolve([]) : fetchCheckAddressesData().catch(function () { return []; }),
+      ownDataOnly ? Promise.resolve([]) : fetchBankAccountsData().catch(function () { return []; }),
+      ownDataOnly ? Promise.resolve([]) : fetchCustomersData().catch(function () { return []; }),
+      !ownDataOnly && typeof window.getMyCompanyProfile === 'function' ? window.getMyCompanyProfile().catch(function () { return null; }) : Promise.resolve(null),
     ])
       .then(function (results) {
         var result = results[0];

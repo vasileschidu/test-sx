@@ -1,0 +1,177 @@
+{
+  "customers": [
+    {
+      "id": "optum-pay",
+      "name": "Optum Pay",
+      "vendorEntries": [
+        "Optum Pay"
+      ]
+    },
+    {
+      "id": "state-of-new-jersey",
+      "name": "State of New Jersey",
+      "vendorEntries": [
+        "State of New Jersey"
+      ]
+    },
+    {
+      "id": "aetna",
+      "name": "Aetna",
+      "vendorEntries": [
+        "Aetna"
+      ]
+    },
+    {
+      "id": "unitedhealthcare",
+      "name": "UnitedHealthcare",
+      "vendorEntries": [
+        "UnitedHealthcare"
+      ]
+    },
+    {
+      "id": "cigna",
+      "name": "Cigna",
+      "vendorEntries": [
+        "Cigna"
+      ]
+    },
+    {
+      "id": "blue-cross-blue-shield",
+      "name": "Blue Cross Blue Shield",
+      "vendorEntries": [
+        "Blue Cross Blue Shield"
+      ]
+    },
+    {
+      "id": "humana",
+      "name": "Humana",
+      "vendorEntries": [
+        "Humana"
+      ]
+    },
+    {
+      "id": "kaiser-permanente",
+      "name": "Kaiser Permanente",
+      "vendorEntries": [
+        "Kaiser Permanente"
+      ]
+    },
+    {
+      "id": "state-of-california",
+      "name": "State of California",
+      "vendorEntries": [
+        "State of California"
+      ]
+    },
+    {
+      "id": "progressive-insurance",
+      "name": "Progressive Insurance",
+      "vendorEntries": [
+        "Progressive Insurance"
+      ]
+    },
+    {
+      "id": "state-farm",
+      "name": "State Farm",
+      "vendorEntries": [
+        "State Farm"
+      ]
+    },
+    {
+      "id": "allstate",
+      "name": "Allstate",
+      "vendorEntries": [
+        "Allstate"
+      ]
+    }
+  ],
+  "bankAccounts": [
+    {
+      "id": "chase-2956",
+      "displayName": "Chase Bank Account",
+      "name": "Johnny Anderson",
+      "bankName": "Chase Bank",
+      "availableAmount": 12480,
+      "currency": "USD",
+      "last4": "2956",
+      "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u20222956",
+      "accountNumber": "000071209432956",
+      "maskedRouting": "\u2022\u2022\u2022\u2022\u20220021",
+      "routingNumber": "021000021",
+      "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States"
+    },
+    {
+      "id": "wf-8419",
+      "displayName": "Wells Fargo Account",
+      "name": "Johnny Anderson",
+      "bankName": "Wells Fargo",
+      "availableAmount": 8340,
+      "currency": "USD",
+      "last4": "8419",
+      "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u20228419",
+      "accountNumber": "000048390108419",
+      "maskedRouting": "\u2022\u2022\u2022\u2022\u20225667",
+      "routingNumber": "121005667",
+      "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States"
+    },
+    {
+      "id": "citi-3674",
+      "displayName": "Citibank Account",
+      "name": "Johnny Anderson",
+      "bankName": "Citibank",
+      "availableAmount": 3120,
+      "currency": "USD",
+      "last4": "3674",
+      "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u20223674",
+      "accountNumber": "000040198913674",
+      "maskedRouting": "\u2022\u2022\u2022\u2022\u20220089",
+      "routingNumber": "021000089",
+      "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States"
+    },
+    {
+      "id": "boa-5281",
+      "displayName": "Bank of America Account",
+      "name": "Johnny Anderson",
+      "bankName": "Bank of America",
+      "availableAmount": 1975,
+      "currency": "USD",
+      "last4": "5281",
+      "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u20225281",
+      "accountNumber": "000033887145281",
+      "maskedRouting": "\u2022\u2022\u2022\u2022\u20229593",
+      "routingNumber": "026009593",
+      "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States"
+    },
+    {
+      "id": "capone-1147",
+      "displayName": "Capital One Account",
+      "name": "Johnny Anderson",
+      "bankName": "Capital One",
+      "availableAmount": 640,
+      "currency": "USD",
+      "last4": "1147",
+      "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u20221147",
+      "accountNumber": "000052618341147",
+      "maskedRouting": "\u2022\u2022\u2022\u2022\u20225515",
+      "routingNumber": "051405515",
+      "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States"
+    }
+  ],
+  "checkAddresses": [
+    {
+      "id": "addr-billing",
+      "displayName": "Billing Address",
+      "name": "Johnny Anderson",
+      "cityState": "Short Hills, NJ",
+      "summary": "1 Chapel Hill Rd, Short Hills, NJ 07078, United States",
+      "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States"
+    }
+  ],
+  "profile": {
+    "id": "johnny-anderson",
+    "name": "Johnny Anderson",
+    "mailingAddress": {
+      "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States"
+    }
+  }
+}

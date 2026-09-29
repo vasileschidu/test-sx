@@ -1,5 +1,22 @@
+        /**
+         * Per-page configuration, set before this script loads, so the same page
+         * serves more than one product. The Consumer Portal uses it:
+         *   dataset        its own data file under src/data (banks, addresses, payers)
+         *   storagePrefix  its own localStorage prefix instead of 'pp_'
+         * With a dataset, nothing is borrowed from the supplier — no shared check
+         * addresses, no company profile, and no payers' cards pulled from payments.
+         * The Supplier Portal sets nothing and keeps every default.
+         */
+        window.__ppConfig = window.PAYMENT_PREFERENCES_CONFIG || {};
+        window.__ppStorageKey = function (name) {
+            return (window.__ppConfig.storagePrefix || 'pp_') + name;
+        };
+
         (function () {
-            var PAYMENT_PREFS_DATA_URL = '../../data/payment-preferences-data.json';
+            var PP_CONFIG = window.__ppConfig;
+            var PAYMENT_PREFS_DATA_URL = PP_CONFIG.dataset
+                ? '../../data/' + PP_CONFIG.dataset + '.json'
+                : '../../data/payment-preferences-data.json';
             var exchangesDataUrl = '../../data/exchanges.json';
             var customersFallbackUrl = '../../data/customers.json';
             var bankAccountsFallbackUrl = '../../data/bank-accounts.json';
@@ -111,6 +128,13 @@
                         })
                         .then(function (payload) {
                             payload = payload && typeof payload === 'object' ? payload : {};
+                            if (PP_CONFIG.dataset) {
+                                // Own data only: addresses and profile come from the file; no cards.
+                                payload.checkAddresses = Array.isArray(payload.checkAddresses) ? payload.checkAddresses : [];
+                                payload.myCompanyProfile = payload.profile || null;
+                                payload.cards = [];
+                                return payload;
+                            }
                             return Promise.all([
                                 fetch(checkAddressesFallbackUrl).then(function (res) { return res.ok ? res.json() : []; }).catch(function () { return []; }),
                                 fetch(exchangesDataUrl).then(function (res) { return res.ok ? res.json() : null; }).catch(function () { return null; }),
@@ -1257,8 +1281,8 @@
         })();
 
         (function () {
-            var BANK_ACCOUNTS_STORAGE_KEY = 'pp_my_bank_accounts_v1';
-            var CHECK_ADDRESSES_STORAGE_KEY = 'pp_my_check_addresses_v1';
+            var BANK_ACCOUNTS_STORAGE_KEY = window.__ppStorageKey('my_bank_accounts_v1');
+            var CHECK_ADDRESSES_STORAGE_KEY = window.__ppStorageKey('my_check_addresses_v1');
             var dialog = document.getElementById('pp-add-bank-account-dialog');
             var saveBtn = document.getElementById('pp-add-bank-account-save-btn');
             var nameInput = document.getElementById('pp-bank-account-name');
@@ -2672,8 +2696,8 @@
 
         /* ===== Global Preferences — detail cards ===== */
         (function () {
-            var BANK_KEY  = 'pp_my_bank_accounts_v1';
-            var CHECK_KEY = 'pp_my_check_addresses_v1';
+            var BANK_KEY  = window.__ppStorageKey('my_bank_accounts_v1');
+            var CHECK_KEY = window.__ppStorageKey('my_check_addresses_v1');
             var cardsCachePromise = null;
             var cardCopyMapBySlot = {};
 

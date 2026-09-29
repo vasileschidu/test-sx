@@ -28,6 +28,25 @@
     .pp-skel-strong { background: var(--pp-skel-strong); }
     @keyframes ppPulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
     @media (prefers-reduced-motion: reduce) { .pp-skel { animation: none; } }
+
+    /* Duration slider: flat track, no stroke. The fill is painted on the input
+       itself, not the track pseudo-element: Chrome doesn't repaint the track
+       when --pp-fill changes, so the blue would stay put while the thumb moved. */
+    .pp-range {
+      -webkit-appearance: none; appearance: none; height: 6px; border-radius: 9999px; cursor: pointer; --pp-fill: 50%;
+      background: linear-gradient(to right, #2563eb 0 var(--pp-fill), #e5e7eb var(--pp-fill) 100%);
+    }
+    .pp-range:focus { outline: none; }
+    .pp-range::-webkit-slider-runnable-track { height: 6px; border: 0; background: transparent; }
+    .pp-range::-moz-range-track { height: 6px; border: 0; background: transparent; }
+    .pp-range::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 16px; height: 16px; margin-top: -5px;
+      border: 0; border-radius: 9999px; background: #fff; box-shadow: inset 0 0 0 3.2px #2563eb;
+    }
+    .pp-range::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 9999px; background: #fff; box-shadow: inset 0 0 0 3.2px #2563eb; }
+    .pp-range:focus-visible::-webkit-slider-thumb { outline: 2px solid #2563eb; outline-offset: 2px; }
+    .pp-range:focus-visible::-moz-range-thumb { outline: 2px solid #2563eb; outline-offset: 2px; }
+    .dark .pp-range { background: linear-gradient(to right, #3b82f6 0 var(--pp-fill), rgba(255,255,255,.12) var(--pp-fill) 100%); }
   </style>
 
   <script src="../../../src/scripts/sidebar-boot.js"></script>
@@ -189,7 +208,7 @@
                 </div>
                 <div class="flex items-center gap-4">
                   <input id="pp-cohort-days" type="range" min="1" max="90" step="1" aria-label="Cohort duration in days"
-                    class="h-1.5 flex-1 cursor-pointer accent-blue-600" />
+                    class="pp-range flex-1" />
                   <output id="pp-cohort-days-label" for="pp-cohort-days" class="w-16 shrink-0 text-right text-sm font-semibold text-gray-900 dark:text-white">45 days</output>
                 </div>
               </section>

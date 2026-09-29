@@ -917,6 +917,11 @@
     if (!cohortEdit) return;
     var draft = readCohortForm(cohortEdit.original);
     $('pp-cohort-days-label').textContent = plural(draft.durationDays, 'day');
+    var days = $('pp-cohort-days');
+    var span = Number(days.max) - Number(days.min) || 1;
+    // The thumb's centre travels 8px in from each end, so the fill does too.
+    var ratio = (Number(days.value) - Number(days.min)) / span;
+    days.style.setProperty('--pp-fill', 'calc(8px + (100% - 16px) * ' + ratio.toFixed(4) + ')');
     var valid = !!draft.name && methodCount(draft) > 0;
     // Apply stays off until something actually differs from what was opened.
     var changed = cohortEdit.index == null || cohortShape(draft) !== cohortShape(cohortEdit.original);

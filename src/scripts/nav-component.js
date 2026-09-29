@@ -86,6 +86,10 @@ const APP_NAV_PAGE_MAP = {
     'vendor-profile.html': 'vendors',
     'payment-preferences.html': 'payment-preferences',
     'payment-program-configuration.html': 'payment-program-config',
+    'consumer-payments-received.html': 'payments-received',
+    'consumer-my-cards.html': 'my-cards',
+    'consumer-payment-preferences.html': 'cp-payment-preferences',
+    'consumer-my-profile.html': 'my-profile',
     'my-company-profile.html': 'my-company-profile'
 };
 
@@ -115,6 +119,9 @@ function getInitialSidebarCollapsed() {
 /* ===== Icon Registry ===== */
 
 const APP_NAV_ICONS = {
+    'payments-received': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="{CLS}"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m.75 12 3 3m0 0 3-3m-3 3v-6m-1.5-9H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>',
+    'payment-preferences': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="{CLS}"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" /></svg>',
+    'my-profile': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="{CLS}"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>',
     insights: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="{CLS}"><path d="M9.8132 15.9038L9 18.75L8.1868 15.9038C7.75968 14.4089 6.59112 13.2403 5.09619 12.8132L2.25 12L5.09619 11.1868C6.59113 10.7597 7.75968 9.59112 8.1868 8.09619L9 5.25L9.8132 8.09619C10.2403 9.59113 11.4089 10.7597 12.9038 11.1868L15.75 12L12.9038 12.8132C11.4089 13.2403 10.2403 14.4089 9.8132 15.9038Z" stroke-linecap="round" stroke-linejoin="round"/><path d="M18.2589 8.71454L18 9.75L17.7411 8.71454C17.4388 7.50533 16.4947 6.56117 15.2855 6.25887L14.25 6L15.2855 5.74113C16.4947 5.43883 17.4388 4.49467 17.7411 3.28546L18 2.25L18.2589 3.28546C18.5612 4.49467 19.5053 5.43883 20.7145 5.74113L21.75 6L20.7145 6.25887C19.5053 6.56117 18.5612 7.50533 18.2589 8.71454Z" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.8942 20.5673L16.5 21.75L16.1058 20.5673C15.8818 19.8954 15.3546 19.3682 14.6827 19.1442L13.5 18.75L14.6827 18.3558C15.3546 18.1318 15.8818 17.6046 16.1058 16.9327L16.5 15.75L16.8942 16.9327C17.1182 17.6046 17.6454 18.1318 18.3173 18.3558L19.5 18.75L18.3173 19.1442C17.6454 19.3682 17.1182 19.8954 16.8942 20.5673Z" stroke-linecap="round" stroke-linejoin="round"/></svg>',
 
     bills: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="{CLS}"><path d="M19 19C19 20.1046 18.1046 21 17 21H7C5.89543 21 5 20.1046 5 19V5C5 3.89543 5.89543 3 7 3H12.5858C12.851 3 13.1054 3.10536 13.2929 3.29289L18.7071 8.70711M10 13.8703H19M19 13.8703L16 16.8703M19 13.8703L16 10.8703" stroke-linecap="round" stroke-linejoin="round"/></svg>',
@@ -222,7 +229,26 @@ function isDarkThemeActive() {
     return document.documentElement.classList.contains('dark');
 }
 
+// Consumer Portal logomark, from the Consumer Portal (SD) Figma file.
+const CONSUMER_MARK_SVG = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 19.9483 23.1276" fill="none"><path d="M9.97413 4.72164L15.9313 8.16099V15.0397L9.97413 18.4791L4.01699 15.0397V8.16099L9.97413 4.72164Z" fill="url(#cpm0)"/><path d="M9.97413 11.6004L15.9312 8.16238V15.0384L9.97413 18.4861L9.97413 11.6004Z" fill="url(#cpm1)"/><path d="M9.97413 15.3837L13.2506 13.492L13.2506 9.70874L9.97413 7.8171L6.6977 9.70874L6.6977 13.492L9.97413 15.3837Z" fill="url(#cpm2)"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.8409 5.90388L9.97436 0.207422L0.107812 5.90388V17.2968L9.97436 22.9932L19.8409 17.2968V5.90388ZM1.64115 16.4115V6.78915L9.97436 1.97796L18.3076 6.78915V16.4115L9.97436 21.2227L1.64115 16.4115Z" fill="#C4ECF5"/><g fill="#3290FF"><circle cx="9.97413" cy="1.03181" r="1.03181"/><circle cx="9.97413" cy="22.0958" r="1.0318"/><circle cx="1.03181" cy="6.36171" r="1.03181"/><circle cx="18.9164" cy="6.36171" r="1.03181"/><circle cx="1.03181" cy="16.7658" r="1.03181"/><circle cx="18.9164" cy="16.7658" r="1.03181"/></g><defs><linearGradient id="cpm0" x1="9.96187" y1="4.68855" x2="10.956" y2="18.5991" gradientUnits="userSpaceOnUse"><stop stop-color="#3099FF"/><stop offset="1" stop-color="#3D5CFF"/></linearGradient><linearGradient id="cpm1" x1="10.633" y1="13.3333" x2="12.9527" y2="18.4861" gradientUnits="userSpaceOnUse"><stop stop-color="#003FD0"/><stop offset="1" stop-color="#2A60DD" stop-opacity="0"/></linearGradient><linearGradient id="cpm2" x1="8.74714" y1="8.8333" x2="8.74714" y2="15.3837" gradientUnits="userSpaceOnUse"><stop stop-color="#2CB2FF" stop-opacity="0"/><stop offset="1" stop-color="#1FAEFF"/></linearGradient></defs></svg>';
+
+/** Which product's brand the sidebar wears, from the active plan. */
+function activeBrand() {
+    try { return (window.AppPlans && window.AppPlans.getPlan().brand) || 'smart-hub'; } catch (error) { return 'smart-hub'; }
+}
+
+function buildConsumerMarkHtml(sizeCls) {
+    smartHubLogoInstanceCount += 1;
+    return '<span class="flex shrink-0 items-center rounded-lg bg-white p-1 shadow-lg ring-1 ring-black/5 dark:bg-white/10 dark:ring-white/10">' +
+        namespaceInlineSvg(CONSUMER_MARK_SVG, 'consumer-mark-' + smartHubLogoInstanceCount).replace('<svg ', '<svg class="' + (sizeCls || 'size-6') + '" ') +
+        '</span>';
+}
+
 function buildFullLogoSvgHtml() {
+    if (activeBrand() === 'consumer-portal') {
+        return '<span class="flex items-center gap-2.5">' + buildConsumerMarkHtml('size-6') +
+            '<span class="text-lg font-semibold whitespace-nowrap text-gray-950 dark:text-white">Consumer Portal</span></span>';
+    }
     smartHubLogoInstanceCount += 1;
     var prefix = 'smart-hub-logo-' + smartHubLogoInstanceCount;
     var svg = isDarkThemeActive() ? SMART_HUB_LOGO_DARK_SVG : SMART_HUB_LOGO_LIGHT_SVG;
@@ -577,7 +603,7 @@ ${buildFooter('')}
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/></svg>
 </button>
 <div id="desktop-logo-mark" class="${collapsed ? 'flex' : 'hidden'} group/logomark relative size-9 shrink-0 items-center justify-start overflow-hidden">
-${namespaceInlineSvg(SMART_HUB_MARK_SVG, 'smart-hub-mark-' + smartHubLogoInstanceCount).replace('<svg ', '<svg class="h-8 w-8 shrink-0" ')}
+${activeBrand() === 'consumer-portal' ? buildConsumerMarkHtml('size-6') : namespaceInlineSvg(SMART_HUB_MARK_SVG, 'smart-hub-mark-' + smartHubLogoInstanceCount).replace('<svg ', '<svg class="h-8 w-8 shrink-0" ')}
 <button type="button" data-sidebar-toggle data-sidebar-btn-tooltip="Expand" aria-label="Expand sidebar" class="absolute inset-0 flex items-center justify-center rounded-lg text-gray-500 bg-white dark:bg-gray-900 opacity-0 group-hover/logomark:opacity-100 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-opacity cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></button>
 </div>
 </div>

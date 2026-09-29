@@ -56,6 +56,19 @@ window.AppPlans = (function () {
       nav: { type: 'expandable', label: 'Settings', icon: 'settings',
              children: [{ id: 'user-management', label: 'User Management', href: '#' }] } },
 
+    // Consumer Portal: a person or business holding the Smart Disburse tokens
+    // they've been sent. Its own product, so its own modules and capability.
+    { id: 'cp-insights', capability: 'consumer', order: 80,
+      nav: { type: 'link', label: 'Insights', href: '#', icon: 'insights' } },
+    { id: 'payments-received', capability: 'consumer', order: 81,
+      nav: { type: 'link', label: 'Payments Received', href: 'consumer-payments-received.html', icon: 'payments-received' } },
+    { id: 'my-cards', capability: 'consumer', order: 82,
+      nav: { type: 'link', label: 'My Cards', href: 'consumer-my-cards.html', icon: 'card-manager' } },
+    { id: 'cp-payment-preferences', capability: 'consumer', order: 83,
+      nav: { type: 'link', label: 'Payment Preferences', href: 'consumer-payment-preferences.html', icon: 'payment-preferences' } },
+    { id: 'my-profile', capability: 'consumer', order: 84,
+      nav: { type: 'link', label: 'My Profile', href: 'consumer-my-profile.html', icon: 'my-profile' } },
+
     { id: 'transcard-only', capability: 'transcard-admin', order: 70,
       nav: { type: 'expandable', label: 'Transcard Only', icon: 'transcard-only', children: [
         { id: 'businesses', label: 'Businesses', href: '#' },
@@ -74,6 +87,7 @@ window.AppPlans = (function () {
   var PLANS = {
     'supplier-portal': {
       label: 'Supplier Portal',
+      home: 'supplier-portal.html',
       capabilities: ['core', 'insights', 'supplier-portal'],
       // Offered but not owned: shown with an Upgrade badge.
       locked: ['ap-ar'],
@@ -83,14 +97,25 @@ window.AppPlans = (function () {
     },
     'bills-payables': {
       label: 'Bills & Payables',
+      home: 'bills-and-payables.html',
       capabilities: ['core', 'insights', 'payables'],
       locked: ['ap-ar'],
       upgradeGrants: ['ap-ar', 'receivables']
     },
     // Transcard sees the platform as it always was: every module, and no
     // AP/AR upgrade — there is nothing for an internal view to upgrade to.
+    'consumer-portal': {
+      label: 'Consumer Portal',
+      capabilities: ['consumer'],
+      locked: [],
+      brand: 'consumer-portal',
+      // Card processing (STP) is a supplier concern; a consumer never sees it.
+      hideStp: true,
+      home: 'consumer-payments-received.html'
+    },
     'full': {
       label: 'Full Platform',
+      home: 'supplier-portal.html',
       capabilities: ['core', 'insights', 'payables', 'receivables', 'supplier-portal', 'transcard-admin'],
       locked: []
     }
@@ -104,13 +129,25 @@ window.AppPlans = (function () {
   var BUSINESSES = [
     { id: 'transcard', name: 'Transcard', view: 'Transcard view', plan: 'full' },
     { id: 'abm-corp', name: 'ABM Corp', view: 'Supplier view', plan: 'supplier-portal' },
-    { id: 'big-kahuna-burger', name: 'Big Kahuna Burger Ltd', view: 'Buyer view', plan: 'bills-payables' }
+    { id: 'big-kahuna-burger', name: 'Big Kahuna Burger Ltd', view: 'Buyer view', plan: 'bills-payables' },
+    { id: 'johnny-anderson', name: 'Johnny Anderson', view: 'Consumer view', plan: 'consumer-portal' }
   ];
 
   // Persistence is deliberately behind this pair so it can become a URL
   // parameter, or the Worker, without touching a single caller.
-  var activeBusinessId = BUSINESSES[0].id;
+  var SESSION_KEY = 'app-active-business';
+  var activeBusinessId = (function () {
+    try {
+      var saved = sessionStorage.getItem(SESSION_KEY);
+      for (var i = 0; i < BUSINESSES.length; i += 1) if (BUSINESSES[i].id === saved) return saved;
+    } catch (error) {}
+    return BUSINESSES[0].id;
+  })();
   var listeners = [];
+
+  function rememberActive() {
+    try { sessionStorage.setItem(SESSION_KEY, activeBusinessId); } catch (error) {}
+  }
 
   function getBusinesses() { return BUSINESSES.slice(); }
 
@@ -126,6 +163,7 @@ window.AppPlans = (function () {
     for (var i = 0; i < BUSINESSES.length; i += 1) {
       if (BUSINESSES[i].id === id) {
         activeBusinessId = id;
+        rememberActive();
         var business = BUSINESSES[i];
         listeners.forEach(function (fn) { try { fn(business); } catch (e) {} });
         return business;
@@ -203,13 +241,49 @@ window.AppPlans = (function () {
       'vendor-profile.html': 'vendors',
       'my-company-profile.html': 'my-company-profile',
       'ap-ar-payments.html': 'ap-ar',
-      'payment-program-configuration.html': 'transcard-only'
+      'payment-program-configuration.html': 'transcard-only',
+      'consumer-payments-received.html': 'payments-received',
+      'consumer-my-cards.html': 'my-cards',
+      'consumer-payment-preferences.html': 'cp-payment-preferences',
+      'consumer-my-profile.html': 'my-profile'
     };
     return owners[name] || null;
   }
 
+  function currentPageFile() {
+    return (window.location.pathname || '').split('/').pop() || '';
+  }
+
+  /** Where this business lands: its plan's home page. */
+  function homeFor(business) {
+    return (getPlan(business).home) || 'supplier-portal.html';
+  }
+
+  /**
+   * After a switch: if the page on screen belongs to a module the new view
+   * can't see, the page it should go to instead. Null when it can stay.
+   */
+  function redirectForCurrentPage() {
+    var owner = moduleForPage(currentPageFile());
+    if (!owner || moduleState(owner) !== 'hidden') return null;
+    return homeFor();
+  }
+
+  // A deep link to a page the default view can't see (a consumer page opened
+  // directly, say) starts in the first view that owns it rather than
+  // rendering one product's page inside another's shell.
+  (function startInOwningView() {
+    var owner = moduleForPage(currentPageFile());
+    if (!owner || moduleState(owner) !== 'hidden') return;
+    for (var i = 0; i < BUSINESSES.length; i += 1) {
+      if (moduleState(owner, BUSINESSES[i]) !== 'hidden') { activeBusinessId = BUSINESSES[i].id; rememberActive(); return; }
+    }
+  })();
+
   return {
     modules: MODULES,
+    homeFor: homeFor,
+    redirectForCurrentPage: redirectForCurrentPage,
     plans: PLANS,
     getBusinesses: getBusinesses,
     getActiveBusiness: getActiveBusiness,
