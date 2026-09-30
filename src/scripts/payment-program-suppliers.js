@@ -429,9 +429,9 @@
       var value = Array.from(state.applied[panel.key]).map(label[panel.key]).sort().join(', ');
       return '<span class="relative inline-flex max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-xs font-medium text-gray-600 dark:bg-white/10 dark:text-gray-300">' +
         '<span class="inline-flex shrink-0 items-center bg-gray-100 px-2 py-1 font-medium text-gray-900 dark:bg-white/15 dark:text-white">' + escapeHtml(panel.label) + '</span>' +
-        '<button type="button" data-filter-tag-open="' + panel.key + '" title="' + escapeHtml(panel.label + ': ' + value) + '" class="inline-flex min-w-0 cursor-pointer items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15">' +
+        '<button type="button" data-filter-tag-open="' + panel.key + '" data-tooltip="' + 'Edit filter' + '" class="inline-flex min-w-0 cursor-pointer items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15">' +
           '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(value) + '</span></button>' +
-        '<button type="button" data-filter-tag-remove="' + panel.key + '" aria-label="Remove filter" class="inline-flex w-6 shrink-0 cursor-pointer items-center justify-center self-stretch border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white">' +
+        '<button type="button" data-filter-tag-remove="' + panel.key + '" aria-label="Remove filter" data-tooltip="Remove filter" class="inline-flex w-6 shrink-0 cursor-pointer items-center justify-center self-stretch border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white">' +
           '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3"><path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg></button>' +
         '<span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span></span>';
     }).join('');
@@ -481,12 +481,17 @@
    * Shown while anything is ticked. The header checkbox only covers the page
    * on screen, so the bar offers the rest of what matches in one click.
    */
+  /** What "all matching" adds over the header checkbox, in a few words. */
+  function selectAllHint(total) {
+    return 'All ' + total.toLocaleString('en-US') + ' across every page, not just this one';
+  }
+
   function bulkBarHtml(matching) {
     var n = state.selected.size;
     if (!n) return '';
     var allMatching = matching.length > 0 && matching.every(function (r) { return state.selected.has(r.id); });
     var more = !allMatching && matching.length > n
-      ? '<button type="button" data-sup-select-all class="cursor-pointer rounded-md px-1.5 py-0.5 text-sm font-semibold text-blue-700 hover:bg-blue-600/10 dark:text-blue-300">Select all ' + matching.length.toLocaleString('en-US') + ' matching</button>'
+      ? '<button type="button" data-sup-select-all data-tooltip="' + escapeHtml(selectAllHint(matching.length)) + '" class="cursor-pointer rounded-md px-1.5 py-0.5 text-sm font-semibold text-blue-700 hover:bg-blue-600/10 dark:text-blue-300">Select all ' + matching.length.toLocaleString('en-US') + ' matching</button>'
       : '';
     return '<div class="flex flex-col gap-3 border-b border-blue-200 bg-blue-50 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-6 dark:border-blue-400/20 dark:bg-blue-500/10">' +
       '<div class="flex flex-wrap items-center gap-x-3 gap-y-1">' +
@@ -535,7 +540,7 @@
     var ids = pageRows.map(function (r) { return r.id; });
     var picked = ids.filter(function (id) { return state.selected.has(id); }).length;
     return '<tr>' +
-      '<th scope="col" class="w-10 min-w-10 border-b border-gray-200 px-0 py-3.5 text-center dark:border-white/10">' + checkbox('data-sup-select-page' + (picked && picked < ids.length ? ' data-indeterminate' : ''), ids.length > 0 && picked === ids.length, 'Select all on this page') + '</th>' +
+      '<th scope="col" data-tooltip="Select this page" class="w-10 min-w-10 border-b border-gray-200 px-0 py-3.5 text-center dark:border-white/10">' + checkbox('data-sup-select-page' + (picked && picked < ids.length ? ' data-indeterminate' : ''), ids.length > 0 && picked === ids.length, 'Select all on this page') + '</th>' +
       sortHeader('name', 'Supplier') +
       sortHeader('program', 'Payment Program') +
       '<th scope="col" class="' + TH + '">Next Move</th>' +
@@ -635,9 +640,9 @@
             '</el-dropdown></div>' +
         '</div>' +
         '<nav aria-label="Pagination" class="isolate inline-flex -space-x-px overflow-hidden rounded-sm shadow-xs inset-ring inset-ring-gray-300 dark:shadow-none dark:inset-ring-gray-700">' +
-          '<a href="#" data-page-prev class="rounded-l-sm ' + arrow + (first ? off : '') + '"><span class="sr-only">Previous</span><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" fill-rule="evenodd" /></svg></a>' +
+          '<a href="#" data-page-prev data-tooltip="Previous page" data-tooltip-side="top" class="rounded-l-sm ' + arrow + (first ? off : '') + '"><span class="sr-only">Previous</span><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" fill-rule="evenodd" /></svg></a>' +
           numbers +
-          '<a href="#" data-page-next class="rounded-r-sm ' + arrow + (last ? off : '') + '"><span class="sr-only">Next</span><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg></a>' +
+          '<a href="#" data-page-next data-tooltip="Next page" data-tooltip-side="top" class="rounded-r-sm ' + arrow + (last ? off : '') + '"><span class="sr-only">Next</span><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg></a>' +
         '</nav>' +
       '</div>';
   }

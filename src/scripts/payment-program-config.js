@@ -395,8 +395,8 @@
   /** Never-published programs are Drafts; published ones stay Active while a draft is pending. */
   function statusBadge(p) { return isNeverPublished(p) ? badge('draft', 'Draft') : badge('active', 'Active'); }
 
-  function toggle(attrs, on, label) {
-    return '<div class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/10">' +
+  function toggle(attrs, on, label, hint) {
+    return '<div' + (hint ? ' data-tooltip="' + escapeHtml(hint) + '"' : '') + ' class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/10">' +
       '<span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>' +
       '<input type="checkbox" ' + (on ? 'checked ' : '') + attrs + ' aria-label="' + escapeHtml(label) + '" class="absolute inset-0 size-full appearance-none cursor-pointer focus:outline-hidden" /></div>';
   }
@@ -458,7 +458,7 @@
       return '<button type="button" ' + attr + ' class="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-left text-sm font-medium ' + tone + ' focus:outline-hidden">' + iconHtml + label + '</button>';
     };
     return '<el-dropdown class="inline-block shrink-0">' +
-      '<button type="button" aria-label="Program actions" class="flex ' + (large ? 'size-8 rounded-md' : 'size-[30px] rounded-sm') + ' cursor-pointer items-center justify-center border border-gray-300 bg-white text-gray-500 shadow-xs hover:bg-gray-50 aria-expanded:border-blue-600 aria-expanded:ring-1 aria-expanded:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10">' + DOTS + '</button>' +
+      '<button type="button" aria-label="Program actions" data-tooltip="More actions" class="flex ' + (large ? 'size-8 rounded-md' : 'size-[30px] rounded-sm') + ' cursor-pointer items-center justify-center border border-gray-300 bg-white text-gray-500 shadow-xs hover:bg-gray-50 aria-expanded:border-blue-600 aria-expanded:ring-1 aria-expanded:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10">' + DOTS + '</button>' +
       '<el-menu anchor="bottom end" popover class="min-w-44 origin-top-right rounded-md bg-white py-1 shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:outline-white/10">' +
         item('data-edit-program="' + id + '"', PENCIL, 'Edit', 'text-gray-700 hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5') +
         item('data-delete-program="' + id + '"', TRASH, 'Delete', 'text-red-600 hover:bg-red-50 focus:bg-red-50 dark:text-red-400 dark:hover:bg-red-400/10 dark:focus:bg-red-400/10') +
@@ -473,7 +473,7 @@
     var text = formatNumber(count);
     if (!count || !programId) return '<span class="' + (cls || '') + '">' + text + '</span>';
     var href = '?tab=suppliers&filterProgram=' + encodeURIComponent(programId) + (cohortId ? '&filterCohort=' + encodeURIComponent(cohortId) : '');
-    return '<a href="' + href + '" data-sup-link data-sup-link-program="' + escapeHtml(programId) + '"' + (cohortId ? ' data-sup-link-cohort="' + escapeHtml(cohortId) + '"' : '') +
+    return '<a href="' + href + '" data-tooltip="View suppliers" data-sup-link data-sup-link-program="' + escapeHtml(programId) + '"' + (cohortId ? ' data-sup-link-cohort="' + escapeHtml(cohortId) + '"' : '') +
       ' class="cursor-pointer underline decoration-gray-400 underline-offset-2 hover:text-blue-600 hover:decoration-blue-600 dark:hover:text-blue-400 ' + (cls || '') + '">' + text + '</a>';
   }
 
@@ -549,7 +549,7 @@
   // ── Detail view ──
 
   function backArrow(inert) {
-    return '<button type="button" ' + (inert ? 'disabled' : 'data-back-to-list') + ' aria-label="Back to programs" class="mt-1 flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 disabled:cursor-default disabled:hover:bg-transparent dark:text-gray-400 dark:hover:bg-white/10">' +
+    return '<button type="button" ' + (inert ? 'disabled' : 'data-back-to-list data-tooltip="Back to programs"') + ' aria-label="Back to programs" class="mt-1 flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 disabled:cursor-default disabled:hover:bg-transparent dark:text-gray-400 dark:hover:bg-white/10">' +
       '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 10H4m0 0 5-5m-5 5 5 5" /></svg></button>';
   }
 
@@ -570,7 +570,7 @@
         '<p>' + (fresh ? 'This program isn\'t available to clients until you publish it.' : 'Clients keep using the published version until you publish.') + '</p></div></div>' +
       '<div class="flex shrink-0 items-center gap-4">' +
         '<button type="button" data-discard class="cursor-pointer text-sm font-semibold text-yellow-800 hover:text-yellow-900 dark:text-yellow-300">Discard draft</button>' +
-        '<button type="button" data-publish ' + (p.cohorts.length ? '' : 'disabled ') + 'class="' + BTN_PRIMARY + '">' + (fresh ? 'Publish Program' : 'Publish Changes') + '</button></div></div>';
+        '<button type="button" data-publish ' + (p.cohorts.length ? '' : 'disabled ') + ' class="' + BTN_PRIMARY + '">' + (fresh ? 'Publish Program' : 'Publish Changes') + '</button></div></div>';
   }
 
   function statTile(label, value, caption, valueHtml) {
@@ -633,9 +633,9 @@
         '</div>' +
         '<div class="flex shrink-0 items-center gap-3">' +
           '<button type="button" data-edit-cohort="' + index + '"' + lockAttrs + ' class="' + BTN_SECONDARY_SM + lockCls + '">Edit</button>' +
-          '<button type="button" data-remove-cohort="' + index + '"' + lockAttrs + ' aria-label="Remove cohort" class="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-sm border border-gray-300 bg-white text-gray-500 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10' + lockCls + '">' +
+          '<button type="button" data-remove-cohort="' + index + '"' + lockAttrs + ' aria-label="Remove cohort" data-tooltip="Remove cohort" class="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-sm border border-gray-300 bg-white text-gray-500 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10' + lockCls + '">' +
             '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg></button>' +
-          toggle('data-toggle-cohort="' + index + '"', cohort.enabled, (off ? 'Enable ' : 'Disable ') + cohort.name) +
+          toggle('data-toggle-cohort="' + index + '"', cohort.enabled, (off ? 'Enable ' : 'Disable ') + cohort.name, off ? 'Enable cohort' : 'Disable cohort') +
         '</div>' +
       '</div>' +
       '<div class="flex flex-wrap gap-4' + dim + '">' +

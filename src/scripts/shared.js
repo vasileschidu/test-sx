@@ -35,6 +35,168 @@
     (document.head || document.documentElement).appendChild(style);
 })();
 
+/* ===== Hover tooltips ===== */
+
+/**
+ * One dark tooltip for the whole shell — the same chip the collapsed sidebar
+ * uses. Any element with data-tooltip="…" gets it on hover and on keyboard
+ * focus; nothing else to wire. It waits a beat before the first one so it
+ * doesn't flicker under a passing cursor, then follows instantly from button
+ * to button, the way Google's do.
+ *
+ * It is shown as a manual popover so it sits in the top layer, above open
+ * dialogs and drawers, where a z-index can't reach.
+ */
+(function initShellTooltips() {
+    var SHOW_DELAY = 700;   // first tooltip: long enough that it only shows when you pause
+    var WARM_MS = 500;      // how long after one hides the next shows at once
+    var FADE_MS = 150;
+    var GAP = 8;
+    var EDGE = 8;
+
+    var tip = null;
+    var label = null;
+    var arrow = null;
+    var anchor = null;
+    var showTimer = null;
+    var hideTimer = null;
+    var lastHidden = 0;
+    var blockedUntil = 0;
+
+    function ensureTip() {
+        if (tip) return tip;
+        tip = document.createElement('div');
+        tip.id = 'shell-tooltip';
+        tip.setAttribute('role', 'tooltip');
+        if ('popover' in tip) tip.setAttribute('popover', 'manual');
+        // Plain CSS, not utility classes: the chip is measured the instant it
+        // is created, before a just-in-time stylesheet could have caught up.
+        var style = document.createElement('style');
+        style.textContent = [
+            '#shell-tooltip { position: fixed; inset: auto; margin: 0; border: 0; overflow: visible; pointer-events: none; z-index: 300;',
+            '  box-sizing: border-box; width: max-content; max-width: 220px; padding: 6px 10px; border-radius: 6px;',
+            '  background: #111827; color: #fff; font-size: 12px; line-height: 16px; font-weight: 500; text-align: center; text-wrap: balance;',
+            '  box-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1); opacity: 0; }',
+            '#shell-tooltip > i { position: absolute; width: 8px; height: 8px; border-radius: 1px; background: inherit; transform: rotate(45deg); }',
+            '.dark #shell-tooltip { background: #030712; box-shadow: 0 0 0 1px rgb(255 255 255 / .1); }',
+            '@media (prefers-reduced-motion: reduce) { #shell-tooltip { transition: none !important; } }'
+        ].join('\n');
+        document.head.appendChild(style);
+        label = document.createElement('span');
+        // The pointer ties the chip to the control it describes, even when the
+        // chip itself has been nudged in from the edge of the screen.
+        arrow = document.createElement('i');
+        arrow.setAttribute('aria-hidden', 'true');
+        tip.appendChild(arrow);
+        tip.appendChild(label);
+        document.body.appendChild(tip);
+        return tip;
+    }
+
+    /** Wrapped text leaves a chip wider than its words; shrink it to fit so it centres truly. */
+    function fitWidth() {
+        tip.style.width = '';
+        // Measure from the corner: where it last sat could squeeze it against the edge.
+        tip.style.left = '0px';
+        tip.style.top = '0px';
+        var range = document.createRange();
+        range.selectNodeContents(label);
+        var style = window.getComputedStyle(tip);
+        var pad = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight);
+        tip.style.width = Math.ceil(range.getBoundingClientRect().width + pad + 1) + 'px';
+    }
+
+    function topLayer(open) {
+        if (!tip || typeof tip.showPopover !== 'function') return;
+        try {
+            if (tip.matches(':popover-open')) tip.hidePopover();
+            if (open) tip.showPopover();
+        } catch (error) {}
+    }
+
+    function place(el) {
+        var rect = el.getBoundingClientRect();
+        var box = tip.getBoundingClientRect();
+        var above = el.getAttribute('data-tooltip-side') === 'top' || rect.bottom + GAP + box.height > window.innerHeight - EDGE;
+        var centre = rect.left + rect.width / 2;
+        var left = centre - box.width / 2;
+        left = Math.round(Math.max(EDGE, Math.min(left, window.innerWidth - box.width - EDGE)));
+        var top = above ? rect.top - GAP - box.height : rect.bottom + GAP;
+        tip.style.left = left + 'px';
+        tip.style.top = Math.round(Math.max(EDGE, top)) + 'px';
+        // Pointer sits under the control's centre, kept clear of the rounded corners.
+        arrow.style.left = Math.round(Math.max(6, Math.min(centre - left - 4, box.width - 14))) + 'px';
+        arrow.style.top = above ? '' : '-3px';
+        arrow.style.bottom = above ? '-3px' : '';
+        return above;
+    }
+
+    function show(el) {
+        var text = el.getAttribute('data-tooltip');
+        if (!text || !el.isConnected) return;
+        clearTimeout(hideTimer);
+        ensureTip();
+        label.textContent = text;
+        topLayer(true);
+        fitWidth();
+        var above = place(el);
+        // Start a few pixels off, on the side it grows from, then settle.
+        tip.style.transition = 'none';
+        tip.style.opacity = '0';
+        tip.style.transform = 'translateY(' + (above ? 3 : -3) + 'px)';
+        void tip.offsetWidth;
+        tip.style.transition = 'opacity ' + FADE_MS + 'ms ease-out, transform ' + FADE_MS + 'ms ease-out';
+        tip.style.opacity = '1';
+        tip.style.transform = 'translateY(0)';
+        el.setAttribute('aria-describedby', 'shell-tooltip');
+    }
+
+    function hide() {
+        clearTimeout(showTimer);
+        if (!anchor) return;
+        anchor.removeAttribute('aria-describedby');
+        anchor = null;
+        if (!tip) return;
+        lastHidden = Date.now();
+        tip.style.opacity = '0';
+        clearTimeout(hideTimer);
+        hideTimer = setTimeout(function () { topLayer(false); }, FADE_MS);
+    }
+
+    function request(el, immediate) {
+        if (el === anchor) return;
+        hide();
+        anchor = el;
+        var warm = Date.now() - lastHidden < WARM_MS;
+        showTimer = setTimeout(function () { if (anchor === el) show(el); }, immediate || warm ? 0 : SHOW_DELAY);
+    }
+
+    document.addEventListener('pointerover', function (event) {
+        if (event.pointerType === 'touch' || Date.now() < blockedUntil) return;
+        var el = event.target.closest && event.target.closest('[data-tooltip]');
+        if (el) request(el, false);
+    });
+    document.addEventListener('pointerout', function (event) {
+        if (!anchor) return;
+        var to = event.relatedTarget;
+        if (to && anchor.contains(to)) return;
+        if (event.target.closest && event.target.closest('[data-tooltip]') === anchor) hide();
+    });
+    document.addEventListener('focusin', function (event) {
+        var el = event.target.closest && event.target.closest('[data-tooltip]');
+        var viaKeyboard = false;
+        try { viaKeyboard = event.target.matches(':focus-visible'); } catch (error) {}
+        if (el && viaKeyboard) request(el, true);
+    });
+    document.addEventListener('focusout', hide);
+    // Acting on the control, or the page moving under it, ends the tooltip.
+    // A click often re-renders what's under the cursor; don't pop straight back up.
+    document.addEventListener('pointerdown', function () { hide(); lastHidden = 0; blockedUntil = Date.now() + 700; }, true);
+    document.addEventListener('keydown', function (event) { if (event.key === 'Escape') hide(); });
+    window.addEventListener('scroll', hide, true);
+    window.addEventListener('resize', hide);
+})();
+
 /* ===== Theme Toggle ===== */
 
 function initThemeToggle() {
