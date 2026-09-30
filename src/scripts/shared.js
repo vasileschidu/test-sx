@@ -25,6 +25,8 @@
     style.textContent = [
         'el-select > button, select, el-option { cursor: pointer; }',
         'el-select > button:disabled, el-select[disabled] > button, select:disabled { cursor: not-allowed; }',
+        'input[type="checkbox"], input[type="radio"] { cursor: pointer; }',
+        'input[type="checkbox"]:disabled, input[type="radio"]:disabled { cursor: not-allowed; }',
         'el-select > button:focus, el-select > button[aria-expanded="true"], select:focus {',
         '  outline: 2px solid #2563eb !important; outline-offset: -2px !important;',
         '}',

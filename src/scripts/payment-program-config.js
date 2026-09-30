@@ -37,6 +37,7 @@
   var editingId = null;      // program being renamed in the create drawer; null when creating
   var pendingDelete = null;  // program id awaiting the delete speedbump
   var toastTimer = null;
+  var toastAction = null;
   var changeListeners = [];
 
   function $(id) { return document.getElementById(id); }
@@ -1377,6 +1378,8 @@
     if (impact.feeUp) items.push(plural2(impact.feeUp, 'supplier', 'suppliers') + ' will pay a higher fee here than they do today.');
     items.push('Payments already on their way finish under the old program\'s terms.');
     $('pp-move-impacts').innerHTML = items.map(function (t) { return '<li class="flex gap-2.5">' + dot + '<span>' + t + '</span></li>'; }).join('');
+    $('pp-move-confirm').textContent = 'Move and add';
+    moveConfirm = null;
     var dialog = $('pp-move-dialog');
     if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
   }
@@ -1442,7 +1445,312 @@
     $('pp-assign-cohort').addEventListener('change', function () { if (assign) { readAssignCohort(); syncAssignFooter(); } });
     $('pp-assign-cohort').addEventListener('click', function () { setTimeout(function () { if (assign) { readAssignCohort(); syncAssignFooter(); } }, 0); });
     $('pp-assign-form').addEventListener('submit', function (event) { event.preventDefault(); submitAssignment(); });
-    $('pp-move-confirm').addEventListener('click', applyAssignment);
+    $('pp-move-confirm').addEventListener('click', function () { (moveConfirm || applyAssignment)(); });
+  }
+
+  // ── Bulk: assign selected suppliers to a program and cohort ──
+  //
+  // The selection comes from the Suppliers table, so it is usually a mix: some
+  // are in another program, some in this one at a different stage, some
+  // already exactly where they're being sent. Each of those is a different
+  // outcome, so the drawer sorts the selection into groups, says what each
+  // group loses, and lets a group be left out. Nothing is applied until the
+  // speedbump is confirmed, and the move can be undone from the toast.
+
+  var BULK_NAME_LIMIT = 60;
+  var bulk = null;        // { ids: Set, programId, cohortId, include: {other, same, fresh}, open: {}, onDone }
+  var moveConfirm = null; // what the shared speedbump's confirm button does; null = add-suppliers flow
+
+  function bulkPrograms() {
+    return programs.filter(function (p) { return p.published && enabledCount(p.published.cohorts) > 0; });
+  }
+
+  function bulkTarget() {
+    var p = bulk && findProgram(bulk.programId);
+    if (!p || !p.published) return null;
+    var cohorts = p.published.cohorts;
+    var idx = indexById(cohorts, bulk.cohortId);
+    if (idx === -1 || !cohorts[idx].enabled) return null;
+    return { program: p, cohorts: cohorts, cohort: cohorts[idx], stage: displayNumber(cohorts, idx) };
+  }
+
+  /** Sort the selection by what the move would mean for each supplier. */
+  function bulkPlan() {
+    var t = bulkTarget();
+    var plan = { target: t, there: [], same: [], other: [], fresh: [], fromPrograms: {}, forward: 0, back: 0, loseMethod: 0, feeUp: 0 };
+    if (!t) return plan;
+    var targetMin = t.cohort.methods.reduce(function (min, id) {
+      var m = catalog.methodById[id];
+      return Math.min(min, m ? feeValue(m.fee) : 0);
+    }, t.cohort.methods.length ? Infinity : 0);
+    roster.forEach(function (s) {
+      if (!bulk.ids.has(s.id)) return;
+      var group;
+      if (!s.programId) group = 'fresh';
+      else if (s.programId !== t.program.id) group = 'other';
+      else if (s.cohortId === t.cohort.id) group = 'there';
+      else group = 'same';
+      plan[group].push(s);
+      if (group === 'there' || !bulk.include[group]) return;
+      if (group === 'other') plan.fromPrograms[s.programId] = (plan.fromPrograms[s.programId] || 0) + 1;
+      if (group === 'same') {
+        var from = indexById(t.cohorts, s.cohortId);
+        if (from !== -1 && from > indexById(t.cohorts, t.cohort.id)) plan.back += 1; else plan.forward += 1;
+      }
+      if (s.method && !offers(t.cohort, s.method)) {
+        plan.loseMethod += 1;
+        var had = s.method === 'paper' ? 0 : feeValue((catalog.methodById[s.method] || {}).fee);
+        if (targetMin !== Infinity && targetMin > had) plan.feeUp += 1;
+      }
+    });
+    plan.moving = ['same', 'other', 'fresh'].reduce(function (list, g) { return bulk.include[g] ? list.concat(plan[g]) : list; }, []);
+    plan.skipped = bulk.ids.size - plan.moving.length;
+    return plan;
+  }
+
+  function bulkProgramOption(p, selected) {
+    return '<el-option value="' + escapeHtml(p.id) + '"' + (selected ? ' aria-selected="true"' : '') +
+      ' class="group/option relative block cursor-default select-none border-b border-gray-200 px-4 py-3 text-gray-900 last:border-b-0 aria-selected:bg-gray-100 focus:bg-gray-50 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/5">' +
+        '<div class="flex flex-col gap-1 pr-8 in-[el-selectedcontent]:hidden">' +
+          '<span class="text-sm font-semibold text-gray-900 dark:text-white">' + escapeHtml(p.published.name) + '</span>' +
+          '<span class="text-sm text-gray-500 dark:text-gray-400">' + plural(enabledCount(p.published.cohorts), 'cohort') + ' · ' + formatNumber(p.suppliers) + ' suppliers</span>' +
+        '</div>' +
+        '<span class="hidden truncate in-[el-selectedcontent]:block">' + escapeHtml(p.published.name) + '</span>' +
+        '<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-green-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-green-400">' + OPTION_CHECK + '</span>' +
+      '</el-option>';
+  }
+
+  function fillSelect(id, optionsHtml) {
+    var select = $(id);
+    select.querySelector('el-options').innerHTML = optionsHtml;
+    var chosen = select.querySelector('el-option[aria-selected="true"]');
+    select.querySelector('el-selectedcontent').innerHTML = chosen ? chosen.innerHTML : '';
+    if (chosen) select.setAttribute('value', chosen.getAttribute('value'));
+  }
+
+  function renderBulkSelects() {
+    fillSelect('pp-bulk-program', bulkPrograms().map(function (p) { return bulkProgramOption(p, p.id === bulk.programId); }).join(''));
+    var p = findProgram(bulk.programId);
+    var cohorts = p.published.cohorts;
+    var options = [];
+    cohorts.forEach(function (c, i) { if (c.enabled) options.push(targetOption(cohorts, i, c.id === bulk.cohortId)); });
+    fillSelect('pp-bulk-cohort', options.join(''));
+  }
+
+  function bulkNames(list) {
+    var names = list.slice(0, BULK_NAME_LIMIT).map(function (s) {
+      return '<li class="flex items-baseline justify-between gap-3"><span class="truncate">' + escapeHtml(s.name) + '</span><span class="shrink-0 text-xs text-gray-500 dark:text-gray-400">' + escapeHtml(s.code) + '</span></li>';
+    }).join('');
+    var more = list.length > BULK_NAME_LIMIT ? '<li class="text-xs text-gray-500 dark:text-gray-400">and ' + formatNumber(list.length - BULK_NAME_LIMIT) + ' more</li>' : '';
+    return '<ul role="list" class="mt-3 flex max-h-44 flex-col gap-1.5 overflow-y-auto border-t border-gray-200 pt-3 text-sm text-gray-700 dark:border-white/10 dark:text-gray-300">' + names + more + '</ul>';
+  }
+
+  function bulkGroupCard(key, list, title, notes, locked) {
+    if (!list.length) return '';
+    var on = !locked && bulk.include[key];
+    var open = !!bulk.open[key];
+    var box = locked
+      ? '<span class="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-gray-200 text-gray-500 dark:bg-white/10 dark:text-gray-400"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-3"><path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Z" /></svg></span>'
+      : '<span class="group mt-0.5 grid size-4 shrink-0 grid-cols-1"><input type="checkbox" data-bulk-include="' + key + '"' + (on ? ' checked' : '') + ' aria-label="Include ' + escapeHtml(title) + '" class="' + CHECKBOX + '" />' +
+        '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg></span>';
+    var tone = locked || !on ? 'border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5' : 'border-gray-200 bg-white dark:border-white/10 dark:bg-white/5';
+    var noteHtml = notes.map(function (n) {
+      return '<li class="flex gap-2"><span class="mt-2 size-1 shrink-0 rounded-full ' + (n.warn && on ? 'bg-amber-500' : 'bg-gray-400') + '"></span><span class="' + (n.warn && on ? 'text-amber-800 dark:text-amber-300' : '') + '">' + n.text + '</span></li>';
+    }).join('');
+    return '<div data-bulk-group="' + key + '" class="rounded-2xl border p-4 ' + tone + '">' +
+      '<div class="flex items-start gap-3">' + box +
+        '<div class="min-w-0 flex-1">' +
+          '<div class="flex flex-wrap items-center justify-between gap-2">' +
+            '<p class="text-sm font-semibold text-gray-950 dark:text-white">' + title + '</p>' +
+            (locked ? badge('neutral', 'Skipped') : on ? '' : badge('neutral', 'Left where they are')) +
+          '</div>' +
+          '<ul role="list" class="mt-1.5 flex flex-col gap-1 text-sm text-gray-600 dark:text-gray-400' + (locked || on ? '' : ' hidden') + '">' + noteHtml + '</ul>' +
+          '<button type="button" data-bulk-toggle="' + key + '" aria-expanded="' + (open ? 'true' : 'false') + '" class="mt-2 cursor-pointer text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400">' + (open ? 'Hide suppliers' : 'Show suppliers') + '</button>' +
+          (open ? bulkNames(list) : '') +
+        '</div></div></div>';
+  }
+
+  function renderBulk() {
+    var plan = bulkPlan();
+    var t = plan.target;
+    var host = $('pp-bulk-groups');
+    if (!t) { host.innerHTML = ''; return; }
+    var where = 'Cohort ' + t.stage + ' · ' + escapeHtml(t.cohort.name);
+    var lossNotes = function (list) {
+      var lose = 0, up = 0;
+      var min = t.cohort.methods.reduce(function (m, id) { var x = catalog.methodById[id]; return Math.min(m, x ? feeValue(x.fee) : 0); }, t.cohort.methods.length ? Infinity : 0);
+      list.forEach(function (s) {
+        if (!s.method || offers(t.cohort, s.method)) return;
+        lose += 1;
+        var had = s.method === 'paper' ? 0 : feeValue((catalog.methodById[s.method] || {}).fee);
+        if (min !== Infinity && min > had) up += 1;
+      });
+      var notes = [];
+      if (lose) notes.push({ warn: true, text: plural2(lose, 'loses', 'lose') + ' their payment method — ' + where + ' doesn\'t offer it — and will be asked to choose again.' });
+      if (up) notes.push({ warn: true, text: plural2(up, 'will pay', 'will pay') + ' a higher fee than today.' });
+      return notes;
+    };
+
+    var fromNames = {};
+    plan.other.forEach(function (s) { fromNames[s.programId] = (fromNames[s.programId] || 0) + 1; });
+    var fromText = Object.keys(fromNames).map(function (id) { return escapeHtml(programName(id)) + ' (' + formatNumber(fromNames[id]) + ')'; }).join(', ');
+    var fwd = 0, back = 0;
+    plan.same.forEach(function (s) {
+      var from = indexById(t.cohorts, s.cohortId);
+      if (from !== -1 && from > indexById(t.cohorts, t.cohort.id)) back += 1; else fwd += 1;
+    });
+    var direction = [];
+    if (fwd) direction.push(formatNumber(fwd) + ' forward');
+    if (back) direction.push(formatNumber(back) + ' back to an earlier stage');
+
+    host.innerHTML =
+      bulkGroupCard('other', plan.other, plural2(plan.other.length, 'supplier moves', 'suppliers move') + ' from another program', [
+        { warn: true, text: 'They leave ' + fromText + '. Their progress there ends.' },
+        { text: 'They start ' + where + ' today.' }
+      ].concat(lossNotes(plan.other))) +
+      bulkGroupCard('same', plan.same, plural2(plan.same.length, 'supplier changes', 'suppliers change') + ' cohort in this program', [
+        { warn: back > 0, text: 'Moving ' + direction.join(', ') + '. The cohort timer restarts today.' }
+      ].concat(lossNotes(plan.same))) +
+      bulkGroupCard('fresh', plan.fresh, plural2(plan.fresh.length, 'unassigned supplier joins', 'unassigned suppliers join'), [
+        { text: 'They start ' + where + ' today.' }
+      ]) +
+      bulkGroupCard('there', plan.there, plural2(plan.there.length, 'supplier is', 'suppliers are') + ' already in this cohort', [
+        { text: 'Nothing changes for them — their timer keeps running.' }
+      ], true);
+
+    var n = plan.moving.length;
+    $('pp-bulk-summary').textContent = n
+      ? plural2(n, 'supplier', 'suppliers') + (plan.moving.every(function (s) { return !s.programId; }) ? ' will be added' : ' will move') + (plan.skipped ? ' · ' + formatNumber(plan.skipped) + ' skipped' : '')
+      : 'Nothing to move';
+    var submit = $('pp-bulk-submit');
+    submit.disabled = !n;
+    submit.textContent = n ? 'Review ' + plural2(n, 'supplier', 'suppliers') : 'Review';
+  }
+
+  function openBulkAssign(ids, onDone) {
+    var dialog = $('pp-bulk-dialog');
+    var options = bulkPrograms();
+    if (!dialog || !ids || !ids.length || !options.length) return;
+    // Start on the program most of the selection is already in: the common
+    // job is moving people between its cohorts.
+    var tally = {};
+    var wanted = {};
+    ids.forEach(function (id) { wanted[id] = true; });
+    roster.forEach(function (s) { if (wanted[s.id] && s.programId) tally[s.programId] = (tally[s.programId] || 0) + 1; });
+    var start = options.slice().sort(function (a, b) { return (tally[b.id] || 0) - (tally[a.id] || 0); })[0];
+    var first = null;
+    start.published.cohorts.forEach(function (c) { if (!first && c.enabled) first = c; });
+    bulk = { ids: new Set(ids), programId: start.id, cohortId: first.id, include: { other: true, same: true, fresh: true }, open: {}, onDone: onDone };
+    $('pp-bulk-subtitle').textContent = plural2(ids.length, 'supplier', 'suppliers') + ' selected';
+    renderBulkSelects();
+    renderBulk();
+    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+  }
+
+  function readBulkSelects() {
+    if (!bulk) return;
+    var program = $('pp-bulk-program').querySelector('el-option[aria-selected="true"]');
+    var programId = program ? program.getAttribute('value') : bulk.programId;
+    if (programId !== bulk.programId) {
+      // A new program has its own cohorts: start at its first stage.
+      bulk.programId = programId;
+      var first = null;
+      findProgram(programId).published.cohorts.forEach(function (c) { if (!first && c.enabled) first = c; });
+      bulk.cohortId = first.id;
+      renderBulkSelects();
+    } else {
+      var cohort = $('pp-bulk-cohort').querySelector('el-option[aria-selected="true"]');
+      if (cohort) bulk.cohortId = cohort.getAttribute('value');
+    }
+    renderBulk();
+  }
+
+  /** The speedbump: outcomes and what they cost, in counts. Who exactly is in the drawer. */
+  function openBulkConfirm() {
+    var plan = bulkPlan();
+    var t = plan.target;
+    if (!t || !plan.moving.length) return;
+    var n = plan.moving.length;
+    var where = 'Cohort ' + t.stage + ' · ' + escapeHtml(t.cohort.name);
+    var joining = bulk.include.fresh ? plan.fresh.length : 0;
+    var onlyJoining = joining === n;   // nobody leaves anything: an add, not a move
+    $('pp-move-title').textContent = (onlyJoining ? 'Add ' : 'Move ') + plural2(n, 'supplier', 'suppliers') + ' to ' + t.program.published.name + '?';
+    $('pp-move-lede').textContent = 'They start Cohort ' + t.stage + ' · ' + t.cohort.name + ' today.' +
+      (plan.skipped ? ' ' + plural2(plan.skipped, 'selected supplier stays', 'selected suppliers stay') + ' where they are.' : '');
+    var items = [];
+    var from = Object.keys(plan.fromPrograms).map(function (id) { return escapeHtml(programName(id)) + ' (' + formatNumber(plan.fromPrograms[id]) + ')'; }).join(', ');
+    if (from) items.push(plural2(bulk.include.other ? plan.other.length : 0, 'leaves', 'leave') + ' ' + from + '. Their progress there ends.');
+    if (bulk.include.same && plan.same.length) {
+      var dir = [];
+      if (plan.forward) dir.push(formatNumber(plan.forward) + ' forward');
+      if (plan.back) dir.push(formatNumber(plan.back) + ' back to an earlier stage');
+      items.push(plural2(plan.same.length, 'changes', 'change') + ' cohort inside this program: ' + dir.join(', ') + '.');
+    }
+    if (joining && !onlyJoining) items.push(plural2(joining, 'unassigned supplier joins', 'unassigned suppliers join') + ' the program.');
+    items.push('The ' + t.cohort.durationDays + '-day timer for ' + where + ' starts today for ' + (onlyJoining ? 'each of them.' : 'everyone moved.'));
+    if (plan.loseMethod) items.push(plural2(plan.loseMethod, 'loses', 'lose') + ' their current payment method — it isn\'t offered in this cohort — and will be asked to choose again.');
+    if (plan.feeUp) items.push(plural2(plan.feeUp, 'will pay', 'will pay') + ' a higher fee here than today.');
+    if (onlyJoining) items.push('They\'ll be asked to choose a payment method this cohort offers.');
+    else items.push('Payments already on their way finish under the old terms.');
+    var dot = '<span class="mt-2 size-1.5 shrink-0 rounded-full bg-amber-500"></span>';
+    $('pp-move-impacts').innerHTML = items.map(function (text) { return '<li class="flex gap-2.5">' + dot + '<span>' + text + '</span></li>'; }).join('');
+    $('pp-move-confirm').textContent = (onlyJoining ? 'Add ' : 'Move ') + plural2(n, 'supplier', 'suppliers');
+    moveConfirm = applyBulk;
+    var dialog = $('pp-move-dialog');
+    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+  }
+
+  function applyBulk() {
+    var plan = bulkPlan();
+    var t = plan.target;
+    if (!t || !plan.moving.length) return;
+    var ids = plan.moving.map(function (s) { return s.id; });
+    // Kept so the toast can put everyone back exactly where they were.
+    var before = plan.moving.map(function (s) {
+      return { id: s.id, programId: s.programId, cohortId: s.cohortId, enteredAt: s.enteredAt, method: s.method };
+    });
+    var onDone = bulk.onDone;
+    var verb = plan.moving.every(function (s) { return !s.programId; }) ? ' added to Cohort ' : ' moved to Cohort ';
+    placeSuppliers(ids, t.program.id, t.cohort);
+    persist();
+    ['pp-move-dialog', 'pp-bulk-dialog'].forEach(function (id) { var d = $(id); if (d && d.open) d.close(); });
+    bulk = null;
+    if (typeof onDone === 'function') onDone();
+    showToast(plural2(ids.length, 'supplier', 'suppliers') + verb + t.stage + ' · ' + t.cohort.name, {
+      label: 'Undo',
+      run: function () {
+        var byId = {};
+        before.forEach(function (b) { byId[b.id] = b; });
+        roster.forEach(function (s) {
+          var b = byId[s.id];
+          if (!b) return;
+          s.programId = b.programId; s.cohortId = b.cohortId; s.enteredAt = b.enteredAt; s.method = b.method;
+        });
+        persistRoster();
+        recount();
+        persist();
+        showToast('Undone — ' + plural2(ids.length, 'supplier is', 'suppliers are') + ' back where they were');
+      }
+    });
+  }
+
+  function bindBulk() {
+    var form = $('pp-bulk-form');
+    form.addEventListener('submit', function (event) { event.preventDefault(); if (bulk) openBulkConfirm(); });
+    form.addEventListener('change', function (event) {
+      if (!bulk) return;
+      var box = event.target.closest('[data-bulk-include]');
+      if (box) { bulk.include[box.getAttribute('data-bulk-include')] = box.checked; renderBulk(); return; }
+      readBulkSelects();
+    });
+    form.addEventListener('click', function (event) {
+      if (!bulk) return;
+      var toggle = event.target.closest('[data-bulk-toggle]');
+      if (toggle) { var key = toggle.getAttribute('data-bulk-toggle'); bulk.open[key] = !bulk.open[key]; renderBulk(); return; }
+      if (event.target.closest('el-option')) setTimeout(readBulkSelects, 0);
+    });
+    $('pp-bulk-dialog').addEventListener('close', function () { if (!$('pp-move-dialog').open) bulk = null; });
+    $('pp-move-dialog').addEventListener('close', function () { moveConfirm = null; });
   }
 
   // ── Toast ──
@@ -1456,15 +1764,20 @@
     $('pp-toast-card').classList.remove('pointer-events-auto');
   }
 
-  function showToast(message) {
+  /** action: { label, run } — an inline button, e.g. Undo. The toast then stays up longer. */
+  function showToast(message, action) {
     var toast = $('pp-toast');
     if (!toast) return;
     $('pp-toast-text').textContent = message;
+    var btn = $('pp-toast-action');
+    toastAction = action && typeof action.run === 'function' ? action.run : null;
+    btn.textContent = toastAction ? action.label : '';
+    btn.classList.toggle('hidden', !toastAction);
     toast.classList.remove('opacity-0', 'translate-y-2');
     toast.classList.add('opacity-100', 'translate-y-0');
     $('pp-toast-card').classList.add('pointer-events-auto');
     clearTimeout(toastTimer);
-    toastTimer = setTimeout(hideToast, 4000);
+    toastTimer = setTimeout(hideToast, toastAction ? 10000 : 4000);
   }
 
   // ── Wiring ──
@@ -1545,8 +1858,10 @@
     cohortForm.addEventListener('submit', function (event) { event.preventDefault(); applyCohort(); });
 
     bindAssign();
+    bindBulk();
     $('pp-disable-form').addEventListener('submit', function (event) { event.preventDefault(); confirmDisable(); });
     $('pp-toast-close').addEventListener('click', hideToast);
+    $('pp-toast-action').addEventListener('click', function () { var run = toastAction; toastAction = null; hideToast(); if (run) run(); });
     $('pp-disable-dialog').addEventListener('close', function () { pendingDisable = null; });
 
     $('pp-name').addEventListener('input', syncCreateState);
@@ -1575,6 +1890,7 @@
     displayNumber: displayNumber,
     enabledCount: enabledCount,
     loadDelay: loadDelay,
+    openBulkAssign: openBulkAssign,
     onChange: function (fn) { if (typeof fn === 'function') changeListeners.push(fn); }
   };
 

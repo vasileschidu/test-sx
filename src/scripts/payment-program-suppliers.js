@@ -1,8 +1,8 @@
 /**
  * payment-program-suppliers.js
- * Suppliers tab of Payment Program Configuration: every supplier enrolled in
- * a published program, where they sit in its waterfall, what happens next and
- * how they get paid.
+ * Suppliers tab of Payment Program Configuration: every supplier, where they
+ * sit in their program's waterfall, what happens next and how they get paid.
+ * Suppliers in no program are listed too, so they can be found and assigned.
  *
  * Rows come from the supplier roster that payment-program-config.js owns —
  * the same records "Add suppliers" and cohort migrations move — so this tab,
@@ -19,7 +19,11 @@
     awaiting: { label: 'Awaiting choice', cls: 'bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20' },
     digital: { label: 'Paying digitally', cls: 'bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20' }
   };
-  var STATUS_ORDER = ['attention', 'awaiting', 'digital'];
+  STATUS.unassigned = { label: 'Unassigned', cls: 'bg-gray-50 text-gray-600 inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20' };
+  var STATUS_ORDER = ['attention', 'awaiting', 'digital', 'unassigned'];
+  // Stands in for a program id on suppliers who aren't in one, so "Unassigned"
+  // filters like any other program.
+  var UNASSIGNED = '__unassigned';
 
   // Filter categories, in the order the menu lists them.
   var PANELS = [
@@ -73,7 +77,22 @@
 
     api.getRoster().forEach(function (s) {
       var program = s.programId && programsById[s.programId];
-      if (!program) return;                      // this tab is enrolled suppliers only
+      if (!program) {
+        if (s.programId) return;                 // in a program that isn't published yet
+        var kept = s.method && s.method !== 'paper' ? catalog.methodById[s.method] : null;
+        rows.push({
+          id: s.id, name: s.name, code: s.code,
+          programId: UNASSIGNED, programName: 'Unassigned', cohortId: null, cohortName: '',
+          stage: 0, stages: 0,
+          nextTitle: '—', nextSub: '', nextMoves: false, nextUrgent: false,
+          payLabel: s.method === 'paper' ? 'Paper Check' : kept ? kept.label : 'No method yet',
+          paySub: s.method === 'paper' ? 'Not converted yet' : kept ? kept.feeLong : 'Chosen once in a program',
+          payIcon: s.method === 'paper' ? 'check' : kept ? kept.icon : 'card',
+          payPending: s.method === 'paper',
+          ytd: s.ytd, status: 'unassigned'
+        });
+        return;
+      }
       var enabled = program.published.cohorts.filter(function (c) { return c.enabled; });
       var stageIdx = -1;
       enabled.forEach(function (c, i) { if (c.id === s.cohortId) stageIdx = i; });
@@ -271,6 +290,7 @@
     var seen = {};
     var list = [];
     state.rows.forEach(function (r) {
+      if (r.programId === UNASSIGNED) return;
       if (!seen[r.programId]) { seen[r.programId] = { id: r.programId, name: r.programName, count: 0, cohorts: {}, order: [] }; list.push(seen[r.programId]); }
       var p = seen[r.programId];
       p.count += 1;
@@ -308,10 +328,15 @@
   function optionsHtml(key) {
     var draft = state.draft;
     if (key === 'program') {
-      return programsInRows().map(function (p) { return optionRow('program', p.id, p.name, p.count, draft.program.has(p.id)); }).join('');
+      // Unassigned leads the list: finding people to enrol is the usual reason to filter here.
+      var loose = state.rows.filter(function (r) { return r.programId === UNASSIGNED; }).length;
+      return (loose ? optionRow('program', UNASSIGNED, 'Unassigned', loose, draft.program.has(UNASSIGNED)) +
+          '<div class="my-2 border-t border-gray-200 dark:border-white/10"></div>' : '') +
+        programsInRows().map(function (p) { return optionRow('program', p.id, p.name, p.count, draft.program.has(p.id)); }).join('');
     }
     if (key === 'cohort') {
       var scope = cohortScope(draft);
+      if (!scope.length) return '<p class="px-2 py-1.5 text-sm text-gray-500 dark:text-gray-400">Unassigned suppliers aren\'t in a cohort. Pick a payment program to filter by its cohorts.</p>';
       return scope.map(function (p) {
         var heading = scope.length > 1
           ? '<p class="px-2 pt-2 pb-1 text-xs font-medium text-gray-500 first:pt-0 dark:text-gray-400">' + escapeHtml(p.name) + '</p>' : '';
@@ -388,6 +413,7 @@
   function tagsHtml() {
     var programs = programsInRows();
     var programName = {};
+    programName[UNASSIGNED] = 'Unassigned';
     var cohortName = {};
     programs.forEach(function (p) {
       programName[p.id] = p.name;
@@ -449,6 +475,47 @@
     } catch (error) {}
   }
 
+  // ── Bulk selection bar ──
+
+  /**
+   * Shown while anything is ticked. The header checkbox only covers the page
+   * on screen, so the bar offers the rest of what matches in one click.
+   */
+  function bulkBarHtml(matching) {
+    var n = state.selected.size;
+    if (!n) return '';
+    var allMatching = matching.length > 0 && matching.every(function (r) { return state.selected.has(r.id); });
+    var more = !allMatching && matching.length > n
+      ? '<button type="button" data-sup-select-all class="cursor-pointer rounded-md px-1.5 py-0.5 text-sm font-semibold text-blue-700 hover:bg-blue-600/10 dark:text-blue-300">Select all ' + matching.length.toLocaleString('en-US') + ' matching</button>'
+      : '';
+    return '<div class="flex flex-col gap-3 border-b border-blue-200 bg-blue-50 px-4 py-2.5 sm:flex-row sm:items-center sm:justify-between sm:px-6 dark:border-blue-400/20 dark:bg-blue-500/10">' +
+      '<div class="flex flex-wrap items-center gap-x-3 gap-y-1">' +
+        '<p class="text-sm font-semibold text-blue-900 dark:text-blue-200">' + n.toLocaleString('en-US') + (n === 1 ? ' supplier' : ' suppliers') + ' selected</p>' + more +
+        '<button type="button" data-sup-select-clear class="cursor-pointer rounded-md px-1.5 py-0.5 text-sm font-semibold text-blue-700 hover:bg-blue-600/10 dark:text-blue-300">Clear</button>' +
+      '</div>' +
+      '<button type="button" data-sup-bulk-assign class="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400">' +
+        '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M2 10a.75.75 0 0 1 .75-.75h12.59l-2.1-1.95a.75.75 0 1 1 1.02-1.1l3.5 3.25a.75.75 0 0 1 0 1.1l-3.5 3.25a.75.75 0 1 1-1.02-1.1l2.1-1.95H2.75A.75.75 0 0 1 2 10Z" clip-rule="evenodd" /></svg>' +
+        'Assign to program</button>' +
+    '</div>';
+  }
+
+  /**
+   * The bar slides open rather than popping in and shoving the table down.
+   * On the way out its content is left in place so there is something to
+   * collapse; `inert` keeps the hidden buttons out of reach meanwhile.
+   */
+  function renderBulkBar(matching) {
+    var bar = $('pp-sup-bulk');
+    var html = bulkBarHtml(matching);
+    var open = !!html;
+    if (open) $('pp-sup-bulk-inner').innerHTML = html;
+    bar.classList.toggle('grid-rows-[0fr]', !open);
+    bar.classList.toggle('opacity-0', !open);
+    bar.classList.toggle('grid-rows-[1fr]', open);
+    bar.classList.toggle('opacity-100', open);
+    if (open) bar.removeAttribute('inert'); else bar.setAttribute('inert', '');
+  }
+
   // ── Table ──
 
   var TH = 'border-b border-gray-200 px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:border-white/10 dark:text-white';
@@ -500,12 +567,14 @@
     return '<tr data-sup-row="' + escapeHtml(r.id) + '" class="transition-colors duration-300 motion-reduce:transition-none' + (state.selected.has(r.id) ? ' bg-blue-50/40 dark:bg-blue-500/5' : '') + '">' +
       '<td class="w-10 min-w-10 border-b border-gray-200 px-0 py-2 text-center align-middle dark:border-white/10">' + checkbox('data-sup-select="' + escapeHtml(r.id) + '"', state.selected.has(r.id), 'Select ' + r.name) + '</td>' +
       '<td class="' + TD + '">' + line(r.name, 'text-sm font-medium text-gray-900 dark:text-white') + line(r.code, 'mt-0.5 text-xs text-gray-500 dark:text-gray-400') + '</td>' +
-      '<td class="' + TD + '">' + line(r.programName, 'text-[11px] leading-4 text-gray-500 dark:text-gray-400') +
+      (r.programId === UNASSIGNED
+        ? '<td class="' + TD + '">' + line('No program', 'text-sm text-gray-500 dark:text-gray-400') + line('Not in a cohort', 'mt-0.5 text-xs text-gray-500 dark:text-gray-400') + '</td>'
+        : '<td class="' + TD + '">' + line(r.programName, 'text-[11px] leading-4 text-gray-500 dark:text-gray-400') +
         '<div class="my-1">' + stageBar(r.stage, r.stages) + '</div>' +
         '<p class="truncate text-xs" title="Cohort ' + r.stage + ' of ' + r.stages + ' · ' + escapeHtml(r.cohortName) + '">' +
           '<span class="font-medium text-gray-900 dark:text-white">Cohort ' + r.stage + ' of ' + r.stages + '</span>' +
-          '<span class="text-gray-500 dark:text-gray-400"> · ' + escapeHtml(r.cohortName) + '</span></p></td>' +
-      '<td class="' + TD + '">' + line(r.nextTitle, nextTitleCls) + line(r.nextSub, nextSubCls) + '</td>' +
+          '<span class="text-gray-500 dark:text-gray-400"> · ' + escapeHtml(r.cohortName) + '</span></p></td>') +
+      '<td class="' + TD + '">' + line(r.nextTitle, nextTitleCls) + (r.nextSub ? line(r.nextSub, nextSubCls) : '') + '</td>' +
       '<td class="' + TD + '"><div class="flex min-w-0 items-start gap-3">' + icon(r.payIcon, 'mt-px size-[18px] shrink-0 text-gray-500 dark:text-gray-400') +
         '<div class="min-w-0">' + line(r.payLabel, 'text-sm font-medium text-gray-900 dark:text-white') +
         line(r.paySub, 'mt-0.5 text-sm ' + (r.payPending ? 'text-orange-600 dark:text-orange-400' : 'text-gray-500 dark:text-gray-400')) + '</div></div></td>' +
@@ -606,6 +675,8 @@
     host.setAttribute('data-ready', '1');
     host.innerHTML = '<div class="pt-3">' + toolbarHtml() +
         '<div class="border-t border-gray-200 dark:border-white/10"></div>' +
+        '<div id="pp-sup-bulk" inert class="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none">' +
+          '<div id="pp-sup-bulk-inner" class="min-h-0 overflow-hidden"></div></div>' +
         '<div class="px-0 sm:px-4"><div class="w-full max-w-full overflow-x-auto">' +
           '<table class="w-full min-w-[960px] table-fixed border-separate border-spacing-0">' +
             '<colgroup><col class="w-10" /><col class="w-[21%]" /><col class="w-[19%]" /><col class="w-[15%]" /><col class="w-[19%]" /><col class="w-[13%]" /><col class="w-[13%]" /></colgroup>' +
@@ -630,11 +701,13 @@
     $('pp-sup-body').innerHTML = pageRows.length ? pageRows.map(rowHtml).join('') : emptyRowHtml();
     $('pp-sup-footer').innerHTML = footerHtml(rows.length);
     renderTags();
+    renderBulkBar(rows);
     $('pp-suppliers-body').setAttribute('aria-busy', 'false');
   }
 
   function showSkeleton() {
     renderTags();
+    renderBulkBar(visibleRows());
     $('pp-sup-head').innerHTML = headHtml([]);
     $('pp-sup-body').innerHTML = skeletonRows(Math.min(state.pageSize, 10));
     $('pp-sup-footer').innerHTML = footerSkeleton();
@@ -662,8 +735,8 @@
     if (state.selected.size) rows = rows.filter(function (r) { return state.selected.has(r.id); });
     var cols = [
       ['Supplier', 'name'], ['Supplier ID', 'code'], ['Payment program', 'programName'],
-      ['Cohort', function (r) { return 'Cohort ' + r.stage + ' of ' + r.stages + ' · ' + r.cohortName; }],
-      ['Next move', function (r) { return r.nextTitle.replace('→ ', '') + ' — ' + r.nextSub; }],
+      ['Cohort', function (r) { return r.stages ? 'Cohort ' + r.stage + ' of ' + r.stages + ' · ' + r.cohortName : ''; }],
+      ['Next move', function (r) { return r.nextSub ? r.nextTitle.replace('→ ', '') + ' — ' + r.nextSub : ''; }],
       ['Gets paid by', 'payLabel'], ['Payment detail', 'paySub'], ['YTD spend', 'ytd'],
       ['Status', function (r) { return STATUS[r.status].label; }]
     ];
@@ -759,6 +832,14 @@
         return;
       }
       if (t.closest('[data-sup-export]')) { exportCsv(); return; }
+
+      if (t.closest('[data-sup-select-all]')) { visibleRows().forEach(function (r) { state.selected.add(r.id); }); render(); return; }
+      if (t.closest('[data-sup-select-clear]')) { state.selected.clear(); render(); return; }
+      if (t.closest('[data-sup-bulk-assign]')) {
+        // Once they've moved, the selection has done its job.
+        window.PaymentPrograms.openBulkAssign(Array.from(state.selected), function () { state.selected.clear(); render(); });
+        return;
+      }
 
       var sortBtn = t.closest('[data-sort-key]');
       if (sortBtn) {
