@@ -51,6 +51,7 @@
     var SHOW_DELAY = 700;   // first tooltip: long enough that it only shows when you pause
     var WARM_MS = 500;      // how long after one hides the next shows at once
     var FADE_MS = 150;
+    var CLICK_HOLD = 600;   // no tooltip this soon after a click
     var GAP = 8;
     var EDGE = 8;
 
@@ -171,29 +172,77 @@
         showTimer = setTimeout(function () { if (anchor === el) show(el); }, immediate || warm ? 0 : SHOW_DELAY);
     }
 
+    // What is under the cursor decides the tooltip, not the moment the cursor
+    // crossed an edge. Entering a control is the usual trigger, but that one
+    // event can arrive while tooltips are held back — just after a click, or
+    // while the page is still scrolling — and it never repeats while the
+    // cursor stays put. So the same check also runs on every move and once
+    // more when the hold ends.
+    var pointerX = -1;
+    var pointerY = -1;
+    var recheckTimer = null;
+    var byFocus = false;
+
+    function targetAt(node) {
+        return node && node.closest ? node.closest('[data-tooltip]') : null;
+    }
+
+    function consider(el) {
+        // A re-render can swap the control out from under the cursor.
+        if (anchor && !anchor.isConnected) { clearTimeout(showTimer); anchor = null; }
+        if (!el) { if (anchor && !byFocus) hide(); return; }
+        if (el === anchor || Date.now() < blockedUntil) return;
+        byFocus = false;
+        request(el, false);
+    }
+
+    function recheckSoon(ms) {
+        clearTimeout(recheckTimer);
+        recheckTimer = setTimeout(function () {
+            if (pointerX < 0) return;
+            consider(targetAt(document.elementFromPoint(pointerX, pointerY)));
+        }, ms);
+    }
+
     document.addEventListener('pointerover', function (event) {
-        if (event.pointerType === 'touch' || Date.now() < blockedUntil) return;
-        var el = event.target.closest && event.target.closest('[data-tooltip]');
-        if (el) request(el, false);
+        if (event.pointerType === 'touch') return;
+        var el = targetAt(event.target);
+        if (el) consider(el);
+    });
+    document.addEventListener('pointermove', function (event) {
+        if (event.pointerType === 'touch') return;
+        pointerX = event.clientX;
+        pointerY = event.clientY;
+        consider(targetAt(event.target));
     });
     document.addEventListener('pointerout', function (event) {
-        if (!anchor) return;
+        if (!anchor || byFocus) return;
         var to = event.relatedTarget;
         if (to && anchor.contains(to)) return;
-        if (event.target.closest && event.target.closest('[data-tooltip]') === anchor) hide();
+        if (targetAt(event.target) === anchor) hide();
     });
+    document.documentElement.addEventListener('pointerleave', function () { pointerX = -1; pointerY = -1; });
     document.addEventListener('focusin', function (event) {
-        var el = event.target.closest && event.target.closest('[data-tooltip]');
+        var el = targetAt(event.target);
         var viaKeyboard = false;
         try { viaKeyboard = event.target.matches(':focus-visible'); } catch (error) {}
-        if (el && viaKeyboard) request(el, true);
+        if (el && viaKeyboard) { request(el, true); byFocus = true; }
     });
-    document.addEventListener('focusout', hide);
-    // Acting on the control, or the page moving under it, ends the tooltip.
-    // A click often re-renders what's under the cursor; don't pop straight back up.
-    document.addEventListener('pointerdown', function () { hide(); lastHidden = 0; blockedUntil = Date.now() + 700; }, true);
+    // Only the control losing focus ends its tooltip — not any blur anywhere.
+    document.addEventListener('focusout', function (event) {
+        if (anchor && byFocus && anchor.contains(event.target)) { byFocus = false; hide(); }
+    });
+    // Acting on a control ends its tooltip, and holds the next one back briefly:
+    // a click often re-renders what's under the cursor.
+    document.addEventListener('pointerdown', function () {
+        hide();
+        lastHidden = 0;
+        blockedUntil = Date.now() + CLICK_HOLD;
+        recheckSoon(CLICK_HOLD + 20);
+    }, true);
     document.addEventListener('keydown', function (event) { if (event.key === 'Escape') hide(); });
-    window.addEventListener('scroll', hide, true);
+    // The page moving under the cursor ends it too; look again once it settles.
+    window.addEventListener('scroll', function () { hide(); recheckSoon(200); }, true);
     window.addEventListener('resize', hide);
 })();
 
