@@ -34,6 +34,8 @@
   var loadTimer = null;
   var cohortEdit = null;   // { programId, index|null, original: snapshot }
   var pendingDisable = null; // { programId, index }
+  var editingId = null;      // program being renamed in the create drawer; null when creating
+  var pendingDelete = null;  // program id awaiting the delete speedbump
   var toastTimer = null;
   var changeListeners = [];
 
@@ -368,6 +370,10 @@
   var ARROW_DOWN = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" class="size-3.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 3v10m0 0 4-4m-4 4-4-4" /></svg>';
   var PLUS = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-[18px]"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>';
 
+  var DOTS = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" /></svg>';
+  var PENCIL = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-500"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" /><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" /></svg>';
+  var TRASH = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" /></svg>';
+
   // ── Shared class strings ──
 
   var BTN_PRIMARY = 'inline-flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400';
@@ -444,6 +450,32 @@
       '<div class="flex flex-col gap-6 p-6">' + cohortHeading() + skeletonCohortCard() + '</div>';
   }
 
+  /** The ⋯ menu on a program: rename it, or delete it. */
+  function programMenu(p, large) {
+    var id = escapeHtml(p.id);
+    var item = function (attr, iconHtml, label, tone) {
+      return '<button type="button" ' + attr + ' class="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-left text-sm font-medium ' + tone + ' focus:outline-hidden">' + iconHtml + label + '</button>';
+    };
+    return '<el-dropdown class="inline-block shrink-0">' +
+      '<button type="button" aria-label="Program actions" class="flex ' + (large ? 'size-8 rounded-md' : 'size-[30px] rounded-sm') + ' cursor-pointer items-center justify-center border border-gray-300 bg-white text-gray-500 shadow-xs hover:bg-gray-50 aria-expanded:border-blue-600 aria-expanded:ring-1 aria-expanded:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10">' + DOTS + '</button>' +
+      '<el-menu anchor="bottom end" popover class="min-w-44 origin-top-right rounded-md bg-white py-1 shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:outline-white/10">' +
+        item('data-edit-program="' + id + '"', PENCIL, 'Edit', 'text-gray-700 hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5') +
+        item('data-delete-program="' + id + '"', TRASH, 'Delete', 'text-red-600 hover:bg-red-50 focus:bg-red-50 dark:text-red-400 dark:hover:bg-red-400/10 dark:focus:bg-red-400/10') +
+      '</el-menu></el-dropdown>';
+  }
+
+  /**
+   * A supplier count that opens the Suppliers tab filtered to exactly the
+   * people it counts. Zero stays plain text — there is nothing to open.
+   */
+  function supplierCount(count, programId, cohortId, cls) {
+    var text = formatNumber(count);
+    if (!count || !programId) return '<span class="' + (cls || '') + '">' + text + '</span>';
+    var href = '?tab=suppliers&filterProgram=' + encodeURIComponent(programId) + (cohortId ? '&filterCohort=' + encodeURIComponent(cohortId) : '');
+    return '<a href="' + href + '" data-sup-link data-sup-link-program="' + escapeHtml(programId) + '"' + (cohortId ? ' data-sup-link-cohort="' + escapeHtml(cohortId) + '"' : '') +
+      ' class="cursor-pointer underline decoration-gray-400 underline-offset-2 hover:text-blue-600 hover:decoration-blue-600 dark:hover:text-blue-400 ' + (cls || '') + '">' + text + '</a>';
+  }
+
   // ── List view ──
 
   function listHeader() {
@@ -478,13 +510,16 @@
             '<p class="text-base font-semibold text-gray-950 dark:text-white">' + escapeHtml(p.published ? p.published.name : p.name) + '</p>' +
             statusBadge(p) + (hasDraftChanges(p) ? badge('draft', 'Draft changes') : '') +
           '</div>' +
-          '<div class="flex flex-wrap items-center gap-1 text-sm text-gray-700 dark:text-gray-300">' +
+          '<div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-gray-700 dark:text-gray-300">' +
             '<span>Updated ' + escapeHtml(formatDate(p.updatedAt)) + '</span>' + DOT +
-            '<span><span class="font-medium">' + formatNumber(p.suppliers) + '</span> suppliers</span>' + DOT +
+            '<span>' + supplierCount(p.suppliers, p.published ? p.id : null, null, 'font-medium') + ' suppliers</span>' + DOT +
             '<span><span class="font-medium">' + formatNumber(p.clients) + '</span> clients</span>' +
           '</div>' +
         '</div>' +
-        '<button type="button" data-open-program="' + escapeHtml(p.id) + '" class="' + BTN_SECONDARY_SM + '">View Program</button>' +
+        '<div class="flex shrink-0 items-center gap-2">' +
+          '<button type="button" data-open-program="' + escapeHtml(p.id) + '" class="' + BTN_SECONDARY_SM + '">View Program</button>' +
+          programMenu(p) +
+        '</div>' +
       '</div>' +
       cohortChips(shown) +
     '</div>';
@@ -537,10 +572,10 @@
         '<button type="button" data-publish ' + (p.cohorts.length ? '' : 'disabled ') + 'class="' + BTN_PRIMARY + '">' + (fresh ? 'Publish Program' : 'Publish Changes') + '</button></div></div>';
   }
 
-  function statTile(label, value, caption) {
+  function statTile(label, value, caption, valueHtml) {
     return '<div class="flex flex-col gap-1 rounded-lg border border-gray-200 p-3.5 dark:border-white/10">' +
       '<span class="text-sm font-medium text-gray-900 dark:text-white">' + label + '</span>' +
-      '<span class="text-2xl font-semibold text-gray-950 dark:text-white">' + escapeHtml(value) + '</span>' +
+      '<span class="text-2xl font-semibold text-gray-950 dark:text-white">' + (valueHtml || escapeHtml(value)) + '</span>' +
       '<span class="text-xs text-gray-500 dark:text-gray-400">' + caption + '</span></div>';
   }
 
@@ -564,10 +599,10 @@
     return chips.join('');
   }
 
-  function miniStat(label, value, unit) {
+  function miniStat(label, value, unit, valueHtml) {
     return '<div class="flex flex-col gap-1 rounded-md bg-gray-50 px-3 py-2.5 dark:bg-white/5">' +
       '<span class="text-xs text-gray-500 dark:text-gray-400">' + label + '</span>' +
-      '<span class="flex items-baseline gap-1 text-sm font-semibold text-gray-950 dark:text-white">' + escapeHtml(value) +
+      '<span class="flex items-baseline gap-1 text-sm font-semibold text-gray-950 dark:text-white">' + (valueHtml || escapeHtml(value)) +
       (unit ? '<span class="text-xs font-normal text-gray-500 dark:text-gray-400">' + unit + '</span>' : '') + '</span></div>';
   }
 
@@ -605,7 +640,7 @@
       '<div class="flex flex-wrap gap-4' + dim + '">' +
         miniStat('Duration', cohort.durationDays, 'days') +
         miniStat('Methods', methodCount(cohort)) +
-        miniStat('Active suppliers', formatNumber(cohort.activeSuppliers)) +
+        miniStat('Active suppliers', formatNumber(cohort.activeSuppliers), null, supplierCount(cohort.activeSuppliers, p.published ? p.id : null, cohort.id)) +
       '</div>' +
       '<div class="flex flex-wrap items-center gap-2' + dim + '">' + cohortMethodChips(cohort) + '</div>' +
     '</div>';
@@ -680,12 +715,12 @@
         '<div class="flex min-w-0 flex-1 flex-col gap-1"><div class="flex flex-wrap items-center gap-3">' +
           '<h1 class="text-2xl font-semibold text-gray-950 dark:text-white">' + escapeHtml(p.name) + '</h1>' + statusBadge(p) + '</div>' +
           '<p class="text-sm text-gray-700 dark:text-gray-300">Updated ' + escapeHtml(formatDate(p.updatedAt)) + '</p></div>' +
-        addSuppliersButton(p) + '</div>' +
+        '<div class="flex shrink-0 items-center gap-2">' + addSuppliersButton(p) + programMenu(p, true) + '</div></div>' +
       '<div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>' +
       '<div class="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2 lg:grid-cols-4">' +
         statTile('Cohorts', String(enabledCount(p.cohorts)), 'Stages in this waterfall') +
         statTile('Clients using', formatNumber(p.clients), 'Buyer programs assigned') +
-        statTile('Suppliers', formatNumber(p.suppliers), 'Across all clients') +
+        statTile('Suppliers', formatNumber(p.suppliers), 'Across all clients', supplierCount(p.suppliers, p.published ? p.id : null, null)) +
         statTile('Check policy', allowsChecks(p) ? 'Allowed' : 'Not allowed', 'Paper check availability') +
       '</div>' +
       '<div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>' +
@@ -750,6 +785,13 @@
     });
   }
 
+  /** The suppliers table needs an unclipped card: a sticky pagination bar and a filter menu that can overhang. */
+  function setCardClipping(clip) {
+    var card = $('pp-list-view').parentNode;
+    card.classList.toggle('overflow-hidden', clip);
+    card.classList.toggle('overflow-visible', !clip);
+  }
+
   function showList(options) {
     var opts = options || {};
     $('pp-detail-view').classList.add('hidden');
@@ -760,6 +802,7 @@
     var suppliersOn = tab === 'suppliers' && !!window.PaymentProgramSuppliers;
     $('pp-list-body').classList.toggle('hidden', suppliersOn);
     $('pp-suppliers-body').classList.toggle('hidden', !suppliersOn);
+    setCardClipping(!suppliersOn);
     if (suppliersOn) { clearTimeout(loadTimer); window.PaymentProgramSuppliers.show(opts); return; }
     var body = $('pp-list-body');
     if (opts.instant) { renderListBody(); return; }
@@ -774,6 +817,7 @@
     if (!p) { showList({ instant: true }); return; }
     $('pp-list-view').classList.add('hidden');
     $('pp-detail-view').classList.remove('hidden');
+    setCardClipping(true);
     setBreadcrumb(p.name);
     window.scrollTo(0, 0);
     var body = $('pp-detail-body');
@@ -840,9 +884,77 @@
     }).join('');
   }
 
+  /** One drawer for both: creating picks a waterfall, editing only renames. */
+  function setCreateMode(p) {
+    editingId = p ? p.id : null;
+    $('pp-create-title').textContent = p ? 'Edit Payment Program' : 'Create Payment Program';
+    $('pp-create-submit').textContent = p ? 'Save Changes' : 'Create Program';
+    $('pp-create-waterfall').classList.toggle('hidden', !!p);
+    $('pp-edit-note').classList.toggle('hidden', !p);
+  }
+
+  function openEdit(id) {
+    var p = findProgram(id);
+    var dialog = $('pp-create-dialog');
+    if (!p || !dialog) return;
+    setCreateMode(p);
+    $('pp-name').value = p.name;
+    syncCreateState();
+    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+  }
+
+  /** A name is a label, not configuration: it applies straight away, no draft. */
+  function renameProgram() {
+    var p = findProgram(editingId);
+    var name = String($('pp-name').value || '').trim();
+    if (!p || !name) return;
+    var changed = name !== p.name;
+    p.name = name;
+    if (p.published) p.published.name = name;
+    if (changed) p.updatedAt = today();
+    persist();
+    var dialog = $('pp-create-dialog');
+    if (dialog && dialog.open) dialog.close();
+    if (currentProgramId() === p.id) redrawDetail(p); else renderListBody();
+    if (changed) showToast('Program renamed to ' + name);
+  }
+
+  // ── Delete speedbump ──
+
+  function openDeleteDialog(id) {
+    var p = findProgram(id);
+    var dialog = $('pp-delete-dialog');
+    if (!p || !dialog) return;
+    pendingDelete = id;
+    $('pp-delete-title').textContent = 'Delete ' + p.name + '?';
+    var impacts = [];
+    if (p.suppliers) impacts.push(plural2(p.suppliers, 'supplier', 'suppliers') + ' will be removed from this program and become unassigned.');
+    if (p.clients) impacts.push(plural2(p.clients, 'client', 'clients') + ' using this program will need a new one.');
+    $('pp-delete-lede').textContent = impacts.length ? 'This can\'t be undone.' : 'Nobody is using this program yet. This can\'t be undone.';
+    var list = $('pp-delete-impacts');
+    list.innerHTML = impacts.map(function (t) { return '<li>' + escapeHtml(t) + '</li>'; }).join('');
+    list.classList.toggle('hidden', !impacts.length);
+    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+  }
+
+  function confirmDelete() {
+    var p = findProgram(pendingDelete);
+    var dialog = $('pp-delete-dialog');
+    if (dialog && dialog.open) dialog.close();
+    if (!p) return;
+    roster.forEach(function (s) { if (s.programId === p.id) { s.programId = null; s.cohortId = null; } });
+    persistRoster();
+    programs = programs.filter(function (x) { return x.id !== p.id; });
+    recount();
+    persist();
+    if (currentProgramId() === p.id) navigate(null, { instant: true }); else renderListBody();
+    showToast(p.name + ' was deleted');
+  }
+
   function openCreate() {
     var dialog = $('pp-create-dialog');
     if (!dialog) return;
+    setCreateMode(null);
     $('pp-name').value = '';
     var first = document.querySelector('input[name="pp-template"][value="default"]');
     if (first) first.checked = true;
@@ -1340,6 +1452,8 @@
     if (!toast) return;
     toast.classList.add('opacity-0', 'translate-y-2');
     toast.classList.remove('opacity-100', 'translate-y-0');
+    // Hidden, it must not swallow clicks meant for whatever sits under it.
+    $('pp-toast-card').classList.remove('pointer-events-auto');
   }
 
   function showToast(message) {
@@ -1348,6 +1462,7 @@
     $('pp-toast-text').textContent = message;
     toast.classList.remove('opacity-0', 'translate-y-2');
     toast.classList.add('opacity-100', 'translate-y-0');
+    $('pp-toast-card').classList.add('pointer-events-auto');
     clearTimeout(toastTimer);
     toastTimer = setTimeout(hideToast, 4000);
   }
@@ -1366,6 +1481,19 @@
         return;
       }
       if (target.closest('[data-open-create]')) { openCreate(); return; }
+
+      var supLink = target.closest('[data-sup-link]');
+      if (supLink) {
+        event.preventDefault();
+        try { window.history.pushState({}, '', window.location.pathname + supLink.getAttribute('href')); } catch (error) {}
+        window.scrollTo(0, 0);
+        showList();
+        return;
+      }
+      var editProgram = target.closest('[data-edit-program]');
+      if (editProgram) { openEdit(editProgram.getAttribute('data-edit-program')); return; }
+      var deleteProgram = target.closest('[data-delete-program]');
+      if (deleteProgram) { openDeleteDialog(deleteProgram.getAttribute('data-delete-program')); return; }
 
       var open = target.closest('[data-open-program]');
       if (open) { navigate(open.getAttribute('data-open-program')); return; }
@@ -1422,7 +1550,9 @@
     $('pp-disable-dialog').addEventListener('close', function () { pendingDisable = null; });
 
     $('pp-name').addEventListener('input', syncCreateState);
-    $('pp-create-form').addEventListener('submit', function (event) { event.preventDefault(); createProgram(); });
+    $('pp-create-form').addEventListener('submit', function (event) { event.preventDefault(); if (editingId) renameProgram(); else createProgram(); });
+    $('pp-delete-confirm').addEventListener('click', confirmDelete);
+    $('pp-delete-dialog').addEventListener('close', function () { pendingDelete = null; });
 
     window.addEventListener('popstate', function () {
       var id = currentProgramId();
