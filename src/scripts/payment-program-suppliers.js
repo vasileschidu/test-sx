@@ -678,10 +678,15 @@
     var host = $('pp-suppliers-body');
     if (host.getAttribute('data-ready')) return host;
     host.setAttribute('data-ready', '1');
-    host.innerHTML = '<div class="pt-3">' + toolbarHtml() +
+    // Toolbar, filter tags and the selection bar travel together as one
+    // sticky header, so search, filters and bulk actions stay in reach down
+    // a long list.
+    host.innerHTML = '<div>' +
+      '<div id="pp-sup-sticky" class="sticky z-30 bg-white pt-3 transition-shadow duration-200 dark:bg-gray-900">' + toolbarHtml() +
         '<div class="border-t border-gray-200 dark:border-white/10"></div>' +
         '<div id="pp-sup-bulk" inert class="grid grid-rows-[0fr] opacity-0 transition-[grid-template-rows,opacity] duration-200 ease-out motion-reduce:transition-none">' +
           '<div id="pp-sup-bulk-inner" class="min-h-0 overflow-hidden"></div></div>' +
+      '</div>' +
         '<div class="px-0 sm:px-4"><div class="w-full max-w-full overflow-x-auto">' +
           '<table class="w-full min-w-[960px] table-fixed border-separate border-spacing-0">' +
             '<colgroup><col class="w-10" /><col class="w-[21%]" /><col class="w-[19%]" /><col class="w-[15%]" /><col class="w-[19%]" /><col class="w-[13%]" /><col class="w-[13%]" /></colgroup>' +
@@ -690,7 +695,30 @@
       '</div>' +
       '<div id="pp-sup-footer" class="sticky bottom-0 z-20 flex border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] sm:rounded-b-lg sm:px-6 dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)]"></div>';
     bindShell(host);
+    initStickyHeader();
     return host;
+  }
+
+  /**
+   * Pins the header right under the app's top bar (and the STP banner when
+   * it's showing), and gives it a shadow only while it is actually stuck.
+   */
+  function initStickyHeader() {
+    var sticky = $('pp-sup-sticky');
+    var topbar = document.querySelector('app-topbar');
+    function syncTop() {
+      var h = topbar ? Math.round(topbar.getBoundingClientRect().height) : 0;
+      sticky.style.top = 'calc(var(--stp-alert-height, 0px) + ' + h + 'px)';
+    }
+    syncTop();
+    if (topbar && 'ResizeObserver' in window) new ResizeObserver(syncTop).observe(topbar);
+    window.addEventListener('resize', syncTop);
+    function syncShadow() {
+      var top = parseFloat(window.getComputedStyle(sticky).top) || 0;
+      var stuck = sticky.getBoundingClientRect().top <= top + 0.5 && window.scrollY > 0 && !$('pp-suppliers-body').classList.contains('hidden');
+      sticky.classList.toggle('shadow-[0_4px_6px_-2px_rgba(0,0,0,0.06)]', stuck);
+    }
+    window.addEventListener('scroll', syncShadow, { passive: true });
   }
 
   function render() {
