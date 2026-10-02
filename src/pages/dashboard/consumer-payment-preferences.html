@@ -938,18 +938,6 @@
                             <div id="pp-adv-table-state" class="hidden w-full rounded-lg">
                                 <div class="flex w-full items-center gap-4 bg-gray-50 px-2 py-1 dark:bg-white/5">
                                     <div class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400">Payer Name</div>
-                                    <div class="min-w-0 flex-1 items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400 sm:flex">
-                                        <span>Entity on File with Payer</span>
-                                        <button type="button" aria-label="Entity on file information"
-                                            class="hidden sm:inline-flex items-center rounded-md bg-gray-100 p-1 text-gray-400 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors cursor-pointer">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14"
-                                                viewBox="0 0 14 14" fill="none">
-                                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                                    d="M1.3125 7.00001C1.3125 3.85888 3.85888 1.3125 7 1.3125C10.1411 1.3125 12.6875 3.85888 12.6875 7.00001C12.6875 10.1411 10.1411 12.6875 7 12.6875C3.85888 12.6875 1.3125 10.1411 1.3125 7.00001ZM6.39114 6.1591C7.05978 5.82478 7.81264 6.42871 7.63133 7.15395L7.21774 8.80831L7.24194 8.79621C7.45805 8.68815 7.72085 8.77575 7.82891 8.99186C7.93697 9.20798 7.84937 9.47077 7.63325 9.57883L7.60905 9.59093C6.94041 9.92525 6.18755 9.32133 6.36886 8.59609L6.78245 6.94173L6.75825 6.95383C6.54214 7.06189 6.27934 6.97429 6.17128 6.75817C6.06323 6.54206 6.15082 6.27926 6.36694 6.1712L6.39114 6.1591ZM7 5.25001C7.24162 5.25001 7.4375 5.05413 7.4375 4.81251C7.4375 4.57088 7.24162 4.375 7 4.375C6.75838 4.375 6.5625 4.57088 6.5625 4.81251C6.5625 5.05413 6.75838 5.25001 7 5.25001Z"
-                                                    fill="#9CA3AF" />
-                                            </svg>
-                                        </button>
-                                    </div>
                                     <div class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400">Primary Method of Payment</div>
                                     <div class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400">Secondary Method of Payment</div>
                                     <div class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400">Third Method of Payment</div>
@@ -979,26 +967,7 @@
                                                 </el-options>
                                             </el-select>
                                         </div>
-                                        <div class="min-w-0 flex-1">
-                                            <el-select data-adv-entity-select value="all-entities" class="block w-full">
-                                                <button type="button"
-                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
-                                                    <el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white">
-                                                        All entities
-                                                    </el-selectedcontent>
-                                                    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
-                                                        class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
-                                                        <path
-                                                            d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                                                            clip-rule="evenodd" fill-rule="evenodd" />
-                                                    </svg>
-                                                </button>
-                                                <el-options anchor="bottom start" popover
-                                                    class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
-                                                    data-adv-entity-options>
-                                                </el-options>
-                                            </el-select>
-                                        </div>
+
                                         <div class="min-w-0 flex-1">
                                             <el-select data-adv-method-select data-method-slot="1" class="block w-full">
                                                 <button type="button"

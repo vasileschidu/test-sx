@@ -68,7 +68,7 @@
                     <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>
                   </div>
                   <input id="mc-search" type="search" autocomplete="off" placeholder="Search customer" aria-label="Search cards"
-                    class="block w-full rounded-md border-0 bg-white py-1.5 pr-3 pl-9 text-sm font-medium text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10 dark:placeholder:text-gray-500 dark:focus:ring-blue-500" />
+                    class="block h-8 w-full rounded-md border-0 bg-white py-0 pr-3 pl-9 text-sm font-medium text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10 dark:placeholder:text-gray-500 dark:focus:ring-blue-500" />
                 </div>
                 <div class="flex items-center gap-3">
                   <label class="flex cursor-pointer items-center gap-2 rounded-lg bg-gray-50 px-3 py-1.5 whitespace-nowrap dark:bg-white/5">
@@ -101,6 +101,46 @@
       </main>
     </div>
   </div>
+
+  <!-- Dispute contact details -->
+  <el-dialog>
+    <dialog id="mc-dispute-dialog" aria-labelledby="mc-dispute-title"
+      class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+      <el-dialog-backdrop
+        class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+      <div tabindex="0" class="flex min-h-full items-center justify-center p-3 focus:outline-none sm:p-6">
+        <el-dialog-panel
+          class="relative w-full max-w-lg transform overflow-hidden rounded-[10px] bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+          <div class="flex w-full items-center justify-end px-4 pt-4">
+            <button type="button" data-mc-dispute-close aria-label="Close contact details"
+              class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">
+              <img src="../../../assets/icons/modal-close-x.svg" alt="" aria-hidden="true" />
+            </button>
+          </div>
+          <div class="flex w-full flex-col gap-[25px] px-6 pt-6 pb-6">
+            <div class="flex w-full flex-col items-center gap-4">
+              <img src="../../../assets/icons/contact-annotation.svg" alt="" aria-hidden="true" />
+              <h2 id="mc-dispute-title" class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">Contact Details</h2>
+            </div>
+            <div class="flex w-full flex-col gap-3">
+              <div class="flex w-full flex-col gap-1 rounded-md bg-gray-50 px-5 py-4 dark:bg-white/5">
+                <p class="text-sm/5 font-medium text-gray-900 dark:text-gray-100">Payer Name</p>
+                <p id="mc-dispute-payer" class="text-sm/5 font-normal text-gray-700 dark:text-gray-300"></p>
+              </div>
+              <div class="flex w-full flex-col gap-1 rounded-md bg-gray-50 px-5 py-4 dark:bg-white/5">
+                <p class="text-sm/5 font-medium text-gray-900 dark:text-gray-100">Email Address</p>
+                <a id="mc-dispute-email" class="w-fit text-sm/5 font-normal text-gray-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300"></a>
+              </div>
+              <div class="flex w-full flex-col gap-1 rounded-md bg-gray-50 px-5 py-4 dark:bg-white/5">
+                <p class="text-sm/5 font-medium text-gray-900 dark:text-gray-100">Phone Number</p>
+                <a id="mc-dispute-phone" class="w-fit text-sm/5 font-normal text-gray-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300"></a>
+              </div>
+            </div>
+          </div>
+        </el-dialog-panel>
+      </div>
+    </dialog>
+  </el-dialog>
 
   <!-- Toast -->
   <div id="mc-toast" role="status" aria-live="polite"

@@ -109,6 +109,26 @@
     toastTimer = setTimeout(function () { toast.classList.add('opacity-0', 'translate-y-2'); }, 3500);
   }
 
+  function openDisputeDialog(card) {
+    var dialog = $('mc-dispute-dialog');
+    var contact = $('mc-dispute-contact');
+    if (!dialog || !contact || typeof dialog.showModal !== 'function') return;
+
+    $('mc-dispute-payer').textContent = card.sentBy || '—';
+    var emailSource = contact.querySelector('a[href^="mailto:"]');
+    var phoneSource = contact.querySelector('a[href^="tel:"]');
+    var email = $('mc-dispute-email');
+    var phone = $('mc-dispute-phone');
+    email.textContent = emailSource ? emailSource.textContent.trim() : '—';
+    phone.textContent = phoneSource ? phoneSource.textContent.trim() : '—';
+    if (emailSource) email.href = emailSource.href;
+    else email.removeAttribute('href');
+    if (phoneSource) phone.href = phoneSource.href;
+    else phone.removeAttribute('href');
+
+    if (!dialog.open) dialog.showModal();
+  }
+
   function copyText(text, btn) {
     if (window.copyTextWithFeedback) { window.copyTextWithFeedback(text, btn); return; }
     try { navigator.clipboard.writeText(text); } catch (error) {}
@@ -344,6 +364,7 @@
       '<el-menu anchor="bottom end" popover class="min-w-52 origin-top-right rounded-md bg-white py-1 shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:outline-white/10">' +
         item('data-mc-statement', '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-500"><path fill-rule="evenodd" d="M4.5 2A1.5 1.5 0 0 0 3 3.5v13A1.5 1.5 0 0 0 4.5 18h11a1.5 1.5 0 0 0 1.5-1.5V7.621a1.5 1.5 0 0 0-.44-1.06l-4.12-4.122A1.5 1.5 0 0 0 11.378 2H4.5Zm2.25 8.5a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Zm0 3a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Z" clip-rule="evenodd" /></svg>', 'Card statement') +
         item('data-mc-request', '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-5 text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3M18 13.5v4.5m2.25-2.25h-4.5M4.5 19.5h9m6-9V6.75A2.25 2.25 0 0 0 17.25 4.5h-12A2.25 2.25 0 0 0 3 6.75v10.5A2.25 2.25 0 0 0 5.25 19.5" /></svg>', 'Request new card') +
+        item('data-mc-dispute', '<img src="../../../assets/icons/dispute-x-circle.svg" alt="" class="shrink-0" />', 'Dispute a transaction') +
       '</el-menu></el-dropdown>';
   }
 
@@ -362,9 +383,9 @@
 
   var TH = 'h-11 px-3 text-left text-xs font-medium tracking-wide whitespace-nowrap text-gray-500 uppercase dark:text-gray-400';
 
-  function txRow(t) {
+  function txRow(t, last) {
     var open = detail.open.has(t.id);
-    var main = '<tr data-mc-tx="' + escapeHtml(t.id) + '" class="cursor-pointer border-b border-gray-200 hover:bg-gray-50/60 dark:border-white/10 dark:hover:bg-white/5' + (open ? ' bg-gray-50 dark:bg-white/5' : '') + '">' +
+    var main = '<tr data-mc-tx="' + escapeHtml(t.id) + '" class="cursor-pointer ' + (last && !open ? 'border-b-0' : 'border-b border-gray-200 dark:border-white/10') + ' hover:bg-gray-50/60 dark:hover:bg-white/5' + (open ? ' bg-gray-50 dark:bg-white/5' : '') + '">' +
       '<td class="h-13 w-10 pl-3"><button type="button" aria-expanded="' + open + '" aria-label="Transaction details" class="rounded-md p-1 text-gray-500 hover:bg-gray-200 dark:hover:bg-white/10">' +
         '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 transition-transform' + (open ? ' rotate-90' : '') + '"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg></button></td>' +
       '<td class="px-3 py-3 text-sm text-gray-500 tabular-nums dark:text-gray-400">' + escapeHtml(t.id) + '</td>' +
@@ -377,7 +398,7 @@
     var d = function (label, value) {
       return '<div class="grid grid-cols-1 gap-1 py-1.5 sm:grid-cols-[14rem_minmax(0,1fr)] sm:gap-4"><dt class="text-sm text-gray-500 dark:text-gray-400">' + label + '</dt><dd class="text-sm text-gray-900 dark:text-white">' + value + '</dd></div>';
     };
-    return main + '<tr class="border-b border-gray-200 dark:border-white/10"><td colspan="6" class="px-4 pt-4 pb-5 sm:pl-14">' +
+    return main + '<tr class="' + (last ? '' : 'border-b border-gray-200 dark:border-white/10') + '"><td colspan="6" class="px-4 pt-4 pb-5 sm:pl-14">' +
       '<h3 class="border-b border-gray-200 pb-3 text-sm font-semibold text-gray-900 dark:border-white/10 dark:text-white">Transaction Details</h3>' +
       '<dl class="pt-2">' +
         d('Transaction Code', escapeHtml(t.transactionCode)) +
@@ -404,7 +425,7 @@
     var end = Math.min(detail.page * detail.pageSize, rows.length);
     var sizes = PAGE_SIZES.map(function (n) { return '<option value="' + n + '"' + (n === detail.pageSize ? ' selected' : '') + '>' + n + '</option>'; }).join('');
     var sortIcon = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 ' + (detail.sort === 'asc' ? 'rotate-180' : '') + '"><path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z" clip-rule="evenodd" /></svg>';
-    var body = slice.length ? slice.map(txRow).join('')
+    var body = slice.length ? slice.map(function (t, index) { return txRow(t, index === slice.length - 1); }).join('')
       : '<tr><td colspan="6" class="px-4 py-10 text-center"><p class="text-sm font-semibold text-gray-900 dark:text-white">No transactions match</p><p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Try a different search or clear the filter.</p></td></tr>';
     return '<div class="overflow-x-auto"><table class="w-full min-w-[720px]">' +
         '<thead><tr class="border-b border-gray-200 dark:border-white/10"><th class="w-10"></th>' +
@@ -455,14 +476,14 @@
           '<h2 class="text-lg font-semibold text-gray-900 dark:text-white">Card Transaction History</h2>' +
           '<div class="flex gap-3 sm:ml-auto">' +
             '<div class="relative w-full sm:w-80"><div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 text-gray-400"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg></div>' +
-              '<input id="mc-tx-search" type="search" autocomplete="off" placeholder="Search Transaction" aria-label="Search transactions" value="' + escapeHtml(detail.search) + '" class="block w-full rounded-md border-0 bg-white py-1.5 pr-3 pl-9 text-sm font-medium text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10" /></div>' +
+              '<input id="mc-tx-search" type="search" autocomplete="off" placeholder="Search Transaction" aria-label="Search transactions" value="' + escapeHtml(detail.search) + '" class="block h-8 w-full rounded-md border-0 bg-white py-0 pr-3 pl-9 text-sm font-medium text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10" /></div>' +
             '<div class="relative"><button type="button" data-mc-tx-filter aria-expanded="' + detail.filterOpen + '" class="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10">' +
               '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M10 4.75a.75.75 0 0 1 .75.75v3.75h3.75a.75.75 0 0 1 0 1.5h-3.75v3.75a.75.75 0 0 1-1.5 0v-3.75H5.5a.75.75 0 0 1 0-1.5h3.75V5.5a.75.75 0 0 1 .75-.75Z" /></svg>Filter' +
               (detail.statuses.size ? '<span class="inline-flex items-center rounded-full bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400">' + detail.statuses.size + '</span>' : '') +
             '</button><div id="mc-tx-filter-panel" class="absolute right-0 z-30 mt-2 w-56 overflow-hidden rounded-md bg-white shadow-lg outline-1 outline-black/5 dark:bg-gray-800 dark:outline-white/10' + (detail.filterOpen ? '' : ' hidden') + '">' + (detail.filterOpen ? txFilterPanel() : '') + '</div></div>' +
           '</div>' +
         '</div>' +
-        '<div class="flex items-start gap-3 rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-700 dark:bg-white/5 dark:text-gray-300">' +
+        '<div id="mc-dispute-contact" class="flex items-start gap-3 rounded-lg bg-gray-50 px-4 py-3 text-sm text-gray-700 dark:bg-white/5 dark:text-gray-300">' +
           '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="mt-0.5 size-4 shrink-0 text-gray-400"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" /></svg>' +
           '<p>For dispute request you can contact: <a href="tel:8008903128" class="font-medium text-gray-900 hover:underline dark:text-white">800-890-3128</a> or <a href="mailto:dispute-ticket@transcard.com" class="font-medium text-gray-900 hover:underline dark:text-white">dispute-ticket@transcard.com</a></p>' +
         '</div>' +
@@ -565,6 +586,12 @@
     document.addEventListener('click', function (event) {
       var t = event.target;
 
+      if (t.closest('[data-mc-dispute-close]')) {
+        var disputeDialog = $('mc-dispute-dialog');
+        if (disputeDialog && disputeDialog.open) disputeDialog.close();
+        return;
+      }
+
       // "Sent by" inside a row goes to that payer's payments, not the card.
       var sender = t.closest('[data-sent-by]');
       if (sender) {
@@ -593,6 +620,10 @@
       if (copy) { copyText(copy.getAttribute('data-mc-copy'), copy); return; }
       if (t.closest('[data-mc-statement]')) { downloadStatement(c); return; }
       if (t.closest('[data-mc-request]')) { showToast('New card requested — we\'ll email you when it\'s ready'); return; }
+      if (t.closest('[data-mc-dispute]')) {
+        openDisputeDialog(c);
+        return;
+      }
       if (t.closest('[data-mc-tx-filter]')) { detail.filterOpen = !detail.filterOpen; $('mc-detail-view').innerHTML = detailHtml(c); return; }
       if (t.closest('[data-mc-tx-filter-clear]')) { detail.statuses.clear(); detail.page = 1; $('mc-detail-view').innerHTML = detailHtml(c); return; }
       if (detail.filterOpen && !t.closest('#mc-tx-filter-panel')) { detail.filterOpen = false; $('mc-detail-view').innerHTML = detailHtml(c); return; }

@@ -949,34 +949,6 @@
                 return html;
             }
 
-            function buildEntityOptionsHtml(vendorEntries) {
-                var html = '' +
-                    '<el-option value="all-entities" class="group/option relative block cursor-default py-2 pr-9 pl-3 text-gray-900 select-none aria-selected:bg-gray-100 group-aria-selected/option:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:group-aria-selected/option:bg-white/10 dark:focus:bg-white/10">' +
-                        '<span class="block truncate font-medium group-aria-selected/option:font-semibold">All entities</span>' +
-                        '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
-                            '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
-                                '<path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
-                            '</svg>' +
-                        '</span>' +
-                    '</el-option>';
-
-                vendorEntries.forEach(function (entry, index) {
-                    var label = escapeHtml(entry);
-                    var value = escapeHtml('entry-' + index + '-' + entry.toLowerCase().replace(/[^a-z0-9]+/g, '-'));
-                    html += '' +
-                        '<el-option value="' + value + '" class="group/option relative block cursor-default py-2 pr-9 pl-3 text-gray-900 select-none aria-selected:bg-gray-100 group-aria-selected/option:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:group-aria-selected/option:bg-white/10 dark:focus:bg-white/10">' +
-                            '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' + label + '</span>' +
-                            '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
-                                '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
-                                    '<path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
-                                '</svg>' +
-                            '</span>' +
-                        '</el-option>';
-                });
-
-                return html;
-            }
-
             function getSelectValue(selectEl) {
                 if (!selectEl) return '';
                 if (typeof selectEl.value === 'string' && selectEl.value) return selectEl.value;
@@ -992,33 +964,10 @@
                 selectEl.dispatchEvent(new Event('change', { bubbles: true }));
             }
 
-            function getCustomerById(customerId) {
-                for (var i = 0; i < customersCache.length; i++) {
-                    if (customersCache[i].id === customerId) return customersCache[i];
-                }
-                return null;
-            }
-
-            function hydrateEntityForRow(rowEl) {
-                var payerSelect = rowEl.querySelector('[data-adv-payer-select]');
-                var entitySelect = rowEl.querySelector('[data-adv-entity-select]');
-                var entityOptions = rowEl.querySelector('[data-adv-entity-options]');
-                if (!entitySelect || !entityOptions) return;
-
-                var payerId = getSelectValue(payerSelect);
-                var customer = getCustomerById(payerId);
-                var vendorEntries = customer && Array.isArray(customer.vendorEntries) ? customer.vendorEntries : [];
-                entityOptions.innerHTML = buildEntityOptionsHtml(vendorEntries);
-                setSelectValue(entitySelect, 'all-entities');
-            }
-
             function hydratePayerSelects() {
                 var optionsHtml = buildPayerOptionsHtml(customersCache);
                 rowsWrap.querySelectorAll('[data-adv-payer-options]').forEach(function (optsEl) {
                     optsEl.innerHTML = optionsHtml;
-                });
-                rowsWrap.querySelectorAll('.pp-adv-row').forEach(function (rowEl) {
-                    hydrateEntityForRow(rowEl);
                 });
             }
 
@@ -1079,15 +1028,6 @@
                             '</el-select>' +
                         '</div>' +
                         '<div class="min-w-0 flex-1">' +
-                            '<el-select data-adv-entity-select value="all-entities" class="block w-full">' +
-                                '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
-                                    '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white">All entities</el-selectedcontent>' +
-                                    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
-                                '</button>' +
-                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-entity-options></el-options>' +
-                            '</el-select>' +
-                        '</div>' +
-                        '<div class="min-w-0 flex-1">' +
                             '<el-select data-adv-method-select data-method-slot="1" class="block w-full">' +
                                 '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
                                     '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"><span class="text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
@@ -1124,6 +1064,11 @@
             }
 
             customizeBtn.addEventListener('click', function () {
+                if (!rowsWrap.querySelector('.pp-adv-row')) {
+                    rowsWrap.insertAdjacentHTML('beforeend', buildRowHtml());
+                    hydratePayerSelects();
+                    hydrateMethodSelects();
+                }
                 emptyState.classList.add('hidden');
                 tableState.classList.remove('hidden');
                 setAdvancedDirty(false);
@@ -1155,8 +1100,6 @@
             rowsWrap.addEventListener('change', function (event) {
                 var payerSelect = event.target.closest('[data-adv-payer-select]');
                 if (payerSelect) {
-                    var payerRow = payerSelect.closest('.pp-adv-row');
-                    if (payerRow) hydrateEntityForRow(payerRow);
                     setAdvancedDirty(true);
                     return;
                 }
@@ -1168,9 +1111,6 @@
                     setAdvancedDirty(true);
                     return;
                 }
-
-                var entitySelect = event.target.closest('[data-adv-entity-select]');
-                if (entitySelect) setAdvancedDirty(true);
             });
 
             fetchCustomers().then(function (customers) {

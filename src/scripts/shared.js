@@ -35,6 +35,21 @@
     (document.head || document.documentElement).appendChild(style);
 })();
 
+/* ===== Table row separators ===== */
+// Table implementations render independently, so keep the final data row clean
+// across static, paginated, and dynamically rendered tables.
+(function injectTableLastRowStyles() {
+    if (document.getElementById('shell-table-last-row-styles')) return;
+    var style = document.createElement('style');
+    style.id = 'shell-table-last-row-styles';
+    style.textContent = [
+        'table tbody:last-of-type > tr:last-child,',
+        'table tbody:last-of-type > tr:last-child > th,',
+        'table tbody:last-of-type > tr:last-child > td { border-bottom-width: 0 !important; }'
+    ].join('\n');
+    (document.head || document.documentElement).appendChild(style);
+})();
+
 /* ===== Hover tooltips ===== */
 
 /**
