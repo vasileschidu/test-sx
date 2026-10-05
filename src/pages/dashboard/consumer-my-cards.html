@@ -36,14 +36,14 @@
 
   <script src="../../../src/scripts/sidebar-boot.js"></script>
   <script src="../../../src/scripts/app-plans.js"></script>
-  <script src="../../../src/scripts/nav-component.js"></script>
+  <script src="../../../src/scripts/nav-component.js?v=consumer-sidebar-top-spacing-20261002"></script>
   <script src="../../../src/scripts/stp-state.js"></script>
   <script src="../../../src/scripts/app-switch.js"></script>
   <script src="../../../src/scripts/topbar-component.js"></script>
-  <script src="../../../src/scripts/sidebar.js" defer></script>
+  <script src="../../../src/scripts/sidebar.js?v=consumer-sidebar-top-spacing-20261002" defer></script>
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/shared.js" defer></script>
-  <script src="../../../src/scripts/shell-navigation.js" defer></script>
+  <script src="../../../src/scripts/shell-navigation.js?v=consumer-shell-20261002" defer></script>
   <script src="../../../src/scripts/payment-preferences-components.js" defer></script>
   <script src="../../../src/scripts/consumer-my-cards.js" defer></script>
 </head>
@@ -52,7 +52,7 @@
   <div id="app-shell" class="min-h-screen">
     <app-nav></app-nav>
 
-    <div id="main-content-wrapper" class="min-w-0 min-h-screen flex flex-col lg:pl-[288px]">
+    <div id="main-content-wrapper" class="min-w-0 min-h-screen flex flex-col lg:pl-[312px]">
       <app-topbar></app-topbar>
 
       <main class="flex w-full justify-center p-2 sm:p-2 lg:p-4">
@@ -113,8 +113,8 @@
           class="relative w-full max-w-lg transform overflow-hidden rounded-[10px] bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
           <div class="flex w-full items-center justify-end px-4 pt-4">
             <button type="button" data-mc-dispute-close aria-label="Close contact details"
-              class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">
-              <img src="../../../assets/icons/modal-close-x.svg" alt="" aria-hidden="true" />
+              class="flex size-10 cursor-pointer items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="size-6" aria-hidden="true"><path d="M6 18L18 6M6 6L18 18" stroke-linecap="round" stroke-linejoin="round" /></svg>
             </button>
           </div>
           <div class="flex w-full flex-col gap-[25px] px-6 pt-6 pb-6">

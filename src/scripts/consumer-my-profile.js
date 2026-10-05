@@ -19,6 +19,8 @@
   var editing = null;        // field key being edited
   var error = '';
   var toastTimer = null;
+  var listenersBound = false;
+  var initGeneration = 0;
 
   var FIELDS = [
     { key: 'fullName', label: 'Full name', type: 'text', autocomplete: 'name', placeholder: 'Your full name' },
@@ -225,6 +227,8 @@
   // ── Wiring ──
 
   function bind() {
+    if (listenersBound) return;
+    listenersBound = true;
     document.addEventListener('click', function (event) {
       var t = event.target;
       var edit = t.closest('[data-mp-edit]');
@@ -253,7 +257,9 @@
     });
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  function init() {
+    if (!$('mp-details')) return;
+    var generation = ++initGeneration;
     bind();
     renderSkeleton();
     var delay = LOAD_MIN_MS + Math.random() * (LOAD_MAX_MS - LOAD_MIN_MS);
@@ -261,11 +267,18 @@
     Promise.resolve(window.DataSource ? window.DataSource.load('consumer-profile') : null)
       .catch(function () { return null; })
       .then(function (seed) {
+        if (generation !== initGeneration || !$('mp-details')) return;
         var stored = null;
         try { stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) {}
         profile = Object.assign({ fullName: '', email: '', phone: '', alerts: {} }, seed || {}, stored || {});
         profile.alerts = Object.assign({ critical: { email: true, sms: false }, account: { email: true, sms: false } }, profile.alerts || {});
-        setTimeout(render, Math.max(0, delay - (Date.now() - started)));
+        setTimeout(function () {
+          if (generation === initGeneration && $('mp-details')) render();
+        }, Math.max(0, delay - (Date.now() - started)));
       });
-  });
+  }
+
+  window.initConsumerMyProfile = init;
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  else init();
 })();

@@ -22,6 +22,8 @@
   var cards = [];
   var loadTimer = null;
   var toastTimer = null;
+  var listenersBound = false;
+  var initGeneration = 0;
 
   var list = { search: '', activeOnly: false, senders: new Set(), statuses: new Set(), expanded: false, filterOpen: false };
   var detail = { cardId: null, revealed: false, search: '', statuses: new Set(), sort: 'desc', page: 1, pageSize: 10, open: new Set(), filterOpen: false };
@@ -211,6 +213,7 @@
 
   function renderList() {
     var body = $('mc-list-body');
+    if (!body) return;
     var matches = listMatches();
     if (!matches.length) {
       body.innerHTML = '<div class="flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-gray-50/80 px-6 py-10 text-center dark:border-white/10 dark:bg-white/5">' +
@@ -583,6 +586,8 @@
   // ── Events ──
 
   function bind() {
+    if (listenersBound) return;
+    listenersBound = true;
     document.addEventListener('click', function (event) {
       var t = event.target;
 
@@ -681,12 +686,16 @@
     });
 
     window.addEventListener('popstate', function () {
+      if (!$('mc-list-view')) return;
       var id = currentCardId();
       if (id) showCard(id, { instant: true }); else showList({ instant: true });
     });
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  function init() {
+    if (!$('mc-list-view')) return;
+    clearTimeout(loadTimer);
+    var generation = ++initGeneration;
     bind();
     var id = currentCardId();
     // First paint is a skeleton for whichever view the URL asks for.
@@ -695,8 +704,13 @@
     Promise.resolve(window.DataSource ? window.DataSource.load('consumer-cards') : null)
       .catch(function () { return null; })
       .then(function (data) {
+        if (generation !== initGeneration || !$('mc-list-view')) return;
         cards = data && Array.isArray(data.cards) ? data.cards : [];
         if (id && findCard(id)) showCard(id); else showList();
       });
-  });
+  }
+
+  window.initConsumerMyCards = init;
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  else init();
 })();

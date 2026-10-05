@@ -1,5 +1,6 @@
 (function () {
     var root = document.documentElement;
+    var expandedSidebarWidth = window.location.pathname.indexOf('consumer-') !== -1 ? 312 : 288;
     var collapsed = false;
 
     try {
@@ -18,7 +19,7 @@
     style.textContent = [
         '@media (min-width: 1024px) {',
         '  html[data-sidebar-collapsed="true"] #main-content-wrapper { padding-left: 68px !important; }',
-        '  html[data-sidebar-collapsed="false"] #main-content-wrapper { padding-left: 288px !important; }',
+        '  html[data-sidebar-collapsed="false"] #main-content-wrapper { padding-left: ' + expandedSidebarWidth + 'px !important; }',
         '  html.sidebar-booting #desktop-sidebar-shell,',
         '  html.sidebar-booting #desktop-sidebar-panel,',
         '  html.sidebar-booting [data-nav="desktop"] .nav-item,',

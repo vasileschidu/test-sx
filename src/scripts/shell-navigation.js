@@ -31,11 +31,29 @@
             preScripts: [],
             scripts: [],
             init: null
+        },
+        'consumer-payments-received.html': {
+            scripts: ['/src/scripts/table-skeleton.js', '/src/scripts/exchanges-table.js?v=20261001b'],
+            init: 'initSmartExchangePage'
+        },
+        'consumer-my-cards.html': {
+            scripts: ['/src/scripts/payment-preferences-components.js', '/src/scripts/consumer-my-cards.js'],
+            init: 'initConsumerMyCards'
+        },
+        'consumer-payment-preferences.html': {
+            scripts: ['/src/scripts/payment-preferences-components.js'],
+            reloadScripts: ['/src/scripts/payment-preferences-tabs.js', '/src/scripts/pages/payment-preferences-page.js'],
+            init: null
+        },
+        'consumer-my-profile.html': {
+            scripts: ['/src/scripts/consumer-my-profile.js'],
+            init: 'initConsumerMyProfile'
         }
     };
 
     var activeNavigation = null;
     var loadedScripts = new Set();
+    var currentPageFile = window.location.pathname.split('/').pop() || '';
 
     function normalizeScriptUrl(url) {
         try {
@@ -63,7 +81,7 @@
 
     function isDashboardPageUrl(url) {
         if (!url || url.origin !== window.location.origin) return false;
-        return /\/src\/pages\/dashboard\/[^/?#]+\.html$/.test(url.pathname || '');
+        return /\.html$/.test(url.pathname || '');
     }
 
     function shouldInterceptLink(link, event) {
@@ -198,6 +216,7 @@
     }
 
     function refreshShell(pageFile) {
+        currentPageFile = pageFile;
         document.body.setAttribute('data-page', pageFile);
 
         var appNav = document.querySelector('app-nav');
@@ -216,6 +235,27 @@
         if (!config || !config.init) return;
         if (typeof window[config.init] === 'function') {
             window[config.init]();
+        }
+    }
+
+    function configurePage(pageFile) {
+        if (pageFile === 'supplier-portal.html' || pageFile === 'consumer-payments-received.html') {
+            window.EXCHANGES_TABLE_CONFIG = pageFile === 'consumer-payments-received.html' ? {
+                dataset: 'consumer-payments',
+                storageKey: 'cp_payment_overrides_v1',
+                methodLabels: { smart_exchange: 'Smart Disburse' },
+                statusLabels: { pending: 'Pending Your Action' },
+                showTokenMethod: true
+            } : {};
+        }
+        if (pageFile === 'payment-preferences.html' || pageFile === 'consumer-payment-preferences.html') {
+            window.PAYMENT_PREFERENCES_CONFIG = pageFile === 'consumer-payment-preferences.html'
+                ? { dataset: 'consumer-payment-preferences', storagePrefix: 'cp_pp_' }
+                : {};
+            window.__ppConfig = window.PAYMENT_PREFERENCES_CONFIG;
+            window.__ppStorageKey = function (name) {
+                return (window.__ppConfig.storagePrefix || 'pp_') + name;
+            };
         }
     }
 
@@ -272,6 +312,7 @@
                 window.history.pushState({}, '', url.pathname + url.search + url.hash);
             }
 
+            configurePage(pageFile);
             return ensurePreScripts(pageFile).then(function () {
                 if (activeNavigation !== controller) return;
                 if (!finalizePageSwap(url, targetDoc)) return;
@@ -302,11 +343,12 @@
 
         event.preventDefault();
         navigateTo(new URL(link.href, window.location.href), { replace: false });
-    });
+    }, true);
 
     window.addEventListener('popstate', function () {
         var url = new URL(window.location.href);
         if (!isDashboardPageUrl(url) || !isSupportedPageFile(getPageFile(url))) return;
+        if (getPageFile(url) === currentPageFile) return;
         navigateTo(url, { replace: true });
     });
 

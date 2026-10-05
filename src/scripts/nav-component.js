@@ -237,17 +237,15 @@ function activeBrand() {
     try { return (window.AppPlans && window.AppPlans.getPlan().brand) || 'smart-hub'; } catch (error) { return 'smart-hub'; }
 }
 
-function buildConsumerMarkHtml(sizeCls) {
+function buildConsumerMarkHtml(sizeCls, containerSizeCls) {
     smartHubLogoInstanceCount += 1;
-    return '<span class="flex shrink-0 items-center rounded-lg bg-white p-1 shadow-lg ring-1 ring-black/5 dark:bg-white/10 dark:ring-white/10">' +
-        namespaceInlineSvg(CONSUMER_MARK_SVG, 'consumer-mark-' + smartHubLogoInstanceCount).replace('<svg ', '<svg class="' + (sizeCls || 'size-6') + '" ') +
-        '</span>';
+    return '<span class="flex ' + (containerSizeCls || 'size-8') + ' shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white p-1 shadow-lg ring-1 ring-black/5 dark:bg-gray-900"><img src="../../../assets/icons/consumer-portal/brand-mark.svg" alt="" class="' + (sizeCls || 'size-6') + '" /></span>';
 }
 
 function buildFullLogoSvgHtml() {
     if (activeBrand() === 'consumer-portal') {
-        return '<span class="flex items-center gap-2.5">' + buildConsumerMarkHtml('size-6') +
-            '<span class="text-lg font-semibold whitespace-nowrap text-gray-950 dark:text-white">Consumer Portal</span></span>';
+        return '<span class="flex h-8 w-[190px] shrink-0 items-center gap-[10px]">' + buildConsumerMarkHtml('size-6') +
+            '<span class="text-lg font-semibold leading-6 whitespace-nowrap text-gray-950 dark:text-white">Consumer Portal</span></span>';
     }
     smartHubLogoInstanceCount += 1;
     var prefix = 'smart-hub-logo-' + smartHubLogoInstanceCount;
@@ -256,7 +254,8 @@ function buildFullLogoSvgHtml() {
 }
 
 function buildLogoHtml(justifyClass) {
-    return '<div class="flex h-9 w-full items-center ' + (justifyClass || 'justify-center') + '" data-smart-hub-logo>' +
+    const heightClass = activeBrand() === 'consumer-portal' ? 'h-8' : 'h-9';
+    return '<div class="flex ' + heightClass + ' w-full items-center ' + (justifyClass || 'justify-center') + '" data-smart-hub-logo>' +
         buildFullLogoSvgHtml() +
         '</div>';
 }
@@ -270,24 +269,50 @@ const HELP_ICON_SVG = '<svg xmlns="http://www.w3.org/2000/svg" width="18" height
 /* ===== Helpers ===== */
 
 function navLinkCls(id, activeId, extra) {
-    const base = 'nav-item group relative flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-[14px] leading-5 font-medium transition-colors cursor-pointer focus-visible:outline-none';
-    const active = 'is-active bg-zinc-950/5 text-zinc-950 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:bg-zinc-950/5 focus-visible:text-zinc-950 dark:bg-white/5 dark:text-white dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white';
-    const inactive = 'text-gray-700 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:bg-zinc-950/5 focus-visible:text-zinc-950 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white';
+    const consumerPortal = activeBrand() === 'consumer-portal';
+    const isCollapsed = Boolean(extra && extra.indexOf('size-9') !== -1);
+    const base = consumerPortal
+        ? 'nav-item group relative flex ' + (isCollapsed ? '' : 'min-h-10 ') + 'w-full items-center justify-between gap-3 rounded-md px-2 py-2 text-left text-base leading-6 font-medium transition-colors cursor-pointer focus-visible:outline-none'
+        : 'nav-item group relative flex w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left text-[14px] leading-5 font-medium transition-colors cursor-pointer focus-visible:outline-none';
+    const active = consumerPortal
+        ? 'is-active bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900'
+        : 'is-active bg-zinc-950/5 text-zinc-950 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:bg-zinc-950/5 focus-visible:text-zinc-950 dark:bg-white/5 dark:text-white dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white';
+    const inactive = consumerPortal
+        ? 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900'
+        : 'text-gray-700 hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:bg-zinc-950/5 focus-visible:text-zinc-950 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white dark:focus-visible:bg-white/5 dark:focus-visible:text-white';
     return `${base} ${id === activeId ? active : inactive}${extra ? ' ' + extra : ''}`;
 }
 
 function collapsedNavItemSizeCls(isDesktopCollapsed) {
-    return isDesktopCollapsed ? ' size-9 justify-center px-0 py-0' : '';
+    const collapsedSize = activeBrand() === 'consumer-portal' ? 'size-10' : 'size-9';
+    return isDesktopCollapsed ? ' ' + collapsedSize + ' justify-center px-0 py-0' : '';
 }
 
-function navIconCls(id, activeId) {
+function navIconCls(id, activeId, isDesktopCollapsed) {
+    if (activeBrand() === 'consumer-portal') return 'nav-icon size-6 shrink-0';
     const base = 'nav-icon size-5 shrink-0';
     const active = 'text-blue-600 dark:text-blue-400';
     const inactive = 'text-gray-500 group-hover:text-blue-600 group-focus-visible:text-blue-600 dark:text-gray-400 dark:group-hover:text-blue-400 dark:group-focus-visible:text-blue-400';
     return `${base} ${id === activeId ? active : inactive}`;
 }
 
-function renderIcon(key, cls) {
+function renderIcon(key, cls, isActive) {
+    if (activeBrand() === 'consumer-portal') {
+        const icons = {
+            insights: 'insights',
+            'payments-received': 'payments-received',
+            'card-manager': 'my-cards',
+            'payment-preferences': 'payment-preferences',
+            'my-profile': 'my-profile'
+        };
+        if (icons[key]) {
+            const basename = icons[key];
+            const inactiveFile = basename + (basename === 'payments-received' ? '-inactive' : '') + '.svg';
+            const activeFile = basename + '-active.svg';
+            const iconFile = isActive ? activeFile : inactiveFile;
+            return '<span class="inline-flex size-6 shrink-0 items-center justify-center overflow-hidden"><img src="../../../assets/icons/consumer-portal/' + iconFile + '" data-consumer-nav-icon data-inactive-src="../../../assets/icons/consumer-portal/' + inactiveFile + '" data-active-src="../../../assets/icons/consumer-portal/' + activeFile + '" alt="" width="24" height="24" style="width:24px;height:24px;max-width:none;flex:none;transform:scale(1.1)" class="' + cls + '" /></span>';
+        }
+    }
     return (APP_NAV_ICONS[key] || '').replace('{CLS}', cls);
 }
 
@@ -328,7 +353,7 @@ function buildNavLink(item, activeId, routerMode, isDesktopCollapsed) {
     const contentCls = 'flex min-w-0 items-center gap-3';
     const labelCls = 'nav-label truncate' + (isDesktopCollapsed ? ' hidden sr-only' : '');
     return `<a href="${resolveNavHref(item.href, routerMode)}" class="${rowCls}"${ariaCurrent}>
-<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId))}<span class="${labelCls}">${item.label}</span>${buildNavBadge(item, isDesktopCollapsed)}</span>
+<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId, isDesktopCollapsed), item.id === activeId)}<span class="${labelCls}">${item.label}</span>${buildNavBadge(item, isDesktopCollapsed)}</span>
 </a>`;
 }
 
@@ -346,7 +371,7 @@ function buildNavLinkArrow(item, activeId, isDesktop, routerMode, isDesktopColla
     const labelCls = 'nav-label truncate' + (isDesktopCollapsed ? ' hidden sr-only' : '');
     const trailingIconCls = isDesktopCollapsed ? ' hidden' : '';
     return `<a href="${resolveNavHref(item.href, routerMode)}" class="${rowCls}"${ariaCurrent}>
-<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId))}<span class="${labelCls}">${item.label}</span></span>
+<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId, isDesktopCollapsed))}<span class="${labelCls}">${item.label}</span></span>
 <span class="${trailingIconCls}">${trailingIcon}</span>
 </a>`;
 }
@@ -385,7 +410,7 @@ function buildExpandableItem(item, activeId, routerMode, isDesktopCollapsed) {
     const labelCls = 'nav-label truncate' + (isDesktopCollapsed ? ' hidden sr-only' : '');
     const chevronHiddenCls = isDesktopCollapsed ? ' hidden' : '';
     return `<button type="button" class="${rowCls}" data-expandable-trigger data-item-id="${item.id}">
-<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId))}<span class="${labelCls}">${item.label}</span></span>
+<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId, isDesktopCollapsed))}<span class="${labelCls}">${item.label}</span></span>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="${chevronCls}${chevronHiddenCls}"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
 </button>
 ${buildSubmenu(item.children, activeId, item.children.some(child => child.id === activeId), routerMode)}`;
@@ -441,16 +466,32 @@ function getPagePathForNavContext(component, overridePagePath) {
 
 /* ===== Shared Block HTML ===== */
 
-function buildHelpBlock(id) {
+function buildHelpBlock(id, isDesktopCollapsed) {
     const wrap = id ? `id="${id}" ` : '';
+    if (activeBrand() === 'consumer-portal' && id) return `<div ${wrap}class="flex w-full flex-col">
+<div data-sidebar-expanded-help class="${isDesktopCollapsed ? 'hidden ' : ''}flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-white/10"><button class="self-start inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100 cursor-pointer"><img src="../../../assets/icons/consumer-portal/help.svg" alt="" class="size-[18px]" />Help from Transcard</button></div>
+<div data-sidebar-collapsed-help class="${isDesktopCollapsed ? '' : 'hidden '}flex w-full flex-col gap-4"><div class="h-px w-full bg-gray-200 dark:bg-white/10"></div><button type="button" aria-label="Help from Transcard" data-sidebar-btn-tooltip="Help from Transcard" class="flex h-8 w-full items-center justify-center rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10"><img src="../../../assets/icons/consumer-portal/help.svg" alt="" class="size-[18px]" /></button></div></div>`;
+    if (activeBrand() === 'consumer-portal') return `<div ${wrap}class="flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-white/10">
+<button class="self-start inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100 cursor-pointer">
+<img src="../../../assets/icons/consumer-portal/help.svg" alt="" class="size-[18px]" />Help from Transcard</button></div>`;
     return `<div ${wrap}class="flex flex-col gap-2">
 <div class="h-px bg-gray-200 dark:bg-white/10"></div>
 <button class="self-start inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100 cursor-pointer">
 ${HELP_ICON_SVG}Help from Transcard</button></div>`;
 }
 
-function buildFooter(id) {
+function buildFooter(id, isDesktopCollapsed) {
     const wrap = id ? `id="${id}" ` : '';
+    if (activeBrand() === 'consumer-portal' && id) return `<div ${wrap}class="h-[74px] w-full shrink-0">
+<div data-sidebar-expanded-footer class="${isDesktopCollapsed ? 'hidden ' : ''}flex h-full flex-col items-center gap-2 pt-4 pb-0"><div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /><span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span><img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16" /></div><div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400"><a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span><a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>
+<div data-sidebar-collapsed-footer class="${isDesktopCollapsed ? '' : 'hidden '}flex h-full w-full flex-col gap-[10px]"><div class="flex w-full items-center justify-center gap-2 px-px py-4"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /></div></div></div>`;
+    if (activeBrand() === 'consumer-portal') return `<div ${wrap}class="flex flex-col items-center gap-2 pt-4 pb-0">
+<div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" />
+<span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span>
+<img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16" /></div>
+<div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400">
+<a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span>
+<a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>`;
     return `<div ${wrap}class="flex flex-col items-center gap-2 pt-4 pb-4">
 <div class="flex items-center gap-1">
 ${TRANSCARD_SHIELD_SVG}
@@ -568,22 +609,31 @@ class AppNav extends HTMLElement {
     _buildHTML(activeId, expand, routerMode, collapsed) {
         const mobileItems = buildNavItems(false, activeId, expand, routerMode, false);
         const desktopItems = buildNavItems(true, activeId, expand, routerMode, collapsed);
+        const consumerPortal = activeBrand() === 'consumer-portal';
+        const panelPadding = consumerPortal ? 'px-6 pt-6 pb-6' : 'px-4 pt-2 pb-4';
+        const contentGap = consumerPortal ? 'gap-9' : 'gap-6';
+        const menuGap = consumerPortal ? 'gap-0' : 'gap-0.5';
+        const navLogoAlignment = consumerPortal ? 'justify-start' : 'justify-center';
+        const desktopWidth = consumerPortal ? 'lg:w-[312px]' : 'lg:w-[288px]';
+        const collapseControl = consumerPortal
+            ? '<img src="../../../assets/icons/consumer-portal/collapse.svg" alt="" class="size-5" />'
+            : '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/></svg>';
 
         return `<!-- ===== MOBILE SIDEBAR (off-canvas drawer, hidden on lg+) ===== -->
 <el-dialog>
 <dialog id="sidebar" class="backdrop:bg-transparent lg:hidden">
 <el-dialog-backdrop class="fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0"></el-dialog-backdrop>
 <div tabindex="0" class="fixed inset-0 flex focus:outline-none">
-<el-dialog-panel class="group/dialog-panel relative mr-16 flex w-full max-w-[360px] flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full">
+<el-dialog-panel class="group/dialog-panel relative mr-16 flex w-full ${consumerPortal ? 'max-w-[312px]' : 'max-w-[360px]'} flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full">
 <div class="absolute top-0 left-full flex w-16 justify-center pt-5 duration-300 ease-in-out group-data-closed/dialog-panel:opacity-0">
 <button type="button" command="close" commandfor="sidebar" class="-m-2.5 p-2.5">
 <span class="sr-only">Close sidebar</span>
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6 text-white"><path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </button></div>
-<div class="flex grow flex-col justify-between overflow-y-auto bg-white px-4 pt-2 pb-4 dark:bg-gray-900">
-<div class="flex flex-col gap-9">
-<div class="flex items-center justify-center px-[2px]">${buildLogoHtml()}</div>
-<nav class="relative flex w-full flex-col gap-0.5" data-nav="mobile">
+<div class="flex grow flex-col justify-between overflow-y-auto bg-white ${panelPadding} dark:bg-gray-900">
+<div class="flex flex-col ${contentGap}">
+<div class="flex items-center ${navLogoAlignment}">${buildLogoHtml(navLogoAlignment)}</div>
+<nav class="relative flex w-full flex-col ${menuGap}" data-nav="mobile">
 ${mobileItems}
 </nav>
 ${buildHelpBlock('')}
@@ -594,25 +644,29 @@ ${buildFooter('')}
 </dialog></el-dialog>
 
 <!-- ===== STATIC SIDEBAR FOR DESKTOP (hidden below lg) ===== -->
-<div id="desktop-sidebar-shell" class="hidden lg:fixed lg:top-[var(--stp-alert-height,0px)] lg:left-0 lg:z-50 lg:flex lg:h-[calc(100vh-var(--stp-alert-height,0px))] lg:flex-col ${collapsed ? 'is-collapsed lg:w-[68px]' : 'lg:w-[288px]'}">
-<div id="desktop-sidebar-panel" class="flex h-full grow flex-col justify-between overflow-y-auto border-r border-gray-200 bg-white px-4 pt-2 pb-4 dark:border-white/10 dark:bg-gray-900">
-<div class="flex flex-col gap-6">
-<div id="desktop-logo-row" class="relative flex min-h-9 items-center justify-start pl-[2px]">
+<div id="desktop-sidebar-shell" class="hidden lg:fixed lg:top-[var(--stp-alert-height,0px)] lg:left-0 lg:z-50 lg:flex lg:h-[calc(100vh-var(--stp-alert-height,0px))] lg:flex-col ${collapsed ? 'is-collapsed ' + (consumerPortal ? 'lg:w-[88px]' : 'lg:w-[68px]') : desktopWidth}">
+<div id="desktop-sidebar-panel" class="flex h-full grow flex-col justify-between overflow-y-auto border-r border-gray-200 bg-white ${panelPadding} dark:border-white/10 dark:bg-gray-900">
+<div class="flex flex-col ${contentGap}">
+<div id="desktop-logo-row" class="relative flex ${collapsed && consumerPortal ? 'w-10 h-8' : 'w-full h-8'} items-center ${collapsed && consumerPortal ? 'justify-center' : 'justify-start'} ${!collapsed && consumerPortal ? 'px-1' : ''}">
 <div id="desktop-logo-full" class="${collapsed ? 'hidden' : ''} flex min-w-0 flex-1 items-center pr-10">${buildLogoHtml('justify-start')}</div>
-<button type="button" id="desktop-sidebar-collapse-btn" data-sidebar-toggle data-sidebar-btn-tooltip="Collapse" aria-label="Collapse sidebar" class="${collapsed ? 'hidden ' : ''}absolute right-0 top-1/2 flex size-9 -translate-y-1/2 items-center justify-center rounded-lg text-gray-500 hover:bg-zinc-950/5 hover:text-gray-700 dark:hover:bg-white/5 dark:hover:text-gray-300 transition-colors cursor-pointer">
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd"/></svg>
+<button type="button" id="desktop-sidebar-collapse-btn" data-sidebar-toggle data-sidebar-btn-tooltip="Collapse" aria-label="Collapse sidebar" class="${collapsed ? 'hidden ' : ''}absolute ${consumerPortal ? 'right-1 w-10 h-8' : 'right-0 size-8'} top-1/2 flex -translate-y-1/2 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5 dark:hover:text-gray-300 transition-colors cursor-pointer">
+${collapseControl}
 </button>
-<div id="desktop-logo-mark" class="${collapsed ? 'flex' : 'hidden'} group/logomark relative size-9 shrink-0 items-center justify-start overflow-hidden">
-${activeBrand() === 'consumer-portal' ? buildConsumerMarkHtml('size-6') : namespaceInlineSvg(SMART_HUB_MARK_SVG, 'smart-hub-mark-' + smartHubLogoInstanceCount).replace('<svg ', '<svg class="h-8 w-8 shrink-0" ')}
+<div id="desktop-logo-mark" class="${collapsed ? 'flex' : 'hidden'} group/logomark relative ${consumerPortal ? 'size-10' : 'size-9'} shrink-0 items-center justify-center overflow-visible">
+${activeBrand() === 'consumer-portal' ? buildConsumerMarkHtml('size-6', 'size-8') : namespaceInlineSvg(SMART_HUB_MARK_SVG, 'smart-hub-mark-' + smartHubLogoInstanceCount).replace('<svg ', '<svg class="h-8 w-8 shrink-0" ')}
 <button type="button" data-sidebar-toggle data-sidebar-btn-tooltip="Expand" aria-label="Expand sidebar" class="absolute inset-0 flex items-center justify-center rounded-lg text-gray-500 bg-white dark:bg-gray-900 opacity-0 group-hover/logomark:opacity-100 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-opacity cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></button>
 </div>
 </div>
-<nav class="relative flex w-full flex-col gap-0.5" data-nav="desktop">
+<nav class="relative flex w-full flex-col ${menuGap}" data-nav="desktop">
 ${desktopItems}
 </nav>
-${buildHelpBlock('desktop-sidebar-help').replace('class="flex flex-col gap-2"', 'class="' + (collapsed ? 'hidden ' : '') + 'flex flex-col gap-2"')}
+${consumerPortal
+    ? buildHelpBlock('desktop-sidebar-help', collapsed)
+    : buildHelpBlock('desktop-sidebar-help').replace('class="flex flex-col gap-2"', 'class="' + (collapsed ? 'hidden ' : '') + 'flex flex-col gap-2"')}
 </div>
-${buildFooter('desktop-sidebar-footer').replace('class="flex flex-col items-center gap-2 pt-4 pb-4"', 'class="' + (collapsed ? 'hidden ' : '') + 'flex flex-col items-center gap-2 pt-4 pb-4"')}
+${consumerPortal
+    ? buildFooter('desktop-sidebar-footer', collapsed)
+    : buildFooter('desktop-sidebar-footer').replace('class="flex flex-col items-center gap-2 pt-4 pb-4"', 'class="' + (collapsed ? 'hidden ' : '') + 'flex flex-col items-center gap-2 pt-4 pb-4"')}
 </div>
 </div>
 

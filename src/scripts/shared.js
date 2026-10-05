@@ -50,6 +50,29 @@
     (document.head || document.documentElement).appendChild(style);
 })();
 
+/* ===== Modal close button hover ===== */
+// Match icon-only modal close buttons to the Manage Columns close control.
+(function injectModalCloseHoverStyles() {
+    if (document.getElementById('shell-modal-close-hover-styles')) return;
+    var style = document.createElement('style');
+    style.id = 'shell-modal-close-hover-styles';
+    style.textContent = [
+        'dialog button[command="close"]:has(svg):hover,',
+        'dialog button[command="close"]:has(img):hover,',
+        'dialog button[aria-label*="close" i]:hover,',
+        'dialog button[data-mc-dispute-close]:hover {',
+        '  background-color: rgb(243 244 246); color: rgb(107 114 128);',
+        '}',
+        '.dark dialog button[command="close"]:has(svg):hover,',
+        '.dark dialog button[command="close"]:has(img):hover,',
+        '.dark dialog button[aria-label*="close" i]:hover,',
+        '.dark dialog button[data-mc-dispute-close]:hover {',
+        '  background-color: rgb(255 255 255 / 0.1); color: rgb(209 213 219);',
+        '}'
+    ].join('\n');
+    (document.head || document.documentElement).appendChild(style);
+})();
+
 /* ===== Hover tooltips ===== */
 
 /**

@@ -33,6 +33,11 @@ function toggleRow(rowId) {
 
 const DESKTOP_SIDEBAR_COLLAPSED_STORAGE_KEY = 'dashboard-sidebar-collapsed-v1';
 
+function isConsumerPortalSidebar() {
+    try { return Boolean(window.AppPlans && window.AppPlans.getPlan().brand === 'consumer-portal'); }
+    catch (error) { return false; }
+}
+
 function clearSidebarBootState() {
     var root = document.documentElement;
     root.classList.remove('sidebar-booting');
@@ -67,9 +72,11 @@ function normalizeMainContentWrapperLayout(collapsed) {
     var isCollapsed = typeof collapsed === 'boolean'
         ? collapsed
         : document.documentElement.getAttribute('data-sidebar-collapsed') === 'true';
-    mainContentWrapper.classList.remove('lg:pl-[288px]', 'lg:pl-[68px]');
+    mainContentWrapper.classList.remove('lg:pl-[288px]', 'lg:pl-[312px]', 'lg:pl-[68px]', 'lg:pl-[88px]');
     mainContentWrapper.classList.add('min-w-0', 'min-h-screen', 'flex', 'flex-col');
-    mainContentWrapper.classList.add(isCollapsed ? 'lg:pl-[68px]' : 'lg:pl-[288px]');
+    mainContentWrapper.classList.add(isCollapsed
+        ? (isConsumerPortalSidebar() ? 'lg:pl-[88px]' : 'lg:pl-[68px]')
+        : (isConsumerPortalSidebar() ? 'lg:pl-[312px]' : 'lg:pl-[288px]'));
 }
 
 function ensureNavTooltip() {
@@ -78,7 +85,9 @@ function ensureNavTooltip() {
 
     var tooltip = document.createElement('div');
     tooltip.id = 'dashboard-nav-tooltip';
-    tooltip.className = 'pointer-events-none fixed z-[80] rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg';
+    tooltip.className = isConsumerPortalSidebar()
+        ? 'pointer-events-none fixed z-[80] rounded-lg bg-gray-900 px-2.5 py-1 text-sm font-normal leading-5 text-gray-100 shadow-[0_10px_7.5px_rgba(0,0,0,0.1),0_4px_3px_rgba(0,0,0,0.05)]'
+        : 'pointer-events-none fixed z-[80] rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg';
     tooltip.style.opacity = '0';
     tooltip.style.transform = 'translateY(-50%) translateX(-4px)';
     tooltip.style.transition = 'opacity 150ms ease-out, transform 150ms ease-out';
@@ -105,6 +114,12 @@ function syncDesktopNavCurrentIndicator(immediate) {
     var refs = getSidebarRefs();
     var desktopNav = refs.desktopNav;
     if (!desktopNav) return;
+
+    if (isConsumerPortalSidebar()) {
+        var consumerIndicator = desktopNav.querySelector('#desktop-nav-current-indicator');
+        if (consumerIndicator) consumerIndicator.remove();
+        return;
+    }
 
     var indicator = ensureDesktopNavCurrentIndicator();
     if (!indicator) return;
@@ -273,20 +288,29 @@ function bindDashboardSidebarRuntime() {
 
             const navItem = e.target.closest('.nav-item');
             if (!navItem) return;
+            const consumerPortal = isConsumerPortalSidebar();
 
             if (navItem.matches('a[href="#"]')) {
                 e.preventDefault();
             }
 
             document.querySelectorAll('.nav-item.is-active').forEach(function (item) {
-                item.classList.remove('is-active', 'bg-zinc-950/5', 'text-zinc-950', 'dark:bg-white/5', 'dark:text-white');
+                item.classList.remove('is-active', 'bg-zinc-950/5', 'text-zinc-950', 'dark:bg-white/5', 'dark:text-white', 'bg-gray-100', 'text-gray-900');
+                item.querySelectorAll('[data-consumer-nav-icon]').forEach(function (icon) {
+                    icon.src = icon.getAttribute('data-inactive-src');
+                });
                 item.querySelectorAll('svg.nav-icon').forEach(function (icon) {
                     icon.classList.remove('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
                     icon.classList.add('text-gray-500', 'dark:text-gray-400');
                 });
             });
 
-            navItem.classList.add('is-active', 'bg-zinc-950/5', 'text-zinc-950', 'dark:bg-white/5', 'dark:text-white');
+            navItem.classList.add('is-active');
+            if (consumerPortal) navItem.classList.add('bg-gray-100', 'text-gray-900');
+            else navItem.classList.add('bg-zinc-950/5', 'text-zinc-950', 'dark:bg-white/5', 'dark:text-white');
+            if (consumerPortal) navItem.querySelectorAll('[data-consumer-nav-icon]').forEach(function (icon) {
+                icon.src = icon.getAttribute('data-active-src');
+            });
             navItem.querySelectorAll('svg.nav-icon').forEach(function (icon) {
                 icon.classList.remove('text-gray-500', 'dark:text-gray-400');
                 icon.classList.add('text-blue-600', 'dark:text-blue-400', '!text-blue-600', 'dark:!text-blue-400');
@@ -327,6 +351,7 @@ function setDesktopSidebarCollapsed(collapsed) {
     var desktopSidebarPanel = refs.desktopSidebarPanel;
     var desktopSidebarCollapseBtn = refs.desktopSidebarCollapseBtn;
     var desktopLogoFull = refs.desktopLogoFull;
+    var desktopLogoRow = refs.desktopLogoRow;
     var desktopLogoMark = refs.desktopLogoMark;
     var desktopSidebarHelp = refs.desktopSidebarHelp;
     var desktopSidebarFooter = refs.desktopSidebarFooter;
@@ -339,8 +364,30 @@ function setDesktopSidebarCollapsed(collapsed) {
     document.documentElement.setAttribute('data-sidebar-collapsed', collapsed ? 'true' : 'false');
 
     desktopSidebarShell.classList.toggle('is-collapsed', collapsed);
-    desktopSidebarShell.classList.toggle('lg:w-[288px]', !collapsed);
-    desktopSidebarShell.classList.toggle('lg:w-[68px]', collapsed);
+    desktopSidebarShell.classList.toggle('lg:w-[288px]', !collapsed && !isConsumerPortalSidebar());
+    desktopSidebarShell.classList.toggle('lg:w-[312px]', !collapsed && isConsumerPortalSidebar());
+    desktopSidebarShell.classList.toggle('lg:w-[68px]', collapsed && !isConsumerPortalSidebar());
+    desktopSidebarShell.classList.toggle('lg:w-[88px]', collapsed && isConsumerPortalSidebar());
+    if (isConsumerPortalSidebar()) {
+        desktopSidebarPanel.classList.toggle('px-6', true);
+        desktopSidebarPanel.classList.toggle('px-4', false);
+        if (desktopLogoRow) {
+            desktopLogoRow.classList.toggle('w-10', collapsed);
+            desktopLogoRow.classList.toggle('w-full', !collapsed);
+            desktopLogoRow.classList.toggle('h-8', true);
+            desktopLogoRow.classList.toggle('px-1', !collapsed);
+            desktopLogoRow.classList.toggle('justify-center', collapsed);
+            desktopLogoRow.classList.toggle('justify-start', !collapsed);
+        }
+        var expandedHelp = desktopSidebarHelp && desktopSidebarHelp.querySelector('[data-sidebar-expanded-help]');
+        var collapsedHelp = desktopSidebarHelp && desktopSidebarHelp.querySelector('[data-sidebar-collapsed-help]');
+        var expandedFooter = desktopSidebarFooter && desktopSidebarFooter.querySelector('[data-sidebar-expanded-footer]');
+        var collapsedFooter = desktopSidebarFooter && desktopSidebarFooter.querySelector('[data-sidebar-collapsed-footer]');
+        if (expandedHelp) expandedHelp.classList.toggle('hidden', collapsed);
+        if (collapsedHelp) collapsedHelp.classList.toggle('hidden', !collapsed);
+        if (expandedFooter) expandedFooter.classList.toggle('hidden', collapsed);
+        if (collapsedFooter) collapsedFooter.classList.toggle('hidden', !collapsed);
+    }
 
     normalizeMainContentWrapperLayout(collapsed);
 
@@ -360,8 +407,8 @@ function setDesktopSidebarCollapsed(collapsed) {
         desktopSidebarCollapseBtn.classList.toggle('flex', !collapsed);
     }
 
-    if (desktopSidebarHelp) desktopSidebarHelp.classList.toggle('hidden', collapsed);
-    if (desktopSidebarFooter) desktopSidebarFooter.classList.toggle('hidden', collapsed);
+    if (desktopSidebarHelp && !isConsumerPortalSidebar()) desktopSidebarHelp.classList.toggle('hidden', collapsed);
+    if (desktopSidebarFooter && !isConsumerPortalSidebar()) desktopSidebarFooter.classList.toggle('hidden', collapsed);
 
     var appNav = document.querySelector('app-nav');
     if (wasCollapsed !== collapsed && appNav && typeof appNav.refreshNav === 'function') {
@@ -511,6 +558,10 @@ function showNavTooltip(navItem) {
  * Ensures active item icons are blue even if HTML classes drift.
  */
 function syncActiveNavItemStyles() {
+    if (isConsumerPortalSidebar()) {
+        syncDesktopNavCurrentIndicator(document.documentElement.classList.contains('sidebar-booting'));
+        return;
+    }
     document.querySelectorAll('.nav-item.is-active').forEach(function (item) {
         item.classList.add('bg-zinc-950/5', 'text-zinc-950', 'dark:bg-white/5', 'dark:text-white');
         item.querySelectorAll('svg.nav-icon').forEach(function (icon) {
