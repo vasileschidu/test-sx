@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en-GB" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Successfully Submitted · SMART Disburse UK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="../../styles/sd-uk.css">
+  <script src="../../data/sd-uk-claim.js"></script>
+  <script src="../../scripts/sd-uk-flow.js"></script>
+  <script src="../../scripts/onboarding-transitions.js"></script>
+  <style>
+    /* Same reveal as the classic completion screen: one crossfade, no slide. */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .stagger-item { opacity: 0; }
+    .stagger-item.visible { animation: fadeIn 300ms ease forwards; }
+  </style>
+</head>
+<!-- SMART Disburse UK · 8.3 Bank transfer submitted — classic SD completion layout with UK data -->
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white">
+    <main data-ob-content data-ob-no-skeleton class="flex flex-1 flex-col items-center justify-center px-4 py-12">
+
+      <!-- Loading state -->
+      <div id="sd-loading" class="flex flex-col items-center gap-3 text-center">
+        <div class="h-11 w-11 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"></div>
+        <div class="flex flex-col items-center gap-1">
+          <h1 class="text-2xl font-semibold text-gray-900">Submitting your payment…</h1>
+          <p class="text-sm text-gray-500">Sending your details to your bank.</p>
+        </div>
+      </div>
+
+      <!-- Content (revealed after loader) -->
+      <div id="sd-content" class="hidden flex-col items-center gap-6">
+        <div class="stagger-item flex flex-col items-center gap-3 text-center">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-11 text-green-500" aria-hidden="true">
+            <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
+          </svg>
+          <div class="flex flex-col items-center gap-1">
+            <h1 class="text-2xl font-semibold text-gray-900">Successfully Submitted!</h1>
+            <p class="text-sm text-gray-500">Your payment is on its way to your bank account.</p>
+          </div>
+        </div>
+
+        <div class="stagger-item w-full max-w-[400px] rounded-lg bg-gray-50 p-4">
+          <div class="flex flex-col gap-0.5">
+            <p class="text-sm text-gray-500">Amount deposited</p>
+            <h2 class="text-2xl font-semibold text-gray-900" data-uk-text="amount"></h2>
+          </div>
+          <div class="mt-4">
+            <p class="text-sm/6 font-medium text-gray-900">Method of Payment</p>
+            <div class="mt-2 flex items-center gap-3">
+              <div class="shrink-0 rounded-lg bg-gray-100 p-3 text-gray-700"><svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
+                </svg></div>
+              <div class="flex min-w-0 flex-1 flex-col justify-center gap-1">
+                <p class="truncate text-sm font-medium text-gray-900"><span data-uk-text="bank.bankName"></span> •••• <span data-account-last4></span></p>
+                <p class="truncate text-sm text-gray-500"><span data-account-type>Current</span> account · Sort code <span data-uk-text="bank.sortCode"></span></p>
+              </div>
+            </div>
+            <div class="mt-4 flex items-center gap-2 rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-800">
+              <svg viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0 text-amber-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd"/></svg>
+              Estimated processing time: up to 3 days
+            </div>
+          </div>
+        </div>
+
+        <!-- Receipt details card -->
+        <div class="stagger-item flex w-full max-w-[400px] flex-col overflow-hidden rounded-md">
+          <div class="flex items-center bg-gray-100 px-4 py-2"><span class="text-sm font-semibold text-gray-900">Receipt Details</span></div>
+          <div class="flex flex-col items-start self-stretch bg-gray-50">
+            <div class="self-stretch px-4 pt-3 pb-2">
+              <dt class="text-sm/6 font-medium text-gray-900">Paid by</dt>
+              <dd class="mt-0.5 text-sm/6 text-gray-700" data-uk-text="payer.name"></dd>
+            </div>
+            <div class="self-stretch px-4 py-2">
+              <dt class="text-sm/6 font-medium text-gray-900">Date Issued</dt>
+              <dd class="mt-0.5 text-sm/6 text-gray-700" data-uk-text="receipt.date"></dd>
+            </div>
+            <div class="self-stretch px-4 py-2">
+              <dt class="text-sm/6 font-medium text-gray-900">Transaction ID</dt>
+              <dd class="mt-0.5 text-sm/6 text-gray-700">
+                <button type="button" data-copy="receipt.bankTransactionId" class="-ml-1.5 inline-flex w-fit cursor-pointer items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200">
+                  <span data-uk-text="receipt.bankTransactionId" class="break-all"></span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400" aria-hidden="true">
+                    <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
+                    <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
+                  </svg>
+                </button>
+              </dd>
+            </div>
+            <div class="self-stretch px-4 py-2">
+              <dt class="text-sm/6 font-medium text-gray-900">Client Payment Reference ID</dt>
+              <dd class="mt-0.5 text-sm/6 break-all text-gray-500" data-uk-text="receipt.clientReferenceId"></dd>
+            </div>
+            <div class="w-full border-t border-gray-200"></div>
+            <div class="flex self-stretch items-center justify-between px-4 py-3">
+              <button type="button" data-download class="-ml-1.5 inline-flex cursor-pointer items-center gap-1.5 rounded-md px-1.5 py-0.5 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-700">Download</button>
+              <a href="../../../index.html" data-finish class="rounded-md px-1.5 py-0.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-100">Finish and Close</a>
+            </div>
+            <div class="h-[8px] w-full" style="background-image: radial-gradient(circle at 50% 100%, white 5px, #F9FAFB 5px); background-size: 13px 8px; background-position: bottom center; background-repeat: repeat-x;"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <div data-uk-footer></div>
+  </div>
+
+  <script>
+    SDUK.ready(function () {
+      var m = SDUK.model();
+      document.querySelectorAll('[data-card-last4]').forEach(function (el) { el.textContent = m.card.number.slice(-4); });
+      document.querySelectorAll('[data-account-last4]').forEach(function (el) { el.textContent = String(m.bank.accountNumber).slice(-4); });
+      document.querySelectorAll('[data-account-type]').forEach(function (el) { el.textContent = m.bank.type || 'Current'; });
+
+      // Loader, then the result fades in item by item (classic completion screen).
+      setTimeout(function () {
+        document.getElementById('sd-loading').classList.add('hidden');
+        var content = document.getElementById('sd-content');
+        content.classList.remove('hidden'); content.classList.add('flex');
+        content.querySelectorAll('.stagger-item').forEach(function (el, i) {
+          setTimeout(function () { el.classList.add('visible'); }, i * 90);
+        });
+      }, 1600);
+
+      document.querySelectorAll('[data-copy]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          var text = btn.querySelector('span').textContent;
+          try { navigator.clipboard.writeText(text); } catch (e) {}
+          var old = btn.querySelector('span').textContent;
+          btn.querySelector('span').textContent = 'Copied';
+          setTimeout(function () { btn.querySelector('span').textContent = old; }, 1200);
+        });
+      });
+      document.querySelector('[data-download]').addEventListener('click', function () { window.print(); });
+      document.querySelector('[data-finish]').addEventListener('click', function () { SDUK.resetState(); });
+
+      var reveal = document.getElementById('reveal-card');
+      if (reveal) reveal.addEventListener('click', function () {
+        var row = function (label, value) {
+          return '<div class="flex items-center justify-between gap-4 py-2"><span class="text-sm font-medium text-gray-900">' + label + '</span><span class="text-sm text-gray-700">' + value + '</span></div>';
+        };
+        SDUK.confirmModal({
+          size: 'sm:max-w-[512px]',
+          title: 'Virtual Card Details',
+          extra:
+            '<div class="relative mx-auto h-[200px] w-[320px] max-w-full overflow-hidden rounded-xl bg-[#151A32] p-5 text-left shadow-lg ring-[0.94px] ring-inset ring-white/20">' +
+              '<div class="flex h-full flex-col gap-2">' +
+                '<div class="flex justify-end"><span class="rounded-full bg-white/20 px-2.5 py-0.5 text-[11px] text-white">CVC2 : ' + m.card.cvc + '</span></div>' +
+                '<div class="flex h-[108px] flex-col justify-end gap-2"><p class="text-2xl font-bold text-white">' + m.amount + '</p>' +
+                  '<p class="font-[\'Roboto_Mono\'] text-lg leading-6 tracking-wider text-white">' + m.card.number.replace(/-/g, ' ') + '</p>' +
+                  '<div class="flex items-center gap-1 pl-14"><p class="font-[\'Roboto_Mono\'] text-[7px] font-bold uppercase text-white">EXPIRATION<br>DATE</p><p class="ml-1 font-[\'Roboto_Mono\'] text-sm leading-5 text-white">' + m.card.expiry + '</p></div></div>' +
+                '<p class="mt-auto font-[\'Roboto_Mono\'] text-sm uppercase tracking-wide text-white">' + m.fullName + '</p>' +
+              '</div>' +
+            '</div>' +
+            '<div class="divide-y divide-gray-100 rounded-lg bg-gray-50 px-4">' +
+              row('Amount', m.amount) + row('Cardholder', m.fullName) + row('Card number', m.card.number.replace(/-/g, ' ')) + row('Expires', m.card.expiry) + row('CVC2', m.card.cvc) +
+            '</div>' +
+            '<p class="text-center text-xs text-gray-500">Use it anywhere Mastercard is accepted online, or add it to Apple Wallet to pay in store.</p>',
+          confirm: 'Done', tone: 'primary'
+        });
+      });
+      var wallet = document.querySelector('[data-wallet]');
+      if (wallet) wallet.addEventListener('click', function () { SDUK.infoModal('Added to Apple Wallet', '<p>Your Virtual Card is ready to use with Apple Pay.</p>', 'check'); });
+    });
+  </script>
+</body>
+</html>

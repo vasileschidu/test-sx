@@ -16,8 +16,12 @@
 (function () {
   'use strict';
 
-  /** Inline copy of src/data/onboarding-steps.json — keep in sync. */
-  var STEPS = [
+  /**
+   * Inline copy of src/data/onboarding-steps.json — keep in sync.
+   * Another flow (e.g. the UK claim demo) can set window.OB_FLOW_STEPS first to
+   * reuse this stepper and the mobile header with its own steps.
+   */
+  var STEPS = window.OB_FLOW_STEPS || [
     { id: 'confirm-identity', label: 'Confirm Identity', href: 'confirm-identity.html' },
     { id: 'confirm-business-details', label: 'Confirm Business Details', href: 'confirm-business-details.html' },
     { id: 'review-documents', label: 'Review Documents', href: 'review-documents.html' },

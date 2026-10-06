@@ -1,0 +1,23 @@
+/* sd-uk.css — the few values the UK SMART Disburse screens use that utility
+   classes can't express cleanly (Figma gradients and the card typeface). */
+
+.uk-grad {
+  background-image: linear-gradient(152.94deg, #3773ff 3.3%, #2254ca 99.23%);
+}
+
+.uk-amount {
+  background-image: linear-gradient(123.76deg, #3773ff 3.3%, #2254ca 99.23%);
+}
+
+.uk-mono {
+  font-family: 'Roboto Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.uk-script {
+  font-family: 'Dancing Script', 'Brush Script MT', cursive;
+}
+
+/* Signature pad: no scroll / zoom while drawing on touch screens. */
+.uk-pad {
+  touch-action: none;
+}
