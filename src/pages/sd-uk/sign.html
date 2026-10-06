@@ -14,7 +14,7 @@
   <script src="../../scripts/onboarding-transitions.js"></script>
   <script src="../../scripts/onboarding-stepper.js"></script>
   <script src="../../scripts/onboarding-mobile-header.js"></script>
-  <script src="../../scripts/signature.js" defer></script>
+  <script src="../../scripts/signature.js?v=uk2" defer></script>
   <link href="https://fonts.googleapis.com/css2?family=Meow+Script&display=swap" rel="stylesheet">
 </head>
 <!-- SMART Disburse UK · 5. Provide signature — draw or type -->
@@ -77,9 +77,15 @@
   <script>
     // Remember the signature for the rest of the session, as the classic step does.
     SDUK.ready(function () {
-      document.getElementById('next-button').addEventListener('click', function () {
+      // This step owns its navigation: an older cached signature.js would send
+      // the user to the US flow's paywall.html, which doesn't exist here.
+      var next = document.getElementById('next-button');
+      next.addEventListener('click', function (e) {
+        e.stopImmediatePropagation();
+        if (next.disabled) return;
         var typed = document.getElementById('type-input-wrap').classList.contains('hidden') === false;
         SDUK.saveState({ signature: typed ? { mode: 'type', name: document.getElementById('fullName').value.trim() } : { mode: 'draw' } });
+        SDUK.go('payment.html');
       }, true);
     });
   </script>
