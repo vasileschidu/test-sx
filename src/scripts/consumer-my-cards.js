@@ -653,7 +653,7 @@
   }
 
   var TH =
-    "h-11 px-3 text-left text-xs font-medium tracking-wide whitespace-nowrap text-gray-500 uppercase dark:text-gray-400";
+    "h-[52px] px-4 text-left align-middle text-xs font-medium tracking-[0.6px] whitespace-nowrap text-gray-500 uppercase dark:text-gray-400";
 
   function txRow(t) {
     var open = detail.open.has(t.id);

@@ -23,6 +23,9 @@
    * no shared payment preferences, bank accounts, check addresses or profile.
    */
   var PAGE_CONFIG = window.EXCHANGES_TABLE_CONFIG || {};
+  var IS_SUPPLIER_PORTAL = /supplier-portal(?:\.html)?(?:$|[?#])/.test(
+    window.location.pathname || "",
+  );
 
   // Get Paid "Confirm and Submit" step (step 4) came from the demo-speedbump
   // test. The product Get Paid is three steps, so it stays off unless a demo
@@ -88,8 +91,10 @@
     "dark:inset-ring-gray-400/20",
   ];
 
-  var DEFAULT_PAGE_SIZE = 16;
-  var PAGE_SIZE_OPTIONS = [10, 16, 25, 50];
+  var DEFAULT_PAGE_SIZE = IS_SUPPLIER_PORTAL ? 10 : 16;
+  var PAGE_SIZE_OPTIONS = IS_SUPPLIER_PORTAL
+    ? [10, 25, 50, 100]
+    : [10, 16, 25, 50];
   var TAB_SWITCH_SKELETON_MS = 500;
   var INITIAL_TABLE_SKELETON_MS = 500;
   var MANUAL_REFRESH_SKELETON_MS = 1000;
@@ -229,6 +234,9 @@
     ach: "ACH",
   };
   Object.assign(STATUS_LABELS, PAGE_CONFIG.statusLabels || {});
+  if (IS_SUPPLIER_PORTAL) {
+    STATUS_LABELS["action-required"] = "Pending Your Action";
+  }
   Object.assign(METHOD_TYPE_LABELS, PAGE_CONFIG.methodLabels || {});
 
   var CLASS_NAMES = {
@@ -236,7 +244,7 @@
     row: "transition-colors duration-300 motion-reduce:transition-none",
     cellBorder: " border-b border-gray-200 dark:border-white/10",
     actionCell:
-      "bg-white h-12 align-middle py-2 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2",
+      "bg-white h-[52px] align-middle py-0 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2",
     detailCell:
       "bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10",
   };
@@ -626,10 +634,19 @@
     }
   }
 
+  function tableIcon(file, width, height) {
+    if (window.TableUi && typeof window.TableUi.icon === "function") {
+      return window.TableUi.icon(file, width, height);
+    }
+    return "";
+  }
+
   function getDefaultManageableColumnKeys(columns) {
     return getManageableColumns(columns)
       .filter(function (col) {
-        return col.key !== "failureReason";
+        if (col.key === "failureReason") return false;
+        if (IS_SUPPLIER_PORTAL && col.key === "vendorEntry") return false;
+        return true;
       })
       .map(function (col) {
         return col.key;
@@ -1370,17 +1387,49 @@
 
   // ── Dynamic <thead> builder ──
 
+  function supplierHeaderExtras(col) {
+    var html = "";
+    if (col.key === "dateInitiated") {
+      html +=
+        '<span class="inline-flex size-5 shrink-0 items-center justify-center" title="The date the payment was initiated by your customer to you.">' +
+        tableIcon("info-14.svg", 14, 14) +
+        "</span>";
+    }
+    if (col.type === "paymentMethod") {
+      html +=
+        '<span class="inline-flex size-5 shrink-0 items-center justify-center" title="How this payment is sent.">' +
+        tableIcon("info-14.svg", 14, 14) +
+        "</span>";
+    }
+    return html;
+  }
+
+  function supplierHeaderFilter(panel) {
+    return (
+      '<button type="button" data-header-filter="' +
+      panel +
+      '" class="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" aria-label="Filter column">' +
+      tableIcon("filter-funnel.svg", 14, 14) +
+      "</button>"
+    );
+  }
+
   function buildTheadHTML(columns) {
     var html = "<thead><tr>";
 
     columns.forEach(function (col) {
-      var base = "border-b border-gray-200 dark:border-white/10";
+      var base = IS_SUPPLIER_PORTAL
+        ? "border-b border-dashed border-gray-300 dark:border-white/15"
+        : "border-b border-gray-200 dark:border-white/10";
 
       if (col.type === "expand") {
         html +=
           '<th scope="col" class="' +
           base +
-          ' w-10 min-w-10 h-12 py-3.5 px-0 text-center whitespace-nowrap"><span class="sr-only">Expand</span></th>';
+          (IS_SUPPLIER_PORTAL
+            ? " h-[52px] w-[52px] min-w-[52px] p-4"
+            : " w-10 min-w-10 h-[52px] px-0") +
+          ' text-center align-middle whitespace-nowrap"><span class="sr-only">Expand</span></th>';
         return;
       }
 
@@ -1388,25 +1437,47 @@
         html +=
           '<th data-action-column scope="col" class="' +
           base +
-          ' bg-white py-3.5 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 dark:bg-gray-900 sm:pr-2"><span class="sr-only">Action</span></th>';
+          " h-[52px] bg-white py-0 align-middle whitespace-nowrap dark:bg-gray-900 " +
+          (IS_SUPPLIER_PORTAL
+            ? "w-[140px] min-w-[140px] pr-0"
+            : "w-32 min-w-32 pr-4 pl-3 sm:pr-2") +
+          '"><span class="sr-only">Action</span></th>';
         return;
       }
 
+      var widthClass = "";
+      if (IS_SUPPLIER_PORTAL) {
+        if (col.key === "amount") widthClass = " w-[162px]";
+        else if (col.key === "invoice") widthClass = " w-[120px]";
+        else if (col.key === "dateInitiated") widthClass = " w-[186px]";
+        else if (col.type === "paymentMethod") widthClass = " w-[192px]";
+        else if (col.type === "status") widthClass = " w-[200px]";
+      }
+      var alignClass =
+        IS_SUPPLIER_PORTAL && col.key === "amount" ? " text-right" : " text-left";
       var thClass =
         base +
-        " px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white";
+        widthClass +
+        " h-[52px] px-4 align-middle text-xs font-medium uppercase tracking-[0.6px] whitespace-nowrap text-gray-500 dark:text-gray-400" +
+        alignClass;
       html += '<th scope="col" class="' + thClass + '">';
 
-      if (col.sortable || col.filterable) {
+      if (col.sortable || col.filterable || (IS_SUPPLIER_PORTAL && (col.type === "paymentMethod" || col.type === "status"))) {
         var headerBtnAttrs = "";
         if (col.sortable) {
           headerBtnAttrs +=
             ' data-sort-key="' + escapeHtml(col.key || "") + '"';
         }
+        var justify =
+          IS_SUPPLIER_PORTAL && col.key === "amount" ? " justify-end" : "";
+        html +=
+          '<div class="flex w-full items-center gap-1' +
+          justify +
+          '">';
         html +=
           '<button type="button"' +
           headerBtnAttrs +
-          ' class="group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white">';
+          ' class="group inline-flex cursor-pointer items-center gap-1 rounded-sm text-left text-xs font-medium uppercase tracking-[0.6px] text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400">';
         html += "<span>" + escapeHtml(col.label) + "</span>";
 
         if (col.sortable) {
@@ -1415,6 +1486,14 @@
         }
 
         html += "</button>";
+        if (IS_SUPPLIER_PORTAL) html += supplierHeaderExtras(col);
+        if (IS_SUPPLIER_PORTAL && col.type === "paymentMethod") {
+          html += supplierHeaderFilter("method");
+        }
+        if (IS_SUPPLIER_PORTAL && col.type === "status") {
+          html += supplierHeaderFilter("status");
+        }
+        html += "</div>";
       } else {
         html += escapeHtml(col.label);
       }
@@ -1427,6 +1506,13 @@
   }
 
   function buildSortBadgeHTML(sortDirection) {
+    if (IS_SUPPLIER_PORTAL && !sortDirection) {
+      return (
+        '<span data-sort-badge="true" class="inline-flex size-5 shrink-0 items-center justify-center">' +
+        tableIcon("sort.svg", 20, 20) +
+        "</span>"
+      );
+    }
     var sortBtnClass = sortDirection
       ? "inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
       : "inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400";
@@ -1476,6 +1562,15 @@
 
     switch (col.key) {
       case "amount":
+        if (IS_SUPPLIER_PORTAL) {
+          return (
+            '<span class="font-medium text-gray-900 dark:text-white">' +
+            formatCurrency(entry.amount, entry.currency) +
+            '</span> <span class="font-normal text-gray-500 dark:text-gray-400">' +
+            escapeHtml(entry.currency) +
+            "</span>"
+          );
+        }
         return (
           formatCurrency(entry.amount, entry.currency) +
           ' <span class="text-gray-500 dark:text-gray-400">' +
@@ -1483,6 +1578,15 @@
           "</span>"
         );
       case "invoice":
+        if (IS_SUPPLIER_PORTAL) {
+          return (
+            '<button type="button" data-get-paid-invoice="' +
+            escapeHtml(entry.invoice) +
+            '" class="cursor-pointer p-0 text-sm font-normal text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">' +
+            escapeHtml(entry.invoice) +
+            "</button>"
+          );
+        }
         return (
           '<button type="button" data-get-paid-invoice="' +
           escapeHtml(entry.invoice) +
@@ -1497,6 +1601,20 @@
       default:
         return escapeHtml(entry[col.key] || "");
     }
+  }
+
+  function paymentBrandMark(kind) {
+    if (!IS_SUPPLIER_PORTAL) return kind === "ach" ? ICON_ACH : ICON_VISA;
+    if (kind === "ach") {
+      return (
+        '<span class="inline-flex h-4 w-6 shrink-0 items-center justify-center overflow-hidden rounded-[1.2px] bg-[#1E326F] text-[8px] leading-none font-bold tracking-wide text-white">ACH</span>'
+      );
+    }
+    return (
+      '<span class="inline-flex h-4 w-6 shrink-0 items-center justify-center overflow-hidden rounded-[1.2px] bg-[linear-gradient(17deg,#222357_14%,#254AA5_88%)]">' +
+      tableIcon("brand-mark.svg", 18, 6) +
+      "</span>"
+    );
   }
 
   function renderPaymentMethod(entry) {
@@ -1520,8 +1638,10 @@
         getDigits(info && info.accountNumber).slice(-4) ||
         getDigits(ending).slice(-4);
       return (
-        '<span class="inline-flex items-center gap-x-2">' +
-        ICON_ACH +
+        '<span class="inline-flex items-center ' +
+        (IS_SUPPLIER_PORTAL ? "gap-1.5" : "gap-x-2") +
+        '">' +
+        paymentBrandMark("ach") +
         '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
         escapeHtml(achLast4 || "") +
         "</span>" +
@@ -1538,8 +1658,10 @@
             (cardDetails.fullCardNumber || cardDetails.maskedCardNumber || ""),
         ).slice(-4) || getDigits(ending).slice(-4);
       return (
-        '<span class="inline-flex items-center gap-x-2">' +
-        ICON_VISA +
+        '<span class="inline-flex items-center ' +
+        (IS_SUPPLIER_PORTAL ? "gap-1.5" : "gap-x-2") +
+        '">' +
+        paymentBrandMark("card") +
         '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
         escapeHtml(last4) +
         "</span>" +
@@ -1559,8 +1681,10 @@
         ).slice(-4) || getDigits(ending).slice(-4);
       if (sxLast4) {
         return (
-          '<span class="inline-flex items-center gap-x-2">' +
-          ICON_VISA +
+          '<span class="inline-flex items-center ' +
+          (IS_SUPPLIER_PORTAL ? "gap-1.5" : "gap-x-2") +
+          '">' +
+          paymentBrandMark("card") +
           '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
           escapeHtml(sxLast4) +
           "</span>" +
@@ -1601,6 +1725,25 @@
   }
 
   function renderStatus(status) {
+    if (IS_SUPPLIER_PORTAL) {
+      var supplierBadge = {
+        pending: "border-yellow-300 bg-yellow-100 text-yellow-800",
+        "action-required": "border-yellow-300 bg-yellow-100 text-yellow-800",
+        processing: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-300",
+        paid: "border-green-200 bg-green-50 text-green-700 dark:border-green-400/30 dark:bg-green-500/10 dark:text-green-400",
+        exception: "border-red-200 bg-red-50 text-red-700 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-300",
+        declined: "border-red-200 bg-red-50 text-red-700 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-300",
+      };
+      var withClock = status === "pending" || status === "action-required";
+      return (
+        '<span class="inline-flex items-center gap-0.5 rounded border py-0.5 pr-2 pl-1 text-sm leading-5 font-medium ' +
+        (supplierBadge[status] || supplierBadge.pending) +
+        '">' +
+        (withClock ? tableIcon("clock-14.svg", 14, 14) : "") +
+        escapeHtml(getStatusLabel(status)) +
+        "</span>"
+      );
+    }
     var badgeClasses = STATUS_STYLES[status] || STATUS_STYLES.pending;
     if (status === "processing") {
       return (
@@ -1685,9 +1828,15 @@
 
     return (
       '<el-dropdown class="inline-block">' +
-      '<button data-action-menu-trigger="true" class="flex cursor-pointer items-center justify-center rounded-md bg-white p-1 text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 dark:hover:text-white">' +
+      '<button data-action-menu-trigger="true" class="' +
+      (IS_SUPPLIER_PORTAL
+        ? "inline-flex size-7 cursor-pointer items-center justify-center rounded border border-gray-300 bg-white p-1 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:shadow-none dark:hover:bg-white/10"
+        : "flex cursor-pointer items-center justify-center rounded-md bg-white p-1 text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 dark:hover:text-white") +
+      '">' +
       '<span class="sr-only">Open options</span>' +
-      ICON_THREE_DOTS +
+      (IS_SUPPLIER_PORTAL
+        ? tableIcon("dots-vertical-18.svg", 18, 18)
+        : ICON_THREE_DOTS) +
       "</button>" +
       '<el-menu anchor="bottom end" popover class=" min-w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
       '<div class="py-1">' +
@@ -1703,6 +1852,13 @@
       requiresGetPaidAction(entry) ||
       (entry.status === "pending" && entry.methodType === "smart_exchange")
     ) {
+      if (IS_SUPPLIER_PORTAL) {
+        return (
+          '<button type="button" data-get-paid-invoice="' +
+          escapeHtml(entry.invoice) +
+          '" class="cursor-pointer rounded bg-blue-600 px-2 py-1 text-sm leading-5 font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>'
+        );
+      }
       return (
         '<div class="inline-flex items-center justify-end gap-2">' +
         '<button type="button" data-get-paid-invoice="' +
@@ -1743,27 +1899,49 @@
       escapeHtml(String(entry.invoice || "")) +
       '" class="' +
       CLASS_NAMES.row +
+      (IS_SUPPLIER_PORTAL
+        ? " cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5"
+        : "") +
       '">';
 
     columns.forEach(function (col) {
       if (col.type === "expand") {
         html +=
-          '<td class="h-12 w-10 min-w-10 align-middle py-2 px-0 text-center whitespace-nowrap' +
+          '<td class="' +
+          (IS_SUPPLIER_PORTAL
+            ? "h-[52px] w-[52px] min-w-[52px] p-0 align-middle text-center"
+            : "h-12 w-10 min-w-10 align-middle py-2 px-0 text-center") +
+          " whitespace-nowrap" +
           cb +
           '">' +
-          '<button data-row-toggle class="inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20">' +
-          '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
-          '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />' +
-          "</svg>" +
+          '<button type="button" data-row-toggle aria-expanded="false" class="' +
+          (IS_SUPPLIER_PORTAL
+            ? "inline-flex h-[52px] w-full cursor-default items-center justify-center"
+            : "inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20") +
+          '">' +
+          (IS_SUPPLIER_PORTAL
+            ? tableIcon(
+                "chevron-right.svg",
+                20,
+                20,
+                "transition-transform duration-200",
+              )
+            : '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>') +
           "</button>" +
           "</td>";
         return;
       }
 
       if (col.type === "action") {
+        var actionClass = CLASS_NAMES.actionCell;
+        if (IS_SUPPLIER_PORTAL) {
+          actionClass = actionClass
+            .replace("w-32 min-w-32", "w-[140px] min-w-[140px]")
+            .replace("sm:pr-2", "pr-0");
+        }
         html +=
           '<td data-action-column class="' +
-          CLASS_NAMES.actionCell +
+          actionClass +
           cb +
           '">' +
           renderActionCell(entry) +
@@ -1772,15 +1950,19 @@
       }
 
       var cellClass;
-      if (col.type === "status" || col.type === "paymentMethod") {
-        cellClass = "h-12 align-middle px-2 py-2 whitespace-nowrap" + cb;
+      if (IS_SUPPLIER_PORTAL && col.key === "amount") {
+        cellClass =
+          "h-[52px] align-middle px-4 text-right text-sm whitespace-nowrap" +
+          cb;
+      } else if (col.type === "status" || col.type === "paymentMethod") {
+        cellClass = "h-[52px] align-middle px-4 whitespace-nowrap" + cb;
       } else if (col.key === "invoice" || col.key === "dateInitiated") {
         cellClass =
-          "h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400" +
+          "h-[52px] align-middle px-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400" +
           cb;
       } else {
         cellClass =
-          "h-12 align-middle px-2 py-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white" +
+          "h-[52px] align-middle px-4 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white" +
           cb;
       }
 
@@ -1828,11 +2010,13 @@
       DETAIL_LABEL +
       '">Status</div>' +
       '<div class="flex-1 flex flex-col items-start gap-2 p-4">' +
-      '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
-      statusClass +
-      '">' +
-      escapeHtml(getStatusLabel(displayStatus)) +
-      "</span>" +
+      (IS_SUPPLIER_PORTAL
+        ? renderStatus(displayStatus)
+        : '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
+          statusClass +
+          '">' +
+          escapeHtml(getStatusLabel(displayStatus)) +
+          "</span>") +
       (declineReason
         ? '<div class="max-w-2xl rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300"><span class="font-medium">Decline reason:</span> ' +
           escapeHtml(declineReason) +
@@ -2930,14 +3114,19 @@
     var detailRow = mainRow ? mainRow.nextElementSibling : null;
     if (!mainRow || !detailRow) return;
 
-    var icon = button.querySelector("svg");
+    var icon = button.querySelector("svg, img");
     var isOpen = !detailRow.classList.contains("hidden");
     var stickyCell = mainRow.querySelector("td.sticky");
     var actionCell = mainRow.querySelector("[data-action-column]");
 
+    button.setAttribute("aria-expanded", isOpen ? "false" : "true");
+
     if (isOpen) {
       detailRow.classList.add("hidden");
-      if (icon) icon.style.transform = "";
+      if (icon) {
+        icon.style.transform = "";
+        icon.classList.remove("rotate-90");
+      }
       mainRow.classList.remove("bg-gray-100", "dark:bg-white/5");
       if (stickyCell)
         stickyCell.classList.remove("!bg-gray-100", "dark:!bg-gray-900");
@@ -2945,7 +3134,10 @@
         actionCell.classList.remove("!bg-gray-100", "dark:!bg-gray-900");
     } else {
       detailRow.classList.remove("hidden");
-      if (icon) icon.style.transform = "rotate(90deg)";
+      if (icon) {
+        if (icon.tagName === "IMG") icon.classList.add("rotate-90");
+        else icon.style.transform = "rotate(90deg)";
+      }
       mainRow.classList.add("bg-gray-100", "dark:bg-white/5");
       if (stickyCell)
         stickyCell.classList.add("!bg-gray-100", "dark:!bg-gray-900");
@@ -3105,6 +3297,20 @@
         return;
       }
 
+      if (IS_SUPPLIER_PORTAL) {
+        if (event.target.closest("[data-row-toggle]")) return;
+        var clickedRow = event.target.closest("tbody tr[data-row]");
+        if (
+          clickedRow &&
+          table.contains(clickedRow) &&
+          !event.target.closest("button, a, input, label, select, textarea")
+        ) {
+          var rowToggle = clickedRow.querySelector("[data-row-toggle]");
+          if (rowToggle) toggleRow(rowToggle);
+        }
+        return;
+      }
+
       var button = event.target.closest("[data-row-toggle]");
       if (!button || !table.contains(button)) return;
       toggleRow(button);
@@ -3166,6 +3372,10 @@
     if (!container) return;
 
     var total = paginationState.totalItems;
+    if (IS_SUPPLIER_PORTAL) {
+      renderSupplierPagination(container, total);
+      return;
+    }
     var page = paginationState.currentPage;
     var size = paginationState.pageSize;
     var totalPages = getTotalPages();
@@ -3295,6 +3505,77 @@
       "</div>";
 
     container.innerHTML = mobileHTML + desktopHTML;
+  }
+
+  function renderSupplierPagination(container, total) {
+    var page = paginationState.currentPage;
+    var size = paginationState.pageSize;
+    var totalPages = getTotalPages();
+    var start = total ? Math.min((page - 1) * size + 1, total) : 0;
+    var end = total ? Math.min(page * size, total) : 0;
+    var isFirstPage = page <= 1;
+    var isLastPage = page >= totalPages;
+
+    function pageIconButton(attr, label, iconFile, disabled) {
+      return (
+        '<button type="button" ' +
+        attr +
+        ' aria-label="' +
+        label +
+        '" class="inline-flex size-[30px] items-center justify-center rounded-md border border-gray-300 bg-white p-1.5 dark:border-white/15 dark:bg-white/5 ' +
+        (disabled
+          ? "cursor-not-allowed opacity-40"
+          : "cursor-pointer shadow-sm hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10") +
+        '"' +
+        (disabled ? " disabled" : "") +
+        ">" +
+        tableIcon(iconFile, 20, 20) +
+        "</button>"
+      );
+    }
+
+    var optionsHTML = "";
+    PAGE_SIZE_OPTIONS.forEach(function (opt) {
+      optionsHTML +=
+        '<a href="#" data-page-size="' +
+        opt +
+        '" class="block px-4 py-3 text-sm ' +
+        (opt === size
+          ? "bg-gray-50 font-semibold text-gray-900 dark:bg-white/5 dark:text-white"
+          : "font-medium text-gray-900 dark:text-gray-200") +
+        ' hover:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:hover:bg-white/10 dark:focus:bg-white/10">' +
+        opt +
+        "</a>";
+    });
+
+    container.innerHTML =
+      '<div class="flex w-full flex-wrap items-center justify-end gap-4">' +
+      '<div class="flex h-10 items-center gap-4">' +
+      '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">Rows per Page:</span>' +
+      '<el-dropdown class="inline-block">' +
+      '<button type="button" class="inline-flex h-10 w-[75px] cursor-pointer items-center justify-between rounded-md border border-gray-300 bg-white px-3 text-base leading-6 font-medium text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:shadow-none">' +
+      size +
+      tableIcon("select-chevron.svg", 20, 20) +
+      "</button>" +
+      '<el-menu anchor="top end" popover class="w-[75px] origin-bottom-right rounded-md bg-white shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(1)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:outline-white/10">' +
+      '<div class="py-1">' +
+      optionsHTML +
+      "</div>" +
+      "</el-menu>" +
+      "</el-dropdown>" +
+      '<p class="text-sm font-normal whitespace-nowrap text-gray-700 dark:text-gray-300">Showing <span class="font-semibold">' +
+      start +
+      " - " +
+      end +
+      '</span> of <span class="font-semibold">' +
+      total +
+      "</span> results</p>" +
+      '<div class="flex items-start gap-2">' +
+      pageIconButton("data-page-first", "First page", "page-first.svg", isFirstPage) +
+      pageIconButton("data-page-prev", "Previous page", "page-prev.svg", isFirstPage) +
+      pageIconButton("data-page-next", "Next page", "page-next.svg", isLastPage) +
+      pageIconButton("data-page-last", "Last page", "page-last.svg", isLastPage) +
+      "</div></div></div>";
   }
 
   function renderPaginationSkeleton() {
@@ -3600,6 +3881,26 @@
         }
         return;
       }
+
+      var firstBtn = event.target.closest("[data-page-first]");
+      if (firstBtn) {
+        event.preventDefault();
+        if (paginationState.currentPage > 1) {
+          paginationState.currentPage = 1;
+          renderCurrentPage();
+        }
+        return;
+      }
+
+      var lastBtn = event.target.closest("[data-page-last]");
+      if (lastBtn) {
+        event.preventDefault();
+        var lastPage = getTotalPages();
+        if (paginationState.currentPage < lastPage) {
+          paginationState.currentPage = lastPage;
+          renderCurrentPage();
+        }
+      }
     });
   }
 
@@ -3722,31 +4023,13 @@
     }
 
     function buildFilterCheckbox(id, label, countText, value, checked) {
-      return (
-        "" +
-        '<label class="group flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5">' +
-        '  <div class="grid size-4 grid-cols-1">' +
-        '    <input type="checkbox" data-filter-value="' +
-        escapeHtml(value) +
-        '" id="' +
-        escapeHtml(id) +
-        '"' +
-        (checked ? " checked" : "") +
-        '      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
-        '    <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
-        '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
-        "    </svg>" +
-        "  </div>" +
-        '  <span class="min-w-0 flex-1 text-sm font-medium text-gray-700 dark:text-gray-200">' +
-        escapeHtml(label) +
-        "</span>" +
-        (countText
-          ? '<span class="shrink-0 text-sm font-normal text-gray-500 dark:text-gray-400">' +
-            escapeHtml(countText) +
-            "</span>"
-          : "") +
-        "</label>"
-      );
+      return window.TableUi.filterCheckbox({
+        id: id,
+        label: label,
+        countText: countText,
+        value: value,
+        checked: checked,
+      });
     }
 
     function normalizeFilterPanel(panel) {
@@ -4512,34 +4795,11 @@
 
       activeFiltersWrap.innerHTML = tags
         .map(function (tag) {
-          var byLabel = "By " + String(tag.label || "").toLowerCase();
-          return (
-            "" +
-            '<span class="relative inline-flex max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-xs font-medium text-gray-600 dark:bg-white/10 dark:text-gray-300">' +
-            '  <span class="inline-flex shrink-0 items-center bg-gray-100 px-2 py-1 font-medium text-gray-900 dark:bg-white/15 dark:text-white">' +
-            escapeHtml(byLabel) +
-            "</span>" +
-            '  <button type="button" data-filter-tag-open="' +
-            escapeHtml(tag.type) +
-            '" title="' +
-            escapeHtml(tag.label + ": " + tag.value) +
-            '"' +
-            '    class="inline-flex min-w-0 items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15 cursor-pointer">' +
-            '    <span class="truncate font-medium text-gray-900 dark:text-white">' +
-            escapeHtml(tag.value) +
-            "</span>" +
-            "  </button>" +
-            '  <button type="button" data-filter-tag-remove="' +
-            escapeHtml(tag.type) +
-            '"' +
-            '    class="inline-flex w-6 shrink-0 self-stretch items-center justify-center border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white cursor-pointer" aria-label="Remove filter">' +
-            '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">' +
-            '      <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
-            "    </svg>" +
-            "  </button>" +
-            '  <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span>' +
-            "</span>"
-          );
+          return window.TableUi.filterChip({
+            label: tag.label,
+            type: tag.type,
+            value: tag.value,
+          });
         })
         .join("");
     }
@@ -4577,10 +4837,34 @@
       filterNavButtons.forEach(function (button) {
         var isActive = button.getAttribute("data-filter-open") === panel;
         button.classList.toggle("bg-gray-100", isActive);
-        button.classList.toggle("text-gray-900", isActive);
         button.classList.toggle("dark:bg-white/10", isActive);
-        button.classList.toggle("dark:text-white", isActive);
+        var chevron = button.querySelector("[data-nav-chevron]");
+        if (chevron) chevron.classList.toggle("hidden", !isActive);
       });
+    }
+
+    function applyOpenFilterSearches() {
+      if (!filterMenu) return;
+      Array.prototype.forEach.call(
+        filterMenu.querySelectorAll("[data-filter-search]"),
+        function (input) {
+          var list = document.getElementById(
+            input.getAttribute("data-filter-search") || "",
+          );
+          if (!list) return;
+          var query = input.value.trim().toLowerCase();
+          Array.prototype.forEach.call(
+            list.querySelectorAll("label"),
+            function (label) {
+              var text = (label.textContent || "").toLowerCase();
+              label.classList.toggle(
+                "hidden",
+                !!query && text.indexOf(query) === -1,
+              );
+            },
+          );
+        },
+      );
     }
 
     function applyFilterMenuLayout() {
@@ -4639,6 +4923,19 @@
         c.classList.toggle("rotate-180", !!open);
       });
     }
+    if (filterBtn && filterBtn.dataset.headerFilterBound !== "1") {
+      filterBtn.dataset.headerFilterBound = "1";
+      document.addEventListener("click", function (event) {
+        var hit = event.target.closest("[data-header-filter]");
+        if (!hit) return;
+        event.preventDefault();
+        event.stopPropagation();
+        tableFilterState.activePanel =
+          hit.getAttribute("data-header-filter") || "status";
+        setFilterMenuOpen(true);
+      });
+    }
+
     function setFilterMenuOpen(nextOpen) {
       tableFilterState.menuOpen = !!nextOpen;
       setFilterChevron(tableFilterState.menuOpen);
@@ -4710,11 +5007,35 @@
 
     filterMenu.addEventListener("click", function (event) {
       event.stopPropagation();
+      var selectAll = event.target.closest("[data-filter-select-all]");
+      if (selectAll) {
+        event.preventDefault();
+        var list = document.getElementById(
+          selectAll.getAttribute("data-filter-select-all") || "",
+        );
+        if (!list) return;
+        Array.prototype.forEach.call(
+          list.querySelectorAll(
+            "label:not(.hidden) input[type='checkbox'][data-filter-value]",
+          ),
+          function (input) {
+            if (input.checked) return;
+            input.checked = true;
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+          },
+        );
+        return;
+      }
       var openBtn = event.target.closest("[data-filter-open]");
       if (openBtn) {
         event.preventDefault();
         setFilterPanel(openBtn.getAttribute("data-filter-open"));
       }
+    });
+
+    filterMenu.addEventListener("input", function (event) {
+      if (!event.target.closest("[data-filter-search]")) return;
+      applyOpenFilterSearches();
     });
 
     filterMenu.addEventListener("change", function (event) {
@@ -4950,6 +5271,7 @@
     document.addEventListener("click", function (event) {
       if (!filterDropdown || !tableFilterState.menuOpen) return;
       if (filterDropdown.contains(event.target)) return;
+      if (event.target.closest("[data-header-filter]")) return;
       setFilterMenuOpen(false);
     });
 
@@ -5028,6 +5350,7 @@
       renderStatusFilters();
       renderMethodFilters();
       renderFailureReasonFilters();
+      applyOpenFilterSearches();
       renderInitiatedDateInputs();
       renderInitiatedDateCalendar();
       renderFilterNavBadges();

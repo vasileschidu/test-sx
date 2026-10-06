@@ -189,31 +189,13 @@
   }
 
   function buildFilterCheckbox(id, label, countText, value, checked) {
-    return (
-      "" +
-      '<label class="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-gray-100 group-has-checked:bg-gray-100 dark:hover:bg-white/5 dark:group-has-checked:bg-white/10">' +
-      '  <div class="grid size-4 grid-cols-1">' +
-      '    <input type="checkbox" data-filter-value="' +
-      escapeHtml(value) +
-      '" id="' +
-      escapeHtml(id) +
-      '"' +
-      (checked ? " checked" : "") +
-      '      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
-      '    <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
-      '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
-      "    </svg>" +
-      "  </div>" +
-      '  <span class="text-sm font-medium text-gray-900 dark:text-gray-100">' +
-      escapeHtml(label) +
-      "</span>" +
-      (countText
-        ? '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' +
-          escapeHtml(countText) +
-          "</span>"
-        : "") +
-      "</label>"
-    );
+    return window.TableUi.filterCheckbox({
+      id: id,
+      label: label,
+      countText: countText,
+      value: value,
+      checked: checked,
+    });
   }
 
   function formatMoney(value) {
@@ -498,34 +480,11 @@
     refs.activeFilters.classList.remove("hidden");
     refs.activeFilters.innerHTML = tags
       .map(function (tag) {
-        var byLabel = "By " + String(tag.label || "").toLowerCase();
-        return (
-          "" +
-          '<span class="relative inline-flex max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-xs font-medium text-gray-600 dark:bg-white/10 dark:text-gray-300">' +
-          '  <span class="inline-flex shrink-0 items-center bg-gray-100 px-2 py-1 font-medium text-gray-900 dark:bg-white/15 dark:text-white">' +
-          escapeHtml(byLabel) +
-          "</span>" +
-          '  <button type="button" data-filter-tag-open="' +
-          escapeHtml(tag.type) +
-          '" title="' +
-          escapeHtml(tag.label + ": " + tag.value) +
-          '"' +
-          '    class="inline-flex min-w-0 items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15 cursor-pointer">' +
-          '    <span class="truncate font-medium text-gray-900 dark:text-white">' +
-          escapeHtml(tag.value) +
-          "</span>" +
-          "  </button>" +
-          '  <button type="button" data-filter-tag-remove="' +
-          escapeHtml(tag.type) +
-          '"' +
-          '    class="inline-flex w-6 shrink-0 self-stretch items-center justify-center border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white cursor-pointer" aria-label="Remove filter">' +
-          '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">' +
-          '      <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
-          "    </svg>" +
-          "  </button>" +
-          '  <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span>' +
-          "</span>"
-        );
+        return window.TableUi.filterChip({
+          label: tag.label,
+          type: tag.type,
+          value: tag.value,
+        });
       })
       .join("");
   }
@@ -819,7 +778,7 @@
             if (col.type === "action")
               return '<th class="w-px px-4 py-3"></th>';
             return (
-              '<th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:border-white/10 dark:text-white">' +
+              '<th class="h-[52px] border-b border-gray-200 px-4 text-left align-middle text-xs font-medium uppercase tracking-[0.6px] text-gray-500 dark:border-white/10 dark:text-gray-400">' +
               escapeHtml(col.label) +
               "</th>"
             );
@@ -855,19 +814,19 @@
       columns
         .map(function (col) {
           if (col.type === "action")
-            return '<th class="w-px border-b border-gray-200 bg-white px-4 py-3 dark:border-white/10 dark:bg-gray-900"></th>';
+            return '<th class="h-[52px] w-px border-b border-gray-200 bg-white px-4 align-middle dark:border-white/10 dark:bg-gray-900"></th>';
           var direction = state.sortKey === col.key ? state.sortDirection : "";
           var content = col.sortable
             ? '<button type="button" data-sort-key="' +
               escapeHtml(col.key) +
-              '" class="group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white"><span>' +
+              '" class="group flex w-full cursor-pointer items-center gap-1 rounded-sm text-left text-xs font-medium uppercase tracking-[0.6px] text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400"><span>' +
               escapeHtml(col.label) +
               "</span>" +
               buildSortBadgeHTML(direction) +
               "</button>"
             : escapeHtml(col.label);
           return (
-            '<th class="border-b border-gray-200 px-4 py-3 text-left text-sm font-semibold text-gray-900 dark:border-white/10 dark:text-white">' +
+            '<th class="h-[52px] border-b border-gray-200 px-4 text-left align-middle text-xs font-medium uppercase tracking-[0.6px] text-gray-500 dark:border-white/10 dark:text-gray-400">' +
             content +
             "</th>"
           );

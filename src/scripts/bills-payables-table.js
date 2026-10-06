@@ -27,8 +27,8 @@
   var ORIGINATION_ACCOUNTS_STORAGE_KEY = "bp-origination-accounts-v1";
   var SMART_DISBURSE_PENDING_STATUS_LABEL = "Pending Payee Action";
 
-  var DEFAULT_PAGE_SIZE = 16;
-  var PAGE_SIZE_OPTIONS = [10, 16, 25, 50];
+  var DEFAULT_PAGE_SIZE = 10;
+  var PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
   var TAB_SWITCH_SKELETON_MS = 500;
   var INITIAL_TABLE_SKELETON_MS = 500;
   var MANUAL_REFRESH_SKELETON_MS = 1000;
@@ -58,39 +58,70 @@
       : "ready_to_pay";
   }
 
-  var STATUS_STYLES = {
-    ready_to_pay: "bg-gray-50 text-gray-600 inset-ring-gray-500/10",
-    in_progress:
-      "bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30",
-    scheduled:
-      "bg-gray-100 text-gray-700 inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-300 dark:inset-ring-white/15",
-    paid: "bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20",
-    exception:
-      "bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20",
+  var BADGE_COLORS = {
+    gray: "border-gray-200 bg-gray-100 text-gray-900 dark:border-white/15 dark:bg-white/10 dark:text-gray-200",
+    red: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-500/15 dark:text-red-200",
+    yellow:
+      "border-yellow-200 bg-yellow-100 text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-500/15 dark:text-yellow-200",
+    green:
+      "border-green-200 bg-green-100 text-green-800 dark:border-green-400/30 dark:bg-green-500/15 dark:text-green-200",
+    blue: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/30 dark:bg-blue-500/15 dark:text-blue-200",
+    indigo:
+      "border-indigo-200 bg-indigo-100 text-indigo-800 dark:border-indigo-400/30 dark:bg-indigo-500/15 dark:text-indigo-200",
+    purple:
+      "border-violet-200 bg-violet-100 text-violet-800 dark:border-violet-400/30 dark:bg-violet-500/15 dark:text-violet-200",
+    pink: "border-pink-200 bg-pink-100 text-pink-800 dark:border-pink-400/30 dark:bg-pink-500/15 dark:text-pink-200",
+  };
+
+  var STATUS_BADGE_COLORS = {
+    ready_to_pay: "gray",
+    in_progress: "blue",
+    scheduled: "yellow",
+    paid: "green",
+    exception: "red",
   };
 
   var ACTIVE_TAB_LINK_CLASSES = [
-    "bg-blue-100",
-    "text-blue-700",
-    "dark:bg-blue-500/20",
+    "bg-blue-50",
+    "text-blue-600",
+    "dark:bg-blue-500/15",
     "dark:text-blue-300",
   ];
-  var INACTIVE_TAB_LINK_CLASSES = ["text-gray-500", "dark:text-gray-400"];
+  var INACTIVE_TAB_LINK_CLASSES = [
+    "text-gray-500",
+    "hover:text-gray-700",
+    "dark:text-gray-400",
+    "dark:hover:text-gray-200",
+  ];
   var ACTIVE_BADGE_CLASSES = [
-    "bg-blue-50",
-    "text-blue-700",
-    "inset-ring-blue-700/10",
-    "dark:bg-blue-400/10",
-    "dark:text-blue-400",
-    "dark:inset-ring-blue-400/30",
+    "bg-blue-100",
+    "text-blue-800",
+    "border-blue-200",
+    "dark:bg-blue-400/15",
+    "dark:text-blue-200",
+    "dark:border-blue-400/30",
   ];
   var INACTIVE_BADGE_CLASSES = [
-    "bg-gray-50",
-    "text-gray-600",
-    "inset-ring-gray-500/10",
-    "dark:bg-gray-400/10",
-    "dark:text-gray-400",
-    "dark:inset-ring-gray-400/20",
+    "bg-gray-100",
+    "text-gray-800",
+    "border-gray-200",
+    "dark:bg-white/10",
+    "dark:text-gray-200",
+    "dark:border-white/15",
+  ];
+  var EXCEPTION_TAB_LINK_CLASSES = [
+    "bg-red-50",
+    "text-red-600",
+    "dark:bg-red-500/15",
+    "dark:text-red-300",
+  ];
+  var EXCEPTION_BADGE_CLASSES = [
+    "bg-red-100",
+    "text-red-800",
+    "border-red-200",
+    "dark:bg-red-400/15",
+    "dark:text-red-200",
+    "dark:border-red-400/30",
   ];
 
   var state = {
@@ -98,6 +129,7 @@
     columns: [],
     activeTab: "ready_to_pay",
     search: "",
+    selectedPayees: new Set(),
     selectedSources: new Set(),
     selectedStatuses: new Set(),
     selectedMethods: new Set(),
@@ -108,7 +140,8 @@
     initiatedDateToDraft: "",
     initiatedDateActiveField: "from",
     filterMenuOpen: false,
-    activeFilterPanel: "source",
+    activeFilterPanel: "payee",
+    appliedSelectedPayees: new Set(),
     appliedSelectedSources: new Set(),
     appliedSelectedStatuses: new Set(),
     appliedSelectedMethods: new Set(),
@@ -158,8 +191,50 @@
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-40" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path transform="translate(10 14.4) scale(1.2) translate(-10 -14.4)" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
   var ICON_CHEVRON_DOWN =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+
+  function tableAsset(file) {
+    var path = window.location.pathname || "";
+    var marker = "/src/pages/";
+    var index = path.indexOf(marker);
+    var root = index >= 0 ? path.slice(0, index) : "";
+    return root + "/src/assets/table/" + encodeURIComponent(file);
+  }
+
+  function tableIcon(file, width, height, extraClass) {
+    return (
+      '<img src="' +
+      tableAsset(file) +
+      '" width="' +
+      width +
+      '" height="' +
+      height +
+      '" alt="" class="shrink-0' +
+      (extraClass ? " " + extraClass : "") +
+      '">'
+    );
+  }
+
+  function columnWidthClass(col) {
+    if (!col) return " px-4";
+    if (col.type === "expand") return " w-[52px] min-w-[52px] px-0";
+    if (col.type === "select") return " w-8 min-w-8 px-2";
+    if (col.type === "action") return " w-[100px] min-w-[100px] px-0";
+    if (col.key === "amount") return " w-[162px] min-w-[162px] px-4";
+    if (col.key === "billNumber") return " w-[140px] min-w-[140px] px-4";
+    if (col.key === "source") return " w-[208px] min-w-[208px] px-4";
+    if (col.key === "dueDate") return " w-[160px] min-w-[160px] px-4";
+    if (col.key === "status") return " w-[170px] min-w-[170px] px-4";
+    return " px-4";
+  }
+
+  function updatePaymentsCount(count) {
+    var el = document.querySelector("[data-payments-count]");
+    if (!el) return;
+    var total = Number(count) || 0;
+    el.textContent = total + (total === 1 ? " Payment" : " Payments");
+  }
   var ICON_SCHEDULED =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg>';
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg>';
   var ICON_ACH =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400 shrink-0"><path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" /></svg>';
   var ICON_SMART_DISBURSE =
@@ -335,6 +410,9 @@
     refs.filterDetailSlot = document.getElementById(
       "bp-table-filter-detail-slot",
     );
+    refs.filterPayeePanel = document.getElementById(
+      "bp-table-filter-panel-payee",
+    );
     refs.filterSourcePanel = document.getElementById(
       "bp-table-filter-panel-source",
     );
@@ -350,6 +428,7 @@
     refs.filterInitiatedDatePanel = document.getElementById(
       "bp-table-filter-panel-initiated-date",
     );
+    refs.filterPayeesWrap = document.getElementById("bp-table-filter-payees");
     refs.filterSourcesWrap = document.getElementById("bp-table-filter-sources");
     refs.filterStatusesWrap = document.getElementById(
       "bp-table-filter-statuses",
@@ -573,7 +652,7 @@
   function getDefaultManageableColumnKeys(columns) {
     return getManageableColumns(columns)
       .filter(function (col) {
-        return col.key !== "failureReason";
+        return col.key !== "paymentMethod" && col.key !== "adDate";
       })
       .map(function (col) {
         return col.key;
@@ -798,44 +877,48 @@
   function buildManageColumnsRowHTML(col, checked, disabled) {
     var scopeBadge =
       col && col.key === "failureReason"
-        ? '<span class="shrink-0 rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10">Exceptions</span>'
+        ? '<span class="inline-flex h-5 shrink-0 items-center rounded border border-gray-200 bg-gray-100 px-2 text-xs leading-4 font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">Exceptions</span>'
         : "";
     return (
       "" +
       '<div data-column-order-row="' +
       escapeHtml(col.key) +
-      '" class="group relative flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 group-has-checked:bg-blue-50 dark:hover:bg-white/5 dark:group-has-checked:bg-blue-500/10' +
+      '" class="group relative flex items-center gap-2.5 p-2' +
       (disabled ? " opacity-60" : "") +
       '">' +
-      '  <span data-drop-line="before" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="top:0;transform:translateY(-50%);"></span>' +
-      '  <span data-drop-line="after" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="bottom:0;transform:translateY(50%);"></span>' +
+      '  <span data-drop-line="before" class="pointer-events-none absolute top-0 right-2 left-7 z-10 h-0.5 -translate-y-1/2 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out"></span>' +
+      '  <span data-drop-line="after" class="pointer-events-none absolute right-2 bottom-0 left-7 z-10 h-0.5 translate-y-1/2 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out"></span>' +
       '  <button type="button" draggable="true" data-column-drag-handle="' +
       escapeHtml(col.key) +
-      '" class="inline-flex size-5 shrink-0 cursor-grab items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-500 active:cursor-grabbing dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
+      '" class="inline-flex shrink-0 cursor-grab items-center justify-center rounded p-0.5 text-gray-500 active:cursor-grabbing dark:text-gray-400">' +
       '    <span class="sr-only">Reorder column</span>' +
-      '    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4">' +
+      '    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">' +
       '      <path d="M2.40039 10.8001C2.40039 10.1374 2.93765 9.6001 3.60039 9.6001C4.26313 9.6001 4.80039 10.1374 4.80039 10.8001C4.80039 11.4628 4.26313 12.0001 3.60039 12.0001C2.93765 12.0001 2.40039 11.4628 2.40039 10.8001Z" /><path d="M6.80039 10.8001C6.80039 10.1374 7.33765 9.6001 8.00039 9.6001C8.66313 9.6001 9.20039 10.1374 9.20039 10.8001C9.20039 11.4628 8.66313 12.0001 8.00039 12.0001C7.33765 12.0001 6.80039 11.4628 6.80039 10.8001Z" /><path d="M12.4004 9.6001C11.7376 9.6001 11.2004 10.1374 11.2004 10.8001C11.2004 11.4628 11.7376 12.0001 12.4004 12.0001C13.0631 12.0001 13.6004 11.4628 13.6004 10.8001C13.6004 10.1374 13.0631 9.6001 12.4004 9.6001Z" /><path d="M2.40039 6.00005C2.40039 5.33731 2.93765 4.80005 3.60039 4.80005C4.26313 4.80005 4.80039 5.33731 4.80039 6.00005C4.80039 6.66279 4.26313 7.20005 3.60039 7.20005C2.93765 7.20005 2.40039 6.66279 2.40039 6.00005Z" /><path d="M6.80039 6.00005C6.80039 5.33731 7.33765 4.80005 8.00039 4.80005C8.66313 4.80005 9.20039 5.33731 9.20039 6.00005C9.20039 6.66279 8.66313 7.20005 8.00039 7.20005C7.33765 7.20005 6.80039 6.66279 6.80039 6.00005Z" /><path d="M12.4004 4.80005C11.7376 4.80005 11.2004 5.33731 11.2004 6.00005C11.2004 6.66279 11.7376 7.20005 12.4004 7.20005C13.0631 7.20005 13.6004 6.66279 13.6004 6.00005C13.6004 5.33731 13.0631 4.80005 12.4004 4.80005Z" />' +
       "    </svg>" +
       "  </button>" +
-      '  <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3">' +
-      '    <div class="grid size-4 grid-cols-1">' +
-      '      <input type="checkbox" data-column-visibility-toggle="' +
+      '  <label class="flex cursor-pointer items-center gap-3">' +
+      '    <span class="inline-flex items-start py-0.5">' +
+      '      <span class="grid size-4">' +
+      '        <input type="checkbox" data-column-visibility-toggle="' +
       escapeHtml(col.key) +
       '"' +
       (checked ? " checked" : "") +
       (disabled ? " disabled" : "") +
-      '        class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500 dark:disabled:bg-white/10" />' +
-      '      <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
-      '        <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
-      "      </svg>" +
-      "    </div>" +
-      '    <span class="flex min-w-0 flex-1 items-center gap-2">' +
-      '      <span class="truncate text-sm font-medium text-gray-900 dark:text-white">' +
+      '          class="col-start-1 row-start-1 size-4 appearance-none rounded border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500 dark:disabled:bg-white/10" />' +
+      "        " +
+      tableIcon(
+        "check-12.svg",
+        12,
+        12,
+        "pointer-events-none col-start-1 row-start-1 self-center justify-self-center opacity-0 group-has-checked:opacity-100",
+      ) +
+      "      </span>" +
+      "    </span>" +
+      '    <span class="text-sm leading-5 font-medium whitespace-nowrap text-gray-900 dark:text-white">' +
       escapeHtml(col.label || col.key) +
       "</span>" +
-      scopeBadge +
-      "    </span>" +
       "  </label>" +
+      scopeBadge +
       "</div>"
     );
   }
@@ -880,21 +963,76 @@
     );
   }
 
-  function buildStatusSection(row) {
-    var status = getDisplayStatusKey(row);
+  function buildBadgeHTML(options) {
+    var opts = options || {};
+    var color = BADGE_COLORS[opts.color] || BADGE_COLORS.gray;
+    var size = opts.size === "small" ? "small" : "large";
+    var shape = opts.type === "rounded" ? "rounded" : "square";
+    var icon = opts.icon || "none";
+    var radius = shape === "rounded" ? "rounded-[512px]" : "rounded";
+    var typeSize = size === "small" ? "text-xs leading-4" : "text-sm leading-5";
+    var pad = "px-2 py-0.5";
+    if (icon === "left") pad = "gap-0.5 py-0.5 pl-1 pr-2";
+    else if (icon === "right") pad = "gap-0.5 py-0.5 pl-2 pr-1";
+    else if (icon === "both") pad = "gap-0.5 px-1 py-0.5";
+    var left = icon === "left" || icon === "both" ? opts.leftHtml || "" : "";
+    var right = icon === "right" || icon === "both" ? opts.rightHtml || "" : "";
+    return (
+      '<span class="inline-flex items-center justify-center border font-medium whitespace-nowrap ' +
+      radius +
+      " " +
+      typeSize +
+      " " +
+      pad +
+      " " +
+      color +
+      (opts.className ? " " + opts.className : "") +
+      '">' +
+      left +
+      escapeHtml(opts.label || "") +
+      right +
+      "</span>"
+    );
+  }
+
+  function statusBadgeOptions(row) {
+    var status = (row && row.status) || "ready_to_pay";
     var label = getDisplayStatusLabel(row);
+    if (status === "in_progress" && row && row.statusType === "scheduled") {
+      return {
+        color: "yellow",
+        label: "Scheduled",
+        icon: "left",
+        leftHtml: ICON_SCHEDULED,
+      };
+    }
+    if (label === SMART_DISBURSE_PENDING_STATUS_LABEL) {
+      return { color: "purple", label: label, icon: "none" };
+    }
+    if (status === "ready_to_pay" && label === "Ready to Pay") label = "Unprocessed";
+    if (status === "ready_to_pay") {
+      return {
+        color: "gray",
+        label: label,
+        icon: "left",
+        leftHtml: tableIcon("flag.svg", 14, 14),
+      };
+    }
+    return {
+      color: STATUS_BADGE_COLORS[status] || "gray",
+      label: label,
+      icon: "none",
+    };
+  }
+
+  function buildStatusSection(row) {
     return (
       '<div class="flex">' +
       '<div class="' +
       DETAIL_LABEL +
       '">Status</div>' +
       '<div class="flex-1 flex items-center p-4">' +
-      '<span class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
-      (STATUS_STYLES[status] || STATUS_STYLES.ready_to_pay) +
-      '">' +
-      (status === "scheduled" ? ICON_SCHEDULED : "") +
-      escapeHtml(label) +
-      "</span>" +
+      buildBadgeHTML(statusBadgeOptions(row)) +
       "</div>" +
       "</div>"
     );
@@ -1225,6 +1363,11 @@
   }
 
   function matchesFilters(row) {
+    if (
+      state.appliedSelectedPayees.size &&
+      !state.appliedSelectedPayees.has(String((row && row.payeeName) || ""))
+    )
+      return false;
     if (
       state.appliedSelectedSources.size &&
       !state.appliedSelectedSources.has(row.source)
@@ -1786,7 +1929,7 @@
         row && (row.bankLast4 || row.paymentMethodEnding || ""),
       ).slice(-4);
       return (
-        '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
+        '<td class="h-[52px] align-middle px-4 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
         cb +
         '">' +
         '<span class="inline-flex items-center gap-x-2">' +
@@ -1806,7 +1949,7 @@
       var cardIcon =
         network.indexOf("master") !== -1 ? ICON_MASTERCARD : ICON_VISA;
       return (
-        '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
+        '<td class="h-[52px] align-middle px-4 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
         cb +
         '">' +
         '<span class="inline-flex items-center gap-x-2">' +
@@ -1820,7 +1963,7 @@
     }
     if (type === "smart_disburse") {
       return (
-        '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
+        '<td class="h-[52px] align-middle px-4 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
         cb +
         '">' +
         '<span class="inline-flex items-center gap-x-2">' +
@@ -1831,7 +1974,7 @@
     }
     if (type === "smart_exchange") {
       return (
-        '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
+        '<td class="h-[52px] align-middle px-4 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
         cb +
         '">' +
         '<span class="inline-flex items-center gap-x-2">' +
@@ -1841,7 +1984,7 @@
       );
     }
     return (
-      '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
+      '<td class="h-[52px] align-middle px-4 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
       cb +
       '">' +
       escapeHtml(
@@ -1914,8 +2057,12 @@
       refs.tabNav.querySelectorAll("[data-tab]").forEach(function (tabEl) {
         var key = tabEl.getAttribute("data-tab");
         var isActive = key === state.activeTab;
+        var isException = key === "exception";
         ACTIVE_TAB_LINK_CLASSES.forEach(function (c) {
-          tabEl.classList.toggle(c, isActive);
+          tabEl.classList.toggle(c, isActive && !isException);
+        });
+        EXCEPTION_TAB_LINK_CLASSES.forEach(function (c) {
+          tabEl.classList.toggle(c, isActive && isException);
         });
         INACTIVE_TAB_LINK_CLASSES.forEach(function (c) {
           tabEl.classList.toggle(c, !isActive);
@@ -1925,10 +2072,13 @@
         var badge = tabEl.querySelector("[data-tab-count]");
         if (badge) {
           ACTIVE_BADGE_CLASSES.forEach(function (c) {
-            badge.classList.toggle(c, isActive);
+            badge.classList.toggle(c, isActive && !isException);
           });
           INACTIVE_BADGE_CLASSES.forEach(function (c) {
-            badge.classList.toggle(c, !isActive);
+            badge.classList.toggle(c, !isActive && !isException);
+          });
+          EXCEPTION_BADGE_CLASSES.forEach(function (c) {
+            badge.classList.toggle(c, isException);
           });
         }
       });
@@ -1937,7 +2087,12 @@
   }
 
   function renderTabCounts() {
-    var counts = { ready_to_pay: 0, in_progress: 0, paid: 0, exception: 0 };
+    var counts = {
+      ready_to_pay: 0,
+      in_progress: 0,
+      paid: 0,
+      exception: 0,
+    };
     state.allRows.forEach(function (row) {
       if (counts[row.status] != null) counts[row.status] += 1;
     });
@@ -1945,6 +2100,7 @@
       var key = el.getAttribute("data-tab-count");
       if (counts[key] != null) el.textContent = String(counts[key]);
     });
+    updatePaymentsCount(counts[state.activeTab] || 0);
     window.dispatchEvent(
       new CustomEvent("app-nav-counts", {
         detail: { bills: counts.ready_to_pay },
@@ -1957,31 +2113,13 @@
   }
 
   function buildFilterCheckbox(id, label, countText, value, checked) {
-    return (
-      "" +
-      '<label class="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-gray-100 group-has-checked:bg-gray-100 dark:hover:bg-white/5 dark:group-has-checked:bg-white/10">' +
-      '  <div class="grid size-4 grid-cols-1">' +
-      '    <input type="checkbox" data-filter-value="' +
-      escapeHtml(value) +
-      '" id="' +
-      escapeHtml(id) +
-      '"' +
-      (checked ? " checked" : "") +
-      '      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
-      '    <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
-      '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
-      "    </svg>" +
-      "  </div>" +
-      '  <span class="text-sm font-medium text-gray-900 dark:text-gray-100">' +
-      escapeHtml(label) +
-      "</span>" +
-      (countText
-        ? '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' +
-          escapeHtml(countText) +
-          "</span>"
-        : "") +
-      "</label>"
-    );
+    return window.TableUi.filterCheckbox({
+      id: id,
+      label: label,
+      countText: countText,
+      value: value,
+      checked: checked,
+    });
   }
 
   function toIsoDate(value) {
@@ -2037,15 +2175,20 @@
 
   function normalizeFilterPanel(panel) {
     if (panel === "root") return "root";
-    return panel === "status" ||
+    if (
+      panel === "payee" ||
+      panel === "source" ||
+      panel === "status" ||
       panel === "method" ||
       panel === "failure_reason" ||
       panel === "initiated_date"
-      ? panel
-      : "source";
+    )
+      return panel;
+    return "payee";
   }
 
   function copyAppliedFiltersToDraft() {
+    state.selectedPayees = cloneSet(state.appliedSelectedPayees);
     state.selectedSources = cloneSet(state.appliedSelectedSources);
     state.selectedStatuses = cloneSet(state.appliedSelectedStatuses);
     state.selectedMethods = cloneSet(state.appliedSelectedMethods);
@@ -2060,6 +2203,7 @@
   }
 
   function commitDraftFilters() {
+    state.appliedSelectedPayees = cloneSet(state.selectedPayees);
     state.appliedSelectedSources = cloneSet(state.selectedSources);
     state.appliedSelectedStatuses = cloneSet(state.selectedStatuses);
     state.appliedSelectedMethods = cloneSet(state.selectedMethods);
@@ -2072,11 +2216,13 @@
 
   function syncSelectedFiltersToAvailable() {
     var baseRows = getBaseFilterRows();
+    var payeeSet = new Set();
     var sourceSet = new Set();
     var statusSet = new Set();
     var methodSet = new Set();
     var failureReasonSet = new Set();
     baseRows.forEach(function (row) {
+      payeeSet.add(String((row && row.payeeName) || ""));
       sourceSet.add(String((row && row.source) || ""));
       statusSet.add(String((row && row.status) || ""));
       methodSet.add(String((row && row.paymentMethodType) || ""));
@@ -2085,6 +2231,12 @@
       if (getFailureReason(row)) failureReasonSet.add(getFailureReason(row));
     });
 
+    Array.from(state.selectedPayees).forEach(function (payee) {
+      if (!payeeSet.has(payee)) state.selectedPayees.delete(payee);
+    });
+    Array.from(state.appliedSelectedPayees).forEach(function (payee) {
+      if (!payeeSet.has(payee)) state.appliedSelectedPayees.delete(payee);
+    });
     Array.from(state.selectedSources).forEach(function (source) {
       if (!sourceSet.has(source)) state.selectedSources.delete(source);
     });
@@ -2131,6 +2283,30 @@
     ) {
       state.appliedInitiatedDateTo = state.appliedInitiatedDateFrom;
     }
+  }
+
+  function renderPayeeFilters() {
+    if (!refs.filterPayeesWrap) return;
+    var counts = new Map();
+    getBaseFilterRows().forEach(function (row) {
+      var key = String((row && row.payeeName) || "");
+      if (!key) return;
+      counts.set(key, (counts.get(key) || 0) + 1);
+    });
+    var rows = Array.from(counts.entries())
+      .sort(function (a, b) {
+        return a[0].localeCompare(b[0]);
+      })
+      .map(function (entry, idx) {
+        return buildFilterCheckbox(
+          "bp-table-filter-payee-" + idx,
+          entry[0],
+          String(entry[1]),
+          entry[0],
+          state.selectedPayees.has(entry[0]),
+        );
+      });
+    refs.filterPayeesWrap.innerHTML = rows.join("");
   }
 
   function renderSourceFilters() {
@@ -2274,6 +2450,7 @@
     renderFilterCountBadge(
       countAppliedFilters(
         [
+          state.appliedSelectedPayees,
           state.appliedSelectedSources,
           state.appliedSelectedStatuses,
           state.appliedSelectedMethods,
@@ -2286,6 +2463,14 @@
 
     if (!refs.activeFilters) return;
     var tags = [];
+    if (state.appliedSelectedPayees.size) {
+      var payeeText = Array.from(state.appliedSelectedPayees)
+        .sort(function (a, b) {
+          return a.localeCompare(b);
+        })
+        .join(", ");
+      tags.push({ type: "payee", label: "Payee", value: payeeText });
+    }
     if (state.appliedSelectedSources.size) {
       var sourceText = Array.from(state.appliedSelectedSources)
         .sort(function (a, b) {
@@ -2323,14 +2508,14 @@
         .join(", ");
       tags.push({
         type: "method",
-        label: "Method of payment",
+        label: "Payment Type",
         value: methodText,
       });
     }
     if (state.appliedSelectedFailureReasons.size) {
       tags.push({
         type: "failure_reason",
-        label: "Failure reason",
+        label: "Failure Reasons",
         value: Array.from(state.appliedSelectedFailureReasons)
           .sort(function (a, b) {
             return a.localeCompare(b);
@@ -2347,7 +2532,7 @@
         : "Any";
       tags.push({
         type: "initiated_date",
-        label: "Initiated date",
+        label: "Payment Date",
         value: fromLabel + " - " + toLabel,
       });
     }
@@ -2360,34 +2545,11 @@
     refs.activeFilters.classList.remove("hidden");
     refs.activeFilters.innerHTML = tags
       .map(function (tag) {
-        var byLabel = "By " + String(tag.label || "").toLowerCase();
-        return (
-          "" +
-          '<span class="relative inline-flex max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-xs font-medium text-gray-600 dark:bg-white/10 dark:text-gray-300">' +
-          '  <span class="inline-flex shrink-0 items-center bg-gray-100 px-2 py-1 font-medium text-gray-900 dark:bg-white/15 dark:text-white">' +
-          escapeHtml(byLabel) +
-          "</span>" +
-          '  <button type="button" data-filter-tag-open="' +
-          escapeHtml(tag.type) +
-          '" title="' +
-          escapeHtml(tag.label + ": " + tag.value) +
-          '"' +
-          '    class="inline-flex min-w-0 items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15 cursor-pointer">' +
-          '    <span class="truncate font-medium text-gray-900 dark:text-white">' +
-          escapeHtml(tag.value) +
-          "</span>" +
-          "  </button>" +
-          '  <button type="button" data-filter-tag-remove="' +
-          escapeHtml(tag.type) +
-          '"' +
-          '    class="inline-flex w-6 shrink-0 self-stretch items-center justify-center border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white cursor-pointer" aria-label="Remove filter">' +
-          '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">' +
-          '      <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
-          "    </svg>" +
-          "  </button>" +
-          '  <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span>' +
-          "</span>"
-        );
+        return window.TableUi.filterChip({
+          label: tag.label,
+          type: tag.type,
+          value: tag.value,
+        });
       })
       .join("");
   }
@@ -2395,17 +2557,11 @@
   function renderPaginationSkeleton() {
     if (!refs.pagination) return;
     refs.pagination.innerHTML =
-      "" +
-      '<div class="flex flex-1 justify-between sm:hidden animate-pulse">' +
-      '<span class="inline-flex h-9 w-24 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
-      '<span class="inline-flex h-9 w-20 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
-      "</div>" +
-      '<div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between animate-pulse">' +
-      '<div class="flex items-center gap-x-6">' +
+      '<div class="flex w-full animate-pulse items-center justify-end gap-4">' +
+      '<span class="inline-flex h-4 w-28 rounded bg-gray-200 dark:bg-white/15"></span>' +
+      '<span class="inline-flex h-10 w-[75px] rounded-md bg-gray-200 dark:bg-white/15"></span>' +
       '<span class="inline-flex h-4 w-56 rounded bg-gray-200 dark:bg-white/15"></span>' +
-      '<span class="inline-flex h-8 w-28 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
-      "</div>" +
-      '<span class="inline-flex h-8 w-56 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+      '<span class="inline-flex h-[30px] w-[138px] rounded-md bg-gray-200 dark:bg-white/15"></span>' +
       "</div>";
   }
 
@@ -2458,7 +2614,9 @@
   }
 
   function clearPanelSelection(panel) {
-    if (panel === "status") {
+    if (panel === "payee") {
+      state.selectedPayees.clear();
+    } else if (panel === "status") {
       state.selectedStatuses.clear();
     } else if (panel === "method") {
       state.selectedMethods.clear();
@@ -2476,6 +2634,7 @@
   }
 
   function getPanelDraftCount(panel) {
+    if (panel === "payee") return state.selectedPayees.size;
     if (panel === "status") return state.selectedStatuses.size;
     if (panel === "method") return state.selectedMethods.size;
     if (panel === "failure_reason") return state.selectedFailureReasons.size;
@@ -2489,6 +2648,8 @@
   }
 
   function panelDraftChanged(panel) {
+    if (panel === "payee")
+      return !setsEqual(state.selectedPayees, state.appliedSelectedPayees);
     if (panel === "status")
       return !setsEqual(state.selectedStatuses, state.appliedSelectedStatuses);
     if (panel === "method")
@@ -2509,6 +2670,7 @@
 
   function hasAnyDraftChanges() {
     return (
+      panelDraftChanged("payee") ||
       panelDraftChanged("source") ||
       panelDraftChanged("status") ||
       panelDraftChanged("method") ||
@@ -2532,6 +2694,7 @@
   }
 
   function setFilterDetailPanelVisibility(panel) {
+    if (refs.filterPayeePanel) refs.filterPayeePanel.classList.add("hidden");
     if (refs.filterSourcePanel) refs.filterSourcePanel.classList.add("hidden");
     if (refs.filterStatusPanel) refs.filterStatusPanel.classList.add("hidden");
     if (refs.filterMethodPanel) refs.filterMethodPanel.classList.add("hidden");
@@ -2539,6 +2702,7 @@
       refs.filterFailureReasonPanel.classList.add("hidden");
     if (refs.filterInitiatedDatePanel)
       refs.filterInitiatedDatePanel.classList.add("hidden");
+    if (refs.filterPayeePanel) refs.filterPayeePanel.classList.remove("flex");
     if (refs.filterSourcePanel) refs.filterSourcePanel.classList.remove("flex");
     if (refs.filterStatusPanel) refs.filterStatusPanel.classList.remove("flex");
     if (refs.filterMethodPanel) refs.filterMethodPanel.classList.remove("flex");
@@ -2546,7 +2710,10 @@
       refs.filterFailureReasonPanel.classList.remove("flex");
     if (refs.filterInitiatedDatePanel)
       refs.filterInitiatedDatePanel.classList.remove("flex");
-    if (panel === "source" && refs.filterSourcePanel) {
+    if (panel === "payee" && refs.filterPayeePanel) {
+      refs.filterPayeePanel.classList.remove("hidden");
+      refs.filterPayeePanel.classList.add("flex");
+    } else if (panel === "source" && refs.filterSourcePanel) {
       refs.filterSourcePanel.classList.remove("hidden");
       refs.filterSourcePanel.classList.add("flex");
     } else if (panel === "status" && refs.filterStatusPanel) {
@@ -2575,9 +2742,9 @@
     navButtons.forEach(function (button) {
       var isActive = button.getAttribute("data-filter-open") === panel;
       button.classList.toggle("bg-gray-100", isActive);
-      button.classList.toggle("text-gray-900", isActive);
       button.classList.toggle("dark:bg-white/10", isActive);
-      button.classList.toggle("dark:text-white", isActive);
+      var chevron = button.querySelector("[data-nav-chevron]");
+      if (chevron) chevron.classList.toggle("hidden", !isActive);
     });
   }
 
@@ -2638,7 +2805,7 @@
       setFilterPanel(
         state.activeFilterPanel && state.activeFilterPanel !== "root"
           ? state.activeFilterPanel
-          : "source",
+          : "payee",
       );
       refs.filterMenu.classList.remove(
         "invisible",
@@ -2695,6 +2862,27 @@
     );
   }
 
+  function applyOpenFilterSearches() {
+    if (!refs.filterMenu) return;
+    Array.prototype.forEach.call(
+      refs.filterMenu.querySelectorAll("[data-filter-search]"),
+      function (input) {
+        var list = document.getElementById(
+          input.getAttribute("data-filter-search") || "",
+        );
+        if (!list) return;
+        var query = input.value.trim().toLowerCase();
+        Array.prototype.forEach.call(
+          list.querySelectorAll("label"),
+          function (label) {
+            var text = (label.textContent || "").toLowerCase();
+            label.classList.toggle("hidden", !!query && text.indexOf(query) === -1);
+          },
+        );
+      },
+    );
+  }
+
   function initTableFilterDropdown() {
     if (
       !refs.filterBtn ||
@@ -2707,6 +2895,7 @@
 
     syncFilterUi = function () {
       syncSelectedFiltersToAvailable();
+      renderPayeeFilters();
       renderSourceFilters();
       renderStatusFilters();
       renderMethodFilters();
@@ -2721,13 +2910,14 @@
           state.initiatedDateToDraft ||
           formatIsoAsUsInput(state.initiatedDateTo);
       renderFilterNavBadges();
+      applyOpenFilterSearches();
       syncFilterApplyButtonState();
       if (state.filterMenuOpen) {
         applyFilterMenuLayout();
         setFilterPanel(
           state.activeFilterPanel && state.activeFilterPanel !== "root"
             ? state.activeFilterPanel
-            : "source",
+            : "payee",
         );
       }
     };
@@ -2739,18 +2929,43 @@
         nextOpen &&
         (!state.activeFilterPanel || state.activeFilterPanel === "root")
       )
-        state.activeFilterPanel = "source";
+        state.activeFilterPanel = "payee";
       setFilterMenuOpen(nextOpen);
       syncFilterApplyButtonState();
     });
 
     refs.filterTrack.addEventListener("click", function (event) {
       event.stopPropagation();
+      var selectAll = event.target.closest("[data-filter-select-all]");
+      if (selectAll) {
+        event.preventDefault();
+        var list = document.getElementById(
+          selectAll.getAttribute("data-filter-select-all") || "",
+        );
+        if (!list) return;
+        Array.prototype.forEach.call(
+          list.querySelectorAll(
+            "label:not(.hidden) input[type='checkbox'][data-filter-value]",
+          ),
+          function (input) {
+            if (input.checked) return;
+            input.checked = true;
+            input.dispatchEvent(new Event("change", { bubbles: true }));
+          },
+        );
+        return;
+      }
       var openBtn = event.target.closest("[data-filter-open]");
       if (openBtn) {
         event.preventDefault();
         setFilterPanel(openBtn.getAttribute("data-filter-open"));
       }
+    });
+
+    refs.filterTrack.addEventListener("input", function (event) {
+      var searchInput = event.target.closest("[data-filter-search]");
+      if (!searchInput) return;
+      applyOpenFilterSearches();
     });
 
     refs.filterTrack.addEventListener("change", function (event) {
@@ -2759,11 +2974,14 @@
       );
       if (!checkbox) return;
       var panelEl = checkbox.closest(
-        "#bp-table-filter-sources, #bp-table-filter-statuses, #bp-table-filter-methods, #bp-table-filter-failure-reasons",
+        "#bp-table-filter-payees, #bp-table-filter-sources, #bp-table-filter-statuses, #bp-table-filter-methods, #bp-table-filter-failure-reasons",
       );
       var value = checkbox.getAttribute("data-filter-value");
       if (!panelEl || !value) return;
-      if (panelEl.id === "bp-table-filter-sources") {
+      if (panelEl.id === "bp-table-filter-payees") {
+        if (checkbox.checked) state.selectedPayees.add(value);
+        else state.selectedPayees.delete(value);
+      } else if (panelEl.id === "bp-table-filter-sources") {
         if (checkbox.checked) state.selectedSources.add(value);
         else state.selectedSources.delete(value);
       } else if (panelEl.id === "bp-table-filter-statuses") {
@@ -2842,7 +3060,7 @@
           event.preventDefault();
           event.stopPropagation();
           var panelType = openBtn.getAttribute("data-filter-tag-open");
-          state.activeFilterPanel = panelType || "source";
+          state.activeFilterPanel = panelType || "payee";
           setFilterMenuOpen(true);
           setFilterPanel(state.activeFilterPanel);
           syncFilterApplyButtonState();
@@ -2852,6 +3070,7 @@
         if (!removeBtn) return;
         event.preventDefault();
         var type = removeBtn.getAttribute("data-filter-tag-remove");
+        if (type === "payee") state.appliedSelectedPayees.clear();
         if (type === "source") state.appliedSelectedSources.clear();
         if (type === "status") state.appliedSelectedStatuses.clear();
         if (type === "method") state.appliedSelectedMethods.clear();
@@ -2887,7 +3106,7 @@
         setFilterPanel(
           state.activeFilterPanel && state.activeFilterPanel !== "root"
             ? state.activeFilterPanel
-            : "source",
+            : "payee",
         );
       };
       window.addEventListener("resize", filterResizeHandler);
@@ -3106,12 +3325,13 @@
   function renderTable() {
     if (!refs.table) return;
     var renderColumns = getRenderableColumns();
+    var filteredRows = getFilteredRows();
+    updatePaymentsCount(filteredRows.length);
     if (state.isTabLoading || state.isInitialLoading || state.isSearchLoading) {
       renderTableSkeleton(renderColumns);
       return;
     }
 
-    var filteredRows = getFilteredRows();
     var totalPages = Math.max(
       1,
       Math.ceil(filteredRows.length / state.pageSize),
@@ -3130,35 +3350,36 @@
     var hasSomeVisibleSelected =
       selectedVisibleCount > 0 && !allVisibleSelected;
 
-    function buildSortBadgeHTML(sortDirection) {
-      var sortBtnClass = sortDirection
-        ? "inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
-        : "inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400";
-      var sortIcon =
-        sortDirection === "asc"
-          ? ICON_SORT_ASC
-          : sortDirection === "desc"
-            ? ICON_SORT_DESC
-            : ICON_SORT;
+    function buildHeaderLabel(col) {
+      if (col.key === "billNumber") return "Bill<br>Reference";
+      return escapeHtml(col.label);
+    }
+
+    function buildHeaderFilterButton(panel, label) {
+      var iconFile = panel === "source" ? "filter-funnel.svg" : "filter.svg";
       return (
-        '<span data-sort-badge="true" class="' +
-        sortBtnClass +
-        '">' +
-        sortIcon +
-        "</span>"
+        '<button type="button" data-column-filter="' +
+        panel +
+        '" aria-label="Filter ' +
+        escapeHtml(label) +
+        '" class="inline-flex size-5 items-center justify-center rounded-sm hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
+        tableIcon(iconFile, 14, 14) +
+        "</button>"
       );
     }
 
     var headerHtml =
-      '<thead class="bg-white dark:bg-gray-900"><tr class="h-14">' +
+      '<thead class="bg-white dark:bg-gray-900"><tr>' +
       renderColumns
         .map(function (col) {
-          var base = "border-b border-gray-200 dark:border-white/10";
+          var base =
+            "border-b border-dashed border-gray-200 align-middle dark:border-white/10";
           if (col.type === "expand") {
             return (
               '<th class="' +
               base +
-              ' h-14 w-10 min-w-10 px-0 py-4 align-middle text-center whitespace-nowrap"><span class="sr-only">Expand</span></th>'
+              columnWidthClass(col) +
+              ' h-[52px] text-center"><span class="sr-only">Expand</span></th>'
             );
           }
           if (col.type === "select") {
@@ -3166,11 +3387,12 @@
               "" +
               '<th class="' +
               base +
-              ' h-14 w-10 min-w-10 px-0 py-4 align-middle text-center text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">' +
-              '<div class="flex h-6 items-center justify-center">' +
-              '<label class="inline-flex items-center justify-center cursor-pointer select-none">' +
+              columnWidthClass(col) +
+              ' h-[52px] text-center">' +
+              '<div class="flex items-center justify-center">' +
+              '<label class="inline-flex cursor-pointer items-center justify-center select-none">' +
               '<span class="group grid size-4 grid-cols-1">' +
-              '<input id="bp-select-all" type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" ' +
+              '<input id="bp-select-all" type="checkbox" class="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" ' +
               (allVisibleSelected ? "checked" : "") +
               " />" +
               '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
@@ -3187,24 +3409,67 @@
             return (
               '<th data-action-column scope="col" class="' +
               base +
-              ' h-14 w-px bg-white py-4 pr-3 pl-3 align-middle whitespace-nowrap dark:bg-gray-900 sm:pr-2"><span class="sr-only">Action</span></th>'
+              columnWidthClass(col) +
+              ' h-[52px] bg-white dark:bg-gray-900"><span class="sr-only">Action</span></th>'
             );
           }
 
-          var thClass =
-            base +
-            " h-14 px-2 py-4 align-middle text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white";
-          var direction = state.sortKey === col.key ? state.sortDirection : "";
-          var content = col.sortable
+          var headerTextClass =
+            "text-xs font-medium uppercase tracking-[0.6px] text-gray-500 dark:text-gray-400";
+          var alignEnd = col.key === "amount";
+          var filterPanel =
+            col.key === "payeeName"
+              ? "payee"
+              : col.key === "source"
+                ? "source"
+                : "";
+          var sortButton = col.sortable
             ? '<button type="button" data-sort-key="' +
               col.key +
-              '" class="group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white"><span>' +
-              escapeHtml(col.label) +
+              '" class="inline-flex cursor-pointer items-center gap-1 rounded-sm ' +
+              (alignEnd ? "justify-end " : "") +
+              headerTextClass +
+              " focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" +
+              (state.sortKey === col.key && state.sortDirection
+                ? " text-blue-600 dark:text-blue-300"
+                : "") +
+              '"><span class="' +
+              (col.key === "billNumber"
+                ? "text-left leading-4"
+                : "whitespace-nowrap") +
+              '">' +
+              buildHeaderLabel(col) +
               "</span>" +
-              buildSortBadgeHTML(direction) +
+              tableIcon("sort.svg", 20, 20) +
               "</button>"
-            : escapeHtml(col.label);
-          return '<th class="' + thClass + '">' + content + "</th>";
+            : '<span class="' +
+              headerTextClass +
+              " " +
+              (col.key === "billNumber"
+                ? "leading-4"
+                : "whitespace-nowrap") +
+              '">' +
+              buildHeaderLabel(col) +
+              "</span>";
+          var content =
+            '<div class="flex items-center gap-1' +
+            (alignEnd ? " justify-end" : "") +
+            '">' +
+            sortButton +
+            (filterPanel
+              ? buildHeaderFilterButton(filterPanel, col.label)
+              : "") +
+            "</div>";
+          return (
+            '<th class="' +
+            base +
+            columnWidthClass(col) +
+            " h-[52px]" +
+            (alignEnd ? " text-right" : " text-left") +
+            '">' +
+            content +
+            "</th>"
+          );
         })
         .join("") +
       "</tr></thead>";
@@ -3224,15 +3489,22 @@
             if (col.type === "expand") {
               return (
                 "" +
-                '<td class="h-12 align-middle py-2 px-0 text-center whitespace-nowrap' +
+                '<td class="h-[52px] p-0 align-middle text-center whitespace-nowrap' +
+                columnWidthClass(col) +
                 cb +
                 '">' +
                 '<button type="button" data-expand-id="' +
                 row.id +
-                '" class="inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 cursor-pointer">' +
-                '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200 ' +
-                (expanded ? "rotate-90" : "") +
-                '" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>' +
+                '" aria-expanded="' +
+                (expanded ? "true" : "false") +
+                '" class="inline-flex h-[52px] w-full cursor-default items-center justify-center">' +
+                tableIcon(
+                  "chevron-right.svg",
+                  20,
+                  20,
+                  "transition-transform duration-200" +
+                    (expanded ? " rotate-90" : ""),
+                ) +
                 "</button>" +
                 "</td>"
               );
@@ -3240,14 +3512,15 @@
             if (col.type === "select") {
               return (
                 "" +
-                '<td class="h-12 align-middle py-2 px-0 text-center whitespace-nowrap' +
+                '<td class="h-[52px] align-middle text-center whitespace-nowrap' +
+                columnWidthClass(col) +
                 cb +
                 '">' +
-                '<div class="flex h-6 items-center justify-center">' +
+                '<div class="flex items-center justify-center">' +
                 '<span class="group inline-grid size-4 grid-cols-1">' +
                 '<input type="checkbox" data-row-select-id="' +
                 row.id +
-                '" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" ' +
+                '" class="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" ' +
                 (state.selectedRowIds.has(row.id) ? "checked" : "") +
                 " />" +
                 '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
@@ -3269,40 +3542,46 @@
                 isScheduledAction || isPendingSmartDisburseAction
                   ? '<button type="button" data-cancel-id="' +
                     row.id +
-                    '" class="rounded-md bg-gray-100 px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40">Cancel</button>'
+                    '" class="rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40">Cancel</button>'
                   : row.status === "in_progress"
                     ? '<span class="inline-flex h-8"></span>'
                     : row.status === "exception"
                       ? '<button type="button" data-rerun-id="' +
                         row.id +
-                        '" class="rounded-md bg-gray-100 px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40">Re-run</button>'
+                        '" class="rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40">Re-run</button>'
                       : '<button type="button" data-pay-id="' +
                         row.id +
-                        '" class="cursor-pointer rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Pay</button>';
+                        '" class="cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Pay</button>';
               return (
-                '<td data-action-column class="h-12 align-middle py-2 pr-3 pl-3 whitespace-nowrap w-px text-right text-sm font-medium' +
+                '<td data-action-column class="h-[52px] align-middle whitespace-nowrap text-right text-sm font-medium' +
+                columnWidthClass(col) +
                 cb +
                 actionBgClass +
-                ' group-hover:bg-gray-50 dark:group-hover:bg-white/5 sm:pr-2">' +
+                ' group-hover:bg-gray-50 dark:group-hover:bg-white/5">' +
                 actionButton +
                 "</td>"
               );
             }
             if (col.key === "amount") {
               return (
-                '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
+                '<td class="h-[52px] align-middle text-right whitespace-nowrap' +
+                columnWidthClass(col) +
                 cb +
                 '">' +
+                '<span class="inline-flex items-center justify-end gap-1">' +
+                '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
                 escapeHtml(formatMoney(row.amount, row.currency)) +
-                ' <span class="text-gray-500 dark:text-gray-400">' +
+                "</span>" +
+                '<span class="text-sm font-normal text-gray-500 dark:text-gray-400">' +
                 escapeHtml(row.currency || "USD") +
-                "</span></td>"
+                "</span></span></td>"
               );
             }
             if (col.key === "dueDate") {
               var pastDue = isPastDue(row.dueDate);
               return (
-                '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap' +
+                '<td class="h-[52px] align-middle text-sm font-normal whitespace-nowrap' +
+                columnWidthClass(col) +
                 cb +
                 '">' +
                 '<span class="group/due relative inline-flex items-center ' +
@@ -3322,7 +3601,8 @@
             }
             if (col.key === "adDate") {
               return (
-                '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' +
+                '<td class="h-[52px] align-middle text-sm font-normal whitespace-nowrap text-gray-500 dark:text-gray-400' +
+                columnWidthClass(col) +
                 cb +
                 '">' +
                 escapeHtml(formatDate(row[col.key])) +
@@ -3330,17 +3610,16 @@
               );
             }
             if (col.type === "status" || col.key === "status") {
-              var status = row.status;
-              if (status === "in_progress" && row.statusType === "scheduled") {
+              if (row.status === "in_progress" && row.statusType === "scheduled") {
                 var scheduledText = formatScheduledDateTime(row.scheduledFor);
                 return (
-                  '<td class="h-12 align-middle px-2 py-2 whitespace-nowrap' +
+                  '<td class="h-[52px] align-middle whitespace-nowrap' +
+                  columnWidthClass(col) +
                   cb +
                   '">' +
-                  '<span class="group/scheduled relative inline-flex cursor-default select-none items-center gap-1 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 inset-ring inset-ring-gray-500/10 hover:bg-gray-200 dark:bg-white/10 dark:text-gray-300 dark:inset-ring-white/15 dark:hover:bg-white/15">' +
-                  ICON_SCHEDULED +
-                  "<span>Scheduled</span>" +
-                  '<span class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg group-hover/scheduled:inline-flex items-center gap-2">' +
+                  '<span class="group/scheduled relative inline-flex cursor-default select-none">' +
+                  buildBadgeHTML(statusBadgeOptions(row)) +
+                  '<span class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 hidden -translate-x-1/2 items-center gap-2 whitespace-nowrap rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg group-hover/scheduled:inline-flex">' +
                   ICON_SCHEDULED +
                   "<span>Scheduled for: " +
                   escapeHtml(scheduledText) +
@@ -3351,14 +3630,12 @@
                 );
               }
               return (
-                '<td class="h-12 align-middle px-2 py-2 whitespace-nowrap' +
+                '<td class="h-[52px] align-middle whitespace-nowrap' +
+                columnWidthClass(col) +
                 cb +
                 '">' +
-                '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
-                (STATUS_STYLES[status] || STATUS_STYLES.ready_to_pay) +
-                '">' +
-                escapeHtml(getDisplayStatusLabel(row)) +
-                "</span></td>"
+                buildBadgeHTML(statusBadgeOptions(row)) +
+                "</td>"
               );
             }
             if (col.key === "billNumber") {
@@ -3367,19 +3644,21 @@
               );
               if (row.status === "in_progress" || row.status === "paid") {
                 return (
-                  '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' +
+                  '<td class="h-[52px] align-middle text-sm font-normal whitespace-nowrap text-gray-500 dark:text-gray-400' +
+                  columnWidthClass(col) +
                   cb +
                   '">' +
                   '<button type="button" data-pay-id="' +
                   row.id +
-                  '" class="cursor-pointer p-0 font-medium text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">' +
+                  '" class="cursor-pointer p-0 font-normal text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">' +
                   billValue +
                   "</button>" +
                   "</td>"
                 );
               }
               return (
-                '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' +
+                '<td class="h-[52px] align-middle text-sm font-normal whitespace-nowrap text-gray-500 dark:text-gray-400' +
+                columnWidthClass(col) +
                 cb +
                 '">' +
                 billValue +
@@ -3391,7 +3670,8 @@
             }
             if (col.key === "failureReason") {
               return (
-                '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' +
+                '<td class="h-[52px] align-middle text-sm leading-5 font-medium whitespace-nowrap text-gray-900 dark:text-white' +
+                columnWidthClass(col) +
                 cb +
                 '">' +
                 escapeHtml(getFailureReason(row) || "--") +
@@ -3400,15 +3680,18 @@
             }
             if (col.key === "payeeName" || col.key === "source") {
               return (
-                '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
+                '<td class="h-[52px] align-middle whitespace-nowrap' +
+                columnWidthClass(col) +
                 cb +
                 '">' +
+                '<span class="block max-w-full truncate text-sm font-medium text-gray-900 dark:text-white">' +
                 escapeHtml(row[col.key] == null ? "--" : row[col.key]) +
-                "</td>"
+                "</span></td>"
               );
             }
             return (
-              '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' +
+              '<td class="h-[52px] align-middle text-sm font-normal whitespace-nowrap text-gray-500 dark:text-gray-400' +
+              columnWidthClass(col) +
               cb +
               '">' +
               escapeHtml(row[col.key] == null ? "--" : row[col.key]) +
@@ -3433,7 +3716,7 @@
         }
 
         return (
-          '<tr class="group ' +
+          '<tr class="group cursor-pointer ' +
           (expanded ? "bg-gray-100 dark:bg-white/5 " : "") +
           'hover:bg-gray-50 dark:hover:bg-white/5">' +
           rowCells +
@@ -3539,49 +3822,30 @@
     var isFirstPage = page <= 1;
     var isLastPage = page >= totalPages;
 
-    var activePageClass =
-      "relative z-10 inline-flex items-center bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-600 inset-ring inset-ring-blue-300 focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500/10 dark:text-blue-400 dark:inset-ring-blue-500/30 dark:focus-visible:outline-blue-400";
-    var defaultPageClass =
-      "relative inline-flex items-center px-2.5 py-1 text-xs font-semibold text-gray-900 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:text-gray-200 dark:inset-ring-gray-700 dark:hover:bg-white/5";
-    var ellipsisClass =
-      "relative inline-flex items-center px-2.5 py-1 text-xs font-semibold text-gray-700 inset-ring inset-ring-gray-300 focus:outline-offset-0 dark:text-gray-400 dark:inset-ring-gray-700";
-    var prevClass =
-      "relative inline-flex items-center rounded-l-sm px-1.5 py-1 text-gray-400 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:inset-ring-gray-700 dark:hover:bg-white/5";
-    var nextClass =
-      "relative inline-flex items-center rounded-r-sm px-1.5 py-1 text-gray-400 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:inset-ring-gray-700 dark:hover:bg-white/5";
-
-    var pageNumbers = getPageNumbers(page, totalPages);
-    var pagesHTML = "";
-    pageNumbers.forEach(function (p) {
-      if (p === "...") {
-        pagesHTML += '<span class="' + ellipsisClass + '">...</span>';
-      } else if (p === page) {
-        pagesHTML +=
-          '<a href="#" data-page-num="' +
-          p +
-          '" aria-current="page" class="' +
-          activePageClass +
-          '">' +
-          p +
-          "</a>";
-      } else {
-        pagesHTML +=
-          '<a href="#" data-page-num="' +
-          p +
-          '" class="' +
-          defaultPageClass +
-          '">' +
-          p +
-          "</a>";
-      }
-    });
+    function pageIconButton(attr, label, iconFile, disabled) {
+      return (
+        '<button type="button" ' +
+        attr +
+        ' aria-label="' +
+        label +
+        '" class="inline-flex size-8 items-center justify-center rounded-md border border-gray-300 bg-white p-1.5 dark:border-white/15 dark:bg-white/5 ' +
+        (disabled
+          ? "cursor-not-allowed opacity-40"
+          : "cursor-pointer shadow-sm hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10") +
+        '"' +
+        (disabled ? " disabled" : "") +
+        ">" +
+        tableIcon(iconFile, 20, 20) +
+        "</button>"
+      );
+    }
 
     var optionsHTML = "";
     PAGE_SIZE_OPTIONS.forEach(function (opt) {
       optionsHTML +=
         '<a href="#" data-page-size="' +
         opt +
-        '" class="block px-4 py-2 text-sm ' +
+        '" class="block px-4 py-3 text-sm ' +
         (opt === size
           ? "font-semibold text-gray-900 bg-gray-50 dark:text-white dark:bg-white/5"
           : "text-gray-700 dark:text-gray-300") +
@@ -3590,68 +3854,59 @@
         "</a>";
     });
 
-    var mobileHTML =
-      '<div class="flex flex-1 justify-between sm:hidden">' +
-      '<a href="#" data-page-prev class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10' +
-      (isFirstPage ? " opacity-50 pointer-events-none" : "") +
-      '">Previous</a>' +
-      '<a href="#" data-page-next class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10' +
-      (isLastPage ? " opacity-50 pointer-events-none" : "") +
-      '">Next</a>' +
-      "</div>";
-
-    var desktopHTML =
-      '<div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">' +
-      '<div class="flex items-center gap-x-6">' +
-      '<p class="text-sm text-gray-700 dark:text-gray-300">' +
-      'Showing <span class="font-medium">' +
-      start +
-      "</span> to " +
-      '<span class="font-medium">' +
-      end +
-      "</span> of " +
-      '<span class="font-medium">' +
-      total +
-      "</span> results" +
-      "</p>" +
-      '<div class="flex items-center gap-x-2 text-sm text-gray-500 dark:text-gray-400">' +
-      "<span>Rows per page:</span>" +
+    var rangeLabel = total ? start + " - " + end : "0 - 0";
+    refs.pagination.innerHTML =
+      '<div class="flex w-full flex-wrap items-center justify-end gap-4">' +
+      '<div class="flex h-10 items-center gap-4">' +
+      '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">Rows per Page:</span>' +
       '<el-dropdown class="inline-block">' +
-      '<button type="button" class="inline-flex items-center gap-x-1 rounded-sm bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">' +
+      '<button type="button" class="inline-flex h-10 w-[75px] items-center justify-between rounded-md border border-gray-300 bg-white px-3 text-base leading-6 font-medium text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:shadow-none dark:hover:bg-white/10">' +
       size +
-      " " +
-      ICON_CHEVRON_DOWN +
+      tableIcon("select-chevron.svg", 20, 20) +
       "</button>" +
-      '<el-menu anchor="bottom end" popover class="w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
+      '<el-menu anchor="bottom end" popover class="w-[75px] origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(1)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
       '<div class="py-1">' +
       optionsHTML +
       "</div>" +
       "</el-menu>" +
       "</el-dropdown>" +
+      '<p class="text-sm font-normal whitespace-nowrap text-gray-700 dark:text-gray-300">' +
+      "Showing " +
+      '<span class="font-semibold">' +
+      rangeLabel +
+      "</span> of " +
+      '<span class="font-semibold">' +
+      total +
+      "</span> results" +
+      "</p>" +
+      '<div class="flex items-start gap-2" aria-label="Pagination">' +
+      pageIconButton(
+        'data-page-first',
+        "First page",
+        "page-first.svg",
+        isFirstPage,
+      ) +
+      pageIconButton(
+        "data-page-prev",
+        "Previous page",
+        "page-prev.svg",
+        isFirstPage,
+      ) +
+      pageIconButton(
+        "data-page-next",
+        "Next page",
+        "page-next.svg",
+        isLastPage,
+      ) +
+      pageIconButton(
+        "data-page-last",
+        "Last page",
+        "page-last.svg",
+        isLastPage,
+      ) +
       "</div>" +
-      "</div>" +
-      "<div>" +
-      '<nav aria-label="Pagination" class="isolate inline-flex -space-x-px overflow-hidden rounded-sm shadow-xs inset-ring inset-ring-gray-300 dark:shadow-none dark:inset-ring-gray-700">' +
-      '<a href="#" data-page-prev class="' +
-      prevClass +
-      (isFirstPage ? " opacity-50 pointer-events-none" : "") +
-      '">' +
-      '<span class="sr-only">Previous</span>' +
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
-      "</a>" +
-      pagesHTML +
-      '<a href="#" data-page-next class="' +
-      nextClass +
-      (isLastPage ? " opacity-50 pointer-events-none" : "") +
-      '">' +
-      '<span class="sr-only">Next</span>' +
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
-      "</a>" +
-      "</nav>" +
       "</div>" +
       "</div>";
-
-    refs.pagination.innerHTML = mobileHTML + desktopHTML;
   }
 
   function exportCurrentRows() {
@@ -3668,7 +3923,7 @@
     ];
     var headers = [
       "Amount",
-      "Bill #",
+      "Bill Reference",
       "Payee",
       "Payment Method",
       "Source",
@@ -3727,7 +3982,7 @@
         state.isTabLoading = true;
         renderAll();
         refreshHalfTurns += 1;
-        var icon = refs.refreshBtn.querySelector("svg");
+        var icon = refs.refreshBtn.querySelector("img, svg");
         if (icon) {
           icon.style.transition = "transform 800ms ease-out";
           icon.style.transform = "rotate(" + refreshHalfTurns * 180 + "deg)";
@@ -3959,6 +4214,23 @@
           return;
         }
 
+        var columnFilter = e.target.closest("[data-column-filter]");
+        if (columnFilter) {
+          e.stopPropagation();
+          var filterPanel = columnFilter.getAttribute("data-column-filter");
+          if (
+            filterPanel === "payee" ||
+            filterPanel === "source" ||
+            filterPanel === "status" ||
+            filterPanel === "method" ||
+            filterPanel === "failure_reason" ||
+            filterPanel === "initiated_date"
+          )
+            setFilterPanel(filterPanel);
+          if (!state.filterMenuOpen) setFilterMenuOpen(true);
+          return;
+        }
+
         var sortBtn = e.target.closest("[data-sort-key]");
         if (sortBtn) {
           var sortKey = sortBtn.getAttribute("data-sort-key");
@@ -3978,7 +4250,15 @@
           return;
         }
 
-        var expandBtn = e.target.closest("[data-expand-id]");
+        if (e.target.closest("[data-expand-id]")) return;
+        var expandBtn = null;
+        var clickedRow = e.target.closest("tbody tr");
+        if (
+          clickedRow &&
+          !e.target.closest("button, a, input, label, select, textarea")
+        ) {
+          expandBtn = clickedRow.querySelector("[data-expand-id]");
+        }
         if (expandBtn) {
           var rowId = expandBtn.getAttribute("data-expand-id");
           if (state.expandedRows.has(rowId)) state.expandedRows.delete(rowId);
@@ -4040,10 +4320,32 @@
           return;
         }
 
+        var totalPages = Math.max(
+          1,
+          Math.ceil(getFilteredRows().length / state.pageSize),
+        );
+        var first = e.target.closest("[data-page-first]");
+        var last = e.target.closest("[data-page-last]");
         var prev = e.target.closest("#bp-page-prev");
         var next = e.target.closest("#bp-page-next");
         if (!prev) prev = e.target.closest("[data-page-prev]");
         if (!next) next = e.target.closest("[data-page-next]");
+        if (first) {
+          e.preventDefault();
+          if (state.currentPage !== 1) {
+            state.currentPage = 1;
+            renderTable();
+          }
+          return;
+        }
+        if (last) {
+          e.preventDefault();
+          if (state.currentPage !== totalPages) {
+            state.currentPage = totalPages;
+            renderTable();
+          }
+          return;
+        }
         if (prev) {
           e.preventDefault();
           state.currentPage = Math.max(1, state.currentPage - 1);
@@ -4051,10 +4353,6 @@
         }
         if (next) {
           e.preventDefault();
-          var totalPages = Math.max(
-            1,
-            Math.ceil(getFilteredRows().length / state.pageSize),
-          );
           state.currentPage = Math.min(totalPages, state.currentPage + 1);
           renderTable();
         }

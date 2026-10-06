@@ -384,14 +384,17 @@
     return (
       '<button type="button" data-filter-open="' +
       panel.key +
-      '" data-filter-nav class="flex w-full cursor-pointer items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">' +
+      '" data-filter-nav class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10">' +
       '<span class="min-w-0 flex-1">' +
       panel.label +
       "</span>" +
       '<span data-filter-count-badge="' +
       panel.key +
       '" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>' +
-      ICON_CHEVRON_RIGHT +
+      window.TableUi.icon("chevron-right.svg", 20, 20, "hidden").replace(
+        "<img ",
+        "<img data-nav-chevron ",
+      ) +
       "</button>"
     );
   }
@@ -432,20 +435,20 @@
       '<span data-filter-count class="hidden items-center rounded-full bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 tabular-nums inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10"></span>' +
       '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-filter-chevron class="-mr-0.5 size-5 transition-transform"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>' +
       "</button>" +
-      '<div id="pp-sup-filter-menu" class="pointer-events-none invisible absolute right-0 z-[60] mt-2 w-[628px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-md bg-white opacity-0 shadow-lg outline-1 outline-black/5 transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
-      '<div class="flex max-h-[470px] min-h-0 flex-col">' +
+      '<div id="pp-sup-filter-menu" class="pointer-events-none invisible absolute right-0 z-[60] mt-2 w-[628px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white opacity-0 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:ring-1 dark:ring-white/10">' +
+      '<div class="flex max-h-[470px] min-h-0 flex-col sm:h-[470px]">' +
       '<div class="flex min-h-0 flex-1 flex-col sm:flex-row">' +
-      '<div class="shrink-0 border-b border-gray-200 bg-gray-50 p-3 sm:w-72 sm:border-r sm:border-b-0 dark:border-white/10 dark:bg-gray-900/40">' +
-      '<div class="grid gap-1">' +
+      '<div class="shrink-0 border-b border-gray-200 bg-gray-50 p-3 sm:w-64 sm:max-w-[256px] sm:border-r sm:border-b-0 dark:border-white/10 dark:bg-gray-900/40">' +
+      '<div class="flex flex-col">' +
       PANELS.map(navButton).join("") +
       "</div></div>" +
       '<div class="min-h-[208px] min-w-0 flex-1 bg-white dark:bg-gray-800">' +
       PANELS.map(detailPanel).join("") +
       "</div>" +
       "</div>" +
-      '<div class="flex items-center justify-end gap-3 border-t border-gray-200 bg-white px-3 py-3 dark:border-white/10 dark:bg-gray-800">' +
-      '<button id="pp-sup-filter-clear" type="button" disabled class="cursor-pointer rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">Clear</button>' +
-      '<button id="pp-sup-filter-apply" type="button" disabled class="cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300">Apply</button>' +
+      '<div class="flex items-center justify-end gap-4 border-t border-gray-200 bg-white p-3 dark:border-white/10 dark:bg-gray-800">' +
+      '<button id="pp-sup-filter-clear" type="button" disabled class="h-7 cursor-pointer rounded border border-gray-300 bg-white px-2 text-sm leading-5 font-semibold text-gray-500 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">Reset</button>' +
+      '<button id="pp-sup-filter-apply" type="button" disabled class="h-7 cursor-pointer rounded bg-blue-600 px-2 text-sm leading-5 font-semibold text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600">Apply</button>' +
       "</div>" +
       "</div>" +
       "</div>" +
@@ -522,25 +525,13 @@
   }
 
   function optionRow(panel, value, label, count, checked) {
-    return (
-      '<label class="group flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5">' +
-      '<div class="grid size-4 grid-cols-1">' +
-      '<input type="checkbox" data-filter-panel-key="' +
-      panel +
-      '" data-filter-value="' +
-      escapeHtml(value) +
-      '"' +
-      (checked ? " checked" : "") +
-      ' class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
-      '<svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none"><path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>' +
-      "</div>" +
-      '<span class="min-w-0 flex-1 truncate text-sm font-medium text-gray-700 dark:text-gray-200">' +
-      escapeHtml(label) +
-      "</span>" +
-      '<span class="shrink-0 text-sm font-normal text-gray-500 dark:text-gray-400">' +
-      Number(count).toLocaleString("en-US") +
-      "</span></label>"
-    );
+    return window.TableUi.filterCheckbox({
+      panelKey: panel,
+      value: value,
+      label: label,
+      countText: Number(count).toLocaleString("en-US"),
+      checked: checked,
+    });
   }
 
   function optionsHtml(key) {
@@ -651,14 +642,10 @@
           '[data-filter-options="' + panel.key + '"]',
         ).innerHTML = optionsHtml(panel.key);
       var nav = menu.querySelector('[data-filter-open="' + panel.key + '"]');
-      [
-        "bg-gray-100",
-        "text-gray-900",
-        "dark:bg-white/10",
-        "dark:text-white",
-      ].forEach(function (c) {
-        nav.classList.toggle(c, on);
-      });
+      nav.classList.toggle("bg-gray-100", on);
+      nav.classList.toggle("dark:bg-white/10", on);
+      var chevron = nav.querySelector("[data-nav-chevron]");
+      if (chevron) chevron.classList.toggle("hidden", !on);
       var badge = menu.querySelector(
         '[data-filter-count-badge="' + panel.key + '"]',
       );
@@ -746,25 +733,13 @@
           .map(label[panel.key])
           .sort()
           .join(", ");
-        return (
-          '<span class="relative inline-flex max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-xs font-medium text-gray-600 dark:bg-white/10 dark:text-gray-300">' +
-          '<span class="inline-flex shrink-0 items-center bg-gray-100 px-2 py-1 font-medium text-gray-900 dark:bg-white/15 dark:text-white">' +
-          escapeHtml(panel.label) +
-          "</span>" +
-          '<button type="button" data-filter-tag-open="' +
-          panel.key +
-          '" data-tooltip="' +
-          "Edit filter" +
-          '" class="inline-flex min-w-0 cursor-pointer items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15">' +
-          '<span class="truncate font-medium text-gray-900 dark:text-white">' +
-          escapeHtml(value) +
-          "</span></button>" +
-          '<button type="button" data-filter-tag-remove="' +
-          panel.key +
-          '" aria-label="Remove filter" data-tooltip="Remove filter" class="inline-flex w-6 shrink-0 cursor-pointer items-center justify-center self-stretch border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white">' +
-          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3"><path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg></button>' +
-          '<span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span></span>'
-        );
+        return window.TableUi.filterChip({
+          label: panel.label,
+          type: panel.key,
+          value: value,
+          openTooltip: "Edit filter",
+          removeTooltip: "Remove filter",
+        });
       })
       .join("");
   }
@@ -886,9 +861,9 @@
   // ── Table ──
 
   var TH =
-    "border-b border-gray-200 px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:border-white/10 dark:text-white";
+    "h-[52px] border-b border-gray-200 px-4 text-left align-middle text-xs font-medium uppercase tracking-[0.6px] whitespace-nowrap text-gray-500 dark:border-white/10 dark:text-gray-400";
   var TD =
-    "border-b border-gray-200 px-2 py-2 align-middle dark:border-white/10";
+    "h-[52px] border-b border-gray-200 px-4 align-middle dark:border-white/10";
 
   function sortHeader(key, label) {
     var dir = state.sort && state.sort.key === key ? state.sort.dir : "";
@@ -903,7 +878,7 @@
       '">' +
       '<button type="button" data-sort-key="' +
       key +
-      '" class="group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white">' +
+      '" class="group flex w-full cursor-pointer items-center gap-1 rounded-sm text-left text-xs font-medium uppercase tracking-[0.6px] text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400">' +
       "<span>" +
       label +
       '</span><span data-sort-badge="true" class="' +

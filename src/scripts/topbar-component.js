@@ -35,9 +35,18 @@
     "my-company-profile.html": [{ label: "My Company Profile", href: null }],
   };
 
+  function normalizePageFile(file) {
+    var name = String(file || "")
+      .split("?")[0]
+      .split("#")[0];
+    if (!name || /\.html$/i.test(name)) return name;
+    return name + ".html";
+  }
+
   function pageTitleFromPath(overridePath) {
-    var file =
-      overridePath || (window.location.pathname || "").split("/").pop() || "";
+    var file = normalizePageFile(
+      overridePath || (window.location.pathname || "").split("/").pop() || "",
+    );
     var map = {
       "supplier-portal.html": "Supplier Portal",
       "bills-and-payables.html": "Bills and Payables",
@@ -56,14 +65,36 @@
   }
 
   function pagePathFromContext() {
-    return this && this.getAttribute
-      ? this.getAttribute("data-page") ||
+    var raw =
+      this && this.getAttribute
+        ? this.getAttribute("data-page") ||
           (document.body && document.body.getAttribute("data-page")) ||
           (window.location.pathname || "").split("/").pop() ||
           ""
-      : (document.body && document.body.getAttribute("data-page")) ||
+        : (document.body && document.body.getAttribute("data-page")) ||
           (window.location.pathname || "").split("/").pop() ||
           "";
+    return normalizePageFile(raw);
+  }
+
+  function topbarAsset(file) {
+    var path = window.location.pathname || "";
+    var marker = "/src/pages/";
+    var index = path.indexOf(marker);
+    var root = index >= 0 ? path.slice(0, index) : "";
+    return root + "/src/assets/topbar/" + encodeURIComponent(file);
+  }
+
+  function topbarIcon(file, width, height) {
+    return (
+      '<img src="' +
+      topbarAsset(file) +
+      '" width="' +
+      width +
+      '" height="' +
+      height +
+      '" alt="" class="shrink-0">'
+    );
   }
 
   function buildInitials(name) {
@@ -102,43 +133,40 @@
       return '<span class="text-sm font-medium text-gray-500 dark:text-gray-400">Dashboard</span>';
     }
 
+    var crumbClass =
+      "text-sm font-medium leading-5 text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200";
     var html =
       "" +
-      '<ol role="list" class="flex items-center space-x-4">' +
+      '<ol role="list" class="flex items-center gap-4">' +
       "<li>" +
-      "<div>" +
       '<a href="' +
       resolveBreadcrumbHref(
         window.AppPlans ? window.AppPlans.homeFor() : "supplier-portal.html",
       ) +
-      '" class="text-gray-400 transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300">' +
-      '<svg viewBox="0 0 20 20" fill="currentColor" data-slot="icon" aria-hidden="true" class="size-5 shrink-0">' +
-      '<path fill-rule="evenodd" d="M9.293 2.293a1 1 0 0 1 1.414 0l7 7A1 1 0 0 1 17 11h-1v6a1 1 0 0 1-1 1h-2a1 1 0 0 1-1-1v-3a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-6H3a1 1 0 0 1-.707-1.707l7-7Z" clip-rule="evenodd" />' +
-      "</svg>" +
+      '" class="flex text-gray-400 transition-colors hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:text-gray-300">' +
+      topbarIcon("home.svg", 20, 20) +
       '<span class="sr-only">Home</span>' +
       "</a>" +
-      "</div>" +
       "</li>";
 
     items.forEach(function (item, index) {
       var isLast = index === items.length - 1;
-      html +=
-        "" +
-        "<li>" +
-        '<div class="flex items-center">' +
-        '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-300 dark:text-gray-600">' +
-        '<path d="M5.555 17.776l8-16 .894.448-8 16-.894-.448z" />' +
-        "</svg>";
+      html += "<li>" + '<div class="flex items-center gap-4">';
+      html += topbarIcon("chevron-right.svg", 20, 20);
       if (item.href && !isLast) {
         html +=
           '<a href="' +
           resolveBreadcrumbHref(item.href) +
-          '" class="ml-4 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">' +
+          '" class="' +
+          crumbClass +
+          ' focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
           item.label +
           "</a>";
       } else {
         html +=
-          '<a href="#" aria-current="page" class="ml-4 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-100">' +
+          '<a href="#" aria-current="page" class="' +
+          crumbClass +
+          ' focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
           item.label +
           "</a>";
       }
@@ -149,62 +177,12 @@
     return html;
   }
 
-  function iconSearch(cls) {
-    return (
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' +
-      cls +
-      '">' +
-      '<path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" />' +
-      "</svg>"
-    );
-  }
-
-  function iconBell(cls) {
-    return (
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' +
-      cls +
-      '">' +
-      '<path fill-rule="evenodd" d="M10 2a6 6 0 0 0-6 6c0 1.887-.454 3.665-1.257 5.234a.75.75 0 0 0 .515 1.076 32.91 32.91 0 0 0 3.256.508 3.5 3.5 0 0 0 6.972 0 32.903 32.903 0 0 0 3.256-.508.75.75 0 0 0 .515-1.076A11.448 11.448 0 0 1 16 8a6 6 0 0 0-6-6ZM8.05 14.943a33.54 33.54 0 0 0 3.9 0 2 2 0 0 1-3.9 0Z" clip-rule="evenodd" />' +
-      "</svg>"
-    );
-  }
-
-  function iconSun(cls) {
-    return (
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' +
-      cls +
-      '">' +
-      '<path d="M10 2a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 2ZM10 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 10 15ZM10 7a3 3 0 1 0 0 6 3 3 0 0 0 0-6ZM15.657 5.404a.75.75 0 1 0-1.06-1.06l-1.061 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM6.464 14.596a.75.75 0 1 0-1.06-1.06l-1.06 1.06a.75.75 0 0 0 1.06 1.06l1.06-1.06ZM18 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 18 10ZM5 10a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 5 10ZM14.596 15.657a.75.75 0 0 0 1.06-1.06l-1.06-1.061a.75.75 0 1 0-1.06 1.06l1.06 1.06ZM5.404 6.464a.75.75 0 0 0 1.06-1.06l-1.06-1.06a.75.75 0 1 0-1.061 1.06l1.06 1.06Z" />' +
-      "</svg>"
-    );
-  }
-
-  function iconMoon(cls) {
-    return (
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' +
-      cls +
-      '">' +
-      '<path fill-rule="evenodd" d="M7.455 2.004a.75.75 0 0 1 .26.77 7 7 0 0 0 9.958 7.967.75.75 0 0 1 1.067.853A8.5 8.5 0 1 1 6.647 1.921a.75.75 0 0 1 .808.083Z" clip-rule="evenodd" />' +
-      "</svg>"
-    );
-  }
-
   function iconBuilding(cls) {
     return (
       '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' +
       cls +
       '">' +
       '<path fill-rule="evenodd" d="M1 2.75A.75.75 0 0 1 1.75 2h10.5a.75.75 0 0 1 0 1.5H12v13.75a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1-.75-.75v-2.5a.75.75 0 0 0-.75-.75h-2.5a.75.75 0 0 0-.75.75v2.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5H2v-13h-.25A.75.75 0 0 1 1 2.75ZM4 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM4.5 9a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1ZM8 5.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1ZM8.5 9a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1ZM14.25 6a.75.75 0 0 0-.75.75V17a1 1 0 0 0 1 1h3.75a.75.75 0 0 0 0-1.5H18v-9h.25a.75.75 0 0 0 0-1.5h-4Zm.5 3.5a.5.5 0 0 1 .5-.5h1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-1a.5.5 0 0 1-.5-.5v-1Zm.5 3.5a.5.5 0 0 0-.5.5v1a.5.5 0 0 0 .5.5h1a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5h-1Z" clip-rule="evenodd" />' +
-      "</svg>"
-    );
-  }
-
-  function iconChevronDown(cls) {
-    return (
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' +
-      cls +
-      '">' +
-      '<path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
       "</svg>"
     );
   }
@@ -418,20 +396,6 @@
         );
       })
       .join("");
-  }
-
-  function actionsButton(label, iconHtml, extraAttrs) {
-    return (
-      "" +
-      '<button type="button" ' +
-      (extraAttrs || "") +
-      ' class="inline-flex items-center justify-center rounded-lg p-2 text-zinc-500 transition-colors hover:bg-zinc-950/5 hover:text-zinc-950 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white cursor-pointer">' +
-      '<span class="sr-only">' +
-      label +
-      "</span>" +
-      iconHtml +
-      "</button>"
-    );
   }
 
   function headerMenuClass(widthClass) {
@@ -838,69 +802,37 @@
         breadcrumb.innerHTML = buildBreadcrumbHtml(nextPagePath);
       }
 
-      this.querySelectorAll("[data-topbar-mobile-title]").forEach(
-        function (node) {
-          node.textContent = nextTitle;
-        },
-      );
+      this.querySelectorAll(
+        "[data-topbar-mobile-title], [data-topbar-page-title]",
+      ).forEach(function (node) {
+        node.textContent = nextTitle;
+      });
     }
 
     render(title, pagePath) {
-      var cardIcon =
-        "" +
-        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">' +
-        '<path d="M1.875 6.875H18.125M1.875 7.5H18.125M4.375 11.875H9.375M4.375 13.75H6.875M18.125 9.16667V5.625C18.125 4.58947 17.2855 3.75 16.25 3.75H3.75C2.71447 3.75 1.875 4.58947 1.875 5.625V14.375C1.875 15.4105 2.71447 16.25 3.75 16.25H11.6667M16.25 16.4583L16.5785 15.4727C16.7652 14.9128 17.2045 14.4735 17.7644 14.2869L18.75 13.9583L17.7644 13.6298C17.2045 13.4432 16.7652 13.0038 16.5785 12.4439L16.25 11.4583L15.9215 12.4439C15.7348 13.0038 15.2955 13.4432 14.7356 13.6298L13.75 13.9583L14.7356 14.2869C15.2955 14.4735 15.7348 14.9128 15.9215 15.4727L16.25 16.4583Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
-        "</svg>";
-
       return (
         "" +
-        '<div class="border-b border-gray-200 bg-white/95 shadow-xs backdrop-blur dark:border-white/10 dark:bg-gray-900/95 dark:shadow-none">' +
-        // ── Top action row ────────────────────────────────────────────
-        '  <div class="flex items-center justify-between gap-4 py-2 pl-6 pr-4">' +
-        '    <div class="flex min-w-0 items-center gap-3">' +
-        '      <button type="button" command="show-modal" commandfor="sidebar" class="-m-2.5 rounded-lg p-2.5 text-zinc-500 transition-colors hover:bg-zinc-950/5 hover:text-zinc-950 lg:hidden dark:text-zinc-400 dark:hover:bg-white/5 dark:hover:text-white cursor-pointer">' +
+        '<div class="flex flex-col gap-4 bg-white px-6 pb-4 pt-6 dark:bg-gray-900">' +
+        '  <div class="flex items-center gap-8">' +
+        '    <div class="flex min-w-0 flex-1 items-center gap-3">' +
+        '      <button type="button" command="show-modal" commandfor="sidebar" class="-m-2.5 shrink-0 rounded-lg p-2.5 text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:hidden dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white cursor-pointer">' +
         '        <span class="sr-only">Open sidebar</span>' +
         '        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M2 5.75A.75.75 0 0 1 2.75 5h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 5.75Zm0 4.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 4.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 14.25Z" /></svg>' +
         "      </button>" +
-        '      <span data-topbar-mobile-title class="sm:hidden text-base font-semibold text-zinc-950 dark:text-white">' +
-        title +
-        "</span>" +
-        '      <div class="relative hidden sm:flex min-w-[480px]">' +
-        '        <div class="flex w-full rounded-md bg-white outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-blue-600 dark:bg-white/5 dark:outline-white/10">' +
-        '          <input type="text" name="search" placeholder="Search…" data-topbar-search-trigger class="block min-w-0 grow px-3 py-1.5 text-sm text-gray-900 placeholder:text-gray-400 focus:outline-none dark:bg-transparent dark:text-white dark:placeholder:text-gray-500" />' +
-        '          <div class="flex py-1.5 pr-1.5">' +
-        '            <kbd class="inline-flex items-center rounded-sm border border-gray-200 px-1 font-sans text-xs text-gray-400 dark:border-white/20 dark:text-gray-500">⌘K</kbd>' +
-        "          </div>" +
-        "        </div>" +
-        "      </div>" +
+        "      <p class=\"min-w-0 truncate font-['Inter'] text-2xl font-bold leading-8 text-gray-900 dark:text-white\">Hello, <span data-topbar-greeting-name>Johnny Anderson</span></p>" +
         "    </div>" +
-        '    <div class="flex shrink-0 items-center gap-1 sm:gap-2">' +
-        actionsButton(
-          "Notifications",
-          iconBell("size-5"),
-          "data-topbar-notification-trigger",
-        ) +
-        actionsButton(
-          "Toggle dark mode",
-          "" +
-            '<span data-theme-icon="light">' +
-            iconSun("size-5") +
-            "</span>" +
-            '<span data-theme-icon="dark" class="hidden">' +
-            iconMoon("size-5") +
-            "</span>",
-          'data-theme-toggle-button aria-pressed="false"',
-        ) +
-        '      <div aria-hidden="true" class="mx-1 h-6 w-px bg-gray-200 dark:bg-white/10"></div>' +
+        '    <div class="flex shrink-0 items-center gap-6">' +
+        '      <button type="button" data-topbar-notification-trigger aria-label="Notifications, 6 unread" class="relative flex items-center justify-center rounded-2xl bg-white p-1 transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-transparent dark:hover:bg-white/10 cursor-pointer">' +
+        '        <span class="absolute left-[18px] top-[-2px] z-[2] flex w-4 items-center justify-center rounded-[512px] border border-red-200 bg-red-500 px-2 text-xs font-medium leading-4 text-white">6</span>' +
+        topbarIcon("bell.svg", 24, 24) +
+        "      </button>" +
         '      <el-dropdown class="relative hidden sm:block">' +
-        '        <button type="button" class="flex min-w-0 items-center gap-3 rounded-lg bg-white p-2 text-left text-sm font-medium text-zinc-950 transition-colors hover:bg-zinc-950/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 cursor-pointer">' +
-        "          " +
-        iconBuilding("size-5 shrink-0 text-zinc-500 dark:text-zinc-400") +
-        '          <span data-topbar-org-name class="max-w-56 truncate">' +
+        '        <button type="button" class="flex w-[238px] items-center gap-1.5 overflow-hidden rounded-md border border-gray-300 bg-white px-3 py-2 text-left shadow-xs transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 cursor-pointer">' +
+        topbarIcon("briefcase.svg", 20, 20) +
+        "          <span data-topbar-org-name class=\"h-6 min-w-0 flex-1 truncate font-['Inter'] text-base font-semibold leading-6 text-gray-800 dark:text-gray-100\">" +
         activeBusinessName() +
         "</span>" +
-        "          " +
-        iconChevronDown("size-4 shrink-0 text-zinc-400 dark:text-zinc-500") +
+        topbarIcon("selector.svg", 20, 20) +
         "        </button>" +
         '        <el-menu anchor="bottom end" popover class="' +
         headerMenuClass("min-w-72") +
@@ -909,11 +841,11 @@
         "        </el-menu>" +
         "      </el-dropdown>" +
         '      <el-dropdown class="relative">' +
-        '        <button type="button" class="relative flex items-center rounded-lg p-1.5 transition-colors hover:bg-zinc-950/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5 cursor-pointer">' +
+        '        <button type="button" class="flex size-10 items-center justify-center overflow-hidden rounded-full border-2 border-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-900 cursor-pointer">' +
         '          <span class="sr-only">Open user menu</span>' +
-        '          <span class="inline-flex size-7 items-center justify-center rounded-[20%] bg-zinc-950 text-[11px] font-semibold text-white outline -outline-offset-1 outline-black/5 dark:bg-white dark:text-zinc-950 dark:outline-white/10">' +
-        "            <span data-topbar-avatar-initials>JA</span>" +
-        "          </span>" +
+        '          <img src="' +
+        topbarAsset("avatar.png") +
+        '" width="40" height="40" alt="" class="size-10 rounded-full object-cover">' +
         "        </button>" +
         '        <el-menu anchor="bottom end" popover class="' +
         headerMenuClass("min-w-64") +
@@ -923,9 +855,12 @@
         "      </el-dropdown>" +
         "    </div>" +
         "  </div>" +
-        // ── Separator + breadcrumb row ────────────────────────────────
-        '  <div class="h-px bg-gray-200 dark:bg-white/10"></div>' +
-        '  <div class="hidden sm:flex items-center px-6 py-2.5">' +
+        '  <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>' +
+        '  <div class="hidden items-center gap-6 sm:flex">' +
+        "    <p data-topbar-page-title class=\"shrink-0 whitespace-nowrap font-['Inter'] text-xl font-semibold leading-8 text-gray-900 dark:text-white\">" +
+        title +
+        "</p>" +
+        '    <div aria-hidden="true" class="h-5 w-px shrink-0 bg-gray-300 dark:bg-white/10"></div>' +
         '    <nav id="dynamic-breadcrumbs" aria-label="Breadcrumb" data-page="' +
         pagePath +
         '">' +
