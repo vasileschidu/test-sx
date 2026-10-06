@@ -405,6 +405,16 @@ function initBreadcrumbs() {
         : (document.body && document.body.getAttribute('data-page')
             ? document.body.getAttribute('data-page')
             : ((window.location.pathname || '').split('/').pop() || ''));
+
+    // Consumer Portal breadcrumbs are rendered by app-topbar with the Figma
+    // chevrons. Do not replace them with the legacy shared breadcrumb markup.
+    if (path === 'consumer-payments-received.html' ||
+        path === 'consumer-my-cards.html' ||
+        path === 'consumer-payment-preferences.html' ||
+        path === 'consumer-my-profile.html') {
+        return;
+    }
+
     var items = BREADCRUMB_CONFIGS[path] || [];
     if (!items.length) return;
 

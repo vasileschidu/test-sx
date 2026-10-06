@@ -136,6 +136,46 @@
         return html;
     }
 
+    function consumerTopbarSection(pagePath) {
+        return pagePath === 'consumer-payment-preferences.html' || pagePath === 'consumer-my-profile.html'
+            ? 'Settings'
+            : (pagePath === 'consumer-my-cards.html' ? 'Cards' : 'Payments');
+    }
+
+    function isConsumerPortalPage(pagePath) {
+        return pagePath === 'consumer-payments-received.html' ||
+            pagePath === 'consumer-my-cards.html' ||
+            pagePath === 'consumer-payment-preferences.html' ||
+            pagePath === 'consumer-my-profile.html';
+    }
+
+    function buildConsumerBreadcrumbHtml(pagePath) {
+        var section = consumerTopbarSection(pagePath);
+        var title = pageTitleFromPath(pagePath);
+        var home = resolveBreadcrumbHref(window.AppPlans ? window.AppPlans.homeFor() : 'consumer-payments-received.html');
+        var assetBase = '../../../src/assets/figma/top-nav/';
+        return '' +
+            '<ol role="list" class="flex flex-wrap items-center gap-4">' +
+            '  <li><a href="' + home + '" aria-label="Home" class="flex size-5 items-center justify-center rounded-md transition-colors hover:bg-gray-100 dark:hover:bg-white/10"><img src="' + assetBase + 'breadcrumb-home.svg" alt="" /></a></li>' +
+            '  <li aria-hidden="true" class="flex size-5 items-center justify-center"><img src="' + assetBase + 'chevron-right.svg" alt="" /></li>' +
+            '  <li><span class="text-sm font-medium leading-5 text-gray-500 dark:text-gray-400">' + section + '</span></li>' +
+            '  <li aria-hidden="true" class="flex size-5 items-center justify-center"><img src="' + assetBase + 'chevron-right-secondary.svg" alt="" /></li>' +
+            '  <li><span aria-current="page" class="text-sm font-medium leading-5 text-gray-500 dark:text-gray-400">' + title + '</span></li>' +
+            '</ol>';
+    }
+
+    function buildConsumerTopbarLowerRow(pagePath) {
+        var section = consumerTopbarSection(pagePath);
+        return '' +
+            '<p data-topbar-section class="shrink-0 text-xl font-semibold leading-8 text-gray-900 dark:text-white">' + section + '</p>' +
+            '<div aria-hidden="true" class="h-5 w-px shrink-0 bg-gray-300 dark:bg-white/20"></div>' +
+            '<nav id="dynamic-breadcrumbs" aria-label="Breadcrumb" data-page="' + pagePath + '" class="min-w-0">' + buildConsumerBreadcrumbHtml(pagePath) + '</nav>';
+    }
+
+    function buildConsumerTopbarSubheader(pagePath) {
+        return '';
+    }
+
     function iconSearch(cls) {
         return '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' + cls + '">' +
             '<path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" />' +
@@ -610,10 +650,15 @@
             var nextTitle = this.getAttribute('data-title') || pageTitleFromPath(nextPagePath);
             this.setAttribute('data-page', nextPagePath);
 
-            var breadcrumb = this.querySelector('#dynamic-breadcrumbs');
-            if (breadcrumb) {
-                breadcrumb.setAttribute('data-page', nextPagePath);
-                breadcrumb.innerHTML = buildBreadcrumbHtml(nextPagePath);
+            if (isConsumerPortalPage(nextPagePath)) {
+                var consumerSubheader = this.querySelector('[data-topbar-consumer-subheader]');
+                if (consumerSubheader) consumerSubheader.innerHTML = buildConsumerTopbarSubheader(nextPagePath);
+            } else {
+                var breadcrumb = this.querySelector('#dynamic-breadcrumbs');
+                if (breadcrumb) {
+                    breadcrumb.setAttribute('data-page', nextPagePath);
+                    breadcrumb.innerHTML = buildBreadcrumbHtml(nextPagePath);
+                }
             }
 
             this.querySelectorAll('[data-topbar-mobile-title]').forEach(function (node) {
@@ -622,6 +667,8 @@
         }
 
         render(title, pagePath) {
+            if (isConsumerPortalPage(pagePath)) return this.renderConsumer(pagePath);
+
             var cardIcon = '' +
                 '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">' +
                 '<path d="M1.875 6.875H18.125M1.875 7.5H18.125M4.375 11.875H9.375M4.375 13.75H6.875M18.125 9.16667V5.625C18.125 4.58947 17.2855 3.75 16.25 3.75H3.75C2.71447 3.75 1.875 4.58947 1.875 5.625V14.375C1.875 15.4105 2.71447 16.25 3.75 16.25H11.6667M16.25 16.4583L16.5785 15.4727C16.7652 14.9128 17.2045 14.4735 17.7644 14.2869L18.75 13.9583L17.7644 13.6298C17.2045 13.4432 16.7652 13.0038 16.5785 12.4439L16.25 11.4583L15.9215 12.4439C15.7348 13.0038 15.2955 13.4432 14.7356 13.6298L13.75 13.9583L14.7356 14.2869C15.2955 14.4735 15.7348 14.9128 15.9215 15.4727L16.25 16.4583Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
@@ -683,6 +730,37 @@
                 '    <nav id="dynamic-breadcrumbs" aria-label="Breadcrumb" data-page="' + pagePath + '">' + buildBreadcrumbHtml(pagePath) + '</nav>' +
                 '  </div>' +
 
+                '</div>';
+        }
+
+        renderConsumer(pagePath) {
+            var assetBase = '../../../src/assets/figma/top-nav/';
+            return '' +
+                '<div class="bg-white text-gray-900 shadow-[0px_1px_1.5px_rgba(0,0,0,0.1),0px_1px_1px_rgba(0,0,0,0.06)] dark:bg-gray-900 dark:text-white">' +
+                '  <div class="flex items-center justify-between gap-8 px-6 pt-6 pb-4">' +
+                '    <p class="min-w-0 flex-1 text-2xl font-bold leading-8 text-gray-900 dark:text-white">Hello, <span data-topbar-greeting-name>Johnny Anderson</span></p>' +
+                '    <div class="flex shrink-0 items-center gap-6">' +
+                '      <button type="button" data-topbar-notification-trigger aria-label="Notifications, 6 unread" class="group relative flex size-9 shrink-0 items-center justify-center rounded-md p-1.5 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-600 active:bg-gray-200 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:active:bg-white/10 cursor-pointer">' +
+                '        <span aria-hidden="true" class="absolute top-[-2px] left-[18px] z-[2] flex h-4 min-w-4 items-center justify-center rounded-full border border-red-200 bg-red-500 px-1 text-center text-xs font-medium leading-4 text-white">6</span>' +
+                '        <img src="' + assetBase + 'bell.svg" alt="" class="transition-[filter] group-hover:brightness-[.7] dark:group-hover:brightness-125" />' +
+                '      </button>' +
+                '      <el-dropdown class="relative hidden sm:block">' +
+                '        <button type="button" aria-label="Select business" class="flex h-10 w-[238px] min-w-0 items-center justify-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-2 text-left shadow-sm transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:hover:bg-white/10">' +
+                '          <span class="flex size-5 shrink-0 items-center justify-center"><img src="' + assetBase + 'business.svg" alt="" /></span>' +
+                '          <span data-topbar-org-name class="min-w-0 flex-1 truncate text-base font-semibold leading-6 text-gray-800 dark:text-gray-100">' + activeBusinessName() + '</span>' +
+                '          <span class="flex size-5 shrink-0 items-center justify-center"><img src="' + assetBase + 'selector.svg" alt="" /></span>' +
+                '        </button>' +
+                '        <el-menu anchor="bottom end" popover class="' + headerMenuClass('min-w-72') + '">' + organizationMenuHtml() + '</el-menu>' +
+                '      </el-dropdown>' +
+                '      <el-dropdown class="relative">' +
+                '        <button type="button" aria-label="Open user menu" class="flex size-10 shrink-0 items-center justify-center rounded-full transition-colors hover:ring-2 hover:ring-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:ring-white/20">' +
+                '          <img src="' + assetBase + 'avatar-cody-fisher.jpg" alt="" class="size-10 rounded-full border-2 border-white object-cover dark:border-gray-800" />' +
+                '        </button>' +
+                '        <el-menu anchor="bottom end" popover class="' + headerMenuClass('min-w-64') + '">' + accountMenuHtml() + '</el-menu>' +
+                '      </el-dropdown>' +
+                '    </div>' +
+                '  </div>' +
+                '  <div data-topbar-consumer-subheader>' + buildConsumerTopbarSubheader(pagePath) + '</div>' +
                 '</div>';
         }
     }
