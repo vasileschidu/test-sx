@@ -5,5 +5,5 @@ export function AuthLayout({ children }) {
         {children}
       </div>
     </main>
-  )
+  );
 }

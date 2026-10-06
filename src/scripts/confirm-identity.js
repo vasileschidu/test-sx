@@ -5,10 +5,10 @@
  * inputs, enables/disables the "Next" button based on whether both fields are
  * filled in, and navigates to the next onboarding step on click.
  */
-document.addEventListener('DOMContentLoaded', () => {
-  const invoiceInput = document.getElementById('invoice-number');
-  const vendorInput = document.getElementById('vendor-id');
-  const nextButton = document.getElementById('next-button');
+document.addEventListener("DOMContentLoaded", () => {
+  const invoiceInput = document.getElementById("invoice-number");
+  const vendorInput = document.getElementById("vendor-id");
+  const nextButton = document.getElementById("next-button");
 
   /**
    * Convert a string value to uppercase (free-form, no masking).
@@ -25,23 +25,24 @@ document.addEventListener('DOMContentLoaded', () => {
    * inputs contain non-empty (trimmed) values; disable it otherwise.
    */
   function updateNextState() {
-    const ready = invoiceInput.value.trim() !== '' && vendorInput.value.trim() !== '';
+    const ready =
+      invoiceInput.value.trim() !== "" && vendorInput.value.trim() !== "";
     nextButton.disabled = !ready;
   }
 
-  invoiceInput.addEventListener('input', () => {
+  invoiceInput.addEventListener("input", () => {
     invoiceInput.value = toUpperFreeForm(invoiceInput.value);
     updateNextState();
   });
 
-  vendorInput.addEventListener('input', () => {
+  vendorInput.addEventListener("input", () => {
     vendorInput.value = toUpperFreeForm(vendorInput.value);
     updateNextState();
   });
 
-  nextButton.addEventListener('click', () => {
+  nextButton.addEventListener("click", () => {
     if (!nextButton.disabled) {
-      window.location.href = 'confirm-business-details.html';
+      window.location.href = "confirm-business-details.html";
     }
   });
 

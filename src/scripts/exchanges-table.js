@@ -7,7 +7,7 @@
  */
 
 (function () {
-  'use strict';
+  "use strict";
 
   /**
    * Per-page configuration, set by the page before this script loads, so the
@@ -27,59 +27,65 @@
   // Get Paid "Confirm and Submit" step (step 4) came from the demo-speedbump
   // test. The product Get Paid is three steps, so it stays off unless a demo
   // asks for it with ?speedbump=1 (or a page sets speedbump: true).
-  var SPEEDBUMP_ENABLED = PAGE_CONFIG.speedbump === true ||
-    /(?:^|[?&])speedbump=1(?:&|$)/.test(String(window.location.search || ''));
+  var SPEEDBUMP_ENABLED =
+    PAGE_CONFIG.speedbump === true ||
+    /(?:^|[?&])speedbump=1(?:&|$)/.test(String(window.location.search || ""));
 
   var JSON_PATH_FALLBACKS = [
-    '../../../src/data/exchanges.json',
-    '/src/data/exchanges.json',
-    './src/data/exchanges.json',
+    "../../../src/data/exchanges.json",
+    "/src/data/exchanges.json",
+    "./src/data/exchanges.json",
   ];
   var CHECK_ADDRESSES_PATH_FALLBACKS = [
-    '../../../src/data/check-addresses.json',
-    '/src/data/check-addresses.json',
-    './src/data/check-addresses.json',
+    "../../../src/data/check-addresses.json",
+    "/src/data/check-addresses.json",
+    "./src/data/check-addresses.json",
   ];
   var CUSTOMERS_PATH_FALLBACKS = [
-    '../../../src/data/customers.json',
-    '/src/data/customers.json',
-    './src/data/customers.json',
+    "../../../src/data/customers.json",
+    "/src/data/customers.json",
+    "./src/data/customers.json",
   ];
   var BANK_ACCOUNTS_PATH_FALLBACKS = [
-    '../../../src/data/bank-accounts.json',
-    '/src/data/bank-accounts.json',
-    './src/data/bank-accounts.json',
+    "../../../src/data/bank-accounts.json",
+    "/src/data/bank-accounts.json",
+    "./src/data/bank-accounts.json",
   ];
   var PAYMENT_PREFERENCES_DATA_PATH_FALLBACKS = [
-    '../../../src/data/payment-preferences-data.json',
-    '/src/data/payment-preferences-data.json',
-    './src/data/payment-preferences-data.json',
+    "../../../src/data/payment-preferences-data.json",
+    "/src/data/payment-preferences-data.json",
+    "./src/data/payment-preferences-data.json",
   ];
-  var TABLE_ID = 'exchanges-table';
-  var TABLE_SCROLL_SELECTOR = '[data-table-scroll]';
-  var ACTION_COLUMN_SELECTOR = '[data-action-column]';
-  var PAGINATION_SELECTOR = '[data-pagination]';
-  var TAB_COUNT_SELECTOR = '[data-tab-count]';
+  var TABLE_ID = "exchanges-table";
+  var TABLE_SCROLL_SELECTOR = "[data-table-scroll]";
+  var ACTION_COLUMN_SELECTOR = "[data-action-column]";
+  var PAGINATION_SELECTOR = "[data-pagination]";
+  var TAB_COUNT_SELECTOR = "[data-tab-count]";
   var TAB_NAV_SELECTOR = 'nav[aria-label="Tabs"]';
-  var TAB_SELECT_SELECTOR = '[data-sx-tab-select]';
+  var TAB_SELECT_SELECTOR = "[data-sx-tab-select]";
 
-  var ACTIVE_TAB_LINK_CLASSES = ['bg-blue-100', 'text-blue-700', 'dark:bg-blue-500/20', 'dark:text-blue-300'];
-  var INACTIVE_TAB_LINK_CLASSES = ['text-gray-500', 'dark:text-gray-400'];
+  var ACTIVE_TAB_LINK_CLASSES = [
+    "bg-blue-100",
+    "text-blue-700",
+    "dark:bg-blue-500/20",
+    "dark:text-blue-300",
+  ];
+  var INACTIVE_TAB_LINK_CLASSES = ["text-gray-500", "dark:text-gray-400"];
   var ACTIVE_BADGE_CLASSES = [
-    'bg-blue-50',
-    'text-blue-700',
-    'inset-ring-blue-700/10',
-    'dark:bg-blue-400/10',
-    'dark:text-blue-400',
-    'dark:inset-ring-blue-400/30',
+    "bg-blue-50",
+    "text-blue-700",
+    "inset-ring-blue-700/10",
+    "dark:bg-blue-400/10",
+    "dark:text-blue-400",
+    "dark:inset-ring-blue-400/30",
   ];
   var INACTIVE_BADGE_CLASSES = [
-    'bg-gray-50',
-    'text-gray-600',
-    'inset-ring-gray-500/10',
-    'dark:bg-gray-400/10',
-    'dark:text-gray-400',
-    'dark:inset-ring-gray-400/20',
+    "bg-gray-50",
+    "text-gray-600",
+    "inset-ring-gray-500/10",
+    "dark:bg-gray-400/10",
+    "dark:text-gray-400",
+    "dark:inset-ring-gray-400/20",
   ];
 
   var DEFAULT_PAGE_SIZE = 16;
@@ -106,7 +112,7 @@
   // MutationObserver for check address select changes
   var _checkSelectObserver = null;
   var _activeGetPaidEntry = null;
-  var _activeTableTabKey = 'pending';
+  var _activeTableTabKey = "pending";
   var _customers = [];
 
   // Pagination state
@@ -137,29 +143,29 @@
   };
   var manualRefreshHalfTurns = 0;
   var sortState = {
-    key: '',
-    direction: '', // '', 'asc', 'desc'
+    key: "",
+    direction: "", // '', 'asc', 'desc'
   };
   var tableFilterState = {
-    search: '',
+    search: "",
     selectedCustomers: new Set(),
     selectedStatuses: new Set(),
     selectedMethods: new Set(),
     selectedFailureReasons: new Set(),
-    initiatedDateFrom: '',
-    initiatedDateTo: '',
-    initiatedDateFromDraft: '',
-    initiatedDateToDraft: '',
-    initiatedDateActiveField: 'from',
+    initiatedDateFrom: "",
+    initiatedDateTo: "",
+    initiatedDateFromDraft: "",
+    initiatedDateToDraft: "",
+    initiatedDateActiveField: "from",
     initiatedDateMonth: null,
     menuOpen: false,
-    activePanel: 'root',
+    activePanel: "root",
     appliedSelectedCustomers: new Set(),
     appliedSelectedStatuses: new Set(),
     appliedSelectedMethods: new Set(),
     appliedSelectedFailureReasons: new Set(),
-    appliedInitiatedDateFrom: '',
-    appliedInitiatedDateTo: '',
+    appliedInitiatedDateFrom: "",
+    appliedInitiatedDateTo: "",
   };
   var columnVisibilityState = {
     initialized: false,
@@ -180,65 +186,67 @@
   // is a predicate too — it holds everything pending-like that is NOT on that worklist.
   var TAB_STATUS_FILTER = {
     pending: function (entry) {
-      return isPendingLikeStatus(entry.status) && !isPendingManualReviewEntry(entry);
+      return (
+        isPendingLikeStatus(entry.status) && !isPendingManualReviewEntry(entry)
+      );
     },
-    'action-required': function (entry) {
+    "action-required": function (entry) {
       return isPendingManualReviewEntry(entry);
     },
-    paid: ['paid'],
-    exceptions: ['exception', 'declined'],
+    paid: ["paid"],
+    exceptions: ["exception", "declined"],
   };
 
   var STATUS_STYLES = {
     pending:
-      'bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20',
+      "bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20",
     processing:
-      'bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/20',
-    paid:
-      'bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20',
+      "bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/20",
+    paid: "bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20",
     exception:
-      'bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20',
+      "bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20",
     declined:
-      'bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20',
+      "bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20",
   };
 
   var STATUS_LABELS = {
-    pending: 'Pending',
-    'action-required': 'Action Required',
-    processing: 'Processing',
-    paid: 'Paid',
-    exception: 'Exception',
-    declined: 'Declined',
+    pending: "Pending",
+    "action-required": "Action Required",
+    processing: "Processing",
+    paid: "Paid",
+    exception: "Exception",
+    declined: "Declined",
   };
 
   // 'action-required' is a display-only status: the data still says 'pending', but
   // the row needs the supplier to confirm funds by hand. It borrows the pending
   // palette rather than introducing another badge variant.
-  STATUS_STYLES['action-required'] = STATUS_STYLES.pending;
+  STATUS_STYLES["action-required"] = STATUS_STYLES.pending;
 
   var METHOD_TYPE_LABELS = {
-    smart_exchange: 'SMART Exchange',
-    card: 'Card',
-    ach: 'ACH',
+    smart_exchange: "SMART Exchange",
+    card: "Card",
+    ach: "ACH",
   };
   Object.assign(STATUS_LABELS, PAGE_CONFIG.statusLabels || {});
   Object.assign(METHOD_TYPE_LABELS, PAGE_CONFIG.methodLabels || {});
 
   var CLASS_NAMES = {
-    tbody: 'bg-white dark:bg-gray-900',
-    row: 'transition-colors duration-300 motion-reduce:transition-none',
-    cellBorder: ' border-b border-gray-200 dark:border-white/10',
+    tbody: "bg-white dark:bg-gray-900",
+    row: "transition-colors duration-300 motion-reduce:transition-none",
+    cellBorder: " border-b border-gray-200 dark:border-white/10",
     actionCell:
-      'bg-white h-12 align-middle py-2 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2',
-    detailCell: 'bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10',
+      "bg-white h-12 align-middle py-2 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2",
+    detailCell:
+      "bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10",
   };
-  var ACTION_GUIDE_PARAM = 'card-rows';
+  var ACTION_GUIDE_PARAM = "card-rows";
 
   var actionGuideState = {
     active: false,
     step: 1,
-    highlightFilter: '',
-    selectedInvoice: '',
+    highlightFilter: "",
+    selectedInvoice: "",
     backdropEl: null,
     closeBtnEl: null,
     spotlightLayerEl: null,
@@ -251,9 +259,9 @@
     stepTransitionTimer: null,
     step3Transitioning: false,
   };
-  var pendingMarkPaidInvoice = '';
+  var pendingMarkPaidInvoice = "";
   var pendingMarkPaidCloseCardDialog = false;
-  var pendingDeclineInvoice = '';
+  var pendingDeclineInvoice = "";
   var topActionToast = {
     el: null,
     removeTimer: null,
@@ -261,21 +269,21 @@
   };
 
   function ensureTopActionToastStyles() {
-    if (document.getElementById('sx-top-action-toast-style')) return;
-    var style = document.createElement('style');
-    style.id = 'sx-top-action-toast-style';
+    if (document.getElementById("sx-top-action-toast-style")) return;
+    var style = document.createElement("style");
+    style.id = "sx-top-action-toast-style";
     style.textContent =
-      '.sx-top-action-toast{' +
-      'position:fixed;left:50%;top:36px;z-index:500;display:flex;align-items:center;gap:12px;' +
-      'max-width:min(680px,calc(100vw - 24px));padding:10px 12px;border-radius:10px;' +
-      'background:#111827;color:#fff;box-shadow:0 10px 25px rgba(0,0,0,.2);' +
-      'transform:translate(-50%,-8px);opacity:0;pointer-events:auto;' +
-      'transition:transform 220ms ease,opacity 220ms ease;}' +
+      ".sx-top-action-toast{" +
+      "position:fixed;left:50%;top:36px;z-index:500;display:flex;align-items:center;gap:12px;" +
+      "max-width:min(680px,calc(100vw - 24px));padding:10px 12px;border-radius:10px;" +
+      "background:#111827;color:#fff;box-shadow:0 10px 25px rgba(0,0,0,.2);" +
+      "transform:translate(-50%,-8px);opacity:0;pointer-events:auto;" +
+      "transition:transform 220ms ease,opacity 220ms ease;}" +
       '.sx-top-action-toast[data-state="visible"]{transform:translate(-50%,0);opacity:1;}' +
       '.sx-top-action-toast[data-state="leaving"]{transform:translate(-50%,8px);opacity:0;}' +
-      '.sx-top-action-toast__msg{font-size:14px;line-height:20px;font-weight:500;}' +
-      '.sx-top-action-toast__close{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:#D1D5DB;cursor:pointer;}' +
-      '.sx-top-action-toast__close:hover{background:rgba(255,255,255,.12);color:#fff;}';
+      ".sx-top-action-toast__msg{font-size:14px;line-height:20px;font-weight:500;}" +
+      ".sx-top-action-toast__close{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:#D1D5DB;cursor:pointer;}" +
+      ".sx-top-action-toast__close:hover{background:rgba(255,255,255,.12);color:#fff;}";
     document.head.appendChild(style);
   }
 
@@ -285,7 +293,7 @@
       clearTimeout(topActionToast.autoHideTimer);
       topActionToast.autoHideTimer = null;
     }
-    topActionToast.el.setAttribute('data-state', 'leaving');
+    topActionToast.el.setAttribute("data-state", "leaving");
     if (topActionToast.removeTimer) clearTimeout(topActionToast.removeTimer);
     topActionToast.removeTimer = window.setTimeout(function () {
       if (!topActionToast.el) return;
@@ -296,7 +304,7 @@
   }
 
   function showTopActionToast(message) {
-    var text = String(message || '').trim();
+    var text = String(message || "").trim();
     if (!text) return;
     ensureTopActionToastStyles();
     if (topActionToast.removeTimer) {
@@ -312,116 +320,139 @@
       topActionToast.el = null;
     }
 
-    var toast = document.createElement('div');
-    toast.className = 'sx-top-action-toast';
-    toast.setAttribute('role', 'status');
-    toast.setAttribute('aria-live', 'polite');
+    var toast = document.createElement("div");
+    toast.className = "sx-top-action-toast";
+    toast.setAttribute("role", "status");
+    toast.setAttribute("aria-live", "polite");
     toast.innerHTML =
       '<span aria-hidden="true" class="inline-flex shrink-0 text-emerald-500">' +
-        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">' +
-          '<path fill-rule="evenodd" clip-rule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.8566 8.19113C14.1002 7.85614 14.0261 7.38708 13.6911 7.14345C13.3561 6.89982 12.8871 6.97388 12.6434 7.30887L9.15969 12.099L7.28033 10.2197C6.98744 9.92678 6.51256 9.92678 6.21967 10.2197C5.92678 10.5126 5.92678 10.9874 6.21967 11.2803L8.71967 13.7803C8.87477 13.9354 9.08999 14.0149 9.30867 13.9977C9.52734 13.9805 9.72754 13.8685 9.85655 13.6911L13.8566 8.19113Z" fill="#10B981"/>' +
-        '</svg>' +
-      '</span>' +
-      '<span class="sx-top-action-toast__msg">' + escapeHtml(text) + '</span>' +
+      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">' +
+      '<path fill-rule="evenodd" clip-rule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.8566 8.19113C14.1002 7.85614 14.0261 7.38708 13.6911 7.14345C13.3561 6.89982 12.8871 6.97388 12.6434 7.30887L9.15969 12.099L7.28033 10.2197C6.98744 9.92678 6.51256 9.92678 6.21967 10.2197C5.92678 10.5126 5.92678 10.9874 6.21967 11.2803L8.71967 13.7803C8.87477 13.9354 9.08999 14.0149 9.30867 13.9977C9.52734 13.9805 9.72754 13.8685 9.85655 13.6911L13.8566 8.19113Z" fill="#10B981"/>' +
+      "</svg>" +
+      "</span>" +
+      '<span class="sx-top-action-toast__msg">' +
+      escapeHtml(text) +
+      "</span>" +
       '<button type="button" aria-label="Dismiss notification" class="sx-top-action-toast__close">' +
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">' +
-          '<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/>' +
-        '</svg>' +
-      '</button>';
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">' +
+      '<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/>' +
+      "</svg>" +
+      "</button>";
     document.body.appendChild(toast);
     topActionToast.el = toast;
 
-    var closeBtn = toast.querySelector('.sx-top-action-toast__close');
+    var closeBtn = toast.querySelector(".sx-top-action-toast__close");
     if (closeBtn) {
-      closeBtn.addEventListener('click', function () {
+      closeBtn.addEventListener("click", function () {
         hideTopActionToast();
       });
     }
 
     window.requestAnimationFrame(function () {
       if (!topActionToast.el) return;
-      topActionToast.el.setAttribute('data-state', 'visible');
+      topActionToast.el.setAttribute("data-state", "visible");
     });
     topActionToast.autoHideTimer = window.setTimeout(hideTopActionToast, 3000);
   }
 
   // ── SVG Icons ──
 
-  var ICON_ACH = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400 shrink-0"><path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" /></svg>';
+  var ICON_ACH =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400 shrink-0"><path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" /></svg>';
 
-  var ICON_VISA = '<svg class="size-5 shrink-0 rounded-md" height="20" width="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h32v32H0z" fill="#00579f"></path><g fill="#fff" fill-rule="nonzero"><path d="M13.823 19.876H11.8l1.265-7.736h2.023zm7.334-7.546a5.036 5.036 0 0 0-1.814-.33c-1.998 0-3.405 1.053-3.414 2.56-.016 1.11 1.007 1.728 1.773 2.098.783.379 1.05.626 1.05.963-.009.518-.633.757-1.216.757-.808 0-1.24-.123-1.898-.411l-.267-.124-.283 1.737c.475.213 1.349.403 2.257.411 2.123 0 3.505-1.037 3.521-2.641.008-.881-.532-1.556-1.698-2.107-.708-.354-1.141-.593-1.141-.955.008-.33.366-.667 1.165-.667a3.471 3.471 0 0 1 1.507.297l.183.082zm2.69 4.806.807-2.165c-.008.017.167-.452.266-.74l.142.666s.383 1.852.466 2.239h-1.682zm2.497-4.996h-1.565c-.483 0-.85.14-1.058.642l-3.005 7.094h2.123l.425-1.16h2.597c.059.271.242 1.16.242 1.16h1.873zm-16.234 0-1.982 5.275-.216-1.07c-.366-1.234-1.515-2.575-2.797-3.242l1.815 6.765h2.14l3.18-7.728z"></path><path d="M6.289 12.14H3.033L3 12.297c2.54.641 4.221 2.189 4.912 4.049l-.708-3.556c-.116-.494-.474-.633-.915-.65z"></path></g></g></svg>';
+  var ICON_VISA =
+    '<svg class="size-5 shrink-0 rounded-md" height="20" width="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h32v32H0z" fill="#00579f"></path><g fill="#fff" fill-rule="nonzero"><path d="M13.823 19.876H11.8l1.265-7.736h2.023zm7.334-7.546a5.036 5.036 0 0 0-1.814-.33c-1.998 0-3.405 1.053-3.414 2.56-.016 1.11 1.007 1.728 1.773 2.098.783.379 1.05.626 1.05.963-.009.518-.633.757-1.216.757-.808 0-1.24-.123-1.898-.411l-.267-.124-.283 1.737c.475.213 1.349.403 2.257.411 2.123 0 3.505-1.037 3.521-2.641.008-.881-.532-1.556-1.698-2.107-.708-.354-1.141-.593-1.141-.955.008-.33.366-.667 1.165-.667a3.471 3.471 0 0 1 1.507.297l.183.082zm2.69 4.806.807-2.165c-.008.017.167-.452.266-.74l.142.666s.383 1.852.466 2.239h-1.682zm2.497-4.996h-1.565c-.483 0-.85.14-1.058.642l-3.005 7.094h2.123l.425-1.16h2.597c.059.271.242 1.16.242 1.16h1.873zm-16.234 0-1.982 5.275-.216-1.07c-.366-1.234-1.515-2.575-2.797-3.242l1.815 6.765h2.14l3.18-7.728z"></path><path d="M6.289 12.14H3.033L3 12.297c2.54.641 4.221 2.189 4.912 4.049l-.708-3.556c-.116-.494-.474-.633-.915-.65z"></path></g></g></svg>';
 
-  var ICON_SORT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-70" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-70" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var ICON_SORT_ASC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path transform="translate(10 5.6) scale(1.2) translate(-10 -5.6)" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-40" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var ICON_SORT_DESC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-40" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path transform="translate(10 14.4) scale(1.2) translate(-10 -14.4)" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+  var ICON_SORT =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-70" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-70" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+  var ICON_SORT_ASC =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path transform="translate(10 5.6) scale(1.2) translate(-10 -5.6)" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-40" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+  var ICON_SORT_DESC =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-40" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path transform="translate(10 14.4) scale(1.2) translate(-10 -14.4)" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
 
-  var ICON_FILTER = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z" clip-rule="evenodd" /></svg>';
+  var ICON_FILTER =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z" clip-rule="evenodd" /></svg>';
 
-  var ICON_THREE_DOTS = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" /></svg>';
+  var ICON_THREE_DOTS =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" /></svg>';
 
-  var ICON_CHEVRON_DOWN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+  var ICON_CHEVRON_DOWN =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
 
-  var ICON_COPY = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>';
-  var ICON_EXPAND_RIGHT = '<svg class="size-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>';
+  var ICON_COPY =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>';
+  var ICON_EXPAND_RIGHT =
+    '<svg class="size-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>';
 
-  var ICON_EYE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-blue-600"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" /></svg>';
-  var ICON_EYE_SLASH = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 text-blue-600"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.28033 2.21967C2.98744 1.92678 2.51256 1.92678 2.21967 2.21967C1.92678 2.51256 1.92678 2.98744 2.21967 3.28033L12.7197 13.7803C13.0126 14.0732 13.4874 14.0732 13.7803 13.7803C14.0732 13.4874 14.0732 13.0126 13.7803 12.7197L12.4577 11.397C13.438 10.5863 14.1937 9.51366 14.6176 8.2863C14.681 8.10274 14.6811 7.90313 14.6179 7.71951C13.672 4.97316 11.0653 3 7.99777 3C6.85414 3 5.77457 3.27425 4.82123 3.76057L3.28033 2.21967Z" /><path d="M6.47602 5.41536L7.61147 6.55081C7.73539 6.51767 7.86563 6.5 8 6.5C8.82843 6.5 9.5 7.17157 9.5 8C9.5 8.13437 9.48233 8.26461 9.44919 8.38853L10.5846 9.52398C10.8486 9.07734 11 8.55636 11 8C11 6.34315 9.65685 5 8 5C7.44364 5 6.92266 5.15145 6.47602 5.41536Z" /><path d="M7.81206 10.9942L9.62754 12.8097C9.10513 12.9341 8.56002 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C1.63675 6.96935 2.01588 6.28191 2.49314 5.67529L5.00579 8.18794C5.09895 9.69509 6.30491 10.901 7.81206 10.9942Z" /></svg>';
+  var ICON_EYE =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-blue-600"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" /></svg>';
+  var ICON_EYE_SLASH =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 text-blue-600"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.28033 2.21967C2.98744 1.92678 2.51256 1.92678 2.21967 2.21967C1.92678 2.51256 1.92678 2.98744 2.21967 3.28033L12.7197 13.7803C13.0126 14.0732 13.4874 14.0732 13.7803 13.7803C14.0732 13.4874 14.0732 13.0126 13.7803 12.7197L12.4577 11.397C13.438 10.5863 14.1937 9.51366 14.6176 8.2863C14.681 8.10274 14.6811 7.90313 14.6179 7.71951C13.672 4.97316 11.0653 3 7.99777 3C6.85414 3 5.77457 3.27425 4.82123 3.76057L3.28033 2.21967Z" /><path d="M6.47602 5.41536L7.61147 6.55081C7.73539 6.51767 7.86563 6.5 8 6.5C8.82843 6.5 9.5 7.17157 9.5 8C9.5 8.13437 9.48233 8.26461 9.44919 8.38853L10.5846 9.52398C10.8486 9.07734 11 8.55636 11 8C11 6.34315 9.65685 5 8 5C7.44364 5 6.92266 5.15145 6.47602 5.41536Z" /><path d="M7.81206 10.9942L9.62754 12.8097C9.10513 12.9341 8.56002 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C1.63675 6.96935 2.01588 6.28191 2.49314 5.67529L5.00579 8.18794C5.09895 9.69509 6.30491 10.901 7.81206 10.9942Z" /></svg>';
 
-  var ICON_DOCUMENT = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" /></svg>';
+  var ICON_DOCUMENT =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" /></svg>';
 
   // ── Helpers ──
 
   function escapeHtml(value) {
     return String(value)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
 
   function formatCurrency(amount, currency) {
     try {
-      return Number(amount).toLocaleString('en-US', {
-        style: 'currency',
+      return Number(amount).toLocaleString("en-US", {
+        style: "currency",
         currency: currency,
         minimumFractionDigits: 2,
       });
     } catch (err) {
-      return '$' + Number(amount || 0).toFixed(2);
+      return "$" + Number(amount || 0).toFixed(2);
     }
   }
 
   function formatDate(isoDate) {
-    var parsed = new Date(String(isoDate) + 'T00:00:00');
-    if (Number.isNaN(parsed.getTime())) return escapeHtml(isoDate || '');
-    return parsed.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    var parsed = new Date(String(isoDate) + "T00:00:00");
+    if (Number.isNaN(parsed.getTime())) return escapeHtml(isoDate || "");
+    return parsed.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   }
 
   // Formats an ISO datetime string (e.g. "2024-06-30T10:40") as
   // "June 30, 2024 10:40 AM (EST)" for activity log display.
   function formatActivityDate(isoDateTime) {
-    if (!isoDateTime) return '';
+    if (!isoDateTime) return "";
     var str = String(isoDateTime);
-    var tIdx = str.indexOf('T');
+    var tIdx = str.indexOf("T");
     var datePart = tIdx !== -1 ? str.slice(0, tIdx) : str;
-    var timePart = tIdx !== -1 ? str.slice(tIdx + 1) : '';
-    var date = new Date(datePart + 'T00:00:00');
+    var timePart = tIdx !== -1 ? str.slice(tIdx + 1) : "";
+    var date = new Date(datePart + "T00:00:00");
     if (Number.isNaN(date.getTime())) return escapeHtml(str);
-    var dateStr = date.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+    var dateStr = date.toLocaleDateString("en-US", {
+      month: "long",
+      day: "numeric",
+      year: "numeric",
+    });
     if (timePart) {
-      var tp = timePart.split(':');
+      var tp = timePart.split(":");
       var hour = parseInt(tp[0], 10);
-      var minute = tp[1] ? tp[1].slice(0, 2) : '00';
-      var ampm = hour >= 12 ? 'PM' : 'AM';
+      var minute = tp[1] ? tp[1].slice(0, 2) : "00";
+      var ampm = hour >= 12 ? "PM" : "AM";
       var hour12 = hour % 12 || 12;
-      return dateStr + ' ' + hour12 + ':' + minute + ' ' + ampm + ' (EST)';
+      return dateStr + " " + hour12 + ":" + minute + " " + ampm + " (EST)";
     }
     return dateStr;
   }
 
   function getDigits(value) {
-    return String(value || '').replace(/\D/g, '');
+    return String(value || "").replace(/\D/g, "");
   }
 
   // True when `entry` belongs in the given tab. Handles both TAB_STATUS_FILTER
@@ -429,7 +460,7 @@
   function entryMatchesTab(entry, tabKey) {
     if (!entry) return false;
     var filter = TAB_STATUS_FILTER[tabKey];
-    if (typeof filter === 'function') return !!filter(entry);
+    if (typeof filter === "function") return !!filter(entry);
     if (!filter || !filter.length) return true;
     return filter.indexOf(entry.status) !== -1;
   }
@@ -447,45 +478,62 @@
 
   function applyTableFilters(entries) {
     var list = Array.isArray(entries) ? entries.slice() : [];
-    var search = String(tableFilterState.search || '').trim().toLowerCase();
+    var search = String(tableFilterState.search || "")
+      .trim()
+      .toLowerCase();
     if (search) {
       list = list.filter(function (entry) {
-        var vendorEntry = String(entry && entry.vendorEntry || '').toLowerCase();
-        var invoice = String(entry && entry.invoice || '').toLowerCase();
-        var customer = String(entry && entry.customer || '').toLowerCase();
-        var failureReason = String(getFailureReason(entry) || '').toLowerCase();
-        return vendorEntry.indexOf(search) !== -1 ||
+        var vendorEntry = String(
+          (entry && entry.vendorEntry) || "",
+        ).toLowerCase();
+        var invoice = String((entry && entry.invoice) || "").toLowerCase();
+        var customer = String((entry && entry.customer) || "").toLowerCase();
+        var failureReason = String(getFailureReason(entry) || "").toLowerCase();
+        return (
+          vendorEntry.indexOf(search) !== -1 ||
           invoice.indexOf(search) !== -1 ||
-          ('#' + invoice).indexOf(search) !== -1 ||
+          ("#" + invoice).indexOf(search) !== -1 ||
           customer.indexOf(search) !== -1 ||
-          failureReason.indexOf(search) !== -1;
+          failureReason.indexOf(search) !== -1
+        );
       });
     }
     if (tableFilterState.appliedSelectedCustomers.size) {
       list = list.filter(function (entry) {
-        return tableFilterState.appliedSelectedCustomers.has(String(entry && entry.customer || ''));
+        return tableFilterState.appliedSelectedCustomers.has(
+          String((entry && entry.customer) || ""),
+        );
       });
     }
     if (tableFilterState.appliedSelectedStatuses.size) {
       list = list.filter(function (entry) {
-        return tableFilterState.appliedSelectedStatuses.has(String(entry && entry.status || ''));
+        return tableFilterState.appliedSelectedStatuses.has(
+          String((entry && entry.status) || ""),
+        );
       });
     }
     if (tableFilterState.appliedSelectedMethods.size) {
       list = list.filter(function (entry) {
-        return tableFilterState.appliedSelectedMethods.has(String(entry && entry.methodType || ''));
+        return tableFilterState.appliedSelectedMethods.has(
+          String((entry && entry.methodType) || ""),
+        );
       });
     }
     if (tableFilterState.appliedSelectedFailureReasons.size) {
       list = list.filter(function (entry) {
-        return tableFilterState.appliedSelectedFailureReasons.has(String(getFailureReason(entry) || ''));
+        return tableFilterState.appliedSelectedFailureReasons.has(
+          String(getFailureReason(entry) || ""),
+        );
       });
     }
-    if (tableFilterState.appliedInitiatedDateFrom || tableFilterState.appliedInitiatedDateTo) {
-      var from = tableFilterState.appliedInitiatedDateFrom || '';
-      var to = tableFilterState.appliedInitiatedDateTo || '';
+    if (
+      tableFilterState.appliedInitiatedDateFrom ||
+      tableFilterState.appliedInitiatedDateTo
+    ) {
+      var from = tableFilterState.appliedInitiatedDateFrom || "";
+      var to = tableFilterState.appliedInitiatedDateTo || "";
       list = list.filter(function (entry) {
-        var dateKey = String(entry && entry.dateInitiated || '').slice(0, 10);
+        var dateKey = String((entry && entry.dateInitiated) || "").slice(0, 10);
         if (!dateKey) return false;
         if (from && dateKey < from) return false;
         if (to && dateKey > to) return false;
@@ -496,18 +544,20 @@
   }
 
   function getVisibleEntriesForActiveTab() {
-    var base = filterEntriesByTab(_activeTableTabKey || 'pending');
+    var base = filterEntriesByTab(_activeTableTabKey || "pending");
     var filtered = applyTableFilters(base);
     return getSortedEntries(filtered);
   }
 
   function normalizeTabKey(tabKey) {
-    var key = String(tabKey || '').trim();
-    return Object.prototype.hasOwnProperty.call(TAB_STATUS_FILTER, key) ? key : 'pending';
+    var key = String(tabKey || "").trim();
+    return Object.prototype.hasOwnProperty.call(TAB_STATUS_FILTER, key)
+      ? key
+      : "pending";
   }
 
   function isAlwaysVisibleColumn(col) {
-    return !!(col && (col.type === 'expand' || col.type === 'action'));
+    return !!(col && (col.type === "expand" || col.type === "action"));
   }
 
   function getManageableColumns(columns) {
@@ -521,25 +571,38 @@
     var defaultKeys = getDefaultManageableColumnKeys(columns);
     if (!columnVisibilityState.initialized) {
       columnVisibilityState.visibleKeys = new Set(defaultKeys);
-      columnVisibilityState.orderedKeys = manageableColumns.map(function (col) { return col.key; });
+      columnVisibilityState.orderedKeys = manageableColumns.map(function (col) {
+        return col.key;
+      });
       columnVisibilityState.draftVisibleKeys = new Set(defaultKeys);
-      columnVisibilityState.draftOrderedKeys = manageableColumns.map(function (col) { return col.key; });
+      columnVisibilityState.draftOrderedKeys = manageableColumns.map(
+        function (col) {
+          return col.key;
+        },
+      );
       columnVisibilityState.initialized = true;
       return;
     }
-    var validKeys = new Set(manageableColumns.map(function (col) { return col.key; }));
+    var validKeys = new Set(
+      manageableColumns.map(function (col) {
+        return col.key;
+      }),
+    );
     Array.from(columnVisibilityState.visibleKeys).forEach(function (key) {
       if (!validKeys.has(key)) columnVisibilityState.visibleKeys.delete(key);
     });
     Array.from(columnVisibilityState.draftVisibleKeys).forEach(function (key) {
-      if (!validKeys.has(key)) columnVisibilityState.draftVisibleKeys.delete(key);
+      if (!validKeys.has(key))
+        columnVisibilityState.draftVisibleKeys.delete(key);
     });
-    columnVisibilityState.orderedKeys = columnVisibilityState.orderedKeys.filter(function (key) {
-      return validKeys.has(key);
-    });
-    columnVisibilityState.draftOrderedKeys = columnVisibilityState.draftOrderedKeys.filter(function (key) {
-      return validKeys.has(key);
-    });
+    columnVisibilityState.orderedKeys =
+      columnVisibilityState.orderedKeys.filter(function (key) {
+        return validKeys.has(key);
+      });
+    columnVisibilityState.draftOrderedKeys =
+      columnVisibilityState.draftOrderedKeys.filter(function (key) {
+        return validKeys.has(key);
+      });
     manageableColumns.forEach(function (col) {
       if (columnVisibilityState.orderedKeys.indexOf(col.key) === -1) {
         columnVisibilityState.orderedKeys.push(col.key);
@@ -553,7 +616,10 @@
         columnVisibilityState.visibleKeys.add(key);
       });
     }
-    if (!columnVisibilityState.draftVisibleKeys.size && manageableColumns.length) {
+    if (
+      !columnVisibilityState.draftVisibleKeys.size &&
+      manageableColumns.length
+    ) {
       defaultKeys.forEach(function (key) {
         columnVisibilityState.draftVisibleKeys.add(key);
       });
@@ -562,25 +628,39 @@
 
   function getDefaultManageableColumnKeys(columns) {
     return getManageableColumns(columns)
-      .filter(function (col) { return col.key !== 'failureReason'; })
-      .map(function (col) { return col.key; });
+      .filter(function (col) {
+        return col.key !== "failureReason";
+      })
+      .map(function (col) {
+        return col.key;
+      });
   }
 
   function cloneColumnDraftFromApplied(columns) {
     ensureColumnVisibilityState(columns);
-    columnVisibilityState.draftVisibleKeys = new Set(Array.from(columnVisibilityState.visibleKeys));
-    columnVisibilityState.draftOrderedKeys = columnVisibilityState.orderedKeys.slice();
+    columnVisibilityState.draftVisibleKeys = new Set(
+      Array.from(columnVisibilityState.visibleKeys),
+    );
+    columnVisibilityState.draftOrderedKeys =
+      columnVisibilityState.orderedKeys.slice();
   }
 
   function resetColumnDraftToDefault(columns) {
     var defaultKeys = getDefaultManageableColumnKeys(columns);
     columnVisibilityState.draftVisibleKeys = new Set(defaultKeys);
-    columnVisibilityState.draftOrderedKeys = getManageableColumns(columns).map(function (col) { return col.key; });
+    columnVisibilityState.draftOrderedKeys = getManageableColumns(columns).map(
+      function (col) {
+        return col.key;
+      },
+    );
   }
 
   function commitColumnDraft() {
-    columnVisibilityState.visibleKeys = new Set(Array.from(columnVisibilityState.draftVisibleKeys));
-    columnVisibilityState.orderedKeys = columnVisibilityState.draftOrderedKeys.slice();
+    columnVisibilityState.visibleKeys = new Set(
+      Array.from(columnVisibilityState.draftVisibleKeys),
+    );
+    columnVisibilityState.orderedKeys =
+      columnVisibilityState.draftOrderedKeys.slice();
   }
 
   function setsMatch(a, b) {
@@ -601,15 +681,27 @@
   }
 
   function isColumnDraftDirty() {
-    return !setsMatch(columnVisibilityState.draftVisibleKeys, columnVisibilityState.visibleKeys) ||
-      !arraysMatch(columnVisibilityState.draftOrderedKeys, columnVisibilityState.orderedKeys);
+    return (
+      !setsMatch(
+        columnVisibilityState.draftVisibleKeys,
+        columnVisibilityState.visibleKeys,
+      ) ||
+      !arraysMatch(
+        columnVisibilityState.draftOrderedKeys,
+        columnVisibilityState.orderedKeys,
+      )
+    );
   }
 
   function isColumnDraftDefault(columns) {
     var defaultKeys = getDefaultManageableColumnKeys(columns);
-    var defaultOrder = getManageableColumns(columns).map(function (col) { return col.key; });
-    return setsMatch(columnVisibilityState.draftVisibleKeys, new Set(defaultKeys)) &&
-      arraysMatch(columnVisibilityState.draftOrderedKeys, defaultOrder);
+    var defaultOrder = getManageableColumns(columns).map(function (col) {
+      return col.key;
+    });
+    return (
+      setsMatch(columnVisibilityState.draftVisibleKeys, new Set(defaultKeys)) &&
+      arraysMatch(columnVisibilityState.draftOrderedKeys, defaultOrder)
+    );
   }
 
   function getVisibleColumns(columns) {
@@ -617,10 +709,16 @@
     var originalColumns = Array.isArray(columns) ? columns : [];
     var manageableColumns = getManageableColumns(originalColumns);
     var manageableByKey = new Map();
-    var manageColumnsDialog = document.getElementById('sx-manage-columns-dialog');
+    var manageColumnsDialog = document.getElementById(
+      "sx-manage-columns-dialog",
+    );
     var useDraftState = !!(manageColumnsDialog && manageColumnsDialog.open);
-    var orderedKeys = useDraftState ? columnVisibilityState.draftOrderedKeys : columnVisibilityState.orderedKeys;
-    var visibleKeys = useDraftState ? columnVisibilityState.draftVisibleKeys : columnVisibilityState.visibleKeys;
+    var orderedKeys = useDraftState
+      ? columnVisibilityState.draftOrderedKeys
+      : columnVisibilityState.orderedKeys;
+    var visibleKeys = useDraftState
+      ? columnVisibilityState.draftVisibleKeys
+      : columnVisibilityState.visibleKeys;
     manageableColumns.forEach(function (col) {
       manageableByKey.set(col.key, col);
     });
@@ -628,7 +726,9 @@
       .filter(function (key) {
         return manageableByKey.has(key) && visibleKeys.has(key);
       })
-      .map(function (key) { return manageableByKey.get(key); });
+      .map(function (key) {
+        return manageableByKey.get(key);
+      });
     var merged = [];
     var insertedManageable = false;
     originalColumns.forEach(function (col) {
@@ -649,9 +749,9 @@
 
   function getRenderableColumns(columns) {
     var visibleColumns = getVisibleColumns(columns);
-    if (normalizeTabKey(_activeTableTabKey || 'pending') !== 'exceptions') {
+    if (normalizeTabKey(_activeTableTabKey || "pending") !== "exceptions") {
       visibleColumns = visibleColumns.filter(function (col) {
-        return col && col.key !== 'failureReason';
+        return col && col.key !== "failureReason";
       });
     }
     return visibleColumns;
@@ -660,12 +760,19 @@
   function ensureCompleteExchangeColumns(columns) {
     var list = Array.isArray(columns) ? columns.slice() : [];
     var hasFailureReason = list.some(function (col) {
-      return col && col.key === 'failureReason';
+      return col && col.key === "failureReason";
     });
     if (!hasFailureReason) {
-      var statusIndex = list.findIndex(function (col) { return col && col.key === 'status'; });
-      var failureReasonColumn = { key: 'failureReason', label: 'Failure Reason', sortable: true };
-      if (statusIndex >= 0) list.splice(statusIndex + 1, 0, failureReasonColumn);
+      var statusIndex = list.findIndex(function (col) {
+        return col && col.key === "status";
+      });
+      var failureReasonColumn = {
+        key: "failureReason",
+        label: "Failure Reason",
+        sortable: true,
+      };
+      if (statusIndex >= 0)
+        list.splice(statusIndex + 1, 0, failureReasonColumn);
       else list.push(failureReasonColumn);
     }
     return list;
@@ -679,8 +786,12 @@
       manageableByKey.set(col.key, col);
     });
     return columnVisibilityState.draftOrderedKeys
-      .filter(function (key) { return manageableByKey.has(key); })
-      .map(function (key) { return manageableByKey.get(key); });
+      .filter(function (key) {
+        return manageableByKey.has(key);
+      })
+      .map(function (key) {
+        return manageableByKey.get(key);
+      });
   }
 
   function moveDraftColumnKeyBefore(movingKey, targetKey) {
@@ -704,47 +815,66 @@
     if (fromIndex === -1 || targetIndex === -1) return false;
     currentOrder.splice(fromIndex, 1);
     targetIndex = currentOrder.indexOf(targetKey);
-    currentOrder.splice(position === 'after' ? targetIndex + 1 : targetIndex, 0, movingKey);
+    currentOrder.splice(
+      position === "after" ? targetIndex + 1 : targetIndex,
+      0,
+      movingKey,
+    );
     columnVisibilityState.draftOrderedKeys = currentOrder;
     return true;
   }
 
   function buildManageColumnsRowHTML(col, checked, disabled) {
-    var scopeBadge = col && col.key === 'failureReason'
-      ? '<span class="shrink-0 rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10">Exceptions</span>'
-      : '';
-    return '' +
-      '<div data-column-order-row="' + escapeHtml(col.key) + '" class="group relative flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 dark:hover:bg-white/5' + (disabled ? ' opacity-60' : '') + '">' +
+    var scopeBadge =
+      col && col.key === "failureReason"
+        ? '<span class="shrink-0 rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10">Exceptions</span>'
+        : "";
+    return (
+      "" +
+      '<div data-column-order-row="' +
+      escapeHtml(col.key) +
+      '" class="group relative flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 dark:hover:bg-white/5' +
+      (disabled ? " opacity-60" : "") +
+      '">' +
       '  <span data-drop-line="before" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="top:0;transform:translateY(-50%);"></span>' +
       '  <span data-drop-line="after" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="bottom:0;transform:translateY(50%);"></span>' +
-      '  <button type="button" draggable="true" data-column-drag-handle="' + escapeHtml(col.key) + '" class="inline-flex size-5 shrink-0 cursor-grab items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-500 active:cursor-grabbing dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
+      '  <button type="button" draggable="true" data-column-drag-handle="' +
+      escapeHtml(col.key) +
+      '" class="inline-flex size-5 shrink-0 cursor-grab items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-500 active:cursor-grabbing dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
       '    <span class="sr-only">Reorder column</span>' +
       '    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4">' +
       '      <path d="M2.40039 10.8001C2.40039 10.1374 2.93765 9.6001 3.60039 9.6001C4.26313 9.6001 4.80039 10.1374 4.80039 10.8001C4.80039 11.4628 4.26313 12.0001 3.60039 12.0001C2.93765 12.0001 2.40039 11.4628 2.40039 10.8001Z" /><path d="M6.80039 10.8001C6.80039 10.1374 7.33765 9.6001 8.00039 9.6001C8.66313 9.6001 9.20039 10.1374 9.20039 10.8001C9.20039 11.4628 8.66313 12.0001 8.00039 12.0001C7.33765 12.0001 6.80039 11.4628 6.80039 10.8001Z" /><path d="M12.4004 9.6001C11.7376 9.6001 11.2004 10.1374 11.2004 10.8001C11.2004 11.4628 11.7376 12.0001 12.4004 12.0001C13.0631 12.0001 13.6004 11.4628 13.6004 10.8001C13.6004 10.1374 13.0631 9.6001 12.4004 9.6001Z" /><path d="M2.40039 6.00005C2.40039 5.33731 2.93765 4.80005 3.60039 4.80005C4.26313 4.80005 4.80039 5.33731 4.80039 6.00005C4.80039 6.66279 4.26313 7.20005 3.60039 7.20005C2.93765 7.20005 2.40039 6.66279 2.40039 6.00005Z" /><path d="M6.80039 6.00005C6.80039 5.33731 7.33765 4.80005 8.00039 4.80005C8.66313 4.80005 9.20039 5.33731 9.20039 6.00005C9.20039 6.66279 8.66313 7.20005 8.00039 7.20005C7.33765 7.20005 6.80039 6.66279 6.80039 6.00005Z" /><path d="M12.4004 4.80005C11.7376 4.80005 11.2004 5.33731 11.2004 6.00005C11.2004 6.66279 11.7376 7.20005 12.4004 7.20005C13.0631 7.20005 13.6004 6.66279 13.6004 6.00005C13.6004 5.33731 13.0631 4.80005 12.4004 4.80005Z" />' +
-      '    </svg>' +
-      '  </button>' +
+      "    </svg>" +
+      "  </button>" +
       '  <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3">' +
       '  <div class="grid size-4 grid-cols-1">' +
-      '    <input type="checkbox" data-column-visibility-toggle="' + escapeHtml(col.key) + '"' + (checked ? ' checked' : '') + (disabled ? ' disabled' : '') +
+      '    <input type="checkbox" data-column-visibility-toggle="' +
+      escapeHtml(col.key) +
+      '"' +
+      (checked ? " checked" : "") +
+      (disabled ? " disabled" : "") +
       '      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500 dark:disabled:bg-white/10" />' +
       '    <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
       '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
-      '    </svg>' +
-      '  </div>' +
+      "    </svg>" +
+      "  </div>" +
       '  <span class="flex min-w-0 flex-1 items-center gap-2">' +
-      '    <span class="truncate text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(col.label || col.key) + '</span>' +
-           scopeBadge +
-      '  </span>' +
-      '  </label>' +
-      '</div>';
+      '    <span class="truncate text-sm font-medium text-gray-900 dark:text-white">' +
+      escapeHtml(col.label || col.key) +
+      "</span>" +
+      scopeBadge +
+      "  </span>" +
+      "  </label>" +
+      "</div>"
+    );
   }
 
   function getUrlTabKey() {
     try {
-      var params = new URLSearchParams(window.location.search || '');
-      return normalizeTabKey(params.get('tab'));
+      var params = new URLSearchParams(window.location.search || "");
+      return normalizeTabKey(params.get("tab"));
     } catch (err) {
-      return 'pending';
+      return "pending";
     }
   }
 
@@ -752,34 +882,34 @@
     try {
       var nextTabKey = normalizeTabKey(tabKey);
       var url = new URL(window.location.href);
-      url.searchParams.set('tab', nextTabKey);
-      window.history.replaceState({}, '', url.toString());
+      url.searchParams.set("tab", nextTabKey);
+      window.history.replaceState({}, "", url.toString());
     } catch (err) {
       // Ignore URL update failures; tab state still changes in memory.
     }
   }
 
   function getSortDirectionForKey(key) {
-    return sortState.key === key ? sortState.direction : '';
+    return sortState.key === key ? sortState.direction : "";
   }
 
   function cycleSortDirection(key) {
     if (!key) return;
     if (sortState.key !== key) {
       sortState.key = key;
-      sortState.direction = 'asc';
+      sortState.direction = "asc";
       return;
     }
-    if (sortState.direction === 'asc') {
-      sortState.direction = 'desc';
+    if (sortState.direction === "asc") {
+      sortState.direction = "desc";
       return;
     }
-    if (sortState.direction === 'desc') {
-      sortState.key = '';
-      sortState.direction = '';
+    if (sortState.direction === "desc") {
+      sortState.key = "";
+      sortState.direction = "";
       return;
     }
-    sortState.direction = 'asc';
+    sortState.direction = "asc";
   }
 
   function getSortedEntries(entries) {
@@ -788,46 +918,68 @@
     var direction = sortState.direction;
     if (!key || !direction) return list;
 
-    var multiplier = direction === 'desc' ? -1 : 1;
+    var multiplier = direction === "desc" ? -1 : 1;
     var statusRank = { pending: 1, paid: 2, exception: 3 };
     list.sort(function (a, b) {
       var av;
       var bv;
 
-      if (key === 'amount') {
+      if (key === "amount") {
         av = Number(a && a.amount) || 0;
         bv = Number(b && b.amount) || 0;
         if (av === bv) return 0;
         return (av > bv ? 1 : -1) * multiplier;
       }
 
-      if (key === 'dateInitiated') {
-        av = new Date(String(a && a.dateInitiated || '') + 'T00:00:00').getTime();
-        bv = new Date(String(b && b.dateInitiated || '') + 'T00:00:00').getTime();
+      if (key === "dateInitiated") {
+        av = new Date(
+          String((a && a.dateInitiated) || "") + "T00:00:00",
+        ).getTime();
+        bv = new Date(
+          String((b && b.dateInitiated) || "") + "T00:00:00",
+        ).getTime();
         av = Number.isFinite(av) ? av : 0;
         bv = Number.isFinite(bv) ? bv : 0;
         if (av === bv) return 0;
         return (av > bv ? 1 : -1) * multiplier;
       }
 
-      if (key === 'status') {
-        av = statusRank[String(a && a.status || '').toLowerCase()] || 99;
-        bv = statusRank[String(b && b.status || '').toLowerCase()] || 99;
+      if (key === "status") {
+        av = statusRank[String((a && a.status) || "").toLowerCase()] || 99;
+        bv = statusRank[String((b && b.status) || "").toLowerCase()] || 99;
         if (av === bv) return 0;
         return (av > bv ? 1 : -1) * multiplier;
       }
 
-      if (key === 'paymentMethod') {
-        av = (String(a && a.paymentMethod || '') + ' ' + String(a && a.paymentMethodEnding || '')).trim().toLowerCase();
-        bv = (String(b && b.paymentMethod || '') + ' ' + String(b && b.paymentMethodEnding || '')).trim().toLowerCase();
-        var pmCmp = av.localeCompare(bv, undefined, { numeric: true, sensitivity: 'base' });
+      if (key === "paymentMethod") {
+        av = (
+          String((a && a.paymentMethod) || "") +
+          " " +
+          String((a && a.paymentMethodEnding) || "")
+        )
+          .trim()
+          .toLowerCase();
+        bv = (
+          String((b && b.paymentMethod) || "") +
+          " " +
+          String((b && b.paymentMethodEnding) || "")
+        )
+          .trim()
+          .toLowerCase();
+        var pmCmp = av.localeCompare(bv, undefined, {
+          numeric: true,
+          sensitivity: "base",
+        });
         if (pmCmp === 0) return 0;
         return pmCmp * multiplier;
       }
 
-      av = String(a && a[key] || '').toLowerCase();
-      bv = String(b && b[key] || '').toLowerCase();
-      var cmp = av.localeCompare(bv, undefined, { numeric: true, sensitivity: 'base' });
+      av = String((a && a[key]) || "").toLowerCase();
+      bv = String((b && b[key]) || "").toLowerCase();
+      var cmp = av.localeCompare(bv, undefined, {
+        numeric: true,
+        sensitivity: "base",
+      });
       if (cmp === 0) return 0;
       return cmp * multiplier;
     });
@@ -835,67 +987,106 @@
   }
 
   function isPendingLikeStatus(status) {
-    return status === 'pending' || status === 'processing';
+    return status === "pending" || status === "processing";
   }
 
   function normalizeStatusValue(status) {
-    var value = String(status || '').trim().toLowerCase();
-    if (value === 'completed') return 'paid';
-    if (value === 'failed') return 'exception';
-    if (value === 'pending' || value === 'processing' || value === 'paid' || value === 'exception' || value === 'declined') return value;
-    return 'pending';
+    var value = String(status || "")
+      .trim()
+      .toLowerCase();
+    if (value === "completed") return "paid";
+    if (value === "failed") return "exception";
+    if (
+      value === "pending" ||
+      value === "processing" ||
+      value === "paid" ||
+      value === "exception" ||
+      value === "declined"
+    )
+      return value;
+    return "pending";
   }
 
   function normalizeMethodTypeValue(entry) {
-    var methodType = String(entry && entry.methodType || '').trim().toLowerCase();
-    if (methodType === 'card' || methodType === 'ach' || methodType === 'smart_exchange') return methodType;
+    var methodType = String((entry && entry.methodType) || "")
+      .trim()
+      .toLowerCase();
+    if (
+      methodType === "card" ||
+      methodType === "ach" ||
+      methodType === "smart_exchange"
+    )
+      return methodType;
 
-    var infoType = String(entry && entry.details && entry.details.paymentInfo && entry.details.paymentInfo.type || '').trim().toLowerCase();
-    if (infoType === 'card' || infoType === 'ach') return infoType;
-    if (infoType === 'smartexchange' || infoType === 'smart_exchange') return 'smart_exchange';
+    var infoType = String(
+      (entry &&
+        entry.details &&
+        entry.details.paymentInfo &&
+        entry.details.paymentInfo.type) ||
+        "",
+    )
+      .trim()
+      .toLowerCase();
+    if (infoType === "card" || infoType === "ach") return infoType;
+    if (infoType === "smartexchange" || infoType === "smart_exchange")
+      return "smart_exchange";
 
-    var method = String(entry && entry.paymentMethod || '').trim().toLowerCase();
-    if (method === 'card') return 'card';
-    if (method === 'ach' || method === 'bank account') return 'ach';
-    if (method === 'smart exchange') return 'smart_exchange';
-    return 'smart_exchange';
+    var method = String((entry && entry.paymentMethod) || "")
+      .trim()
+      .toLowerCase();
+    if (method === "card") return "card";
+    if (method === "ach" || method === "bank account") return "ach";
+    if (method === "smart exchange") return "smart_exchange";
+    return "smart_exchange";
   }
 
   function getMethodLabelFromType(methodType) {
-    return METHOD_TYPE_LABELS[methodType] || 'SMART Exchange';
+    return METHOD_TYPE_LABELS[methodType] || "SMART Exchange";
   }
 
   function getStatusLabel(status) {
-    return STATUS_LABELS[status] || 'Pending';
+    return STATUS_LABELS[status] || "Pending";
   }
 
   // The status to show for an entry. Rows on the Action Required worklist read
   // 'Action Required' instead of the bare 'Pending' the data carries.
   function getDisplayStatus(entry) {
-    if (isPendingManualReviewEntry(entry)) return 'action-required';
-    return entry ? entry.status : 'pending';
+    if (isPendingManualReviewEntry(entry)) return "action-required";
+    return entry ? entry.status : "pending";
   }
 
   function getDeclineReason(entry) {
-    if (!entry || !entry.details) return '';
-    if (typeof entry.details.declineReason === 'string' && entry.details.declineReason.trim()) {
+    if (!entry || !entry.details) return "";
+    if (
+      typeof entry.details.declineReason === "string" &&
+      entry.details.declineReason.trim()
+    ) {
       return entry.details.declineReason.trim();
     }
-    var log = Array.isArray(entry.details.activityLog) ? entry.details.activityLog : [];
+    var log = Array.isArray(entry.details.activityLog)
+      ? entry.details.activityLog
+      : [];
     for (var i = log.length - 1; i >= 0; i -= 1) {
       var item = log[i];
-      if (item && item.comment && String(item.action || '').toLowerCase().indexOf('declined') !== -1) {
+      if (
+        item &&
+        item.comment &&
+        String(item.action || "")
+          .toLowerCase()
+          .indexOf("declined") !== -1
+      ) {
         return String(item.comment).trim();
       }
     }
-    return '';
+    return "";
   }
 
   function getFailureReason(entry) {
-    if (!entry) return '';
+    if (!entry) return "";
     var declineReason = getDeclineReason(entry);
     if (declineReason) return declineReason;
-    var details = entry.details && typeof entry.details === 'object' ? entry.details : {};
+    var details =
+      entry.details && typeof entry.details === "object" ? entry.details : {};
     var directReason = [
       entry.failureReason,
       entry.exceptionReason,
@@ -903,105 +1094,158 @@
       details.exceptionReason,
       details.error,
       details.errorMessage,
-      details.declineReason
+      details.declineReason,
     ].find(function (value) {
-      return typeof value === 'string' && value.trim();
+      return typeof value === "string" && value.trim();
     });
     if (directReason) return String(directReason).trim();
-    var log = Array.isArray(entry && entry.details && entry.details.activityLog) ? entry.details.activityLog : [];
+    var log = Array.isArray(entry && entry.details && entry.details.activityLog)
+      ? entry.details.activityLog
+      : [];
     for (var i = log.length - 1; i >= 0; i -= 1) {
       var item = log[i];
-      var action = String(item && item.action || '').trim();
-      var comment = String(item && (item.comment || item.description) || '').trim();
+      var action = String((item && item.action) || "").trim();
+      var comment = String(
+        (item && (item.comment || item.description)) || "",
+      ).trim();
       var lower = action.toLowerCase();
-      if (lower.indexOf('failed') !== -1 || lower.indexOf('declined') !== -1 || lower.indexOf('revoked') !== -1 || lower.indexOf('rejected') !== -1 || lower.indexOf('error') !== -1) {
+      if (
+        lower.indexOf("failed") !== -1 ||
+        lower.indexOf("declined") !== -1 ||
+        lower.indexOf("revoked") !== -1 ||
+        lower.indexOf("rejected") !== -1 ||
+        lower.indexOf("error") !== -1
+      ) {
         return comment || action;
       }
     }
-    return '';
+    return "";
   }
 
   function getDeclineDate(entry) {
-    if (!entry || !entry.details || !Array.isArray(entry.details.activityLog)) return '';
+    if (!entry || !entry.details || !Array.isArray(entry.details.activityLog))
+      return "";
     var log = entry.details.activityLog;
     for (var i = log.length - 1; i >= 0; i -= 1) {
       var item = log[i];
-      if (item && item.date && String(item.action || '').toLowerCase().indexOf('declined') !== -1) {
-        return formatDate(String(item.date).split('T')[0]);
+      if (
+        item &&
+        item.date &&
+        String(item.action || "")
+          .toLowerCase()
+          .indexOf("declined") !== -1
+      ) {
+        return formatDate(String(item.date).split("T")[0]);
       }
     }
-    return '';
+    return "";
   }
 
   function normalizeDetails(details) {
-    if (!details || typeof details !== 'object') {
-      return { notes: '', paymentInfo: null, attachments: [], activityLog: [] };
+    if (!details || typeof details !== "object") {
+      return { notes: "", paymentInfo: null, attachments: [], activityLog: [] };
     }
     return {
-      notes: typeof details.notes === 'string' ? details.notes : '',
-      paymentInfo: details.paymentInfo && typeof details.paymentInfo === 'object' ? details.paymentInfo : null,
-      attachments: Array.isArray(details.attachments) ? details.attachments : [],
-      activityLog: Array.isArray(details.activityLog) ? details.activityLog : [],
-      declineReason: typeof details.declineReason === 'string' ? details.declineReason : '',
+      notes: typeof details.notes === "string" ? details.notes : "",
+      paymentInfo:
+        details.paymentInfo && typeof details.paymentInfo === "object"
+          ? details.paymentInfo
+          : null,
+      attachments: Array.isArray(details.attachments)
+        ? details.attachments
+        : [],
+      activityLog: Array.isArray(details.activityLog)
+        ? details.activityLog
+        : [],
+      declineReason:
+        typeof details.declineReason === "string" ? details.declineReason : "",
       requiresSignature: details.requiresSignature === true,
       requiresDocumentReview: details.requiresDocumentReview === true,
-      processing: details.processing && typeof details.processing === 'object' ? details.processing : null,
+      processing:
+        details.processing && typeof details.processing === "object"
+          ? details.processing
+          : null,
     };
   }
 
   function getEntryAttachments(entry) {
-    return entry && entry.details && Array.isArray(entry.details.attachments) ? entry.details.attachments : [];
+    return entry && entry.details && Array.isArray(entry.details.attachments)
+      ? entry.details.attachments
+      : [];
   }
 
   function requiresDocumentReview(entry) {
     if (!entry || !entry.details) return false;
-    return entry.details.requiresDocumentReview === true || getEntryAttachments(entry).length > 0;
+    return (
+      entry.details.requiresDocumentReview === true ||
+      getEntryAttachments(entry).length > 0
+    );
   }
 
   function requiresSignature(entry) {
-    return !!(entry && entry.details && entry.details.requiresSignature === true);
+    return !!(
+      entry &&
+      entry.details &&
+      entry.details.requiresSignature === true
+    );
   }
 
   function requiresGetPaidAction(entry) {
-    return !!(entry && isPendingLikeStatus(entry.status) && (requiresDocumentReview(entry) || requiresSignature(entry)));
+    return !!(
+      entry &&
+      isPendingLikeStatus(entry.status) &&
+      (requiresDocumentReview(entry) || requiresSignature(entry))
+    );
   }
 
   // Tabs that surface the inline "Mark as paid" action. Manual-review rows now live
   // only on 'action-required'; 'pending' stays listed so the Get Paid panel opened
   // from a deep link still offers the action. Paid and Exceptions stay read-only.
   function activeTabShowsManualActions() {
-    var key = normalizeTabKey(_activeTableTabKey || 'pending');
-    return key === 'pending' || key === 'action-required';
+    var key = normalizeTabKey(_activeTableTabKey || "pending");
+    return key === "pending" || key === "action-required";
   }
 
   function isPendingManualReviewEntry(entry) {
-    if (!entry || !isPendingLikeStatus(entry.status) || requiresGetPaidAction(entry)) return false;
-    return String(entry.methodType || '').toLowerCase() === 'card';
+    if (
+      !entry ||
+      !isPendingLikeStatus(entry.status) ||
+      requiresGetPaidAction(entry)
+    )
+      return false;
+    return String(entry.methodType || "").toLowerCase() === "card";
   }
 
   function isPendingAutoProcessingEntry(entry) {
-    if (!entry || !isPendingLikeStatus(entry.status) || requiresGetPaidAction(entry)) return false;
-    return String(entry.methodType || '').toLowerCase() === 'ach';
+    if (
+      !entry ||
+      !isPendingLikeStatus(entry.status) ||
+      requiresGetPaidAction(entry)
+    )
+      return false;
+    return String(entry.methodType || "").toLowerCase() === "ach";
   }
 
   function parseEntryDate(value) {
-    var raw = String(value || '').trim();
+    var raw = String(value || "").trim();
     if (!raw) return null;
-    var normalized = raw.indexOf('T') === -1 ? (raw + 'T00:00:00') : raw;
+    var normalized = raw.indexOf("T") === -1 ? raw + "T00:00:00" : raw;
     var date = new Date(normalized);
     return isNaN(date.getTime()) ? null : date;
   }
 
   function getAutoSettleDays(entry) {
-    var configured = entry && entry.details && entry.details.processing
-      ? Number(entry.details.processing.autoSettleAfterDays)
-      : NaN;
+    var configured =
+      entry && entry.details && entry.details.processing
+        ? Number(entry.details.processing.autoSettleAfterDays)
+        : NaN;
     return Number.isFinite(configured) && configured > 0 ? configured : 2;
   }
 
   function shouldAutoSettlePendingAch(entry) {
     if (!isPendingAutoProcessingEntry(entry)) return false;
-    var processing = entry.details && entry.details.processing ? entry.details.processing : {};
+    var processing =
+      entry.details && entry.details.processing ? entry.details.processing : {};
     var now = new Date();
     var expectedDate = parseEntryDate(processing.expectedSettlementDate);
     if (expectedDate) return now.getTime() >= expectedDate.getTime();
@@ -1013,84 +1257,111 @@
 
   function autoSettlePendingAchIfReady(entry) {
     if (!shouldAutoSettlePendingAch(entry)) return entry;
-    entry.status = 'paid';
+    entry.status = "paid";
     if (entry.details && Array.isArray(entry.details.activityLog)) {
       var hasComplete = entry.details.activityLog.some(function (logItem) {
-        return logItem && logItem.type === 'complete';
+        return logItem && logItem.type === "complete";
       });
       if (!hasComplete) {
-        var expectedDate = entry.details.processing && entry.details.processing.expectedSettlementDate
-          ? entry.details.processing.expectedSettlementDate
-          : new Date().toISOString();
+        var expectedDate =
+          entry.details.processing &&
+          entry.details.processing.expectedSettlementDate
+            ? entry.details.processing.expectedSettlementDate
+            : new Date().toISOString();
         entry.details.activityLog.push({
-          user: 'System',
-          action: 'completed ACH settlement',
+          user: "System",
+          action: "completed ACH settlement",
           date: expectedDate,
-          type: 'complete'
+          type: "complete",
         });
       }
     }
     return entry;
   }
 
-  var EXCHANGE_OVERRIDES_STORAGE_KEY = PAGE_CONFIG.storageKey || 'sx_exchange_entry_overrides_v1';
+  var EXCHANGE_OVERRIDES_STORAGE_KEY =
+    PAGE_CONFIG.storageKey || "sx_exchange_entry_overrides_v1";
 
   function readExchangeEntryOverrides() {
     try {
       var raw = localStorage.getItem(EXCHANGE_OVERRIDES_STORAGE_KEY);
       var parsed = raw ? JSON.parse(raw) : {};
-      return parsed && typeof parsed === 'object' ? parsed : {};
+      return parsed && typeof parsed === "object" ? parsed : {};
     } catch (error) {
       return {};
     }
   }
 
   function writeExchangeEntryOverride(invoice, patch) {
-    var key = String(invoice || '').trim();
+    var key = String(invoice || "").trim();
     if (!key) return;
     var overrides = readExchangeEntryOverrides();
     overrides[key] = Object.assign({}, overrides[key] || {}, patch || {});
     try {
-      localStorage.setItem(EXCHANGE_OVERRIDES_STORAGE_KEY, JSON.stringify(overrides));
+      localStorage.setItem(
+        EXCHANGE_OVERRIDES_STORAGE_KEY,
+        JSON.stringify(overrides),
+      );
     } catch (error) {}
   }
 
   function normalizeEntry(entry, index) {
-    if (!entry || typeof entry !== 'object') {
-      console.warn('Skipping malformed exchange row at index', index, entry);
+    if (!entry || typeof entry !== "object") {
+      console.warn("Skipping malformed exchange row at index", index, entry);
       return null;
     }
     var methodType = normalizeMethodTypeValue(entry);
     var normalized = {
       amount: Number(entry.amount) || 0,
-      currency: typeof entry.currency === 'string' ? entry.currency : 'USD',
-      vendorEntry: typeof entry.vendorEntry === 'string' ? entry.vendorEntry : '',
-      invoice: typeof entry.invoice === 'string' ? entry.invoice : '',
-      customer: typeof entry.customer === 'string' ? entry.customer : '',
-      dateInitiated: typeof entry.dateInitiated === 'string' ? entry.dateInitiated : '',
+      currency: typeof entry.currency === "string" ? entry.currency : "USD",
+      vendorEntry:
+        typeof entry.vendorEntry === "string" ? entry.vendorEntry : "",
+      invoice: typeof entry.invoice === "string" ? entry.invoice : "",
+      customer: typeof entry.customer === "string" ? entry.customer : "",
+      dateInitiated:
+        typeof entry.dateInitiated === "string" ? entry.dateInitiated : "",
       paymentMethod: getMethodLabelFromType(methodType),
       methodType: methodType,
-      paymentMethodEnding: typeof entry.paymentMethodEnding === 'string' ? entry.paymentMethodEnding : '',
+      paymentMethodEnding:
+        typeof entry.paymentMethodEnding === "string"
+          ? entry.paymentMethodEnding
+          : "",
       status: normalizeStatusValue(entry.status),
-      payeeId: typeof entry.payeeId === 'string' ? entry.payeeId : ((_myBusiness && _myBusiness.id) || 'my-business'),
+      payeeId:
+        typeof entry.payeeId === "string"
+          ? entry.payeeId
+          : (_myBusiness && _myBusiness.id) || "my-business",
       details: normalizeDetails(entry.details),
     };
     var overrides = readExchangeEntryOverrides();
     var saved = overrides[normalized.invoice];
-    if (saved && typeof saved === 'object') {
+    if (saved && typeof saved === "object") {
       if (saved.status) normalized.status = normalizeStatusValue(saved.status);
-      if (saved.methodType) normalized.methodType = normalizeMethodTypeValue({ methodType: saved.methodType });
-      if (typeof saved.paymentMethodEnding === 'string') normalized.paymentMethodEnding = saved.paymentMethodEnding;
-      if (typeof saved.paymentMethod === 'string') normalized.paymentMethod = saved.paymentMethod;
-      if (saved.details && typeof saved.details === 'object') {
+      if (saved.methodType)
+        normalized.methodType = normalizeMethodTypeValue({
+          methodType: saved.methodType,
+        });
+      if (typeof saved.paymentMethodEnding === "string")
+        normalized.paymentMethodEnding = saved.paymentMethodEnding;
+      if (typeof saved.paymentMethod === "string")
+        normalized.paymentMethod = saved.paymentMethod;
+      if (saved.details && typeof saved.details === "object") {
         normalized.details = Object.assign({}, normalized.details, {
-          activityLog: Array.isArray(saved.details.activityLog) ? saved.details.activityLog : normalized.details.activityLog,
-          declineReason: typeof saved.details.declineReason === 'string' ? saved.details.declineReason : normalized.details.declineReason
+          activityLog: Array.isArray(saved.details.activityLog)
+            ? saved.details.activityLog
+            : normalized.details.activityLog,
+          declineReason:
+            typeof saved.details.declineReason === "string"
+              ? saved.details.declineReason
+              : normalized.details.declineReason,
         });
       }
     }
-    if (normalized.status === 'pending' && isPendingAutoProcessingEntry(normalized)) {
-      normalized.status = 'processing';
+    if (
+      normalized.status === "pending" &&
+      isPendingAutoProcessingEntry(normalized)
+    ) {
+      normalized.status = "processing";
     }
     normalized = autoSettlePendingAchIfReady(normalized);
     normalized.failureReason = getFailureReason(normalized);
@@ -1100,70 +1371,91 @@
   // ── Dynamic <thead> builder ──
 
   function buildTheadHTML(columns) {
-    var html = '<thead><tr>';
+    var html = "<thead><tr>";
 
     columns.forEach(function (col) {
-      var base = 'border-b border-gray-200 dark:border-white/10';
+      var base = "border-b border-gray-200 dark:border-white/10";
 
-      if (col.type === 'expand') {
-        html += '<th scope="col" class="' + base + ' w-10 min-w-10 h-12 py-3.5 px-0 text-center whitespace-nowrap"><span class="sr-only">Expand</span></th>';
+      if (col.type === "expand") {
+        html +=
+          '<th scope="col" class="' +
+          base +
+          ' w-10 min-w-10 h-12 py-3.5 px-0 text-center whitespace-nowrap"><span class="sr-only">Expand</span></th>';
         return;
       }
 
-      if (col.type === 'action') {
-        html += '<th data-action-column scope="col" class="' + base + ' bg-white py-3.5 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 dark:bg-gray-900 sm:pr-2"><span class="sr-only">Action</span></th>';
+      if (col.type === "action") {
+        html +=
+          '<th data-action-column scope="col" class="' +
+          base +
+          ' bg-white py-3.5 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 dark:bg-gray-900 sm:pr-2"><span class="sr-only">Action</span></th>';
         return;
       }
 
-      var thClass = base + ' px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white';
+      var thClass =
+        base +
+        " px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white";
       html += '<th scope="col" class="' + thClass + '">';
 
       if (col.sortable || col.filterable) {
-        var headerBtnAttrs = '';
+        var headerBtnAttrs = "";
         if (col.sortable) {
-          headerBtnAttrs += ' data-sort-key="' + escapeHtml(col.key || '') + '"';
+          headerBtnAttrs +=
+            ' data-sort-key="' + escapeHtml(col.key || "") + '"';
         }
-        html += '<button type="button"' + headerBtnAttrs + ' class="group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white">';
-        html += '<span>' + escapeHtml(col.label) + '</span>';
+        html +=
+          '<button type="button"' +
+          headerBtnAttrs +
+          ' class="group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white">';
+        html += "<span>" + escapeHtml(col.label) + "</span>";
 
         if (col.sortable) {
-          var sortDirection = getSortDirectionForKey(col.key || '');
+          var sortDirection = getSortDirectionForKey(col.key || "");
           html += buildSortBadgeHTML(sortDirection);
         }
 
-        html += '</button>';
+        html += "</button>";
       } else {
         html += escapeHtml(col.label);
       }
 
-      html += '</th>';
+      html += "</th>";
     });
 
-    html += '</tr></thead>';
+    html += "</tr></thead>";
     return html;
   }
 
   function buildSortBadgeHTML(sortDirection) {
     var sortBtnClass = sortDirection
-      ? 'inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300'
-      : 'inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400';
-    var sortIcon = sortDirection === 'asc'
-      ? ICON_SORT_ASC
-      : (sortDirection === 'desc' ? ICON_SORT_DESC : ICON_SORT);
-    return '<span data-sort-badge="true" class="' + sortBtnClass + '">' + sortIcon + '</span>';
+      ? "inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
+      : "inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400";
+    var sortIcon =
+      sortDirection === "asc"
+        ? ICON_SORT_ASC
+        : sortDirection === "desc"
+          ? ICON_SORT_DESC
+          : ICON_SORT;
+    return (
+      '<span data-sort-badge="true" class="' +
+      sortBtnClass +
+      '">' +
+      sortIcon +
+      "</span>"
+    );
   }
 
   function syncSortBadges(table) {
     if (!table) return;
-    var sortButtons = table.querySelectorAll('[data-sort-key]');
+    var sortButtons = table.querySelectorAll("[data-sort-key]");
     sortButtons.forEach(function (button) {
-      var key = button.getAttribute('data-sort-key') || '';
+      var key = button.getAttribute("data-sort-key") || "";
       if (!key) return;
       var direction = getSortDirectionForKey(key);
       var badge = button.querySelector('[data-sort-badge="true"]');
       var badgeHtml = buildSortBadgeHTML(direction);
       if (!badge) {
-        button.insertAdjacentHTML('beforeend', badgeHtml);
+        button.insertAdjacentHTML("beforeend", badgeHtml);
         return;
       }
       badge.outerHTML = badgeHtml;
@@ -1174,67 +1466,106 @@
 
   function renderCellValue(col, entry) {
     switch (col.type) {
-      case 'paymentMethod':
+      case "paymentMethod":
         return renderPaymentMethod(entry);
-      case 'status':
+      case "status":
         return renderStatus(getDisplayStatus(entry));
       default:
         break;
     }
 
     switch (col.key) {
-      case 'amount':
-        return formatCurrency(entry.amount, entry.currency) +
-          ' <span class="text-gray-500 dark:text-gray-400">' + escapeHtml(entry.currency) + '</span>';
-      case 'invoice':
-        return '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer p-0 text-sm font-medium text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">#' + escapeHtml(entry.invoice) + '</button>';
-      case 'dateInitiated':
+      case "amount":
+        return (
+          formatCurrency(entry.amount, entry.currency) +
+          ' <span class="text-gray-500 dark:text-gray-400">' +
+          escapeHtml(entry.currency) +
+          "</span>"
+        );
+      case "invoice":
+        return (
+          '<button type="button" data-get-paid-invoice="' +
+          escapeHtml(entry.invoice) +
+          '" class="cursor-pointer p-0 text-sm font-medium text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">#' +
+          escapeHtml(entry.invoice) +
+          "</button>"
+        );
+      case "dateInitiated":
         return formatDate(entry.dateInitiated);
-      case 'failureReason':
-        return escapeHtml(getFailureReason(entry) || '--');
+      case "failureReason":
+        return escapeHtml(getFailureReason(entry) || "--");
       default:
-        return escapeHtml(entry[col.key] || '');
+        return escapeHtml(entry[col.key] || "");
     }
   }
 
   function renderPaymentMethod(entry) {
     var method = entry.paymentMethod;
     var ending = entry.paymentMethodEnding;
-    var info = entry && entry.details ? (entry.details.paymentInfo || {}) : {};
+    var info = entry && entry.details ? entry.details.paymentInfo || {} : {};
 
-    if (entry.methodType === 'ach') {
+    if (entry.methodType === "ach") {
       var payee = getResolvedPayee(entry);
-      var receivingBank = resolveReceivingBankAccount(entry, info) || (payee && payee.bankAccounts && payee.bankAccounts[0]);
-      var achLast4 = getDigits(receivingBank && (receivingBank.accountNumber || receivingBank.maskedAccount || receivingBank.last4 || '')).slice(-4) ||
+      var receivingBank =
+        resolveReceivingBankAccount(entry, info) ||
+        (payee && payee.bankAccounts && payee.bankAccounts[0]);
+      var achLast4 =
+        getDigits(
+          receivingBank &&
+            (receivingBank.accountNumber ||
+              receivingBank.maskedAccount ||
+              receivingBank.last4 ||
+              ""),
+        ).slice(-4) ||
         getDigits(info && info.accountNumber).slice(-4) ||
         getDigits(ending).slice(-4);
-      return '<span class="inline-flex items-center gap-x-2">' +
+      return (
+        '<span class="inline-flex items-center gap-x-2">' +
         ICON_ACH +
-        '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(achLast4 || '') + '</span>' +
-        '</span>';
+        '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
+        escapeHtml(achLast4 || "") +
+        "</span>" +
+        "</span>"
+      );
     }
 
-    if (entry.methodType === 'card') {
+    if (entry.methodType === "card") {
       var customer = getCustomerForEntry(entry);
       var cardDetails = getPayerCardDetailsForRender(entry, info, customer);
-      var last4 = getDigits(cardDetails && (cardDetails.fullCardNumber || cardDetails.maskedCardNumber || '')).slice(-4) ||
-        getDigits(ending).slice(-4);
-      return '<span class="inline-flex items-center gap-x-2">' +
+      var last4 =
+        getDigits(
+          cardDetails &&
+            (cardDetails.fullCardNumber || cardDetails.maskedCardNumber || ""),
+        ).slice(-4) || getDigits(ending).slice(-4);
+      return (
+        '<span class="inline-flex items-center gap-x-2">' +
         ICON_VISA +
-        '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(last4) + '</span>' +
-        '</span>';
+        '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
+        escapeHtml(last4) +
+        "</span>" +
+        "</span>"
+      );
     }
 
-    if (entry.methodType === 'smart_exchange' && entry.status === 'paid') {
+    if (entry.methodType === "smart_exchange" && entry.status === "paid") {
       var sxCustomer = getCustomerForEntry(entry);
       var sxCardDetails = getPayerCardDetailsForRender(entry, info, sxCustomer);
-      var sxLast4 = getDigits(sxCardDetails && (sxCardDetails.fullCardNumber || sxCardDetails.maskedCardNumber || '')).slice(-4) ||
-        getDigits(ending).slice(-4);
+      var sxLast4 =
+        getDigits(
+          sxCardDetails &&
+            (sxCardDetails.fullCardNumber ||
+              sxCardDetails.maskedCardNumber ||
+              ""),
+        ).slice(-4) || getDigits(ending).slice(-4);
       if (sxLast4) {
-        return '<span class="inline-flex items-center gap-x-2">' +
+        return (
+          '<span class="inline-flex items-center gap-x-2">' +
           ICON_VISA +
-          '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(sxLast4) + '</span>' +
-          '</span>';
+          '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
+          escapeHtml(sxLast4) +
+          "</span>" +
+          "</span>"
+        );
       }
     }
 
@@ -1242,39 +1573,63 @@
     // "SMART Exchange" here reads as a chosen method. An em dash says empty.
     // Where the token itself is the rail (Consumer Portal: "Smart Disburse"),
     // it is the method — show it, as the design does.
-    if (entry.methodType === 'smart_exchange' && entry.status !== 'paid' && PAGE_CONFIG.showTokenMethod) {
-      return '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(METHOD_TYPE_LABELS.smart_exchange) + '</span>';
+    if (
+      entry.methodType === "smart_exchange" &&
+      entry.status !== "paid" &&
+      PAGE_CONFIG.showTokenMethod
+    ) {
+      return (
+        '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
+        escapeHtml(METHOD_TYPE_LABELS.smart_exchange) +
+        "</span>"
+      );
     }
-    if (entry.methodType === 'smart_exchange' && entry.status !== 'paid') {
-      return '<span class="text-sm text-gray-400 dark:text-gray-500" title="No payment method selected">' +
+    if (entry.methodType === "smart_exchange" && entry.status !== "paid") {
+      return (
+        '<span class="text-sm text-gray-400 dark:text-gray-500" title="No payment method selected">' +
         '<span aria-hidden="true">&mdash;</span>' +
         '<span class="sr-only">No payment method selected</span>' +
-      '</span>';
+        "</span>"
+      );
     }
 
-    return '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(method) + '</span>';
+    return (
+      '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
+      escapeHtml(method) +
+      "</span>"
+    );
   }
 
   function renderStatus(status) {
     var badgeClasses = STATUS_STYLES[status] || STATUS_STYLES.pending;
-    if (status === 'processing') {
-      return '<span data-processing-tooltip="true" class="inline-flex cursor-default items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + badgeClasses + '">' +
+    if (status === "processing") {
+      return (
+        '<span data-processing-tooltip="true" class="inline-flex cursor-default items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
+        badgeClasses +
+        '">' +
         escapeHtml(getStatusLabel(status)) +
-      '</span>';
+        "</span>"
+      );
     }
-    return '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + badgeClasses + '">' +
+    return (
+      '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
+      badgeClasses +
+      '">' +
       escapeHtml(getStatusLabel(status)) +
-      '</span>';
+      "</span>"
+    );
   }
 
   function initProcessingStatusTooltip() {
     var tooltip = null;
-    var tooltipText = 'ACH is processing automatically. Standard ACH processing time is typically 1-2 business days.';
+    var tooltipText =
+      "ACH is processing automatically. Standard ACH processing time is typically 1-2 business days.";
 
     function ensureTooltip() {
       if (tooltip) return tooltip;
-      tooltip = document.createElement('div');
-      tooltip.className = 'pointer-events-none fixed z-[240] hidden w-72 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium leading-5 text-white shadow-lg dark:bg-gray-950';
+      tooltip = document.createElement("div");
+      tooltip.className =
+        "pointer-events-none fixed z-[240] hidden w-72 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium leading-5 text-white shadow-lg dark:bg-gray-950";
       tooltip.textContent = tooltipText;
       document.body.appendChild(tooltip);
       return tooltip;
@@ -1282,68 +1637,91 @@
 
     function positionTooltip(target) {
       var el = ensureTooltip();
-      el.classList.remove('hidden');
+      el.classList.remove("hidden");
       var rect = target.getBoundingClientRect();
       var tipRect = el.getBoundingClientRect();
-      var left = rect.left + (rect.width / 2) - (tipRect.width / 2);
+      var left = rect.left + rect.width / 2 - tipRect.width / 2;
       left = Math.max(8, Math.min(left, window.innerWidth - tipRect.width - 8));
       var top = rect.top - tipRect.height - 10;
       if (top < 8) top = rect.bottom + 10;
-      el.style.left = left + 'px';
-      el.style.top = top + 'px';
+      el.style.left = left + "px";
+      el.style.top = top + "px";
     }
 
-    document.addEventListener('mouseover', function (event) {
+    document.addEventListener("mouseover", function (event) {
       var target = event.target.closest('[data-processing-tooltip="true"]');
       if (!target) return;
       positionTooltip(target);
     });
 
-    document.addEventListener('mouseout', function (event) {
+    document.addEventListener("mouseout", function (event) {
       var target = event.target.closest('[data-processing-tooltip="true"]');
-      if (!target || (event.relatedTarget && target.contains(event.relatedTarget))) return;
-      if (tooltip) tooltip.classList.add('hidden');
+      if (
+        !target ||
+        (event.relatedTarget && target.contains(event.relatedTarget))
+      )
+        return;
+      if (tooltip) tooltip.classList.add("hidden");
     });
   }
 
   function renderActionMenu(entry, includeDecline, includeCardDetails) {
     var itemsHtml =
-      '<a href="#" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block cursor-pointer px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>';
+      '<a href="#" data-get-paid-invoice="' +
+      escapeHtml(entry.invoice) +
+      '" class="block cursor-pointer px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>';
     if (includeCardDetails) {
       itemsHtml +=
-        '<a href="#" data-view-card-invoice="' + escapeHtml(entry.invoice) + '" class="block cursor-pointer px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View card details</a>';
+        '<a href="#" data-view-card-invoice="' +
+        escapeHtml(entry.invoice) +
+        '" class="block cursor-pointer px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View card details</a>';
     }
     if (includeDecline) {
       itemsHtml +=
-        '<a href="#" data-decline-invoice="' + escapeHtml(entry.invoice) + '" class="block cursor-pointer px-3 py-1.5 text-sm font-medium whitespace-nowrap text-red-600 focus:bg-red-50 focus:text-red-700 focus:outline-hidden dark:text-red-400 dark:focus:bg-red-500/10 dark:focus:text-red-300">Decline</a>';
+        '<a href="#" data-decline-invoice="' +
+        escapeHtml(entry.invoice) +
+        '" class="block cursor-pointer px-3 py-1.5 text-sm font-medium whitespace-nowrap text-red-600 focus:bg-red-50 focus:text-red-700 focus:outline-hidden dark:text-red-400 dark:focus:bg-red-500/10 dark:focus:text-red-300">Decline</a>';
     }
 
-    return '<el-dropdown class="inline-block">' +
+    return (
+      '<el-dropdown class="inline-block">' +
       '<button data-action-menu-trigger="true" class="flex cursor-pointer items-center justify-center rounded-md bg-white p-1 text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 dark:hover:text-white">' +
-        '<span class="sr-only">Open options</span>' +
-        ICON_THREE_DOTS +
-      '</button>' +
+      '<span class="sr-only">Open options</span>' +
+      ICON_THREE_DOTS +
+      "</button>" +
       '<el-menu anchor="bottom end" popover class=" min-w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
-        '<div class="py-1">' +
-          itemsHtml +
-        '</div>' +
-      '</el-menu>' +
-    '</el-dropdown>';
+      '<div class="py-1">' +
+      itemsHtml +
+      "</div>" +
+      "</el-menu>" +
+      "</el-dropdown>"
+    );
   }
 
   function renderActionCell(entry) {
-    if (requiresGetPaidAction(entry) || (entry.status === 'pending' && entry.methodType === 'smart_exchange')) {
-      return '<div class="inline-flex items-center justify-end gap-2">' +
-        '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>' +
+    if (
+      requiresGetPaidAction(entry) ||
+      (entry.status === "pending" && entry.methodType === "smart_exchange")
+    ) {
+      return (
+        '<div class="inline-flex items-center justify-end gap-2">' +
+        '<button type="button" data-get-paid-invoice="' +
+        escapeHtml(entry.invoice) +
+        '" class="cursor-pointer rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>' +
         renderActionMenu(entry, true) +
-      '</div>';
+        "</div>"
+      );
     }
 
     if (activeTabShowsManualActions() && isPendingManualReviewEntry(entry)) {
-      return '<div class="inline-flex items-center justify-end gap-2">' +
-        '<button type="button" data-mark-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 dark:hover:text-white">Mark as paid</button>' +
+      return (
+        '<div class="inline-flex items-center justify-end gap-2">' +
+        '<button type="button" data-mark-paid-invoice="' +
+        escapeHtml(entry.invoice) +
+        '" class="cursor-pointer rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 dark:hover:text-white">Mark as paid</button>' +
         renderActionMenu(entry, false, true) +
-      '</div>';
+        "</div>"
+      );
     }
 
     if (activeTabShowsManualActions() && isPendingLikeStatus(entry.status)) {
@@ -1357,191 +1735,273 @@
   // ── Row builders ──
 
   function buildMainRowHTML(entry, columns, isLast) {
-    var cb = isLast ? '' : CLASS_NAMES.cellBorder;
-    var html = '<tr data-row data-method-type="' + escapeHtml(String(entry.methodType || '')) + '" data-invoice="' + escapeHtml(String(entry.invoice || '')) + '" class="' + CLASS_NAMES.row + '">';
+    var cb = isLast ? "" : CLASS_NAMES.cellBorder;
+    var html =
+      '<tr data-row data-method-type="' +
+      escapeHtml(String(entry.methodType || "")) +
+      '" data-invoice="' +
+      escapeHtml(String(entry.invoice || "")) +
+      '" class="' +
+      CLASS_NAMES.row +
+      '">';
 
     columns.forEach(function (col) {
-      if (col.type === 'expand') {
+      if (col.type === "expand") {
         html +=
-          '<td class="h-12 w-10 min-w-10 align-middle py-2 px-0 text-center whitespace-nowrap' + cb + '">' +
-            '<button data-row-toggle class="inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20">' +
-              '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
-                '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />' +
-              '</svg>' +
-            '</button>' +
-          '</td>';
+          '<td class="h-12 w-10 min-w-10 align-middle py-2 px-0 text-center whitespace-nowrap' +
+          cb +
+          '">' +
+          '<button data-row-toggle class="inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20">' +
+          '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
+          '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />' +
+          "</svg>" +
+          "</button>" +
+          "</td>";
         return;
       }
 
-      if (col.type === 'action') {
+      if (col.type === "action") {
         html +=
-          '<td data-action-column class="' + CLASS_NAMES.actionCell + cb + '">' +
-            renderActionCell(entry) +
-          '</td>';
+          '<td data-action-column class="' +
+          CLASS_NAMES.actionCell +
+          cb +
+          '">' +
+          renderActionCell(entry) +
+          "</td>";
         return;
       }
 
       var cellClass;
-      if (col.type === 'status' || col.type === 'paymentMethod') {
-        cellClass = 'h-12 align-middle px-2 py-2 whitespace-nowrap' + cb;
-      } else if (col.key === 'invoice' || col.key === 'dateInitiated') {
-        cellClass = 'h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb;
+      if (col.type === "status" || col.type === "paymentMethod") {
+        cellClass = "h-12 align-middle px-2 py-2 whitespace-nowrap" + cb;
+      } else if (col.key === "invoice" || col.key === "dateInitiated") {
+        cellClass =
+          "h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400" +
+          cb;
       } else {
-        cellClass = 'h-12 align-middle px-2 py-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb;
+        cellClass =
+          "h-12 align-middle px-2 py-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white" +
+          cb;
       }
 
-      html += '<td class="' + cellClass + '">' + renderCellValue(col, entry) + '</td>';
+      html +=
+        '<td class="' +
+        cellClass +
+        '">' +
+        renderCellValue(col, entry) +
+        "</td>";
     });
 
-    html += '</tr>';
+    html += "</tr>";
     return html;
   }
 
   // ── Detail Row: Section builders (Figma-matched layout) ──
 
-  var DETAIL_LABEL = 'w-[156px] shrink-0 p-4 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400';
-  var DETAIL_SEPARATOR = '<div class="border-t border-gray-200 dark:border-white/10"></div>';
+  var DETAIL_LABEL =
+    "w-[156px] shrink-0 p-4 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400";
+  var DETAIL_SEPARATOR =
+    '<div class="border-t border-gray-200 dark:border-white/10"></div>';
 
   function buildNotesSection(entry) {
-    if (!entry.details.notes) return '';
+    if (!entry.details.notes) return "";
     return (
       '<div class="flex">' +
-        '<div class="' + DETAIL_LABEL + '">Notes</div>' +
-        '<div class="flex-1 p-4 text-sm font-medium text-gray-900 dark:text-white">' +
-          escapeHtml(entry.details.notes) +
-        '</div>' +
-      '</div>'
+      '<div class="' +
+      DETAIL_LABEL +
+      '">Notes</div>' +
+      '<div class="flex-1 p-4 text-sm font-medium text-gray-900 dark:text-white">' +
+      escapeHtml(entry.details.notes) +
+      "</div>" +
+      "</div>"
     );
   }
 
   function buildStatusSection(entry) {
     var displayStatus = getDisplayStatus(entry);
     var statusClass = STATUS_STYLES[displayStatus] || STATUS_STYLES.pending;
-    var declineReason = entry.status === 'declined' ? getDeclineReason(entry) : '';
+    var declineReason =
+      entry.status === "declined" ? getDeclineReason(entry) : "";
     return (
       '<div class="flex">' +
-        '<div class="' + DETAIL_LABEL + '">Status</div>' +
-        '<div class="flex-1 flex flex-col items-start gap-2 p-4">' +
-          '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + statusClass + '">' +
-            escapeHtml(getStatusLabel(displayStatus)) +
-          '</span>' +
-          (declineReason
-            ? '<div class="max-w-2xl rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300"><span class="font-medium">Decline reason:</span> ' + escapeHtml(declineReason) + '</div>'
-            : '') +
-        '</div>' +
-      '</div>'
+      '<div class="' +
+      DETAIL_LABEL +
+      '">Status</div>' +
+      '<div class="flex-1 flex flex-col items-start gap-2 p-4">' +
+      '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
+      statusClass +
+      '">' +
+      escapeHtml(getStatusLabel(displayStatus)) +
+      "</span>" +
+      (declineReason
+        ? '<div class="max-w-2xl rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300"><span class="font-medium">Decline reason:</span> ' +
+          escapeHtml(declineReason) +
+          "</div>"
+        : "") +
+      "</div>" +
+      "</div>"
     );
   }
 
   function buildAttachmentsSection(entry) {
     var attachments = entry.details.attachments;
-    if (!attachments || !attachments.length) return '';
+    if (!attachments || !attachments.length) return "";
 
-    var badges = '';
+    var badges = "";
     attachments.forEach(function (att, idx) {
       badges +=
-        '<button type="button" data-attachment-preview="true" data-attachment-name="' + escapeHtml(att.name || '') + '" data-attachment-index="' + idx + '" command="show-modal" commandfor="gp-review-dialog" class="inline-flex items-center gap-1.5 rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer">' +
-          ICON_DOCUMENT +
-          escapeHtml(att.name || '') +
-        '</button>';
+        '<button type="button" data-attachment-preview="true" data-attachment-name="' +
+        escapeHtml(att.name || "") +
+        '" data-attachment-index="' +
+        idx +
+        '" command="show-modal" commandfor="gp-review-dialog" class="inline-flex items-center gap-1.5 rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer">' +
+        ICON_DOCUMENT +
+        escapeHtml(att.name || "") +
+        "</button>";
     });
 
     return (
       '<div class="flex">' +
-        '<div class="' + DETAIL_LABEL + '">Attachments</div>' +
-        '<div class="flex-1 p-4 flex flex-wrap items-center gap-2">' +
-          badges +
-        '</div>' +
-      '</div>'
+      '<div class="' +
+      DETAIL_LABEL +
+      '">Attachments</div>' +
+      '<div class="flex-1 p-4 flex flex-wrap items-center gap-2">' +
+      badges +
+      "</div>" +
+      "</div>"
     );
   }
 
   var paymentInfoCopyIdCounter = 0;
-  var EMPTY_DETAIL_VALUE = '<span class="text-gray-400 dark:text-gray-500">—</span>';
+  var EMPTY_DETAIL_VALUE =
+    '<span class="text-gray-400 dark:text-gray-500">—</span>';
 
   // Payment info: each row is a 2-col layout (both flex-1, gap-6 = 24px)
   function buildPaymentInfoRow(label, value, hasCopy) {
     var valueHtml = value;
     if (hasCopy) {
-      var copyId = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
-      var requiresReveal = hasCopy === 'revealed';
-      var isMaskedValue = /[•]/.test(String(value || ''));
+      var copyId = "sx-payment-copy-" + ++paymentInfoCopyIdCounter;
+      var requiresReveal = hasCopy === "revealed";
+      var isMaskedValue = /[•]/.test(String(value || ""));
       var hideByDefault = requiresReveal || isMaskedValue;
       valueHtml =
-        '<button type="button" data-copy-id="' + copyId + '"' +
-          (requiresReveal ? ' data-copy-requires-reveal="true"' : '') +
-          (isMaskedValue ? ' data-copy-masked="true"' : '') +
-          ' class="copy-btn inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer' +
-          (hideByDefault ? ' hidden' : '') + '">' +
-          '<span id="' + copyId + '" class="text-sm font-normal">' + value + '</span>' +
-          ICON_COPY +
-        '</button>';
+        '<button type="button" data-copy-id="' +
+        copyId +
+        '"' +
+        (requiresReveal ? ' data-copy-requires-reveal="true"' : "") +
+        (isMaskedValue ? ' data-copy-masked="true"' : "") +
+        ' class="copy-btn inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer' +
+        (hideByDefault ? " hidden" : "") +
+        '">' +
+        '<span id="' +
+        copyId +
+        '" class="text-sm font-normal">' +
+        value +
+        "</span>" +
+        ICON_COPY +
+        "</button>";
     }
 
     return (
       '<div class="flex gap-6">' +
-        '<dt class="flex-1 text-sm font-medium text-gray-900 dark:text-gray-100">' + label + '</dt>' +
-        '<dd class="flex-1 flex items-center gap-6 text-sm text-gray-700 dark:text-gray-300">' +
-          (valueHtml || EMPTY_DETAIL_VALUE) +
-        '</dd>' +
-      '</div>'
+      '<dt class="flex-1 text-sm font-medium text-gray-900 dark:text-gray-100">' +
+      label +
+      "</dt>" +
+      '<dd class="flex-1 flex items-center gap-6 text-sm text-gray-700 dark:text-gray-300">' +
+      (valueHtml || EMPTY_DETAIL_VALUE) +
+      "</dd>" +
+      "</div>"
     );
   }
 
   function getSafeTextValue(value) {
-    var str = String(value || '').trim();
+    var str = String(value || "").trim();
     return str ? escapeHtml(str) : EMPTY_DETAIL_VALUE;
   }
 
   function getSafeMultilineValue(value) {
-    var str = String(value || '').trim();
-    return str ? escapeHtml(str).replace(/\n/g, '<br>') : EMPTY_DETAIL_VALUE;
+    var str = String(value || "").trim();
+    return str ? escapeHtml(str).replace(/\n/g, "<br>") : EMPTY_DETAIL_VALUE;
   }
 
   function getMaskedLast4(raw, prefix) {
     var digits = getDigits(raw);
-    if (!digits) return '';
-    return (prefix || '•••• ') + digits.slice(-4);
+    if (!digits) return "";
+    return (prefix || "•••• ") + digits.slice(-4);
   }
 
   function buildMaskedCardField(maskedValue, fieldName, revealedValue) {
     if (!maskedValue) return EMPTY_DETAIL_VALUE;
     var safeMasked = escapeHtml(maskedValue);
     var safeRevealed = escapeHtml(revealedValue || maskedValue);
-    return '<span data-mask-field="' + fieldName + '" class="inline-block whitespace-nowrap" data-masked="' + safeMasked + '" data-revealed="' + safeRevealed + '">' + safeMasked + '</span>';
+    return (
+      '<span data-mask-field="' +
+      fieldName +
+      '" class="inline-block whitespace-nowrap" data-masked="' +
+      safeMasked +
+      '" data-revealed="' +
+      safeRevealed +
+      '">' +
+      safeMasked +
+      "</span>"
+    );
   }
 
   function buildMaskedAchField(maskedValue, revealedValue) {
     if (!maskedValue) return EMPTY_DETAIL_VALUE;
     var safeMasked = escapeHtml(maskedValue);
     var safeRevealed = escapeHtml(revealedValue || maskedValue);
-    return '<span data-ach-mask-field="true" data-masked="' + safeMasked + '" data-revealed="' + safeRevealed + '" class="inline-block whitespace-nowrap">' + safeMasked + '</span>';
+    return (
+      '<span data-ach-mask-field="true" data-masked="' +
+      safeMasked +
+      '" data-revealed="' +
+      safeRevealed +
+      '" class="inline-block whitespace-nowrap">' +
+      safeMasked +
+      "</span>"
+    );
   }
 
   function findMatchingBusinessBankAccount(info) {
-    var banks = _myBusiness && Array.isArray(_myBusiness.bankAccounts) ? _myBusiness.bankAccounts : [];
+    var banks =
+      _myBusiness && Array.isArray(_myBusiness.bankAccounts)
+        ? _myBusiness.bankAccounts
+        : [];
     if (!banks.length) return null;
     var targetLast4 = getDigits(info && info.accountNumber).slice(-4);
-    var targetBankName = String(info && info.bankName || '').trim().toLowerCase();
+    var targetBankName = String((info && info.bankName) || "")
+      .trim()
+      .toLowerCase();
     for (var i = 0; i < banks.length; i++) {
       var bank = banks[i];
-      var bankLast4 = getDigits(bank && (bank.accountNumber || bank.maskedAccount || '')).slice(-4);
-      var bankName = String(bank && (bank.bankName || bank.displayName || '')).trim().toLowerCase();
+      var bankLast4 = getDigits(
+        bank && (bank.accountNumber || bank.maskedAccount || ""),
+      ).slice(-4);
+      var bankName = String(bank && (bank.bankName || bank.displayName || ""))
+        .trim()
+        .toLowerCase();
       if (targetLast4 && bankLast4 && targetLast4 === bankLast4) return bank;
-      if (targetBankName && bankName && targetBankName === bankName) return bank;
+      if (targetBankName && bankName && targetBankName === bankName)
+        return bank;
     }
     return null;
   }
 
   function resolveReceivingBankAccount(entry, info) {
-    var banks = _myBusiness && Array.isArray(_myBusiness.bankAccounts) ? _myBusiness.bankAccounts : [];
+    var banks =
+      _myBusiness && Array.isArray(_myBusiness.bankAccounts)
+        ? _myBusiness.bankAccounts
+        : [];
     if (!banks.length) return null;
 
     var endingLast4 = getDigits(entry && entry.paymentMethodEnding).slice(-4);
     if (endingLast4) {
       for (var i = 0; i < banks.length; i++) {
         var bank = banks[i];
-        var bankLast4 = getDigits(bank && (bank.accountNumber || bank.maskedAccount || bank.last4 || '')).slice(-4);
+        var bankLast4 = getDigits(
+          bank &&
+            (bank.accountNumber || bank.maskedAccount || bank.last4 || ""),
+        ).slice(-4);
         if (bankLast4 && bankLast4 === endingLast4) return bank;
       }
     }
@@ -1554,50 +2014,81 @@
 
   function getResolvedPayee(entry) {
     if (!_myBusiness) return null;
-    if (entry && entry.payeeId && _myBusiness.id && entry.payeeId !== _myBusiness.id) return null;
+    if (
+      entry &&
+      entry.payeeId &&
+      _myBusiness.id &&
+      entry.payeeId !== _myBusiness.id
+    )
+      return null;
     return _myBusiness;
   }
 
   function mergeMyBusinessProfile(business, profile) {
-    var next = business && typeof business === 'object' ? Object.assign({}, business) : {};
-    var normalized = window.normalizeMyCompanyProfile ? window.normalizeMyCompanyProfile(profile) : null;
+    var next =
+      business && typeof business === "object"
+        ? Object.assign({}, business)
+        : {};
+    var normalized = window.normalizeMyCompanyProfile
+      ? window.normalizeMyCompanyProfile(profile)
+      : null;
     if (!normalized || !normalized.legalName) return next;
-    next.id = String(next.id || normalized.id || 'my-business');
+    next.id = String(next.id || normalized.id || "my-business");
     next.name = normalized.legalName;
     next.legalName = normalized.legalName;
     if (normalized.legalAddress && normalized.legalAddress.displayText) {
       next.address = normalized.legalAddress.displayText;
       next.mailingAddress = Object.assign({}, next.mailingAddress || {}, {
         name: normalized.legalName,
-        address: normalized.legalAddress.displayText
+        address: normalized.legalAddress.displayText,
       });
     }
     return next;
   }
 
   function getExceptionContextMessage(entry) {
-    if (entry && entry.status === 'declined') {
+    if (entry && entry.status === "declined") {
       var declineReason = getDeclineReason(entry);
-      return declineReason ? ('Declined: ' + declineReason) : 'Payment was declined and needs review.';
+      return declineReason
+        ? "Declined: " + declineReason
+        : "Payment was declined and needs review.";
     }
-    var log = entry && entry.details && Array.isArray(entry.details.activityLog) ? entry.details.activityLog : [];
+    var log =
+      entry && entry.details && Array.isArray(entry.details.activityLog)
+        ? entry.details.activityLog
+        : [];
     for (var i = log.length - 1; i >= 0; i--) {
       var item = log[i];
-      if (item && item.type === 'failed' && item.action) return String(item.action);
+      if (item && item.type === "failed" && item.action)
+        return String(item.action);
     }
-    return 'Payment is in exception state and requires review.';
+    return "Payment is in exception state and requires review.";
   }
 
   function getCustomerForEntry(entry) {
-    var targetCustomerName = String(entry && entry.vendorEntry || '').trim().toLowerCase();
-    var targetVendorEntry = String(entry && entry.customer || '').trim().toLowerCase();
+    var targetCustomerName = String((entry && entry.vendorEntry) || "")
+      .trim()
+      .toLowerCase();
+    var targetVendorEntry = String((entry && entry.customer) || "")
+      .trim()
+      .toLowerCase();
     for (var i = 0; i < _customers.length; i++) {
       var customer = _customers[i];
-      var customerName = String(customer && customer.name || '').trim().toLowerCase();
-      if (targetCustomerName && customerName === targetCustomerName) return customer;
-      var vendorEntries = Array.isArray(customer && customer.vendorEntries) ? customer.vendorEntries : [];
+      var customerName = String((customer && customer.name) || "")
+        .trim()
+        .toLowerCase();
+      if (targetCustomerName && customerName === targetCustomerName)
+        return customer;
+      var vendorEntries = Array.isArray(customer && customer.vendorEntries)
+        ? customer.vendorEntries
+        : [];
       for (var j = 0; j < vendorEntries.length; j++) {
-        if (String(vendorEntries[j] || '').trim().toLowerCase() === targetVendorEntry) return customer;
+        if (
+          String(vendorEntries[j] || "")
+            .trim()
+            .toLowerCase() === targetVendorEntry
+        )
+          return customer;
       }
     }
     return null;
@@ -1607,33 +2098,58 @@
     var paymentInfo = info || {};
     var payerCardInfo = paymentInfo.payerCard || paymentInfo;
     var myBusiness = getResolvedPayee(entry);
-    var cardHolderName = (myBusiness && (window.getMyCompanyDisplayName ? window.getMyCompanyDisplayName(myBusiness) : (myBusiness.legalName || myBusiness.name))) ||
+    var cardHolderName =
+      (myBusiness &&
+        (window.getMyCompanyDisplayName
+          ? window.getMyCompanyDisplayName(myBusiness)
+          : myBusiness.legalName || myBusiness.name)) ||
       (customer && customer.name) ||
       payerCardInfo.cardholderName ||
       entry.vendorEntry ||
-      '';
+      "";
     var cardHolderAddress =
       payerCardInfo.cardholderAddress ||
       paymentInfo.cardholderAddress ||
-      (myBusiness && (window.getMyCompanyAddressText ? window.getMyCompanyAddressText(myBusiness) : ((myBusiness.mailingAddress && myBusiness.mailingAddress.address) || myBusiness.address))) ||
+      (myBusiness &&
+        (window.getMyCompanyAddressText
+          ? window.getMyCompanyAddressText(myBusiness)
+          : (myBusiness.mailingAddress && myBusiness.mailingAddress.address) ||
+            myBusiness.address)) ||
       (customer && customer.address) ||
-      '';
-    var cardNumberRaw = String(paymentInfo.cardNumber || payerCardInfo.cardNumber || entry.paymentMethodEnding || '');
-    var cardDigits = cardNumberRaw.replace(/\D/g, '');
-    var cardLast4 = cardDigits.length >= 4 ? cardDigits.slice(-4) : '0000';
-    var fullCardNumber = cardDigits.length >= 13
-      ? cardDigits.slice(0, 16).replace(/(.{4})/g, '$1 ').trim()
-      : ('4000 0000 0000 ' + cardLast4);
-    var maskedCardNumber = '•••• ' + cardLast4;
-    var expiryFull = String(paymentInfo.expires || payerCardInfo.expires || '12/2026');
-    var rawCvc = String(paymentInfo.cvcFull || paymentInfo.cvc || payerCardInfo.cvcFull || payerCardInfo.cvc || '').trim();
-    var cvcDigits = rawCvc.replace(/\D/g, '');
-    var cvcValue = cvcDigits.length >= 3 ? cvcDigits.slice(0, 3) : '999';
-    var maskedCvc = '•••';
+      "";
+    var cardNumberRaw = String(
+      paymentInfo.cardNumber ||
+        payerCardInfo.cardNumber ||
+        entry.paymentMethodEnding ||
+        "",
+    );
+    var cardDigits = cardNumberRaw.replace(/\D/g, "");
+    var cardLast4 = cardDigits.length >= 4 ? cardDigits.slice(-4) : "0000";
+    var fullCardNumber =
+      cardDigits.length >= 13
+        ? cardDigits
+            .slice(0, 16)
+            .replace(/(.{4})/g, "$1 ")
+            .trim()
+        : "4000 0000 0000 " + cardLast4;
+    var maskedCardNumber = "•••• " + cardLast4;
+    var expiryFull = String(
+      paymentInfo.expires || payerCardInfo.expires || "12/2026",
+    );
+    var rawCvc = String(
+      paymentInfo.cvcFull ||
+        paymentInfo.cvc ||
+        payerCardInfo.cvcFull ||
+        payerCardInfo.cvc ||
+        "",
+    ).trim();
+    var cvcDigits = rawCvc.replace(/\D/g, "");
+    var cvcValue = cvcDigits.length >= 3 ? cvcDigits.slice(0, 3) : "999";
+    var maskedCvc = "•••";
     return {
       cardHolderName: cardHolderName,
       cardHolderAddress: cardHolderAddress,
-      cardType: paymentInfo.cardType || payerCardInfo.cardType || 'Visa',
+      cardType: paymentInfo.cardType || payerCardInfo.cardType || "Visa",
       maskedCardNumber: maskedCardNumber,
       fullCardNumber: fullCardNumber,
       expiryFull: expiryFull,
@@ -1642,263 +2158,421 @@
     };
   }
 
-  function getPaymentMethodDetailsVariant(status, methodType, entry, info, payee) {
-    if (status === 'pending' && methodType === 'smart_exchange') {
+  function getPaymentMethodDetailsVariant(
+    status,
+    methodType,
+    entry,
+    info,
+    payee,
+  ) {
+    if (status === "pending" && methodType === "smart_exchange") {
       return {
-        key: 'smart_exchange_unselected',
+        key: "smart_exchange_unselected",
         typeLabel: METHOD_TYPE_LABELS.smart_exchange,
-        titleLabel: 'No Payment Method Selected',
-        revealKind: '',
+        titleLabel: "No Payment Method Selected",
+        revealKind: "",
         rowsHtml:
           '<div class="rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-300">' +
-            'No payment method selected yet. Click \'Get paid\' to choose how you want to be paid.' +
-          '</div>',
+          "No payment method selected yet. Click 'Get paid' to choose how you want to be paid." +
+          "</div>",
       };
     }
 
-    if (methodType === 'ach') {
-      var receivingBank = resolveReceivingBankAccount(entry, info) || (payee && payee.bankAccounts && payee.bankAccounts[0]);
+    if (methodType === "ach") {
+      var receivingBank =
+        resolveReceivingBankAccount(entry, info) ||
+        (payee && payee.bankAccounts && payee.bankAccounts[0]);
       var achName = getSafeTextValue(
-        (receivingBank && (receivingBank.name || receivingBank.displayName || receivingBank.bankName)) ||
-        (info && (info.accountHolder || info.bankName))
+        (receivingBank &&
+          (receivingBank.name ||
+            receivingBank.displayName ||
+            receivingBank.bankName)) ||
+          (info && (info.accountHolder || info.bankName)),
       );
-      var achAccountLast4 = getDigits(receivingBank && (receivingBank.accountNumber || receivingBank.maskedAccount || receivingBank.last4 || '')).slice(-4) ||
-        getDigits(info && info.accountNumber).slice(-4);
-      var achRoutingLast4 = getDigits(receivingBank && (receivingBank.routingNumber || receivingBank.maskedRouting || receivingBank.routing || '')).slice(-4) ||
-        getDigits(info && info.routingNumber).slice(-4);
-      var achAccountMasked = (receivingBank && receivingBank.maskedAccount) || (achAccountLast4 ? ('••••' + achAccountLast4) : '');
-      var achRoutingMasked = (receivingBank && receivingBank.maskedRouting) || (achRoutingLast4 ? ('••••' + achRoutingLast4) : '');
+      var achAccountLast4 =
+        getDigits(
+          receivingBank &&
+            (receivingBank.accountNumber ||
+              receivingBank.maskedAccount ||
+              receivingBank.last4 ||
+              ""),
+        ).slice(-4) || getDigits(info && info.accountNumber).slice(-4);
+      var achRoutingLast4 =
+        getDigits(
+          receivingBank &&
+            (receivingBank.routingNumber ||
+              receivingBank.maskedRouting ||
+              receivingBank.routing ||
+              ""),
+        ).slice(-4) || getDigits(info && info.routingNumber).slice(-4);
+      var achAccountMasked =
+        (receivingBank && receivingBank.maskedAccount) ||
+        (achAccountLast4 ? "••••" + achAccountLast4 : "");
+      var achRoutingMasked =
+        (receivingBank && receivingBank.maskedRouting) ||
+        (achRoutingLast4 ? "••••" + achRoutingLast4 : "");
       var achAccountRevealed = String(
         (receivingBank && receivingBank.accountNumber) ||
-        (info && info.accountNumber) ||
-        ''
+          (info && info.accountNumber) ||
+          "",
       ).trim();
       var achRoutingRevealed = String(
-        (receivingBank && (receivingBank.routingNumber || receivingBank.routing)) ||
-        (info && info.routingNumber) ||
-        ''
+        (receivingBank &&
+          (receivingBank.routingNumber || receivingBank.routing)) ||
+          (info && info.routingNumber) ||
+          "",
       ).trim();
-      var achAddress = getSafeMultilineValue((receivingBank && receivingBank.address) || (info && info.address));
-      var accountCopyId = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
-      var routingCopyId = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var achAddress = getSafeMultilineValue(
+        (receivingBank && receivingBank.address) || (info && info.address),
+      );
+      var accountCopyId = "sx-payment-copy-" + ++paymentInfoCopyIdCounter;
+      var routingCopyId = "sx-payment-copy-" + ++paymentInfoCopyIdCounter;
       var achCardHtml =
         '<div data-ach-info-card class="flex flex-col items-start self-stretch">' +
-          '<div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">' +
-            '<span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Account Details</span>' +
-            '<span></span>' +
-          '</div>' +
-          '<div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
-              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name</span>' +
-              '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + achName + '</span>' +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
-              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span>' +
-              '<button type="button" data-copy-id="' + accountCopyId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
-                '<span id="' + accountCopyId + '" data-ach-mask-field="true" data-masked="' + escapeHtml(achAccountMasked) + '" data-revealed="' + escapeHtml(achAccountRevealed) + '" class="text-sm font-normal">' + escapeHtml(achAccountMasked) + '</span>' +
-                '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
-              '</button>' +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
-              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span>' +
-              '<button type="button" data-copy-id="' + routingCopyId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
-                '<span id="' + routingCopyId + '" data-ach-mask-field="true" data-masked="' + escapeHtml(achRoutingMasked) + '" data-revealed="' + escapeHtml(achRoutingRevealed) + '" class="text-sm font-normal">' + escapeHtml(achRoutingMasked) + '</span>' +
-                '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
-              '</button>' +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch items-start">' +
-              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Address</span>' +
-              '<div class="flex flex-col items-start gap-1.5">' +
-                '<span class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line">' + achAddress + '</span>' +
-                '<button type="button" data-ach-reveal-toggle data-revealed="false" class="mr-2.5 inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
-                  '<span data-icon="reveal">' + ICON_EYE + '</span>' +
-                  '<span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span>' +
-                  '<span data-ach-reveal-text>Reveal Details</span>' +
-                '</button>' +
-              '</div>' +
-            '</div>' +
-          '</div>' +
-        '</div>';
+        '<div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">' +
+        '<span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Account Details</span>' +
+        "<span></span>" +
+        "</div>" +
+        '<div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">' +
+        '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+        '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name</span>' +
+        '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' +
+        achName +
+        "</span>" +
+        "</div>" +
+        '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+        '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span>' +
+        '<button type="button" data-copy-id="' +
+        accountCopyId +
+        '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+        '<span id="' +
+        accountCopyId +
+        '" data-ach-mask-field="true" data-masked="' +
+        escapeHtml(achAccountMasked) +
+        '" data-revealed="' +
+        escapeHtml(achAccountRevealed) +
+        '" class="text-sm font-normal">' +
+        escapeHtml(achAccountMasked) +
+        "</span>" +
+        '<span data-copy-icon="true" class="hidden">' +
+        ICON_COPY +
+        "</span>" +
+        "</button>" +
+        "</div>" +
+        '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+        '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span>' +
+        '<button type="button" data-copy-id="' +
+        routingCopyId +
+        '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+        '<span id="' +
+        routingCopyId +
+        '" data-ach-mask-field="true" data-masked="' +
+        escapeHtml(achRoutingMasked) +
+        '" data-revealed="' +
+        escapeHtml(achRoutingRevealed) +
+        '" class="text-sm font-normal">' +
+        escapeHtml(achRoutingMasked) +
+        "</span>" +
+        '<span data-copy-icon="true" class="hidden">' +
+        ICON_COPY +
+        "</span>" +
+        "</button>" +
+        "</div>" +
+        '<div class="grid grid-cols-2 gap-4 self-stretch items-start">' +
+        '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Address</span>' +
+        '<div class="flex flex-col items-start gap-1.5">' +
+        '<span class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line">' +
+        achAddress +
+        "</span>" +
+        '<button type="button" data-ach-reveal-toggle data-revealed="false" class="mr-2.5 inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
+        '<span data-icon="reveal">' +
+        ICON_EYE +
+        "</span>" +
+        '<span data-icon="hide" class="hidden">' +
+        ICON_EYE_SLASH +
+        "</span>" +
+        "<span data-ach-reveal-text>Reveal Details</span>" +
+        "</button>" +
+        "</div>" +
+        "</div>" +
+        "</div>" +
+        "</div>";
       var achRows = achCardHtml;
-      if (status === 'exception' || status === 'declined') {
+      if (status === "exception" || status === "declined") {
         achRows +=
           '<div class="mt-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300">' +
-            escapeHtml(getExceptionContextMessage(entry)) +
-          '</div>';
+          escapeHtml(getExceptionContextMessage(entry)) +
+          "</div>";
       }
       return {
-        key: (status === 'exception' || status === 'declined') ? 'exception_ach' : 'ach',
-        typeLabel: 'ACH',
-        titleLabel: '',
-        revealKind: '',
+        key:
+          status === "exception" || status === "declined"
+            ? "exception_ach"
+            : "ach",
+        typeLabel: "ACH",
+        titleLabel: "",
+        revealKind: "",
         rawCardHtml: achRows,
       };
     }
 
-    if (methodType === 'card') {
+    if (methodType === "card") {
       var customer = getCustomerForEntry(entry);
       var cardDetails = getPayerCardDetailsForRender(entry, info, customer);
-      var cardNumberCopyId = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
-      var expiryCopyId = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
-      var cvcCopyId = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var cardNumberCopyId = "sx-payment-copy-" + ++paymentInfoCopyIdCounter;
+      var expiryCopyId = "sx-payment-copy-" + ++paymentInfoCopyIdCounter;
+      var cvcCopyId = "sx-payment-copy-" + ++paymentInfoCopyIdCounter;
       var cardRows =
         '<div data-payment-info-card class="flex flex-col items-start self-stretch">' +
-          '<div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">' +
-            '<span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Card Details</span>' +
-            '<span></span>' +
-          '</div>' +
-          '<div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
-              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Name</span>' +
-              '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + getSafeTextValue(cardDetails.cardHolderName) + '</span>' +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch items-start">' +
-              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Address</span>' +
-              '<span class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line">' + getSafeMultilineValue(cardDetails.cardHolderAddress) + '</span>' +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
-              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Type</span>' +
-              '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(cardDetails.cardType) + '</span>' +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
-              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Number</span>' +
-              '<button type="button" data-copy-id="' + cardNumberCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
-                '<span id="' + cardNumberCopyId + '" data-mask-field="card-number" data-masked="' + escapeHtml(cardDetails.maskedCardNumber) + '" data-revealed="' + escapeHtml(cardDetails.fullCardNumber) + '" class="text-sm font-normal">' + escapeHtml(cardDetails.maskedCardNumber) + '</span>' +
-                '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
-              '</button>' +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
-              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Expires</span>' +
-              '<button type="button" data-copy-id="' + expiryCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
-                '<span id="' + expiryCopyId + '" data-mask-field="card-expiry" data-masked="' + escapeHtml(cardDetails.expiryFull) + '" data-revealed="' + escapeHtml(cardDetails.expiryFull) + '" class="text-sm font-normal">' + escapeHtml(cardDetails.expiryFull) + '</span>' +
-                '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
-              '</button>' +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch">' +
-              '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">CVC2</span>' +
-              '<button type="button" data-copy-id="' + cvcCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
-                '<span id="' + cvcCopyId + '" data-mask-field="card-cvc" data-masked="' + escapeHtml(cardDetails.maskedCvc) + '" data-revealed="' + escapeHtml(cardDetails.cvcValue) + '" class="text-sm font-normal">' + escapeHtml(cardDetails.maskedCvc) + '</span>' +
-                '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
-              '</button>' +
-            '</div>' +
-            '<div class="grid grid-cols-2 gap-4 self-stretch items-start">' +
-              '<span></span>' +
-              '<button type="button" data-card-reveal-toggle data-revealed="false" class="mr-2.5 inline-flex w-fit self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
-                '<span data-icon="reveal">' + ICON_EYE + '</span>' +
-                '<span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span>' +
-                '<span data-card-reveal-text>Reveal Details</span>' +
-              '</button>' +
-            '</div>' +
-          '</div>' +
-        '</div>';
-      if (status === 'exception' || status === 'declined') {
+        '<div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">' +
+        '<span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Card Details</span>' +
+        "<span></span>" +
+        "</div>" +
+        '<div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">' +
+        '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+        '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Name</span>' +
+        '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' +
+        getSafeTextValue(cardDetails.cardHolderName) +
+        "</span>" +
+        "</div>" +
+        '<div class="grid grid-cols-2 gap-4 self-stretch items-start">' +
+        '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Address</span>' +
+        '<span class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line">' +
+        getSafeMultilineValue(cardDetails.cardHolderAddress) +
+        "</span>" +
+        "</div>" +
+        '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+        '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Type</span>' +
+        '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' +
+        escapeHtml(cardDetails.cardType) +
+        "</span>" +
+        "</div>" +
+        '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+        '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Number</span>' +
+        '<button type="button" data-copy-id="' +
+        cardNumberCopyId +
+        '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+        '<span id="' +
+        cardNumberCopyId +
+        '" data-mask-field="card-number" data-masked="' +
+        escapeHtml(cardDetails.maskedCardNumber) +
+        '" data-revealed="' +
+        escapeHtml(cardDetails.fullCardNumber) +
+        '" class="text-sm font-normal">' +
+        escapeHtml(cardDetails.maskedCardNumber) +
+        "</span>" +
+        '<span data-copy-icon="true" class="hidden">' +
+        ICON_COPY +
+        "</span>" +
+        "</button>" +
+        "</div>" +
+        '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+        '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Expires</span>' +
+        '<button type="button" data-copy-id="' +
+        expiryCopyId +
+        '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+        '<span id="' +
+        expiryCopyId +
+        '" data-mask-field="card-expiry" data-masked="' +
+        escapeHtml(cardDetails.expiryFull) +
+        '" data-revealed="' +
+        escapeHtml(cardDetails.expiryFull) +
+        '" class="text-sm font-normal">' +
+        escapeHtml(cardDetails.expiryFull) +
+        "</span>" +
+        '<span data-copy-icon="true" class="hidden">' +
+        ICON_COPY +
+        "</span>" +
+        "</button>" +
+        "</div>" +
+        '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+        '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">CVC2</span>' +
+        '<button type="button" data-copy-id="' +
+        cvcCopyId +
+        '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+        '<span id="' +
+        cvcCopyId +
+        '" data-mask-field="card-cvc" data-masked="' +
+        escapeHtml(cardDetails.maskedCvc) +
+        '" data-revealed="' +
+        escapeHtml(cardDetails.cvcValue) +
+        '" class="text-sm font-normal">' +
+        escapeHtml(cardDetails.maskedCvc) +
+        "</span>" +
+        '<span data-copy-icon="true" class="hidden">' +
+        ICON_COPY +
+        "</span>" +
+        "</button>" +
+        "</div>" +
+        '<div class="grid grid-cols-2 gap-4 self-stretch items-start">' +
+        "<span></span>" +
+        '<button type="button" data-card-reveal-toggle data-revealed="false" class="mr-2.5 inline-flex w-fit self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
+        '<span data-icon="reveal">' +
+        ICON_EYE +
+        "</span>" +
+        '<span data-icon="hide" class="hidden">' +
+        ICON_EYE_SLASH +
+        "</span>" +
+        "<span data-card-reveal-text>Reveal Details</span>" +
+        "</button>" +
+        "</div>" +
+        "</div>" +
+        "</div>";
+      if (status === "exception" || status === "declined") {
         cardRows +=
           '<div class="mt-2 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300">' +
-            escapeHtml(getExceptionContextMessage(entry)) +
-          '</div>';
+          escapeHtml(getExceptionContextMessage(entry)) +
+          "</div>";
       }
       return {
-        key: (status === 'exception' || status === 'declined') ? 'exception_card' : 'card',
-        typeLabel: 'Card',
-        titleLabel: '',
-        revealKind: '',
+        key:
+          status === "exception" || status === "declined"
+            ? "exception_card"
+            : "card",
+        typeLabel: "Card",
+        titleLabel: "",
+        revealKind: "",
         rawCardHtml: cardRows,
       };
     }
 
-    if (status === 'exception' || status === 'declined') {
+    if (status === "exception" || status === "declined") {
       return {
-        key: 'exception_smart_exchange_unselected',
+        key: "exception_smart_exchange_unselected",
         typeLabel: METHOD_TYPE_LABELS.smart_exchange,
-        titleLabel: 'No Payment Method Selected',
-        revealKind: '',
+        titleLabel: "No Payment Method Selected",
+        revealKind: "",
         rowsHtml:
           '<div class="rounded-md border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-300">' +
-            escapeHtml(getExceptionContextMessage(entry)) +
-          '</div>',
+          escapeHtml(getExceptionContextMessage(entry)) +
+          "</div>",
       };
     }
 
     return {
-      key: 'smart_exchange',
+      key: "smart_exchange",
       typeLabel: METHOD_TYPE_LABELS.smart_exchange,
-      titleLabel: 'Exchange Details',
-      revealKind: '',
+      titleLabel: "Exchange Details",
+      revealKind: "",
       rowsHtml:
-        buildPaymentInfoRow('Exchange ID', getSafeTextValue(info && info.exchangeId), false) +
-        buildPaymentInfoRow('Exchange Rate', getSafeTextValue(info && info.exchangeRate), false) +
-        buildPaymentInfoRow('Source Amount', getSafeTextValue(info && info.sourceAmount), false) +
-        buildPaymentInfoRow('Target Amount', getSafeTextValue(info && info.targetAmount), false) +
-        buildPaymentInfoRow('Settlement Date', getSafeTextValue(info && info.settlementDate), false),
+        buildPaymentInfoRow(
+          "Exchange ID",
+          getSafeTextValue(info && info.exchangeId),
+          false,
+        ) +
+        buildPaymentInfoRow(
+          "Exchange Rate",
+          getSafeTextValue(info && info.exchangeRate),
+          false,
+        ) +
+        buildPaymentInfoRow(
+          "Source Amount",
+          getSafeTextValue(info && info.sourceAmount),
+          false,
+        ) +
+        buildPaymentInfoRow(
+          "Target Amount",
+          getSafeTextValue(info && info.targetAmount),
+          false,
+        ) +
+        buildPaymentInfoRow(
+          "Settlement Date",
+          getSafeTextValue(info && info.settlementDate),
+          false,
+        ),
     };
   }
 
   function buildPaymentMethodDetailsSection(variant) {
     var revealKind = variant.revealKind;
-    var revealAttr = revealKind === 'card'
-      ? ' data-payment-info-card'
-      : (revealKind === 'ach' ? ' data-ach-info-card' : '');
-    var revealLink = revealKind === 'card'
-      ? (
-        '<button type="button" data-card-reveal-toggle data-revealed="false" class="mr-2.5 inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
-          '<span data-icon="reveal">' + ICON_EYE + '</span>' +
-          '<span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span>' +
-          '<span data-card-reveal-text>Reveal Details</span>' +
-        '</button>'
-      )
-      : (revealKind === 'ach'
-        ? (
-          '<button type="button" data-ach-reveal-toggle data-revealed="false" class="mr-2.5 inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
-            '<span data-icon="reveal">' + ICON_EYE + '</span>' +
-            '<span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span>' +
-            '<span data-ach-reveal-text>Reveal Details</span>' +
-          '</button>'
-        )
-        : '');
+    var revealAttr =
+      revealKind === "card"
+        ? " data-payment-info-card"
+        : revealKind === "ach"
+          ? " data-ach-info-card"
+          : "";
+    var revealLink =
+      revealKind === "card"
+        ? '<button type="button" data-card-reveal-toggle data-revealed="false" class="mr-2.5 inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
+          '<span data-icon="reveal">' +
+          ICON_EYE +
+          "</span>" +
+          '<span data-icon="hide" class="hidden">' +
+          ICON_EYE_SLASH +
+          "</span>" +
+          "<span data-card-reveal-text>Reveal Details</span>" +
+          "</button>"
+        : revealKind === "ach"
+          ? '<button type="button" data-ach-reveal-toggle data-revealed="false" class="mr-2.5 inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
+            '<span data-icon="reveal">' +
+            ICON_EYE +
+            "</span>" +
+            '<span data-icon="hide" class="hidden">' +
+            ICON_EYE_SLASH +
+            "</span>" +
+            "<span data-ach-reveal-text>Reveal Details</span>" +
+            "</button>"
+          : "";
 
     if (variant.rawCardHtml) {
       return (
         '<div class="flex">' +
-          '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
-          '<div class="flex-1 p-4">' +
-            '<div class="w-[460px] max-w-full">' +
-              variant.rawCardHtml +
-            '</div>' +
-          '</div>' +
-        '</div>'
+        '<div class="' +
+        DETAIL_LABEL +
+        '">Payment Method<br>Details</div>' +
+        '<div class="flex-1 p-4">' +
+        '<div class="w-[460px] max-w-full">' +
+        variant.rawCardHtml +
+        "</div>" +
+        "</div>" +
+        "</div>"
       );
     }
 
     return (
       '<div class="flex">' +
-        '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
-        '<div class="flex-1 p-4">' +
-          '<div' + revealAttr + ' class="flex flex-col gap-2 w-[460px] max-w-full">' +
-            '<div class="flex gap-6">' +
-              '<div class="flex-1 text-sm font-medium text-gray-900 dark:text-white">' + variant.titleLabel + '</div>' +
-              '<div class="flex-1 flex items-center">' + revealLink + '</div>' +
-            '</div>' +
-            '<div>' +
-              '<div class="border-t border-gray-200 dark:border-white/10"></div>' +
-              '<dl class="mt-2 flex flex-col gap-3">' +
-                variant.rowsHtml +
-              '</dl>' +
-            '</div>' +
-          '</div>' +
-        '</div>' +
-      '</div>'
+      '<div class="' +
+      DETAIL_LABEL +
+      '">Payment Method<br>Details</div>' +
+      '<div class="flex-1 p-4">' +
+      "<div" +
+      revealAttr +
+      ' class="flex flex-col gap-2 w-[460px] max-w-full">' +
+      '<div class="flex gap-6">' +
+      '<div class="flex-1 text-sm font-medium text-gray-900 dark:text-white">' +
+      variant.titleLabel +
+      "</div>" +
+      '<div class="flex-1 flex items-center">' +
+      revealLink +
+      "</div>" +
+      "</div>" +
+      "<div>" +
+      '<div class="border-t border-gray-200 dark:border-white/10"></div>' +
+      '<dl class="mt-2 flex flex-col gap-3">' +
+      variant.rowsHtml +
+      "</dl>" +
+      "</div>" +
+      "</div>" +
+      "</div>" +
+      "</div>"
     );
   }
 
   function PaymentMethodDetails(params) {
-    if (!params) return '';
+    if (!params) return "";
     var status = params.status;
     var methodType = params.methodType;
     var payment = params.payment;
     var payee = params.payee;
     var info = payment && payment.details ? payment.details.paymentInfo : null;
-    var variant = getPaymentMethodDetailsVariant(status, methodType, payment, info || {}, payee);
-    if (!variant) return '';
+    var variant = getPaymentMethodDetailsVariant(
+      status,
+      methodType,
+      payment,
+      info || {},
+      payee,
+    );
+    if (!variant) return "";
     return buildPaymentMethodDetailsSection(variant);
   }
 
@@ -1916,25 +2590,42 @@
 
   // Activity log — matches Figma Activity Log component (31822:55675)
   function buildInlineActivityDescription(description, timestampLabel) {
-    if (!timestampLabel) return description || '';
-    return (description || '') + '<span class="text-gray-700 dark:text-gray-300"><span class="mx-1.5 text-base leading-none align-middle">&middot;</span>' + escapeHtml(timestampLabel) + '</span>';
+    if (!timestampLabel) return description || "";
+    return (
+      (description || "") +
+      '<span class="text-gray-700 dark:text-gray-300"><span class="mx-1.5 text-base leading-none align-middle">&middot;</span>' +
+      escapeHtml(timestampLabel) +
+      "</span>"
+    );
   }
 
-  function buildActivityLogItem(dotClasses, title, description, timestampLabel, showLine) {
+  function buildActivityLogItem(
+    dotClasses,
+    title,
+    description,
+    timestampLabel,
+    showLine,
+  ) {
     var lineHtml = showLine
       ? '<div class="flex-1 w-px bg-gray-200 dark:bg-white/10"></div>'
-      : '';
+      : "";
     return (
       '<div class="flex gap-3">' +
-        '<div class="flex w-6 flex-none self-stretch flex-col items-center gap-[6px] pt-[6px]">' +
-          '<div class="size-1.5 rounded-full ' + dotClasses + '"></div>' +
-          lineHtml +
-        '</div>' +
-        '<div class="flex min-w-0 flex-col gap-2 pb-4">' +
-          '<p class="text-sm font-medium text-gray-900 dark:text-white">' + title + '</p>' +
-          '<p class="text-sm text-gray-700 dark:text-gray-300">' + buildInlineActivityDescription(description, timestampLabel) + '</p>' +
-        '</div>' +
-      '</div>'
+      '<div class="flex w-6 flex-none self-stretch flex-col items-center gap-[6px] pt-[6px]">' +
+      '<div class="size-1.5 rounded-full ' +
+      dotClasses +
+      '"></div>' +
+      lineHtml +
+      "</div>" +
+      '<div class="flex min-w-0 flex-col gap-2 pb-4">' +
+      '<p class="text-sm font-medium text-gray-900 dark:text-white">' +
+      title +
+      "</p>" +
+      '<p class="text-sm text-gray-700 dark:text-gray-300">' +
+      buildInlineActivityDescription(description, timestampLabel) +
+      "</p>" +
+      "</div>" +
+      "</div>"
     );
   }
 
@@ -1943,100 +2634,137 @@
 
     return (
       '<div class="flex">' +
-        '<div class="' + DETAIL_LABEL + '">Activity Log</div>' +
-        '<div class="flex-1 p-4">' +
-          items +
-        '</div>' +
-      '</div>'
+      '<div class="' +
+      DETAIL_LABEL +
+      '">Activity Log</div>' +
+      '<div class="flex-1 p-4">' +
+      items +
+      "</div>" +
+      "</div>"
     );
   }
 
   function buildEntryActivityLogItems(entry) {
-    var invoice = escapeHtml(entry.invoice || '');
+    var invoice = escapeHtml(entry.invoice || "");
     var log = entry.details.activityLog;
-    var items = '';
+    var items = "";
 
-    if (entry.status === 'paid') {
+    if (entry.status === "paid") {
       // Find most recent complete event for processed timestamp
       var completedEntry = null;
       for (var ci = log.length - 1; ci >= 0; ci--) {
-        if (log[ci].type === 'complete') { completedEntry = log[ci]; break; }
+        if (log[ci].type === "complete") {
+          completedEntry = log[ci];
+          break;
+        }
       }
-      var processedDate = completedEntry ? formatActivityDate(completedEntry.date) : '';
-      var initiatedDate = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
+      var processedDate = completedEntry
+        ? formatActivityDate(completedEntry.date)
+        : "";
+      var initiatedDate = log[0]
+        ? formatActivityDate(log[0].date)
+        : formatDate(entry.dateInitiated);
 
       items += buildActivityLogItem(
-        'bg-green-100 ring-1 ring-green-700/60 dark:bg-green-400/10 dark:ring-green-400/20',
-        'Paid',
-        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been processed',
+        "bg-green-100 ring-1 ring-green-700/60 dark:bg-green-400/10 dark:ring-green-400/20",
+        "Paid",
+        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' +
+          invoice +
+          "</span> has been processed",
         processedDate,
-        true
+        true,
       );
       items += buildActivityLogItem(
-        'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
-        'Initiated',
-        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated',
+        "bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20",
+        "Initiated",
+        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' +
+          invoice +
+          "</span> has been initiated",
         initiatedDate,
-        false
+        false,
       );
-
-    } else if (entry.status === 'exception' || entry.status === 'declined') {
-      var initiatedDateF = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
+    } else if (entry.status === "exception" || entry.status === "declined") {
+      var initiatedDateF = log[0]
+        ? formatActivityDate(log[0].date)
+        : formatDate(entry.dateInitiated);
       var failedLogEntry = log[log.length - 1] || null;
-      var failedDate = failedLogEntry ? formatActivityDate(failedLogEntry.date) : '';
-      var declined = entry.status === 'declined';
+      var failedDate = failedLogEntry
+        ? formatActivityDate(failedLogEntry.date)
+        : "";
+      var declined = entry.status === "declined";
       var reason = getDeclineReason(entry);
       var exceptionDescription = declined
-        ? 'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> was declined.'
-        : 'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has an exception and needs review.';
+        ? 'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' +
+          invoice +
+          "</span> was declined."
+        : 'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' +
+          invoice +
+          "</span> has an exception and needs review.";
       if (reason) {
-        exceptionDescription += '<span class="mt-1 block text-gray-700 dark:text-gray-300">Reason: ' + escapeHtml(reason) + '</span>';
+        exceptionDescription +=
+          '<span class="mt-1 block text-gray-700 dark:text-gray-300">Reason: ' +
+          escapeHtml(reason) +
+          "</span>";
       }
 
       items += buildActivityLogItem(
-        'bg-red-100 ring-1 ring-red-700/60 dark:bg-red-400/10 dark:ring-red-400/20',
-        declined ? 'Declined' : 'Payment Exception',
+        "bg-red-100 ring-1 ring-red-700/60 dark:bg-red-400/10 dark:ring-red-400/20",
+        declined ? "Declined" : "Payment Exception",
         exceptionDescription,
         failedDate,
-        true
+        true,
       );
       items += buildActivityLogItem(
-        'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
-        'Initiated',
-        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated',
+        "bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20",
+        "Initiated",
+        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' +
+          invoice +
+          "</span> has been initiated",
         initiatedDateF,
-        false
+        false,
       );
-
     } else {
       // Pending/default
-      var pendingDate = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
-      var pendingTitle = 'Pending Your Action';
-      var pendingDescription = 'Please review the required items before you get paid.';
+      var pendingDate = log[0]
+        ? formatActivityDate(log[0].date)
+        : formatDate(entry.dateInitiated);
+      var pendingTitle = "Pending Your Action";
+      var pendingDescription =
+        "Please review the required items before you get paid.";
       if (isPendingAutoProcessingEntry(entry)) {
-        var processing = entry.details && entry.details.processing ? entry.details.processing : {};
-        var expectedLabel = processing.expectedSettlementDate ? formatDate(processing.expectedSettlementDate) : '';
-        pendingTitle = 'Pending ACH Settlement';
+        var processing =
+          entry.details && entry.details.processing
+            ? entry.details.processing
+            : {};
+        var expectedLabel = processing.expectedSettlementDate
+          ? formatDate(processing.expectedSettlementDate)
+          : "";
+        pendingTitle = "Pending ACH Settlement";
         pendingDescription = expectedLabel
-          ? 'ACH settlement is processing and is expected to complete by <span class="font-medium text-gray-900 dark:text-white">' + escapeHtml(expectedLabel) + '</span>.'
-          : 'ACH settlement is processing and will complete automatically after the standard ACH window.';
+          ? 'ACH settlement is processing and is expected to complete by <span class="font-medium text-gray-900 dark:text-white">' +
+            escapeHtml(expectedLabel) +
+            "</span>."
+          : "ACH settlement is processing and will complete automatically after the standard ACH window.";
       } else if (isPendingManualReviewEntry(entry)) {
-        pendingTitle = 'Pending Manual Confirmation';
-        pendingDescription = 'Card details have been provided. Mark this payment as paid once funds are confirmed.';
+        pendingTitle = "Pending Manual Confirmation";
+        pendingDescription =
+          "Card details have been provided. Mark this payment as paid once funds are confirmed.";
       }
       items += buildActivityLogItem(
-        'bg-yellow-100 ring-1 ring-yellow-700/60 dark:bg-yellow-400/10 dark:ring-yellow-400/20',
+        "bg-yellow-100 ring-1 ring-yellow-700/60 dark:bg-yellow-400/10 dark:ring-yellow-400/20",
         pendingTitle,
         pendingDescription,
         pendingDate,
-        true
+        true,
       );
       items += buildActivityLogItem(
-        'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
-        'Initiated',
-        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated',
+        "bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20",
+        "Initiated",
+        'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' +
+          invoice +
+          "</span> has been initiated",
         pendingDate,
-        false
+        false,
       );
     }
 
@@ -2046,28 +2774,40 @@
   function buildDetailRowHTML(entry, colCount, isLast) {
     var paymentSection = buildPaymentInfoSection(entry);
     var detailCellClass = isLast
-      ? 'bg-white dark:bg-gray-900'
+      ? "bg-white dark:bg-gray-900"
       : CLASS_NAMES.detailCell;
     return (
       '<tr data-detail class="hidden">' +
-        '<td colspan="' + colCount + '" class="' + detailCellClass + '">' +
-          buildNotesSection(entry) +
-          buildStatusSection(entry) +
-          buildAttachmentsSection(entry) +
-          (paymentSection ? (DETAIL_SEPARATOR + paymentSection + DETAIL_SEPARATOR) : DETAIL_SEPARATOR) +
-          buildActivityLogSection(entry) +
-        '</td>' +
-      '</tr>'
+      '<td colspan="' +
+      colCount +
+      '" class="' +
+      detailCellClass +
+      '">' +
+      buildNotesSection(entry) +
+      buildStatusSection(entry) +
+      buildAttachmentsSection(entry) +
+      (paymentSection
+        ? DETAIL_SEPARATOR + paymentSection + DETAIL_SEPARATOR
+        : DETAIL_SEPARATOR) +
+      buildActivityLogSection(entry) +
+      "</td>" +
+      "</tr>"
     );
   }
 
   function buildRowHTML(entry, columns, isLast) {
-    var rowHighlightClass = getRowHighlightClass(entry, actionGuideState.highlightFilter);
+    var rowHighlightClass = getRowHighlightClass(
+      entry,
+      actionGuideState.highlightFilter,
+    );
     return (
-      '<tbody class="' + CLASS_NAMES.tbody + (rowHighlightClass ? (' ' + rowHighlightClass) : '') + '">' +
-        buildMainRowHTML(entry, columns, isLast) +
-        buildDetailRowHTML(entry, columns.length, isLast) +
-      '</tbody>'
+      '<tbody class="' +
+      CLASS_NAMES.tbody +
+      (rowHighlightClass ? " " + rowHighlightClass : "") +
+      '">' +
+      buildMainRowHTML(entry, columns, isLast) +
+      buildDetailRowHTML(entry, columns.length, isLast) +
+      "</tbody>"
     );
   }
 
@@ -2079,7 +2819,7 @@
 
   /** True when a search term or any applied filter is narrowing the table. */
   function hasNarrowingTableFilters() {
-    if (String(tableFilterState.search || '').trim()) return true;
+    if (String(tableFilterState.search || "").trim()) return true;
     var sets = [
       tableFilterState.appliedSelectedCustomers,
       tableFilterState.appliedSelectedStatuses,
@@ -2089,34 +2829,49 @@
     for (var i = 0; i < sets.length; i += 1) {
       if (sets[i] && sets[i].size) return true;
     }
-    return !!(tableFilterState.appliedInitiatedDateFrom || tableFilterState.appliedInitiatedDateTo);
+    return !!(
+      tableFilterState.appliedInitiatedDateFrom ||
+      tableFilterState.appliedInitiatedDateTo
+    );
   }
 
   function buildEmptyStateHTML(colspan) {
     // An empty Action Required tab means the work is done, not that the search
     // came up short — say so, unless a filter is what emptied it.
     var isClearedWorklist =
-      normalizeTabKey(_activeTableTabKey || 'pending') === 'action-required' &&
+      normalizeTabKey(_activeTableTabKey || "pending") === "action-required" &&
       !hasNarrowingTableFilters();
 
-    var icon = isClearedWorklist ? EMPTY_STATE_CHECK_ICON : EMPTY_STATE_DOCUMENT_ICON;
-    var heading = isClearedWorklist ? 'You are all caught up' : 'No exchange records found';
+    var icon = isClearedWorklist
+      ? EMPTY_STATE_CHECK_ICON
+      : EMPTY_STATE_DOCUMENT_ICON;
+    var heading = isClearedWorklist
+      ? "You are all caught up"
+      : "No exchange records found";
     var body = isClearedWorklist
-      ? 'No payments are waiting on your confirmation right now.'
-      : 'Try a different search or adjust the active filters to see matching invoices.';
+      ? "No payments are waiting on your confirmation right now."
+      : "Try a different search or adjust the active filters to see matching invoices.";
 
     return (
-      '<tbody class="' + CLASS_NAMES.tbody + '">' +
-        '<tr>' +
-          '<td colspan="' + colspan + '" class="px-0 py-4">' +
-            '<div class="flex w-full flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-gray-50/80 px-6 py-8 text-center dark:border-white/10 dark:bg-white/5">' +
-              icon +
-              '<h3 class="mt-3 text-sm font-semibold text-gray-900 dark:text-white">' + escapeHtml(heading) + '</h3>' +
-              '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(body) + '</p>' +
-            '</div>' +
-          '</td>' +
-        '</tr>' +
-      '</tbody>'
+      '<tbody class="' +
+      CLASS_NAMES.tbody +
+      '">' +
+      "<tr>" +
+      '<td colspan="' +
+      colspan +
+      '" class="px-0 py-4">' +
+      '<div class="flex w-full flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-gray-50/80 px-6 py-8 text-center dark:border-white/10 dark:bg-white/5">' +
+      icon +
+      '<h3 class="mt-3 text-sm font-semibold text-gray-900 dark:text-white">' +
+      escapeHtml(heading) +
+      "</h3>" +
+      '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">' +
+      escapeHtml(body) +
+      "</p>" +
+      "</div>" +
+      "</td>" +
+      "</tr>" +
+      "</tbody>"
     );
   }
 
@@ -2124,42 +2879,45 @@
 
   function applyActionDivider(cell, isActive, isDark) {
     if (isActive) {
-      cell.style.borderLeftWidth = '1px';
-      cell.style.borderLeftStyle = 'solid';
-      cell.style.borderLeftColor = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.15)';
+      cell.style.borderLeftWidth = "1px";
+      cell.style.borderLeftStyle = "solid";
+      cell.style.borderLeftColor = isDark
+        ? "rgba(255,255,255,0.10)"
+        : "rgba(0,0,0,0.15)";
       cell.style.boxShadow = isDark
-        ? '-10px 0 15px -3px rgba(0,0,0,0.3), -4px 0 6px -4px rgba(0,0,0,0.3)'
-        : '-10px 0 15px -3px rgba(0,0,0,0.1), -4px 0 6px -4px rgba(0,0,0,0.1)';
+        ? "-10px 0 15px -3px rgba(0,0,0,0.3), -4px 0 6px -4px rgba(0,0,0,0.3)"
+        : "-10px 0 15px -3px rgba(0,0,0,0.1), -4px 0 6px -4px rgba(0,0,0,0.1)";
     } else {
-      cell.style.borderLeftWidth = '0px';
-      cell.style.borderLeftStyle = 'solid';
-      cell.style.borderLeftColor = 'transparent';
-      cell.style.boxShadow = 'none';
+      cell.style.borderLeftWidth = "0px";
+      cell.style.borderLeftStyle = "solid";
+      cell.style.borderLeftColor = "transparent";
+      cell.style.boxShadow = "none";
     }
   }
 
   function initStickyAction(table) {
-    var scroller = table.closest(TABLE_SCROLL_SELECTOR) || table.closest('.overflow-x-auto');
+    var scroller =
+      table.closest(TABLE_SCROLL_SELECTOR) || table.closest(".overflow-x-auto");
     if (!scroller) return function () {};
 
     function sync() {
       var maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
       var isOverflowing = maxScrollLeft > 0.5;
-      var isDark = document.documentElement.classList.contains('dark');
+      var isDark = document.documentElement.classList.contains("dark");
       var actionColumns = table.querySelectorAll(ACTION_COLUMN_SELECTOR);
 
       actionColumns.forEach(function (cell) {
         if (isOverflowing) {
-          cell.classList.add('sticky', 'right-0', 'z-10');
+          cell.classList.add("sticky", "right-0", "z-10");
         } else {
-          cell.classList.remove('sticky', 'right-0', 'z-10');
+          cell.classList.remove("sticky", "right-0", "z-10");
         }
         applyActionDivider(cell, isOverflowing, isDark);
       });
     }
 
-    scroller.addEventListener('scroll', sync, { passive: true });
-    window.addEventListener('resize', sync);
+    scroller.addEventListener("scroll", sync, { passive: true });
+    window.addEventListener("resize", sync);
     sync();
 
     return sync;
@@ -2168,40 +2926,44 @@
   // ── Row expand/collapse toggle ──
 
   function toggleRow(button) {
-    var mainRow = button.closest('tr[data-row]');
+    var mainRow = button.closest("tr[data-row]");
     var detailRow = mainRow ? mainRow.nextElementSibling : null;
     if (!mainRow || !detailRow) return;
 
-    var icon = button.querySelector('svg');
-    var isOpen = !detailRow.classList.contains('hidden');
-    var stickyCell = mainRow.querySelector('td.sticky');
-    var actionCell = mainRow.querySelector('[data-action-column]');
+    var icon = button.querySelector("svg");
+    var isOpen = !detailRow.classList.contains("hidden");
+    var stickyCell = mainRow.querySelector("td.sticky");
+    var actionCell = mainRow.querySelector("[data-action-column]");
 
     if (isOpen) {
-      detailRow.classList.add('hidden');
-      if (icon) icon.style.transform = '';
-      mainRow.classList.remove('bg-gray-100', 'dark:bg-white/5');
-      if (stickyCell) stickyCell.classList.remove('!bg-gray-100', 'dark:!bg-gray-900');
-      if (actionCell) actionCell.classList.remove('!bg-gray-100', 'dark:!bg-gray-900');
+      detailRow.classList.add("hidden");
+      if (icon) icon.style.transform = "";
+      mainRow.classList.remove("bg-gray-100", "dark:bg-white/5");
+      if (stickyCell)
+        stickyCell.classList.remove("!bg-gray-100", "dark:!bg-gray-900");
+      if (actionCell)
+        actionCell.classList.remove("!bg-gray-100", "dark:!bg-gray-900");
     } else {
-      detailRow.classList.remove('hidden');
-      if (icon) icon.style.transform = 'rotate(90deg)';
-      mainRow.classList.add('bg-gray-100', 'dark:bg-white/5');
-      if (stickyCell) stickyCell.classList.add('!bg-gray-100', 'dark:!bg-gray-900');
-      if (actionCell) actionCell.classList.add('!bg-gray-100', 'dark:!bg-gray-900');
+      detailRow.classList.remove("hidden");
+      if (icon) icon.style.transform = "rotate(90deg)";
+      mainRow.classList.add("bg-gray-100", "dark:bg-white/5");
+      if (stickyCell)
+        stickyCell.classList.add("!bg-gray-100", "dark:!bg-gray-900");
+      if (actionCell)
+        actionCell.classList.add("!bg-gray-100", "dark:!bg-gray-900");
     }
   }
 
   function attachToggleListeners(table) {
-    if (table.dataset.toggleBound === '1') return;
-    table.dataset.toggleBound = '1';
+    if (table.dataset.toggleBound === "1") return;
+    table.dataset.toggleBound = "1";
 
-    table.addEventListener('click', function (event) {
-      var sortBtn = event.target.closest('[data-sort-key]');
+    table.addEventListener("click", function (event) {
+      var sortBtn = event.target.closest("[data-sort-key]");
       if (sortBtn && table.contains(sortBtn)) {
         event.preventDefault();
         event.stopPropagation();
-        var sortKey = sortBtn.getAttribute('data-sort-key') || '';
+        var sortKey = sortBtn.getAttribute("data-sort-key") || "";
         if (!sortKey) return;
         cycleSortDirection(sortKey);
         refreshTableForActiveTab();
@@ -2209,104 +2971,141 @@
         return;
       }
 
-      var revealBtn = event.target.closest('[data-card-reveal-toggle]');
+      var revealBtn = event.target.closest("[data-card-reveal-toggle]");
       if (revealBtn && table.contains(revealBtn)) {
         event.preventDefault();
-        var cardSection = revealBtn.closest('[data-payment-info-card]');
+        var cardSection = revealBtn.closest("[data-payment-info-card]");
         if (!cardSection) return;
         function setCardCopyVisible(copyBtn, visible) {
           if (!copyBtn) return;
-          copyBtn.setAttribute('data-copy-enabled', visible ? 'true' : 'false');
+          copyBtn.setAttribute("data-copy-enabled", visible ? "true" : "false");
           var icon = copyBtn.querySelector('[data-copy-icon="true"]');
           if (visible) {
-            copyBtn.classList.remove('pointer-events-none');
-            copyBtn.classList.add('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
-            if (icon) icon.classList.remove('hidden');
+            copyBtn.classList.remove("pointer-events-none");
+            copyBtn.classList.add(
+              "cursor-pointer",
+              "transition-colors",
+              "hover:bg-gray-200",
+              "dark:hover:bg-white/20",
+            );
+            if (icon) icon.classList.remove("hidden");
           } else {
-            copyBtn.classList.add('pointer-events-none');
-            copyBtn.classList.remove('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
-            if (icon) icon.classList.add('hidden');
+            copyBtn.classList.add("pointer-events-none");
+            copyBtn.classList.remove(
+              "cursor-pointer",
+              "transition-colors",
+              "hover:bg-gray-200",
+              "dark:hover:bg-white/20",
+            );
+            if (icon) icon.classList.add("hidden");
           }
         }
 
-        var revealed = revealBtn.getAttribute('data-revealed') === 'true';
+        var revealed = revealBtn.getAttribute("data-revealed") === "true";
         revealed = !revealed;
-        revealBtn.setAttribute('data-revealed', String(revealed));
+        revealBtn.setAttribute("data-revealed", String(revealed));
 
-        var maskFields = cardSection.querySelectorAll('[data-mask-field]');
+        var maskFields = cardSection.querySelectorAll("[data-mask-field]");
         maskFields.forEach(function (field) {
-          var maskedValue = field.getAttribute('data-masked') || '';
-          var revealedValue = field.getAttribute('data-revealed') || '';
-          field.textContent = revealed ? (revealedValue || maskedValue) : maskedValue;
+          var maskedValue = field.getAttribute("data-masked") || "";
+          var revealedValue = field.getAttribute("data-revealed") || "";
+          field.textContent = revealed
+            ? revealedValue || maskedValue
+            : maskedValue;
         });
 
         var revealIcon = revealBtn.querySelector('[data-icon="reveal"]');
         var hideIcon = revealBtn.querySelector('[data-icon="hide"]');
-        var text = revealBtn.querySelector('[data-card-reveal-text]');
-        cardSection.querySelectorAll('[data-card-copy-control="true"]').forEach(function (copyAction) {
-          setCardCopyVisible(copyAction, revealed);
-        });
-        if (revealIcon) revealIcon.classList.toggle('hidden', revealed);
-        if (hideIcon) hideIcon.classList.toggle('hidden', !revealed);
-        if (text) text.textContent = revealed ? 'Hide Details' : 'Reveal Details';
+        var text = revealBtn.querySelector("[data-card-reveal-text]");
+        cardSection
+          .querySelectorAll('[data-card-copy-control="true"]')
+          .forEach(function (copyAction) {
+            setCardCopyVisible(copyAction, revealed);
+          });
+        if (revealIcon) revealIcon.classList.toggle("hidden", revealed);
+        if (hideIcon) hideIcon.classList.toggle("hidden", !revealed);
+        if (text)
+          text.textContent = revealed ? "Hide Details" : "Reveal Details";
         return;
       }
 
-      var achRevealBtn = event.target.closest('[data-ach-reveal-toggle]');
+      var achRevealBtn = event.target.closest("[data-ach-reveal-toggle]");
       if (achRevealBtn && table.contains(achRevealBtn)) {
         event.preventDefault();
-        var achSection = achRevealBtn.closest('[data-ach-info-card]');
+        var achSection = achRevealBtn.closest("[data-ach-info-card]");
         if (!achSection) return;
         function setAchCopyVisible(copyBtn, visible) {
           if (!copyBtn) return;
-          copyBtn.setAttribute('data-copy-enabled', visible ? 'true' : 'false');
+          copyBtn.setAttribute("data-copy-enabled", visible ? "true" : "false");
           var icon = copyBtn.querySelector('[data-copy-icon="true"]');
           if (visible) {
-            copyBtn.classList.remove('pointer-events-none');
-            copyBtn.classList.add('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
-            if (icon) icon.classList.remove('hidden');
+            copyBtn.classList.remove("pointer-events-none");
+            copyBtn.classList.add(
+              "cursor-pointer",
+              "transition-colors",
+              "hover:bg-gray-200",
+              "dark:hover:bg-white/20",
+            );
+            if (icon) icon.classList.remove("hidden");
           } else {
-            copyBtn.classList.add('pointer-events-none');
-            copyBtn.classList.remove('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
-            if (icon) icon.classList.add('hidden');
+            copyBtn.classList.add("pointer-events-none");
+            copyBtn.classList.remove(
+              "cursor-pointer",
+              "transition-colors",
+              "hover:bg-gray-200",
+              "dark:hover:bg-white/20",
+            );
+            if (icon) icon.classList.add("hidden");
           }
         }
 
-        var achRevealed = achRevealBtn.getAttribute('data-revealed') === 'true';
+        var achRevealed = achRevealBtn.getAttribute("data-revealed") === "true";
         achRevealed = !achRevealed;
-        achRevealBtn.setAttribute('data-revealed', String(achRevealed));
+        achRevealBtn.setAttribute("data-revealed", String(achRevealed));
 
-        var achFields = achSection.querySelectorAll('[data-ach-mask-field="true"]');
+        var achFields = achSection.querySelectorAll(
+          '[data-ach-mask-field="true"]',
+        );
         achFields.forEach(function (field) {
-          var maskedValue = field.getAttribute('data-masked') || '';
-          var revealedValue = field.getAttribute('data-revealed') || '';
-          field.textContent = achRevealed ? (revealedValue || maskedValue) : maskedValue;
+          var maskedValue = field.getAttribute("data-masked") || "";
+          var revealedValue = field.getAttribute("data-revealed") || "";
+          field.textContent = achRevealed
+            ? revealedValue || maskedValue
+            : maskedValue;
         });
 
         var achRevealIcon = achRevealBtn.querySelector('[data-icon="reveal"]');
         var achHideIcon = achRevealBtn.querySelector('[data-icon="hide"]');
-        var achText = achRevealBtn.querySelector('[data-ach-reveal-text]');
-        achSection.querySelectorAll('[data-ach-copy-control="true"]').forEach(function (copyAction) {
-          setAchCopyVisible(copyAction, achRevealed);
-        });
-        if (achRevealIcon) achRevealIcon.classList.toggle('hidden', achRevealed);
-        if (achHideIcon) achHideIcon.classList.toggle('hidden', !achRevealed);
-        if (achText) achText.textContent = achRevealed ? 'Hide Details' : 'Reveal Details';
+        var achText = achRevealBtn.querySelector("[data-ach-reveal-text]");
+        achSection
+          .querySelectorAll('[data-ach-copy-control="true"]')
+          .forEach(function (copyAction) {
+            setAchCopyVisible(copyAction, achRevealed);
+          });
+        if (achRevealIcon)
+          achRevealIcon.classList.toggle("hidden", achRevealed);
+        if (achHideIcon) achHideIcon.classList.toggle("hidden", !achRevealed);
+        if (achText)
+          achText.textContent = achRevealed ? "Hide Details" : "Reveal Details";
         return;
       }
 
-      var previewBtn = event.target.closest('[data-attachment-preview]');
+      var previewBtn = event.target.closest("[data-attachment-preview]");
       if (previewBtn && table.contains(previewBtn)) {
         event.preventDefault();
         event.stopPropagation();
-        var reviewDialog = document.getElementById('gp-review-dialog');
-        if (reviewDialog && !reviewDialog.open && typeof reviewDialog.showModal === 'function') {
+        var reviewDialog = document.getElementById("gp-review-dialog");
+        if (
+          reviewDialog &&
+          !reviewDialog.open &&
+          typeof reviewDialog.showModal === "function"
+        ) {
           reviewDialog.showModal();
         }
         return;
       }
 
-      var button = event.target.closest('[data-row-toggle]');
+      var button = event.target.closest("[data-row-toggle]");
       if (!button || !table.contains(button)) return;
       toggleRow(button);
     });
@@ -2315,7 +3114,10 @@
   // ── Pagination ──
 
   function getTotalPages() {
-    return Math.max(1, Math.ceil(paginationState.totalItems / paginationState.pageSize));
+    return Math.max(
+      1,
+      Math.ceil(paginationState.totalItems / paginationState.pageSize),
+    );
   }
 
   function getPageSlice() {
@@ -2338,7 +3140,7 @@
     pages.push(1);
 
     if (current > 3) {
-      pages.push('...');
+      pages.push("...");
     }
 
     // Pages around current
@@ -2350,7 +3152,7 @@
     }
 
     if (current < total - 2) {
-      pages.push('...');
+      pages.push("...");
     }
 
     // Always show last page
@@ -2374,81 +3176,123 @@
     var isLastPage = page >= totalPages;
 
     // Page number classes — compact size to match 3-dot button
-    var activePageClass = 'relative z-10 inline-flex items-center bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-600 inset-ring inset-ring-blue-300 focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500/10 dark:text-blue-400 dark:inset-ring-blue-500/30 dark:focus-visible:outline-blue-400';
-    var defaultPageClass = 'relative inline-flex items-center px-2.5 py-1 text-xs font-semibold text-gray-900 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:text-gray-200 dark:inset-ring-gray-700 dark:hover:bg-white/5';
-    var ellipsisClass = 'relative inline-flex items-center px-2.5 py-1 text-xs font-semibold text-gray-700 inset-ring inset-ring-gray-300 focus:outline-offset-0 dark:text-gray-400 dark:inset-ring-gray-700';
-    var prevClass = 'relative inline-flex items-center rounded-l-sm px-1.5 py-1 text-gray-400 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:inset-ring-gray-700 dark:hover:bg-white/5';
-    var nextClass = 'relative inline-flex items-center rounded-r-sm px-1.5 py-1 text-gray-400 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:inset-ring-gray-700 dark:hover:bg-white/5';
+    var activePageClass =
+      "relative z-10 inline-flex items-center bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-600 inset-ring inset-ring-blue-300 focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500/10 dark:text-blue-400 dark:inset-ring-blue-500/30 dark:focus-visible:outline-blue-400";
+    var defaultPageClass =
+      "relative inline-flex items-center px-2.5 py-1 text-xs font-semibold text-gray-900 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:text-gray-200 dark:inset-ring-gray-700 dark:hover:bg-white/5";
+    var ellipsisClass =
+      "relative inline-flex items-center px-2.5 py-1 text-xs font-semibold text-gray-700 inset-ring inset-ring-gray-300 focus:outline-offset-0 dark:text-gray-400 dark:inset-ring-gray-700";
+    var prevClass =
+      "relative inline-flex items-center rounded-l-sm px-1.5 py-1 text-gray-400 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:inset-ring-gray-700 dark:hover:bg-white/5";
+    var nextClass =
+      "relative inline-flex items-center rounded-r-sm px-1.5 py-1 text-gray-400 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:inset-ring-gray-700 dark:hover:bg-white/5";
 
     // Build page number buttons
     var pageNumbers = getPageNumbers(page, totalPages);
-    var pagesHTML = '';
+    var pagesHTML = "";
     pageNumbers.forEach(function (p) {
-      if (p === '...') {
+      if (p === "...") {
         pagesHTML += '<span class="' + ellipsisClass + '">...</span>';
       } else if (p === page) {
-        pagesHTML += '<a href="#" data-page-num="' + p + '" aria-current="page" class="' + activePageClass + '">' + p + '</a>';
+        pagesHTML +=
+          '<a href="#" data-page-num="' +
+          p +
+          '" aria-current="page" class="' +
+          activePageClass +
+          '">' +
+          p +
+          "</a>";
       } else {
-        pagesHTML += '<a href="#" data-page-num="' + p + '" class="' + defaultPageClass + '">' + p + '</a>';
+        pagesHTML +=
+          '<a href="#" data-page-num="' +
+          p +
+          '" class="' +
+          defaultPageClass +
+          '">' +
+          p +
+          "</a>";
       }
     });
 
     // Build rows-per-page options
-    var optionsHTML = '';
+    var optionsHTML = "";
     PAGE_SIZE_OPTIONS.forEach(function (opt) {
-      optionsHTML += '<a href="#" data-page-size="' + opt + '" class="block px-4 py-2 text-sm ' +
-        (opt === size ? 'font-semibold text-gray-900 bg-gray-50 dark:text-white dark:bg-white/5' : 'text-gray-700 dark:text-gray-300') +
+      optionsHTML +=
+        '<a href="#" data-page-size="' +
+        opt +
+        '" class="block px-4 py-2 text-sm ' +
+        (opt === size
+          ? "font-semibold text-gray-900 bg-gray-50 dark:text-white dark:bg-white/5"
+          : "text-gray-700 dark:text-gray-300") +
         ' hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:hover:bg-white/5 dark:hover:text-white dark:focus:bg-white/5 dark:focus:text-white">' +
-        opt + '</a>';
+        opt +
+        "</a>";
     });
 
     // Mobile: simple prev/next
     var mobileHTML =
       '<div class="flex flex-1 justify-between sm:hidden">' +
-        '<a href="#" data-page-prev class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10' +
-          (isFirstPage ? ' opacity-50 pointer-events-none' : '') + '">Previous</a>' +
-        '<a href="#" data-page-next class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10' +
-          (isLastPage ? ' opacity-50 pointer-events-none' : '') + '">Next</a>' +
-      '</div>';
+      '<a href="#" data-page-prev class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10' +
+      (isFirstPage ? " opacity-50 pointer-events-none" : "") +
+      '">Previous</a>' +
+      '<a href="#" data-page-next class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10' +
+      (isLastPage ? " opacity-50 pointer-events-none" : "") +
+      '">Next</a>' +
+      "</div>";
 
     // Desktop: full pagination
     var desktopHTML =
       '<div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">' +
-        // Left: showing info + rows per page
-        '<div class="flex items-center gap-x-6">' +
-          '<p class="text-sm text-gray-700 dark:text-gray-300">' +
-            'Showing <span class="font-medium">' + start + '</span> to ' +
-            '<span class="font-medium">' + end + '</span> of ' +
-            '<span class="font-medium">' + total + '</span> results' +
-          '</p>' +
-          '<div class="flex items-center gap-x-2 text-sm text-gray-500 dark:text-gray-400">' +
-            '<span>Rows per page:</span>' +
-            '<el-dropdown class="inline-block">' +
-              '<button type="button" class="inline-flex items-center gap-x-1 rounded-sm bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">' +
-                size +
-                ' ' + ICON_CHEVRON_DOWN +
-              '</button>' +
-              '<el-menu anchor="bottom end" popover class="w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
-                '<div class="py-1">' + optionsHTML + '</div>' +
-              '</el-menu>' +
-            '</el-dropdown>' +
-          '</div>' +
-        '</div>' +
-        // Right: page numbers nav
-        '<div>' +
-          '<nav aria-label="Pagination" class="isolate inline-flex -space-x-px overflow-hidden rounded-sm shadow-xs inset-ring inset-ring-gray-300 dark:shadow-none dark:inset-ring-gray-700">' +
-            '<a href="#" data-page-prev class="' + prevClass + (isFirstPage ? ' opacity-50 pointer-events-none' : '') + '">' +
-              '<span class="sr-only">Previous</span>' +
-              '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
-            '</a>' +
-            pagesHTML +
-            '<a href="#" data-page-next class="' + nextClass + (isLastPage ? ' opacity-50 pointer-events-none' : '') + '">' +
-              '<span class="sr-only">Next</span>' +
-              '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
-            '</a>' +
-          '</nav>' +
-        '</div>' +
-      '</div>';
+      // Left: showing info + rows per page
+      '<div class="flex items-center gap-x-6">' +
+      '<p class="text-sm text-gray-700 dark:text-gray-300">' +
+      'Showing <span class="font-medium">' +
+      start +
+      "</span> to " +
+      '<span class="font-medium">' +
+      end +
+      "</span> of " +
+      '<span class="font-medium">' +
+      total +
+      "</span> results" +
+      "</p>" +
+      '<div class="flex items-center gap-x-2 text-sm text-gray-500 dark:text-gray-400">' +
+      "<span>Rows per page:</span>" +
+      '<el-dropdown class="inline-block">' +
+      '<button type="button" class="inline-flex items-center gap-x-1 rounded-sm bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">' +
+      size +
+      " " +
+      ICON_CHEVRON_DOWN +
+      "</button>" +
+      '<el-menu anchor="bottom end" popover class="w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
+      '<div class="py-1">' +
+      optionsHTML +
+      "</div>" +
+      "</el-menu>" +
+      "</el-dropdown>" +
+      "</div>" +
+      "</div>" +
+      // Right: page numbers nav
+      "<div>" +
+      '<nav aria-label="Pagination" class="isolate inline-flex -space-x-px overflow-hidden rounded-sm shadow-xs inset-ring inset-ring-gray-300 dark:shadow-none dark:inset-ring-gray-700">' +
+      '<a href="#" data-page-prev class="' +
+      prevClass +
+      (isFirstPage ? " opacity-50 pointer-events-none" : "") +
+      '">' +
+      '<span class="sr-only">Previous</span>' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
+      "</a>" +
+      pagesHTML +
+      '<a href="#" data-page-next class="' +
+      nextClass +
+      (isLastPage ? " opacity-50 pointer-events-none" : "") +
+      '">' +
+      '<span class="sr-only">Next</span>' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
+      "</a>" +
+      "</nav>" +
+      "</div>" +
+      "</div>";
 
     container.innerHTML = mobileHTML + desktopHTML;
   }
@@ -2456,25 +3300,34 @@
   function renderPaginationSkeleton() {
     var container = document.querySelector(PAGINATION_SELECTOR);
     if (!container) return;
-    container.innerHTML = '' +
+    container.innerHTML =
+      "" +
       '<div class="flex flex-1 justify-between sm:hidden animate-pulse">' +
-        '<span class="inline-flex h-9 w-24 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
-        '<span class="inline-flex h-9 w-20 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
-      '</div>' +
+      '<span class="inline-flex h-9 w-24 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+      '<span class="inline-flex h-9 w-20 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+      "</div>" +
       '<div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between animate-pulse">' +
-        '<div class="flex items-center gap-x-6">' +
-          '<span class="inline-flex h-4 w-56 rounded bg-gray-200 dark:bg-white/15"></span>' +
-          '<span class="inline-flex h-8 w-28 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
-        '</div>' +
-        '<span class="inline-flex h-8 w-56 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
-      '</div>';
+      '<div class="flex items-center gap-x-6">' +
+      '<span class="inline-flex h-4 w-56 rounded bg-gray-200 dark:bg-white/15"></span>' +
+      '<span class="inline-flex h-8 w-28 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+      "</div>" +
+      '<span class="inline-flex h-8 w-56 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+      "</div>";
   }
 
   function renderTabSwitchSkeleton() {
     var table = document.getElementById(TABLE_ID);
     if (!table) return;
-    var columns = getRenderableColumns(paginationState.allColumns && paginationState.allColumns.length ? paginationState.allColumns : paginationState.columns);
-    if (window.TableSkeleton && typeof window.TableSkeleton.render === 'function' && columns.length) {
+    var columns = getRenderableColumns(
+      paginationState.allColumns && paginationState.allColumns.length
+        ? paginationState.allColumns
+        : paginationState.columns,
+    );
+    if (
+      window.TableSkeleton &&
+      typeof window.TableSkeleton.render === "function" &&
+      columns.length
+    ) {
       window.TableSkeleton.render({
         tableEl: table,
         columns: columns,
@@ -2482,7 +3335,8 @@
         includeHeader: true,
       });
     } else {
-      table.innerHTML = '<tbody><tr><td class="px-4 py-8 text-sm text-gray-500 dark:text-gray-400">Loading...</td></tr></tbody>';
+      table.innerHTML =
+        '<tbody><tr><td class="px-4 py-8 text-sm text-gray-500 dark:text-gray-400">Loading...</td></tr></tbody>';
     }
     renderPaginationSkeleton();
     refreshStickyAction();
@@ -2490,10 +3344,15 @@
   }
 
   function initTableRefreshButton() {
-    var refreshBtn = document.getElementById('sx-table-refresh-btn');
+    var refreshBtn = document.getElementById("sx-table-refresh-btn");
     if (!refreshBtn) return;
-    refreshBtn.addEventListener('click', function () {
-      if (tabSwitchLoadingState.active || initialTableLoadingState.active || filterApplyLoadingState.active) return;
+    refreshBtn.addEventListener("click", function () {
+      if (
+        tabSwitchLoadingState.active ||
+        initialTableLoadingState.active ||
+        filterApplyLoadingState.active
+      )
+        return;
       if (tabSwitchLoadingState.timer) {
         clearTimeout(tabSwitchLoadingState.timer);
         tabSwitchLoadingState.timer = null;
@@ -2501,17 +3360,18 @@
       tabSwitchLoadingState.active = true;
       renderTabSwitchSkeleton();
       manualRefreshHalfTurns += 1;
-      var icon = refreshBtn.querySelector('svg');
+      var icon = refreshBtn.querySelector("svg");
       if (icon) {
-        icon.style.transition = 'transform 800ms ease-out';
-        icon.style.transform = 'rotate(' + (manualRefreshHalfTurns * 180) + 'deg)';
+        icon.style.transition = "transform 800ms ease-out";
+        icon.style.transform =
+          "rotate(" + manualRefreshHalfTurns * 180 + "deg)";
       }
       tabSwitchLoadingState.timer = window.setTimeout(function () {
         tabSwitchLoadingState.active = false;
         tabSwitchLoadingState.timer = null;
         refreshTableForActiveTab({ forceTableShell: true });
-        if (icon) icon.style.transition = '';
-        if (typeof window.showGlobalTopToast === 'function') {
+        if (icon) icon.style.transition = "";
+        if (typeof window.showGlobalTopToast === "function") {
           window.showGlobalTopToast("Data synced. You're up to date.");
         }
       }, MANUAL_REFRESH_SKELETON_MS);
@@ -2519,12 +3379,17 @@
   }
 
   function initTableSearchInput() {
-    var input = document.getElementById('sx-table-search-input');
+    var input = document.getElementById("sx-table-search-input");
     if (!input) return;
-    input.value = tableFilterState.search || '';
-    input.addEventListener('input', function () {
-      if (tabSwitchLoadingState.active || initialTableLoadingState.active || filterApplyLoadingState.active) return;
-      tableFilterState.search = String(input.value || '');
+    input.value = tableFilterState.search || "";
+    input.addEventListener("input", function () {
+      if (
+        tabSwitchLoadingState.active ||
+        initialTableLoadingState.active ||
+        filterApplyLoadingState.active
+      )
+        return;
+      tableFilterState.search = String(input.value || "");
       if (searchLoadingState.timer) {
         clearTimeout(searchLoadingState.timer);
         searchLoadingState.timer = null;
@@ -2585,7 +3450,7 @@
 
     var counts = calculateTabCounts(entries);
     badges.forEach(function (badge) {
-      var key = badge.getAttribute('data-tab-count');
+      var key = badge.getAttribute("data-tab-count");
       if (!Object.prototype.hasOwnProperty.call(counts, key)) return;
       badge.textContent = String(counts[key]);
     });
@@ -2612,11 +3477,11 @@
   }
 
   function syncTabBadgeStyles(nav) {
-    var tabs = nav.querySelectorAll('a');
+    var tabs = nav.querySelectorAll("a");
     if (!tabs.length) return;
 
     tabs.forEach(function (tab) {
-      var isActive = tab.getAttribute('aria-current') === 'page';
+      var isActive = tab.getAttribute("aria-current") === "page";
       setTabVisualState(tab, isActive);
     });
   }
@@ -2629,18 +3494,21 @@
     _activeTableTabKey = getUrlTabKey();
 
     function getTabKeyFromTab(tab) {
-      if (!tab) return 'pending';
-      var explicitKey = tab.getAttribute('data-tab');
+      if (!tab) return "pending";
+      var explicitKey = tab.getAttribute("data-tab");
       if (explicitKey) return normalizeTabKey(explicitKey);
       var tabCountEl = tab.querySelector(TAB_COUNT_SELECTOR);
-      return tabCountEl ? normalizeTabKey(tabCountEl.getAttribute('data-tab-count')) : 'pending';
+      return tabCountEl
+        ? normalizeTabKey(tabCountEl.getAttribute("data-tab-count"))
+        : "pending";
     }
 
     function syncTabs(tabKey) {
       if (nav) {
-        nav.querySelectorAll('a').forEach(function (tab) {
-          if (getTabKeyFromTab(tab) === tabKey) tab.setAttribute('aria-current', 'page');
-          else tab.removeAttribute('aria-current');
+        nav.querySelectorAll("a").forEach(function (tab) {
+          if (getTabKeyFromTab(tab) === tabKey)
+            tab.setAttribute("aria-current", "page");
+          else tab.removeAttribute("aria-current");
         });
         syncTabBadgeStyles(nav);
       }
@@ -2649,14 +3517,15 @@
 
     syncTabs(_activeTableTabKey);
 
-    if (nav && nav.dataset.tabBound !== '1') {
-      nav.dataset.tabBound = '1';
-      nav.addEventListener('click', function (event) {
-        var clicked = event.target.closest('[data-tab], a');
+    if (nav && nav.dataset.tabBound !== "1") {
+      nav.dataset.tabBound = "1";
+      nav.addEventListener("click", function (event) {
+        var clicked = event.target.closest("[data-tab], a");
         if (!clicked || !nav.contains(clicked)) return;
         event.preventDefault();
         event.stopPropagation();
-        if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+        if (typeof event.stopImmediatePropagation === "function")
+          event.stopImmediatePropagation();
 
         var tabKey = getTabKeyFromTab(clicked);
         if (tabKey === _activeTableTabKey) return;
@@ -2668,9 +3537,9 @@
       });
     }
 
-    if (tabSelect && tabSelect.dataset.tabBound !== '1') {
-      tabSelect.dataset.tabBound = '1';
-      tabSelect.addEventListener('change', function (event) {
+    if (tabSelect && tabSelect.dataset.tabBound !== "1") {
+      tabSelect.dataset.tabBound = "1";
+      tabSelect.addEventListener("change", function (event) {
         var tabKey = normalizeTabKey(event.target.value);
         if (tabKey === _activeTableTabKey) return;
         syncTabs(tabKey);
@@ -2681,12 +3550,12 @@
 
   function attachPaginationListeners() {
     var container = document.querySelector(PAGINATION_SELECTOR);
-    if (!container || container.dataset.paginationBound === '1') return;
-    container.dataset.paginationBound = '1';
+    if (!container || container.dataset.paginationBound === "1") return;
+    container.dataset.paginationBound = "1";
 
-    container.addEventListener('click', function (event) {
+    container.addEventListener("click", function (event) {
       // Page size selection
-      var pageSizeLink = event.target.closest('[data-page-size]');
+      var pageSizeLink = event.target.closest("[data-page-size]");
       if (pageSizeLink) {
         event.preventDefault();
         var newSize = parseInt(pageSizeLink.dataset.pageSize, 10);
@@ -2699,7 +3568,7 @@
       }
 
       // Page number click
-      var pageNumLink = event.target.closest('[data-page-num]');
+      var pageNumLink = event.target.closest("[data-page-num]");
       if (pageNumLink) {
         event.preventDefault();
         var targetPage = parseInt(pageNumLink.dataset.pageNum, 10);
@@ -2711,7 +3580,7 @@
       }
 
       // Previous page
-      var prevBtn = event.target.closest('[data-page-prev]');
+      var prevBtn = event.target.closest("[data-page-prev]");
       if (prevBtn) {
         event.preventDefault();
         if (paginationState.currentPage > 1) {
@@ -2722,7 +3591,7 @@
       }
 
       // Next page
-      var nextBtn = event.target.closest('[data-page-next]');
+      var nextBtn = event.target.closest("[data-page-next]");
       if (nextBtn) {
         event.preventDefault();
         if (paginationState.currentPage < getTotalPages()) {
@@ -2735,37 +3604,109 @@
   }
 
   function initTableFilterDropdown() {
-    var filterBtn = document.getElementById('sx-table-filter-btn');
-    var filterDropdown = document.getElementById('sx-table-filter-dropdown');
-    var filterMenu = document.getElementById('sx-table-filter-menu');
-    var filterRootPanel = document.getElementById('sx-table-filter-panel-root');
-    var filterNavButtons = filterMenu ? Array.from(filterMenu.querySelectorAll('[data-filter-nav][data-filter-open]')) : [];
-    var filterCountBadges = filterMenu ? Array.from(filterMenu.querySelectorAll('[data-filter-count-badge]')) : [];
-    var filterCustomerPanel = document.getElementById('sx-table-filter-panel-customer');
-    var filterStatusPanel = document.getElementById('sx-table-filter-panel-status');
-    var filterMethodPanel = document.getElementById('sx-table-filter-panel-method');
-    var filterFailureReasonPanel = document.getElementById('sx-table-filter-panel-failure-reason');
-    var filterInitiatedDatePanel = document.getElementById('sx-table-filter-panel-initiated-date');
-    var filterCustomersWrap = document.getElementById('sx-table-filter-customers');
-    var filterStatusesWrap = document.getElementById('sx-table-filter-statuses');
-    var filterMethodsWrap = document.getElementById('sx-table-filter-methods');
-    var filterFailureReasonsWrap = document.getElementById('sx-table-filter-failure-reasons');
-    var filterDateFromInput = document.getElementById('sx-table-filter-date-from-input');
-    var filterDateToInput = document.getElementById('sx-table-filter-date-to-input');
-    var filterDateFromMaskFilled = document.getElementById('sx-table-filter-date-from-mask-filled');
-    var filterDateFromMaskEmpty = document.getElementById('sx-table-filter-date-from-mask-empty');
-    var filterDateToMaskFilled = document.getElementById('sx-table-filter-date-to-mask-filled');
-    var filterDateToMaskEmpty = document.getElementById('sx-table-filter-date-to-mask-empty');
-    var filterDateMonthLabel = document.getElementById('sx-table-filter-date-month-label');
-    var filterDatePrevBtn = document.getElementById('sx-table-filter-date-prev');
-    var filterDateNextBtn = document.getElementById('sx-table-filter-date-next');
-    var filterDateGrid = document.getElementById('sx-table-filter-date-grid');
-    var filterDateCalendarWrap = document.getElementById('sx-table-filter-date-calendar');
-    var filterClearBtn = document.getElementById('sx-table-filter-clear-btn');
-    var filterApplyActiveBtn = document.getElementById('sx-table-filter-apply-active-btn');
-    var filterBackdrop = document.getElementById('sx-table-filter-backdrop');
-    var activeFiltersWrap = document.getElementById('sx-table-active-filters');
-    if (!filterBtn || !filterMenu || !filterRootPanel || !filterNavButtons.length || !filterCustomerPanel || !filterStatusPanel || !filterMethodPanel || !filterFailureReasonPanel || !filterInitiatedDatePanel || !filterCustomersWrap || !filterStatusesWrap || !filterMethodsWrap || !filterFailureReasonsWrap || !filterDateFromInput || !filterDateToInput || !filterDateFromMaskFilled || !filterDateFromMaskEmpty || !filterDateToMaskFilled || !filterDateToMaskEmpty || !filterDateMonthLabel || !filterDatePrevBtn || !filterDateNextBtn || !filterDateGrid || !filterDateCalendarWrap || !filterClearBtn || !filterApplyActiveBtn) return;
+    var filterBtn = document.getElementById("sx-table-filter-btn");
+    var filterDropdown = document.getElementById("sx-table-filter-dropdown");
+    var filterMenu = document.getElementById("sx-table-filter-menu");
+    var filterRootPanel = document.getElementById("sx-table-filter-panel-root");
+    var filterNavButtons = filterMenu
+      ? Array.from(
+          filterMenu.querySelectorAll("[data-filter-nav][data-filter-open]"),
+        )
+      : [];
+    var filterCountBadges = filterMenu
+      ? Array.from(filterMenu.querySelectorAll("[data-filter-count-badge]"))
+      : [];
+    var filterCustomerPanel = document.getElementById(
+      "sx-table-filter-panel-customer",
+    );
+    var filterStatusPanel = document.getElementById(
+      "sx-table-filter-panel-status",
+    );
+    var filterMethodPanel = document.getElementById(
+      "sx-table-filter-panel-method",
+    );
+    var filterFailureReasonPanel = document.getElementById(
+      "sx-table-filter-panel-failure-reason",
+    );
+    var filterInitiatedDatePanel = document.getElementById(
+      "sx-table-filter-panel-initiated-date",
+    );
+    var filterCustomersWrap = document.getElementById(
+      "sx-table-filter-customers",
+    );
+    var filterStatusesWrap = document.getElementById(
+      "sx-table-filter-statuses",
+    );
+    var filterMethodsWrap = document.getElementById("sx-table-filter-methods");
+    var filterFailureReasonsWrap = document.getElementById(
+      "sx-table-filter-failure-reasons",
+    );
+    var filterDateFromInput = document.getElementById(
+      "sx-table-filter-date-from-input",
+    );
+    var filterDateToInput = document.getElementById(
+      "sx-table-filter-date-to-input",
+    );
+    var filterDateFromMaskFilled = document.getElementById(
+      "sx-table-filter-date-from-mask-filled",
+    );
+    var filterDateFromMaskEmpty = document.getElementById(
+      "sx-table-filter-date-from-mask-empty",
+    );
+    var filterDateToMaskFilled = document.getElementById(
+      "sx-table-filter-date-to-mask-filled",
+    );
+    var filterDateToMaskEmpty = document.getElementById(
+      "sx-table-filter-date-to-mask-empty",
+    );
+    var filterDateMonthLabel = document.getElementById(
+      "sx-table-filter-date-month-label",
+    );
+    var filterDatePrevBtn = document.getElementById(
+      "sx-table-filter-date-prev",
+    );
+    var filterDateNextBtn = document.getElementById(
+      "sx-table-filter-date-next",
+    );
+    var filterDateGrid = document.getElementById("sx-table-filter-date-grid");
+    var filterDateCalendarWrap = document.getElementById(
+      "sx-table-filter-date-calendar",
+    );
+    var filterClearBtn = document.getElementById("sx-table-filter-clear-btn");
+    var filterApplyActiveBtn = document.getElementById(
+      "sx-table-filter-apply-active-btn",
+    );
+    var filterBackdrop = document.getElementById("sx-table-filter-backdrop");
+    var activeFiltersWrap = document.getElementById("sx-table-active-filters");
+    if (
+      !filterBtn ||
+      !filterMenu ||
+      !filterRootPanel ||
+      !filterNavButtons.length ||
+      !filterCustomerPanel ||
+      !filterStatusPanel ||
+      !filterMethodPanel ||
+      !filterFailureReasonPanel ||
+      !filterInitiatedDatePanel ||
+      !filterCustomersWrap ||
+      !filterStatusesWrap ||
+      !filterMethodsWrap ||
+      !filterFailureReasonsWrap ||
+      !filterDateFromInput ||
+      !filterDateToInput ||
+      !filterDateFromMaskFilled ||
+      !filterDateFromMaskEmpty ||
+      !filterDateToMaskFilled ||
+      !filterDateToMaskEmpty ||
+      !filterDateMonthLabel ||
+      !filterDatePrevBtn ||
+      !filterDateNextBtn ||
+      !filterDateGrid ||
+      !filterDateCalendarWrap ||
+      !filterClearBtn ||
+      !filterApplyActiveBtn
+    )
+      return;
 
     function cloneSet(source) {
       return new Set(Array.from(source || []));
@@ -2781,69 +3722,113 @@
     }
 
     function buildFilterCheckbox(id, label, countText, value, checked) {
-      return '' +
+      return (
+        "" +
         '<label class="group flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5">' +
         '  <div class="grid size-4 grid-cols-1">' +
-        '    <input type="checkbox" data-filter-value="' + escapeHtml(value) + '" id="' + escapeHtml(id) + '"' + (checked ? ' checked' : '') +
+        '    <input type="checkbox" data-filter-value="' +
+        escapeHtml(value) +
+        '" id="' +
+        escapeHtml(id) +
+        '"' +
+        (checked ? " checked" : "") +
         '      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
         '    <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
         '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
-        '    </svg>' +
-        '  </div>' +
-        '  <span class="min-w-0 flex-1 text-sm font-medium text-gray-700 dark:text-gray-200">' + escapeHtml(label) + '</span>' +
-        (countText ? ('<span class="shrink-0 text-sm font-normal text-gray-500 dark:text-gray-400">' + escapeHtml(countText) + '</span>') : '') +
-        '</label>';
+        "    </svg>" +
+        "  </div>" +
+        '  <span class="min-w-0 flex-1 text-sm font-medium text-gray-700 dark:text-gray-200">' +
+        escapeHtml(label) +
+        "</span>" +
+        (countText
+          ? '<span class="shrink-0 text-sm font-normal text-gray-500 dark:text-gray-400">' +
+            escapeHtml(countText) +
+            "</span>"
+          : "") +
+        "</label>"
+      );
     }
 
     function normalizeFilterPanel(panel) {
-      return panel === 'status' || panel === 'method' || panel === 'failure_reason' || panel === 'initiated_date' ? panel : 'customer';
+      return panel === "status" ||
+        panel === "method" ||
+        panel === "failure_reason" ||
+        panel === "initiated_date"
+        ? panel
+        : "customer";
     }
 
     function copyAppliedFiltersToDraft() {
-      tableFilterState.selectedCustomers = cloneSet(tableFilterState.appliedSelectedCustomers);
-      tableFilterState.selectedStatuses = cloneSet(tableFilterState.appliedSelectedStatuses);
-      tableFilterState.selectedMethods = cloneSet(tableFilterState.appliedSelectedMethods);
-      tableFilterState.selectedFailureReasons = cloneSet(tableFilterState.appliedSelectedFailureReasons);
-      tableFilterState.initiatedDateFrom = tableFilterState.appliedInitiatedDateFrom || '';
-      tableFilterState.initiatedDateTo = tableFilterState.appliedInitiatedDateTo || '';
-      tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(tableFilterState.initiatedDateFrom);
-      tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(tableFilterState.initiatedDateTo);
-      tableFilterState.initiatedDateActiveField = 'from';
+      tableFilterState.selectedCustomers = cloneSet(
+        tableFilterState.appliedSelectedCustomers,
+      );
+      tableFilterState.selectedStatuses = cloneSet(
+        tableFilterState.appliedSelectedStatuses,
+      );
+      tableFilterState.selectedMethods = cloneSet(
+        tableFilterState.appliedSelectedMethods,
+      );
+      tableFilterState.selectedFailureReasons = cloneSet(
+        tableFilterState.appliedSelectedFailureReasons,
+      );
+      tableFilterState.initiatedDateFrom =
+        tableFilterState.appliedInitiatedDateFrom || "";
+      tableFilterState.initiatedDateTo =
+        tableFilterState.appliedInitiatedDateTo || "";
+      tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(
+        tableFilterState.initiatedDateFrom,
+      );
+      tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(
+        tableFilterState.initiatedDateTo,
+      );
+      tableFilterState.initiatedDateActiveField = "from";
     }
 
     function commitDraftFilters() {
-      tableFilterState.appliedSelectedCustomers = cloneSet(tableFilterState.selectedCustomers);
-      tableFilterState.appliedSelectedStatuses = cloneSet(tableFilterState.selectedStatuses);
-      tableFilterState.appliedSelectedMethods = cloneSet(tableFilterState.selectedMethods);
-      tableFilterState.appliedSelectedFailureReasons = cloneSet(tableFilterState.selectedFailureReasons);
-      tableFilterState.appliedInitiatedDateFrom = tableFilterState.initiatedDateFrom || '';
-      tableFilterState.appliedInitiatedDateTo = tableFilterState.initiatedDateTo || '';
+      tableFilterState.appliedSelectedCustomers = cloneSet(
+        tableFilterState.selectedCustomers,
+      );
+      tableFilterState.appliedSelectedStatuses = cloneSet(
+        tableFilterState.selectedStatuses,
+      );
+      tableFilterState.appliedSelectedMethods = cloneSet(
+        tableFilterState.selectedMethods,
+      );
+      tableFilterState.appliedSelectedFailureReasons = cloneSet(
+        tableFilterState.selectedFailureReasons,
+      );
+      tableFilterState.appliedInitiatedDateFrom =
+        tableFilterState.initiatedDateFrom || "";
+      tableFilterState.appliedInitiatedDateTo =
+        tableFilterState.initiatedDateTo || "";
     }
 
     function getBaseFilterEntries() {
-      return Array.isArray(paginationState.sourceEntries) ? paginationState.sourceEntries : [];
+      return Array.isArray(paginationState.sourceEntries)
+        ? paginationState.sourceEntries
+        : [];
     }
 
     function isIsoDateString(value) {
-      return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ''));
+      return /^\d{4}-\d{2}-\d{2}$/.test(String(value || ""));
     }
 
     function toIsoDate(value) {
-      var str = String(value || '').slice(0, 10);
-      return isIsoDateString(str) ? str : '';
+      var str = String(value || "").slice(0, 10);
+      return isIsoDateString(str) ? str : "";
     }
 
     function toLocalIsoDate(date) {
-      if (!(date instanceof Date) || Number.isNaN(date.getTime())) return '';
+      if (!(date instanceof Date) || Number.isNaN(date.getTime())) return "";
       var y = date.getFullYear();
-      var m = String(date.getMonth() + 1).padStart(2, '0');
-      var d = String(date.getDate()).padStart(2, '0');
-      return y + '-' + m + '-' + d;
+      var m = String(date.getMonth() + 1).padStart(2, "0");
+      var d = String(date.getDate()).padStart(2, "0");
+      return y + "-" + m + "-" + d;
     }
 
     function isoToDate(iso) {
       if (!isIsoDateString(iso)) return null;
-      var date = new Date(iso + 'T00:00:00');
+      var date = new Date(iso + "T00:00:00");
       return Number.isNaN(date.getTime()) ? null : date;
     }
 
@@ -2851,46 +3836,59 @@
       var mmNum = parseInt(mm, 10);
       var ddNum = parseInt(dd, 10);
       var yyyyNum = parseInt(yyyy, 10);
-      if (!mm || !dd || !yyyy || Number.isNaN(mmNum) || Number.isNaN(ddNum) || Number.isNaN(yyyyNum)) return '';
-      if (yyyy.length !== 4 || mm.length !== 2 || dd.length !== 2) return '';
-      if (mmNum < 1 || mmNum > 12) return '';
-      if (ddNum < 1 || ddNum > 31) return '';
-      if (yyyyNum < 1900 || yyyyNum > 2099) return '';
-      return yyyy + '-' + mm.padStart(2, '0') + '-' + dd.padStart(2, '0');
+      if (
+        !mm ||
+        !dd ||
+        !yyyy ||
+        Number.isNaN(mmNum) ||
+        Number.isNaN(ddNum) ||
+        Number.isNaN(yyyyNum)
+      )
+        return "";
+      if (yyyy.length !== 4 || mm.length !== 2 || dd.length !== 2) return "";
+      if (mmNum < 1 || mmNum > 12) return "";
+      if (ddNum < 1 || ddNum > 31) return "";
+      if (yyyyNum < 1900 || yyyyNum > 2099) return "";
+      return yyyy + "-" + mm.padStart(2, "0") + "-" + dd.padStart(2, "0");
     }
 
     function formatIsoAsUsInput(iso) {
-      if (!isIsoDateString(iso)) return '';
-      return iso.slice(5, 7) + ' / ' + iso.slice(8, 10) + ' / ' + iso.slice(0, 4);
+      if (!isIsoDateString(iso)) return "";
+      return (
+        iso.slice(5, 7) + " / " + iso.slice(8, 10) + " / " + iso.slice(0, 4)
+      );
     }
 
     function sanitizeUsDateDigits(value) {
-      var rawDigits = String(value || '').replace(/\D/g, '').slice(0, 8);
-      var accepted = '';
+      var rawDigits = String(value || "")
+        .replace(/\D/g, "")
+        .slice(0, 8);
+      var accepted = "";
       for (var i = 0; i < rawDigits.length; i++) {
         var ch = rawDigits.charAt(i);
         var ok = false;
         if (accepted.length === 0) {
-          ok = ch === '0' || ch === '1';
+          ok = ch === "0" || ch === "1";
         } else if (accepted.length === 1) {
           var monthTens = accepted.charAt(0);
-          if (monthTens === '0') ok = ch >= '1' && ch <= '9';
-          else if (monthTens === '1') ok = ch >= '0' && ch <= '2';
+          if (monthTens === "0") ok = ch >= "1" && ch <= "9";
+          else if (monthTens === "1") ok = ch >= "0" && ch <= "2";
         } else if (accepted.length === 2) {
-          ok = ch >= '0' && ch <= '3';
+          ok = ch >= "0" && ch <= "3";
         } else if (accepted.length === 3) {
           var dayTens = accepted.charAt(2);
-          if (dayTens === '0') ok = ch >= '1' && ch <= '9';
-          else if (dayTens === '1' || dayTens === '2') ok = ch >= '0' && ch <= '9';
-          else if (dayTens === '3') ok = ch >= '0' && ch <= '1';
+          if (dayTens === "0") ok = ch >= "1" && ch <= "9";
+          else if (dayTens === "1" || dayTens === "2")
+            ok = ch >= "0" && ch <= "9";
+          else if (dayTens === "3") ok = ch >= "0" && ch <= "1";
         } else if (accepted.length === 4) {
-          ok = ch === '1' || ch === '2';
+          ok = ch === "1" || ch === "2";
         } else if (accepted.length === 5) {
           var yearThousands = accepted.charAt(4);
-          if (yearThousands === '1') ok = ch === '9';
-          else if (yearThousands === '2') ok = ch === '0';
+          if (yearThousands === "1") ok = ch === "9";
+          else if (yearThousands === "2") ok = ch === "0";
         } else if (accepted.length === 6 || accepted.length === 7) {
-          ok = ch >= '0' && ch <= '9';
+          ok = ch >= "0" && ch <= "9";
         }
         if (ok) accepted += ch;
       }
@@ -2899,63 +3897,106 @@
 
     function formatUsInput(value) {
       var digits = sanitizeUsDateDigits(value);
-      if (!digits) return '';
+      if (!digits) return "";
       if (digits.length <= 1) return digits;
-      if (digits.length === 2) return digits + ' / ';
-      if (digits.length === 3) return digits.slice(0, 2) + ' / ' + digits.slice(2);
-      if (digits.length === 4) return digits.slice(0, 2) + ' / ' + digits.slice(2, 4) + ' / ';
-      return digits.slice(0, 2) + ' / ' + digits.slice(2, 4) + ' / ' + digits.slice(4);
+      if (digits.length === 2) return digits + " / ";
+      if (digits.length === 3)
+        return digits.slice(0, 2) + " / " + digits.slice(2);
+      if (digits.length === 4)
+        return digits.slice(0, 2) + " / " + digits.slice(2, 4) + " / ";
+      return (
+        digits.slice(0, 2) +
+        " / " +
+        digits.slice(2, 4) +
+        " / " +
+        digits.slice(4)
+      );
     }
 
     function usInputToIso(value) {
       var digits = sanitizeUsDateDigits(value);
-      if (digits.length !== 8) return '';
-      return partsToIso(digits.slice(0, 2), digits.slice(2, 4), digits.slice(4, 8));
+      if (digits.length !== 8) return "";
+      return partsToIso(
+        digits.slice(0, 2),
+        digits.slice(2, 4),
+        digits.slice(4, 8),
+      );
     }
 
     function renderInputMaskDisplay(inputValue, filledEl, emptyEl) {
-      var template = 'MM / DD / YYYY';
-      var filled = String(inputValue || '');
-      var clamped = filled.length > template.length ? filled.slice(0, template.length) : filled;
+      var template = "MM / DD / YYYY";
+      var filled = String(inputValue || "");
+      var clamped =
+        filled.length > template.length
+          ? filled.slice(0, template.length)
+          : filled;
       filledEl.textContent = clamped;
       emptyEl.textContent = template.slice(clamped.length);
     }
 
     function setInitiatedDateMonthFromIso(iso) {
       var source = isoToDate(iso) || new Date();
-      tableFilterState.initiatedDateMonth = new Date(source.getFullYear(), source.getMonth(), 1);
+      tableFilterState.initiatedDateMonth = new Date(
+        source.getFullYear(),
+        source.getMonth(),
+        1,
+      );
     }
 
     function shiftInitiatedDateMonth(offset) {
-      if (!tableFilterState.initiatedDateMonth) setInitiatedDateMonthFromIso(tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo);
+      if (!tableFilterState.initiatedDateMonth)
+        setInitiatedDateMonthFromIso(
+          tableFilterState.initiatedDateFrom ||
+            tableFilterState.initiatedDateTo,
+        );
       tableFilterState.initiatedDateMonth = new Date(
         tableFilterState.initiatedDateMonth.getFullYear(),
         tableFilterState.initiatedDateMonth.getMonth() + offset,
-        1
+        1,
       );
     }
 
     function getSelectedDateForActiveField() {
-      return tableFilterState.initiatedDateActiveField === 'to'
+      return tableFilterState.initiatedDateActiveField === "to"
         ? tableFilterState.initiatedDateTo
         : tableFilterState.initiatedDateFrom;
     }
 
     function renderInitiatedDateInputs() {
-      var fromDisplay = tableFilterState.initiatedDateFromDraft || formatIsoAsUsInput(tableFilterState.initiatedDateFrom);
-      var toDisplay = tableFilterState.initiatedDateToDraft || formatIsoAsUsInput(tableFilterState.initiatedDateTo);
+      var fromDisplay =
+        tableFilterState.initiatedDateFromDraft ||
+        formatIsoAsUsInput(tableFilterState.initiatedDateFrom);
+      var toDisplay =
+        tableFilterState.initiatedDateToDraft ||
+        formatIsoAsUsInput(tableFilterState.initiatedDateTo);
       filterDateFromInput.value = fromDisplay;
       filterDateToInput.value = toDisplay;
-      renderInputMaskDisplay(fromDisplay, filterDateFromMaskFilled, filterDateFromMaskEmpty);
-      renderInputMaskDisplay(toDisplay, filterDateToMaskFilled, filterDateToMaskEmpty);
+      renderInputMaskDisplay(
+        fromDisplay,
+        filterDateFromMaskFilled,
+        filterDateFromMaskEmpty,
+      );
+      renderInputMaskDisplay(
+        toDisplay,
+        filterDateToMaskFilled,
+        filterDateToMaskEmpty,
+      );
     }
 
     function renderInitiatedDateCalendar() {
-      if (!tableFilterState.initiatedDateMonth) setInitiatedDateMonthFromIso(getSelectedDateForActiveField());
+      if (!tableFilterState.initiatedDateMonth)
+        setInitiatedDateMonthFromIso(getSelectedDateForActiveField());
       var monthStart = tableFilterState.initiatedDateMonth;
-      filterDateMonthLabel.textContent = monthStart.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+      filterDateMonthLabel.textContent = monthStart.toLocaleDateString(
+        "en-US",
+        { month: "long", year: "numeric" },
+      );
 
-      var firstOfMonth = new Date(monthStart.getFullYear(), monthStart.getMonth(), 1);
+      var firstOfMonth = new Date(
+        monthStart.getFullYear(),
+        monthStart.getMonth(),
+        1,
+      );
       var startOffset = (firstOfMonth.getDay() + 6) % 7; // Monday-first
       var gridStart = new Date(firstOfMonth);
       gridStart.setDate(firstOfMonth.getDate() - startOffset);
@@ -2963,62 +4004,89 @@
       var selectedFrom = tableFilterState.initiatedDateFrom;
       var selectedTo = tableFilterState.initiatedDateTo;
       var activeIso = getSelectedDateForActiveField();
-      var cells = '';
+      var cells = "";
 
       for (var i = 0; i < 42; i++) {
-        var current = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
+        var current = new Date(
+          gridStart.getFullYear(),
+          gridStart.getMonth(),
+          gridStart.getDate() + i,
+        );
         var iso = toLocalIsoDate(current);
-        var isCurrentMonth = current.getMonth() === monthStart.getMonth() && current.getFullYear() === monthStart.getFullYear();
+        var isCurrentMonth =
+          current.getMonth() === monthStart.getMonth() &&
+          current.getFullYear() === monthStart.getFullYear();
         var isSelected = iso && (iso === selectedFrom || iso === selectedTo);
-        var isInRange = selectedFrom && selectedTo && iso >= selectedFrom && iso <= selectedTo;
+        var isInRange =
+          selectedFrom &&
+          selectedTo &&
+          iso >= selectedFrom &&
+          iso <= selectedTo;
         var isToday = iso === todayIso;
         var isActive = iso && iso === activeIso;
-        var classes = 'mx-auto flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-200';
-        if (!isCurrentMonth) classes += ' text-gray-400 dark:text-gray-500';
-        else classes += ' text-gray-900 dark:text-gray-100';
-        if (isInRange && !isSelected) classes += ' bg-blue-50 dark:bg-blue-500/20';
-        if (isSelected) classes += ' bg-blue-600 font-semibold text-white';
-        else if (isToday) classes += ' font-semibold text-blue-600 dark:text-blue-400';
-        if (isActive && !isSelected) classes += ' ring-2 ring-blue-500';
+        var classes =
+          "mx-auto flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-200";
+        if (!isCurrentMonth) classes += " text-gray-400 dark:text-gray-500";
+        else classes += " text-gray-900 dark:text-gray-100";
+        if (isInRange && !isSelected)
+          classes += " bg-blue-50 dark:bg-blue-500/20";
+        if (isSelected) classes += " bg-blue-600 font-semibold text-white";
+        else if (isToday)
+          classes += " font-semibold text-blue-600 dark:text-blue-400";
+        if (isActive && !isSelected) classes += " ring-2 ring-blue-500";
 
-        cells += '' +
+        cells +=
+          "" +
           '<div class="py-1">' +
-          '  <button type="button" data-date-cell="' + escapeHtml(iso) + '" class="' + classes + '">' +
-          '    <time datetime="' + escapeHtml(iso) + '">' + current.getDate() + '</time>' +
-          '  </button>' +
-          '</div>';
+          '  <button type="button" data-date-cell="' +
+          escapeHtml(iso) +
+          '" class="' +
+          classes +
+          '">' +
+          '    <time datetime="' +
+          escapeHtml(iso) +
+          '">' +
+          current.getDate() +
+          "</time>" +
+          "  </button>" +
+          "</div>";
       }
       filterDateGrid.innerHTML = cells;
     }
 
     function setDateCalendarVisible(visible) {
-      filterDateCalendarWrap.classList.toggle('hidden', !visible);
+      filterDateCalendarWrap.classList.toggle("hidden", !visible);
       if (visible) renderInitiatedDateCalendar();
     }
 
     function clearPanelSelection(panel) {
-      if (panel === 'status') {
+      if (panel === "status") {
         tableFilterState.selectedStatuses.clear();
-      } else if (panel === 'method') {
+      } else if (panel === "method") {
         tableFilterState.selectedMethods.clear();
-      } else if (panel === 'failure_reason') {
+      } else if (panel === "failure_reason") {
         tableFilterState.selectedFailureReasons.clear();
-      } else if (panel === 'initiated_date') {
-        tableFilterState.initiatedDateFrom = '';
-        tableFilterState.initiatedDateTo = '';
-        tableFilterState.initiatedDateFromDraft = '';
-        tableFilterState.initiatedDateToDraft = '';
-        tableFilterState.initiatedDateActiveField = 'from';
+      } else if (panel === "initiated_date") {
+        tableFilterState.initiatedDateFrom = "";
+        tableFilterState.initiatedDateTo = "";
+        tableFilterState.initiatedDateFromDraft = "";
+        tableFilterState.initiatedDateToDraft = "";
+        tableFilterState.initiatedDateActiveField = "from";
       } else {
         tableFilterState.selectedCustomers.clear();
       }
     }
 
     function getPanelDraftCount(panel) {
-      if (panel === 'status') return tableFilterState.selectedStatuses.size;
-      if (panel === 'method') return tableFilterState.selectedMethods.size;
-      if (panel === 'failure_reason') return tableFilterState.selectedFailureReasons.size;
-      if (panel === 'initiated_date') return tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo ? 1 : 0;
+      if (panel === "status") return tableFilterState.selectedStatuses.size;
+      if (panel === "method") return tableFilterState.selectedMethods.size;
+      if (panel === "failure_reason")
+        return tableFilterState.selectedFailureReasons.size;
+      if (panel === "initiated_date")
+        return tableFilterState.initiatedDateFrom ||
+          tableFilterState.initiatedDateTo
+          ? 1
+          : 0;
       return tableFilterState.selectedCustomers.size;
     }
 
@@ -3027,28 +4095,46 @@
     }
 
     function panelDraftChanged(panel) {
-      if (panel === 'status') {
-        return !setsEqual(tableFilterState.selectedStatuses, tableFilterState.appliedSelectedStatuses);
+      if (panel === "status") {
+        return !setsEqual(
+          tableFilterState.selectedStatuses,
+          tableFilterState.appliedSelectedStatuses,
+        );
       }
-      if (panel === 'method') {
-        return !setsEqual(tableFilterState.selectedMethods, tableFilterState.appliedSelectedMethods);
+      if (panel === "method") {
+        return !setsEqual(
+          tableFilterState.selectedMethods,
+          tableFilterState.appliedSelectedMethods,
+        );
       }
-      if (panel === 'failure_reason') {
-        return !setsEqual(tableFilterState.selectedFailureReasons, tableFilterState.appliedSelectedFailureReasons);
+      if (panel === "failure_reason") {
+        return !setsEqual(
+          tableFilterState.selectedFailureReasons,
+          tableFilterState.appliedSelectedFailureReasons,
+        );
       }
-      if (panel === 'initiated_date') {
-        return tableFilterState.initiatedDateFrom !== tableFilterState.appliedInitiatedDateFrom ||
-          tableFilterState.initiatedDateTo !== tableFilterState.appliedInitiatedDateTo;
+      if (panel === "initiated_date") {
+        return (
+          tableFilterState.initiatedDateFrom !==
+            tableFilterState.appliedInitiatedDateFrom ||
+          tableFilterState.initiatedDateTo !==
+            tableFilterState.appliedInitiatedDateTo
+        );
       }
-      return !setsEqual(tableFilterState.selectedCustomers, tableFilterState.appliedSelectedCustomers);
+      return !setsEqual(
+        tableFilterState.selectedCustomers,
+        tableFilterState.appliedSelectedCustomers,
+      );
     }
 
     function hasAnyDraftChanges() {
-      return panelDraftChanged('customer') ||
-        panelDraftChanged('status') ||
-        panelDraftChanged('method') ||
-        panelDraftChanged('failure_reason') ||
-        panelDraftChanged('initiated_date');
+      return (
+        panelDraftChanged("customer") ||
+        panelDraftChanged("status") ||
+        panelDraftChanged("method") ||
+        panelDraftChanged("failure_reason") ||
+        panelDraftChanged("initiated_date")
+      );
     }
 
     function syncSelectedFiltersToAvailable() {
@@ -3058,147 +4144,231 @@
       var methodSet = new Set();
       var failureReasonSet = new Set();
       baseEntries.forEach(function (entry) {
-        customerSet.add(String(entry && entry.customer || ''));
-        statusSet.add(String(entry && entry.status || ''));
-        methodSet.add(String(entry && entry.methodType || ''));
+        customerSet.add(String((entry && entry.customer) || ""));
+        statusSet.add(String((entry && entry.status) || ""));
+        methodSet.add(String((entry && entry.methodType) || ""));
       });
-      (Array.isArray(paginationState.sourceEntries) ? paginationState.sourceEntries : []).forEach(function (entry) {
-        if (getFailureReason(entry)) failureReasonSet.add(getFailureReason(entry));
+      (Array.isArray(paginationState.sourceEntries)
+        ? paginationState.sourceEntries
+        : []
+      ).forEach(function (entry) {
+        if (getFailureReason(entry))
+          failureReasonSet.add(getFailureReason(entry));
       });
-      Array.from(tableFilterState.selectedCustomers).forEach(function (customer) {
-        if (!customerSet.has(customer)) tableFilterState.selectedCustomers.delete(customer);
-      });
-      Array.from(tableFilterState.appliedSelectedCustomers).forEach(function (customer) {
-        if (!customerSet.has(customer)) tableFilterState.appliedSelectedCustomers.delete(customer);
-      });
+      Array.from(tableFilterState.selectedCustomers).forEach(
+        function (customer) {
+          if (!customerSet.has(customer))
+            tableFilterState.selectedCustomers.delete(customer);
+        },
+      );
+      Array.from(tableFilterState.appliedSelectedCustomers).forEach(
+        function (customer) {
+          if (!customerSet.has(customer))
+            tableFilterState.appliedSelectedCustomers.delete(customer);
+        },
+      );
       Array.from(tableFilterState.selectedStatuses).forEach(function (status) {
-        if (!statusSet.has(status)) tableFilterState.selectedStatuses.delete(status);
+        if (!statusSet.has(status))
+          tableFilterState.selectedStatuses.delete(status);
       });
-      Array.from(tableFilterState.appliedSelectedStatuses).forEach(function (status) {
-        if (!statusSet.has(status)) tableFilterState.appliedSelectedStatuses.delete(status);
-      });
+      Array.from(tableFilterState.appliedSelectedStatuses).forEach(
+        function (status) {
+          if (!statusSet.has(status))
+            tableFilterState.appliedSelectedStatuses.delete(status);
+        },
+      );
       Array.from(tableFilterState.selectedMethods).forEach(function (method) {
-        if (!methodSet.has(method)) tableFilterState.selectedMethods.delete(method);
+        if (!methodSet.has(method))
+          tableFilterState.selectedMethods.delete(method);
       });
-      Array.from(tableFilterState.appliedSelectedMethods).forEach(function (method) {
-        if (!methodSet.has(method)) tableFilterState.appliedSelectedMethods.delete(method);
-      });
-      Array.from(tableFilterState.selectedFailureReasons).forEach(function (reason) {
-        if (!failureReasonSet.has(reason)) tableFilterState.selectedFailureReasons.delete(reason);
-      });
-      Array.from(tableFilterState.appliedSelectedFailureReasons).forEach(function (reason) {
-        if (!failureReasonSet.has(reason)) tableFilterState.appliedSelectedFailureReasons.delete(reason);
-      });
-      tableFilterState.initiatedDateFrom = toIsoDate(tableFilterState.initiatedDateFrom);
-      tableFilterState.initiatedDateTo = toIsoDate(tableFilterState.initiatedDateTo);
-      tableFilterState.appliedInitiatedDateFrom = toIsoDate(tableFilterState.appliedInitiatedDateFrom);
-      tableFilterState.appliedInitiatedDateTo = toIsoDate(tableFilterState.appliedInitiatedDateTo);
-      tableFilterState.initiatedDateFromDraft = formatUsInput(tableFilterState.initiatedDateFromDraft);
-      tableFilterState.initiatedDateToDraft = formatUsInput(tableFilterState.initiatedDateToDraft);
-      if (tableFilterState.initiatedDateFrom && tableFilterState.initiatedDateTo && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
+      Array.from(tableFilterState.appliedSelectedMethods).forEach(
+        function (method) {
+          if (!methodSet.has(method))
+            tableFilterState.appliedSelectedMethods.delete(method);
+        },
+      );
+      Array.from(tableFilterState.selectedFailureReasons).forEach(
+        function (reason) {
+          if (!failureReasonSet.has(reason))
+            tableFilterState.selectedFailureReasons.delete(reason);
+        },
+      );
+      Array.from(tableFilterState.appliedSelectedFailureReasons).forEach(
+        function (reason) {
+          if (!failureReasonSet.has(reason))
+            tableFilterState.appliedSelectedFailureReasons.delete(reason);
+        },
+      );
+      tableFilterState.initiatedDateFrom = toIsoDate(
+        tableFilterState.initiatedDateFrom,
+      );
+      tableFilterState.initiatedDateTo = toIsoDate(
+        tableFilterState.initiatedDateTo,
+      );
+      tableFilterState.appliedInitiatedDateFrom = toIsoDate(
+        tableFilterState.appliedInitiatedDateFrom,
+      );
+      tableFilterState.appliedInitiatedDateTo = toIsoDate(
+        tableFilterState.appliedInitiatedDateTo,
+      );
+      tableFilterState.initiatedDateFromDraft = formatUsInput(
+        tableFilterState.initiatedDateFromDraft,
+      );
+      tableFilterState.initiatedDateToDraft = formatUsInput(
+        tableFilterState.initiatedDateToDraft,
+      );
+      if (
+        tableFilterState.initiatedDateFrom &&
+        tableFilterState.initiatedDateTo &&
+        tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo
+      ) {
         tableFilterState.initiatedDateTo = tableFilterState.initiatedDateFrom;
       }
-      if (tableFilterState.appliedInitiatedDateFrom && tableFilterState.appliedInitiatedDateTo && tableFilterState.appliedInitiatedDateFrom > tableFilterState.appliedInitiatedDateTo) {
-        tableFilterState.appliedInitiatedDateTo = tableFilterState.appliedInitiatedDateFrom;
+      if (
+        tableFilterState.appliedInitiatedDateFrom &&
+        tableFilterState.appliedInitiatedDateTo &&
+        tableFilterState.appliedInitiatedDateFrom >
+          tableFilterState.appliedInitiatedDateTo
+      ) {
+        tableFilterState.appliedInitiatedDateTo =
+          tableFilterState.appliedInitiatedDateFrom;
       }
     }
 
     function renderCustomerFilters() {
       var counts = new Map();
       getBaseFilterEntries().forEach(function (entry) {
-        var name = String(entry && entry.customer || '').trim();
+        var name = String((entry && entry.customer) || "").trim();
         counts.set(name, (counts.get(name) || 0) + 1);
       });
       var rows = Array.from(counts.entries())
-        .sort(function (a, b) { return a[0].localeCompare(b[0]); })
+        .sort(function (a, b) {
+          return a[0].localeCompare(b[0]);
+        })
         .map(function (entry, idx) {
           return buildFilterCheckbox(
-            'sx-table-filter-customer-' + idx,
+            "sx-table-filter-customer-" + idx,
             entry[0],
             String(entry[1]),
             entry[0],
-            tableFilterState.selectedCustomers.has(entry[0])
+            tableFilterState.selectedCustomers.has(entry[0]),
           );
         });
-      filterCustomersWrap.innerHTML = rows.join('');
+      filterCustomersWrap.innerHTML = rows.join("");
     }
 
     function renderStatusFilters() {
       var counts = {};
       getBaseFilterEntries().forEach(function (entry) {
-        var key = String(entry && entry.status || '');
+        var key = String((entry && entry.status) || "");
         if (!key) return;
         counts[key] = (counts[key] || 0) + 1;
       });
-      var statusOrder = ['pending', 'processing', 'paid', 'exception', 'declined'];
-      var statusLabels = { pending: 'Pending', processing: 'Processing', paid: 'Paid', exception: 'Exception', declined: 'Declined' };
+      var statusOrder = [
+        "pending",
+        "processing",
+        "paid",
+        "exception",
+        "declined",
+      ];
+      var statusLabels = {
+        pending: "Pending",
+        processing: "Processing",
+        paid: "Paid",
+        exception: "Exception",
+        declined: "Declined",
+      };
       var rows = statusOrder
-        .filter(function (key) { return counts[key] > 0; })
+        .filter(function (key) {
+          return counts[key] > 0;
+        })
         .map(function (key) {
-          return { key: key, label: statusLabels[key] || key, count: counts[key] };
+          return {
+            key: key,
+            label: statusLabels[key] || key,
+            count: counts[key],
+          };
         });
-      filterStatusesWrap.innerHTML = rows.map(function (row, idx) {
-        return buildFilterCheckbox(
-          'sx-table-filter-status-' + idx,
-          row.label,
-          String(row.count),
-          row.key,
-          tableFilterState.selectedStatuses.has(row.key)
-        );
-      }).join('');
+      filterStatusesWrap.innerHTML = rows
+        .map(function (row, idx) {
+          return buildFilterCheckbox(
+            "sx-table-filter-status-" + idx,
+            row.label,
+            String(row.count),
+            row.key,
+            tableFilterState.selectedStatuses.has(row.key),
+          );
+        })
+        .join("");
     }
 
     function renderMethodFilters() {
       var counts = {};
       getBaseFilterEntries().forEach(function (entry) {
-        var key = String(entry && entry.methodType || '');
+        var key = String((entry && entry.methodType) || "");
         if (!key) return;
         counts[key] = (counts[key] || 0) + 1;
       });
-      var methodOrder = ['card', 'ach', 'smart_exchange'];
+      var methodOrder = ["card", "ach", "smart_exchange"];
       var rows = methodOrder
-        .filter(function (key) { return counts[key] > 0; })
+        .filter(function (key) {
+          return counts[key] > 0;
+        })
         .map(function (key) {
-          return { key: key, label: getMethodLabelFromType(key), count: counts[key] };
+          return {
+            key: key,
+            label: getMethodLabelFromType(key),
+            count: counts[key],
+          };
         });
-      filterMethodsWrap.innerHTML = rows.map(function (row, idx) {
-        return buildFilterCheckbox(
-          'sx-table-filter-method-' + idx,
-          row.label,
-          String(row.count),
-          row.key,
-          tableFilterState.selectedMethods.has(row.key)
-        );
-      }).join('');
+      filterMethodsWrap.innerHTML = rows
+        .map(function (row, idx) {
+          return buildFilterCheckbox(
+            "sx-table-filter-method-" + idx,
+            row.label,
+            String(row.count),
+            row.key,
+            tableFilterState.selectedMethods.has(row.key),
+          );
+        })
+        .join("");
     }
 
     function renderFailureReasonFilters() {
       var counts = new Map();
-      (Array.isArray(paginationState.sourceEntries) ? paginationState.sourceEntries : []).forEach(function (entry) {
+      (Array.isArray(paginationState.sourceEntries)
+        ? paginationState.sourceEntries
+        : []
+      ).forEach(function (entry) {
         var reason = getFailureReason(entry);
         if (!reason) return;
         counts.set(reason, (counts.get(reason) || 0) + 1);
       });
       filterFailureReasonsWrap.innerHTML = Array.from(counts.entries())
-        .sort(function (a, b) { return a[0].localeCompare(b[0]); })
+        .sort(function (a, b) {
+          return a[0].localeCompare(b[0]);
+        })
         .map(function (entry, idx) {
           return buildFilterCheckbox(
-            'sx-table-filter-failure-reason-' + idx,
+            "sx-table-filter-failure-reason-" + idx,
             entry[0],
             String(entry[1]),
             entry[0],
-            tableFilterState.selectedFailureReasons.has(entry[0])
+            tableFilterState.selectedFailureReasons.has(entry[0]),
           );
-        }).join('');
+        })
+        .join("");
     }
 
     function renderFilterNavBadges() {
       filterCountBadges.forEach(function (badge) {
-        var panel = normalizeFilterPanel(badge.getAttribute('data-filter-count-badge'));
+        var panel = normalizeFilterPanel(
+          badge.getAttribute("data-filter-count-badge"),
+        );
         var count = getPanelDraftCount(panel);
         badge.textContent = String(count);
-        badge.classList.toggle('hidden', count <= 0);
-        badge.classList.toggle('inline-flex', count > 0);
+        badge.classList.toggle("hidden", count <= 0);
+        badge.classList.toggle("inline-flex", count > 0);
       });
     }
 
@@ -3208,183 +4378,237 @@
       filterApplyActiveBtn.disabled = !hasAnyDraftChanges();
     }
 
-
     /** Total applied filter values across every category, for the Filter button badge. */
     function countAppliedFilters(sets, fromKey, toKey) {
       var total = 0;
-      sets.forEach(function (set) { total += set ? set.size : 0; });
+      sets.forEach(function (set) {
+        total += set ? set.size : 0;
+      });
       if (fromKey || toKey) total += 1;
       return total;
     }
 
     function renderFilterCountBadge(total) {
-      var badges = document.querySelectorAll('[data-filter-count]');
+      var badges = document.querySelectorAll("[data-filter-count]");
       Array.prototype.forEach.call(badges, function (badge) {
-        badge.textContent = total > 0 ? String(total) : '';
-        badge.classList.toggle('hidden', total === 0);
-        badge.classList.toggle('inline-flex', total > 0);
+        badge.textContent = total > 0 ? String(total) : "";
+        badge.classList.toggle("hidden", total === 0);
+        badge.classList.toggle("inline-flex", total > 0);
       });
     }
 
     function renderActiveFilterTags() {
       if (!activeFiltersWrap) return;
-      renderFilterCountBadge(countAppliedFilters([
-        tableFilterState.appliedSelectedCustomers,
-        tableFilterState.appliedSelectedStatuses,
-        tableFilterState.appliedSelectedMethods,
-        tableFilterState.appliedSelectedFailureReasons
-      ], tableFilterState.appliedInitiatedDateFrom, tableFilterState.appliedInitiatedDateTo));
+      renderFilterCountBadge(
+        countAppliedFilters(
+          [
+            tableFilterState.appliedSelectedCustomers,
+            tableFilterState.appliedSelectedStatuses,
+            tableFilterState.appliedSelectedMethods,
+            tableFilterState.appliedSelectedFailureReasons,
+          ],
+          tableFilterState.appliedInitiatedDateFrom,
+          tableFilterState.appliedInitiatedDateTo,
+        ),
+      );
 
       var tags = [];
-      var selectedCustomers = Array.from(tableFilterState.appliedSelectedCustomers)
-        .filter(function (customer) { return customer && customer.trim(); })
-        .sort(function (a, b) { return a.localeCompare(b); });
-      var selectedStatuses = Array.from(tableFilterState.appliedSelectedStatuses)
-        .filter(function (status) { return status && status.trim(); })
-        .sort(function (a, b) { return a.localeCompare(b); });
+      var selectedCustomers = Array.from(
+        tableFilterState.appliedSelectedCustomers,
+      )
+        .filter(function (customer) {
+          return customer && customer.trim();
+        })
+        .sort(function (a, b) {
+          return a.localeCompare(b);
+        });
+      var selectedStatuses = Array.from(
+        tableFilterState.appliedSelectedStatuses,
+      )
+        .filter(function (status) {
+          return status && status.trim();
+        })
+        .sort(function (a, b) {
+          return a.localeCompare(b);
+        });
 
       if (selectedCustomers.length) {
         tags.push({
-          type: 'customer',
-          label: 'Customer',
-          value: selectedCustomers.join(', '),
+          type: "customer",
+          label: "Customer",
+          value: selectedCustomers.join(", "),
         });
       }
       if (selectedStatuses.length) {
         var statusText = selectedStatuses
-          .map(function (status) { return STATUS_LABELS[status] || status; })
-          .join(', ');
+          .map(function (status) {
+            return STATUS_LABELS[status] || status;
+          })
+          .join(", ");
         tags.push({
-          type: 'status',
-          label: 'Status',
+          type: "status",
+          label: "Status",
           value: statusText,
         });
       }
       var selectedMethods = Array.from(tableFilterState.appliedSelectedMethods)
-        .filter(function (method) { return method && method.trim(); })
-        .sort(function (a, b) { return a.localeCompare(b); });
+        .filter(function (method) {
+          return method && method.trim();
+        })
+        .sort(function (a, b) {
+          return a.localeCompare(b);
+        });
       if (selectedMethods.length) {
         var methodText = selectedMethods
-          .map(function (method) { return getMethodLabelFromType(method); })
-          .join(', ');
+          .map(function (method) {
+            return getMethodLabelFromType(method);
+          })
+          .join(", ");
         tags.push({
-          type: 'method',
-          label: 'Method of payment',
+          type: "method",
+          label: "Method of payment",
           value: methodText,
         });
       }
-      var selectedFailureReasons = Array.from(tableFilterState.appliedSelectedFailureReasons)
-        .filter(function (reason) { return reason && reason.trim(); })
-        .sort(function (a, b) { return a.localeCompare(b); });
+      var selectedFailureReasons = Array.from(
+        tableFilterState.appliedSelectedFailureReasons,
+      )
+        .filter(function (reason) {
+          return reason && reason.trim();
+        })
+        .sort(function (a, b) {
+          return a.localeCompare(b);
+        });
       if (selectedFailureReasons.length) {
         tags.push({
-          type: 'failure_reason',
-          label: 'Failure reason',
-          value: selectedFailureReasons.join(', '),
+          type: "failure_reason",
+          label: "Failure reason",
+          value: selectedFailureReasons.join(", "),
         });
       }
-      if (tableFilterState.appliedInitiatedDateFrom || tableFilterState.appliedInitiatedDateTo) {
-        var fromLabel = tableFilterState.appliedInitiatedDateFrom ? formatDate(tableFilterState.appliedInitiatedDateFrom) : 'Any';
-        var toLabel = tableFilterState.appliedInitiatedDateTo ? formatDate(tableFilterState.appliedInitiatedDateTo) : 'Any';
+      if (
+        tableFilterState.appliedInitiatedDateFrom ||
+        tableFilterState.appliedInitiatedDateTo
+      ) {
+        var fromLabel = tableFilterState.appliedInitiatedDateFrom
+          ? formatDate(tableFilterState.appliedInitiatedDateFrom)
+          : "Any";
+        var toLabel = tableFilterState.appliedInitiatedDateTo
+          ? formatDate(tableFilterState.appliedInitiatedDateTo)
+          : "Any";
         tags.push({
-          type: 'initiated_date',
-          label: 'Initiated date',
-          value: fromLabel + ' - ' + toLabel,
+          type: "initiated_date",
+          label: "Initiated date",
+          value: fromLabel + " - " + toLabel,
         });
       }
 
       if (!tags.length) {
-        activeFiltersWrap.innerHTML = '';
-        activeFiltersWrap.classList.add('hidden');
+        activeFiltersWrap.innerHTML = "";
+        activeFiltersWrap.classList.add("hidden");
         return;
       }
-      activeFiltersWrap.classList.remove('hidden');
+      activeFiltersWrap.classList.remove("hidden");
 
-      activeFiltersWrap.innerHTML = tags.map(function (tag) {
-        var byLabel = 'By ' + String(tag.label || '').toLowerCase();
-        return '' +
-          '<span class="relative inline-flex max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-xs font-medium text-gray-600 dark:bg-white/10 dark:text-gray-300">' +
-          '  <span class="inline-flex shrink-0 items-center bg-gray-100 px-2 py-1 font-medium text-gray-900 dark:bg-white/15 dark:text-white">' + escapeHtml(byLabel) + '</span>' +
-          '  <button type="button" data-filter-tag-open="' + escapeHtml(tag.type) + '" title="' + escapeHtml(tag.label + ': ' + tag.value) + '"' +
-          '    class="inline-flex min-w-0 items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15 cursor-pointer">' +
-          '    <span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(tag.value) + '</span>' +
-          '  </button>' +
-          '  <button type="button" data-filter-tag-remove="' + escapeHtml(tag.type) + '"' +
-          '    class="inline-flex w-6 shrink-0 self-stretch items-center justify-center border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white cursor-pointer" aria-label="Remove filter">' +
-          '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">' +
-          '      <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
-          '    </svg>' +
-          '  </button>' +
-          '  <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span>' +
-          '</span>';
-      }).join('');
+      activeFiltersWrap.innerHTML = tags
+        .map(function (tag) {
+          var byLabel = "By " + String(tag.label || "").toLowerCase();
+          return (
+            "" +
+            '<span class="relative inline-flex max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-xs font-medium text-gray-600 dark:bg-white/10 dark:text-gray-300">' +
+            '  <span class="inline-flex shrink-0 items-center bg-gray-100 px-2 py-1 font-medium text-gray-900 dark:bg-white/15 dark:text-white">' +
+            escapeHtml(byLabel) +
+            "</span>" +
+            '  <button type="button" data-filter-tag-open="' +
+            escapeHtml(tag.type) +
+            '" title="' +
+            escapeHtml(tag.label + ": " + tag.value) +
+            '"' +
+            '    class="inline-flex min-w-0 items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15 cursor-pointer">' +
+            '    <span class="truncate font-medium text-gray-900 dark:text-white">' +
+            escapeHtml(tag.value) +
+            "</span>" +
+            "  </button>" +
+            '  <button type="button" data-filter-tag-remove="' +
+            escapeHtml(tag.type) +
+            '"' +
+            '    class="inline-flex w-6 shrink-0 self-stretch items-center justify-center border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white cursor-pointer" aria-label="Remove filter">' +
+            '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">' +
+            '      <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
+            "    </svg>" +
+            "  </button>" +
+            '  <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span>' +
+            "</span>"
+          );
+        })
+        .join("");
     }
 
     function setDetailPanelVisibility(panel) {
-      filterCustomerPanel.classList.add('hidden');
-      filterCustomerPanel.classList.remove('flex');
-      filterStatusPanel.classList.add('hidden');
-      filterStatusPanel.classList.remove('flex');
-      filterMethodPanel.classList.add('hidden');
-      filterMethodPanel.classList.remove('flex');
-      filterFailureReasonPanel.classList.add('hidden');
-      filterFailureReasonPanel.classList.remove('flex');
-      filterInitiatedDatePanel.classList.add('hidden');
-      filterInitiatedDatePanel.classList.remove('flex');
-      if (panel === 'customer') {
-        filterCustomerPanel.classList.remove('hidden');
-        filterCustomerPanel.classList.add('flex');
-      } else if (panel === 'status') {
-        filterStatusPanel.classList.remove('hidden');
-        filterStatusPanel.classList.add('flex');
-      } else if (panel === 'method') {
-        filterMethodPanel.classList.remove('hidden');
-        filterMethodPanel.classList.add('flex');
-      } else if (panel === 'failure_reason') {
-        filterFailureReasonPanel.classList.remove('hidden');
-        filterFailureReasonPanel.classList.add('flex');
-      } else if (panel === 'initiated_date') {
-        filterInitiatedDatePanel.classList.remove('hidden');
-        filterInitiatedDatePanel.classList.add('flex');
+      filterCustomerPanel.classList.add("hidden");
+      filterCustomerPanel.classList.remove("flex");
+      filterStatusPanel.classList.add("hidden");
+      filterStatusPanel.classList.remove("flex");
+      filterMethodPanel.classList.add("hidden");
+      filterMethodPanel.classList.remove("flex");
+      filterFailureReasonPanel.classList.add("hidden");
+      filterFailureReasonPanel.classList.remove("flex");
+      filterInitiatedDatePanel.classList.add("hidden");
+      filterInitiatedDatePanel.classList.remove("flex");
+      if (panel === "customer") {
+        filterCustomerPanel.classList.remove("hidden");
+        filterCustomerPanel.classList.add("flex");
+      } else if (panel === "status") {
+        filterStatusPanel.classList.remove("hidden");
+        filterStatusPanel.classList.add("flex");
+      } else if (panel === "method") {
+        filterMethodPanel.classList.remove("hidden");
+        filterMethodPanel.classList.add("flex");
+      } else if (panel === "failure_reason") {
+        filterFailureReasonPanel.classList.remove("hidden");
+        filterFailureReasonPanel.classList.add("flex");
+      } else if (panel === "initiated_date") {
+        filterInitiatedDatePanel.classList.remove("hidden");
+        filterInitiatedDatePanel.classList.add("flex");
       }
     }
 
     function syncFilterNavState(panel) {
       filterNavButtons.forEach(function (button) {
-        var isActive = button.getAttribute('data-filter-open') === panel;
-        button.classList.toggle('bg-gray-100', isActive);
-        button.classList.toggle('text-gray-900', isActive);
-        button.classList.toggle('dark:bg-white/10', isActive);
-        button.classList.toggle('dark:text-white', isActive);
+        var isActive = button.getAttribute("data-filter-open") === panel;
+        button.classList.toggle("bg-gray-100", isActive);
+        button.classList.toggle("text-gray-900", isActive);
+        button.classList.toggle("dark:bg-white/10", isActive);
+        button.classList.toggle("dark:text-white", isActive);
       });
     }
 
     function applyFilterMenuLayout() {
-      var isMobileView = window.matchMedia('(max-width: 639px)').matches;
+      var isMobileView = window.matchMedia("(max-width: 639px)").matches;
       if (isMobileView) {
-        filterMenu.style.position = 'fixed';
-        filterMenu.style.left = '1rem';
-        filterMenu.style.right = '1rem';
-        filterMenu.style.bottom = '1rem';
-        filterMenu.style.top = 'auto';
-        filterMenu.style.marginTop = '0';
-        filterMenu.style.margin = '0';
-        filterMenu.style.zIndex = '50';
-        filterMenu.style.maxWidth = 'none';
-        filterMenu.style.width = 'auto';
-        filterMenu.style.maxHeight = 'calc(100dvh - 2rem)';
+        filterMenu.style.position = "fixed";
+        filterMenu.style.left = "1rem";
+        filterMenu.style.right = "1rem";
+        filterMenu.style.bottom = "1rem";
+        filterMenu.style.top = "auto";
+        filterMenu.style.marginTop = "0";
+        filterMenu.style.margin = "0";
+        filterMenu.style.zIndex = "50";
+        filterMenu.style.maxWidth = "none";
+        filterMenu.style.width = "auto";
+        filterMenu.style.maxHeight = "calc(100dvh - 2rem)";
       } else {
-        filterMenu.style.position = '';
-        filterMenu.style.left = '';
-        filterMenu.style.right = '';
-        filterMenu.style.bottom = '';
-        filterMenu.style.top = '';
-        filterMenu.style.marginTop = '';
-        filterMenu.style.margin = '';
-        filterMenu.style.zIndex = '';
-        filterMenu.style.maxWidth = '';
-        filterMenu.style.width = '';
-        filterMenu.style.maxHeight = '';
+        filterMenu.style.position = "";
+        filterMenu.style.left = "";
+        filterMenu.style.right = "";
+        filterMenu.style.bottom = "";
+        filterMenu.style.top = "";
+        filterMenu.style.marginTop = "";
+        filterMenu.style.margin = "";
+        filterMenu.style.zIndex = "";
+        filterMenu.style.maxWidth = "";
+        filterMenu.style.width = "";
+        filterMenu.style.maxHeight = "";
       }
     }
 
@@ -3393,8 +4617,12 @@
       tableFilterState.activePanel = activePanel;
       setDetailPanelVisibility(activePanel);
       syncFilterNavState(activePanel);
-      if (activePanel === 'initiated_date') {
-        setInitiatedDateMonthFromIso(getSelectedDateForActiveField() || tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo);
+      if (activePanel === "initiated_date") {
+        setInitiatedDateMonthFromIso(
+          getSelectedDateForActiveField() ||
+            tableFilterState.initiatedDateFrom ||
+            tableFilterState.initiatedDateTo,
+        );
         renderInitiatedDateInputs();
         renderInitiatedDateCalendar();
         setDateCalendarVisible(true);
@@ -3404,12 +4632,13 @@
       syncApplyButtonState();
     }
 
-
-  /** Rotate the Filter chevron while its menu is open, as the sidebar submenu does. */
-  function setFilterChevron(open) {
-    var chevrons = document.querySelectorAll('[data-filter-chevron]');
-    Array.prototype.forEach.call(chevrons, function (c) { c.classList.toggle('rotate-180', !!open); });
-  }
+    /** Rotate the Filter chevron while its menu is open, as the sidebar submenu does. */
+    function setFilterChevron(open) {
+      var chevrons = document.querySelectorAll("[data-filter-chevron]");
+      Array.prototype.forEach.call(chevrons, function (c) {
+        c.classList.toggle("rotate-180", !!open);
+      });
+    }
     function setFilterMenuOpen(nextOpen) {
       tableFilterState.menuOpen = !!nextOpen;
       setFilterChevron(tableFilterState.menuOpen);
@@ -3417,15 +4646,31 @@
       if (tableFilterState.menuOpen) {
         copyAppliedFiltersToDraft();
         syncTableFilterUi();
-        setFilterPanel(tableFilterState.activePanel || 'customer');
-        filterMenu.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
-        if (filterBackdrop && window.matchMedia('(max-width: 639px)').matches) {
-          filterBackdrop.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
+        setFilterPanel(tableFilterState.activePanel || "customer");
+        filterMenu.classList.remove(
+          "invisible",
+          "opacity-0",
+          "pointer-events-none",
+        );
+        if (filterBackdrop && window.matchMedia("(max-width: 639px)").matches) {
+          filterBackdrop.classList.remove(
+            "invisible",
+            "opacity-0",
+            "pointer-events-none",
+          );
         }
       } else {
-        filterMenu.classList.add('invisible', 'opacity-0', 'pointer-events-none');
+        filterMenu.classList.add(
+          "invisible",
+          "opacity-0",
+          "pointer-events-none",
+        );
         if (filterBackdrop) {
-          filterBackdrop.classList.add('invisible', 'opacity-0', 'pointer-events-none');
+          filterBackdrop.classList.add(
+            "invisible",
+            "opacity-0",
+            "pointer-events-none",
+          );
         }
       }
     }
@@ -3438,46 +4683,63 @@
       filterApplyLoadingState.active = true;
       setFilterMenuOpen(false);
       renderTabSwitchSkeleton();
-      filterApplyLoadingState.timer = window.setTimeout(function () {
-        filterApplyLoadingState.active = false;
-        filterApplyLoadingState.timer = null;
-        commitDraftFilters();
-        refreshTableForActiveTab({ forceTableShell: true });
-      }, Math.floor(Math.random() * (FILTER_APPLY_SKELETON_MAX_MS - FILTER_APPLY_SKELETON_MIN_MS + 1)) + FILTER_APPLY_SKELETON_MIN_MS);
+      filterApplyLoadingState.timer = window.setTimeout(
+        function () {
+          filterApplyLoadingState.active = false;
+          filterApplyLoadingState.timer = null;
+          commitDraftFilters();
+          refreshTableForActiveTab({ forceTableShell: true });
+        },
+        Math.floor(
+          Math.random() *
+            (FILTER_APPLY_SKELETON_MAX_MS - FILTER_APPLY_SKELETON_MIN_MS + 1),
+        ) + FILTER_APPLY_SKELETON_MIN_MS,
+      );
     }
 
-    filterBtn.addEventListener('click', function (event) {
+    filterBtn.addEventListener("click", function (event) {
       event.stopPropagation();
       var nextOpen = !tableFilterState.menuOpen;
-      if (nextOpen) tableFilterState.activePanel = normalizeFilterPanel(tableFilterState.activePanel);
+      if (nextOpen)
+        tableFilterState.activePanel = normalizeFilterPanel(
+          tableFilterState.activePanel,
+        );
       setFilterMenuOpen(nextOpen);
       syncApplyButtonState();
     });
 
-    filterMenu.addEventListener('click', function (event) {
+    filterMenu.addEventListener("click", function (event) {
       event.stopPropagation();
-      var openBtn = event.target.closest('[data-filter-open]');
+      var openBtn = event.target.closest("[data-filter-open]");
       if (openBtn) {
         event.preventDefault();
-        setFilterPanel(openBtn.getAttribute('data-filter-open'));
+        setFilterPanel(openBtn.getAttribute("data-filter-open"));
       }
     });
 
-    filterMenu.addEventListener('change', function (event) {
-      var checkbox = event.target.closest('input[type="checkbox"][data-filter-value]');
+    filterMenu.addEventListener("change", function (event) {
+      var checkbox = event.target.closest(
+        'input[type="checkbox"][data-filter-value]',
+      );
       if (!checkbox) return;
-      var panelEl = checkbox.closest('#sx-table-filter-customers, #sx-table-filter-statuses');
-      if (!panelEl) panelEl = checkbox.closest('#sx-table-filter-methods, #sx-table-filter-failure-reasons');
-      var value = checkbox.getAttribute('data-filter-value');
+      var panelEl = checkbox.closest(
+        "#sx-table-filter-customers, #sx-table-filter-statuses",
+      );
+      if (!panelEl)
+        panelEl = checkbox.closest(
+          "#sx-table-filter-methods, #sx-table-filter-failure-reasons",
+        );
+      var value = checkbox.getAttribute("data-filter-value");
       if (!panelEl || !value) return;
-      if (panelEl.id === 'sx-table-filter-customers') {
+      if (panelEl.id === "sx-table-filter-customers") {
         if (checkbox.checked) tableFilterState.selectedCustomers.add(value);
         else tableFilterState.selectedCustomers.delete(value);
-      } else if (panelEl.id === 'sx-table-filter-statuses') {
+      } else if (panelEl.id === "sx-table-filter-statuses") {
         if (checkbox.checked) tableFilterState.selectedStatuses.add(value);
         else tableFilterState.selectedStatuses.delete(value);
-      } else if (panelEl.id === 'sx-table-filter-failure-reasons') {
-        if (checkbox.checked) tableFilterState.selectedFailureReasons.add(value);
+      } else if (panelEl.id === "sx-table-filter-failure-reasons") {
+        if (checkbox.checked)
+          tableFilterState.selectedFailureReasons.add(value);
         else tableFilterState.selectedFailureReasons.delete(value);
       } else {
         if (checkbox.checked) tableFilterState.selectedMethods.add(value);
@@ -3488,30 +4750,49 @@
     });
 
     function setActiveDateField(field) {
-      tableFilterState.initiatedDateActiveField = field === 'to' ? 'to' : 'from';
-      setInitiatedDateMonthFromIso(getSelectedDateForActiveField() || tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo);
+      tableFilterState.initiatedDateActiveField =
+        field === "to" ? "to" : "from";
+      setInitiatedDateMonthFromIso(
+        getSelectedDateForActiveField() ||
+          tableFilterState.initiatedDateFrom ||
+          tableFilterState.initiatedDateTo,
+      );
       renderInitiatedDateInputs();
-      setDateCalendarVisible(tableFilterState.activePanel === 'initiated_date');
+      setDateCalendarVisible(tableFilterState.activePanel === "initiated_date");
     }
 
     function setDateFieldFromInput(field, rawInput) {
       var formatted = formatUsInput(rawInput);
       var iso = usInputToIso(formatted);
-      if (field === 'to') {
+      if (field === "to") {
         tableFilterState.initiatedDateToDraft = formatted;
-        if (!formatted || formatted === 'MM / DD / YYYY') tableFilterState.initiatedDateTo = '';
+        if (!formatted || formatted === "MM / DD / YYYY")
+          tableFilterState.initiatedDateTo = "";
         else if (iso) tableFilterState.initiatedDateTo = iso;
-        if (tableFilterState.initiatedDateFrom && tableFilterState.initiatedDateTo && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
+        if (
+          tableFilterState.initiatedDateFrom &&
+          tableFilterState.initiatedDateTo &&
+          tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo
+        ) {
           tableFilterState.initiatedDateFrom = tableFilterState.initiatedDateTo;
-          tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(tableFilterState.initiatedDateFrom);
+          tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(
+            tableFilterState.initiatedDateFrom,
+          );
         }
       } else {
         tableFilterState.initiatedDateFromDraft = formatted;
-        if (!formatted || formatted === 'MM / DD / YYYY') tableFilterState.initiatedDateFrom = '';
+        if (!formatted || formatted === "MM / DD / YYYY")
+          tableFilterState.initiatedDateFrom = "";
         else if (iso) tableFilterState.initiatedDateFrom = iso;
-        if (tableFilterState.initiatedDateFrom && tableFilterState.initiatedDateTo && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
+        if (
+          tableFilterState.initiatedDateFrom &&
+          tableFilterState.initiatedDateTo &&
+          tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo
+        ) {
           tableFilterState.initiatedDateTo = tableFilterState.initiatedDateFrom;
-          tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(tableFilterState.initiatedDateTo);
+          tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(
+            tableFilterState.initiatedDateTo,
+          );
         }
       }
       syncApplyButtonState();
@@ -3528,20 +4809,24 @@
         return Math.max(0, Math.min(idx, formatted.length));
       }
 
-      inputEl.addEventListener('focus', function () {
+      inputEl.addEventListener("focus", function () {
         setActiveDateField(field);
       });
-      inputEl.addEventListener('click', function (event) {
+      inputEl.addEventListener("click", function (event) {
         event.stopPropagation();
       });
-      inputEl.addEventListener('keydown', function (event) {
-        if (event.key !== 'Backspace') return;
-        var start = typeof inputEl.selectionStart === 'number' ? inputEl.selectionStart : 0;
-        var end = typeof inputEl.selectionEnd === 'number' ? inputEl.selectionEnd : 0;
+      inputEl.addEventListener("keydown", function (event) {
+        if (event.key !== "Backspace") return;
+        var start =
+          typeof inputEl.selectionStart === "number"
+            ? inputEl.selectionStart
+            : 0;
+        var end =
+          typeof inputEl.selectionEnd === "number" ? inputEl.selectionEnd : 0;
         if (start !== end || start <= 0) return;
-        var value = String(inputEl.value || '');
+        var value = String(inputEl.value || "");
         var prevChar = value.charAt(start - 1);
-        if (prevChar !== ' ' && prevChar !== '/') return;
+        if (prevChar !== " " && prevChar !== "/") return;
         var removeIdx = -1;
         for (var i = start - 1; i >= 0; i -= 1) {
           if (/\d/.test(value.charAt(i))) {
@@ -3557,19 +4842,35 @@
         } catch (err) {
           // Ignore selection errors on unsupported input states.
         }
-        inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+        inputEl.dispatchEvent(new Event("input", { bubbles: true }));
       });
-      inputEl.addEventListener('input', function () {
-        var selectionStart = typeof inputEl.selectionStart === 'number' ? inputEl.selectionStart : inputEl.value.length;
-        var digitsBeforeCaret = String(inputEl.value || '').slice(0, selectionStart).replace(/\D/g, '').length;
+      inputEl.addEventListener("input", function () {
+        var selectionStart =
+          typeof inputEl.selectionStart === "number"
+            ? inputEl.selectionStart
+            : inputEl.value.length;
+        var digitsBeforeCaret = String(inputEl.value || "")
+          .slice(0, selectionStart)
+          .replace(/\D/g, "").length;
         var formatted = setDateFieldFromInput(field, inputEl.value);
         inputEl.value = formatted;
-        if (field === 'from') {
-          renderInputMaskDisplay(formatted, filterDateFromMaskFilled, filterDateFromMaskEmpty);
+        if (field === "from") {
+          renderInputMaskDisplay(
+            formatted,
+            filterDateFromMaskFilled,
+            filterDateFromMaskEmpty,
+          );
         } else {
-          renderInputMaskDisplay(formatted, filterDateToMaskFilled, filterDateToMaskEmpty);
+          renderInputMaskDisplay(
+            formatted,
+            filterDateToMaskFilled,
+            filterDateToMaskEmpty,
+          );
         }
-        var nextCaret = getCaretIndexFromDigitsCount(digitsBeforeCaret, formatted);
+        var nextCaret = getCaretIndexFromDigitsCount(
+          digitsBeforeCaret,
+          formatted,
+        );
         try {
           inputEl.setSelectionRange(nextCaret, nextCaret);
         } catch (err) {
@@ -3578,43 +4879,53 @@
       });
     }
 
-    bindDateInput(filterDateFromInput, 'from');
-    bindDateInput(filterDateToInput, 'to');
+    bindDateInput(filterDateFromInput, "from");
+    bindDateInput(filterDateToInput, "to");
 
-    filterDatePrevBtn.addEventListener('click', function (event) {
+    filterDatePrevBtn.addEventListener("click", function (event) {
       event.preventDefault();
       event.stopPropagation();
       shiftInitiatedDateMonth(-1);
       renderInitiatedDateCalendar();
     });
 
-    filterDateNextBtn.addEventListener('click', function (event) {
+    filterDateNextBtn.addEventListener("click", function (event) {
       event.preventDefault();
       event.stopPropagation();
       shiftInitiatedDateMonth(1);
       renderInitiatedDateCalendar();
     });
 
-    filterDateGrid.addEventListener('click', function (event) {
-      var dayBtn = event.target.closest('button[data-date-cell]');
+    filterDateGrid.addEventListener("click", function (event) {
+      var dayBtn = event.target.closest("button[data-date-cell]");
       if (!dayBtn) return;
       event.preventDefault();
       event.stopPropagation();
-      var iso = toIsoDate(dayBtn.getAttribute('data-date-cell'));
+      var iso = toIsoDate(dayBtn.getAttribute("data-date-cell"));
       if (!iso) return;
-      if (tableFilterState.initiatedDateActiveField === 'to') {
+      if (tableFilterState.initiatedDateActiveField === "to") {
         tableFilterState.initiatedDateTo = iso;
         tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(iso);
-        if (tableFilterState.initiatedDateFrom && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
+        if (
+          tableFilterState.initiatedDateFrom &&
+          tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo
+        ) {
           tableFilterState.initiatedDateFrom = tableFilterState.initiatedDateTo;
-          tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(tableFilterState.initiatedDateFrom);
+          tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(
+            tableFilterState.initiatedDateFrom,
+          );
         }
       } else {
         tableFilterState.initiatedDateFrom = iso;
         tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(iso);
-        if (tableFilterState.initiatedDateTo && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
+        if (
+          tableFilterState.initiatedDateTo &&
+          tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo
+        ) {
           tableFilterState.initiatedDateTo = tableFilterState.initiatedDateFrom;
-          tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(tableFilterState.initiatedDateTo);
+          tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(
+            tableFilterState.initiatedDateTo,
+          );
         }
       }
       syncApplyButtonState();
@@ -3623,40 +4934,46 @@
       renderFilterNavBadges();
     });
 
-    filterClearBtn.addEventListener('click', function (event) {
+    filterClearBtn.addEventListener("click", function (event) {
       event.stopPropagation();
       if (filterClearBtn.disabled) return;
       clearPanelSelection(normalizeFilterPanel(tableFilterState.activePanel));
       syncTableFilterUi();
     });
 
-    filterApplyActiveBtn.addEventListener('click', function (event) {
+    filterApplyActiveBtn.addEventListener("click", function (event) {
       event.stopPropagation();
       if (filterApplyActiveBtn.disabled) return;
       startFilterApplyLoading();
     });
 
-    document.addEventListener('click', function (event) {
+    document.addEventListener("click", function (event) {
       if (!filterDropdown || !tableFilterState.menuOpen) return;
       if (filterDropdown.contains(event.target)) return;
       setFilterMenuOpen(false);
     });
 
     if (filterBackdrop) {
-      filterBackdrop.addEventListener('click', function () {
+      filterBackdrop.addEventListener("click", function () {
         if (!tableFilterState.menuOpen) return;
         setFilterMenuOpen(false);
       });
     }
 
     if (activeFiltersWrap) {
-      activeFiltersWrap.addEventListener('click', function (event) {
-        var openBtn = event.target.closest('button[data-filter-tag-open]');
+      activeFiltersWrap.addEventListener("click", function (event) {
+        var openBtn = event.target.closest("button[data-filter-tag-open]");
         if (openBtn) {
           event.preventDefault();
           event.stopPropagation();
-          var panelType = openBtn.getAttribute('data-filter-tag-open');
-          if (panelType === 'customer' || panelType === 'status' || panelType === 'method' || panelType === 'failure_reason' || panelType === 'initiated_date') {
+          var panelType = openBtn.getAttribute("data-filter-tag-open");
+          if (
+            panelType === "customer" ||
+            panelType === "status" ||
+            panelType === "method" ||
+            panelType === "failure_reason" ||
+            panelType === "initiated_date"
+          ) {
             syncTableFilterUi();
             setFilterMenuOpen(true);
             setFilterPanel(panelType);
@@ -3664,45 +4981,45 @@
           }
           return;
         }
-        var removeBtn = event.target.closest('button[data-filter-tag-remove]');
+        var removeBtn = event.target.closest("button[data-filter-tag-remove]");
         if (!removeBtn) return;
         event.preventDefault();
         event.stopPropagation();
-        var type = removeBtn.getAttribute('data-filter-tag-remove');
+        var type = removeBtn.getAttribute("data-filter-tag-remove");
         if (!type) return;
-        if (type === 'customer') {
+        if (type === "customer") {
           tableFilterState.selectedCustomers.clear();
           tableFilterState.appliedSelectedCustomers.clear();
         }
-        if (type === 'status') {
+        if (type === "status") {
           tableFilterState.selectedStatuses.clear();
           tableFilterState.appliedSelectedStatuses.clear();
         }
-        if (type === 'method') {
+        if (type === "method") {
           tableFilterState.selectedMethods.clear();
           tableFilterState.appliedSelectedMethods.clear();
         }
-        if (type === 'failure_reason') {
+        if (type === "failure_reason") {
           tableFilterState.selectedFailureReasons.clear();
           tableFilterState.appliedSelectedFailureReasons.clear();
         }
-        if (type === 'initiated_date') {
-          tableFilterState.initiatedDateFrom = '';
-          tableFilterState.initiatedDateTo = '';
-          tableFilterState.initiatedDateFromDraft = '';
-          tableFilterState.initiatedDateToDraft = '';
-          tableFilterState.initiatedDateActiveField = 'from';
-          tableFilterState.appliedInitiatedDateFrom = '';
-          tableFilterState.appliedInitiatedDateTo = '';
+        if (type === "initiated_date") {
+          tableFilterState.initiatedDateFrom = "";
+          tableFilterState.initiatedDateTo = "";
+          tableFilterState.initiatedDateFromDraft = "";
+          tableFilterState.initiatedDateToDraft = "";
+          tableFilterState.initiatedDateActiveField = "from";
+          tableFilterState.appliedInitiatedDateFrom = "";
+          tableFilterState.appliedInitiatedDateTo = "";
         }
         refreshTableForActiveTab();
       });
     }
 
-    window.addEventListener('resize', function () {
+    window.addEventListener("resize", function () {
       if (!tableFilterState.menuOpen) return;
       applyFilterMenuLayout();
-      setFilterPanel(tableFilterState.activePanel || 'customer');
+      setFilterPanel(tableFilterState.activePanel || "customer");
     });
 
     syncTableFilterUi = function () {
@@ -3718,7 +5035,7 @@
       syncApplyButtonState();
       if (tableFilterState.menuOpen) {
         applyFilterMenuLayout();
-        setFilterPanel(tableFilterState.activePanel || 'customer');
+        setFilterPanel(tableFilterState.activePanel || "customer");
       }
     };
 
@@ -3731,11 +5048,11 @@
 
   function renderTableBody(table, columns, entries) {
     // Remove existing tbodies, keep thead
-    table.querySelectorAll('tbody').forEach(function (tbody) {
+    table.querySelectorAll("tbody").forEach(function (tbody) {
       tbody.remove();
     });
 
-    var rowsHTML = '';
+    var rowsHTML = "";
     if (!entries.length) {
       rowsHTML = buildEmptyStateHTML(columns.length);
     } else {
@@ -3745,9 +5062,9 @@
       });
     }
 
-    var thead = table.querySelector('thead');
+    var thead = table.querySelector("thead");
     if (thead) {
-      thead.insertAdjacentHTML('afterend', rowsHTML);
+      thead.insertAdjacentHTML("afterend", rowsHTML);
     } else {
       table.innerHTML += rowsHTML;
     }
@@ -3758,14 +5075,28 @@
     if (!table) return;
 
     var pageEntries = getPageSlice();
-    renderTableBody(table, getRenderableColumns(paginationState.allColumns && paginationState.allColumns.length ? paginationState.allColumns : paginationState.columns), pageEntries);
+    renderTableBody(
+      table,
+      getRenderableColumns(
+        paginationState.allColumns && paginationState.allColumns.length
+          ? paginationState.allColumns
+          : paginationState.columns,
+      ),
+      pageEntries,
+    );
     renderPagination();
     refreshStickyAction();
     syncActionColumnGuide();
   }
 
   function refreshTableForActiveTab(options) {
-    if (tabSwitchLoadingState.active || initialTableLoadingState.active || searchLoadingState.active || filterApplyLoadingState.active) return;
+    if (
+      tabSwitchLoadingState.active ||
+      initialTableLoadingState.active ||
+      searchLoadingState.active ||
+      filterApplyLoadingState.active
+    )
+      return;
     var forceTableShell = !!(options && options.forceTableShell);
     var filtered = getVisibleEntriesForActiveTab();
     paginationState.allEntries = filtered;
@@ -3775,7 +5106,11 @@
     if (forceTableShell) {
       var table = document.getElementById(TABLE_ID);
       if (table) {
-        renderTable(table, getRenderableColumns(paginationState.allColumns), filtered);
+        renderTable(
+          table,
+          getRenderableColumns(paginationState.allColumns),
+          filtered,
+        );
       } else {
         renderCurrentPage();
       }
@@ -3810,17 +5145,25 @@
   function rerenderVisibleColumns() {
     var table = document.getElementById(TABLE_ID);
     if (!table) return;
-    if (sortState.key && !columnVisibilityState.visibleKeys.has(sortState.key)) {
-      var sortColumn = (paginationState.allColumns || []).find(function (col) { return col && col.key === sortState.key; });
+    if (
+      sortState.key &&
+      !columnVisibilityState.visibleKeys.has(sortState.key)
+    ) {
+      var sortColumn = (paginationState.allColumns || []).find(function (col) {
+        return col && col.key === sortState.key;
+      });
       if (sortColumn && !isAlwaysVisibleColumn(sortColumn)) {
-        sortState.key = '';
-        sortState.direction = '';
+        sortState.key = "";
+        sortState.direction = "";
         paginationState.allEntries = getVisibleEntriesForActiveTab();
       }
     }
     paginationState.columns = getRenderableColumns(paginationState.allColumns);
     paginationState.totalItems = paginationState.allEntries.length;
-    paginationState.currentPage = Math.min(paginationState.currentPage, getTotalPages());
+    paginationState.currentPage = Math.min(
+      paginationState.currentPage,
+      getTotalPages(),
+    );
     table.innerHTML = buildTheadHTML(paginationState.columns);
     renderCurrentPage();
     attachToggleListeners(table);
@@ -3828,104 +5171,146 @@
   }
 
   function initManageColumnsModal() {
-    var manageColumnsDialog = document.getElementById('sx-manage-columns-dialog');
-    var manageColumnsList = document.getElementById('sx-manage-columns-list');
-    var manageColumnsApplyBtn = document.getElementById('sx-manage-columns-apply-btn');
-    var manageColumnsResetBtn = document.getElementById('sx-manage-columns-reset-btn');
-    var LIFT_CLASSES = ['bg-white', 'shadow-lg', 'ring-1', 'ring-gray-900/10', 'dark:bg-gray-800', 'dark:ring-white/15'];
+    var manageColumnsDialog = document.getElementById(
+      "sx-manage-columns-dialog",
+    );
+    var manageColumnsList = document.getElementById("sx-manage-columns-list");
+    var manageColumnsApplyBtn = document.getElementById(
+      "sx-manage-columns-apply-btn",
+    );
+    var manageColumnsResetBtn = document.getElementById(
+      "sx-manage-columns-reset-btn",
+    );
+    var LIFT_CLASSES = [
+      "bg-white",
+      "shadow-lg",
+      "ring-1",
+      "ring-gray-900/10",
+      "dark:bg-gray-800",
+      "dark:ring-white/15",
+    ];
     function liftRow(row, on) {
       if (!row) return;
-      LIFT_CLASSES.forEach(function (c) { row.classList.toggle(c, on); });
+      LIFT_CLASSES.forEach(function (c) {
+        row.classList.toggle(c, on);
+      });
     }
     function clearAllLifts(scope) {
-      Array.prototype.forEach.call(scope.querySelectorAll('[data-column-order-row]'), function (r) { liftRow(r, false); });
+      Array.prototype.forEach.call(
+        scope.querySelectorAll("[data-column-order-row]"),
+        function (r) {
+          liftRow(r, false);
+        },
+      );
     }
 
-    var draggingColumnKey = '';
-    var dragTargetPosition = 'before';
-    var dragTargetKey = '';
-    if (!manageColumnsDialog || !manageColumnsList || !manageColumnsApplyBtn || !manageColumnsResetBtn) return;
+    var draggingColumnKey = "";
+    var dragTargetPosition = "before";
+    var dragTargetKey = "";
+    if (
+      !manageColumnsDialog ||
+      !manageColumnsList ||
+      !manageColumnsApplyBtn ||
+      !manageColumnsResetBtn
+    )
+      return;
 
     function clearDropIndicators() {
-      Array.from(manageColumnsList.querySelectorAll('[data-drop-line]')).forEach(function (line) {
-        line.classList.remove('opacity-100');
-        line.classList.add('opacity-0');
+      Array.from(
+        manageColumnsList.querySelectorAll("[data-drop-line]"),
+      ).forEach(function (line) {
+        line.classList.remove("opacity-100");
+        line.classList.add("opacity-0");
       });
     }
 
     function setDropIndicator(row, position) {
       clearDropIndicators();
       if (!row) return;
-      var indicator = row.querySelector('[data-drop-line="' + (position === 'after' ? 'after' : 'before') + '"]');
+      var indicator = row.querySelector(
+        '[data-drop-line="' +
+          (position === "after" ? "after" : "before") +
+          '"]',
+      );
       if (indicator) {
-        indicator.classList.remove('opacity-0');
-        indicator.classList.add('opacity-100');
+        indicator.classList.remove("opacity-0");
+        indicator.classList.add("opacity-100");
       }
-      dragTargetKey = row.getAttribute('data-column-order-row') || '';
-      dragTargetPosition = position === 'after' ? 'after' : 'before';
+      dragTargetKey = row.getAttribute("data-column-order-row") || "";
+      dragTargetPosition = position === "after" ? "after" : "before";
     }
 
     function getNearestDropTarget(clientY) {
-      var rows = Array.from(manageColumnsList.querySelectorAll('[data-column-order-row]')).filter(function (row) {
-        return row.getAttribute('data-column-order-row') !== draggingColumnKey;
+      var rows = Array.from(
+        manageColumnsList.querySelectorAll("[data-column-order-row]"),
+      ).filter(function (row) {
+        return row.getAttribute("data-column-order-row") !== draggingColumnKey;
       });
       if (!rows.length) return null;
       for (var i = 0; i < rows.length; i += 1) {
         var rect = rows[i].getBoundingClientRect();
-        if (clientY < rect.top + (rect.height / 2)) return { row: rows[i], position: 'before' };
+        if (clientY < rect.top + rect.height / 2)
+          return { row: rows[i], position: "before" };
       }
-      return { row: rows[rows.length - 1], position: 'after' };
+      return { row: rows[rows.length - 1], position: "after" };
     }
 
     syncManageColumnsUi = function () {
-      var allColumns = paginationState.allColumns || paginationState.columns || [];
+      var allColumns =
+        paginationState.allColumns || paginationState.columns || [];
       var manageableColumns = getOrderedManageableColumns(allColumns);
       ensureColumnVisibilityState(allColumns);
       var visibleCount = manageableColumns.filter(function (col) {
         return columnVisibilityState.draftVisibleKeys.has(col.key);
       }).length;
-      manageColumnsList.innerHTML = manageableColumns.map(function (col) {
-        var checked = columnVisibilityState.draftVisibleKeys.has(col.key);
-        var disabled = checked && visibleCount <= 1;
-        return buildManageColumnsRowHTML(col, checked, disabled);
-      }).join('');
+      manageColumnsList.innerHTML = manageableColumns
+        .map(function (col) {
+          var checked = columnVisibilityState.draftVisibleKeys.has(col.key);
+          var disabled = checked && visibleCount <= 1;
+          return buildManageColumnsRowHTML(col, checked, disabled);
+        })
+        .join("");
       manageColumnsApplyBtn.disabled = !isColumnDraftDirty();
       manageColumnsResetBtn.disabled = isColumnDraftDefault(allColumns);
     };
 
-    manageColumnsList.addEventListener('dragstart', function (event) {
-      var handle = event.target.closest('[data-column-drag-handle]');
+    manageColumnsList.addEventListener("dragstart", function (event) {
+      var handle = event.target.closest("[data-column-drag-handle]");
       if (!handle) return;
-      var row = handle.closest('[data-column-order-row]');
+      var row = handle.closest("[data-column-order-row]");
       if (!row) return;
-      draggingColumnKey = row.getAttribute('data-column-order-row') || '';
-      dragTargetKey = '';
-      dragTargetPosition = 'before';
+      draggingColumnKey = row.getAttribute("data-column-order-row") || "";
+      dragTargetKey = "";
+      dragTargetPosition = "before";
       if (!draggingColumnKey) return;
       // Lift the whole row, not just the grip, and drag the row as the ghost —
       // otherwise the cursor carries a lone six-dot icon.
       liftRow(row, true);
       if (event.dataTransfer) {
-        event.dataTransfer.effectAllowed = 'move';
-        event.dataTransfer.setData('text/plain', draggingColumnKey);
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData("text/plain", draggingColumnKey);
         if (event.dataTransfer.setDragImage) {
           var box = row.getBoundingClientRect();
-          event.dataTransfer.setDragImage(row, event.clientX - box.left, event.clientY - box.top);
+          event.dataTransfer.setDragImage(
+            row,
+            event.clientX - box.left,
+            event.clientY - box.top,
+          );
         }
       }
     });
 
-    manageColumnsList.addEventListener('dragend', function (event) {
-      var row = event.target.closest('[data-column-order-row]');
+    manageColumnsList.addEventListener("dragend", function (event) {
+      var row = event.target.closest("[data-column-order-row]");
       if (row) liftRow(row, false);
       clearAllLifts(manageColumnsList);
-      draggingColumnKey = '';
-      dragTargetKey = '';
-      dragTargetPosition = 'before';
+      draggingColumnKey = "";
+      dragTargetKey = "";
+      dragTargetPosition = "before";
       clearDropIndicators();
     });
 
-    manageColumnsList.addEventListener('dragover', function (event) {
+    manageColumnsList.addEventListener("dragover", function (event) {
       if (!draggingColumnKey) return;
       event.preventDefault();
       var target = getNearestDropTarget(event.clientY);
@@ -3934,79 +5319,98 @@
         return;
       }
       setDropIndicator(target.row, target.position);
-      if (event.dataTransfer) event.dataTransfer.dropEffect = 'move';
+      if (event.dataTransfer) event.dataTransfer.dropEffect = "move";
     });
 
-    manageColumnsList.addEventListener('drop', function (event) {
+    manageColumnsList.addEventListener("drop", function (event) {
       if (!draggingColumnKey) return;
       event.preventDefault();
       var targetKey = dragTargetKey;
       clearDropIndicators();
-      if (moveDraftColumnKeyToPosition(draggingColumnKey, targetKey, dragTargetPosition)) {
+      if (
+        moveDraftColumnKeyToPosition(
+          draggingColumnKey,
+          targetKey,
+          dragTargetPosition,
+        )
+      ) {
         syncManageColumnsUi();
         rerenderVisibleColumns();
       } else {
         syncManageColumnsUi();
         rerenderVisibleColumns();
       }
-      dragTargetKey = '';
+      dragTargetKey = "";
     });
 
-    manageColumnsList.addEventListener('change', function (event) {
-      var checkbox = event.target.closest('input[type="checkbox"][data-column-visibility-toggle]');
+    manageColumnsList.addEventListener("change", function (event) {
+      var checkbox = event.target.closest(
+        'input[type="checkbox"][data-column-visibility-toggle]',
+      );
       if (!checkbox) return;
-      var key = checkbox.getAttribute('data-column-visibility-toggle');
+      var key = checkbox.getAttribute("data-column-visibility-toggle");
       if (!key) return;
       if (checkbox.checked) {
         columnVisibilityState.draftVisibleKeys.add(key);
       } else {
         columnVisibilityState.draftVisibleKeys.delete(key);
       }
-      if (checkbox.checked && key === 'failureReason' && normalizeTabKey(_activeTableTabKey || 'pending') !== 'exceptions') {
+      if (
+        checkbox.checked &&
+        key === "failureReason" &&
+        normalizeTabKey(_activeTableTabKey || "pending") !== "exceptions"
+      ) {
         syncManageColumnsUi();
-        var exceptionsTab = document.querySelector(TAB_NAV_SELECTOR + ' [data-tab="exceptions"]');
+        var exceptionsTab = document.querySelector(
+          TAB_NAV_SELECTOR + ' [data-tab="exceptions"]',
+        );
         if (exceptionsTab) exceptionsTab.click();
-        else startTabSwitchLoading('exceptions');
+        else startTabSwitchLoading("exceptions");
         return;
       }
       syncManageColumnsUi();
       rerenderVisibleColumns();
     });
 
-    manageColumnsApplyBtn.addEventListener('click', function () {
+    manageColumnsApplyBtn.addEventListener("click", function () {
       if (manageColumnsApplyBtn.disabled) return;
       commitColumnDraft();
       rerenderVisibleColumns();
-      if (typeof manageColumnsDialog.close === 'function') manageColumnsDialog.close();
+      if (typeof manageColumnsDialog.close === "function")
+        manageColumnsDialog.close();
     });
 
-    manageColumnsResetBtn.addEventListener('click', function () {
+    manageColumnsResetBtn.addEventListener("click", function () {
       if (manageColumnsResetBtn.disabled) return;
-      var allColumns = paginationState.allColumns || paginationState.columns || [];
+      var allColumns =
+        paginationState.allColumns || paginationState.columns || [];
       resetColumnDraftToDefault(allColumns);
       syncManageColumnsUi();
       rerenderVisibleColumns();
     });
 
-    manageColumnsDialog.addEventListener('close', function () {
-      var allColumns = paginationState.allColumns || paginationState.columns || [];
-      draggingColumnKey = '';
-      dragTargetKey = '';
-      dragTargetPosition = 'before';
+    manageColumnsDialog.addEventListener("close", function () {
+      var allColumns =
+        paginationState.allColumns || paginationState.columns || [];
+      draggingColumnKey = "";
+      dragTargetKey = "";
+      dragTargetPosition = "before";
       clearDropIndicators();
       cloneColumnDraftFromApplied(allColumns);
       syncManageColumnsUi();
       rerenderVisibleColumns();
     });
 
-    cloneColumnDraftFromApplied(paginationState.allColumns || paginationState.columns || []);
+    cloneColumnDraftFromApplied(
+      paginationState.allColumns || paginationState.columns || [],
+    );
     syncManageColumnsUi();
   }
 
   function shouldShowActionColumnGuide() {
     try {
       var params = new URLSearchParams(window.location.search);
-      return params.get('guide') === ACTION_GUIDE_PARAM;
+      return params.get("guide") === ACTION_GUIDE_PARAM;
     } catch (err) {
       return false;
     }
@@ -4015,26 +5419,28 @@
   function removeGuideUrlParam() {
     try {
       var url = new URL(window.location.href);
-      if (!url.searchParams.has('guide')) return;
-      url.searchParams.delete('guide');
+      if (!url.searchParams.has("guide")) return;
+      url.searchParams.delete("guide");
       var query = url.searchParams.toString();
-      var next = url.pathname + (query ? ('?' + query) : '') + url.hash;
-      window.history.replaceState({}, '', next);
+      var next = url.pathname + (query ? "?" + query : "") + url.hash;
+      window.history.replaceState({}, "", next);
     } catch (err) {
       // Ignore URL parsing errors
     }
   }
 
   function getRowHighlightClass(payment, highlightFilter) {
-    if (highlightFilter !== 'card') return '';
-    if (String(payment && payment.methodType || '') !== 'card') return '';
-    return 'relative z-[210]';
+    if (highlightFilter !== "card") return "";
+    if (String((payment && payment.methodType) || "") !== "card") return "";
+    return "relative z-[210]";
   }
 
   function getGuideCardRows() {
     var table = document.getElementById(TABLE_ID);
     if (!table) return [];
-    return Array.prototype.slice.call(table.querySelectorAll('tr[data-row][data-method-type="card"]'));
+    return Array.prototype.slice.call(
+      table.querySelectorAll('tr[data-row][data-method-type="card"]'),
+    );
   }
 
   function getFirstVisibleGuideCardRow() {
@@ -4052,7 +5458,7 @@
 
   function isVisibleGuideTarget(el) {
     if (!el) return false;
-    var row = el.closest('tr[data-row]');
+    var row = el.closest("tr[data-row]");
     var target = row || el;
     if (!target || target.offsetParent === null) return false;
     var rect = target.getBoundingClientRect();
@@ -4075,29 +5481,38 @@
     if (!table) return null;
     var firstRow = getFirstVisibleGuideCardRow();
     var firstTarget = firstRow
-      ? pickFirstVisibleTarget(firstRow.querySelectorAll('[data-action-menu-trigger="true"]'))
+      ? pickFirstVisibleTarget(
+          firstRow.querySelectorAll('[data-action-menu-trigger="true"]'),
+        )
       : null;
     if (!firstTarget) {
       firstTarget = pickFirstVisibleTarget(
-        table.querySelectorAll('tr[data-row] [data-action-menu-trigger="true"]')
+        table.querySelectorAll(
+          'tr[data-row] [data-action-menu-trigger="true"]',
+        ),
       );
     }
     return firstTarget || null;
   }
 
   function getGuideTargetButton() {
-    var selectedInvoice = String(actionGuideState.selectedInvoice || '');
+    var selectedInvoice = String(actionGuideState.selectedInvoice || "");
     if (selectedInvoice) {
       var table = document.getElementById(TABLE_ID);
       if (table) {
         var selectedTargets = Array.prototype.slice.call(
-          table.querySelectorAll('tr[data-row] [data-action-menu-trigger="true"]')
+          table.querySelectorAll(
+            'tr[data-row] [data-action-menu-trigger="true"]',
+          ),
         );
         for (var i = 0; i < selectedTargets.length; i += 1) {
           var target = selectedTargets[i];
-          var row = target && target.closest('tr[data-row]');
+          var row = target && target.closest("tr[data-row]");
           if (!row) continue;
-          if (String(row.getAttribute('data-invoice') || '') !== selectedInvoice) continue;
+          if (
+            String(row.getAttribute("data-invoice") || "") !== selectedInvoice
+          )
+            continue;
           if (isVisibleGuideTarget(target)) return target;
         }
       }
@@ -4115,12 +5530,22 @@
   }
 
   function getGuideViewDetailsRect() {
-    var selectedInvoice = String(actionGuideState.selectedInvoice || '');
-    var links = Array.prototype.slice.call(document.querySelectorAll('el-menu a, [popover] a'));
+    var selectedInvoice = String(actionGuideState.selectedInvoice || "");
+    var links = Array.prototype.slice.call(
+      document.querySelectorAll("el-menu a, [popover] a"),
+    );
     for (var i = 0; i < links.length; i += 1) {
       var link = links[i];
-      if (!link || String(link.textContent || '').trim().toLowerCase() !== 'view details') continue;
-      var invoice = String(link.getAttribute('data-view-details-invoice') || '');
+      if (
+        !link ||
+        String(link.textContent || "")
+          .trim()
+          .toLowerCase() !== "view details"
+      )
+        continue;
+      var invoice = String(
+        link.getAttribute("data-view-details-invoice") || "",
+      );
       var rect = link.getBoundingClientRect();
       if (rect.width <= 0 || rect.height <= 0) continue;
       if (rect.bottom <= 0 || rect.top >= window.innerHeight) continue;
@@ -4131,20 +5556,20 @@
   }
 
   function getGuideCardDetailsHighlightEl() {
-    var dialog = document.getElementById('gp-card-details-dialog');
+    var dialog = document.getElementById("gp-card-details-dialog");
     if (!dialog || !dialog.open) return null;
-    return document.getElementById('gp-card-copy-details-section');
+    return document.getElementById("gp-card-copy-details-section");
   }
 
   function clearGuideCardDetailsHighlight() {
-    var section = document.getElementById('gp-card-copy-details-section');
+    var section = document.getElementById("gp-card-copy-details-section");
     if (section) {
       section.classList.remove(
-        'ring-2',
-        'ring-blue-500',
-        'ring-offset-2',
-        'ring-offset-white',
-        'dark:ring-offset-gray-900'
+        "ring-2",
+        "ring-blue-500",
+        "ring-offset-2",
+        "ring-offset-white",
+        "dark:ring-offset-gray-900",
       );
     }
     actionGuideState.modalHighlightEl = null;
@@ -4163,33 +5588,40 @@
     if (!actionGuideState.tooltipEl) return;
     var host = document.body;
     if (actionGuideState.step === 3) {
-      var dialog = document.getElementById('gp-card-details-dialog');
-      var panel = dialog ? dialog.querySelector('el-dialog-panel') : null;
+      var dialog = document.getElementById("gp-card-details-dialog");
+      var panel = dialog ? dialog.querySelector("el-dialog-panel") : null;
       if (dialog && dialog.open && panel) {
         host = panel;
         // Keep tooltip visible outside panel bounds while still counting as "inside modal".
-        panel.classList.remove('overflow-hidden');
-        panel.setAttribute('data-guide-tooltip-open', 'true');
+        panel.classList.remove("overflow-hidden");
+        panel.setAttribute("data-guide-tooltip-open", "true");
       }
     } else {
-      var openDialog = document.getElementById('gp-card-details-dialog');
-      var openPanel = openDialog ? openDialog.querySelector('el-dialog-panel[data-guide-tooltip-open="true"]') : null;
+      var openDialog = document.getElementById("gp-card-details-dialog");
+      var openPanel = openDialog
+        ? openDialog.querySelector(
+            'el-dialog-panel[data-guide-tooltip-open="true"]',
+          )
+        : null;
       if (openPanel) {
-        openPanel.classList.add('overflow-hidden');
-        openPanel.removeAttribute('data-guide-tooltip-open');
+        openPanel.classList.add("overflow-hidden");
+        openPanel.removeAttribute("data-guide-tooltip-open");
       }
     }
     if (actionGuideState.tooltipEl.parentNode !== host) {
       // Avoid one-frame flash at stale coordinates when host changes (step 2 -> step 3).
-      actionGuideState.tooltipEl.style.display = 'none';
-      actionGuideState.tooltipEl.style.opacity = '0';
+      actionGuideState.tooltipEl.style.display = "none";
+      actionGuideState.tooltipEl.style.opacity = "0";
       host.appendChild(actionGuideState.tooltipEl);
     }
   }
 
   function setGuideModalHighlightActive(active) {
     var target = getGuideCardDetailsHighlightEl();
-    if (actionGuideState.modalHighlightEl && actionGuideState.modalHighlightEl !== target) {
+    if (
+      actionGuideState.modalHighlightEl &&
+      actionGuideState.modalHighlightEl !== target
+    ) {
       clearGuideCardDetailsHighlight();
     }
     if (!active || !target) {
@@ -4197,21 +5629,28 @@
       return;
     }
     target.classList.add(
-      'ring-2',
-      'ring-blue-500',
-      'ring-offset-2',
-      'ring-offset-white',
-      'dark:ring-offset-gray-900'
+      "ring-2",
+      "ring-blue-500",
+      "ring-offset-2",
+      "ring-offset-white",
+      "dark:ring-offset-gray-900",
     );
     actionGuideState.modalHighlightEl = target;
   }
 
   function openGuideMenuForTargetButton(button) {
     if (!button) return;
-    var dropdown = button.closest('el-dropdown');
-    var menu = dropdown ? dropdown.querySelector('el-menu[popover], [popover]') : null;
-    if (menu && typeof menu.matches === 'function' && menu.matches(':popover-open')) return;
-    if (menu && typeof menu.showPopover === 'function') {
+    var dropdown = button.closest("el-dropdown");
+    var menu = dropdown
+      ? dropdown.querySelector("el-menu[popover], [popover]")
+      : null;
+    if (
+      menu &&
+      typeof menu.matches === "function" &&
+      menu.matches(":popover-open")
+    )
+      return;
+    if (menu && typeof menu.showPopover === "function") {
       try {
         menu.showPopover();
         return;
@@ -4223,14 +5662,14 @@
   }
 
   function setGuideSelectedInvoice(invoice) {
-    actionGuideState.selectedInvoice = String(invoice || '');
+    actionGuideState.selectedInvoice = String(invoice || "");
   }
 
   function getEntryFromActionTrigger(button) {
     if (!button) return null;
-    var row = button.closest('tr[data-row]');
+    var row = button.closest("tr[data-row]");
     if (!row) return null;
-    var invoice = row.getAttribute('data-invoice') || '';
+    var invoice = row.getAttribute("data-invoice") || "";
     return invoice ? findEntryByInvoice(invoice) : null;
   }
 
@@ -4239,29 +5678,29 @@
     if (selected) return selected;
     var firstGuideRow = getFirstVisibleGuideCardRow();
     if (!firstGuideRow) return null;
-    return findEntryByInvoice(firstGuideRow.getAttribute('data-invoice') || '');
+    return findEntryByInvoice(firstGuideRow.getAttribute("data-invoice") || "");
   }
 
   function openCardDetailsModalForEntry(entry) {
     if (!entry) return;
-    if (entry.methodType !== 'card') return;
+    if (entry.methodType !== "card") return;
     if (!(actionGuideState.active && actionGuideState.step === 3)) {
       clearGuideCardDetailsHighlight();
     }
-    var howContent = document.getElementById('gp-card-how-content');
-    var howToggle = document.getElementById('gp-card-how-toggle');
+    var howContent = document.getElementById("gp-card-how-content");
+    var howToggle = document.getElementById("gp-card-how-toggle");
     if (howContent) {
-      howContent.classList.add('hidden');
-      howContent.classList.remove('flex');
+      howContent.classList.add("hidden");
+      howContent.classList.remove("flex");
     }
     if (howToggle) {
-      var howIcon = howToggle.querySelector('[data-collapse-icon]');
-      if (howIcon) howIcon.classList.remove('rotate-180');
+      var howIcon = howToggle.querySelector("[data-collapse-icon]");
+      if (howIcon) howIcon.classList.remove("rotate-180");
     }
     _activeGetPaidEntry = entry;
     populateGetPaidCardModal(entry);
-    var dialog = document.getElementById('gp-card-details-dialog');
-    if (dialog && typeof dialog.showModal === 'function') {
+    var dialog = document.getElementById("gp-card-details-dialog");
+    if (dialog && typeof dialog.showModal === "function") {
       if (!dialog.open) dialog.showModal();
     }
   }
@@ -4280,30 +5719,41 @@
     if (step === 3) {
       actionGuideState.tooltipEl.innerHTML =
         '<div class="relative rounded-lg border border-gray-300 bg-gray-50 p-4 shadow-sm dark:border-white/10 dark:bg-gray-800">' +
-          '<span class="pointer-events-none absolute top-1/2 -right-1 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-t border-r border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-gray-800"></span>' +
-          '<div class="flex items-start justify-between gap-4">' +
-            '<div class="min-w-0">' +
-              '<p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Use This Card in Your Terminal</p>' +
-              '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Take these card details and run the payment through your terminal like a regular card charge.</p>' +
-            '</div>' +
-          '</div>' +
-          '<div class="mt-4 flex items-center justify-end gap-2">' +
-            '<button type="button" data-guide-tooltip-done class="rounded bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Done</button>' +
-          '</div>' +
-        '</div>';
-      var doneBtn = actionGuideState.tooltipEl.querySelector('[data-guide-tooltip-done]');
+        '<span class="pointer-events-none absolute top-1/2 -right-1 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-t border-r border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-gray-800"></span>' +
+        '<div class="flex items-start justify-between gap-4">' +
+        '<div class="min-w-0">' +
+        '<p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Use This Card in Your Terminal</p>' +
+        '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Take these card details and run the payment through your terminal like a regular card charge.</p>' +
+        "</div>" +
+        "</div>" +
+        '<div class="mt-4 flex items-center justify-end gap-2">' +
+        '<button type="button" data-guide-tooltip-done class="rounded bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Done</button>' +
+        "</div>" +
+        "</div>";
+      var doneBtn = actionGuideState.tooltipEl.querySelector(
+        "[data-guide-tooltip-done]",
+      );
       if (doneBtn) {
-        doneBtn.addEventListener('pointerdown', function (event) {
+        doneBtn.addEventListener(
+          "pointerdown",
+          function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (typeof event.stopImmediatePropagation === "function")
+              event.stopImmediatePropagation();
+          },
+          true,
+        );
+        doneBtn.addEventListener("click", function (event) {
           event.preventDefault();
           event.stopPropagation();
-          if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
-        }, true);
-        doneBtn.addEventListener('click', function (event) {
-          event.preventDefault();
-          event.stopPropagation();
-          if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
-          if (window.STPState && typeof window.STPState.setStpStep === 'function') {
-            window.STPState.setStpStep('bank_verification_required');
+          if (typeof event.stopImmediatePropagation === "function")
+            event.stopImmediatePropagation();
+          if (
+            window.STPState &&
+            typeof window.STPState.setStpStep === "function"
+          ) {
+            window.STPState.setStpStep("bank_verification_required");
           }
           closeActionColumnGuide({ keepCardDetailsModalOpen: true });
         });
@@ -4314,47 +5764,57 @@
     if (step === 2) {
       actionGuideState.tooltipEl.innerHTML =
         '<div class="relative rounded-lg border border-gray-300 bg-gray-50 p-4 shadow-sm dark:border-white/10 dark:bg-gray-800">' +
-          '<span class="pointer-events-none absolute top-1/2 -right-1 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-t border-r border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-gray-800"></span>' +
-          '<div class="flex items-start justify-between gap-4">' +
-            '<div class="min-w-0">' +
-              '<p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Reveal Card Details</p>' +
-              '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Open <span class="font-medium text-gray-900 dark:text-gray-100">View details</span> to verify this payment card information and continue setup.</p>' +
-            '</div>' +
-          '</div>' +
-          '<div class="mt-4 flex items-center justify-end gap-2">' +
-            '<button type="button" data-guide-tooltip-skip class="inline-flex items-center rounded-md px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-900/10 dark:text-gray-300 dark:hover:bg-gray-900/10">Skip for now</button>' +
-            '<button type="button" data-guide-tooltip-next class="rounded bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Next</button>' +
-          '</div>' +
-        '</div>';
-      var skipBtnStep2 = actionGuideState.tooltipEl.querySelector('[data-guide-tooltip-skip]');
-      var nextBtnStep2 = actionGuideState.tooltipEl.querySelector('[data-guide-tooltip-next]');
-      if (skipBtnStep2) skipBtnStep2.addEventListener('click', closeActionColumnGuide);
-      if (nextBtnStep2) nextBtnStep2.addEventListener('click', function () {
-        goToGuideStep3();
-      });
+        '<span class="pointer-events-none absolute top-1/2 -right-1 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-t border-r border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-gray-800"></span>' +
+        '<div class="flex items-start justify-between gap-4">' +
+        '<div class="min-w-0">' +
+        '<p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Reveal Card Details</p>' +
+        '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Open <span class="font-medium text-gray-900 dark:text-gray-100">View details</span> to verify this payment card information and continue setup.</p>' +
+        "</div>" +
+        "</div>" +
+        '<div class="mt-4 flex items-center justify-end gap-2">' +
+        '<button type="button" data-guide-tooltip-skip class="inline-flex items-center rounded-md px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-900/10 dark:text-gray-300 dark:hover:bg-gray-900/10">Skip for now</button>' +
+        '<button type="button" data-guide-tooltip-next class="rounded bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Next</button>' +
+        "</div>" +
+        "</div>";
+      var skipBtnStep2 = actionGuideState.tooltipEl.querySelector(
+        "[data-guide-tooltip-skip]",
+      );
+      var nextBtnStep2 = actionGuideState.tooltipEl.querySelector(
+        "[data-guide-tooltip-next]",
+      );
+      if (skipBtnStep2)
+        skipBtnStep2.addEventListener("click", closeActionColumnGuide);
+      if (nextBtnStep2)
+        nextBtnStep2.addEventListener("click", function () {
+          goToGuideStep3();
+        });
       return;
     }
 
     actionGuideState.tooltipEl.innerHTML =
       '<div class="relative rounded-lg border border-gray-300 bg-gray-50 p-4 shadow-sm dark:border-white/10 dark:bg-gray-800">' +
-        '<span class="pointer-events-none absolute top-1/2 -right-1 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-t border-r border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-gray-800"></span>' +
-        '<div class="flex items-start justify-between gap-4">' +
-          '<div class="min-w-0">' +
-            '<p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Choose Any of These Payments</p>' +
-            '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Start with any highlighted card payment to connect your terminal and begin the setup flow.</p>' +
-          '</div>' +
-        '</div>' +
-        '<div class="mt-4 flex items-center justify-end gap-2">' +
-          '<button type="button" data-guide-tooltip-skip class="inline-flex items-center rounded-md px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-900/10 dark:text-gray-300 dark:hover:bg-gray-900/10">Skip for now</button>' +
-          '<button type="button" data-guide-tooltip-next class="rounded bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Next</button>' +
-        '</div>' +
-      '</div>';
+      '<span class="pointer-events-none absolute top-1/2 -right-1 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-t border-r border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-gray-800"></span>' +
+      '<div class="flex items-start justify-between gap-4">' +
+      '<div class="min-w-0">' +
+      '<p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Choose Any of These Payments</p>' +
+      '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Start with any highlighted card payment to connect your terminal and begin the setup flow.</p>' +
+      "</div>" +
+      "</div>" +
+      '<div class="mt-4 flex items-center justify-end gap-2">' +
+      '<button type="button" data-guide-tooltip-skip class="inline-flex items-center rounded-md px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-900/10 dark:text-gray-300 dark:hover:bg-gray-900/10">Skip for now</button>' +
+      '<button type="button" data-guide-tooltip-next class="rounded bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Next</button>' +
+      "</div>" +
+      "</div>";
 
-    var skipBtn = actionGuideState.tooltipEl.querySelector('[data-guide-tooltip-skip]');
-    var nextBtn = actionGuideState.tooltipEl.querySelector('[data-guide-tooltip-next]');
-    if (skipBtn) skipBtn.addEventListener('click', closeActionColumnGuide);
+    var skipBtn = actionGuideState.tooltipEl.querySelector(
+      "[data-guide-tooltip-skip]",
+    );
+    var nextBtn = actionGuideState.tooltipEl.querySelector(
+      "[data-guide-tooltip-next]",
+    );
+    if (skipBtn) skipBtn.addEventListener("click", closeActionColumnGuide);
     if (nextBtn) {
-      nextBtn.addEventListener('click', function () {
+      nextBtn.addEventListener("click", function () {
         goToGuideStep2(true);
       });
     }
@@ -4372,34 +5832,41 @@
       if (guideTargetEntry) setGuideSelectedInvoice(guideTargetEntry.invoice);
       if (!guideTargetEntry) {
         var fallbackRow = getFirstVisibleGuideCardRow();
-        if (fallbackRow) setGuideSelectedInvoice(fallbackRow.getAttribute('data-invoice') || '');
+        if (fallbackRow)
+          setGuideSelectedInvoice(
+            fallbackRow.getAttribute("data-invoice") || "",
+          );
       }
-      if (guideTarget && !getGuideViewDetailsRect()) openGuideMenuForTargetButton(guideTarget);
+      if (guideTarget && !getGuideViewDetailsRect())
+        openGuideMenuForTargetButton(guideTarget);
     }
     var attempts = 0;
     function tryAdvance() {
       if (!actionGuideState.active) return;
       var rect = getGuideViewDetailsRect();
       if (rect) {
-        var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var reducedMotion =
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         if (reducedMotion || !actionGuideState.tooltipEl) {
           setGuideTooltipContent(2);
           syncActionColumnGuide();
           if (actionGuideState.tooltipEl) {
-            actionGuideState.tooltipEl.style.opacity = '1';
-            actionGuideState.tooltipEl.style.transform = 'translateX(0)';
+            actionGuideState.tooltipEl.style.opacity = "1";
+            actionGuideState.tooltipEl.style.transform = "translateX(0)";
           }
           return;
         }
-        actionGuideState.tooltipEl.style.opacity = '0';
-        actionGuideState.tooltipEl.style.transform = 'translateX(-10px)';
-        if (actionGuideState.stepTransitionTimer) clearTimeout(actionGuideState.stepTransitionTimer);
+        actionGuideState.tooltipEl.style.opacity = "0";
+        actionGuideState.tooltipEl.style.transform = "translateX(-10px)";
+        if (actionGuideState.stepTransitionTimer)
+          clearTimeout(actionGuideState.stepTransitionTimer);
         actionGuideState.stepTransitionTimer = window.setTimeout(function () {
           setGuideTooltipContent(2);
           syncActionColumnGuide();
           if (actionGuideState.tooltipEl && actionGuideState.active) {
-            actionGuideState.tooltipEl.style.opacity = '1';
-            actionGuideState.tooltipEl.style.transform = 'translateX(0)';
+            actionGuideState.tooltipEl.style.opacity = "1";
+            actionGuideState.tooltipEl.style.transform = "translateX(0)";
           }
         }, 160);
         return;
@@ -4408,7 +5875,8 @@
       if (attempts <= 30) {
         if (attempts === 10 && forceOpenMenu) {
           var retryTarget = getGuideTargetButton();
-          if (retryTarget && !getGuideViewDetailsRect()) openGuideMenuForTargetButton(retryTarget);
+          if (retryTarget && !getGuideViewDetailsRect())
+            openGuideMenuForTargetButton(retryTarget);
         }
         window.requestAnimationFrame(tryAdvance);
         return;
@@ -4426,9 +5894,9 @@
     }
     actionGuideState.step3Transitioning = true;
     if (actionGuideState.tooltipEl) {
-      actionGuideState.tooltipEl.style.display = 'none';
-      actionGuideState.tooltipEl.style.visibility = 'hidden';
-      actionGuideState.tooltipEl.style.opacity = '0';
+      actionGuideState.tooltipEl.style.display = "none";
+      actionGuideState.tooltipEl.style.visibility = "hidden";
+      actionGuideState.tooltipEl.style.opacity = "0";
     }
     var opened = openGuideSelectedEntryCardDetailsModal();
     if (!opened) {
@@ -4441,29 +5909,32 @@
       if (!actionGuideState.active) return;
       var rect = getGuideCardDetailsRect();
       if (rect) {
-        var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        var reducedMotion =
+          window.matchMedia &&
+          window.matchMedia("(prefers-reduced-motion: reduce)").matches;
         if (reducedMotion || !actionGuideState.tooltipEl) {
           setGuideTooltipContent(3);
           syncActionColumnGuide();
           actionGuideState.step3Transitioning = false;
           syncActionColumnGuide();
           if (actionGuideState.tooltipEl) {
-            actionGuideState.tooltipEl.style.opacity = '1';
-            actionGuideState.tooltipEl.style.transform = 'translateX(0)';
+            actionGuideState.tooltipEl.style.opacity = "1";
+            actionGuideState.tooltipEl.style.transform = "translateX(0)";
           }
           return;
         }
-        actionGuideState.tooltipEl.style.opacity = '0';
-        actionGuideState.tooltipEl.style.transform = 'translateX(-10px)';
-        if (actionGuideState.stepTransitionTimer) clearTimeout(actionGuideState.stepTransitionTimer);
+        actionGuideState.tooltipEl.style.opacity = "0";
+        actionGuideState.tooltipEl.style.transform = "translateX(-10px)";
+        if (actionGuideState.stepTransitionTimer)
+          clearTimeout(actionGuideState.stepTransitionTimer);
         actionGuideState.stepTransitionTimer = window.setTimeout(function () {
           setGuideTooltipContent(3);
           actionGuideState.step3Transitioning = false;
           syncActionColumnGuide();
           syncActionColumnGuide();
           if (actionGuideState.tooltipEl && actionGuideState.active) {
-            actionGuideState.tooltipEl.style.opacity = '1';
-            actionGuideState.tooltipEl.style.transform = 'translateX(0)';
+            actionGuideState.tooltipEl.style.opacity = "1";
+            actionGuideState.tooltipEl.style.transform = "translateX(0)";
           }
         }, 160);
         return;
@@ -4482,8 +5953,8 @@
   function positionGuideTooltip() {
     if (!actionGuideState.tooltipEl) return;
     if (actionGuideState.step3Transitioning) {
-      actionGuideState.tooltipEl.style.display = 'none';
-      actionGuideState.tooltipEl.style.visibility = 'hidden';
+      actionGuideState.tooltipEl.style.display = "none";
+      actionGuideState.tooltipEl.style.visibility = "hidden";
       return;
     }
     ensureGuideTooltipHostForCurrentStep();
@@ -4492,68 +5963,76 @@
     else if (actionGuideState.step === 2) rect = getGuideViewDetailsRect();
     else rect = getFirstGuideTargetButtonRect();
     if (!rect) {
-      actionGuideState.tooltipEl.style.display = 'none';
-      actionGuideState.tooltipEl.style.visibility = 'hidden';
+      actionGuideState.tooltipEl.style.display = "none";
+      actionGuideState.tooltipEl.style.visibility = "hidden";
       return;
     }
 
     // Park offscreen before measuring to avoid a one-frame flash at stale coordinates.
-    actionGuideState.tooltipEl.style.left = '-9999px';
-    actionGuideState.tooltipEl.style.top = '-9999px';
-    actionGuideState.tooltipEl.style.display = 'inline-flex';
-    actionGuideState.tooltipEl.style.visibility = 'hidden';
+    actionGuideState.tooltipEl.style.left = "-9999px";
+    actionGuideState.tooltipEl.style.top = "-9999px";
+    actionGuideState.tooltipEl.style.display = "inline-flex";
+    actionGuideState.tooltipEl.style.visibility = "hidden";
     var gap = 16;
     var tooltipRect = actionGuideState.tooltipEl.getBoundingClientRect();
-    var hostPanel = actionGuideState.step === 3 ? actionGuideState.tooltipEl.closest('el-dialog-panel') : null;
+    var hostPanel =
+      actionGuideState.step === 3
+        ? actionGuideState.tooltipEl.closest("el-dialog-panel")
+        : null;
     if (hostPanel) {
-      actionGuideState.tooltipEl.style.position = 'absolute';
+      actionGuideState.tooltipEl.style.position = "absolute";
       var panelRect = hostPanel.getBoundingClientRect();
-      var leftInPanel = (rect.left - panelRect.left) - tooltipRect.width - gap;
-      var topInPanel = (rect.top - panelRect.top) + (rect.height / 2) - (tooltipRect.height / 2);
-      actionGuideState.tooltipEl.style.left = leftInPanel + 'px';
-      actionGuideState.tooltipEl.style.top = topInPanel + 'px';
-      actionGuideState.tooltipEl.style.visibility = 'visible';
+      var leftInPanel = rect.left - panelRect.left - tooltipRect.width - gap;
+      var topInPanel =
+        rect.top - panelRect.top + rect.height / 2 - tooltipRect.height / 2;
+      actionGuideState.tooltipEl.style.left = leftInPanel + "px";
+      actionGuideState.tooltipEl.style.top = topInPanel + "px";
+      actionGuideState.tooltipEl.style.visibility = "visible";
       return;
     }
-    actionGuideState.tooltipEl.style.position = 'fixed';
+    actionGuideState.tooltipEl.style.position = "fixed";
     var left = rect.left - tooltipRect.width - gap;
-    var top = rect.top + (rect.height / 2) - (tooltipRect.height / 2);
+    var top = rect.top + rect.height / 2 - tooltipRect.height / 2;
     var maxLeft = window.innerWidth - tooltipRect.width - 16;
     var maxTop = window.innerHeight - tooltipRect.height - 16;
     if (left < 16 || left > maxLeft || top < 16 || top > maxTop) {
-      actionGuideState.tooltipEl.style.display = 'none';
-      actionGuideState.tooltipEl.style.visibility = 'hidden';
+      actionGuideState.tooltipEl.style.display = "none";
+      actionGuideState.tooltipEl.style.visibility = "hidden";
       return;
     }
-    actionGuideState.tooltipEl.style.left = left + 'px';
-    actionGuideState.tooltipEl.style.top = top + 'px';
-    actionGuideState.tooltipEl.style.visibility = 'visible';
+    actionGuideState.tooltipEl.style.left = left + "px";
+    actionGuideState.tooltipEl.style.top = top + "px";
+    actionGuideState.tooltipEl.style.visibility = "visible";
   }
 
   function getGuideTransitionDuration() {
-    if (window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches) return 0;
+    if (
+      window.matchMedia &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    )
+      return 0;
     return 300;
   }
 
   function buildGuideSpotlightBoxes() {
     if (!actionGuideState.spotlightLayerEl) return;
     if (actionGuideState.step === 3) {
-      actionGuideState.spotlightLayerEl.innerHTML = '';
+      actionGuideState.spotlightLayerEl.innerHTML = "";
       setGuideModalHighlightActive(true);
       return;
     }
     setGuideModalHighlightActive(false);
     var rows = getGuideCardRows();
-    actionGuideState.spotlightLayerEl.innerHTML = '';
+    actionGuideState.spotlightLayerEl.innerHTML = "";
     rows.forEach(function (row) {
       var rect = row.getBoundingClientRect();
       if (rect.width <= 0 || rect.height <= 0) return;
-      var box = document.createElement('div');
-      box.className = 'pointer-events-none fixed rounded-xl';
-      box.style.left = Math.max(8, rect.left - 2) + 'px';
-      box.style.top = Math.max(8, rect.top - 2) + 'px';
-      box.style.width = Math.max(0, rect.width + 4) + 'px';
-      box.style.height = Math.max(0, rect.height + 4) + 'px';
+      var box = document.createElement("div");
+      box.className = "pointer-events-none fixed rounded-xl";
+      box.style.left = Math.max(8, rect.left - 2) + "px";
+      box.style.top = Math.max(8, rect.top - 2) + "px";
+      box.style.width = Math.max(0, rect.width + 4) + "px";
+      box.style.height = Math.max(0, rect.height + 4) + "px";
       actionGuideState.spotlightLayerEl.appendChild(box);
     });
   }
@@ -4565,8 +6044,12 @@
   }
 
   function closeActionColumnGuide(options) {
-    var keepCardDetailsModalOpen = !!(options && options.keepCardDetailsModalOpen);
-    var cardDetailsDialog = keepCardDetailsModalOpen ? document.getElementById('gp-card-details-dialog') : null;
+    var keepCardDetailsModalOpen = !!(
+      options && options.keepCardDetailsModalOpen
+    );
+    var cardDetailsDialog = keepCardDetailsModalOpen
+      ? document.getElementById("gp-card-details-dialog")
+      : null;
     if (actionGuideState.openTimer) {
       clearTimeout(actionGuideState.openTimer);
       actionGuideState.openTimer = null;
@@ -4575,16 +6058,24 @@
     actionGuideState.active = false;
 
     if (actionGuideState.onEsc) {
-      window.removeEventListener('keydown', actionGuideState.onEsc);
+      window.removeEventListener("keydown", actionGuideState.onEsc);
       actionGuideState.onEsc = null;
     }
     if (actionGuideState.onViewportChange) {
-      window.removeEventListener('resize', actionGuideState.onViewportChange);
-      window.removeEventListener('scroll', actionGuideState.onViewportChange, true);
+      window.removeEventListener("resize", actionGuideState.onViewportChange);
+      window.removeEventListener(
+        "scroll",
+        actionGuideState.onViewportChange,
+        true,
+      );
       actionGuideState.onViewportChange = null;
     }
     if (actionGuideState.onDocumentPointerDown) {
-      document.removeEventListener('pointerdown', actionGuideState.onDocumentPointerDown, true);
+      document.removeEventListener(
+        "pointerdown",
+        actionGuideState.onDocumentPointerDown,
+        true,
+      );
       actionGuideState.onDocumentPointerDown = null;
     }
     if (actionGuideState.stepTransitionTimer) {
@@ -4593,11 +6084,15 @@
     }
     actionGuideState.step3Transitioning = false;
     setGuideModalHighlightActive(false);
-    var guideDialog = document.getElementById('gp-card-details-dialog');
-    var guidePanel = guideDialog ? guideDialog.querySelector('el-dialog-panel[data-guide-tooltip-open="true"]') : null;
+    var guideDialog = document.getElementById("gp-card-details-dialog");
+    var guidePanel = guideDialog
+      ? guideDialog.querySelector(
+          'el-dialog-panel[data-guide-tooltip-open="true"]',
+        )
+      : null;
     if (guidePanel) {
-      guidePanel.classList.add('overflow-hidden');
-      guidePanel.removeAttribute('data-guide-tooltip-open');
+      guidePanel.classList.add("overflow-hidden");
+      guidePanel.removeAttribute("data-guide-tooltip-open");
     }
 
     var backdropToRemove = actionGuideState.backdropEl;
@@ -4606,20 +6101,20 @@
     var tooltipToRemove = actionGuideState.tooltipEl;
 
     if (backdropToRemove) {
-      backdropToRemove.style.pointerEvents = 'none';
-      backdropToRemove.style.opacity = '0';
+      backdropToRemove.style.pointerEvents = "none";
+      backdropToRemove.style.opacity = "0";
     }
     if (closeBtnToRemove) {
-      closeBtnToRemove.style.pointerEvents = 'none';
-      closeBtnToRemove.style.opacity = '0';
+      closeBtnToRemove.style.pointerEvents = "none";
+      closeBtnToRemove.style.opacity = "0";
     }
     if (spotlightToRemove) {
-      spotlightToRemove.style.pointerEvents = 'none';
-      spotlightToRemove.style.opacity = '0';
+      spotlightToRemove.style.pointerEvents = "none";
+      spotlightToRemove.style.opacity = "0";
     }
     if (tooltipToRemove) {
-      tooltipToRemove.style.pointerEvents = 'none';
-      tooltipToRemove.style.opacity = '0';
+      tooltipToRemove.style.pointerEvents = "none";
+      tooltipToRemove.style.opacity = "0";
     }
 
     actionGuideState.backdropEl = null;
@@ -4629,14 +6124,23 @@
     actionGuideState.modalHighlightEl = null;
 
     var cleanup = function () {
-      if (backdropToRemove && backdropToRemove.parentNode) backdropToRemove.parentNode.removeChild(backdropToRemove);
-      if (closeBtnToRemove && closeBtnToRemove.parentNode) closeBtnToRemove.parentNode.removeChild(closeBtnToRemove);
-      if (spotlightToRemove && spotlightToRemove.parentNode) spotlightToRemove.parentNode.removeChild(spotlightToRemove);
-      if (tooltipToRemove && tooltipToRemove.parentNode) tooltipToRemove.parentNode.removeChild(tooltipToRemove);
-      actionGuideState.highlightFilter = '';
-      actionGuideState.selectedInvoice = '';
+      if (backdropToRemove && backdropToRemove.parentNode)
+        backdropToRemove.parentNode.removeChild(backdropToRemove);
+      if (closeBtnToRemove && closeBtnToRemove.parentNode)
+        closeBtnToRemove.parentNode.removeChild(closeBtnToRemove);
+      if (spotlightToRemove && spotlightToRemove.parentNode)
+        spotlightToRemove.parentNode.removeChild(spotlightToRemove);
+      if (tooltipToRemove && tooltipToRemove.parentNode)
+        tooltipToRemove.parentNode.removeChild(tooltipToRemove);
+      actionGuideState.highlightFilter = "";
+      actionGuideState.selectedInvoice = "";
       renderCurrentPage();
-      if (keepCardDetailsModalOpen && cardDetailsDialog && !cardDetailsDialog.open && typeof cardDetailsDialog.showModal === 'function') {
+      if (
+        keepCardDetailsModalOpen &&
+        cardDetailsDialog &&
+        !cardDetailsDialog.open &&
+        typeof cardDetailsDialog.showModal === "function"
+      ) {
         cardDetailsDialog.showModal();
       }
     };
@@ -4652,37 +6156,40 @@
   function openActionColumnGuide() {
     if (actionGuideState.active) return;
     actionGuideState.active = true;
-    actionGuideState.highlightFilter = 'card';
+    actionGuideState.highlightFilter = "card";
     renderCurrentPage();
 
     actionGuideState.onEsc = function (event) {
-      if (event.key === 'Escape') closeActionColumnGuide();
+      if (event.key === "Escape") closeActionColumnGuide();
     };
-    window.addEventListener('keydown', actionGuideState.onEsc);
+    window.addEventListener("keydown", actionGuideState.onEsc);
 
-    var backdrop = document.createElement('button');
-    backdrop.type = 'button';
-    backdrop.setAttribute('aria-label', 'Close payments guide');
-    backdrop.setAttribute('data-guide-overlay', 'true');
-    backdrop.className = 'fixed inset-0 z-[200] bg-gray-900/75 transition-opacity duration-300 ease-out motion-reduce:transition-none';
-    backdrop.style.opacity = '0';
-    backdrop.addEventListener('click', closeActionColumnGuide);
+    var backdrop = document.createElement("button");
+    backdrop.type = "button";
+    backdrop.setAttribute("aria-label", "Close payments guide");
+    backdrop.setAttribute("data-guide-overlay", "true");
+    backdrop.className =
+      "fixed inset-0 z-[200] bg-gray-900/75 transition-opacity duration-300 ease-out motion-reduce:transition-none";
+    backdrop.style.opacity = "0";
+    backdrop.addEventListener("click", closeActionColumnGuide);
     document.body.appendChild(backdrop);
     actionGuideState.backdropEl = backdrop;
 
     actionGuideState.closeBtnEl = null;
 
-    var spotlightLayer = document.createElement('div');
-    spotlightLayer.className = 'fixed inset-0 z-[215] pointer-events-none transition-opacity duration-300 ease-out motion-reduce:transition-none';
-    spotlightLayer.style.opacity = '0';
+    var spotlightLayer = document.createElement("div");
+    spotlightLayer.className =
+      "fixed inset-0 z-[215] pointer-events-none transition-opacity duration-300 ease-out motion-reduce:transition-none";
+    spotlightLayer.style.opacity = "0";
     document.body.appendChild(spotlightLayer);
     actionGuideState.spotlightLayerEl = spotlightLayer;
 
-    var tooltip = document.createElement('div');
-    tooltip.className = 'fixed z-[230] w-[413px] max-w-[calc(100vw-32px)] transition-[opacity,transform] duration-400 ease-out motion-reduce:transition-none';
-    tooltip.setAttribute('data-guide-tooltip-host', 'true');
-    tooltip.style.opacity = '0';
-    tooltip.style.transform = 'translateX(-10px)';
+    var tooltip = document.createElement("div");
+    tooltip.className =
+      "fixed z-[230] w-[413px] max-w-[calc(100vw-32px)] transition-[opacity,transform] duration-400 ease-out motion-reduce:transition-none";
+    tooltip.setAttribute("data-guide-tooltip-host", "true");
+    tooltip.style.opacity = "0";
+    tooltip.style.transform = "translateX(-10px)";
     document.body.appendChild(tooltip);
     actionGuideState.tooltipEl = tooltip;
     setGuideTooltipContent(1);
@@ -4692,44 +6199,58 @@
       var tooltipEl = actionGuideState.tooltipEl;
       if (tooltipEl && tooltipEl.contains(event.target)) return;
       if (actionGuideState.step === 3) {
-        var cardDialog = document.getElementById('gp-card-details-dialog');
-        if (cardDialog && cardDialog.open && cardDialog.contains(event.target)) return;
+        var cardDialog = document.getElementById("gp-card-details-dialog");
+        if (cardDialog && cardDialog.open && cardDialog.contains(event.target))
+          return;
       }
-      var actionTrigger = event.target.closest('[data-action-menu-trigger="true"]');
+      var actionTrigger = event.target.closest(
+        '[data-action-menu-trigger="true"]',
+      );
       if (actionTrigger && actionGuideState.step === 1) {
         var actionEntry = getEntryFromActionTrigger(actionTrigger);
         if (actionEntry) setGuideSelectedInvoice(actionEntry.invoice);
-        window.setTimeout(function () { goToGuideStep2(false); }, 0);
+        window.setTimeout(function () {
+          goToGuideStep2(false);
+        }, 0);
         return;
       }
-      var viewDetailsLink = event.target.closest('[data-view-details-invoice]');
+      var viewDetailsLink = event.target.closest("[data-view-details-invoice]");
       if (viewDetailsLink && actionGuideState.step === 2) return;
       closeActionColumnGuide();
     };
-    document.addEventListener('pointerdown', actionGuideState.onDocumentPointerDown, true);
+    document.addEventListener(
+      "pointerdown",
+      actionGuideState.onDocumentPointerDown,
+      true,
+    );
 
     actionGuideState.onViewportChange = function () {
       syncActionColumnGuide();
     };
-    window.addEventListener('resize', actionGuideState.onViewportChange);
-    window.addEventListener('scroll', actionGuideState.onViewportChange, true);
+    window.addEventListener("resize", actionGuideState.onViewportChange);
+    window.addEventListener("scroll", actionGuideState.onViewportChange, true);
     syncActionColumnGuide();
 
     window.requestAnimationFrame(function () {
-      if (actionGuideState.backdropEl) actionGuideState.backdropEl.style.opacity = '1';
-      if (actionGuideState.spotlightLayerEl) actionGuideState.spotlightLayerEl.style.opacity = '1';
-      var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (actionGuideState.backdropEl)
+        actionGuideState.backdropEl.style.opacity = "1";
+      if (actionGuideState.spotlightLayerEl)
+        actionGuideState.spotlightLayerEl.style.opacity = "1";
+      var reducedMotion =
+        window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       if (actionGuideState.tooltipEl) {
         if (reducedMotion) {
-          actionGuideState.tooltipEl.style.opacity = '1';
-          actionGuideState.tooltipEl.style.transform = 'translateX(0)';
+          actionGuideState.tooltipEl.style.opacity = "1";
+          actionGuideState.tooltipEl.style.transform = "translateX(0)";
         } else {
-          actionGuideState.tooltipEl.style.transitionDuration = '400ms';
-          actionGuideState.tooltipEl.style.transitionTimingFunction = 'ease-out';
+          actionGuideState.tooltipEl.style.transitionDuration = "400ms";
+          actionGuideState.tooltipEl.style.transitionTimingFunction =
+            "ease-out";
           window.setTimeout(function () {
             if (!actionGuideState.tooltipEl || !actionGuideState.active) return;
-            actionGuideState.tooltipEl.style.opacity = '1';
-            actionGuideState.tooltipEl.style.transform = 'translateX(0)';
+            actionGuideState.tooltipEl.style.opacity = "1";
+            actionGuideState.tooltipEl.style.transform = "translateX(0)";
           }, 500);
         }
       }
@@ -4747,9 +6268,13 @@
     var firstRow = getFirstVisibleGuideCardRow();
     var table = document.getElementById(TABLE_ID);
     var scrollTarget = firstTarget || firstRow || table;
-    if (scrollTarget && typeof scrollTarget.scrollIntoView === 'function') {
+    if (scrollTarget && typeof scrollTarget.scrollIntoView === "function") {
       // Use instant scroll to avoid race where tooltip computes before smooth scroll finishes.
-      scrollTarget.scrollIntoView({ behavior: 'auto', block: 'center', inline: 'nearest' });
+      scrollTarget.scrollIntoView({
+        behavior: "auto",
+        block: "center",
+        inline: "nearest",
+      });
     }
     actionGuideState.openTimer = window.setTimeout(function () {
       actionGuideState.openTimer = null;
@@ -4762,13 +6287,22 @@
 
   function getJsonPathCandidates() {
     if (PAGE_CONFIG.dataset) {
-      var file = PAGE_CONFIG.dataset + '.json';
-      return ['../../../src/data/' + file, '/src/data/' + file, './src/data/' + file];
+      var file = PAGE_CONFIG.dataset + ".json";
+      return [
+        "../../../src/data/" + file,
+        "/src/data/" + file,
+        "./src/data/" + file,
+      ];
     }
     var candidates = JSON_PATH_FALLBACKS.slice();
     if (document.currentScript && document.currentScript.src) {
       try {
-        candidates.unshift(new URL('../data/exchanges.json', document.currentScript.src).toString());
+        candidates.unshift(
+          new URL(
+            "../data/exchanges.json",
+            document.currentScript.src,
+          ).toString(),
+        );
       } catch (err) {
         // Ignore URL parse errors
       }
@@ -4785,7 +6319,12 @@
     var candidates = CHECK_ADDRESSES_PATH_FALLBACKS.slice();
     if (document.currentScript && document.currentScript.src) {
       try {
-        candidates.unshift(new URL('../data/check-addresses.json', document.currentScript.src).toString());
+        candidates.unshift(
+          new URL(
+            "../data/check-addresses.json",
+            document.currentScript.src,
+          ).toString(),
+        );
       } catch (err) {
         // Ignore URL parse errors
       }
@@ -4797,7 +6336,12 @@
     var candidates = BANK_ACCOUNTS_PATH_FALLBACKS.slice();
     if (document.currentScript && document.currentScript.src) {
       try {
-        candidates.unshift(new URL('../data/bank-accounts.json', document.currentScript.src).toString());
+        candidates.unshift(
+          new URL(
+            "../data/bank-accounts.json",
+            document.currentScript.src,
+          ).toString(),
+        );
       } catch (err) {
         // Ignore URL parse errors
       }
@@ -4809,7 +6353,12 @@
     var candidates = PAYMENT_PREFERENCES_DATA_PATH_FALLBACKS.slice();
     if (document.currentScript && document.currentScript.src) {
       try {
-        candidates.unshift(new URL('../data/payment-preferences-data.json', document.currentScript.src).toString());
+        candidates.unshift(
+          new URL(
+            "../data/payment-preferences-data.json",
+            document.currentScript.src,
+          ).toString(),
+        );
       } catch (err) {
         // Ignore URL parse errors
       }
@@ -4821,7 +6370,12 @@
     var candidates = CUSTOMERS_PATH_FALLBACKS.slice();
     if (document.currentScript && document.currentScript.src) {
       try {
-        candidates.unshift(new URL('../data/customers.json', document.currentScript.src).toString());
+        candidates.unshift(
+          new URL(
+            "../data/customers.json",
+            document.currentScript.src,
+          ).toString(),
+        );
       } catch (err) {
         // Ignore URL parse errors
       }
@@ -4830,15 +6384,25 @@
   }
 
   function normalizeCustomer(customer) {
-    if (!customer || typeof customer !== 'object') return null;
-    var id = typeof customer.id === 'string' ? customer.id.trim() : '';
-    var name = typeof customer.name === 'string' ? customer.name.trim() : '';
+    if (!customer || typeof customer !== "object") return null;
+    var id = typeof customer.id === "string" ? customer.id.trim() : "";
+    var name = typeof customer.name === "string" ? customer.name.trim() : "";
     var vendorEntries = Array.isArray(customer.vendorEntries)
-      ? customer.vendorEntries.map(function (v) { return String(v || '').trim(); }).filter(Boolean)
+      ? customer.vendorEntries
+          .map(function (v) {
+            return String(v || "").trim();
+          })
+          .filter(Boolean)
       : [];
-    var address = typeof customer.address === 'string' ? customer.address.trim() : '';
+    var address =
+      typeof customer.address === "string" ? customer.address.trim() : "";
     if (!id || !name) return null;
-    return { id: id, name: name, vendorEntries: vendorEntries, address: address };
+    return {
+      id: id,
+      name: name,
+      vendorEntries: vendorEntries,
+      address: address,
+    };
   }
 
   function fetchCustomersData() {
@@ -4847,7 +6411,7 @@
 
     function tryNextPath() {
       if (index >= paths.length) {
-        throw new Error('Failed to load customers from all candidate paths');
+        throw new Error("Failed to load customers from all candidate paths");
       }
       var path = paths[index++];
       return fetchJsonFromPath(path).catch(function () {
@@ -4857,34 +6421,42 @@
 
     return tryNextPath().then(function (payload) {
       if (!Array.isArray(payload)) return [];
-      return payload
-        .map(normalizeCustomer)
-        .filter(function (customer) { return customer !== null; });
+      return payload.map(normalizeCustomer).filter(function (customer) {
+        return customer !== null;
+      });
     });
   }
 
   function normalizeCheckAddress(address) {
-    if (!address || typeof address !== 'object') return null;
-    var id = typeof address.id === 'string' ? address.id.trim() : '';
-    var displayName = typeof address.displayName === 'string' ? address.displayName.trim() : '';
-    var name = typeof address.name === 'string' ? address.name.trim() : '';
-    var fullAddress = typeof address.address === 'string' ? address.address.trim() : '';
-    var cityState = typeof address.cityState === 'string' ? address.cityState.trim() : '';
-    var summary = typeof address.summary === 'string' ? address.summary.trim() : '';
+    if (!address || typeof address !== "object") return null;
+    var id = typeof address.id === "string" ? address.id.trim() : "";
+    var displayName =
+      typeof address.displayName === "string" ? address.displayName.trim() : "";
+    var name = typeof address.name === "string" ? address.name.trim() : "";
+    var fullAddress =
+      typeof address.address === "string" ? address.address.trim() : "";
+    var cityState =
+      typeof address.cityState === "string" ? address.cityState.trim() : "";
+    var summary =
+      typeof address.summary === "string" ? address.summary.trim() : "";
     if (!id || !displayName || !name || !fullAddress) return null;
     if (!cityState) {
       var lines = fullAddress
-        .split('\n')
-        .map(function (line) { return line.trim(); })
+        .split("\n")
+        .map(function (line) {
+          return line.trim();
+        })
         .filter(Boolean);
-      cityState = lines.length > 1 ? lines[lines.length - 2] : (lines[0] || '');
+      cityState = lines.length > 1 ? lines[lines.length - 2] : lines[0] || "";
     }
     if (!summary) {
       var summaryLines = fullAddress
-        .split('\n')
-        .map(function (line) { return line.trim(); })
+        .split("\n")
+        .map(function (line) {
+          return line.trim();
+        })
         .filter(Boolean);
-      summary = summaryLines.slice(0, 3).join(', ');
+      summary = summaryLines.slice(0, 3).join(", ");
     }
     if (!cityState) return null;
     return {
@@ -4903,7 +6475,9 @@
 
     function tryNextPath() {
       if (index >= paths.length) {
-        throw new Error('Failed to load check addresses from all candidate paths');
+        throw new Error(
+          "Failed to load check addresses from all candidate paths",
+        );
       }
       var path = paths[index++];
       return fetchJsonFromPath(path).catch(function () {
@@ -4913,41 +6487,56 @@
 
     return tryNextPath().then(function (payload) {
       if (!Array.isArray(payload)) return [];
-      return payload
-        .map(normalizeCheckAddress)
-        .filter(function (address) { return address !== null; });
+      return payload.map(normalizeCheckAddress).filter(function (address) {
+        return address !== null;
+      });
     });
   }
 
   function normalizeBankAccount(account) {
-    if (!account || typeof account !== 'object') return null;
-    var id = typeof account.id === 'string' ? account.id.trim() : '';
+    if (!account || typeof account !== "object") return null;
+    var id = typeof account.id === "string" ? account.id.trim() : "";
     if (!id) return null;
-    var displayName = typeof account.displayName === 'string' ? account.displayName.trim() : '';
-    var bankName = typeof account.bankName === 'string' ? account.bankName.trim() : '';
-    var name = typeof account.name === 'string' ? account.name.trim() : '';
-    var accountNumber = typeof account.accountNumber === 'string' ? account.accountNumber.trim() : '';
-    var maskedAccount = typeof account.maskedAccount === 'string' ? account.maskedAccount.trim() : '';
-    var routingNumber = typeof account.routingNumber === 'string' ? account.routingNumber.trim() : '';
-    var maskedRouting = typeof account.maskedRouting === 'string' ? account.maskedRouting.trim() : '';
-    var address = typeof account.address === 'string' ? account.address.trim() : '';
-    var last4 = typeof account.last4 === 'string' ? account.last4.trim() : '';
+    var displayName =
+      typeof account.displayName === "string" ? account.displayName.trim() : "";
+    var bankName =
+      typeof account.bankName === "string" ? account.bankName.trim() : "";
+    var name = typeof account.name === "string" ? account.name.trim() : "";
+    var accountNumber =
+      typeof account.accountNumber === "string"
+        ? account.accountNumber.trim()
+        : "";
+    var maskedAccount =
+      typeof account.maskedAccount === "string"
+        ? account.maskedAccount.trim()
+        : "";
+    var routingNumber =
+      typeof account.routingNumber === "string"
+        ? account.routingNumber.trim()
+        : "";
+    var maskedRouting =
+      typeof account.maskedRouting === "string"
+        ? account.maskedRouting.trim()
+        : "";
+    var address =
+      typeof account.address === "string" ? account.address.trim() : "";
+    var last4 = typeof account.last4 === "string" ? account.last4.trim() : "";
     if (!last4) {
-      var digits = accountNumber.replace(/\D/g, '');
+      var digits = accountNumber.replace(/\D/g, "");
       if (digits.length >= 4) last4 = digits.slice(-4);
     }
     if (!displayName) {
-      if (bankName) displayName = bankName + ' Account';
+      if (bankName) displayName = bankName + " Account";
       else if (name) displayName = name;
-      else displayName = 'Bank Account';
+      else displayName = "Bank Account";
     }
     return {
       id: id,
       displayName: displayName,
       name: name || displayName,
-      bankName: bankName || displayName.replace(/\s+Account$/i, ''),
+      bankName: bankName || displayName.replace(/\s+Account$/i, ""),
       accountNumber: accountNumber,
-      maskedAccount: maskedAccount || (last4 ? ('••••' + last4) : ''),
+      maskedAccount: maskedAccount || (last4 ? "••••" + last4 : ""),
       routingNumber: routingNumber,
       maskedRouting: maskedRouting,
       address: address,
@@ -4961,7 +6550,9 @@
 
     function tryNextPath() {
       if (index >= paths.length) {
-        throw new Error('Failed to load bank accounts from all candidate paths');
+        throw new Error(
+          "Failed to load bank accounts from all candidate paths",
+        );
       }
       var path = paths[index++];
       return fetchJsonFromPath(path).catch(function () {
@@ -4971,9 +6562,9 @@
 
     return tryNextPath().then(function (payload) {
       if (!Array.isArray(payload)) return [];
-      return payload
-        .map(normalizeBankAccount)
-        .filter(function (account) { return account !== null; });
+      return payload.map(normalizeBankAccount).filter(function (account) {
+        return account !== null;
+      });
     });
   }
 
@@ -4983,7 +6574,9 @@
 
     function tryNextPath() {
       if (index >= paths.length) {
-        throw new Error('Failed to load payment-preferences data from all candidate paths');
+        throw new Error(
+          "Failed to load payment-preferences data from all candidate paths",
+        );
       }
       var path = paths[index++];
       return fetchJsonFromPath(path).catch(function () {
@@ -4992,9 +6585,13 @@
     }
 
     return tryNextPath().then(function (payload) {
-      var banks = Array.isArray(payload && payload.bankAccounts) ? payload.bankAccounts : [];
+      var banks = Array.isArray(payload && payload.bankAccounts)
+        ? payload.bankAccounts
+        : [];
       return {
-        bankAccounts: banks.map(normalizeBankAccount).filter(function (item) { return item !== null; }),
+        bankAccounts: banks.map(normalizeBankAccount).filter(function (item) {
+          return item !== null;
+        }),
       };
     });
   }
@@ -5015,16 +6612,19 @@
       if (!normalized) return;
       var current = byId[normalized.id] || {};
       byId[normalized.id] = Object.assign({}, current, normalized, {
-        accountNumber: normalized.accountNumber || current.accountNumber || '',
-        maskedAccount: normalized.maskedAccount || current.maskedAccount || '',
-        routingNumber: normalized.routingNumber || current.routingNumber || '',
-        maskedRouting: normalized.maskedRouting || current.maskedRouting || '',
-        address: normalized.address || current.address || '',
+        accountNumber: normalized.accountNumber || current.accountNumber || "",
+        maskedAccount: normalized.maskedAccount || current.maskedAccount || "",
+        routingNumber: normalized.routingNumber || current.routingNumber || "",
+        maskedRouting: normalized.maskedRouting || current.maskedRouting || "",
+        address: normalized.address || current.address || "",
       });
-      if (orderedIds.indexOf(normalized.id) === -1) orderedIds.push(normalized.id);
+      if (orderedIds.indexOf(normalized.id) === -1)
+        orderedIds.push(normalized.id);
     });
 
-    return orderedIds.map(function (id) { return byId[id]; });
+    return orderedIds.map(function (id) {
+      return byId[id];
+    });
   }
 
   function fetchExchangesData() {
@@ -5033,7 +6633,9 @@
 
     function tryNextPath() {
       if (index >= paths.length) {
-        throw new Error('Failed to load exchanges data from all candidate paths');
+        throw new Error(
+          "Failed to load exchanges data from all candidate paths",
+        );
       }
       var path = paths[index++];
       return fetchJsonFromPath(path).catch(function () {
@@ -5052,14 +6654,18 @@
         columns = null;
         rawData = payload;
       } else {
-        throw new Error('Unexpected JSON format in exchanges data');
+        throw new Error("Unexpected JSON format in exchanges data");
       }
 
-      var entries = rawData
-        .map(normalizeEntry)
-        .filter(function (entry) { return entry !== null; });
+      var entries = rawData.map(normalizeEntry).filter(function (entry) {
+        return entry !== null;
+      });
 
-      return { columns: columns, entries: entries, myBusiness: payload.myBusiness || null };
+      return {
+        columns: columns,
+        entries: entries,
+        myBusiness: payload.myBusiness || null,
+      };
     });
   }
 
@@ -5071,62 +6677,63 @@
 
   var ATTACHMENT_ICON =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500">' +
-      '<path fill-rule="evenodd" clip-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" />' +
-    '</svg>';
+    '<path fill-rule="evenodd" clip-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" />' +
+    "</svg>";
 
   var CHECKBOX_STATUS_HTML =
     '<div class="flex h-6 shrink-0 items-center">' +
-      '<div class="group grid size-4 grid-cols-1 opacity-60">' +
-        '<input type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
-        '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
-          '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
-        '</svg>' +
-      '</div>' +
-    '</div>';
+    '<div class="group grid size-4 grid-cols-1 opacity-60">' +
+    '<input type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
+    '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
+    '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
+    "</svg>" +
+    "</div>" +
+    "</div>";
 
   var STEP_BADGE_NUMBER_CLASS =
-    'inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300';
+    "inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300";
   var STEP_BADGE_COMPLETE_CLASS =
-    'inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-blue-300 bg-blue-100 text-blue-700 dark:border-blue-500/40 dark:bg-blue-400/15 dark:text-blue-300';
+    "inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-blue-300 bg-blue-100 text-blue-700 dark:border-blue-500/40 dark:bg-blue-400/15 dark:text-blue-300";
   var STEP_BADGE_CHECK_ICON =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5" aria-hidden="true">' +
-      '<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />' +
-    '</svg>';
+    '<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />' +
+    "</svg>";
   var _getPaidStpOptInRequested = false;
   var _getPaidStpModalActive = false;
   var _getPaidStpModalConfirmed = false;
 
   function setGetPaidStepBadge(stepNum, isComplete) {
-    var badge = document.getElementById('gp-step-' + stepNum + '-badge');
+    var badge = document.getElementById("gp-step-" + stepNum + "-badge");
     if (!badge) return;
-    var displayNum = badge.getAttribute('data-step-display') || String(stepNum);
+    var displayNum = badge.getAttribute("data-step-display") || String(stepNum);
     if (isComplete) {
       badge.className = STEP_BADGE_COMPLETE_CLASS;
       badge.innerHTML = STEP_BADGE_CHECK_ICON;
-      badge.setAttribute('aria-label', 'Step ' + displayNum + ' complete');
+      badge.setAttribute("aria-label", "Step " + displayNum + " complete");
     } else {
       badge.className = STEP_BADGE_NUMBER_CLASS;
       badge.textContent = displayNum;
-      badge.setAttribute('aria-label', 'Step ' + displayNum);
+      badge.setAttribute("aria-label", "Step " + displayNum);
     }
   }
 
   function setGetPaidStepDisplayNumber(stepNum, displayNum) {
-    var badge = document.getElementById('gp-step-' + stepNum + '-badge');
+    var badge = document.getElementById("gp-step-" + stepNum + "-badge");
     if (!badge) return;
-    badge.setAttribute('data-step-display', String(displayNum));
+    badge.setAttribute("data-step-display", String(displayNum));
   }
 
   function getSelectedOptionValue(sel) {
-    if (!sel) return '';
+    if (!sel) return "";
     var selected = sel.querySelector('el-option[aria-selected="true"]');
-    return selected ? String(selected.getAttribute('value') || '') : '';
+    return selected ? String(selected.getAttribute("value") || "") : "";
   }
 
   function findEntryByInvoice(invoice) {
-    var inv = String(invoice || '');
+    var inv = String(invoice || "");
     for (var i = 0; i < paginationState.sourceEntries.length; i++) {
-      if (paginationState.sourceEntries[i].invoice === inv) return paginationState.sourceEntries[i];
+      if (paginationState.sourceEntries[i].invoice === inv)
+        return paginationState.sourceEntries[i];
     }
     return null;
   }
@@ -5134,27 +6741,37 @@
   function populateGetPaidCardModal(entry) {
     if (!entry) return;
     var formattedAmount = formatCurrency(entry.amount, entry.currency);
-    var paymentInfo = entry.details && entry.details.paymentInfo ? entry.details.paymentInfo : {};
+    var paymentInfo =
+      entry.details && entry.details.paymentInfo
+        ? entry.details.paymentInfo
+        : {};
     var customer = getCustomerForEntry(entry);
-    var cardDetails = getPayerCardDetailsForRender(entry, paymentInfo, customer);
-    var cardHolderName = cardDetails.cardHolderName || entry.vendorEntry || '';
-    var cardHolderAddress = cardDetails.cardHolderAddress || '';
-    var displayCardNumber = cardDetails.fullCardNumber || cardDetails.maskedCardNumber || '';
-    var expiryFull = String(cardDetails.expiryFull || '12/2026');
-    var expiryShort = /^\d{2}\/\d{4}$/.test(expiryFull) ? (expiryFull.slice(0, 3) + expiryFull.slice(-2)) : expiryFull;
-    var cvcValue = String(cardDetails.cvcValue || '999');
+    var cardDetails = getPayerCardDetailsForRender(
+      entry,
+      paymentInfo,
+      customer,
+    );
+    var cardHolderName = cardDetails.cardHolderName || entry.vendorEntry || "";
+    var cardHolderAddress = cardDetails.cardHolderAddress || "";
+    var displayCardNumber =
+      cardDetails.fullCardNumber || cardDetails.maskedCardNumber || "";
+    var expiryFull = String(cardDetails.expiryFull || "12/2026");
+    var expiryShort = /^\d{2}\/\d{4}$/.test(expiryFull)
+      ? expiryFull.slice(0, 3) + expiryFull.slice(-2)
+      : expiryFull;
+    var cvcValue = String(cardDetails.cvcValue || "999");
 
-    var vcAmountEl = document.getElementById('gp-vc-amount');
-    var vcPendingEl = document.getElementById('gp-vc-pending-amount');
-    var vcNameOnCardEl = document.getElementById('gp-vc-name');
-    var vcHolderNameEl = document.getElementById('gp-vc-holder-name');
-    var vcHolderAddressEl = document.getElementById('gp-vc-card-address');
-    var vcCardNumberEl = document.getElementById('gp-vc-card-number');
-    var vcExpiryEl = document.getElementById('gp-vc-expiry');
-    var vcFullNumberEl = document.getElementById('gp-vc-full-number');
-    var vcFullExpiryEl = document.getElementById('gp-vc-full-expiry');
-    var vcCvcEl = document.getElementById('gp-vc-cvc2');
-    var vcCvvPillEl = document.getElementById('gp-vc-cvv-pill');
+    var vcAmountEl = document.getElementById("gp-vc-amount");
+    var vcPendingEl = document.getElementById("gp-vc-pending-amount");
+    var vcNameOnCardEl = document.getElementById("gp-vc-name");
+    var vcHolderNameEl = document.getElementById("gp-vc-holder-name");
+    var vcHolderAddressEl = document.getElementById("gp-vc-card-address");
+    var vcCardNumberEl = document.getElementById("gp-vc-card-number");
+    var vcExpiryEl = document.getElementById("gp-vc-expiry");
+    var vcFullNumberEl = document.getElementById("gp-vc-full-number");
+    var vcFullExpiryEl = document.getElementById("gp-vc-full-expiry");
+    var vcCvcEl = document.getElementById("gp-vc-cvc2");
+    var vcCvvPillEl = document.getElementById("gp-vc-cvv-pill");
 
     if (vcAmountEl) vcAmountEl.textContent = formattedAmount;
     if (vcPendingEl) vcPendingEl.textContent = formattedAmount;
@@ -5166,61 +6783,66 @@
     if (vcFullNumberEl) vcFullNumberEl.textContent = displayCardNumber;
     if (vcFullExpiryEl) vcFullExpiryEl.textContent = expiryFull;
     if (vcCvcEl) vcCvcEl.textContent = cvcValue;
-    if (vcCvvPillEl) vcCvvPillEl.textContent = 'CVV : ' + cvcValue;
+    if (vcCvvPillEl) vcCvvPillEl.textContent = "CVV : " + cvcValue;
 
-    var footer = document.getElementById('gp-card-details-footer');
-    var markPaidBtn = document.getElementById('gp-card-mark-paid-btn');
-    var showMarkPaid = activeTabShowsManualActions() && isPendingManualReviewEntry(entry);
-    if (footer) footer.classList.toggle('hidden', !showMarkPaid);
+    var footer = document.getElementById("gp-card-details-footer");
+    var markPaidBtn = document.getElementById("gp-card-mark-paid-btn");
+    var showMarkPaid =
+      activeTabShowsManualActions() && isPendingManualReviewEntry(entry);
+    if (footer) footer.classList.toggle("hidden", !showMarkPaid);
     if (markPaidBtn) {
-      if (showMarkPaid) markPaidBtn.setAttribute('data-mark-paid-invoice', entry.invoice || '');
-      else markPaidBtn.removeAttribute('data-mark-paid-invoice');
+      if (showMarkPaid)
+        markPaidBtn.setAttribute("data-mark-paid-invoice", entry.invoice || "");
+      else markPaidBtn.removeAttribute("data-mark-paid-invoice");
     }
   }
 
   function initGetPaidCardDetailsTrigger() {
-    document.addEventListener('click', function (e) {
+    document.addEventListener("click", function (e) {
       var trigger = e.target.closest('[commandfor="gp-card-details-dialog"]');
       if (!trigger) return;
       if (!(actionGuideState.active && actionGuideState.step === 3)) {
         clearGuideCardDetailsHighlight();
       }
-      var howContent = document.getElementById('gp-card-how-content');
-      var howToggle = document.getElementById('gp-card-how-toggle');
+      var howContent = document.getElementById("gp-card-how-content");
+      var howToggle = document.getElementById("gp-card-how-toggle");
       if (howContent) {
-        howContent.classList.add('hidden');
-        howContent.classList.remove('flex');
+        howContent.classList.add("hidden");
+        howContent.classList.remove("flex");
       }
       if (howToggle) {
-        var howIcon = howToggle.querySelector('[data-collapse-icon]');
-        if (howIcon) howIcon.classList.remove('rotate-180');
+        var howIcon = howToggle.querySelector("[data-collapse-icon]");
+        if (howIcon) howIcon.classList.remove("rotate-180");
       }
       if (_activeGetPaidEntry) populateGetPaidCardModal(_activeGetPaidEntry);
     });
   }
 
   function initCardDetailsHowItWorksToggle() {
-    var howToggle = document.getElementById('gp-card-how-toggle');
-    var howContent = document.getElementById('gp-card-how-content');
+    var howToggle = document.getElementById("gp-card-how-toggle");
+    var howContent = document.getElementById("gp-card-how-content");
     if (!howToggle || !howContent) return;
-    howToggle.addEventListener('click', function () {
-      howContent.classList.toggle('hidden');
-      howContent.classList.toggle('flex', !howContent.classList.contains('hidden'));
-      var icon = howToggle.querySelector('[data-collapse-icon]');
-      if (icon) icon.classList.toggle('rotate-180');
+    howToggle.addEventListener("click", function () {
+      howContent.classList.toggle("hidden");
+      howContent.classList.toggle(
+        "flex",
+        !howContent.classList.contains("hidden"),
+      );
+      var icon = howToggle.querySelector("[data-collapse-icon]");
+      if (icon) icon.classList.toggle("rotate-180");
     });
   }
 
   function updateGetPaidStepStates() {
-    if (_activeGetPaidEntry && _activeGetPaidEntry.status === 'declined') {
+    if (_activeGetPaidEntry && _activeGetPaidEntry.status === "declined") {
       setGetPaidStepBadge(1, false);
       setGetPaidStepBadge(2, false);
       setGetPaidStepBadge(3, false);
       setGetPaidStepBadge(4, false);
-      var declinedSubmitBtn = document.getElementById('gp-submit-btn');
+      var declinedSubmitBtn = document.getElementById("gp-submit-btn");
       if (declinedSubmitBtn) {
         declinedSubmitBtn.disabled = true;
-        declinedSubmitBtn.setAttribute('aria-disabled', 'true');
+        declinedSubmitBtn.setAttribute("aria-disabled", "true");
       }
       return;
     }
@@ -5229,21 +6851,28 @@
     var signatureRequired = requiresSignature(_activeGetPaidEntry);
 
     // Step 1: all document review actions are complete
-    var openReviewBtns = document.querySelectorAll('#gp-attachments .gp-review-trigger:not(.hidden)');
-    var statusChecks = document.querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"] input[type="checkbox"]');
-    var step1Done = !docRequired || (statusChecks.length > 0 && openReviewBtns.length === 0);
+    var openReviewBtns = document.querySelectorAll(
+      "#gp-attachments .gp-review-trigger:not(.hidden)",
+    );
+    var statusChecks = document.querySelectorAll(
+      '#gp-attachments [id^="gp-attach-"][id$="-status"] input[type="checkbox"]',
+    );
+    var step1Done =
+      !docRequired || (statusChecks.length > 0 && openReviewBtns.length === 0);
 
     // Step 2: signature has been completed
-    var signedBadge = document.getElementById('gp-signed-badge');
-    var step2Done = !signatureRequired || !!(signedBadge && !signedBadge.classList.contains('hidden'));
+    var signedBadge = document.getElementById("gp-signed-badge");
+    var step2Done =
+      !signatureRequired ||
+      !!(signedBadge && !signedBadge.classList.contains("hidden"));
 
     // Step 3: payment method selected; bank account method also requires bank selection
     var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
     var paymentValue = getSelectedOptionValue(paymentSel);
     var step3Done = false;
     if (paymentValue) {
-      if (paymentValue === 'bank-account') {
-        var bankSel = document.getElementById('gp-bank-account-select');
+      if (paymentValue === "bank-account") {
+        var bankSel = document.getElementById("gp-bank-account-select");
         step3Done = !!getSelectedOptionValue(bankSel);
       } else {
         step3Done = true;
@@ -5251,8 +6880,9 @@
     }
 
     // Step 4: confirmation checkbox ticked (only when the speedbump demo is on)
-    var confirmCheckbox = document.getElementById('gp-confirm-checkbox');
-    var step4Done = !SPEEDBUMP_ENABLED || !!(confirmCheckbox && confirmCheckbox.checked);
+    var confirmCheckbox = document.getElementById("gp-confirm-checkbox");
+    var step4Done =
+      !SPEEDBUMP_ENABLED || !!(confirmCheckbox && confirmCheckbox.checked);
 
     setGetPaidStepBadge(1, step1Done);
     setGetPaidStepBadge(2, step2Done);
@@ -5261,11 +6891,11 @@
 
     updateGetPaidConfirmSummary();
 
-    var submitBtn = document.getElementById('gp-submit-btn');
+    var submitBtn = document.getElementById("gp-submit-btn");
     if (submitBtn) {
       var canSubmit = step1Done && step2Done && step3Done && step4Done;
       submitBtn.disabled = !canSubmit;
-      submitBtn.setAttribute('aria-disabled', canSubmit ? 'false' : 'true');
+      submitBtn.setAttribute("aria-disabled", canSubmit ? "false" : "true");
     }
   }
 
@@ -5273,71 +6903,92 @@
   // method. Reuses the exact bank/check lookups the submit handler already
   // performs — no new data, just read earlier.
   function getConfirmSummaryDestination(paymentValue) {
-    if (paymentValue === 'bank-account') {
-      var bankSel = document.getElementById('gp-bank-account-select');
-      var selectedBank = bankSel && bankSel.querySelector('el-option[aria-selected="true"]');
-      var bankId = selectedBank && selectedBank.getAttribute('value');
+    if (paymentValue === "bank-account") {
+      var bankSel = document.getElementById("gp-bank-account-select");
+      var selectedBank =
+        bankSel && bankSel.querySelector('el-option[aria-selected="true"]');
+      var bankId = selectedBank && selectedBank.getAttribute("value");
       var bankAccounts = _myBusiness && _myBusiness.bankAccounts;
       if (bankAccounts && bankId) {
         for (var bi = 0; bi < bankAccounts.length; bi++) {
-          if (bankAccounts[bi].id === bankId) return bankAccounts[bi].displayName;
+          if (bankAccounts[bi].id === bankId)
+            return bankAccounts[bi].displayName;
         }
       }
-      return '';
+      return "";
     }
-    if (paymentValue === 'paper-check') {
-      var checkSel = document.getElementById('gp-check-address-select');
-      var selectedCheck = checkSel && checkSel.querySelector('el-option[aria-selected="true"]');
-      var checkId = selectedCheck && selectedCheck.getAttribute('value');
+    if (paymentValue === "paper-check") {
+      var checkSel = document.getElementById("gp-check-address-select");
+      var selectedCheck =
+        checkSel && checkSel.querySelector('el-option[aria-selected="true"]');
+      var checkId = selectedCheck && selectedCheck.getAttribute("value");
       var checkAddresses = _myBusiness && _myBusiness.checkAddresses;
       if (checkAddresses && checkId) {
         for (var ci = 0; ci < checkAddresses.length; ci++) {
-          if (checkAddresses[ci].id === checkId) return checkAddresses[ci].displayName;
+          if (checkAddresses[ci].id === checkId)
+            return checkAddresses[ci].displayName;
         }
       }
-      return '';
+      return "";
     }
-    if (paymentValue === 'payers-card') return "Payer's Card";
-    return '';
+    if (paymentValue === "payers-card") return "Payer's Card";
+    return "";
   }
 
   function updateGetPaidConfirmSummary() {
-    var amountEl = document.getElementById('gp-confirm-amount');
-    var methodEl = document.getElementById('gp-confirm-method');
-    var destinationEl = document.getElementById('gp-confirm-destination');
+    var amountEl = document.getElementById("gp-confirm-amount");
+    var methodEl = document.getElementById("gp-confirm-method");
+    var destinationEl = document.getElementById("gp-confirm-destination");
     if (!amountEl || !methodEl || !destinationEl) return;
 
     var entry = _activeGetPaidEntry;
-    amountEl.textContent = entry ? formatCurrency(entry.amount, entry.currency) : '';
+    amountEl.textContent = entry
+      ? formatCurrency(entry.amount, entry.currency)
+      : "";
 
     var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
     var paymentValue = getSelectedOptionValue(paymentSel);
-    var methodLabels = { 'payers-card': "Payer's Card", 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
-    methodEl.textContent = methodLabels[paymentValue] || '—';
-    destinationEl.textContent = getConfirmSummaryDestination(paymentValue) || '—';
+    var methodLabels = {
+      "payers-card": "Payer's Card",
+      "bank-account": "Bank Transfer",
+      "paper-check": "Check",
+    };
+    methodEl.textContent = methodLabels[paymentValue] || "—";
+    destinationEl.textContent =
+      getConfirmSummaryDestination(paymentValue) || "—";
   }
 
   function buildAttachmentItem(att, idx) {
     return (
       '<li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm/6">' +
-        '<div class="flex w-0 flex-1 items-center">' +
-          ATTACHMENT_ICON +
-          '<div class="ml-4 flex min-w-0 flex-1 gap-2">' +
-            '<button type="button" command="show-modal" commandfor="gp-review-dialog"' +
-              ' class="gp-review-name-trigger truncate font-medium text-gray-900 underline decoration-transparent underline-offset-2 transition-colors hover:text-gray-700 hover:decoration-gray-400 dark:text-white dark:hover:text-gray-200 dark:hover:decoration-white/30"' +
-              ' data-attach-idx="' + idx + '">' + escapeHtml(att.name || '') + '</button>' +
-            '<span class="shrink-0 text-gray-400 dark:text-gray-500">' + escapeHtml(att.size || '') + '</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="ml-4 shrink-0 flex items-center">' +
-          '<button type="button" command="show-modal" commandfor="gp-review-dialog"' +
-            ' class="gp-review-trigger inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"' +
-            ' data-attach-idx="' + idx + '">Review</button>' +
-          '<div id="gp-attach-' + idx + '-status" class="hidden">' +
-            CHECKBOX_STATUS_HTML +
-          '</div>' +
-        '</div>' +
-      '</li>'
+      '<div class="flex w-0 flex-1 items-center">' +
+      ATTACHMENT_ICON +
+      '<div class="ml-4 flex min-w-0 flex-1 gap-2">' +
+      '<button type="button" command="show-modal" commandfor="gp-review-dialog"' +
+      ' class="gp-review-name-trigger truncate font-medium text-gray-900 underline decoration-transparent underline-offset-2 transition-colors hover:text-gray-700 hover:decoration-gray-400 dark:text-white dark:hover:text-gray-200 dark:hover:decoration-white/30"' +
+      ' data-attach-idx="' +
+      idx +
+      '">' +
+      escapeHtml(att.name || "") +
+      "</button>" +
+      '<span class="shrink-0 text-gray-400 dark:text-gray-500">' +
+      escapeHtml(att.size || "") +
+      "</span>" +
+      "</div>" +
+      "</div>" +
+      '<div class="ml-4 shrink-0 flex items-center">' +
+      '<button type="button" command="show-modal" commandfor="gp-review-dialog"' +
+      ' class="gp-review-trigger inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"' +
+      ' data-attach-idx="' +
+      idx +
+      '">Review</button>' +
+      '<div id="gp-attach-' +
+      idx +
+      '-status" class="hidden">' +
+      CHECKBOX_STATUS_HTML +
+      "</div>" +
+      "</div>" +
+      "</li>"
     );
   }
 
@@ -5346,34 +6997,41 @@
     if (!list.length) {
       return '<div class="rounded-md border border-dashed border-gray-300 bg-white px-4 py-3 text-sm text-gray-500 dark:border-white/15 dark:bg-white/5 dark:text-gray-400">No document review is required for this payment.</div>';
     }
-    var items = '';
-    list.forEach(function (att, idx) { items += buildAttachmentItem(att, idx); });
-    return '<ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200 dark:divide-white/5 dark:border-white/10">' + items + '</ul>';
+    var items = "";
+    list.forEach(function (att, idx) {
+      items += buildAttachmentItem(att, idx);
+    });
+    return (
+      '<ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200 dark:divide-white/5 dark:border-white/10">' +
+      items +
+      "</ul>"
+    );
   }
 
   function syncGetPaidRequirementSections(entry) {
-    var docStep = document.getElementById('gp-documents-step');
-    var signatureStep = document.getElementById('gp-signature-step');
+    var docStep = document.getElementById("gp-documents-step");
+    var signatureStep = document.getElementById("gp-signature-step");
     var docRequired = requiresDocumentReview(entry);
     var signatureRequired = requiresSignature(entry);
 
     if (docStep) {
-      docStep.classList.toggle('hidden', !docRequired);
-      docStep.classList.toggle('sm:grid', docRequired);
+      docStep.classList.toggle("hidden", !docRequired);
+      docStep.classList.toggle("sm:grid", docRequired);
     }
     if (signatureStep) {
-      signatureStep.classList.toggle('hidden', !signatureRequired);
-      signatureStep.classList.toggle('sm:grid', signatureRequired);
+      signatureStep.classList.toggle("hidden", !signatureRequired);
+      signatureStep.classList.toggle("sm:grid", signatureRequired);
     }
-    var step3DisplayNum = 1 + (docRequired ? 1 : 0) + (signatureRequired ? 1 : 0);
+    var step3DisplayNum =
+      1 + (docRequired ? 1 : 0) + (signatureRequired ? 1 : 0);
     setGetPaidStepDisplayNumber(1, 1);
     setGetPaidStepDisplayNumber(2, docRequired ? 2 : 1);
     setGetPaidStepDisplayNumber(3, step3DisplayNum);
     setGetPaidStepDisplayNumber(4, step3DisplayNum + 1);
-    var confirmStep = document.getElementById('gp-confirm-step');
+    var confirmStep = document.getElementById("gp-confirm-step");
     if (confirmStep) {
-      confirmStep.classList.toggle('hidden', !SPEEDBUMP_ENABLED);
-      confirmStep.classList.toggle('sm:grid', SPEEDBUMP_ENABLED);
+      confirmStep.classList.toggle("hidden", !SPEEDBUMP_ENABLED);
+      confirmStep.classList.toggle("sm:grid", SPEEDBUMP_ENABLED);
     }
   }
 
@@ -5382,139 +7040,187 @@
     if (!sel || !value) return;
     var targetOption = sel.querySelector('el-option[value="' + value + '"]');
     if (!targetOption) return;
-    sel.querySelectorAll('el-option').forEach(function (opt) {
-      if (opt === targetOption) opt.setAttribute('aria-selected', 'true');
-      else opt.removeAttribute('aria-selected');
+    sel.querySelectorAll("el-option").forEach(function (opt) {
+      if (opt === targetOption) opt.setAttribute("aria-selected", "true");
+      else opt.removeAttribute("aria-selected");
     });
-    var selectedContent = sel.querySelector('el-selectedcontent');
+    var selectedContent = sel.querySelector("el-selectedcontent");
     var labelMap = {
-      'payers-card': "Accept Payer's Card",
-      'bank-account': 'Send to Bank Account',
-      'paper-check': 'Request a Paper Check'
+      "payers-card": "Accept Payer's Card",
+      "bank-account": "Send to Bank Account",
+      "paper-check": "Request a Paper Check",
     };
     if (selectedContent) {
       var label = displayLabel || labelMap[value] || value;
-      if (value === 'payers-card') {
+      if (value === "payers-card") {
         selectedContent.innerHTML =
           '<span class="flex min-w-0 items-center gap-2">' +
-            '<span class="shrink-0 text-gray-600 dark:text-gray-400">' +
-              '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">' +
-                '<path d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>' +
-              '</svg>' +
-            '</span>' +
-            '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(label) + '</span>' +
-          '</span>';
-      } else if (value === 'bank-account') {
+          '<span class="shrink-0 text-gray-600 dark:text-gray-400">' +
+          '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">' +
+          '<path d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>' +
+          "</svg>" +
+          "</span>" +
+          '<span class="truncate font-medium text-gray-900 dark:text-white">' +
+          escapeHtml(label) +
+          "</span>" +
+          "</span>";
+      } else if (value === "bank-account") {
         selectedContent.innerHTML =
           '<span class="flex min-w-0 items-center gap-2">' +
-            '<span class="shrink-0 text-gray-600 dark:text-gray-400">' +
-              '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">' +
-                '<path d="M12 21V12.75M15.75 21V12.75M8.25 21V12.75M3 9L12 3L21 9M19.5 21V10.3325C17.0563 9.94906 14.5514 9.75 12 9.75C9.44861 9.75 6.94372 9.94906 4.5 10.3325V21M3 21H21M12 6.75H12.0075V6.7575H12V6.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>' +
-              '</svg>' +
-            '</span>' +
-            '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(label) + '</span>' +
-          '</span>';
+          '<span class="shrink-0 text-gray-600 dark:text-gray-400">' +
+          '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">' +
+          '<path d="M12 21V12.75M15.75 21V12.75M8.25 21V12.75M3 9L12 3L21 9M19.5 21V10.3325C17.0563 9.94906 14.5514 9.75 12 9.75C9.44861 9.75 6.94372 9.94906 4.5 10.3325V21M3 21H21M12 6.75H12.0075V6.7575H12V6.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>' +
+          "</svg>" +
+          "</span>" +
+          '<span class="truncate font-medium text-gray-900 dark:text-white">' +
+          escapeHtml(label) +
+          "</span>" +
+          "</span>";
       } else {
-        selectedContent.innerHTML = '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(label) + '</span>';
+        selectedContent.innerHTML =
+          '<span class="truncate font-medium text-gray-900 dark:text-white">' +
+          escapeHtml(label) +
+          "</span>";
       }
     }
     updatePaymentMethodDetails(value, entry);
   }
 
   function getPaidGetPaidMethodValue(entry) {
-    var methodType = String(entry && entry.methodType || '').toLowerCase();
-    var paymentMethod = String(entry && entry.paymentMethod || '').toLowerCase();
-    if (methodType === 'card') return 'payers-card';
-    if (methodType === 'smart_exchange' || paymentMethod.indexOf('smart exchange') !== -1) return 'payers-card';
-    if (paymentMethod.indexOf('check') !== -1) return 'paper-check';
-    if (methodType === 'ach' || paymentMethod.indexOf('bank') !== -1 || paymentMethod.indexOf('transfer') !== -1 || paymentMethod.indexOf('ach') !== -1) {
-      return 'bank-account';
+    var methodType = String((entry && entry.methodType) || "").toLowerCase();
+    var paymentMethod = String(
+      (entry && entry.paymentMethod) || "",
+    ).toLowerCase();
+    if (methodType === "card") return "payers-card";
+    if (
+      methodType === "smart_exchange" ||
+      paymentMethod.indexOf("smart exchange") !== -1
+    )
+      return "payers-card";
+    if (paymentMethod.indexOf("check") !== -1) return "paper-check";
+    if (
+      methodType === "ach" ||
+      paymentMethod.indexOf("bank") !== -1 ||
+      paymentMethod.indexOf("transfer") !== -1 ||
+      paymentMethod.indexOf("ach") !== -1
+    ) {
+      return "bank-account";
     }
-    return 'payers-card';
+    return "payers-card";
   }
 
   function getPaidGetPaidMethodLabel(entry, paymentValue) {
-    var methodType = String(entry && entry.methodType || '').toLowerCase();
-    var paymentMethod = String(entry && entry.paymentMethod || '');
-    if (methodType === 'smart_exchange' || paymentMethod.toLowerCase().indexOf('smart exchange') !== -1) {
+    var methodType = String((entry && entry.methodType) || "").toLowerCase();
+    var paymentMethod = String((entry && entry.paymentMethod) || "");
+    if (
+      methodType === "smart_exchange" ||
+      paymentMethod.toLowerCase().indexOf("smart exchange") !== -1
+    ) {
       return "Accept Payer's Card";
     }
-    if (paymentValue === 'bank-account') return 'Send to Bank Account';
-    if (paymentValue === 'paper-check') return 'Request a Paper Check';
+    if (paymentValue === "bank-account") return "Send to Bank Account";
+    if (paymentValue === "paper-check") return "Request a Paper Check";
     return "Accept Payer's Card";
   }
 
   function getManualPendingGetPaidMethodLabel(paymentValue) {
-    if (paymentValue === 'bank-account') return 'Send to My Bank';
-    if (paymentValue === 'paper-check') return 'Request a Paper Check';
-    return 'Customers Card';
+    if (paymentValue === "bank-account") return "Send to My Bank";
+    if (paymentValue === "paper-check") return "Request a Paper Check";
+    return "Customers Card";
   }
 
   function getManualPendingBankDetailsTitle(entry) {
-    return 'Account Details';
+    return "Account Details";
   }
 
   function shouldUseCompactCardView(entry) {
-    return !!entry && (entry.status === 'paid' || isPendingManualReviewEntry(entry));
+    return (
+      !!entry && (entry.status === "paid" || isPendingManualReviewEntry(entry))
+    );
   }
 
   function getEntryPaymentEndingDigits(entry) {
-    return getDigits(entry && (entry.paymentMethodEnding || '')).slice(-4);
+    return getDigits(entry && (entry.paymentMethodEnding || "")).slice(-4);
   }
 
   function findMatchingBusinessBankAccountForEntry(entry) {
-    var accounts = _myBusiness && Array.isArray(_myBusiness.bankAccounts) ? _myBusiness.bankAccounts : [];
+    var accounts =
+      _myBusiness && Array.isArray(_myBusiness.bankAccounts)
+        ? _myBusiness.bankAccounts
+        : [];
     if (!accounts.length) return null;
     var targetLast4 = getEntryPaymentEndingDigits(entry);
     if (targetLast4) {
       for (var i = 0; i < accounts.length; i += 1) {
-        if (getBankAccountLast4(accounts[i]) === targetLast4) return accounts[i];
+        if (getBankAccountLast4(accounts[i]) === targetLast4)
+          return accounts[i];
       }
     }
     return accounts[0] || null;
   }
 
   function syncGetPaidBankEditVisibility(entry) {
-    var editBankBtn = document.getElementById('gp-edit-bank-btn');
+    var editBankBtn = document.getElementById("gp-edit-bank-btn");
     if (!editBankBtn) return;
-    var bankSelect = document.getElementById('gp-bank-account-select');
-    var isDisabled = !!(bankSelect && bankSelect.getAttribute('aria-disabled') === 'true');
-    var isReadOnlyState = !!(entry && (entry.status === 'paid' || isPendingManualReviewEntry(entry)));
+    var bankSelect = document.getElementById("gp-bank-account-select");
+    var isDisabled = !!(
+      bankSelect && bankSelect.getAttribute("aria-disabled") === "true"
+    );
+    var isReadOnlyState = !!(
+      entry &&
+      (entry.status === "paid" || isPendingManualReviewEntry(entry))
+    );
     var shouldHide = isDisabled || isReadOnlyState;
     editBankBtn.hidden = shouldHide;
-    editBankBtn.style.display = shouldHide ? 'none' : '';
-    editBankBtn.classList.toggle('hidden', shouldHide);
+    editBankBtn.style.display = shouldHide ? "none" : "";
+    editBankBtn.classList.toggle("hidden", shouldHide);
   }
 
   function setSelectOptionByValue(selectEl, value, selectedMarkup) {
     if (!selectEl || !value) return false;
-    var targetOption = selectEl.querySelector('el-option[value="' + value + '"]');
+    var targetOption = selectEl.querySelector(
+      'el-option[value="' + value + '"]',
+    );
     if (!targetOption) return false;
-    selectEl.querySelectorAll('el-option').forEach(function (opt) {
-      if (opt === targetOption) opt.setAttribute('aria-selected', 'true');
-      else opt.removeAttribute('aria-selected');
+    selectEl.querySelectorAll("el-option").forEach(function (opt) {
+      if (opt === targetOption) opt.setAttribute("aria-selected", "true");
+      else opt.removeAttribute("aria-selected");
     });
-    var selectedContent = selectEl.querySelector('el-selectedcontent');
-    if (selectedContent && selectedMarkup) selectedContent.innerHTML = selectedMarkup;
+    var selectedContent = selectEl.querySelector("el-selectedcontent");
+    if (selectedContent && selectedMarkup)
+      selectedContent.innerHTML = selectedMarkup;
     return true;
   }
 
   function applyResolvedMethodDetailsSelection(entry, paymentValue) {
-    if (paymentValue === 'bank-account') {
-      var bankSelect = document.getElementById('gp-bank-account-select');
+    if (paymentValue === "bank-account") {
+      var bankSelect = document.getElementById("gp-bank-account-select");
       var selectedBank = findMatchingBusinessBankAccountForEntry(entry);
       if (bankSelect && selectedBank) {
-        setSelectOptionByValue(bankSelect, selectedBank.id, buildSelectedBankContent(selectedBank));
+        setSelectOptionByValue(
+          bankSelect,
+          selectedBank.id,
+          buildSelectedBankContent(selectedBank),
+        );
         updateBankDetails(selectedBank.id);
       }
       return;
     }
-    if (paymentValue === 'paper-check') {
-      var checkSelect = document.getElementById('gp-check-address-select');
-      var addresses = _myBusiness && Array.isArray(_myBusiness.checkAddresses) ? _myBusiness.checkAddresses : [];
+    if (paymentValue === "paper-check") {
+      var checkSelect = document.getElementById("gp-check-address-select");
+      var addresses =
+        _myBusiness && Array.isArray(_myBusiness.checkAddresses)
+          ? _myBusiness.checkAddresses
+          : [];
       if (checkSelect && addresses.length) {
         var selectedAddress = addresses[0];
-        setSelectOptionByValue(checkSelect, selectedAddress.id, '<span class="truncate font-medium">' + escapeHtml(selectedAddress.displayName || 'Mailing Address') + '</span>');
+        setSelectOptionByValue(
+          checkSelect,
+          selectedAddress.id,
+          '<span class="truncate font-medium">' +
+            escapeHtml(selectedAddress.displayName || "Mailing Address") +
+            "</span>",
+        );
         updateCheckDetails(selectedAddress.id);
       }
     }
@@ -5522,64 +7228,71 @@
 
   function setGetPaidSelectDisabled(selectEl, disabled) {
     if (!selectEl) return;
-    var button = selectEl.querySelector('button');
-    var selectedContent = selectEl.querySelector('el-selectedcontent');
+    var button = selectEl.querySelector("button");
+    var selectedContent = selectEl.querySelector("el-selectedcontent");
     if (button) {
-      button.classList.toggle('pointer-events-none', disabled);
-      button.classList.toggle('cursor-not-allowed', disabled);
-      button.classList.toggle('bg-white', !disabled);
-      button.classList.toggle('dark:bg-white/5', !disabled);
-      button.classList.toggle('bg-gray-50', disabled);
-      button.classList.toggle('text-gray-900', !disabled);
-      button.classList.toggle('text-gray-500', disabled);
-      button.classList.toggle('outline-gray-300', !disabled);
-      button.classList.toggle('outline-gray-200', disabled);
-      button.classList.toggle('dark:text-white', !disabled);
-      button.classList.toggle('dark:text-gray-400', disabled);
+      button.classList.toggle("pointer-events-none", disabled);
+      button.classList.toggle("cursor-not-allowed", disabled);
+      button.classList.toggle("bg-white", !disabled);
+      button.classList.toggle("dark:bg-white/5", !disabled);
+      button.classList.toggle("bg-gray-50", disabled);
+      button.classList.toggle("text-gray-900", !disabled);
+      button.classList.toggle("text-gray-500", disabled);
+      button.classList.toggle("outline-gray-300", !disabled);
+      button.classList.toggle("outline-gray-200", disabled);
+      button.classList.toggle("dark:text-white", !disabled);
+      button.classList.toggle("dark:text-gray-400", disabled);
     }
     if (selectedContent) {
-      selectedContent.classList.toggle('text-gray-900', !disabled);
-      selectedContent.classList.toggle('text-gray-500', disabled);
-      selectedContent.classList.toggle('dark:text-white', !disabled);
-      selectedContent.classList.toggle('dark:text-gray-400', disabled);
+      selectedContent.classList.toggle("text-gray-900", !disabled);
+      selectedContent.classList.toggle("text-gray-500", disabled);
+      selectedContent.classList.toggle("dark:text-white", !disabled);
+      selectedContent.classList.toggle("dark:text-gray-400", disabled);
     }
-    selectEl.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+    selectEl.setAttribute("aria-disabled", disabled ? "true" : "false");
   }
 
   function applyPaidGetPaidPanelState(entry) {
-    var submitBtn = document.getElementById('gp-submit-btn');
-    var declineBtn = document.getElementById('gp-decline-btn');
-    var sigTrigger = document.getElementById('gp-signature-trigger');
-    var sigBadge = document.getElementById('gp-signed-badge');
+    var submitBtn = document.getElementById("gp-submit-btn");
+    var declineBtn = document.getElementById("gp-decline-btn");
+    var sigTrigger = document.getElementById("gp-signature-trigger");
+    var sigBadge = document.getElementById("gp-signed-badge");
     var paymentValue = getPaidGetPaidMethodValue(entry);
-    var paymentMethodSelect = document.querySelector('el-select[name="paymentMethod"]');
-    var bankAccountSelect = document.getElementById('gp-bank-account-select');
-    var checkAddressSelect = document.getElementById('gp-check-address-select');
+    var paymentMethodSelect = document.querySelector(
+      'el-select[name="paymentMethod"]',
+    );
+    var bankAccountSelect = document.getElementById("gp-bank-account-select");
+    var checkAddressSelect = document.getElementById("gp-check-address-select");
     var paymentLabel = getPaidGetPaidMethodLabel(entry, paymentValue);
 
-    document.querySelectorAll('#gp-attachments .gp-review-trigger').forEach(function (btn) {
-      btn.classList.add('hidden');
-      btn.classList.remove('inline-flex');
-      btn.style.display = 'none';
-    });
-    document.querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"]').forEach(function (status) {
-      status.classList.remove('hidden');
-      var checkbox = status.querySelector('input[type="checkbox"]');
-      if (checkbox) {
-        checkbox.checked = true;
-        checkbox.disabled = true;
-      }
-    });
+    document
+      .querySelectorAll("#gp-attachments .gp-review-trigger")
+      .forEach(function (btn) {
+        btn.classList.add("hidden");
+        btn.classList.remove("inline-flex");
+        btn.style.display = "none";
+      });
+    document
+      .querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"]')
+      .forEach(function (status) {
+        status.classList.remove("hidden");
+        var checkbox = status.querySelector('input[type="checkbox"]');
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.disabled = true;
+        }
+      });
 
-    if (sigTrigger) sigTrigger.classList.add('hidden');
-    if (sigBadge) sigBadge.classList.remove('hidden');
-    if (submitBtn) submitBtn.classList.add('hidden');
+    if (sigTrigger) sigTrigger.classList.add("hidden");
+    if (sigBadge) sigBadge.classList.remove("hidden");
+    if (submitBtn) submitBtn.classList.add("hidden");
     if (declineBtn) {
-      declineBtn.classList.add('hidden');
-      declineBtn.removeAttribute('data-decline-invoice');
+      declineBtn.classList.add("hidden");
+      declineBtn.removeAttribute("data-decline-invoice");
     }
 
-    if (paymentValue) setGetPaidMethodSelection(paymentValue, entry, paymentLabel);
+    if (paymentValue)
+      setGetPaidMethodSelection(paymentValue, entry, paymentLabel);
     applyResolvedMethodDetailsSelection(entry, paymentValue);
     setGetPaidSelectDisabled(paymentMethodSelect, true);
     setGetPaidSelectDisabled(bankAccountSelect, true);
@@ -5588,12 +7301,21 @@
     syncGetPaidHeaderStatus(entry);
     updateGetPaidStepStates();
 
-    if (paymentValue === 'bank-account') {
+    if (paymentValue === "bank-account") {
       window.requestAnimationFrame(function () {
-        if (!_activeGetPaidEntry || String(_activeGetPaidEntry.invoice || '') !== String(entry.invoice || '')) return;
+        if (
+          !_activeGetPaidEntry ||
+          String(_activeGetPaidEntry.invoice || "") !==
+            String(entry.invoice || "")
+        )
+          return;
         var fallbackBank = findMatchingBusinessBankAccountForEntry(entry);
         if (!fallbackBank || !bankAccountSelect) return;
-        setSelectOptionByValue(bankAccountSelect, fallbackBank.id, buildSelectedBankContent(fallbackBank));
+        setSelectOptionByValue(
+          bankAccountSelect,
+          fallbackBank.id,
+          buildSelectedBankContent(fallbackBank),
+        );
         updateBankDetails(fallbackBank.id);
         setGetPaidSelectDisabled(bankAccountSelect, true);
         syncGetPaidBankEditVisibility(entry);
@@ -5603,28 +7325,34 @@
   }
 
   function applyPendingManualGetPaidPanelState(entry) {
-    var submitBtn = document.getElementById('gp-submit-btn');
-    var declineBtn = document.getElementById('gp-decline-btn');
+    var submitBtn = document.getElementById("gp-submit-btn");
+    var declineBtn = document.getElementById("gp-decline-btn");
     var paymentValue = getPaidGetPaidMethodValue(entry);
-    var paymentMethodSelect = document.querySelector('el-select[name="paymentMethod"]');
-    var bankAccountSelect = document.getElementById('gp-bank-account-select');
-    var checkAddressSelect = document.getElementById('gp-check-address-select');
+    var paymentMethodSelect = document.querySelector(
+      'el-select[name="paymentMethod"]',
+    );
+    var bankAccountSelect = document.getElementById("gp-bank-account-select");
+    var checkAddressSelect = document.getElementById("gp-check-address-select");
 
     applyPaidGetPaidPanelState(entry);
 
     if (paymentValue) {
-      setGetPaidMethodSelection(paymentValue, entry, getManualPendingGetPaidMethodLabel(paymentValue));
+      setGetPaidMethodSelection(
+        paymentValue,
+        entry,
+        getManualPendingGetPaidMethodLabel(paymentValue),
+      );
       applyResolvedMethodDetailsSelection(entry, paymentValue);
     }
 
     if (submitBtn) {
-      submitBtn.classList.remove('hidden');
-      submitBtn.textContent = 'Mark as Paid';
+      submitBtn.classList.remove("hidden");
+      submitBtn.textContent = "Mark as Paid";
       submitBtn.disabled = false;
     }
     if (declineBtn) {
-      declineBtn.classList.add('hidden');
-      declineBtn.removeAttribute('data-decline-invoice');
+      declineBtn.classList.add("hidden");
+      declineBtn.removeAttribute("data-decline-invoice");
     }
 
     setGetPaidSelectDisabled(paymentMethodSelect, true);
@@ -5633,12 +7361,21 @@
     syncGetPaidBankEditVisibility(entry);
     syncGetPaidHeaderStatus(entry);
 
-    if (paymentValue === 'bank-account') {
+    if (paymentValue === "bank-account") {
       window.requestAnimationFrame(function () {
-        if (!_activeGetPaidEntry || String(_activeGetPaidEntry.invoice || '') !== String(entry.invoice || '')) return;
+        if (
+          !_activeGetPaidEntry ||
+          String(_activeGetPaidEntry.invoice || "") !==
+            String(entry.invoice || "")
+        )
+          return;
         var fallbackBank = findMatchingBusinessBankAccountForEntry(entry);
         if (!fallbackBank || !bankAccountSelect) return;
-        setSelectOptionByValue(bankAccountSelect, fallbackBank.id, buildSelectedBankContent(fallbackBank));
+        setSelectOptionByValue(
+          bankAccountSelect,
+          fallbackBank.id,
+          buildSelectedBankContent(fallbackBank),
+        );
         updateBankDetails(fallbackBank.id);
         setGetPaidSelectDisabled(bankAccountSelect, true);
         syncGetPaidBankEditVisibility(entry);
@@ -5649,9 +7386,9 @@
   }
 
   function applyPendingRequiredActionGetPaidPanelState(entry) {
-    var methodType = String(entry && entry.methodType || '').toLowerCase();
-    if (methodType === 'smart_exchange') return;
-    var declineBtn = document.getElementById('gp-decline-btn');
+    var methodType = String((entry && entry.methodType) || "").toLowerCase();
+    if (methodType === "smart_exchange") return;
+    var declineBtn = document.getElementById("gp-decline-btn");
 
     // This row still needs the payee to act, so the method is theirs to choose:
     // review the documents, sign, then pick how to get paid. Pre-selecting it
@@ -5661,244 +7398,286 @@
     // undo here — only the decline affordance to add.
     syncGetPaidBankEditVisibility(entry);
     if (declineBtn) {
-      declineBtn.classList.remove('hidden');
-      declineBtn.setAttribute('data-decline-invoice', entry.invoice || '');
+      declineBtn.classList.remove("hidden");
+      declineBtn.setAttribute("data-decline-invoice", entry.invoice || "");
     }
   }
 
   function applyPendingAutoProcessingGetPaidPanelState(entry) {
     applyPaidGetPaidPanelState(entry);
-    var submitBtn = document.getElementById('gp-submit-btn');
-    var declineBtn = document.getElementById('gp-decline-btn');
+    var submitBtn = document.getElementById("gp-submit-btn");
+    var declineBtn = document.getElementById("gp-decline-btn");
     var paymentValue = getPaidGetPaidMethodValue(entry);
     if (paymentValue) {
-      setGetPaidMethodSelection(paymentValue, entry, getPaidGetPaidMethodLabel(entry, paymentValue));
+      setGetPaidMethodSelection(
+        paymentValue,
+        entry,
+        getPaidGetPaidMethodLabel(entry, paymentValue),
+      );
       applyResolvedMethodDetailsSelection(entry, paymentValue);
     }
     if (submitBtn) {
-      submitBtn.classList.add('hidden');
-      submitBtn.textContent = 'Submit and Get Paid';
+      submitBtn.classList.add("hidden");
+      submitBtn.textContent = "Submit and Get Paid";
     }
     if (declineBtn) {
-      declineBtn.classList.add('hidden');
-      declineBtn.removeAttribute('data-decline-invoice');
+      declineBtn.classList.add("hidden");
+      declineBtn.removeAttribute("data-decline-invoice");
     }
     syncGetPaidHeaderStatus(entry);
     updateGetPaidStepStates();
   }
 
   function syncGetPaidDeclineMessage(entry) {
-    var messageEl = document.getElementById('gp-decline-message');
-    var messageTextEl = document.getElementById('gp-decline-message-text');
-    var dateItem = document.getElementById('gp-decline-date-item');
-    var dateSeparator = document.getElementById('gp-decline-date-separator');
-    var dateEl = document.getElementById('gp-decline-date');
-    var reasonItem = document.getElementById('gp-decline-reason-item');
-    var reasonSeparator = document.getElementById('gp-decline-reason-separator');
-    var reasonSummaryEl = document.getElementById('gp-decline-reason-summary');
-    var reason = entry && entry.status === 'declined' ? getDeclineReason(entry) : '';
-    var declineDate = reason ? getDeclineDate(entry) : '';
+    var messageEl = document.getElementById("gp-decline-message");
+    var messageTextEl = document.getElementById("gp-decline-message-text");
+    var dateItem = document.getElementById("gp-decline-date-item");
+    var dateSeparator = document.getElementById("gp-decline-date-separator");
+    var dateEl = document.getElementById("gp-decline-date");
+    var reasonItem = document.getElementById("gp-decline-reason-item");
+    var reasonSeparator = document.getElementById(
+      "gp-decline-reason-separator",
+    );
+    var reasonSummaryEl = document.getElementById("gp-decline-reason-summary");
+    var reason =
+      entry && entry.status === "declined" ? getDeclineReason(entry) : "";
+    var declineDate = reason ? getDeclineDate(entry) : "";
 
     if (messageEl) {
-      if (messageTextEl) messageTextEl.textContent = '';
-      messageEl.classList.add('hidden');
+      if (messageTextEl) messageTextEl.textContent = "";
+      messageEl.classList.add("hidden");
     }
 
-    if (dateEl) dateEl.textContent = declineDate || '';
-    if (reasonSummaryEl) reasonSummaryEl.textContent = reason || '';
+    if (dateEl) dateEl.textContent = declineDate || "";
+    if (reasonSummaryEl) reasonSummaryEl.textContent = reason || "";
 
     [dateItem, dateSeparator].forEach(function (el) {
       if (!el) return;
-      el.classList.toggle('hidden', !declineDate);
-      if (el === dateItem) el.classList.toggle('flex', !!declineDate);
+      el.classList.toggle("hidden", !declineDate);
+      if (el === dateItem) el.classList.toggle("flex", !!declineDate);
     });
     [reasonItem, reasonSeparator].forEach(function (el) {
       if (!el) return;
-      el.classList.toggle('hidden', !reason);
-      if (el === reasonItem) el.classList.toggle('flex', !!reason);
+      el.classList.toggle("hidden", !reason);
+      if (el === reasonItem) el.classList.toggle("flex", !!reason);
     });
   }
 
   function applyDeclinedGetPaidPanelState(entry) {
     applyPaidGetPaidPanelState(entry);
-    var submitBtn = document.getElementById('gp-submit-btn');
-    var declineBtn = document.getElementById('gp-decline-btn');
-    document.querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"]').forEach(function (status) {
-      status.classList.add('hidden');
-      var checkbox = status.querySelector('input[type="checkbox"]');
-      if (checkbox) {
-        checkbox.checked = false;
-        checkbox.disabled = true;
-      }
-    });
-    document.querySelectorAll('#gp-attachments .gp-review-trigger').forEach(function (btn) {
-      btn.classList.add('hidden');
-      btn.classList.remove('inline-flex');
-      btn.style.display = 'none';
-      btn.disabled = true;
-    });
-    if (submitBtn) submitBtn.classList.add('hidden');
+    var submitBtn = document.getElementById("gp-submit-btn");
+    var declineBtn = document.getElementById("gp-decline-btn");
+    document
+      .querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"]')
+      .forEach(function (status) {
+        status.classList.add("hidden");
+        var checkbox = status.querySelector('input[type="checkbox"]');
+        if (checkbox) {
+          checkbox.checked = false;
+          checkbox.disabled = true;
+        }
+      });
+    document
+      .querySelectorAll("#gp-attachments .gp-review-trigger")
+      .forEach(function (btn) {
+        btn.classList.add("hidden");
+        btn.classList.remove("inline-flex");
+        btn.style.display = "none";
+        btn.disabled = true;
+      });
+    if (submitBtn) submitBtn.classList.add("hidden");
     if (declineBtn) {
-      declineBtn.classList.add('hidden');
-      declineBtn.removeAttribute('data-decline-invoice');
+      declineBtn.classList.add("hidden");
+      declineBtn.removeAttribute("data-decline-invoice");
     }
     syncGetPaidHeaderStatus(entry);
     syncGetPaidDeclineMessage(entry);
   }
 
   function syncGetPaidHeaderStatus(entry) {
-    var badge = document.getElementById('gp-status-badge');
+    var badge = document.getElementById("gp-status-badge");
     if (!badge || !entry) return;
-    badge.removeAttribute('title');
-    if (entry.status === 'paid') {
-      badge.textContent = 'Paid';
-      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:inset-ring-green-400/30';
+    badge.removeAttribute("title");
+    if (entry.status === "paid") {
+      badge.textContent = "Paid";
+      badge.className =
+        "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:inset-ring-green-400/30";
       return;
     }
-    if (entry.status === 'declined') {
-      badge.textContent = 'Declined';
-      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-red-50 text-red-700 inset-ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:inset-ring-red-400/30';
+    if (entry.status === "declined") {
+      badge.textContent = "Declined";
+      badge.className =
+        "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-red-50 text-red-700 inset-ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:inset-ring-red-400/30";
       return;
     }
-    if (entry.status === 'exception') {
-      badge.textContent = 'Exception';
-      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-red-50 text-red-700 inset-ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:inset-ring-red-400/30';
+    if (entry.status === "exception") {
+      badge.textContent = "Exception";
+      badge.className =
+        "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-red-50 text-red-700 inset-ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:inset-ring-red-400/30";
       return;
     }
-    if (entry.status === 'processing') {
-      badge.textContent = 'Processing';
-      badge.title = 'ACH is processing automatically. Standard ACH processing time is typically 1-2 business days.';
-      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/20';
+    if (entry.status === "processing") {
+      badge.textContent = "Processing";
+      badge.title =
+        "ACH is processing automatically. Standard ACH processing time is typically 1-2 business days.";
+      badge.className =
+        "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/20";
       return;
     }
     if (isPendingAutoProcessingEntry(entry)) {
-      badge.textContent = 'Pending';
-      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20';
+      badge.textContent = "Pending";
+      badge.className =
+        "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20";
       return;
     }
-    badge.textContent = 'Pending Your Action';
-    badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20';
+    badge.textContent = "Pending Your Action";
+    badge.className =
+      "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20";
   }
 
   function openGetPaidPanel(entry) {
     _activeGetPaidEntry = entry;
     _getPaidStpOptInRequested = false;
-    var amountEl = document.getElementById('gp-amount');
-    var currencyEl = document.getElementById('gp-currency');
-    var dateEl = document.getElementById('gp-date');
-    var customerEl = document.getElementById('gp-customer');
-    var invoiceEl = document.getElementById('gp-invoice');
-    var attachEl = document.getElementById('gp-attachments');
-    var activityEl = document.getElementById('gp-activity-content');
-    var declineMessageEl = document.getElementById('gp-decline-message');
-    var declineDateItem = document.getElementById('gp-decline-date-item');
-    var declineDateSeparator = document.getElementById('gp-decline-date-separator');
-    var declineDateEl = document.getElementById('gp-decline-date');
-    var declineReasonItem = document.getElementById('gp-decline-reason-item');
-    var declineReasonSeparator = document.getElementById('gp-decline-reason-separator');
-    var declineReasonSummaryEl = document.getElementById('gp-decline-reason-summary');
+    var amountEl = document.getElementById("gp-amount");
+    var currencyEl = document.getElementById("gp-currency");
+    var dateEl = document.getElementById("gp-date");
+    var customerEl = document.getElementById("gp-customer");
+    var invoiceEl = document.getElementById("gp-invoice");
+    var attachEl = document.getElementById("gp-attachments");
+    var activityEl = document.getElementById("gp-activity-content");
+    var declineMessageEl = document.getElementById("gp-decline-message");
+    var declineDateItem = document.getElementById("gp-decline-date-item");
+    var declineDateSeparator = document.getElementById(
+      "gp-decline-date-separator",
+    );
+    var declineDateEl = document.getElementById("gp-decline-date");
+    var declineReasonItem = document.getElementById("gp-decline-reason-item");
+    var declineReasonSeparator = document.getElementById(
+      "gp-decline-reason-separator",
+    );
+    var declineReasonSummaryEl = document.getElementById(
+      "gp-decline-reason-summary",
+    );
 
-    if (amountEl) amountEl.textContent = formatCurrency(entry.amount, entry.currency);
+    if (amountEl)
+      amountEl.textContent = formatCurrency(entry.amount, entry.currency);
     if (currencyEl) currencyEl.textContent = entry.currency;
     if (declineMessageEl) {
-      var declineMessageTextEl = document.getElementById('gp-decline-message-text');
-      if (declineMessageTextEl) declineMessageTextEl.textContent = '';
-      declineMessageEl.classList.add('hidden');
+      var declineMessageTextEl = document.getElementById(
+        "gp-decline-message-text",
+      );
+      if (declineMessageTextEl) declineMessageTextEl.textContent = "";
+      declineMessageEl.classList.add("hidden");
     }
     [
       declineDateItem,
       declineDateSeparator,
       declineReasonItem,
-      declineReasonSeparator
+      declineReasonSeparator,
     ].forEach(function (el) {
       if (!el) return;
-      el.classList.add('hidden');
-      el.classList.remove('flex');
+      el.classList.add("hidden");
+      el.classList.remove("flex");
     });
-    if (declineDateEl) declineDateEl.textContent = '';
-    if (declineReasonSummaryEl) declineReasonSummaryEl.textContent = '';
+    if (declineDateEl) declineDateEl.textContent = "";
+    if (declineReasonSummaryEl) declineReasonSummaryEl.textContent = "";
     if (dateEl) dateEl.textContent = formatDate(entry.dateInitiated);
     if (customerEl) customerEl.textContent = entry.vendorEntry;
-    if (invoiceEl) invoiceEl.textContent = '#' + entry.invoice;
+    if (invoiceEl) invoiceEl.textContent = "#" + entry.invoice;
     syncGetPaidHeaderStatus(entry);
 
     syncGetPaidRequirementSections(entry);
-    if (attachEl) attachEl.innerHTML = buildGetPaidAttachments(getEntryAttachments(entry));
+    if (attachEl)
+      attachEl.innerHTML = buildGetPaidAttachments(getEntryAttachments(entry));
     if (activityEl) activityEl.innerHTML = buildGetPaidActivityLog(entry);
-    var activityToggle = document.getElementById('gp-activity-toggle');
-    if (activityEl) activityEl.classList.add('hidden');
+    var activityToggle = document.getElementById("gp-activity-toggle");
+    if (activityEl) activityEl.classList.add("hidden");
     if (activityToggle) {
-      var activityIcon = activityToggle.querySelector('[data-collapse-icon]');
-      if (activityIcon) activityIcon.classList.remove('rotate-180');
+      var activityIcon = activityToggle.querySelector("[data-collapse-icon]");
+      if (activityIcon) activityIcon.classList.remove("rotate-180");
     }
 
     // Reset signature state
-    var sigTrigger = document.getElementById('gp-signature-trigger');
-    var sigBadge = document.getElementById('gp-signed-badge');
-    if (sigTrigger) sigTrigger.classList.remove('hidden');
-    if (sigBadge) sigBadge.classList.add('hidden');
+    var sigTrigger = document.getElementById("gp-signature-trigger");
+    var sigBadge = document.getElementById("gp-signed-badge");
+    if (sigTrigger) sigTrigger.classList.remove("hidden");
+    if (sigBadge) sigBadge.classList.add("hidden");
 
     // Reset confirm checkbox (Step 4) — every open, including returning to
     // an entry already visited, starts unticked.
-    var confirmCheckboxReset = document.getElementById('gp-confirm-checkbox');
+    var confirmCheckboxReset = document.getElementById("gp-confirm-checkbox");
     if (confirmCheckboxReset) confirmCheckboxReset.checked = false;
 
     if (!_suppressUrlUpdate) {
       history.pushState(
-        { view: 'get-paid', invoice: entry.invoice },
-        '',
-        location.pathname + '?view=get-paid&id=' + encodeURIComponent(entry.invoice)
+        { view: "get-paid", invoice: entry.invoice },
+        "",
+        location.pathname +
+          "?view=get-paid&id=" +
+          encodeURIComponent(entry.invoice),
       );
     }
 
-    var panel = document.getElementById('get-paid-panel');
-    var tableSection = document.getElementById('table-section');
-    if (panel) panel.classList.remove('hidden');
-    if (tableSection) tableSection.classList.add('hidden');
+    var panel = document.getElementById("get-paid-panel");
+    var tableSection = document.getElementById("table-section");
+    if (panel) panel.classList.remove("hidden");
+    if (tableSection) tableSection.classList.add("hidden");
     window.scrollTo(0, 0);
 
     initPaymentMethodDetails(entry);
-    var submitBtn = document.getElementById('gp-submit-btn');
-    var declineBtn = document.getElementById('gp-decline-btn');
-    setGetPaidSelectDisabled(document.querySelector('el-select[name="paymentMethod"]'), false);
-    setGetPaidSelectDisabled(document.getElementById('gp-bank-account-select'), false);
-    setGetPaidSelectDisabled(document.getElementById('gp-check-address-select'), false);
+    var submitBtn = document.getElementById("gp-submit-btn");
+    var declineBtn = document.getElementById("gp-decline-btn");
+    setGetPaidSelectDisabled(
+      document.querySelector('el-select[name="paymentMethod"]'),
+      false,
+    );
+    setGetPaidSelectDisabled(
+      document.getElementById("gp-bank-account-select"),
+      false,
+    );
+    setGetPaidSelectDisabled(
+      document.getElementById("gp-check-address-select"),
+      false,
+    );
     if (submitBtn) {
-      submitBtn.classList.remove('hidden');
-      submitBtn.textContent = 'Submit and Get Paid';
+      submitBtn.classList.remove("hidden");
+      submitBtn.textContent = "Submit and Get Paid";
     }
     if (declineBtn) {
-      declineBtn.classList.add('hidden');
-      declineBtn.removeAttribute('data-decline-invoice');
+      declineBtn.classList.add("hidden");
+      declineBtn.removeAttribute("data-decline-invoice");
     }
-    if (entry.status === 'paid') applyPaidGetPaidPanelState(entry);
-    else if (entry.status === 'declined') applyDeclinedGetPaidPanelState(entry);
-    else if (requiresGetPaidAction(entry)) applyPendingRequiredActionGetPaidPanelState(entry);
-    else if (isPendingManualReviewEntry(entry)) applyPendingManualGetPaidPanelState(entry);
-    else if (isPendingAutoProcessingEntry(entry)) applyPendingAutoProcessingGetPaidPanelState(entry);
+    if (entry.status === "paid") applyPaidGetPaidPanelState(entry);
+    else if (entry.status === "declined") applyDeclinedGetPaidPanelState(entry);
+    else if (requiresGetPaidAction(entry))
+      applyPendingRequiredActionGetPaidPanelState(entry);
+    else if (isPendingManualReviewEntry(entry))
+      applyPendingManualGetPaidPanelState(entry);
+    else if (isPendingAutoProcessingEntry(entry))
+      applyPendingAutoProcessingGetPaidPanelState(entry);
     updateGetPaidStepStates();
   }
 
   function pmcSetText(id, value) {
     var el = document.getElementById(id);
-    if (el) el.textContent = value || '';
+    if (el) el.textContent = value || "";
   }
 
   function getGetPaidStpState() {
-    if (window.STPState && typeof window.STPState.getStpState === 'function') {
+    if (window.STPState && typeof window.STPState.getStpState === "function") {
       return window.STPState.getStpState();
     }
-    return { stpStatus: 'disabled', stpStep: 'opt_in_required' };
+    return { stpStatus: "disabled", stpStep: "opt_in_required" };
   }
 
   function updateGetPaidStpCardToggleState() {
-    var enableToggle = document.getElementById('gp-stp-enable-toggle');
+    var enableToggle = document.getElementById("gp-stp-enable-toggle");
     if (!enableToggle) return;
     enableToggle.disabled = false;
   }
 
   function syncGetPaidStpToggle() {
-    var enableToggle = document.getElementById('gp-stp-enable-toggle');
+    var enableToggle = document.getElementById("gp-stp-enable-toggle");
     if (!enableToggle) return;
     enableToggle.checked = !!_getPaidStpOptInRequested;
   }
@@ -5908,17 +7687,21 @@
     _getPaidStpModalConfirmed = false;
     _getPaidStpOptInRequested = true;
     syncGetPaidStpToggle();
-    if (window.STPState && typeof window.STPState.openOptInModal === 'function') {
+    if (
+      window.STPState &&
+      typeof window.STPState.openOptInModal === "function"
+    ) {
       window.STPState.openOptInModal();
     }
     bindGetPaidStpModalBridge();
   }
 
   function bindGetPaidStpModalBridge() {
-    var ppDialog = document.getElementById('pp-enable-stp-dialog');
-    var ppConfirmBtn = document.getElementById('pp-enable-stp-confirm-btn');
-    var inlineDialog = document.getElementById('sx-inline-stp-dialog');
-    var inlineConfirmBtn = inlineDialog && inlineDialog.querySelector('[data-inline-stp-confirm]');
+    var ppDialog = document.getElementById("pp-enable-stp-dialog");
+    var ppConfirmBtn = document.getElementById("pp-enable-stp-confirm-btn");
+    var inlineDialog = document.getElementById("sx-inline-stp-dialog");
+    var inlineConfirmBtn =
+      inlineDialog && inlineDialog.querySelector("[data-inline-stp-confirm]");
 
     function handleConfirm(event, dialog) {
       if (!_getPaidStpModalActive) return;
@@ -5926,11 +7709,13 @@
       if (target && target.disabled) return;
       event.preventDefault();
       event.stopPropagation();
-      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+      if (typeof event.stopImmediatePropagation === "function")
+        event.stopImmediatePropagation();
       _getPaidStpModalConfirmed = true;
       _getPaidStpOptInRequested = true;
       syncGetPaidStpToggle();
-      if (dialog && dialog.open && typeof dialog.close === 'function') dialog.close();
+      if (dialog && dialog.open && typeof dialog.close === "function")
+        dialog.close();
     }
 
     function handleClose() {
@@ -5943,53 +7728,91 @@
       _getPaidStpModalConfirmed = false;
     }
 
-    if (ppConfirmBtn && ppDialog && ppConfirmBtn.getAttribute('data-gp-stp-bound') !== 'true') {
-      ppConfirmBtn.setAttribute('data-gp-stp-bound', 'true');
-      ppConfirmBtn.addEventListener('click', function (event) {
-        handleConfirm(event, ppDialog);
-      }, true);
+    if (
+      ppConfirmBtn &&
+      ppDialog &&
+      ppConfirmBtn.getAttribute("data-gp-stp-bound") !== "true"
+    ) {
+      ppConfirmBtn.setAttribute("data-gp-stp-bound", "true");
+      ppConfirmBtn.addEventListener(
+        "click",
+        function (event) {
+          handleConfirm(event, ppDialog);
+        },
+        true,
+      );
     }
-    if (ppDialog && ppDialog.getAttribute('data-gp-stp-close-bound') !== 'true') {
-      ppDialog.setAttribute('data-gp-stp-close-bound', 'true');
-      ppDialog.addEventListener('close', handleClose);
+    if (
+      ppDialog &&
+      ppDialog.getAttribute("data-gp-stp-close-bound") !== "true"
+    ) {
+      ppDialog.setAttribute("data-gp-stp-close-bound", "true");
+      ppDialog.addEventListener("close", handleClose);
     }
-    if (inlineConfirmBtn && inlineDialog && inlineConfirmBtn.getAttribute('data-gp-stp-bound') !== 'true') {
-      inlineConfirmBtn.setAttribute('data-gp-stp-bound', 'true');
-      inlineConfirmBtn.addEventListener('click', function (event) {
-        handleConfirm(event, inlineDialog);
-      }, true);
+    if (
+      inlineConfirmBtn &&
+      inlineDialog &&
+      inlineConfirmBtn.getAttribute("data-gp-stp-bound") !== "true"
+    ) {
+      inlineConfirmBtn.setAttribute("data-gp-stp-bound", "true");
+      inlineConfirmBtn.addEventListener(
+        "click",
+        function (event) {
+          handleConfirm(event, inlineDialog);
+        },
+        true,
+      );
     }
-    if (inlineDialog && inlineDialog.getAttribute('data-gp-stp-close-bound') !== 'true') {
-      inlineDialog.setAttribute('data-gp-stp-close-bound', 'true');
-      inlineDialog.addEventListener('close', handleClose);
+    if (
+      inlineDialog &&
+      inlineDialog.getAttribute("data-gp-stp-close-bound") !== "true"
+    ) {
+      inlineDialog.setAttribute("data-gp-stp-close-bound", "true");
+      inlineDialog.addEventListener("close", handleClose);
     }
   }
 
   function updateGetPaidStpInlineUi() {
-    var stpCardContainer = document.getElementById('gp-stp-card-container');
-    var stpStatusBadge = document.getElementById('gp-stp-status-badge');
-    var agreementCheckbox = document.getElementById('gp-stp-agreement-checkbox');
-    var enableToggle = document.getElementById('gp-stp-enable-toggle');
+    var stpCardContainer = document.getElementById("gp-stp-card-container");
+    var stpStatusBadge = document.getElementById("gp-stp-status-badge");
+    var agreementCheckbox = document.getElementById(
+      "gp-stp-agreement-checkbox",
+    );
+    var enableToggle = document.getElementById("gp-stp-enable-toggle");
     var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
     var paymentValue = getSelectedOptionValue(paymentSel);
-    var isPaidEntry = !!(_activeGetPaidEntry && _activeGetPaidEntry.status === 'paid');
+    var isPaidEntry = !!(
+      _activeGetPaidEntry && _activeGetPaidEntry.status === "paid"
+    );
     var state = getGetPaidStpState();
-    var status = state && state.stpStatus ? String(state.stpStatus) : 'disabled';
-    var step = state && state.stpStep ? String(state.stpStep) : 'opt_in_required';
-    var showOptInCard = !isPaidEntry && !isPendingManualReviewEntry(_activeGetPaidEntry) && paymentValue === 'payers-card' && status === 'disabled' && step === 'opt_in_required';
-    var showStatusBadge = paymentValue === 'payers-card' && (status === 'in_progress' || status === 'enabled');
+    var status =
+      state && state.stpStatus ? String(state.stpStatus) : "disabled";
+    var step =
+      state && state.stpStep ? String(state.stpStep) : "opt_in_required";
+    var showOptInCard =
+      !isPaidEntry &&
+      !isPendingManualReviewEntry(_activeGetPaidEntry) &&
+      paymentValue === "payers-card" &&
+      status === "disabled" &&
+      step === "opt_in_required";
+    var showStatusBadge =
+      paymentValue === "payers-card" &&
+      (status === "in_progress" || status === "enabled");
 
-    if (stpCardContainer) stpCardContainer.classList.toggle('hidden', !showOptInCard);
+    if (stpCardContainer)
+      stpCardContainer.classList.toggle("hidden", !showOptInCard);
 
     if (stpStatusBadge) {
       stpStatusBadge.hidden = !showStatusBadge;
-      stpStatusBadge.classList.toggle('hidden', !showStatusBadge);
-      if (showStatusBadge && status === 'enabled') {
-        stpStatusBadge.textContent = 'Opted in';
-        stpStatusBadge.className = 'inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30';
+      stpStatusBadge.classList.toggle("hidden", !showStatusBadge);
+      if (showStatusBadge && status === "enabled") {
+        stpStatusBadge.textContent = "Opted in";
+        stpStatusBadge.className =
+          "inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30";
       } else if (showStatusBadge) {
-        stpStatusBadge.textContent = 'Enabling pending';
-        stpStatusBadge.className = 'inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-white/5 dark:text-gray-300 dark:ring-white/15';
+        stpStatusBadge.textContent = "Enabling pending";
+        stpStatusBadge.className =
+          "inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-white/5 dark:text-gray-300 dark:ring-white/15";
       }
     }
 
@@ -6003,64 +7826,86 @@
   }
 
   function updatePaymentMethodDetails(value, entry) {
-    var wrapper = document.getElementById('gp-payment-method-details');
-    var cardPanel = document.getElementById('gp-pmc-payers-card');
-    var bankPanel = document.getElementById('gp-pmc-bank-account');
-    var checkPanel = document.getElementById('gp-pmc-paper-check');
-    var cardholderDetailsWrap = document.getElementById('gp-pmc-cardholder-details-wrap');
-    var paidCardSection = document.getElementById('gp-pmc-paid-card-section');
-    var cardHeaderTitle = document.getElementById('gp-pmc-card-header-title');
-    var bankHeaderTitle = document.getElementById('gp-pmc-bank-header-title');
-    var editBankBtn = document.getElementById('gp-edit-bank-btn');
-    var bankDefaultWrap = document.getElementById('gp-pmc-bank-default-wrap');
+    var wrapper = document.getElementById("gp-payment-method-details");
+    var cardPanel = document.getElementById("gp-pmc-payers-card");
+    var bankPanel = document.getElementById("gp-pmc-bank-account");
+    var checkPanel = document.getElementById("gp-pmc-paper-check");
+    var cardholderDetailsWrap = document.getElementById(
+      "gp-pmc-cardholder-details-wrap",
+    );
+    var paidCardSection = document.getElementById("gp-pmc-paid-card-section");
+    var cardHeaderTitle = document.getElementById("gp-pmc-card-header-title");
+    var bankHeaderTitle = document.getElementById("gp-pmc-bank-header-title");
+    var editBankBtn = document.getElementById("gp-edit-bank-btn");
+    var bankDefaultWrap = document.getElementById("gp-pmc-bank-default-wrap");
 
-    if (cardPanel) cardPanel.classList.add('hidden');
-    if (bankPanel) bankPanel.classList.add('hidden');
-    if (checkPanel) checkPanel.classList.add('hidden');
-    if (bankDefaultWrap) bankDefaultWrap.classList.toggle('hidden', false);
+    if (cardPanel) cardPanel.classList.add("hidden");
+    if (bankPanel) bankPanel.classList.add("hidden");
+    if (checkPanel) checkPanel.classList.add("hidden");
+    if (bankDefaultWrap) bankDefaultWrap.classList.toggle("hidden", false);
 
-    if (value === 'payers-card') {
-      var paymentInfo = entry && entry.details ? (entry.details.paymentInfo || {}) : {};
+    if (value === "payers-card") {
+      var paymentInfo =
+        entry && entry.details ? entry.details.paymentInfo || {} : {};
       var customer = getCustomerForEntry(entry);
-      var cardDetails = getPayerCardDetailsForRender(entry, paymentInfo, customer);
+      var cardDetails = getPayerCardDetailsForRender(
+        entry,
+        paymentInfo,
+        customer,
+      );
       if (cardHeaderTitle) {
-        cardHeaderTitle.textContent = isPendingManualReviewEntry(entry) ? 'Customers Card' : 'Cardholder Details';
+        cardHeaderTitle.textContent = isPendingManualReviewEntry(entry)
+          ? "Customers Card"
+          : "Cardholder Details";
       }
-      if (bankHeaderTitle) bankHeaderTitle.textContent = getManualPendingBankDetailsTitle(entry);
-      pmcSetText('gp-pmc-card-name', cardDetails.cardHolderName || '');
-      pmcSetText('gp-pmc-card-address', cardDetails.cardHolderAddress || '');
-      pmcSetText('gp-pmc-card-last4', String(cardDetails.maskedCardNumber || '').replace(/\D/g, '').slice(-4) || '0000');
+      if (bankHeaderTitle)
+        bankHeaderTitle.textContent = getManualPendingBankDetailsTitle(entry);
+      pmcSetText("gp-pmc-card-name", cardDetails.cardHolderName || "");
+      pmcSetText("gp-pmc-card-address", cardDetails.cardHolderAddress || "");
+      pmcSetText(
+        "gp-pmc-card-last4",
+        String(cardDetails.maskedCardNumber || "")
+          .replace(/\D/g, "")
+          .slice(-4) || "0000",
+      );
       var useCompactCardView = shouldUseCompactCardView(entry);
-      if (cardholderDetailsWrap) cardholderDetailsWrap.classList.toggle('hidden', useCompactCardView);
+      if (cardholderDetailsWrap)
+        cardholderDetailsWrap.classList.toggle("hidden", useCompactCardView);
       if (paidCardSection) {
-        paidCardSection.classList.toggle('hidden', !useCompactCardView);
-        paidCardSection.classList.toggle('inline-flex', useCompactCardView);
+        paidCardSection.classList.toggle("hidden", !useCompactCardView);
+        paidCardSection.classList.toggle("inline-flex", useCompactCardView);
       }
-      if (cardPanel) cardPanel.classList.remove('hidden');
-    } else if (value === 'bank-account') {
-      if (cardHeaderTitle) cardHeaderTitle.textContent = 'Cardholder Details';
-      if (bankHeaderTitle) bankHeaderTitle.textContent = getManualPendingBankDetailsTitle(entry);
+      if (cardPanel) cardPanel.classList.remove("hidden");
+    } else if (value === "bank-account") {
+      if (cardHeaderTitle) cardHeaderTitle.textContent = "Cardholder Details";
+      if (bankHeaderTitle)
+        bankHeaderTitle.textContent = getManualPendingBankDetailsTitle(entry);
       if (editBankBtn) {
         editBankBtn.hidden = false;
-        editBankBtn.style.display = '';
-        editBankBtn.classList.remove('hidden');
+        editBankBtn.style.display = "";
+        editBankBtn.classList.remove("hidden");
       }
-      if (bankDefaultWrap) bankDefaultWrap.classList.toggle('hidden', String(entry && entry.methodType || '').toLowerCase() !== 'smart_exchange');
-      if (bankPanel) bankPanel.classList.remove('hidden');
+      if (bankDefaultWrap)
+        bankDefaultWrap.classList.toggle(
+          "hidden",
+          String((entry && entry.methodType) || "").toLowerCase() !==
+            "smart_exchange",
+        );
+      if (bankPanel) bankPanel.classList.remove("hidden");
       initBankAccountSelector();
-    } else if (value === 'paper-check') {
-      if (cardHeaderTitle) cardHeaderTitle.textContent = 'Cardholder Details';
-      if (bankHeaderTitle) bankHeaderTitle.textContent = 'Account Details';
-      if (checkPanel) checkPanel.classList.remove('hidden');
+    } else if (value === "paper-check") {
+      if (cardHeaderTitle) cardHeaderTitle.textContent = "Cardholder Details";
+      if (bankHeaderTitle) bankHeaderTitle.textContent = "Account Details";
+      if (checkPanel) checkPanel.classList.remove("hidden");
       initCheckAddressSelector();
     }
 
-    if (wrapper) wrapper.classList.remove('hidden');
+    if (wrapper) wrapper.classList.remove("hidden");
     updateGetPaidStpInlineUi();
   }
 
   function updateBankDetails(bankId) {
-    var details = document.getElementById('gp-pmc-bank-details');
+    var details = document.getElementById("gp-pmc-bank-details");
     if (!details) return;
 
     var accounts = _myBusiness && _myBusiness.bankAccounts;
@@ -6068,65 +7913,92 @@
 
     var account = null;
     for (var i = 0; i < accounts.length; i++) {
-      if (accounts[i].id === bankId) { account = accounts[i]; break; }
+      if (accounts[i].id === bankId) {
+        account = accounts[i];
+        break;
+      }
     }
     if (!account) return;
 
-    pmcSetText('gp-pmc-bank-name-val', account.name);
-    pmcSetText('gp-pmc-bank-acct', account.maskedAccount);
-    pmcSetText('gp-pmc-bank-routing', account.maskedRouting);
-    pmcSetText('gp-pmc-bank-address', account.address);
+    pmcSetText("gp-pmc-bank-name-val", account.name);
+    pmcSetText("gp-pmc-bank-acct", account.maskedAccount);
+    pmcSetText("gp-pmc-bank-routing", account.maskedRouting);
+    pmcSetText("gp-pmc-bank-address", account.address);
 
     // Reset reveal button to hidden state
-    var btn = document.getElementById('gp-pmc-reveal-btn');
-    var acctCopyBtn = document.getElementById('gp-pmc-bank-acct-copy-btn');
-    var routingCopyBtn = document.getElementById('gp-pmc-bank-routing-copy-btn');
+    var btn = document.getElementById("gp-pmc-reveal-btn");
+    var acctCopyBtn = document.getElementById("gp-pmc-bank-acct-copy-btn");
+    var routingCopyBtn = document.getElementById(
+      "gp-pmc-bank-routing-copy-btn",
+    );
     if (btn) {
-      btn.setAttribute('data-revealed', 'false');
+      btn.setAttribute("data-revealed", "false");
       var revealIcon = btn.querySelector('[data-icon="reveal"]');
       var hideIcon = btn.querySelector('[data-icon="hide"]');
-      var revealText = document.getElementById('gp-pmc-reveal-text');
-      if (revealIcon) revealIcon.classList.remove('hidden');
-      if (hideIcon) hideIcon.classList.add('hidden');
-      if (revealText) revealText.textContent = 'Reveal Details';
+      var revealText = document.getElementById("gp-pmc-reveal-text");
+      if (revealIcon) revealIcon.classList.remove("hidden");
+      if (hideIcon) hideIcon.classList.add("hidden");
+      if (revealText) revealText.textContent = "Reveal Details";
     }
     if (acctCopyBtn) {
-      acctCopyBtn.setAttribute('data-copy-enabled', 'false');
-      acctCopyBtn.classList.add('pointer-events-none');
-      acctCopyBtn.classList.remove('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+      acctCopyBtn.setAttribute("data-copy-enabled", "false");
+      acctCopyBtn.classList.add("pointer-events-none");
+      acctCopyBtn.classList.remove(
+        "cursor-pointer",
+        "transition-colors",
+        "hover:bg-gray-200",
+        "dark:hover:bg-white/20",
+      );
       var acctIcon = acctCopyBtn.querySelector('[data-copy-icon="true"]');
-      if (acctIcon) acctIcon.classList.add('hidden');
+      if (acctIcon) acctIcon.classList.add("hidden");
     }
     if (routingCopyBtn) {
-      routingCopyBtn.setAttribute('data-copy-enabled', 'false');
-      routingCopyBtn.classList.add('pointer-events-none');
-      routingCopyBtn.classList.remove('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+      routingCopyBtn.setAttribute("data-copy-enabled", "false");
+      routingCopyBtn.classList.add("pointer-events-none");
+      routingCopyBtn.classList.remove(
+        "cursor-pointer",
+        "transition-colors",
+        "hover:bg-gray-200",
+        "dark:hover:bg-white/20",
+      );
       var routingIcon = routingCopyBtn.querySelector('[data-copy-icon="true"]');
-      if (routingIcon) routingIcon.classList.add('hidden');
+      if (routingIcon) routingIcon.classList.add("hidden");
     }
 
-    details.classList.remove('hidden');
+    details.classList.remove("hidden");
     initRevealToggle(account);
     updateGetPaidStepStates();
   }
 
   function initRevealToggle(account) {
-    var btn = document.getElementById('gp-pmc-reveal-btn');
+    var btn = document.getElementById("gp-pmc-reveal-btn");
     if (!btn) return;
-    var acctCopyBtn = document.getElementById('gp-pmc-bank-acct-copy-btn');
-    var routingCopyBtn = document.getElementById('gp-pmc-bank-routing-copy-btn');
+    var acctCopyBtn = document.getElementById("gp-pmc-bank-acct-copy-btn");
+    var routingCopyBtn = document.getElementById(
+      "gp-pmc-bank-routing-copy-btn",
+    );
     function setCopyBtnVisible(copyBtn, visible) {
       if (!copyBtn) return;
-      copyBtn.setAttribute('data-copy-enabled', visible ? 'true' : 'false');
+      copyBtn.setAttribute("data-copy-enabled", visible ? "true" : "false");
       var icon = copyBtn.querySelector('[data-copy-icon="true"]');
       if (visible) {
-        copyBtn.classList.remove('pointer-events-none');
-        copyBtn.classList.add('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
-        if (icon) icon.classList.remove('hidden');
+        copyBtn.classList.remove("pointer-events-none");
+        copyBtn.classList.add(
+          "cursor-pointer",
+          "transition-colors",
+          "hover:bg-gray-200",
+          "dark:hover:bg-white/20",
+        );
+        if (icon) icon.classList.remove("hidden");
       } else {
-        copyBtn.classList.add('pointer-events-none');
-        copyBtn.classList.remove('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
-        if (icon) icon.classList.add('hidden');
+        copyBtn.classList.add("pointer-events-none");
+        copyBtn.classList.remove(
+          "cursor-pointer",
+          "transition-colors",
+          "hover:bg-gray-200",
+          "dark:hover:bg-white/20",
+        );
+        if (icon) icon.classList.add("hidden");
       }
     }
 
@@ -6134,9 +8006,9 @@
       acctCopyBtn.onclick = function (event) {
         event.preventDefault();
         event.stopPropagation();
-        if (acctCopyBtn.getAttribute('data-copy-enabled') !== 'true') return;
-        var target = document.getElementById('gp-pmc-bank-acct');
-        var text = target ? String(target.textContent || '').trim() : '';
+        if (acctCopyBtn.getAttribute("data-copy-enabled") !== "true") return;
+        var target = document.getElementById("gp-pmc-bank-acct");
+        var text = target ? String(target.textContent || "").trim() : "";
         if (!text || /[•]/.test(text)) return;
         if (window.copyTextWithFeedback) {
           window.copyTextWithFeedback(text, acctCopyBtn);
@@ -6148,9 +8020,9 @@
       routingCopyBtn.onclick = function (event) {
         event.preventDefault();
         event.stopPropagation();
-        if (routingCopyBtn.getAttribute('data-copy-enabled') !== 'true') return;
-        var target = document.getElementById('gp-pmc-bank-routing');
-        var text = target ? String(target.textContent || '').trim() : '';
+        if (routingCopyBtn.getAttribute("data-copy-enabled") !== "true") return;
+        var target = document.getElementById("gp-pmc-bank-routing");
+        var text = target ? String(target.textContent || "").trim() : "";
         if (!text || /[•]/.test(text)) return;
         if (window.copyTextWithFeedback) {
           window.copyTextWithFeedback(text, routingCopyBtn);
@@ -6159,28 +8031,28 @@
     }
 
     btn.onclick = function () {
-      var revealed = btn.getAttribute('data-revealed') === 'true';
+      var revealed = btn.getAttribute("data-revealed") === "true";
       revealed = !revealed;
-      btn.setAttribute('data-revealed', String(revealed));
+      btn.setAttribute("data-revealed", String(revealed));
 
       var revealIcon = btn.querySelector('[data-icon="reveal"]');
       var hideIcon = btn.querySelector('[data-icon="hide"]');
-      var revealText = document.getElementById('gp-pmc-reveal-text');
+      var revealText = document.getElementById("gp-pmc-reveal-text");
 
       if (revealed) {
-        pmcSetText('gp-pmc-bank-acct', account.accountNumber);
-        pmcSetText('gp-pmc-bank-routing', account.routingNumber);
-        if (revealIcon) revealIcon.classList.add('hidden');
-        if (hideIcon) hideIcon.classList.remove('hidden');
-        if (revealText) revealText.textContent = 'Hide Details';
+        pmcSetText("gp-pmc-bank-acct", account.accountNumber);
+        pmcSetText("gp-pmc-bank-routing", account.routingNumber);
+        if (revealIcon) revealIcon.classList.add("hidden");
+        if (hideIcon) hideIcon.classList.remove("hidden");
+        if (revealText) revealText.textContent = "Hide Details";
         setCopyBtnVisible(acctCopyBtn, true);
         setCopyBtnVisible(routingCopyBtn, true);
       } else {
-        pmcSetText('gp-pmc-bank-acct', account.maskedAccount);
-        pmcSetText('gp-pmc-bank-routing', account.maskedRouting);
-        if (revealIcon) revealIcon.classList.remove('hidden');
-        if (hideIcon) hideIcon.classList.add('hidden');
-        if (revealText) revealText.textContent = 'Reveal Details';
+        pmcSetText("gp-pmc-bank-acct", account.maskedAccount);
+        pmcSetText("gp-pmc-bank-routing", account.maskedRouting);
+        if (revealIcon) revealIcon.classList.remove("hidden");
+        if (hideIcon) hideIcon.classList.add("hidden");
+        if (revealText) revealText.textContent = "Reveal Details";
         setCopyBtnVisible(acctCopyBtn, false);
         setCopyBtnVisible(routingCopyBtn, false);
       }
@@ -6189,73 +8061,93 @@
 
   function buildCheckAddressOptionHtml(address) {
     return (
-      '<el-option value="' + escapeHtml(address.id) + '" class="group/option relative block cursor-default select-none border-b border-gray-200 py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
-        '<div class="flex items-center gap-3">' +
-          '<div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">' +
-            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">' +
-              '<path d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z" fill="#6B7280" />' +
-            '</svg>' +
-          '</div>' +
-          '<div class="in-[el-selectedcontent]:hidden">' +
-            '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' + escapeHtml(address.displayName) + '</span>' +
-            '<span class="block text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(address.summary || address.cityState || '') + '</span>' +
-          '</div>' +
-          '<span class="hidden in-[el-selectedcontent]:block truncate font-medium">' + escapeHtml(address.displayName) + '</span>' +
-        '</div>' +
-        '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
-          '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
-            '<path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
-          '</svg>' +
-        '</span>' +
-      '</el-option>'
+      '<el-option value="' +
+      escapeHtml(address.id) +
+      '" class="group/option relative block cursor-default select-none border-b border-gray-200 py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
+      '<div class="flex items-center gap-3">' +
+      '<div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">' +
+      '<path d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z" fill="#6B7280" />' +
+      "</svg>" +
+      "</div>" +
+      '<div class="in-[el-selectedcontent]:hidden">' +
+      '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' +
+      escapeHtml(address.displayName) +
+      "</span>" +
+      '<span class="block text-sm text-gray-500 dark:text-gray-400">' +
+      escapeHtml(address.summary || address.cityState || "") +
+      "</span>" +
+      "</div>" +
+      '<span class="hidden in-[el-selectedcontent]:block truncate font-medium">' +
+      escapeHtml(address.displayName) +
+      "</span>" +
+      "</div>" +
+      '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
+      '<path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
+      "</svg>" +
+      "</span>" +
+      "</el-option>"
     );
   }
 
   function getBankAccountDisplayName(account) {
-    if (!account || typeof account !== 'object') return 'Bank Account';
-    var displayName = typeof account.displayName === 'string' ? account.displayName.trim() : '';
+    if (!account || typeof account !== "object") return "Bank Account";
+    var displayName =
+      typeof account.displayName === "string" ? account.displayName.trim() : "";
     if (displayName) return displayName;
-    var bankName = typeof account.bankName === 'string' ? account.bankName.trim() : '';
-    if (bankName) return bankName + ' Account';
-    return 'Bank Account';
+    var bankName =
+      typeof account.bankName === "string" ? account.bankName.trim() : "";
+    if (bankName) return bankName + " Account";
+    return "Bank Account";
   }
 
   function getBankAccountLast4(account) {
-    if (!account || typeof account !== 'object') return '';
-    if (typeof account.last4 === 'string' && account.last4.trim()) {
+    if (!account || typeof account !== "object") return "";
+    if (typeof account.last4 === "string" && account.last4.trim()) {
       return account.last4.trim().slice(-4);
     }
-    var accountNumber = typeof account.accountNumber === 'string' ? account.accountNumber : '';
-    var accountDigits = accountNumber.replace(/\D/g, '');
+    var accountNumber =
+      typeof account.accountNumber === "string" ? account.accountNumber : "";
+    var accountDigits = accountNumber.replace(/\D/g, "");
     if (accountDigits.length >= 4) return accountDigits.slice(-4);
-    var masked = typeof account.maskedAccount === 'string' ? account.maskedAccount : '';
-    var maskedDigits = masked.replace(/\D/g, '');
+    var masked =
+      typeof account.maskedAccount === "string" ? account.maskedAccount : "";
+    var maskedDigits = masked.replace(/\D/g, "");
     if (maskedDigits.length >= 4) return maskedDigits.slice(-4);
-    return '';
+    return "";
   }
 
   function buildBankAccountOptionHtml(account) {
     var label = getBankAccountDisplayName(account);
     var last4 = getBankAccountLast4(account);
-    var summary = last4 ? ('••••' + last4) : label;
+    var summary = last4 ? "••••" + last4 : label;
     return (
-      '<el-option value="' + escapeHtml(account.id) + '" class="group/option relative block cursor-default select-none border-b border-gray-200 py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
-        '<div class="flex items-center gap-3">' +
-          '<div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">' +
-            '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>' +
-          '</div>' +
-          '<div class="in-[el-selectedcontent]:hidden">' +
-            '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' + escapeHtml(label) + '</span>' +
-            '<span class="block text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(summary) + '</span>' +
-          '</div>' +
-          '<span class="hidden in-[el-selectedcontent]:block truncate font-medium">' + escapeHtml(label + (last4 ? (' ••••' + last4) : '')) + '</span>' +
-        '</div>' +
-        '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
-          '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
-            '<path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
-          '</svg>' +
-        '</span>' +
-      '</el-option>'
+      '<el-option value="' +
+      escapeHtml(account.id) +
+      '" class="group/option relative block cursor-default select-none border-b border-gray-200 py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
+      '<div class="flex items-center gap-3">' +
+      '<div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>' +
+      "</div>" +
+      '<div class="in-[el-selectedcontent]:hidden">' +
+      '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' +
+      escapeHtml(label) +
+      "</span>" +
+      '<span class="block text-sm text-gray-500 dark:text-gray-400">' +
+      escapeHtml(summary) +
+      "</span>" +
+      "</div>" +
+      '<span class="hidden in-[el-selectedcontent]:block truncate font-medium">' +
+      escapeHtml(label + (last4 ? " ••••" + last4 : "")) +
+      "</span>" +
+      "</div>" +
+      '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
+      '<path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
+      "</svg>" +
+      "</span>" +
+      "</el-option>"
     );
   }
 
@@ -6264,69 +8156,91 @@
     var last4 = getBankAccountLast4(account);
     return (
       '<span class="flex min-w-0 items-center gap-2">' +
-        '<span class="shrink-0 text-gray-600 dark:text-gray-400">' +
-          '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="currentColor"/></svg>' +
-        '</span>' +
-        '<span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(label + (last4 ? (' ••••' + last4) : '')) + '</span>' +
-      '</span>'
+      '<span class="shrink-0 text-gray-600 dark:text-gray-400">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="currentColor"/></svg>' +
+      "</span>" +
+      '<span class="truncate font-medium text-gray-900 dark:text-white">' +
+      escapeHtml(label + (last4 ? " ••••" + last4 : "")) +
+      "</span>" +
+      "</span>"
     );
   }
 
   function renderBankAccountOptions(accounts) {
-    var sel = document.getElementById('gp-bank-account-select');
+    var sel = document.getElementById("gp-bank-account-select");
     if (!sel) return;
-    var optionsEl = sel.querySelector('el-options');
+    var optionsEl = sel.querySelector("el-options");
     if (!optionsEl) return;
-    var addButton = optionsEl.querySelector('[data-gp-add-bank-account]');
+    var addButton = optionsEl.querySelector("[data-gp-add-bank-account]");
     var addFooter = addButton ? addButton.parentElement : null;
 
-    optionsEl.querySelectorAll('el-option').forEach(function (opt) {
+    optionsEl.querySelectorAll("el-option").forEach(function (opt) {
       opt.remove();
     });
 
     (accounts || []).forEach(function (account) {
       if (!account || !account.id) return;
       if (addFooter) {
-        addFooter.insertAdjacentHTML('beforebegin', buildBankAccountOptionHtml(account));
+        addFooter.insertAdjacentHTML(
+          "beforebegin",
+          buildBankAccountOptionHtml(account),
+        );
       } else {
-        optionsEl.insertAdjacentHTML('beforeend', buildBankAccountOptionHtml(account));
+        optionsEl.insertAdjacentHTML(
+          "beforeend",
+          buildBankAccountOptionHtml(account),
+        );
       }
     });
 
-    var bankOptions = optionsEl.querySelectorAll('el-option');
+    var bankOptions = optionsEl.querySelectorAll("el-option");
     if (bankOptions.length) {
-      bankOptions[bankOptions.length - 1].classList.remove('border-b', 'border-gray-200', 'dark:border-white/10');
+      bankOptions[bankOptions.length - 1].classList.remove(
+        "border-b",
+        "border-gray-200",
+        "dark:border-white/10",
+      );
     }
   }
 
   function renderCheckAddressOptions(addresses) {
-    var sel = document.getElementById('gp-check-address-select');
+    var sel = document.getElementById("gp-check-address-select");
     if (!sel) return;
-    var optionsEl = sel.querySelector('el-options');
+    var optionsEl = sel.querySelector("el-options");
     if (!optionsEl) return;
-    var addButton = optionsEl.querySelector('[data-gp-add-check-address]');
+    var addButton = optionsEl.querySelector("[data-gp-add-check-address]");
     var addFooter = addButton ? addButton.parentElement : null;
 
-    optionsEl.querySelectorAll('el-option').forEach(function (opt) {
+    optionsEl.querySelectorAll("el-option").forEach(function (opt) {
       opt.remove();
     });
 
     (addresses || []).forEach(function (address) {
       if (addFooter) {
-        addFooter.insertAdjacentHTML('beforebegin', buildCheckAddressOptionHtml(address));
+        addFooter.insertAdjacentHTML(
+          "beforebegin",
+          buildCheckAddressOptionHtml(address),
+        );
       } else {
-        optionsEl.insertAdjacentHTML('beforeend', buildCheckAddressOptionHtml(address));
+        optionsEl.insertAdjacentHTML(
+          "beforeend",
+          buildCheckAddressOptionHtml(address),
+        );
       }
     });
 
-    var checkOptions = optionsEl.querySelectorAll('el-option');
+    var checkOptions = optionsEl.querySelectorAll("el-option");
     if (checkOptions.length) {
-      checkOptions[checkOptions.length - 1].classList.remove('border-b', 'border-gray-200', 'dark:border-white/10');
+      checkOptions[checkOptions.length - 1].classList.remove(
+        "border-b",
+        "border-gray-200",
+        "dark:border-white/10",
+      );
     }
   }
 
   function updateCheckDetails(addressId) {
-    var details = document.getElementById('gp-pmc-check-details');
+    var details = document.getElementById("gp-pmc-check-details");
     if (!details) return;
 
     var addresses = _myBusiness && _myBusiness.checkAddresses;
@@ -6334,14 +8248,17 @@
 
     var addr = null;
     for (var i = 0; i < addresses.length; i++) {
-      if (addresses[i].id === addressId) { addr = addresses[i]; break; }
+      if (addresses[i].id === addressId) {
+        addr = addresses[i];
+        break;
+      }
     }
     if (!addr) return;
 
-    pmcSetText('gp-pmc-check-name', addr.name);
-    pmcSetText('gp-pmc-check-address', addr.address);
+    pmcSetText("gp-pmc-check-name", addr.name);
+    pmcSetText("gp-pmc-check-address", addr.address);
 
-    details.classList.remove('hidden');
+    details.classList.remove("hidden");
     updateGetPaidStepStates();
   }
 
@@ -6351,30 +8268,34 @@
       _checkSelectObserver = null;
     }
 
-    var details = document.getElementById('gp-pmc-check-details');
-    if (details) details.classList.add('hidden');
+    var details = document.getElementById("gp-pmc-check-details");
+    if (details) details.classList.add("hidden");
 
     renderCheckAddressOptions(_myBusiness && _myBusiness.checkAddresses);
 
-    var sel = document.getElementById('gp-check-address-select');
+    var sel = document.getElementById("gp-check-address-select");
     if (!sel) return;
 
     // Reset to placeholder
-    sel.querySelectorAll('el-option').forEach(function (opt) {
-      opt.removeAttribute('aria-selected');
+    sel.querySelectorAll("el-option").forEach(function (opt) {
+      opt.removeAttribute("aria-selected");
     });
-    var selContent = sel.querySelector('el-selectedcontent');
+    var selContent = sel.querySelector("el-selectedcontent");
     if (selContent) {
-      selContent.innerHTML = '<span class="truncate text-gray-400 dark:text-gray-500">Select mailing address</span>';
+      selContent.innerHTML =
+        '<span class="truncate text-gray-400 dark:text-gray-500">Select mailing address</span>';
     }
 
     var observer = new MutationObserver(function () {
       var selected = sel.querySelector('el-option[aria-selected="true"]');
-      if (selected) updateCheckDetails(selected.getAttribute('value'));
+      if (selected) updateCheckDetails(selected.getAttribute("value"));
       updateGetPaidStepStates();
     });
-    sel.querySelectorAll('el-option').forEach(function (opt) {
-      observer.observe(opt, { attributes: true, attributeFilter: ['aria-selected'] });
+    sel.querySelectorAll("el-option").forEach(function (opt) {
+      observer.observe(opt, {
+        attributes: true,
+        attributeFilter: ["aria-selected"],
+      });
     });
     _checkSelectObserver = observer;
     updateGetPaidStepStates();
@@ -6386,105 +8307,117 @@
       _bankSelectObserver = null;
     }
 
-    var details = document.getElementById('gp-pmc-bank-details');
-    if (details) details.classList.add('hidden');
+    var details = document.getElementById("gp-pmc-bank-details");
+    if (details) details.classList.add("hidden");
 
     renderBankAccountOptions(_myBusiness && _myBusiness.bankAccounts);
 
-    var sel = document.getElementById('gp-bank-account-select');
+    var sel = document.getElementById("gp-bank-account-select");
     if (!sel) return;
 
     // Reset to placeholder
-    sel.querySelectorAll('el-option').forEach(function (opt) {
-      opt.removeAttribute('aria-selected');
+    sel.querySelectorAll("el-option").forEach(function (opt) {
+      opt.removeAttribute("aria-selected");
     });
-    var selContent = sel.querySelector('el-selectedcontent');
+    var selContent = sel.querySelector("el-selectedcontent");
     if (selContent) {
-      selContent.innerHTML = '<span class="truncate text-gray-400 dark:text-gray-500">Select bank account</span>';
+      selContent.innerHTML =
+        '<span class="truncate text-gray-400 dark:text-gray-500">Select bank account</span>';
     }
 
     var observer = new MutationObserver(function () {
       var selected = sel.querySelector('el-option[aria-selected="true"]');
-      if (selected) updateBankDetails(selected.getAttribute('value'));
+      if (selected) updateBankDetails(selected.getAttribute("value"));
       updateGetPaidStepStates();
     });
-    sel.querySelectorAll('el-option').forEach(function (opt) {
-      observer.observe(opt, { attributes: true, attributeFilter: ['aria-selected'] });
+    sel.querySelectorAll("el-option").forEach(function (opt) {
+      observer.observe(opt, {
+        attributes: true,
+        attributeFilter: ["aria-selected"],
+      });
     });
     _bankSelectObserver = observer;
     updateGetPaidStepStates();
   }
 
   function initEditBankModal() {
-    var btn = document.getElementById('gp-edit-bank-btn');
+    var btn = document.getElementById("gp-edit-bank-btn");
     if (!btn) return;
-    btn.addEventListener('click', function () {
-      var sel = document.getElementById('gp-bank-account-select');
-      var selectedOpt = sel && sel.querySelector('el-option[aria-selected="true"]');
-      var bankId = selectedOpt && selectedOpt.getAttribute('value');
+    btn.addEventListener("click", function () {
+      var sel = document.getElementById("gp-bank-account-select");
+      var selectedOpt =
+        sel && sel.querySelector('el-option[aria-selected="true"]');
+      var bankId = selectedOpt && selectedOpt.getAttribute("value");
       var accounts = _myBusiness && _myBusiness.bankAccounts;
       var account = null;
       if (accounts && bankId) {
         for (var i = 0; i < accounts.length; i++) {
-          if (accounts[i].id === bankId) { account = accounts[i]; break; }
+          if (accounts[i].id === bankId) {
+            account = accounts[i];
+            break;
+          }
         }
       }
       if (!account) return;
 
       var setVal = function (id, val) {
         var el = document.getElementById(id);
-        if (el) el.value = val || '';
+        if (el) el.value = val || "";
       };
-      setVal('gp-edit-bank-name', account.name);
-      setVal('gp-edit-bank-routing', account.routingNumber);
-      setVal('gp-edit-bank-account', account.accountNumber);
-      setVal('gp-edit-bank-confirm', account.accountNumber);
-      setVal('gp-edit-bank-nickname', account.displayName);
+      setVal("gp-edit-bank-name", account.name);
+      setVal("gp-edit-bank-routing", account.routingNumber);
+      setVal("gp-edit-bank-account", account.accountNumber);
+      setVal("gp-edit-bank-confirm", account.accountNumber);
+      setVal("gp-edit-bank-nickname", account.displayName);
 
-      var dialog = document.getElementById('gp-edit-bank-dialog');
-      if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
+      var dialog = document.getElementById("gp-edit-bank-dialog");
+      if (dialog && typeof dialog.showModal === "function") dialog.showModal();
     });
   }
 
   function initEditCheckModal() {
-    var btn = document.getElementById('gp-edit-check-btn');
+    var btn = document.getElementById("gp-edit-check-btn");
     if (!btn) return;
-    btn.addEventListener('click', function () {
-      var sel = document.getElementById('gp-check-address-select');
-      var selectedOpt = sel && sel.querySelector('el-option[aria-selected="true"]');
-      var addrId = selectedOpt && selectedOpt.getAttribute('value');
+    btn.addEventListener("click", function () {
+      var sel = document.getElementById("gp-check-address-select");
+      var selectedOpt =
+        sel && sel.querySelector('el-option[aria-selected="true"]');
+      var addrId = selectedOpt && selectedOpt.getAttribute("value");
       var addresses = _myBusiness && _myBusiness.checkAddresses;
       var addr = null;
       if (addresses && addrId) {
         for (var i = 0; i < addresses.length; i++) {
-          if (addresses[i].id === addrId) { addr = addresses[i]; break; }
+          if (addresses[i].id === addrId) {
+            addr = addresses[i];
+            break;
+          }
         }
       }
       if (!addr) return;
 
       // Parse multi-line address string
-      var lines = (addr.address || '').split('\n');
-      var line1 = lines[0] || '';
-      var line2 = lines.length > 3 ? lines[1] : '';
-      var cityStateLine = lines.length > 3 ? lines[2] : (lines[1] || '');
+      var lines = (addr.address || "").split("\n");
+      var line1 = lines[0] || "";
+      var line2 = lines.length > 3 ? lines[1] : "";
+      var cityStateLine = lines.length > 3 ? lines[2] : lines[1] || "";
       var cityStateMatch = cityStateLine.match(/^(.+),\s*([A-Z]{2})\s+(\S+)$/);
       var city = cityStateMatch ? cityStateMatch[1] : cityStateLine;
-      var state = cityStateMatch ? cityStateMatch[2] : '';
-      var zip = cityStateMatch ? cityStateMatch[3] : '';
+      var state = cityStateMatch ? cityStateMatch[2] : "";
+      var zip = cityStateMatch ? cityStateMatch[3] : "";
 
       var setVal = function (id, val) {
         var el = document.getElementById(id);
-        if (el) el.value = val || '';
+        if (el) el.value = val || "";
       };
-      setVal('gp-edit-check-nickname', addr.displayName);
-      setVal('gp-edit-check-line1', line1);
-      setVal('gp-edit-check-line2', line2);
-      setVal('gp-edit-check-city', city);
-      setVal('gp-edit-check-state', state);
-      setVal('gp-edit-check-zip', zip);
+      setVal("gp-edit-check-nickname", addr.displayName);
+      setVal("gp-edit-check-line1", line1);
+      setVal("gp-edit-check-line2", line2);
+      setVal("gp-edit-check-city", city);
+      setVal("gp-edit-check-state", state);
+      setVal("gp-edit-check-zip", zip);
 
-      var dialog = document.getElementById('gp-edit-check-dialog');
-      if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
+      var dialog = document.getElementById("gp-edit-check-dialog");
+      if (dialog && typeof dialog.showModal === "function") dialog.showModal();
     });
   }
 
@@ -6502,31 +8435,36 @@
       _checkSelectObserver = null;
     }
 
-    var wrapper = document.getElementById('gp-payment-method-details');
-    if (wrapper) wrapper.classList.add('hidden');
+    var wrapper = document.getElementById("gp-payment-method-details");
+    if (wrapper) wrapper.classList.add("hidden");
 
     var sel = document.querySelector('el-select[name="paymentMethod"]');
     if (!sel) return;
 
     // Reset select to placeholder state
-    sel.querySelectorAll('el-option').forEach(function (opt) {
-      opt.removeAttribute('aria-selected');
+    sel.querySelectorAll("el-option").forEach(function (opt) {
+      opt.removeAttribute("aria-selected");
     });
-    var selContent = sel.querySelector('el-selectedcontent');
+    var selContent = sel.querySelector("el-selectedcontent");
     if (selContent) {
-      selContent.innerHTML = '<span class="truncate text-gray-400 dark:text-gray-500">Select payment method</span>';
+      selContent.innerHTML =
+        '<span class="truncate text-gray-400 dark:text-gray-500">Select payment method</span>';
     }
     updateGetPaidStpInlineUi();
 
     // Watch for aria-selected changes on options
     var observer = new MutationObserver(function () {
       var selected = sel.querySelector('el-option[aria-selected="true"]');
-      if (selected) updatePaymentMethodDetails(selected.getAttribute('value'), entry);
+      if (selected)
+        updatePaymentMethodDetails(selected.getAttribute("value"), entry);
       else updateGetPaidStpInlineUi();
       updateGetPaidStepStates();
     });
-    sel.querySelectorAll('el-option').forEach(function (opt) {
-      observer.observe(opt, { attributes: true, attributeFilter: ['aria-selected'] });
+    sel.querySelectorAll("el-option").forEach(function (opt) {
+      observer.observe(opt, {
+        attributes: true,
+        attributeFilter: ["aria-selected"],
+      });
     });
     _pmcObserver = observer;
     updateGetPaidStepStates();
@@ -6535,12 +8473,12 @@
   function closeGetPaidPanel() {
     _activeGetPaidEntry = null;
     if (!_suppressUrlUpdate) {
-      history.pushState({}, '', location.pathname);
+      history.pushState({}, "", location.pathname);
     }
-    var panel = document.getElementById('get-paid-panel');
-    var tableSection = document.getElementById('table-section');
-    if (panel) panel.classList.add('hidden');
-    if (tableSection) tableSection.classList.remove('hidden');
+    var panel = document.getElementById("get-paid-panel");
+    var tableSection = document.getElementById("table-section");
+    if (panel) panel.classList.add("hidden");
+    if (tableSection) tableSection.classList.remove("hidden");
   }
 
   function initGetPaidPanel() {
@@ -6549,43 +8487,43 @@
     initEditCheckModal();
 
     // Back button
-    var backBtn = document.getElementById('get-paid-back');
-    if (backBtn) backBtn.addEventListener('click', closeGetPaidPanel);
+    var backBtn = document.getElementById("get-paid-back");
+    if (backBtn) backBtn.addEventListener("click", closeGetPaidPanel);
 
     // Receivable Summary toggle
-    var receivableToggle = document.getElementById('gp-receivable-toggle');
-    var receivableContent = document.getElementById('gp-receivable-content');
+    var receivableToggle = document.getElementById("gp-receivable-toggle");
+    var receivableContent = document.getElementById("gp-receivable-content");
     if (receivableToggle && receivableContent) {
-      receivableToggle.addEventListener('click', function () {
-        receivableContent.classList.toggle('hidden');
-        var icon = receivableToggle.querySelector('[data-collapse-icon]');
-        if (icon) icon.classList.toggle('rotate-180');
+      receivableToggle.addEventListener("click", function () {
+        receivableContent.classList.toggle("hidden");
+        var icon = receivableToggle.querySelector("[data-collapse-icon]");
+        if (icon) icon.classList.toggle("rotate-180");
       });
     }
 
     // Activity Log toggle
-    var activityToggle = document.getElementById('gp-activity-toggle');
-    var activityContent = document.getElementById('gp-activity-content');
+    var activityToggle = document.getElementById("gp-activity-toggle");
+    var activityContent = document.getElementById("gp-activity-content");
     if (activityToggle && activityContent) {
-      activityToggle.addEventListener('click', function () {
-        activityContent.classList.toggle('hidden');
-        var icon = activityToggle.querySelector('[data-collapse-icon]');
-        if (icon) icon.classList.toggle('rotate-180');
+      activityToggle.addEventListener("click", function () {
+        activityContent.classList.toggle("hidden");
+        var icon = activityToggle.querySelector("[data-collapse-icon]");
+        if (icon) icon.classList.toggle("rotate-180");
       });
     }
 
     // Confirm checkbox (Step 4) — gates the Submit button
-    var confirmCheckboxToggle = document.getElementById('gp-confirm-checkbox');
+    var confirmCheckboxToggle = document.getElementById("gp-confirm-checkbox");
     if (confirmCheckboxToggle) {
-      confirmCheckboxToggle.addEventListener('change', updateGetPaidStepStates);
+      confirmCheckboxToggle.addEventListener("change", updateGetPaidStepStates);
     }
 
-    var stpEnableToggle = document.getElementById('gp-stp-enable-toggle');
-    var stpInfoBtn = document.getElementById('gp-stp-info-btn');
+    var stpEnableToggle = document.getElementById("gp-stp-enable-toggle");
+    var stpInfoBtn = document.getElementById("gp-stp-info-btn");
     bindGetPaidStpModalBridge();
     if (stpEnableToggle) {
       stpEnableToggle.checked = false;
-      stpEnableToggle.addEventListener('change', function () {
+      stpEnableToggle.addEventListener("change", function () {
         if (stpEnableToggle.checked) {
           openGetPaidStpModal();
           return;
@@ -6596,130 +8534,188 @@
       updateGetPaidStpCardToggleState();
       syncGetPaidStpToggle();
     }
-    if (stpInfoBtn) stpInfoBtn.addEventListener('click', openGetPaidStpModal);
+    if (stpInfoBtn) stpInfoBtn.addEventListener("click", openGetPaidStpModal);
 
-    var submitBtn = document.getElementById('gp-submit-btn');
+    var submitBtn = document.getElementById("gp-submit-btn");
     if (submitBtn) {
-      submitBtn.addEventListener('click', function () {
+      submitBtn.addEventListener("click", function () {
         if (submitBtn.disabled || !_activeGetPaidEntry) return;
         if (isPendingManualReviewEntry(_activeGetPaidEntry)) {
           openMarkPaidConfirm(_activeGetPaidEntry.invoice);
           return;
         }
-        var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
+        var paymentSel = document.querySelector(
+          'el-select[name="paymentMethod"]',
+        );
         var paymentValue = getSelectedOptionValue(paymentSel);
-        var validMethods = ['payers-card', 'bank-account', 'paper-check'];
+        var validMethods = ["payers-card", "bank-account", "paper-check"];
         if (validMethods.indexOf(paymentValue) === -1) return;
 
-        var methodLabels = { 'payers-card': "Payer's Card", 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
+        var methodLabels = {
+          "payers-card": "Payer's Card",
+          "bank-account": "Bank Transfer",
+          "paper-check": "Check",
+        };
 
-        var txIdEl = document.getElementById('gp-submit-txid');
-        var amountEl = document.getElementById('gp-submit-amount');
-        var dateEl = document.getElementById('gp-submit-date');
-        var methodEl = document.getElementById('gp-submit-method');
-        var cardLast4El = document.getElementById('gp-submit-card-last4');
-        var cardSectionEl = document.getElementById('gp-submit-card-section');
-        var bankRowEl = document.getElementById('gp-submit-bank-row');
-        var bankNameEl = document.getElementById('gp-submit-bank-name');
-        var checkRowEl = document.getElementById('gp-submit-check-row');
-        var checkAddressEl = document.getElementById('gp-submit-check-address');
+        var txIdEl = document.getElementById("gp-submit-txid");
+        var amountEl = document.getElementById("gp-submit-amount");
+        var dateEl = document.getElementById("gp-submit-date");
+        var methodEl = document.getElementById("gp-submit-method");
+        var cardLast4El = document.getElementById("gp-submit-card-last4");
+        var cardSectionEl = document.getElementById("gp-submit-card-section");
+        var bankRowEl = document.getElementById("gp-submit-bank-row");
+        var bankNameEl = document.getElementById("gp-submit-bank-name");
+        var checkRowEl = document.getElementById("gp-submit-check-row");
+        var checkAddressEl = document.getElementById("gp-submit-check-address");
 
-        var txId = 'TXN-' + String(_activeGetPaidEntry.invoice || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase() + '-' + Date.now().toString().slice(-6);
-        var payerCard = _activeGetPaidEntry.details &&
+        var txId =
+          "TXN-" +
+          String(_activeGetPaidEntry.invoice || "")
+            .replace(/[^A-Za-z0-9]/g, "")
+            .toUpperCase() +
+          "-" +
+          Date.now().toString().slice(-6);
+        var payerCard =
+          _activeGetPaidEntry.details &&
           _activeGetPaidEntry.details.paymentInfo &&
           _activeGetPaidEntry.details.paymentInfo.payerCard;
-        var cardLast4 = _activeGetPaidEntry.paymentMethodEnding || '';
-        var shouldAdvanceStpAfterPayment = paymentValue === 'payers-card' && _getPaidStpOptInRequested;
-        if (!cardLast4 && payerCard && payerCard.cardNumber) cardLast4 = String(payerCard.cardNumber).slice(-4);
+        var cardLast4 = _activeGetPaidEntry.paymentMethodEnding || "";
+        var shouldAdvanceStpAfterPayment =
+          paymentValue === "payers-card" && _getPaidStpOptInRequested;
+        if (!cardLast4 && payerCard && payerCard.cardNumber)
+          cardLast4 = String(payerCard.cardNumber).slice(-4);
 
         if (txIdEl) txIdEl.textContent = txId;
-        if (amountEl) amountEl.textContent = formatCurrency(_activeGetPaidEntry.amount, _activeGetPaidEntry.currency);
-        if (dateEl) dateEl.textContent = formatDate(_activeGetPaidEntry.dateInitiated);
-        if (methodEl) methodEl.textContent = methodLabels[paymentValue] || paymentValue;
-        if (cardLast4El) cardLast4El.textContent = cardLast4 || '0000';
+        if (amountEl)
+          amountEl.textContent = formatCurrency(
+            _activeGetPaidEntry.amount,
+            _activeGetPaidEntry.currency,
+          );
+        if (dateEl)
+          dateEl.textContent = formatDate(_activeGetPaidEntry.dateInitiated);
+        if (methodEl)
+          methodEl.textContent = methodLabels[paymentValue] || paymentValue;
+        if (cardLast4El) cardLast4El.textContent = cardLast4 || "0000";
 
         // Show card section only for payer's card
         if (cardSectionEl) {
-          var showCard = paymentValue === 'payers-card';
-          cardSectionEl.classList.toggle('hidden', !showCard);
-          cardSectionEl.classList.toggle('inline-flex', showCard);
+          var showCard = paymentValue === "payers-card";
+          cardSectionEl.classList.toggle("hidden", !showCard);
+          cardSectionEl.classList.toggle("inline-flex", showCard);
         }
 
         // Bank account row
         if (bankRowEl && bankNameEl) {
-          if (paymentValue === 'bank-account') {
-            var bankSel = document.getElementById('gp-bank-account-select');
-            var selectedBank = bankSel && bankSel.querySelector('el-option[aria-selected="true"]');
-            var bankId = selectedBank && selectedBank.getAttribute('value');
+          if (paymentValue === "bank-account") {
+            var bankSel = document.getElementById("gp-bank-account-select");
+            var selectedBank =
+              bankSel &&
+              bankSel.querySelector('el-option[aria-selected="true"]');
+            var bankId = selectedBank && selectedBank.getAttribute("value");
             var bankAccounts = _myBusiness && _myBusiness.bankAccounts;
             var bankAccount = null;
             if (bankAccounts && bankId) {
               for (var bi = 0; bi < bankAccounts.length; bi++) {
-                if (bankAccounts[bi].id === bankId) { bankAccount = bankAccounts[bi]; break; }
+                if (bankAccounts[bi].id === bankId) {
+                  bankAccount = bankAccounts[bi];
+                  break;
+                }
               }
             }
-            bankNameEl.textContent = bankAccount ? bankAccount.displayName : '';
-            bankRowEl.classList.remove('hidden');
-            bankRowEl.classList.add('grid');
+            bankNameEl.textContent = bankAccount ? bankAccount.displayName : "";
+            bankRowEl.classList.remove("hidden");
+            bankRowEl.classList.add("grid");
           } else {
-            bankRowEl.classList.add('hidden');
-            bankRowEl.classList.remove('grid');
+            bankRowEl.classList.add("hidden");
+            bankRowEl.classList.remove("grid");
           }
         }
 
         // Check address row
         if (checkRowEl && checkAddressEl) {
-          if (paymentValue === 'paper-check') {
-            var checkSel = document.getElementById('gp-check-address-select');
-            var selectedCheck = checkSel && checkSel.querySelector('el-option[aria-selected="true"]');
-            var checkId = selectedCheck && selectedCheck.getAttribute('value');
+          if (paymentValue === "paper-check") {
+            var checkSel = document.getElementById("gp-check-address-select");
+            var selectedCheck =
+              checkSel &&
+              checkSel.querySelector('el-option[aria-selected="true"]');
+            var checkId = selectedCheck && selectedCheck.getAttribute("value");
             var checkAddresses = _myBusiness && _myBusiness.checkAddresses;
             var checkAddr = null;
             if (checkAddresses && checkId) {
               for (var ci = 0; ci < checkAddresses.length; ci++) {
-                if (checkAddresses[ci].id === checkId) { checkAddr = checkAddresses[ci]; break; }
+                if (checkAddresses[ci].id === checkId) {
+                  checkAddr = checkAddresses[ci];
+                  break;
+                }
               }
             }
-            checkAddressEl.textContent = checkAddr ? checkAddr.displayName : '';
-            checkRowEl.classList.remove('hidden');
-            checkRowEl.classList.add('grid');
+            checkAddressEl.textContent = checkAddr ? checkAddr.displayName : "";
+            checkRowEl.classList.remove("hidden");
+            checkRowEl.classList.add("grid");
           } else {
-            checkRowEl.classList.add('hidden');
-            checkRowEl.classList.remove('grid');
+            checkRowEl.classList.add("hidden");
+            checkRowEl.classList.remove("grid");
           }
         }
 
-        var originalMethodType = String(_activeGetPaidEntry.methodType || '').toLowerCase();
-        var selectedMethodType = paymentValue === 'payers-card' ? 'card' : 'ach';
-        if (originalMethodType === 'smart_exchange' && paymentValue === 'payers-card') {
-          _activeGetPaidEntry.methodType = 'smart_exchange';
+        var originalMethodType = String(
+          _activeGetPaidEntry.methodType || "",
+        ).toLowerCase();
+        var selectedMethodType =
+          paymentValue === "payers-card" ? "card" : "ach";
+        if (
+          originalMethodType === "smart_exchange" &&
+          paymentValue === "payers-card"
+        ) {
+          _activeGetPaidEntry.methodType = "smart_exchange";
           _activeGetPaidEntry.paymentMethod = METHOD_TYPE_LABELS.smart_exchange;
         } else {
           _activeGetPaidEntry.methodType = selectedMethodType;
-          _activeGetPaidEntry.paymentMethod = getMethodLabelFromType(selectedMethodType);
+          _activeGetPaidEntry.paymentMethod =
+            getMethodLabelFromType(selectedMethodType);
         }
-        _activeGetPaidEntry.status = 'paid';
-        if (_activeGetPaidEntry.details && Array.isArray(_activeGetPaidEntry.details.activityLog)) {
+        _activeGetPaidEntry.status = "paid";
+        if (
+          _activeGetPaidEntry.details &&
+          Array.isArray(_activeGetPaidEntry.details.activityLog)
+        ) {
           _activeGetPaidEntry.details.activityLog.push({
-            type: 'complete',
-            date: new Date().toISOString()
+            type: "complete",
+            date: new Date().toISOString(),
           });
         }
-        if (selectedMethodType === 'card') {
-          var selectedCardLast4 = String(_activeGetPaidEntry.paymentMethodEnding || '').replace(/\D/g, '').slice(-4);
-          if (selectedCardLast4) _activeGetPaidEntry.paymentMethodEnding = selectedCardLast4;
+        if (selectedMethodType === "card") {
+          var selectedCardLast4 = String(
+            _activeGetPaidEntry.paymentMethodEnding || "",
+          )
+            .replace(/\D/g, "")
+            .slice(-4);
+          if (selectedCardLast4)
+            _activeGetPaidEntry.paymentMethodEnding = selectedCardLast4;
         } else {
-          var selectedBank = document.getElementById('gp-bank-account-select');
-          var selectedBankOption = selectedBank && selectedBank.querySelector('el-option[aria-selected="true"]');
-          var selectedBankId = selectedBankOption && selectedBankOption.getAttribute('value');
+          var selectedBank = document.getElementById("gp-bank-account-select");
+          var selectedBankOption =
+            selectedBank &&
+            selectedBank.querySelector('el-option[aria-selected="true"]');
+          var selectedBankId =
+            selectedBankOption && selectedBankOption.getAttribute("value");
           var selectedBankAccount = null;
           var allBanks = _myBusiness && _myBusiness.bankAccounts;
           if (allBanks && selectedBankId) {
             for (var sb = 0; sb < allBanks.length; sb++) {
-              if (allBanks[sb].id === selectedBankId) { selectedBankAccount = allBanks[sb]; break; }
+              if (allBanks[sb].id === selectedBankId) {
+                selectedBankAccount = allBanks[sb];
+                break;
+              }
             }
           }
-          var bankLast4 = getDigits(selectedBankAccount && (selectedBankAccount.last4 || selectedBankAccount.accountNumber || selectedBankAccount.maskedAccount || '')).slice(-4);
+          var bankLast4 = getDigits(
+            selectedBankAccount &&
+              (selectedBankAccount.last4 ||
+                selectedBankAccount.accountNumber ||
+                selectedBankAccount.maskedAccount ||
+                ""),
+          ).slice(-4);
           if (bankLast4) _activeGetPaidEntry.paymentMethodEnding = bankLast4;
         }
         writeExchangeEntryOverride(_activeGetPaidEntry.invoice, {
@@ -6728,36 +8724,47 @@
           paymentMethod: _activeGetPaidEntry.paymentMethod,
           paymentMethodEnding: _activeGetPaidEntry.paymentMethodEnding,
           details: {
-            activityLog: _activeGetPaidEntry.details && Array.isArray(_activeGetPaidEntry.details.activityLog)
-              ? _activeGetPaidEntry.details.activityLog
-              : []
-          }
+            activityLog:
+              _activeGetPaidEntry.details &&
+              Array.isArray(_activeGetPaidEntry.details.activityLog)
+                ? _activeGetPaidEntry.details.activityLog
+                : [],
+          },
         });
 
         refreshTableForActiveTab();
-        if (shouldAdvanceStpAfterPayment && window.STPState && typeof window.STPState.setStpStep === 'function') {
-          window.STPState.setStpStep('bank_verification_required');
+        if (
+          shouldAdvanceStpAfterPayment &&
+          window.STPState &&
+          typeof window.STPState.setStpStep === "function"
+        ) {
+          window.STPState.setStpStep("bank_verification_required");
           _getPaidStpOptInRequested = false;
           updateGetPaidStpInlineUi();
         }
         applyPaidGetPaidPanelState(_activeGetPaidEntry);
-        var updatedActivityEl = document.getElementById('gp-activity-content');
-        if (updatedActivityEl) updatedActivityEl.innerHTML = buildGetPaidActivityLog(_activeGetPaidEntry);
+        var updatedActivityEl = document.getElementById("gp-activity-content");
+        if (updatedActivityEl)
+          updatedActivityEl.innerHTML =
+            buildGetPaidActivityLog(_activeGetPaidEntry);
         populateGetPaidCardModal(_activeGetPaidEntry);
-        showTopActionToast('Payment marked as paid.');
+        showTopActionToast("Payment marked as paid.");
 
-        var dialog = document.getElementById('gp-submit-success-dialog');
-        if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
+        var dialog = document.getElementById("gp-submit-success-dialog");
+        if (dialog && typeof dialog.showModal === "function")
+          dialog.showModal();
       });
     }
 
     function openMarkPaidConfirm(invoice, options) {
-      var normalizedInvoice = String(invoice || '').trim();
+      var normalizedInvoice = String(invoice || "").trim();
       if (!normalizedInvoice) return;
       pendingMarkPaidInvoice = normalizedInvoice;
-      pendingMarkPaidCloseCardDialog = !!(options && options.closeCardDetailsDialog);
-      var dialog = document.getElementById('gp-mark-paid-confirm-dialog');
-      if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
+      pendingMarkPaidCloseCardDialog = !!(
+        options && options.closeCardDetailsDialog
+      );
+      var dialog = document.getElementById("gp-mark-paid-confirm-dialog");
+      if (dialog && typeof dialog.showModal === "function" && !dialog.open) {
         dialog.showModal();
       }
     }
@@ -6766,11 +8773,14 @@
       if (!pendingMarkPaidInvoice) return;
       var targetEntry = findEntryByInvoice(pendingMarkPaidInvoice);
       if (targetEntry) {
-        targetEntry.status = 'paid';
-        if (targetEntry.details && Array.isArray(targetEntry.details.activityLog)) {
+        targetEntry.status = "paid";
+        if (
+          targetEntry.details &&
+          Array.isArray(targetEntry.details.activityLog)
+        ) {
           targetEntry.details.activityLog.push({
-            type: 'complete',
-            date: new Date().toISOString()
+            type: "complete",
+            date: new Date().toISOString(),
           });
         }
         writeExchangeEntryOverride(targetEntry.invoice, {
@@ -6779,39 +8789,53 @@
           paymentMethod: targetEntry.paymentMethod,
           paymentMethodEnding: targetEntry.paymentMethodEnding,
           details: {
-            activityLog: targetEntry.details && Array.isArray(targetEntry.details.activityLog)
-              ? targetEntry.details.activityLog
-              : []
-          }
+            activityLog:
+              targetEntry.details &&
+              Array.isArray(targetEntry.details.activityLog)
+                ? targetEntry.details.activityLog
+                : [],
+          },
         });
         refreshTableForActiveTab();
-        if (_activeGetPaidEntry && String(_activeGetPaidEntry.invoice || '') === String(targetEntry.invoice || '')) {
+        if (
+          _activeGetPaidEntry &&
+          String(_activeGetPaidEntry.invoice || "") ===
+            String(targetEntry.invoice || "")
+        ) {
           _activeGetPaidEntry = targetEntry;
           applyPaidGetPaidPanelState(targetEntry);
-          var updatedActivityEl = document.getElementById('gp-activity-content');
-          if (updatedActivityEl) updatedActivityEl.innerHTML = buildGetPaidActivityLog(targetEntry);
+          var updatedActivityEl = document.getElementById(
+            "gp-activity-content",
+          );
+          if (updatedActivityEl)
+            updatedActivityEl.innerHTML = buildGetPaidActivityLog(targetEntry);
           populateGetPaidCardModal(targetEntry);
         }
-        showTopActionToast('Payment marked as paid.');
+        showTopActionToast("Payment marked as paid.");
       }
       if (pendingMarkPaidCloseCardDialog) {
-        var cardDialog = document.getElementById('gp-card-details-dialog');
-        if (cardDialog && cardDialog.open && typeof cardDialog.close === 'function') cardDialog.close();
+        var cardDialog = document.getElementById("gp-card-details-dialog");
+        if (
+          cardDialog &&
+          cardDialog.open &&
+          typeof cardDialog.close === "function"
+        )
+          cardDialog.close();
       }
-      pendingMarkPaidInvoice = '';
+      pendingMarkPaidInvoice = "";
       pendingMarkPaidCloseCardDialog = false;
     }
 
     function openDeclineConfirm(invoice) {
-      var normalizedInvoice = String(invoice || '').trim();
+      var normalizedInvoice = String(invoice || "").trim();
       if (!normalizedInvoice) return;
       pendingDeclineInvoice = normalizedInvoice;
-      var reasonEl = document.getElementById('gp-decline-reason');
-      var confirmBtn = document.getElementById('gp-decline-confirm-btn');
-      var dialog = document.getElementById('gp-decline-confirm-dialog');
-      if (reasonEl) reasonEl.value = '';
+      var reasonEl = document.getElementById("gp-decline-reason");
+      var confirmBtn = document.getElementById("gp-decline-confirm-btn");
+      var dialog = document.getElementById("gp-decline-confirm-dialog");
+      if (reasonEl) reasonEl.value = "";
       if (confirmBtn) confirmBtn.disabled = true;
-      if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
+      if (dialog && typeof dialog.showModal === "function" && !dialog.open) {
         dialog.showModal();
         window.setTimeout(function () {
           if (reasonEl) reasonEl.focus();
@@ -6820,20 +8844,24 @@
     }
 
     function declinePendingPayment(invoice, reason) {
-      var normalizedInvoice = String(invoice || '').trim();
-      var normalizedReason = String(reason || '').trim();
+      var normalizedInvoice = String(invoice || "").trim();
+      var normalizedReason = String(reason || "").trim();
       if (!normalizedInvoice || !normalizedReason) return;
       var targetEntry = findEntryByInvoice(normalizedInvoice);
       if (!targetEntry) return;
-      targetEntry.status = 'declined';
-      if (targetEntry.details) targetEntry.details.declineReason = normalizedReason;
-      if (targetEntry.details && Array.isArray(targetEntry.details.activityLog)) {
+      targetEntry.status = "declined";
+      if (targetEntry.details)
+        targetEntry.details.declineReason = normalizedReason;
+      if (
+        targetEntry.details &&
+        Array.isArray(targetEntry.details.activityLog)
+      ) {
         targetEntry.details.activityLog.push({
-          user: 'You',
-          action: 'declined the payment',
+          user: "You",
+          action: "declined the payment",
           comment: normalizedReason,
           date: new Date().toISOString(),
-          type: 'failed'
+          type: "failed",
         });
       }
       writeExchangeEntryOverride(targetEntry.invoice, {
@@ -6842,83 +8870,106 @@
         paymentMethod: targetEntry.paymentMethod,
         paymentMethodEnding: targetEntry.paymentMethodEnding,
         details: {
-          activityLog: targetEntry.details && Array.isArray(targetEntry.details.activityLog)
-            ? targetEntry.details.activityLog
-            : [],
-          declineReason: normalizedReason
-        }
+          activityLog:
+            targetEntry.details &&
+            Array.isArray(targetEntry.details.activityLog)
+              ? targetEntry.details.activityLog
+              : [],
+          declineReason: normalizedReason,
+        },
       });
       refreshTableForActiveTab();
-      if (_activeGetPaidEntry && String(_activeGetPaidEntry.invoice || '') === normalizedInvoice) {
+      if (
+        _activeGetPaidEntry &&
+        String(_activeGetPaidEntry.invoice || "") === normalizedInvoice
+      ) {
         _activeGetPaidEntry = targetEntry;
         syncGetPaidHeaderStatus(targetEntry);
         syncGetPaidDeclineMessage(targetEntry);
-        var submitBtn = document.getElementById('gp-submit-btn');
-        var declineBtn = document.getElementById('gp-decline-btn');
-        if (submitBtn) submitBtn.classList.add('hidden');
+        var submitBtn = document.getElementById("gp-submit-btn");
+        var declineBtn = document.getElementById("gp-decline-btn");
+        if (submitBtn) submitBtn.classList.add("hidden");
         if (declineBtn) {
-          declineBtn.classList.add('hidden');
-          declineBtn.removeAttribute('data-decline-invoice');
+          declineBtn.classList.add("hidden");
+          declineBtn.removeAttribute("data-decline-invoice");
         }
-        var updatedActivityEl = document.getElementById('gp-activity-content');
-        if (updatedActivityEl) updatedActivityEl.innerHTML = buildGetPaidActivityLog(targetEntry);
+        var updatedActivityEl = document.getElementById("gp-activity-content");
+        if (updatedActivityEl)
+          updatedActivityEl.innerHTML = buildGetPaidActivityLog(targetEntry);
       }
-      showTopActionToast('Payment declined.');
+      showTopActionToast("Payment declined.");
     }
 
-    var markPaidConfirmDialog = document.getElementById('gp-mark-paid-confirm-dialog');
-    var markPaidConfirmBtn = document.getElementById('gp-mark-paid-confirm-btn');
+    var markPaidConfirmDialog = document.getElementById(
+      "gp-mark-paid-confirm-dialog",
+    );
+    var markPaidConfirmBtn = document.getElementById(
+      "gp-mark-paid-confirm-btn",
+    );
     if (markPaidConfirmBtn) {
-      markPaidConfirmBtn.addEventListener('click', function () {
+      markPaidConfirmBtn.addEventListener("click", function () {
         applyPendingMarkPaid();
-        if (markPaidConfirmDialog && markPaidConfirmDialog.open && typeof markPaidConfirmDialog.close === 'function') {
+        if (
+          markPaidConfirmDialog &&
+          markPaidConfirmDialog.open &&
+          typeof markPaidConfirmDialog.close === "function"
+        ) {
           markPaidConfirmDialog.close();
         }
       });
     }
     if (markPaidConfirmDialog) {
-      markPaidConfirmDialog.addEventListener('close', function () {
-        pendingMarkPaidInvoice = '';
+      markPaidConfirmDialog.addEventListener("close", function () {
+        pendingMarkPaidInvoice = "";
         pendingMarkPaidCloseCardDialog = false;
       });
     }
 
-    var declineConfirmDialog = document.getElementById('gp-decline-confirm-dialog');
-    var declineConfirmBtn = document.getElementById('gp-decline-confirm-btn');
-    var declineReasonEl = document.getElementById('gp-decline-reason');
+    var declineConfirmDialog = document.getElementById(
+      "gp-decline-confirm-dialog",
+    );
+    var declineConfirmBtn = document.getElementById("gp-decline-confirm-btn");
+    var declineReasonEl = document.getElementById("gp-decline-reason");
     if (declineReasonEl && declineConfirmBtn) {
-      declineReasonEl.addEventListener('input', function () {
-        declineConfirmBtn.disabled = String(declineReasonEl.value || '').trim().length === 0;
+      declineReasonEl.addEventListener("input", function () {
+        declineConfirmBtn.disabled =
+          String(declineReasonEl.value || "").trim().length === 0;
       });
     }
     if (declineConfirmBtn) {
-      declineConfirmBtn.addEventListener('click', function () {
-        var reason = declineReasonEl ? declineReasonEl.value : '';
-        if (!String(reason || '').trim()) return;
+      declineConfirmBtn.addEventListener("click", function () {
+        var reason = declineReasonEl ? declineReasonEl.value : "";
+        if (!String(reason || "").trim()) return;
         declinePendingPayment(pendingDeclineInvoice, reason);
-        pendingDeclineInvoice = '';
-        if (declineConfirmDialog && declineConfirmDialog.open && typeof declineConfirmDialog.close === 'function') {
+        pendingDeclineInvoice = "";
+        if (
+          declineConfirmDialog &&
+          declineConfirmDialog.open &&
+          typeof declineConfirmDialog.close === "function"
+        ) {
           declineConfirmDialog.close();
         }
       });
     }
     if (declineConfirmDialog) {
-      declineConfirmDialog.addEventListener('close', function () {
-        pendingDeclineInvoice = '';
-        if (declineReasonEl) declineReasonEl.value = '';
+      declineConfirmDialog.addEventListener("close", function () {
+        pendingDeclineInvoice = "";
+        if (declineReasonEl) declineReasonEl.value = "";
         if (declineConfirmBtn) declineConfirmBtn.disabled = true;
       });
     }
 
     // "Get paid" button clicks (delegated — buttons are rendered dynamically)
-    document.addEventListener('click', function (e) {
-      var viewDetailsLink = e.target.closest('[data-view-details-invoice]');
+    document.addEventListener("click", function (e) {
+      var viewDetailsLink = e.target.closest("[data-view-details-invoice]");
       if (viewDetailsLink) {
         e.preventDefault();
-        var invoiceForDetails = viewDetailsLink.getAttribute('data-view-details-invoice');
+        var invoiceForDetails = viewDetailsLink.getAttribute(
+          "data-view-details-invoice",
+        );
         if (invoiceForDetails) setGuideSelectedInvoice(invoiceForDetails);
         var detailsEntry = findEntryByInvoice(invoiceForDetails);
-        if (detailsEntry && detailsEntry.methodType !== 'card') return;
+        if (detailsEntry && detailsEntry.methodType !== "card") return;
         if (detailsEntry) openCardDetailsModalForEntry(detailsEntry);
         if (actionGuideState.active) {
           if (actionGuideState.step === 2) goToGuideStep3();
@@ -6927,42 +8978,48 @@
         return;
       }
 
-      var viewCardLink = e.target.closest('[data-view-card-invoice]');
+      var viewCardLink = e.target.closest("[data-view-card-invoice]");
       if (viewCardLink) {
         e.preventDefault();
-        var cardEntry = findEntryByInvoice(viewCardLink.getAttribute('data-view-card-invoice'));
+        var cardEntry = findEntryByInvoice(
+          viewCardLink.getAttribute("data-view-card-invoice"),
+        );
         if (cardEntry) openCardDetailsModalForEntry(cardEntry);
         return;
       }
 
-      var markPaidBtn = e.target.closest('#gp-card-mark-paid-btn[data-mark-paid-invoice]');
+      var markPaidBtn = e.target.closest(
+        "#gp-card-mark-paid-btn[data-mark-paid-invoice]",
+      );
       if (markPaidBtn) {
         e.preventDefault();
-        var invoiceFromModal = markPaidBtn.getAttribute('data-mark-paid-invoice');
+        var invoiceFromModal = markPaidBtn.getAttribute(
+          "data-mark-paid-invoice",
+        );
         openMarkPaidConfirm(invoiceFromModal, { closeCardDetailsDialog: true });
         return;
       }
 
-      var markPaidLink = e.target.closest('[data-mark-paid-invoice]');
+      var markPaidLink = e.target.closest("[data-mark-paid-invoice]");
       if (markPaidLink) {
         e.preventDefault();
-        var invoiceToMark = markPaidLink.getAttribute('data-mark-paid-invoice');
+        var invoiceToMark = markPaidLink.getAttribute("data-mark-paid-invoice");
         openMarkPaidConfirm(invoiceToMark);
         return;
       }
 
-      var declineLink = e.target.closest('[data-decline-invoice]');
+      var declineLink = e.target.closest("[data-decline-invoice]");
       if (declineLink) {
         e.preventDefault();
-        var invoiceToDecline = declineLink.getAttribute('data-decline-invoice');
+        var invoiceToDecline = declineLink.getAttribute("data-decline-invoice");
         openDeclineConfirm(invoiceToDecline);
         return;
       }
 
-      var btn = e.target.closest('[data-get-paid-invoice]');
+      var btn = e.target.closest("[data-get-paid-invoice]");
       if (!btn) return;
       e.preventDefault();
-      var invoice = btn.getAttribute('data-get-paid-invoice');
+      var invoice = btn.getAttribute("data-get-paid-invoice");
       var entry = null;
       for (var i = 0; i < paginationState.sourceEntries.length; i++) {
         if (paginationState.sourceEntries[i].invoice === invoice) {
@@ -6974,11 +9031,11 @@
     });
 
     // Browser back/forward — reopen or close panel based on URL
-    window.addEventListener('popstate', function () {
+    window.addEventListener("popstate", function () {
       _suppressUrlUpdate = true;
       var params = new URLSearchParams(location.search);
-      if (params.get('view') === 'get-paid') {
-        var invoiceId = params.get('id');
+      if (params.get("view") === "get-paid") {
+        var invoiceId = params.get("id");
         for (var i = 0; i < paginationState.sourceEntries.length; i++) {
           if (paginationState.sourceEntries[i].invoice === invoiceId) {
             openGetPaidPanel(paginationState.sourceEntries[i]);
@@ -6995,38 +9052,46 @@
   // ── Review Modal ──
 
   function initReviewModal() {
-    var markReadBtn = document.getElementById('gp-mark-read-btn');
+    var markReadBtn = document.getElementById("gp-mark-read-btn");
     if (!markReadBtn) return;
 
     var activeAttachIdx = null;
 
-    document.addEventListener('click', function (e) {
-      var trigger = e.target.closest('.gp-review-trigger, .gp-review-name-trigger');
+    document.addEventListener("click", function (e) {
+      var trigger = e.target.closest(
+        ".gp-review-trigger, .gp-review-name-trigger",
+      );
       if (trigger) {
-        activeAttachIdx = trigger.getAttribute('data-attach-idx');
-        var isDeclined = !!(_activeGetPaidEntry && _activeGetPaidEntry.status === 'declined');
-        markReadBtn.textContent = isDeclined ? 'Close' : 'I have read';
+        activeAttachIdx = trigger.getAttribute("data-attach-idx");
+        var isDeclined = !!(
+          _activeGetPaidEntry && _activeGetPaidEntry.status === "declined"
+        );
+        markReadBtn.textContent = isDeclined ? "Close" : "I have read";
         markReadBtn.className = isDeclined
-          ? 'inline-flex items-center gap-x-2 rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer'
-          : 'inline-flex items-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer';
+          ? "inline-flex items-center gap-x-2 rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer"
+          : "inline-flex items-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer";
       }
     });
 
-    markReadBtn.addEventListener('click', function () {
-      if (_activeGetPaidEntry && _activeGetPaidEntry.status === 'declined') {
+    markReadBtn.addEventListener("click", function () {
+      if (_activeGetPaidEntry && _activeGetPaidEntry.status === "declined") {
         activeAttachIdx = null;
         return;
       }
       if (activeAttachIdx === null) return;
-      var btn = document.querySelector('.gp-review-trigger[data-attach-idx="' + activeAttachIdx + '"]');
-      var status = document.getElementById('gp-attach-' + activeAttachIdx + '-status');
+      var btn = document.querySelector(
+        '.gp-review-trigger[data-attach-idx="' + activeAttachIdx + '"]',
+      );
+      var status = document.getElementById(
+        "gp-attach-" + activeAttachIdx + "-status",
+      );
       if (btn) {
-        btn.classList.add('hidden');
-        btn.classList.remove('inline-flex');
-        btn.style.display = 'none';
+        btn.classList.add("hidden");
+        btn.classList.remove("inline-flex");
+        btn.style.display = "none";
       }
       if (status) {
-        status.classList.remove('hidden');
+        status.classList.remove("hidden");
         var checkbox = status.querySelector('input[type="checkbox"]');
         if (checkbox) checkbox.checked = true;
       }
@@ -7038,24 +9103,27 @@
   // ── Signature Modal ──
 
   function initSignatureModal() {
-    var canvas = document.getElementById('gp-signature-canvas');
+    var canvas = document.getElementById("gp-signature-canvas");
     if (!canvas) return;
 
-    var ctx = canvas.getContext('2d');
-    var clearBtn = document.getElementById('gp-clear-signature');
-    var signBtn = document.getElementById('gp-sign-btn');
-    var tabDraw = document.getElementById('gp-tab-draw');
-    var tabType = document.getElementById('gp-tab-type');
-    var typeWrap = document.getElementById('gp-type-input-wrap');
-    var fullNameInput = document.getElementById('gp-fullName');
-    var sigDialog = document.getElementById('gp-signature-dialog');
+    var ctx = canvas.getContext("2d");
+    var clearBtn = document.getElementById("gp-clear-signature");
+    var signBtn = document.getElementById("gp-sign-btn");
+    var tabDraw = document.getElementById("gp-tab-draw");
+    var tabType = document.getElementById("gp-tab-type");
+    var typeWrap = document.getElementById("gp-type-input-wrap");
+    var fullNameInput = document.getElementById("gp-fullName");
+    var sigDialog = document.getElementById("gp-signature-dialog");
 
     var isDrawing = false;
     var hasSignature = false;
-    var sigMode = 'draw';
+    var sigMode = "draw";
 
     function getInkColor() {
-      return getComputedStyle(canvas).getPropertyValue('--gp-ink-color').trim() || '#111827';
+      return (
+        getComputedStyle(canvas).getPropertyValue("--gp-ink-color").trim() ||
+        "#111827"
+      );
     }
 
     function setCanvasSize() {
@@ -7064,11 +9132,12 @@
       canvas.width = Math.floor(bounds.width * ratio);
       canvas.height = Math.floor(bounds.height * ratio);
       ctx.setTransform(ratio, 0, 0, ratio, 0, 0);
-      ctx.lineCap = 'round';
-      ctx.lineJoin = 'round';
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
       ctx.lineWidth = 2.5;
       ctx.strokeStyle = getInkColor();
-      if (sigMode === 'type' && fullNameInput) drawTypedSig(fullNameInput.value || '');
+      if (sigMode === "type" && fullNameInput)
+        drawTypedSig(fullNameInput.value || "");
     }
 
     function updateSignBtn() {
@@ -7086,12 +9155,16 @@
 
     function drawTypedSig(text) {
       clearCanvas();
-      var safe = (text || '').trim();
-      if (!safe) { hasSignature = false; updateSignBtn(); return; }
+      var safe = (text || "").trim();
+      if (!safe) {
+        hasSignature = false;
+        updateSignBtn();
+        return;
+      }
       ctx.save();
       ctx.fillStyle = getInkColor();
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
       var maxWidth = canvas.getBoundingClientRect().width - 48;
       var fontSize = 72;
       while (fontSize > 24) {
@@ -7099,7 +9172,11 @@
         if (ctx.measureText(safe).width <= maxWidth) break;
         fontSize -= 2;
       }
-      ctx.fillText(safe, canvas.getBoundingClientRect().width / 2, canvas.getBoundingClientRect().height / 2);
+      ctx.fillText(
+        safe,
+        canvas.getBoundingClientRect().width / 2,
+        canvas.getBoundingClientRect().height / 2,
+      );
       ctx.restore();
       hasSignature = true;
       updateSignBtn();
@@ -7107,69 +9184,114 @@
 
     function setMode(nextMode) {
       sigMode = nextMode;
-      if (sigMode === 'draw') {
-        if (tabDraw) { tabDraw.className = 'rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900 dark:bg-white/10 dark:text-white'; tabDraw.setAttribute('aria-current', 'page'); }
-        if (tabType) { tabType.className = 'rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'; tabType.removeAttribute('aria-current'); }
-        if (typeWrap) typeWrap.classList.add('hidden');
-        canvas.style.pointerEvents = 'auto';
+      if (sigMode === "draw") {
+        if (tabDraw) {
+          tabDraw.className =
+            "rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900 dark:bg-white/10 dark:text-white";
+          tabDraw.setAttribute("aria-current", "page");
+        }
+        if (tabType) {
+          tabType.className =
+            "rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300";
+          tabType.removeAttribute("aria-current");
+        }
+        if (typeWrap) typeWrap.classList.add("hidden");
+        canvas.style.pointerEvents = "auto";
       } else {
-        if (tabType) { tabType.className = 'rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900 dark:bg-white/10 dark:text-white'; tabType.setAttribute('aria-current', 'page'); }
-        if (tabDraw) { tabDraw.className = 'rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300'; tabDraw.removeAttribute('aria-current'); }
-        if (typeWrap) typeWrap.classList.remove('hidden');
-        canvas.style.pointerEvents = 'none';
-        drawTypedSig(fullNameInput ? fullNameInput.value || '' : '');
+        if (tabType) {
+          tabType.className =
+            "rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900 dark:bg-white/10 dark:text-white";
+          tabType.setAttribute("aria-current", "page");
+        }
+        if (tabDraw) {
+          tabDraw.className =
+            "rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300";
+          tabDraw.removeAttribute("aria-current");
+        }
+        if (typeWrap) typeWrap.classList.remove("hidden");
+        canvas.style.pointerEvents = "none";
+        drawTypedSig(fullNameInput ? fullNameInput.value || "" : "");
       }
     }
 
-    if (tabDraw) tabDraw.addEventListener('click', function () { setMode('draw'); });
-    if (tabType) tabType.addEventListener('click', function () { setMode('type'); });
+    if (tabDraw)
+      tabDraw.addEventListener("click", function () {
+        setMode("draw");
+      });
+    if (tabType)
+      tabType.addEventListener("click", function () {
+        setMode("type");
+      });
 
     if (fullNameInput) {
-      fullNameInput.addEventListener('input', function (e) {
-        if (sigMode !== 'type') return;
+      fullNameInput.addEventListener("input", function (e) {
+        if (sigMode !== "type") return;
         drawTypedSig(e.target.value);
       });
     }
 
     if (clearBtn) {
-      clearBtn.addEventListener('click', function () {
+      clearBtn.addEventListener("click", function () {
         clearCanvas();
         hasSignature = false;
         updateSignBtn();
-        if (sigMode === 'type' && fullNameInput) fullNameInput.value = '';
+        if (sigMode === "type" && fullNameInput) fullNameInput.value = "";
       });
     }
 
-    canvas.addEventListener('pointerdown', function (e) {
-      if (sigMode !== 'draw') return;
-      e.preventDefault(); isDrawing = true;
-      ctx.strokeStyle = getInkColor();
-      var p = getPoint(e); ctx.beginPath(); ctx.moveTo(p.x, p.y);
-    });
-    canvas.addEventListener('pointermove', function (e) {
-      if (sigMode !== 'draw' || !isDrawing) return;
+    canvas.addEventListener("pointerdown", function (e) {
+      if (sigMode !== "draw") return;
       e.preventDefault();
-      var p = getPoint(e); ctx.lineTo(p.x, p.y); ctx.stroke();
-      if (!hasSignature) { hasSignature = true; updateSignBtn(); }
+      isDrawing = true;
+      ctx.strokeStyle = getInkColor();
+      var p = getPoint(e);
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y);
     });
-    canvas.addEventListener('pointerup', function () { if (sigMode === 'draw') { isDrawing = false; ctx.closePath(); } });
-    canvas.addEventListener('pointerleave', function () { if (sigMode === 'draw') { isDrawing = false; ctx.closePath(); } });
-    canvas.addEventListener('pointercancel', function () { if (sigMode === 'draw') { isDrawing = false; ctx.closePath(); } });
+    canvas.addEventListener("pointermove", function (e) {
+      if (sigMode !== "draw" || !isDrawing) return;
+      e.preventDefault();
+      var p = getPoint(e);
+      ctx.lineTo(p.x, p.y);
+      ctx.stroke();
+      if (!hasSignature) {
+        hasSignature = true;
+        updateSignBtn();
+      }
+    });
+    canvas.addEventListener("pointerup", function () {
+      if (sigMode === "draw") {
+        isDrawing = false;
+        ctx.closePath();
+      }
+    });
+    canvas.addEventListener("pointerleave", function () {
+      if (sigMode === "draw") {
+        isDrawing = false;
+        ctx.closePath();
+      }
+    });
+    canvas.addEventListener("pointercancel", function () {
+      if (sigMode === "draw") {
+        isDrawing = false;
+        ctx.closePath();
+      }
+    });
 
     // Reset + resize canvas on open; reset only on close
     function resetSigState() {
       clearCanvas();
       hasSignature = false;
-      if (fullNameInput) fullNameInput.value = '';
+      if (fullNameInput) fullNameInput.value = "";
       updateSignBtn();
-      setMode('draw');
+      setMode("draw");
     }
 
     if (sigDialog) {
       new MutationObserver(function (mutations) {
         mutations.forEach(function (m) {
-          if (m.attributeName !== 'open') return;
-          if (sigDialog.hasAttribute('open')) {
+          if (m.attributeName !== "open") return;
+          if (sigDialog.hasAttribute("open")) {
             resetSigState();
             setTimeout(setCanvasSize, 30);
           } else {
@@ -7180,21 +9302,22 @@
     }
 
     if (signBtn) {
-      signBtn.addEventListener('click', function () {
+      signBtn.addEventListener("click", function () {
         if (signBtn.disabled) return;
         if (sigDialog) sigDialog.close();
-        var trigger = document.getElementById('gp-signature-trigger');
-        var badge = document.getElementById('gp-signed-badge');
-        if (trigger) trigger.classList.add('hidden');
-        if (badge) badge.classList.remove('hidden');
-        clearCanvas(); hasSignature = false;
+        var trigger = document.getElementById("gp-signature-trigger");
+        var badge = document.getElementById("gp-signed-badge");
+        if (trigger) trigger.classList.add("hidden");
+        if (badge) badge.classList.remove("hidden");
+        clearCanvas();
+        hasSignature = false;
         updateGetPaidStepStates();
       });
     }
 
     setCanvasSize();
     updateSignBtn();
-    setMode('draw');
+    setMode("draw");
   }
 
   function copyTextFallback(text, triggerEl) {
@@ -7204,40 +9327,51 @@
       return;
     }
     if (navigator.clipboard && navigator.clipboard.writeText) {
-      navigator.clipboard.writeText(text).then(function () {
-        if (window.showCopiedTooltip) window.showCopiedTooltip(triggerEl);
-      }).catch(function () {});
+      navigator.clipboard
+        .writeText(text)
+        .then(function () {
+          if (window.showCopiedTooltip) window.showCopiedTooltip(triggerEl);
+        })
+        .catch(function () {});
       return;
     }
-    var textarea = document.createElement('textarea');
+    var textarea = document.createElement("textarea");
     textarea.value = text;
-    textarea.setAttribute('readonly', 'readonly');
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
+    textarea.setAttribute("readonly", "readonly");
+    textarea.style.position = "fixed";
+    textarea.style.opacity = "0";
     document.body.appendChild(textarea);
     textarea.select();
     var copied = false;
-    try { copied = document.execCommand('copy'); } catch (err) {}
+    try {
+      copied = document.execCommand("copy");
+    } catch (err) {}
     document.body.removeChild(textarea);
     if (copied && window.showCopiedTooltip) window.showCopiedTooltip(triggerEl);
   }
 
   function initSubmitSuccessModalCopy() {
-    var cardDialog = document.getElementById('gp-card-details-dialog');
+    var cardDialog = document.getElementById("gp-card-details-dialog");
     if (!cardDialog) return;
     var pairs = [
-      { valueId: 'gp-vc-full-number', selector: '[data-copy-id="gp-vc-full-number"]' },
-      { valueId: 'gp-vc-full-expiry', selector: '[data-copy-id="gp-vc-full-expiry"]' },
-      { valueId: 'gp-vc-cvc2', selector: '[data-copy-id="gp-vc-cvc2"]' },
+      {
+        valueId: "gp-vc-full-number",
+        selector: '[data-copy-id="gp-vc-full-number"]',
+      },
+      {
+        valueId: "gp-vc-full-expiry",
+        selector: '[data-copy-id="gp-vc-full-expiry"]',
+      },
+      { valueId: "gp-vc-cvc2", selector: '[data-copy-id="gp-vc-cvc2"]' },
     ];
     pairs.forEach(function (item) {
       var valueEl = document.getElementById(item.valueId);
       var btn = cardDialog.querySelector(item.selector);
       if (!valueEl || !btn) return;
-      btn.addEventListener('click', function (event) {
+      btn.addEventListener("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
-        var text = String(valueEl.textContent || '').trim();
+        var text = String(valueEl.textContent || "").trim();
         if (!text) return;
         copyTextFallback(text, btn);
       });
@@ -7245,23 +9379,27 @@
   }
 
   function initCardDetailsDialogGuards() {
-    var cardDialog = document.getElementById('gp-card-details-dialog');
-    if (!cardDialog || cardDialog.getAttribute('data-outside-close-guard') === 'true') return;
-    cardDialog.setAttribute('data-outside-close-guard', 'true');
+    var cardDialog = document.getElementById("gp-card-details-dialog");
+    if (
+      !cardDialog ||
+      cardDialog.getAttribute("data-outside-close-guard") === "true"
+    )
+      return;
+    cardDialog.setAttribute("data-outside-close-guard", "true");
 
     // Keep this modal dismissible only via explicit controls (close button / commands).
-    cardDialog.addEventListener('cancel', function (event) {
+    cardDialog.addEventListener("cancel", function (event) {
       event.preventDefault();
     });
 
     function isCardDialogBackdropInteraction(event) {
       var target = event.target;
-      if (!target || typeof target.closest !== 'function') return false;
+      if (!target || typeof target.closest !== "function") return false;
       if (!cardDialog.open) return false;
-      if (target.closest('[data-guide-tooltip-host]')) return false;
+      if (target.closest("[data-guide-tooltip-host]")) return false;
       if (target === cardDialog) return true;
-      if (target.closest('el-dialog-panel')) return false;
-      if (target.closest('el-dialog-backdrop')) return true;
+      if (target.closest("el-dialog-panel")) return false;
+      if (target.closest("el-dialog-backdrop")) return true;
       return cardDialog.contains(target);
     }
 
@@ -7269,38 +9407,52 @@
       if (!isCardDialogBackdropInteraction(event)) return;
       event.preventDefault();
       event.stopPropagation();
-      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+      if (typeof event.stopImmediatePropagation === "function")
+        event.stopImmediatePropagation();
     }
 
-    cardDialog.addEventListener('pointerdown', swallowBackdropInteraction, true);
-    cardDialog.addEventListener('click', swallowBackdropInteraction, true);
+    cardDialog.addEventListener(
+      "pointerdown",
+      swallowBackdropInteraction,
+      true,
+    );
+    cardDialog.addEventListener("click", swallowBackdropInteraction, true);
 
     // Some dialog wrapper implementations emit light-dismiss from elements outside <dialog>.
     // Guard globally while this specific dialog is open so only explicit close controls can dismiss.
     function swallowOutsidePanelInteraction(event) {
       if (!cardDialog.open) return;
       var target = event.target;
-      if (!target || typeof target.closest !== 'function') return;
-      var cardDialogHost = cardDialog.closest('el-dialog');
-      if (target.closest('[data-guide-tooltip-host]')) return;
-      if (target.closest('[command="close"][commandfor="gp-card-details-dialog"]')) return;
-      if (target.closest('#gp-card-mark-paid-btn')) return;
-      if (target.closest('#gp-card-details-dialog el-dialog-panel')) return;
-      if (target.closest('#gp-card-details-dialog [data-copy-id]')) return;
-      if (target.closest('#gp-card-how-toggle')) return;
+      if (!target || typeof target.closest !== "function") return;
+      var cardDialogHost = cardDialog.closest("el-dialog");
+      if (target.closest("[data-guide-tooltip-host]")) return;
+      if (
+        target.closest('[command="close"][commandfor="gp-card-details-dialog"]')
+      )
+        return;
+      if (target.closest("#gp-card-mark-paid-btn")) return;
+      if (target.closest("#gp-card-details-dialog el-dialog-panel")) return;
+      if (target.closest("#gp-card-details-dialog [data-copy-id]")) return;
+      if (target.closest("#gp-card-how-toggle")) return;
 
-      var inCardDialog = !!target.closest('#gp-card-details-dialog');
-      var inCardDialogHost = !!(cardDialogHost && cardDialogHost.contains(target));
+      var inCardDialog = !!target.closest("#gp-card-details-dialog");
+      var inCardDialogHost = !!(
+        cardDialogHost && cardDialogHost.contains(target)
+      );
       if (!inCardDialog && !inCardDialogHost) return;
 
       event.preventDefault();
       event.stopPropagation();
-      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
+      if (typeof event.stopImmediatePropagation === "function")
+        event.stopImmediatePropagation();
     }
 
-    document.addEventListener('pointerdown', swallowOutsidePanelInteraction, true);
-    document.addEventListener('click', swallowOutsidePanelInteraction, true);
-
+    document.addEventListener(
+      "pointerdown",
+      swallowOutsidePanelInteraction,
+      true,
+    );
+    document.addEventListener("click", swallowOutsidePanelInteraction, true);
   }
 
   // ── Init ──
@@ -7327,9 +9479,13 @@
     var shouldOpenActionGuide = shouldShowActionColumnGuide();
     if (shouldOpenActionGuide) removeGuideUrlParam();
 
-    if (window.STPState && typeof window.STPState.subscribe === 'function') {
+    if (window.STPState && typeof window.STPState.subscribe === "function") {
       window.STPState.subscribe(function () {
-        if (!paginationState.sourceEntries || !paginationState.sourceEntries.length) return;
+        if (
+          !paginationState.sourceEntries ||
+          !paginationState.sourceEntries.length
+        )
+          return;
         updateGetPaidStpInlineUi();
         refreshTableForActiveTab();
       });
@@ -7340,11 +9496,31 @@
     var ownDataOnly = !!PAGE_CONFIG.dataset;
     Promise.all([
       fetchExchangesData(),
-      ownDataOnly ? Promise.resolve({ bankAccounts: [] }) : fetchPaymentPreferencesData().catch(function () { return { bankAccounts: [] }; }),
-      ownDataOnly ? Promise.resolve([]) : fetchCheckAddressesData().catch(function () { return []; }),
-      ownDataOnly ? Promise.resolve([]) : fetchBankAccountsData().catch(function () { return []; }),
-      ownDataOnly ? Promise.resolve([]) : fetchCustomersData().catch(function () { return []; }),
-      !ownDataOnly && typeof window.getMyCompanyProfile === 'function' ? window.getMyCompanyProfile().catch(function () { return null; }) : Promise.resolve(null),
+      ownDataOnly
+        ? Promise.resolve({ bankAccounts: [] })
+        : fetchPaymentPreferencesData().catch(function () {
+            return { bankAccounts: [] };
+          }),
+      ownDataOnly
+        ? Promise.resolve([])
+        : fetchCheckAddressesData().catch(function () {
+            return [];
+          }),
+      ownDataOnly
+        ? Promise.resolve([])
+        : fetchBankAccountsData().catch(function () {
+            return [];
+          }),
+      ownDataOnly
+        ? Promise.resolve([])
+        : fetchCustomersData().catch(function () {
+            return [];
+          }),
+      !ownDataOnly && typeof window.getMyCompanyProfile === "function"
+        ? window.getMyCompanyProfile().catch(function () {
+            return null;
+          })
+        : Promise.resolve(null),
     ])
       .then(function (results) {
         var result = results[0];
@@ -7355,21 +9531,34 @@
         var myCompanyProfile = results[5];
         var columns = result.columns;
         var entries = result.entries;
-        _myBusiness = mergeMyBusinessProfile(result.myBusiness || {}, myCompanyProfile);
+        _myBusiness = mergeMyBusinessProfile(
+          result.myBusiness || {},
+          myCompanyProfile,
+        );
         if (sharedCheckAddresses && sharedCheckAddresses.length) {
           _myBusiness.checkAddresses = sharedCheckAddresses;
         }
-        var preferredBankAccounts = paymentPreferencesData && paymentPreferencesData.bankAccounts
-          ? paymentPreferencesData.bankAccounts
-          : [];
+        var preferredBankAccounts =
+          paymentPreferencesData && paymentPreferencesData.bankAccounts
+            ? paymentPreferencesData.bankAccounts
+            : [];
         if (sharedBankAccounts && sharedBankAccounts.length) {
-          _myBusiness.bankAccounts = mergeBankAccounts(_myBusiness.bankAccounts, sharedBankAccounts);
+          _myBusiness.bankAccounts = mergeBankAccounts(
+            _myBusiness.bankAccounts,
+            sharedBankAccounts,
+          );
         } else if (preferredBankAccounts.length) {
-          _myBusiness.bankAccounts = mergeBankAccounts(_myBusiness.bankAccounts, preferredBankAccounts);
+          _myBusiness.bankAccounts = mergeBankAccounts(
+            _myBusiness.bankAccounts,
+            preferredBankAccounts,
+          );
         } else {
-          _myBusiness.bankAccounts = mergeBankAccounts(_myBusiness.bankAccounts, []);
+          _myBusiness.bankAccounts = mergeBankAccounts(
+            _myBusiness.bankAccounts,
+            [],
+          );
         }
-        if (!_myBusiness.id) _myBusiness.id = 'my-business';
+        if (!_myBusiness.id) _myBusiness.id = "my-business";
         _customers = Array.isArray(customers) ? customers : [];
         paginationState.sourceEntries = entries;
         updateTabBadges(entries);
@@ -7386,8 +9575,8 @@
           if (shouldOpenActionGuide) {
             startActionColumnGuide();
           }
-          if (params.get('view') === 'get-paid') {
-            var invoiceId = params.get('id');
+          if (params.get("view") === "get-paid") {
+            var invoiceId = params.get("id");
             for (var j = 0; j < paginationState.sourceEntries.length; j++) {
               if (paginationState.sourceEntries[j].invoice === invoiceId) {
                 _suppressUrlUpdate = true;
@@ -7417,12 +9606,20 @@
             initialTableLoadingState.timer = window.setTimeout(function () {
               initialTableLoadingState.active = false;
               initialTableLoadingState.timer = null;
-              renderTable(table, paginationState.allColumns, initialFilteredEntries);
+              renderTable(
+                table,
+                paginationState.allColumns,
+                initialFilteredEntries,
+              );
               afterInitialTableRender();
             }, remaining);
           } else {
             initialTableLoadingState.active = false;
-            renderTable(table, paginationState.allColumns, initialFilteredEntries);
+            renderTable(
+              table,
+              paginationState.allColumns,
+              initialFilteredEntries,
+            );
             afterInitialTableRender();
           }
         } else {
@@ -7431,7 +9628,7 @@
         }
       })
       .catch(function (error) {
-        console.error('Failed to load exchanges data:', error);
+        console.error("Failed to load exchanges data:", error);
         updateTabBadges([]);
       });
   }

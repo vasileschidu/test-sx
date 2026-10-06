@@ -17,67 +17,104 @@
  * are skeletoned; static labels stay.
  */
 (function () {
-  'use strict';
+  "use strict";
 
-  var STORAGE_KEY = 'sx_payment_programs_v4';
-  var ROSTER_KEY = 'sx_pp_suppliers_v1';
+  var STORAGE_KEY = "sx_payment_programs_v4";
+  var ROSTER_KEY = "sx_pp_suppliers_v1";
   var LOAD_MIN_MS = 1000;
   var LOAD_MAX_MS = 1500;
 
   var catalog = {
-    methods: [], methodById: {}, paperCheck: { label: 'Check', fee: 'No fee' },
-    conditions: [], defaultWaterfall: [], defaultDurationDays: 45, durationRange: { min: 1, max: 90 }
+    methods: [],
+    methodById: {},
+    paperCheck: { label: "Check", fee: "No fee" },
+    conditions: [],
+    defaultWaterfall: [],
+    defaultDurationDays: 45,
+    durationRange: { min: 1, max: 90 },
   };
   var programs = [];
-  var roster = [];          // every supplier; programId/cohortId null when unassigned
+  var roster = []; // every supplier; programId/cohortId null when unassigned
   var unassignedSeed = 0;
   var loadTimer = null;
-  var cohortEdit = null;   // { programId, index|null, original: snapshot }
+  var cohortEdit = null; // { programId, index|null, original: snapshot }
   var pendingDisable = null; // { programId, index }
-  var editingId = null;      // program being renamed in the create drawer; null when creating
-  var pendingDelete = null;  // program id awaiting the delete speedbump
+  var editingId = null; // program being renamed in the create drawer; null when creating
+  var pendingDelete = null; // program id awaiting the delete speedbump
   var toastTimer = null;
   var toastAction = null;
   var changeListeners = [];
 
-  function $(id) { return document.getElementById(id); }
+  function $(id) {
+    return document.getElementById(id);
+  }
 
   function escapeHtml(value) {
-    return String(value == null ? '' : value)
-      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
   }
 
-  function today() { return new Date().toISOString().slice(0, 10); }
+  function today() {
+    return new Date().toISOString().slice(0, 10);
+  }
 
   function formatDate(value) {
-    var date = new Date(String(value).indexOf('T') === -1 ? value + 'T00:00:00' : value);
-    if (isNaN(date.getTime())) return '';
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    var date = new Date(
+      String(value).indexOf("T") === -1 ? value + "T00:00:00" : value,
+    );
+    if (isNaN(date.getTime())) return "";
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
   }
 
-  function formatNumber(value) { return Number(value || 0).toLocaleString('en-US'); }
+  function formatNumber(value) {
+    return Number(value || 0).toLocaleString("en-US");
+  }
 
-  function clone(value) { return JSON.parse(JSON.stringify(value)); }
+  function clone(value) {
+    return JSON.parse(JSON.stringify(value));
+  }
 
-  function uid(prefix) { return prefix + '-' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+  function uid(prefix) {
+    return (
+      prefix +
+      "-" +
+      Date.now().toString(36) +
+      Math.random().toString(36).slice(2, 6)
+    );
+  }
 
-  function plural(n, word) { return n + ' ' + word + (Number(n) === 1 ? '' : 's'); }
+  function plural(n, word) {
+    return n + " " + word + (Number(n) === 1 ? "" : "s");
+  }
 
   // ── Cohort model ──
 
   function allConditions() {
     var out = {};
-    catalog.conditions.forEach(function (c) { out[c.id] = true; });
+    catalog.conditions.forEach(function (c) {
+      out[c.id] = true;
+    });
     return out;
   }
 
   function normalizeCohort(raw) {
     var c = clone(raw || {});
-    c.id = c.id || uid('co');
-    c.name = String(c.name || '').trim();
+    c.id = c.id || uid("co");
+    c.name = String(c.name || "").trim();
     c.durationDays = Number(c.durationDays) || catalog.defaultDurationDays;
-    c.methods = Array.isArray(c.methods) ? c.methods.filter(function (id) { return catalog.methodById[id]; }) : [];
+    c.methods = Array.isArray(c.methods)
+      ? c.methods.filter(function (id) {
+          return catalog.methodById[id];
+        })
+      : [];
     c.paperCheck = c.paperCheck === true;
     c.conditions = Object.assign(allConditions(), c.conditions || {});
     c.enabled = c.enabled !== false;
@@ -93,14 +130,22 @@
       durationDays: c.durationDays,
       methods: c.methods.slice().sort(),
       paperCheck: c.paperCheck,
-      conditions: catalog.conditions.map(function (k) { return !!c.conditions[k.id]; }),
-      enabled: c.enabled
+      conditions: catalog.conditions.map(function (k) {
+        return !!c.conditions[k.id];
+      }),
+      enabled: c.enabled,
     });
   }
 
-  function methodCount(c) { return c.methods.length + (c.paperCheck ? 1 : 0); }
+  function methodCount(c) {
+    return c.methods.length + (c.paperCheck ? 1 : 0);
+  }
 
-  function enabledCount(cohorts) { return cohorts.filter(function (c) { return c.enabled; }).length; }
+  function enabledCount(cohorts) {
+    return cohorts.filter(function (c) {
+      return c.enabled;
+    }).length;
+  }
 
   /** 1-based position among enabled cohorts; disabled ones are skipped and get none. */
   function displayNumber(cohorts, index) {
@@ -111,75 +156,102 @@
   }
 
   function feeValue(fee) {
-    var n = parseFloat(String(fee || '').replace('%', ''));
+    var n = parseFloat(String(fee || "").replace("%", ""));
     return isNaN(n) ? 0 : n;
   }
 
   /** What the stage costs a supplier: its fallback method's fee, else its dearest method. */
   function cohortRate(c) {
     var fallback = c.fallback && catalog.methodById[c.fallback];
-    var rate = fallback ? feeValue(fallback.fee) : c.methods.reduce(function (max, id) {
-      var m = catalog.methodById[id];
-      return Math.max(max, m ? feeValue(m.fee) : 0);
-    }, 0);
-    return rate.toFixed(2) + '%';
+    var rate = fallback
+      ? feeValue(fallback.fee)
+      : c.methods.reduce(function (max, id) {
+          var m = catalog.methodById[id];
+          return Math.max(max, m ? feeValue(m.fee) : 0);
+        }, 0);
+    return rate.toFixed(2) + "%";
   }
 
   function cohortLabel(cohorts, index) {
     var n = displayNumber(cohorts, index);
-    return (n ? 'Cohort ' + n + ' · ' : '') + cohorts[index].name;
+    return (n ? "Cohort " + n + " · " : "") + cohorts[index].name;
   }
 
   // ── Program model ──
 
   function normalizeProgram(raw) {
     var p = clone(raw);
-    p.cohorts = (Array.isArray(p.cohorts) ? p.cohorts : []).map(normalizeCohort);
-    if (p.status === 'active' && !p.published) p.published = { name: p.name, cohorts: clone(p.cohorts) };
-    if (p.published) p.published.cohorts = p.published.cohorts.map(normalizeCohort);
-    p.status = p.published ? 'active' : 'draft';
+    p.cohorts = (Array.isArray(p.cohorts) ? p.cohorts : []).map(
+      normalizeCohort,
+    );
+    if (p.status === "active" && !p.published)
+      p.published = { name: p.name, cohorts: clone(p.cohorts) };
+    if (p.published)
+      p.published.cohorts = p.published.cohorts.map(normalizeCohort);
+    p.status = p.published ? "active" : "draft";
     return p;
   }
 
-  function isNeverPublished(p) { return !p.published; }
+  function isNeverPublished(p) {
+    return !p.published;
+  }
 
   function contentShape(name, cohorts) {
-    return JSON.stringify({ name: name, cohorts: cohorts.map(function (c) { return c.id + ':' + cohortShape(c); }) });
+    return JSON.stringify({
+      name: name,
+      cohorts: cohorts.map(function (c) {
+        return c.id + ":" + cohortShape(c);
+      }),
+    });
   }
 
   /** True when the working copy differs from what clients are using. */
   function hasDraftChanges(p) {
     if (isNeverPublished(p)) return false;
-    return contentShape(p.name, p.cohorts) !== contentShape(p.published.name, p.published.cohorts);
+    return (
+      contentShape(p.name, p.cohorts) !==
+      contentShape(p.published.name, p.published.cohorts)
+    );
   }
 
-  function inDraft(p) { return isNeverPublished(p) || hasDraftChanges(p); }
+  function inDraft(p) {
+    return isNeverPublished(p) || hasDraftChanges(p);
+  }
 
   /** 'edited' | 'added' | null — how a working-copy cohort differs from published. */
   function cohortChange(p, cohort) {
     if (isNeverPublished(p)) return null;
     for (var i = 0; i < p.published.cohorts.length; i += 1) {
       var pub = p.published.cohorts[i];
-      if (pub.id === cohort.id) return cohortShape(pub) === cohortShape(cohort) ? null : 'edited';
+      if (pub.id === cohort.id)
+        return cohortShape(pub) === cohortShape(cohort) ? null : "edited";
     }
-    return 'added';
+    return "added";
   }
 
   // ── Storage ──
 
   function persistQuiet() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(programs)); } catch (error) {}
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(programs));
+    } catch (error) {}
     persistRoster();
   }
 
   function persist() {
-    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(programs)); } catch (error) {}
-    changeListeners.forEach(function (fn) { try { fn(); } catch (error) {} });
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(programs));
+    } catch (error) {}
+    changeListeners.forEach(function (fn) {
+      try {
+        fn();
+      } catch (error) {}
+    });
   }
 
   function readStored() {
     try {
-      var parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+      var parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
       return Array.isArray(parsed) ? parsed : null;
     } catch (error) {
       return null;
@@ -187,8 +259,12 @@
   }
 
   function loadData() {
-    return Promise.resolve(window.DataSource ? window.DataSource.load('payment-programs') : null)
-      .catch(function () { return null; })
+    return Promise.resolve(
+      window.DataSource ? window.DataSource.load("payment-programs") : null,
+    )
+      .catch(function () {
+        return null;
+      })
       .then(function (data) {
         var seed = [];
         if (data) {
@@ -202,7 +278,9 @@
           unassignedSeed = Number(data.unassignedSuppliers) || 0;
         }
         catalog.methodById = {};
-        catalog.methods.forEach(function (m) { catalog.methodById[m.id] = m; });
+        catalog.methods.forEach(function (m) {
+          catalog.methodById[m.id] = m;
+        });
         var stored = readStored();
         programs = (stored || seed).map(normalizeProgram);
         loadRoster();
@@ -218,34 +296,94 @@
   // edited directly, so the numbers and the Suppliers tab can't disagree.
 
   var FEATURED = [
-    ['Redline Freight', 'RF-2093'], ['Redline Freight', 'RF-2094'], ['Blue Wave Logistics', 'BW-3021'],
-    ['Green Leaf Transport', 'GL-1427'], ['Yellow Star Shipping', 'YS-5874'], ['Black Hawk Couriers', 'BH-9185'],
-    ['Orange Sky Freight', 'OS-2046'], ['Purple Mountain Movers', 'PM-6742']
+    ["Redline Freight", "RF-2093"],
+    ["Redline Freight", "RF-2094"],
+    ["Blue Wave Logistics", "BW-3021"],
+    ["Green Leaf Transport", "GL-1427"],
+    ["Yellow Star Shipping", "YS-5874"],
+    ["Black Hawk Couriers", "BH-9185"],
+    ["Orange Sky Freight", "OS-2046"],
+    ["Purple Mountain Movers", "PM-6742"],
   ];
-  var NAME_A = ['Redline', 'Blue Wave', 'Green Leaf', 'Yellow Star', 'Black Hawk', 'Orange Sky', 'Purple Mountain', 'Silver Pine', 'Harbor Point', 'Summit Ridge', 'Northgate', 'Iron Bridge', 'Cedar Lane', 'Pacific Crest', 'Granite Peak', 'Maple Grove', 'Red Rock', 'Clearwater', 'Lakeshore', 'Stonebrook', 'Eastwind', 'Blue Ridge', 'Golden Gate', 'Riverbend'];
-  var NAME_B = ['Freight', 'Logistics', 'Transport', 'Shipping', 'Couriers', 'Movers', 'Supply Co.', 'Distribution', 'Haulers', 'Carriers', 'Cargo', 'Express', 'Fleet Services', 'Trucking', 'Delivery'];
+  var NAME_A = [
+    "Redline",
+    "Blue Wave",
+    "Green Leaf",
+    "Yellow Star",
+    "Black Hawk",
+    "Orange Sky",
+    "Purple Mountain",
+    "Silver Pine",
+    "Harbor Point",
+    "Summit Ridge",
+    "Northgate",
+    "Iron Bridge",
+    "Cedar Lane",
+    "Pacific Crest",
+    "Granite Peak",
+    "Maple Grove",
+    "Red Rock",
+    "Clearwater",
+    "Lakeshore",
+    "Stonebrook",
+    "Eastwind",
+    "Blue Ridge",
+    "Golden Gate",
+    "Riverbend",
+  ];
+  var NAME_B = [
+    "Freight",
+    "Logistics",
+    "Transport",
+    "Shipping",
+    "Couriers",
+    "Movers",
+    "Supply Co.",
+    "Distribution",
+    "Haulers",
+    "Carriers",
+    "Cargo",
+    "Express",
+    "Fleet Services",
+    "Trucking",
+    "Delivery",
+  ];
 
   function hash(str) {
     var h = 2166136261;
-    for (var i = 0; i < str.length; i += 1) { h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
+    for (var i = 0; i < str.length; i += 1) {
+      h ^= str.charCodeAt(i);
+      h = Math.imul(h, 16777619);
+    }
     return h >>> 0;
   }
 
   function rng(seed) {
     var a = seed || 1;
     return function () {
-      a |= 0; a = (a + 0x6D2B79F5) | 0;
+      a |= 0;
+      a = (a + 0x6d2b79f5) | 0;
       var t = Math.imul(a ^ (a >>> 15), 1 | a);
       t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
   }
 
-  function pick(rand, list) { return list[Math.floor(rand() * list.length)]; }
+  function pick(rand, list) {
+    return list[Math.floor(rand() * list.length)];
+  }
 
   function initialsOf(name) {
-    return name.split(/\s+/).filter(function (w) { return /^[A-Za-z]/.test(w); }).slice(0, 2)
-      .map(function (w) { return w.charAt(0).toUpperCase(); }).join('');
+    return name
+      .split(/\s+/)
+      .filter(function (w) {
+        return /^[A-Za-z]/.test(w);
+      })
+      .slice(0, 2)
+      .map(function (w) {
+        return w.charAt(0).toUpperCase();
+      })
+      .join("");
   }
 
   function daysAgo(n) {
@@ -255,17 +393,17 @@
   }
 
   function newSupplier(key, rand) {
-    var name = pick(rand, NAME_A) + ' ' + pick(rand, NAME_B);
+    var name = pick(rand, NAME_A) + " " + pick(rand, NAME_B);
     return {
-      id: 'sup-' + hash(key).toString(36),
+      id: "sup-" + hash(key).toString(36),
       name: name,
-      code: initialsOf(name) + '-' + (1000 + Math.floor(rand() * 9000)),
+      code: initialsOf(name) + "-" + (1000 + Math.floor(rand() * 9000)),
       ytd: 20000 + Math.floor(rand() * 750) * 100,
       attention: rand() < 0.07,
       programId: null,
       cohortId: null,
-      method: null,       // method id, 'paper', or null when they haven't chosen
-      enteredAt: null
+      method: null, // method id, 'paper', or null when they haven't chosen
+      enteredAt: null,
     };
   }
 
@@ -278,27 +416,41 @@
       p.published.cohorts.forEach(function (c) {
         if (!c.enabled) return;
         for (var k = 0; k < c.activeSuppliers; k += 1, pool += 1) {
-          var rand = rng(hash(p.id + ':' + pool));
-          var s = newSupplier(p.id + ':' + pool, rand);
+          var rand = rng(hash(p.id + ":" + pool));
+          var s = newSupplier(p.id + ":" + pool, rand);
           var onPaper = c.paperCheck && (!c.methods.length || rand() < 0.38);
           s.programId = p.id;
           s.cohortId = c.id;
-          s.method = onPaper ? 'paper' : (c.methods.length ? pick(rand, c.methods) : null);
-          s.enteredAt = daysAgo(Math.floor(rand() * Math.max(1, c.durationDays - 1)));
+          s.method = onPaper
+            ? "paper"
+            : c.methods.length
+              ? pick(rand, c.methods)
+              : null;
+          s.enteredAt = daysAgo(
+            Math.floor(rand() * Math.max(1, c.durationDays - 1)),
+          );
           list.push(s);
         }
       });
     });
     // A real list mixes programs and stages; key the order to ids so it's stable.
-    list.sort(function (a, b) { return hash('order:' + a.id) - hash('order:' + b.id); });
-    FEATURED.forEach(function (f, i) { if (list[i]) { list[i].name = f[0]; list[i].code = f[1]; } });
-    for (var u = 0; u < unassignedSeed; u += 1) list.push(newSupplier('pool:' + u, rng(hash('pool:' + u))));
+    list.sort(function (a, b) {
+      return hash("order:" + a.id) - hash("order:" + b.id);
+    });
+    FEATURED.forEach(function (f, i) {
+      if (list[i]) {
+        list[i].name = f[0];
+        list[i].code = f[1];
+      }
+    });
+    for (var u = 0; u < unassignedSeed; u += 1)
+      list.push(newSupplier("pool:" + u, rng(hash("pool:" + u))));
     return list;
   }
 
   function loadRoster() {
     try {
-      var parsed = JSON.parse(localStorage.getItem(ROSTER_KEY) || 'null');
+      var parsed = JSON.parse(localStorage.getItem(ROSTER_KEY) || "null");
       roster = Array.isArray(parsed) ? parsed : seedRoster();
     } catch (error) {
       roster = seedRoster();
@@ -306,7 +458,9 @@
   }
 
   function persistRoster() {
-    try { localStorage.setItem(ROSTER_KEY, JSON.stringify(roster)); } catch (error) {}
+    try {
+      localStorage.setItem(ROSTER_KEY, JSON.stringify(roster));
+    } catch (error) {}
   }
 
   /** Recompute every cohort and program count from the roster. */
@@ -320,7 +474,9 @@
     });
     programs.forEach(function (p) {
       p.suppliers = byProgram[p.id] || 0;
-      var apply = function (c) { c.activeSuppliers = byCohort[c.id] || 0; };
+      var apply = function (c) {
+        c.activeSuppliers = byCohort[c.id] || 0;
+      };
       p.cohorts.forEach(apply);
       if (p.published) p.published.cohorts.forEach(apply);
     });
@@ -328,141 +484,277 @@
 
   function offers(cohort, method) {
     if (!method) return false;
-    return method === 'paper' ? cohort.paperCheck : cohort.methods.indexOf(method) !== -1;
+    return method === "paper"
+      ? cohort.paperCheck
+      : cohort.methods.indexOf(method) !== -1;
   }
 
   /** Move suppliers into a cohort. Progress restarts; a method the cohort doesn't offer is dropped. */
   function placeSuppliers(ids, programId, cohort) {
     var wanted = {};
-    ids.forEach(function (id) { wanted[id] = true; });
+    ids.forEach(function (id) {
+      wanted[id] = true;
+    });
     roster.forEach(function (s) {
       if (!wanted[s.id]) return;
       s.programId = programId;
       s.cohortId = cohort.id;
       s.enteredAt = today();
-      if (!offers(cohort, s.method)) s.method = cohort.paperCheck ? 'paper' : null;
+      if (!offers(cohort, s.method))
+        s.method = cohort.paperCheck ? "paper" : null;
     });
     persistRoster();
     recount();
   }
 
-
   function findProgram(id) {
-    for (var i = 0; i < programs.length; i += 1) if (programs[i].id === id) return programs[i];
+    for (var i = 0; i < programs.length; i += 1)
+      if (programs[i].id === id) return programs[i];
     return null;
   }
 
   // ── Icons ──
 
   var ICONS = {
-    card: 'M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z',
+    card: "M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z",
     // Credit card with a sparkle — Figma's "Managed Card Acceptance Icon", used for MCA and Qualified Settlement.
-    'card-plus': 'M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z',
-    bank: 'M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z',
-    check: 'M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z'
+    "card-plus":
+      "M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z",
+    bank: "M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z",
+    check:
+      "M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z",
   };
 
   function icon(name, cls) {
-    return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="' + cls + '"><path stroke-linecap="round" stroke-linejoin="round" d="' + (ICONS[name] || ICONS.card) + '" /></svg>';
+    return (
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="' +
+      cls +
+      '"><path stroke-linecap="round" stroke-linejoin="round" d="' +
+      (ICONS[name] || ICONS.card) +
+      '" /></svg>'
+    );
   }
 
-  var DOT = '<span class="size-1 shrink-0 rounded-full bg-gray-400" aria-hidden="true"></span>';
-  var ARROW_RIGHT = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" class="size-4 shrink-0 text-gray-500 dark:text-gray-400" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8h10m0 0-4-4m4 4-4 4" /></svg>';
-  var ARROW_DOWN = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" class="size-3.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 3v10m0 0 4-4m-4 4-4-4" /></svg>';
-  var PLUS = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-[18px]"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>';
+  var DOT =
+    '<span class="size-1 shrink-0 rounded-full bg-gray-400" aria-hidden="true"></span>';
+  var ARROW_RIGHT =
+    '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" class="size-4 shrink-0 text-gray-500 dark:text-gray-400" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M3 8h10m0 0-4-4m4 4-4 4" /></svg>';
+  var ARROW_DOWN =
+    '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" class="size-3.5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M8 3v10m0 0 4-4m-4 4-4-4" /></svg>';
+  var PLUS =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-[18px]"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>';
 
-  var DOTS = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" /></svg>';
-  var PENCIL = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-500"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" /><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" /></svg>';
-  var TRASH = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" /></svg>';
+  var DOTS =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" /></svg>';
+  var PENCIL =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-500"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" /><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" /></svg>';
+  var TRASH =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" /></svg>';
 
   // ── Shared class strings ──
 
-  var BTN_PRIMARY = 'inline-flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400';
-  var BTN_SECONDARY_SM = 'shrink-0 cursor-pointer rounded-sm border border-gray-300 bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10';
-  var BTN_LINK = 'inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300';
-  var CHECKBOX = 'col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500';
+  var BTN_PRIMARY =
+    "inline-flex shrink-0 cursor-pointer items-center justify-center gap-1 rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400";
+  var BTN_SECONDARY_SM =
+    "shrink-0 cursor-pointer rounded-sm border border-gray-300 bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10";
+  var BTN_LINK =
+    "inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300";
+  var CHECKBOX =
+    "col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500";
 
   var BADGE = {
-    active: 'border-green-200 bg-green-100 text-green-800 dark:border-green-400/20 dark:bg-green-500/10 dark:text-green-300',
-    draft: 'border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/20 dark:bg-yellow-400/10 dark:text-yellow-300',
-    neutral: 'border-gray-200 bg-gray-50 text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-300'
+    active:
+      "border-green-200 bg-green-100 text-green-800 dark:border-green-400/20 dark:bg-green-500/10 dark:text-green-300",
+    draft:
+      "border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/20 dark:bg-yellow-400/10 dark:text-yellow-300",
+    neutral:
+      "border-gray-200 bg-gray-50 text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-300",
   };
 
   function badge(kind, label) {
-    return '<span class="inline-flex shrink-0 items-center rounded-sm border px-2 py-0.5 text-xs font-medium ' + BADGE[kind] + '">' + escapeHtml(label) + '</span>';
+    return (
+      '<span class="inline-flex shrink-0 items-center rounded-sm border px-2 py-0.5 text-xs font-medium ' +
+      BADGE[kind] +
+      '">' +
+      escapeHtml(label) +
+      "</span>"
+    );
   }
 
   /** Never-published programs are Drafts; published ones stay Active while a draft is pending. */
-  function statusBadge(p) { return isNeverPublished(p) ? badge('draft', 'Draft') : badge('active', 'Active'); }
+  function statusBadge(p) {
+    return isNeverPublished(p)
+      ? badge("draft", "Draft")
+      : badge("active", "Active");
+  }
 
   function toggle(attrs, on, label, hint) {
-    return '<div' + (hint ? ' data-tooltip="' + escapeHtml(hint) + '"' : '') + ' class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/10">' +
+    return (
+      "<div" +
+      (hint ? ' data-tooltip="' + escapeHtml(hint) + '"' : "") +
+      ' class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/10">' +
       '<span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>' +
-      '<input type="checkbox" ' + (on ? 'checked ' : '') + attrs + ' aria-label="' + escapeHtml(label) + '" class="absolute inset-0 size-full appearance-none cursor-pointer focus:outline-hidden" /></div>';
+      '<input type="checkbox" ' +
+      (on ? "checked " : "") +
+      attrs +
+      ' aria-label="' +
+      escapeHtml(label) +
+      '" class="absolute inset-0 size-full appearance-none cursor-pointer focus:outline-hidden" /></div>'
+    );
   }
 
   // ── Skeletons (dynamic values only) ──
 
   function bar(w, h, strong) {
-    return '<span class="pp-skel' + (strong ? ' pp-skel-strong' : '') + '" style="width:' + w + ';height:' + h + '"></span>';
+    return (
+      '<span class="pp-skel' +
+      (strong ? " pp-skel-strong" : "") +
+      '" style="width:' +
+      w +
+      ";height:" +
+      h +
+      '"></span>'
+    );
   }
 
   function skeletonEmpty() {
-    return '<div class="flex flex-col items-center gap-6 py-8" aria-hidden="true">' +
-      '<div class="flex w-full max-w-[480px] flex-col items-center gap-2">' + bar('16rem', '1.25rem') + bar('100%', '2.5rem') + '</div>' +
-      bar('11rem', '2rem') + '</div>';
+    return (
+      '<div class="flex flex-col items-center gap-6 py-8" aria-hidden="true">' +
+      '<div class="flex w-full max-w-[480px] flex-col items-center gap-2">' +
+      bar("16rem", "1.25rem") +
+      bar("100%", "2.5rem") +
+      "</div>" +
+      bar("11rem", "2rem") +
+      "</div>"
+    );
   }
 
   function skeletonListCard() {
-    return '<div class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-white/5" aria-hidden="true">' +
-      '<div class="flex items-start gap-4"><div class="flex flex-1 flex-col gap-2">' + bar('18rem', '1.25rem', true) + bar('22rem', '1rem', true) + '</div>' + bar('6rem', '1.75rem', true) + '</div>' +
-      '<div class="flex gap-2">' + bar('13rem', '1.5rem', true) + bar('12rem', '1.5rem', true) + bar('13rem', '1.5rem', true) + '</div></div>';
+    return (
+      '<div class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-white/5" aria-hidden="true">' +
+      '<div class="flex items-start gap-4"><div class="flex flex-1 flex-col gap-2">' +
+      bar("18rem", "1.25rem", true) +
+      bar("22rem", "1rem", true) +
+      "</div>" +
+      bar("6rem", "1.75rem", true) +
+      "</div>" +
+      '<div class="flex gap-2">' +
+      bar("13rem", "1.5rem", true) +
+      bar("12rem", "1.5rem", true) +
+      bar("13rem", "1.5rem", true) +
+      "</div></div>"
+    );
   }
 
   function skeletonList(count) {
     if (!count) return skeletonEmpty();
-    var cards = '';
+    var cards = "";
     for (var i = 0; i < Math.min(count, 3); i += 1) cards += skeletonListCard();
-    return '<div class="flex flex-col gap-6">' + listHeader() + '<div class="flex flex-col gap-4">' + cards + '</div></div>';
+    return (
+      '<div class="flex flex-col gap-6">' +
+      listHeader() +
+      '<div class="flex flex-col gap-4">' +
+      cards +
+      "</div></div>"
+    );
   }
 
   function skeletonCohortCard() {
-    return '<div class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-white/5" aria-hidden="true">' +
-      '<div class="flex items-center gap-3">' + bar('1.75rem', '1.75rem', true) + bar('14rem', '1.25rem', true) + '</div>' +
-      '<div class="flex gap-4">' + bar('4.6rem', '3.75rem', true) + bar('4.7rem', '3.75rem', true) + bar('7.2rem', '3.75rem', true) + '</div>' +
-      '<div class="flex gap-2">' + bar('9rem', '1.5rem', true) + bar('14rem', '1.5rem', true) + bar('7rem', '1.5rem', true) + '</div></div>';
+    return (
+      '<div class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-white/5" aria-hidden="true">' +
+      '<div class="flex items-center gap-3">' +
+      bar("1.75rem", "1.75rem", true) +
+      bar("14rem", "1.25rem", true) +
+      "</div>" +
+      '<div class="flex gap-4">' +
+      bar("4.6rem", "3.75rem", true) +
+      bar("4.7rem", "3.75rem", true) +
+      bar("7.2rem", "3.75rem", true) +
+      "</div>" +
+      '<div class="flex gap-2">' +
+      bar("9rem", "1.5rem", true) +
+      bar("14rem", "1.5rem", true) +
+      bar("7rem", "1.5rem", true) +
+      "</div></div>"
+    );
   }
 
   function skeletonDetail(p) {
     var banner = inDraft(p)
-      ? '<div class="border-b border-yellow-300 bg-yellow-50/60 p-4 dark:border-yellow-400/20 dark:bg-yellow-400/5" aria-hidden="true">' + bar('100%', '3rem') + '</div>'
-      : '';
-    var tiles = ['Cohorts', 'Clients using', 'Suppliers', 'Check policy'].map(function (label) {
-      return '<div class="flex flex-col gap-1 rounded-lg border border-gray-200 p-3.5 dark:border-white/10">' +
-        '<span class="text-sm font-medium text-gray-900 dark:text-white">' + label + '</span>' +
-        bar('4rem', '2rem') + bar('9rem', '1rem') + '</div>';
-    }).join('');
-    return banner +
-      '<div class="flex items-start gap-3 px-6 pt-6 pb-5">' + backArrow(true) +
-        '<div class="flex flex-col gap-2">' + bar('22rem', '2rem', true) + bar('9rem', '1.25rem', true) + '</div></div>' +
+      ? '<div class="border-b border-yellow-300 bg-yellow-50/60 p-4 dark:border-yellow-400/20 dark:bg-yellow-400/5" aria-hidden="true">' +
+        bar("100%", "3rem") +
+        "</div>"
+      : "";
+    var tiles = ["Cohorts", "Clients using", "Suppliers", "Check policy"]
+      .map(function (label) {
+        return (
+          '<div class="flex flex-col gap-1 rounded-lg border border-gray-200 p-3.5 dark:border-white/10">' +
+          '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
+          label +
+          "</span>" +
+          bar("4rem", "2rem") +
+          bar("9rem", "1rem") +
+          "</div>"
+        );
+      })
+      .join("");
+    return (
+      banner +
+      '<div class="flex items-start gap-3 px-6 pt-6 pb-5">' +
+      backArrow(true) +
+      '<div class="flex flex-col gap-2">' +
+      bar("22rem", "2rem", true) +
+      bar("9rem", "1.25rem", true) +
+      "</div></div>" +
       '<div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>' +
-      '<div class="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2 lg:grid-cols-4">' + tiles + '</div>' +
+      '<div class="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2 lg:grid-cols-4">' +
+      tiles +
+      "</div>" +
       '<div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>' +
-      '<div class="flex flex-col gap-6 p-6">' + cohortHeading() + skeletonCohortCard() + '</div>';
+      '<div class="flex flex-col gap-6 p-6">' +
+      cohortHeading() +
+      skeletonCohortCard() +
+      "</div>"
+    );
   }
 
   /** The ⋯ menu on a program: rename it, or delete it. */
   function programMenu(p, large) {
     var id = escapeHtml(p.id);
     var item = function (attr, iconHtml, label, tone) {
-      return '<button type="button" ' + attr + ' class="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-left text-sm font-medium ' + tone + ' focus:outline-hidden">' + iconHtml + label + '</button>';
+      return (
+        '<button type="button" ' +
+        attr +
+        ' class="flex w-full cursor-pointer items-center gap-3 px-3 py-2 text-left text-sm font-medium ' +
+        tone +
+        ' focus:outline-hidden">' +
+        iconHtml +
+        label +
+        "</button>"
+      );
     };
-    return '<el-dropdown class="inline-block shrink-0">' +
-      '<button type="button" aria-label="Program actions" data-tooltip="More actions" class="flex ' + (large ? 'size-8 rounded-md' : 'size-[30px] rounded-sm') + ' cursor-pointer items-center justify-center border border-gray-300 bg-white text-gray-500 shadow-xs hover:bg-gray-50 aria-expanded:border-blue-600 aria-expanded:ring-1 aria-expanded:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10">' + DOTS + '</button>' +
+    return (
+      '<el-dropdown class="inline-block shrink-0">' +
+      '<button type="button" aria-label="Program actions" data-tooltip="More actions" class="flex ' +
+      (large ? "size-8 rounded-md" : "size-[30px] rounded-sm") +
+      ' cursor-pointer items-center justify-center border border-gray-300 bg-white text-gray-500 shadow-xs hover:bg-gray-50 aria-expanded:border-blue-600 aria-expanded:ring-1 aria-expanded:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10">' +
+      DOTS +
+      "</button>" +
       '<el-menu anchor="bottom end" popover class="min-w-44 origin-top-right rounded-md bg-white py-1 shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:outline-white/10">' +
-        item('data-edit-program="' + id + '"', PENCIL, 'Edit', 'text-gray-700 hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5') +
-        item('data-delete-program="' + id + '"', TRASH, 'Delete', 'text-red-600 hover:bg-red-50 focus:bg-red-50 dark:text-red-400 dark:hover:bg-red-400/10 dark:focus:bg-red-400/10') +
-      '</el-menu></el-dropdown>';
+      item(
+        'data-edit-program="' + id + '"',
+        PENCIL,
+        "Edit",
+        "text-gray-700 hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/5 dark:focus:bg-white/5",
+      ) +
+      item(
+        'data-delete-program="' + id + '"',
+        TRASH,
+        "Delete",
+        "text-red-600 hover:bg-red-50 focus:bg-red-50 dark:text-red-400 dark:hover:bg-red-400/10 dark:focus:bg-red-400/10",
+      ) +
+      "</el-menu></el-dropdown>"
+    );
   }
 
   /**
@@ -471,22 +763,43 @@
    */
   function supplierCount(count, programId, cohortId, cls) {
     var text = formatNumber(count);
-    if (!count || !programId) return '<span class="' + (cls || '') + '">' + text + '</span>';
-    var href = '?tab=suppliers&filterProgram=' + encodeURIComponent(programId) + (cohortId ? '&filterCohort=' + encodeURIComponent(cohortId) : '');
-    return '<a href="' + href + '" data-tooltip="View suppliers" data-sup-link data-sup-link-program="' + escapeHtml(programId) + '"' + (cohortId ? ' data-sup-link-cohort="' + escapeHtml(cohortId) + '"' : '') +
-      ' class="cursor-pointer underline decoration-gray-400 underline-offset-2 hover:text-blue-600 hover:decoration-blue-600 dark:hover:text-blue-400 ' + (cls || '') + '">' + text + '</a>';
+    if (!count || !programId)
+      return '<span class="' + (cls || "") + '">' + text + "</span>";
+    var href =
+      "?tab=suppliers&filterProgram=" +
+      encodeURIComponent(programId) +
+      (cohortId ? "&filterCohort=" + encodeURIComponent(cohortId) : "");
+    return (
+      '<a href="' +
+      href +
+      '" data-tooltip="View suppliers" data-sup-link data-sup-link-program="' +
+      escapeHtml(programId) +
+      '"' +
+      (cohortId ? ' data-sup-link-cohort="' + escapeHtml(cohortId) + '"' : "") +
+      ' class="cursor-pointer underline decoration-gray-400 underline-offset-2 hover:text-blue-600 hover:decoration-blue-600 dark:hover:text-blue-400 ' +
+      (cls || "") +
+      '">' +
+      text +
+      "</a>"
+    );
   }
 
   // ── List view ──
 
   function listHeader() {
-    return '<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">' +
+    return (
+      '<div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-6">' +
       '<div class="flex min-w-0 flex-1 flex-col gap-1">' +
-        '<h2 class="text-lg font-semibold text-gray-900 dark:text-white">Payment Program Workflows</h2>' +
-        '<p class="text-sm text-gray-500 dark:text-gray-400">Manage Transcard waterfall configurations used to power supplier payment programs across buyer accounts.</p>' +
-      '</div>' +
-      '<button type="button" data-open-create class="' + BTN_PRIMARY + '">' + PLUS + 'Create Program</button>' +
-    '</div>';
+      '<h2 class="text-lg font-semibold text-gray-900 dark:text-white">Payment Program Workflows</h2>' +
+      '<p class="text-sm text-gray-500 dark:text-gray-400">Manage Transcard waterfall configurations used to power supplier payment programs across buyer accounts.</p>' +
+      "</div>" +
+      '<button type="button" data-open-create class="' +
+      BTN_PRIMARY +
+      '">' +
+      PLUS +
+      "Create Program</button>" +
+      "</div>"
+    );
   }
 
   function cohortChips(cohorts) {
@@ -495,116 +808,223 @@
       if (index > 0) parts.push(ARROW_RIGHT);
       parts.push(
         '<div class="flex items-center gap-1 rounded-md border border-gray-200 px-1.5 py-1 text-xs dark:border-white/10">' +
-          '<span class="font-medium text-gray-950 dark:text-white">Cohort ' + (index + 1) + '</span>' + DOT +
-          '<span class="font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(cohort.name) + '</span></div>');
+          '<span class="font-medium text-gray-950 dark:text-white">Cohort ' +
+          (index + 1) +
+          "</span>" +
+          DOT +
+          '<span class="font-normal text-gray-700 dark:text-gray-300">' +
+          escapeHtml(cohort.name) +
+          "</span></div>",
+      );
     });
-    return parts.length ? '<div class="flex flex-wrap items-center gap-2">' + parts.join('') + '</div>' : '';
+    return parts.length
+      ? '<div class="flex flex-wrap items-center gap-2">' +
+          parts.join("") +
+          "</div>"
+      : "";
   }
 
   function programCard(p) {
     // The list shows what clients see: the published waterfall when there is one.
-    var shown = (p.published ? p.published.cohorts : p.cohorts).filter(function (c) { return c.enabled; });
-    return '<div class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">' +
+    var shown = (p.published ? p.published.cohorts : p.cohorts).filter(
+      function (c) {
+        return c.enabled;
+      },
+    );
+    return (
+      '<div class="flex flex-col gap-4 rounded-2xl border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">' +
       '<div class="flex items-start gap-4">' +
-        '<div class="flex min-w-0 flex-1 flex-col gap-1">' +
-          '<div class="flex flex-wrap items-center gap-2.5">' +
-            '<p class="text-base font-semibold text-gray-950 dark:text-white">' + escapeHtml(p.published ? p.published.name : p.name) + '</p>' +
-            statusBadge(p) + (hasDraftChanges(p) ? badge('draft', 'Draft changes') : '') +
-          '</div>' +
-          '<div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-gray-700 dark:text-gray-300">' +
-            '<span>Updated ' + escapeHtml(formatDate(p.updatedAt)) + '</span>' + DOT +
-            '<span>' + supplierCount(p.suppliers, p.published ? p.id : null, null, 'font-medium') + ' suppliers</span>' + DOT +
-            '<span><span class="font-medium">' + formatNumber(p.clients) + '</span> clients</span>' +
-          '</div>' +
-        '</div>' +
-        '<div class="flex shrink-0 items-center gap-2">' +
-          '<button type="button" data-open-program="' + escapeHtml(p.id) + '" class="' + BTN_SECONDARY_SM + '">View Program</button>' +
-          programMenu(p) +
-        '</div>' +
-      '</div>' +
+      '<div class="flex min-w-0 flex-1 flex-col gap-1">' +
+      '<div class="flex flex-wrap items-center gap-2.5">' +
+      '<p class="text-base font-semibold text-gray-950 dark:text-white">' +
+      escapeHtml(p.published ? p.published.name : p.name) +
+      "</p>" +
+      statusBadge(p) +
+      (hasDraftChanges(p) ? badge("draft", "Draft changes") : "") +
+      "</div>" +
+      '<div class="flex flex-wrap items-center gap-x-2.5 gap-y-1 text-sm text-gray-700 dark:text-gray-300">' +
+      "<span>Updated " +
+      escapeHtml(formatDate(p.updatedAt)) +
+      "</span>" +
+      DOT +
+      "<span>" +
+      supplierCount(
+        p.suppliers,
+        p.published ? p.id : null,
+        null,
+        "font-medium",
+      ) +
+      " suppliers</span>" +
+      DOT +
+      '<span><span class="font-medium">' +
+      formatNumber(p.clients) +
+      "</span> clients</span>" +
+      "</div>" +
+      "</div>" +
+      '<div class="flex shrink-0 items-center gap-2">' +
+      '<button type="button" data-open-program="' +
+      escapeHtml(p.id) +
+      '" class="' +
+      BTN_SECONDARY_SM +
+      '">View Program</button>' +
+      programMenu(p) +
+      "</div>" +
+      "</div>" +
       cohortChips(shown) +
-    '</div>';
+      "</div>"
+    );
   }
 
   function emptyState() {
-    return '<div class="flex flex-col items-center py-8">' +
+    return (
+      '<div class="flex flex-col items-center py-8">' +
       '<div class="flex w-full max-w-[480px] flex-col items-center gap-6 text-center">' +
-        '<div class="flex flex-col gap-2">' +
-          '<p class="text-base font-semibold text-gray-900 dark:text-white">No Payment Program yet</p>' +
-          '<p class="text-sm text-gray-500 dark:text-gray-400">Create your first payment program to define payment terms and manage supplier enrollment.</p>' +
-        '</div>' +
-        '<button type="button" data-open-create class="' + BTN_PRIMARY + '">' + PLUS + 'Create Payment Program</button>' +
-      '</div></div>';
+      '<div class="flex flex-col gap-2">' +
+      '<p class="text-base font-semibold text-gray-900 dark:text-white">No Payment Program yet</p>' +
+      '<p class="text-sm text-gray-500 dark:text-gray-400">Create your first payment program to define payment terms and manage supplier enrollment.</p>' +
+      "</div>" +
+      '<button type="button" data-open-create class="' +
+      BTN_PRIMARY +
+      '">' +
+      PLUS +
+      "Create Payment Program</button>" +
+      "</div></div>"
+    );
   }
 
   function renderListBody() {
-    var body = $('pp-list-body');
+    var body = $("pp-list-body");
     if (!body) return;
-    body.setAttribute('aria-busy', 'false');
+    body.setAttribute("aria-busy", "false");
     body.innerHTML = programs.length
-      ? '<div class="flex flex-col gap-6">' + listHeader() + '<div class="flex flex-col gap-4">' + programs.map(programCard).join('') + '</div></div>'
+      ? '<div class="flex flex-col gap-6">' +
+        listHeader() +
+        '<div class="flex flex-col gap-4">' +
+        programs.map(programCard).join("") +
+        "</div></div>"
       : emptyState();
   }
 
   // ── Detail view ──
 
   function backArrow(inert) {
-    return '<button type="button" ' + (inert ? 'disabled' : 'data-back-to-list data-tooltip="Back to programs"') + ' aria-label="Back to programs" class="mt-1 flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 disabled:cursor-default disabled:hover:bg-transparent dark:text-gray-400 dark:hover:bg-white/10">' +
-      '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 10H4m0 0 5-5m-5 5 5 5" /></svg></button>';
+    return (
+      '<button type="button" ' +
+      (inert
+        ? "disabled"
+        : 'data-back-to-list data-tooltip="Back to programs"') +
+      ' aria-label="Back to programs" class="mt-1 flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 disabled:cursor-default disabled:hover:bg-transparent dark:text-gray-400 dark:hover:bg-white/10">' +
+      '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M16 10H4m0 0 5-5m-5 5 5 5" /></svg></button>'
+    );
   }
 
   function cohortHeading() {
-    return '<div><h3 class="text-lg font-semibold text-gray-900 dark:text-white">Cohort Configuration</h3>' +
-      '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">The sequence clients\' suppliers move through. Edits create a draft.</p></div>';
+    return (
+      '<div><h3 class="text-lg font-semibold text-gray-900 dark:text-white">Cohort Configuration</h3>' +
+      '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">The sequence clients\' suppliers move through. Edits create a draft.</p></div>'
+    );
   }
 
-  var WARNING_ICON = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-yellow-500"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" /></svg>';
+  var WARNING_ICON =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-yellow-500"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" /></svg>';
 
   /** One alert only: the yellow draft notice, for new programs and for edits alike. */
   function draftBanner(p) {
-    if (!inDraft(p)) return '';
+    if (!inDraft(p)) return "";
     var fresh = isNeverPublished(p);
-    return '<div data-pp-draft-banner class="flex flex-col gap-3 border-b border-yellow-300 bg-yellow-50 p-4 sm:flex-row sm:items-center dark:border-yellow-400/20 dark:bg-yellow-400/10">' +
-      '<div class="flex flex-1 gap-3">' + WARNING_ICON +
-        '<div class="flex flex-col gap-2 text-sm text-yellow-800 dark:text-yellow-300"><p class="font-medium">Draft in progress - changes aren\'t live for any client yet.</p>' +
-        '<p>' + (fresh ? 'This program isn\'t available to clients until you publish it.' : 'Clients keep using the published version until you publish.') + '</p></div></div>' +
+    return (
+      '<div data-pp-draft-banner class="flex flex-col gap-3 border-b border-yellow-300 bg-yellow-50 p-4 sm:flex-row sm:items-center dark:border-yellow-400/20 dark:bg-yellow-400/10">' +
+      '<div class="flex flex-1 gap-3">' +
+      WARNING_ICON +
+      '<div class="flex flex-col gap-2 text-sm text-yellow-800 dark:text-yellow-300"><p class="font-medium">Draft in progress - changes aren\'t live for any client yet.</p>' +
+      "<p>" +
+      (fresh
+        ? "This program isn't available to clients until you publish it."
+        : "Clients keep using the published version until you publish.") +
+      "</p></div></div>" +
       '<div class="flex shrink-0 items-center gap-4">' +
-        '<button type="button" data-discard class="cursor-pointer text-sm font-semibold text-yellow-800 hover:text-yellow-900 dark:text-yellow-300">Discard draft</button>' +
-        '<button type="button" data-publish ' + (p.cohorts.length ? '' : 'disabled ') + ' class="' + BTN_PRIMARY + '">' + (fresh ? 'Publish Program' : 'Publish Changes') + '</button></div></div>';
+      '<button type="button" data-discard class="cursor-pointer text-sm font-semibold text-yellow-800 hover:text-yellow-900 dark:text-yellow-300">Discard draft</button>' +
+      '<button type="button" data-publish ' +
+      (p.cohorts.length ? "" : "disabled ") +
+      ' class="' +
+      BTN_PRIMARY +
+      '">' +
+      (fresh ? "Publish Program" : "Publish Changes") +
+      "</button></div></div>"
+    );
   }
 
   function statTile(label, value, caption, valueHtml) {
-    return '<div class="flex flex-col gap-1 rounded-lg border border-gray-200 p-3.5 dark:border-white/10">' +
-      '<span class="text-sm font-medium text-gray-900 dark:text-white">' + label + '</span>' +
-      '<span class="text-2xl font-semibold text-gray-950 dark:text-white">' + (valueHtml || escapeHtml(value)) + '</span>' +
-      '<span class="text-xs text-gray-500 dark:text-gray-400">' + caption + '</span></div>';
+    return (
+      '<div class="flex flex-col gap-1 rounded-lg border border-gray-200 p-3.5 dark:border-white/10">' +
+      '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
+      label +
+      "</span>" +
+      '<span class="text-2xl font-semibold text-gray-950 dark:text-white">' +
+      (valueHtml || escapeHtml(value)) +
+      "</span>" +
+      '<span class="text-xs text-gray-500 dark:text-gray-400">' +
+      caption +
+      "</span></div>"
+    );
   }
 
   function allowsChecks(p) {
-    return p.cohorts.some(function (c) { return c.enabled && c.paperCheck; });
+    return p.cohorts.some(function (c) {
+      return c.enabled && c.paperCheck;
+    });
   }
 
   function methodChip(label, fee, iconName, extra) {
-    return '<span class="inline-flex items-center gap-1.5 rounded-md bg-gray-50 px-1.5 py-1 text-xs dark:bg-white/5">' +
-      icon(iconName, 'size-4 shrink-0 text-gray-600 dark:text-gray-400') +
-      '<span class="font-medium text-gray-950 dark:text-white">' + escapeHtml(label) + '</span>' +
-      '<span class="text-gray-500 dark:text-gray-400">' + escapeHtml(fee) + '</span>' + (extra || '') +
-    '</span>';
+    return (
+      '<span class="inline-flex items-center gap-1.5 rounded-md bg-gray-50 px-1.5 py-1 text-xs dark:bg-white/5">' +
+      icon(iconName, "size-4 shrink-0 text-gray-600 dark:text-gray-400") +
+      '<span class="font-medium text-gray-950 dark:text-white">' +
+      escapeHtml(label) +
+      "</span>" +
+      '<span class="text-gray-500 dark:text-gray-400">' +
+      escapeHtml(fee) +
+      "</span>" +
+      (extra || "") +
+      "</span>"
+    );
   }
 
   function cohortMethodChips(c) {
-    var chips = catalog.methods.filter(function (m) { return c.methods.indexOf(m.id) !== -1; }).map(function (m) {
-      return methodChip(m.label, m.fee, m.icon, c.fallback === m.id ? badge('draft', 'Fallback') : '');
-    });
-    if (c.paperCheck) chips.push(methodChip(catalog.paperCheck.label, catalog.paperCheck.fee, 'check'));
-    return chips.join('');
+    var chips = catalog.methods
+      .filter(function (m) {
+        return c.methods.indexOf(m.id) !== -1;
+      })
+      .map(function (m) {
+        return methodChip(
+          m.label,
+          m.fee,
+          m.icon,
+          c.fallback === m.id ? badge("draft", "Fallback") : "",
+        );
+      });
+    if (c.paperCheck)
+      chips.push(
+        methodChip(catalog.paperCheck.label, catalog.paperCheck.fee, "check"),
+      );
+    return chips.join("");
   }
 
   function miniStat(label, value, unit, valueHtml) {
-    return '<div class="flex flex-col gap-1 rounded-md bg-gray-50 px-3 py-2.5 dark:bg-white/5">' +
-      '<span class="text-xs text-gray-500 dark:text-gray-400">' + label + '</span>' +
-      '<span class="flex items-baseline gap-1 text-sm font-semibold text-gray-950 dark:text-white">' + (valueHtml || escapeHtml(value)) +
-      (unit ? '<span class="text-xs font-normal text-gray-500 dark:text-gray-400">' + unit + '</span>' : '') + '</span></div>';
+    return (
+      '<div class="flex flex-col gap-1 rounded-md bg-gray-50 px-3 py-2.5 dark:bg-white/5">' +
+      '<span class="text-xs text-gray-500 dark:text-gray-400">' +
+      label +
+      "</span>" +
+      '<span class="flex items-baseline gap-1 text-sm font-semibold text-gray-950 dark:text-white">' +
+      (valueHtml || escapeHtml(value)) +
+      (unit
+        ? '<span class="text-xs font-normal text-gray-500 dark:text-gray-400">' +
+          unit +
+          "</span>"
+        : "") +
+      "</span></div>"
+    );
   }
 
   function cohortCard(p, cohort, index, displayNum, isFinal) {
@@ -613,38 +1033,87 @@
     // A changed cohort is outlined in amber: border and ring together read as
     // 2px without shifting the layout by a pixel. A disabled one goes dashed.
     var frame = off
-      ? 'border-dashed border-gray-300 dark:border-white/15'
+      ? "border-dashed border-gray-300 dark:border-white/15"
       : change
-        ? 'border-amber-400 ring-1 ring-amber-400 dark:border-amber-400/70 dark:ring-amber-400/70'
-        : 'border-gray-200 dark:border-white/10';
-    var dim = off ? ' opacity-50' : '';
-    var lockAttrs = off ? ' disabled aria-disabled="true"' : '';
-    var lockCls = off ? ' pointer-events-none opacity-50' : '';
-    return '<div data-cohort-card="' + index + '"' + (change ? ' data-cohort-change="' + change + '"' : '') + (off ? ' data-cohort-disabled' : '') +
-      ' class="flex flex-col gap-4 rounded-2xl border bg-white p-4 transition-[border-color,box-shadow] duration-300 dark:bg-white/5 ' + frame + '">' +
+        ? "border-amber-400 ring-1 ring-amber-400 dark:border-amber-400/70 dark:ring-amber-400/70"
+        : "border-gray-200 dark:border-white/10";
+    var dim = off ? " opacity-50" : "";
+    var lockAttrs = off ? ' disabled aria-disabled="true"' : "";
+    var lockCls = off ? " pointer-events-none opacity-50" : "";
+    return (
+      '<div data-cohort-card="' +
+      index +
+      '"' +
+      (change ? ' data-cohort-change="' + change + '"' : "") +
+      (off ? " data-cohort-disabled" : "") +
+      ' class="flex flex-col gap-4 rounded-2xl border bg-white p-4 transition-[border-color,box-shadow] duration-300 dark:bg-white/5 ' +
+      frame +
+      '">' +
       '<div class="flex items-center gap-2.5">' +
-        '<span class="flex size-7 shrink-0 items-center justify-center rounded-md bg-gray-100 text-sm font-medium text-gray-900 dark:bg-white/10 dark:text-white' + dim + '">' + (off ? '-' : displayNum) + '</span>' +
-        '<div class="flex min-w-0 flex-1 flex-wrap items-center gap-2">' +
-          '<p class="text-base font-semibold text-gray-950 dark:text-white' + dim + '">' + escapeHtml(cohort.name) + '</p>' +
-          (off ? badge('draft', 'Disabled - suppliers skip this stage') : '') +
-          (change === 'edited' ? badge('draft', 'Edited in draft') : '') +
-          (change === 'added' ? badge('draft', 'Added in draft') : '') +
-          (isFinal ? badge('neutral', 'Final Stage') : '') +
-        '</div>' +
-        '<div class="flex shrink-0 items-center gap-3">' +
-          '<button type="button" data-edit-cohort="' + index + '"' + lockAttrs + ' class="' + BTN_SECONDARY_SM + lockCls + '">Edit</button>' +
-          '<button type="button" data-remove-cohort="' + index + '"' + lockAttrs + ' aria-label="Remove cohort" data-tooltip="Remove cohort" class="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-sm border border-gray-300 bg-white text-gray-500 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10' + lockCls + '">' +
-            '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg></button>' +
-          toggle('data-toggle-cohort="' + index + '"', cohort.enabled, (off ? 'Enable ' : 'Disable ') + cohort.name, off ? 'Enable cohort' : 'Disable cohort') +
-        '</div>' +
-      '</div>' +
-      '<div class="flex flex-wrap gap-4' + dim + '">' +
-        miniStat('Duration', cohort.durationDays, 'days') +
-        miniStat('Methods', methodCount(cohort)) +
-        miniStat('Active suppliers', formatNumber(cohort.activeSuppliers), null, supplierCount(cohort.activeSuppliers, p.published ? p.id : null, cohort.id)) +
-      '</div>' +
-      '<div class="flex flex-wrap items-center gap-2' + dim + '">' + cohortMethodChips(cohort) + '</div>' +
-    '</div>';
+      '<span class="flex size-7 shrink-0 items-center justify-center rounded-md bg-gray-100 text-sm font-medium text-gray-900 dark:bg-white/10 dark:text-white' +
+      dim +
+      '">' +
+      (off ? "-" : displayNum) +
+      "</span>" +
+      '<div class="flex min-w-0 flex-1 flex-wrap items-center gap-2">' +
+      '<p class="text-base font-semibold text-gray-950 dark:text-white' +
+      dim +
+      '">' +
+      escapeHtml(cohort.name) +
+      "</p>" +
+      (off ? badge("draft", "Disabled - suppliers skip this stage") : "") +
+      (change === "edited" ? badge("draft", "Edited in draft") : "") +
+      (change === "added" ? badge("draft", "Added in draft") : "") +
+      (isFinal ? badge("neutral", "Final Stage") : "") +
+      "</div>" +
+      '<div class="flex shrink-0 items-center gap-3">' +
+      '<button type="button" data-edit-cohort="' +
+      index +
+      '"' +
+      lockAttrs +
+      ' class="' +
+      BTN_SECONDARY_SM +
+      lockCls +
+      '">Edit</button>' +
+      '<button type="button" data-remove-cohort="' +
+      index +
+      '"' +
+      lockAttrs +
+      ' aria-label="Remove cohort" data-tooltip="Remove cohort" class="flex size-7 shrink-0 cursor-pointer items-center justify-center rounded-sm border border-gray-300 bg-white text-gray-500 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10' +
+      lockCls +
+      '">' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg></button>' +
+      toggle(
+        'data-toggle-cohort="' + index + '"',
+        cohort.enabled,
+        (off ? "Enable " : "Disable ") + cohort.name,
+        off ? "Enable cohort" : "Disable cohort",
+      ) +
+      "</div>" +
+      "</div>" +
+      '<div class="flex flex-wrap gap-4' +
+      dim +
+      '">' +
+      miniStat("Duration", cohort.durationDays, "days") +
+      miniStat("Methods", methodCount(cohort)) +
+      miniStat(
+        "Active suppliers",
+        formatNumber(cohort.activeSuppliers),
+        null,
+        supplierCount(
+          cohort.activeSuppliers,
+          p.published ? p.id : null,
+          cohort.id,
+        ),
+      ) +
+      "</div>" +
+      '<div class="flex flex-wrap items-center gap-2' +
+      dim +
+      '">' +
+      cohortMethodChips(cohort) +
+      "</div>" +
+      "</div>"
+    );
   }
 
   /**
@@ -655,85 +1124,156 @@
     // 24px on every side — the list's own rhythm. At the very top the heading
     // already supplies it, and at the very bottom the Add cohort row does, so
     // those edges get none of their own; otherwise the gap would double.
-    var pad = (isFirst ? 'pt-0' : 'pt-6') + ' ' + (isLast ? 'pb-0' : 'pb-6');
-    return '<div class="relative flex flex-col gap-6 pl-16 ' + pad + '">' +
+    var pad = (isFirst ? "pt-0" : "pt-6") + " " + (isLast ? "pb-0" : "pb-6");
+    return (
+      '<div class="relative flex flex-col gap-6 pl-16 ' +
+      pad +
+      '">' +
       '<span class="absolute top-0 bottom-0 left-[27px] w-px bg-gray-200 dark:bg-white/10" aria-hidden="true"></span>' +
-      cardsHtml + '</div>';
+      cardsHtml +
+      "</div>"
+    );
   }
 
   function moveOn(days, afterSkipped) {
     // After a skipped stage the rail is already running down beside it, so the
     // connector drops its own top stub and the arrow sits 24px below the card.
-    return '<div class="flex flex-col">' +
-      (afterSkipped ? '' : '<div class="ml-[27px] h-4 w-px bg-gray-200 dark:bg-white/10"></div>') +
-      '<div class="flex items-center gap-2 px-4"><span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-gray-200 text-gray-500 dark:bg-white/10 dark:text-gray-400">' + ARROW_DOWN + '</span>' +
-      '<span class="text-xs text-gray-600 dark:text-gray-400">moves automatically after ' + days + ' days (or sooner if declined)</span></div>' +
-      '<div class="ml-[27px] h-4 w-px bg-gray-200 dark:bg-white/10"></div></div>';
+    return (
+      '<div class="flex flex-col">' +
+      (afterSkipped
+        ? ""
+        : '<div class="ml-[27px] h-4 w-px bg-gray-200 dark:bg-white/10"></div>') +
+      '<div class="flex items-center gap-2 px-4"><span class="flex size-5 shrink-0 items-center justify-center rounded-full bg-gray-200 text-gray-500 dark:bg-white/10 dark:text-gray-400">' +
+      ARROW_DOWN +
+      "</span>" +
+      '<span class="text-xs text-gray-600 dark:text-gray-400">moves automatically after ' +
+      days +
+      " days (or sooner if declined)</span></div>" +
+      '<div class="ml-[27px] h-4 w-px bg-gray-200 dark:bg-white/10"></div></div>'
+    );
   }
 
   function cohortList(p) {
     if (!p.cohorts.length) {
-      return '<div class="flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-gray-50/80 px-6 py-8 text-center dark:border-white/10 dark:bg-white/5">' +
+      return (
+        '<div class="flex flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-gray-50/80 px-6 py-8 text-center dark:border-white/10 dark:bg-white/5">' +
         '<h4 class="text-sm font-semibold text-gray-900 dark:text-white">No cohorts yet</h4>' +
-        '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Add a cohort to define the first stage suppliers move through.</p></div>';
+        '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Add a cohort to define the first stage suppliers move through.</p></div>'
+      );
     }
     var lastEnabled = -1;
-    p.cohorts.forEach(function (c, i) { if (c.enabled) lastEnabled = i; });
-    var html = '';
+    p.cohorts.forEach(function (c, i) {
+      if (c.enabled) lastEnabled = i;
+    });
+    var html = "";
     var prevEnabled = null;
-    var skipped = '';
+    var skipped = "";
     var skippedAtStart = false;
     p.cohorts.forEach(function (cohort, index) {
       if (!cohort.enabled) {
-        if (!skipped) skippedAtStart = html === '';
+        if (!skipped) skippedAtStart = html === "";
         skipped += cohortCard(p, cohort, index, null, false);
         return;
       }
       var afterSkipped = !!skipped;
-      if (skipped) { html += disabledWrap(skipped, skippedAtStart, false); skipped = ''; }
+      if (skipped) {
+        html += disabledWrap(skipped, skippedAtStart, false);
+        skipped = "";
+      }
       // The hand-off line only runs between stages suppliers actually pass through.
       if (prevEnabled) html += moveOn(prevEnabled.durationDays, afterSkipped);
-      html += cohortCard(p, cohort, index, displayNumber(p.cohorts, index), index === lastEnabled);
+      html += cohortCard(
+        p,
+        cohort,
+        index,
+        displayNumber(p.cohorts, index),
+        index === lastEnabled,
+      );
       prevEnabled = cohort;
     });
     if (skipped) html += disabledWrap(skipped, skippedAtStart, true);
     return html;
   }
 
-  var USER_PLUS = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-[18px]"><path d="M10 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 18a9.953 9.953 0 0 1-5.385-1.572ZM16.25 5.75a.75.75 0 0 0-1.5 0v2h-2a.75.75 0 0 0 0 1.5h2v2a.75.75 0 0 0 1.5 0v-2h2a.75.75 0 0 0 0-1.5h-2v-2Z" /></svg>';
+  var USER_PLUS =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-[18px]"><path d="M10 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 18a9.953 9.953 0 0 1-5.385-1.572ZM16.25 5.75a.75.75 0 0 0-1.5 0v2h-2a.75.75 0 0 0 0 1.5h2v2a.75.75 0 0 0 1.5 0v-2h2a.75.75 0 0 0 0-1.5h-2v-2Z" /></svg>';
 
   /** Suppliers join what clients use, so a never-published program can't take any yet. */
   function addSuppliersButton(p) {
     var ready = !!p.published && enabledCount(p.published.cohorts) > 0;
-    return '<button type="button" data-add-suppliers' + (ready ? '' : ' disabled title="Publish this program before adding suppliers"') +
+    return (
+      '<button type="button" data-add-suppliers' +
+      (ready
+        ? ""
+        : ' disabled title="Publish this program before adding suppliers"') +
       ' class="inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20">' +
-      USER_PLUS + 'Add suppliers</button>';
+      USER_PLUS +
+      "Add suppliers</button>"
+    );
   }
 
   function detailHtml(p) {
-    return draftBanner(p) +
-      '<div class="flex items-start gap-3 px-6 pt-6 pb-5">' + backArrow(false) +
-        '<div class="flex min-w-0 flex-1 flex-col gap-1"><div class="flex flex-wrap items-center gap-3">' +
-          '<h1 class="text-2xl font-semibold text-gray-950 dark:text-white">' + escapeHtml(p.name) + '</h1>' + statusBadge(p) + '</div>' +
-          '<p class="text-sm text-gray-700 dark:text-gray-300">Updated ' + escapeHtml(formatDate(p.updatedAt)) + '</p></div>' +
-        '<div class="flex shrink-0 items-center gap-2">' + addSuppliersButton(p) + programMenu(p, true) + '</div></div>' +
+    return (
+      draftBanner(p) +
+      '<div class="flex items-start gap-3 px-6 pt-6 pb-5">' +
+      backArrow(false) +
+      '<div class="flex min-w-0 flex-1 flex-col gap-1"><div class="flex flex-wrap items-center gap-3">' +
+      '<h1 class="text-2xl font-semibold text-gray-950 dark:text-white">' +
+      escapeHtml(p.name) +
+      "</h1>" +
+      statusBadge(p) +
+      "</div>" +
+      '<p class="text-sm text-gray-700 dark:text-gray-300">Updated ' +
+      escapeHtml(formatDate(p.updatedAt)) +
+      "</p></div>" +
+      '<div class="flex shrink-0 items-center gap-2">' +
+      addSuppliersButton(p) +
+      programMenu(p, true) +
+      "</div></div>" +
       '<div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>' +
       '<div class="grid grid-cols-1 gap-4 p-6 sm:grid-cols-2 lg:grid-cols-4">' +
-        statTile('Cohorts', String(enabledCount(p.cohorts)), 'Stages in this waterfall') +
-        statTile('Clients using', formatNumber(p.clients), 'Buyer programs assigned') +
-        statTile('Suppliers', formatNumber(p.suppliers), 'Across all clients', supplierCount(p.suppliers, p.published ? p.id : null, null)) +
-        statTile('Check policy', allowsChecks(p) ? 'Allowed' : 'Not allowed', 'Paper check availability') +
-      '</div>' +
+      statTile(
+        "Cohorts",
+        String(enabledCount(p.cohorts)),
+        "Stages in this waterfall",
+      ) +
+      statTile(
+        "Clients using",
+        formatNumber(p.clients),
+        "Buyer programs assigned",
+      ) +
+      statTile(
+        "Suppliers",
+        formatNumber(p.suppliers),
+        "Across all clients",
+        supplierCount(p.suppliers, p.published ? p.id : null, null),
+      ) +
+      statTile(
+        "Check policy",
+        allowsChecks(p) ? "Allowed" : "Not allowed",
+        "Paper check availability",
+      ) +
+      "</div>" +
       '<div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>' +
-      '<div class="flex flex-col gap-6 p-6">' + cohortHeading() +
-        '<div class="flex flex-col">' + cohortList(p) + '</div>' +
-        '<div><button type="button" data-add-cohort class="' + BTN_LINK + '">' + PLUS + 'Add cohort</button></div>' +
-      '</div>';
+      '<div class="flex flex-col gap-6 p-6">' +
+      cohortHeading() +
+      '<div class="flex flex-col">' +
+      cohortList(p) +
+      "</div>" +
+      '<div><button type="button" data-add-cohort class="' +
+      BTN_LINK +
+      '">' +
+      PLUS +
+      "Add cohort</button></div>" +
+      "</div>"
+    );
   }
 
   // ── Views + deliberate load time ──
 
-  function loadDelay() { return LOAD_MIN_MS + Math.random() * (LOAD_MAX_MS - LOAD_MIN_MS); }
+  function loadDelay() {
+    return LOAD_MIN_MS + Math.random() * (LOAD_MAX_MS - LOAD_MIN_MS);
+  }
 
   function later(fn) {
     clearTimeout(loadTimer);
@@ -741,73 +1281,93 @@
   }
 
   function currentProgramId() {
-    try { return new URLSearchParams(window.location.search).get('program'); } catch (error) { return null; }
+    try {
+      return new URLSearchParams(window.location.search).get("program");
+    } catch (error) {
+      return null;
+    }
   }
 
   function setBreadcrumb(programName) {
-    var nav = $('dynamic-breadcrumbs');
-    var list = nav && nav.querySelector('ol');
+    var nav = $("dynamic-breadcrumbs");
+    var list = nav && nav.querySelector("ol");
     if (!list) return;
-    var extra = list.querySelector('[data-pp-crumb]');
+    var extra = list.querySelector("[data-pp-crumb]");
     if (extra) extra.remove();
-    var items = list.querySelectorAll(':scope > li');
-    var link = items.length ? items[items.length - 1].querySelector('a') : null;
+    var items = list.querySelectorAll(":scope > li");
+    var link = items.length ? items[items.length - 1].querySelector("a") : null;
     if (!link) return;
     if (programName) {
-      link.setAttribute('href', window.location.pathname);
-      link.setAttribute('data-pp-list-crumb', '');
-      link.removeAttribute('aria-current');
+      link.setAttribute("href", window.location.pathname);
+      link.setAttribute("data-pp-list-crumb", "");
+      link.removeAttribute("aria-current");
       // Reuse the shell's own separator so the extra step matches it exactly.
       var li = items[items.length - 1].cloneNode(true);
-      li.setAttribute('data-pp-crumb', '');
-      var clonedLink = li.querySelector('a');
-      var label = document.createElement('span');
-      label.setAttribute('aria-current', 'page');
-      label.className = clonedLink ? clonedLink.className : 'ml-4 text-sm font-medium text-gray-500';
+      li.setAttribute("data-pp-crumb", "");
+      var clonedLink = li.querySelector("a");
+      var label = document.createElement("span");
+      label.setAttribute("aria-current", "page");
+      label.className = clonedLink
+        ? clonedLink.className
+        : "ml-4 text-sm font-medium text-gray-500";
       label.textContent = programName;
       if (clonedLink) clonedLink.replaceWith(label);
       list.appendChild(li);
     } else {
-      link.removeAttribute('data-pp-list-crumb');
-      link.setAttribute('aria-current', 'page');
+      link.removeAttribute("data-pp-list-crumb");
+      link.setAttribute("aria-current", "page");
     }
   }
 
   function currentTab() {
-    try { return new URLSearchParams(window.location.search).get('tab') === 'suppliers' ? 'suppliers' : 'configuration'; }
-    catch (error) { return 'configuration'; }
+    try {
+      return new URLSearchParams(window.location.search).get("tab") ===
+        "suppliers"
+        ? "suppliers"
+        : "configuration";
+    } catch (error) {
+      return "configuration";
+    }
   }
 
   function syncTabs(tab) {
-    document.querySelectorAll('[data-pp-tab]').forEach(function (btn) {
-      var on = btn.getAttribute('data-pp-tab') === tab;
-      btn.setAttribute('aria-selected', on ? 'true' : 'false');
-      if (on) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
+    document.querySelectorAll("[data-pp-tab]").forEach(function (btn) {
+      var on = btn.getAttribute("data-pp-tab") === tab;
+      btn.setAttribute("aria-selected", on ? "true" : "false");
+      if (on) btn.setAttribute("aria-current", "page");
+      else btn.removeAttribute("aria-current");
     });
   }
 
   /** The suppliers table needs an unclipped card: a sticky pagination bar and a filter menu that can overhang. */
   function setCardClipping(clip) {
-    var card = $('pp-list-view').parentNode;
-    card.classList.toggle('overflow-hidden', clip);
-    card.classList.toggle('overflow-visible', !clip);
+    var card = $("pp-list-view").parentNode;
+    card.classList.toggle("overflow-hidden", clip);
+    card.classList.toggle("overflow-visible", !clip);
   }
 
   function showList(options) {
     var opts = options || {};
-    $('pp-detail-view').classList.add('hidden');
-    $('pp-list-view').classList.remove('hidden');
+    $("pp-detail-view").classList.add("hidden");
+    $("pp-list-view").classList.remove("hidden");
     setBreadcrumb(null);
     var tab = currentTab();
     syncTabs(tab);
-    var suppliersOn = tab === 'suppliers' && !!window.PaymentProgramSuppliers;
-    $('pp-list-body').classList.toggle('hidden', suppliersOn);
-    $('pp-suppliers-body').classList.toggle('hidden', !suppliersOn);
+    var suppliersOn = tab === "suppliers" && !!window.PaymentProgramSuppliers;
+    $("pp-list-body").classList.toggle("hidden", suppliersOn);
+    $("pp-suppliers-body").classList.toggle("hidden", !suppliersOn);
     setCardClipping(!suppliersOn);
-    if (suppliersOn) { clearTimeout(loadTimer); window.PaymentProgramSuppliers.show(opts); return; }
-    var body = $('pp-list-body');
-    if (opts.instant) { renderListBody(); return; }
-    body.setAttribute('aria-busy', 'true');
+    if (suppliersOn) {
+      clearTimeout(loadTimer);
+      window.PaymentProgramSuppliers.show(opts);
+      return;
+    }
+    var body = $("pp-list-body");
+    if (opts.instant) {
+      renderListBody();
+      return;
+    }
+    body.setAttribute("aria-busy", "true");
     body.innerHTML = skeletonList(programs.length);
     later(renderListBody);
   }
@@ -815,32 +1375,43 @@
   function showDetail(id, options) {
     var opts = options || {};
     var p = findProgram(id);
-    if (!p) { showList({ instant: true }); return; }
-    $('pp-list-view').classList.add('hidden');
-    $('pp-detail-view').classList.remove('hidden');
+    if (!p) {
+      showList({ instant: true });
+      return;
+    }
+    $("pp-list-view").classList.add("hidden");
+    $("pp-detail-view").classList.remove("hidden");
     setCardClipping(true);
     setBreadcrumb(p.name);
     window.scrollTo(0, 0);
-    var body = $('pp-detail-body');
-    if (opts.instant) { body.innerHTML = detailHtml(p); return; }
-    body.setAttribute('aria-busy', 'true');
+    var body = $("pp-detail-body");
+    if (opts.instant) {
+      body.innerHTML = detailHtml(p);
+      return;
+    }
+    body.setAttribute("aria-busy", "true");
     body.innerHTML = skeletonDetail(p);
     later(function () {
       var fresh = findProgram(id);
       if (!fresh || currentProgramId() !== id) return;
-      body.setAttribute('aria-busy', 'false');
+      body.setAttribute("aria-busy", "false");
       body.innerHTML = detailHtml(fresh);
     });
   }
 
   function navigate(id, options) {
-    var url = window.location.pathname + (id ? '?program=' + encodeURIComponent(id) : '');
-    try { window.history.pushState({}, '', url); } catch (error) {}
-    if (id) showDetail(id, options); else showList(options);
+    var url =
+      window.location.pathname +
+      (id ? "?program=" + encodeURIComponent(id) : "");
+    try {
+      window.history.pushState({}, "", url);
+    } catch (error) {}
+    if (id) showDetail(id, options);
+    else showList(options);
   }
 
   function redrawDetail(p) {
-    $('pp-detail-body').innerHTML = detailHtml(p);
+    $("pp-detail-body").innerHTML = detailHtml(p);
     setBreadcrumb(p.name);
   }
 
@@ -854,7 +1425,7 @@
 
   function publish(p) {
     p.published = { name: p.name, cohorts: clone(p.cohorts) };
-    p.status = 'active';
+    p.status = "active";
     p.updatedAt = today();
     persist();
     redrawDetail(p);
@@ -862,7 +1433,9 @@
 
   function discard(p) {
     if (isNeverPublished(p)) {
-      programs = programs.filter(function (x) { return x.id !== p.id; });
+      programs = programs.filter(function (x) {
+        return x.id !== p.id;
+      });
       persist();
       navigate(null, { instant: true });
       return;
@@ -876,116 +1449,164 @@
   // ── Create drawer ──
 
   function renderDefaultChips() {
-    var host = $('pp-default-chips');
+    var host = $("pp-default-chips");
     if (!host) return;
-    host.innerHTML = catalog.defaultWaterfall.map(function (t, i) {
-      return '<span class="flex items-center gap-1 rounded-md border border-gray-200 bg-gray-50 px-1.5 py-1 text-xs dark:border-white/10 dark:bg-white/5">' +
-        '<span class="font-medium text-gray-950 dark:text-white">Cohort ' + (i + 1) + '</span>' + DOT +
-        '<span class="text-gray-700 dark:text-gray-300">' + escapeHtml(t.name) + ' (' + escapeHtml(t.rate || '') + ')</span></span>';
-    }).join('');
+    host.innerHTML = catalog.defaultWaterfall
+      .map(function (t, i) {
+        return (
+          '<span class="flex items-center gap-1 rounded-md border border-gray-200 bg-gray-50 px-1.5 py-1 text-xs dark:border-white/10 dark:bg-white/5">' +
+          '<span class="font-medium text-gray-950 dark:text-white">Cohort ' +
+          (i + 1) +
+          "</span>" +
+          DOT +
+          '<span class="text-gray-700 dark:text-gray-300">' +
+          escapeHtml(t.name) +
+          " (" +
+          escapeHtml(t.rate || "") +
+          ")</span></span>"
+        );
+      })
+      .join("");
   }
 
   /** One drawer for both: creating picks a waterfall, editing only renames. */
   function setCreateMode(p) {
     editingId = p ? p.id : null;
-    $('pp-create-title').textContent = p ? 'Edit Payment Program' : 'Create Payment Program';
-    $('pp-create-submit').textContent = p ? 'Save Changes' : 'Create Program';
-    $('pp-create-waterfall').classList.toggle('hidden', !!p);
-    $('pp-edit-note').classList.toggle('hidden', !p);
+    $("pp-create-title").textContent = p
+      ? "Edit Payment Program"
+      : "Create Payment Program";
+    $("pp-create-submit").textContent = p ? "Save Changes" : "Create Program";
+    $("pp-create-waterfall").classList.toggle("hidden", !!p);
+    $("pp-edit-note").classList.toggle("hidden", !p);
   }
 
   function openEdit(id) {
     var p = findProgram(id);
-    var dialog = $('pp-create-dialog');
+    var dialog = $("pp-create-dialog");
     if (!p || !dialog) return;
     setCreateMode(p);
-    $('pp-name').value = p.name;
+    $("pp-name").value = p.name;
     syncCreateState();
-    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+    if (typeof dialog.showModal === "function" && !dialog.open)
+      dialog.showModal();
   }
 
   /** A name is a label, not configuration: it applies straight away, no draft. */
   function renameProgram() {
     var p = findProgram(editingId);
-    var name = String($('pp-name').value || '').trim();
+    var name = String($("pp-name").value || "").trim();
     if (!p || !name) return;
     var changed = name !== p.name;
     p.name = name;
     if (p.published) p.published.name = name;
     if (changed) p.updatedAt = today();
     persist();
-    var dialog = $('pp-create-dialog');
+    var dialog = $("pp-create-dialog");
     if (dialog && dialog.open) dialog.close();
-    if (currentProgramId() === p.id) redrawDetail(p); else renderListBody();
-    if (changed) showToast('Program renamed to ' + name);
+    if (currentProgramId() === p.id) redrawDetail(p);
+    else renderListBody();
+    if (changed) showToast("Program renamed to " + name);
   }
 
   // ── Delete speedbump ──
 
   function openDeleteDialog(id) {
     var p = findProgram(id);
-    var dialog = $('pp-delete-dialog');
+    var dialog = $("pp-delete-dialog");
     if (!p || !dialog) return;
     pendingDelete = id;
-    $('pp-delete-title').textContent = 'Delete ' + p.name + '?';
+    $("pp-delete-title").textContent = "Delete " + p.name + "?";
     var impacts = [];
-    if (p.suppliers) impacts.push(plural2(p.suppliers, 'supplier', 'suppliers') + ' will be removed from this program and become unassigned.');
-    if (p.clients) impacts.push(plural2(p.clients, 'client', 'clients') + ' using this program will need a new one.');
-    $('pp-delete-lede').textContent = impacts.length ? 'This can\'t be undone.' : 'Nobody is using this program yet. This can\'t be undone.';
-    var list = $('pp-delete-impacts');
-    list.innerHTML = impacts.map(function (t) { return '<li>' + escapeHtml(t) + '</li>'; }).join('');
-    list.classList.toggle('hidden', !impacts.length);
-    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+    if (p.suppliers)
+      impacts.push(
+        plural2(p.suppliers, "supplier", "suppliers") +
+          " will be removed from this program and become unassigned.",
+      );
+    if (p.clients)
+      impacts.push(
+        plural2(p.clients, "client", "clients") +
+          " using this program will need a new one.",
+      );
+    $("pp-delete-lede").textContent = impacts.length
+      ? "This can't be undone."
+      : "Nobody is using this program yet. This can't be undone.";
+    var list = $("pp-delete-impacts");
+    list.innerHTML = impacts
+      .map(function (t) {
+        return "<li>" + escapeHtml(t) + "</li>";
+      })
+      .join("");
+    list.classList.toggle("hidden", !impacts.length);
+    if (typeof dialog.showModal === "function" && !dialog.open)
+      dialog.showModal();
   }
 
   function confirmDelete() {
     var p = findProgram(pendingDelete);
-    var dialog = $('pp-delete-dialog');
+    var dialog = $("pp-delete-dialog");
     if (dialog && dialog.open) dialog.close();
     if (!p) return;
-    roster.forEach(function (s) { if (s.programId === p.id) { s.programId = null; s.cohortId = null; } });
+    roster.forEach(function (s) {
+      if (s.programId === p.id) {
+        s.programId = null;
+        s.cohortId = null;
+      }
+    });
     persistRoster();
-    programs = programs.filter(function (x) { return x.id !== p.id; });
+    programs = programs.filter(function (x) {
+      return x.id !== p.id;
+    });
     recount();
     persist();
-    if (currentProgramId() === p.id) navigate(null, { instant: true }); else renderListBody();
-    showToast(p.name + ' was deleted');
+    if (currentProgramId() === p.id) navigate(null, { instant: true });
+    else renderListBody();
+    showToast(p.name + " was deleted");
   }
 
   function openCreate() {
-    var dialog = $('pp-create-dialog');
+    var dialog = $("pp-create-dialog");
     if (!dialog) return;
     setCreateMode(null);
-    $('pp-name').value = '';
-    var first = document.querySelector('input[name="pp-template"][value="default"]');
+    $("pp-name").value = "";
+    var first = document.querySelector(
+      'input[name="pp-template"][value="default"]',
+    );
     if (first) first.checked = true;
     renderDefaultChips();
     syncCreateState();
-    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+    if (typeof dialog.showModal === "function" && !dialog.open)
+      dialog.showModal();
   }
 
   function syncCreateState() {
-    $('pp-create-submit').disabled = !String($('pp-name').value || '').trim();
+    $("pp-create-submit").disabled = !String($("pp-name").value || "").trim();
   }
 
   function createProgram() {
-    var name = String($('pp-name').value || '').trim();
+    var name = String($("pp-name").value || "").trim();
     if (!name) return;
     var template = document.querySelector('input[name="pp-template"]:checked');
-    var useDefault = !template || template.value === 'default';
+    var useDefault = !template || template.value === "default";
     var p = normalizeProgram({
-      id: uid('prog'),
+      id: uid("prog"),
       name: name,
       updatedAt: today(),
       suppliers: 0,
       clients: 0,
-      cohorts: useDefault ? catalog.defaultWaterfall.map(function (t) {
-        return { name: t.name, methods: t.methods, paperCheck: t.paperCheck, fallback: t.fallback || null };
-      }) : []
+      cohorts: useDefault
+        ? catalog.defaultWaterfall.map(function (t) {
+            return {
+              name: t.name,
+              methods: t.methods,
+              paperCheck: t.paperCheck,
+              fallback: t.fallback || null,
+            };
+          })
+        : [],
     });
     programs = [p].concat(programs);
     persist();
-    var dialog = $('pp-create-dialog');
+    var dialog = $("pp-create-dialog");
     if (dialog && dialog.open) dialog.close();
     navigate(p.id);
   }
@@ -993,35 +1614,55 @@
   // ── Cohort drawer ──
 
   function methodRow(m, on) {
-    return '<div class="flex items-center gap-3 p-4">' +
-      icon(m.icon, 'size-6 shrink-0 text-blue-600 dark:text-blue-400') +
+    return (
+      '<div class="flex items-center gap-3 p-4">' +
+      icon(m.icon, "size-6 shrink-0 text-blue-600 dark:text-blue-400") +
       '<div class="flex min-w-0 flex-1 flex-col text-sm">' +
-        '<span class="font-semibold text-gray-950 dark:text-white">' + escapeHtml(m.label) + '</span>' +
-        '<span class="text-gray-700 dark:text-gray-300">' + escapeHtml(m.feeLong) + '</span></div>' +
+      '<span class="font-semibold text-gray-950 dark:text-white">' +
+      escapeHtml(m.label) +
+      "</span>" +
+      '<span class="text-gray-700 dark:text-gray-300">' +
+      escapeHtml(m.feeLong) +
+      "</span></div>" +
       toggle('data-cohort-method="' + escapeHtml(m.id) + '"', on, m.label) +
-    '</div>';
+      "</div>"
+    );
   }
 
   function conditionRow(c, on) {
-    return '<label class="flex cursor-pointer items-center gap-3">' +
+    return (
+      '<label class="flex cursor-pointer items-center gap-3">' +
       '<span class="group grid size-4 shrink-0 grid-cols-1">' +
-        '<input type="checkbox" data-cohort-condition="' + escapeHtml(c.id) + '"' + (on ? ' checked' : '') + ' class="' + CHECKBOX + '" />' +
-        '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg>' +
-      '</span>' +
-      '<span class="text-sm text-gray-900 dark:text-gray-100">' + escapeHtml(c.label) + '</span></label>';
+      '<input type="checkbox" data-cohort-condition="' +
+      escapeHtml(c.id) +
+      '"' +
+      (on ? " checked" : "") +
+      ' class="' +
+      CHECKBOX +
+      '" />' +
+      '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg>' +
+      "</span>" +
+      '<span class="text-sm text-gray-900 dark:text-gray-100">' +
+      escapeHtml(c.label) +
+      "</span></label>"
+    );
   }
 
   function readCohortForm(base) {
     var c = clone(base);
-    c.name = String($('pp-cohort-name').value || '').trim();
-    c.durationDays = Number($('pp-cohort-days').value) || catalog.defaultDurationDays;
-    c.methods = Array.prototype.map.call(document.querySelectorAll('[data-cohort-method]:checked'), function (el) {
-      return el.getAttribute('data-cohort-method');
-    });
-    c.paperCheck = !!($('pp-cohort-check').querySelector('input:checked'));
+    c.name = String($("pp-cohort-name").value || "").trim();
+    c.durationDays =
+      Number($("pp-cohort-days").value) || catalog.defaultDurationDays;
+    c.methods = Array.prototype.map.call(
+      document.querySelectorAll("[data-cohort-method]:checked"),
+      function (el) {
+        return el.getAttribute("data-cohort-method");
+      },
+    );
+    c.paperCheck = !!$("pp-cohort-check").querySelector("input:checked");
     c.conditions = {};
-    document.querySelectorAll('[data-cohort-condition]').forEach(function (el) {
-      c.conditions[el.getAttribute('data-cohort-condition')] = el.checked;
+    document.querySelectorAll("[data-cohort-condition]").forEach(function (el) {
+      c.conditions[el.getAttribute("data-cohort-condition")] = el.checked;
     });
     return c;
   }
@@ -1029,49 +1670,73 @@
   function syncCohortForm() {
     if (!cohortEdit) return;
     var draft = readCohortForm(cohortEdit.original);
-    $('pp-cohort-days-label').textContent = plural(draft.durationDays, 'day');
-    var days = $('pp-cohort-days');
+    $("pp-cohort-days-label").textContent = plural(draft.durationDays, "day");
+    var days = $("pp-cohort-days");
     var span = Number(days.max) - Number(days.min) || 1;
     // The thumb's centre travels 8px in from each end, so the fill does too.
     var ratio = (Number(days.value) - Number(days.min)) / span;
-    days.style.setProperty('--pp-fill', 'calc(8px + (100% - 16px) * ' + ratio.toFixed(4) + ')');
+    days.style.setProperty(
+      "--pp-fill",
+      "calc(8px + (100% - 16px) * " + ratio.toFixed(4) + ")",
+    );
     var valid = !!draft.name && methodCount(draft) > 0;
     // Apply stays off until something actually differs from what was opened.
-    var changed = cohortEdit.index == null || cohortShape(draft) !== cohortShape(cohortEdit.original);
-    $('pp-cohort-save').disabled = !(valid && changed);
+    var changed =
+      cohortEdit.index == null ||
+      cohortShape(draft) !== cohortShape(cohortEdit.original);
+    $("pp-cohort-save").disabled = !(valid && changed);
   }
 
   function openCohortDrawer(programId, index) {
-    var dialog = $('pp-cohort-dialog');
+    var dialog = $("pp-cohort-dialog");
     var p = findProgram(programId);
     if (!dialog || !p) return;
-    var cohort = index == null
-      ? normalizeCohort({ name: '', methods: [], paperCheck: false })
-      : p.cohorts[index];
-    cohortEdit = { programId: programId, index: index, original: clone(cohort) };
+    var cohort =
+      index == null
+        ? normalizeCohort({ name: "", methods: [], paperCheck: false })
+        : p.cohorts[index];
+    cohortEdit = {
+      programId: programId,
+      index: index,
+      original: clone(cohort),
+    };
 
-    $('pp-cohort-title').textContent = index == null ? 'Add Cohort' : 'Edit Cohort ' + (displayNumber(p.cohorts, index) || '');
-    $('pp-cohort-save').textContent = index == null ? 'Add to Draft' : 'Apply to Draft';
-    $('pp-cohort-name').value = cohort.name;
-    var days = $('pp-cohort-days');
+    $("pp-cohort-title").textContent =
+      index == null
+        ? "Add Cohort"
+        : "Edit Cohort " + (displayNumber(p.cohorts, index) || "");
+    $("pp-cohort-save").textContent =
+      index == null ? "Add to Draft" : "Apply to Draft";
+    $("pp-cohort-name").value = cohort.name;
+    var days = $("pp-cohort-days");
     days.min = catalog.durationRange.min;
     days.max = catalog.durationRange.max;
     days.value = cohort.durationDays;
-    $('pp-cohort-methods').innerHTML = catalog.methods.map(function (m) {
-      return methodRow(m, cohort.methods.indexOf(m.id) !== -1);
-    }).join('');
-    $('pp-cohort-check').innerHTML =
-      '<div class="flex items-center gap-3 p-4">' + icon('check', 'size-6 shrink-0 text-blue-600 dark:text-blue-400') +
-        '<div class="flex min-w-0 flex-1 flex-col text-sm">' +
-          '<span class="font-semibold text-gray-950 dark:text-white">Offer Paper Check in this cohort</span>' +
-          '<span class="text-gray-700 dark:text-gray-300">Last Resort Option - Not a stage suppliers progress into</span></div>' +
-        toggle('data-cohort-paper-check', cohort.paperCheck, 'Offer Paper Check in this cohort') +
-      '</div>';
-    $('pp-cohort-conditions').innerHTML = catalog.conditions.map(function (c) {
-      return conditionRow(c, cohort.conditions[c.id] !== false);
-    }).join('');
+    $("pp-cohort-methods").innerHTML = catalog.methods
+      .map(function (m) {
+        return methodRow(m, cohort.methods.indexOf(m.id) !== -1);
+      })
+      .join("");
+    $("pp-cohort-check").innerHTML =
+      '<div class="flex items-center gap-3 p-4">' +
+      icon("check", "size-6 shrink-0 text-blue-600 dark:text-blue-400") +
+      '<div class="flex min-w-0 flex-1 flex-col text-sm">' +
+      '<span class="font-semibold text-gray-950 dark:text-white">Offer Paper Check in this cohort</span>' +
+      '<span class="text-gray-700 dark:text-gray-300">Last Resort Option - Not a stage suppliers progress into</span></div>' +
+      toggle(
+        "data-cohort-paper-check",
+        cohort.paperCheck,
+        "Offer Paper Check in this cohort",
+      ) +
+      "</div>";
+    $("pp-cohort-conditions").innerHTML = catalog.conditions
+      .map(function (c) {
+        return conditionRow(c, cohort.conditions[c.id] !== false);
+      })
+      .join("");
     syncCohortForm();
-    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+    if (typeof dialog.showModal === "function" && !dialog.open)
+      dialog.showModal();
   }
 
   function applyCohort() {
@@ -1082,7 +1747,7 @@
     if (!next.name || !methodCount(next)) return;
     if (cohortEdit.index == null) p.cohorts.push(next);
     else p.cohorts[cohortEdit.index] = next;
-    var dialog = $('pp-cohort-dialog');
+    var dialog = $("pp-cohort-dialog");
     if (dialog && dialog.open) dialog.close();
     saveWorkingCopy(p);
   }
@@ -1099,7 +1764,8 @@
   }
 
   function indexById(cohorts, id) {
-    for (var i = 0; i < cohorts.length; i += 1) if (cohorts[i].id === id) return i;
+    for (var i = 0; i < cohorts.length; i += 1)
+      if (cohorts[i].id === id) return i;
     return -1;
   }
 
@@ -1111,8 +1777,16 @@
     });
     if (!enabled && targetId) {
       var target = null;
-      (p.published ? p.published.cohorts : p.cohorts).forEach(function (c) { if (c.id === targetId) target = c; });
-      var moving = roster.filter(function (s) { return s.cohortId === id; }).map(function (s) { return s.id; });
+      (p.published ? p.published.cohorts : p.cohorts).forEach(function (c) {
+        if (c.id === targetId) target = c;
+      });
+      var moving = roster
+        .filter(function (s) {
+          return s.cohortId === id;
+        })
+        .map(function (s) {
+          return s.id;
+        });
       if (target && moving.length) placeSuppliers(moving, p.id, target);
     }
     recount();
@@ -1122,67 +1796,98 @@
 
   /** Where affected suppliers go by default: the next enabled stage, else the one before. */
   function defaultTarget(cohorts, index) {
-    for (var i = index + 1; i < cohorts.length; i += 1) if (cohorts[i].enabled) return i;
+    for (var i = index + 1; i < cohorts.length; i += 1)
+      if (cohorts[i].enabled) return i;
     for (var j = index - 1; j >= 0; j -= 1) if (cohorts[j].enabled) return j;
     return -1;
   }
 
-  var OPTION_CHECK = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" /></svg>';
+  var OPTION_CHECK =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" /></svg>';
 
   /** Two lines in the list, one line once chosen — the project's el-option pattern. */
   function targetOption(cohorts, i, selected) {
     var c = cohorts[i];
     var n = displayNumber(cohorts, i);
-    return '<el-option value="' + escapeHtml(c.id) + '"' + (selected ? ' aria-selected="true"' : '') +
+    return (
+      '<el-option value="' +
+      escapeHtml(c.id) +
+      '"' +
+      (selected ? ' aria-selected="true"' : "") +
       ' class="group/option relative block cursor-default select-none border-b border-gray-200 px-4 py-3 text-gray-900 last:border-b-0 aria-selected:bg-gray-100 focus:bg-gray-50 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/5">' +
-        '<div class="flex flex-col gap-1 pr-8 in-[el-selectedcontent]:hidden">' +
-          '<span class="text-sm font-semibold text-gray-900 dark:text-white">Cohort ' + n + '</span>' +
-          '<span class="text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(c.name) + ' · ' + cohortRate(c) + '</span>' +
-        '</div>' +
-        '<span class="hidden truncate in-[el-selectedcontent]:block">Cohort ' + n + ' · ' + escapeHtml(c.name) + '</span>' +
-        '<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-green-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-green-400">' + OPTION_CHECK + '</span>' +
-      '</el-option>';
+      '<div class="flex flex-col gap-1 pr-8 in-[el-selectedcontent]:hidden">' +
+      '<span class="text-sm font-semibold text-gray-900 dark:text-white">Cohort ' +
+      n +
+      "</span>" +
+      '<span class="text-sm text-gray-500 dark:text-gray-400">' +
+      escapeHtml(c.name) +
+      " · " +
+      cohortRate(c) +
+      "</span>" +
+      "</div>" +
+      '<span class="hidden truncate in-[el-selectedcontent]:block">Cohort ' +
+      n +
+      " · " +
+      escapeHtml(c.name) +
+      "</span>" +
+      '<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-green-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-green-400">' +
+      OPTION_CHECK +
+      "</span>" +
+      "</el-option>"
+    );
   }
 
   function selectedTargetId() {
-    var sel = $('pp-disable-target');
-    if (!sel) return '';
+    var sel = $("pp-disable-target");
+    if (!sel) return "";
     var chosen = sel.querySelector('el-option[aria-selected="true"]');
-    return chosen ? chosen.getAttribute('value') : (sel.value || '');
+    return chosen ? chosen.getAttribute("value") : sel.value || "";
   }
 
   function openDisableDialog(programId, index) {
-    var dialog = $('pp-disable-dialog');
+    var dialog = $("pp-disable-dialog");
     var p = findProgram(programId);
     if (!dialog || !p) return;
     var cohort = p.cohorts[index];
     pendingDisable = { programId: programId, index: index };
 
-    $('pp-disable-title').textContent = 'Disable ' + cohortLabel(p.cohorts, index) + '?';
+    $("pp-disable-title").textContent =
+      "Disable " + cohortLabel(p.cohorts, index) + "?";
     var affected = cohort.activeSuppliers > 0;
-    $('pp-disable-migration').classList.toggle('hidden', !affected);
-    $('pp-disable-skip').classList.toggle('hidden', affected);
+    $("pp-disable-migration").classList.toggle("hidden", !affected);
+    $("pp-disable-skip").classList.toggle("hidden", affected);
 
     var targets = [];
-    p.cohorts.forEach(function (c, i) { if (i !== index && c.enabled) targets.push(i); });
+    p.cohorts.forEach(function (c, i) {
+      if (i !== index && c.enabled) targets.push(i);
+    });
     var preferred = defaultTarget(p.cohorts, index);
-    var select = $('pp-disable-target');
-    select.querySelector('el-options').innerHTML = targets.map(function (i) {
-      return targetOption(p.cohorts, i, i === preferred);
-    }).join('');
+    var select = $("pp-disable-target");
+    select.querySelector("el-options").innerHTML = targets
+      .map(function (i) {
+        return targetOption(p.cohorts, i, i === preferred);
+      })
+      .join("");
     // Mirror the preselected option into the trigger; el-select owns it from here.
     var chosen = select.querySelector('el-option[aria-selected="true"]');
-    select.querySelector('el-selectedcontent').innerHTML = chosen ? chosen.innerHTML : '';
-    if (chosen) select.setAttribute('value', chosen.getAttribute('value'));
-    $('pp-disable-warning').textContent = 'This cohort has ' + formatNumber(cohort.activeSuppliers) + ' active ' +
-      (cohort.activeSuppliers === 1 ? 'supplier' : 'suppliers') + '. Disabling requires a migration plan for where they move next.';
+    select.querySelector("el-selectedcontent").innerHTML = chosen
+      ? chosen.innerHTML
+      : "";
+    if (chosen) select.setAttribute("value", chosen.getAttribute("value"));
+    $("pp-disable-warning").textContent =
+      "This cohort has " +
+      formatNumber(cohort.activeSuppliers) +
+      " active " +
+      (cohort.activeSuppliers === 1 ? "supplier" : "suppliers") +
+      ". Disabling requires a migration plan for where they move next.";
 
     var stranded = affected && !targets.length;
-    $('pp-disable-target').classList.toggle('hidden', stranded);
-    $('pp-disable-no-target').classList.toggle('hidden', !stranded);
-    $('pp-disable-confirm').disabled = stranded;
+    $("pp-disable-target").classList.toggle("hidden", stranded);
+    $("pp-disable-no-target").classList.toggle("hidden", !stranded);
+    $("pp-disable-confirm").disabled = stranded;
 
-    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+    if (typeof dialog.showModal === "function" && !dialog.open)
+      dialog.showModal();
   }
 
   function confirmDisable() {
@@ -1193,12 +1898,12 @@
     var cohort = p.cohorts[index];
     var targetId = cohort.activeSuppliers > 0 ? selectedTargetId() : null;
     if (cohort.activeSuppliers > 0 && !targetId) return;
-    var label = cohortLabel(p.cohorts, index);   // before numbering shifts
+    var label = cohortLabel(p.cohorts, index); // before numbering shifts
     pendingDisable = null;
-    var dialog = $('pp-disable-dialog');
+    var dialog = $("pp-disable-dialog");
     if (dialog && dialog.open) dialog.close();
     setCohortEnabled(p, index, false, targetId);
-    showToast(label + ' was disabled');
+    showToast(label + " was disabled");
   }
 
   // ── Add suppliers to a program ──
@@ -1209,20 +1914,23 @@
   // speedbump spelling out what they lose.
 
   var ASSIGN_RENDER_LIMIT = 150;
-  var assign = null;   // { programId, cohortId, selected: Set, onlyUnassigned, search }
+  var assign = null; // { programId, cohortId, selected: Set, onlyUnassigned, search }
 
   function programName(id) {
     var p = findProgram(id);
-    return p ? (p.published ? p.published.name : p.name) : 'another program';
+    return p ? (p.published ? p.published.name : p.name) : "another program";
   }
 
-  function assignCohorts(p) { return p.published ? p.published.cohorts : []; }
+  function assignCohorts(p) {
+    return p.published ? p.published.cohorts : [];
+  }
 
   function assignTargetCohort() {
     var p = assign && findProgram(assign.programId);
     if (!p) return null;
     var list = assignCohorts(p);
-    for (var i = 0; i < list.length; i += 1) if (list[i].id === assign.cohortId) return list[i];
+    for (var i = 0; i < list.length; i += 1)
+      if (list[i].id === assign.cohortId) return list[i];
     return null;
   }
 
@@ -1231,11 +1939,25 @@
     var list = roster.filter(function (s) {
       if (assign.onlyUnassigned && s.programId) return false;
       if (!q) return true;
-      return (s.name + ' ' + s.code + ' ' + (s.programId ? programName(s.programId) : 'unassigned')).toLowerCase().indexOf(q) !== -1;
+      return (
+        (
+          s.name +
+          " " +
+          s.code +
+          " " +
+          (s.programId ? programName(s.programId) : "unassigned")
+        )
+          .toLowerCase()
+          .indexOf(q) !== -1
+      );
     });
     // Unassigned first, then people in other programs, then those already here.
-    var rank = function (s) { return !s.programId ? 0 : s.programId === assign.programId ? 2 : 1; };
-    return list.slice().sort(function (a, b) { return rank(a) - rank(b); });
+    var rank = function (s) {
+      return !s.programId ? 0 : s.programId === assign.programId ? 2 : 1;
+    };
+    return list.slice().sort(function (a, b) {
+      return rank(a) - rank(b);
+    });
   }
 
   function assignRowHtml(s) {
@@ -1243,120 +1965,214 @@
     var on = assign.selected.has(s.id);
     var where;
     if (!s.programId) {
-      where = '<span class="inline-flex shrink-0 items-center rounded-sm border border-gray-200 bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-300">Unassigned</span>';
+      where =
+        '<span class="inline-flex shrink-0 items-center rounded-sm border border-gray-200 bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-300">Unassigned</span>';
     } else {
       var owner = findProgram(s.programId);
       var cohorts = owner && owner.published ? owner.published.cohorts : [];
       var idx = indexById(cohorts, s.cohortId);
       var n = idx === -1 ? null : displayNumber(cohorts, idx);
-      var label = here ? 'Already in this program' : 'In ' + programName(s.programId) + (n ? ' · Cohort ' + n : '');
-      where = '<span class="inline-flex max-w-[14rem] shrink-0 items-center truncate rounded-sm border px-2 py-0.5 text-xs font-medium ' +
-        (here ? 'border-gray-200 bg-gray-50 text-gray-500 dark:border-white/10 dark:bg-white/5 dark:text-gray-400' : 'border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-300') +
-        '" title="' + escapeHtml(label) + '">' + escapeHtml(label) + '</span>';
+      var label = here
+        ? "Already in this program"
+        : "In " + programName(s.programId) + (n ? " · Cohort " + n : "");
+      where =
+        '<span class="inline-flex max-w-[14rem] shrink-0 items-center truncate rounded-sm border px-2 py-0.5 text-xs font-medium ' +
+        (here
+          ? "border-gray-200 bg-gray-50 text-gray-500 dark:border-white/10 dark:bg-white/5 dark:text-gray-400"
+          : "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-300") +
+        '" title="' +
+        escapeHtml(label) +
+        '">' +
+        escapeHtml(label) +
+        "</span>";
     }
-    return '<label class="flex items-center gap-3 px-4 py-3 ' + (here ? 'cursor-not-allowed opacity-60' : 'cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5') + (on ? ' bg-blue-50/50 dark:bg-blue-500/5' : '') + '">' +
+    return (
+      '<label class="flex items-center gap-3 px-4 py-3 ' +
+      (here
+        ? "cursor-not-allowed opacity-60"
+        : "cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5") +
+      (on ? " bg-blue-50/50 dark:bg-blue-500/5" : "") +
+      '">' +
       '<span class="group grid size-4 shrink-0 grid-cols-1">' +
-        '<input type="checkbox" data-assign-pick="' + escapeHtml(s.id) + '"' + (on ? ' checked' : '') + (here ? ' disabled' : '') + ' class="' + CHECKBOX + ' disabled:border-gray-200 disabled:bg-gray-100" />' +
-        '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg>' +
-      '</span>' +
-      '<span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(s.name) + '</span>' +
-        '<span class="block text-xs text-gray-500 dark:text-gray-400">' + escapeHtml(s.code) + '</span></span>' +
-      where + '</label>';
+      '<input type="checkbox" data-assign-pick="' +
+      escapeHtml(s.id) +
+      '"' +
+      (on ? " checked" : "") +
+      (here ? " disabled" : "") +
+      ' class="' +
+      CHECKBOX +
+      ' disabled:border-gray-200 disabled:bg-gray-100" />' +
+      '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg>' +
+      "</span>" +
+      '<span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-gray-900 dark:text-white">' +
+      escapeHtml(s.name) +
+      "</span>" +
+      '<span class="block text-xs text-gray-500 dark:text-gray-400">' +
+      escapeHtml(s.code) +
+      "</span></span>" +
+      where +
+      "</label>"
+    );
   }
 
   function renderAssignList() {
     var matches = assignMatches();
-    var list = $('pp-assign-list');
+    var list = $("pp-assign-list");
     if (!matches.length) {
-      list.innerHTML = '<div class="flex flex-col items-center px-6 py-10 text-center">' +
-        '<p class="text-sm font-semibold text-gray-900 dark:text-white">' + (assign.onlyUnassigned && !assign.search ? 'Every supplier is in a program' : 'No suppliers match') + '</p>' +
-        '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">' + (assign.onlyUnassigned ? 'Untick “Show only unassigned” to move suppliers from other programs.' : 'Try a different search.') + '</p></div>';
+      list.innerHTML =
+        '<div class="flex flex-col items-center px-6 py-10 text-center">' +
+        '<p class="text-sm font-semibold text-gray-900 dark:text-white">' +
+        (assign.onlyUnassigned && !assign.search
+          ? "Every supplier is in a program"
+          : "No suppliers match") +
+        "</p>" +
+        '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">' +
+        (assign.onlyUnassigned
+          ? "Untick “Show only unassigned” to move suppliers from other programs."
+          : "Try a different search.") +
+        "</p></div>";
     } else {
-      var keep = list.scrollTop;   // ticking a box re-renders; don't jump the list
-      list.innerHTML = matches.slice(0, ASSIGN_RENDER_LIMIT).map(assignRowHtml).join('');
+      var keep = list.scrollTop; // ticking a box re-renders; don't jump the list
+      list.innerHTML = matches
+        .slice(0, ASSIGN_RENDER_LIMIT)
+        .map(assignRowHtml)
+        .join("");
       list.scrollTop = keep;
     }
-    var more = $('pp-assign-more');
+    var more = $("pp-assign-more");
     var hidden = Math.max(0, matches.length - ASSIGN_RENDER_LIMIT);
-    more.textContent = hidden ? 'Showing ' + ASSIGN_RENDER_LIMIT + ' of ' + matches.length.toLocaleString('en-US') + ' — search to narrow the list.' : '';
-    more.classList.toggle('hidden', !hidden);
+    more.textContent = hidden
+      ? "Showing " +
+        ASSIGN_RENDER_LIMIT +
+        " of " +
+        matches.length.toLocaleString("en-US") +
+        " — search to narrow the list."
+      : "";
+    more.classList.toggle("hidden", !hidden);
 
-    var pickable = matches.filter(function (s) { return s.programId !== assign.programId; });
-    var allOn = pickable.length > 0 && pickable.every(function (s) { return assign.selected.has(s.id); });
-    var btn = $('pp-assign-select-all');
+    var pickable = matches.filter(function (s) {
+      return s.programId !== assign.programId;
+    });
+    var allOn =
+      pickable.length > 0 &&
+      pickable.every(function (s) {
+        return assign.selected.has(s.id);
+      });
+    var btn = $("pp-assign-select-all");
     btn.disabled = !pickable.length;
-    btn.textContent = allOn ? 'Clear selection' : 'Select all ' + pickable.length.toLocaleString('en-US');
-    btn.setAttribute('data-mode', allOn ? 'clear' : 'all');
+    btn.textContent = allOn
+      ? "Clear selection"
+      : "Select all " + pickable.length.toLocaleString("en-US");
+    btn.setAttribute("data-mode", allOn ? "clear" : "all");
     syncAssignFooter();
   }
 
   /** What picking these suppliers would do — feeds the footer and the speedbump. */
   function assignImpact() {
     var target = assignTargetCohort();
-    var impact = { total: 0, moving: 0, fromPrograms: {}, loseMethod: 0, feeUp: 0 };
+    var impact = {
+      total: 0,
+      moving: 0,
+      fromPrograms: {},
+      loseMethod: 0,
+      feeUp: 0,
+    };
     if (!target) return impact;
-    var targetMin = target.methods.reduce(function (min, id) {
-      var m = catalog.methodById[id];
-      return Math.min(min, m ? feeValue(m.fee) : 0);
-    }, target.methods.length ? Infinity : 0);
+    var targetMin = target.methods.reduce(
+      function (min, id) {
+        var m = catalog.methodById[id];
+        return Math.min(min, m ? feeValue(m.fee) : 0);
+      },
+      target.methods.length ? Infinity : 0,
+    );
     roster.forEach(function (s) {
       if (!assign.selected.has(s.id)) return;
       impact.total += 1;
       if (!s.programId) return;
       impact.moving += 1;
-      impact.fromPrograms[s.programId] = (impact.fromPrograms[s.programId] || 0) + 1;
+      impact.fromPrograms[s.programId] =
+        (impact.fromPrograms[s.programId] || 0) + 1;
       if (s.method && !offers(target, s.method)) {
         impact.loseMethod += 1;
-        var had = s.method === 'paper' ? 0 : feeValue((catalog.methodById[s.method] || {}).fee);
+        var had =
+          s.method === "paper"
+            ? 0
+            : feeValue((catalog.methodById[s.method] || {}).fee);
         if (targetMin !== Infinity && targetMin > had) impact.feeUp += 1;
       }
     });
     return impact;
   }
 
-  function plural2(n, one, many) { return n.toLocaleString('en-US') + ' ' + (n === 1 ? one : many); }
+  function plural2(n, one, many) {
+    return n.toLocaleString("en-US") + " " + (n === 1 ? one : many);
+  }
 
   function syncAssignFooter() {
     var impact = assignImpact();
-    var submit = $('pp-assign-submit');
+    var submit = $("pp-assign-submit");
     submit.disabled = !impact.total || !assignTargetCohort();
-    submit.textContent = impact.total ? 'Add ' + plural2(impact.total, 'supplier', 'suppliers') : 'Add suppliers';
-    $('pp-assign-summary').textContent = !impact.total
-      ? 'No suppliers selected'
-      : plural2(impact.total, 'supplier', 'suppliers') + ' selected' + (impact.moving ? ' · ' + impact.moving.toLocaleString('en-US') + ' from other programs' : '');
+    submit.textContent = impact.total
+      ? "Add " + plural2(impact.total, "supplier", "suppliers")
+      : "Add suppliers";
+    $("pp-assign-summary").textContent = !impact.total
+      ? "No suppliers selected"
+      : plural2(impact.total, "supplier", "suppliers") +
+        " selected" +
+        (impact.moving
+          ? " · " +
+            impact.moving.toLocaleString("en-US") +
+            " from other programs"
+          : "");
   }
 
   function renderAssignCohorts(p) {
     var cohorts = assignCohorts(p);
-    var select = $('pp-assign-cohort');
+    var select = $("pp-assign-cohort");
     var options = [];
-    cohorts.forEach(function (c, i) { if (c.enabled) options.push(targetOption(cohorts, i, c.id === assign.cohortId)); });
-    select.querySelector('el-options').innerHTML = options.join('');
+    cohorts.forEach(function (c, i) {
+      if (c.enabled)
+        options.push(targetOption(cohorts, i, c.id === assign.cohortId));
+    });
+    select.querySelector("el-options").innerHTML = options.join("");
     var chosen = select.querySelector('el-option[aria-selected="true"]');
-    select.querySelector('el-selectedcontent').innerHTML = chosen ? chosen.innerHTML : '';
-    if (chosen) select.setAttribute('value', chosen.getAttribute('value'));
+    select.querySelector("el-selectedcontent").innerHTML = chosen
+      ? chosen.innerHTML
+      : "";
+    if (chosen) select.setAttribute("value", chosen.getAttribute("value"));
   }
 
   function openAssignDrawer(programId) {
     var p = findProgram(programId);
-    var dialog = $('pp-assign-dialog');
+    var dialog = $("pp-assign-dialog");
     if (!p || !dialog || !p.published) return;
     var first = null;
-    assignCohorts(p).forEach(function (c) { if (!first && c.enabled) first = c; });
+    assignCohorts(p).forEach(function (c) {
+      if (!first && c.enabled) first = c;
+    });
     if (!first) return;
-    assign = { programId: p.id, cohortId: first.id, selected: new Set(), onlyUnassigned: true, search: '' };
-    $('pp-assign-title').textContent = 'Add suppliers';
-    $('pp-assign-subtitle').textContent = p.published.name;
-    $('pp-assign-search').value = '';
-    $('pp-assign-only-unassigned').checked = true;
+    assign = {
+      programId: p.id,
+      cohortId: first.id,
+      selected: new Set(),
+      onlyUnassigned: true,
+      search: "",
+    };
+    $("pp-assign-title").textContent = "Add suppliers";
+    $("pp-assign-subtitle").textContent = p.published.name;
+    $("pp-assign-search").value = "";
+    $("pp-assign-only-unassigned").checked = true;
     renderAssignCohorts(p);
     renderAssignList();
-    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+    if (typeof dialog.showModal === "function" && !dialog.open)
+      dialog.showModal();
   }
 
   function readAssignCohort() {
-    var chosen = $('pp-assign-cohort').querySelector('el-option[aria-selected="true"]');
-    if (chosen) assign.cohortId = chosen.getAttribute('value');
+    var chosen = $("pp-assign-cohort").querySelector(
+      'el-option[aria-selected="true"]',
+    );
+    if (chosen) assign.cohortId = chosen.getAttribute("value");
   }
 
   function openMoveDialog(impact) {
@@ -1364,24 +2180,67 @@
     var target = assignTargetCohort();
     var cohorts = assignCohorts(p);
     var stage = displayNumber(cohorts, indexById(cohorts, target.id));
-    var from = Object.keys(impact.fromPrograms).map(function (id) {
-      return escapeHtml(programName(id)) + ' (' + impact.fromPrograms[id].toLocaleString('en-US') + ')';
-    }).join(', ');
-    $('pp-move-title').textContent = 'Move ' + plural2(impact.moving, 'supplier', 'suppliers') + ' into ' + p.published.name + '?';
-    $('pp-move-lede').textContent = 'A supplier can only be in one program. ' +
-      (impact.total > impact.moving ? plural2(impact.total - impact.moving, 'unassigned supplier', 'unassigned suppliers') + ' will be added as well.' : '');
-    var dot = '<span class="mt-2 size-1.5 shrink-0 rounded-full bg-amber-500"></span>';
+    var from = Object.keys(impact.fromPrograms)
+      .map(function (id) {
+        return (
+          escapeHtml(programName(id)) +
+          " (" +
+          impact.fromPrograms[id].toLocaleString("en-US") +
+          ")"
+        );
+      })
+      .join(", ");
+    $("pp-move-title").textContent =
+      "Move " +
+      plural2(impact.moving, "supplier", "suppliers") +
+      " into " +
+      p.published.name +
+      "?";
+    $("pp-move-lede").textContent =
+      "A supplier can only be in one program. " +
+      (impact.total > impact.moving
+        ? plural2(
+            impact.total - impact.moving,
+            "unassigned supplier",
+            "unassigned suppliers",
+          ) + " will be added as well."
+        : "");
+    var dot =
+      '<span class="mt-2 size-1.5 shrink-0 rounded-full bg-amber-500"></span>';
     var items = [
-      'They leave ' + from + '. Their progress there ends and they start Cohort ' + stage + ' · ' + escapeHtml(target.name) + ' today.'
+      "They leave " +
+        from +
+        ". Their progress there ends and they start Cohort " +
+        stage +
+        " · " +
+        escapeHtml(target.name) +
+        " today.",
     ];
-    if (impact.loseMethod) items.push(plural2(impact.loseMethod, 'supplier loses', 'suppliers lose') + ' their current payment method — it isn\'t offered in this cohort — and will be asked to choose again.');
-    if (impact.feeUp) items.push(plural2(impact.feeUp, 'supplier', 'suppliers') + ' will pay a higher fee here than they do today.');
-    items.push('Payments already on their way finish under the old program\'s terms.');
-    $('pp-move-impacts').innerHTML = items.map(function (t) { return '<li class="flex gap-2.5">' + dot + '<span>' + t + '</span></li>'; }).join('');
-    $('pp-move-confirm').textContent = 'Move and add';
+    if (impact.loseMethod)
+      items.push(
+        plural2(impact.loseMethod, "supplier loses", "suppliers lose") +
+          " their current payment method — it isn't offered in this cohort — and will be asked to choose again.",
+      );
+    if (impact.feeUp)
+      items.push(
+        plural2(impact.feeUp, "supplier", "suppliers") +
+          " will pay a higher fee here than they do today.",
+      );
+    items.push(
+      "Payments already on their way finish under the old program's terms.",
+    );
+    $("pp-move-impacts").innerHTML = items
+      .map(function (t) {
+        return (
+          '<li class="flex gap-2.5">' + dot + "<span>" + t + "</span></li>"
+        );
+      })
+      .join("");
+    $("pp-move-confirm").textContent = "Move and add";
     moveConfirm = null;
-    var dialog = $('pp-move-dialog');
-    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+    var dialog = $("pp-move-dialog");
+    if (typeof dialog.showModal === "function" && !dialog.open)
+      dialog.showModal();
   }
 
   function applyAssignment() {
@@ -1392,14 +2251,21 @@
     var moved = assignImpact().moving;
     placeSuppliers(ids, p.id, target);
     persist();
-    ['pp-move-dialog', 'pp-assign-dialog'].forEach(function (id) {
+    ["pp-move-dialog", "pp-assign-dialog"].forEach(function (id) {
       var d = $(id);
       if (d && d.open) d.close();
     });
     redrawDetail(p);
     var cohorts = assignCohorts(p);
     var stage = displayNumber(cohorts, indexById(cohorts, target.id));
-    showToast(plural2(ids.length, 'supplier', 'suppliers') + ' added to Cohort ' + stage + ' · ' + target.name + (moved ? ' (' + moved.toLocaleString('en-US') + ' moved)' : ''));
+    showToast(
+      plural2(ids.length, "supplier", "suppliers") +
+        " added to Cohort " +
+        stage +
+        " · " +
+        target.name +
+        (moved ? " (" + moved.toLocaleString("en-US") + " moved)" : ""),
+    );
     assign = null;
   }
 
@@ -1413,39 +2279,58 @@
   }
 
   function bindAssign() {
-    var list = $('pp-assign-list');
-    list.addEventListener('change', function (event) {
-      var box = event.target.closest('[data-assign-pick]');
+    var list = $("pp-assign-list");
+    list.addEventListener("change", function (event) {
+      var box = event.target.closest("[data-assign-pick]");
       if (!box || !assign) return;
-      var id = box.getAttribute('data-assign-pick');
-      if (box.checked) assign.selected.add(id); else assign.selected.delete(id);
-      box.closest('label').classList.toggle('bg-blue-50/50', box.checked);
+      var id = box.getAttribute("data-assign-pick");
+      if (box.checked) assign.selected.add(id);
+      else assign.selected.delete(id);
+      box.closest("label").classList.toggle("bg-blue-50/50", box.checked);
       renderAssignList();
     });
-    $('pp-assign-search').addEventListener('input', function (event) {
+    $("pp-assign-search").addEventListener("input", function (event) {
       if (!assign) return;
       assign.search = event.target.value;
       renderAssignList();
     });
-    $('pp-assign-only-unassigned').addEventListener('change', function (event) {
+    $("pp-assign-only-unassigned").addEventListener("change", function (event) {
       if (!assign) return;
       assign.onlyUnassigned = event.target.checked;
       renderAssignList();
     });
-    $('pp-assign-select-all').addEventListener('click', function () {
+    $("pp-assign-select-all").addEventListener("click", function () {
       if (!assign) return;
-      var clear = this.getAttribute('data-mode') === 'clear';
+      var clear = this.getAttribute("data-mode") === "clear";
       assignMatches().forEach(function (s) {
         if (s.programId === assign.programId) return;
-        if (clear) assign.selected.delete(s.id); else assign.selected.add(s.id);
+        if (clear) assign.selected.delete(s.id);
+        else assign.selected.add(s.id);
       });
       renderAssignList();
     });
     // The entry cohort changes what a move costs, so re-read it on every pick.
-    $('pp-assign-cohort').addEventListener('change', function () { if (assign) { readAssignCohort(); syncAssignFooter(); } });
-    $('pp-assign-cohort').addEventListener('click', function () { setTimeout(function () { if (assign) { readAssignCohort(); syncAssignFooter(); } }, 0); });
-    $('pp-assign-form').addEventListener('submit', function (event) { event.preventDefault(); submitAssignment(); });
-    $('pp-move-confirm').addEventListener('click', function () { (moveConfirm || applyAssignment)(); });
+    $("pp-assign-cohort").addEventListener("change", function () {
+      if (assign) {
+        readAssignCohort();
+        syncAssignFooter();
+      }
+    });
+    $("pp-assign-cohort").addEventListener("click", function () {
+      setTimeout(function () {
+        if (assign) {
+          readAssignCohort();
+          syncAssignFooter();
+        }
+      }, 0);
+    });
+    $("pp-assign-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      submitAssignment();
+    });
+    $("pp-move-confirm").addEventListener("click", function () {
+      (moveConfirm || applyAssignment)();
+    });
   }
 
   // ── Bulk: assign selected suppliers to a program and cohort ──
@@ -1458,11 +2343,13 @@
   // speedbump is confirmed, and the move can be undone from the toast.
 
   var BULK_NAME_LIMIT = 60;
-  var bulk = null;        // { ids: Set, programId, cohortId, include: {other, same, fresh}, open: {}, onDone }
+  var bulk = null; // { ids: Set, programId, cohortId, include: {other, same, fresh}, open: {}, onDone }
   var moveConfirm = null; // what the shared speedbump's confirm button does; null = add-suppliers flow
 
   function bulkPrograms() {
-    return programs.filter(function (p) { return p.published && enabledCount(p.published.cohorts) > 0; });
+    return programs.filter(function (p) {
+      return p.published && enabledCount(p.published.cohorts) > 0;
+    });
   }
 
   function bulkTarget() {
@@ -1471,196 +2358,415 @@
     var cohorts = p.published.cohorts;
     var idx = indexById(cohorts, bulk.cohortId);
     if (idx === -1 || !cohorts[idx].enabled) return null;
-    return { program: p, cohorts: cohorts, cohort: cohorts[idx], stage: displayNumber(cohorts, idx) };
+    return {
+      program: p,
+      cohorts: cohorts,
+      cohort: cohorts[idx],
+      stage: displayNumber(cohorts, idx),
+    };
   }
 
   /** Sort the selection by what the move would mean for each supplier. */
   function bulkPlan() {
     var t = bulkTarget();
-    var plan = { target: t, there: [], same: [], other: [], fresh: [], fromPrograms: {}, forward: 0, back: 0, loseMethod: 0, feeUp: 0 };
+    var plan = {
+      target: t,
+      there: [],
+      same: [],
+      other: [],
+      fresh: [],
+      fromPrograms: {},
+      forward: 0,
+      back: 0,
+      loseMethod: 0,
+      feeUp: 0,
+    };
     if (!t) return plan;
-    var targetMin = t.cohort.methods.reduce(function (min, id) {
-      var m = catalog.methodById[id];
-      return Math.min(min, m ? feeValue(m.fee) : 0);
-    }, t.cohort.methods.length ? Infinity : 0);
+    var targetMin = t.cohort.methods.reduce(
+      function (min, id) {
+        var m = catalog.methodById[id];
+        return Math.min(min, m ? feeValue(m.fee) : 0);
+      },
+      t.cohort.methods.length ? Infinity : 0,
+    );
     roster.forEach(function (s) {
       if (!bulk.ids.has(s.id)) return;
       var group;
-      if (!s.programId) group = 'fresh';
-      else if (s.programId !== t.program.id) group = 'other';
-      else if (s.cohortId === t.cohort.id) group = 'there';
-      else group = 'same';
+      if (!s.programId) group = "fresh";
+      else if (s.programId !== t.program.id) group = "other";
+      else if (s.cohortId === t.cohort.id) group = "there";
+      else group = "same";
       plan[group].push(s);
-      if (group === 'there' || !bulk.include[group]) return;
-      if (group === 'other') plan.fromPrograms[s.programId] = (plan.fromPrograms[s.programId] || 0) + 1;
-      if (group === 'same') {
+      if (group === "there" || !bulk.include[group]) return;
+      if (group === "other")
+        plan.fromPrograms[s.programId] =
+          (plan.fromPrograms[s.programId] || 0) + 1;
+      if (group === "same") {
         var from = indexById(t.cohorts, s.cohortId);
-        if (from !== -1 && from > indexById(t.cohorts, t.cohort.id)) plan.back += 1; else plan.forward += 1;
+        if (from !== -1 && from > indexById(t.cohorts, t.cohort.id))
+          plan.back += 1;
+        else plan.forward += 1;
       }
       if (s.method && !offers(t.cohort, s.method)) {
         plan.loseMethod += 1;
-        var had = s.method === 'paper' ? 0 : feeValue((catalog.methodById[s.method] || {}).fee);
+        var had =
+          s.method === "paper"
+            ? 0
+            : feeValue((catalog.methodById[s.method] || {}).fee);
         if (targetMin !== Infinity && targetMin > had) plan.feeUp += 1;
       }
     });
-    plan.moving = ['same', 'other', 'fresh'].reduce(function (list, g) { return bulk.include[g] ? list.concat(plan[g]) : list; }, []);
+    plan.moving = ["same", "other", "fresh"].reduce(function (list, g) {
+      return bulk.include[g] ? list.concat(plan[g]) : list;
+    }, []);
     plan.skipped = bulk.ids.size - plan.moving.length;
     return plan;
   }
 
   function bulkProgramOption(p, selected) {
-    return '<el-option value="' + escapeHtml(p.id) + '"' + (selected ? ' aria-selected="true"' : '') +
+    return (
+      '<el-option value="' +
+      escapeHtml(p.id) +
+      '"' +
+      (selected ? ' aria-selected="true"' : "") +
       ' class="group/option relative block cursor-default select-none border-b border-gray-200 px-4 py-3 text-gray-900 last:border-b-0 aria-selected:bg-gray-100 focus:bg-gray-50 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/5">' +
-        '<div class="flex flex-col gap-1 pr-8 in-[el-selectedcontent]:hidden">' +
-          '<span class="text-sm font-semibold text-gray-900 dark:text-white">' + escapeHtml(p.published.name) + '</span>' +
-          '<span class="text-sm text-gray-500 dark:text-gray-400">' + plural(enabledCount(p.published.cohorts), 'cohort') + ' · ' + formatNumber(p.suppliers) + ' suppliers</span>' +
-        '</div>' +
-        '<span class="hidden truncate in-[el-selectedcontent]:block">' + escapeHtml(p.published.name) + '</span>' +
-        '<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-green-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-green-400">' + OPTION_CHECK + '</span>' +
-      '</el-option>';
+      '<div class="flex flex-col gap-1 pr-8 in-[el-selectedcontent]:hidden">' +
+      '<span class="text-sm font-semibold text-gray-900 dark:text-white">' +
+      escapeHtml(p.published.name) +
+      "</span>" +
+      '<span class="text-sm text-gray-500 dark:text-gray-400">' +
+      plural(enabledCount(p.published.cohorts), "cohort") +
+      " · " +
+      formatNumber(p.suppliers) +
+      " suppliers</span>" +
+      "</div>" +
+      '<span class="hidden truncate in-[el-selectedcontent]:block">' +
+      escapeHtml(p.published.name) +
+      "</span>" +
+      '<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-green-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-green-400">' +
+      OPTION_CHECK +
+      "</span>" +
+      "</el-option>"
+    );
   }
 
   function fillSelect(id, optionsHtml) {
     var select = $(id);
-    select.querySelector('el-options').innerHTML = optionsHtml;
+    select.querySelector("el-options").innerHTML = optionsHtml;
     var chosen = select.querySelector('el-option[aria-selected="true"]');
-    select.querySelector('el-selectedcontent').innerHTML = chosen ? chosen.innerHTML : '';
-    if (chosen) select.setAttribute('value', chosen.getAttribute('value'));
+    select.querySelector("el-selectedcontent").innerHTML = chosen
+      ? chosen.innerHTML
+      : "";
+    if (chosen) select.setAttribute("value", chosen.getAttribute("value"));
   }
 
   function renderBulkSelects() {
-    fillSelect('pp-bulk-program', bulkPrograms().map(function (p) { return bulkProgramOption(p, p.id === bulk.programId); }).join(''));
+    fillSelect(
+      "pp-bulk-program",
+      bulkPrograms()
+        .map(function (p) {
+          return bulkProgramOption(p, p.id === bulk.programId);
+        })
+        .join(""),
+    );
     var p = findProgram(bulk.programId);
     var cohorts = p.published.cohorts;
     var options = [];
-    cohorts.forEach(function (c, i) { if (c.enabled) options.push(targetOption(cohorts, i, c.id === bulk.cohortId)); });
-    fillSelect('pp-bulk-cohort', options.join(''));
+    cohorts.forEach(function (c, i) {
+      if (c.enabled)
+        options.push(targetOption(cohorts, i, c.id === bulk.cohortId));
+    });
+    fillSelect("pp-bulk-cohort", options.join(""));
   }
 
   function bulkNames(list) {
-    var names = list.slice(0, BULK_NAME_LIMIT).map(function (s) {
-      return '<li class="flex items-baseline justify-between gap-3"><span class="truncate">' + escapeHtml(s.name) + '</span><span class="shrink-0 text-xs text-gray-500 dark:text-gray-400">' + escapeHtml(s.code) + '</span></li>';
-    }).join('');
-    var more = list.length > BULK_NAME_LIMIT ? '<li class="text-xs text-gray-500 dark:text-gray-400">and ' + formatNumber(list.length - BULK_NAME_LIMIT) + ' more</li>' : '';
-    return '<ul role="list" class="mt-3 flex max-h-44 flex-col gap-1.5 overflow-y-auto border-t border-gray-200 pt-3 text-sm text-gray-700 dark:border-white/10 dark:text-gray-300">' + names + more + '</ul>';
+    var names = list
+      .slice(0, BULK_NAME_LIMIT)
+      .map(function (s) {
+        return (
+          '<li class="flex items-baseline justify-between gap-3"><span class="truncate">' +
+          escapeHtml(s.name) +
+          '</span><span class="shrink-0 text-xs text-gray-500 dark:text-gray-400">' +
+          escapeHtml(s.code) +
+          "</span></li>"
+        );
+      })
+      .join("");
+    var more =
+      list.length > BULK_NAME_LIMIT
+        ? '<li class="text-xs text-gray-500 dark:text-gray-400">and ' +
+          formatNumber(list.length - BULK_NAME_LIMIT) +
+          " more</li>"
+        : "";
+    return (
+      '<ul role="list" class="mt-3 flex max-h-44 flex-col gap-1.5 overflow-y-auto border-t border-gray-200 pt-3 text-sm text-gray-700 dark:border-white/10 dark:text-gray-300">' +
+      names +
+      more +
+      "</ul>"
+    );
   }
 
   function bulkGroupCard(key, list, title, notes, locked) {
-    if (!list.length) return '';
+    if (!list.length) return "";
     var on = !locked && bulk.include[key];
     var open = !!bulk.open[key];
     var box = locked
       ? '<span class="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-gray-200 text-gray-500 dark:bg-white/10 dark:text-gray-400"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-3"><path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Z" /></svg></span>'
-      : '<span class="group mt-0.5 grid size-4 shrink-0 grid-cols-1"><input type="checkbox" data-bulk-include="' + key + '"' + (on ? ' checked' : '') + ' aria-label="Include ' + escapeHtml(title) + '" class="' + CHECKBOX + '" />' +
+      : '<span class="group mt-0.5 grid size-4 shrink-0 grid-cols-1"><input type="checkbox" data-bulk-include="' +
+        key +
+        '"' +
+        (on ? " checked" : "") +
+        ' aria-label="Include ' +
+        escapeHtml(title) +
+        '" class="' +
+        CHECKBOX +
+        '" />' +
         '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg></span>';
-    var tone = locked || !on ? 'border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5' : 'border-gray-200 bg-white dark:border-white/10 dark:bg-white/5';
-    var noteHtml = notes.map(function (n) {
-      return '<li class="flex gap-2"><span class="mt-2 size-1 shrink-0 rounded-full ' + (n.warn && on ? 'bg-amber-500' : 'bg-gray-400') + '"></span><span class="' + (n.warn && on ? 'text-amber-800 dark:text-amber-300' : '') + '">' + n.text + '</span></li>';
-    }).join('');
-    return '<div data-bulk-group="' + key + '" class="rounded-2xl border p-4 ' + tone + '">' +
-      '<div class="flex items-start gap-3">' + box +
-        '<div class="min-w-0 flex-1">' +
-          '<div class="flex flex-wrap items-center justify-between gap-2">' +
-            '<p class="text-sm font-semibold text-gray-950 dark:text-white">' + title + '</p>' +
-            (locked ? badge('neutral', 'Skipped') : on ? '' : badge('neutral', 'Left where they are')) +
-          '</div>' +
-          '<ul role="list" class="mt-1.5 flex flex-col gap-1 text-sm text-gray-600 dark:text-gray-400' + (locked || on ? '' : ' hidden') + '">' + noteHtml + '</ul>' +
-          '<button type="button" data-bulk-toggle="' + key + '" aria-expanded="' + (open ? 'true' : 'false') + '" class="mt-2 cursor-pointer text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400">' + (open ? 'Hide suppliers' : 'Show suppliers') + '</button>' +
-          (open ? bulkNames(list) : '') +
-        '</div></div></div>';
+    var tone =
+      locked || !on
+        ? "border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"
+        : "border-gray-200 bg-white dark:border-white/10 dark:bg-white/5";
+    var noteHtml = notes
+      .map(function (n) {
+        return (
+          '<li class="flex gap-2"><span class="mt-2 size-1 shrink-0 rounded-full ' +
+          (n.warn && on ? "bg-amber-500" : "bg-gray-400") +
+          '"></span><span class="' +
+          (n.warn && on ? "text-amber-800 dark:text-amber-300" : "") +
+          '">' +
+          n.text +
+          "</span></li>"
+        );
+      })
+      .join("");
+    return (
+      '<div data-bulk-group="' +
+      key +
+      '" class="rounded-2xl border p-4 ' +
+      tone +
+      '">' +
+      '<div class="flex items-start gap-3">' +
+      box +
+      '<div class="min-w-0 flex-1">' +
+      '<div class="flex flex-wrap items-center justify-between gap-2">' +
+      '<p class="text-sm font-semibold text-gray-950 dark:text-white">' +
+      title +
+      "</p>" +
+      (locked
+        ? badge("neutral", "Skipped")
+        : on
+          ? ""
+          : badge("neutral", "Left where they are")) +
+      "</div>" +
+      '<ul role="list" class="mt-1.5 flex flex-col gap-1 text-sm text-gray-600 dark:text-gray-400' +
+      (locked || on ? "" : " hidden") +
+      '">' +
+      noteHtml +
+      "</ul>" +
+      '<button type="button" data-bulk-toggle="' +
+      key +
+      '" aria-expanded="' +
+      (open ? "true" : "false") +
+      '" class="mt-2 cursor-pointer text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400">' +
+      (open ? "Hide suppliers" : "Show suppliers") +
+      "</button>" +
+      (open ? bulkNames(list) : "") +
+      "</div></div></div>"
+    );
   }
 
   function renderBulk() {
     var plan = bulkPlan();
     var t = plan.target;
-    var host = $('pp-bulk-groups');
-    if (!t) { host.innerHTML = ''; return; }
-    var where = 'Cohort ' + t.stage + ' · ' + escapeHtml(t.cohort.name);
+    var host = $("pp-bulk-groups");
+    if (!t) {
+      host.innerHTML = "";
+      return;
+    }
+    var where = "Cohort " + t.stage + " · " + escapeHtml(t.cohort.name);
     var lossNotes = function (list) {
-      var lose = 0, up = 0;
-      var min = t.cohort.methods.reduce(function (m, id) { var x = catalog.methodById[id]; return Math.min(m, x ? feeValue(x.fee) : 0); }, t.cohort.methods.length ? Infinity : 0);
+      var lose = 0,
+        up = 0;
+      var min = t.cohort.methods.reduce(
+        function (m, id) {
+          var x = catalog.methodById[id];
+          return Math.min(m, x ? feeValue(x.fee) : 0);
+        },
+        t.cohort.methods.length ? Infinity : 0,
+      );
       list.forEach(function (s) {
         if (!s.method || offers(t.cohort, s.method)) return;
         lose += 1;
-        var had = s.method === 'paper' ? 0 : feeValue((catalog.methodById[s.method] || {}).fee);
+        var had =
+          s.method === "paper"
+            ? 0
+            : feeValue((catalog.methodById[s.method] || {}).fee);
         if (min !== Infinity && min > had) up += 1;
       });
       var notes = [];
-      if (lose) notes.push({ warn: true, text: plural2(lose, 'loses', 'lose') + ' their payment method — ' + where + ' doesn\'t offer it — and will be asked to choose again.' });
-      if (up) notes.push({ warn: true, text: plural2(up, 'will pay', 'will pay') + ' a higher fee than today.' });
+      if (lose)
+        notes.push({
+          warn: true,
+          text:
+            plural2(lose, "loses", "lose") +
+            " their payment method — " +
+            where +
+            " doesn't offer it — and will be asked to choose again.",
+        });
+      if (up)
+        notes.push({
+          warn: true,
+          text:
+            plural2(up, "will pay", "will pay") + " a higher fee than today.",
+        });
       return notes;
     };
 
     var fromNames = {};
-    plan.other.forEach(function (s) { fromNames[s.programId] = (fromNames[s.programId] || 0) + 1; });
-    var fromText = Object.keys(fromNames).map(function (id) { return escapeHtml(programName(id)) + ' (' + formatNumber(fromNames[id]) + ')'; }).join(', ');
-    var fwd = 0, back = 0;
+    plan.other.forEach(function (s) {
+      fromNames[s.programId] = (fromNames[s.programId] || 0) + 1;
+    });
+    var fromText = Object.keys(fromNames)
+      .map(function (id) {
+        return (
+          escapeHtml(programName(id)) + " (" + formatNumber(fromNames[id]) + ")"
+        );
+      })
+      .join(", ");
+    var fwd = 0,
+      back = 0;
     plan.same.forEach(function (s) {
       var from = indexById(t.cohorts, s.cohortId);
-      if (from !== -1 && from > indexById(t.cohorts, t.cohort.id)) back += 1; else fwd += 1;
+      if (from !== -1 && from > indexById(t.cohorts, t.cohort.id)) back += 1;
+      else fwd += 1;
     });
     var direction = [];
-    if (fwd) direction.push(formatNumber(fwd) + ' forward');
-    if (back) direction.push(formatNumber(back) + ' back to an earlier stage');
+    if (fwd) direction.push(formatNumber(fwd) + " forward");
+    if (back) direction.push(formatNumber(back) + " back to an earlier stage");
 
     host.innerHTML =
-      bulkGroupCard('other', plan.other, plural2(plan.other.length, 'supplier moves', 'suppliers move') + ' from another program', [
-        { warn: true, text: 'They leave ' + fromText + '. Their progress there ends.' },
-        { text: 'They start ' + where + ' today.' }
-      ].concat(lossNotes(plan.other))) +
-      bulkGroupCard('same', plan.same, plural2(plan.same.length, 'supplier changes', 'suppliers change') + ' cohort in this program', [
-        { warn: back > 0, text: 'Moving ' + direction.join(', ') + '. The cohort timer restarts today.' }
-      ].concat(lossNotes(plan.same))) +
-      bulkGroupCard('fresh', plan.fresh, plural2(plan.fresh.length, 'unassigned supplier joins', 'unassigned suppliers join'), [
-        { text: 'They start ' + where + ' today.' }
-      ]) +
-      bulkGroupCard('there', plan.there, plural2(plan.there.length, 'supplier is', 'suppliers are') + ' already in this cohort', [
-        { text: 'Nothing changes for them — their timer keeps running.' }
-      ], true);
+      bulkGroupCard(
+        "other",
+        plan.other,
+        plural2(plan.other.length, "supplier moves", "suppliers move") +
+          " from another program",
+        [
+          {
+            warn: true,
+            text: "They leave " + fromText + ". Their progress there ends.",
+          },
+          { text: "They start " + where + " today." },
+        ].concat(lossNotes(plan.other)),
+      ) +
+      bulkGroupCard(
+        "same",
+        plan.same,
+        plural2(plan.same.length, "supplier changes", "suppliers change") +
+          " cohort in this program",
+        [
+          {
+            warn: back > 0,
+            text:
+              "Moving " +
+              direction.join(", ") +
+              ". The cohort timer restarts today.",
+          },
+        ].concat(lossNotes(plan.same)),
+      ) +
+      bulkGroupCard(
+        "fresh",
+        plan.fresh,
+        plural2(
+          plan.fresh.length,
+          "unassigned supplier joins",
+          "unassigned suppliers join",
+        ),
+        [{ text: "They start " + where + " today." }],
+      ) +
+      bulkGroupCard(
+        "there",
+        plan.there,
+        plural2(plan.there.length, "supplier is", "suppliers are") +
+          " already in this cohort",
+        [{ text: "Nothing changes for them — their timer keeps running." }],
+        true,
+      );
 
     var n = plan.moving.length;
-    $('pp-bulk-summary').textContent = n
-      ? plural2(n, 'supplier', 'suppliers') + (plan.moving.every(function (s) { return !s.programId; }) ? ' will be added' : ' will move') + (plan.skipped ? ' · ' + formatNumber(plan.skipped) + ' skipped' : '')
-      : 'Nothing to move';
-    var submit = $('pp-bulk-submit');
+    $("pp-bulk-summary").textContent = n
+      ? plural2(n, "supplier", "suppliers") +
+        (plan.moving.every(function (s) {
+          return !s.programId;
+        })
+          ? " will be added"
+          : " will move") +
+        (plan.skipped ? " · " + formatNumber(plan.skipped) + " skipped" : "")
+      : "Nothing to move";
+    var submit = $("pp-bulk-submit");
     submit.disabled = !n;
-    submit.textContent = n ? 'Review ' + plural2(n, 'supplier', 'suppliers') : 'Review';
+    submit.textContent = n
+      ? "Review " + plural2(n, "supplier", "suppliers")
+      : "Review";
   }
 
   function openBulkAssign(ids, onDone) {
-    var dialog = $('pp-bulk-dialog');
+    var dialog = $("pp-bulk-dialog");
     var options = bulkPrograms();
     if (!dialog || !ids || !ids.length || !options.length) return;
     // Start on the program most of the selection is already in: the common
     // job is moving people between its cohorts.
     var tally = {};
     var wanted = {};
-    ids.forEach(function (id) { wanted[id] = true; });
-    roster.forEach(function (s) { if (wanted[s.id] && s.programId) tally[s.programId] = (tally[s.programId] || 0) + 1; });
-    var start = options.slice().sort(function (a, b) { return (tally[b.id] || 0) - (tally[a.id] || 0); })[0];
+    ids.forEach(function (id) {
+      wanted[id] = true;
+    });
+    roster.forEach(function (s) {
+      if (wanted[s.id] && s.programId)
+        tally[s.programId] = (tally[s.programId] || 0) + 1;
+    });
+    var start = options.slice().sort(function (a, b) {
+      return (tally[b.id] || 0) - (tally[a.id] || 0);
+    })[0];
     var first = null;
-    start.published.cohorts.forEach(function (c) { if (!first && c.enabled) first = c; });
-    bulk = { ids: new Set(ids), programId: start.id, cohortId: first.id, include: { other: true, same: true, fresh: true }, open: {}, onDone: onDone };
-    $('pp-bulk-subtitle').textContent = plural2(ids.length, 'supplier', 'suppliers') + ' selected';
+    start.published.cohorts.forEach(function (c) {
+      if (!first && c.enabled) first = c;
+    });
+    bulk = {
+      ids: new Set(ids),
+      programId: start.id,
+      cohortId: first.id,
+      include: { other: true, same: true, fresh: true },
+      open: {},
+      onDone: onDone,
+    };
+    $("pp-bulk-subtitle").textContent =
+      plural2(ids.length, "supplier", "suppliers") + " selected";
     renderBulkSelects();
     renderBulk();
-    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+    if (typeof dialog.showModal === "function" && !dialog.open)
+      dialog.showModal();
   }
 
   function readBulkSelects() {
     if (!bulk) return;
-    var program = $('pp-bulk-program').querySelector('el-option[aria-selected="true"]');
-    var programId = program ? program.getAttribute('value') : bulk.programId;
+    var program = $("pp-bulk-program").querySelector(
+      'el-option[aria-selected="true"]',
+    );
+    var programId = program ? program.getAttribute("value") : bulk.programId;
     if (programId !== bulk.programId) {
       // A new program has its own cohorts: start at its first stage.
       bulk.programId = programId;
       var first = null;
-      findProgram(programId).published.cohorts.forEach(function (c) { if (!first && c.enabled) first = c; });
+      findProgram(programId).published.cohorts.forEach(function (c) {
+        if (!first && c.enabled) first = c;
+      });
       bulk.cohortId = first.id;
       renderBulkSelects();
     } else {
-      var cohort = $('pp-bulk-cohort').querySelector('el-option[aria-selected="true"]');
-      if (cohort) bulk.cohortId = cohort.getAttribute('value');
+      var cohort = $("pp-bulk-cohort").querySelector(
+        'el-option[aria-selected="true"]',
+      );
+      if (cohort) bulk.cohortId = cohort.getAttribute("value");
     }
     renderBulk();
   }
@@ -1671,111 +2777,233 @@
     var t = plan.target;
     if (!t || !plan.moving.length) return;
     var n = plan.moving.length;
-    var where = 'Cohort ' + t.stage + ' · ' + escapeHtml(t.cohort.name);
+    var where = "Cohort " + t.stage + " · " + escapeHtml(t.cohort.name);
     var joining = bulk.include.fresh ? plan.fresh.length : 0;
-    var onlyJoining = joining === n;   // nobody leaves anything: an add, not a move
-    $('pp-move-title').textContent = (onlyJoining ? 'Add ' : 'Move ') + plural2(n, 'supplier', 'suppliers') + ' to ' + t.program.published.name + '?';
-    $('pp-move-lede').textContent = 'They start Cohort ' + t.stage + ' · ' + t.cohort.name + ' today.' +
-      (plan.skipped ? ' ' + plural2(plan.skipped, 'selected supplier stays', 'selected suppliers stay') + ' where they are.' : '');
+    var onlyJoining = joining === n; // nobody leaves anything: an add, not a move
+    $("pp-move-title").textContent =
+      (onlyJoining ? "Add " : "Move ") +
+      plural2(n, "supplier", "suppliers") +
+      " to " +
+      t.program.published.name +
+      "?";
+    $("pp-move-lede").textContent =
+      "They start Cohort " +
+      t.stage +
+      " · " +
+      t.cohort.name +
+      " today." +
+      (plan.skipped
+        ? " " +
+          plural2(
+            plan.skipped,
+            "selected supplier stays",
+            "selected suppliers stay",
+          ) +
+          " where they are."
+        : "");
     var items = [];
-    var from = Object.keys(plan.fromPrograms).map(function (id) { return escapeHtml(programName(id)) + ' (' + formatNumber(plan.fromPrograms[id]) + ')'; }).join(', ');
-    if (from) items.push(plural2(bulk.include.other ? plan.other.length : 0, 'leaves', 'leave') + ' ' + from + '. Their progress there ends.');
+    var from = Object.keys(plan.fromPrograms)
+      .map(function (id) {
+        return (
+          escapeHtml(programName(id)) +
+          " (" +
+          formatNumber(plan.fromPrograms[id]) +
+          ")"
+        );
+      })
+      .join(", ");
+    if (from)
+      items.push(
+        plural2(bulk.include.other ? plan.other.length : 0, "leaves", "leave") +
+          " " +
+          from +
+          ". Their progress there ends.",
+      );
     if (bulk.include.same && plan.same.length) {
       var dir = [];
-      if (plan.forward) dir.push(formatNumber(plan.forward) + ' forward');
-      if (plan.back) dir.push(formatNumber(plan.back) + ' back to an earlier stage');
-      items.push(plural2(plan.same.length, 'changes', 'change') + ' cohort inside this program: ' + dir.join(', ') + '.');
+      if (plan.forward) dir.push(formatNumber(plan.forward) + " forward");
+      if (plan.back)
+        dir.push(formatNumber(plan.back) + " back to an earlier stage");
+      items.push(
+        plural2(plan.same.length, "changes", "change") +
+          " cohort inside this program: " +
+          dir.join(", ") +
+          ".",
+      );
     }
-    if (joining && !onlyJoining) items.push(plural2(joining, 'unassigned supplier joins', 'unassigned suppliers join') + ' the program.');
-    items.push('The ' + t.cohort.durationDays + '-day timer for ' + where + ' starts today for ' + (onlyJoining ? 'each of them.' : 'everyone moved.'));
-    if (plan.loseMethod) items.push(plural2(plan.loseMethod, 'loses', 'lose') + ' their current payment method — it isn\'t offered in this cohort — and will be asked to choose again.');
-    if (plan.feeUp) items.push(plural2(plan.feeUp, 'will pay', 'will pay') + ' a higher fee here than today.');
-    if (onlyJoining) items.push('They\'ll be asked to choose a payment method this cohort offers.');
-    else items.push('Payments already on their way finish under the old terms.');
-    var dot = '<span class="mt-2 size-1.5 shrink-0 rounded-full bg-amber-500"></span>';
-    $('pp-move-impacts').innerHTML = items.map(function (text) { return '<li class="flex gap-2.5">' + dot + '<span>' + text + '</span></li>'; }).join('');
-    $('pp-move-confirm').textContent = (onlyJoining ? 'Add ' : 'Move ') + plural2(n, 'supplier', 'suppliers');
+    if (joining && !onlyJoining)
+      items.push(
+        plural2(
+          joining,
+          "unassigned supplier joins",
+          "unassigned suppliers join",
+        ) + " the program.",
+      );
+    items.push(
+      "The " +
+        t.cohort.durationDays +
+        "-day timer for " +
+        where +
+        " starts today for " +
+        (onlyJoining ? "each of them." : "everyone moved."),
+    );
+    if (plan.loseMethod)
+      items.push(
+        plural2(plan.loseMethod, "loses", "lose") +
+          " their current payment method — it isn't offered in this cohort — and will be asked to choose again.",
+      );
+    if (plan.feeUp)
+      items.push(
+        plural2(plan.feeUp, "will pay", "will pay") +
+          " a higher fee here than today.",
+      );
+    if (onlyJoining)
+      items.push(
+        "They'll be asked to choose a payment method this cohort offers.",
+      );
+    else
+      items.push("Payments already on their way finish under the old terms.");
+    var dot =
+      '<span class="mt-2 size-1.5 shrink-0 rounded-full bg-amber-500"></span>';
+    $("pp-move-impacts").innerHTML = items
+      .map(function (text) {
+        return (
+          '<li class="flex gap-2.5">' + dot + "<span>" + text + "</span></li>"
+        );
+      })
+      .join("");
+    $("pp-move-confirm").textContent =
+      (onlyJoining ? "Add " : "Move ") + plural2(n, "supplier", "suppliers");
     moveConfirm = applyBulk;
-    var dialog = $('pp-move-dialog');
-    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+    var dialog = $("pp-move-dialog");
+    if (typeof dialog.showModal === "function" && !dialog.open)
+      dialog.showModal();
   }
 
   function applyBulk() {
     var plan = bulkPlan();
     var t = plan.target;
     if (!t || !plan.moving.length) return;
-    var ids = plan.moving.map(function (s) { return s.id; });
+    var ids = plan.moving.map(function (s) {
+      return s.id;
+    });
     // Kept so the toast can put everyone back exactly where they were.
     var before = plan.moving.map(function (s) {
-      return { id: s.id, programId: s.programId, cohortId: s.cohortId, enteredAt: s.enteredAt, method: s.method };
+      return {
+        id: s.id,
+        programId: s.programId,
+        cohortId: s.cohortId,
+        enteredAt: s.enteredAt,
+        method: s.method,
+      };
     });
     var onDone = bulk.onDone;
-    var verb = plan.moving.every(function (s) { return !s.programId; }) ? ' added to Cohort ' : ' moved to Cohort ';
+    var verb = plan.moving.every(function (s) {
+      return !s.programId;
+    })
+      ? " added to Cohort "
+      : " moved to Cohort ";
     placeSuppliers(ids, t.program.id, t.cohort);
     persist();
-    ['pp-move-dialog', 'pp-bulk-dialog'].forEach(function (id) { var d = $(id); if (d && d.open) d.close(); });
-    bulk = null;
-    if (typeof onDone === 'function') onDone();
-    showToast(plural2(ids.length, 'supplier', 'suppliers') + verb + t.stage + ' · ' + t.cohort.name, {
-      label: 'Undo',
-      run: function () {
-        var byId = {};
-        before.forEach(function (b) { byId[b.id] = b; });
-        roster.forEach(function (s) {
-          var b = byId[s.id];
-          if (!b) return;
-          s.programId = b.programId; s.cohortId = b.cohortId; s.enteredAt = b.enteredAt; s.method = b.method;
-        });
-        persistRoster();
-        recount();
-        persist();
-        showToast('Undone — ' + plural2(ids.length, 'supplier is', 'suppliers are') + ' back where they were');
-      }
+    ["pp-move-dialog", "pp-bulk-dialog"].forEach(function (id) {
+      var d = $(id);
+      if (d && d.open) d.close();
     });
+    bulk = null;
+    if (typeof onDone === "function") onDone();
+    showToast(
+      plural2(ids.length, "supplier", "suppliers") +
+        verb +
+        t.stage +
+        " · " +
+        t.cohort.name,
+      {
+        label: "Undo",
+        run: function () {
+          var byId = {};
+          before.forEach(function (b) {
+            byId[b.id] = b;
+          });
+          roster.forEach(function (s) {
+            var b = byId[s.id];
+            if (!b) return;
+            s.programId = b.programId;
+            s.cohortId = b.cohortId;
+            s.enteredAt = b.enteredAt;
+            s.method = b.method;
+          });
+          persistRoster();
+          recount();
+          persist();
+          showToast(
+            "Undone — " +
+              plural2(ids.length, "supplier is", "suppliers are") +
+              " back where they were",
+          );
+        },
+      },
+    );
   }
 
   function bindBulk() {
-    var form = $('pp-bulk-form');
-    form.addEventListener('submit', function (event) { event.preventDefault(); if (bulk) openBulkConfirm(); });
-    form.addEventListener('change', function (event) {
+    var form = $("pp-bulk-form");
+    form.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (bulk) openBulkConfirm();
+    });
+    form.addEventListener("change", function (event) {
       if (!bulk) return;
-      var box = event.target.closest('[data-bulk-include]');
-      if (box) { bulk.include[box.getAttribute('data-bulk-include')] = box.checked; renderBulk(); return; }
+      var box = event.target.closest("[data-bulk-include]");
+      if (box) {
+        bulk.include[box.getAttribute("data-bulk-include")] = box.checked;
+        renderBulk();
+        return;
+      }
       readBulkSelects();
     });
-    form.addEventListener('click', function (event) {
+    form.addEventListener("click", function (event) {
       if (!bulk) return;
-      var toggle = event.target.closest('[data-bulk-toggle]');
-      if (toggle) { var key = toggle.getAttribute('data-bulk-toggle'); bulk.open[key] = !bulk.open[key]; renderBulk(); return; }
-      if (event.target.closest('el-option')) setTimeout(readBulkSelects, 0);
+      var toggle = event.target.closest("[data-bulk-toggle]");
+      if (toggle) {
+        var key = toggle.getAttribute("data-bulk-toggle");
+        bulk.open[key] = !bulk.open[key];
+        renderBulk();
+        return;
+      }
+      if (event.target.closest("el-option")) setTimeout(readBulkSelects, 0);
     });
-    $('pp-bulk-dialog').addEventListener('close', function () { if (!$('pp-move-dialog').open) bulk = null; });
-    $('pp-move-dialog').addEventListener('close', function () { moveConfirm = null; });
+    $("pp-bulk-dialog").addEventListener("close", function () {
+      if (!$("pp-move-dialog").open) bulk = null;
+    });
+    $("pp-move-dialog").addEventListener("close", function () {
+      moveConfirm = null;
+    });
   }
 
   // ── Toast ──
 
   function hideToast() {
-    var toast = $('pp-toast');
+    var toast = $("pp-toast");
     if (!toast) return;
-    toast.classList.add('opacity-0', 'translate-y-2');
-    toast.classList.remove('opacity-100', 'translate-y-0');
+    toast.classList.add("opacity-0", "translate-y-2");
+    toast.classList.remove("opacity-100", "translate-y-0");
     // Hidden, it must not swallow clicks meant for whatever sits under it.
-    $('pp-toast-card').classList.remove('pointer-events-auto');
+    $("pp-toast-card").classList.remove("pointer-events-auto");
   }
 
   /** action: { label, run } — an inline button, e.g. Undo. The toast then stays up longer. */
   function showToast(message, action) {
-    var toast = $('pp-toast');
+    var toast = $("pp-toast");
     if (!toast) return;
-    $('pp-toast-text').textContent = message;
-    var btn = $('pp-toast-action');
-    toastAction = action && typeof action.run === 'function' ? action.run : null;
-    btn.textContent = toastAction ? action.label : '';
-    btn.classList.toggle('hidden', !toastAction);
-    toast.classList.remove('opacity-0', 'translate-y-2');
-    toast.classList.add('opacity-100', 'translate-y-0');
-    $('pp-toast-card').classList.add('pointer-events-auto');
+    $("pp-toast-text").textContent = message;
+    var btn = $("pp-toast-action");
+    toastAction =
+      action && typeof action.run === "function" ? action.run : null;
+    btn.textContent = toastAction ? action.label : "";
+    btn.classList.toggle("hidden", !toastAction);
+    toast.classList.remove("opacity-0", "translate-y-2");
+    toast.classList.add("opacity-100", "translate-y-0");
+    $("pp-toast-card").classList.add("pointer-events-auto");
     clearTimeout(toastTimer);
     toastTimer = setTimeout(hideToast, toastAction ? 10000 : 4000);
   }
@@ -1783,35 +3011,63 @@
   // ── Wiring ──
 
   function bind() {
-    document.addEventListener('click', function (event) {
+    document.addEventListener("click", function (event) {
       var target = event.target;
-      var tabBtn = target.closest('[data-pp-tab]');
+      var tabBtn = target.closest("[data-pp-tab]");
       if (tabBtn) {
-        var tab = tabBtn.getAttribute('data-pp-tab');
+        var tab = tabBtn.getAttribute("data-pp-tab");
         if (tab === currentTab() && !currentProgramId()) return;
-        try { window.history.pushState({}, '', window.location.pathname + (tab === 'suppliers' ? '?tab=suppliers' : '')); } catch (error) {}
+        try {
+          window.history.pushState(
+            {},
+            "",
+            window.location.pathname +
+              (tab === "suppliers" ? "?tab=suppliers" : ""),
+          );
+        } catch (error) {}
         showList();
         return;
       }
-      if (target.closest('[data-open-create]')) { openCreate(); return; }
+      if (target.closest("[data-open-create]")) {
+        openCreate();
+        return;
+      }
 
-      var supLink = target.closest('[data-sup-link]');
+      var supLink = target.closest("[data-sup-link]");
       if (supLink) {
         event.preventDefault();
-        try { window.history.pushState({}, '', window.location.pathname + supLink.getAttribute('href')); } catch (error) {}
+        try {
+          window.history.pushState(
+            {},
+            "",
+            window.location.pathname + supLink.getAttribute("href"),
+          );
+        } catch (error) {}
         window.scrollTo(0, 0);
         showList();
         return;
       }
-      var editProgram = target.closest('[data-edit-program]');
-      if (editProgram) { openEdit(editProgram.getAttribute('data-edit-program')); return; }
-      var deleteProgram = target.closest('[data-delete-program]');
-      if (deleteProgram) { openDeleteDialog(deleteProgram.getAttribute('data-delete-program')); return; }
+      var editProgram = target.closest("[data-edit-program]");
+      if (editProgram) {
+        openEdit(editProgram.getAttribute("data-edit-program"));
+        return;
+      }
+      var deleteProgram = target.closest("[data-delete-program]");
+      if (deleteProgram) {
+        openDeleteDialog(deleteProgram.getAttribute("data-delete-program"));
+        return;
+      }
 
-      var open = target.closest('[data-open-program]');
-      if (open) { navigate(open.getAttribute('data-open-program')); return; }
+      var open = target.closest("[data-open-program]");
+      if (open) {
+        navigate(open.getAttribute("data-open-program"));
+        return;
+      }
 
-      if (target.closest('[data-back-to-list]') || target.closest('[data-pp-list-crumb]')) {
+      if (
+        target.closest("[data-back-to-list]") ||
+        target.closest("[data-pp-list-crumb]")
+      ) {
         event.preventDefault();
         navigate(null);
         return;
@@ -1820,31 +3076,47 @@
       var p = findProgram(currentProgramId());
       if (!p) return;
 
-      if (target.closest('[data-publish]')) { if (p.cohorts.length) publish(p); return; }
-      if (target.closest('[data-discard]')) { discard(p); return; }
-      if (target.closest('[data-add-cohort]')) { openCohortDrawer(p.id, null); return; }
-      var addSup = target.closest('[data-add-suppliers]');
-      if (addSup && !addSup.disabled) { openAssignDrawer(p.id); return; }
+      if (target.closest("[data-publish]")) {
+        if (p.cohorts.length) publish(p);
+        return;
+      }
+      if (target.closest("[data-discard]")) {
+        discard(p);
+        return;
+      }
+      if (target.closest("[data-add-cohort]")) {
+        openCohortDrawer(p.id, null);
+        return;
+      }
+      var addSup = target.closest("[data-add-suppliers]");
+      if (addSup && !addSup.disabled) {
+        openAssignDrawer(p.id);
+        return;
+      }
 
-      var edit = target.closest('[data-edit-cohort]');
-      if (edit) { openCohortDrawer(p.id, Number(edit.getAttribute('data-edit-cohort'))); return; }
+      var edit = target.closest("[data-edit-cohort]");
+      if (edit) {
+        openCohortDrawer(p.id, Number(edit.getAttribute("data-edit-cohort")));
+        return;
+      }
 
-      var remove = target.closest('[data-remove-cohort]');
+      var remove = target.closest("[data-remove-cohort]");
       if (remove) {
-        p.cohorts.splice(Number(remove.getAttribute('data-remove-cohort')), 1);
+        p.cohorts.splice(Number(remove.getAttribute("data-remove-cohort")), 1);
         saveWorkingCopy(p);
       }
     });
 
-    document.addEventListener('change', function (event) {
-      var box = event.target.closest && event.target.closest('[data-toggle-cohort]');
+    document.addEventListener("change", function (event) {
+      var box =
+        event.target.closest && event.target.closest("[data-toggle-cohort]");
       if (!box) return;
       var p = findProgram(currentProgramId());
       if (!p) return;
-      var index = Number(box.getAttribute('data-toggle-cohort'));
+      var index = Number(box.getAttribute("data-toggle-cohort"));
       if (box.checked) {
         setCohortEnabled(p, index, true, null);
-        showToast(cohortLabel(p.cohorts, index) + ' was enabled');
+        showToast(cohortLabel(p.cohorts, index) + " was enabled");
       } else {
         // Hold the switch where it was until the speedbump is confirmed.
         box.checked = true;
@@ -1852,31 +3124,53 @@
       }
     });
 
-    var cohortForm = $('pp-cohort-form');
-    cohortForm.addEventListener('input', syncCohortForm);
-    cohortForm.addEventListener('change', syncCohortForm);
-    cohortForm.addEventListener('submit', function (event) { event.preventDefault(); applyCohort(); });
+    var cohortForm = $("pp-cohort-form");
+    cohortForm.addEventListener("input", syncCohortForm);
+    cohortForm.addEventListener("change", syncCohortForm);
+    cohortForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      applyCohort();
+    });
 
     bindAssign();
     bindBulk();
-    $('pp-disable-form').addEventListener('submit', function (event) { event.preventDefault(); confirmDisable(); });
-    $('pp-toast-close').addEventListener('click', hideToast);
-    $('pp-toast-action').addEventListener('click', function () { var run = toastAction; toastAction = null; hideToast(); if (run) run(); });
-    $('pp-disable-dialog').addEventListener('close', function () { pendingDisable = null; });
+    $("pp-disable-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      confirmDisable();
+    });
+    $("pp-toast-close").addEventListener("click", hideToast);
+    $("pp-toast-action").addEventListener("click", function () {
+      var run = toastAction;
+      toastAction = null;
+      hideToast();
+      if (run) run();
+    });
+    $("pp-disable-dialog").addEventListener("close", function () {
+      pendingDisable = null;
+    });
 
-    $('pp-name').addEventListener('input', syncCreateState);
-    $('pp-create-form').addEventListener('submit', function (event) { event.preventDefault(); if (editingId) renameProgram(); else createProgram(); });
-    $('pp-delete-confirm').addEventListener('click', confirmDelete);
-    $('pp-delete-dialog').addEventListener('close', function () { pendingDelete = null; });
+    $("pp-name").addEventListener("input", syncCreateState);
+    $("pp-create-form").addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (editingId) renameProgram();
+      else createProgram();
+    });
+    $("pp-delete-confirm").addEventListener("click", confirmDelete);
+    $("pp-delete-dialog").addEventListener("close", function () {
+      pendingDelete = null;
+    });
 
-    window.addEventListener('popstate', function () {
+    window.addEventListener("popstate", function () {
       var id = currentProgramId();
-      if (id) showDetail(id, { instant: true }); else showList({ instant: true });
+      if (id) showDetail(id, { instant: true });
+      else showList({ instant: true });
     });
   }
 
   var readyResolve;
-  var ready = new Promise(function (resolve) { readyResolve = resolve; });
+  var ready = new Promise(function (resolve) {
+    readyResolve = resolve;
+  });
 
   /**
    * Read-only view for the Suppliers tab. It never writes programs — it only
@@ -1884,22 +3178,31 @@
    */
   window.PaymentPrograms = {
     ready: ready,
-    getPrograms: function () { return programs; },
-    getCatalog: function () { return catalog; },
-    getRoster: function () { return roster; },
+    getPrograms: function () {
+      return programs;
+    },
+    getCatalog: function () {
+      return catalog;
+    },
+    getRoster: function () {
+      return roster;
+    },
     displayNumber: displayNumber,
     enabledCount: enabledCount,
     loadDelay: loadDelay,
     openBulkAssign: openBulkAssign,
-    onChange: function (fn) { if (typeof fn === 'function') changeListeners.push(fn); }
+    onChange: function (fn) {
+      if (typeof fn === "function") changeListeners.push(fn);
+    },
   };
 
-  document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener("DOMContentLoaded", function () {
     bind();
     loadData().then(function () {
       readyResolve();
       var id = currentProgramId();
-      if (id && findProgram(id)) showDetail(id); else showList();
+      if (id && findProgram(id)) showDetail(id);
+      else showList();
     });
   });
 })();

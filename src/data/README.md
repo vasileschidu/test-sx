@@ -8,10 +8,10 @@ need to touch the HTML**.
 
 ## Files
 
-| File | Purpose |
-|---|---|
-| `src/data/exchanges.json` | The data source (edit this to add/change rows) |
-| `src/scripts/exchanges-table.js` | Reads the JSON and renders the table |
+| File                             | Purpose                                        |
+| -------------------------------- | ---------------------------------------------- |
+| `src/data/exchanges.json`        | The data source (edit this to add/change rows) |
+| `src/scripts/exchanges-table.js` | Reads the JSON and renders the table           |
 
 ## How to add or edit an entry
 
@@ -42,19 +42,19 @@ need to touch the HTML**.
 
 ### Field reference
 
-| Field | Type | Description |
-|---|---|---|
-| `amount` | number | Dollar/currency value (e.g. `39823.41`) |
-| `currency` | string | ISO 4217 code (`USD`, `EUR`, `GBP`, etc.) |
-| `vendorEntry` | string | Short vendor name displayed in the table |
-| `invoice` | string | Invoice number or reference code |
-| `customer` | string | Full customer / company name |
-| `dateInitiated` | string | Date in `YYYY-MM-DD` format |
-| `paymentMethod` | string | One of: `Card`, `ACH`, `Wire` |
-| `status` | string | One of: `Pending`, `Completed`, `Processing`, `Failed` |
-| `details.payment` | string | Payment detail shown when row is expanded |
-| `details.vendor` | string | Vendor info shown when row is expanded |
-| `details.history` | string | Transaction history shown when row is expanded |
+| Field             | Type   | Description                                            |
+| ----------------- | ------ | ------------------------------------------------------ |
+| `amount`          | number | Dollar/currency value (e.g. `39823.41`)                |
+| `currency`        | string | ISO 4217 code (`USD`, `EUR`, `GBP`, etc.)              |
+| `vendorEntry`     | string | Short vendor name displayed in the table               |
+| `invoice`         | string | Invoice number or reference code                       |
+| `customer`        | string | Full customer / company name                           |
+| `dateInitiated`   | string | Date in `YYYY-MM-DD` format                            |
+| `paymentMethod`   | string | One of: `Card`, `ACH`, `Wire`                          |
+| `status`          | string | One of: `Pending`, `Completed`, `Processing`, `Failed` |
+| `details.payment` | string | Payment detail shown when row is expanded              |
+| `details.vendor`  | string | Vendor info shown when row is expanded                 |
+| `details.history` | string | Transaction history shown when row is expanded         |
 
 ### Status badges
 

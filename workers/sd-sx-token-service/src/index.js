@@ -1,6 +1,6 @@
 const FLOW_LABELS = {
-  sd: 'SMART Disburse',
-  sx: 'SMART Exchange'
+  sd: "SMART Disburse",
+  sx: "SMART Exchange",
 };
 
 function json(data, status = 200, extraHeaders = {}) {
@@ -8,43 +8,45 @@ function json(data, status = 200, extraHeaders = {}) {
     status,
     headers: Object.assign(
       {
-        'content-type': 'application/json; charset=utf-8'
+        "content-type": "application/json; charset=utf-8",
       },
-      extraHeaders
-    )
+      extraHeaders,
+    ),
   });
 }
 
 function parseList(value) {
-  return String(value || '')
-    .split(',')
+  return String(value || "")
+    .split(",")
     .map((item) => item.trim())
     .filter(Boolean);
 }
 
 function normalizeEmail(value) {
-  return String(value || '').trim().toLowerCase();
+  return String(value || "")
+    .trim()
+    .toLowerCase();
 }
 
 function getAllowedOrigin(request, env) {
-  const origin = request.headers.get('Origin') || '';
+  const origin = request.headers.get("Origin") || "";
   const allowed = parseList(env.ALLOWED_ORIGINS);
-  if (!origin) return allowed[0] || '*';
-  if (!allowed.length || allowed.includes('*')) return origin;
+  if (!origin) return allowed[0] || "*";
+  if (!allowed.length || allowed.includes("*")) return origin;
   if (allowed.includes(origin)) return origin;
   return allowed[0] || origin;
 }
 
 function withCors(response, request, env) {
   const headers = new Headers(response.headers);
-  headers.set('Access-Control-Allow-Origin', getAllowedOrigin(request, env));
-  headers.set('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
-  headers.set('Access-Control-Allow-Headers', 'Content-Type');
-  headers.set('Vary', 'Origin');
+  headers.set("Access-Control-Allow-Origin", getAllowedOrigin(request, env));
+  headers.set("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
+  headers.set("Access-Control-Allow-Headers", "Content-Type");
+  headers.set("Vary", "Origin");
   return new Response(response.body, {
     status: response.status,
     statusText: response.statusText,
-    headers
+    headers,
   });
 }
 
@@ -63,88 +65,105 @@ function isAllowedEmail(env, email) {
 }
 
 function getFlow(payload) {
-  const flow = String(payload && payload.flow || '').trim().toLowerCase();
-  return flow === 'sd' || flow === 'sx' ? flow : '';
+  const flow = String((payload && payload.flow) || "")
+    .trim()
+    .toLowerCase();
+  return flow === "sd" || flow === "sx" ? flow : "";
 }
 
 function createToken() {
   const bytes = new Uint8Array(24);
   crypto.getRandomValues(bytes);
-  let binary = '';
+  let binary = "";
   for (let i = 0; i < bytes.length; i += 1) {
     binary += String.fromCharCode(bytes[i]);
   }
-  return btoa(binary).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/g, '');
+  return btoa(binary)
+    .replace(/\+/g, "-")
+    .replace(/\//g, "_")
+    .replace(/=+$/g, "");
 }
 
 async function sha256(value) {
-  const encoded = new TextEncoder().encode(String(value || ''));
-  const digest = await crypto.subtle.digest('SHA-256', encoded);
+  const encoded = new TextEncoder().encode(String(value || ""));
+  const digest = await crypto.subtle.digest("SHA-256", encoded);
   return Array.from(new Uint8Array(digest))
-    .map((byte) => byte.toString(16).padStart(2, '0'))
-    .join('');
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 function getRecipientGreeting(name, email) {
-  const trimmedName = String(name || '').trim();
+  const trimmedName = String(name || "").trim();
   if (trimmedName) return trimmedName;
   const normalizedEmail = normalizeEmail(email);
-  if (!normalizedEmail || normalizedEmail.indexOf('@') === -1) return 'there';
-  const localPart = normalizedEmail.split('@')[0].replace(/[._-]+/g, ' ').trim();
-  if (!localPart) return 'there';
+  if (!normalizedEmail || normalizedEmail.indexOf("@") === -1) return "there";
+  const localPart = normalizedEmail
+    .split("@")[0]
+    .replace(/[._-]+/g, " ")
+    .trim();
+  if (!localPart) return "there";
   return localPart.replace(/\b\w/g, (char) => char.toUpperCase());
 }
 
 function escapeHtml(value) {
-  return String(value || '')
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
+  return String(value || "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function formatDisplayDate(value) {
-  const raw = String(value || '').trim();
-  if (!raw) return '';
+  const raw = String(value || "").trim();
+  if (!raw) return "";
   const normalized = /^\d{4}-\d{2}-\d{2}$/.test(raw) ? `${raw}T00:00:00` : raw;
   const date = new Date(normalized);
   if (Number.isNaN(date.getTime())) return raw;
-  return new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric'
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
   }).format(date);
 }
 
 function buildOnboardingUrl(baseUrl, flow, email, extraParams) {
-  const rawBaseUrl = String(baseUrl || '').trim();
-  if (!rawBaseUrl) return '';
+  const rawBaseUrl = String(baseUrl || "").trim();
+  if (!rawBaseUrl) return "";
 
   // Both flows were merged into src/pages/onboarding/; onboarding-sd/ no longer
   // exists, so a link built against it 404s. `flow` still rides along as a
   // query parameter for anything that wants to branch on it.
-  const onboardingFolder = 'onboarding';
+  const onboardingFolder = "onboarding";
 
   try {
     const url = new URL(rawBaseUrl);
     if (/\/src\/pages\/tools\/[^/]+$/i.test(url.pathname)) {
-      url.pathname = url.pathname.replace(/\/src\/pages\/tools\/[^/]+$/i, `/src/pages/${onboardingFolder}/index.html`);
+      url.pathname = url.pathname.replace(
+        /\/src\/pages\/tools\/[^/]+$/i,
+        `/src/pages/${onboardingFolder}/index.html`,
+      );
     } else if (/\/src\/pages\/onboarding(?:-sd)?\/[^/]+$/i.test(url.pathname)) {
-      url.pathname = url.pathname.replace(/\/src\/pages\/onboarding(?:-sd)?\/[^/]+$/i, `/src/pages/${onboardingFolder}/index.html`);
+      url.pathname = url.pathname.replace(
+        /\/src\/pages\/onboarding(?:-sd)?\/[^/]+$/i,
+        `/src/pages/${onboardingFolder}/index.html`,
+      );
     } else {
-      url.pathname = url.pathname.replace(/\/+$/, '') + `/src/pages/${onboardingFolder}/index.html`;
+      url.pathname =
+        url.pathname.replace(/\/+$/, "") +
+        `/src/pages/${onboardingFolder}/index.html`;
     }
-    url.search = '';
-    url.searchParams.set('flow', flow);
-    if (email) url.searchParams.set('email', email);
+    url.search = "";
+    url.searchParams.set("flow", flow);
+    if (email) url.searchParams.set("email", email);
     Object.entries(extraParams || {}).forEach(([key, value]) => {
-      if (value === undefined || value === null || String(value).trim() === '') return;
+      if (value === undefined || value === null || String(value).trim() === "")
+        return;
       url.searchParams.set(key, String(value).trim());
     });
     return url.toString();
   } catch (error) {
-    return '';
+    return "";
   }
 }
 
@@ -164,30 +183,36 @@ function buildEmailHtml({
   tokenExpiresAtFormatted,
   paymentReference,
   payableId,
-  payeeName
+  payeeName,
 }) {
   const title = FLOW_LABELS[flow] || flow.toUpperCase();
   const greeting = getRecipientGreeting(recipientName, email);
   const safeTitle = escapeHtml(title);
   const safeGreeting = escapeHtml(greeting);
-  const safeSenderName = escapeHtml(senderName || 'SMART Hub');
+  const safeSenderName = escapeHtml(senderName || "SMART Hub");
   const safeToken = escapeHtml(token);
   const safeOnboardingUrl = escapeHtml(onboardingUrl);
-  const amount = escapeHtml(paymentAmountFormatted || '');
-  const displayDate = escapeHtml(paymentDateFormatted || formatDisplayDate(paymentDate || ''));
-  const tokenExpiry = escapeHtml(tokenExpiresAtFormatted || '');
-  const referenceId = escapeHtml(paymentReference || payableId || '');
-  const safePayeeName = escapeHtml(payeeName || recipientName || '');
-  const safeSupportEmail = escapeHtml(supportEmail || '');
-  const safeSupportPhone = escapeHtml(supportPhone || '');
-  const emailFontStack = "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
+  const amount = escapeHtml(paymentAmountFormatted || "");
+  const displayDate = escapeHtml(
+    paymentDateFormatted || formatDisplayDate(paymentDate || ""),
+  );
+  const tokenExpiry = escapeHtml(tokenExpiresAtFormatted || "");
+  const referenceId = escapeHtml(paymentReference || payableId || "");
+  const safePayeeName = escapeHtml(payeeName || recipientName || "");
+  const safeSupportEmail = escapeHtml(supportEmail || "");
+  const safeSupportPhone = escapeHtml(supportPhone || "");
+  const emailFontStack =
+    "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
   const detailsRows = [
-    amount ? ['Amount', amount] : null,
-    displayDate ? ['Payment date', displayDate] : null,
-    safeTitle ? ['Payment type', safeTitle] : null,
-    referenceId ? ['Reference ID', referenceId] : null,
-    safePayeeName ? ['Recipient', safePayeeName] : null
-  ].filter(Boolean).map(([label, value]) => `
+    amount ? ["Amount", amount] : null,
+    displayDate ? ["Payment date", displayDate] : null,
+    safeTitle ? ["Payment type", safeTitle] : null,
+    referenceId ? ["Reference ID", referenceId] : null,
+    safePayeeName ? ["Recipient", safePayeeName] : null,
+  ]
+    .filter(Boolean)
+    .map(
+      ([label, value]) => `
                             <tr>
                               <td style="padding:6px 20px;font-family:${emailFontStack};font-size:14px;line-height:20px;color:#6b7280;">
                                 ${label}
@@ -196,13 +221,21 @@ function buildEmailHtml({
                                 ${value}
                               </td>
                             </tr>
-                          `).join('');
+                          `,
+    )
+    .join("");
   const supportParts = [];
-  const defaultSupportEmail = 'support@smarthub.test';
-  if (safeSupportEmail) supportParts.push(`<a href="mailto:${safeSupportEmail}" style="color:#2563eb;text-decoration:none;">${safeSupportEmail}</a>`);
-  if (safeSupportPhone) supportParts.push(`<span style="color:#111827;">${safeSupportPhone}</span>`);
+  const defaultSupportEmail = "support@smarthub.test";
+  if (safeSupportEmail)
+    supportParts.push(
+      `<a href="mailto:${safeSupportEmail}" style="color:#2563eb;text-decoration:none;">${safeSupportEmail}</a>`,
+    );
+  if (safeSupportPhone)
+    supportParts.push(
+      `<span style="color:#111827;">${safeSupportPhone}</span>`,
+    );
   const supportLine = supportParts.length
-    ? `Need help? Contact ${supportParts.join(' or ')}.`
+    ? `Need help? Contact ${supportParts.join(" or ")}.`
     : `Need help? Contact <a href="mailto:${defaultSupportEmail}" style="color:#2563eb;text-decoration:none;">${defaultSupportEmail}</a>.`;
   return `
     <!doctype html>
@@ -356,20 +389,20 @@ function buildEmailHtml({
 
 async function sendBrevoEmail(env, payload, sandbox) {
   const headers = {
-    accept: 'application/json',
-    'content-type': 'application/json',
-    'api-key': env.BREVO_API_KEY
+    accept: "application/json",
+    "content-type": "application/json",
+    "api-key": env.BREVO_API_KEY,
   };
-  if (sandbox) headers['X-Sib-Sandbox'] = 'drop';
+  if (sandbox) headers["X-Sib-Sandbox"] = "drop";
 
-  const response = await fetch('https://api.brevo.com/v3/smtp/email', {
-    method: 'POST',
+  const response = await fetch("https://api.brevo.com/v3/smtp/email", {
+    method: "POST",
     headers,
-    body: JSON.stringify(payload)
+    body: JSON.stringify(payload),
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
-    throw new Error(data.message || 'Brevo send failed.');
+    throw new Error(data.message || "Brevo send failed.");
   }
   return data;
 }
@@ -379,32 +412,55 @@ function canSendBrevo(env) {
 }
 
 function buildPreviewEmailRequest(url, env) {
-  const flow = getFlow({ flow: url.searchParams.get('flow') }) || 'sd';
-  const email = normalizeEmail(url.searchParams.get('email')) || 'michelle@example.com';
-  const recipientName = String(url.searchParams.get('name') || 'Michelle').trim();
-  const previewBaseUrl = String(env.APP_BASE_URL || '').trim() || 'http://127.0.0.1:5500/src/pages/tools/sd-sx-token-test.html';
-  const token = String(url.searchParams.get('token') || 'abc123TESTtoken').trim();
+  const flow = getFlow({ flow: url.searchParams.get("flow") }) || "sd";
+  const email =
+    normalizeEmail(url.searchParams.get("email")) || "michelle@example.com";
+  const recipientName = String(
+    url.searchParams.get("name") || "Michelle",
+  ).trim();
+  const previewBaseUrl =
+    String(env.APP_BASE_URL || "").trim() ||
+    "http://127.0.0.1:5500/src/pages/tools/sd-sx-token-test.html";
+  const token = String(
+    url.searchParams.get("token") || "abc123TESTtoken",
+  ).trim();
   const onboardingUrl = buildOnboardingUrl(previewBaseUrl, flow, email, {
-    payableId: String(url.searchParams.get('payableId') || '').trim(),
-    payeeId: String(url.searchParams.get('payeeId') || '').trim(),
-    bill: String(url.searchParams.get('bill') || '').trim(),
-    sender: String(url.searchParams.get('sender') || 'ABC Corporation Ltd.').trim()
+    payableId: String(url.searchParams.get("payableId") || "").trim(),
+    payeeId: String(url.searchParams.get("payeeId") || "").trim(),
+    bill: String(url.searchParams.get("bill") || "").trim(),
+    sender: String(
+      url.searchParams.get("sender") || "ABC Corporation Ltd.",
+    ).trim(),
   });
   return {
     flow,
     email,
     recipientName,
     token,
-    verifyUrl: '',
+    verifyUrl: "",
     onboardingUrl,
-    senderName: String(url.searchParams.get('sender') || 'ABC Corporation Ltd.').trim(),
-    paymentAmountFormatted: String(url.searchParams.get('amount') || '$10,000.00').trim(),
-    paymentDateFormatted: String(url.searchParams.get('date') || 'April 19, 2026').trim(),
-    tokenExpiresAtFormatted: String(url.searchParams.get('expires') || 'April 19, 2026 at 11:59 PM').trim(),
-    paymentReference: String(url.searchParams.get('reference') || 'BP-01138').trim(),
+    senderName: String(
+      url.searchParams.get("sender") || "ABC Corporation Ltd.",
+    ).trim(),
+    paymentAmountFormatted: String(
+      url.searchParams.get("amount") || "$10,000.00",
+    ).trim(),
+    paymentDateFormatted: String(
+      url.searchParams.get("date") || "April 19, 2026",
+    ).trim(),
+    tokenExpiresAtFormatted: String(
+      url.searchParams.get("expires") || "April 19, 2026 at 11:59 PM",
+    ).trim(),
+    paymentReference: String(
+      url.searchParams.get("reference") || "BP-01138",
+    ).trim(),
     payeeName: recipientName,
-    supportEmail: String(url.searchParams.get('supportEmail') || 'support@smarthub.test').trim(),
-    supportPhone: String(url.searchParams.get('supportPhone') || '+1 415-555-0199').trim()
+    supportEmail: String(
+      url.searchParams.get("supportEmail") || "support@smarthub.test",
+    ).trim(),
+    supportPhone: String(
+      url.searchParams.get("supportPhone") || "+1 415-555-0199",
+    ).trim(),
   };
 }
 
@@ -412,28 +468,48 @@ async function handleSendToken(request, env) {
   const payload = await readJson(request);
   const flow = getFlow(payload);
   const email = normalizeEmail(payload.email);
-  const recipientName = String(payload.recipientName || '').trim();
-  const sandbox = payload.sandbox === true || payload.sandbox === 'true' || String(env.BREVO_SANDBOX_DEFAULT || '').toLowerCase() === 'true';
-  const verifyBaseUrl = String(payload.verifyBaseUrl || '').trim() || String(env.APP_BASE_URL || '').trim();
-  const senderName = String(payload.senderName || 'SMART Hub').trim();
-  const supportEmail = String(payload.supportEmail || '').trim();
-  const supportPhone = String(payload.supportPhone || '').trim();
-  const paymentAmountFormatted = String(payload.paymentAmountFormatted || '').trim();
-  const paymentDate = String(payload.paymentDate || '').trim();
-  const paymentDateFormatted = String(payload.paymentDateFormatted || formatDisplayDate(paymentDate)).trim();
-  const paymentReference = String(payload.paymentReference || '').trim();
-  const payableId = String(payload.payableId || '').trim();
-  const payeeId = String(payload.payeeId || '').trim();
-  const payeeName = String(payload.payeeName || recipientName || '').trim();
+  const recipientName = String(payload.recipientName || "").trim();
+  const sandbox =
+    payload.sandbox === true ||
+    payload.sandbox === "true" ||
+    String(env.BREVO_SANDBOX_DEFAULT || "").toLowerCase() === "true";
+  const verifyBaseUrl =
+    String(payload.verifyBaseUrl || "").trim() ||
+    String(env.APP_BASE_URL || "").trim();
+  const senderName = String(payload.senderName || "SMART Hub").trim();
+  const supportEmail = String(payload.supportEmail || "").trim();
+  const supportPhone = String(payload.supportPhone || "").trim();
+  const paymentAmountFormatted = String(
+    payload.paymentAmountFormatted || "",
+  ).trim();
+  const paymentDate = String(payload.paymentDate || "").trim();
+  const paymentDateFormatted = String(
+    payload.paymentDateFormatted || formatDisplayDate(paymentDate),
+  ).trim();
+  const paymentReference = String(payload.paymentReference || "").trim();
+  const payableId = String(payload.payableId || "").trim();
+  const payeeId = String(payload.payeeId || "").trim();
+  const payeeName = String(payload.payeeName || recipientName || "").trim();
 
-  if (!flow) return json({ ok: false, error: 'Flow must be "sd" or "sx".' }, 400);
-  if (!email) return json({ ok: false, error: 'Email is required.' }, 400);
-  if (!verifyBaseUrl) return json({ ok: false, error: 'APP_BASE_URL or verifyBaseUrl is required.' }, 400);
+  if (!flow)
+    return json({ ok: false, error: 'Flow must be "sd" or "sx".' }, 400);
+  if (!email) return json({ ok: false, error: "Email is required." }, 400);
+  if (!verifyBaseUrl)
+    return json(
+      { ok: false, error: "APP_BASE_URL or verifyBaseUrl is required." },
+      400,
+    );
   if (!env.TOKEN_STORE) {
-    return json({ ok: false, error: 'TOKEN_STORE KV binding is missing.' }, 500);
+    return json(
+      { ok: false, error: "TOKEN_STORE KV binding is missing." },
+      500,
+    );
   }
   if (sandbox && !isAllowedEmail(env, email)) {
-    return json({ ok: false, error: 'This email is not allowed for test sending.' }, 403);
+    return json(
+      { ok: false, error: "This email is not allowed for test sending." },
+      403,
+    );
   }
 
   const token = createToken();
@@ -441,40 +517,40 @@ async function handleSendToken(request, env) {
   const now = Date.now();
   const ttlMinutes = Number(env.TOKEN_TTL_MINUTES || 15);
   const expiresAt = new Date(now + ttlMinutes * 60 * 1000).toISOString();
-  const tokenExpiresAtFormatted = new Intl.DateTimeFormat('en-US', {
-    month: 'long',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit'
+  const tokenExpiresAtFormatted = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+    hour: "numeric",
+    minute: "2-digit",
   }).format(new Date(expiresAt));
   const onboardingUrl = buildOnboardingUrl(verifyBaseUrl, flow, email, {
     payableId,
     payeeId,
     bill: paymentReference,
-    sender: senderName
+    sender: senderName,
   });
 
   await env.TOKEN_STORE.put(
-    'token:' + tokenHash,
+    "token:" + tokenHash,
     JSON.stringify({
       flow,
       email,
       recipientName,
       createdAt: new Date(now).toISOString(),
       expiresAt,
-      usedAt: null
+      usedAt: null,
     }),
     {
-      expirationTtl: ttlMinutes * 60
-    }
+      expirationTtl: ttlMinutes * 60,
+    },
   );
 
-  const subject = 'SMART Hub: Your ' + FLOW_LABELS[flow] + ' payment link';
+  const subject = "SMART Hub: Your " + FLOW_LABELS[flow] + " payment link";
   const htmlContent = buildEmailHtml({
     flow,
     token,
-    verifyUrl: '',
+    verifyUrl: "",
     onboardingUrl,
     recipientName,
     email,
@@ -487,82 +563,109 @@ async function handleSendToken(request, env) {
     tokenExpiresAtFormatted,
     paymentReference,
     payableId,
-    payeeName
+    payeeName,
   });
   const textContent =
-    'Hi ' + getRecipientGreeting(recipientName, email) + ',\n\n' +
-    senderName + ' sent you a payment.\n' +
-    (paymentAmountFormatted ? ('Amount: ' + paymentAmountFormatted + '\n') : '') +
-    (paymentDateFormatted ? ('Payment date: ' + paymentDateFormatted + '\n') : '') +
-    'Payment type: ' + FLOW_LABELS[flow] + '\n' +
-    (paymentReference ? ('Reference ID: ' + paymentReference + '\n') : '') +
-    'Payment token: ' + token + '\n' +
-    'Open payment: ' + onboardingUrl + '\n' +
-    (supportEmail || supportPhone ? ('Support: ' + [supportEmail, supportPhone].filter(Boolean).join(' | ') + '\n') : '') +
-    '\nPowered by Transcard\n';
+    "Hi " +
+    getRecipientGreeting(recipientName, email) +
+    ",\n\n" +
+    senderName +
+    " sent you a payment.\n" +
+    (paymentAmountFormatted ? "Amount: " + paymentAmountFormatted + "\n" : "") +
+    (paymentDateFormatted
+      ? "Payment date: " + paymentDateFormatted + "\n"
+      : "") +
+    "Payment type: " +
+    FLOW_LABELS[flow] +
+    "\n" +
+    (paymentReference ? "Reference ID: " + paymentReference + "\n" : "") +
+    "Payment token: " +
+    token +
+    "\n" +
+    "Open payment: " +
+    onboardingUrl +
+    "\n" +
+    (supportEmail || supportPhone
+      ? "Support: " +
+        [supportEmail, supportPhone].filter(Boolean).join(" | ") +
+        "\n"
+      : "") +
+    "\nPowered by Transcard\n";
 
   const emailDeliveryEnabled = canSendBrevo(env);
   if (!sandbox && !emailDeliveryEnabled) {
-    return json({ ok: false, error: 'Worker email secrets are missing.' }, 500);
+    return json({ ok: false, error: "Worker email secrets are missing." }, 500);
   }
 
   if (emailDeliveryEnabled) {
-    await sendBrevoEmail(env, {
-      sender: {
-        email: env.EMAIL_FROM,
-        name: env.EMAIL_FROM_NAME || 'SMART Exchange Test'
+    await sendBrevoEmail(
+      env,
+      {
+        sender: {
+          email: env.EMAIL_FROM,
+          name: env.EMAIL_FROM_NAME || "SMART Exchange Test",
+        },
+        to: [
+          {
+            email,
+            name: recipientName || email,
+          },
+        ],
+        subject,
+        htmlContent,
+        textContent,
       },
-      to: [
-        {
-          email,
-          name: recipientName || email
-        }
-      ],
-      subject,
-      htmlContent,
-      textContent
-    }, sandbox);
+      sandbox,
+    );
   }
 
   return json({
     ok: true,
     flow,
     email,
-    mode: sandbox ? 'sandbox' : 'live',
+    mode: sandbox ? "sandbox" : "live",
     previewUrl: onboardingUrl,
-    delivery: emailDeliveryEnabled ? 'brevo' : 'preview_only'
+    delivery: emailDeliveryEnabled ? "brevo" : "preview_only",
   });
 }
 
 async function handleVerifyToken(request, env) {
   const payload = await readJson(request);
   const flow = getFlow(payload);
-  const token = String(payload.token || '').trim();
+  const token = String(payload.token || "").trim();
 
-  if (!flow) return json({ ok: false, error: 'Flow must be "sd" or "sx".' }, 400);
-  if (!token) return json({ ok: false, error: 'Token is required.' }, 400);
+  if (!flow)
+    return json({ ok: false, error: 'Flow must be "sd" or "sx".' }, 400);
+  if (!token) return json({ ok: false, error: "Token is required." }, 400);
   if (!env.TOKEN_STORE) {
-    return json({ ok: false, error: 'TOKEN_STORE KV binding is missing.' }, 500);
+    return json(
+      { ok: false, error: "TOKEN_STORE KV binding is missing." },
+      500,
+    );
   }
 
   const tokenHash = await sha256(token);
-  const raw = await env.TOKEN_STORE.get('token:' + tokenHash);
-  if (!raw) return json({ ok: false, error: 'Token not found or expired.' }, 404);
+  const raw = await env.TOKEN_STORE.get("token:" + tokenHash);
+  if (!raw)
+    return json({ ok: false, error: "Token not found or expired." }, 404);
 
   const record = JSON.parse(raw);
   if (record.flow !== flow) {
-    return json({ ok: false, error: 'Token flow does not match.' }, 400);
+    return json({ ok: false, error: "Token flow does not match." }, 400);
   }
   if (record.usedAt) {
-    return json({ ok: false, error: 'Token has already been used.' }, 409);
+    return json({ ok: false, error: "Token has already been used." }, 409);
   }
   if (record.expiresAt && Date.parse(record.expiresAt) < Date.now()) {
-    return json({ ok: false, error: 'Token has expired.' }, 410);
+    return json({ ok: false, error: "Token has expired." }, 410);
   }
 
   record.usedAt = new Date().toISOString();
-  await env.TOKEN_STORE.put('token:' + tokenHash, JSON.stringify(record), {
-    expirationTtl: Math.max(60, Math.ceil((Date.parse(record.expiresAt) - Date.now()) / 1000))
+  await env.TOKEN_STORE.put("token:" + tokenHash, JSON.stringify(record), {
+    expirationTtl: Math.max(
+      60,
+      Math.ceil((Date.parse(record.expiresAt) - Date.now()) / 1000),
+    ),
   });
 
   return json({
@@ -570,13 +673,13 @@ async function handleVerifyToken(request, env) {
     flow: record.flow,
     email: record.email,
     expiresAt: record.expiresAt,
-    usedAt: record.usedAt
+    usedAt: record.usedAt,
   });
 }
 
 export default {
   async fetch(request, env) {
-    if (request.method === 'OPTIONS') {
+    if (request.method === "OPTIONS") {
       return withCors(new Response(null, { status: 204 }), request, env);
     }
 
@@ -584,26 +687,41 @@ export default {
     let response;
 
     try {
-      if (request.method === 'GET' && url.pathname === '/health') {
-        response = json({ ok: true, service: 'sd-sx-token-service' });
-      } else if (request.method === 'GET' && url.pathname === '/preview-email') {
-        response = new Response(buildEmailHtml(buildPreviewEmailRequest(url, env)), {
-          status: 200,
-          headers: {
-            'content-type': 'text/html; charset=utf-8'
-          }
-        });
-      } else if (request.method === 'POST' && url.pathname === '/send-test-token') {
+      if (request.method === "GET" && url.pathname === "/health") {
+        response = json({ ok: true, service: "sd-sx-token-service" });
+      } else if (
+        request.method === "GET" &&
+        url.pathname === "/preview-email"
+      ) {
+        response = new Response(
+          buildEmailHtml(buildPreviewEmailRequest(url, env)),
+          {
+            status: 200,
+            headers: {
+              "content-type": "text/html; charset=utf-8",
+            },
+          },
+        );
+      } else if (
+        request.method === "POST" &&
+        url.pathname === "/send-test-token"
+      ) {
         response = await handleSendToken(request, env);
-      } else if (request.method === 'POST' && url.pathname === '/verify-test-token') {
+      } else if (
+        request.method === "POST" &&
+        url.pathname === "/verify-test-token"
+      ) {
         response = await handleVerifyToken(request, env);
       } else {
-        response = json({ ok: false, error: 'Not found.' }, 404);
+        response = json({ ok: false, error: "Not found." }, 404);
       }
     } catch (error) {
-      response = json({ ok: false, error: error.message || 'Unexpected error.' }, 500);
+      response = json(
+        { ok: false, error: error.message || "Unexpected error." },
+        500,
+      );
     }
 
     return withCors(response, request, env);
-  }
+  },
 };

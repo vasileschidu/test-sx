@@ -1,15 +1,22 @@
-import { Avatar } from '@/components/avatar'
-import { Button } from '@/components/button'
-import { Heading } from '@/components/heading'
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
-import { getOrders } from '@/data'
+import { Avatar } from "@/components/avatar";
+import { Button } from "@/components/button";
+import { Heading } from "@/components/heading";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/table";
+import { getOrders } from "@/data";
 
 export const metadata = {
-  title: 'Orders',
-}
+  title: "Orders",
+};
 
 export default async function Orders() {
-  let orders = await getOrders()
+  let orders = await getOrders();
 
   return (
     <>
@@ -29,7 +36,11 @@ export default async function Orders() {
         </TableHead>
         <TableBody>
           {orders.map((order) => (
-            <TableRow key={order.id} href={order.url} title={`Order #${order.id}`}>
+            <TableRow
+              key={order.id}
+              href={order.url}
+              title={`Order #${order.id}`}
+            >
               <TableCell>{order.id}</TableCell>
               <TableCell className="text-zinc-500">{order.date}</TableCell>
               <TableCell>{order.customer.name}</TableCell>
@@ -45,5 +56,5 @@ export default async function Orders() {
         </TableBody>
       </Table>
     </>
-  )
+  );
 }

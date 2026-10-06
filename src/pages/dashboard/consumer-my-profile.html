@@ -5,91 +5,161 @@
 -->
 <!doctype html>
 <html class="h-full bg-gray-100 dark:bg-gray-950">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Profile - Consumer Portal</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Profile - Consumer Portal</title>
 
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
 
-  <script src="../../../src/scripts/theme-init.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <style type="text/tailwindcss">
-    @custom-variant dark (&:where(.dark, .dark *));
-  </style>
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
-  <style>
-    /* Intentional load state: one tone, one radius, one synchronized pulse. */
-    :root { --pp-skel: #e8eaed; --pp-skel-strong: #d6dae1; }
-    .dark { --pp-skel: rgba(255,255,255,.10); --pp-skel-strong: rgba(255,255,255,.18); }
-    .pp-skel { display: block; border-radius: .375rem; background: var(--pp-skel); animation: ppPulse 1.6s ease-in-out infinite; }
-    .pp-skel-strong { background: var(--pp-skel-strong); }
-    @keyframes ppPulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
-    @media (prefers-reduced-motion: reduce) { .pp-skel { animation: none; } }
+    <script src="../../../src/scripts/theme-init.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1"
+      type="module"
+    ></script>
+    <style>
+      /* Intentional load state: one tone, one radius, one synchronized pulse. */
+      :root {
+        --pp-skel: #e8eaed;
+        --pp-skel-strong: #d6dae1;
+      }
+      .dark {
+        --pp-skel: rgba(255, 255, 255, 0.1);
+        --pp-skel-strong: rgba(255, 255, 255, 0.18);
+      }
+      .pp-skel {
+        display: block;
+        border-radius: 0.375rem;
+        background: var(--pp-skel);
+        animation: ppPulse 1.6s ease-in-out infinite;
+      }
+      .pp-skel-strong {
+        background: var(--pp-skel-strong);
+      }
+      @keyframes ppPulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.55;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .pp-skel {
+          animation: none;
+        }
+      }
+    </style>
 
-  </style>
+    <script src="../../../src/scripts/sidebar-boot.js"></script>
+    <script src="../../../src/scripts/app-plans.js"></script>
+    <script src="../../../src/scripts/nav-component.js"></script>
+    <script src="../../../src/scripts/stp-state.js"></script>
+    <script src="../../../src/scripts/app-switch.js"></script>
+    <script src="../../../src/scripts/topbar-component.js"></script>
+    <script src="../../../src/scripts/sidebar.js" defer></script>
+    <script src="../../../src/scripts/data-source.js"></script>
+    <script src="../../../src/scripts/shared.js" defer></script>
+    <script src="../../../src/scripts/shell-navigation.js" defer></script>
+    <script src="../../../src/scripts/consumer-my-profile.js" defer></script>
+  </head>
 
-  <script src="../../../src/scripts/sidebar-boot.js"></script>
-  <script src="../../../src/scripts/app-plans.js"></script>
-  <script src="../../../src/scripts/nav-component.js"></script>
-  <script src="../../../src/scripts/stp-state.js"></script>
-  <script src="../../../src/scripts/app-switch.js"></script>
-  <script src="../../../src/scripts/topbar-component.js"></script>
-  <script src="../../../src/scripts/sidebar.js" defer></script>
-  <script src="../../../src/scripts/data-source.js"></script>
-  <script src="../../../src/scripts/shared.js" defer></script>
-  <script src="../../../src/scripts/shell-navigation.js" defer></script>
-  <script src="../../../src/scripts/consumer-my-profile.js" defer></script>
-</head>
+  <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
+    <div id="app-shell" class="min-h-screen">
+      <app-nav></app-nav>
 
-<body class="h-full font-['Inter'] antialiased dark:text-gray-100">
-  <div id="app-shell" class="min-h-screen">
-    <app-nav></app-nav>
+      <div
+        id="main-content-wrapper"
+        class="min-w-0 min-h-screen flex flex-col lg:pl-[304px]"
+      >
+        <app-topbar></app-topbar>
 
-    <div id="main-content-wrapper" class="min-w-0 min-h-screen flex flex-col lg:pl-[288px]">
-      <app-topbar></app-topbar>
-
-      <main class="flex w-full justify-center p-2 sm:p-2 lg:p-4">
-        <section class="w-full max-w-[960px] overflow-hidden rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900">
-          <div class="flex flex-col gap-5 p-4 sm:p-6">
-
-            <!-- ===== Personal details ===== -->
-            <div class="flex flex-col gap-5">
-              <div>
-                <h1 class="text-xl font-semibold text-gray-900 dark:text-white">My Profile</h1>
-                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Please provide your information below.</p>
-              </div>
-              <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
-              <div id="mp-details" class="flex flex-col gap-5" aria-live="polite"></div>
-            </div>
-
-            <!-- ===== Alerts ===== -->
-            <div class="flex flex-col gap-6 pt-12">
+        <main class="flex w-full justify-center p-2 sm:p-2 lg:p-4">
+          <section
+            class="w-full max-w-[960px] overflow-hidden rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900"
+          >
+            <div class="flex flex-col gap-5 p-4 sm:p-6">
+              <!-- ===== Personal details ===== -->
               <div class="flex flex-col gap-5">
                 <div>
-                  <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Alerts</h2>
-                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Sign up for email and SMS messages about your account.</p>
+                  <h1
+                    class="text-xl font-semibold text-gray-900 dark:text-white"
+                  >
+                    My Profile
+                  </h1>
+                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                    Please provide your information below.
+                  </p>
                 </div>
                 <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
+                <div
+                  id="mp-details"
+                  class="flex flex-col gap-5"
+                  aria-live="polite"
+                ></div>
               </div>
-              <div id="mp-alerts" class="flex flex-col gap-6" aria-live="polite"></div>
+
+              <!-- ===== Alerts ===== -->
+              <div class="flex flex-col gap-6 pt-12">
+                <div class="flex flex-col gap-5">
+                  <div>
+                    <h2
+                      class="text-xl font-semibold text-gray-900 dark:text-white"
+                    >
+                      Alerts
+                    </h2>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                      Sign up for email and SMS messages about your account.
+                    </p>
+                  </div>
+                  <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
+                </div>
+                <div
+                  id="mp-alerts"
+                  class="flex flex-col gap-6"
+                  aria-live="polite"
+                ></div>
+              </div>
             </div>
-
-          </div>
-        </section>
-      </main>
+          </section>
+        </main>
+      </div>
     </div>
-  </div>
 
-  <!-- Toast -->
-  <div id="mp-toast" role="status" aria-live="polite"
-    class="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex translate-y-2 justify-center px-4 opacity-0 transition duration-200 ease-out">
-    <div class="pointer-events-auto flex items-center gap-3 rounded-lg bg-gray-900 py-3 pr-3 pl-4 text-sm text-white shadow-lg dark:bg-gray-700">
-      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-green-400"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" /></svg>
-      <span id="mp-toast-text"></span>
+    <!-- Toast -->
+    <div
+      id="mp-toast"
+      role="status"
+      aria-live="polite"
+      class="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex translate-y-2 justify-center px-4 opacity-0 transition duration-200 ease-out"
+    >
+      <div
+        class="pointer-events-auto flex items-center gap-3 rounded-lg bg-gray-900 py-3 pr-3 pl-4 text-sm text-white shadow-lg dark:bg-gray-700"
+      >
+        <svg
+          viewBox="0 0 20 20"
+          fill="currentColor"
+          aria-hidden="true"
+          class="size-5 shrink-0 text-green-400"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span id="mp-toast-text"></span>
+      </div>
     </div>
-  </div>
-</body>
+  </body>
 </html>

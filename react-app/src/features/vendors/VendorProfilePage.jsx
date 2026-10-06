@@ -1,10 +1,12 @@
-import { ProductPageFrame } from '@/components/ProductPageFrame';
-import { formatDate, formatMoney } from '@/data/adapters';
+import { ProductPageFrame } from "@/components/ProductPageFrame";
+import { formatDate, formatMoney } from "@/data/adapters";
 
 function Section({ children, title }) {
   return (
     <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs dark:border-white/10 dark:bg-gray-900">
-      <h2 className="text-sm font-semibold text-gray-900 dark:text-white">{title}</h2>
+      <h2 className="text-sm font-semibold text-gray-900 dark:text-white">
+        {title}
+      </h2>
       <div className="mt-4">{children}</div>
     </section>
   );
@@ -15,9 +17,11 @@ function DefinitionList({ items }) {
     <dl className="grid grid-cols-1 gap-x-6 gap-y-4 sm:grid-cols-2">
       {items.map((item) => (
         <div key={item.label}>
-          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">{item.label}</dt>
+          <dt className="text-sm font-medium text-gray-500 dark:text-gray-400">
+            {item.label}
+          </dt>
           <dd className="mt-1 whitespace-pre-wrap text-sm text-gray-900 dark:text-white">
-            {item.value || '--'}
+            {item.value || "--"}
           </dd>
         </div>
       ))}
@@ -27,11 +31,11 @@ function DefinitionList({ items }) {
 
 function StatusBadge({ kind, label }) {
   const className =
-    kind === 'active'
-      ? 'bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30'
-      : kind === 'exception'
-        ? 'bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:ring-red-400/30'
-        : 'bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/30';
+    kind === "active"
+      ? "bg-green-50 text-green-700 ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30"
+      : kind === "exception"
+        ? "bg-red-50 text-red-700 ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:ring-red-400/30"
+        : "bg-amber-50 text-amber-700 ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/30";
 
   return (
     <span
@@ -47,10 +51,12 @@ export function VendorProfilePage({ vendor }) {
     return (
       <ProductPageFrame page="vendor-profile.html" title="Vendor Profile">
         <section className="w-full overflow-hidden rounded-xl border border-gray-200 bg-white px-6 py-6 shadow-xs dark:border-white/10 dark:bg-gray-900">
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Vendor not found</h1>
+          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+            Vendor not found
+          </h1>
           <p className="mt-2 text-sm text-gray-500 dark:text-gray-400">
-            This vendor profile route is active in React, but the requested vendor could not be
-            found in the current data source.
+            This vendor profile route is active in React, but the requested
+            vendor could not be found in the current data source.
           </p>
         </section>
       </ProductPageFrame>
@@ -60,18 +66,18 @@ export function VendorProfilePage({ vendor }) {
   const paymentMethods = [
     ...(vendor.bankAccounts || []).map((bank) => ({
       id: bank.id,
-      title: bank.label || bank.bankName || 'Bank account',
-      subtitle: `${bank.maskedAccount || '--'} / ${bank.maskedRouting || '--'}`,
+      title: bank.label || bank.bankName || "Bank account",
+      subtitle: `${bank.maskedAccount || "--"} / ${bank.maskedRouting || "--"}`,
     })),
     ...(vendor.cards || []).map((card) => ({
       id: card.id,
-      title: card.label || 'Card',
-      subtitle: card.cardholderName || 'Cardholder',
+      title: card.label || "Card",
+      subtitle: card.cardholderName || "Cardholder",
     })),
     ...(vendor.checks || []).map((check) => ({
       id: check.id,
-      title: check.label || 'Check address',
-      subtitle: check.address || '--',
+      title: check.label || "Check address",
+      subtitle: check.address || "--",
     })),
   ];
 
@@ -92,7 +98,10 @@ export function VendorProfilePage({ vendor }) {
                   {vendor.vendorId}
                 </span>
                 <StatusBadge kind={vendor.status} label={vendor.statusLabel} />
-                <StatusBadge kind={vendor.verificationStatus} label={vendor.verificationStatusLabel} />
+                <StatusBadge
+                  kind={vendor.verificationStatus}
+                  label={vendor.verificationStatusLabel}
+                />
               </div>
             </div>
           </div>
@@ -104,12 +113,15 @@ export function VendorProfilePage({ vendor }) {
               <Section title="Overview">
                 <DefinitionList
                   items={[
-                    { label: 'Business Name', value: vendor.displayName },
-                    { label: 'Vendor ID', value: vendor.vendorId },
-                    { label: 'Payment Terms', value: vendor.paymentTerms },
-                    { label: 'Tax ID', value: vendor.taxInfo?.einMasked || '--' },
-                    { label: 'Billing Address', value: vendor.address },
-                    { label: 'Source System', value: vendor.sourceSystem },
+                    { label: "Business Name", value: vendor.displayName },
+                    { label: "Vendor ID", value: vendor.vendorId },
+                    { label: "Payment Terms", value: vendor.paymentTerms },
+                    {
+                      label: "Tax ID",
+                      value: vendor.taxInfo?.einMasked || "--",
+                    },
+                    { label: "Billing Address", value: vendor.address },
+                    { label: "Source System", value: vendor.sourceSystem },
                   ]}
                 />
               </Section>
@@ -143,10 +155,22 @@ export function VendorProfilePage({ vendor }) {
               <Section title="Linked Payables">
                 <DefinitionList
                   items={[
-                    { label: 'Open Bills', value: String(vendor.openBillsCount) },
-                    { label: 'Outstanding', value: formatMoney(vendor.outstandingAmount) },
-                    { label: 'Total Paid', value: formatMoney(vendor.totalPaid) },
-                    { label: 'Last Payment Date', value: formatDate(vendor.lastPaymentDate) },
+                    {
+                      label: "Open Bills",
+                      value: String(vendor.openBillsCount),
+                    },
+                    {
+                      label: "Outstanding",
+                      value: formatMoney(vendor.outstandingAmount),
+                    },
+                    {
+                      label: "Total Paid",
+                      value: formatMoney(vendor.totalPaid),
+                    },
+                    {
+                      label: "Last Payment Date",
+                      value: formatDate(vendor.lastPaymentDate),
+                    },
                   ]}
                 />
               </Section>
@@ -156,16 +180,28 @@ export function VendorProfilePage({ vendor }) {
               <Section title="Contact Information">
                 <DefinitionList
                   items={[
-                    { label: 'Primary Contact', value: vendor.primaryContact?.name || '--' },
                     {
-                      label: 'Email',
-                      value: vendor.primaryContact?.email || vendor.remittanceEmails[0] || '--',
+                      label: "Primary Contact",
+                      value: vendor.primaryContact?.name || "--",
                     },
                     {
-                      label: 'Phone',
-                      value: vendor.primaryContact?.phone || vendor.remittancePhones[0] || '--',
+                      label: "Email",
+                      value:
+                        vendor.primaryContact?.email ||
+                        vendor.remittanceEmails[0] ||
+                        "--",
                     },
-                    { label: 'Default Method', value: vendor.defaultPaymentMethod },
+                    {
+                      label: "Phone",
+                      value:
+                        vendor.primaryContact?.phone ||
+                        vendor.remittancePhones[0] ||
+                        "--",
+                    },
+                    {
+                      label: "Default Method",
+                      value: vendor.defaultPaymentMethod,
+                    },
                   ]}
                 />
               </Section>
@@ -183,11 +219,14 @@ export function VendorProfilePage({ vendor }) {
                             {item.title}
                           </strong>
                           <span className="text-xs text-gray-500 dark:text-gray-400">
-                            {new Date(item.timestamp).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric',
-                            })}
+                            {new Date(item.timestamp).toLocaleDateString(
+                              "en-US",
+                              {
+                                month: "short",
+                                day: "numeric",
+                                year: "numeric",
+                              },
+                            )}
                           </span>
                         </div>
                         <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
