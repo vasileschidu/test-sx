@@ -1,48 +1,36 @@
-import { Avatar } from "@/components/avatar";
-import { Badge } from "@/components/badge";
-import { Button } from "@/components/button";
-import {
-  DescriptionDetails,
-  DescriptionList,
-  DescriptionTerm,
-} from "@/components/description-list";
-import { Divider } from "@/components/divider";
-import { Heading, Subheading } from "@/components/heading";
-import { Link } from "@/components/link";
-import { getOrder } from "@/data";
-import {
-  BanknotesIcon,
-  CalendarIcon,
-  ChevronLeftIcon,
-  CreditCardIcon,
-} from "@heroicons/react/16/solid";
-import { notFound } from "next/navigation";
-import { RefundOrder } from "./refund";
+import { Avatar } from '@/components/avatar'
+import { Badge } from '@/components/badge'
+import { Button } from '@/components/button'
+import { DescriptionDetails, DescriptionList, DescriptionTerm } from '@/components/description-list'
+import { Divider } from '@/components/divider'
+import { Heading, Subheading } from '@/components/heading'
+import { Link } from '@/components/link'
+import { getOrder } from '@/data'
+import { BanknotesIcon, CalendarIcon, ChevronLeftIcon, CreditCardIcon } from '@heroicons/react/16/solid'
+import { notFound } from 'next/navigation'
+import { RefundOrder } from './refund'
 
 export async function generateMetadata({ params }) {
-  let { id } = await params;
-  let order = await getOrder(id);
+  let { id } = await params
+  let order = await getOrder(id)
 
   return {
     title: order && `Order #${order.id}`,
-  };
+  }
 }
 
 export default async function Order({ params }) {
-  let { id } = await params;
-  let order = await getOrder(id);
+  let { id } = await params
+  let order = await getOrder(id)
 
   if (!order) {
-    notFound();
+    notFound()
   }
 
   return (
     <>
       <div className="max-lg:hidden">
-        <Link
-          href="/orders"
-          className="inline-flex items-center gap-2 text-sm/6 text-zinc-500 dark:text-zinc-400"
-        >
+        <Link href="/orders" className="inline-flex items-center gap-2 text-sm/6 text-zinc-500 dark:text-zinc-400">
           <ChevronLeftIcon className="size-4 fill-zinc-400 dark:fill-zinc-500" />
           Orders
         </Link>
@@ -61,10 +49,9 @@ export default async function Order({ params }) {
             <span className="flex items-center gap-3 text-base/6 text-zinc-950 sm:text-sm/6 dark:text-white">
               <CreditCardIcon className="size-4 shrink-0 fill-zinc-400 dark:fill-zinc-500" />
               <span className="inline-flex gap-3">
-                {order.payment.card.type}{" "}
+                {order.payment.card.type}{' '}
                 <span>
-                  <span aria-hidden="true">••••</span>{" "}
-                  {order.payment.card.number}
+                  <span aria-hidden="true">••••</span> {order.payment.card.number}
                 </span>
               </span>
             </span>
@@ -113,9 +100,7 @@ export default async function Order({ params }) {
           <DescriptionTerm>Transaction ID</DescriptionTerm>
           <DescriptionDetails>{order.payment.transactionId}</DescriptionDetails>
           <DescriptionTerm>Card number</DescriptionTerm>
-          <DescriptionDetails>
-            •••• {order.payment.card.number}
-          </DescriptionDetails>
+          <DescriptionDetails>•••• {order.payment.card.number}</DescriptionDetails>
           <DescriptionTerm>Card type</DescriptionTerm>
           <DescriptionDetails>{order.payment.card.type}</DescriptionDetails>
           <DescriptionTerm>Card expiry</DescriptionTerm>
@@ -129,10 +114,7 @@ export default async function Order({ params }) {
           <DescriptionTerm>Country</DescriptionTerm>
           <DescriptionDetails>
             <span className="inline-flex gap-3">
-              <img
-                src={order.customer.countryFlagUrl}
-                alt={order.customer.country}
-              />
+              <img src={order.customer.countryFlagUrl} alt={order.customer.country} />
               {order.customer.country}
             </span>
           </DescriptionDetails>
@@ -143,5 +125,5 @@ export default async function Order({ params }) {
         </DescriptionList>
       </div>
     </>
-  );
+  )
 }

@@ -1,23 +1,19 @@
-import { Logo } from "@/app/logo";
-import { Button } from "@/components/button";
-import { Checkbox, CheckboxField } from "@/components/checkbox";
-import { Field, Label } from "@/components/fieldset";
-import { Heading } from "@/components/heading";
-import { Input } from "@/components/input";
-import { Select } from "@/components/select";
-import { Strong, Text, TextLink } from "@/components/text";
+import { Logo } from '@/app/logo'
+import { Button } from '@/components/button'
+import { Checkbox, CheckboxField } from '@/components/checkbox'
+import { Field, Label } from '@/components/fieldset'
+import { Heading } from '@/components/heading'
+import { Input } from '@/components/input'
+import { Select } from '@/components/select'
+import { Strong, Text, TextLink } from '@/components/text'
 
 export const metadata = {
-  title: "Register",
-};
+  title: 'Register',
+}
 
 export default function Login() {
   return (
-    <form
-      action=""
-      method="POST"
-      className="grid w-full max-w-sm grid-cols-1 gap-8"
-    >
+    <form action="" method="POST" className="grid w-full max-w-sm grid-cols-1 gap-8">
       <Logo className="h-6 text-zinc-950 dark:text-white forced-colors:text-[CanvasText]" />
       <Heading>Create your account</Heading>
       <Field>
@@ -48,11 +44,11 @@ export default function Login() {
         Create account
       </Button>
       <Text>
-        Already have an account?{" "}
+        Already have an account?{' '}
         <TextLink href="/login">
           <Strong>Sign in</Strong>
         </TextLink>
       </Text>
     </form>
-  );
+  )
 }

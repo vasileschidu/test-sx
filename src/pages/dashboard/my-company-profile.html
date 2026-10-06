@@ -5,37 +5,31 @@
 -->
 <!doctype html>
 <html class="h-full bg-gray-100 dark:bg-gray-950">
-  <head>
+
+<head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Supplier Portal - My Company Profile</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Meow+Script&family=Roboto+Mono:wght@400;700&display=swap"
-      rel="stylesheet"
-    />
+        href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Meow+Script&family=Roboto+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
 
     <!-- Flag icons -->
-    <link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/flag-icons@7.3.2/css/flag-icons.min.css"
-    />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flag-icons@7.3.2/css/flag-icons.min.css">
 
     <script src="../../../src/scripts/theme-init.js"></script>
 
     <!-- Tailwind -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style type="text/tailwindcss">
-      @custom-variant dark (&:where(.dark, .dark *));
+        @custom-variant dark (&:where(.dark, .dark *));
     </style>
 
     <!-- Tailwind Plus Elements -->
-    <script
-      src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1"
-      type="module"
-    ></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
     <script src="../../../src/scripts/sidebar-boot.js"></script>
     <script src="../../../src/scripts/app-plans.js"></script>
     <script src="../../../src/scripts/nav-component.js"></script>
@@ -46,971 +40,447 @@
     <script src="../../../src/scripts/data-source.js"></script>
     <script src="../../../src/scripts/shared.js" defer></script>
     <script src="../../../src/scripts/shell-navigation.js" defer></script>
-  </head>
+</head>
 
-  <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
+<body class="h-full font-['Inter'] antialiased dark:text-gray-100">
+
     <div id="app-shell" class="min-h-screen">
-      <app-nav></app-nav>
+    <app-nav></app-nav>
 
-      <!-- ===== MAIN CONTENT ===== -->
-      <div
-        id="main-content-wrapper"
-        class="min-w-0 min-h-screen flex flex-col lg:pl-[304px]"
-      >
+    <!-- ===== MAIN CONTENT ===== -->
+    <div id="main-content-wrapper" class="min-w-0 min-h-screen flex flex-col lg:pl-[288px]">
+
         <!-- ===== TOP HEADER BAR ===== -->
         <app-topbar></app-topbar>
 
         <!-- ===== MAIN CONTENT AREA ===== -->
         <main class="w-full flex justify-center p-0 sm:p-2 lg:p-4">
-          <div class="flex w-full max-w-[1280px] flex-col gap-5">
-            <div
-              class="overflow-hidden rounded-none sm:rounded-lg bg-white shadow-sm dark:bg-gray-900"
-            >
-              <div class="pt-5 sm:pt-6">
-                <div class="px-4 sm:px-6 pb-5">
-                  <h2
-                    class="text-xl font-semibold text-gray-900 dark:text-white"
-                  >
-                    My Company Profile
-                  </h2>
-                </div>
-                <div class="h-px bg-gray-200 dark:bg-white/10"></div>
-              </div>
+            <div class="flex w-full max-w-[1280px] flex-col gap-5">
+                <div class="overflow-hidden rounded-none sm:rounded-lg bg-white shadow-sm dark:bg-gray-900">
+                    <div class="pt-5 sm:pt-6">
+                        <div class="px-4 sm:px-6 pb-5">
+                            <h2 class="text-xl font-semibold text-gray-900 dark:text-white">My Company Profile</h2>
+                        </div>
+                        <div class="h-px bg-gray-200 dark:bg-white/10"></div>
+                    </div>
 
-              <div class="divide-y divide-gray-200 dark:divide-white/10">
-                <div class="p-4 sm:p-6 lg:p-8">
-                  <form id="business-info-form" class="w-full">
-                    <div class="px-4 sm:px-0">
-                      <div class="flex items-start justify-between gap-4">
-                        <div class="flex flex-col gap-2">
-                          <h3
-                            class="text-base/7 font-semibold text-gray-900 dark:text-white"
-                          >
-                            Business Information
-                          </h3>
-                          <p
-                            class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400"
-                          >
-                            Please provide your information below.
-                          </p>
-                        </div>
-                        <button
-                          id="business-info-edit-btn"
-                          type="button"
-                          class="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="20"
-                            height="20"
-                            viewBox="0 0 20 20"
-                            fill="none"
-                            aria-hidden="true"
-                            class="text-gray-500 dark:text-gray-300"
-                          >
-                            <path
-                              d="M2.69533 14.7623L1.43355 17.9168C1.27028 18.3249 1.67532 18.73 2.08348 18.5667L5.23795 17.3049C5.74091 17.1037 6.19777 16.8025 6.58081 16.4194L17.5 5.50072C18.3284 4.67229 18.3284 3.32914 17.5 2.50072C16.6716 1.67229 15.3284 1.67229 14.5 2.50071L3.58081 13.4194C3.19777 13.8025 2.89652 14.2593 2.69533 14.7623Z"
-                              fill="currentColor"
-                            />
-                          </svg>
-                          <span>Edit</span>
-                        </button>
-                        <div
-                          id="business-info-edit-actions"
-                          class="hidden items-center gap-2"
-                        >
-                          <button
-                            id="business-info-cancel-btn"
-                            type="button"
-                            class="rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            id="business-info-update-btn"
-                            type="button"
-                            disabled
-                            class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:text-white/90 dark:disabled:bg-blue-900/40"
-                          >
-                            Update
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="mt-6 border-t border-gray-200 dark:border-white/10"
-                    >
-                      <dl class="divide-y divide-gray-200 dark:divide-white/10">
-                        <div
-                          class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0"
-                        >
-                          <dt
-                            class="text-sm/6 font-medium text-gray-900 dark:text-white"
-                          >
-                            Business Legal Name
-                          </dt>
-                          <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                            <span
-                              id="business-legal-name-read"
-                              data-read
-                              class="text-sm/6 text-gray-700 dark:text-gray-300"
-                              >ABC Corporation Ltd.</span
-                            >
-                            <div data-edit class="hidden w-full max-w-md">
-                              <input
-                                id="business-legal-name-input"
-                                type="text"
-                                value="ABC Corporation Ltd."
-                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                              />
-                            </div>
-                          </dd>
-                        </div>
-                        <div
-                          class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0"
-                        >
-                          <dt
-                            class="text-sm/6 font-medium text-gray-900 dark:text-white"
-                          >
-                            Main Business Phone Number
-                            <span
-                              class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500"
-                              >Optional</span
-                            >
-                          </dt>
-                          <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                            <span
-                              id="business-phone-read"
-                              data-read
-                              class="text-sm/6 text-gray-700 dark:text-gray-300"
-                              >---</span
-                            >
-                            <div data-edit class="hidden w-full max-w-md">
-                              <input
-                                id="business-phone-input"
-                                type="text"
-                                value=""
-                                placeholder="(555) 123-4567"
-                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                              />
-                            </div>
-                          </dd>
-                        </div>
-                        <div
-                          class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0"
-                        >
-                          <dt
-                            class="text-sm/6 font-medium text-gray-900 dark:text-white"
-                          >
-                            Main Business Email Address
-                            <span
-                              class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500"
-                              >Optional</span
-                            >
-                          </dt>
-                          <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                            <span
-                              id="business-email-read"
-                              data-read
-                              class="text-sm/6 text-gray-700 dark:text-gray-300"
-                              >---</span
-                            >
-                            <div data-edit class="hidden w-full max-w-md">
-                              <input
-                                id="business-email-input"
-                                type="email"
-                                value=""
-                                placeholder="business@example.com"
-                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                              />
-                            </div>
-                          </dd>
-                        </div>
-                        <div
-                          class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0"
-                        >
-                          <dt
-                            class="text-sm/6 font-medium text-gray-900 dark:text-white"
-                          >
-                            Legal Address
-                          </dt>
-                          <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                            <span
-                              id="business-legal-address-read"
-                              data-read
-                              class="text-sm/6 text-gray-700 dark:text-gray-300"
-                            >
-                              2972 Westheimer Rd<br />
-                              Suite 1010<br />
-                              Chicago, Illinois 85486<br />
-                              United States
-                            </span>
-                            <div
-                              data-edit
-                              class="hidden w-full max-w-md flex flex-col gap-6"
-                            >
-                              <div class="w-full">
-                                <label
-                                  for="business-legal-address-nickname-input"
-                                  class="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                  >Address Nickname</label
-                                >
-                                <div class="mt-2">
-                                  <input
-                                    id="business-legal-address-nickname-input"
-                                    type="text"
-                                    value="Headquarters"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                  />
-                                </div>
-                              </div>
-                              <div class="w-full">
-                                <label
-                                  for="business-legal-address-line1-input"
-                                  class="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                  >Address Line 1</label
-                                >
-                                <div class="mt-2">
-                                  <input
-                                    id="business-legal-address-line1-input"
-                                    type="text"
-                                    value="2972 Westheimer Rd"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                  />
-                                </div>
-                              </div>
-                              <div class="w-full">
-                                <div
-                                  class="flex items-baseline justify-between"
-                                >
-                                  <label
-                                    for="business-legal-address-line2-input"
-                                    class="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                    >Address Line 2</label
-                                  >
-                                  <span
-                                    class="text-sm/6 text-gray-400 dark:text-gray-500"
-                                    >Optional</span
-                                  >
-                                </div>
-                                <div class="mt-2">
-                                  <input
-                                    id="business-legal-address-line2-input"
-                                    type="text"
-                                    value="Suite 1010"
-                                    placeholder="Suite, floor, unit..."
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                  />
-                                </div>
-                              </div>
-                              <div class="w-full">
-                                <label
-                                  for="business-legal-address-city-input"
-                                  class="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                  >City</label
-                                >
-                                <div class="mt-2">
-                                  <input
-                                    id="business-legal-address-city-input"
-                                    type="text"
-                                    value="Chicago"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                  />
-                                </div>
-                              </div>
-                              <div class="grid w-full grid-cols-2 gap-4">
-                                <div>
-                                  <label
-                                    for="business-legal-address-state-input"
-                                    class="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                    >State / Province</label
-                                  >
-                                  <div class="mt-2">
-                                    <input
-                                      id="business-legal-address-state-input"
-                                      type="text"
-                                      value="Illinois"
-                                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                    />
-                                  </div>
-                                </div>
-                                <div>
-                                  <label
-                                    for="business-legal-address-zip-input"
-                                    class="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                    >Zip / Postal Code</label
-                                  >
-                                  <div class="mt-2">
-                                    <input
-                                      id="business-legal-address-zip-input"
-                                      type="text"
-                                      value="85486"
-                                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                    />
-                                  </div>
-                                </div>
-                              </div>
-                              <div class="w-full">
-                                <label
-                                  for="business-legal-address-country-input"
-                                  class="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                  >Country</label
-                                >
-                                <div class="mt-2 grid grid-cols-1">
-                                  <span
-                                    id="business-legal-address-country-flag"
-                                    class="fi fi-us pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm"
-                                  ></span>
-                                  <select
-                                    id="business-legal-address-country-input"
-                                    name="business-legal-address-country-input"
-                                    class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-10 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                  >
-                                    <option value="us" selected>
-                                      United States
-                                    </option>
-                                    <option value="ca">Canada</option>
-                                    <option value="mx">Mexico</option>
-                                    <option value="gb">United Kingdom</option>
-                                    <option value="au">Australia</option>
-                                    <option value="de">Germany</option>
-                                    <option value="fr">France</option>
-                                  </select>
-                                  <svg
-                                    viewBox="0 0 16 16"
-                                    fill="currentColor"
-                                    aria-hidden="true"
-                                    class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
-                                  >
-                                    <path
-                                      d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
-                                      clip-rule="evenodd"
-                                      fill-rule="evenodd"
-                                    />
-                                  </svg>
-                                </div>
-                              </div>
-                            </div>
-                          </dd>
-                        </div>
-                        <div
-                          class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0"
-                        >
-                          <dt
-                            class="text-sm/6 font-medium text-gray-900 dark:text-white"
-                          >
-                            Business Structure
-                            <span
-                              class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500"
-                              >Optional</span
-                            >
-                          </dt>
-                          <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                            <span
-                              id="business-structure-read"
-                              data-read
-                              class="text-sm/6 text-gray-700 dark:text-gray-300"
-                              >S Corporation (S-Corp)</span
-                            >
-                            <div data-edit class="hidden w-full max-w-md">
-                              <div class="grid grid-cols-1">
-                                <select
-                                  id="business-structure-input"
-                                  name="business-structure-input"
-                                  class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                >
-                                  <option>Corporation (C-Corp)</option>
-                                  <option selected>
-                                    S Corporation (S-Corp)
-                                  </option>
-                                  <option>
-                                    Limited Liability Company (LLC)
-                                  </option>
-                                  <option>Partnership</option>
-                                  <option>Sole Proprietorship</option>
-                                  <option>Nonprofit Organization</option>
-                                </select>
-                                <svg
-                                  viewBox="0 0 16 16"
-                                  fill="currentColor"
-                                  aria-hidden="true"
-                                  class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
-                                >
-                                  <path
-                                    d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
-                                    clip-rule="evenodd"
-                                    fill-rule="evenodd"
-                                  />
-                                </svg>
-                              </div>
-                            </div>
-                          </dd>
-                        </div>
-                        <div
-                          class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0"
-                        >
-                          <dt
-                            class="text-sm/6 font-medium text-gray-900 dark:text-white"
-                          >
-                            Organization Identification Type
-                            <span
-                              class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500"
-                              >Optional</span
-                            >
-                          </dt>
-                          <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                            <span
-                              id="business-org-id-read"
-                              data-read
-                              class="text-sm/6 text-gray-700 dark:text-gray-300"
-                            >
-                              Tax Identification Number (TIN)<br />
-                              000-123-456-001
-                            </span>
-                            <div
-                              data-edit
-                              class="hidden w-full max-w-md flex flex-col gap-6"
-                            >
-                              <div class="w-full">
-                                <div class="grid grid-cols-1">
-                                  <select
-                                    id="business-org-id-type-input"
-                                    name="business-org-id-type-input"
-                                    class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                  >
-                                    <option value="TIN" selected>
-                                      Tax Identification Number (TIN)
-                                    </option>
-                                    <option value="EIN">
-                                      Employer Identification Number (EIN)
-                                    </option>
-                                  </select>
-                                  <svg
-                                    viewBox="0 0 16 16"
-                                    fill="currentColor"
-                                    aria-hidden="true"
-                                    class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
-                                  >
-                                    <path
-                                      d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
-                                      clip-rule="evenodd"
-                                      fill-rule="evenodd"
-                                    />
-                                  </svg>
-                                </div>
-                              </div>
-                              <div class="w-full">
-                                <label
-                                  for="business-org-id-value-input"
-                                  class="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                  >ID Number</label
-                                >
-                                <div class="mt-2">
-                                  <input
-                                    id="business-org-id-value-input"
-                                    type="text"
-                                    value="000-123-456-001"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </dd>
-                        </div>
-                        <div
-                          class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0"
-                        >
-                          <dt
-                            class="text-sm/6 font-medium text-gray-900 dark:text-white"
-                          >
-                            Business Website URL
-                            <span
-                              class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500"
-                              >Optional</span
-                            >
-                          </dt>
-                          <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                            <span
-                              id="business-website-read"
-                              data-read
-                              class="text-sm/6 text-gray-700 dark:text-gray-300"
-                              >---</span
-                            >
-                            <div data-edit class="hidden w-full max-w-md">
-                              <input
-                                id="business-website-input"
-                                type="url"
-                                value=""
-                                placeholder="https://example.com"
-                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                              />
-                            </div>
-                          </dd>
-                        </div>
-                        <div
-                          class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0"
-                        >
-                          <dt
-                            class="text-sm/6 font-medium text-gray-900 dark:text-white"
-                          >
-                            Stock Symbol
-                            <span
-                              class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500"
-                              >Optional</span
-                            >
-                          </dt>
-                          <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                            <span
-                              id="business-stock-read"
-                              data-read
-                              class="text-sm/6 text-gray-700 dark:text-gray-300"
-                              >---</span
-                            >
-                            <div data-edit class="hidden w-full max-w-md">
-                              <input
-                                id="business-stock-input"
-                                type="text"
-                                value=""
-                                placeholder="ABCD"
-                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                              />
-                            </div>
-                          </dd>
-                        </div>
-                        <div
-                          class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0"
-                        >
-                          <dt
-                            class="text-sm/6 font-medium text-gray-900 dark:text-white"
-                          >
-                            Do you operate under a fictitious name /<br />Doing
-                            Business As (DBA)?
-                          </dt>
-                          <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                            <span
-                              id="business-dba-read"
-                              data-read
-                              class="text-sm/6 text-gray-700 dark:text-gray-300"
-                              >Lorem Business</span
-                            >
-                            <div
-                              data-edit
-                              class="hidden w-full max-w-md flex flex-col gap-6"
-                            >
-                              <div
-                                class="flex self-start gap-3 rounded-md bg-gray-100 px-4 py-3 dark:bg-white/10"
-                              >
-                                <div class="flex h-6 shrink-0 items-center">
-                                  <div class="group grid size-4 grid-cols-1">
-                                    <input
-                                      id="business-dba-toggle"
-                                      type="checkbox"
-                                      name="business-dba-toggle"
-                                      checked
-                                      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500"
-                                    />
-                                    <svg
-                                      viewBox="0 0 14 14"
-                                      fill="none"
-                                      class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                                    >
-                                      <path
-                                        d="M3 8L6 11L11 3.5"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="opacity-0 group-has-checked:opacity-100"
-                                      />
-                                      <path
-                                        d="M3 7H11"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="opacity-0 group-has-indeterminate:opacity-100"
-                                      />
-                                    </svg>
-                                  </div>
-                                </div>
-                                <div class="text-sm/6">
-                                  <label
-                                    for="business-dba-toggle"
-                                    class="font-medium text-gray-900 dark:text-white"
-                                    >I operate under a fictitious name
-                                    (DBA)</label
-                                  >
-                                </div>
-                              </div>
-                              <div>
-                                <label
-                                  for="business-dba-input"
-                                  class="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                  >Fictitious / Doing Business As (DBA)
-                                  name</label
-                                >
-                                <div class="mt-2">
-                                  <input
-                                    id="business-dba-input"
-                                    type="text"
-                                    value="Lorem Business"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:disabled:bg-white/5 dark:disabled:text-gray-500 dark:disabled:outline-white/10"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </dd>
-                        </div>
-                      </dl>
-                    </div>
-                  </form>
-                </div>
+                    
 
-                <div class="p-4 sm:p-6 lg:p-8">
-                  <form id="contact-info-form" class="w-full">
-                    <div class="px-4 sm:px-0">
-                      <div class="flex items-start justify-between gap-4">
-                        <div class="flex flex-col gap-2">
-                          <h3
-                            class="text-base/7 font-semibold text-gray-900 dark:text-white"
-                          >
-                            Contact Information
-                          </h3>
-                          <p
-                            class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400"
-                          >
-                            Provide contact details for customer inquiries or
-                            payment disputes.
-                          </p>
-                        </div>
-                        <button
-                          id="contact-info-edit-btn"
-                          type="button"
-                          class="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="20"
-                            height="20"
-                            viewBox="0 0 20 20"
-                            fill="none"
-                            aria-hidden="true"
-                            class="text-gray-500 dark:text-gray-300"
-                          >
-                            <path
-                              d="M2.69533 14.7623L1.43355 17.9168C1.27028 18.3249 1.67532 18.73 2.08348 18.5667L5.23795 17.3049C5.74091 17.1037 6.19777 16.8025 6.58081 16.4194L17.5 5.50072C18.3284 4.67229 18.3284 3.32914 17.5 2.50072C16.6716 1.67229 15.3284 1.67229 14.5 2.50071L3.58081 13.4194C3.19777 13.8025 2.89652 14.2593 2.69533 14.7623Z"
-                              fill="currentColor"
-                            />
-                          </svg>
-                          <span>Edit</span>
-                        </button>
-                        <div
-                          id="contact-info-edit-actions"
-                          class="hidden items-center gap-2"
-                        >
-                          <button
-                            id="contact-info-cancel-btn"
-                            type="button"
-                            class="rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10"
-                          >
-                            Cancel
-                          </button>
-                          <button
-                            id="contact-info-update-btn"
-                            type="button"
-                            disabled
-                            class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:text-white/90 dark:disabled:bg-blue-900/40"
-                          >
-                            Update
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div
-                      class="mt-6 border-t border-gray-200 dark:border-white/10"
-                    >
-                      <dl class="divide-y divide-gray-200 dark:divide-white/10">
-                        <div
-                          class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0"
-                        >
-                          <dt
-                            class="text-sm/6 font-medium text-gray-900 dark:text-white"
-                          >
-                            Primary Contact Information
-                          </dt>
-                          <dd class="mt-1 sm:col-span-2 sm:mt-0">
-                            <span
-                              id="contact-info-read"
-                              data-contact-read
-                              class="text-sm/6 text-gray-700 dark:text-gray-300"
-                              >Johnny Anderson<br />j.anderson@mail.com<br />+1
-                              (555) 987-6543</span
-                            >
-                            <div
-                              data-contact-edit
-                              class="hidden w-full max-w-md flex flex-col gap-6"
-                            >
-                              <div>
-                                <label
-                                  for="contact-name-input"
-                                  class="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                  >Contact Name</label
-                                >
-                                <div class="mt-2">
-                                  <input
-                                    id="contact-name-input"
-                                    type="text"
-                                    value="Johnny Anderson"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                  />
-                                </div>
-                              </div>
-                              <div>
-                                <label
-                                  for="contact-email-input"
-                                  class="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                  >Contact Email</label
-                                >
-                                <div class="mt-2">
-                                  <input
-                                    id="contact-email-input"
-                                    type="email"
-                                    value="j.anderson@mail.com"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                  />
-                                </div>
-                              </div>
-                              <div>
-                                <label
-                                  for="contact-phone-input"
-                                  class="block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                  >Contact Phone Number</label
-                                >
-                                <div class="mt-2">
-                                  <input
-                                    id="contact-phone-input"
-                                    type="text"
-                                    value="+1 (555) 987-6543"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                                  />
-                                </div>
-                              </div>
-                            </div>
-                          </dd>
-                        </div>
-                      </dl>
-                    </div>
-                  </form>
-                </div>
-              </div>
+                    <div class="divide-y divide-gray-200 dark:divide-white/10">
 
-              <div class="h-px bg-gray-200 dark:bg-white/10"></div>
+                        <div class="p-4 sm:p-6 lg:p-8">
+                            <form id="business-info-form" class="w-full">
+                                <div class="px-4 sm:px-0">
+                                    <div class="flex items-start justify-between gap-4">
+                                        <div class="flex flex-col gap-2">
+                                            <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Business Information</h3>
+                                            <p class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">Please provide your information below.</p>
+                                        </div>
+                                        <button id="business-info-edit-btn" type="button" class="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="text-gray-500 dark:text-gray-300">
+                                                <path d="M2.69533 14.7623L1.43355 17.9168C1.27028 18.3249 1.67532 18.73 2.08348 18.5667L5.23795 17.3049C5.74091 17.1037 6.19777 16.8025 6.58081 16.4194L17.5 5.50072C18.3284 4.67229 18.3284 3.32914 17.5 2.50072C16.6716 1.67229 15.3284 1.67229 14.5 2.50071L3.58081 13.4194C3.19777 13.8025 2.89652 14.2593 2.69533 14.7623Z" fill="currentColor" />
+                                            </svg>
+                                            <span>Edit</span>
+                                        </button>
+                                        <div id="business-info-edit-actions" class="hidden items-center gap-2">
+                                            <button id="business-info-cancel-btn" type="button"
+                                                class="rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+                                                Cancel
+                                            </button>
+                                            <button id="business-info-update-btn" type="button" disabled
+                                                class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:text-white/90 dark:disabled:bg-blue-900/40">
+                                                Update
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-6 border-t border-gray-200 dark:border-white/10">
+                                    <dl class="divide-y divide-gray-200 dark:divide-white/10">
+                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Business Legal Name</dt>
+                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
+                                                <span id="business-legal-name-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">ABC Corporation Ltd.</span>
+                                                <div data-edit class="hidden w-full max-w-md">
+                                                    <input id="business-legal-name-input" type="text" value="ABC Corporation Ltd." class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                </div>
+                                            </dd>
+                                        </div>
+                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Main Business Phone Number <span class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500">Optional</span></dt>
+                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
+                                                <span id="business-phone-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">---</span>
+                                                <div data-edit class="hidden w-full max-w-md">
+                                                    <input id="business-phone-input" type="text" value="" placeholder="(555) 123-4567" class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                </div>
+                                            </dd>
+                                        </div>
+                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Main Business Email Address <span class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500">Optional</span></dt>
+                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
+                                                <span id="business-email-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">---</span>
+                                                <div data-edit class="hidden w-full max-w-md">
+                                                    <input id="business-email-input" type="email" value="" placeholder="business@example.com" class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                </div>
+                                            </dd>
+                                        </div>
+                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Legal Address</dt>
+                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
+                                                <span id="business-legal-address-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">
+                                                    2972 Westheimer Rd<br>
+                                                    Suite 1010<br>
+                                                    Chicago, Illinois 85486<br>
+                                                    United States
+                                                </span>
+                                                <div data-edit class="hidden w-full max-w-md flex flex-col gap-6">
+                                                    <div class="w-full">
+                                                        <label for="business-legal-address-nickname-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Nickname</label>
+                                                        <div class="mt-2">
+                                                            <input id="business-legal-address-nickname-input" type="text" value="Headquarters"
+                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full">
+                                                        <label for="business-legal-address-line1-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 1</label>
+                                                        <div class="mt-2">
+                                                            <input id="business-legal-address-line1-input" type="text" value="2972 Westheimer Rd"
+                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full">
+                                                        <div class="flex items-baseline justify-between">
+                                                            <label for="business-legal-address-line2-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 2</label>
+                                                            <span class="text-sm/6 text-gray-400 dark:text-gray-500">Optional</span>
+                                                        </div>
+                                                        <div class="mt-2">
+                                                            <input id="business-legal-address-line2-input" type="text" value="Suite 1010" placeholder="Suite, floor, unit..."
+                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full">
+                                                        <label for="business-legal-address-city-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">City</label>
+                                                        <div class="mt-2">
+                                                            <input id="business-legal-address-city-input" type="text" value="Chicago"
+                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                        </div>
+                                                    </div>
+                                                    <div class="grid w-full grid-cols-2 gap-4">
+                                                        <div>
+                                                            <label for="business-legal-address-state-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">State / Province</label>
+                                                            <div class="mt-2">
+                                                                <input id="business-legal-address-state-input" type="text" value="Illinois"
+                                                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <label for="business-legal-address-zip-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Zip / Postal Code</label>
+                                                            <div class="mt-2">
+                                                                <input id="business-legal-address-zip-input" type="text" value="85486"
+                                                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full">
+                                                        <label for="business-legal-address-country-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Country</label>
+                                                        <div class="mt-2 grid grid-cols-1">
+                                                            <span id="business-legal-address-country-flag" class="fi fi-us pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm"></span>
+                                                            <select id="business-legal-address-country-input" name="business-legal-address-country-input"
+                                                                class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-10 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                                <option value="us" selected>United States</option>
+                                                                <option value="ca">Canada</option>
+                                                                <option value="mx">Mexico</option>
+                                                                <option value="gb">United Kingdom</option>
+                                                                <option value="au">Australia</option>
+                                                                <option value="de">Germany</option>
+                                                                <option value="fr">France</option>
+                                                            </select>
+                                                            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
+                                                                class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
+                                                                <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </dd>
+                                        </div>
+                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Business Structure <span class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500">Optional</span></dt>
+                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
+                                                <span id="business-structure-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">S Corporation (S-Corp)</span>
+                                                <div data-edit class="hidden w-full max-w-md">
+                                                    <div class="grid grid-cols-1">
+                                                        <select id="business-structure-input" name="business-structure-input"
+                                                            class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                            <option>Corporation (C-Corp)</option>
+                                                            <option selected>S Corporation (S-Corp)</option>
+                                                            <option>Limited Liability Company (LLC)</option>
+                                                            <option>Partnership</option>
+                                                            <option>Sole Proprietorship</option>
+                                                            <option>Nonprofit Organization</option>
+                                                        </select>
+                                                        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
+                                                            class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
+                                                            <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                                        </svg>
+                                                    </div>
+                                                </div>
+                                            </dd>
+                                        </div>
+                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Organization Identification Type <span class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500">Optional</span></dt>
+                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
+                                                <span id="business-org-id-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">
+                                                    Tax Identification Number (TIN)<br>
+                                                    000-123-456-001
+                                                </span>
+                                                <div data-edit class="hidden w-full max-w-md flex flex-col gap-6">
+                                                    <div class="w-full">
+                                                        <div class="grid grid-cols-1">
+                                                            <select id="business-org-id-type-input" name="business-org-id-type-input"
+                                                                class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-3 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                                <option value="TIN" selected>Tax Identification Number (TIN)</option>
+                                                                <option value="EIN">Employer Identification Number (EIN)</option>
+                                                            </select>
+                                                            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
+                                                                class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
+                                                                <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+                                                            </svg>
+                                                        </div>
+                                                    </div>
+                                                    <div class="w-full">
+                                                        <label for="business-org-id-value-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">ID Number</label>
+                                                        <div class="mt-2">
+                                                            <input id="business-org-id-value-input" type="text" value="000-123-456-001" class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </dd>
+                                        </div>
+                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Business Website URL <span class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500">Optional</span></dt>
+                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
+                                                <span id="business-website-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">---</span>
+                                                <div data-edit class="hidden w-full max-w-md">
+                                                    <input id="business-website-input" type="url" value="" placeholder="https://example.com" class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                </div>
+                                            </dd>
+                                        </div>
+                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Stock Symbol <span class="ml-1 text-xs font-medium text-gray-400 dark:text-gray-500">Optional</span></dt>
+                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
+                                                <span id="business-stock-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">---</span>
+                                                <div data-edit class="hidden w-full max-w-md">
+                                                    <input id="business-stock-input" type="text" value="" placeholder="ABCD" class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                </div>
+                                            </dd>
+                                        </div>
+                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Do you operate under a fictitious name /<br>Doing Business As (DBA)?</dt>
+                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
+                                                <span id="business-dba-read" data-read class="text-sm/6 text-gray-700 dark:text-gray-300">Lorem Business</span>
+                                                <div data-edit class="hidden w-full max-w-md flex flex-col gap-6">
+                                                    <div class="flex self-start gap-3 rounded-md bg-gray-100 px-4 py-3 dark:bg-white/10">
+                                                        <div class="flex h-6 shrink-0 items-center">
+                                                            <div class="group grid size-4 grid-cols-1">
+                                                                <input id="business-dba-toggle" type="checkbox" name="business-dba-toggle" checked
+                                                                    class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
+                                                                <svg viewBox="0 0 14 14" fill="none"
+                                                                    class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25">
+                                                                    <path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                                        class="opacity-0 group-has-checked:opacity-100" />
+                                                                    <path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                                        class="opacity-0 group-has-indeterminate:opacity-100" />
+                                                                </svg>
+                                                            </div>
+                                                        </div>
+                                                        <div class="text-sm/6">
+                                                            <label for="business-dba-toggle" class="font-medium text-gray-900 dark:text-white">I operate under a fictitious name (DBA)</label>
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <label for="business-dba-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Fictitious / Doing Business As (DBA) name</label>
+                                                        <div class="mt-2">
+                                                            <input id="business-dba-input" type="text" value="Lorem Business"
+                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:disabled:bg-white/5 dark:disabled:text-gray-500 dark:disabled:outline-white/10" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            </form>
+                        </div>
+
+                        <div class="p-4 sm:p-6 lg:p-8">
+                            <form id="contact-info-form" class="w-full">
+                                <div class="px-4 sm:px-0">
+                                    <div class="flex items-start justify-between gap-4">
+                                        <div class="flex flex-col gap-2">
+                                            <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Contact Information</h3>
+                                            <p class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400">Provide contact details for customer inquiries or payment disputes.</p>
+                                        </div>
+                                        <button id="contact-info-edit-btn" type="button" class="inline-flex items-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true" class="text-gray-500 dark:text-gray-300">
+                                                <path d="M2.69533 14.7623L1.43355 17.9168C1.27028 18.3249 1.67532 18.73 2.08348 18.5667L5.23795 17.3049C5.74091 17.1037 6.19777 16.8025 6.58081 16.4194L17.5 5.50072C18.3284 4.67229 18.3284 3.32914 17.5 2.50072C16.6716 1.67229 15.3284 1.67229 14.5 2.50071L3.58081 13.4194C3.19777 13.8025 2.89652 14.2593 2.69533 14.7623Z" fill="currentColor" />
+                                            </svg>
+                                            <span>Edit</span>
+                                        </button>
+                                        <div id="contact-info-edit-actions" class="hidden items-center gap-2">
+                                            <button id="contact-info-cancel-btn" type="button"
+                                                class="rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 cursor-pointer dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+                                                Cancel
+                                            </button>
+                                            <button id="contact-info-update-btn" type="button" disabled
+                                                class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:text-white/90 dark:disabled:bg-blue-900/40">
+                                                Update
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="mt-6 border-t border-gray-200 dark:border-white/10">
+                                    <dl class="divide-y divide-gray-200 dark:divide-white/10">
+                                        <div class="px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0 last:pb-0">
+                                            <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Primary Contact Information</dt>
+                                            <dd class="mt-1 sm:col-span-2 sm:mt-0">
+                                                <span id="contact-info-read" data-contact-read class="text-sm/6 text-gray-700 dark:text-gray-300">Johnny Anderson<br>j.anderson@mail.com<br>+1 (555) 987-6543</span>
+                                                <div data-contact-edit class="hidden w-full max-w-md flex flex-col gap-6">
+                                                    <div>
+                                                        <label for="contact-name-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Contact Name</label>
+                                                        <div class="mt-2">
+                                                            <input id="contact-name-input" type="text" value="Johnny Anderson"
+                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <label for="contact-email-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Contact Email</label>
+                                                        <div class="mt-2">
+                                                            <input id="contact-email-input" type="email" value="j.anderson@mail.com"
+                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                        </div>
+                                                    </div>
+                                                    <div>
+                                                        <label for="contact-phone-input" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Contact Phone Number</label>
+                                                        <div class="mt-2">
+                                                            <input id="contact-phone-input" type="text" value="+1 (555) 987-6543"
+                                                                class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="h-px bg-gray-200 dark:bg-white/10"></div>
+                </div>
             </div>
-          </div>
         </main>
-      </div>
+    </div>
     </div>
     <!-- /main-content-wrapper -->
 
     <!-- ===== BUSINESS EDIT REVIEW MODAL ===== -->
     <el-dialog>
-      <dialog
-        id="business-info-review-dialog"
-        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
-      >
-        <el-dialog-backdrop
-          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
-        ></el-dialog-backdrop>
-        <div
-          tabindex="0"
-          class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6"
-        >
-          <el-dialog-panel
-            class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10"
-          >
-            <div
-              class="flex self-stretch flex-col items-end justify-end px-4 pt-4"
-            >
-              <button
-                type="button"
-                command="close"
-                commandfor="business-info-review-dialog"
-                class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer"
-              >
-                <span class="sr-only">Close</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  class="size-5"
-                  aria-hidden="true"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+        <dialog id="business-info-review-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
+                        <button type="button" command="close" commandfor="business-info-review-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+                        <div class="flex flex-col items-center text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
+                                <path d="M22 4.40039C31.7202 4.40039 39.5996 12.2798 39.5996 22C39.5996 31.7202 31.7202 39.5996 22 39.5996C12.2798 39.5996 4.40039 31.7202 4.40039 22C4.40039 12.2798 12.2798 4.40039 22 4.40039ZM19.7998 19.7998C18.8886 19.7999 18.1504 20.539 18.1504 21.4502C18.1505 22.3613 18.8887 23.0995 19.7998 23.0996H20.3574C20.7093 23.0996 20.9709 23.426 20.8945 23.7695L19.8838 28.3145C19.3495 30.7188 21.1795 33 23.6426 33H24.2002C25.1114 32.9999 25.8496 32.2608 25.8496 31.3496C25.8494 30.4386 25.1112 29.7003 24.2002 29.7002H23.6426C23.2907 29.7002 23.0291 29.3738 23.1055 29.0303L24.1162 24.4854C24.6505 22.081 22.8205 19.7998 20.3574 19.7998H19.7998ZM22 11C20.785 11 19.7998 11.9852 19.7998 13.2002C19.7999 14.4151 20.785 15.4004 22 15.4004C23.215 15.4004 24.2001 14.4151 24.2002 13.2002C24.2002 11.9852 23.215 11 22 11Z" fill="#3B82F6"/>
+                            </svg>
+                            <div class="mt-6 flex flex-col items-center gap-2">
+                                <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">Updates May Require Review</h2>
+                                <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
+                                    Some changes may need additional verification. Click <span class="font-semibold text-gray-900 dark:text-white">"Continue"</span> to proceed.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                        <button type="button" command="close" commandfor="business-info-review-dialog"
+                            class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+                            Cancel
+                        </button>
+                        <button id="business-info-review-continue-btn" type="button"
+                            class="w-full rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
+                            Continue
+                        </button>
+                    </div>
+                </el-dialog-panel>
             </div>
-            <div class="flex flex-col gap-6 p-6 px-8 pt-0">
-              <div class="flex flex-col items-center text-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="44"
-                  height="44"
-                  viewBox="0 0 44 44"
-                  fill="none"
-                >
-                  <path
-                    d="M22 4.40039C31.7202 4.40039 39.5996 12.2798 39.5996 22C39.5996 31.7202 31.7202 39.5996 22 39.5996C12.2798 39.5996 4.40039 31.7202 4.40039 22C4.40039 12.2798 12.2798 4.40039 22 4.40039ZM19.7998 19.7998C18.8886 19.7999 18.1504 20.539 18.1504 21.4502C18.1505 22.3613 18.8887 23.0995 19.7998 23.0996H20.3574C20.7093 23.0996 20.9709 23.426 20.8945 23.7695L19.8838 28.3145C19.3495 30.7188 21.1795 33 23.6426 33H24.2002C25.1114 32.9999 25.8496 32.2608 25.8496 31.3496C25.8494 30.4386 25.1112 29.7003 24.2002 29.7002H23.6426C23.2907 29.7002 23.0291 29.3738 23.1055 29.0303L24.1162 24.4854C24.6505 22.081 22.8205 19.7998 20.3574 19.7998H19.7998ZM22 11C20.785 11 19.7998 11.9852 19.7998 13.2002C19.7999 14.4151 20.785 15.4004 22 15.4004C23.215 15.4004 24.2001 14.4151 24.2002 13.2002C24.2002 11.9852 23.215 11 22 11Z"
-                    fill="#3B82F6"
-                  />
-                </svg>
-                <div class="mt-6 flex flex-col items-center gap-2">
-                  <h2
-                    class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white"
-                  >
-                    Updates May Require Review
-                  </h2>
-                  <p
-                    class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400"
-                  >
-                    Some changes may need additional verification. Click
-                    <span class="font-semibold text-gray-900 dark:text-white"
-                      >"Continue"</span
-                    >
-                    to proceed.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div
-              class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10"
-            >
-              <button
-                type="button"
-                command="close"
-                commandfor="business-info-review-dialog"
-                class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                id="business-info-review-continue-btn"
-                type="button"
-                class="w-full rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
-              >
-                Continue
-              </button>
-            </div>
-          </el-dialog-panel>
-        </div>
-      </dialog>
+        </dialog>
     </el-dialog>
 
     <!-- ===== CONTACT EDIT REVIEW MODAL ===== -->
     <el-dialog>
-      <dialog
-        id="contact-info-review-dialog"
-        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
-      >
-        <el-dialog-backdrop
-          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
-        ></el-dialog-backdrop>
-        <div
-          tabindex="0"
-          class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6"
-        >
-          <el-dialog-panel
-            class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10"
-          >
-            <div
-              class="flex self-stretch flex-col items-end justify-end px-4 pt-4"
-            >
-              <button
-                type="button"
-                command="close"
-                commandfor="contact-info-review-dialog"
-                class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer"
-              >
-                <span class="sr-only">Close</span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  class="size-5"
-                  aria-hidden="true"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
-              </button>
+        <dialog id="contact-info-review-dialog"
+            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+            <el-dialog-backdrop
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+            <div tabindex="0"
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+                <el-dialog-panel
+                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+                    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
+                        <button type="button" command="close" commandfor="contact-info-review-dialog"
+                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                            <span class="sr-only">Close</span>
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+                        <div class="flex flex-col items-center text-center">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none">
+                                <path d="M22 4.40039C31.7202 4.40039 39.5996 12.2798 39.5996 22C39.5996 31.7202 31.7202 39.5996 22 39.5996C12.2798 39.5996 4.40039 31.7202 4.40039 22C4.40039 12.2798 12.2798 4.40039 22 4.40039ZM19.7998 19.7998C18.8886 19.7999 18.1504 20.539 18.1504 21.4502C18.1505 22.3613 18.8887 23.0995 19.7998 23.0996H20.3574C20.7093 23.0996 20.9709 23.426 20.8945 23.7695L19.8838 28.3145C19.3495 30.7188 21.1795 33 23.6426 33H24.2002C25.1114 32.9999 25.8496 32.2608 25.8496 31.3496C25.8494 30.4386 25.1112 29.7003 24.2002 29.7002H23.6426C23.2907 29.7002 23.0291 29.3738 23.1055 29.0303L24.1162 24.4854C24.6505 22.081 22.8205 19.7998 20.3574 19.7998H19.7998ZM22 11C20.785 11 19.7998 11.9852 19.7998 13.2002C19.7999 14.4151 20.785 15.4004 22 15.4004C23.215 15.4004 24.2001 14.4151 24.2002 13.2002C24.2002 11.9852 23.215 11 22 11Z" fill="#3B82F6"/>
+                            </svg>
+                            <div class="mt-6 flex flex-col items-center gap-2">
+                                <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">Updates May Require Review</h2>
+                                <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
+                                    Some changes may need additional verification. Click <span class="font-semibold text-gray-900 dark:text-white">"Continue"</span> to proceed.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                        <button type="button" command="close" commandfor="contact-info-review-dialog"
+                            class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+                            Cancel
+                        </button>
+                        <button id="contact-info-review-continue-btn" type="button"
+                            class="w-full rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
+                            Continue
+                        </button>
+                    </div>
+                </el-dialog-panel>
             </div>
-            <div class="flex flex-col gap-6 p-6 px-8 pt-0">
-              <div class="flex flex-col items-center text-center">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="44"
-                  height="44"
-                  viewBox="0 0 44 44"
-                  fill="none"
-                >
-                  <path
-                    d="M22 4.40039C31.7202 4.40039 39.5996 12.2798 39.5996 22C39.5996 31.7202 31.7202 39.5996 22 39.5996C12.2798 39.5996 4.40039 31.7202 4.40039 22C4.40039 12.2798 12.2798 4.40039 22 4.40039ZM19.7998 19.7998C18.8886 19.7999 18.1504 20.539 18.1504 21.4502C18.1505 22.3613 18.8887 23.0995 19.7998 23.0996H20.3574C20.7093 23.0996 20.9709 23.426 20.8945 23.7695L19.8838 28.3145C19.3495 30.7188 21.1795 33 23.6426 33H24.2002C25.1114 32.9999 25.8496 32.2608 25.8496 31.3496C25.8494 30.4386 25.1112 29.7003 24.2002 29.7002H23.6426C23.2907 29.7002 23.0291 29.3738 23.1055 29.0303L24.1162 24.4854C24.6505 22.081 22.8205 19.7998 20.3574 19.7998H19.7998ZM22 11C20.785 11 19.7998 11.9852 19.7998 13.2002C19.7999 14.4151 20.785 15.4004 22 15.4004C23.215 15.4004 24.2001 14.4151 24.2002 13.2002C24.2002 11.9852 23.215 11 22 11Z"
-                    fill="#3B82F6"
-                  />
-                </svg>
-                <div class="mt-6 flex flex-col items-center gap-2">
-                  <h2
-                    class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white"
-                  >
-                    Updates May Require Review
-                  </h2>
-                  <p
-                    class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400"
-                  >
-                    Some changes may need additional verification. Click
-                    <span class="font-semibold text-gray-900 dark:text-white"
-                      >"Continue"</span
-                    >
-                    to proceed.
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div
-              class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10"
-            >
-              <button
-                type="button"
-                command="close"
-                commandfor="contact-info-review-dialog"
-                class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer"
-              >
-                Cancel
-              </button>
-              <button
-                id="contact-info-review-continue-btn"
-                type="button"
-                class="w-full rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
-              >
-                Continue
-              </button>
-            </div>
-          </el-dialog-panel>
-        </div>
-      </dialog>
+        </dialog>
     </el-dialog>
 
-    <script
-      src="../../../src/scripts/pages/my-company-profile-page.js"
-      defer
-    ></script>
-  </body>
+    <script src="../../../src/scripts/pages/my-company-profile-page.js" defer></script>
+
+</body>
+
 </html>

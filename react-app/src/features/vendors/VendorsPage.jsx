@@ -1,25 +1,25 @@
-import { useMemo, useState } from "react";
-import { ProductPageFrame } from "@/components/ProductPageFrame";
-import { formatDate, formatMoney } from "@/data/adapters";
+import { useMemo, useState } from 'react';
+import { ProductPageFrame } from '@/components/ProductPageFrame';
+import { formatDate, formatMoney } from '@/data/adapters';
 
 function badgeClass(kind) {
-  if (kind === "active") {
-    return "bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30";
+  if (kind === 'active') {
+    return 'bg-green-50 text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30';
   }
 
-  if (kind === "needs_verification") {
-    return "bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/30";
+  if (kind === 'needs_verification') {
+    return 'bg-amber-50 text-amber-700 ring-1 ring-inset ring-amber-600/20 dark:bg-amber-500/10 dark:text-amber-300 dark:ring-amber-400/30';
   }
 
-  if (kind === "verified") {
-    return "bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-400/30";
+  if (kind === 'verified') {
+    return 'bg-blue-50 text-blue-700 ring-1 ring-inset ring-blue-600/20 dark:bg-blue-500/10 dark:text-blue-300 dark:ring-blue-400/30';
   }
 
-  if (kind === "exception") {
-    return "bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:ring-red-400/30";
+  if (kind === 'exception') {
+    return 'bg-red-50 text-red-700 ring-1 ring-inset ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:ring-red-400/30';
   }
 
-  return "bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-300 dark:bg-white/5 dark:text-gray-300 dark:ring-white/10";
+  return 'bg-gray-50 text-gray-700 ring-1 ring-inset ring-gray-300 dark:bg-white/5 dark:text-gray-300 dark:ring-white/10';
 }
 
 function FilterPill({ children, onRemove }) {
@@ -36,7 +36,7 @@ function FilterPill({ children, onRemove }) {
 }
 
 export function VendorsPage({ vendors }) {
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState('');
   const [filterOpen, setFilterOpen] = useState(false);
   const [selectedSources, setSelectedSources] = useState([]);
   const [selectedStatuses, setSelectedStatuses] = useState([]);
@@ -44,23 +44,11 @@ export function VendorsPage({ vendors }) {
   const [selectedMethods, setSelectedMethods] = useState([]);
 
   const options = useMemo(() => {
-    const sources = [
-      ...new Set(vendors.map((vendor) => vendor.sourceSystem).filter(Boolean)),
-    ].sort();
-    const statuses = [
-      ...new Set(vendors.map((vendor) => vendor.status).filter(Boolean)),
-    ];
-    const verification = [
-      ...new Set(
-        vendors.map((vendor) => vendor.verificationStatus).filter(Boolean),
-      ),
-    ];
+    const sources = [...new Set(vendors.map((vendor) => vendor.sourceSystem).filter(Boolean))].sort();
+    const statuses = [...new Set(vendors.map((vendor) => vendor.status).filter(Boolean))];
+    const verification = [...new Set(vendors.map((vendor) => vendor.verificationStatus).filter(Boolean))];
     const methods = [
-      ...new Set(
-        vendors
-          .flatMap((vendor) => vendor.supportedPaymentMethods || [])
-          .filter(Boolean),
-      ),
+      ...new Set(vendors.flatMap((vendor) => vendor.supportedPaymentMethods || []).filter(Boolean)),
     ].sort();
 
     return { methods, sources, statuses, verification };
@@ -79,20 +67,13 @@ export function VendorsPage({ vendors }) {
           ...(vendor.supportedPaymentMethods || []),
         ]
           .filter(Boolean)
-          .some((value) =>
-            String(value).toLowerCase().includes(normalizedQuery),
-          );
+          .some((value) => String(value).toLowerCase().includes(normalizedQuery));
 
         if (!matches) return false;
       }
 
-      if (
-        selectedSources.length &&
-        !selectedSources.includes(vendor.sourceSystem)
-      )
-        return false;
-      if (selectedStatuses.length && !selectedStatuses.includes(vendor.status))
-        return false;
+      if (selectedSources.length && !selectedSources.includes(vendor.sourceSystem)) return false;
+      if (selectedStatuses.length && !selectedStatuses.includes(vendor.status)) return false;
       if (
         selectedVerification.length &&
         !selectedVerification.includes(vendor.verificationStatus)
@@ -101,9 +82,7 @@ export function VendorsPage({ vendors }) {
       }
       if (
         selectedMethods.length &&
-        !selectedMethods.some((method) =>
-          (vendor.supportedPaymentMethods || []).includes(method),
-        )
+        !selectedMethods.some((method) => (vendor.supportedPaymentMethods || []).includes(method))
       ) {
         return false;
       }
@@ -121,9 +100,7 @@ export function VendorsPage({ vendors }) {
 
   function toggleValue(setter, value) {
     setter((current) =>
-      current.includes(value)
-        ? current.filter((item) => item !== value)
-        : [...current, value],
+      current.includes(value) ? current.filter((item) => item !== value) : [...current, value],
     );
   }
 
@@ -133,12 +110,10 @@ export function VendorsPage({ vendors }) {
         <div className="border-b border-gray-200 px-4 py-4 dark:border-white/10 sm:px-6">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div className="flex max-w-2xl flex-col gap-2">
-              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">
-                Vendors
-              </h1>
+              <h1 className="text-xl font-semibold text-gray-900 dark:text-white">Vendors</h1>
               <p className="text-sm text-gray-500 dark:text-gray-400">
-                Manage vendor health, payment setup, remittance destinations,
-                and linked payable activity from one operational view.
+                Manage vendor health, payment setup, remittance destinations, and linked payable
+                activity from one operational view.
               </p>
             </div>
 
@@ -186,9 +161,7 @@ export function VendorsPage({ vendors }) {
                   <div className="absolute right-0 z-30 mt-2 w-80 overflow-hidden rounded-md bg-white shadow-lg outline-1 outline-black/5 dark:bg-gray-800 dark:-outline-offset-1 dark:outline-white/10">
                     <div className="grid gap-4 p-4 sm:grid-cols-2">
                       <div className="space-y-2">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          By source
-                        </p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">By source</p>
                         {options.sources.map((source) => (
                           <label
                             key={source}
@@ -197,9 +170,7 @@ export function VendorsPage({ vendors }) {
                             <input
                               type="checkbox"
                               checked={selectedSources.includes(source)}
-                              onChange={() =>
-                                toggleValue(setSelectedSources, source)
-                              }
+                              onChange={() => toggleValue(setSelectedSources, source)}
                             />
                             <span>{source}</span>
                           </label>
@@ -207,9 +178,7 @@ export function VendorsPage({ vendors }) {
                       </div>
 
                       <div className="space-y-2">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          By status
-                        </p>
+                        <p className="text-sm font-medium text-gray-900 dark:text-white">By status</p>
                         {options.statuses.map((status) => (
                           <label
                             key={status}
@@ -218,15 +187,9 @@ export function VendorsPage({ vendors }) {
                             <input
                               type="checkbox"
                               checked={selectedStatuses.includes(status)}
-                              onChange={() =>
-                                toggleValue(setSelectedStatuses, status)
-                              }
+                              onChange={() => toggleValue(setSelectedStatuses, status)}
                             />
-                            <span>
-                              {vendors.find(
-                                (vendor) => vendor.status === status,
-                              )?.statusLabel || status}
-                            </span>
+                            <span>{vendors.find((vendor) => vendor.status === status)?.statusLabel || status}</span>
                           </label>
                         ))}
                       </div>
@@ -243,15 +206,11 @@ export function VendorsPage({ vendors }) {
                             <input
                               type="checkbox"
                               checked={selectedVerification.includes(status)}
-                              onChange={() =>
-                                toggleValue(setSelectedVerification, status)
-                              }
+                              onChange={() => toggleValue(setSelectedVerification, status)}
                             />
                             <span>
-                              {vendors.find(
-                                (vendor) =>
-                                  vendor.verificationStatus === status,
-                              )?.verificationStatusLabel || status}
+                              {vendors.find((vendor) => vendor.verificationStatus === status)
+                                ?.verificationStatusLabel || status}
                             </span>
                           </label>
                         ))}
@@ -269,9 +228,7 @@ export function VendorsPage({ vendors }) {
                             <input
                               type="checkbox"
                               checked={selectedMethods.includes(method)}
-                              onChange={() =>
-                                toggleValue(setSelectedMethods, method)
-                              }
+                              onChange={() => toggleValue(setSelectedMethods, method)}
                             />
                             <span>{method}</span>
                           </label>
@@ -286,25 +243,16 @@ export function VendorsPage({ vendors }) {
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
             <span className="rounded-full bg-gray-100 px-3 py-1 text-xs font-medium text-gray-700 dark:bg-white/10 dark:text-gray-200">
-              {filteredVendors.length} vendor
-              {filteredVendors.length === 1 ? "" : "s"}
+              {filteredVendors.length} vendor{filteredVendors.length === 1 ? '' : 's'}
             </span>
             {selectedSources.map((value) => (
-              <FilterPill
-                key={`source-${value}`}
-                onRemove={() => toggleValue(setSelectedSources, value)}
-              >
+              <FilterPill key={`source-${value}`} onRemove={() => toggleValue(setSelectedSources, value)}>
                 Source: {value}
               </FilterPill>
             ))}
             {selectedStatuses.map((value) => (
-              <FilterPill
-                key={`status-${value}`}
-                onRemove={() => toggleValue(setSelectedStatuses, value)}
-              >
-                Status:{" "}
-                {vendors.find((vendor) => vendor.status === value)
-                  ?.statusLabel || value}
+              <FilterPill key={`status-${value}`} onRemove={() => toggleValue(setSelectedStatuses, value)}>
+                Status: {vendors.find((vendor) => vendor.status === value)?.statusLabel || value}
               </FilterPill>
             ))}
             {selectedVerification.map((value) => (
@@ -312,16 +260,13 @@ export function VendorsPage({ vendors }) {
                 key={`verification-${value}`}
                 onRemove={() => toggleValue(setSelectedVerification, value)}
               >
-                Verification:{" "}
+                Verification:{' '}
                 {vendors.find((vendor) => vendor.verificationStatus === value)
                   ?.verificationStatusLabel || value}
               </FilterPill>
             ))}
             {selectedMethods.map((value) => (
-              <FilterPill
-                key={`method-${value}`}
-                onRemove={() => toggleValue(setSelectedMethods, value)}
-              >
+              <FilterPill key={`method-${value}`} onRemove={() => toggleValue(setSelectedMethods, value)}>
                 Method: {value}
               </FilterPill>
             ))}
@@ -335,14 +280,14 @@ export function VendorsPage({ vendors }) {
                 <thead>
                   <tr>
                     {[
-                      "Vendor",
-                      "Vendor ID",
-                      "Status",
-                      "Verification",
-                      "Default Method",
-                      "Outstanding",
-                      "Total Paid",
-                      "Last Payment",
+                      'Vendor',
+                      'Vendor ID',
+                      'Status',
+                      'Verification',
+                      'Default Method',
+                      'Outstanding',
+                      'Total Paid',
+                      'Last Payment',
                     ].map((label) => (
                       <th
                         key={label}
@@ -357,10 +302,7 @@ export function VendorsPage({ vendors }) {
                 <tbody className="divide-y divide-gray-200 bg-white dark:divide-white/10 dark:bg-gray-900">
                   {filteredVendors.length ? (
                     filteredVendors.map((vendor) => (
-                      <tr
-                        key={vendor.id}
-                        className="hover:bg-gray-50 dark:hover:bg-white/5"
-                      >
+                      <tr key={vendor.id} className="hover:bg-gray-50 dark:hover:bg-white/5">
                         <td className="px-4 py-3 align-top">
                           <a
                             href={`#/vendors/${vendor.id}`}

@@ -1,5 +1,5 @@
-import { useMemo, useState } from "react";
-import { Avatar } from "@/components/avatar";
+import { useMemo, useState } from 'react';
+import { Avatar } from '@/components/avatar';
 import {
   Dropdown,
   DropdownButton,
@@ -7,13 +7,8 @@ import {
   DropdownItem,
   DropdownLabel,
   DropdownMenu,
-} from "@/components/catalyst/dropdown";
-import {
-  Navbar,
-  NavbarItem,
-  NavbarSection,
-  NavbarSpacer,
-} from "@/components/navbar";
+} from '@/components/catalyst/dropdown';
+import { Navbar, NavbarItem, NavbarSection, NavbarSpacer } from '@/components/navbar';
 import {
   Sidebar,
   SidebarBody,
@@ -24,8 +19,8 @@ import {
   SidebarLabel,
   SidebarSection,
   SidebarSpacer,
-} from "@/components/sidebar";
-import { SidebarLayout } from "@/components/sidebar-layout";
+} from '@/components/sidebar';
+import { SidebarLayout } from '@/components/sidebar-layout';
 import {
   ArrowRightStartOnRectangleIcon,
   ChevronDownIcon,
@@ -35,7 +30,7 @@ import {
   PlusIcon,
   ShieldCheckIcon,
   UserIcon,
-} from "@heroicons/react/16/solid";
+} from '@heroicons/react/16/solid';
 import {
   BellIcon,
   BuildingOffice2Icon,
@@ -48,21 +43,20 @@ import {
   SparklesIcon,
   Square2StackIcon,
   UserGroupIcon,
-} from "@heroicons/react/20/solid";
+} from '@heroicons/react/20/solid';
 
 function routeMatches(route, page) {
-  if (page === "vendors") {
-    return route.page === "vendors" || route.page === "vendor-profile";
+  if (page === 'vendors') {
+    return route.page === 'vendors' || route.page === 'vendor-profile';
   }
 
   return route.page === page;
 }
 
 function linkIsActive(route, href) {
-  if (href === "/payables") return routeMatches(route, "payables");
-  if (href === "/vendors") return routeMatches(route, "vendors");
-  if (href === "/payment-preferences")
-    return routeMatches(route, "payment-preferences");
+  if (href === '/payables') return routeMatches(route, 'payables');
+  if (href === '/vendors') return routeMatches(route, 'vendors');
+  if (href === '/payment-preferences') return routeMatches(route, 'payment-preferences');
   return false;
 }
 
@@ -80,33 +74,26 @@ function NestedShellLink({ href, label, route }) {
 
 function ProductShellTitle({ route }) {
   const title = useMemo(() => {
-    if (route.page === "payables") return "Bills and Payables";
-    if (route.page === "vendors") return "Vendors";
-    if (route.page === "vendor-profile") return "Vendor Profile";
-    if (route.page === "payment-preferences") return "Payment Preferences";
-    return "Transcard";
+    if (route.page === 'payables') return 'Bills and Payables';
+    if (route.page === 'vendors') return 'Vendors';
+    if (route.page === 'vendor-profile') return 'Vendor Profile';
+    if (route.page === 'payment-preferences') return 'Payment Preferences';
+    return 'Transcard';
   }, [route.page]);
 
   return (
     <div className="hidden min-w-0 lg:block">
-      <p className="truncate text-sm/5 font-medium text-zinc-500 dark:text-zinc-400">
-        Workspace
-      </p>
-      <p className="truncate text-base/6 font-semibold text-zinc-950 dark:text-white">
-        {title}
-      </p>
+      <p className="truncate text-sm/5 font-medium text-zinc-500 dark:text-zinc-400">Workspace</p>
+      <p className="truncate text-base/6 font-semibold text-zinc-950 dark:text-white">{title}</p>
     </div>
   );
 }
 
 export function AppShell({ route, children }) {
-  const [smartExchangeOpen, setSmartExchangeOpen] = useState(() =>
-    routeMatches(route, "payment-preferences"),
-  );
+  const [smartExchangeOpen, setSmartExchangeOpen] = useState(() => routeMatches(route, 'payment-preferences'));
   const [settingsOpen, setSettingsOpen] = useState(false);
   const [transcardOpen, setTranscardOpen] = useState(false);
-  const smartExchangeExpanded =
-    smartExchangeOpen || routeMatches(route, "payment-preferences");
+  const smartExchangeExpanded = smartExchangeOpen || routeMatches(route, 'payment-preferences');
 
   const navbar = (
     <Navbar>
@@ -166,19 +153,11 @@ export function AppShell({ route, children }) {
           </DropdownButton>
           <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
             <DropdownItem href="/payables">
-              <Avatar
-                slot="icon"
-                initials="BP"
-                className="bg-blue-600 text-white"
-              />
+              <Avatar slot="icon" initials="BP" className="bg-blue-600 text-white" />
               <DropdownLabel>Bills and Payables</DropdownLabel>
             </DropdownItem>
             <DropdownItem href="/vendors">
-              <Avatar
-                slot="icon"
-                initials="VN"
-                className="bg-zinc-800 text-white"
-              />
+              <Avatar slot="icon" initials="VN" className="bg-zinc-800 text-white" />
               <DropdownLabel>Vendors</DropdownLabel>
             </DropdownItem>
             <DropdownDivider />
@@ -208,45 +187,26 @@ export function AppShell({ route, children }) {
 
       <SidebarBody>
         <SidebarSection>
-          <SidebarItem
-            href="/payables"
-            current={routeMatches(route, "payables")}
-          >
+          <SidebarItem href="/payables" current={routeMatches(route, 'payables')}>
             <Square2StackIcon data-slot="icon" />
             <SidebarLabel>Bills/Payables</SidebarLabel>
           </SidebarItem>
-          <SidebarItem href="/vendors" current={routeMatches(route, "vendors")}>
+          <SidebarItem href="/vendors" current={routeMatches(route, 'vendors')}>
             <UserGroupIcon data-slot="icon" />
             <SidebarLabel>Vendors</SidebarLabel>
           </SidebarItem>
-          <SidebarItem
-            type="button"
-            onClick={() => setSmartExchangeOpen((value) => !value)}
-            current={routeMatches(route, "payment-preferences")}
-          >
+          <SidebarItem type="button" onClick={() => setSmartExchangeOpen((value) => !value)} current={routeMatches(route, 'payment-preferences')}>
             <CreditCardIcon data-slot="icon" />
             <SidebarLabel>SMART Exchange</SidebarLabel>
             <ChevronDownIcon
               data-slot="icon"
-              className={
-                smartExchangeExpanded
-                  ? "rotate-180 transition-transform"
-                  : "transition-transform"
-              }
+              className={smartExchangeExpanded ? 'rotate-180 transition-transform' : 'transition-transform'}
             />
           </SidebarItem>
           {smartExchangeExpanded ? (
             <>
-              <NestedShellLink
-                href="/smart-exchange"
-                label="Overview"
-                route={route}
-              />
-              <NestedShellLink
-                href="/payment-preferences"
-                label="Payment Preferences"
-                route={route}
-              />
+              <NestedShellLink href="/smart-exchange" label="Overview" route={route} />
+              <NestedShellLink href="/payment-preferences" label="Payment Preferences" route={route} />
             </>
           ) : null}
         </SidebarSection>
@@ -257,62 +217,32 @@ export function AppShell({ route, children }) {
             <BuildingOffice2Icon data-slot="icon" />
             <SidebarLabel>My Company Profile</SidebarLabel>
           </SidebarItem>
-          <SidebarItem
-            type="button"
-            onClick={() => setSettingsOpen((value) => !value)}
-          >
+          <SidebarItem type="button" onClick={() => setSettingsOpen((value) => !value)}>
             <Cog6ToothIcon data-slot="icon" />
             <SidebarLabel>Settings</SidebarLabel>
             <ChevronDownIcon
               data-slot="icon"
-              className={
-                settingsOpen
-                  ? "rotate-180 transition-transform"
-                  : "transition-transform"
-              }
+              className={settingsOpen ? 'rotate-180 transition-transform' : 'transition-transform'}
             />
           </SidebarItem>
           {settingsOpen ? (
             <>
-              <NestedShellLink
-                href="#/user-management"
-                label="User Management"
-                route={route}
-              />
-              <NestedShellLink
-                href="#/approval-workflows"
-                label="Approval Workflows"
-                route={route}
-              />
+              <NestedShellLink href="#/user-management" label="User Management" route={route} />
+              <NestedShellLink href="#/approval-workflows" label="Approval Workflows" route={route} />
             </>
           ) : null}
-          <SidebarItem
-            type="button"
-            onClick={() => setTranscardOpen((value) => !value)}
-          >
+          <SidebarItem type="button" onClick={() => setTranscardOpen((value) => !value)}>
             <ShieldCheckIcon data-slot="icon" />
             <SidebarLabel>Transcard Only</SidebarLabel>
             <ChevronDownIcon
               data-slot="icon"
-              className={
-                transcardOpen
-                  ? "rotate-180 transition-transform"
-                  : "transition-transform"
-              }
+              className={transcardOpen ? 'rotate-180 transition-transform' : 'transition-transform'}
             />
           </SidebarItem>
           {transcardOpen ? (
             <>
-              <NestedShellLink
-                href="#/businesses"
-                label="Businesses"
-                route={route}
-              />
-              <NestedShellLink
-                href="#/recipients"
-                label="SMART Exchange Recipients"
-                route={route}
-              />
+              <NestedShellLink href="#/businesses" label="Businesses" route={route} />
+              <NestedShellLink href="#/recipients" label="SMART Exchange Recipients" route={route} />
               <NestedShellLink href="#/reports" label="Reports" route={route} />
             </>
           ) : null}
@@ -340,12 +270,7 @@ export function AppShell({ route, children }) {
         <Dropdown>
           <DropdownButton as={SidebarItem}>
             <span className="flex min-w-0 items-center gap-3">
-              <Avatar
-                initials="JA"
-                className="size-10 bg-zinc-950 text-white"
-                square
-                alt=""
-              />
+              <Avatar initials="JA" className="size-10 bg-zinc-950 text-white" square alt="" />
               <span className="min-w-0">
                 <span className="block truncate text-sm/5 font-medium text-zinc-950 dark:text-white">
                   Johnny Anderson

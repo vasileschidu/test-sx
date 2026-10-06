@@ -64,20 +64,29 @@
     {
       "name": "Managed Card Acceptance",
       "rate": "2.99%",
-      "methods": ["virtual-card", "managed-card"],
+      "methods": [
+        "virtual-card",
+        "managed-card"
+      ],
       "paperCheck": true
     },
     {
       "name": "Qualified Settlement",
       "rate": "1.50%",
-      "methods": ["virtual-card", "managed-card", "qualified-settlement"],
+      "methods": [
+        "virtual-card",
+        "managed-card",
+        "qualified-settlement"
+      ],
       "fallback": "qualified-settlement",
       "paperCheck": false
     },
     {
       "name": "Buyer Funded Account",
       "rate": "0.00%",
-      "methods": ["bank-transfer"],
+      "methods": [
+        "bank-transfer"
+      ],
       "paperCheck": true
     }
   ],
@@ -94,7 +103,10 @@
           "id": "co-mca",
           "name": "Managed Card Acceptance",
           "durationDays": 45,
-          "methods": ["virtual-card", "managed-card"],
+          "methods": [
+            "virtual-card",
+            "managed-card"
+          ],
           "paperCheck": true,
           "enabled": true,
           "activeSuppliers": 567
@@ -103,7 +115,11 @@
           "id": "co-qs",
           "name": "Qualified Settlement",
           "durationDays": 45,
-          "methods": ["virtual-card", "managed-card", "qualified-settlement"],
+          "methods": [
+            "virtual-card",
+            "managed-card",
+            "qualified-settlement"
+          ],
           "fallback": "qualified-settlement",
           "paperCheck": false,
           "enabled": true,
@@ -113,7 +129,9 @@
           "id": "co-bfa",
           "name": "Buyer Funded Account",
           "durationDays": 45,
-          "methods": ["bank-transfer"],
+          "methods": [
+            "bank-transfer"
+          ],
           "paperCheck": true,
           "enabled": true,
           "activeSuppliers": 1171
@@ -132,7 +150,10 @@
           "id": "co-ts-qs",
           "name": "Qualified Settlement",
           "durationDays": 30,
-          "methods": ["virtual-card", "qualified-settlement"],
+          "methods": [
+            "virtual-card",
+            "qualified-settlement"
+          ],
           "fallback": "qualified-settlement",
           "paperCheck": true,
           "enabled": true,
@@ -142,7 +163,9 @@
           "id": "co-ts-bfa",
           "name": "Buyer Funded Account",
           "durationDays": 45,
-          "methods": ["bank-transfer"],
+          "methods": [
+            "bank-transfer"
+          ],
           "paperCheck": true,
           "enabled": true,
           "activeSuppliers": 60

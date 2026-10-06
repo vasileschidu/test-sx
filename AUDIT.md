@@ -47,16 +47,16 @@ src/
 
 **Dashboard pages** (`src/pages/dashboard/`):
 
-| File                       | Lines | Role                                                   |
-| -------------------------- | ----: | ------------------------------------------------------ |
-| `payables-pay.html`        |  2447 | Pay-a-payable flow                                     |
-| `payment-preferences.html` |  2404 | Payment method management                              |
-| `supplier-portal.html`     |  1986 | Main exchange table (renamed from smart-exchange.html) |
-| `my-company-profile.html`  |   486 | Company profile editor                                 |
-| `bills-and-payables.html`  |   420 | Payables table                                         |
-| `ap-ar-payments.html`      |   161 | AP/AR upgrade page                                     |
-| `vendors.html`             |   155 | Vendor list                                            |
-| `vendor-profile.html`      |    92 | Vendor detail                                          |
+| File | Lines | Role |
+|---|---:|---|
+| `payables-pay.html` | 2447 | Pay-a-payable flow |
+| `payment-preferences.html` | 2404 | Payment method management |
+| `supplier-portal.html` | 1986 | Main exchange table (renamed from smart-exchange.html) |
+| `my-company-profile.html` | 486 | Company profile editor |
+| `bills-and-payables.html` | 420 | Payables table |
+| `ap-ar-payments.html` | 161 | AP/AR upgrade page |
+| `vendors.html` | 155 | Vendor list |
+| `vendor-profile.html` | 92 | Vendor detail |
 
 **Onboarding pages** (`src/pages/onboarding/`): `index`, `confirm-identity`,
 `confirm-business-details`, `review-documents`, `signature`, `paywall`, `instant-virtual-card`,
@@ -65,22 +65,22 @@ largest). One flow; a previously separate `onboarding-sd/` was merged in.
 
 **Scripts by size** — `src/scripts/`, 28,122 lines total:
 
-| File                                | Lines |
-| ----------------------------------- | ----: |
-| `exchanges-table.js`                |  7260 |
-| `payables-pay.js`                   |  5404 |
-| `pages/payment-preferences-page.js` |  3059 |
-| `bills-payables-table.js`           |  3056 |
-| `shared.js`                         |  1153 |
-| `vendors-page.js`                   |   863 |
-| `vendor-profile-page.js`            |   721 |
-| `stp-state.js`                      |   697 |
-| `topbar-component.js`               |   625 |
-| `nav-component.js`                  |   619 |
-| `sidebar.js`                        |   550 |
-| `pages/my-company-profile-page.js`  |   462 |
-| `onboarding-transitions.js`         |   410 |
-| …19 more under 400 lines each       |       |
+| File | Lines |
+|---|---:|
+| `exchanges-table.js` | 7260 |
+| `payables-pay.js` | 5404 |
+| `pages/payment-preferences-page.js` | 3059 |
+| `bills-payables-table.js` | 3056 |
+| `shared.js` | 1153 |
+| `vendors-page.js` | 863 |
+| `vendor-profile-page.js` | 721 |
+| `stp-state.js` | 697 |
+| `topbar-component.js` | 625 |
+| `nav-component.js` | 619 |
+| `sidebar.js` | 550 |
+| `pages/my-company-profile-page.js` | 462 |
+| `onboarding-transitions.js` | 410 |
+| …19 more under 400 lines each | |
 
 The top four files are **59% of all JavaScript** (18,779 / 28,122 lines).
 
@@ -98,15 +98,15 @@ The top four files are **59% of all JavaScript** (18,779 / 28,122 lines).
 
 ### 1.4 Detected stack
 
-| Concern         | Reality                                                                                                       |
-| --------------- | ------------------------------------------------------------------------------------------------------------- |
-| Framework       | **None.** Vanilla JS. One Web Component (`<app-nav>`), one more (`<app-topbar>`).                             |
-| Module system   | **None.** No `import`/`export` anywhere in `src/scripts/`. 26 of 29 files are IIFEs; 3 are not (§3.3).        |
-| Build tool      | **None** for `src/`. `react-app/` has Vite, but is not part of the served site.                               |
-| CSS             | **Tailwind v4 via CDN** (`@tailwindcss/browser@4`), loaded in all 22 pages. Utility classes inline in markup. |
-| Component model | **String-concatenated HTML** inside JS, plus hand-written markup in each page.                                |
-| Data            | 13 static JSON files fetched at runtime; writes go to `sessionStorage`/`localStorage`.                        |
-| Icons           | Inline SVG, pasted per use site. Some in `assets/`, mostly literal.                                           |
+| Concern | Reality |
+|---|---|
+| Framework | **None.** Vanilla JS. One Web Component (`<app-nav>`), one more (`<app-topbar>`). |
+| Module system | **None.** No `import`/`export` anywhere in `src/scripts/`. 26 of 29 files are IIFEs; 3 are not (§3.3). |
+| Build tool | **None** for `src/`. `react-app/` has Vite, but is not part of the served site. |
+| CSS | **Tailwind v4 via CDN** (`@tailwindcss/browser@4`), loaded in all 22 pages. Utility classes inline in markup. |
+| Component model | **String-concatenated HTML** inside JS, plus hand-written markup in each page. |
+| Data | 13 static JSON files fetched at runtime; writes go to `sessionStorage`/`localStorage`. |
+| Icons | Inline SVG, pasted per use site. Some in `assets/`, mostly literal. |
 
 ---
 
@@ -119,18 +119,18 @@ re-authored at each use site, and the class strings have diverged.
 
 Distinct class strings for what is visually one component:
 
-| Component                                           | Distinct implementations | Files |
-| --------------------------------------------------- | -----------------------: | ----: |
-| **Primary button** (`bg-blue-600` + `text-white`)   |                   **37** |    25 |
-| **Secondary button** (white + grey ring)            |                   **29** |    22 |
-| **Text input** (`block w-full rounded-md bg-white`) |                   **17** |    12 |
-| Select trigger                                      |           21 occurrences |     4 |
-| Badge / pill                                        |           37 occurrences |    11 |
-| Card / panel                                        |           38 occurrences |    11 |
-| Modal (`el-dialog` / `<dialog>`)                    |          131 occurrences |    13 |
-| Checkbox                                            |           21 occurrences |    11 |
-| Toggle switch                                       |           11 occurrences |     4 |
-| Skeleton / loading                                  |          157 occurrences |    16 |
+| Component | Distinct implementations | Files |
+|---|---:|---:|
+| **Primary button** (`bg-blue-600` + `text-white`) | **37** | 25 |
+| **Secondary button** (white + grey ring) | **29** | 22 |
+| **Text input** (`block w-full rounded-md bg-white`) | **17** | 12 |
+| Select trigger | 21 occurrences | 4 |
+| Badge / pill | 37 occurrences | 11 |
+| Card / panel | 38 occurrences | 11 |
+| Modal (`el-dialog` / `<dialog>`) | 131 occurrences | 13 |
+| Checkbox | 21 occurrences | 11 |
+| Toggle switch | 11 occurrences | 4 |
+| Skeleton / loading | 157 occurrences | 16 |
 
 ### 2.2 Primary button — 37 variants
 
@@ -151,11 +151,11 @@ no naming that distinguishes them.
 
 The same 1px grey border is expressed three ways:
 
-| Idiom                              | Example file                                                                     |
-| ---------------------------------- | -------------------------------------------------------------------------------- |
-| `inset-ring inset-ring-gray-300`   | `payables-pay.html`, `supplier-portal.html`, onboarding pages                    |
-| `ring-1 ring-inset ring-gray-300`  | `bills-and-payables.html`, `my-company-profile.html`, `payment-preferences.html` |
-| `inset-ring-1 inset-ring-gray-300` | `bills-and-payables.html`, `supplier-portal.html`                                |
+| Idiom | Example file |
+|---|---|
+| `inset-ring inset-ring-gray-300` | `payables-pay.html`, `supplier-portal.html`, onboarding pages |
+| `ring-1 ring-inset ring-gray-300` | `bills-and-payables.html`, `my-company-profile.html`, `payment-preferences.html` |
+| `inset-ring-1 inset-ring-gray-300` | `bills-and-payables.html`, `supplier-portal.html` |
 
 Two of these are Tailwind v4 syntax and one is v3 — they coexist in the same repo and, in
 `bills-and-payables.html`, on the same page.
@@ -186,15 +186,15 @@ react-app/src/data/source.js  ->  imports ../../../src/data/bills-payables.json,
 
 It has the component layer that `src/` lacks:
 
-| React component                                                        | Static equivalent                 |
-| ---------------------------------------------------------------------- | --------------------------------- |
-| `components/app/Button.jsx`                                            | 37 inline variants                |
-| `components/app/Input.jsx`                                             | 17 inline variants                |
-| `components/app/Modal.jsx`                                             | 131 inline `<dialog>` occurrences |
-| `components/app/Icon.jsx` + `icon-registry.js`                         | inline SVG everywhere             |
-| `components/DataTable.jsx`                                             | `exchanges-table.js` (7260 lines) |
-| `components/Badge.jsx`, `SectionCard.jsx`, `loading/SkeletonBlock.jsx` | inline                            |
-| `components/catalyst/*` (14 files)                                     | vendored Tailwind Catalyst kit    |
+| React component | Static equivalent |
+|---|---|
+| `components/app/Button.jsx` | 37 inline variants |
+| `components/app/Input.jsx` | 17 inline variants |
+| `components/app/Modal.jsx` | 131 inline `<dialog>` occurrences |
+| `components/app/Icon.jsx` + `icon-registry.js` | inline SVG everywhere |
+| `components/DataTable.jsx` | `exchanges-table.js` (7260 lines) |
+| `components/Badge.jsx`, `SectionCard.jsx`, `loading/SkeletonBlock.jsx` | inline |
+| `components/catalyst/*` (14 files) | vendored Tailwind Catalyst kit |
 
 Feature pages: `features/payables/PayablesPage.jsx`, `features/vendors/VendorsPage.jsx`,
 `features/vendors/VendorProfilePage.jsx`, `features/payment-preferences/PaymentPreferencesPage.jsx`,
@@ -212,21 +212,20 @@ one convention that holds throughout and should be preserved.
 
 **Element IDs** — page-scoped prefixes, four different ones, applied inconsistently:
 
-| Prefix     |                                               Count | Meaning                                                                          |
-| ---------- | --------------------------------------------------: | -------------------------------------------------------------------------------- |
-| `gp-`      |                                                 296 | "get paid" panel (inside supplier-portal)                                        |
-| `pp-`      |                                                 286 | payment preferences **and** payables-pay — two different pages share this prefix |
-| `sx-`      |                                                  71 | smart exchange / supplier portal                                                 |
-| `bp-`      |                                                  49 | bills & payables                                                                 |
-| `sd-`      |                                                 ~40 | SMART Disburse (onboarding)                                                      |
-| unprefixed | `business-`, `vendor-`, `contact-`, `main-`, `app-` |                                                                                  |
+| Prefix | Count | Meaning |
+|---|---:|---|
+| `gp-` | 296 | "get paid" panel (inside supplier-portal) |
+| `pp-` | 286 | payment preferences **and** payables-pay — two different pages share this prefix |
+| `sx-` | 71 | smart exchange / supplier portal |
+| `bp-` | 49 | bills & payables |
+| `sd-` | ~40 | SMART Disburse (onboarding) |
+| unprefixed | `business-`, `vendor-`, `contact-`, `main-`, `app-` | |
 
 `pp-` is overloaded across two unrelated pages — a real collision risk if pages are ever composed.
 
 **JS naming** — `camelCase` functions, `UPPER_SNAKE` module constants. Consistent.
 
 **Storage keys** — three competing schemes:
-
 - `kebab-case-v1`: `bp-row-overrides-v1`, `bp-cards-dataset-v1`, `bp-origination-accounts-v1`, `bp-pay-page-view-context-v1`, `dashboard-sidebar-collapsed-v1`, `sd-sx-token-test-config-v1`
 - `snake_case_v#`: `sx_exchange_entry_overrides_v1`, `sx_global_stp_state_v3`, `sx_global_stp_status_v2`
 - unversioned kebab: `sd-onboarding-state`, `sd-onboarding-complete-state`
@@ -247,69 +246,69 @@ one convention that holds throughout and should be preserved.
 
 **External** — `src/data/*.json`, 13 files:
 
-| File                            |   Size | Consumers                                 |
-| ------------------------------- | -----: | ----------------------------------------- |
-| `bills-payables.json`           | 148 KB | 15 references                             |
-| `exchanges.json`                |  54 KB | 7                                         |
-| `payees.json`                   |  21 KB | 12                                        |
-| `vendor-profiles.json`          | 9.1 KB | 3                                         |
-| `payment-preferences-data.json` | 4.5 KB | 7                                         |
-| `cards.json`                    | 3.1 KB | 3                                         |
-| `customers.json`                | 2.9 KB | 4                                         |
-| `nav.json`                      | 2.9 KB | **stale, see below**                      |
-| `bank-accounts.json`            | 1.4 KB | 7                                         |
-| `onboarding-steps.json`         | 1.0 KB | mirrored in JS                            |
-| `my-company-profile.json`       | 0.9 KB | 4                                         |
-| `check-addresses.json`          | 0.6 KB | 7                                         |
-| `public-runtime-config.json`    | 0.4 KB | 3 (Worker base URL, test-email allowlist) |
+| File | Size | Consumers |
+|---|---:|---|
+| `bills-payables.json` | 148 KB | 15 references |
+| `exchanges.json` | 54 KB | 7 |
+| `payees.json` | 21 KB | 12 |
+| `vendor-profiles.json` | 9.1 KB | 3 |
+| `payment-preferences-data.json` | 4.5 KB | 7 |
+| `cards.json` | 3.1 KB | 3 |
+| `customers.json` | 2.9 KB | 4 |
+| `nav.json` | 2.9 KB | **stale, see below** |
+| `bank-accounts.json` | 1.4 KB | 7 |
+| `onboarding-steps.json` | 1.0 KB | mirrored in JS |
+| `my-company-profile.json` | 0.9 KB | 4 |
+| `check-addresses.json` | 0.6 KB | 7 |
+| `public-runtime-config.json` | 0.4 KB | 3 (Worker base URL, test-email allowlist) |
 
 All reads funnel through `src/scripts/data-source.js` (95 lines), which is the single fetch seam —
 this part is already clean and should be kept.
 
 **Hardcoded structures inside JS** (≥8 lines):
 
-| Constant                     | File                      | Lines |
-| ---------------------------- | ------------------------- | ----: |
-| `APP_NAV_DATA`               | `nav-component.js`        |    54 |
-| `MODULES`                    | `app-plans.js`            |    48 |
-| `PAGE_CONFIGS`               | `shell-navigation.js`     |    33 |
-| `BREADCRUMB_CONFIGS`         | `shared.js`               |    25 |
-| `TOPBAR_BREADCRUMB_CONFIGS`  | `topbar-component.js`     |    25 |
-| `PLANS`                      | `app-plans.js`            |    23 |
-| `APP_NAV_ICONS`              | `nav-component.js`        |    20 |
-| `STATUS_STYLES`              | `exchanges-table.js`      |    11 |
-| `STATUS_STYLES`              | `bills-payables-table.js` |    11 |
-| `STEPS`                      | `onboarding-stepper.js`   |    10 |
-| `OPTIONS`                    | `paywall.js`              |    10 |
-| `APP_NAV_PAGE_MAP`           | `nav-component.js`        |     9 |
-| `RULES`                      | `create-account.js`       |     9 |
-| `APP_NAV_REACT_ROUTE_MAP`    | `nav-component.js`        |     8 |
-| `BREADCRUMB_REACT_ROUTE_MAP` | `shared.js`               |     8 |
+| Constant | File | Lines |
+|---|---|---:|
+| `APP_NAV_DATA` | `nav-component.js` | 54 |
+| `MODULES` | `app-plans.js` | 48 |
+| `PAGE_CONFIGS` | `shell-navigation.js` | 33 |
+| `BREADCRUMB_CONFIGS` | `shared.js` | 25 |
+| `TOPBAR_BREADCRUMB_CONFIGS` | `topbar-component.js` | 25 |
+| `PLANS` | `app-plans.js` | 23 |
+| `APP_NAV_ICONS` | `nav-component.js` | 20 |
+| `STATUS_STYLES` | `exchanges-table.js` | 11 |
+| `STATUS_STYLES` | `bills-payables-table.js` | 11 |
+| `STEPS` | `onboarding-stepper.js` | 10 |
+| `OPTIONS` | `paywall.js` | 10 |
+| `APP_NAV_PAGE_MAP` | `nav-component.js` | 9 |
+| `RULES` | `create-account.js` | 9 |
+| `APP_NAV_REACT_ROUTE_MAP` | `nav-component.js` | 8 |
+| `BREADCRUMB_REACT_ROUTE_MAP` | `shared.js` | 8 |
 
 ### 3.2 Duplicated registries — the same 7 pages listed 7 times
 
 Seven separate structures enumerate the same dashboard pages:
 
-| Structure                   | File                  | Pages listed |
-| --------------------------- | --------------------- | ------------ |
-| `BREADCRUMB_CONFIGS`        | `shared.js`           | 7            |
-| `TOPBAR_BREADCRUMB_CONFIGS` | `topbar-component.js` | 7 (same 7)   |
-| `PAGE_CONFIGS`              | `shell-navigation.js` | 7 (same 7)   |
-| `APP_NAV_PAGE_MAP`          | `nav-component.js`    | 8            |
-| `APP_NAV_REACT_ROUTE_MAP`   | `nav-component.js`    | 7            |
-| `APP_NAV_DATA`              | `nav-component.js`    | 5            |
-| `MODULES`                   | `app-plans.js`        | 8            |
+| Structure | File | Pages listed |
+|---|---|---|
+| `BREADCRUMB_CONFIGS` | `shared.js` | 7 |
+| `TOPBAR_BREADCRUMB_CONFIGS` | `topbar-component.js` | 7 (same 7) |
+| `PAGE_CONFIGS` | `shell-navigation.js` | 7 (same 7) |
+| `APP_NAV_PAGE_MAP` | `nav-component.js` | 8 |
+| `APP_NAV_REACT_ROUTE_MAP` | `nav-component.js` | 7 |
+| `APP_NAV_DATA` | `nav-component.js` | 5 |
+| `MODULES` | `app-plans.js` | 8 |
 
 Adding a page means editing up to seven places. `PROJECT_RULES.md` line 15 acknowledges two of
 them ("must be registered in both `nav.json` and the component's page-id map") but not the other five.
 
 ### 3.3 Navigation defined three times — and already drifted
 
-| Source                               | "Supplier Portal" item reads                    |
-| ------------------------------------ | ----------------------------------------------- |
-| `src/data/nav.json`                  | **"SMART Exchange"** ← stale                    |
-| `APP_NAV_DATA` in `nav-component.js` | "Supplier Portal"                               |
-| `MODULES` in `app-plans.js`          | "Supplier Portal" (+ per-plan alias "Payments") |
+| Source | "Supplier Portal" item reads |
+|---|---|
+| `src/data/nav.json` | **"SMART Exchange"** ← stale |
+| `APP_NAV_DATA` in `nav-component.js` | "Supplier Portal" |
+| `MODULES` in `app-plans.js` | "Supplier Portal" (+ per-plan alias "Payments") |
 
 `nav.json` is the file `PROJECT_RULES.md` designates as the source of truth, and it is the one that
 is wrong. It is loaded by nothing at runtime — `nav-component.js` uses its inline copy, and
@@ -331,17 +330,17 @@ business rules and presentation in one function:
 **HTML containing logic.** 1,377 lines of JavaScript live inside `<script>` blocks in onboarding
 pages, in direct violation of `PROJECT_RULES.md` line 66:
 
-| Page                                   | Inline JS lines |
-| -------------------------------------- | --------------: |
-| `onboarding/complete.html`             |             398 |
-| `onboarding/debit-account-info.html`   |             318 |
-| `onboarding/summary.html`              |             142 |
-| `onboarding/confirm-identity.html`     |             116 |
-| `onboarding/instant-virtual-card.html` |              98 |
-| `onboarding/debit-card-details.html`   |              96 |
-| `onboarding/paywall.html`              |              83 |
-| `onboarding/review-documents.html`     |              65 |
-| `onboarding/signature.html`            |              61 |
+| Page | Inline JS lines |
+|---|---:|
+| `onboarding/complete.html` | 398 |
+| `onboarding/debit-account-info.html` | 318 |
+| `onboarding/summary.html` | 142 |
+| `onboarding/confirm-identity.html` | 116 |
+| `onboarding/instant-virtual-card.html` | 98 |
+| `onboarding/debit-card-details.html` | 96 |
+| `onboarding/paywall.html` | 83 |
+| `onboarding/review-documents.html` | 65 |
+| `onboarding/signature.html` | 61 |
 
 One `onclick=` attribute remains in `onboarding/summary.html`, also against rule line 67.
 
@@ -395,10 +394,10 @@ it survives a page navigation, which matters because every navigation is a full 
 
 The only variables in the codebase are runtime CSS custom properties injected by JS for skeletons:
 
-| Variable                                                     | Defined in                  |
-| ------------------------------------------------------------ | --------------------------- |
-| `--ob-skel-bg`, `--ob-skel-bg-strong`, `--ob-skel-radius`    | `onboarding-transitions.js` |
-| `--app-skel-bg`, `--app-skel-strong`, `--app-switch-veil-bg` | `app-switch.js`             |
+| Variable | Defined in |
+|---|---|
+| `--ob-skel-bg`, `--ob-skel-bg-strong`, `--ob-skel-radius` | `onboarding-transitions.js` |
+| `--app-skel-bg`, `--app-skel-strong`, `--app-switch-veil-bg` | `app-switch.js` |
 
 These are the only named design values in the project, and they cover one concern (loading states).
 
@@ -417,15 +416,15 @@ Two gradients share the same stops at different angles, written as separate arbi
 
 ### 4.3 Inconsistent implementations of one visual pattern
 
-| Pattern         | Divergence                                                                                                                                 |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1px grey border | `inset-ring inset-ring-gray-300` / `ring-1 ring-inset ring-gray-300` / `inset-ring-1 inset-ring-gray-300`                                  |
-| Input outline   | `outline-1 …` (v4) vs `outline outline-1 …` (v3)                                                                                           |
-| Button shadow   | `shadow-xs` vs `shadow-sm`                                                                                                                 |
-| Button radius   | `rounded-md` vs `rounded`                                                                                                                  |
-| Focus ring      | `focus-visible:outline-2 focus-visible:outline-offset-2` vs `focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2` |
-| Badge shape     | `rounded-full` (status pills) vs `rounded-sm` (Exceptions, Upgrade, filter count)                                                          |
-| Dark mode       | `dark:bg-white/5` vs `dark:bg-white/10` for the same secondary-button surface                                                              |
+| Pattern | Divergence |
+|---|---|
+| 1px grey border | `inset-ring inset-ring-gray-300` / `ring-1 ring-inset ring-gray-300` / `inset-ring-1 inset-ring-gray-300` |
+| Input outline | `outline-1 …` (v4) vs `outline outline-1 …` (v3) |
+| Button shadow | `shadow-xs` vs `shadow-sm` |
+| Button radius | `rounded-md` vs `rounded` |
+| Focus ring | `focus-visible:outline-2 focus-visible:outline-offset-2` vs `focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2` |
+| Badge shape | `rounded-full` (status pills) vs `rounded-sm` (Exceptions, Upgrade, filter count) |
+| Dark mode | `dark:bg-white/5` vs `dark:bg-white/10` for the same secondary-button surface |
 
 Mixed Tailwind v3 and v4 syntax is the through-line. Both render, so nothing has surfaced as a bug,
 but it means no find-and-replace can safely normalise styling today.
@@ -449,14 +448,14 @@ style is a 37-site edit with no way to verify completeness, and the v3/v4 syntax
 mechanical replacement is unsafe. **This is the single largest obstacle**: nothing else can be
 cleanly extracted while the primitives are literals.
 
-_Evidence:_ §2.2–2.4. Reproduce with the class-clustering script pattern in §2.1.
+*Evidence:* §2.2–2.4. Reproduce with the class-clustering script pattern in §2.1.
 
 ### 5.2 — Two 3,000–7,000-line table engines doing near-identical work
 
 `exchanges-table.js` (7260) and `bills-payables-table.js` (3056) independently implement: row
 rendering, sorting, filtering with faceted panels, pagination, column show/hide, column drag-reorder,
 skeletons, status pills, row expansion, and modals. During this audit's period both required the
-_same_ fix applied twice (Exceptions badge, drag lift, filter count badge, chevron, export icon,
+*same* fix applied twice (Exceptions badge, drag lift, filter count badge, chevron, export icon,
 grip icon — each edited in both files). `payables-pay.js` (5404) repeats a third variant of the
 filter/modal machinery.
 
@@ -478,7 +477,7 @@ reimplements `getState`/`saveState` for the shared `sd-onboarding-state` key. Di
 ### 5.5 — No design tokens, and both styling config files are dead
 
 §4.1. `tailwind.config.js` is not read (CDN build) and `global.css` is imported by nothing. There is
-no place to define a colour or spacing scale, so §5.1 has nowhere to extract _to_. Fixing 5.1
+no place to define a colour or spacing scale, so §5.1 has nowhere to extract *to*. Fixing 5.1
 requires fixing this first.
 
 ### 5.6 — Load-order-dependent globals with no module system
@@ -580,23 +579,23 @@ src/
 
 ### 6.2 What moves where, and why
 
-| From                                                                                                                                         | To                                | Why                                                                                   |
-| -------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------- | ------------------------------------------------------------------------------------- |
-| 83 inline button/input class strings                                                                                                         | `design/ui/button.js`, `input.js` | §5.1. One definition, variants as parameters. Normalise v3→v4 syntax during the move. |
-| Shared logic in `exchanges-table.js` + `bills-payables-table.js`                                                                             | `features/table/*`                | §5.2. Both files keep only their column definitions, data shaping and page wiring.    |
-| `BREADCRUMB_CONFIGS`, `TOPBAR_BREADCRUMB_CONFIGS`, `PAGE_CONFIGS`, `APP_NAV_PAGE_MAP`, `APP_NAV_REACT_ROUTE_MAP`, `APP_NAV_DATA`, `nav.json` | `shell/page-registry.js`          | §5.3. One record per page: id, file, label, breadcrumb, module, react route.          |
-| 1,377 lines of inline `<script>`                                                                                                             | `onboarding/steps/*.js`           | §5.4. Testable, lintable, and rule-compliant.                                         |
-| Six private `getState`/`saveState` pairs                                                                                                     | `onboarding/onboarding-state.js`  | §3.5. One accessor for `sd-onboarding-state`.                                         |
-| 47 raw storage calls                                                                                                                         | `platform/storage.js`             | §5.7. One naming scheme, one migration point.                                         |
-| Pasted inline SVG                                                                                                                            | `design/ui/icon.js`               | Mirrors `react-app/src/components/app/icon-registry.js`, which already solves this.   |
-| Brand gradients (§4.2)                                                                                                                       | `design/tokens.js`                | Two angles of one gradient become one token with a parameter.                         |
+| From | To | Why |
+|---|---|---|
+| 83 inline button/input class strings | `design/ui/button.js`, `input.js` | §5.1. One definition, variants as parameters. Normalise v3→v4 syntax during the move. |
+| Shared logic in `exchanges-table.js` + `bills-payables-table.js` | `features/table/*` | §5.2. Both files keep only their column definitions, data shaping and page wiring. |
+| `BREADCRUMB_CONFIGS`, `TOPBAR_BREADCRUMB_CONFIGS`, `PAGE_CONFIGS`, `APP_NAV_PAGE_MAP`, `APP_NAV_REACT_ROUTE_MAP`, `APP_NAV_DATA`, `nav.json` | `shell/page-registry.js` | §5.3. One record per page: id, file, label, breadcrumb, module, react route. |
+| 1,377 lines of inline `<script>` | `onboarding/steps/*.js` | §5.4. Testable, lintable, and rule-compliant. |
+| Six private `getState`/`saveState` pairs | `onboarding/onboarding-state.js` | §3.5. One accessor for `sd-onboarding-state`. |
+| 47 raw storage calls | `platform/storage.js` | §5.7. One naming scheme, one migration point. |
+| Pasted inline SVG | `design/ui/icon.js` | Mirrors `react-app/src/components/app/icon-registry.js`, which already solves this. |
+| Brand gradients (§4.2) | `design/tokens.js` | Two angles of one gradient become one token with a parameter. |
 
 ### 6.3 Conventions to keep unchanged
 
 - **kebab-case filenames** — consistent today, no reason to touch.
 - **`data-*` attributes as the JS↔markup contract** — already the cleanest seam in the codebase.
 - **`src/data/*.json` shapes** — `react-app/` imports them directly; changing shapes breaks it.
-- **`src/pages/**`URLs** — GitHub Pages links and the Worker's`APP_BASE_URL` depend on them.
+- **`src/pages/**` URLs** — GitHub Pages links and the Worker's `APP_BASE_URL` depend on them.
 - **`DataSource.load()`** — keep as-is; it is already the single read seam and is API-ready.
 - **IIFE + `window.*` namespacing** — keep for now. Moving to ESM is a separate decision with a
   real cost (22 pages of `<script type="module">`, CORS on `file://`), and should not be bundled

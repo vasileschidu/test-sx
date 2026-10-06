@@ -23,11 +23,7 @@
       },
       "documents": [
         { "name": "red_maple_w9.pdf", "size": "1.1mb", "type": "Tax Form" },
-        {
-          "name": "red_maple_bank_letter.pdf",
-          "size": "830kb",
-          "type": "Bank Verification"
-        },
+        { "name": "red_maple_bank_letter.pdf", "size": "830kb", "type": "Bank Verification" },
         { "name": "red_maple_msa.pdf", "size": "2.4mb", "type": "Contract" }
       ],
       "notes": "Primary field contractor for Austin projects. Prefers ACH for standard releases and keeps SMART Exchange enabled for accelerated settlements.",
@@ -71,16 +67,8 @@
         "tinMatchStatus": "Pending"
       },
       "documents": [
-        {
-          "name": "beacon_vendor_packet.pdf",
-          "size": "2.0mb",
-          "type": "Onboarding Packet"
-        },
-        {
-          "name": "beacon_insurance_certificate.pdf",
-          "size": "1.4mb",
-          "type": "Insurance"
-        }
+        { "name": "beacon_vendor_packet.pdf", "size": "2.0mb", "type": "Onboarding Packet" },
+        { "name": "beacon_insurance_certificate.pdf", "size": "1.4mb", "type": "Insurance" }
       ],
       "notes": "Payments are active for approved invoices, but tax verification is still waiting on the updated W-9 from Beacon.",
       "activityLog": [
@@ -119,11 +107,7 @@
       },
       "documents": [
         { "name": "mosaic_w9.pdf", "size": "1.0mb", "type": "Tax Form" },
-        {
-          "name": "mosaic_exchange_enrollment.pdf",
-          "size": "920kb",
-          "type": "Enrollment"
-        }
+        { "name": "mosaic_exchange_enrollment.pdf", "size": "920kb", "type": "Enrollment" }
       ],
       "notes": "Mosaic is enabled for SMART Exchange and uses it for rush settlement windows tied to campaign print runs.",
       "activityLog": [
@@ -162,11 +146,7 @@
       },
       "documents": [
         { "name": "sierra_w9.pdf", "size": "980kb", "type": "Tax Form" },
-        {
-          "name": "sierra_catalog_agreement.pdf",
-          "size": "1.8mb",
-          "type": "Contract"
-        }
+        { "name": "sierra_catalog_agreement.pdf", "size": "1.8mb", "type": "Contract" }
       ],
       "notes": "Office supply vendor for recurring branch replenishment. ACH remains the preferred default for scheduled releases.",
       "activityLog": [
@@ -205,16 +185,8 @@
       },
       "documents": [
         { "name": "technova_w9.pdf", "size": "1.2mb", "type": "Tax Form" },
-        {
-          "name": "technova_security_addendum.pdf",
-          "size": "2.6mb",
-          "type": "Compliance"
-        },
-        {
-          "name": "technova_bank_confirmation.pdf",
-          "size": "910kb",
-          "type": "Bank Verification"
-        }
+        { "name": "technova_security_addendum.pdf", "size": "2.6mb", "type": "Compliance" },
+        { "name": "technova_bank_confirmation.pdf", "size": "910kb", "type": "Bank Verification" }
       ],
       "notes": "Recent exception activity is tied to approval holds on high-value invoices. Vendor data remains verified, but releases require treasury review.",
       "activityLog": [
@@ -253,16 +225,8 @@
       },
       "documents": [
         { "name": "urban_pulse_w9.pdf", "size": "1.1mb", "type": "Tax Form" },
-        {
-          "name": "urban_pulse_statement_of_work.pdf",
-          "size": "1.9mb",
-          "type": "Contract"
-        },
-        {
-          "name": "urban_pulse_creative_msa.pdf",
-          "size": "2.3mb",
-          "type": "Contract"
-        }
+        { "name": "urban_pulse_statement_of_work.pdf", "size": "1.9mb", "type": "Contract" },
+        { "name": "urban_pulse_creative_msa.pdf", "size": "2.3mb", "type": "Contract" }
       ],
       "notes": "Marketing spend is frequently settled by card for campaign timing. Remittance notifications go to Olivia Chen and the AP inbox.",
       "activityLog": [

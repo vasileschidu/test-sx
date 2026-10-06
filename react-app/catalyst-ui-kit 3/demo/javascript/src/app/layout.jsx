@@ -1,12 +1,12 @@
-import "@/styles/tailwind.css";
+import '@/styles/tailwind.css'
 
 export const metadata = {
   title: {
-    template: "%s - Catalyst",
-    default: "Catalyst",
+    template: '%s - Catalyst',
+    default: 'Catalyst',
   },
-  description: "",
-};
+  description: '',
+}
 
 export default async function RootLayout({ children }) {
   return (
@@ -20,5 +20,5 @@ export default async function RootLayout({ children }) {
       </head>
       <body>{children}</body>
     </html>
-  );
+  )
 }

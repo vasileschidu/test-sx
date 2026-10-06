@@ -1,5 +1,4 @@
 # PROJECT_RULES.md
-
 ## SMART Exchange Dashboard — Architectural Rules
 
 All contributors and AI agents MUST follow these rules. Every change must respect and reinforce them.
@@ -17,7 +16,6 @@ If a rule conflicts with existing code, **refactor the code to match the rule**.
 - Onboarding pages have their own static stepper sidebar and are **exempt** from `<app-nav>`.
 
 ### Adding a new dashboard page:
-
 1. Add an entry to `src/data/nav.json`.
 2. Update the `APP_NAV_DATA` constant in `src/scripts/nav-component.js` to match.
 3. Add its filename → nav-id mapping to `_getActiveId()` in the component.
@@ -40,7 +38,6 @@ If a rule conflicts with existing code, **refactor the code to match the rule**.
 - The UI must render from these JSON files; never duplicate data between JSON and HTML.
 
 ### validateData() requirement:
-
 Each data-loading module must call a lightweight `validateData(data, requiredFields)` function before rendering. Fail gracefully (show an error state in the UI, log to console) if data is missing or malformed.
 
 ---
@@ -85,7 +82,6 @@ Each data-loading module must call a lightweight `validateData(data, requiredFie
 - No global namespace pollution beyond what is strictly necessary (e.g., `toggleRow`, `toggleExpandableItem`, `toggleSmartExchangeSubmenu` must remain global for sidebar interop).
 
 ### Script loading order (dashboard pages):
-
 ```html
 <!-- 1. nav-component.js must come BEFORE sidebar.js so the nav HTML exists when sidebar.js runs -->
 <script src="nav-component.js" defer></script>
@@ -95,7 +91,6 @@ Each data-loading module must call a lightweight `validateData(data, requiredFie
 ```
 
 ### Known tech debt (inline scripts to extract):
-
 - `payment-preferences.html` contains a large inline script (~2137 lines) with payment-data loading and card-formatting logic. Target: `src/scripts/payment-preferences-init.js`.
 - `my-company-profile.html` contains an inline script (~360 lines) for the business-info form editor. Target: `src/scripts/my-company-profile-init.js`.
 - These are prioritized in the next refactoring cycle.
@@ -114,17 +109,17 @@ Each data-loading module must call a lightweight `validateData(data, requiredFie
 
 ## 7. Naming Conventions
 
-| Concern         | Convention                        | Example                              |
-| --------------- | --------------------------------- | ------------------------------------ |
-| HTML files      | kebab-case                        | `smart-exchange.html`                |
-| JS files        | kebab-case                        | `nav-component.js`                   |
-| JSON files      | kebab-case                        | `bank-accounts.json`                 |
-| CSS classes     | Tailwind utility classes only     | `flex items-center gap-3`            |
-| JS functions    | camelCase                         | `initThemeToggle()`                  |
-| JS constants    | UPPER_SNAKE for module-level data | `APP_NAV_DATA`                       |
-| Data keys       | camelCase                         | `vendorEntry`, `dateInitiated`       |
-| DOM IDs         | kebab-case                        | `desktop-sidebar-shell`              |
-| Data attributes | kebab-case                        | `data-nav="desktop"`, `data-copy-id` |
+| Concern | Convention | Example |
+|---------|------------|---------|
+| HTML files | kebab-case | `smart-exchange.html` |
+| JS files | kebab-case | `nav-component.js` |
+| JSON files | kebab-case | `bank-accounts.json` |
+| CSS classes | Tailwind utility classes only | `flex items-center gap-3` |
+| JS functions | camelCase | `initThemeToggle()` |
+| JS constants | UPPER_SNAKE for module-level data | `APP_NAV_DATA` |
+| Data keys | camelCase | `vendorEntry`, `dateInitiated` |
+| DOM IDs | kebab-case | `desktop-sidebar-shell` |
+| Data attributes | kebab-case | `data-nav="desktop"`, `data-copy-id` |
 
 ---
 
@@ -165,24 +160,23 @@ Each data-loading module must call a lightweight `validateData(data, requiredFie
 
 ## 9. Prohibited Patterns
 
-| ❌ Prohibited                                  | ✅ Required instead                       |
-| ---------------------------------------------- | ----------------------------------------- |
-| Duplicated sidebar HTML across pages           | `<app-nav></app-nav>`                     |
-| `onclick="fn()"` in HTML attributes            | `el.addEventListener('click', fn)`        |
-| `<script>` blocks in `<body>`                  | External `.js` file with `defer`          |
-| Hardcoded names/amounts/addresses in HTML      | Render from JSON data                     |
-| Mixing `dark:` and non-`dark:` on same element | Always pair them                          |
-| `style="..."` attribute on any element         | Tailwind classes only                     |
-| `@apply` in CSS                                | Tailwind utility classes directly in HTML |
-| Separate nav markup per page                   | Single `<app-nav>` component              |
-| Copying a function from one JS file to another | Import / shared module                    |
+| ❌ Prohibited | ✅ Required instead |
+|--------------|-------------------|
+| Duplicated sidebar HTML across pages | `<app-nav></app-nav>` |
+| `onclick="fn()"` in HTML attributes | `el.addEventListener('click', fn)` |
+| `<script>` blocks in `<body>` | External `.js` file with `defer` |
+| Hardcoded names/amounts/addresses in HTML | Render from JSON data |
+| Mixing `dark:` and non-`dark:` on same element | Always pair them |
+| `style="..."` attribute on any element | Tailwind classes only |
+| `@apply` in CSS | Tailwind utility classes directly in HTML |
+| Separate nav markup per page | Single `<app-nav>` component |
+| Copying a function from one JS file to another | Import / shared module |
 
 ---
 
 ## 10. No Build Step Policy
 
 This project runs directly in the browser using Tailwind CDN (`@tailwindcss/browser@4`).
-
 - No bundlers, transpilers, or build tools.
 - No ES module `import/export` syntax (use `const` / global scope with IIFE where needed).
 - Web Components use the custom elements v1 API (light DOM, no shadow root) so Tailwind CDN can detect and apply classes via MutationObserver.

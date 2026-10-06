@@ -4,28 +4,22 @@
  */
 
 (function () {
-  "use strict";
+  'use strict';
 
-  var JSON_PATH_FALLBACKS =
-    window.__BP_JSON_PATHS && window.__BP_JSON_PATHS.length
-      ? window.__BP_JSON_PATHS
-      : [
-          "../../../src/data/bills-payables.json",
-          "/src/data/bills-payables.json",
-          "./src/data/bills-payables.json",
-        ];
-  var PAYEES_PATH_FALLBACKS =
-    window.__BP_PAYEES_PATHS && window.__BP_PAYEES_PATHS.length
-      ? window.__BP_PAYEES_PATHS
-      : [
-          "../../../src/data/payees.json",
-          "/src/data/payees.json",
-          "./src/data/payees.json",
-        ];
-  var PAYABLE_ROW_OVERRIDES_STORAGE_KEY = "bp-row-overrides-v1";
-  var PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY = "bp-pay-page-view-context-v1";
-  var ORIGINATION_ACCOUNTS_STORAGE_KEY = "bp-origination-accounts-v1";
-  var SMART_DISBURSE_PENDING_STATUS_LABEL = "Pending Payee Action";
+  var JSON_PATH_FALLBACKS = (window.__BP_JSON_PATHS && window.__BP_JSON_PATHS.length ? window.__BP_JSON_PATHS : [
+    '../../../src/data/bills-payables.json',
+    '/src/data/bills-payables.json',
+    './src/data/bills-payables.json',
+  ]);
+  var PAYEES_PATH_FALLBACKS = (window.__BP_PAYEES_PATHS && window.__BP_PAYEES_PATHS.length ? window.__BP_PAYEES_PATHS : [
+    '../../../src/data/payees.json',
+    '/src/data/payees.json',
+    './src/data/payees.json',
+  ]);
+  var PAYABLE_ROW_OVERRIDES_STORAGE_KEY = 'bp-row-overrides-v1';
+  var PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY = 'bp-pay-page-view-context-v1';
+  var ORIGINATION_ACCOUNTS_STORAGE_KEY = 'bp-origination-accounts-v1';
+  var SMART_DISBURSE_PENDING_STATUS_LABEL = 'Pending Payee Action';
 
   var DEFAULT_PAGE_SIZE = 16;
   var PAGE_SIZE_OPTIONS = [10, 16, 25, 50];
@@ -37,88 +31,83 @@
   var FILTER_APPLY_SKELETON_MAX_MS = 400;
 
   var TAB_LABELS = {
-    ready_to_pay: "Ready to Pay",
-    in_progress: "In Progress",
-    paid: "Paid",
-    exception: "Exceptions",
+    ready_to_pay: 'Ready to Pay',
+    in_progress: 'In Progress',
+    paid: 'Paid',
+    exception: 'Exceptions',
   };
 
   var STATUS_LABELS = {
-    ready_to_pay: "Ready to Pay",
-    in_progress: "In Progress",
-    paid: "Paid",
-    exception: "Exception",
+    ready_to_pay: 'Ready to Pay',
+    in_progress: 'In Progress',
+    paid: 'Paid',
+    exception: 'Exception',
   };
 
   function normalizeTabKey(tabKey) {
-    var key = String(tabKey || "").trim();
-    if (key === "exceptions") return "exception";
-    return Object.prototype.hasOwnProperty.call(TAB_LABELS, key)
-      ? key
-      : "ready_to_pay";
+    var key = String(tabKey || '').trim();
+    if (key === 'exceptions') return 'exception';
+    return Object.prototype.hasOwnProperty.call(TAB_LABELS, key) ? key : 'ready_to_pay';
   }
 
   var STATUS_STYLES = {
-    ready_to_pay: "bg-gray-50 text-gray-600 inset-ring-gray-500/10",
+    ready_to_pay:
+      'bg-gray-50 text-gray-600 inset-ring-gray-500/10',
     in_progress:
-      "bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30",
+      'bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30',
     scheduled:
-      "bg-gray-100 text-gray-700 inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-300 dark:inset-ring-white/15",
-    paid: "bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20",
+      'bg-gray-100 text-gray-700 inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-300 dark:inset-ring-white/15',
+    paid:
+      'bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20',
     exception:
-      "bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20",
+      'bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20',
   };
 
-  var ACTIVE_TAB_LINK_CLASSES = [
-    "bg-blue-100",
-    "text-blue-700",
-    "dark:bg-blue-500/20",
-    "dark:text-blue-300",
-  ];
-  var INACTIVE_TAB_LINK_CLASSES = ["text-gray-500", "dark:text-gray-400"];
+  var ACTIVE_TAB_LINK_CLASSES = ['bg-blue-100', 'text-blue-700', 'dark:bg-blue-500/20', 'dark:text-blue-300'];
+  var INACTIVE_TAB_LINK_CLASSES = ['text-gray-500', 'dark:text-gray-400'];
   var ACTIVE_BADGE_CLASSES = [
-    "bg-blue-50",
-    "text-blue-700",
-    "inset-ring-blue-700/10",
-    "dark:bg-blue-400/10",
-    "dark:text-blue-400",
-    "dark:inset-ring-blue-400/30",
+    'bg-blue-50',
+    'text-blue-700',
+    'inset-ring-blue-700/10',
+    'dark:bg-blue-400/10',
+    'dark:text-blue-400',
+    'dark:inset-ring-blue-400/30',
   ];
   var INACTIVE_BADGE_CLASSES = [
-    "bg-gray-50",
-    "text-gray-600",
-    "inset-ring-gray-500/10",
-    "dark:bg-gray-400/10",
-    "dark:text-gray-400",
-    "dark:inset-ring-gray-400/20",
+    'bg-gray-50',
+    'text-gray-600',
+    'inset-ring-gray-500/10',
+    'dark:bg-gray-400/10',
+    'dark:text-gray-400',
+    'dark:inset-ring-gray-400/20',
   ];
 
   var state = {
     allRows: [],
     columns: [],
-    activeTab: "ready_to_pay",
-    search: "",
+    activeTab: 'ready_to_pay',
+    search: '',
     selectedSources: new Set(),
     selectedStatuses: new Set(),
     selectedMethods: new Set(),
     selectedFailureReasons: new Set(),
-    initiatedDateFrom: "",
-    initiatedDateTo: "",
-    initiatedDateFromDraft: "",
-    initiatedDateToDraft: "",
-    initiatedDateActiveField: "from",
+    initiatedDateFrom: '',
+    initiatedDateTo: '',
+    initiatedDateFromDraft: '',
+    initiatedDateToDraft: '',
+    initiatedDateActiveField: 'from',
     filterMenuOpen: false,
-    activeFilterPanel: "source",
+    activeFilterPanel: 'source',
     appliedSelectedSources: new Set(),
     appliedSelectedStatuses: new Set(),
     appliedSelectedMethods: new Set(),
     appliedSelectedFailureReasons: new Set(),
-    appliedInitiatedDateFrom: "",
-    appliedInitiatedDateTo: "",
+    appliedInitiatedDateFrom: '',
+    appliedInitiatedDateTo: '',
     selectedRowIds: new Set(),
     expandedRows: new Set(),
-    sortKey: "",
-    sortDirection: "",
+    sortKey: '',
+    sortDirection: '',
     currentPage: 1,
     pageSize: DEFAULT_PAGE_SIZE,
     isTabLoading: false,
@@ -147,70 +136,39 @@
   var filterDismissHandler = null;
   var filterResizeHandler = null;
   var refreshHalfTurns = 0;
-  var pendingScheduleCancelId = "";
-  var pendingRerunId = "";
-  var draggingColumnKey = "";
-  var ICON_SORT =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-70" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-70" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var ICON_SORT_ASC =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path transform="translate(10 5.6) scale(1.2) translate(-10 -5.6)" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-40" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var ICON_SORT_DESC =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-40" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path transform="translate(10 14.4) scale(1.2) translate(-10 -14.4)" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var ICON_CHEVRON_DOWN =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var ICON_SCHEDULED =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg>';
-  var ICON_ACH =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400 shrink-0"><path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" /></svg>';
-  var ICON_SMART_DISBURSE =
-    '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#406AFF"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#406AFF"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#406AFF"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#406AFF"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#406AFF"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>';
-  var ICON_SMART_EXCHANGE =
-    '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#F5B842"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#F5B842"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#F5B842"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#F5B842"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#F5B842"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>';
+  var pendingScheduleCancelId = '';
+  var pendingRerunId = '';
+  var draggingColumnKey = '';
+  var ICON_SORT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-70" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-70" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+  var ICON_SORT_ASC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path transform="translate(10 5.6) scale(1.2) translate(-10 -5.6)" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-40" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+  var ICON_SORT_DESC = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-40" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path transform="translate(10 14.4) scale(1.2) translate(-10 -14.4)" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+  var ICON_CHEVRON_DOWN = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+  var ICON_SCHEDULED = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg>';
+  var ICON_ACH = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400 shrink-0"><path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" /></svg>';
+  var ICON_SMART_DISBURSE = '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#406AFF"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#406AFF"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#406AFF"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#406AFF"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#406AFF"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>';
+  var ICON_SMART_EXCHANGE = '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#F5B842"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#F5B842"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#F5B842"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#F5B842"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#F5B842"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>';
 
   function getTodayIsoDate() {
     var now = new Date();
-    var localMidnight = new Date(
-      now.getFullYear(),
-      now.getMonth(),
-      now.getDate(),
-    );
+    var localMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     var year = localMidnight.getFullYear();
-    var month = String(localMidnight.getMonth() + 1).padStart(2, "0");
-    var day = String(localMidnight.getDate()).padStart(2, "0");
-    return year + "-" + month + "-" + day;
+    var month = String(localMidnight.getMonth() + 1).padStart(2, '0');
+    var day = String(localMidnight.getDate()).padStart(2, '0');
+    return year + '-' + month + '-' + day;
   }
 
   function normalizeOriginationAccounts(payload) {
-    var list = Array.isArray(payload)
-      ? payload
-      : payload && Array.isArray(payload.data)
-        ? payload.data
-        : [];
+    var list = Array.isArray(payload) ? payload : ((payload && Array.isArray(payload.data)) ? payload.data : []);
     var fallbackBalances = [184250, 96740, 128500, 75200];
     return list.map(function (account, idx) {
       var next = cloneJson(account) || {};
-      next.id = String(
-        next.id || "origination_" + String(idx + 1).padStart(3, "0"),
-      );
-      next.displayName = String(
-        next.displayName ||
-          next.bankName ||
-          next.name ||
-          "Origination Account " + (idx + 1),
-      );
-      next.name = String(
-        next.name || next.displayName || next.bankName || "Origination Account",
-      );
-      next.bankName = String(
-        next.bankName || next.displayName || next.name || "Bank Account",
-      );
-      next.accountType = String(next.accountType || next.type || "origination");
-      next.currency = String(next.currency || "USD");
-      next.availableAmount = Number(
-        next.availableAmount != null
-          ? next.availableAmount
-          : fallbackBalances[idx % fallbackBalances.length],
-      );
+      next.id = String(next.id || ('origination_' + String(idx + 1).padStart(3, '0')));
+      next.displayName = String(next.displayName || next.bankName || next.name || ('Origination Account ' + (idx + 1)));
+      next.name = String(next.name || next.displayName || next.bankName || 'Origination Account');
+      next.bankName = String(next.bankName || next.displayName || next.name || 'Bank Account');
+      next.accountType = String(next.accountType || next.type || 'origination');
+      next.currency = String(next.currency || 'USD');
+      next.availableAmount = Number(next.availableAmount != null ? next.availableAmount : fallbackBalances[idx % fallbackBalances.length]);
       return next;
     });
   }
@@ -227,32 +185,22 @@
 
   function persistOriginationAccounts(accounts) {
     try {
-      window.localStorage.setItem(
-        ORIGINATION_ACCOUNTS_STORAGE_KEY,
-        JSON.stringify(normalizeOriginationAccounts(accounts)),
-      );
+      window.localStorage.setItem(ORIGINATION_ACCOUNTS_STORAGE_KEY, JSON.stringify(normalizeOriginationAccounts(accounts)));
     } catch (err) {
       // Ignore storage failures.
     }
   }
 
   function isPendingSmartDisburseRow(row) {
-    return (
-      !!row &&
-      String(row.status || "").toLowerCase() === "in_progress" &&
-      String(row.statusType || "").toLowerCase() === "smart_disburse_pending"
-    );
+    return !!row
+      && String(row.status || '').toLowerCase() === 'in_progress'
+      && String(row.statusType || '').toLowerCase() === 'smart_disburse_pending';
   }
 
   function reversePendingSmartDisburseFunds(row) {
     if (!isPendingSmartDisburseRow(row)) return;
-    var payPageState =
-      row && row.details && row.details.payPageState
-        ? row.details.payPageState
-        : null;
-    var originationAccountId = String(
-      (payPageState && payPageState.originationAccountId) || "",
-    ).trim();
+    var payPageState = row && row.details && row.details.payPageState ? row.details.payPageState : null;
+    var originationAccountId = String((payPageState && payPageState.originationAccountId) || '').trim();
     if (!originationAccountId) return;
     var amount = Number((row && row.amount) || 0);
     if (!(amount > 0)) return;
@@ -261,30 +209,21 @@
     if (!accounts.length) return;
     var balanceAccount = null;
     for (var i = 0; i < accounts.length; i += 1) {
-      if (
-        String(accounts[i].accountType || "").toLowerCase() ===
-        "balance_account"
-      ) {
+      if (String(accounts[i].accountType || '').toLowerCase() === 'balance_account') {
         balanceAccount = accounts[i];
         break;
       }
     }
 
     var updatedAccounts = accounts.map(function (account) {
-      if (
-        balanceAccount &&
-        String(account.id || "") === String(balanceAccount.id || "")
-      ) {
+      if (balanceAccount && String(account.id || '') === String(balanceAccount.id || '')) {
         return Object.assign({}, account, {
-          availableAmount: Math.max(
-            0,
-            Number(account.availableAmount || 0) - amount,
-          ),
+          availableAmount: Math.max(0, Number(account.availableAmount || 0) - amount)
         });
       }
-      if (String(account.id || "") === originationAccountId) {
+      if (String(account.id || '') === originationAccountId) {
         return Object.assign({}, account, {
-          availableAmount: Number(account.availableAmount || 0) + amount,
+          availableAmount: Number(account.availableAmount || 0) + amount
         });
       }
       return account;
@@ -294,143 +233,97 @@
   }
 
   function isPastDue(dueDate) {
-    var normalized = String(dueDate || "").slice(0, 10);
+    var normalized = String(dueDate || '').slice(0, 10);
     return !!normalized && normalized < getTodayIsoDate();
   }
-  var ICON_VISA =
-    '<svg class="size-5 shrink-0 rounded-md" height="20" width="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h32v32H0z" fill="#00579f"></path><g fill="#fff" fill-rule="nonzero"><path d="M13.823 19.876H11.8l1.265-7.736h2.023zm7.334-7.546a5.036 5.036 0 0 0-1.814-.33c-1.998 0-3.405 1.053-3.414 2.56-.016 1.11 1.007 1.728 1.773 2.098.783.379 1.05.626 1.05.963-.009.518-.633.757-1.216.757-.808 0-1.24-.123-1.898-.411l-.267-.124-.283 1.737c.475.213 1.349.403 2.257.411 2.123 0 3.505-1.037 3.521-2.641.008-.881-.532-1.556-1.698-2.107-.708-.354-1.141-.593-1.141-.955.008-.33.366-.667 1.165-.667a3.471 3.471 0 0 1 1.507.297l.183.082zm2.69 4.806.807-2.165c-.008.017.167-.452.266-.74l.142.666s.383 1.852.466 2.239h-1.682zm2.497-4.996h-1.565c-.483 0-.85.14-1.058.642l-3.005 7.094h2.123l.425-1.16h2.597c.059.271.242 1.16.242 1.16h1.873zm-16.234 0-1.982 5.275-.216-1.07c-.366-1.234-1.515-2.575-2.797-3.242l1.815 6.765h2.14l3.18-7.728z"></path><path d="M6.289 12.14H3.033L3 12.297c2.54.641 4.221 2.189 4.912 4.049l-.708-3.556c-.116-.494-.474-.633-.915-.65z"></path></g></g></svg>';
-  var mastercardSymbolUrl =
-    (window.__BP_ASSET_URLS && window.__BP_ASSET_URLS.mastercardSymbol) ||
-    "../../../src/assets/illustrations/ma_symbol.svg";
-  var ICON_MASTERCARD =
-    '<img src="' +
-    mastercardSymbolUrl +
-    '" alt="Mastercard" class="size-5 shrink-0" />';
-  var ICON_COPY =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>';
-  var ICON_EYE =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-blue-600"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" /></svg>';
-  var ICON_EYE_SLASH =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 text-blue-600"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.28033 2.21967C2.98744 1.92678 2.51256 1.92678 2.21967 2.21967C1.92678 2.51256 1.92678 2.98744 2.21967 3.28033L12.7197 13.7803C13.0126 14.0732 13.4874 14.0732 13.7803 13.7803C14.0732 13.4874 14.0732 13.0126 13.7803 12.7197L12.4577 11.397C13.438 10.5863 14.1937 9.51366 14.6176 8.2863C14.681 8.10274 14.6811 7.90313 14.6179 7.71951C13.672 4.97316 11.0653 3 7.99777 3C6.85414 3 5.77457 3.27425 4.82123 3.76057L3.28033 2.21967Z" /><path d="M6.47602 5.41536L7.61147 6.55081C7.73539 6.51767 7.86563 6.5 8 6.5C8.82843 6.5 9.5 7.17157 9.5 8C9.5 8.13437 9.48233 8.26461 9.44919 8.38853L10.5846 9.52398C10.8486 9.07734 11 8.55636 11 8C11 6.34315 9.65685 5 8 5C7.44364 5 6.92266 5.15145 6.47602 5.41536Z" /><path d="M7.81206 10.9942L9.62754 12.8097C9.10513 12.9341 8.56002 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C1.63675 6.96935 2.01588 6.28191 2.49314 5.67529L5.00579 8.18794C5.09895 9.69509 6.30491 10.901 7.81206 10.9942Z" /></svg>';
-  var ICON_EXPAND_RIGHT =
-    '<svg class="size-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>';
+  var ICON_VISA = '<svg class="size-5 shrink-0 rounded-md" height="20" width="20" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><g fill="none" fill-rule="evenodd"><path d="M0 0h32v32H0z" fill="#00579f"></path><g fill="#fff" fill-rule="nonzero"><path d="M13.823 19.876H11.8l1.265-7.736h2.023zm7.334-7.546a5.036 5.036 0 0 0-1.814-.33c-1.998 0-3.405 1.053-3.414 2.56-.016 1.11 1.007 1.728 1.773 2.098.783.379 1.05.626 1.05.963-.009.518-.633.757-1.216.757-.808 0-1.24-.123-1.898-.411l-.267-.124-.283 1.737c.475.213 1.349.403 2.257.411 2.123 0 3.505-1.037 3.521-2.641.008-.881-.532-1.556-1.698-2.107-.708-.354-1.141-.593-1.141-.955.008-.33.366-.667 1.165-.667a3.471 3.471 0 0 1 1.507.297l.183.082zm2.69 4.806.807-2.165c-.008.017.167-.452.266-.74l.142.666s.383 1.852.466 2.239h-1.682zm2.497-4.996h-1.565c-.483 0-.85.14-1.058.642l-3.005 7.094h2.123l.425-1.16h2.597c.059.271.242 1.16.242 1.16h1.873zm-16.234 0-1.982 5.275-.216-1.07c-.366-1.234-1.515-2.575-2.797-3.242l1.815 6.765h2.14l3.18-7.728z"></path><path d="M6.289 12.14H3.033L3 12.297c2.54.641 4.221 2.189 4.912 4.049l-.708-3.556c-.116-.494-.474-.633-.915-.65z"></path></g></g></svg>';
+  var mastercardSymbolUrl = (window.__BP_ASSET_URLS && window.__BP_ASSET_URLS.mastercardSymbol) || '../../../src/assets/illustrations/ma_symbol.svg';
+  var ICON_MASTERCARD = '<img src="' + mastercardSymbolUrl + '" alt="Mastercard" class="size-5 shrink-0" />';
+  var ICON_COPY = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>';
+  var ICON_EYE = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-blue-600"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" /></svg>';
+  var ICON_EYE_SLASH = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 text-blue-600"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.28033 2.21967C2.98744 1.92678 2.51256 1.92678 2.21967 2.21967C1.92678 2.51256 1.92678 2.98744 2.21967 3.28033L12.7197 13.7803C13.0126 14.0732 13.4874 14.0732 13.7803 13.7803C14.0732 13.4874 14.0732 13.0126 13.7803 12.7197L12.4577 11.397C13.438 10.5863 14.1937 9.51366 14.6176 8.2863C14.681 8.10274 14.6811 7.90313 14.6179 7.71951C13.672 4.97316 11.0653 3 7.99777 3C6.85414 3 5.77457 3.27425 4.82123 3.76057L3.28033 2.21967Z" /><path d="M6.47602 5.41536L7.61147 6.55081C7.73539 6.51767 7.86563 6.5 8 6.5C8.82843 6.5 9.5 7.17157 9.5 8C9.5 8.13437 9.48233 8.26461 9.44919 8.38853L10.5846 9.52398C10.8486 9.07734 11 8.55636 11 8C11 6.34315 9.65685 5 8 5C7.44364 5 6.92266 5.15145 6.47602 5.41536Z" /><path d="M7.81206 10.9942L9.62754 12.8097C9.10513 12.9341 8.56002 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C1.63675 6.96935 2.01588 6.28191 2.49314 5.67529L5.00579 8.18794C5.09895 9.69509 6.30491 10.901 7.81206 10.9942Z" /></svg>';
+  var ICON_EXPAND_RIGHT = '<svg class="size-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>';
   var paymentInfoCopyIdCounter = 0;
 
   function initRefs() {
-    refs.table = document.getElementById("bills-payables-table");
-    refs.pagination = document.querySelector("[data-pagination]");
-    refs.searchInput = document.getElementById("bp-search-input");
-    refs.refreshBtn = document.getElementById("bp-refresh-btn");
-    refs.exportBtn = document.getElementById("bp-export-btn");
-    refs.tabNav = document.getElementById("bp-tab-nav");
-    refs.tabSelect = document.getElementById("bp-tab-select");
+    refs.table = document.getElementById('bills-payables-table');
+    refs.pagination = document.querySelector('[data-pagination]');
+    refs.searchInput = document.getElementById('bp-search-input');
+    refs.refreshBtn = document.getElementById('bp-refresh-btn');
+    refs.exportBtn = document.getElementById('bp-export-btn');
+    refs.tabNav = document.getElementById('bp-tab-nav');
+    refs.tabSelect = document.getElementById('bp-tab-select');
 
-    refs.filterDropdown = document.getElementById("bp-table-filter-dropdown");
-    refs.filterBtn = document.getElementById("bp-table-filter-btn");
-    refs.filterMenu = document.getElementById("bp-table-filter-menu");
-    refs.filterTrack = document.getElementById("bp-table-filter-track");
-    refs.filterRootPanel = document.getElementById(
-      "bp-table-filter-panel-root",
-    );
-    refs.filterDetailSlot = document.getElementById(
-      "bp-table-filter-detail-slot",
-    );
-    refs.filterSourcePanel = document.getElementById(
-      "bp-table-filter-panel-source",
-    );
-    refs.filterStatusPanel = document.getElementById(
-      "bp-table-filter-panel-status",
-    );
-    refs.filterMethodPanel = document.getElementById(
-      "bp-table-filter-panel-method",
-    );
-    refs.filterFailureReasonPanel = document.getElementById(
-      "bp-table-filter-panel-failure-reason",
-    );
-    refs.filterInitiatedDatePanel = document.getElementById(
-      "bp-table-filter-panel-initiated-date",
-    );
-    refs.filterSourcesWrap = document.getElementById("bp-table-filter-sources");
-    refs.filterStatusesWrap = document.getElementById(
-      "bp-table-filter-statuses",
-    );
-    refs.filterMethodsWrap = document.getElementById("bp-table-filter-methods");
-    refs.filterFailureReasonsWrap = document.getElementById(
-      "bp-table-filter-failure-reasons",
-    );
-    refs.filterDateFromInput = document.getElementById(
-      "bp-table-filter-date-from-input",
-    );
-    refs.filterDateToInput = document.getElementById(
-      "bp-table-filter-date-to-input",
-    );
-    refs.filterClearBtn = document.getElementById("bp-table-filter-clear-btn");
-    refs.filterApplyActiveBtn = document.getElementById(
-      "bp-table-filter-apply-active-btn",
-    );
-    refs.filterBackdrop = document.getElementById("bp-table-filter-backdrop");
-    refs.activeFilters = document.getElementById("bp-table-active-filters");
-    refs.filterCountBadges = Array.from(
-      document.querySelectorAll("[data-filter-count-badge]"),
-    );
-    refs.manageColumnsBtn = document.getElementById("bp-manage-columns-btn");
-    refs.manageColumnsDialog = document.getElementById(
-      "bp-manage-columns-dialog",
-    );
-    refs.manageColumnsList = document.getElementById("bp-manage-columns-list");
-    refs.manageColumnsApplyBtn = document.getElementById(
-      "bp-manage-columns-apply-btn",
-    );
-    refs.manageColumnsResetBtn = document.getElementById(
-      "bp-manage-columns-reset-btn",
-    );
+    refs.filterDropdown = document.getElementById('bp-table-filter-dropdown');
+    refs.filterBtn = document.getElementById('bp-table-filter-btn');
+    refs.filterMenu = document.getElementById('bp-table-filter-menu');
+    refs.filterTrack = document.getElementById('bp-table-filter-track');
+    refs.filterRootPanel = document.getElementById('bp-table-filter-panel-root');
+    refs.filterDetailSlot = document.getElementById('bp-table-filter-detail-slot');
+    refs.filterSourcePanel = document.getElementById('bp-table-filter-panel-source');
+    refs.filterStatusPanel = document.getElementById('bp-table-filter-panel-status');
+    refs.filterMethodPanel = document.getElementById('bp-table-filter-panel-method');
+    refs.filterFailureReasonPanel = document.getElementById('bp-table-filter-panel-failure-reason');
+    refs.filterInitiatedDatePanel = document.getElementById('bp-table-filter-panel-initiated-date');
+    refs.filterSourcesWrap = document.getElementById('bp-table-filter-sources');
+    refs.filterStatusesWrap = document.getElementById('bp-table-filter-statuses');
+    refs.filterMethodsWrap = document.getElementById('bp-table-filter-methods');
+    refs.filterFailureReasonsWrap = document.getElementById('bp-table-filter-failure-reasons');
+    refs.filterDateFromInput = document.getElementById('bp-table-filter-date-from-input');
+    refs.filterDateToInput = document.getElementById('bp-table-filter-date-to-input');
+    refs.filterClearBtn = document.getElementById('bp-table-filter-clear-btn');
+    refs.filterApplyActiveBtn = document.getElementById('bp-table-filter-apply-active-btn');
+    refs.filterBackdrop = document.getElementById('bp-table-filter-backdrop');
+    refs.activeFilters = document.getElementById('bp-table-active-filters');
+    refs.filterCountBadges = Array.from(document.querySelectorAll('[data-filter-count-badge]'));
+    refs.manageColumnsBtn = document.getElementById('bp-manage-columns-btn');
+    refs.manageColumnsDialog = document.getElementById('bp-manage-columns-dialog');
+    refs.manageColumnsList = document.getElementById('bp-manage-columns-list');
+    refs.manageColumnsApplyBtn = document.getElementById('bp-manage-columns-apply-btn');
+    refs.manageColumnsResetBtn = document.getElementById('bp-manage-columns-reset-btn');
   }
 
   function formatMoney(amount, currency) {
-    return new Intl.NumberFormat("en-US", {
-      style: "currency",
-      currency: currency || "USD",
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currency || 'USD',
       minimumFractionDigits: 2,
       maximumFractionDigits: 2,
     }).format(Number(amount || 0));
   }
 
   function formatDate(value) {
-    if (!value) return "--";
-    var date = new Date(value + "T00:00:00");
+    if (!value) return '--';
+    var date = new Date(value + 'T00:00:00');
     if (isNaN(date.getTime())) return value;
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-      year: "numeric",
-    });
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
   function getDigits(value) {
-    return String(value || "").replace(/\D/g, "");
+    return String(value || '').replace(/\D/g, '');
   }
 
   function formatScheduledDateTime(value) {
-    if (!value) return "";
+    if (!value) return '';
     var parsed = new Date(value);
     if (isNaN(parsed.getTime())) return String(value);
-    return parsed.toLocaleString("en-US", {
-      month: "long",
-      day: "numeric",
-      year: "numeric",
-      hour: "numeric",
-      minute: "2-digit",
+    return parsed.toLocaleString('en-US', {
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit',
       hour12: true,
     });
   }
 
   function escapeHtml(value) {
-    return String(value == null ? "" : value)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
+    return String(value == null ? '' : value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
   }
 
   function cloneJson(value) {
@@ -443,7 +336,7 @@
       var raw = window.localStorage.getItem(PAYABLE_ROW_OVERRIDES_STORAGE_KEY);
       if (!raw) return {};
       var parsed = JSON.parse(raw);
-      return parsed && typeof parsed === "object" ? parsed : {};
+      return parsed && typeof parsed === 'object' ? parsed : {};
     } catch (err) {
       return {};
     }
@@ -454,16 +347,10 @@
     return (Array.isArray(rows) ? rows : []).map(function (row) {
       if (!row || row.id == null) return row;
       var override = overrides[String(row.id)];
-      if (!override || typeof override !== "object") return row;
+      if (!override || typeof override !== 'object') return row;
       var merged = Object.assign({}, cloneJson(row), cloneJson(override));
-      var baseDetails =
-        row.details && typeof row.details === "object"
-          ? cloneJson(row.details)
-          : {};
-      var overrideDetails =
-        override.details && typeof override.details === "object"
-          ? cloneJson(override.details)
-          : null;
+      var baseDetails = row.details && typeof row.details === 'object' ? cloneJson(row.details) : {};
+      var overrideDetails = override.details && typeof override.details === 'object' ? cloneJson(override.details) : null;
       if (overrideDetails) {
         merged.details = Object.assign({}, baseDetails, overrideDetails);
       } else if (Object.keys(baseDetails).length) {
@@ -478,10 +365,7 @@
     try {
       var overrides = getStoredPayableOverrides();
       overrides[String(row.id)] = cloneJson(row);
-      window.localStorage.setItem(
-        PAYABLE_ROW_OVERRIDES_STORAGE_KEY,
-        JSON.stringify(overrides),
-      );
+      window.localStorage.setItem(PAYABLE_ROW_OVERRIDES_STORAGE_KEY, JSON.stringify(overrides));
     } catch (err) {
       // Ignore storage failures.
     }
@@ -490,10 +374,7 @@
   function persistPayPageViewContext(row) {
     if (!row) return;
     try {
-      window.sessionStorage.setItem(
-        PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY,
-        JSON.stringify(cloneJson(row)),
-      );
+      window.sessionStorage.setItem(PAY_PAGE_VIEW_CONTEXT_STORAGE_KEY, JSON.stringify(cloneJson(row)));
     } catch (err) {
       // Ignore storage failures.
     }
@@ -504,64 +385,52 @@
     try {
       var overrides = getStoredPayableOverrides();
       delete overrides[String(rowId)];
-      window.localStorage.setItem(
-        PAYABLE_ROW_OVERRIDES_STORAGE_KEY,
-        JSON.stringify(overrides),
-      );
+      window.localStorage.setItem(PAYABLE_ROW_OVERRIDES_STORAGE_KEY, JSON.stringify(overrides));
     } catch (err) {
       // Ignore storage failures.
     }
   }
 
   function getDisplayStatusKey(row) {
-    if (row && row.status === "in_progress" && row.statusType === "scheduled")
-      return "scheduled";
-    return row && row.status ? row.status : "ready_to_pay";
+    if (row && row.status === 'in_progress' && row.statusType === 'scheduled') return 'scheduled';
+    return row && row.status ? row.status : 'ready_to_pay';
   }
 
   function getDisplayStatusLabel(row) {
-    if (isPendingSmartDisburseRow(row))
-      return SMART_DISBURSE_PENDING_STATUS_LABEL;
+    if (isPendingSmartDisburseRow(row)) return SMART_DISBURSE_PENDING_STATUS_LABEL;
     var status = getDisplayStatusKey(row);
-    return (row && row.statusLabel) || STATUS_LABELS[status] || status || "";
+    return (row && row.statusLabel) || STATUS_LABELS[status] || status || '';
   }
 
   function getFailureReason(row) {
-    if (!row) return "";
-    var details =
-      row.details && typeof row.details === "object" ? row.details : {};
+    if (!row) return '';
+    var details = row.details && typeof row.details === 'object' ? row.details : {};
     var directReason = [
       row.failureReason,
       row.exceptionReason,
       details.exceptionReason,
       details.error,
       details.errorMessage,
-      details.failureReason,
+      details.failureReason
     ].find(function (value) {
-      return typeof value === "string" && value.trim();
+      return typeof value === 'string' && value.trim();
     });
     if (directReason) return String(directReason).trim();
 
     var log = Array.isArray(details.activityLog) ? details.activityLog : [];
     for (var i = 0; i < log.length; i += 1) {
       var item = log[i] || {};
-      var title = String(item.title || item.action || "").toLowerCase();
-      var description = String(item.description || item.comment || "").trim();
-      if (
-        description &&
-        /fail|failed|exception|declin|reject|error|returned/.test(title)
-      ) {
+      var title = String(item.title || item.action || '').toLowerCase();
+      var description = String(item.description || item.comment || '').trim();
+      if (description && (/fail|failed|exception|declin|reject|error|returned/.test(title))) {
         return description;
       }
     }
-    return "";
+    return '';
   }
 
   function isAlwaysVisibleColumn(col) {
-    return !!(
-      col &&
-      (col.type === "expand" || col.type === "action" || col.type === "select")
-    );
+    return !!(col && (col.type === 'expand' || col.type === 'action' || col.type === 'select'));
   }
 
   function getManageableColumns(columns) {
@@ -572,12 +441,8 @@
 
   function getDefaultManageableColumnKeys(columns) {
     return getManageableColumns(columns)
-      .filter(function (col) {
-        return col.key !== "failureReason";
-      })
-      .map(function (col) {
-        return col.key;
-      });
+      .filter(function (col) { return col.key !== 'failureReason'; })
+      .map(function (col) { return col.key; });
   }
 
   function ensureColumnVisibilityState(columns) {
@@ -585,38 +450,25 @@
     var defaultKeys = getDefaultManageableColumnKeys(columns);
     if (!columnVisibilityState.initialized) {
       columnVisibilityState.visibleKeys = new Set(defaultKeys);
-      columnVisibilityState.orderedKeys = manageableColumns.map(function (col) {
-        return col.key;
-      });
+      columnVisibilityState.orderedKeys = manageableColumns.map(function (col) { return col.key; });
       columnVisibilityState.draftVisibleKeys = new Set(defaultKeys);
-      columnVisibilityState.draftOrderedKeys = manageableColumns.map(
-        function (col) {
-          return col.key;
-        },
-      );
+      columnVisibilityState.draftOrderedKeys = manageableColumns.map(function (col) { return col.key; });
       columnVisibilityState.initialized = true;
       return;
     }
-    var validKeys = new Set(
-      manageableColumns.map(function (col) {
-        return col.key;
-      }),
-    );
+    var validKeys = new Set(manageableColumns.map(function (col) { return col.key; }));
     Array.from(columnVisibilityState.visibleKeys).forEach(function (key) {
       if (!validKeys.has(key)) columnVisibilityState.visibleKeys.delete(key);
     });
     Array.from(columnVisibilityState.draftVisibleKeys).forEach(function (key) {
-      if (!validKeys.has(key))
-        columnVisibilityState.draftVisibleKeys.delete(key);
+      if (!validKeys.has(key)) columnVisibilityState.draftVisibleKeys.delete(key);
     });
-    columnVisibilityState.orderedKeys =
-      columnVisibilityState.orderedKeys.filter(function (key) {
-        return validKeys.has(key);
-      });
-    columnVisibilityState.draftOrderedKeys =
-      columnVisibilityState.draftOrderedKeys.filter(function (key) {
-        return validKeys.has(key);
-      });
+    columnVisibilityState.orderedKeys = columnVisibilityState.orderedKeys.filter(function (key) {
+      return validKeys.has(key);
+    });
+    columnVisibilityState.draftOrderedKeys = columnVisibilityState.draftOrderedKeys.filter(function (key) {
+      return validKeys.has(key);
+    });
     manageableColumns.forEach(function (col) {
       if (columnVisibilityState.orderedKeys.indexOf(col.key) === -1) {
         columnVisibilityState.orderedKeys.push(col.key);
@@ -626,46 +478,29 @@
       }
     });
     if (!columnVisibilityState.visibleKeys.size && manageableColumns.length) {
-      defaultKeys.forEach(function (key) {
-        columnVisibilityState.visibleKeys.add(key);
-      });
+      defaultKeys.forEach(function (key) { columnVisibilityState.visibleKeys.add(key); });
     }
-    if (
-      !columnVisibilityState.draftVisibleKeys.size &&
-      manageableColumns.length
-    ) {
-      defaultKeys.forEach(function (key) {
-        columnVisibilityState.draftVisibleKeys.add(key);
-      });
+    if (!columnVisibilityState.draftVisibleKeys.size && manageableColumns.length) {
+      defaultKeys.forEach(function (key) { columnVisibilityState.draftVisibleKeys.add(key); });
     }
   }
 
   function cloneColumnDraftFromApplied(columns) {
     ensureColumnVisibilityState(columns);
-    columnVisibilityState.draftVisibleKeys = new Set(
-      Array.from(columnVisibilityState.visibleKeys),
-    );
-    columnVisibilityState.draftOrderedKeys =
-      columnVisibilityState.orderedKeys.slice();
+    columnVisibilityState.draftVisibleKeys = new Set(Array.from(columnVisibilityState.visibleKeys));
+    columnVisibilityState.draftOrderedKeys = columnVisibilityState.orderedKeys.slice();
   }
 
   function resetColumnDraftToDefault(columns) {
     var defaultKeys = getDefaultManageableColumnKeys(columns);
     ensureColumnVisibilityState(columns);
     columnVisibilityState.draftVisibleKeys = new Set(defaultKeys);
-    columnVisibilityState.draftOrderedKeys = getManageableColumns(columns).map(
-      function (col) {
-        return col.key;
-      },
-    );
+    columnVisibilityState.draftOrderedKeys = getManageableColumns(columns).map(function (col) { return col.key; });
   }
 
   function commitColumnDraft() {
-    columnVisibilityState.visibleKeys = new Set(
-      Array.from(columnVisibilityState.draftVisibleKeys),
-    );
-    columnVisibilityState.orderedKeys =
-      columnVisibilityState.draftOrderedKeys.slice();
+    columnVisibilityState.visibleKeys = new Set(Array.from(columnVisibilityState.draftVisibleKeys));
+    columnVisibilityState.orderedKeys = columnVisibilityState.draftOrderedKeys.slice();
   }
 
   function setsMatch(a, b) {
@@ -686,27 +521,15 @@
   }
 
   function isColumnDraftDirty() {
-    return (
-      !setsMatch(
-        columnVisibilityState.draftVisibleKeys,
-        columnVisibilityState.visibleKeys,
-      ) ||
-      !arraysMatch(
-        columnVisibilityState.draftOrderedKeys,
-        columnVisibilityState.orderedKeys,
-      )
-    );
+    return !setsMatch(columnVisibilityState.draftVisibleKeys, columnVisibilityState.visibleKeys) ||
+      !arraysMatch(columnVisibilityState.draftOrderedKeys, columnVisibilityState.orderedKeys);
   }
 
   function isColumnDraftDefault(columns) {
     var defaultKeys = getDefaultManageableColumnKeys(columns);
-    var defaultOrder = getManageableColumns(columns).map(function (col) {
-      return col.key;
-    });
-    return (
-      setsMatch(columnVisibilityState.draftVisibleKeys, new Set(defaultKeys)) &&
-      arraysMatch(columnVisibilityState.draftOrderedKeys, defaultOrder)
-    );
+    var defaultOrder = getManageableColumns(columns).map(function (col) { return col.key; });
+    return setsMatch(columnVisibilityState.draftVisibleKeys, new Set(defaultKeys)) &&
+      arraysMatch(columnVisibilityState.draftOrderedKeys, defaultOrder);
   }
 
   function getVisibleColumns(columns) {
@@ -714,15 +537,9 @@
     var originalColumns = Array.isArray(columns) ? columns : [];
     var manageableColumns = getManageableColumns(originalColumns);
     var manageableByKey = new Map();
-    var useDraftState = !!(
-      refs.manageColumnsDialog && refs.manageColumnsDialog.open
-    );
-    var orderedKeys = useDraftState
-      ? columnVisibilityState.draftOrderedKeys
-      : columnVisibilityState.orderedKeys;
-    var visibleKeys = useDraftState
-      ? columnVisibilityState.draftVisibleKeys
-      : columnVisibilityState.visibleKeys;
+    var useDraftState = !!(refs.manageColumnsDialog && refs.manageColumnsDialog.open);
+    var orderedKeys = useDraftState ? columnVisibilityState.draftOrderedKeys : columnVisibilityState.orderedKeys;
+    var visibleKeys = useDraftState ? columnVisibilityState.draftVisibleKeys : columnVisibilityState.visibleKeys;
     manageableColumns.forEach(function (col) {
       manageableByKey.set(col.key, col);
     });
@@ -730,9 +547,7 @@
       .filter(function (key) {
         return manageableByKey.has(key) && visibleKeys.has(key);
       })
-      .map(function (key) {
-        return manageableByKey.get(key);
-      });
+      .map(function (key) { return manageableByKey.get(key); });
     var merged = [];
     var insertedManageable = false;
     originalColumns.forEach(function (col) {
@@ -745,8 +560,7 @@
         insertedManageable = true;
       }
     });
-    if (!insertedManageable)
-      Array.prototype.push.apply(merged, orderedVisibleManageable);
+    if (!insertedManageable) Array.prototype.push.apply(merged, orderedVisibleManageable);
     return merged;
   }
 
@@ -758,12 +572,8 @@
       manageableByKey.set(col.key, col);
     });
     return columnVisibilityState.draftOrderedKeys
-      .filter(function (key) {
-        return manageableByKey.has(key);
-      })
-      .map(function (key) {
-        return manageableByKey.get(key);
-      });
+      .filter(function (key) { return manageableByKey.has(key); })
+      .map(function (key) { return manageableByKey.get(key); });
   }
 
   function moveDraftColumnKeyBefore(movingKey, targetKey) {
@@ -786,97 +596,72 @@
     if (fromIndex === -1 || targetIndex === -1) return false;
     currentOrder.splice(fromIndex, 1);
     targetIndex = currentOrder.indexOf(targetKey);
-    currentOrder.splice(
-      position === "after" ? targetIndex + 1 : targetIndex,
-      0,
-      movingKey,
-    );
+    currentOrder.splice(position === 'after' ? targetIndex + 1 : targetIndex, 0, movingKey);
     columnVisibilityState.draftOrderedKeys = currentOrder;
     return true;
   }
 
   function buildManageColumnsRowHTML(col, checked, disabled) {
-    var scopeBadge =
-      col && col.key === "failureReason"
-        ? '<span class="shrink-0 rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10">Exceptions</span>'
-        : "";
-    return (
-      "" +
-      '<div data-column-order-row="' +
-      escapeHtml(col.key) +
-      '" class="group relative flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 group-has-checked:bg-blue-50 dark:hover:bg-white/5 dark:group-has-checked:bg-blue-500/10' +
-      (disabled ? " opacity-60" : "") +
-      '">' +
+    var scopeBadge = col && col.key === 'failureReason'
+      ? '<span class="shrink-0 rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10">Exceptions</span>'
+      : '';
+    return '' +
+      '<div data-column-order-row="' + escapeHtml(col.key) + '" class="group relative flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 group-has-checked:bg-blue-50 dark:hover:bg-white/5 dark:group-has-checked:bg-blue-500/10' + (disabled ? ' opacity-60' : '') + '">' +
       '  <span data-drop-line="before" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="top:0;transform:translateY(-50%);"></span>' +
       '  <span data-drop-line="after" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="bottom:0;transform:translateY(50%);"></span>' +
-      '  <button type="button" draggable="true" data-column-drag-handle="' +
-      escapeHtml(col.key) +
-      '" class="inline-flex size-5 shrink-0 cursor-grab items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-500 active:cursor-grabbing dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
+      '  <button type="button" draggable="true" data-column-drag-handle="' + escapeHtml(col.key) + '" class="inline-flex size-5 shrink-0 cursor-grab items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-500 active:cursor-grabbing dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
       '    <span class="sr-only">Reorder column</span>' +
       '    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4">' +
       '      <path d="M2.40039 10.8001C2.40039 10.1374 2.93765 9.6001 3.60039 9.6001C4.26313 9.6001 4.80039 10.1374 4.80039 10.8001C4.80039 11.4628 4.26313 12.0001 3.60039 12.0001C2.93765 12.0001 2.40039 11.4628 2.40039 10.8001Z" /><path d="M6.80039 10.8001C6.80039 10.1374 7.33765 9.6001 8.00039 9.6001C8.66313 9.6001 9.20039 10.1374 9.20039 10.8001C9.20039 11.4628 8.66313 12.0001 8.00039 12.0001C7.33765 12.0001 6.80039 11.4628 6.80039 10.8001Z" /><path d="M12.4004 9.6001C11.7376 9.6001 11.2004 10.1374 11.2004 10.8001C11.2004 11.4628 11.7376 12.0001 12.4004 12.0001C13.0631 12.0001 13.6004 11.4628 13.6004 10.8001C13.6004 10.1374 13.0631 9.6001 12.4004 9.6001Z" /><path d="M2.40039 6.00005C2.40039 5.33731 2.93765 4.80005 3.60039 4.80005C4.26313 4.80005 4.80039 5.33731 4.80039 6.00005C4.80039 6.66279 4.26313 7.20005 3.60039 7.20005C2.93765 7.20005 2.40039 6.66279 2.40039 6.00005Z" /><path d="M6.80039 6.00005C6.80039 5.33731 7.33765 4.80005 8.00039 4.80005C8.66313 4.80005 9.20039 5.33731 9.20039 6.00005C9.20039 6.66279 8.66313 7.20005 8.00039 7.20005C7.33765 7.20005 6.80039 6.66279 6.80039 6.00005Z" /><path d="M12.4004 4.80005C11.7376 4.80005 11.2004 5.33731 11.2004 6.00005C11.2004 6.66279 11.7376 7.20005 12.4004 7.20005C13.0631 7.20005 13.6004 6.66279 13.6004 6.00005C13.6004 5.33731 13.0631 4.80005 12.4004 4.80005Z" />' +
-      "    </svg>" +
-      "  </button>" +
+      '    </svg>' +
+      '  </button>' +
       '  <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3">' +
       '    <div class="grid size-4 grid-cols-1">' +
-      '      <input type="checkbox" data-column-visibility-toggle="' +
-      escapeHtml(col.key) +
-      '"' +
-      (checked ? " checked" : "") +
-      (disabled ? " disabled" : "") +
+      '      <input type="checkbox" data-column-visibility-toggle="' + escapeHtml(col.key) + '"' + (checked ? ' checked' : '') + (disabled ? ' disabled' : '') +
       '        class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500 dark:disabled:bg-white/10" />' +
       '      <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
       '        <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
-      "      </svg>" +
-      "    </div>" +
+      '      </svg>' +
+      '    </div>' +
       '    <span class="flex min-w-0 flex-1 items-center gap-2">' +
-      '      <span class="truncate text-sm font-medium text-gray-900 dark:text-white">' +
-      escapeHtml(col.label || col.key) +
-      "</span>" +
-      scopeBadge +
-      "    </span>" +
-      "  </label>" +
-      "</div>"
-    );
+      '      <span class="truncate text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(col.label || col.key) + '</span>' +
+             scopeBadge +
+      '    </span>' +
+      '  </label>' +
+      '</div>';
   }
 
-  var DETAIL_LABEL =
-    "w-[156px] shrink-0 p-4 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400";
-  var DETAIL_SEPARATOR =
-    '<div class="border-t border-gray-200 dark:border-white/10"></div>';
+  var DETAIL_LABEL = 'w-[156px] shrink-0 p-4 text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400';
+  var DETAIL_SEPARATOR = '<div class="border-t border-gray-200 dark:border-white/10"></div>';
   var ATTACHMENT_ICON =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500">' +
-    '<path fill-rule="evenodd" clip-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" />' +
-    "</svg>";
+      '<path fill-rule="evenodd" clip-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" />' +
+    '</svg>';
 
   function getStatusDotClass(type) {
-    if (type === "scheduled") {
-      return "bg-gray-200 ring-1 ring-gray-400/60 dark:bg-white/15 dark:ring-white/20";
+    if (type === 'scheduled') {
+      return 'bg-gray-200 ring-1 ring-gray-400/60 dark:bg-white/15 dark:ring-white/20';
     }
-    if (type === "processing" || type === "in_progress") {
-      return "bg-blue-100 ring-1 ring-blue-700/60 dark:bg-blue-400/10 dark:ring-blue-400/20";
+    if (type === 'processing' || type === 'in_progress') {
+      return 'bg-blue-100 ring-1 ring-blue-700/60 dark:bg-blue-400/10 dark:ring-blue-400/20';
     }
-    if (type === "paid" || type === "complete" || type === "completed") {
-      return "bg-green-100 ring-1 ring-green-700/60 dark:bg-green-400/10 dark:ring-green-400/20";
+    if (type === 'paid' || type === 'complete' || type === 'completed') {
+      return 'bg-green-100 ring-1 ring-green-700/60 dark:bg-green-400/10 dark:ring-green-400/20';
     }
-    if (type === "exception" || type === "failed") {
-      return "bg-red-100 ring-1 ring-red-700/60 dark:bg-red-400/10 dark:ring-red-400/20";
+    if (type === 'exception' || type === 'failed') {
+      return 'bg-red-100 ring-1 ring-red-700/60 dark:bg-red-400/10 dark:ring-red-400/20';
     }
-    return "bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20";
+    return 'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20';
   }
 
   function buildNotesSection(row) {
     var notes = row && row.details && row.details.notes;
-    if (!notes) return "";
+    if (!notes) return '';
     return (
       '<div class="flex">' +
-      '<div class="' +
-      DETAIL_LABEL +
-      '">Notes</div>' +
-      '<div class="flex-1 p-4 text-sm font-medium text-gray-900 dark:text-white">' +
-      escapeHtml(notes) +
-      "</div>" +
-      "</div>"
+        '<div class="' + DETAIL_LABEL + '">Notes</div>' +
+        '<div class="flex-1 p-4 text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(notes) + '</div>' +
+      '</div>'
     );
   }
 
@@ -885,282 +670,154 @@
     var label = getDisplayStatusLabel(row);
     return (
       '<div class="flex">' +
-      '<div class="' +
-      DETAIL_LABEL +
-      '">Status</div>' +
-      '<div class="flex-1 flex items-center p-4">' +
-      '<span class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
-      (STATUS_STYLES[status] || STATUS_STYLES.ready_to_pay) +
-      '">' +
-      (status === "scheduled" ? ICON_SCHEDULED : "") +
-      escapeHtml(label) +
-      "</span>" +
-      "</div>" +
-      "</div>"
+        '<div class="' + DETAIL_LABEL + '">Status</div>' +
+        '<div class="flex-1 flex items-center p-4">' +
+          '<span class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-medium inset-ring ' + (STATUS_STYLES[status] || STATUS_STYLES.ready_to_pay) + '">' +
+            (status === 'scheduled' ? ICON_SCHEDULED : '') +
+            escapeHtml(label) +
+          '</span>' +
+        '</div>' +
+      '</div>'
     );
   }
 
   function buildAttachmentsSection(row) {
     var attachments = row && row.details && row.details.attachments;
-    if (!attachments || !attachments.length) return "";
-    var badges = "";
+    if (!attachments || !attachments.length) return '';
+    var badges = '';
     attachments.forEach(function (att, idx) {
       badges +=
-        '<button type="button" data-attachment-preview="true" data-attachment-name="' +
-        escapeHtml((att && att.name) || "") +
-        '" data-attachment-index="' +
-        idx +
-        '" command="show-modal" commandfor="gp-review-dialog" class="inline-flex items-center gap-1.5 rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer">' +
-        ATTACHMENT_ICON +
-        escapeHtml((att && att.name) || "") +
-        "</button>";
+        '<button type="button" data-attachment-preview="true" data-attachment-name="' + escapeHtml((att && att.name) || '') + '" data-attachment-index="' + idx + '" command="show-modal" commandfor="gp-review-dialog" class="inline-flex items-center gap-1.5 rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer">' +
+          ATTACHMENT_ICON +
+          escapeHtml((att && att.name) || '') +
+        '</button>';
     });
     return (
       '<div class="flex">' +
-      '<div class="' +
-      DETAIL_LABEL +
-      '">Attachments</div>' +
-      '<div class="flex-1 p-4 flex flex-wrap items-center gap-2">' +
-      badges +
-      "</div>" +
-      "</div>"
+        '<div class="' + DETAIL_LABEL + '">Attachments</div>' +
+        '<div class="flex-1 p-4 flex flex-wrap items-center gap-2">' +
+          badges +
+        '</div>' +
+      '</div>'
     );
   }
 
   function buildPaymentMethodDetailsSection(row) {
-    if (
-      !row ||
-      (row.status !== "in_progress" &&
-        row.status !== "paid" &&
-        row.status !== "exception")
-    )
-      return "";
-    var type = String(row.paymentMethodType || "").toLowerCase();
-    if (type !== "card" && type !== "ach") return "";
+    if (!row || (row.status !== 'in_progress' && row.status !== 'paid' && row.status !== 'exception')) return '';
+    var type = String(row.paymentMethodType || '').toLowerCase();
+    if (type !== 'card' && type !== 'ach') return '';
 
-    if (type === "card") {
-      var cardLast4 =
-        getDigits(row.cardLast4 || row.paymentMethodEnding || "").slice(-4) ||
-        "0000";
-      var cardFull = "4000 0000 0000 " + cardLast4;
-      var expiry = row.cardExpiry || "12/2028";
-      var cvcValue = row.cardCvc || "123";
-      var holder =
-        row.cardholderName ||
-        (state.myCompanyProfile &&
-          (window.getMyCompanyDisplayName
-            ? window.getMyCompanyDisplayName(state.myCompanyProfile)
-            : state.myCompanyProfile.legalName)) ||
+    if (type === 'card') {
+      var cardLast4 = getDigits(row.cardLast4 || row.paymentMethodEnding || '').slice(-4) || '0000';
+      var cardFull = '4000 0000 0000 ' + cardLast4;
+      var expiry = row.cardExpiry || '12/2028';
+      var cvcValue = row.cardCvc || '123';
+      var holder = row.cardholderName ||
+        (state.myCompanyProfile && (window.getMyCompanyDisplayName ? window.getMyCompanyDisplayName(state.myCompanyProfile) : state.myCompanyProfile.legalName)) ||
         row.payeeName ||
-        "Cardholder";
-      var address =
-        row.cardholderAddress ||
-        (state.myCompanyProfile &&
-          (window.getMyCompanyAddressText
-            ? window.getMyCompanyAddressText(state.myCompanyProfile)
-            : (state.myCompanyProfile.mailingAddress &&
-                state.myCompanyProfile.mailingAddress.address) ||
-              "")) ||
-        "892 Innovation Blvd\nAustin, TX 78701\nUnited States";
-      var cardNetworkValue = String(row.cardNetwork || "Visa");
-      var typeIcon =
-        cardNetworkValue.toLowerCase().indexOf("master") !== -1
-          ? ICON_MASTERCARD
-          : ICON_VISA;
-      var numberId = "bp-payment-copy-" + ++paymentInfoCopyIdCounter;
-      var expId = "bp-payment-copy-" + ++paymentInfoCopyIdCounter;
-      var cvcId = "bp-payment-copy-" + ++paymentInfoCopyIdCounter;
+        'Cardholder';
+      var address = row.cardholderAddress ||
+        (state.myCompanyProfile && (window.getMyCompanyAddressText ? window.getMyCompanyAddressText(state.myCompanyProfile) : ((state.myCompanyProfile.mailingAddress && state.myCompanyProfile.mailingAddress.address) || ''))) ||
+        '892 Innovation Blvd\nAustin, TX 78701\nUnited States';
+      var cardNetworkValue = String(row.cardNetwork || 'Visa');
+      var typeIcon = cardNetworkValue.toLowerCase().indexOf('master') !== -1 ? ICON_MASTERCARD : ICON_VISA;
+      var numberId = 'bp-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var expId = 'bp-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var cvcId = 'bp-payment-copy-' + (++paymentInfoCopyIdCounter);
       return (
         '<div class="flex">' +
-        '<div class="' +
-        DETAIL_LABEL +
-        '">Payment Method<br>Details</div>' +
-        '<div class="flex-1 p-4">' +
-        '<div class="w-[460px] max-w-full">' +
-        '<div data-payment-info-card class="flex flex-col items-start self-stretch">' +
-        '<div class="flex items-center justify-between self-stretch rounded-t-md border border-gray-200 bg-gray-100 px-4 py-2 dark:border-white/10 dark:bg-white/10">' +
-        '<span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Card Details</span><span></span>' +
-        "</div>" +
-        '<div class="flex flex-col items-start gap-2 self-stretch rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">' +
-        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Name</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' +
-        escapeHtml(holder) +
-        "</span></div>" +
-        '<div class="grid grid-cols-2 gap-4 self-stretch items-start"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Address</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line">' +
-        escapeHtml(address).replace(/\n/g, "<br>") +
-        "</span></div>" +
-        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Type</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' +
-        typeIcon +
-        "</span></div>" +
-        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Number</span><button type="button" data-copy-id="' +
-        numberId +
-        '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' +
-        numberId +
-        '" data-mask-field="card-number" data-masked="•••• ' +
-        escapeHtml(cardLast4) +
-        '" data-revealed="' +
-        escapeHtml(cardFull) +
-        '" class="text-sm font-normal">•••• ' +
-        escapeHtml(cardLast4) +
-        '</span><span data-copy-icon="true" class="hidden">' +
-        ICON_COPY +
-        "</span></button></div>" +
-        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Expires</span><button type="button" data-copy-id="' +
-        expId +
-        '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' +
-        expId +
-        '" data-mask-field="card-expiry" data-masked="' +
-        escapeHtml(expiry) +
-        '" data-revealed="' +
-        escapeHtml(expiry) +
-        '" class="text-sm font-normal">' +
-        escapeHtml(expiry) +
-        '</span><span data-copy-icon="true" class="hidden">' +
-        ICON_COPY +
-        "</span></button></div>" +
-        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">CVC2</span><button type="button" data-copy-id="' +
-        cvcId +
-        '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' +
-        cvcId +
-        '" data-mask-field="card-cvc" data-masked="•••" data-revealed="' +
-        escapeHtml(cvcValue) +
-        '" class="text-sm font-normal">•••</span><span data-copy-icon="true" class="hidden">' +
-        ICON_COPY +
-        "</span></button></div>" +
-        '<div class="grid grid-cols-2 gap-4 self-stretch items-start"><span></span><button type="button" data-card-reveal-toggle data-revealed="false" class="inline-flex w-fit shrink-0 self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"><span data-icon="reveal">' +
-        ICON_EYE +
-        '</span><span data-icon="hide" class="hidden">' +
-        ICON_EYE_SLASH +
-        "</span><span data-card-reveal-text>Reveal Details</span></button></div>" +
-        "</div>" +
-        "</div>" +
-        "</div>" +
-        "</div>" +
-        "</div>"
+          '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
+          '<div class="flex-1 p-4">' +
+            '<div class="w-[460px] max-w-full">' +
+              '<div data-payment-info-card class="flex flex-col items-start self-stretch">' +
+                '<div class="flex items-center justify-between self-stretch rounded-t-md border border-gray-200 bg-gray-100 px-4 py-2 dark:border-white/10 dark:bg-white/10">' +
+                  '<span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Card Details</span><span></span>' +
+                '</div>' +
+                '<div class="flex flex-col items-start gap-2 self-stretch rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">' +
+                  '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Name</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(holder) + '</span></div>' +
+                  '<div class="grid grid-cols-2 gap-4 self-stretch items-start"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Cardholder Address</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line">' + escapeHtml(address).replace(/\n/g, '<br>') + '</span></div>' +
+                  '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Type</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + typeIcon + '</span></div>' +
+                  '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Number</span><button type="button" data-copy-id="' + numberId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' + numberId + '" data-mask-field="card-number" data-masked="•••• ' + escapeHtml(cardLast4) + '" data-revealed="' + escapeHtml(cardFull) + '" class="text-sm font-normal">•••• ' + escapeHtml(cardLast4) + '</span><span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span></button></div>' +
+                  '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Expires</span><button type="button" data-copy-id="' + expId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' + expId + '" data-mask-field="card-expiry" data-masked="' + escapeHtml(expiry) + '" data-revealed="' + escapeHtml(expiry) + '" class="text-sm font-normal">' + escapeHtml(expiry) + '</span><span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span></button></div>' +
+                  '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">CVC2</span><button type="button" data-copy-id="' + cvcId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' + cvcId + '" data-mask-field="card-cvc" data-masked="•••" data-revealed="' + escapeHtml(cvcValue) + '" class="text-sm font-normal">•••</span><span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span></button></div>' +
+                  '<div class="grid grid-cols-2 gap-4 self-stretch items-start"><span></span><button type="button" data-card-reveal-toggle data-revealed="false" class="inline-flex w-fit shrink-0 self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"><span data-icon="reveal">' + ICON_EYE + '</span><span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span><span data-card-reveal-text>Reveal Details</span></button></div>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>'
       );
     }
 
-    var bankLast4 =
-      getDigits(row.bankLast4 || row.paymentMethodEnding || "").slice(-4) ||
-      "0000";
-    var acctId = "bp-payment-copy-" + ++paymentInfoCopyIdCounter;
-    var routingId = "bp-payment-copy-" + ++paymentInfoCopyIdCounter;
+    var bankLast4 = getDigits(row.bankLast4 || row.paymentMethodEnding || '').slice(-4) || '0000';
+    var acctId = 'bp-payment-copy-' + (++paymentInfoCopyIdCounter);
+    var routingId = 'bp-payment-copy-' + (++paymentInfoCopyIdCounter);
     return (
       '<div class="flex">' +
-      '<div class="' +
-      DETAIL_LABEL +
-      '">Payment Method<br>Details</div>' +
-      '<div class="flex-1 p-4">' +
-      '<div class="w-[460px] max-w-full">' +
-      '<div data-ach-info-card class="flex flex-col items-start self-stretch">' +
-      '<div class="flex items-center justify-between self-stretch rounded-t-md border border-gray-200 bg-gray-100 px-4 py-2 dark:border-white/10 dark:bg-white/10"><span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Account Details</span><span></span></div>' +
-      '<div class="flex flex-col items-start gap-2 self-stretch rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">' +
-      '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' +
-      escapeHtml(row.payeeName || "Account Holder") +
-      "</span></div>" +
-      '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span><button type="button" data-copy-id="' +
-      acctId +
-      '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' +
-      acctId +
-      '" data-ach-mask-field="true" data-masked="••••' +
-      escapeHtml(bankLast4) +
-      '" data-revealed="' +
-      escapeHtml(row.bankAccountNumber || "00000000" + bankLast4) +
-      '" class="text-sm font-normal">••••' +
-      escapeHtml(bankLast4) +
-      '</span><span data-copy-icon="true" class="hidden">' +
-      ICON_COPY +
-      "</span></button></div>" +
-      '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span><button type="button" data-copy-id="' +
-      routingId +
-      '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' +
-      routingId +
-      '" data-ach-mask-field="true" data-masked="••••1100" data-revealed="' +
-      escapeHtml(row.bankRoutingNumber || "021000021") +
-      '" class="text-sm font-normal">••••1100</span><span data-copy-icon="true" class="hidden">' +
-      ICON_COPY +
-      "</span></button></div>" +
-      '<div class="grid grid-cols-2 gap-4 self-stretch items-start"><span></span><button type="button" data-ach-reveal-toggle data-revealed="false" class="inline-flex w-fit shrink-0 self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"><span data-icon="reveal">' +
-      ICON_EYE +
-      '</span><span data-icon="hide" class="hidden">' +
-      ICON_EYE_SLASH +
-      "</span><span data-ach-reveal-text>Reveal Details</span></button></div>" +
-      "</div>" +
-      "</div>" +
-      "</div>" +
-      "</div>" +
-      "</div>"
+        '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
+        '<div class="flex-1 p-4">' +
+          '<div class="w-[460px] max-w-full">' +
+            '<div data-ach-info-card class="flex flex-col items-start self-stretch">' +
+              '<div class="flex items-center justify-between self-stretch rounded-t-md border border-gray-200 bg-gray-100 px-4 py-2 dark:border-white/10 dark:bg-white/10"><span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Account Details</span><span></span></div>' +
+              '<div class="flex flex-col items-start gap-2 self-stretch rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">' +
+                '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(row.payeeName || 'Account Holder') + '</span></div>' +
+                '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span><button type="button" data-copy-id="' + acctId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' + acctId + '" data-ach-mask-field="true" data-masked="••••' + escapeHtml(bankLast4) + '" data-revealed="' + escapeHtml(row.bankAccountNumber || ('00000000' + bankLast4)) + '" class="text-sm font-normal">••••' + escapeHtml(bankLast4) + '</span><span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span></button></div>' +
+                '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span><button type="button" data-copy-id="' + routingId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' + routingId + '" data-ach-mask-field="true" data-masked="••••1100" data-revealed="' + escapeHtml(row.bankRoutingNumber || '021000021') + '" class="text-sm font-normal">••••1100</span><span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span></button></div>' +
+                '<div class="grid grid-cols-2 gap-4 self-stretch items-start"><span></span><button type="button" data-ach-reveal-toggle data-revealed="false" class="inline-flex w-fit shrink-0 self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"><span data-icon="reveal">' + ICON_EYE + '</span><span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span><span data-ach-reveal-text>Reveal Details</span></button></div>' +
+              '</div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>'
     );
   }
 
   function buildActivityDescription(description, timestamp) {
-    var copy = escapeHtml(description || "");
+    var copy = escapeHtml(description || '');
     if (!timestamp) return copy;
-    return (
-      copy +
-      '<span class="text-gray-700 dark:text-gray-300"><span class="mx-1.5 text-base leading-none align-middle">&middot;</span>' +
-      formatActivityLogDate(timestamp) +
-      "</span>"
-    );
+    return copy + '<span class="text-gray-700 dark:text-gray-300"><span class="mx-1.5 text-base leading-none align-middle">&middot;</span>' + formatActivityLogDate(timestamp) + '</span>';
   }
 
-  function buildActivityLogItem(
-    dotClasses,
-    title,
-    description,
-    timestamp,
-    showLine,
-  ) {
+  function buildActivityLogItem(dotClasses, title, description, timestamp, showLine) {
     var lineHtml = showLine
       ? '<div class="flex-1 w-px bg-gray-200 dark:bg-white/10"></div>'
-      : "";
+      : '';
     return (
       '<div class="flex gap-3">' +
-      '<div class="flex w-6 flex-none self-stretch flex-col items-center gap-[6px] pt-[6px]">' +
-      '<div class="size-1.5 rounded-full ' +
-      dotClasses +
-      '"></div>' +
-      lineHtml +
-      "</div>" +
-      '<div class="flex min-w-0 flex-col gap-2 pb-4">' +
-      '<p class="text-sm font-medium text-gray-900 dark:text-white">' +
-      escapeHtml(title || "") +
-      "</p>" +
-      '<p class="text-sm text-gray-700 dark:text-gray-300">' +
-      buildActivityDescription(description, timestamp) +
-      "</p>" +
-      "</div>" +
-      "</div>"
+        '<div class="flex w-6 flex-none self-stretch flex-col items-center gap-[6px] pt-[6px]">' +
+          '<div class="size-1.5 rounded-full ' + dotClasses + '"></div>' +
+          lineHtml +
+        '</div>' +
+        '<div class="flex min-w-0 flex-col gap-2 pb-4">' +
+          '<p class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(title || '') + '</p>' +
+          '<p class="text-sm text-gray-700 dark:text-gray-300">' + buildActivityDescription(description, timestamp) + '</p>' +
+        '</div>' +
+      '</div>'
     );
   }
 
   function buildActivityLogSection(row) {
-    if (!row || typeof window.getActivityLog !== "function") return "";
+    if (!row || typeof window.getActivityLog !== 'function') return '';
     var log = window.getActivityLog(row);
-    if (!log.length) return "";
-    var items = log
-      .map(function (item, idx) {
-        var dotType = item && item.type;
-        if (dotType === "pending") {
-          dotType = "processing";
-        }
-        return buildActivityLogItem(
-          getStatusDotClass(dotType),
-          item && (item.title || item.label),
-          item && item.description,
-          item && item.timestamp,
-          idx < log.length - 1,
-        );
-      })
-      .join("");
+    if (!log.length) return '';
+    var items = log.map(function (item, idx) {
+      var dotType = item && item.type;
+      if (dotType === 'pending') {
+        dotType = 'processing';
+      }
+      return buildActivityLogItem(
+        getStatusDotClass(dotType),
+        item && (item.title || item.label),
+        item && item.description,
+        item && item.timestamp,
+        idx < log.length - 1
+      );
+    }).join('');
     return (
       '<div class="flex">' +
-      '<div class="' +
-      DETAIL_LABEL +
-      '">Activity Log</div>' +
-      '<div class="flex-1 p-4">' +
-      items +
-      "</div>" +
-      "</div>"
+        '<div class="' + DETAIL_LABEL + '">Activity Log</div>' +
+        '<div class="flex-1 p-4">' + items + '</div>' +
+      '</div>'
     );
   }
 
@@ -1171,11 +828,10 @@
     var paymentMethodDetails = buildPaymentMethodDetailsSection(row);
     var activity = buildActivityLogSection(row);
     var sections = [notes, status, attachments].filter(Boolean);
-    if (paymentMethodDetails)
-      sections.push(DETAIL_SEPARATOR + paymentMethodDetails);
+    if (paymentMethodDetails) sections.push(DETAIL_SEPARATOR + paymentMethodDetails);
     if (activity) sections.push(DETAIL_SEPARATOR + activity);
-    if (!sections.length) return "";
-    return sections.join("");
+    if (!sections.length) return '';
+    return sections.join('');
   }
 
   function loadJsonWithFallbacks(paths) {
@@ -1186,12 +842,12 @@
   function matchesSearch(row, query) {
     if (!query) return true;
     var q = query.toLowerCase();
-    var billNumber = String(row.billNumber || "").trim();
-    var normalizedBillNumber = billNumber.replace(/^#/, "");
+    var billNumber = String(row.billNumber || '').trim();
+    var normalizedBillNumber = billNumber.replace(/^#/, '');
     var haystack = [
       billNumber,
       normalizedBillNumber,
-      normalizedBillNumber ? "#" + normalizedBillNumber : "",
+      normalizedBillNumber ? '#' + normalizedBillNumber : '',
       row.payeeName,
       row.source,
       row.paymentMethod,
@@ -1200,64 +856,30 @@
       row.statusLabel || STATUS_LABELS[row.status] || row.status,
       String(row.amount),
       row.id,
-    ]
-      .join(" ")
-      .toLowerCase();
+    ].join(' ').toLowerCase();
     return haystack.indexOf(q) !== -1;
   }
 
   function buildEmptyStateRow(colspan, title, description) {
-    return (
-      '<tr><td colspan="' +
-      colspan +
-      '" class="px-0 py-4">' +
+    return '<tr><td colspan="' + colspan + '" class="px-0 py-4">' +
       '<div class="flex w-full flex-col items-center rounded-2xl border border-dashed border-gray-300 bg-gray-50/80 px-6 py-8 text-center dark:border-white/10 dark:bg-white/5">' +
-      '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-gray-400 dark:text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>' +
-      '<h3 class="mt-3 text-sm font-semibold text-gray-900 dark:text-white">' +
-      escapeHtml(title) +
-      "</h3>" +
-      '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">' +
-      escapeHtml(description) +
-      "</p>" +
-      "</div>" +
-      "</td></tr>"
-    );
+        '<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6 text-gray-400 dark:text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>' +
+        '<h3 class="mt-3 text-sm font-semibold text-gray-900 dark:text-white">' + escapeHtml(title) + '</h3>' +
+        '<p class="mt-1 text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(description) + '</p>' +
+      '</div>' +
+    '</td></tr>';
   }
 
   function matchesFilters(row) {
-    if (
-      state.appliedSelectedSources.size &&
-      !state.appliedSelectedSources.has(row.source)
-    )
-      return false;
-    if (
-      state.appliedSelectedStatuses.size &&
-      !state.appliedSelectedStatuses.has(row.status)
-    )
-      return false;
-    if (
-      state.appliedSelectedMethods.size &&
-      !state.appliedSelectedMethods.has(row.paymentMethodType)
-    )
-      return false;
-    if (
-      state.appliedSelectedFailureReasons.size &&
-      !state.appliedSelectedFailureReasons.has(getFailureReason(row))
-    )
-      return false;
+    if (state.appliedSelectedSources.size && !state.appliedSelectedSources.has(row.source)) return false;
+    if (state.appliedSelectedStatuses.size && !state.appliedSelectedStatuses.has(row.status)) return false;
+    if (state.appliedSelectedMethods.size && !state.appliedSelectedMethods.has(row.paymentMethodType)) return false;
+    if (state.appliedSelectedFailureReasons.size && !state.appliedSelectedFailureReasons.has(getFailureReason(row))) return false;
     if (state.appliedInitiatedDateFrom || state.appliedInitiatedDateTo) {
       var rowDate = toIsoDate(row.adDate);
       if (!rowDate) return false;
-      if (
-        state.appliedInitiatedDateFrom &&
-        rowDate < state.appliedInitiatedDateFrom
-      )
-        return false;
-      if (
-        state.appliedInitiatedDateTo &&
-        rowDate > state.appliedInitiatedDateTo
-      )
-        return false;
+      if (state.appliedInitiatedDateFrom && rowDate < state.appliedInitiatedDateFrom) return false;
+      if (state.appliedInitiatedDateTo && rowDate > state.appliedInitiatedDateTo) return false;
     }
     return true;
   }
@@ -1266,19 +888,16 @@
     if (a == null && b == null) return 0;
     if (a == null) return -1;
     if (b == null) return 1;
-    if (typeof a === "number" && typeof b === "number") return a - b;
+    if (typeof a === 'number' && typeof b === 'number') return a - b;
     var aDate = Date.parse(a);
     var bDate = Date.parse(b);
     if (!isNaN(aDate) && !isNaN(bDate)) return aDate - bDate;
-    return String(a).localeCompare(String(b), undefined, {
-      numeric: true,
-      sensitivity: "base",
-    });
+    return String(a).localeCompare(String(b), undefined, { numeric: true, sensitivity: 'base' });
   }
 
   function sortRows(rows) {
     if (!state.sortKey || !state.sortDirection) return rows.slice();
-    var dir = state.sortDirection === "asc" ? 1 : -1;
+    var dir = state.sortDirection === 'asc' ? 1 : -1;
     return rows.slice().sort(function (a, b) {
       return compareValues(a[state.sortKey], b[state.sortKey]) * dir;
     });
@@ -1291,50 +910,39 @@
   }
 
   function getFilteredRows() {
-    return sortRows(
-      getTabRows().filter(function (row) {
-        return matchesSearch(row, state.search) && matchesFilters(row);
-      }),
-    );
+    return sortRows(getTabRows().filter(function (row) {
+      return matchesSearch(row, state.search) && matchesFilters(row);
+    }));
   }
 
   function getRenderableColumns() {
     var cols = getVisibleColumns(state.columns);
-    if (state.activeTab !== "exception") {
+    if (state.activeTab !== 'exception') {
+      cols = cols.filter(function (col) { return col && col.key !== 'failureReason'; });
+    }
+    if (state.activeTab === 'ready_to_pay') {
       cols = cols.filter(function (col) {
-        return col && col.key !== "failureReason";
+        return col && col.key !== 'paymentMethod' && col.key !== 'adDate';
       });
     }
-    if (state.activeTab === "ready_to_pay") {
+    if (state.activeTab === 'in_progress') {
       cols = cols.filter(function (col) {
-        return col && col.key !== "paymentMethod" && col.key !== "adDate";
+        return col && col.key !== 'dueDate' && col.type !== 'select';
       });
     }
-    if (state.activeTab === "in_progress") {
+    if (state.activeTab === 'paid') {
       cols = cols.filter(function (col) {
-        return col && col.key !== "dueDate" && col.type !== "select";
+        return col && col.key !== 'dueDate' && col.type !== 'action' && col.type !== 'select';
+      }).map(function (col) {
+        if (col && col.key === 'adDate') {
+          return Object.assign({}, col, { label: 'Payment Date' });
+        }
+        return col;
       });
     }
-    if (state.activeTab === "paid") {
-      cols = cols
-        .filter(function (col) {
-          return (
-            col &&
-            col.key !== "dueDate" &&
-            col.type !== "action" &&
-            col.type !== "select"
-          );
-        })
-        .map(function (col) {
-          if (col && col.key === "adDate") {
-            return Object.assign({}, col, { label: "Payment Date" });
-          }
-          return col;
-        });
-    }
-    if (state.activeTab === "exception") {
+    if (state.activeTab === 'exception') {
       cols = cols.filter(function (col) {
-        return col && col.type !== "select";
+        return col && col.type !== 'select';
       });
     }
     return cols;
@@ -1343,119 +951,88 @@
   function normalizeRows(rows) {
     var payeesById = state.payeesById || {};
     var payeesByName = state.payeesByName || {};
-    var methods = ["card", "ach", "wire", "smart_disburse", "smart_exchange"];
+    var methods = ['card', 'ach', 'wire', 'smart_disburse', 'smart_exchange'];
     return rows.map(function (row, idx) {
       var next = Object.assign({}, row);
-      var payee =
-        (next.payeeId && payeesById[next.payeeId]) ||
-        (next.payeeName && payeesByName[next.payeeName]) ||
-        null;
+      var payee = (next.payeeId && payeesById[next.payeeId]) || (next.payeeName && payeesByName[next.payeeName]) || null;
       if (payee) {
         next.payeeId = next.payeeId || payee.id;
         next.payeeName = payee.name || next.payeeName;
       }
-      var methodType = String(next.paymentMethodType || "")
-        .trim()
-        .toLowerCase();
+      var methodType = String(next.paymentMethodType || '').trim().toLowerCase();
       if (!methodType) methodType = methods[idx % methods.length];
       next.paymentMethodType = methodType;
 
-      if (methodType === "card") {
-        var network = String(
-          next.cardNetwork || (idx % 2 === 0 ? "Visa" : "Mastercard"),
-        );
-        var cardLast4 = getDigits(
-          next.cardLast4 ||
-            next.paymentMethodEnding ||
-            String(4100 + (idx % 9000)),
-        ).slice(-4);
+      if (methodType === 'card') {
+        var network = String(next.cardNetwork || (idx % 2 === 0 ? 'Visa' : 'Mastercard'));
+        var cardLast4 = getDigits(next.cardLast4 || next.paymentMethodEnding || String(4100 + (idx % 9000))).slice(-4);
         next.cardNetwork = network;
         next.cardLast4 = cardLast4;
-        next.paymentMethod = network + " •••• " + cardLast4;
-      } else if (methodType === "ach" || methodType === "wire") {
-        var bankLast4 = getDigits(
-          next.bankLast4 ||
-            next.paymentMethodEnding ||
-            String(1200 + (idx % 8000)),
-        ).slice(-4);
+        next.paymentMethod = network + ' •••• ' + cardLast4;
+      } else if (methodType === 'ach' || methodType === 'wire') {
+        var bankLast4 = getDigits(next.bankLast4 || next.paymentMethodEnding || String(1200 + (idx % 8000))).slice(-4);
         next.bankLast4 = bankLast4;
-        next.paymentMethod =
-          (methodType === "wire" ? "Wire" : "Bank") + " •••• " + bankLast4;
-      } else if (methodType === "smart_exchange") {
-        next.paymentMethod = "SMART Exchange";
-      } else if (methodType === "smart_disburse") {
-        next.paymentMethod = "SMART Disburse";
+        next.paymentMethod = (methodType === 'wire' ? 'Wire' : 'Bank') + ' •••• ' + bankLast4;
+      } else if (methodType === 'smart_exchange') {
+        next.paymentMethod = 'SMART Exchange';
+      } else if (methodType === 'smart_disburse') {
+        next.paymentMethod = 'SMART Disburse';
       } else {
-        next.paymentMethodType = "smart_disburse";
-        next.paymentMethod = "SMART Disburse";
+        next.paymentMethodType = 'smart_disburse';
+        next.paymentMethod = 'SMART Disburse';
       }
-      if (next.status === "in_progress") {
+      if (next.status === 'in_progress') {
         var statusType = next.statusType;
         if (!statusType) {
-          statusType = idx % 3 === 0 ? "scheduled" : "processing";
+          statusType = (idx % 3 === 0) ? 'scheduled' : 'processing';
         }
         next.statusType = statusType;
-        if (statusType === "scheduled") {
+        if (statusType === 'scheduled') {
           if (!next.scheduledFor) {
             var day = 14 + (idx % 10);
-            var minute = idx % 2 === 0 ? "45" : "15";
-            next.scheduledFor =
-              "2026-07-" +
-              String(day).padStart(2, "0") +
-              "T00:" +
-              minute +
-              ":00";
+            var minute = idx % 2 === 0 ? '45' : '15';
+            next.scheduledFor = '2026-07-' + String(day).padStart(2, '0') + 'T00:' + minute + ':00';
           }
-          next.statusLabel = "Scheduled";
+          next.statusLabel = 'Scheduled';
           next.details = next.details || {};
-          if (
-            !Array.isArray(next.details.activityLog) ||
-            !next.details.activityLog.length
-          ) {
+          if (!Array.isArray(next.details.activityLog) || !next.details.activityLog.length) {
             next.details.activityLog = [
               {
-                type: "scheduled",
-                title: "Scheduled",
-                description:
-                  "Payment is scheduled for " +
-                  formatScheduledDateTime(next.scheduledFor) +
-                  ".",
+                type: 'scheduled',
+                title: 'Scheduled',
+                description: 'Payment is scheduled for ' + formatScheduledDateTime(next.scheduledFor) + '.',
               },
               {
-                type: "event",
-                title: "Queued",
-                description:
-                  "Payment request was queued and is waiting for the scheduled run.",
+                type: 'event',
+                title: 'Queued',
+                description: 'Payment request was queued and is waiting for the scheduled run.',
               },
             ];
           }
-        } else if (statusType === "smart_disburse_pending") {
+        } else if (statusType === 'smart_disburse_pending') {
           next.statusLabel = SMART_DISBURSE_PENDING_STATUS_LABEL;
-          next.processingStep = "Pending payee action";
+          next.processingStep = 'Pending payee action';
         } else {
-          next.statusLabel = "Processing";
+          next.statusLabel = 'Processing';
           next.details = next.details || {};
-          if (
-            !Array.isArray(next.details.activityLog) ||
-            !next.details.activityLog.length
-          ) {
+          if (!Array.isArray(next.details.activityLog) || !next.details.activityLog.length) {
             next.details.activityLog = [
               {
-                type: "processing",
-                title: "Processing",
-                description: "Payment is currently being processed.",
+                type: 'processing',
+                title: 'Processing',
+                description: 'Payment is currently being processed.',
               },
               {
-                type: "event",
-                title: "Initiated",
-                description: "Payment entered processing pipeline.",
+                type: 'event',
+                title: 'Initiated',
+                description: 'Payment entered processing pipeline.',
               },
             ];
           }
         }
       }
-      if (next.status === "exception") {
-        next.statusLabel = "Failed";
+      if (next.status === 'exception') {
+        next.statusLabel = 'Failed';
       }
       next.exceptionReason = getFailureReason(next);
       next.failureReason = next.exceptionReason;
@@ -1471,8 +1048,8 @@
     var byName = {};
     list.forEach(function (p) {
       if (!p) return;
-      var id = String(p.id || "").trim();
-      var name = String(p.name || "").trim();
+      var id = String(p.id || '').trim();
+      var name = String(p.name || '').trim();
       if (id) byId[id] = p;
       if (name) byName[name] = p;
     });
@@ -1483,38 +1060,32 @@
   function getTodayIsoDate() {
     var now = new Date();
     var y = now.getFullYear();
-    var m = String(now.getMonth() + 1).padStart(2, "0");
-    var d = String(now.getDate()).padStart(2, "0");
-    return y + "-" + m + "-" + d;
+    var m = String(now.getMonth() + 1).padStart(2, '0');
+    var d = String(now.getDate()).padStart(2, '0');
+    return y + '-' + m + '-' + d;
   }
 
   function moveRowToInProgress(rowId) {
     var today = getTodayIsoDate();
     state.allRows = state.allRows.map(function (row) {
-      if (String(row.id || "") !== String(rowId || "")) return row;
+      if (String(row.id || '') !== String(rowId || '')) return row;
       var updated = Object.assign({}, row);
-      updated.status = "in_progress";
-      updated.statusType = "processing";
-      updated.statusLabel = "Processing";
+      updated.status = 'in_progress';
+      updated.statusType = 'processing';
+      updated.statusLabel = 'Processing';
       updated.adDate = today;
       updated.details = Object.assign({}, updated.details || {});
-      var previousActivity = Array.isArray(updated.details.activityLog)
-        ? updated.details.activityLog
-        : [];
+      var previousActivity = Array.isArray(updated.details.activityLog) ? updated.details.activityLog : [];
       updated.details.activityLog = [
         {
-          type: "processing",
-          title: "Processing",
-          description:
-            "Payment was re-run on " +
-            formatDate(today) +
-            " and is currently processing.",
+          type: 'processing',
+          title: 'Processing',
+          description: 'Payment was re-run on ' + formatDate(today) + ' and is currently processing.',
         },
         {
-          type: "event",
-          title: "Re-run confirmed",
-          description:
-            "Payment re-run was confirmed on " + formatDate(today) + ".",
+          type: 'event',
+          title: 'Re-run confirmed',
+          description: 'Payment re-run was confirmed on ' + formatDate(today) + '.',
         },
       ].concat(previousActivity);
       persistPayableOverride(updated);
@@ -1531,13 +1102,12 @@
       }
     }
     var params = new URLSearchParams();
-    params.set("view", "pay");
-    params.set("tab", state.activeTab);
+    params.set('view', 'pay');
+    params.set('tab', state.activeTab);
     if (selected) persistPayPageViewContext(selected);
-    if (selected && selected.id) params.set("id", String(selected.id));
-    if (selected && selected.billNumber)
-      params.set("bill", String(selected.billNumber));
-    window.location.href = "./payables-pay.html?" + params.toString();
+    if (selected && selected.id) params.set('id', String(selected.id));
+    if (selected && selected.billNumber) params.set('bill', String(selected.billNumber));
+    window.location.href = './payables-pay.html?' + params.toString();
   }
 
   function moveRowBackToReady(rowId) {
@@ -1546,21 +1116,21 @@
       var wasPendingSmartDisburse = isPendingSmartDisburseRow(row);
       if (wasPendingSmartDisburse) reversePendingSmartDisburseFunds(row);
       var updated = Object.assign({}, row);
-      updated.status = "ready_to_pay";
-      updated.statusType = "";
-      updated.statusLabel = "Ready to Pay";
-      updated.processingStep = "";
-      updated.scheduledFor = "";
-      updated.adDate = "";
+      updated.status = 'ready_to_pay';
+      updated.statusType = '';
+      updated.statusLabel = 'Ready to Pay';
+      updated.processingStep = '';
+      updated.scheduledFor = '';
+      updated.adDate = '';
       updated.details = Object.assign({}, updated.details || {});
       delete updated.details.payPageState;
       updated.details.activityLog = [
         {
-          type: "ready",
-          title: "Ready to Pay",
+          type: 'ready',
+          title: 'Ready to Pay',
           description: wasPendingSmartDisburse
-            ? "SMART Disburse was canceled. Funds were returned from the Balance Account to the origination account."
-            : "Payment was returned to Ready to Pay.",
+            ? 'SMART Disburse was canceled. Funds were returned from the Balance Account to the origination account.'
+            : 'Payment was returned to Ready to Pay.',
         },
       ];
       persistPayableOverride(updated);
@@ -1570,23 +1140,20 @@
 
   function openDialogById(id) {
     var dialog = document.getElementById(id);
-    if (!dialog || typeof dialog.showModal !== "function") return false;
+    if (!dialog || typeof dialog.showModal !== 'function') return false;
     if (!dialog.open) dialog.showModal();
     return true;
   }
 
   function closeDialogById(id) {
     var dialog = document.getElementById(id);
-    if (!dialog || typeof dialog.close !== "function") return;
+    if (!dialog || typeof dialog.close !== 'function') return;
     if (dialog.open) dialog.close();
   }
 
   function findRowById(rowId) {
     for (var i = 0; i < state.allRows.length; i += 1) {
-      if (
-        String((state.allRows[i] && state.allRows[i].id) || "") ===
-        String(rowId || "")
-      ) {
+      if (String(state.allRows[i] && state.allRows[i].id || '') === String(rowId || '')) {
         return state.allRows[i];
       }
     }
@@ -1595,34 +1162,24 @@
 
   function setRerunDialogText(id, value) {
     var element = document.getElementById(id);
-    if (element) element.textContent = String(value || "--");
+    if (element) element.textContent = String(value || '--');
   }
 
   function getRerunOriginationAccount(row) {
-    var payPageState =
-      row && row.details && row.details.payPageState
-        ? row.details.payPageState
-        : {};
-    var selectedId = String(payPageState.originationAccountId || "").trim();
+    var payPageState = row && row.details && row.details.payPageState ? row.details.payPageState : {};
+    var selectedId = String(payPageState.originationAccountId || '').trim();
     var accounts = getStoredOriginationAccounts();
     var selected = null;
 
     for (var i = 0; i < accounts.length; i += 1) {
-      if (
-        selectedId &&
-        String((accounts[i] && accounts[i].id) || "") === selectedId
-      ) {
+      if (selectedId && String(accounts[i] && accounts[i].id || '') === selectedId) {
         selected = accounts[i];
         break;
       }
     }
     if (!selected) {
       for (var j = 0; j < accounts.length; j += 1) {
-        if (
-          String(
-            (accounts[j] && accounts[j].accountType) || "",
-          ).toLowerCase() !== "balance_account"
-        ) {
+        if (String(accounts[j] && accounts[j].accountType || '').toLowerCase() !== 'balance_account') {
           selected = accounts[j];
           break;
         }
@@ -1630,241 +1187,163 @@
     }
 
     var name = selected
-      ? String(
-          selected.displayName ||
-            selected.bankName ||
-            selected.name ||
-            "Origination Account",
-        )
-      : "Wells Fargo Account";
+      ? String(selected.displayName || selected.bankName || selected.name || 'Origination Account')
+      : 'Wells Fargo Account';
     var last4 = selected
-      ? getDigits(
-          selected.last4 ||
-            selected.accountNumber ||
-            selected.maskedAccount ||
-            "",
-        ).slice(-4)
-      : "8419";
+      ? getDigits(selected.last4 || selected.accountNumber || selected.maskedAccount || '').slice(-4)
+      : '8419';
     return {
       name: name,
-      sub: last4 ? "••••" + last4 : "Bank account",
+      sub: last4 ? ('••••' + last4) : 'Bank account',
     };
   }
 
   function getRerunRecipientSummary(row) {
-    var type = String(
-      (row && (row.paymentMethodType || row.method)) || "",
-    ).toLowerCase();
-    var last4 = getDigits(
-      (row && (row.paymentMethodEnding || row.bankLast4 || row.cardLast4)) ||
-        "",
-    ).slice(-4);
-    if (type === "card") {
-      return String(row.cardNetwork || "Card") + (last4 ? " ••••" + last4 : "");
+    var type = String(row && (row.paymentMethodType || row.method) || '').toLowerCase();
+    var last4 = getDigits(row && (row.paymentMethodEnding || row.bankLast4 || row.cardLast4) || '').slice(-4);
+    if (type === 'card') {
+      return String(row.cardNetwork || 'Card') + (last4 ? (' ••••' + last4) : '');
     }
-    if (type === "ach" || type === "wire") {
-      return (
-        (type === "wire" ? "Wire account" : "Bank account") +
-        (last4 ? " ••••" + last4 : "")
-      );
+    if (type === 'ach' || type === 'wire') {
+      return (type === 'wire' ? 'Wire account' : 'Bank account') + (last4 ? (' ••••' + last4) : '');
     }
-    return String(
-      (row && (row.paymentMethodLabel || row.paymentMethod)) ||
-        "Payment recipient",
-    );
+    return String(row && (row.paymentMethodLabel || row.paymentMethod) || 'Payment recipient');
   }
 
   function syncRerunConfirmDialogContent(row) {
     if (!row) return;
     var origin = getRerunOriginationAccount(row);
-    var method = String(
-      row.paymentMethodLabel || row.paymentMethod || "Payment method",
-    );
+    var method = String(row.paymentMethodLabel || row.paymentMethod || 'Payment method');
     var amount = formatMoney(row.amount, row.currency);
-    setRerunDialogText(
-      "bp-rerun-confirm-title",
-      "Re-run " + amount + " payment",
-    );
-    setRerunDialogText("bp-rerun-origin-name", origin.name);
-    setRerunDialogText("bp-rerun-origin-sub", origin.sub);
-    setRerunDialogText("bp-rerun-recipient-name", row.payeeName || "Payee");
-    setRerunDialogText("bp-rerun-recipient-sub", getRerunRecipientSummary(row));
-    setRerunDialogText("bp-rerun-amount", amount);
-    setRerunDialogText("bp-rerun-payee", row.payeeName || "Payee");
-    setRerunDialogText("bp-rerun-method", method);
-    setRerunDialogText("bp-rerun-date", formatDate(getTodayIsoDate()));
-    setRerunDialogText("bp-rerun-failure-reason", getFailureReason(row));
+    setRerunDialogText('bp-rerun-confirm-title', 'Re-run ' + amount + ' payment');
+    setRerunDialogText('bp-rerun-origin-name', origin.name);
+    setRerunDialogText('bp-rerun-origin-sub', origin.sub);
+    setRerunDialogText('bp-rerun-recipient-name', row.payeeName || 'Payee');
+    setRerunDialogText('bp-rerun-recipient-sub', getRerunRecipientSummary(row));
+    setRerunDialogText('bp-rerun-amount', amount);
+    setRerunDialogText('bp-rerun-payee', row.payeeName || 'Payee');
+    setRerunDialogText('bp-rerun-method', method);
+    setRerunDialogText('bp-rerun-date', formatDate(getTodayIsoDate()));
+    setRerunDialogText('bp-rerun-failure-reason', getFailureReason(row));
   }
 
   function initRerunConfirmDialog() {
-    var dialog = document.getElementById("bp-rerun-confirm-dialog");
-    var confirmBtn = document.getElementById("bp-rerun-confirm-btn");
+    var dialog = document.getElementById('bp-rerun-confirm-dialog');
+    var confirmBtn = document.getElementById('bp-rerun-confirm-btn');
     if (!dialog || !confirmBtn) return;
 
-    dialog.querySelectorAll("[data-bp-rerun-close]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        pendingRerunId = "";
-        closeDialogById("bp-rerun-confirm-dialog");
+    dialog.querySelectorAll('[data-bp-rerun-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        pendingRerunId = '';
+        closeDialogById('bp-rerun-confirm-dialog');
       });
     });
 
-    dialog.addEventListener("close", function () {
-      pendingRerunId = "";
+    dialog.addEventListener('close', function () {
+      pendingRerunId = '';
     });
 
-    confirmBtn.addEventListener("click", function () {
+    confirmBtn.addEventListener('click', function () {
       if (!pendingRerunId) {
-        closeDialogById("bp-rerun-confirm-dialog");
+        closeDialogById('bp-rerun-confirm-dialog');
         return;
       }
       moveRowToInProgress(pendingRerunId);
-      pendingRerunId = "";
+      pendingRerunId = '';
       state.currentPage = 1;
       renderAll();
-      closeDialogById("bp-rerun-confirm-dialog");
+      closeDialogById('bp-rerun-confirm-dialog');
     });
   }
 
   function syncScheduledCancelDialogContent(row) {
-    var confirmBtn = document.getElementById("bp-schedule-cancel-confirm-btn");
-    var titleEl = document.getElementById("bp-cancel-dialog-title");
-    var copyEl = document.getElementById("bp-cancel-dialog-copy");
-    var keepBtn = document.getElementById("bp-cancel-dialog-keep-btn");
+    var confirmBtn = document.getElementById('bp-schedule-cancel-confirm-btn');
+    var titleEl = document.getElementById('bp-cancel-dialog-title');
+    var copyEl = document.getElementById('bp-cancel-dialog-copy');
+    var keepBtn = document.getElementById('bp-cancel-dialog-keep-btn');
     var isPendingSmartDisburse = isPendingSmartDisburseRow(row);
-    if (titleEl)
-      titleEl.textContent = isPendingSmartDisburse
-        ? "Cancel SMART Disburse"
-        : "Cancel Scheduled Payment";
+    if (titleEl) titleEl.textContent = isPendingSmartDisburse ? 'Cancel SMART Disburse' : 'Cancel Scheduled Payment';
     if (copyEl) {
       copyEl.textContent = isPendingSmartDisburse
-        ? "Are you sure you want to cancel this SMART Disburse payment? This will void the SMART Disburse token and move the funds from the Balance Account back to the origination account."
-        : "This will cancel the scheduled payment and move it back to Ready to Pay. Are you sure you want to continue?";
+        ? 'Are you sure you want to cancel this SMART Disburse payment? This will void the SMART Disburse token and move the funds from the Balance Account back to the origination account.'
+        : 'This will cancel the scheduled payment and move it back to Ready to Pay. Are you sure you want to continue?';
     }
-    if (keepBtn)
-      keepBtn.textContent = isPendingSmartDisburse
-        ? "Keep In Progress"
-        : "Keep Scheduled";
-    if (confirmBtn)
-      confirmBtn.textContent = isPendingSmartDisburse
-        ? "Cancel SMART Disburse"
-        : "Cancel Schedule";
+    if (keepBtn) keepBtn.textContent = isPendingSmartDisburse ? 'Keep In Progress' : 'Keep Scheduled';
+    if (confirmBtn) confirmBtn.textContent = isPendingSmartDisburse ? 'Cancel SMART Disburse' : 'Cancel Schedule';
   }
 
   function initScheduledCancelDialog() {
-    var dialog = document.getElementById("bp-schedule-cancel-dialog");
-    var confirmBtn = document.getElementById("bp-schedule-cancel-confirm-btn");
+    var dialog = document.getElementById('bp-schedule-cancel-dialog');
+    var confirmBtn = document.getElementById('bp-schedule-cancel-confirm-btn');
     if (!dialog || !confirmBtn) return;
 
-    dialog.querySelectorAll("[data-bp-cancel-close]").forEach(function (btn) {
-      btn.addEventListener("click", function () {
-        pendingScheduleCancelId = "";
-        closeDialogById("bp-schedule-cancel-dialog");
+    dialog.querySelectorAll('[data-bp-cancel-close]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        pendingScheduleCancelId = '';
+        closeDialogById('bp-schedule-cancel-dialog');
       });
     });
 
-    dialog.addEventListener("close", function () {
-      pendingScheduleCancelId = "";
+    dialog.addEventListener('close', function () {
+      pendingScheduleCancelId = '';
     });
 
-    confirmBtn.addEventListener("click", function () {
+    confirmBtn.addEventListener('click', function () {
       if (!pendingScheduleCancelId) {
-        closeDialogById("bp-schedule-cancel-dialog");
+        closeDialogById('bp-schedule-cancel-dialog');
         return;
       }
       moveRowBackToReady(pendingScheduleCancelId);
-      pendingScheduleCancelId = "";
+      pendingScheduleCancelId = '';
       state.currentPage = 1;
       renderAll();
-      closeDialogById("bp-schedule-cancel-dialog");
+      closeDialogById('bp-schedule-cancel-dialog');
     });
   }
 
   function renderPaymentMethodCell(row, cb) {
-    var type = String((row && row.paymentMethodType) || "").toLowerCase();
-    if (type === "ach" || type === "wire") {
-      var achLast4 = getDigits(
-        row && (row.bankLast4 || row.paymentMethodEnding || ""),
-      ).slice(-4);
-      return (
-        '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
-        cb +
-        '">' +
+    var type = String(row && row.paymentMethodType || '').toLowerCase();
+    if (type === 'ach' || type === 'wire') {
+      var achLast4 = getDigits(row && (row.bankLast4 || row.paymentMethodEnding || '')).slice(-4);
+      return '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb + '">' +
         '<span class="inline-flex items-center gap-x-2">' +
-        ICON_ACH +
-        '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
-        escapeHtml(achLast4 || "") +
-        "</span>" +
-        "</span>" +
-        "</td>"
-      );
+          ICON_ACH +
+          '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(achLast4 || '') + '</span>' +
+        '</span>' +
+      '</td>';
     }
-    if (type === "card") {
-      var cardLast4 = getDigits(
-        row && (row.cardLast4 || row.paymentMethodEnding || ""),
-      ).slice(-4);
-      var network = String((row && row.cardNetwork) || "").toLowerCase();
-      var cardIcon =
-        network.indexOf("master") !== -1 ? ICON_MASTERCARD : ICON_VISA;
-      return (
-        '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
-        cb +
-        '">' +
+    if (type === 'card') {
+      var cardLast4 = getDigits(row && (row.cardLast4 || row.paymentMethodEnding || '')).slice(-4);
+      var network = String(row && row.cardNetwork || '').toLowerCase();
+      var cardIcon = network.indexOf('master') !== -1 ? ICON_MASTERCARD : ICON_VISA;
+      return '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb + '">' +
         '<span class="inline-flex items-center gap-x-2">' +
-        cardIcon +
-        '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
-        escapeHtml(cardLast4 || "") +
-        "</span>" +
-        "</span>" +
-        "</td>"
-      );
+          cardIcon +
+          '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(cardLast4 || '') + '</span>' +
+        '</span>' +
+      '</td>';
     }
-    if (type === "smart_disburse") {
-      return (
-        '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
-        cb +
-        '">' +
-        '<span class="inline-flex items-center gap-x-2">' +
-        ICON_SMART_DISBURSE +
-        '<span class="text-sm font-medium text-gray-900 dark:text-white">SMART Disburse</span></span>' +
-        "</td>"
-      );
+    if (type === 'smart_disburse') {
+      return '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb + '">' +
+        '<span class="inline-flex items-center gap-x-2">' + ICON_SMART_DISBURSE + '<span class="text-sm font-medium text-gray-900 dark:text-white">SMART Disburse</span></span>' +
+      '</td>';
     }
-    if (type === "smart_exchange") {
-      return (
-        '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
-        cb +
-        '">' +
-        '<span class="inline-flex items-center gap-x-2">' +
-        ICON_SMART_EXCHANGE +
-        '<span class="text-sm font-medium text-gray-900 dark:text-white">SMART Exchange</span></span>' +
-        "</td>"
-      );
+    if (type === 'smart_exchange') {
+      return '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb + '">' +
+        '<span class="inline-flex items-center gap-x-2">' + ICON_SMART_EXCHANGE + '<span class="text-sm font-medium text-gray-900 dark:text-white">SMART Exchange</span></span>' +
+      '</td>';
     }
-    return (
-      '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
-      cb +
-      '">' +
-      escapeHtml(
-        row && row.paymentMethod ? row.paymentMethod : "SMART Disburse",
-      ) +
-      "</td>"
-    );
+    return '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb + '">' +
+      escapeHtml(row && row.paymentMethod ? row.paymentMethod : 'SMART Disburse') +
+    '</td>';
   }
 
   function ensurePaymentMethodColumn(columns) {
     var list = Array.isArray(columns) ? columns.slice() : [];
-    var hasColumn = list.some(function (col) {
-      return col && col.key === "paymentMethod";
-    });
+    var hasColumn = list.some(function (col) { return col && col.key === 'paymentMethod'; });
     if (!hasColumn) {
-      var payeeIndex = list.findIndex(function (col) {
-        return col && col.key === "payeeName";
-      });
-      var paymentMethodColumn = {
-        key: "paymentMethod",
-        label: "Payment Method",
-        sortable: true,
-      };
+      var payeeIndex = list.findIndex(function (col) { return col && col.key === 'payeeName'; });
+      var paymentMethodColumn = { key: 'paymentMethod', label: 'Payment Method', sortable: true };
       if (payeeIndex >= 0) {
         list.splice(payeeIndex + 1, 0, paymentMethodColumn);
       } else {
@@ -1872,29 +1351,16 @@
       }
     }
     list = list.map(function (col) {
-      if (col && col.key === "paymentMethod") {
-        return {
-          key: "paymentMethod",
-          label: "Payment Method",
-          sortable: true,
-        };
+      if (col && col.key === 'paymentMethod') {
+        return { key: 'paymentMethod', label: 'Payment Method', sortable: true };
       }
       return col;
     });
-    var hasFailureReasonColumn = list.some(function (col) {
-      return col && col.key === "failureReason";
-    });
+    var hasFailureReasonColumn = list.some(function (col) { return col && col.key === 'failureReason'; });
     if (!hasFailureReasonColumn) {
-      var statusIndex = list.findIndex(function (col) {
-        return col && col.key === "status";
-      });
-      var failureReasonColumn = {
-        key: "failureReason",
-        label: "Failure Reason",
-        sortable: true,
-      };
-      if (statusIndex >= 0)
-        list.splice(statusIndex + 1, 0, failureReasonColumn);
+      var statusIndex = list.findIndex(function (col) { return col && col.key === 'status'; });
+      var failureReasonColumn = { key: 'failureReason', label: 'Failure Reason', sortable: true };
+      if (statusIndex >= 0) list.splice(statusIndex + 1, 0, failureReasonColumn);
       else list.push(failureReasonColumn);
     }
     return list;
@@ -1911,25 +1377,17 @@
 
   function updateTabUi() {
     if (refs.tabNav) {
-      refs.tabNav.querySelectorAll("[data-tab]").forEach(function (tabEl) {
-        var key = tabEl.getAttribute("data-tab");
+      refs.tabNav.querySelectorAll('[data-tab]').forEach(function (tabEl) {
+        var key = tabEl.getAttribute('data-tab');
         var isActive = key === state.activeTab;
-        ACTIVE_TAB_LINK_CLASSES.forEach(function (c) {
-          tabEl.classList.toggle(c, isActive);
-        });
-        INACTIVE_TAB_LINK_CLASSES.forEach(function (c) {
-          tabEl.classList.toggle(c, !isActive);
-        });
-        tabEl.setAttribute("aria-current", isActive ? "page" : "false");
+        ACTIVE_TAB_LINK_CLASSES.forEach(function (c) { tabEl.classList.toggle(c, isActive); });
+        INACTIVE_TAB_LINK_CLASSES.forEach(function (c) { tabEl.classList.toggle(c, !isActive); });
+        tabEl.setAttribute('aria-current', isActive ? 'page' : 'false');
 
-        var badge = tabEl.querySelector("[data-tab-count]");
+        var badge = tabEl.querySelector('[data-tab-count]');
         if (badge) {
-          ACTIVE_BADGE_CLASSES.forEach(function (c) {
-            badge.classList.toggle(c, isActive);
-          });
-          INACTIVE_BADGE_CLASSES.forEach(function (c) {
-            badge.classList.toggle(c, !isActive);
-          });
+          ACTIVE_BADGE_CLASSES.forEach(function (c) { badge.classList.toggle(c, isActive); });
+          INACTIVE_BADGE_CLASSES.forEach(function (c) { badge.classList.toggle(c, !isActive); });
         }
       });
     }
@@ -1941,15 +1399,10 @@
     state.allRows.forEach(function (row) {
       if (counts[row.status] != null) counts[row.status] += 1;
     });
-    document.querySelectorAll("[data-tab-count]").forEach(function (el) {
-      var key = el.getAttribute("data-tab-count");
+    document.querySelectorAll('[data-tab-count]').forEach(function (el) {
+      var key = el.getAttribute('data-tab-count');
       if (counts[key] != null) el.textContent = String(counts[key]);
     });
-    window.dispatchEvent(
-      new CustomEvent("app-nav-counts", {
-        detail: { bills: counts.ready_to_pay },
-      }),
-    );
   }
 
   function getBaseFilterRows() {
@@ -1957,69 +1410,47 @@
   }
 
   function buildFilterCheckbox(id, label, countText, value, checked) {
-    return (
-      "" +
+    return '' +
       '<label class="group flex w-full cursor-pointer items-center gap-2 rounded-md px-2 py-1.5 hover:bg-gray-100 group-has-checked:bg-gray-100 dark:hover:bg-white/5 dark:group-has-checked:bg-white/10">' +
       '  <div class="grid size-4 grid-cols-1">' +
-      '    <input type="checkbox" data-filter-value="' +
-      escapeHtml(value) +
-      '" id="' +
-      escapeHtml(id) +
-      '"' +
-      (checked ? " checked" : "") +
+      '    <input type="checkbox" data-filter-value="' + escapeHtml(value) + '" id="' + escapeHtml(id) + '"' + (checked ? ' checked' : '') +
       '      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
       '    <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
       '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
-      "    </svg>" +
-      "  </div>" +
-      '  <span class="text-sm font-medium text-gray-900 dark:text-gray-100">' +
-      escapeHtml(label) +
-      "</span>" +
-      (countText
-        ? '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' +
-          escapeHtml(countText) +
-          "</span>"
-        : "") +
-      "</label>"
-    );
+      '    </svg>' +
+      '  </div>' +
+      '  <span class="text-sm font-medium text-gray-900 dark:text-gray-100">' + escapeHtml(label) + '</span>' +
+      (countText ? ('<span class="text-sm font-normal text-gray-700 dark:text-gray-300">' + escapeHtml(countText) + '</span>') : '') +
+      '</label>';
   }
 
   function toIsoDate(value) {
-    var str = String(value || "").slice(0, 10);
-    return /^\d{4}-\d{2}-\d{2}$/.test(str) ? str : "";
+    var str = String(value || '').slice(0, 10);
+    return /^\d{4}-\d{2}-\d{2}$/.test(str) ? str : '';
   }
 
   function formatUsInput(value) {
-    var digits = String(value || "")
-      .replace(/\D/g, "")
-      .slice(0, 8);
-    if (!digits) return "";
+    var digits = String(value || '').replace(/\D/g, '').slice(0, 8);
+    if (!digits) return '';
     if (digits.length <= 2) return digits;
-    if (digits.length <= 4) return digits.slice(0, 2) + " / " + digits.slice(2);
-    return (
-      digits.slice(0, 2) + " / " + digits.slice(2, 4) + " / " + digits.slice(4)
-    );
+    if (digits.length <= 4) return digits.slice(0, 2) + ' / ' + digits.slice(2);
+    return digits.slice(0, 2) + ' / ' + digits.slice(2, 4) + ' / ' + digits.slice(4);
   }
 
   function usInputToIso(value) {
-    var digits = String(value || "")
-      .replace(/\D/g, "")
-      .slice(0, 8);
-    if (digits.length !== 8) return "";
+    var digits = String(value || '').replace(/\D/g, '').slice(0, 8);
+    if (digits.length !== 8) return '';
     var mm = parseInt(digits.slice(0, 2), 10);
     var dd = parseInt(digits.slice(2, 4), 10);
     var yyyy = parseInt(digits.slice(4, 8), 10);
-    if (Number.isNaN(mm) || Number.isNaN(dd) || Number.isNaN(yyyy)) return "";
-    if (mm < 1 || mm > 12 || dd < 1 || dd > 31 || yyyy < 1900 || yyyy > 2099)
-      return "";
-    return (
-      digits.slice(4, 8) + "-" + digits.slice(0, 2) + "-" + digits.slice(2, 4)
-    );
+    if (Number.isNaN(mm) || Number.isNaN(dd) || Number.isNaN(yyyy)) return '';
+    if (mm < 1 || mm > 12 || dd < 1 || dd > 31 || yyyy < 1900 || yyyy > 2099) return '';
+    return digits.slice(4, 8) + '-' + digits.slice(0, 2) + '-' + digits.slice(2, 4);
   }
 
   function formatIsoAsUsInput(iso) {
-    if (!toIsoDate(iso)) return "";
-    return iso.slice(5, 7) + " / " + iso.slice(8, 10) + " / " + iso.slice(0, 4);
+    if (!toIsoDate(iso)) return '';
+    return iso.slice(5, 7) + ' / ' + iso.slice(8, 10) + ' / ' + iso.slice(0, 4);
   }
 
   function cloneSet(source) {
@@ -2036,38 +1467,29 @@
   }
 
   function normalizeFilterPanel(panel) {
-    if (panel === "root") return "root";
-    return panel === "status" ||
-      panel === "method" ||
-      panel === "failure_reason" ||
-      panel === "initiated_date"
-      ? panel
-      : "source";
+    if (panel === 'root') return 'root';
+    return panel === 'status' || panel === 'method' || panel === 'failure_reason' || panel === 'initiated_date' ? panel : 'source';
   }
 
   function copyAppliedFiltersToDraft() {
     state.selectedSources = cloneSet(state.appliedSelectedSources);
     state.selectedStatuses = cloneSet(state.appliedSelectedStatuses);
     state.selectedMethods = cloneSet(state.appliedSelectedMethods);
-    state.selectedFailureReasons = cloneSet(
-      state.appliedSelectedFailureReasons,
-    );
-    state.initiatedDateFrom = state.appliedInitiatedDateFrom || "";
-    state.initiatedDateTo = state.appliedInitiatedDateTo || "";
+    state.selectedFailureReasons = cloneSet(state.appliedSelectedFailureReasons);
+    state.initiatedDateFrom = state.appliedInitiatedDateFrom || '';
+    state.initiatedDateTo = state.appliedInitiatedDateTo || '';
     state.initiatedDateFromDraft = formatIsoAsUsInput(state.initiatedDateFrom);
     state.initiatedDateToDraft = formatIsoAsUsInput(state.initiatedDateTo);
-    state.initiatedDateActiveField = "from";
+    state.initiatedDateActiveField = 'from';
   }
 
   function commitDraftFilters() {
     state.appliedSelectedSources = cloneSet(state.selectedSources);
     state.appliedSelectedStatuses = cloneSet(state.selectedStatuses);
     state.appliedSelectedMethods = cloneSet(state.selectedMethods);
-    state.appliedSelectedFailureReasons = cloneSet(
-      state.selectedFailureReasons,
-    );
-    state.appliedInitiatedDateFrom = state.initiatedDateFrom || "";
-    state.appliedInitiatedDateTo = state.initiatedDateTo || "";
+    state.appliedSelectedFailureReasons = cloneSet(state.selectedFailureReasons);
+    state.appliedInitiatedDateFrom = state.initiatedDateFrom || '';
+    state.appliedInitiatedDateTo = state.initiatedDateTo || '';
   }
 
   function syncSelectedFiltersToAvailable() {
@@ -2077,9 +1499,9 @@
     var methodSet = new Set();
     var failureReasonSet = new Set();
     baseRows.forEach(function (row) {
-      sourceSet.add(String((row && row.source) || ""));
-      statusSet.add(String((row && row.status) || ""));
-      methodSet.add(String((row && row.paymentMethodType) || ""));
+      sourceSet.add(String(row && row.source || ''));
+      statusSet.add(String(row && row.status || ''));
+      methodSet.add(String(row && row.paymentMethodType || ''));
     });
     (Array.isArray(state.allRows) ? state.allRows : []).forEach(function (row) {
       if (getFailureReason(row)) failureReasonSet.add(getFailureReason(row));
@@ -2104,12 +1526,10 @@
       if (!methodSet.has(method)) state.appliedSelectedMethods.delete(method);
     });
     Array.from(state.selectedFailureReasons).forEach(function (reason) {
-      if (!failureReasonSet.has(reason))
-        state.selectedFailureReasons.delete(reason);
+      if (!failureReasonSet.has(reason)) state.selectedFailureReasons.delete(reason);
     });
     Array.from(state.appliedSelectedFailureReasons).forEach(function (reason) {
-      if (!failureReasonSet.has(reason))
-        state.appliedSelectedFailureReasons.delete(reason);
+      if (!failureReasonSet.has(reason)) state.appliedSelectedFailureReasons.delete(reason);
     });
     state.initiatedDateFrom = toIsoDate(state.initiatedDateFrom);
     state.initiatedDateTo = toIsoDate(state.initiatedDateTo);
@@ -2117,18 +1537,10 @@
     state.appliedInitiatedDateTo = toIsoDate(state.appliedInitiatedDateTo);
     state.initiatedDateFromDraft = formatUsInput(state.initiatedDateFromDraft);
     state.initiatedDateToDraft = formatUsInput(state.initiatedDateToDraft);
-    if (
-      state.initiatedDateFrom &&
-      state.initiatedDateTo &&
-      state.initiatedDateFrom > state.initiatedDateTo
-    ) {
+    if (state.initiatedDateFrom && state.initiatedDateTo && state.initiatedDateFrom > state.initiatedDateTo) {
       state.initiatedDateTo = state.initiatedDateFrom;
     }
-    if (
-      state.appliedInitiatedDateFrom &&
-      state.appliedInitiatedDateTo &&
-      state.appliedInitiatedDateFrom > state.appliedInitiatedDateTo
-    ) {
+    if (state.appliedInitiatedDateFrom && state.appliedInitiatedDateTo && state.appliedInitiatedDateFrom > state.appliedInitiatedDateTo) {
       state.appliedInitiatedDateTo = state.appliedInitiatedDateFrom;
     }
   }
@@ -2137,81 +1549,75 @@
     if (!refs.filterSourcesWrap) return;
     var counts = new Map();
     getBaseFilterRows().forEach(function (row) {
-      var key = String((row && row.source) || "");
+      var key = String(row && row.source || '');
       if (!key) return;
       counts.set(key, (counts.get(key) || 0) + 1);
     });
     var rows = Array.from(counts.entries())
-      .sort(function (a, b) {
-        return a[0].localeCompare(b[0]);
-      })
+      .sort(function (a, b) { return a[0].localeCompare(b[0]); })
       .map(function (entry, idx) {
         return buildFilterCheckbox(
-          "bp-table-filter-source-" + idx,
+          'bp-table-filter-source-' + idx,
           entry[0],
           String(entry[1]),
           entry[0],
-          state.selectedSources.has(entry[0]),
+          state.selectedSources.has(entry[0])
         );
       });
-    refs.filterSourcesWrap.innerHTML = rows.join("");
+    refs.filterSourcesWrap.innerHTML = rows.join('');
   }
 
   function renderStatusFilters() {
     if (!refs.filterStatusesWrap) return;
     var counts = {};
     getBaseFilterRows().forEach(function (row) {
-      var key = String((row && row.status) || "");
+      var key = String(row && row.status || '');
       if (!key) return;
       counts[key] = (counts[key] || 0) + 1;
     });
-    var statusOrder = ["ready_to_pay", "in_progress", "paid", "exception"];
+    var statusOrder = ['ready_to_pay', 'in_progress', 'paid', 'exception'];
     var rows = statusOrder
-      .filter(function (key) {
-        return counts[key] > 0;
-      })
+      .filter(function (key) { return counts[key] > 0; })
       .map(function (key) {
         return buildFilterCheckbox(
-          "bp-table-filter-status-" + key,
+          'bp-table-filter-status-' + key,
           TAB_LABELS[key] || key,
           String(counts[key]),
           key,
-          state.selectedStatuses.has(key),
+          state.selectedStatuses.has(key)
         );
       });
-    refs.filterStatusesWrap.innerHTML = rows.join("");
+    refs.filterStatusesWrap.innerHTML = rows.join('');
   }
 
   function renderMethodFilters() {
     if (!refs.filterMethodsWrap) return;
     var counts = {};
     getBaseFilterRows().forEach(function (row) {
-      var key = String((row && row.paymentMethodType) || "");
+      var key = String(row && row.paymentMethodType || '');
       if (!key) return;
       counts[key] = (counts[key] || 0) + 1;
     });
     var labels = {
-      card: "Card",
-      ach: "ACH",
-      wire: "Wire",
-      smart_disburse: "SMART Disburse",
-      smart_exchange: "SMART Exchange",
+      card: 'Card',
+      ach: 'ACH',
+      wire: 'Wire',
+      smart_disburse: 'SMART Disburse',
+      smart_exchange: 'SMART Exchange',
     };
-    var order = ["card", "ach", "wire", "smart_disburse", "smart_exchange"];
+    var order = ['card', 'ach', 'wire', 'smart_disburse', 'smart_exchange'];
     var rows = order
-      .filter(function (key) {
-        return counts[key] > 0;
-      })
+      .filter(function (key) { return counts[key] > 0; })
       .map(function (key, idx) {
         return buildFilterCheckbox(
-          "bp-table-filter-method-" + idx,
+          'bp-table-filter-method-' + idx,
           labels[key] || key,
           String(counts[key]),
           key,
-          state.selectedMethods.has(key),
+          state.selectedMethods.has(key)
         );
       });
-    refs.filterMethodsWrap.innerHTML = rows.join("");
+    refs.filterMethodsWrap.innerHTML = rows.join('');
   }
 
   function renderFailureReasonFilters() {
@@ -2223,198 +1629,141 @@
       counts.set(reason, (counts.get(reason) || 0) + 1);
     });
     var rows = Array.from(counts.entries())
-      .sort(function (a, b) {
-        return a[0].localeCompare(b[0]);
-      })
+      .sort(function (a, b) { return a[0].localeCompare(b[0]); })
       .map(function (entry, idx) {
         return buildFilterCheckbox(
-          "bp-table-filter-failure-reason-" + idx,
+          'bp-table-filter-failure-reason-' + idx,
           entry[0],
           String(entry[1]),
           entry[0],
-          state.selectedFailureReasons.has(entry[0]),
+          state.selectedFailureReasons.has(entry[0])
         );
       });
-    refs.filterFailureReasonsWrap.innerHTML = rows.join("");
+    refs.filterFailureReasonsWrap.innerHTML = rows.join('');
   }
 
   function renderFilterNavBadges() {
     if (!refs.filterCountBadges || !refs.filterCountBadges.length) return;
     refs.filterCountBadges.forEach(function (badge) {
-      var panel = normalizeFilterPanel(
-        badge.getAttribute("data-filter-count-badge"),
-      );
+      var panel = normalizeFilterPanel(badge.getAttribute('data-filter-count-badge'));
       var count = getPanelDraftCount(panel);
       badge.textContent = String(count);
-      badge.classList.toggle("hidden", count <= 0);
-      badge.classList.toggle("inline-flex", count > 0);
+      badge.classList.toggle('hidden', count <= 0);
+      badge.classList.toggle('inline-flex', count > 0);
     });
   }
+
 
   /** Total applied filter values across every category, for the Filter button badge. */
   function countAppliedFilters(sets, fromKey, toKey) {
     var total = 0;
-    sets.forEach(function (set) {
-      total += set ? set.size : 0;
-    });
+    sets.forEach(function (set) { total += set ? set.size : 0; });
     if (fromKey || toKey) total += 1;
     return total;
   }
 
   function renderFilterCountBadge(total) {
-    var badges = document.querySelectorAll("[data-filter-count]");
+    var badges = document.querySelectorAll('[data-filter-count]');
     Array.prototype.forEach.call(badges, function (badge) {
-      badge.textContent = total > 0 ? String(total) : "";
-      badge.classList.toggle("hidden", total === 0);
-      badge.classList.toggle("inline-flex", total > 0);
+      badge.textContent = total > 0 ? String(total) : '';
+      badge.classList.toggle('hidden', total === 0);
+      badge.classList.toggle('inline-flex', total > 0);
     });
   }
 
   function renderActiveFilters() {
-    renderFilterCountBadge(
-      countAppliedFilters(
-        [
-          state.appliedSelectedSources,
-          state.appliedSelectedStatuses,
-          state.appliedSelectedMethods,
-          state.appliedSelectedFailureReasons,
-        ],
-        state.appliedInitiatedDateFrom,
-        state.appliedInitiatedDateTo,
-      ),
-    );
+    renderFilterCountBadge(countAppliedFilters([
+      state.appliedSelectedSources,
+      state.appliedSelectedStatuses,
+      state.appliedSelectedMethods,
+      state.appliedSelectedFailureReasons
+    ], state.appliedInitiatedDateFrom, state.appliedInitiatedDateTo));
 
     if (!refs.activeFilters) return;
     var tags = [];
     if (state.appliedSelectedSources.size) {
-      var sourceText = Array.from(state.appliedSelectedSources)
-        .sort(function (a, b) {
-          return a.localeCompare(b);
-        })
-        .join(", ");
-      tags.push({ type: "source", label: "Source", value: sourceText });
+      var sourceText = Array.from(state.appliedSelectedSources).sort(function (a, b) { return a.localeCompare(b); }).join(', ');
+      tags.push({ type: 'source', label: 'Source', value: sourceText });
     }
     if (state.appliedSelectedStatuses.size) {
       var statusText = Array.from(state.appliedSelectedStatuses)
-        .sort(function (a, b) {
-          return a.localeCompare(b);
-        })
-        .map(function (status) {
-          return TAB_LABELS[status] || status;
-        })
-        .join(", ");
-      tags.push({ type: "status", label: "Status", value: statusText });
+        .sort(function (a, b) { return a.localeCompare(b); })
+        .map(function (status) { return TAB_LABELS[status] || status; })
+        .join(', ');
+      tags.push({ type: 'status', label: 'Status', value: statusText });
     }
     if (state.appliedSelectedMethods.size) {
       var methodLabels = {
-        card: "Card",
-        ach: "ACH",
-        wire: "Wire",
-        smart_disburse: "SMART Disburse",
-        smart_exchange: "SMART Exchange",
+        card: 'Card',
+        ach: 'ACH',
+        wire: 'Wire',
+        smart_disburse: 'SMART Disburse',
+        smart_exchange: 'SMART Exchange',
       };
       var methodText = Array.from(state.appliedSelectedMethods)
-        .sort(function (a, b) {
-          return a.localeCompare(b);
-        })
-        .map(function (method) {
-          return methodLabels[method] || method;
-        })
-        .join(", ");
-      tags.push({
-        type: "method",
-        label: "Method of payment",
-        value: methodText,
-      });
+        .sort(function (a, b) { return a.localeCompare(b); })
+        .map(function (method) { return methodLabels[method] || method; })
+        .join(', ');
+      tags.push({ type: 'method', label: 'Method of payment', value: methodText });
     }
     if (state.appliedSelectedFailureReasons.size) {
       tags.push({
-        type: "failure_reason",
-        label: "Failure reason",
-        value: Array.from(state.appliedSelectedFailureReasons)
-          .sort(function (a, b) {
-            return a.localeCompare(b);
-          })
-          .join(", "),
+        type: 'failure_reason',
+        label: 'Failure reason',
+        value: Array.from(state.appliedSelectedFailureReasons).sort(function (a, b) { return a.localeCompare(b); }).join(', ')
       });
     }
     if (state.appliedInitiatedDateFrom || state.appliedInitiatedDateTo) {
-      var fromLabel = state.appliedInitiatedDateFrom
-        ? formatDate(state.appliedInitiatedDateFrom)
-        : "Any";
-      var toLabel = state.appliedInitiatedDateTo
-        ? formatDate(state.appliedInitiatedDateTo)
-        : "Any";
-      tags.push({
-        type: "initiated_date",
-        label: "Initiated date",
-        value: fromLabel + " - " + toLabel,
-      });
+      var fromLabel = state.appliedInitiatedDateFrom ? formatDate(state.appliedInitiatedDateFrom) : 'Any';
+      var toLabel = state.appliedInitiatedDateTo ? formatDate(state.appliedInitiatedDateTo) : 'Any';
+      tags.push({ type: 'initiated_date', label: 'Initiated date', value: fromLabel + ' - ' + toLabel });
     }
 
     if (!tags.length) {
-      refs.activeFilters.innerHTML = "";
-      refs.activeFilters.classList.add("hidden");
+      refs.activeFilters.innerHTML = '';
+      refs.activeFilters.classList.add('hidden');
       return;
     }
-    refs.activeFilters.classList.remove("hidden");
-    refs.activeFilters.innerHTML = tags
-      .map(function (tag) {
-        var byLabel = "By " + String(tag.label || "").toLowerCase();
-        return (
-          "" +
-          '<span class="relative inline-flex max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-xs font-medium text-gray-600 dark:bg-white/10 dark:text-gray-300">' +
-          '  <span class="inline-flex shrink-0 items-center bg-gray-100 px-2 py-1 font-medium text-gray-900 dark:bg-white/15 dark:text-white">' +
-          escapeHtml(byLabel) +
-          "</span>" +
-          '  <button type="button" data-filter-tag-open="' +
-          escapeHtml(tag.type) +
-          '" title="' +
-          escapeHtml(tag.label + ": " + tag.value) +
-          '"' +
-          '    class="inline-flex min-w-0 items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15 cursor-pointer">' +
-          '    <span class="truncate font-medium text-gray-900 dark:text-white">' +
-          escapeHtml(tag.value) +
-          "</span>" +
-          "  </button>" +
-          '  <button type="button" data-filter-tag-remove="' +
-          escapeHtml(tag.type) +
-          '"' +
-          '    class="inline-flex w-6 shrink-0 self-stretch items-center justify-center border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white cursor-pointer" aria-label="Remove filter">' +
-          '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">' +
-          '      <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
-          "    </svg>" +
-          "  </button>" +
-          '  <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span>' +
-          "</span>"
-        );
-      })
-      .join("");
+    refs.activeFilters.classList.remove('hidden');
+    refs.activeFilters.innerHTML = tags.map(function (tag) {
+      var byLabel = 'By ' + String(tag.label || '').toLowerCase();
+      return '' +
+        '<span class="relative inline-flex max-w-[360px] items-stretch overflow-hidden rounded-md bg-gray-50 text-xs font-medium text-gray-600 dark:bg-white/10 dark:text-gray-300">' +
+        '  <span class="inline-flex shrink-0 items-center bg-gray-100 px-2 py-1 font-medium text-gray-900 dark:bg-white/15 dark:text-white">' + escapeHtml(byLabel) + '</span>' +
+        '  <button type="button" data-filter-tag-open="' + escapeHtml(tag.type) + '" title="' + escapeHtml(tag.label + ': ' + tag.value) + '"' +
+        '    class="inline-flex min-w-0 items-center border-l border-gray-300 bg-white px-2 py-1 text-left hover:bg-gray-100 dark:border-gray-500/40 dark:bg-white/5 dark:hover:bg-white/15 cursor-pointer">' +
+        '    <span class="truncate font-medium text-gray-900 dark:text-white">' + escapeHtml(tag.value) + '</span>' +
+        '  </button>' +
+        '  <button type="button" data-filter-tag-remove="' + escapeHtml(tag.type) + '"' +
+        '    class="inline-flex w-6 shrink-0 self-stretch items-center justify-center border-l border-gray-300 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:border-gray-500/40 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white cursor-pointer" aria-label="Remove filter">' +
+        '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3">' +
+        '      <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />' +
+        '    </svg>' +
+        '  </button>' +
+        '  <span aria-hidden="true" class="pointer-events-none absolute inset-0 rounded-md inset-ring inset-ring-gray-300 dark:inset-ring-gray-500/40"></span>' +
+        '</span>';
+    }).join('');
   }
 
   function renderPaginationSkeleton() {
     if (!refs.pagination) return;
-    refs.pagination.innerHTML =
-      "" +
+    refs.pagination.innerHTML = '' +
       '<div class="flex flex-1 justify-between sm:hidden animate-pulse">' +
-      '<span class="inline-flex h-9 w-24 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
-      '<span class="inline-flex h-9 w-20 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
-      "</div>" +
+        '<span class="inline-flex h-9 w-24 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+        '<span class="inline-flex h-9 w-20 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+      '</div>' +
       '<div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between animate-pulse">' +
-      '<div class="flex items-center gap-x-6">' +
-      '<span class="inline-flex h-4 w-56 rounded bg-gray-200 dark:bg-white/15"></span>' +
-      '<span class="inline-flex h-8 w-28 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
-      "</div>" +
-      '<span class="inline-flex h-8 w-56 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
-      "</div>";
+        '<div class="flex items-center gap-x-6">' +
+          '<span class="inline-flex h-4 w-56 rounded bg-gray-200 dark:bg-white/15"></span>' +
+          '<span class="inline-flex h-8 w-28 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+        '</div>' +
+        '<span class="inline-flex h-8 w-56 rounded-md bg-gray-200 dark:bg-white/15"></span>' +
+      '</div>';
   }
 
   function renderTableSkeleton(renderColumns) {
     if (!refs.table) return;
-    if (
-      window.TableSkeleton &&
-      typeof window.TableSkeleton.render === "function"
-    ) {
+    if (window.TableSkeleton && typeof window.TableSkeleton.render === 'function') {
       window.TableSkeleton.render({
         tableEl: refs.table,
         columns: renderColumns,
@@ -2422,8 +1771,7 @@
         includeHeader: true,
       });
     } else {
-      refs.table.innerHTML =
-        '<tbody><tr><td class="px-4 py-8 text-sm text-gray-500 dark:text-gray-400">Loading...</td></tr></tbody>';
+      refs.table.innerHTML = '<tbody><tr><td class="px-4 py-8 text-sm text-gray-500 dark:text-gray-400">Loading...</td></tr></tbody>';
     }
     renderPaginationSkeleton();
     refreshStickyAction();
@@ -2441,8 +1789,8 @@
     state.isTabLoading = true;
     try {
       var nextUrl = new URL(window.location.href);
-      nextUrl.searchParams.set("tab", nextTab);
-      window.history.replaceState({}, "", nextUrl.toString());
+      nextUrl.searchParams.set('tab', nextTab);
+      window.history.replaceState({}, '', nextUrl.toString());
     } catch (err) {
       // Ignore URL update failures and continue switching tabs.
     }
@@ -2458,29 +1806,28 @@
   }
 
   function clearPanelSelection(panel) {
-    if (panel === "status") {
+    if (panel === 'status') {
       state.selectedStatuses.clear();
-    } else if (panel === "method") {
+    } else if (panel === 'method') {
       state.selectedMethods.clear();
-    } else if (panel === "failure_reason") {
+    } else if (panel === 'failure_reason') {
       state.selectedFailureReasons.clear();
-    } else if (panel === "initiated_date") {
-      state.initiatedDateFrom = "";
-      state.initiatedDateTo = "";
-      state.initiatedDateFromDraft = "";
-      state.initiatedDateToDraft = "";
-      state.initiatedDateActiveField = "from";
+    } else if (panel === 'initiated_date') {
+      state.initiatedDateFrom = '';
+      state.initiatedDateTo = '';
+      state.initiatedDateFromDraft = '';
+      state.initiatedDateToDraft = '';
+      state.initiatedDateActiveField = 'from';
     } else {
       state.selectedSources.clear();
     }
   }
 
   function getPanelDraftCount(panel) {
-    if (panel === "status") return state.selectedStatuses.size;
-    if (panel === "method") return state.selectedMethods.size;
-    if (panel === "failure_reason") return state.selectedFailureReasons.size;
-    if (panel === "initiated_date")
-      return state.initiatedDateFrom || state.initiatedDateTo ? 1 : 0;
+    if (panel === 'status') return state.selectedStatuses.size;
+    if (panel === 'method') return state.selectedMethods.size;
+    if (panel === 'failure_reason') return state.selectedFailureReasons.size;
+    if (panel === 'initiated_date') return state.initiatedDateFrom || state.initiatedDateTo ? 1 : 0;
     return state.selectedSources.size;
   }
 
@@ -2489,125 +1836,100 @@
   }
 
   function panelDraftChanged(panel) {
-    if (panel === "status")
-      return !setsEqual(state.selectedStatuses, state.appliedSelectedStatuses);
-    if (panel === "method")
-      return !setsEqual(state.selectedMethods, state.appliedSelectedMethods);
-    if (panel === "failure_reason")
-      return !setsEqual(
-        state.selectedFailureReasons,
-        state.appliedSelectedFailureReasons,
-      );
-    if (panel === "initiated_date") {
-      return (
-        state.initiatedDateFrom !== state.appliedInitiatedDateFrom ||
-        state.initiatedDateTo !== state.appliedInitiatedDateTo
-      );
+    if (panel === 'status') return !setsEqual(state.selectedStatuses, state.appliedSelectedStatuses);
+    if (panel === 'method') return !setsEqual(state.selectedMethods, state.appliedSelectedMethods);
+    if (panel === 'failure_reason') return !setsEqual(state.selectedFailureReasons, state.appliedSelectedFailureReasons);
+    if (panel === 'initiated_date') {
+      return state.initiatedDateFrom !== state.appliedInitiatedDateFrom ||
+        state.initiatedDateTo !== state.appliedInitiatedDateTo;
     }
     return !setsEqual(state.selectedSources, state.appliedSelectedSources);
   }
 
   function hasAnyDraftChanges() {
-    return (
-      panelDraftChanged("source") ||
-      panelDraftChanged("status") ||
-      panelDraftChanged("method") ||
-      panelDraftChanged("failure_reason") ||
-      panelDraftChanged("initiated_date")
-    );
+    return panelDraftChanged('source') ||
+      panelDraftChanged('status') ||
+      panelDraftChanged('method') ||
+      panelDraftChanged('failure_reason') ||
+      panelDraftChanged('initiated_date');
   }
 
   function syncFilterApplyButtonState() {
     var activePanel = normalizeFilterPanel(state.activeFilterPanel);
-    if (refs.filterClearBtn)
-      refs.filterClearBtn.disabled = !panelHasDraftSelection(activePanel);
-    if (refs.filterApplyActiveBtn)
-      refs.filterApplyActiveBtn.disabled = !hasAnyDraftChanges();
-    if (refs.filterCountBadges && refs.filterCountBadges.length)
-      renderFilterNavBadges();
-    if (refs.filterBtn)
-      refs.filterBtn.dataset.hasDraft = hasAnyDraftChanges() ? "true" : "false";
-    if (refs.filterBackdrop)
-      refs.filterBackdrop.dataset.activePanel = activePanel;
+    if (refs.filterClearBtn) refs.filterClearBtn.disabled = !panelHasDraftSelection(activePanel);
+    if (refs.filterApplyActiveBtn) refs.filterApplyActiveBtn.disabled = !hasAnyDraftChanges();
+    if (refs.filterCountBadges && refs.filterCountBadges.length) renderFilterNavBadges();
+    if (refs.filterBtn) refs.filterBtn.dataset.hasDraft = hasAnyDraftChanges() ? 'true' : 'false';
+    if (refs.filterBackdrop) refs.filterBackdrop.dataset.activePanel = activePanel;
   }
 
   function setFilterDetailPanelVisibility(panel) {
-    if (refs.filterSourcePanel) refs.filterSourcePanel.classList.add("hidden");
-    if (refs.filterStatusPanel) refs.filterStatusPanel.classList.add("hidden");
-    if (refs.filterMethodPanel) refs.filterMethodPanel.classList.add("hidden");
-    if (refs.filterFailureReasonPanel)
-      refs.filterFailureReasonPanel.classList.add("hidden");
-    if (refs.filterInitiatedDatePanel)
-      refs.filterInitiatedDatePanel.classList.add("hidden");
-    if (refs.filterSourcePanel) refs.filterSourcePanel.classList.remove("flex");
-    if (refs.filterStatusPanel) refs.filterStatusPanel.classList.remove("flex");
-    if (refs.filterMethodPanel) refs.filterMethodPanel.classList.remove("flex");
-    if (refs.filterFailureReasonPanel)
-      refs.filterFailureReasonPanel.classList.remove("flex");
-    if (refs.filterInitiatedDatePanel)
-      refs.filterInitiatedDatePanel.classList.remove("flex");
-    if (panel === "source" && refs.filterSourcePanel) {
-      refs.filterSourcePanel.classList.remove("hidden");
-      refs.filterSourcePanel.classList.add("flex");
-    } else if (panel === "status" && refs.filterStatusPanel) {
-      refs.filterStatusPanel.classList.remove("hidden");
-      refs.filterStatusPanel.classList.add("flex");
-    } else if (panel === "method" && refs.filterMethodPanel) {
-      refs.filterMethodPanel.classList.remove("hidden");
-      refs.filterMethodPanel.classList.add("flex");
-    } else if (panel === "failure_reason" && refs.filterFailureReasonPanel) {
-      refs.filterFailureReasonPanel.classList.remove("hidden");
-      refs.filterFailureReasonPanel.classList.add("flex");
-    } else if (panel === "initiated_date" && refs.filterInitiatedDatePanel) {
-      refs.filterInitiatedDatePanel.classList.remove("hidden");
-      refs.filterInitiatedDatePanel.classList.add("flex");
+    if (refs.filterSourcePanel) refs.filterSourcePanel.classList.add('hidden');
+    if (refs.filterStatusPanel) refs.filterStatusPanel.classList.add('hidden');
+    if (refs.filterMethodPanel) refs.filterMethodPanel.classList.add('hidden');
+    if (refs.filterFailureReasonPanel) refs.filterFailureReasonPanel.classList.add('hidden');
+    if (refs.filterInitiatedDatePanel) refs.filterInitiatedDatePanel.classList.add('hidden');
+    if (refs.filterSourcePanel) refs.filterSourcePanel.classList.remove('flex');
+    if (refs.filterStatusPanel) refs.filterStatusPanel.classList.remove('flex');
+    if (refs.filterMethodPanel) refs.filterMethodPanel.classList.remove('flex');
+    if (refs.filterFailureReasonPanel) refs.filterFailureReasonPanel.classList.remove('flex');
+    if (refs.filterInitiatedDatePanel) refs.filterInitiatedDatePanel.classList.remove('flex');
+    if (panel === 'source' && refs.filterSourcePanel) {
+      refs.filterSourcePanel.classList.remove('hidden');
+      refs.filterSourcePanel.classList.add('flex');
+    } else if (panel === 'status' && refs.filterStatusPanel) {
+      refs.filterStatusPanel.classList.remove('hidden');
+      refs.filterStatusPanel.classList.add('flex');
+    } else if (panel === 'method' && refs.filterMethodPanel) {
+      refs.filterMethodPanel.classList.remove('hidden');
+      refs.filterMethodPanel.classList.add('flex');
+    } else if (panel === 'failure_reason' && refs.filterFailureReasonPanel) {
+      refs.filterFailureReasonPanel.classList.remove('hidden');
+      refs.filterFailureReasonPanel.classList.add('flex');
+    } else if (panel === 'initiated_date' && refs.filterInitiatedDatePanel) {
+      refs.filterInitiatedDatePanel.classList.remove('hidden');
+      refs.filterInitiatedDatePanel.classList.add('flex');
     }
   }
 
   function syncFilterNavState(panel) {
-    var navButtons = refs.filterMenu
-      ? Array.from(
-          refs.filterMenu.querySelectorAll(
-            "[data-filter-nav][data-filter-open]",
-          ),
-        )
-      : [];
+    var navButtons = refs.filterMenu ? Array.from(refs.filterMenu.querySelectorAll('[data-filter-nav][data-filter-open]')) : [];
     navButtons.forEach(function (button) {
-      var isActive = button.getAttribute("data-filter-open") === panel;
-      button.classList.toggle("bg-gray-100", isActive);
-      button.classList.toggle("text-gray-900", isActive);
-      button.classList.toggle("dark:bg-white/10", isActive);
-      button.classList.toggle("dark:text-white", isActive);
+      var isActive = button.getAttribute('data-filter-open') === panel;
+      button.classList.toggle('bg-gray-100', isActive);
+      button.classList.toggle('text-gray-900', isActive);
+      button.classList.toggle('dark:bg-white/10', isActive);
+      button.classList.toggle('dark:text-white', isActive);
     });
   }
 
   function applyFilterMenuLayout() {
     if (!refs.filterMenu) return;
-    var isMobileView = window.matchMedia("(max-width: 639px)").matches;
+    var isMobileView = window.matchMedia('(max-width: 639px)').matches;
     if (isMobileView) {
-      refs.filterMenu.style.position = "fixed";
-      refs.filterMenu.style.left = "1rem";
-      refs.filterMenu.style.right = "1rem";
-      refs.filterMenu.style.bottom = "1rem";
-      refs.filterMenu.style.top = "auto";
-      refs.filterMenu.style.marginTop = "0";
-      refs.filterMenu.style.margin = "0";
-      refs.filterMenu.style.zIndex = "50";
-      refs.filterMenu.style.maxWidth = "none";
-      refs.filterMenu.style.width = "auto";
-      refs.filterMenu.style.maxHeight = "calc(100dvh - 2rem)";
+      refs.filterMenu.style.position = 'fixed';
+      refs.filterMenu.style.left = '1rem';
+      refs.filterMenu.style.right = '1rem';
+      refs.filterMenu.style.bottom = '1rem';
+      refs.filterMenu.style.top = 'auto';
+      refs.filterMenu.style.marginTop = '0';
+      refs.filterMenu.style.margin = '0';
+      refs.filterMenu.style.zIndex = '50';
+      refs.filterMenu.style.maxWidth = 'none';
+      refs.filterMenu.style.width = 'auto';
+      refs.filterMenu.style.maxHeight = 'calc(100dvh - 2rem)';
     } else {
-      refs.filterMenu.style.position = "";
-      refs.filterMenu.style.left = "";
-      refs.filterMenu.style.right = "";
-      refs.filterMenu.style.bottom = "";
-      refs.filterMenu.style.top = "";
-      refs.filterMenu.style.marginTop = "";
-      refs.filterMenu.style.margin = "";
-      refs.filterMenu.style.zIndex = "";
-      refs.filterMenu.style.maxWidth = "";
-      refs.filterMenu.style.width = "";
-      refs.filterMenu.style.maxHeight = "";
+      refs.filterMenu.style.position = '';
+      refs.filterMenu.style.left = '';
+      refs.filterMenu.style.right = '';
+      refs.filterMenu.style.bottom = '';
+      refs.filterMenu.style.top = '';
+      refs.filterMenu.style.marginTop = '';
+      refs.filterMenu.style.margin = '';
+      refs.filterMenu.style.zIndex = '';
+      refs.filterMenu.style.maxWidth = '';
+      refs.filterMenu.style.width = '';
+      refs.filterMenu.style.maxHeight = '';
     }
   }
 
@@ -2620,12 +1942,11 @@
     syncFilterApplyButtonState();
   }
 
+
   /** Rotate the Filter chevron while its menu is open, as the sidebar submenu does. */
   function setFilterChevron(open) {
-    var chevrons = document.querySelectorAll("[data-filter-chevron]");
-    Array.prototype.forEach.call(chevrons, function (c) {
-      c.classList.toggle("rotate-180", !!open);
-    });
+    var chevrons = document.querySelectorAll('[data-filter-chevron]');
+    Array.prototype.forEach.call(chevrons, function (c) { c.classList.toggle('rotate-180', !!open); });
   }
   function setFilterMenuOpen(nextOpen) {
     if (!refs.filterMenu) return;
@@ -2635,40 +1956,16 @@
     if (state.filterMenuOpen) {
       copyAppliedFiltersToDraft();
       syncFilterUi();
-      setFilterPanel(
-        state.activeFilterPanel && state.activeFilterPanel !== "root"
-          ? state.activeFilterPanel
-          : "source",
-      );
-      refs.filterMenu.classList.remove(
-        "invisible",
-        "opacity-0",
-        "pointer-events-none",
-      );
-      if (
-        refs.filterBackdrop &&
-        window.matchMedia("(max-width: 639px)").matches
-      ) {
-        refs.filterBackdrop.classList.remove(
-          "invisible",
-          "opacity-0",
-          "pointer-events-none",
-        );
+      setFilterPanel(state.activeFilterPanel && state.activeFilterPanel !== 'root' ? state.activeFilterPanel : 'source');
+      refs.filterMenu.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
+      if (refs.filterBackdrop && window.matchMedia('(max-width: 639px)').matches) {
+        refs.filterBackdrop.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
       }
     } else {
-      refs.filterMenu.classList.add(
-        "invisible",
-        "opacity-0",
-        "pointer-events-none",
-      );
-      refs.filterMenu.style.width = "";
-      refs.filterMenu.style.height = "";
-      if (refs.filterBackdrop)
-        refs.filterBackdrop.classList.add(
-          "invisible",
-          "opacity-0",
-          "pointer-events-none",
-        );
+      refs.filterMenu.classList.add('invisible', 'opacity-0', 'pointer-events-none');
+      refs.filterMenu.style.width = '';
+      refs.filterMenu.style.height = '';
+      if (refs.filterBackdrop) refs.filterBackdrop.classList.add('invisible', 'opacity-0', 'pointer-events-none');
     }
   }
 
@@ -2680,30 +1977,17 @@
     state.isTabLoading = true;
     setFilterMenuOpen(false);
     renderAll();
-    filterApplyLoadingTimer = window.setTimeout(
-      function () {
-        filterApplyLoadingTimer = null;
-        commitDraftFilters();
-        state.isTabLoading = false;
-        state.currentPage = 1;
-        renderAll();
-      },
-      Math.floor(
-        Math.random() *
-          (FILTER_APPLY_SKELETON_MAX_MS - FILTER_APPLY_SKELETON_MIN_MS + 1),
-      ) + FILTER_APPLY_SKELETON_MIN_MS,
-    );
+    filterApplyLoadingTimer = window.setTimeout(function () {
+      filterApplyLoadingTimer = null;
+      commitDraftFilters();
+      state.isTabLoading = false;
+      state.currentPage = 1;
+      renderAll();
+    }, Math.floor(Math.random() * (FILTER_APPLY_SKELETON_MAX_MS - FILTER_APPLY_SKELETON_MIN_MS + 1)) + FILTER_APPLY_SKELETON_MIN_MS);
   }
 
   function initTableFilterDropdown() {
-    if (
-      !refs.filterBtn ||
-      !refs.filterMenu ||
-      !refs.filterTrack ||
-      !refs.filterRootPanel ||
-      !refs.filterDetailSlot
-    )
-      return;
+    if (!refs.filterBtn || !refs.filterMenu || !refs.filterTrack || !refs.filterRootPanel || !refs.filterDetailSlot) return;
 
     syncFilterUi = function () {
       syncSelectedFiltersToAvailable();
@@ -2712,64 +1996,46 @@
       renderMethodFilters();
       renderFailureReasonFilters();
       renderActiveFilters();
-      if (refs.filterDateFromInput)
-        refs.filterDateFromInput.value =
-          state.initiatedDateFromDraft ||
-          formatIsoAsUsInput(state.initiatedDateFrom);
-      if (refs.filterDateToInput)
-        refs.filterDateToInput.value =
-          state.initiatedDateToDraft ||
-          formatIsoAsUsInput(state.initiatedDateTo);
+      if (refs.filterDateFromInput) refs.filterDateFromInput.value = state.initiatedDateFromDraft || formatIsoAsUsInput(state.initiatedDateFrom);
+      if (refs.filterDateToInput) refs.filterDateToInput.value = state.initiatedDateToDraft || formatIsoAsUsInput(state.initiatedDateTo);
       renderFilterNavBadges();
       syncFilterApplyButtonState();
       if (state.filterMenuOpen) {
         applyFilterMenuLayout();
-        setFilterPanel(
-          state.activeFilterPanel && state.activeFilterPanel !== "root"
-            ? state.activeFilterPanel
-            : "source",
-        );
+        setFilterPanel(state.activeFilterPanel && state.activeFilterPanel !== 'root' ? state.activeFilterPanel : 'source');
       }
     };
 
-    refs.filterBtn.addEventListener("click", function (event) {
+    refs.filterBtn.addEventListener('click', function (event) {
       event.stopPropagation();
       var nextOpen = !state.filterMenuOpen;
-      if (
-        nextOpen &&
-        (!state.activeFilterPanel || state.activeFilterPanel === "root")
-      )
-        state.activeFilterPanel = "source";
+      if (nextOpen && (!state.activeFilterPanel || state.activeFilterPanel === 'root')) state.activeFilterPanel = 'source';
       setFilterMenuOpen(nextOpen);
       syncFilterApplyButtonState();
     });
 
-    refs.filterTrack.addEventListener("click", function (event) {
+    refs.filterTrack.addEventListener('click', function (event) {
       event.stopPropagation();
-      var openBtn = event.target.closest("[data-filter-open]");
+      var openBtn = event.target.closest('[data-filter-open]');
       if (openBtn) {
         event.preventDefault();
-        setFilterPanel(openBtn.getAttribute("data-filter-open"));
+        setFilterPanel(openBtn.getAttribute('data-filter-open'));
       }
     });
 
-    refs.filterTrack.addEventListener("change", function (event) {
-      var checkbox = event.target.closest(
-        'input[type="checkbox"][data-filter-value]',
-      );
+    refs.filterTrack.addEventListener('change', function (event) {
+      var checkbox = event.target.closest('input[type="checkbox"][data-filter-value]');
       if (!checkbox) return;
-      var panelEl = checkbox.closest(
-        "#bp-table-filter-sources, #bp-table-filter-statuses, #bp-table-filter-methods, #bp-table-filter-failure-reasons",
-      );
-      var value = checkbox.getAttribute("data-filter-value");
+      var panelEl = checkbox.closest('#bp-table-filter-sources, #bp-table-filter-statuses, #bp-table-filter-methods, #bp-table-filter-failure-reasons');
+      var value = checkbox.getAttribute('data-filter-value');
       if (!panelEl || !value) return;
-      if (panelEl.id === "bp-table-filter-sources") {
+      if (panelEl.id === 'bp-table-filter-sources') {
         if (checkbox.checked) state.selectedSources.add(value);
         else state.selectedSources.delete(value);
-      } else if (panelEl.id === "bp-table-filter-statuses") {
+      } else if (panelEl.id === 'bp-table-filter-statuses') {
         if (checkbox.checked) state.selectedStatuses.add(value);
         else state.selectedStatuses.delete(value);
-      } else if (panelEl.id === "bp-table-filter-failure-reasons") {
+      } else if (panelEl.id === 'bp-table-filter-failure-reasons') {
         if (checkbox.checked) state.selectedFailureReasons.add(value);
         else state.selectedFailureReasons.delete(value);
       } else {
@@ -2782,37 +2048,33 @@
 
     function bindDateInput(inputEl, field) {
       if (!inputEl) return;
-      inputEl.addEventListener("focus", function () {
-        state.initiatedDateActiveField = field === "to" ? "to" : "from";
+      inputEl.addEventListener('focus', function () {
+        state.initiatedDateActiveField = field === 'to' ? 'to' : 'from';
       });
-      inputEl.addEventListener("input", function () {
+      inputEl.addEventListener('input', function () {
         var formatted = formatUsInput(inputEl.value);
         var iso = usInputToIso(formatted);
         inputEl.value = formatted;
-        if (field === "to") {
+        if (field === 'to') {
           state.initiatedDateToDraft = formatted;
-          state.initiatedDateTo = iso || "";
+          state.initiatedDateTo = iso || '';
         } else {
           state.initiatedDateFromDraft = formatted;
-          state.initiatedDateFrom = iso || "";
+          state.initiatedDateFrom = iso || '';
         }
-        if (
-          state.initiatedDateFrom &&
-          state.initiatedDateTo &&
-          state.initiatedDateFrom > state.initiatedDateTo
-        ) {
-          if (field === "to") state.initiatedDateFrom = state.initiatedDateTo;
+        if (state.initiatedDateFrom && state.initiatedDateTo && state.initiatedDateFrom > state.initiatedDateTo) {
+          if (field === 'to') state.initiatedDateFrom = state.initiatedDateTo;
           else state.initiatedDateTo = state.initiatedDateFrom;
         }
         syncFilterApplyButtonState();
       });
     }
 
-    bindDateInput(refs.filterDateFromInput, "from");
-    bindDateInput(refs.filterDateToInput, "to");
+    bindDateInput(refs.filterDateFromInput, 'from');
+    bindDateInput(refs.filterDateToInput, 'to');
 
     if (refs.filterClearBtn) {
-      refs.filterClearBtn.addEventListener("click", function (event) {
+      refs.filterClearBtn.addEventListener('click', function (event) {
         event.stopPropagation();
         if (refs.filterClearBtn.disabled) return;
         clearPanelSelection(normalizeFilterPanel(state.activeFilterPanel));
@@ -2821,7 +2083,7 @@
     }
 
     if (refs.filterApplyActiveBtn) {
-      refs.filterApplyActiveBtn.addEventListener("click", function (event) {
+      refs.filterApplyActiveBtn.addEventListener('click', function (event) {
         event.stopPropagation();
         if (refs.filterApplyActiveBtn.disabled) return;
         startFilterApplyLoading();
@@ -2829,41 +2091,40 @@
     }
 
     if (refs.filterBackdrop) {
-      refs.filterBackdrop.addEventListener("click", function () {
+      refs.filterBackdrop.addEventListener('click', function () {
         if (!state.filterMenuOpen) return;
         setFilterMenuOpen(false);
       });
     }
 
     if (refs.activeFilters) {
-      refs.activeFilters.addEventListener("click", function (event) {
-        var openBtn = event.target.closest("button[data-filter-tag-open]");
+      refs.activeFilters.addEventListener('click', function (event) {
+        var openBtn = event.target.closest('button[data-filter-tag-open]');
         if (openBtn) {
           event.preventDefault();
           event.stopPropagation();
-          var panelType = openBtn.getAttribute("data-filter-tag-open");
-          state.activeFilterPanel = panelType || "source";
+          var panelType = openBtn.getAttribute('data-filter-tag-open');
+          state.activeFilterPanel = panelType || 'source';
           setFilterMenuOpen(true);
           setFilterPanel(state.activeFilterPanel);
           syncFilterApplyButtonState();
           return;
         }
-        var removeBtn = event.target.closest("button[data-filter-tag-remove]");
+        var removeBtn = event.target.closest('button[data-filter-tag-remove]');
         if (!removeBtn) return;
         event.preventDefault();
-        var type = removeBtn.getAttribute("data-filter-tag-remove");
-        if (type === "source") state.appliedSelectedSources.clear();
-        if (type === "status") state.appliedSelectedStatuses.clear();
-        if (type === "method") state.appliedSelectedMethods.clear();
-        if (type === "failure_reason")
-          state.appliedSelectedFailureReasons.clear();
-        if (type === "initiated_date") {
-          state.appliedInitiatedDateFrom = "";
-          state.appliedInitiatedDateTo = "";
-          state.initiatedDateFromDraft = "";
-          state.initiatedDateToDraft = "";
-          if (refs.filterDateFromInput) refs.filterDateFromInput.value = "";
-          if (refs.filterDateToInput) refs.filterDateToInput.value = "";
+        var type = removeBtn.getAttribute('data-filter-tag-remove');
+        if (type === 'source') state.appliedSelectedSources.clear();
+        if (type === 'status') state.appliedSelectedStatuses.clear();
+        if (type === 'method') state.appliedSelectedMethods.clear();
+        if (type === 'failure_reason') state.appliedSelectedFailureReasons.clear();
+        if (type === 'initiated_date') {
+          state.appliedInitiatedDateFrom = '';
+          state.appliedInitiatedDateTo = '';
+          state.initiatedDateFromDraft = '';
+          state.initiatedDateToDraft = '';
+          if (refs.filterDateFromInput) refs.filterDateFromInput.value = '';
+          if (refs.filterDateToInput) refs.filterDateToInput.value = '';
         }
         state.currentPage = 1;
         syncFilterUi();
@@ -2877,191 +2138,143 @@
         if (refs.filterDropdown.contains(event.target)) return;
         setFilterMenuOpen(false);
       };
-      document.addEventListener("click", filterDismissHandler);
+      document.addEventListener('click', filterDismissHandler);
     }
 
     if (!filterResizeHandler) {
       filterResizeHandler = function () {
         if (!state.filterMenuOpen) return;
         applyFilterMenuLayout();
-        setFilterPanel(
-          state.activeFilterPanel && state.activeFilterPanel !== "root"
-            ? state.activeFilterPanel
-            : "source",
-        );
+        setFilterPanel(state.activeFilterPanel && state.activeFilterPanel !== 'root' ? state.activeFilterPanel : 'source');
       };
-      window.addEventListener("resize", filterResizeHandler);
+      window.addEventListener('resize', filterResizeHandler);
     }
   }
 
   function initManageColumnsModal() {
-    if (
-      !refs.manageColumnsBtn ||
-      !refs.manageColumnsDialog ||
-      !refs.manageColumnsList ||
-      !refs.manageColumnsApplyBtn ||
-      !refs.manageColumnsResetBtn
-    )
-      return;
-    var LIFT_CLASSES = [
-      "bg-white",
-      "shadow-lg",
-      "ring-1",
-      "ring-gray-900/10",
-      "dark:bg-gray-800",
-      "dark:ring-white/15",
-    ];
+    if (!refs.manageColumnsBtn || !refs.manageColumnsDialog || !refs.manageColumnsList || !refs.manageColumnsApplyBtn || !refs.manageColumnsResetBtn) return;
+    var LIFT_CLASSES = ['bg-white', 'shadow-lg', 'ring-1', 'ring-gray-900/10', 'dark:bg-gray-800', 'dark:ring-white/15'];
     function liftRow(row, on) {
       if (!row) return;
-      LIFT_CLASSES.forEach(function (c) {
-        row.classList.toggle(c, on);
-      });
+      LIFT_CLASSES.forEach(function (c) { row.classList.toggle(c, on); });
     }
     function clearAllLifts(scope) {
-      Array.prototype.forEach.call(
-        scope.querySelectorAll("[data-column-order-row]"),
-        function (r) {
-          liftRow(r, false);
-        },
-      );
+      Array.prototype.forEach.call(scope.querySelectorAll('[data-column-order-row]'), function (r) { liftRow(r, false); });
     }
 
-    var dragTargetPosition = "before";
-    var dragTargetKey = "";
+    var dragTargetPosition = 'before';
+    var dragTargetKey = '';
 
     function clearDropIndicators() {
-      Array.from(
-        refs.manageColumnsList.querySelectorAll("[data-drop-line]"),
-      ).forEach(function (line) {
-        line.classList.remove("opacity-100");
-        line.classList.add("opacity-0");
+      Array.from(refs.manageColumnsList.querySelectorAll('[data-drop-line]')).forEach(function (line) {
+        line.classList.remove('opacity-100');
+        line.classList.add('opacity-0');
       });
     }
 
     function setDropIndicator(row, position) {
       clearDropIndicators();
       if (!row) return;
-      var indicator = row.querySelector(
-        '[data-drop-line="' +
-          (position === "after" ? "after" : "before") +
-          '"]',
-      );
+      var indicator = row.querySelector('[data-drop-line="' + (position === 'after' ? 'after' : 'before') + '"]');
       if (indicator) {
-        indicator.classList.remove("opacity-0");
-        indicator.classList.add("opacity-100");
+        indicator.classList.remove('opacity-0');
+        indicator.classList.add('opacity-100');
       }
-      dragTargetKey = row.getAttribute("data-column-order-row") || "";
-      dragTargetPosition = position === "after" ? "after" : "before";
+      dragTargetKey = row.getAttribute('data-column-order-row') || '';
+      dragTargetPosition = position === 'after' ? 'after' : 'before';
     }
 
     function getNearestDropTarget(clientY) {
-      var rows = Array.from(
-        refs.manageColumnsList.querySelectorAll("[data-column-order-row]"),
-      ).filter(function (row) {
-        return row.getAttribute("data-column-order-row") !== draggingColumnKey;
+      var rows = Array.from(refs.manageColumnsList.querySelectorAll('[data-column-order-row]')).filter(function (row) {
+        return row.getAttribute('data-column-order-row') !== draggingColumnKey;
       });
       if (!rows.length) return null;
       for (var i = 0; i < rows.length; i += 1) {
         var rect = rows[i].getBoundingClientRect();
-        if (clientY < rect.top + rect.height / 2)
-          return { row: rows[i], position: "before" };
+        if (clientY < rect.top + (rect.height / 2)) return { row: rows[i], position: 'before' };
       }
-      return { row: rows[rows.length - 1], position: "after" };
+      return { row: rows[rows.length - 1], position: 'after' };
     }
 
     syncManageColumnsUi = function () {
       var allColumns = getCompleteManageColumnsSchema();
       var orderedColumns = getOrderedManageableColumns(allColumns);
-      refs.manageColumnsList.innerHTML = orderedColumns
-        .map(function (col) {
-          var checked = columnVisibilityState.draftVisibleKeys.has(col.key);
-          var visibleCount = orderedColumns.reduce(function (count, item) {
-            return (
-              count +
-              (columnVisibilityState.draftVisibleKeys.has(item.key) ? 1 : 0)
-            );
-          }, 0);
-          var disabled = checked && visibleCount <= 1;
-          return buildManageColumnsRowHTML(col, checked, disabled);
-        })
-        .join("");
+      refs.manageColumnsList.innerHTML = orderedColumns.map(function (col) {
+        var checked = columnVisibilityState.draftVisibleKeys.has(col.key);
+        var visibleCount = orderedColumns.reduce(function (count, item) {
+          return count + (columnVisibilityState.draftVisibleKeys.has(item.key) ? 1 : 0);
+        }, 0);
+        var disabled = checked && visibleCount <= 1;
+        return buildManageColumnsRowHTML(col, checked, disabled);
+      }).join('');
       refs.manageColumnsApplyBtn.disabled = !isColumnDraftDirty();
       refs.manageColumnsResetBtn.disabled = isColumnDraftDefault(allColumns);
     };
 
-    refs.manageColumnsBtn.addEventListener("click", function () {
+    refs.manageColumnsBtn.addEventListener('click', function () {
       cloneColumnDraftFromApplied(getCompleteManageColumnsSchema());
       syncManageColumnsUi();
     });
 
-    refs.manageColumnsDialog.addEventListener("close", function () {
-      draggingColumnKey = "";
-      dragTargetKey = "";
-      dragTargetPosition = "before";
+    refs.manageColumnsDialog.addEventListener('close', function () {
+      draggingColumnKey = '';
+      dragTargetKey = '';
+      dragTargetPosition = 'before';
       clearDropIndicators();
       cloneColumnDraftFromApplied(getCompleteManageColumnsSchema());
       syncManageColumnsUi();
       renderTable();
     });
 
-    refs.manageColumnsApplyBtn.addEventListener("click", function () {
+    refs.manageColumnsApplyBtn.addEventListener('click', function () {
       if (refs.manageColumnsApplyBtn.disabled) return;
       commitColumnDraft();
       syncManageColumnsUi();
       renderTable();
-      if (typeof refs.manageColumnsDialog.close === "function")
-        refs.manageColumnsDialog.close();
+      if (typeof refs.manageColumnsDialog.close === 'function') refs.manageColumnsDialog.close();
     });
 
-    refs.manageColumnsResetBtn.addEventListener("click", function () {
+    refs.manageColumnsResetBtn.addEventListener('click', function () {
       resetColumnDraftToDefault(getCompleteManageColumnsSchema());
       syncManageColumnsUi();
       renderTable();
     });
 
-    refs.manageColumnsList.addEventListener("change", function (event) {
-      var input = event.target.closest("[data-column-visibility-toggle]");
+    refs.manageColumnsList.addEventListener('change', function (event) {
+      var input = event.target.closest('[data-column-visibility-toggle]');
       if (!input) return;
-      var key = input.getAttribute("data-column-visibility-toggle");
+      var key = input.getAttribute('data-column-visibility-toggle');
       if (!key) return;
       if (input.checked) columnVisibilityState.draftVisibleKeys.add(key);
       else columnVisibilityState.draftVisibleKeys.delete(key);
-      if (
-        input.checked &&
-        key === "failureReason" &&
-        state.activeTab !== "exception"
-      ) {
-        startTabSwitchLoading("exception");
+      if (input.checked && key === 'failureReason' && state.activeTab !== 'exception') {
+        startTabSwitchLoading('exception');
         return;
       }
       syncManageColumnsUi();
       renderTable();
     });
 
-    refs.manageColumnsList.addEventListener("dragstart", function (event) {
-      var handle = event.target.closest("[data-column-drag-handle]");
+    refs.manageColumnsList.addEventListener('dragstart', function (event) {
+      var handle = event.target.closest('[data-column-drag-handle]');
       if (!handle) return;
-      draggingColumnKey = handle.getAttribute("data-column-drag-handle") || "";
-      dragTargetKey = "";
-      dragTargetPosition = "before";
+      draggingColumnKey = handle.getAttribute('data-column-drag-handle') || '';
+      dragTargetKey = '';
+      dragTargetPosition = 'before';
       // Lift the whole row, not just the grip, and drag the row as the ghost.
-      var row = handle.closest("[data-column-order-row]");
+      var row = handle.closest('[data-column-order-row]');
       liftRow(row, true);
-      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.effectAllowed = 'move';
       try {
-        event.dataTransfer.setData("text/plain", draggingColumnKey);
+        event.dataTransfer.setData('text/plain', draggingColumnKey);
         if (row && event.dataTransfer.setDragImage) {
           var box = row.getBoundingClientRect();
-          event.dataTransfer.setDragImage(
-            row,
-            event.clientX - box.left,
-            event.clientY - box.top,
-          );
+          event.dataTransfer.setDragImage(row, event.clientX - box.left, event.clientY - box.top);
         }
       } catch (error) {}
     });
 
-    refs.manageColumnsList.addEventListener("dragover", function (event) {
+    refs.manageColumnsList.addEventListener('dragover', function (event) {
       if (!draggingColumnKey) return;
       event.preventDefault();
       var target = getNearestDropTarget(event.clientY);
@@ -3070,32 +2283,26 @@
         return;
       }
       setDropIndicator(target.row, target.position);
-      event.dataTransfer.dropEffect = "move";
+      event.dataTransfer.dropEffect = 'move';
     });
 
-    refs.manageColumnsList.addEventListener("drop", function (event) {
+    refs.manageColumnsList.addEventListener('drop', function (event) {
       if (!draggingColumnKey) return;
       event.preventDefault();
       var targetKey = dragTargetKey;
       clearDropIndicators();
-      if (
-        moveDraftColumnKeyToPosition(
-          draggingColumnKey,
-          targetKey,
-          dragTargetPosition,
-        )
-      ) {
+      if (moveDraftColumnKeyToPosition(draggingColumnKey, targetKey, dragTargetPosition)) {
         syncManageColumnsUi();
         renderTable();
       }
-      dragTargetKey = "";
+      dragTargetKey = '';
     });
 
-    refs.manageColumnsList.addEventListener("dragend", function () {
+    refs.manageColumnsList.addEventListener('dragend', function () {
       clearAllLifts(refs.manageColumnsList);
-      draggingColumnKey = "";
-      dragTargetKey = "";
-      dragTargetPosition = "before";
+      draggingColumnKey = '';
+      dragTargetKey = '';
+      dragTargetPosition = 'before';
       clearDropIndicators();
     });
 
@@ -3112,352 +2319,183 @@
     }
 
     var filteredRows = getFilteredRows();
-    var totalPages = Math.max(
-      1,
-      Math.ceil(filteredRows.length / state.pageSize),
-    );
+    var totalPages = Math.max(1, Math.ceil(filteredRows.length / state.pageSize));
     if (state.currentPage > totalPages) state.currentPage = totalPages;
 
     var visibleRows = getVisibleRows(filteredRows);
-    var visibleIds = visibleRows.map(function (r) {
-      return r.id;
-    });
-    var selectedVisibleCount = visibleIds.filter(function (id) {
-      return state.selectedRowIds.has(id);
-    }).length;
-    var allVisibleSelected =
-      visibleRows.length > 0 && selectedVisibleCount === visibleRows.length;
-    var hasSomeVisibleSelected =
-      selectedVisibleCount > 0 && !allVisibleSelected;
+    var visibleIds = visibleRows.map(function (r) { return r.id; });
+    var selectedVisibleCount = visibleIds.filter(function (id) { return state.selectedRowIds.has(id); }).length;
+    var allVisibleSelected = visibleRows.length > 0 && selectedVisibleCount === visibleRows.length;
+    var hasSomeVisibleSelected = selectedVisibleCount > 0 && !allVisibleSelected;
 
     function buildSortBadgeHTML(sortDirection) {
       var sortBtnClass = sortDirection
-        ? "inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
-        : "inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400";
-      var sortIcon =
-        sortDirection === "asc"
-          ? ICON_SORT_ASC
-          : sortDirection === "desc"
-            ? ICON_SORT_DESC
-            : ICON_SORT;
-      return (
-        '<span data-sort-badge="true" class="' +
-        sortBtnClass +
-        '">' +
-        sortIcon +
-        "</span>"
-      );
+        ? 'inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300'
+        : 'inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400';
+      var sortIcon = sortDirection === 'asc'
+        ? ICON_SORT_ASC
+        : (sortDirection === 'desc' ? ICON_SORT_DESC : ICON_SORT);
+      return '<span data-sort-badge="true" class="' + sortBtnClass + '">' + sortIcon + '</span>';
     }
 
-    var headerHtml =
-      '<thead class="bg-white dark:bg-gray-900"><tr class="h-14">' +
-      renderColumns
-        .map(function (col) {
-          var base = "border-b border-gray-200 dark:border-white/10";
-          if (col.type === "expand") {
-            return (
-              '<th class="' +
-              base +
-              ' h-14 w-10 min-w-10 px-0 py-4 align-middle text-center whitespace-nowrap"><span class="sr-only">Expand</span></th>'
-            );
-          }
-          if (col.type === "select") {
-            return (
-              "" +
-              '<th class="' +
-              base +
-              ' h-14 w-10 min-w-10 px-0 py-4 align-middle text-center text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">' +
-              '<div class="flex h-6 items-center justify-center">' +
-              '<label class="inline-flex items-center justify-center cursor-pointer select-none">' +
-              '<span class="group grid size-4 grid-cols-1">' +
-              '<input id="bp-select-all" type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" ' +
-              (allVisibleSelected ? "checked" : "") +
-              " />" +
-              '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
-              '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
-              '<path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100" />' +
-              "</svg>" +
-              "</span>" +
-              "</label>" +
-              "</div>" +
-              "</th>"
-            );
-          }
-          if (col.type === "action") {
-            return (
-              '<th data-action-column scope="col" class="' +
-              base +
-              ' h-14 w-px bg-white py-4 pr-3 pl-3 align-middle whitespace-nowrap dark:bg-gray-900 sm:pr-2"><span class="sr-only">Action</span></th>'
-            );
-          }
+    var headerHtml = '<thead class="bg-white dark:bg-gray-900"><tr class="h-14">' + renderColumns.map(function (col) {
+      var base = 'border-b border-gray-200 dark:border-white/10';
+      if (col.type === 'expand') {
+        return '<th class="' + base + ' h-14 w-10 min-w-10 px-0 py-4 align-middle text-center whitespace-nowrap"><span class="sr-only">Expand</span></th>';
+      }
+      if (col.type === 'select') {
+        return '' +
+          '<th class="' + base + ' h-14 w-10 min-w-10 px-0 py-4 align-middle text-center text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white">' +
+          '<div class="flex h-6 items-center justify-center">' +
+          '<label class="inline-flex items-center justify-center cursor-pointer select-none">' +
+          '<span class="group grid size-4 grid-cols-1">' +
+          '<input id="bp-select-all" type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" ' + (allVisibleSelected ? 'checked' : '') + ' />' +
+          '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
+          '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
+          '<path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100" />' +
+          '</svg>' +
+          '</span>' +
+          '</label>' +
+          '</div>' +
+          '</th>';
+      }
+      if (col.type === 'action') {
+        return '<th data-action-column scope="col" class="' + base + ' h-14 w-px bg-white py-4 pr-3 pl-3 align-middle whitespace-nowrap dark:bg-gray-900 sm:pr-2"><span class="sr-only">Action</span></th>';
+      }
 
-          var thClass =
-            base +
-            " h-14 px-2 py-4 align-middle text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white";
-          var direction = state.sortKey === col.key ? state.sortDirection : "";
-          var content = col.sortable
-            ? '<button type="button" data-sort-key="' +
-              col.key +
-              '" class="group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white"><span>' +
-              escapeHtml(col.label) +
-              "</span>" +
-              buildSortBadgeHTML(direction) +
-              "</button>"
-            : escapeHtml(col.label);
-          return '<th class="' + thClass + '">' + content + "</th>";
-        })
-        .join("") +
-      "</tr></thead>";
+      var thClass = base + ' h-14 px-2 py-4 align-middle text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white';
+      var direction = state.sortKey === col.key ? state.sortDirection : '';
+      var content = col.sortable
+        ? '<button type="button" data-sort-key="' + col.key + '" class="group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white"><span>' + escapeHtml(col.label) + '</span>' + buildSortBadgeHTML(direction) + '</button>'
+        : escapeHtml(col.label);
+      return '<th class="' + thClass + '">' + content + '</th>';
+    }).join('') + '</tr></thead>';
 
-    var bodyRows = visibleRows
-      .map(function (row, rowIndex) {
-        var isLastRow = rowIndex === visibleRows.length - 1;
-        var cb = isLastRow
-          ? ""
-          : " border-b border-gray-200 dark:border-white/10";
-        var expanded = state.expandedRows.has(row.id);
-        var actionBgClass = expanded
-          ? " bg-gray-100 dark:bg-white/5"
-          : " bg-white dark:bg-gray-900";
-        var rowCells = renderColumns
-          .map(function (col) {
-            if (col.type === "expand") {
-              return (
-                "" +
-                '<td class="h-12 align-middle py-2 px-0 text-center whitespace-nowrap' +
-                cb +
-                '">' +
-                '<button type="button" data-expand-id="' +
-                row.id +
-                '" class="inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 cursor-pointer">' +
-                '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200 ' +
-                (expanded ? "rotate-90" : "") +
-                '" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>' +
-                "</button>" +
-                "</td>"
-              );
-            }
-            if (col.type === "select") {
-              return (
-                "" +
-                '<td class="h-12 align-middle py-2 px-0 text-center whitespace-nowrap' +
-                cb +
-                '">' +
-                '<div class="flex h-6 items-center justify-center">' +
-                '<span class="group inline-grid size-4 grid-cols-1">' +
-                '<input type="checkbox" data-row-select-id="' +
-                row.id +
-                '" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" ' +
-                (state.selectedRowIds.has(row.id) ? "checked" : "") +
-                " />" +
-                '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
-                '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
-                '<path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100" />' +
-                "</svg>" +
-                "</span>" +
-                "</div>" +
-                "</td>"
-              );
-            }
-            if (col.type === "action") {
-              var isScheduledAction =
-                row.status === "scheduled" ||
-                (row.status === "in_progress" &&
-                  row.statusType === "scheduled");
-              var isPendingSmartDisburseAction = isPendingSmartDisburseRow(row);
-              var actionButton =
-                isScheduledAction || isPendingSmartDisburseAction
-                  ? '<button type="button" data-cancel-id="' +
-                    row.id +
-                    '" class="rounded-md bg-gray-100 px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40">Cancel</button>'
-                  : row.status === "in_progress"
-                    ? '<span class="inline-flex h-8"></span>'
-                    : row.status === "exception"
-                      ? '<button type="button" data-rerun-id="' +
-                        row.id +
-                        '" class="rounded-md bg-gray-100 px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40">Re-run</button>'
-                      : '<button type="button" data-pay-id="' +
-                        row.id +
-                        '" class="cursor-pointer rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Pay</button>';
-              return (
-                '<td data-action-column class="h-12 align-middle py-2 pr-3 pl-3 whitespace-nowrap w-px text-right text-sm font-medium' +
-                cb +
-                actionBgClass +
-                ' group-hover:bg-gray-50 dark:group-hover:bg-white/5 sm:pr-2">' +
-                actionButton +
-                "</td>"
-              );
-            }
-            if (col.key === "amount") {
-              return (
-                '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
-                cb +
-                '">' +
-                escapeHtml(formatMoney(row.amount, row.currency)) +
-                ' <span class="text-gray-500 dark:text-gray-400">' +
-                escapeHtml(row.currency || "USD") +
-                "</span></td>"
-              );
-            }
-            if (col.key === "dueDate") {
-              var pastDue = isPastDue(row.dueDate);
-              return (
-                '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap' +
-                cb +
-                '">' +
-                '<span class="group/due relative inline-flex items-center ' +
-                (pastDue
-                  ? "text-red-600 dark:text-red-400"
-                  : "text-gray-500 dark:text-gray-400") +
-                '">' +
-                escapeHtml(formatDate(row.dueDate)) +
-                '<span class="pointer-events-none invisible absolute bottom-full left-1/2 z-30 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg ' +
-                (pastDue
-                  ? "group-hover/due:inline-flex group-hover/due:visible group-hover/due:opacity-100 group-focus-within/due:inline-flex group-focus-within/due:visible group-focus-within/due:opacity-100"
-                  : "") +
-                '">Past due</span>' +
-                "</span>" +
-                "</td>"
-              );
-            }
-            if (col.key === "adDate") {
-              return (
-                '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' +
-                cb +
-                '">' +
-                escapeHtml(formatDate(row[col.key])) +
-                "</td>"
-              );
-            }
-            if (col.type === "status" || col.key === "status") {
-              var status = row.status;
-              if (status === "in_progress" && row.statusType === "scheduled") {
-                var scheduledText = formatScheduledDateTime(row.scheduledFor);
-                return (
-                  '<td class="h-12 align-middle px-2 py-2 whitespace-nowrap' +
-                  cb +
-                  '">' +
-                  '<span class="group/scheduled relative inline-flex cursor-default select-none items-center gap-1 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 inset-ring inset-ring-gray-500/10 hover:bg-gray-200 dark:bg-white/10 dark:text-gray-300 dark:inset-ring-white/15 dark:hover:bg-white/15">' +
-                  ICON_SCHEDULED +
-                  "<span>Scheduled</span>" +
-                  '<span class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg group-hover/scheduled:inline-flex items-center gap-2">' +
-                  ICON_SCHEDULED +
-                  "<span>Scheduled for: " +
-                  escapeHtml(scheduledText) +
-                  "</span>" +
-                  "</span>" +
-                  "</span>" +
-                  "</td>"
-                );
-              }
-              return (
-                '<td class="h-12 align-middle px-2 py-2 whitespace-nowrap' +
-                cb +
-                '">' +
-                '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
-                (STATUS_STYLES[status] || STATUS_STYLES.ready_to_pay) +
-                '">' +
-                escapeHtml(getDisplayStatusLabel(row)) +
-                "</span></td>"
-              );
-            }
-            if (col.key === "billNumber") {
-              var billValue = escapeHtml(
-                row[col.key] == null ? "--" : row[col.key],
-              );
-              if (row.status === "in_progress" || row.status === "paid") {
-                return (
-                  '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' +
-                  cb +
-                  '">' +
-                  '<button type="button" data-pay-id="' +
-                  row.id +
-                  '" class="cursor-pointer p-0 font-medium text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">' +
-                  billValue +
-                  "</button>" +
-                  "</td>"
-                );
-              }
-              return (
-                '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' +
-                cb +
-                '">' +
-                billValue +
-                "</td>"
-              );
-            }
-            if (col.key === "paymentMethod") {
-              return renderPaymentMethodCell(row, cb);
-            }
-            if (col.key === "failureReason") {
-              return (
-                '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' +
-                cb +
-                '">' +
-                escapeHtml(getFailureReason(row) || "--") +
-                "</td>"
-              );
-            }
-            if (col.key === "payeeName" || col.key === "source") {
-              return (
-                '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' +
-                cb +
-                '">' +
-                escapeHtml(row[col.key] == null ? "--" : row[col.key]) +
-                "</td>"
-              );
-            }
-            return (
-              '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' +
-              cb +
-              '">' +
-              escapeHtml(row[col.key] == null ? "--" : row[col.key]) +
-              "</td>"
-            );
-          })
-          .join("");
-
-        var expandedHtml = "";
-        if (expanded) {
-          expandedHtml =
-            "" +
-            "<tr>" +
-            '<td colspan="' +
-            renderColumns.length +
-            '" class="bg-white dark:bg-gray-900 ' +
-            (isLastRow ? "" : "border-b border-gray-200 dark:border-white/10") +
-            '">' +
-            buildExpandedDetails(row) +
-            "</td>" +
-            "</tr>";
+    var bodyRows = visibleRows.map(function (row, rowIndex) {
+      var isLastRow = rowIndex === visibleRows.length - 1;
+      var cb = isLastRow ? '' : ' border-b border-gray-200 dark:border-white/10';
+      var expanded = state.expandedRows.has(row.id);
+      var actionBgClass = expanded ? ' bg-gray-100 dark:bg-white/5' : ' bg-white dark:bg-gray-900';
+      var rowCells = renderColumns.map(function (col) {
+        if (col.type === 'expand') {
+          return '' +
+            '<td class="h-12 align-middle py-2 px-0 text-center whitespace-nowrap' + cb + '">' +
+            '<button type="button" data-expand-id="' + row.id + '" class="inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20 cursor-pointer">' +
+            '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200 ' + (expanded ? 'rotate-90' : '') + '" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>' +
+            '</button>' +
+            '</td>';
         }
+        if (col.type === 'select') {
+          return '' +
+            '<td class="h-12 align-middle py-2 px-0 text-center whitespace-nowrap' + cb + '">' +
+            '<div class="flex h-6 items-center justify-center">' +
+            '<span class="group inline-grid size-4 grid-cols-1">' +
+            '<input type="checkbox" data-row-select-id="' + row.id + '" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" ' +
+            (state.selectedRowIds.has(row.id) ? 'checked' : '') + ' />' +
+            '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
+            '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
+            '<path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100" />' +
+            '</svg>' +
+            '</span>' +
+            '</div>' +
+            '</td>';
+        }
+        if (col.type === 'action') {
+          var isScheduledAction = row.status === 'scheduled' || (row.status === 'in_progress' && row.statusType === 'scheduled');
+          var isPendingSmartDisburseAction = isPendingSmartDisburseRow(row);
+          var actionButton = (isScheduledAction || isPendingSmartDisburseAction)
+            ? '<button type="button" data-cancel-id="' + row.id + '" class="rounded-md bg-gray-100 px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40">Cancel</button>'
+            : (row.status === 'in_progress'
+              ? '<span class="inline-flex h-8"></span>'
+              : (row.status === 'exception'
+              ? '<button type="button" data-rerun-id="' + row.id + '" class="rounded-md bg-gray-100 px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40">Re-run</button>'
+              : '<button type="button" data-pay-id="' + row.id + '" class="cursor-pointer rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Pay</button>'));
+          return '<td data-action-column class="h-12 align-middle py-2 pr-3 pl-3 whitespace-nowrap w-px text-right text-sm font-medium' + cb + actionBgClass + ' group-hover:bg-gray-50 dark:group-hover:bg-white/5 sm:pr-2">' +
+            actionButton +
+            '</td>';
+        }
+        if (col.key === 'amount') {
+          return '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb + '">' +
+            escapeHtml(formatMoney(row.amount, row.currency)) +
+            ' <span class="text-gray-500 dark:text-gray-400">' + escapeHtml(row.currency || 'USD') + '</span></td>';
+        }
+        if (col.key === 'dueDate') {
+          var pastDue = isPastDue(row.dueDate);
+          return '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap' + cb + '">' +
+            '<span class="group/due relative inline-flex items-center ' + (pastDue ? 'text-red-600 dark:text-red-400' : 'text-gray-500 dark:text-gray-400') + '">' +
+              escapeHtml(formatDate(row.dueDate)) +
+              '<span class="pointer-events-none invisible absolute bottom-full left-1/2 z-30 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg ' + (pastDue ? 'group-hover/due:inline-flex group-hover/due:visible group-hover/due:opacity-100 group-focus-within/due:inline-flex group-focus-within/due:visible group-focus-within/due:opacity-100' : '') + '">Past due</span>' +
+            '</span>' +
+          '</td>';
+        }
+        if (col.key === 'adDate') {
+          return '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb + '">' + escapeHtml(formatDate(row[col.key])) + '</td>';
+        }
+        if (col.type === 'status' || col.key === 'status') {
+          var status = row.status;
+          if (status === 'in_progress' && row.statusType === 'scheduled') {
+            var scheduledText = formatScheduledDateTime(row.scheduledFor);
+            return '<td class="h-12 align-middle px-2 py-2 whitespace-nowrap' + cb + '">' +
+              '<span class="group/scheduled relative inline-flex cursor-default select-none items-center gap-1 rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-700 inset-ring inset-ring-gray-500/10 hover:bg-gray-200 dark:bg-white/10 dark:text-gray-300 dark:inset-ring-white/15 dark:hover:bg-white/15">' +
+                ICON_SCHEDULED +
+                '<span>Scheduled</span>' +
+                '<span class="pointer-events-none absolute bottom-full left-1/2 z-30 mb-2 hidden -translate-x-1/2 whitespace-nowrap rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg group-hover/scheduled:inline-flex items-center gap-2">' +
+                  ICON_SCHEDULED +
+                  '<span>Scheduled for: ' + escapeHtml(scheduledText) + '</span>' +
+                '</span>' +
+              '</span>' +
+            '</td>';
+          }
+          return '<td class="h-12 align-middle px-2 py-2 whitespace-nowrap' + cb + '">' +
+            '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + (STATUS_STYLES[status] || STATUS_STYLES.ready_to_pay) + '">' +
+            escapeHtml(getDisplayStatusLabel(row)) +
+            '</span></td>';
+        }
+        if (col.key === 'billNumber') {
+          var billValue = escapeHtml(row[col.key] == null ? '--' : row[col.key]);
+          if (row.status === 'in_progress' || row.status === 'paid') {
+            return '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb + '">' +
+              '<button type="button" data-pay-id="' + row.id + '" class="cursor-pointer p-0 font-medium text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">' + billValue + '</button>' +
+            '</td>';
+          }
+          return '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb + '">' + billValue + '</td>';
+        }
+        if (col.key === 'paymentMethod') {
+          return renderPaymentMethodCell(row, cb);
+        }
+        if (col.key === 'failureReason') {
+          return '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb + '">' + escapeHtml(getFailureReason(row) || '--') + '</td>';
+        }
+        if (col.key === 'payeeName' || col.key === 'source') {
+          return '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb + '">' + escapeHtml(row[col.key] == null ? '--' : row[col.key]) + '</td>';
+        }
+        return '<td class="h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb + '">' + escapeHtml(row[col.key] == null ? '--' : row[col.key]) + '</td>';
+      }).join('');
 
-        return (
-          '<tr class="group ' +
-          (expanded ? "bg-gray-100 dark:bg-white/5 " : "") +
-          'hover:bg-gray-50 dark:hover:bg-white/5">' +
-          rowCells +
-          "</tr>" +
-          expandedHtml
-        );
-      })
-      .join("");
+      var expandedHtml = '';
+      if (expanded) {
+        expandedHtml = '' +
+          '<tr>' +
+            '<td colspan="' + renderColumns.length + '" class="bg-white dark:bg-gray-900 ' + (isLastRow ? '' : 'border-b border-gray-200 dark:border-white/10') + '">' +
+              buildExpandedDetails(row) +
+            '</td>' +
+          '</tr>';
+      }
+
+      return '<tr class="group ' + (expanded ? 'bg-gray-100 dark:bg-white/5 ' : '') + 'hover:bg-gray-50 dark:hover:bg-white/5">' + rowCells + '</tr>' + expandedHtml;
+    }).join('');
 
     if (!bodyRows) {
       bodyRows = buildEmptyStateRow(
         renderColumns.length,
-        "No payables found",
-        "Try a different search or adjust the active filters to find matching bills.",
+        'No payables found',
+        'Try a different search or adjust the active filters to find matching bills.'
       );
     }
 
-    refs.table.innerHTML =
-      headerHtml +
-      '<tbody class="bg-white dark:bg-gray-900">' +
-      bodyRows +
-      "</tbody>";
+    refs.table.innerHTML = headerHtml + '<tbody class="bg-white dark:bg-gray-900">' + bodyRows + '</tbody>';
 
-    var selectAll = document.getElementById("bp-select-all");
+    var selectAll = document.getElementById('bp-select-all');
     if (selectAll) {
       selectAll.indeterminate = hasSomeVisibleSelected;
     }
@@ -3468,44 +2506,41 @@
 
   function applyActionDivider(cell, isActive, isDark) {
     if (isActive) {
-      cell.style.borderLeftWidth = "1px";
-      cell.style.borderLeftStyle = "solid";
-      cell.style.borderLeftColor = isDark
-        ? "rgba(255,255,255,0.10)"
-        : "rgba(0,0,0,0.15)";
+      cell.style.borderLeftWidth = '1px';
+      cell.style.borderLeftStyle = 'solid';
+      cell.style.borderLeftColor = isDark ? 'rgba(255,255,255,0.10)' : 'rgba(0,0,0,0.15)';
       cell.style.boxShadow = isDark
-        ? "-10px 0 15px -3px rgba(0,0,0,0.3), -4px 0 6px -4px rgba(0,0,0,0.3)"
-        : "-10px 0 15px -3px rgba(0,0,0,0.1), -4px 0 6px -4px rgba(0,0,0,0.1)";
+        ? '-10px 0 15px -3px rgba(0,0,0,0.3), -4px 0 6px -4px rgba(0,0,0,0.3)'
+        : '-10px 0 15px -3px rgba(0,0,0,0.1), -4px 0 6px -4px rgba(0,0,0,0.1)';
     } else {
-      cell.style.borderLeftWidth = "0px";
-      cell.style.borderLeftStyle = "solid";
-      cell.style.borderLeftColor = "transparent";
-      cell.style.boxShadow = "none";
+      cell.style.borderLeftWidth = '0px';
+      cell.style.borderLeftStyle = 'solid';
+      cell.style.borderLeftColor = 'transparent';
+      cell.style.boxShadow = 'none';
     }
   }
 
   function initStickyAction(table) {
-    var scroller =
-      table.closest("[data-table-scroll]") || table.closest(".overflow-x-auto");
+    var scroller = table.closest('[data-table-scroll]') || table.closest('.overflow-x-auto');
     if (!scroller) return function () {};
 
     function sync() {
       var maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
       var isOverflowing = maxScrollLeft > 0.5;
-      var isDark = document.documentElement.classList.contains("dark");
-      var actionColumns = table.querySelectorAll("[data-action-column]");
+      var isDark = document.documentElement.classList.contains('dark');
+      var actionColumns = table.querySelectorAll('[data-action-column]');
       actionColumns.forEach(function (cell) {
         if (isOverflowing) {
-          cell.classList.add("sticky", "right-0", "z-10");
+          cell.classList.add('sticky', 'right-0', 'z-10');
         } else {
-          cell.classList.remove("sticky", "right-0", "z-10");
+          cell.classList.remove('sticky', 'right-0', 'z-10');
         }
         applyActionDivider(cell, isOverflowing, isDark);
       });
     }
 
-    scroller.addEventListener("scroll", sync, { passive: true });
-    window.addEventListener("resize", sync);
+    scroller.addEventListener('scroll', sync, { passive: true });
+    window.addEventListener('resize', sync);
     sync();
     return sync;
   }
@@ -3518,11 +2553,11 @@
     }
     var pages = [];
     pages.push(1);
-    if (current > 3) pages.push("...");
+    if (current > 3) pages.push('...');
     var rangeStart = Math.max(2, current - 1);
     var rangeEnd = Math.min(total - 1, current + 1);
     for (var j = rangeStart; j <= rangeEnd; j++) pages.push(j);
-    if (current < total - 2) pages.push("...");
+    if (current < total - 2) pages.push('...');
     pages.push(total);
     return pages;
   }
@@ -3539,166 +2574,105 @@
     var isFirstPage = page <= 1;
     var isLastPage = page >= totalPages;
 
-    var activePageClass =
-      "relative z-10 inline-flex items-center bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-600 inset-ring inset-ring-blue-300 focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500/10 dark:text-blue-400 dark:inset-ring-blue-500/30 dark:focus-visible:outline-blue-400";
-    var defaultPageClass =
-      "relative inline-flex items-center px-2.5 py-1 text-xs font-semibold text-gray-900 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:text-gray-200 dark:inset-ring-gray-700 dark:hover:bg-white/5";
-    var ellipsisClass =
-      "relative inline-flex items-center px-2.5 py-1 text-xs font-semibold text-gray-700 inset-ring inset-ring-gray-300 focus:outline-offset-0 dark:text-gray-400 dark:inset-ring-gray-700";
-    var prevClass =
-      "relative inline-flex items-center rounded-l-sm px-1.5 py-1 text-gray-400 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:inset-ring-gray-700 dark:hover:bg-white/5";
-    var nextClass =
-      "relative inline-flex items-center rounded-r-sm px-1.5 py-1 text-gray-400 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:inset-ring-gray-700 dark:hover:bg-white/5";
+    var activePageClass = 'relative z-10 inline-flex items-center bg-blue-100 px-2.5 py-1 text-xs font-semibold text-blue-600 inset-ring inset-ring-blue-300 focus:z-20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500/10 dark:text-blue-400 dark:inset-ring-blue-500/30 dark:focus-visible:outline-blue-400';
+    var defaultPageClass = 'relative inline-flex items-center px-2.5 py-1 text-xs font-semibold text-gray-900 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:text-gray-200 dark:inset-ring-gray-700 dark:hover:bg-white/5';
+    var ellipsisClass = 'relative inline-flex items-center px-2.5 py-1 text-xs font-semibold text-gray-700 inset-ring inset-ring-gray-300 focus:outline-offset-0 dark:text-gray-400 dark:inset-ring-gray-700';
+    var prevClass = 'relative inline-flex items-center rounded-l-sm px-1.5 py-1 text-gray-400 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:inset-ring-gray-700 dark:hover:bg-white/5';
+    var nextClass = 'relative inline-flex items-center rounded-r-sm px-1.5 py-1 text-gray-400 inset-ring inset-ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0 dark:inset-ring-gray-700 dark:hover:bg-white/5';
 
     var pageNumbers = getPageNumbers(page, totalPages);
-    var pagesHTML = "";
+    var pagesHTML = '';
     pageNumbers.forEach(function (p) {
-      if (p === "...") {
+      if (p === '...') {
         pagesHTML += '<span class="' + ellipsisClass + '">...</span>';
       } else if (p === page) {
-        pagesHTML +=
-          '<a href="#" data-page-num="' +
-          p +
-          '" aria-current="page" class="' +
-          activePageClass +
-          '">' +
-          p +
-          "</a>";
+        pagesHTML += '<a href="#" data-page-num="' + p + '" aria-current="page" class="' + activePageClass + '">' + p + '</a>';
       } else {
-        pagesHTML +=
-          '<a href="#" data-page-num="' +
-          p +
-          '" class="' +
-          defaultPageClass +
-          '">' +
-          p +
-          "</a>";
+        pagesHTML += '<a href="#" data-page-num="' + p + '" class="' + defaultPageClass + '">' + p + '</a>';
       }
     });
 
-    var optionsHTML = "";
+    var optionsHTML = '';
     PAGE_SIZE_OPTIONS.forEach(function (opt) {
-      optionsHTML +=
-        '<a href="#" data-page-size="' +
-        opt +
-        '" class="block px-4 py-2 text-sm ' +
-        (opt === size
-          ? "font-semibold text-gray-900 bg-gray-50 dark:text-white dark:bg-white/5"
-          : "text-gray-700 dark:text-gray-300") +
+      optionsHTML += '<a href="#" data-page-size="' + opt + '" class="block px-4 py-2 text-sm ' +
+        (opt === size ? 'font-semibold text-gray-900 bg-gray-50 dark:text-white dark:bg-white/5' : 'text-gray-700 dark:text-gray-300') +
         ' hover:bg-gray-100 hover:text-gray-900 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:hover:bg-white/5 dark:hover:text-white dark:focus:bg-white/5 dark:focus:text-white">' +
-        opt +
-        "</a>";
+        opt + '</a>';
     });
 
     var mobileHTML =
       '<div class="flex flex-1 justify-between sm:hidden">' +
-      '<a href="#" data-page-prev class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10' +
-      (isFirstPage ? " opacity-50 pointer-events-none" : "") +
-      '">Previous</a>' +
-      '<a href="#" data-page-next class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10' +
-      (isLastPage ? " opacity-50 pointer-events-none" : "") +
-      '">Next</a>' +
-      "</div>";
+        '<a href="#" data-page-prev class="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10' +
+          (isFirstPage ? ' opacity-50 pointer-events-none' : '') + '">Previous</a>' +
+        '<a href="#" data-page-next class="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10' +
+          (isLastPage ? ' opacity-50 pointer-events-none' : '') + '">Next</a>' +
+      '</div>';
 
     var desktopHTML =
       '<div class="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">' +
-      '<div class="flex items-center gap-x-6">' +
-      '<p class="text-sm text-gray-700 dark:text-gray-300">' +
-      'Showing <span class="font-medium">' +
-      start +
-      "</span> to " +
-      '<span class="font-medium">' +
-      end +
-      "</span> of " +
-      '<span class="font-medium">' +
-      total +
-      "</span> results" +
-      "</p>" +
-      '<div class="flex items-center gap-x-2 text-sm text-gray-500 dark:text-gray-400">' +
-      "<span>Rows per page:</span>" +
-      '<el-dropdown class="inline-block">' +
-      '<button type="button" class="inline-flex items-center gap-x-1 rounded-sm bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">' +
-      size +
-      " " +
-      ICON_CHEVRON_DOWN +
-      "</button>" +
-      '<el-menu anchor="bottom end" popover class="w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
-      '<div class="py-1">' +
-      optionsHTML +
-      "</div>" +
-      "</el-menu>" +
-      "</el-dropdown>" +
-      "</div>" +
-      "</div>" +
-      "<div>" +
-      '<nav aria-label="Pagination" class="isolate inline-flex -space-x-px overflow-hidden rounded-sm shadow-xs inset-ring inset-ring-gray-300 dark:shadow-none dark:inset-ring-gray-700">' +
-      '<a href="#" data-page-prev class="' +
-      prevClass +
-      (isFirstPage ? " opacity-50 pointer-events-none" : "") +
-      '">' +
-      '<span class="sr-only">Previous</span>' +
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
-      "</a>" +
-      pagesHTML +
-      '<a href="#" data-page-next class="' +
-      nextClass +
-      (isLastPage ? " opacity-50 pointer-events-none" : "") +
-      '">' +
-      '<span class="sr-only">Next</span>' +
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
-      "</a>" +
-      "</nav>" +
-      "</div>" +
-      "</div>";
+        '<div class="flex items-center gap-x-6">' +
+          '<p class="text-sm text-gray-700 dark:text-gray-300">' +
+            'Showing <span class="font-medium">' + start + '</span> to ' +
+            '<span class="font-medium">' + end + '</span> of ' +
+            '<span class="font-medium">' + total + '</span> results' +
+          '</p>' +
+          '<div class="flex items-center gap-x-2 text-sm text-gray-500 dark:text-gray-400">' +
+            '<span>Rows per page:</span>' +
+            '<el-dropdown class="inline-block">' +
+              '<button type="button" class="inline-flex items-center gap-x-1 rounded-sm bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">' +
+                size +
+                ' ' + ICON_CHEVRON_DOWN +
+              '</button>' +
+              '<el-menu anchor="bottom end" popover class="w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
+                '<div class="py-1">' + optionsHTML + '</div>' +
+              '</el-menu>' +
+            '</el-dropdown>' +
+          '</div>' +
+        '</div>' +
+        '<div>' +
+          '<nav aria-label="Pagination" class="isolate inline-flex -space-x-px overflow-hidden rounded-sm shadow-xs inset-ring inset-ring-gray-300 dark:shadow-none dark:inset-ring-gray-700">' +
+            '<a href="#" data-page-prev class="' + prevClass + (isFirstPage ? ' opacity-50 pointer-events-none' : '') + '">' +
+              '<span class="sr-only">Previous</span>' +
+              '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M11.78 5.22a.75.75 0 0 1 0 1.06L8.06 10l3.72 3.72a.75.75 0 1 1-1.06 1.06l-4.25-4.25a.75.75 0 0 1 0-1.06l4.25-4.25a.75.75 0 0 1 1.06 0Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
+            '</a>' +
+            pagesHTML +
+            '<a href="#" data-page-next class="' + nextClass + (isLastPage ? ' opacity-50 pointer-events-none' : '') + '">' +
+              '<span class="sr-only">Next</span>' +
+              '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
+            '</a>' +
+          '</nav>' +
+        '</div>' +
+      '</div>';
 
     refs.pagination.innerHTML = mobileHTML + desktopHTML;
   }
 
   function exportCurrentRows() {
     var rows = getFilteredRows();
-    var columns = [
-      "amount",
-      "billNumber",
-      "payeeName",
-      "paymentMethod",
-      "source",
-      "dueDate",
-      "adDate",
-      "statusLabel",
-    ];
-    var headers = [
-      "Amount",
-      "Bill #",
-      "Payee",
-      "Payment Method",
-      "Source",
-      "Due Date",
-      "Date Initiated",
-      "Status",
-    ];
-    var csv = [headers.join(",")];
+    var columns = ['amount', 'billNumber', 'payeeName', 'paymentMethod', 'source', 'dueDate', 'adDate', 'statusLabel'];
+    var headers = ['Amount', 'Bill #', 'Payee', 'Payment Method', 'Source', 'Due Date', 'Date Initiated', 'Status'];
+    var csv = [headers.join(',')];
 
     rows.forEach(function (row) {
       var values = columns.map(function (key) {
-        var value =
-          key === "amount"
-            ? formatMoney(row.amount, row.currency)
-            : key === "dueDate" || key === "adDate"
-              ? formatDate(row[key])
-              : key === "statusLabel"
-                ? getDisplayStatusLabel(row)
-                : row[key];
-        var safe = String(value == null ? "" : value).replace(/"/g, '""');
+        var value = key === 'amount'
+          ? formatMoney(row.amount, row.currency)
+          : key === 'dueDate' || key === 'adDate'
+            ? formatDate(row[key])
+            : key === 'statusLabel'
+              ? getDisplayStatusLabel(row)
+              : row[key];
+        var safe = String(value == null ? '' : value).replace(/"/g, '""');
         return '"' + safe + '"';
       });
-      csv.push(values.join(","));
+      csv.push(values.join(','));
     });
 
-    var blob = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
+    var blob = new Blob([csv.join('\n')], { type: 'text/csv;charset=utf-8;' });
     var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
+    var a = document.createElement('a');
     a.href = url;
-    a.download = "bills-payables-export.csv";
+    a.download = 'bills-payables-export.csv';
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -3707,8 +2681,8 @@
 
   function bindEvents() {
     if (refs.searchInput) {
-      refs.searchInput.addEventListener("input", function (e) {
-        state.search = String(e.target.value || "").trim();
+      refs.searchInput.addEventListener('input', function (e) {
+        state.search = String(e.target.value || '').trim();
         state.currentPage = 1;
         state.isSearchLoading = true;
         if (searchLoadingTimer) clearTimeout(searchLoadingTimer);
@@ -3722,21 +2696,21 @@
     }
 
     if (refs.refreshBtn) {
-      refs.refreshBtn.addEventListener("click", function () {
+      refs.refreshBtn.addEventListener('click', function () {
         if (state.isTabLoading || state.isInitialLoading) return;
         state.isTabLoading = true;
         renderAll();
         refreshHalfTurns += 1;
-        var icon = refs.refreshBtn.querySelector("svg");
+        var icon = refs.refreshBtn.querySelector('svg');
         if (icon) {
-          icon.style.transition = "transform 800ms ease-out";
-          icon.style.transform = "rotate(" + refreshHalfTurns * 180 + "deg)";
+          icon.style.transition = 'transform 800ms ease-out';
+          icon.style.transform = 'rotate(' + (refreshHalfTurns * 180) + 'deg)';
         }
         setTimeout(function () {
           state.isTabLoading = false;
           renderAll();
-          if (icon) icon.style.transition = "";
-          if (typeof window.showGlobalTopToast === "function") {
+          if (icon) icon.style.transition = '';
+          if (typeof window.showGlobalTopToast === 'function') {
             window.showGlobalTopToast("Data synced. You're up to date.");
           }
         }, MANUAL_REFRESH_SKELETON_MS);
@@ -3744,260 +2718,202 @@
     }
 
     if (refs.exportBtn) {
-      refs.exportBtn.addEventListener("click", function () {
+      refs.exportBtn.addEventListener('click', function () {
         exportCurrentRows();
       });
     }
 
-    if (refs.tabNav && refs.tabNav.dataset.tabBound !== "1") {
-      refs.tabNav.dataset.tabBound = "1";
-      refs.tabNav.addEventListener("click", function (e) {
-        var tab = e.target.closest("[data-tab]");
+    if (refs.tabNav && refs.tabNav.dataset.tabBound !== '1') {
+      refs.tabNav.dataset.tabBound = '1';
+      refs.tabNav.addEventListener('click', function (e) {
+        var tab = e.target.closest('[data-tab]');
         if (!tab) return;
         e.preventDefault();
         e.stopPropagation();
-        if (typeof e.stopImmediatePropagation === "function")
-          e.stopImmediatePropagation();
-        var key = normalizeTabKey(tab.getAttribute("data-tab"));
+        if (typeof e.stopImmediatePropagation === 'function') e.stopImmediatePropagation();
+        var key = normalizeTabKey(tab.getAttribute('data-tab'));
         startTabSwitchLoading(key);
       });
     }
 
-    if (refs.tabSelect && refs.tabSelect.dataset.tabBound !== "1") {
-      refs.tabSelect.dataset.tabBound = "1";
-      refs.tabSelect.addEventListener("change", function (e) {
+    if (refs.tabSelect && refs.tabSelect.dataset.tabBound !== '1') {
+      refs.tabSelect.dataset.tabBound = '1';
+      refs.tabSelect.addEventListener('change', function (e) {
         var key = normalizeTabKey(e.target.value);
         startTabSwitchLoading(key);
       });
     }
 
     if (refs.table) {
-      refs.table.addEventListener("click", function (e) {
-        var previewBtn = e.target.closest("[data-attachment-preview]");
+      refs.table.addEventListener('click', function (e) {
+        var previewBtn = e.target.closest('[data-attachment-preview]');
         if (previewBtn) {
           e.preventDefault();
           e.stopPropagation();
-          var reviewDialog = document.getElementById("gp-review-dialog");
-          if (
-            reviewDialog &&
-            !reviewDialog.open &&
-            typeof reviewDialog.showModal === "function"
-          ) {
+          var reviewDialog = document.getElementById('gp-review-dialog');
+          if (reviewDialog && !reviewDialog.open && typeof reviewDialog.showModal === 'function') {
             reviewDialog.showModal();
           }
           return;
         }
 
-        var cardRevealBtn = e.target.closest("[data-card-reveal-toggle]");
+        var cardRevealBtn = e.target.closest('[data-card-reveal-toggle]');
         if (cardRevealBtn) {
           e.preventDefault();
-          var cardSection = cardRevealBtn.closest("[data-payment-info-card]");
+          var cardSection = cardRevealBtn.closest('[data-payment-info-card]');
           if (!cardSection) return;
 
           function setCardCopyVisible(copyBtn, visible) {
             if (!copyBtn) return;
-            copyBtn.setAttribute(
-              "data-copy-enabled",
-              visible ? "true" : "false",
-            );
+            copyBtn.setAttribute('data-copy-enabled', visible ? 'true' : 'false');
             var icon = copyBtn.querySelector('[data-copy-icon="true"]');
             if (visible) {
-              copyBtn.classList.remove("pointer-events-none");
-              copyBtn.classList.add(
-                "cursor-pointer",
-                "transition-colors",
-                "hover:bg-gray-200",
-                "dark:hover:bg-white/20",
-              );
-              if (icon) icon.classList.remove("hidden");
+              copyBtn.classList.remove('pointer-events-none');
+              copyBtn.classList.add('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+              if (icon) icon.classList.remove('hidden');
             } else {
-              copyBtn.classList.add("pointer-events-none");
-              copyBtn.classList.remove(
-                "cursor-pointer",
-                "transition-colors",
-                "hover:bg-gray-200",
-                "dark:hover:bg-white/20",
-              );
-              if (icon) icon.classList.add("hidden");
+              copyBtn.classList.add('pointer-events-none');
+              copyBtn.classList.remove('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+              if (icon) icon.classList.add('hidden');
             }
           }
 
-          var revealed = cardRevealBtn.getAttribute("data-revealed") === "true";
+          var revealed = cardRevealBtn.getAttribute('data-revealed') === 'true';
           revealed = !revealed;
-          cardRevealBtn.setAttribute("data-revealed", String(revealed));
-          cardSection
-            .querySelectorAll("[data-mask-field]")
-            .forEach(function (field) {
-              var maskedValue = field.getAttribute("data-masked") || "";
-              var revealedValue = field.getAttribute("data-revealed") || "";
-              field.textContent = revealed
-                ? revealedValue || maskedValue
-                : maskedValue;
-            });
-          cardSection
-            .querySelectorAll('[data-card-copy-control="true"]')
-            .forEach(function (copyAction) {
-              setCardCopyVisible(copyAction, revealed);
-            });
+          cardRevealBtn.setAttribute('data-revealed', String(revealed));
+          cardSection.querySelectorAll('[data-mask-field]').forEach(function (field) {
+            var maskedValue = field.getAttribute('data-masked') || '';
+            var revealedValue = field.getAttribute('data-revealed') || '';
+            field.textContent = revealed ? (revealedValue || maskedValue) : maskedValue;
+          });
+          cardSection.querySelectorAll('[data-card-copy-control="true"]').forEach(function (copyAction) {
+            setCardCopyVisible(copyAction, revealed);
+          });
           var revealIcon = cardRevealBtn.querySelector('[data-icon="reveal"]');
           var hideIcon = cardRevealBtn.querySelector('[data-icon="hide"]');
-          var text = cardRevealBtn.querySelector("[data-card-reveal-text]");
-          if (revealIcon) revealIcon.classList.toggle("hidden", revealed);
-          if (hideIcon) hideIcon.classList.toggle("hidden", !revealed);
-          if (text)
-            text.textContent = revealed ? "Hide Details" : "Reveal Details";
+          var text = cardRevealBtn.querySelector('[data-card-reveal-text]');
+          if (revealIcon) revealIcon.classList.toggle('hidden', revealed);
+          if (hideIcon) hideIcon.classList.toggle('hidden', !revealed);
+          if (text) text.textContent = revealed ? 'Hide Details' : 'Reveal Details';
           return;
         }
 
-        var achRevealBtn = e.target.closest("[data-ach-reveal-toggle]");
+        var achRevealBtn = e.target.closest('[data-ach-reveal-toggle]');
         if (achRevealBtn) {
           e.preventDefault();
-          var achSection = achRevealBtn.closest("[data-ach-info-card]");
+          var achSection = achRevealBtn.closest('[data-ach-info-card]');
           if (!achSection) return;
 
           function setAchCopyVisible(copyBtn, visible) {
             if (!copyBtn) return;
-            copyBtn.setAttribute(
-              "data-copy-enabled",
-              visible ? "true" : "false",
-            );
+            copyBtn.setAttribute('data-copy-enabled', visible ? 'true' : 'false');
             var icon = copyBtn.querySelector('[data-copy-icon="true"]');
             if (visible) {
-              copyBtn.classList.remove("pointer-events-none");
-              copyBtn.classList.add(
-                "cursor-pointer",
-                "transition-colors",
-                "hover:bg-gray-200",
-                "dark:hover:bg-white/20",
-              );
-              if (icon) icon.classList.remove("hidden");
+              copyBtn.classList.remove('pointer-events-none');
+              copyBtn.classList.add('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+              if (icon) icon.classList.remove('hidden');
             } else {
-              copyBtn.classList.add("pointer-events-none");
-              copyBtn.classList.remove(
-                "cursor-pointer",
-                "transition-colors",
-                "hover:bg-gray-200",
-                "dark:hover:bg-white/20",
-              );
-              if (icon) icon.classList.add("hidden");
+              copyBtn.classList.add('pointer-events-none');
+              copyBtn.classList.remove('cursor-pointer', 'transition-colors', 'hover:bg-gray-200', 'dark:hover:bg-white/20');
+              if (icon) icon.classList.add('hidden');
             }
           }
 
-          var achRevealed =
-            achRevealBtn.getAttribute("data-revealed") === "true";
+          var achRevealed = achRevealBtn.getAttribute('data-revealed') === 'true';
           achRevealed = !achRevealed;
-          achRevealBtn.setAttribute("data-revealed", String(achRevealed));
-          achSection
-            .querySelectorAll('[data-ach-mask-field="true"]')
-            .forEach(function (field) {
-              var maskedValue = field.getAttribute("data-masked") || "";
-              var revealedValue = field.getAttribute("data-revealed") || "";
-              field.textContent = achRevealed
-                ? revealedValue || maskedValue
-                : maskedValue;
-            });
-          achSection
-            .querySelectorAll('[data-ach-copy-control="true"]')
-            .forEach(function (copyAction) {
-              setAchCopyVisible(copyAction, achRevealed);
-            });
-          var achRevealIcon = achRevealBtn.querySelector(
-            '[data-icon="reveal"]',
-          );
+          achRevealBtn.setAttribute('data-revealed', String(achRevealed));
+          achSection.querySelectorAll('[data-ach-mask-field="true"]').forEach(function (field) {
+            var maskedValue = field.getAttribute('data-masked') || '';
+            var revealedValue = field.getAttribute('data-revealed') || '';
+            field.textContent = achRevealed ? (revealedValue || maskedValue) : maskedValue;
+          });
+          achSection.querySelectorAll('[data-ach-copy-control="true"]').forEach(function (copyAction) {
+            setAchCopyVisible(copyAction, achRevealed);
+          });
+          var achRevealIcon = achRevealBtn.querySelector('[data-icon="reveal"]');
           var achHideIcon = achRevealBtn.querySelector('[data-icon="hide"]');
-          var achText = achRevealBtn.querySelector("[data-ach-reveal-text]");
-          if (achRevealIcon)
-            achRevealIcon.classList.toggle("hidden", achRevealed);
-          if (achHideIcon) achHideIcon.classList.toggle("hidden", !achRevealed);
-          if (achText)
-            achText.textContent = achRevealed
-              ? "Hide Details"
-              : "Reveal Details";
+          var achText = achRevealBtn.querySelector('[data-ach-reveal-text]');
+          if (achRevealIcon) achRevealIcon.classList.toggle('hidden', achRevealed);
+          if (achHideIcon) achHideIcon.classList.toggle('hidden', !achRevealed);
+          if (achText) achText.textContent = achRevealed ? 'Hide Details' : 'Reveal Details';
           return;
         }
 
-        var payBtn = e.target.closest("[data-pay-id]");
+        var payBtn = e.target.closest('[data-pay-id]');
         if (payBtn) {
-          openPayPage(payBtn.getAttribute("data-pay-id"));
+          openPayPage(payBtn.getAttribute('data-pay-id'));
           return;
         }
 
-        var cancelBtn = e.target.closest("[data-cancel-id]");
+        var cancelBtn = e.target.closest('[data-cancel-id]');
         if (cancelBtn) {
-          pendingScheduleCancelId = String(
-            cancelBtn.getAttribute("data-cancel-id") || "",
-          ).trim();
+          pendingScheduleCancelId = String(cancelBtn.getAttribute('data-cancel-id') || '').trim();
           if (!pendingScheduleCancelId) return;
           var pendingRow = null;
           for (var i = 0; i < state.allRows.length; i += 1) {
-            if (
-              String((state.allRows[i] && state.allRows[i].id) || "") ===
-              pendingScheduleCancelId
-            ) {
+            if (String(state.allRows[i] && state.allRows[i].id || '') === pendingScheduleCancelId) {
               pendingRow = state.allRows[i];
               break;
             }
           }
           syncScheduledCancelDialogContent(pendingRow);
-          openDialogById("bp-schedule-cancel-dialog");
+          openDialogById('bp-schedule-cancel-dialog');
           return;
         }
 
-        var rerunBtn = e.target.closest("[data-rerun-id]");
+        var rerunBtn = e.target.closest('[data-rerun-id]');
         if (rerunBtn) {
-          pendingRerunId = String(
-            rerunBtn.getAttribute("data-rerun-id") || "",
-          ).trim();
+          pendingRerunId = String(rerunBtn.getAttribute('data-rerun-id') || '').trim();
           if (!pendingRerunId) return;
           var rerunRow = findRowById(pendingRerunId);
           if (!rerunRow) {
-            pendingRerunId = "";
+            pendingRerunId = '';
             return;
           }
           syncRerunConfirmDialogContent(rerunRow);
-          openDialogById("bp-rerun-confirm-dialog");
+          openDialogById('bp-rerun-confirm-dialog');
           return;
         }
 
-        var sortBtn = e.target.closest("[data-sort-key]");
+        var sortBtn = e.target.closest('[data-sort-key]');
         if (sortBtn) {
-          var sortKey = sortBtn.getAttribute("data-sort-key");
+          var sortKey = sortBtn.getAttribute('data-sort-key');
           if (state.sortKey !== sortKey) {
             state.sortKey = sortKey;
-            state.sortDirection = "asc";
-          } else if (state.sortDirection === "asc") {
-            state.sortDirection = "desc";
-          } else if (state.sortDirection === "desc") {
-            state.sortDirection = "";
-            state.sortKey = "";
+            state.sortDirection = 'asc';
+          } else if (state.sortDirection === 'asc') {
+            state.sortDirection = 'desc';
+          } else if (state.sortDirection === 'desc') {
+            state.sortDirection = '';
+            state.sortKey = '';
           } else {
-            state.sortDirection = "asc";
+            state.sortDirection = 'asc';
           }
           state.currentPage = 1;
           renderTable();
           return;
         }
 
-        var expandBtn = e.target.closest("[data-expand-id]");
+        var expandBtn = e.target.closest('[data-expand-id]');
         if (expandBtn) {
-          var rowId = expandBtn.getAttribute("data-expand-id");
+          var rowId = expandBtn.getAttribute('data-expand-id');
           if (state.expandedRows.has(rowId)) state.expandedRows.delete(rowId);
           else state.expandedRows.add(rowId);
           renderTable();
         }
       });
 
-      refs.table.addEventListener("change", function (e) {
-        var rowCheckbox = e.target.closest("[data-row-select-id]");
+      refs.table.addEventListener('change', function (e) {
+        var rowCheckbox = e.target.closest('[data-row-select-id]');
         if (rowCheckbox) {
-          var rowId = rowCheckbox.getAttribute("data-row-select-id");
+          var rowId = rowCheckbox.getAttribute('data-row-select-id');
           if (rowCheckbox.checked) state.selectedRowIds.add(rowId);
           else state.selectedRowIds.delete(rowId);
           renderTable();
           return;
         }
 
-        var selectAll = e.target.closest("#bp-select-all");
+        var selectAll = e.target.closest('#bp-select-all');
         if (selectAll) {
           var visibleRows = getVisibleRows(getFilteredRows());
           visibleRows.forEach(function (row) {
@@ -4010,14 +2926,11 @@
     }
 
     if (refs.pagination) {
-      refs.pagination.addEventListener("click", function (e) {
-        var pageSizeLink = e.target.closest("[data-page-size]");
+      refs.pagination.addEventListener('click', function (e) {
+        var pageSizeLink = e.target.closest('[data-page-size]');
         if (pageSizeLink) {
           e.preventDefault();
-          var newSize = parseInt(
-            pageSizeLink.getAttribute("data-page-size"),
-            10,
-          );
+          var newSize = parseInt(pageSizeLink.getAttribute('data-page-size'), 10);
           if (newSize && newSize !== state.pageSize) {
             state.pageSize = newSize;
             state.currentPage = 1;
@@ -4026,13 +2939,10 @@
           return;
         }
 
-        var pageNumLink = e.target.closest("[data-page-num]");
+        var pageNumLink = e.target.closest('[data-page-num]');
         if (pageNumLink) {
           e.preventDefault();
-          var targetPage = parseInt(
-            pageNumLink.getAttribute("data-page-num"),
-            10,
-          );
+          var targetPage = parseInt(pageNumLink.getAttribute('data-page-num'), 10);
           if (targetPage && targetPage !== state.currentPage) {
             state.currentPage = targetPage;
             renderTable();
@@ -4040,10 +2950,10 @@
           return;
         }
 
-        var prev = e.target.closest("#bp-page-prev");
-        var next = e.target.closest("#bp-page-next");
-        if (!prev) prev = e.target.closest("[data-page-prev]");
-        if (!next) next = e.target.closest("[data-page-next]");
+        var prev = e.target.closest('#bp-page-prev');
+        var next = e.target.closest('#bp-page-next');
+        if (!prev) prev = e.target.closest('[data-page-prev]');
+        if (!next) next = e.target.closest('[data-page-next]');
         if (prev) {
           e.preventDefault();
           state.currentPage = Math.max(1, state.currentPage - 1);
@@ -4051,10 +2961,7 @@
         }
         if (next) {
           e.preventDefault();
-          var totalPages = Math.max(
-            1,
-            Math.ceil(getFilteredRows().length / state.pageSize),
-          );
+          var totalPages = Math.max(1, Math.ceil(getFilteredRows().length / state.pageSize));
           state.currentPage = Math.min(totalPages, state.currentPage + 1);
           renderTable();
         }
@@ -4074,11 +2981,11 @@
     initRefs();
     if (!refs.table || !refs.pagination) return;
     try {
-      window.dispatchEvent(new CustomEvent("bp:loading-start"));
+      window.dispatchEvent(new CustomEvent('bp:loading-start'));
     } catch (err) {}
     try {
-      var params = new URLSearchParams(window.location.search || "");
-      var initialTab = normalizeTabKey(params.get("tab"));
+      var params = new URLSearchParams(window.location.search || '');
+      var initialTab = normalizeTabKey(params.get('tab'));
       if (TAB_LABELS[initialTab]) state.activeTab = initialTab;
     } catch (err) {
       // Ignore malformed query params.
@@ -4089,90 +2996,60 @@
 
     Promise.all([
       loadJsonWithFallbacks(JSON_PATH_FALLBACKS),
-      loadJsonWithFallbacks(PAYEES_PATH_FALLBACKS).catch(function () {
-        return { data: [] };
-      }),
-      typeof window.getMyCompanyProfile === "function"
-        ? window.getMyCompanyProfile().catch(function () {
-            return null;
-          })
-        : Promise.resolve(null),
-    ])
-      .then(function (results) {
-        var payload = results[0];
-        var payeesPayload = results[1];
-        state.myCompanyProfile = results[2] || null;
-        indexPayees(payeesPayload);
-        state.columns = ensurePaymentMethodColumn(
-          (payload && payload.tableConfig && payload.tableConfig.columns) || [],
-        );
-        state.allRows = normalizeRows(
-          applyStoredPayableOverrides((payload && payload.data) || []),
-        );
-        if (!state.columns.length || !state.allRows.length) {
-          refs.table.innerHTML =
-            '<tbody><tr><td class="px-4 py-12 text-sm text-gray-500">No data available.</td></tr></tbody>';
-          return;
-        }
-        bindEvents();
-        initRerunConfirmDialog();
-        initScheduledCancelDialog();
-        initTableFilterDropdown();
-        initManageColumnsModal();
-        refreshStickyAction = initStickyAction(refs.table);
-        if (initialLoadingTimer) {
-          clearTimeout(initialLoadingTimer);
+      loadJsonWithFallbacks(PAYEES_PATH_FALLBACKS).catch(function () { return { data: [] }; }),
+      typeof window.getMyCompanyProfile === 'function' ? window.getMyCompanyProfile().catch(function () { return null; }) : Promise.resolve(null),
+    ]).then(function (results) {
+      var payload = results[0];
+      var payeesPayload = results[1];
+      state.myCompanyProfile = results[2] || null;
+      indexPayees(payeesPayload);
+      state.columns = ensurePaymentMethodColumn((payload && payload.tableConfig && payload.tableConfig.columns) || []);
+      state.allRows = normalizeRows(applyStoredPayableOverrides((payload && payload.data) || []));
+      if (!state.columns.length || !state.allRows.length) {
+        refs.table.innerHTML = '<tbody><tr><td class="px-4 py-12 text-sm text-gray-500">No data available.</td></tr></tbody>';
+        return;
+      }
+      bindEvents();
+      initRerunConfirmDialog();
+      initScheduledCancelDialog();
+      initTableFilterDropdown();
+      initManageColumnsModal();
+      refreshStickyAction = initStickyAction(refs.table);
+      if (initialLoadingTimer) {
+        clearTimeout(initialLoadingTimer);
+        initialLoadingTimer = null;
+      }
+      var elapsed = Date.now() - initialLoadStartedAt;
+      var remaining = Math.max(0, INITIAL_TABLE_SKELETON_MS - elapsed);
+      state.isInitialLoading = remaining > 0;
+      renderAll();
+      if (remaining > 0) {
+        initialLoadingTimer = setTimeout(function () {
+          state.isInitialLoading = false;
           initialLoadingTimer = null;
-        }
-        var elapsed = Date.now() - initialLoadStartedAt;
-        var remaining = Math.max(0, INITIAL_TABLE_SKELETON_MS - elapsed);
-        state.isInitialLoading = remaining > 0;
-        renderAll();
-        if (remaining > 0) {
-          initialLoadingTimer = setTimeout(function () {
-            state.isInitialLoading = false;
-            initialLoadingTimer = null;
-            renderAll();
-            try {
-              window.dispatchEvent(
-                new CustomEvent("bp:loading-end", {
-                  detail: { status: "ready" },
-                }),
-              );
-            } catch (err) {}
-          }, remaining);
-        } else {
+          renderAll();
           try {
-            window.dispatchEvent(
-              new CustomEvent("bp:loading-end", {
-                detail: { status: "ready" },
-              }),
-            );
+            window.dispatchEvent(new CustomEvent('bp:loading-end', { detail: { status: 'ready' } }));
           } catch (err) {}
-        }
-      })
-      .catch(function (err) {
-        refs.table.innerHTML =
-          '<tbody><tr><td class="px-4 py-12 text-sm text-red-600">Failed to load data.</td></tr></tbody>';
+        }, remaining);
+      } else {
         try {
-          window.dispatchEvent(
-            new CustomEvent("bp:loading-end", {
-              detail: {
-                status: "error",
-                error:
-                  err && err.message ? err.message : "Failed to load data.",
-              },
-            }),
-          );
-        } catch (eventError) {}
-        console.error(err);
-      });
+          window.dispatchEvent(new CustomEvent('bp:loading-end', { detail: { status: 'ready' } }));
+        } catch (err) {}
+      }
+    }).catch(function (err) {
+      refs.table.innerHTML = '<tbody><tr><td class="px-4 py-12 text-sm text-red-600">Failed to load data.</td></tr></tbody>';
+      try {
+        window.dispatchEvent(new CustomEvent('bp:loading-end', { detail: { status: 'error', error: err && err.message ? err.message : 'Failed to load data.' } }));
+      } catch (eventError) {}
+      console.error(err);
+    });
   }
 
   window.initBillsPayablesTable = init;
 
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", init);
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
   }

@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import * as Headless from "@headlessui/react";
-import clsx from "clsx";
-import React, { useState } from "react";
-import { NavbarItem } from "@/components/navbar";
+import * as Headless from '@headlessui/react';
+import clsx from 'clsx';
+import React, { useState } from 'react';
+import { NavbarItem } from '@/components/navbar';
 
 function OpenMenuIcon() {
   return (
@@ -49,12 +49,7 @@ export function SidebarLayout({ navbar, sidebar, children, className }) {
   const [showSidebar, setShowSidebar] = useState(false);
 
   return (
-    <div
-      className={clsx(
-        className,
-        "relative isolate flex min-h-svh w-full bg-zinc-50 max-lg:flex-col dark:bg-zinc-950",
-      )}
-    >
+    <div className={clsx(className, 'relative isolate flex min-h-svh w-full bg-zinc-50 max-lg:flex-col dark:bg-zinc-950')}>
       <div className="fixed inset-y-0 left-0 w-64 max-lg:hidden">{sidebar}</div>
 
       <MobileSidebar open={showSidebar} close={() => setShowSidebar(false)}>
@@ -63,10 +58,7 @@ export function SidebarLayout({ navbar, sidebar, children, className }) {
 
       <header className="sticky top-0 z-30 flex items-center border-b border-zinc-950/5 bg-white px-4 max-lg:shadow-xs lg:hidden dark:border-white/10 dark:bg-zinc-900">
         <div className="py-2.5">
-          <NavbarItem
-            onClick={() => setShowSidebar(true)}
-            aria-label="Open navigation"
-          >
+          <NavbarItem onClick={() => setShowSidebar(true)} aria-label="Open navigation">
             <OpenMenuIcon />
           </NavbarItem>
         </div>

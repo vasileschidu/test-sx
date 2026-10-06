@@ -10,34 +10,31 @@
  * form instead of the bank-details form.
  */
 (function () {
-  "use strict";
+  'use strict';
 
-  var STATE_KEY = "sd-onboarding-state";
+  var STATE_KEY = 'sd-onboarding-state';
 
   var OPTIONS = {
-    "btn-accept-card": {
-      href: "instant-virtual-card.html",
-      state: { paymentMethod: "instant-virtual-card" },
+    'btn-accept-card': {
+      href: 'instant-virtual-card.html',
+      state: { paymentMethod: 'instant-virtual-card' }
     },
-    "btn-bank-account": {
-      href: "debit-account-info.html",
-      state: { paymentMethod: "bank-account", bankFlowStep: "bank-details" },
-    },
+    'btn-bank-account': {
+      href: 'debit-account-info.html',
+      state: { paymentMethod: 'bank-account', bankFlowStep: 'bank-details' }
+    }
     // "Request a Paper Check" has no follow-up screen in either flow yet.
   };
 
   function saveState(patch) {
     var current = {};
     try {
-      current = JSON.parse(sessionStorage.getItem(STATE_KEY) || "{}");
+      current = JSON.parse(sessionStorage.getItem(STATE_KEY) || '{}');
     } catch (error) {
       current = {};
     }
     try {
-      sessionStorage.setItem(
-        STATE_KEY,
-        JSON.stringify(Object.assign(current, patch)),
-      );
+      sessionStorage.setItem(STATE_KEY, JSON.stringify(Object.assign(current, patch)));
     } catch (error) {
       /* storage is best-effort in the prototype */
     }
@@ -54,8 +51,8 @@
   Object.keys(OPTIONS).forEach(function (id) {
     var button = document.getElementById(id);
     if (!button) return;
-    button.classList.add("cursor-pointer");
-    button.addEventListener("click", function () {
+    button.classList.add('cursor-pointer');
+    button.addEventListener('click', function () {
       saveState(OPTIONS[id].state);
       go(OPTIONS[id].href);
     });

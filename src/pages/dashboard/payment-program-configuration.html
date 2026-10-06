@@ -5,1077 +5,505 @@
 -->
 <!doctype html>
 <html class="h-full bg-gray-100 dark:bg-gray-950">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Payment Program Configuration - Dashboard</title>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Payment Program Configuration - Dashboard</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
-      rel="stylesheet"
-    />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
-    <script src="../../../src/scripts/theme-init.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style type="text/tailwindcss">
-      @custom-variant dark (&:where(.dark, .dark *));
-    </style>
-    <script
-      src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1"
-      type="module"
-    ></script>
-    <style>
-      /* Intentional load state: one tone, one radius, one synchronized pulse. */
-      :root {
-        --pp-skel: #e8eaed;
-        --pp-skel-strong: #d6dae1;
-      }
-      .dark {
-        --pp-skel: rgba(255, 255, 255, 0.1);
-        --pp-skel-strong: rgba(255, 255, 255, 0.18);
-      }
-      .pp-skel {
-        display: block;
-        border-radius: 0.375rem;
-        background: var(--pp-skel);
-        animation: ppPulse 1.6s ease-in-out infinite;
-      }
-      .pp-skel-strong {
-        background: var(--pp-skel-strong);
-      }
-      @keyframes ppPulse {
-        0%,
-        100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.55;
-        }
-      }
-      @media (prefers-reduced-motion: reduce) {
-        .pp-skel {
-          animation: none;
-        }
-      }
+  <script src="../../../src/scripts/theme-init.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+  <style>
+    /* Intentional load state: one tone, one radius, one synchronized pulse. */
+    :root { --pp-skel: #e8eaed; --pp-skel-strong: #d6dae1; }
+    .dark { --pp-skel: rgba(255,255,255,.10); --pp-skel-strong: rgba(255,255,255,.18); }
+    .pp-skel { display: block; border-radius: .375rem; background: var(--pp-skel); animation: ppPulse 1.6s ease-in-out infinite; }
+    .pp-skel-strong { background: var(--pp-skel-strong); }
+    @keyframes ppPulse { 0%, 100% { opacity: 1; } 50% { opacity: .55; } }
+    @media (prefers-reduced-motion: reduce) { .pp-skel { animation: none; } }
 
-      /* Duration slider: flat track, no stroke. The fill is painted on the input
+    /* Duration slider: flat track, no stroke. The fill is painted on the input
        itself, not the track pseudo-element: Chrome doesn't repaint the track
        when --pp-fill changes, so the blue would stay put while the thumb moved. */
-      .pp-range {
-        -webkit-appearance: none;
-        appearance: none;
-        height: 6px;
-        border-radius: 9999px;
-        cursor: pointer;
-        --pp-fill: 50%;
-        background: linear-gradient(
-          to right,
-          #2563eb 0 var(--pp-fill),
-          #e5e7eb var(--pp-fill) 100%
-        );
-      }
-      .pp-range:focus {
-        outline: none;
-      }
-      .pp-range::-webkit-slider-runnable-track {
-        height: 6px;
-        border: 0;
-        background: transparent;
-      }
-      .pp-range::-moz-range-track {
-        height: 6px;
-        border: 0;
-        background: transparent;
-      }
-      .pp-range::-webkit-slider-thumb {
-        -webkit-appearance: none;
-        appearance: none;
-        width: 16px;
-        height: 16px;
-        margin-top: -5px;
-        border: 0;
-        border-radius: 9999px;
-        background: #fff;
-        box-shadow: inset 0 0 0 3.2px #2563eb;
-      }
-      .pp-range::-moz-range-thumb {
-        width: 16px;
-        height: 16px;
-        border: 0;
-        border-radius: 9999px;
-        background: #fff;
-        box-shadow: inset 0 0 0 3.2px #2563eb;
-      }
-      .pp-range:focus-visible::-webkit-slider-thumb {
-        outline: 2px solid #2563eb;
-        outline-offset: 2px;
-      }
-      .pp-range:focus-visible::-moz-range-thumb {
-        outline: 2px solid #2563eb;
-        outline-offset: 2px;
-      }
-      .dark .pp-range {
-        background: linear-gradient(
-          to right,
-          #3b82f6 0 var(--pp-fill),
-          rgba(255, 255, 255, 0.12) var(--pp-fill) 100%
-        );
-      }
-    </style>
+    .pp-range {
+      -webkit-appearance: none; appearance: none; height: 6px; border-radius: 9999px; cursor: pointer; --pp-fill: 50%;
+      background: linear-gradient(to right, #2563eb 0 var(--pp-fill), #e5e7eb var(--pp-fill) 100%);
+    }
+    .pp-range:focus { outline: none; }
+    .pp-range::-webkit-slider-runnable-track { height: 6px; border: 0; background: transparent; }
+    .pp-range::-moz-range-track { height: 6px; border: 0; background: transparent; }
+    .pp-range::-webkit-slider-thumb {
+      -webkit-appearance: none; appearance: none; width: 16px; height: 16px; margin-top: -5px;
+      border: 0; border-radius: 9999px; background: #fff; box-shadow: inset 0 0 0 3.2px #2563eb;
+    }
+    .pp-range::-moz-range-thumb { width: 16px; height: 16px; border: 0; border-radius: 9999px; background: #fff; box-shadow: inset 0 0 0 3.2px #2563eb; }
+    .pp-range:focus-visible::-webkit-slider-thumb { outline: 2px solid #2563eb; outline-offset: 2px; }
+    .pp-range:focus-visible::-moz-range-thumb { outline: 2px solid #2563eb; outline-offset: 2px; }
+    .dark .pp-range { background: linear-gradient(to right, #3b82f6 0 var(--pp-fill), rgba(255,255,255,.12) var(--pp-fill) 100%); }
+  </style>
 
-    <script src="../../../src/scripts/sidebar-boot.js"></script>
-    <script src="../../../src/scripts/app-plans.js"></script>
-    <script src="../../../src/scripts/nav-component.js"></script>
-    <script src="../../../src/scripts/stp-state.js"></script>
-    <script src="../../../src/scripts/app-switch.js"></script>
-    <script src="../../../src/scripts/topbar-component.js"></script>
-    <script src="../../../src/scripts/sidebar.js" defer></script>
-    <script src="../../../src/scripts/data-source.js"></script>
-    <script src="../../../src/scripts/shared.js" defer></script>
-    <script src="../../../src/scripts/shell-navigation.js" defer></script>
-    <script src="../../../src/scripts/payment-program-config.js" defer></script>
-    <script
-      src="../../../src/scripts/payment-program-suppliers.js"
-      defer
-    ></script>
-  </head>
+  <script src="../../../src/scripts/sidebar-boot.js"></script>
+  <script src="../../../src/scripts/app-plans.js"></script>
+  <script src="../../../src/scripts/nav-component.js"></script>
+  <script src="../../../src/scripts/stp-state.js"></script>
+  <script src="../../../src/scripts/app-switch.js"></script>
+  <script src="../../../src/scripts/topbar-component.js"></script>
+  <script src="../../../src/scripts/sidebar.js" defer></script>
+  <script src="../../../src/scripts/data-source.js"></script>
+  <script src="../../../src/scripts/shared.js" defer></script>
+  <script src="../../../src/scripts/shell-navigation.js" defer></script>
+  <script src="../../../src/scripts/payment-program-config.js" defer></script>
+  <script src="../../../src/scripts/payment-program-suppliers.js" defer></script>
+</head>
 
-  <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
-    <div id="app-shell" class="min-h-screen">
-      <app-nav></app-nav>
+<body class="h-full font-['Inter'] antialiased dark:text-gray-100">
+  <div id="app-shell" class="min-h-screen">
+    <app-nav></app-nav>
 
-      <div
-        id="main-content-wrapper"
-        class="min-w-0 min-h-screen flex flex-col lg:pl-[304px]"
-      >
-        <app-topbar></app-topbar>
+    <div id="main-content-wrapper" class="min-w-0 min-h-screen flex flex-col lg:pl-[288px]">
+      <app-topbar></app-topbar>
 
-        <main class="flex w-full justify-center p-2 sm:p-2 lg:p-4">
-          <section
-            class="w-full max-w-[1280px] overflow-hidden rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900"
-          >
-            <!-- List view: Configuration / Suppliers tabs -->
-            <div id="pp-list-view">
-              <div class="flex flex-col gap-3 px-4 pt-6 sm:px-6">
-                <h1
-                  class="text-2xl font-semibold text-gray-950 dark:text-white"
-                >
-                  Payment Program Configuration
-                </h1>
-                <nav aria-label="Tabs" class="flex gap-6">
-                  <span
-                    class="cursor-default px-1 py-2.5 text-sm font-medium text-gray-500 dark:text-gray-400"
-                    >Overview</span
-                  >
-                  <button
-                    type="button"
-                    data-pp-tab="configuration"
-                    class="cursor-pointer border-b-2 border-transparent px-1 py-2.5 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 aria-selected:border-blue-500 aria-selected:text-blue-600 dark:text-gray-400 dark:aria-selected:text-blue-400"
-                  >
-                    Configuration
-                  </button>
-                  <button
-                    type="button"
-                    data-pp-tab="suppliers"
-                    class="cursor-pointer border-b-2 border-transparent px-1 py-2.5 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 aria-selected:border-blue-500 aria-selected:text-blue-600 dark:text-gray-400 dark:aria-selected:text-blue-400"
-                  >
-                    Suppliers
-                  </button>
-                </nav>
-              </div>
-              <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
-              <div
-                id="pp-list-body"
-                class="p-4 sm:p-6"
-                aria-live="polite"
-                aria-busy="true"
-              >
-                <span class="pp-skel h-40 w-full rounded-2xl"></span>
-              </div>
-              <div
-                id="pp-suppliers-body"
-                class="hidden"
-                aria-live="polite"
-              ></div>
+      <main class="flex w-full justify-center p-2 sm:p-2 lg:p-4">
+        <section class="w-full max-w-[1280px] overflow-hidden rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900">
+
+          <!-- List view: Configuration / Suppliers tabs -->
+          <div id="pp-list-view">
+            <div class="flex flex-col gap-3 px-4 pt-6 sm:px-6">
+              <h1 class="text-2xl font-semibold text-gray-950 dark:text-white">Payment Program Configuration</h1>
+              <nav aria-label="Tabs" class="flex gap-6">
+                <span class="cursor-default px-1 py-2.5 text-sm font-medium text-gray-500 dark:text-gray-400">Overview</span>
+                <button type="button" data-pp-tab="configuration" class="cursor-pointer border-b-2 border-transparent px-1 py-2.5 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 aria-selected:border-blue-500 aria-selected:text-blue-600 dark:text-gray-400 dark:aria-selected:text-blue-400">Configuration</button>
+                <button type="button" data-pp-tab="suppliers" class="cursor-pointer border-b-2 border-transparent px-1 py-2.5 text-sm font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 aria-selected:border-blue-500 aria-selected:text-blue-600 dark:text-gray-400 dark:aria-selected:text-blue-400">Suppliers</button>
+              </nav>
             </div>
-
-            <!-- Program detail view -->
-            <div id="pp-detail-view" class="hidden">
-              <div id="pp-detail-body" aria-live="polite"></div>
+            <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
+            <div id="pp-list-body" class="p-4 sm:p-6" aria-live="polite" aria-busy="true">
+              <span class="pp-skel h-40 w-full rounded-2xl"></span>
             </div>
-          </section>
-        </main>
-      </div>
+            <div id="pp-suppliers-body" class="hidden" aria-live="polite"></div>
+          </div>
+
+          <!-- Program detail view -->
+          <div id="pp-detail-view" class="hidden">
+            <div id="pp-detail-body" aria-live="polite"></div>
+          </div>
+
+        </section>
+      </main>
     </div>
+  </div>
 
-    <!-- Create program (right-hand drawer) -->
-    <el-dialog>
-      <dialog
-        id="pp-create-dialog"
-        aria-labelledby="pp-create-title"
-        class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent backdrop:bg-transparent"
-      >
-        <el-dialog-backdrop
-          class="fixed inset-0 bg-slate-950/70 transition-opacity duration-300 ease-in-out data-closed:opacity-0"
-        ></el-dialog-backdrop>
-        <div class="fixed inset-y-0 right-0 flex max-w-full">
-          <el-dialog-panel
-            class="flex h-full w-screen max-w-[576px] transform flex-col bg-white shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full dark:bg-gray-900"
-          >
-            <form id="pp-create-form" class="flex h-full min-h-0 flex-col">
-              <div
-                class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10"
-              >
-                <h2
-                  id="pp-create-title"
-                  class="flex-1 text-lg font-medium text-gray-900 dark:text-white"
-                >
-                  Create Payment Program
-                </h2>
-                <button
-                  type="button"
-                  command="close"
-                  commandfor="pp-create-dialog"
-                  class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10"
-                >
-                  <span class="sr-only">Close</span>
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    aria-hidden="true"
-                    class="size-6"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M6 18 18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-
-              <div
-                class="flex min-h-0 flex-1 flex-col gap-12 overflow-y-auto p-6"
-              >
-                <div class="flex flex-col gap-1">
-                  <label
-                    for="pp-name"
-                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                    >Program Name</label
-                  >
-                  <input
-                    id="pp-name"
-                    type="text"
-                    autocomplete="off"
-                    placeholder="e.g. Early Payment Program"
-                    class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                  />
-                </div>
-
-                <div class="flex flex-col gap-4">
-                  <div>
-                    <h3
-                      class="text-base font-semibold text-gray-950 dark:text-white"
-                    >
-                      Payment Preference Waterfall
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      The sequence clients' suppliers move through.
-                    </p>
-                  </div>
-                  <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
-
-                  <label
-                    class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5"
-                  >
-                    <span class="flex h-5 shrink-0 items-center">
-                      <input
-                        type="radio"
-                        name="pp-template"
-                        value="default"
-                        checked
-                        class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                      />
-                    </span>
-                    <span class="flex min-w-0 flex-1 flex-col gap-3">
-                      <span class="flex flex-col text-sm">
-                        <span
-                          class="font-semibold text-gray-950 dark:text-white"
-                          >Default Waterfall</span
-                        >
-                        <span class="text-gray-500 dark:text-gray-400"
-                          >3 Ready Made Cohorts.</span
-                        >
-                      </span>
-                      <span
-                        id="pp-default-chips"
-                        class="flex flex-wrap items-center gap-2"
-                      ></span>
-                      <span
-                        class="flex items-start gap-2 rounded-lg border border-gray-200 bg-gray-50 p-2 text-xs text-gray-950 dark:border-white/10 dark:bg-white/5 dark:text-gray-200"
-                      >
-                        <svg
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          aria-hidden="true"
-                          class="mt-px size-4 shrink-0 text-gray-500"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                        <span
-                          >You can edit the number of cohorts and the available
-                          payment methods for each cohort in the program
-                          configuration.</span
-                        >
-                      </span>
-                    </span>
-                  </label>
-
-                  <label
-                    class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5"
-                  >
-                    <span class="flex h-5 shrink-0 items-center">
-                      <input
-                        type="radio"
-                        name="pp-template"
-                        value="custom"
-                        class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                      />
-                    </span>
-                    <span class="flex flex-col text-sm">
-                      <span class="font-semibold text-gray-950 dark:text-white"
-                        >Custom</span
-                      >
-                      <span class="text-gray-500 dark:text-gray-400"
-                        >Begin with no cohorts.</span
-                      >
-                    </span>
-                  </label>
-                </div>
-              </div>
-
-              <div
-                class="flex items-start justify-end gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10"
-              >
-                <button
-                  type="button"
-                  command="close"
-                  commandfor="pp-create-dialog"
-                  class="cursor-pointer rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
-                >
-                  Cancel
-                </button>
-                <button
-                  id="pp-create-submit"
-                  type="submit"
-                  disabled
-                  class="cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600"
-                >
-                  Create Program
-                </button>
-              </div>
-            </form>
-          </el-dialog-panel>
-        </div>
-      </dialog>
-    </el-dialog>
-
-    <!-- Add / edit cohort (right-hand drawer) -->
-    <el-dialog>
-      <dialog
-        id="pp-cohort-dialog"
-        aria-labelledby="pp-cohort-title"
-        class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent backdrop:bg-transparent"
-      >
-        <el-dialog-backdrop
-          class="fixed inset-0 bg-slate-950/70 transition-opacity duration-300 ease-in-out data-closed:opacity-0"
-        ></el-dialog-backdrop>
-        <div class="fixed inset-y-0 right-0 flex max-w-full">
-          <el-dialog-panel
-            class="flex h-full w-screen max-w-[576px] transform flex-col bg-white shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full dark:bg-gray-900"
-          >
-            <form id="pp-cohort-form" class="flex h-full min-h-0 flex-col">
-              <div
-                class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10"
-              >
-                <h2
-                  id="pp-cohort-title"
-                  class="flex-1 text-lg font-medium text-gray-900 dark:text-white"
-                >
-                  Edit Cohort
-                </h2>
-                <button
-                  type="button"
-                  command="close"
-                  commandfor="pp-cohort-dialog"
-                  class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10"
-                >
-                  <span class="sr-only">Close</span>
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    aria-hidden="true"
-                    class="size-6"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M6 18 18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
-
-              <div
-                class="flex min-h-0 flex-1 flex-col gap-12 overflow-y-auto p-6"
-              >
-                <!-- Template settings -->
-                <section class="flex flex-col gap-4">
-                  <div>
-                    <h3
-                      class="text-base font-semibold text-gray-950 dark:text-white"
-                    >
-                      Template Settings
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      These become the fixed configuration clients inherit.
-                    </p>
-                  </div>
-                  <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
-                  <div class="flex flex-col gap-1">
-                    <label
-                      for="pp-cohort-name"
-                      class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                      >Cohort Name (plain-language)</label
-                    >
-                    <input
-                      id="pp-cohort-name"
-                      type="text"
-                      autocomplete="off"
-                      placeholder="e.g. Managed Card Acceptance"
-                      class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                    />
-                  </div>
-                </section>
-
-                <!-- Duration -->
-                <section class="flex flex-col gap-4">
-                  <div>
-                    <h3
-                      class="text-base font-semibold text-gray-950 dark:text-white"
-                    >
-                      Cohort Duration
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      Set how long a supplier stays in this cohort before moving
-                      to the next one.
-                    </p>
-                  </div>
-                  <div class="flex items-center gap-4">
-                    <input
-                      id="pp-cohort-days"
-                      type="range"
-                      min="1"
-                      max="90"
-                      step="1"
-                      aria-label="Cohort duration in days"
-                      class="pp-range flex-1"
-                    />
-                    <output
-                      id="pp-cohort-days-label"
-                      for="pp-cohort-days"
-                      class="w-16 shrink-0 text-right text-sm font-semibold text-gray-900 dark:text-white"
-                      >45 days</output
-                    >
-                  </div>
-                </section>
-
-                <!-- Methods -->
-                <section class="flex flex-col gap-4">
-                  <div>
-                    <h3
-                      class="text-base font-semibold text-gray-950 dark:text-white"
-                    >
-                      Approved Payment Methods
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      Choose which payment methods are available for suppliers
-                      in this cohort.
-                    </p>
-                  </div>
-                  <div
-                    id="pp-cohort-methods"
-                    class="divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200 dark:divide-white/10 dark:border-white/10"
-                  ></div>
-                  <div class="flex flex-col gap-2">
-                    <span
-                      class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                      >Paper Check policy</span
-                    >
-                    <div
-                      id="pp-cohort-check"
-                      class="overflow-hidden rounded-lg border border-gray-200 dark:border-white/10"
-                    ></div>
-                  </div>
-                </section>
-
-                <!-- Progression -->
-                <section class="flex flex-col gap-4">
-                  <div>
-                    <h3
-                      class="text-base font-semibold text-gray-950 dark:text-white"
-                    >
-                      Progression Conditions
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                      Set the rules that determine when a supplier moves out of
-                      this cohort.
-                    </p>
-                  </div>
-                  <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
-                  <div
-                    id="pp-cohort-conditions"
-                    class="flex flex-col gap-4"
-                  ></div>
-                </section>
-              </div>
-
-              <div
-                class="flex items-start justify-end gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10"
-              >
-                <button
-                  type="button"
-                  command="close"
-                  commandfor="pp-cohort-dialog"
-                  class="cursor-pointer rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
-                >
-                  Cancel
-                </button>
-                <button
-                  id="pp-cohort-save"
-                  type="submit"
-                  disabled
-                  class="cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600"
-                >
-                  Apply to Draft
-                </button>
-              </div>
-            </form>
-          </el-dialog-panel>
-        </div>
-      </dialog>
-    </el-dialog>
-    <!-- Disable cohort speedbump -->
-    <el-dialog>
-      <dialog
-        id="pp-disable-dialog"
-        aria-labelledby="pp-disable-title"
-        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
-      >
-        <el-dialog-backdrop
-          class="fixed inset-0 bg-gray-900/60 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
-        ></el-dialog-backdrop>
-        <div
-          tabindex="0"
-          class="flex min-h-full items-center justify-center p-4 focus:outline-none"
-        >
-          <el-dialog-panel
-            class="relative w-full max-w-lg transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-2 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800"
-          >
-            <form id="pp-disable-form">
-              <button
-                command="close"
-                commandfor="pp-disable-dialog"
-                type="button"
-                class="absolute right-4 top-4 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10"
-              >
+  <!-- Create program (right-hand drawer) -->
+  <el-dialog>
+    <dialog id="pp-create-dialog" aria-labelledby="pp-create-title" class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent backdrop:bg-transparent">
+      <el-dialog-backdrop class="fixed inset-0 bg-slate-950/70 transition-opacity duration-300 ease-in-out data-closed:opacity-0"></el-dialog-backdrop>
+      <div class="fixed inset-y-0 right-0 flex max-w-full">
+        <el-dialog-panel class="flex h-full w-screen max-w-[576px] transform flex-col bg-white shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full dark:bg-gray-900">
+          <form id="pp-create-form" class="flex h-full min-h-0 flex-col">
+            <div class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
+              <h2 id="pp-create-title" class="flex-1 text-lg font-medium text-gray-900 dark:text-white">Create Payment Program</h2>
+              <button type="button" command="close" commandfor="pp-create-dialog" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10">
                 <span class="sr-only">Close</span>
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  aria-hidden="true"
-                  class="size-6"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6 18 18 6M6 6l12 12"
-                  />
-                </svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
               </button>
+            </div>
 
-              <div class="flex flex-col gap-6 px-6 pt-14 pb-6">
-                <div class="flex flex-col items-center gap-4 text-center">
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    class="size-10 text-red-500"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                  <h3
-                    id="pp-disable-title"
-                    class="text-lg font-semibold text-gray-900 dark:text-white"
-                  ></h3>
-                  <p
-                    id="pp-disable-skip"
-                    class="hidden text-sm text-gray-500 dark:text-gray-400"
-                  >
-                    Suppliers will skip this stage and move straight to the next
-                    enabled cohort.
-                  </p>
-                </div>
-
-                <div id="pp-disable-migration" class="flex flex-col gap-6">
-                  <div
-                    class="flex gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-400/20 dark:bg-amber-400/10"
-                  >
-                    <svg
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden="true"
-                      class="mt-0.5 size-5 shrink-0 text-yellow-500"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                    <p
-                      id="pp-disable-warning"
-                      class="text-sm font-medium text-amber-800 dark:text-amber-300"
-                    ></p>
-                  </div>
-                  <div class="flex flex-col gap-1">
-                    <label
-                      for="pp-disable-target"
-                      class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                      >Move affected suppliers to</label
-                    >
-                    <el-select
-                      id="pp-disable-target"
-                      name="pp-disable-target"
-                      class="block w-full"
-                    >
-                      <button
-                        type="button"
-                        class="grid h-10 w-full cursor-default grid-cols-1 rounded-md bg-white pr-3 pl-3 text-left text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                      >
-                        <el-selectedcontent
-                          class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-base font-medium text-gray-900 dark:text-white"
-                        ></el-selectedcontent>
-                        <svg
-                          viewBox="0 0 16 16"
-                          fill="currentColor"
-                          aria-hidden="true"
-                          class="col-start-1 row-start-1 size-4 self-center justify-self-end text-gray-500 dark:text-gray-400"
-                        >
-                          <path
-                            d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                            clip-rule="evenodd"
-                            fill-rule="evenodd"
-                          />
-                        </svg>
-                      </button>
-                      <el-options
-                        anchor="bottom start"
-                        popover
-                        class="w-(--button-width) overflow-auto rounded-md bg-white pt-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10"
-                      ></el-options>
-                    </el-select>
-                    <p
-                      id="pp-disable-no-target"
-                      class="hidden text-sm text-red-600 dark:text-red-400"
-                    >
-                      Enable another cohort first so these suppliers have
-                      somewhere to go.
-                    </p>
-                  </div>
-                </div>
+            <div class="flex min-h-0 flex-1 flex-col gap-12 overflow-y-auto p-6">
+              <div class="flex flex-col gap-1">
+                <label for="pp-name" class="text-sm font-medium text-gray-700 dark:text-gray-300">Program Name</label>
+                <input id="pp-name" type="text" autocomplete="off" placeholder="e.g. Early Payment Program"
+                  class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
               </div>
 
-              <div
-                class="grid grid-cols-2 gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10"
-              >
-                <button
-                  type="button"
-                  command="close"
-                  commandfor="pp-disable-dialog"
-                  class="cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
-                >
-                  Cancel
-                </button>
-                <button
-                  id="pp-disable-confirm"
-                  type="submit"
-                  class="cursor-pointer rounded-md bg-red-600 px-3 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-red-600"
-                >
-                  Disable cohort
-                </button>
-              </div>
-            </form>
-          </el-dialog-panel>
-        </div>
-      </dialog>
-    </el-dialog>
+              <p id="pp-edit-note" class="hidden -mt-8 text-sm text-gray-500 dark:text-gray-400">The new name applies right away. Cohorts and payment methods are edited from the program itself.</p>
 
-    <!-- Add suppliers to a program (right-hand drawer) -->
-    <el-dialog>
-      <dialog
-        id="pp-assign-dialog"
-        aria-labelledby="pp-assign-title"
-        class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent backdrop:bg-transparent"
-      >
-        <el-dialog-backdrop
-          class="fixed inset-0 bg-slate-950/70 transition-opacity duration-300 ease-in-out data-closed:opacity-0"
-        ></el-dialog-backdrop>
-        <div class="fixed inset-y-0 right-0 flex max-w-full">
-          <el-dialog-panel
-            class="flex h-full w-screen max-w-[576px] transform flex-col bg-white shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full dark:bg-gray-900"
-          >
-            <form id="pp-assign-form" class="flex h-full min-h-0 flex-col">
-              <div
-                class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10"
-              >
-                <div class="min-w-0 flex-1">
-                  <h2
-                    id="pp-assign-title"
-                    class="text-lg font-medium text-gray-900 dark:text-white"
-                  >
-                    Add suppliers
-                  </h2>
-                  <p
-                    id="pp-assign-subtitle"
-                    class="truncate text-sm text-gray-500 dark:text-gray-400"
-                  ></p>
+              <div id="pp-create-waterfall" class="flex flex-col gap-4">
+                <div>
+                  <h3 class="text-base font-semibold text-gray-950 dark:text-white">Payment Preference Waterfall</h3>
+                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">The sequence clients' suppliers move through.</p>
                 </div>
-                <button
-                  type="button"
-                  command="close"
-                  commandfor="pp-assign-dialog"
-                  class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10"
-                >
-                  <span class="sr-only">Close</span>
-                  <svg
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="1.5"
-                    aria-hidden="true"
-                    class="size-6"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      d="M6 18 18 6M6 6l12 12"
-                    />
-                  </svg>
-                </button>
-              </div>
+                <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
 
-              <div class="flex min-h-0 flex-1 flex-col gap-6 p-6">
+                <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5">
+                  <span class="flex h-5 shrink-0 items-center">
+                    <input type="radio" name="pp-template" value="default" checked
+                      class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
+                  </span>
+                  <span class="flex min-w-0 flex-1 flex-col gap-3">
+                    <span class="flex flex-col text-sm">
+                      <span class="font-semibold text-gray-950 dark:text-white">Default Waterfall</span>
+                      <span class="text-gray-500 dark:text-gray-400">3 Ready Made Cohorts.</span>
+                    </span>
+                    <span id="pp-default-chips" class="flex flex-wrap items-center gap-2"></span>
+                    <span class="flex items-start gap-2 rounded-lg border border-gray-200 bg-gray-50 p-2 text-xs text-gray-950 dark:border-white/10 dark:bg-white/5 dark:text-gray-200">
+                      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="mt-px size-4 shrink-0 text-gray-500"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" /></svg>
+                      <span>You can edit the number of cohorts and the available payment methods for each cohort in the program configuration.</span>
+                    </span>
+                  </span>
+                </label>
+
+                <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5">
+                  <span class="flex h-5 shrink-0 items-center">
+                    <input type="radio" name="pp-template" value="custom"
+                      class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
+                  </span>
+                  <span class="flex flex-col text-sm">
+                    <span class="font-semibold text-gray-950 dark:text-white">Custom</span>
+                    <span class="text-gray-500 dark:text-gray-400">Begin with no cohorts.</span>
+                  </span>
+                </label>
+              </div>
+            </div>
+
+            <div class="flex items-start justify-end gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+              <button type="button" command="close" commandfor="pp-create-dialog" class="cursor-pointer rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">Cancel</button>
+              <button id="pp-create-submit" type="submit" disabled class="cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600">Create Program</button>
+            </div>
+          </form>
+        </el-dialog-panel>
+      </div>
+    </dialog>
+  </el-dialog>
+
+  <!-- Add / edit cohort (right-hand drawer) -->
+  <el-dialog>
+    <dialog id="pp-cohort-dialog" aria-labelledby="pp-cohort-title" class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent backdrop:bg-transparent">
+      <el-dialog-backdrop class="fixed inset-0 bg-slate-950/70 transition-opacity duration-300 ease-in-out data-closed:opacity-0"></el-dialog-backdrop>
+      <div class="fixed inset-y-0 right-0 flex max-w-full">
+        <el-dialog-panel class="flex h-full w-screen max-w-[576px] transform flex-col bg-white shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full dark:bg-gray-900">
+          <form id="pp-cohort-form" class="flex h-full min-h-0 flex-col">
+            <div class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
+              <h2 id="pp-cohort-title" class="flex-1 text-lg font-medium text-gray-900 dark:text-white">Edit Cohort</h2>
+              <button type="button" command="close" commandfor="pp-cohort-dialog" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10">
+                <span class="sr-only">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <div class="flex min-h-0 flex-1 flex-col gap-12 overflow-y-auto p-6">
+              <!-- Template settings -->
+              <section class="flex flex-col gap-4">
+                <div>
+                  <h3 class="text-base font-semibold text-gray-950 dark:text-white">Template Settings</h3>
+                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">These become the fixed configuration clients inherit.</p>
+                </div>
+                <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
                 <div class="flex flex-col gap-1">
-                  <label
-                    for="pp-assign-cohort"
-                    class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                    >Start suppliers in</label
-                  >
-                  <el-select
-                    id="pp-assign-cohort"
-                    name="pp-assign-cohort"
-                    class="block w-full"
-                  >
-                    <button
-                      type="button"
-                      class="grid h-10 w-full cursor-default grid-cols-1 rounded-md bg-white pr-3 pl-3 text-left text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                    >
-                      <el-selectedcontent
-                        class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-base font-medium text-gray-900 dark:text-white"
-                      ></el-selectedcontent>
-                      <svg
-                        viewBox="0 0 16 16"
-                        fill="currentColor"
-                        aria-hidden="true"
-                        class="col-start-1 row-start-1 size-4 self-center justify-self-end text-gray-500 dark:text-gray-400"
-                      >
-                        <path
-                          d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                          clip-rule="evenodd"
-                          fill-rule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                    <el-options
-                      anchor="bottom start"
-                      popover
-                      class="w-(--button-width) overflow-auto rounded-md bg-white pt-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10"
-                    ></el-options>
-                  </el-select>
-                  <p class="text-xs text-gray-500 dark:text-gray-400">
-                    Suppliers start this stage fresh, and its timer begins
-                    today.
-                  </p>
+                  <label for="pp-cohort-name" class="text-sm font-medium text-gray-700 dark:text-gray-300">Cohort Name (plain-language)</label>
+                  <input id="pp-cohort-name" type="text" autocomplete="off" placeholder="e.g. Managed Card Acceptance"
+                    class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
                 </div>
+              </section>
 
-                <div class="flex min-h-0 flex-1 flex-col gap-3">
-                  <div class="grid grid-cols-1">
-                    <input
-                      id="pp-assign-search"
-                      type="search"
-                      autocomplete="off"
-                      placeholder="Search suppliers"
-                      aria-label="Search suppliers"
-                      class="col-start-1 row-start-1 block h-10 w-full rounded-md bg-white pr-3 pl-10 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
-                    />
-                    <svg
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      aria-hidden="true"
-                      class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400"
-                    >
-                      <path
-                        fill-rule="evenodd"
-                        d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
-                  </div>
-
-                  <div class="flex items-center justify-between gap-3">
-                    <label
-                      class="flex cursor-pointer items-center gap-3 text-sm text-gray-900 dark:text-gray-100"
-                    >
-                      <span class="group grid size-4 grid-cols-1">
-                        <input
-                          id="pp-assign-only-unassigned"
-                          type="checkbox"
-                          checked
-                          class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500"
-                        />
-                        <svg
-                          viewBox="0 0 14 14"
-                          fill="none"
-                          class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"
-                        >
-                          <path
-                            d="M3 8L6 11L11 3.5"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="opacity-0 group-has-checked:opacity-100"
-                          />
-                        </svg>
-                      </span>
-                      Show only unassigned
-                    </label>
-                    <button
-                      type="button"
-                      id="pp-assign-select-all"
-                      class="cursor-pointer rounded-md px-2 py-1 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 disabled:cursor-not-allowed disabled:opacity-40 dark:text-blue-400"
-                    >
-                      Select all
-                    </button>
-                  </div>
-
-                  <div
-                    id="pp-assign-list"
-                    role="listbox"
-                    aria-multiselectable="true"
-                    aria-label="Suppliers"
-                    class="min-h-0 flex-1 divide-y divide-gray-200 overflow-y-auto rounded-lg border border-gray-200 dark:divide-white/10 dark:border-white/10"
-                  ></div>
-                  <p
-                    id="pp-assign-more"
-                    class="hidden text-xs text-gray-500 dark:text-gray-400"
-                  ></p>
+              <!-- Duration -->
+              <section class="flex flex-col gap-4">
+                <div>
+                  <h3 class="text-base font-semibold text-gray-950 dark:text-white">Cohort Duration</h3>
+                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Set how long a supplier stays in this cohort before moving to the next one.</p>
                 </div>
-              </div>
-
-              <div
-                class="flex items-center justify-between gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10"
-              >
-                <p
-                  id="pp-assign-summary"
-                  class="min-w-0 text-sm text-gray-600 dark:text-gray-400"
-                >
-                  No suppliers selected
-                </p>
-                <div class="flex shrink-0 gap-3">
-                  <button
-                    type="button"
-                    command="close"
-                    commandfor="pp-assign-dialog"
-                    class="cursor-pointer rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    id="pp-assign-submit"
-                    type="submit"
-                    disabled
-                    class="cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600"
-                  >
-                    Add suppliers
-                  </button>
+                <div class="flex items-center gap-4">
+                  <input id="pp-cohort-days" type="range" min="1" max="90" step="1" aria-label="Cohort duration in days"
+                    class="pp-range flex-1" />
+                  <output id="pp-cohort-days-label" for="pp-cohort-days" class="w-16 shrink-0 text-right text-sm font-semibold text-gray-900 dark:text-white">45 days</output>
                 </div>
-              </div>
-            </form>
-          </el-dialog-panel>
-        </div>
-      </dialog>
-    </el-dialog>
+              </section>
 
-    <!-- Move suppliers between programs: speedbump -->
-    <el-dialog>
-      <dialog
-        id="pp-move-dialog"
-        aria-labelledby="pp-move-title"
-        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
-      >
-        <el-dialog-backdrop
-          class="fixed inset-0 bg-gray-900/60 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
-        ></el-dialog-backdrop>
-        <div
-          tabindex="0"
-          class="flex min-h-full items-center justify-center p-4 focus:outline-none"
-        >
-          <el-dialog-panel
-            class="relative w-full max-w-lg transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-2 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800"
-          >
-            <button
-              command="close"
-              commandfor="pp-move-dialog"
-              type="button"
-              class="absolute right-4 top-4 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10"
-            >
+              <!-- Methods -->
+              <section class="flex flex-col gap-4">
+                <div>
+                  <h3 class="text-base font-semibold text-gray-950 dark:text-white">Approved Payment Methods</h3>
+                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Choose which payment methods are available for suppliers in this cohort.</p>
+                </div>
+                <div id="pp-cohort-methods" class="divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200 dark:divide-white/10 dark:border-white/10"></div>
+                <div class="flex flex-col gap-2">
+                  <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Paper Check policy</span>
+                  <div id="pp-cohort-check" class="overflow-hidden rounded-lg border border-gray-200 dark:border-white/10"></div>
+                </div>
+              </section>
+
+              <!-- Progression -->
+              <section class="flex flex-col gap-4">
+                <div>
+                  <h3 class="text-base font-semibold text-gray-950 dark:text-white">Progression Conditions</h3>
+                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Set the rules that determine when a supplier moves out of this cohort.</p>
+                </div>
+                <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
+                <div id="pp-cohort-conditions" class="flex flex-col gap-4"></div>
+              </section>
+            </div>
+
+            <div class="flex items-start justify-end gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+              <button type="button" command="close" commandfor="pp-cohort-dialog" class="cursor-pointer rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">Cancel</button>
+              <button id="pp-cohort-save" type="submit" disabled class="cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600">Apply to Draft</button>
+            </div>
+          </form>
+        </el-dialog-panel>
+      </div>
+    </dialog>
+  </el-dialog>
+  <!-- Disable cohort speedbump -->
+  <el-dialog>
+    <dialog id="pp-disable-dialog" aria-labelledby="pp-disable-title" class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+      <el-dialog-backdrop class="fixed inset-0 bg-gray-900/60 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"></el-dialog-backdrop>
+      <div tabindex="0" class="flex min-h-full items-center justify-center p-4 focus:outline-none">
+        <el-dialog-panel class="relative w-full max-w-lg transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-2 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800">
+          <form id="pp-disable-form">
+            <button command="close" commandfor="pp-disable-dialog" type="button" class="absolute right-4 top-4 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10">
               <span class="sr-only">Close</span>
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                aria-hidden="true"
-                class="size-6"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6 18 18 6M6 6l12 12"
-                />
-              </svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
             </button>
+
             <div class="flex flex-col gap-6 px-6 pt-14 pb-6">
               <div class="flex flex-col items-center gap-4 text-center">
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="currentColor"
-                  aria-hidden="true"
-                  class="size-10 text-amber-500"
-                >
-                  <path
-                    fill-rule="evenodd"
-                    d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-                <h3
-                  id="pp-move-title"
-                  class="text-lg font-semibold text-gray-900 dark:text-white"
-                ></h3>
-                <p
-                  id="pp-move-lede"
-                  class="text-sm text-gray-500 dark:text-gray-400"
-                ></p>
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-10 text-red-500"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" /></svg>
+                <h3 id="pp-disable-title" class="text-lg font-semibold text-gray-900 dark:text-white"></h3>
+                <p id="pp-disable-skip" class="hidden text-sm text-gray-500 dark:text-gray-400">Suppliers will skip this stage and move straight to the next enabled cohort.</p>
               </div>
-              <ul
-                id="pp-move-impacts"
-                role="list"
-                class="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-medium text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300"
-              ></ul>
-            </div>
-            <div
-              class="grid grid-cols-2 gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10"
-            >
-              <button
-                type="button"
-                command="close"
-                commandfor="pp-move-dialog"
-                class="cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
-              >
-                Back
-              </button>
-              <button
-                id="pp-move-confirm"
-                type="button"
-                class="cursor-pointer rounded-md bg-blue-600 px-3 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-              >
-                Move and add
-              </button>
-            </div>
-          </el-dialog-panel>
-        </div>
-      </dialog>
-    </el-dialog>
 
-    <!-- Toast -->
-    <div
-      id="pp-toast"
-      role="status"
-      aria-live="polite"
-      class="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 opacity-0 translate-y-2 transition duration-200 ease-out"
-    >
-      <div
-        class="pointer-events-auto flex items-center gap-3 rounded-lg bg-gray-900 py-3 pr-3 pl-4 text-sm text-white shadow-lg dark:bg-gray-700"
-      >
-        <svg
-          viewBox="0 0 20 20"
-          fill="currentColor"
-          aria-hidden="true"
-          class="size-5 shrink-0 text-green-400"
-        >
-          <path
-            fill-rule="evenodd"
-            d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
-            clip-rule="evenodd"
-          />
-        </svg>
-        <span id="pp-toast-text"></span>
-        <button
-          type="button"
-          id="pp-toast-close"
-          class="ml-2 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-white/10 hover:text-white"
-        >
-          <span class="sr-only">Dismiss</span>
-          <svg
-            viewBox="0 0 20 20"
-            fill="currentColor"
-            aria-hidden="true"
-            class="size-4"
-          >
-            <path
-              d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"
-            />
-          </svg>
-        </button>
+              <div id="pp-disable-migration" class="flex flex-col gap-6">
+                <div class="flex gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-400/20 dark:bg-amber-400/10">
+                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="mt-0.5 size-5 shrink-0 text-yellow-500"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" /></svg>
+                  <p id="pp-disable-warning" class="text-sm font-medium text-amber-800 dark:text-amber-300"></p>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label for="pp-disable-target" class="text-sm font-medium text-gray-700 dark:text-gray-300">Move affected suppliers to</label>
+                  <el-select id="pp-disable-target" name="pp-disable-target" class="block w-full">
+                    <button type="button"
+                      class="grid h-10 w-full cursor-default grid-cols-1 rounded-md bg-white pr-3 pl-3 text-left text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                      <el-selectedcontent class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-base font-medium text-gray-900 dark:text-white"></el-selectedcontent>
+                      <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-4 self-center justify-self-end text-gray-500 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>
+                    </button>
+                    <el-options anchor="bottom start" popover
+                      class="w-(--button-width) overflow-auto rounded-md bg-white pt-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10"></el-options>
+                  </el-select>
+                  <p id="pp-disable-no-target" class="hidden text-sm text-red-600 dark:text-red-400">Enable another cohort first so these suppliers have somewhere to go.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+              <button type="button" command="close" commandfor="pp-disable-dialog" class="cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">Cancel</button>
+              <button id="pp-disable-confirm" type="submit" class="cursor-pointer rounded-md bg-red-600 px-3 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-red-600">Disable cohort</button>
+            </div>
+          </form>
+        </el-dialog-panel>
       </div>
+    </dialog>
+  </el-dialog>
+
+  <!-- Add suppliers to a program (right-hand drawer) -->
+  <el-dialog>
+    <dialog id="pp-assign-dialog" aria-labelledby="pp-assign-title" class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent backdrop:bg-transparent">
+      <el-dialog-backdrop class="fixed inset-0 bg-slate-950/70 transition-opacity duration-300 ease-in-out data-closed:opacity-0"></el-dialog-backdrop>
+      <div class="fixed inset-y-0 right-0 flex max-w-full">
+        <el-dialog-panel class="flex h-full w-screen max-w-[576px] transform flex-col bg-white shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full dark:bg-gray-900">
+          <form id="pp-assign-form" class="flex h-full min-h-0 flex-col">
+            <div class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
+              <div class="min-w-0 flex-1">
+                <h2 id="pp-assign-title" class="text-lg font-medium text-gray-900 dark:text-white">Add suppliers</h2>
+                <p id="pp-assign-subtitle" class="truncate text-sm text-gray-500 dark:text-gray-400"></p>
+              </div>
+              <button type="button" command="close" commandfor="pp-assign-dialog" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10">
+                <span class="sr-only">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <div class="flex min-h-0 flex-1 flex-col gap-6 p-6">
+              <div class="flex flex-col gap-1">
+                <label for="pp-assign-cohort" class="text-sm font-medium text-gray-700 dark:text-gray-300">Start suppliers in</label>
+                <el-select id="pp-assign-cohort" name="pp-assign-cohort" class="block w-full">
+                  <button type="button"
+                    class="grid h-10 w-full cursor-default grid-cols-1 rounded-md bg-white pr-3 pl-3 text-left text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                    <el-selectedcontent class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-base font-medium text-gray-900 dark:text-white"></el-selectedcontent>
+                    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-4 self-center justify-self-end text-gray-500 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>
+                  </button>
+                  <el-options anchor="bottom start" popover
+                    class="w-(--button-width) overflow-auto rounded-md bg-white pt-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10"></el-options>
+                </el-select>
+                <p class="text-xs text-gray-500 dark:text-gray-400">Suppliers start this stage fresh, and its timer begins today.</p>
+              </div>
+
+              <div class="flex min-h-0 flex-1 flex-col gap-3">
+                <div class="grid grid-cols-1">
+                  <input id="pp-assign-search" type="search" autocomplete="off" placeholder="Search suppliers" aria-label="Search suppliers"
+                    class="col-start-1 row-start-1 block h-10 w-full rounded-md bg-white pr-3 pl-10 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>
+                </div>
+
+                <div class="flex items-center justify-between gap-3">
+                  <label class="flex cursor-pointer items-center gap-3 text-sm text-gray-900 dark:text-gray-100">
+                    <span class="group grid size-4 grid-cols-1">
+                      <input id="pp-assign-only-unassigned" type="checkbox" checked
+                        class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
+                      <svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg>
+                    </span>
+                    Show only unassigned
+                  </label>
+                  <button type="button" id="pp-assign-select-all" class="cursor-pointer rounded-md px-2 py-1 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 disabled:cursor-not-allowed disabled:opacity-40 dark:text-blue-400">Select all</button>
+                </div>
+
+                <div id="pp-assign-list" role="listbox" aria-multiselectable="true" aria-label="Suppliers"
+                  class="min-h-0 flex-1 divide-y divide-gray-200 overflow-y-auto rounded-lg border border-gray-200 dark:divide-white/10 dark:border-white/10"></div>
+                <p id="pp-assign-more" class="hidden text-xs text-gray-500 dark:text-gray-400"></p>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+              <p id="pp-assign-summary" class="min-w-0 text-sm text-gray-600 dark:text-gray-400">No suppliers selected</p>
+              <div class="flex shrink-0 gap-3">
+                <button type="button" command="close" commandfor="pp-assign-dialog" class="cursor-pointer rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">Cancel</button>
+                <button id="pp-assign-submit" type="submit" disabled class="cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600">Add suppliers</button>
+              </div>
+            </div>
+          </form>
+        </el-dialog-panel>
+      </div>
+    </dialog>
+  </el-dialog>
+
+  <!-- Bulk: assign selected suppliers to a program and cohort (right-hand drawer) -->
+  <el-dialog>
+    <dialog id="pp-bulk-dialog" aria-labelledby="pp-bulk-title" class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent backdrop:bg-transparent">
+      <el-dialog-backdrop class="fixed inset-0 bg-slate-950/70 transition-opacity duration-300 ease-in-out data-closed:opacity-0"></el-dialog-backdrop>
+      <div class="fixed inset-y-0 right-0 flex max-w-full">
+        <el-dialog-panel class="flex h-full w-screen max-w-[576px] transform flex-col bg-white shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full dark:bg-gray-900">
+          <form id="pp-bulk-form" class="flex h-full min-h-0 flex-col">
+            <div class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
+              <div class="min-w-0 flex-1">
+                <h2 id="pp-bulk-title" class="text-lg font-medium text-gray-900 dark:text-white">Assign to program</h2>
+                <p id="pp-bulk-subtitle" class="truncate text-sm text-gray-500 dark:text-gray-400"></p>
+              </div>
+              <button type="button" command="close" commandfor="pp-bulk-dialog" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10">
+                <span class="sr-only">Close</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+              </button>
+            </div>
+
+            <div class="flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto p-6">
+              <div class="flex flex-col gap-4">
+                <div class="flex flex-col gap-1">
+                  <label for="pp-bulk-program" class="text-sm font-medium text-gray-700 dark:text-gray-300">Payment program</label>
+                  <el-select id="pp-bulk-program" name="pp-bulk-program" class="block w-full">
+                <button type="button"
+                  class="grid h-10 w-full cursor-default grid-cols-1 rounded-md bg-white pr-3 pl-3 text-left text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                  <el-selectedcontent class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-base font-medium text-gray-900 dark:text-white"></el-selectedcontent>
+                  <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-4 self-center justify-self-end text-gray-500 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>
+                </button>
+                <el-options anchor="bottom start" popover
+                  class="max-h-72 w-(--button-width) overflow-auto rounded-md bg-white pt-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10"></el-options>
+                  </el-select>
+                </div>
+                <div class="flex flex-col gap-1">
+                  <label for="pp-bulk-cohort" class="text-sm font-medium text-gray-700 dark:text-gray-300">Start suppliers in</label>
+                  <el-select id="pp-bulk-cohort" name="pp-bulk-cohort" class="block w-full">
+                <button type="button"
+                  class="grid h-10 w-full cursor-default grid-cols-1 rounded-md bg-white pr-3 pl-3 text-left text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                  <el-selectedcontent class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-base font-medium text-gray-900 dark:text-white"></el-selectedcontent>
+                  <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-4 self-center justify-self-end text-gray-500 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>
+                </button>
+                <el-options anchor="bottom start" popover
+                  class="max-h-72 w-(--button-width) overflow-auto rounded-md bg-white pt-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10"></el-options>
+                  </el-select>
+                  <p class="text-xs text-gray-500 dark:text-gray-400">Suppliers start this stage fresh, and its timer begins today.</p>
+                </div>
+              </div>
+
+              <div class="flex flex-col gap-4">
+                <div>
+                  <h3 class="text-base font-semibold text-gray-950 dark:text-white">What will happen</h3>
+                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">A supplier is in one program and one cohort at a time. Untick a group to leave those suppliers where they are.</p>
+                </div>
+                <div id="pp-bulk-groups" class="flex flex-col gap-3"></div>
+              </div>
+            </div>
+
+            <div class="flex items-center justify-between gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+              <p id="pp-bulk-summary" class="min-w-0 text-sm text-gray-600 dark:text-gray-400"></p>
+              <div class="flex shrink-0 gap-3">
+                <button type="button" command="close" commandfor="pp-bulk-dialog" class="cursor-pointer rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">Cancel</button>
+                <button id="pp-bulk-submit" type="submit" disabled class="cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600">Review</button>
+              </div>
+            </div>
+          </form>
+        </el-dialog-panel>
+      </div>
+    </dialog>
+  </el-dialog>
+
+  <!-- Move suppliers between programs: speedbump -->
+  <el-dialog>
+    <dialog id="pp-move-dialog" aria-labelledby="pp-move-title" class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+      <el-dialog-backdrop class="fixed inset-0 bg-gray-900/60 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"></el-dialog-backdrop>
+      <div tabindex="0" class="flex min-h-full items-center justify-center p-4 focus:outline-none">
+        <el-dialog-panel class="relative w-full max-w-lg transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-2 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800">
+          <button command="close" commandfor="pp-move-dialog" type="button" class="absolute right-4 top-4 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10">
+            <span class="sr-only">Close</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+          </button>
+          <div class="flex flex-col gap-6 px-6 pt-14 pb-6">
+            <div class="flex flex-col items-center gap-4 text-center">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-10 text-amber-500"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" /></svg>
+              <h3 id="pp-move-title" class="text-lg font-semibold text-gray-900 dark:text-white"></h3>
+              <p id="pp-move-lede" class="text-sm text-gray-500 dark:text-gray-400"></p>
+            </div>
+            <ul id="pp-move-impacts" role="list" class="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-medium text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300"></ul>
+          </div>
+          <div class="grid grid-cols-2 gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+            <button type="button" command="close" commandfor="pp-move-dialog" class="cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">Back</button>
+            <button id="pp-move-confirm" type="button" class="cursor-pointer rounded-md bg-blue-600 px-3 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Move and add</button>
+          </div>
+        </el-dialog-panel>
+      </div>
+    </dialog>
+  </el-dialog>
+
+  <!-- Delete program: speedbump -->
+  <el-dialog>
+    <dialog id="pp-delete-dialog" aria-labelledby="pp-delete-title" class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+      <el-dialog-backdrop class="fixed inset-0 bg-gray-900/60 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"></el-dialog-backdrop>
+      <div tabindex="0" class="flex min-h-full items-center justify-center p-4 focus:outline-none">
+        <el-dialog-panel class="relative w-full max-w-lg transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-2 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800">
+          <button command="close" commandfor="pp-delete-dialog" type="button" class="absolute right-4 top-4 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10">
+            <span class="sr-only">Close</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+          </button>
+          <div class="flex flex-col gap-6 px-6 pt-14 pb-6">
+            <div class="flex flex-col items-center gap-4 text-center">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-10 text-red-500"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" /></svg>
+              <h3 id="pp-delete-title" class="text-lg font-semibold text-gray-900 dark:text-white"></h3>
+              <p id="pp-delete-lede" class="text-sm text-gray-500 dark:text-gray-400"></p>
+            </div>
+            <ul id="pp-delete-impacts" role="list" class="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-medium text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300"></ul>
+          </div>
+          <div class="grid grid-cols-2 gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+            <button type="button" command="close" commandfor="pp-delete-dialog" class="cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">Cancel</button>
+            <button id="pp-delete-confirm" type="button" class="cursor-pointer rounded-md bg-red-600 px-3 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">Delete program</button>
+          </div>
+        </el-dialog-panel>
+      </div>
+    </dialog>
+  </el-dialog>
+
+  <!-- Toast -->
+  <div id="pp-toast" role="status" aria-live="polite"
+    class="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 opacity-0 translate-y-2 transition duration-200 ease-out">
+    <div id="pp-toast-card" class="flex items-center gap-3 rounded-lg bg-gray-900 py-3 pr-3 pl-4 text-sm text-white shadow-lg dark:bg-gray-700">
+      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-green-400"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" /></svg>
+      <span id="pp-toast-text"></span>
+      <button type="button" id="pp-toast-action" class="hidden cursor-pointer rounded-md px-2 py-1 text-sm font-semibold text-blue-300 hover:bg-white/10 hover:text-blue-200"></button>
+      <button type="button" id="pp-toast-close" class="ml-2 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-white/10 hover:text-white">
+        <span class="sr-only">Dismiss</span>
+        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg>
+      </button>
     </div>
-  </body>
+  </div>
+</body>
 </html>

@@ -1,5 +1,5 @@
 export function isInternalAppHref(href) {
-  return typeof href === "string" && href.startsWith("/");
+  return typeof href === 'string' && href.startsWith('/');
 }
 
 export function toAppHref(href) {

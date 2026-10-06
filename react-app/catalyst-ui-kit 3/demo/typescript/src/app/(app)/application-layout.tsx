@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { Avatar } from "@/components/avatar";
+import { Avatar } from '@/components/avatar'
 import {
   Dropdown,
   DropdownButton,
@@ -8,13 +8,8 @@ import {
   DropdownItem,
   DropdownLabel,
   DropdownMenu,
-} from "@/components/dropdown";
-import {
-  Navbar,
-  NavbarItem,
-  NavbarSection,
-  NavbarSpacer,
-} from "@/components/navbar";
+} from '@/components/dropdown'
+import { Navbar, NavbarItem, NavbarSection, NavbarSpacer } from '@/components/navbar'
 import {
   Sidebar,
   SidebarBody,
@@ -25,9 +20,9 @@ import {
   SidebarLabel,
   SidebarSection,
   SidebarSpacer,
-} from "@/components/sidebar";
-import { SidebarLayout } from "@/components/sidebar-layout";
-import { getEvents } from "@/data";
+} from '@/components/sidebar'
+import { SidebarLayout } from '@/components/sidebar-layout'
+import { getEvents } from '@/data'
 import {
   ArrowRightStartOnRectangleIcon,
   ChevronDownIcon,
@@ -37,7 +32,7 @@ import {
   PlusIcon,
   ShieldCheckIcon,
   UserCircleIcon,
-} from "@heroicons/react/16/solid";
+} from '@heroicons/react/16/solid'
 import {
   Cog6ToothIcon,
   HomeIcon,
@@ -45,14 +40,10 @@ import {
   SparklesIcon,
   Square2StackIcon,
   TicketIcon,
-} from "@heroicons/react/20/solid";
-import { usePathname } from "next/navigation";
+} from '@heroicons/react/20/solid'
+import { usePathname } from 'next/navigation'
 
-function AccountDropdownMenu({
-  anchor,
-}: {
-  anchor: "top start" | "bottom end";
-}) {
+function AccountDropdownMenu({ anchor }: { anchor: 'top start' | 'bottom end' }) {
   return (
     <DropdownMenu className="min-w-64" anchor={anchor}>
       <DropdownItem href="#">
@@ -74,17 +65,17 @@ function AccountDropdownMenu({
         <DropdownLabel>Sign out</DropdownLabel>
       </DropdownItem>
     </DropdownMenu>
-  );
+  )
 }
 
 export function ApplicationLayout({
   events,
   children,
 }: {
-  events: Awaited<ReturnType<typeof getEvents>>;
-  children: React.ReactNode;
+  events: Awaited<ReturnType<typeof getEvents>>
+  children: React.ReactNode
 }) {
-  let pathname = usePathname();
+  let pathname = usePathname()
 
   return (
     <SidebarLayout
@@ -110,10 +101,7 @@ export function ApplicationLayout({
                 <SidebarLabel>Catalyst</SidebarLabel>
                 <ChevronDownIcon />
               </DropdownButton>
-              <DropdownMenu
-                className="min-w-80 lg:min-w-64"
-                anchor="bottom start"
-              >
+              <DropdownMenu className="min-w-80 lg:min-w-64" anchor="bottom start">
                 <DropdownItem href="/settings">
                   <Cog8ToothIcon />
                   <DropdownLabel>Settings</DropdownLabel>
@@ -124,11 +112,7 @@ export function ApplicationLayout({
                   <DropdownLabel>Catalyst</DropdownLabel>
                 </DropdownItem>
                 <DropdownItem href="#">
-                  <Avatar
-                    slot="icon"
-                    initials="BE"
-                    className="bg-purple-500 text-white"
-                  />
+                  <Avatar slot="icon" initials="BE" className="bg-purple-500 text-white" />
                   <DropdownLabel>Big Events</DropdownLabel>
                 </DropdownItem>
                 <DropdownDivider />
@@ -142,28 +126,19 @@ export function ApplicationLayout({
 
           <SidebarBody>
             <SidebarSection>
-              <SidebarItem href="/" current={pathname === "/"}>
+              <SidebarItem href="/" current={pathname === '/'}>
                 <HomeIcon />
                 <SidebarLabel>Home</SidebarLabel>
               </SidebarItem>
-              <SidebarItem
-                href="/events"
-                current={pathname.startsWith("/events")}
-              >
+              <SidebarItem href="/events" current={pathname.startsWith('/events')}>
                 <Square2StackIcon />
                 <SidebarLabel>Events</SidebarLabel>
               </SidebarItem>
-              <SidebarItem
-                href="/orders"
-                current={pathname.startsWith("/orders")}
-              >
+              <SidebarItem href="/orders" current={pathname.startsWith('/orders')}>
                 <TicketIcon />
                 <SidebarLabel>Orders</SidebarLabel>
               </SidebarItem>
-              <SidebarItem
-                href="/settings"
-                current={pathname.startsWith("/settings")}
-              >
+              <SidebarItem href="/settings" current={pathname.startsWith('/settings')}>
                 <Cog6ToothIcon />
                 <SidebarLabel>Settings</SidebarLabel>
               </SidebarItem>
@@ -196,16 +171,9 @@ export function ApplicationLayout({
             <Dropdown>
               <DropdownButton as={SidebarItem}>
                 <span className="flex min-w-0 items-center gap-3">
-                  <Avatar
-                    src="/users/erica.jpg"
-                    className="size-10"
-                    square
-                    alt=""
-                  />
+                  <Avatar src="/users/erica.jpg" className="size-10" square alt="" />
                   <span className="min-w-0">
-                    <span className="block truncate text-sm/5 font-medium text-zinc-950 dark:text-white">
-                      Erica
-                    </span>
+                    <span className="block truncate text-sm/5 font-medium text-zinc-950 dark:text-white">Erica</span>
                     <span className="block truncate text-xs/5 font-normal text-zinc-500 dark:text-zinc-400">
                       erica@example.com
                     </span>
@@ -221,5 +189,5 @@ export function ApplicationLayout({
     >
       {children}
     </SidebarLayout>
-  );
+  )
 }

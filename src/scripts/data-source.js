@@ -17,31 +17,28 @@
  * dataset name is derived from them — so nothing downstream has to change.
  */
 window.DataSource = (function () {
-  "use strict";
+  'use strict';
 
-  var apiBaseUrl = "";
+  var apiBaseUrl = '';
   var inFlight = {};
 
   /** Dataset name from a path or name: '../src/data/payees.json' -> 'payees'. */
   function datasetName(value) {
-    var last = String(value || "")
-      .split("?")[0]
-      .split("/")
-      .pop();
-    return last.replace(/\.json$/i, "");
+    var last = String(value || '').split('?')[0].split('/').pop();
+    return last.replace(/\.json$/i, '');
   }
 
   function toCandidates(input) {
     if (Array.isArray(input)) return input.filter(Boolean);
-    if (typeof input === "string" && input) {
+    if (typeof input === 'string' && input) {
       // A bare dataset name resolves against the usual locations.
-      if (input.indexOf("/") === -1) {
-        var file = /\.json$/i.test(input) ? input : input + ".json";
+      if (input.indexOf('/') === -1) {
+        var file = /\.json$/i.test(input) ? input : input + '.json';
         return [
-          "../../../src/data/" + file,
-          "/src/data/" + file,
-          "./src/data/" + file,
-          "../../src/data/" + file,
+          '../../../src/data/' + file,
+          '/src/data/' + file,
+          './src/data/' + file,
+          '../../src/data/' + file
         ];
       }
       return [input];
@@ -51,8 +48,7 @@ window.DataSource = (function () {
 
   function fetchJson(url, init) {
     return fetch(url, init).then(function (response) {
-      if (!response.ok)
-        throw new Error("HTTP " + response.status + " for " + url);
+      if (!response.ok) throw new Error('HTTP ' + response.status + ' for ' + url);
       return response.json();
     });
   }
@@ -62,11 +58,9 @@ window.DataSource = (function () {
     var index = 0;
     function tryNext() {
       if (index >= paths.length) {
-        return Promise.reject(
-          new Error("Failed to load data from: " + paths.join(", ")),
-        );
+        return Promise.reject(new Error('Failed to load data from: ' + paths.join(', ')));
       }
-      return fetchJson(paths[index++], { cache: "no-store" }).catch(tryNext);
+      return fetchJson(paths[index++], { cache: 'no-store' }).catch(tryNext);
     }
     return tryNext();
   }
@@ -77,8 +71,7 @@ window.DataSource = (function () {
    */
   function load(source) {
     var candidates = toCandidates(source);
-    if (!candidates.length)
-      return Promise.reject(new Error("No data source given."));
+    if (!candidates.length) return Promise.reject(new Error('No data source given.'));
     var name = datasetName(candidates[0]);
 
     // Several scripts ask for the same dataset on one page; share the request
@@ -86,23 +79,16 @@ window.DataSource = (function () {
     if (inFlight[name]) return inFlight[name];
 
     var request = apiBaseUrl
-      ? fetchJson(apiBaseUrl.replace(/\/$/, "") + "/" + name, {
-          cache: "no-store",
-        })
+      ? fetchJson(apiBaseUrl.replace(/\/$/, '') + '/' + name, { cache: 'no-store' })
       : loadFromPaths(candidates);
 
     inFlight[name] = request;
-    request
-      .catch(function () {})
-      .then(function () {
-        delete inFlight[name];
-      });
+    request.catch(function () {}).then(function () { delete inFlight[name]; });
     return request;
   }
 
   function configure(options) {
-    if (options && typeof options.apiBaseUrl === "string")
-      apiBaseUrl = options.apiBaseUrl;
+    if (options && typeof options.apiBaseUrl === 'string') apiBaseUrl = options.apiBaseUrl;
   }
 
   return { load: load, configure: configure, datasetName: datasetName };

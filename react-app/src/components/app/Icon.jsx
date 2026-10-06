@@ -1,4 +1,4 @@
-import clsx from "clsx";
+import clsx from 'clsx';
 import {
   ArrowLeftIcon,
   ArrowPathIcon,
@@ -15,13 +15,9 @@ import {
   PlusIcon,
   TrashIcon,
   XMarkIcon,
-} from "@heroicons/react/16/solid";
-import {
-  ExclamationTriangleIcon,
-  BuildingLibraryIcon,
-  CreditCardIcon,
-} from "@heroicons/react/20/solid";
-import { CUSTOM_ICON_NOTES } from "@/components/app/icon-registry";
+} from '@heroicons/react/16/solid';
+import { ExclamationTriangleIcon, BuildingLibraryIcon, CreditCardIcon } from '@heroicons/react/20/solid';
+import { CUSTOM_ICON_NOTES } from '@/components/app/icon-registry';
 
 const SYSTEM_ICONS = {
   arrowLeft: ArrowLeftIcon,
@@ -53,24 +49,12 @@ function DocumentDuplicateIconFallback(props) {
 }
 
 export function Icon({ className, name, title }) {
-  if (name === "bank") {
-    return (
-      <BuildingLibraryIcon
-        aria-hidden="true"
-        className={clsx("size-4", className)}
-        title={title}
-      />
-    );
+  if (name === 'bank') {
+    return <BuildingLibraryIcon aria-hidden="true" className={clsx('size-4', className)} title={title} />;
   }
 
-  if (name === "card") {
-    return (
-      <CreditCardIcon
-        aria-hidden="true"
-        className={clsx("size-4", className)}
-        title={title}
-      />
-    );
+  if (name === 'card') {
+    return <CreditCardIcon aria-hidden="true" className={clsx('size-4', className)} title={title} />;
   }
 
   const Component = SYSTEM_ICONS[name];
@@ -79,11 +63,5 @@ export function Icon({ className, name, title }) {
     return null;
   }
 
-  return (
-    <Component
-      aria-hidden="true"
-      className={clsx("size-4", className)}
-      title={title}
-    />
-  );
+  return <Component aria-hidden="true" className={clsx('size-4', className)} title={title} />;
 }

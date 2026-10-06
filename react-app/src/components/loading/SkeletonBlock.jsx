@@ -1,4 +1,4 @@
-export function SkeletonBlock({ className = "" }) {
+export function SkeletonBlock({ className = '' }) {
   return (
     <div
       aria-hidden="true"

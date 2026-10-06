@@ -1,4 +1,4 @@
-import { SkeletonBlock } from "@/components/loading/SkeletonBlock";
+import { SkeletonBlock } from '@/components/loading/SkeletonBlock';
 
 function TableHeaderCell({ width }) {
   return (
@@ -43,9 +43,7 @@ function TableRow({ showAction = true }) {
         <SkeletonBlock className="h-6 w-24 rounded-full" />
       </td>
       <td className="h-12 w-px border-b border-gray-200 px-3 py-2 align-middle text-right dark:border-white/10 sm:pr-2">
-        {showAction ? (
-          <SkeletonBlock className="ml-auto h-8 w-16 rounded-md" />
-        ) : null}
+        {showAction ? <SkeletonBlock className="ml-auto h-8 w-16 rounded-md" /> : null}
       </td>
     </tr>
   );

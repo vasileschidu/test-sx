@@ -1,1042 +1,420 @@
 <!doctype html>
 <html class="h-full bg-gray-100 dark:bg-gray-950">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bills and Payables - Dashboard</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
-      rel="stylesheet"
-    />
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bills and Payables - Dashboard</title>
 
-    <script src="../../../src/scripts/theme-init.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <style type="text/tailwindcss">
-      @custom-variant dark (&:where(.dark, .dark *));
-    </style>
-    <script
-      src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1"
-      type="module"
-    ></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
 
-    <script src="../../../src/scripts/sidebar-boot.js"></script>
-    <script src="../../../src/scripts/app-plans.js"></script>
-    <script src="../../../src/scripts/nav-component.js"></script>
-    <script src="../../../src/scripts/stp-state.js"></script>
-    <script src="../../../src/scripts/app-switch.js"></script>
-    <script src="../../../src/scripts/topbar-component.js"></script>
-    <script src="../../../src/scripts/sidebar.js" defer></script>
-    <script src="../../../src/scripts/data-source.js"></script>
-    <script src="../../../src/scripts/shared.js" defer></script>
-    <script src="../../../src/scripts/shell-navigation.js" defer></script>
-    <script src="../../../src/scripts/table-skeleton.js" defer></script>
-  </head>
+  <script src="../../../src/scripts/theme-init.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
 
-  <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
-    <div id="app-shell" class="min-h-screen">
-      <app-nav></app-nav>
+  <script src="../../../src/scripts/sidebar-boot.js"></script>
+  <script src="../../../src/scripts/app-plans.js"></script>
+  <script src="../../../src/scripts/nav-component.js"></script>
+  <script src="../../../src/scripts/stp-state.js"></script>
+  <script src="../../../src/scripts/app-switch.js"></script>
+  <script src="../../../src/scripts/topbar-component.js"></script>
+  <script src="../../../src/scripts/sidebar.js" defer></script>
+  <script src="../../../src/scripts/data-source.js"></script>
+  <script src="../../../src/scripts/shared.js" defer></script>
+  <script src="../../../src/scripts/shell-navigation.js" defer></script>
+  <script src="../../../src/scripts/table-skeleton.js" defer></script>
+</head>
 
-      <div
-        id="main-content-wrapper"
-        class="min-w-0 min-h-screen flex flex-col lg:pl-[304px]"
-      >
-        <app-topbar></app-topbar>
+<body class="h-full font-['Inter'] antialiased dark:text-gray-100">
+  <div id="app-shell" class="min-h-screen">
+    <app-nav></app-nav>
 
-        <main class="flex w-full justify-center p-0 sm:p-2 lg:p-4">
-          <div class="flex w-full min-w-0 flex-col gap-5">
-            <div
-              class="flex flex-col overflow-hidden rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900"
-            >
-              <div class="pt-3">
-                <div class="px-4 pb-3 sm:px-6">
-                  <div
-                    class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between"
-                  >
-                    <div class="flex items-center gap-4">
-                      <h1
-                        class="text-xl font-semibold text-gray-900 dark:text-white whitespace-nowrap"
-                      >
-                        Bills and Payables
-                      </h1>
+    <div id="main-content-wrapper" class="min-w-0 min-h-screen flex flex-col lg:pl-[288px]">
+    <app-topbar></app-topbar>
 
-                      <button
-                        id="bp-refresh-btn"
-                        type="button"
-                        class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:focus-visible:outline-blue-500 transition-colors cursor-pointer"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          class="size-4"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                        Refresh
-                      </button>
-                    </div>
+    <main class="flex w-full justify-center p-0 sm:p-2 lg:p-4">
+      <div class="flex w-full min-w-0 flex-col gap-5">
+        <div class="flex flex-col overflow-hidden rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900">
+          <div class="pt-3">
+          <div class="px-4 pb-3 sm:px-6">
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <div class="flex items-center gap-4">
+                <h1 class="text-xl font-semibold text-gray-900 dark:text-white whitespace-nowrap">Bills and Payables</h1>
 
-                    <div
-                      class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center"
-                    >
-                      <div class="w-full sm:w-auto">
-                        <div class="grid grid-cols-1">
-                          <input
-                            id="bp-search-input"
-                            type="text"
-                            placeholder="Search payables..."
-                            class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pr-3 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:pl-9 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500"
-                          />
-                          <svg
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            aria-hidden="true"
-                            class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4 dark:text-gray-500"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z"
-                            />
-                          </svg>
-                        </div>
-                      </div>
+                <button id="bp-refresh-btn" type="button" class="inline-flex items-center gap-x-1.5 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:focus-visible:outline-blue-500 transition-colors cursor-pointer">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
+                    <path fill-rule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z" clip-rule="evenodd" />
+                  </svg>
+                  Refresh
+                </button>
+              </div>
 
-                      <div class="flex w-full gap-3 sm:w-auto">
-                        <div
-                          id="bp-table-filter-dropdown"
-                          class="relative inline-block w-full sm:w-auto"
-                        >
-                          <button
-                            id="bp-table-filter-btn"
-                            type="button"
-                            class="whitespace-nowrap inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10 cursor-pointer sm:w-auto"
-                          >
-                            Filter
-                            <span
-                              data-filter-count
-                              class="hidden items-center rounded-full bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 tabular-nums dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10"
-                            ></span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              aria-hidden="true"
-                              data-filter-chevron
-                              class="chevron-icon -mr-0.5 size-5 transition-transform"
-                            >
-                              <path
-                                fill-rule="evenodd"
-                                d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                                clip-rule="evenodd"
-                              />
-                            </svg>
-                          </button>
-                          <div
-                            id="bp-table-filter-menu"
-                            class="pointer-events-none invisible absolute right-0 z-[60] mt-2 w-[628px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-md bg-white opacity-0 shadow-lg outline-1 outline-black/5 transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10"
-                          >
-                            <div
-                              id="bp-table-filter-track"
-                              class="flex max-h-[470px] min-h-0 flex-col"
-                            >
-                              <div
-                                class="flex min-h-0 flex-1 flex-col sm:flex-row"
-                              >
-                                <div
-                                  id="bp-table-filter-panel-root"
-                                  class="shrink-0 border-b border-gray-200 bg-gray-50 p-3 dark:border-white/10 dark:bg-gray-900/40 sm:w-72 sm:border-r sm:border-b-0"
-                                >
-                                  <div class="grid gap-1">
-                                    <button
-                                      type="button"
-                                      data-filter-open="source"
-                                      data-filter-nav
-                                      class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5"
-                                    >
-                                      <span class="min-w-0 flex-1"
-                                        >By source</span
-                                      >
-                                      <span
-                                        data-filter-count-badge="source"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
-                                        >0</span
-                                      >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                        class="size-4 text-gray-500 dark:text-gray-400"
-                                      >
-                                        <path
-                                          fill-rule="evenodd"
-                                          d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                          clip-rule="evenodd"
-                                        />
-                                      </svg>
-                                    </button>
-                                    <button
-                                      type="button"
-                                      data-filter-open="status"
-                                      data-filter-nav
-                                      class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5"
-                                    >
-                                      <span class="min-w-0 flex-1"
-                                        >By status</span
-                                      >
-                                      <span
-                                        data-filter-count-badge="status"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
-                                        >0</span
-                                      >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                        class="size-4 text-gray-500 dark:text-gray-400"
-                                      >
-                                        <path
-                                          fill-rule="evenodd"
-                                          d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                          clip-rule="evenodd"
-                                        />
-                                      </svg>
-                                    </button>
-                                    <button
-                                      type="button"
-                                      data-filter-open="method"
-                                      data-filter-nav
-                                      class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5"
-                                    >
-                                      <span class="min-w-0 flex-1"
-                                        >By method of payment</span
-                                      >
-                                      <span
-                                        data-filter-count-badge="method"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
-                                        >0</span
-                                      >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                        class="size-4 text-gray-500 dark:text-gray-400"
-                                      >
-                                        <path
-                                          fill-rule="evenodd"
-                                          d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                          clip-rule="evenodd"
-                                        />
-                                      </svg>
-                                    </button>
-                                    <button
-                                      type="button"
-                                      data-filter-open="failure_reason"
-                                      data-filter-nav
-                                      class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5"
-                                    >
-                                      <span class="min-w-0 flex-1"
-                                        >Failure reason</span
-                                      >
-                                      <span
-                                        data-filter-count-badge="failure_reason"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
-                                        >0</span
-                                      >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                        class="size-4 text-gray-500 dark:text-gray-400"
-                                      >
-                                        <path
-                                          fill-rule="evenodd"
-                                          d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                          clip-rule="evenodd"
-                                        />
-                                      </svg>
-                                    </button>
-                                    <button
-                                      type="button"
-                                      data-filter-open="initiated_date"
-                                      data-filter-nav
-                                      class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5"
-                                    >
-                                      <span class="min-w-0 flex-1"
-                                        >By initiated date</span
-                                      >
-                                      <span
-                                        data-filter-count-badge="initiated_date"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
-                                        >0</span
-                                      >
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                        class="size-4 text-gray-500 dark:text-gray-400"
-                                      >
-                                        <path
-                                          fill-rule="evenodd"
-                                          d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                          clip-rule="evenodd"
-                                        />
-                                      </svg>
-                                    </button>
-                                  </div>
-                                </div>
-                                <div
-                                  id="bp-table-filter-detail-slot"
-                                  class="min-h-0 min-w-0 flex-1 bg-white dark:bg-gray-800"
-                                >
-                                  <div
-                                    id="bp-table-filter-panel-source"
-                                    class="hidden h-full min-h-0 flex-col"
-                                  >
-                                    <div
-                                      class="border-b border-gray-200 px-3 py-3 dark:border-white/10"
-                                    >
-                                      <p
-                                        class="text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                      >
-                                        By source
-                                      </p>
-                                    </div>
-                                    <div
-                                      id="bp-table-filter-sources"
-                                      class="min-h-0 flex-1 overflow-auto px-3 py-3"
-                                    ></div>
-                                  </div>
-                                  <div
-                                    id="bp-table-filter-panel-status"
-                                    class="hidden h-full min-h-0 flex-col"
-                                  >
-                                    <div
-                                      class="border-b border-gray-200 px-3 py-3 dark:border-white/10"
-                                    >
-                                      <p
-                                        class="text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                      >
-                                        By status
-                                      </p>
-                                    </div>
-                                    <div
-                                      id="bp-table-filter-statuses"
-                                      class="min-h-0 flex-1 overflow-auto px-3 py-3"
-                                    ></div>
-                                  </div>
-                                  <div
-                                    id="bp-table-filter-panel-method"
-                                    class="hidden h-full min-h-0 flex-col"
-                                  >
-                                    <div
-                                      class="border-b border-gray-200 px-3 py-3 dark:border-white/10"
-                                    >
-                                      <p
-                                        class="text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                      >
-                                        By method of payment
-                                      </p>
-                                    </div>
-                                    <div
-                                      id="bp-table-filter-methods"
-                                      class="min-h-0 flex-1 overflow-auto px-3 py-3"
-                                    ></div>
-                                  </div>
-                                  <div
-                                    id="bp-table-filter-panel-failure-reason"
-                                    class="hidden h-full min-h-0 flex-col"
-                                  >
-                                    <div
-                                      class="border-b border-gray-200 px-3 py-3 dark:border-white/10"
-                                    >
-                                      <p
-                                        class="text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                      >
-                                        Failure reason
-                                      </p>
-                                    </div>
-                                    <div
-                                      id="bp-table-filter-failure-reasons"
-                                      class="min-h-0 flex-1 overflow-auto px-3 py-3"
-                                    ></div>
-                                  </div>
-                                  <div
-                                    id="bp-table-filter-panel-initiated-date"
-                                    class="hidden h-full min-h-0 flex-col"
-                                  >
-                                    <div
-                                      class="border-b border-gray-200 px-3 py-3 dark:border-white/10"
-                                    >
-                                      <p
-                                        class="text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                      >
-                                        By initiated date
-                                      </p>
-                                    </div>
-                                    <div class="space-y-3 px-3 py-3">
-                                      <div>
-                                        <label
-                                          class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
-                                          >From</label
-                                        >
-                                        <div class="relative mt-2">
-                                          <input
-                                            id="bp-table-filter-date-from-input"
-                                            type="text"
-                                            inputmode="numeric"
-                                            placeholder="MM / DD / YYYY"
-                                            class="relative z-10 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
-                                          />
-                                        </div>
-                                      </div>
-                                      <div>
-                                        <label
-                                          class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
-                                          >To</label
-                                        >
-                                        <div class="relative mt-2">
-                                          <input
-                                            id="bp-table-filter-date-to-input"
-                                            type="text"
-                                            inputmode="numeric"
-                                            placeholder="MM / DD / YYYY"
-                                            class="relative z-10 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
-                                          />
-                                        </div>
-                                      </div>
-                                    </div>
-                                  </div>
-                                </div>
+              <div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">
+                <div class="w-full sm:w-auto">
+                  <div class="grid grid-cols-1">
+                    <input id="bp-search-input" type="text" placeholder="Search payables..." class="col-start-1 row-start-1 block w-full rounded-md bg-white py-1.5 pr-3 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:pl-9 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500" />
+                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4 dark:text-gray-500">
+                      <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" />
+                    </svg>
+                  </div>
+                </div>
+
+                <div class="flex w-full gap-3 sm:w-auto">
+                  <div id="bp-table-filter-dropdown" class="relative inline-block w-full sm:w-auto">
+                    <button id="bp-table-filter-btn" type="button"
+                      class="whitespace-nowrap inline-flex w-full items-center justify-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10 cursor-pointer sm:w-auto">
+                      Filter
+                      <span data-filter-count class="hidden items-center rounded-full bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 tabular-nums dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10"></span>
+                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-filter-chevron class="chevron-icon -mr-0.5 size-5 transition-transform"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+                    </button>
+                    <div id="bp-table-filter-menu"
+                      class="pointer-events-none invisible absolute right-0 z-[60] mt-2 w-[628px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-md bg-white opacity-0 shadow-lg outline-1 outline-black/5 transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">
+                      <div id="bp-table-filter-track" class="flex max-h-[470px] min-h-0 flex-col">
+                        <div class="flex min-h-0 flex-1 flex-col sm:flex-row">
+                          <div id="bp-table-filter-panel-root" class="shrink-0 border-b border-gray-200 bg-gray-50 p-3 dark:border-white/10 dark:bg-gray-900/40 sm:w-72 sm:border-r sm:border-b-0">
+                            <div class="grid gap-1">
+                              <button type="button" data-filter-open="source" data-filter-nav class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                <span class="min-w-0 flex-1">By source</span>
+                                <span data-filter-count-badge="source" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+                              </button>
+                              <button type="button" data-filter-open="status" data-filter-nav class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                <span class="min-w-0 flex-1">By status</span>
+                                <span data-filter-count-badge="status" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+                              </button>
+                              <button type="button" data-filter-open="method" data-filter-nav class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                <span class="min-w-0 flex-1">By method of payment</span>
+                                <span data-filter-count-badge="method" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+                              </button>
+                              <button type="button" data-filter-open="failure_reason" data-filter-nav class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                <span class="min-w-0 flex-1">Failure reason</span>
+                                <span data-filter-count-badge="failure_reason" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+                              </button>
+                              <button type="button" data-filter-open="initiated_date" data-filter-nav class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                <span class="min-w-0 flex-1">By initiated date</span>
+                                <span data-filter-count-badge="initiated_date" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+                              </button>
+                            </div>
+                          </div>
+                          <div id="bp-table-filter-detail-slot" class="min-h-0 min-w-0 flex-1 bg-white dark:bg-gray-800">
+                            <div id="bp-table-filter-panel-source" class="hidden h-full min-h-0 flex-col">
+                              <div class="border-b border-gray-200 px-3 py-3 dark:border-white/10">
+                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">By source</p>
                               </div>
-                              <div
-                                class="flex items-center justify-end gap-3 border-t border-gray-200 bg-white px-3 py-3 dark:border-white/10 dark:bg-gray-800"
-                              >
-                                <button
-                                  id="bp-table-filter-clear-btn"
-                                  type="button"
-                                  disabled
-                                  class="rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10"
-                                >
-                                  Clear
-                                </button>
-                                <button
-                                  id="bp-table-filter-apply-active-btn"
-                                  type="button"
-                                  disabled
-                                  class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300"
-                                >
-                                  Apply
-                                </button>
+                              <div id="bp-table-filter-sources" class="min-h-0 flex-1 overflow-auto px-3 py-3"></div>
+                            </div>
+                            <div id="bp-table-filter-panel-status" class="hidden h-full min-h-0 flex-col">
+                              <div class="border-b border-gray-200 px-3 py-3 dark:border-white/10">
+                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">By status</p>
+                              </div>
+                              <div id="bp-table-filter-statuses" class="min-h-0 flex-1 overflow-auto px-3 py-3"></div>
+                            </div>
+                            <div id="bp-table-filter-panel-method" class="hidden h-full min-h-0 flex-col">
+                              <div class="border-b border-gray-200 px-3 py-3 dark:border-white/10">
+                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">By method of payment</p>
+                              </div>
+                              <div id="bp-table-filter-methods" class="min-h-0 flex-1 overflow-auto px-3 py-3"></div>
+                            </div>
+                            <div id="bp-table-filter-panel-failure-reason" class="hidden h-full min-h-0 flex-col">
+                              <div class="border-b border-gray-200 px-3 py-3 dark:border-white/10">
+                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Failure reason</p>
+                              </div>
+                              <div id="bp-table-filter-failure-reasons" class="min-h-0 flex-1 overflow-auto px-3 py-3"></div>
+                            </div>
+                            <div id="bp-table-filter-panel-initiated-date" class="hidden h-full min-h-0 flex-col">
+                              <div class="border-b border-gray-200 px-3 py-3 dark:border-white/10">
+                                <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">By initiated date</p>
+                              </div>
+                              <div class="space-y-3 px-3 py-3">
+                                <div>
+                                  <label class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">From</label>
+                                  <div class="relative mt-2">
+                                    <input id="bp-table-filter-date-from-input" type="text" inputmode="numeric" placeholder="MM / DD / YYYY" class="relative z-10 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                  </div>
+                                </div>
+                                <div>
+                                  <label class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">To</label>
+                                  <div class="relative mt-2">
+                                    <input id="bp-table-filter-date-to-input" type="text" inputmode="numeric" placeholder="MM / DD / YYYY" class="relative z-10 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </div>
-                          <div
-                            id="bp-table-filter-backdrop"
-                            class="pointer-events-none invisible fixed inset-0 z-40 bg-gray-900/50 opacity-0 transition-opacity duration-200 ease-out"
-                          ></div>
                         </div>
-
-                        <button
-                          id="bp-export-btn"
-                          class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 sm:w-auto cursor-pointer"
-                        >
-                          Export
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                            aria-hidden="true"
-                            class="-mr-0.5 size-[18px]"
-                          >
-                            <path
-                              d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z"
-                            />
-                            <path
-                              d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z"
-                            />
-                          </svg>
-                        </button>
-
-                        <button
-                          id="bp-manage-columns-btn"
-                          type="button"
-                          command="show-modal"
-                          commandfor="bp-manage-columns-dialog"
-                          class="inline-flex h-8 w-full items-center justify-center self-start rounded-md bg-white px-0 py-0 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 sm:w-8"
-                          aria-label="Manage columns"
-                          title="Manage columns"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            fill="none"
-                            viewBox="0 0 24 24"
-                            stroke-width="1.5"
-                            stroke="currentColor"
-                            class="size-5"
-                          >
-                            <path
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                              d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75"
-                            />
-                          </svg>
-                        </button>
+                        <div class="flex items-center justify-end gap-3 border-t border-gray-200 bg-white px-3 py-3 dark:border-white/10 dark:bg-gray-800">
+                          <button id="bp-table-filter-clear-btn" type="button" disabled class="rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">Clear</button>
+                          <button id="bp-table-filter-apply-active-btn" type="button" disabled class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300">Apply</button>
+                        </div>
                       </div>
                     </div>
+                    <div id="bp-table-filter-backdrop" class="pointer-events-none invisible fixed inset-0 z-40 bg-gray-900/50 opacity-0 transition-opacity duration-200 ease-out"></div>
                   </div>
-                  <div
-                    id="bp-table-active-filters"
-                    class="hidden mt-3 flex flex-wrap items-center justify-end gap-2"
-                  ></div>
-                </div>
-                <div class="h-px bg-gray-200 dark:bg-white/10"></div>
-              </div>
 
-              <div
-                class="border-b border-gray-200 px-4 py-2 dark:border-white/10 sm:px-6"
-              >
-                <div class="grid grid-cols-1 sm:hidden">
-                  <select
-                    id="bp-tab-select"
-                    aria-label="Select a tab"
-                    class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-gray-800/50 dark:text-gray-100 dark:*:bg-gray-800 dark:outline-white/10 dark:focus:outline-indigo-500"
-                  >
-                    <option value="ready_to_pay">Ready to Pay</option>
-                    <option value="in_progress">In Progress</option>
-                    <option value="paid">Paid</option>
-                    <option value="exception">Exceptions</option>
-                  </select>
-                  <svg
-                    viewBox="0 0 16 16"
-                    fill="currentColor"
-                    aria-hidden="true"
-                    class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500 dark:fill-gray-400"
-                  >
-                    <path
-                      d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z"
-                      clip-rule="evenodd"
-                      fill-rule="evenodd"
-                    />
-                  </svg>
-                </div>
+                  <button id="bp-export-btn" class="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-white px-3 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 sm:w-auto cursor-pointer">
+                    Export
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="-mr-0.5 size-[18px]"><path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z" /><path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z" /></svg>
+                  </button>
 
-                <div class="hidden sm:block">
-                  <nav id="bp-tab-nav" aria-label="Tabs" class="flex space-x-4">
-                    <a
-                      href="#"
-                      data-tab="ready_to_pay"
-                      aria-current="page"
-                      class="inline-flex items-center gap-2 rounded-md bg-blue-100 px-3 py-2 text-sm font-medium text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
-                    >
-                      <span>Ready to Pay</span>
-                      <span
-                        data-tab-count="ready_to_pay"
-                        class="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30"
-                        >0</span
-                      >
-                    </a>
-                    <a
-                      href="#"
-                      data-tab="in_progress"
-                      class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    >
-                      <span>In Progress</span>
-                      <span
-                        data-tab-count="in_progress"
-                        class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20"
-                        >0</span
-                      >
-                    </a>
-                    <a
-                      href="#"
-                      data-tab="paid"
-                      class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    >
-                      <span>Paid</span>
-                      <span
-                        data-tab-count="paid"
-                        class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20"
-                        >0</span
-                      >
-                    </a>
-                    <a
-                      href="#"
-                      data-tab="exception"
-                      class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                    >
-                      <span>Exceptions</span>
-                      <span
-                        data-tab-count="exception"
-                        class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20"
-                        >0</span
-                      >
-                    </a>
-                  </nav>
+                  <button id="bp-manage-columns-btn" type="button" command="show-modal" commandfor="bp-manage-columns-dialog"
+                    class="inline-flex h-8 w-full items-center justify-center self-start rounded-md bg-white px-0 py-0 text-sm font-semibold text-gray-900 shadow-xs inset-ring-1 inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 sm:w-8"
+                    aria-label="Manage columns" title="Manage columns">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-5">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" />
+                    </svg>
+                  </button>
                 </div>
               </div>
+            </div>
+            <div id="bp-table-active-filters" class="hidden mt-3 flex flex-wrap items-center justify-end gap-2"></div>
+          </div>
+          <div class="h-px bg-gray-200 dark:bg-white/10"></div>
+          </div>
 
-              <div class="flex flex-col">
-                <div class="px-0 sm:px-4">
-                  <div
-                    data-table-scroll
-                    class="w-full max-w-full overflow-x-auto"
-                  >
-                    <div class="min-w-full align-middle">
-                      <table
-                        id="bills-payables-table"
-                        class="w-full min-w-max table-auto border-separate border-spacing-0 divide-y divide-gray-200 dark:divide-white/10"
-                      ></table>
-                    </div>
-                  </div>
+          <div class="border-b border-gray-200 px-4 py-2 dark:border-white/10 sm:px-6">
+            <div class="grid grid-cols-1 sm:hidden">
+              <select id="bp-tab-select" aria-label="Select a tab" class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-2 pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 dark:bg-gray-800/50 dark:text-gray-100 dark:*:bg-gray-800 dark:outline-white/10 dark:focus:outline-indigo-500">
+                <option value="ready_to_pay">Ready to Pay</option>
+                <option value="in_progress">In Progress</option>
+                <option value="paid">Paid</option>
+                <option value="exception">Exceptions</option>
+              </select>
+              <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end fill-gray-500 dark:fill-gray-400">
+                <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
+              </svg>
+            </div>
+
+            <div class="hidden sm:block">
+              <nav id="bp-tab-nav" aria-label="Tabs" class="flex space-x-4">
+                <a href="#" data-tab="ready_to_pay" aria-current="page" class="inline-flex items-center gap-2 rounded-md bg-blue-100 px-3 py-2 text-sm font-medium text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
+                  <span>Ready to Pay</span>
+                  <span data-tab-count="ready_to_pay" class="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30">0</span>
+                </a>
+                <a href="#" data-tab="in_progress" class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                  <span>In Progress</span>
+                  <span data-tab-count="in_progress" class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">0</span>
+                </a>
+                <a href="#" data-tab="paid" class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                  <span>Paid</span>
+                  <span data-tab-count="paid" class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">0</span>
+                </a>
+                <a href="#" data-tab="exception" class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                  <span>Exceptions</span>
+                  <span data-tab-count="exception" class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">0</span>
+                </a>
+              </nav>
+            </div>
+          </div>
+
+          <div class="flex flex-col">
+            <div class="px-0 sm:px-4">
+              <div data-table-scroll class="w-full max-w-full overflow-x-auto">
+                <div class="min-w-full align-middle">
+                  <table id="bills-payables-table" class="w-full min-w-max table-auto border-separate border-spacing-0 divide-y divide-gray-200 dark:divide-white/10"></table>
                 </div>
+              </div>
+            </div>
 
-                <div
-                  data-pagination
-                  class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:rounded-b-lg sm:px-6"
-                ></div>
+            <div data-pagination class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:rounded-b-lg sm:px-6"></div>
+          </div>
+        </div>
+      </div>
+    </main>
+    </div>
+  </div>
+
+  <dialog id="bp-rerun-confirm-dialog" aria-labelledby="bp-rerun-confirm-title"
+    class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-gray-900/75">
+    <div tabindex="0" class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+      <div class="relative w-full max-w-[600px] transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+        <div class="flex justify-end px-4 pt-4">
+          <button type="button" data-bp-rerun-close
+            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+            <span class="sr-only">Close</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="px-6 pb-6 sm:px-8">
+          <h3 id="bp-rerun-confirm-title" class="text-xl font-semibold text-gray-900 dark:text-white">Re-run payment</h3>
+          <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Review the account and recipient details before re-running this payment.</p>
+
+          <div class="mt-6 hidden sm:grid sm:grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)] sm:items-start sm:gap-2">
+            <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Origination Account</p>
+            <span aria-hidden="true"></span>
+            <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Recipient</p>
+          </div>
+
+          <div class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-2">
+            <div class="min-w-0 flex-1">
+              <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100 sm:hidden">Origination Account</p>
+              <div class="mt-2 flex min-h-[74px] items-center gap-3 rounded-md bg-gray-100 px-4 py-3 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10 sm:mt-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0 text-gray-500 dark:text-gray-400" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" />
+                </svg>
+                <div class="min-w-0 flex-1">
+                  <p id="bp-rerun-origin-name" class="truncate text-sm font-medium text-gray-900 dark:text-white">--</p>
+                  <p id="bp-rerun-origin-sub" class="mt-1 text-sm text-gray-500 dark:text-gray-400">--</p>
+                </div>
+              </div>
+            </div>
+
+            <span class="hidden shrink-0 sm:inline-flex sm:items-center sm:justify-center">
+              <span class="inline-flex items-center justify-center rounded-full bg-gray-50 p-2 dark:bg-white/5">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
+                </svg>
+              </span>
+            </span>
+
+            <div class="min-w-0 flex-1">
+              <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100 sm:hidden">Recipient</p>
+              <div class="mt-2 flex min-h-[74px] items-center gap-3 rounded-md bg-gray-100 px-4 py-3 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10 sm:mt-0">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0 text-gray-500 dark:text-gray-400" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" />
+                </svg>
+                <div class="min-w-0 flex-1">
+                  <p id="bp-rerun-recipient-name" class="truncate text-sm font-medium text-gray-900 dark:text-white">--</p>
+                  <p id="bp-rerun-recipient-sub" class="mt-1 truncate text-sm text-gray-500 dark:text-gray-400">--</p>
+                </div>
               </div>
             </div>
           </div>
-        </main>
+
+          <div class="mt-3 rounded-md bg-gray-100 p-4 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10">
+            <dl class="space-y-2">
+              <div class="grid grid-cols-2 gap-4">
+                <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Transfer Amount</dt>
+                <dd id="bp-rerun-amount" class="text-right text-sm/6 text-gray-700 dark:text-gray-300">--</dd>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Payee</dt>
+                <dd id="bp-rerun-payee" class="truncate text-right text-sm/6 text-gray-700 dark:text-gray-300">--</dd>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Payment method</dt>
+                <dd id="bp-rerun-method" class="truncate text-right text-sm/6 text-gray-700 dark:text-gray-300">--</dd>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Payment date</dt>
+                <dd id="bp-rerun-date" class="text-right text-sm/6 text-gray-700 dark:text-gray-300">--</dd>
+              </div>
+              <div class="grid grid-cols-2 gap-4">
+                <dt class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">Failure reason</dt>
+                <dd id="bp-rerun-failure-reason" class="text-right text-sm/6 text-gray-700 dark:text-gray-300">--</dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+
+        <div class="flex w-full justify-end gap-3 px-6 py-5">
+          <button type="button" data-bp-rerun-close
+            class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+            Cancel
+          </button>
+          <button id="bp-rerun-confirm-btn" type="button"
+            class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
+            Re-run payment
+          </button>
+        </div>
       </div>
     </div>
+  </dialog>
 
-    <dialog
-      id="bp-rerun-confirm-dialog"
-      aria-labelledby="bp-rerun-confirm-title"
-      class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-gray-900/75"
-    >
-      <div
-        tabindex="0"
-        class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6"
-      >
-        <div
-          class="relative w-full max-w-[600px] transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all dark:bg-gray-900 dark:ring-1 dark:ring-white/10"
-        >
-          <div class="flex justify-end px-4 pt-4">
-            <button
-              type="button"
-              data-bp-rerun-close
-              class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer"
-            >
-              <span class="sr-only">Close</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                class="size-5"
-                aria-hidden="true"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <div class="px-6 pb-6 sm:px-8">
-            <h3
-              id="bp-rerun-confirm-title"
-              class="text-xl font-semibold text-gray-900 dark:text-white"
-            >
-              Re-run payment
-            </h3>
-            <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">
-              Review the account and recipient details before re-running this
-              payment.
-            </p>
-
-            <div
-              class="mt-6 hidden sm:grid sm:grid-cols-[minmax(0,1fr)_56px_minmax(0,1fr)] sm:items-start sm:gap-2"
-            >
-              <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">
-                Origination Account
-              </p>
-              <span aria-hidden="true"></span>
-              <p class="text-sm/6 font-medium text-gray-900 dark:text-gray-100">
-                Recipient
+  <dialog id="bp-schedule-cancel-dialog"
+    class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-gray-900/75">
+    <div tabindex="0" class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+      <div class="relative w-full max-w-lg transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+        <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
+          <button type="button" data-bp-cancel-close
+            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+            <span class="sr-only">Close</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+          <div class="flex flex-col items-center text-center">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#EF4444" class="size-11" aria-hidden="true">
+              <path fill-rule="evenodd" d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z" clip-rule="evenodd" />
+            </svg>
+            <div class="mt-6 flex flex-col items-center gap-2">
+              <h2 id="bp-cancel-dialog-title" class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">Cancel Scheduled Payment</h2>
+              <p id="bp-cancel-dialog-copy" class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
+                This will cancel the scheduled payment and move it back to Ready to Pay. Are you sure you want to continue?
               </p>
             </div>
-
-            <div
-              class="mt-3 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-2"
-            >
-              <div class="min-w-0 flex-1">
-                <p
-                  class="text-sm/6 font-medium text-gray-900 dark:text-gray-100 sm:hidden"
-                >
-                  Origination Account
-                </p>
-                <div
-                  class="mt-2 flex min-h-[74px] items-center gap-3 rounded-md bg-gray-100 px-4 py-3 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10 sm:mt-0"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    class="size-5 shrink-0 text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                  <div class="min-w-0 flex-1">
-                    <p
-                      id="bp-rerun-origin-name"
-                      class="truncate text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      --
-                    </p>
-                    <p
-                      id="bp-rerun-origin-sub"
-                      class="mt-1 text-sm text-gray-500 dark:text-gray-400"
-                    >
-                      --
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <span
-                class="hidden shrink-0 sm:inline-flex sm:items-center sm:justify-center"
-              >
-                <span
-                  class="inline-flex items-center justify-center rounded-full bg-gray-50 p-2 dark:bg-white/5"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    class="size-5 text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </span>
-              </span>
-
-              <div class="min-w-0 flex-1">
-                <p
-                  class="text-sm/6 font-medium text-gray-900 dark:text-gray-100 sm:hidden"
-                >
-                  Recipient
-                </p>
-                <div
-                  class="mt-2 flex min-h-[74px] items-center gap-3 rounded-md bg-gray-100 px-4 py-3 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10 sm:mt-0"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    class="size-5 shrink-0 text-gray-500 dark:text-gray-400"
-                    aria-hidden="true"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                  <div class="min-w-0 flex-1">
-                    <p
-                      id="bp-rerun-recipient-name"
-                      class="truncate text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      --
-                    </p>
-                    <p
-                      id="bp-rerun-recipient-sub"
-                      class="mt-1 truncate text-sm text-gray-500 dark:text-gray-400"
-                    >
-                      --
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div
-              class="mt-3 rounded-md bg-gray-100 p-4 ring-1 ring-inset ring-gray-200 dark:bg-white/10 dark:ring-white/10"
-            >
-              <dl class="space-y-2">
-                <div class="grid grid-cols-2 gap-4">
-                  <dt
-                    class="text-sm/6 font-medium text-gray-900 dark:text-gray-100"
-                  >
-                    Transfer Amount
-                  </dt>
-                  <dd
-                    id="bp-rerun-amount"
-                    class="text-right text-sm/6 text-gray-700 dark:text-gray-300"
-                  >
-                    --
-                  </dd>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                  <dt
-                    class="text-sm/6 font-medium text-gray-900 dark:text-gray-100"
-                  >
-                    Payee
-                  </dt>
-                  <dd
-                    id="bp-rerun-payee"
-                    class="truncate text-right text-sm/6 text-gray-700 dark:text-gray-300"
-                  >
-                    --
-                  </dd>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                  <dt
-                    class="text-sm/6 font-medium text-gray-900 dark:text-gray-100"
-                  >
-                    Payment method
-                  </dt>
-                  <dd
-                    id="bp-rerun-method"
-                    class="truncate text-right text-sm/6 text-gray-700 dark:text-gray-300"
-                  >
-                    --
-                  </dd>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                  <dt
-                    class="text-sm/6 font-medium text-gray-900 dark:text-gray-100"
-                  >
-                    Payment date
-                  </dt>
-                  <dd
-                    id="bp-rerun-date"
-                    class="text-right text-sm/6 text-gray-700 dark:text-gray-300"
-                  >
-                    --
-                  </dd>
-                </div>
-                <div class="grid grid-cols-2 gap-4">
-                  <dt
-                    class="text-sm/6 font-medium text-gray-900 dark:text-gray-100"
-                  >
-                    Failure reason
-                  </dt>
-                  <dd
-                    id="bp-rerun-failure-reason"
-                    class="text-right text-sm/6 text-gray-700 dark:text-gray-300"
-                  >
-                    --
-                  </dd>
-                </div>
-              </dl>
-            </div>
           </div>
-
-          <div class="flex w-full justify-end gap-3 px-6 py-5">
-            <button
-              type="button"
-              data-bp-rerun-close
-              class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer"
-            >
-              Cancel
-            </button>
-            <button
-              id="bp-rerun-confirm-btn"
-              type="button"
-              class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
-            >
-              Re-run payment
-            </button>
-          </div>
+        </div>
+        <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+          <button id="bp-cancel-dialog-keep-btn" type="button" data-bp-cancel-close
+            class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+            Keep Scheduled
+          </button>
+          <button type="button" id="bp-schedule-cancel-confirm-btn"
+            class="w-full rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 cursor-pointer">
+            Cancel Schedule
+          </button>
         </div>
       </div>
-    </dialog>
+    </div>
+  </dialog>
 
-    <dialog
-      id="bp-schedule-cancel-dialog"
-      class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-gray-900/75"
-    >
-      <div
-        tabindex="0"
-        class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6"
-      >
-        <div
-          class="relative w-full max-w-lg transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all dark:bg-gray-900 dark:ring-1 dark:ring-white/10"
-        >
-          <div
-            class="flex self-stretch flex-col items-end justify-end px-4 pt-4"
-          >
-            <button
-              type="button"
-              data-bp-cancel-close
-              class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer"
-            >
-              <span class="sr-only">Close</span>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                stroke-width="1.5"
-                class="size-5"
-                aria-hidden="true"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-          <div class="flex flex-col gap-6 p-6 px-8 pt-0">
-            <div class="flex flex-col items-center text-center">
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="#EF4444"
-                class="size-11"
-                aria-hidden="true"
-              >
-                <path
-                  fill-rule="evenodd"
-                  d="M6.75 2.25A.75.75 0 0 1 7.5 3v1.5h9V3A.75.75 0 0 1 18 3v1.5h.75a3 3 0 0 1 3 3v11.25a3 3 0 0 1-3 3H5.25a3 3 0 0 1-3-3V7.5a3 3 0 0 1 3-3H6V3a.75.75 0 0 1 .75-.75Zm13.5 9a1.5 1.5 0 0 0-1.5-1.5H5.25a1.5 1.5 0 0 0-1.5 1.5v7.5a1.5 1.5 0 0 0 1.5 1.5h13.5a1.5 1.5 0 0 0 1.5-1.5v-7.5Z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-              <div class="mt-6 flex flex-col items-center gap-2">
-                <h2
-                  id="bp-cancel-dialog-title"
-                  class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white"
-                >
-                  Cancel Scheduled Payment
-                </h2>
-                <p
-                  id="bp-cancel-dialog-copy"
-                  class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400"
-                >
-                  This will cancel the scheduled payment and move it back to
-                  Ready to Pay. Are you sure you want to continue?
-                </p>
+  <el-dialog>
+    <dialog id="bp-manage-columns-dialog" aria-labelledby="bp-manage-columns-title"
+      class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+      <el-dialog-backdrop
+        class="fixed inset-0 bg-gray-900/30 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+      <div tabindex="0"
+        class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+        <el-dialog-panel
+          class="relative w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in dark:bg-gray-900 sm:my-8 sm:w-full sm:data-closed:translate-y-0 sm:data-closed:scale-95">
+          <div class="border-b border-gray-200 px-6 py-4 dark:border-white/10">
+            <div class="flex items-start justify-between gap-4">
+              <div>
+                <h3 id="bp-manage-columns-title" class="text-xl font-semibold text-gray-900 dark:text-white">Manage columns</h3>
+                <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Show, hide, and reorder table columns.</p>
               </div>
+              <button type="button" command="close" commandfor="bp-manage-columns-dialog"
+                class="inline-flex size-8 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white"
+                aria-label="Close manage columns">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
+                  <path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" />
+                </svg>
+              </button>
             </div>
           </div>
-          <div
-            class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10"
-          >
-            <button
-              id="bp-cancel-dialog-keep-btn"
-              type="button"
-              data-bp-cancel-close
-              class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer"
-            >
-              Keep Scheduled
+          <div class="px-4 py-4">
+            <div id="bp-manage-columns-list" class="space-y-3"></div>
+          </div>
+          <div class="flex items-center justify-end gap-3 border-t border-gray-200 px-4 py-4 dark:border-white/10">
+            <button id="bp-manage-columns-reset-btn" type="button"
+              class="rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">
+              Reset default
             </button>
-            <button
-              type="button"
-              id="bp-schedule-cancel-confirm-btn"
-              class="w-full rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 cursor-pointer"
-            >
-              Cancel Schedule
+            <button id="bp-manage-columns-apply-btn" type="button"
+              class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300">
+              Apply changes
             </button>
           </div>
-        </div>
+        </el-dialog-panel>
       </div>
     </dialog>
+  </el-dialog>
 
-    <el-dialog>
-      <dialog
-        id="bp-manage-columns-dialog"
-        aria-labelledby="bp-manage-columns-title"
-        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
-      >
-        <el-dialog-backdrop
-          class="fixed inset-0 bg-gray-900/30 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
-        ></el-dialog-backdrop>
-        <div
-          tabindex="0"
-          class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6"
-        >
-          <el-dialog-panel
-            class="relative w-full max-w-2xl transform overflow-hidden rounded-2xl bg-white text-left align-middle shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in dark:bg-gray-900 sm:my-8 sm:w-full sm:data-closed:translate-y-0 sm:data-closed:scale-95"
-          >
-            <div
-              class="border-b border-gray-200 px-6 py-4 dark:border-white/10"
-            >
-              <div class="flex items-start justify-between gap-4">
-                <div>
-                  <h3
-                    id="bp-manage-columns-title"
-                    class="text-xl font-semibold text-gray-900 dark:text-white"
-                  >
-                    Manage columns
-                  </h3>
-                  <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                    Show, hide, and reorder table columns.
-                  </p>
-                </div>
-                <button
-                  type="button"
-                  command="close"
-                  commandfor="bp-manage-columns-dialog"
-                  class="inline-flex size-8 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white"
-                  aria-label="Close manage columns"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    class="size-5"
-                  >
-                    <path
-                      fill-rule="evenodd"
-                      d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z"
-                      clip-rule="evenodd"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </div>
-            <div class="px-4 py-4">
-              <div id="bp-manage-columns-list" class="space-y-3"></div>
-            </div>
-            <div
-              class="flex items-center justify-end gap-3 border-t border-gray-200 px-4 py-4 dark:border-white/10"
-            >
-              <button
-                id="bp-manage-columns-reset-btn"
-                type="button"
-                class="rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10"
-              >
-                Reset default
-              </button>
-              <button
-                id="bp-manage-columns-apply-btn"
-                type="button"
-                class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300"
-              >
-                Apply changes
-              </button>
-            </div>
-          </el-dialog-panel>
-        </div>
-      </dialog>
-    </el-dialog>
+  <script src="../../../src/scripts/bills-payables-table.js?v=20260806f"></script>
+</body>
 
-    <script src="../../../src/scripts/bills-payables-table.js?v=20260806f"></script>
-  </body>
 </html>

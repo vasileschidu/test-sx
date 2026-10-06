@@ -1,19 +1,12 @@
-import { Stat } from "@/app/stat";
-import { Avatar } from "@/components/avatar";
-import { Heading, Subheading } from "@/components/heading";
-import { Select } from "@/components/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/table";
-import { getRecentOrders } from "@/data";
+import { Stat } from '@/app/stat'
+import { Avatar } from '@/components/avatar'
+import { Heading, Subheading } from '@/components/heading'
+import { Select } from '@/components/select'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/table'
+import { getRecentOrders } from '@/data'
 
 export default async function Home() {
-  let orders = await getRecentOrders();
+  let orders = await getRecentOrders()
 
   return (
     <>
@@ -48,11 +41,7 @@ export default async function Home() {
         </TableHead>
         <TableBody>
           {orders.map((order) => (
-            <TableRow
-              key={order.id}
-              href={order.url}
-              title={`Order #${order.id}`}
-            >
+            <TableRow key={order.id} href={order.url} title={`Order #${order.id}`}>
               <TableCell>{order.id}</TableCell>
               <TableCell className="text-zinc-500">{order.date}</TableCell>
               <TableCell>{order.customer.name}</TableCell>
@@ -68,5 +57,5 @@ export default async function Home() {
         </TableBody>
       </Table>
     </>
-  );
+  )
 }
