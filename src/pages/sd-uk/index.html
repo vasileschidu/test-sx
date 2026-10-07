@@ -11,20 +11,17 @@
   <link rel="stylesheet" href="../../styles/sd-uk.css">
   <script src="../../data/sd-uk-claim.js"></script>
   <script src="../../scripts/sd-uk-flow.js"></script>
-  <script src="../../scripts/onboarding-transitions.js"></script>
-  <script src="../../scripts/onboarding-stepper.js"></script>
-  <script src="../../scripts/onboarding-mobile-header.js"></script>
 </head>
 <!-- SMART Disburse UK · 1. Welcome — claim payout invite (Figma 1. Welcome Screen) -->
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white">
-    <div data-ob-content class="flex flex-1 flex-col items-center justify-center px-4 py-10 lg:px-10 lg:py-12">
-      <div class="flex w-full max-w-[480px] flex-col gap-6">
-      <div class="mb-2 flex h-[60px] w-[246px] items-center justify-center self-center rounded-[10px] border-[2.5px] border-dashed border-gray-300 bg-gray-50" title="Client logo">
+<body class="min-h-screen bg-white font-['Inter'] antialiased">
+  <div class="flex min-h-screen w-full flex-col bg-white">
+    <main class="flex flex-1 flex-col px-4 pt-12 sm:px-6 justify-center">
+      <div class="mx-auto flex w-full max-w-[480px] flex-col gap-6">
+      <div class="flex h-[60px] w-[246px] items-center justify-center self-center rounded-[10px] border-[2.5px] border-dashed border-gray-300 bg-gray-50" title="Client logo">
         <img alt="" src="../../assets/sd-uk/logo-placeholder.svg" class="size-[35px]">
       </div>
       <div class="flex flex-col gap-10">
-        <div data-ob-tone="dark" class="relative flex w-full flex-col justify-center gap-10 overflow-hidden rounded-[32px] py-4 bg-gradient-to-b from-[#1e326f] to-[#090c38]">
+        <div class="relative flex h-[448px] w-full flex-col justify-center overflow-hidden rounded-[32px] bg-gradient-to-b from-[#1e326f] to-[#090c38]">
           <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[572px] overflow-hidden rounded-[32px]">
             <img alt="" src="../../assets/sd-uk/wave-1.svg" class="absolute top-[calc(50%+218px)] left-[-20.8px] size-[151.6px] max-w-none -translate-y-1/2 opacity-60">
             <img alt="" src="../../assets/sd-uk/wave-2.svg" class="absolute top-[calc(50%+218px)] left-[-124.2px] size-[358.4px] max-w-none -translate-y-1/2 opacity-60">
@@ -42,13 +39,13 @@
             </div>
           </div>
           <div class="relative p-6">
-            <a href="verify.html" id="get-started" class="inline-flex w-full items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Get Started<img alt="" src="../../assets/sd-uk/icon-arrow-right.svg" class="size-5"></a>
+            <a href="verify.html" id="get-started" class="uk-grad flex h-14 w-full items-center justify-center gap-2 rounded-md px-3.5 text-base font-semibold text-white shadow-[0_16px_24px_0_rgba(55,115,255,0.16)]">Get Started<img alt="" src="../../assets/sd-uk/icon-arrow-right.svg" class="size-5"></a>
           </div>
         </div>
+        <div data-uk-footer></div>
       </div>
       </div>
-    </div>
-    <div data-uk-footer></div>
+    </main>
   </div>
   <script>
     // A fresh visit to the link starts the claim over.

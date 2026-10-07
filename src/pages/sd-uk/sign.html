@@ -11,82 +11,90 @@
   <link rel="stylesheet" href="../../styles/sd-uk.css">
   <script src="../../data/sd-uk-claim.js"></script>
   <script src="../../scripts/sd-uk-flow.js"></script>
-  <script src="../../scripts/onboarding-transitions.js"></script>
-  <script src="../../scripts/onboarding-stepper.js"></script>
-  <script src="../../scripts/onboarding-mobile-header.js"></script>
-  <script src="../../scripts/signature.js?v=uk2" defer></script>
-  <link href="https://fonts.googleapis.com/css2?family=Meow+Script&display=swap" rel="stylesheet">
 </head>
 <!-- SMART Disburse UK · 5. Provide signature — draw or type -->
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
-    <!-- LEFT SIDEBAR (same as the onboarding flow) -->
-    <div class="hidden lg:flex bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex-col px-10 py-[56px] gap-[35px]">
-      <div class="flex h-[60px] w-full max-w-[246px] shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white/5" title="Client logo">
-        <img alt="" src="../../assets/sd-uk/logo-placeholder.svg" class="size-[30px] opacity-60">
+<body data-uk-step="3" data-uk-back="review.html" class="min-h-screen bg-[#1e326f] font-['Inter'] antialiased">
+  <div class="flex min-h-screen w-full flex-col bg-[#1e326f]">
+    <div data-uk-header></div>
+    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
+      <div class="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-6">
+      <h1 class="text-3xl font-semibold leading-9 text-gray-900">Sign insurance claim</h1>
+      <div class="flex gap-2" role="tablist">
+        <button type="button" role="tab" aria-selected="true" data-sign-tab="draw" class="cursor-pointer rounded-md px-3 py-2 text-sm leading-5 font-medium text-gray-900 aria-selected:bg-gray-100">Draw</button>
+        <button type="button" role="tab" aria-selected="false" data-sign-tab="type" class="cursor-pointer rounded-md px-3 py-2 text-sm leading-5 font-medium text-gray-900 aria-selected:bg-gray-100">Type</button>
       </div>
-      <nav aria-label="Progress" data-ob-stepper></nav>
-      <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
-        <a href="contact.html" class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
-          <span class="flex-1 text-xs font-medium">Contact <span data-uk-text="payer.name"></span></span>
-        </a>
+      <div class="hidden flex-col gap-2" data-sign-type-field>
+        <label for="sign-name" class="text-sm leading-5 text-gray-900">Your Full Name</label>
+        <input id="sign-name" data-uk-value="fullName" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
       </div>
-    </div>
-
-    <!-- RIGHT COLUMN -->
-    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
-      <div class="flex flex-1 flex-col lg:min-h-screen">
-        <div data-ob-content class="flex flex-1 flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
-          <div class="w-full max-w-[640px]">
-            <h1 class="text-3xl font-semibold text-gray-900">Sign insurance claim</h1>
-
-            <!-- Classic SD signature step: same tabs, canvas and script (signature.js) -->
-            <div class="mt-6">
-              <nav aria-label="Tabs" class="flex space-x-4">
-                <button id="tab-draw" type="button" aria-current="page" class="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900">Draw</button>
-                <button id="tab-type" type="button" class="rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700">Type</button>
-              </nav>
-            </div>
-
-            <div id="type-input-wrap" class="mt-6 hidden">
-              <label for="fullName" class="block text-sm/6 font-medium text-gray-900">Your Full Name</label>
-              <div class="mt-2">
-                <input id="fullName" type="text" name="fullName" placeholder="Type your full name" data-uk-value="fullName"
-                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
-              </div>
-            </div>
-
-            <div class="relative mt-6 flex h-[296px] w-full flex-col items-center gap-4 self-stretch rounded-2xl border border-gray-200 bg-gray-50 p-4">
-              <canvas id="signature-canvas" class="h-full w-full rounded-lg"></canvas>
-              <button id="clear-signature" type="button" class="absolute top-4 right-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">Clear</button>
-            </div>
-          </div>
-          <div class="mt-auto w-full max-w-[640px] pt-10 pb-6">
-            <div class="mt-6 flex items-center gap-6">
-              <a href="review.html" class="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">Back</a>
-              <button id="next-button" type="button" disabled data-next="payment.html"
-                class="inline-flex h-11 flex-1 items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">Sign &amp; Go next</button>
-            </div>
-          </div>
-        </div>
+      <div class="relative h-[290px] w-full overflow-hidden rounded-2xl bg-gray-50">
+        <canvas id="sign-pad" class="uk-pad absolute inset-0 size-full cursor-crosshair"></canvas>
+        <p class="uk-script pointer-events-none absolute inset-0 hidden items-center justify-center px-6 text-center text-[40px] text-gray-900" data-sign-preview></p>
+        <p class="pointer-events-none absolute inset-0 flex items-center justify-center text-sm text-gray-400" data-sign-hint>Sign here with your finger or mouse</p>
+        <button type="button" id="sign-clear" class="absolute top-4 right-4 cursor-pointer rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">Clear</button>
+      </div>
+      <div class="flex flex-1 flex-col justify-end gap-6">
+        <button type="button" id="sign-submit" disabled class="uk-grad flex h-14 w-full items-center justify-center gap-2 rounded-lg px-3.5 text-base font-semibold text-white shadow-[0_16px_24px_0_rgba(55,115,255,0.16)] transition-opacity opacity-40 cursor-not-allowed">Sign</button>
         <div data-uk-footer></div>
       </div>
-    </div>
+      </div>
+    </main>
   </div>
   <script>
-    // Remember the signature for the rest of the session, as the classic step does.
     SDUK.ready(function () {
-      // This step owns its navigation: an older cached signature.js would send
-      // the user to the US flow's paywall.html, which doesn't exist here.
-      var next = document.getElementById('next-button');
-      next.addEventListener('click', function (e) {
-        e.stopImmediatePropagation();
-        if (next.disabled) return;
-        var typed = document.getElementById('type-input-wrap').classList.contains('hidden') === false;
-        SDUK.saveState({ signature: typed ? { mode: 'type', name: document.getElementById('fullName').value.trim() } : { mode: 'draw' } });
+      var pad = document.getElementById('sign-pad');
+      var ctx = pad.getContext('2d');
+      var submit = document.getElementById('sign-submit');
+      var nameInput = document.getElementById('sign-name');
+      var preview = document.querySelector('[data-sign-preview]');
+      var hint = document.querySelector('[data-sign-hint]');
+      var mode = 'draw', drawn = false, drawing = false;
+
+      function size() {
+        var r = window.devicePixelRatio || 1, b = pad.getBoundingClientRect();
+        pad.width = b.width * r; pad.height = b.height * r;
+        ctx.setTransform(r, 0, 0, r, 0, 0);
+        ctx.lineCap = 'round'; ctx.lineJoin = 'round'; ctx.lineWidth = 2.2; ctx.strokeStyle = '#111827';
+      }
+      size();
+      window.addEventListener('resize', function () { if (!drawn) size(); });
+
+      function sync() {
+        var ok = mode === 'draw' ? drawn : nameInput.value.trim().length > 1;
+        SDUK.setEnabled(submit, ok);
+        hint.classList.toggle('hidden', mode !== 'draw' || drawn);
+        preview.textContent = nameInput.value;
+      }
+      function pt(e) { var b = pad.getBoundingClientRect(); return { x: e.clientX - b.left, y: e.clientY - b.top }; }
+      pad.addEventListener('pointerdown', function (e) { if (mode !== 'draw') return; drawing = true; pad.setPointerCapture(e.pointerId); var p = pt(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); });
+      pad.addEventListener('pointermove', function (e) { if (!drawing) return; var p = pt(e); ctx.lineTo(p.x, p.y); ctx.stroke(); if (!drawn) { drawn = true; sync(); } });
+      ['pointerup', 'pointercancel'].forEach(function (t) { pad.addEventListener(t, function () { drawing = false; }); });
+      document.getElementById('sign-clear').addEventListener('click', function () {
+        if (mode === 'draw') { ctx.clearRect(0, 0, pad.width, pad.height); drawn = false; }
+        else nameInput.value = '';
+        sync();
+      });
+
+      document.querySelectorAll('[data-sign-tab]').forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          mode = tab.getAttribute('data-sign-tab');
+          document.querySelectorAll('[data-sign-tab]').forEach(function (t) { t.setAttribute('aria-selected', t === tab ? 'true' : 'false'); });
+          var typing = mode === 'type';
+          var field = document.querySelector('[data-sign-type-field]');
+          field.classList.toggle('hidden', !typing); field.classList.toggle('flex', typing);
+          pad.classList.toggle('hidden', typing);
+          preview.classList.toggle('hidden', !typing); preview.classList.toggle('flex', typing);
+          sync();
+        });
+      });
+      nameInput.addEventListener('input', sync);
+      sync();
+
+      submit.addEventListener('click', function () {
+        if (submit.disabled) return;
+        SDUK.saveState({ signature: mode === 'draw' ? { mode: 'draw' } : { mode: 'type', name: nameInput.value.trim() } });
         SDUK.go('payment.html');
-      }, true);
+      });
     });
   </script>
 </body>

@@ -2,10 +2,11 @@
  * sd-uk-flow.js
  * Shared shell for the UK SMART Disburse demo (src/pages/sd-uk/).
  *
- * Pages use the existing onboarding shell — the sidebar stepper and mobile
- * header come from onboarding-stepper.js / onboarding-mobile-header.js, driven
- * by window.OB_FLOW_STEPS in the profile. This script adds what the UK steps share:
- *   - the onboarding footer into [data-uk-footer]
+ * Figma-match version (branch figma-match): the UK prototype's look — dark
+ * header with back arrow and step dots, gradient buttons, Figma footer — on a
+ * responsive layout that works from phone to desktop. This script adds:
+ *   - the header (back arrow + step dots) for pages with <body data-uk-step="0..4">
+ *   - the footer (language, legal links, Powered by Transcard) into [data-uk-footer]
  *   - data binding: [data-uk-text="path.to.value"] is filled from
  *     window.SD_UK_CLAIM merged with what the user entered this session
  *   - session state, money formatting, a small modal, and primary-button helpers
@@ -15,6 +16,7 @@ window.SDUK = (function () {
 
   var STATE_KEY = 'sd-uk-state';
   var ASSETS = '../../assets/sd-uk/';
+  var DOTS = 6;
 
   var data = window.SD_UK_CLAIM || {};
 
@@ -79,11 +81,6 @@ window.SDUK = (function () {
 
   function bind(root) {
     var m = model();
-    // Values that come from the claim load behind the flow's skeleton, like the
-    // other onboarding steps (onboarding-transitions.js picks these up).
-    (root || document).querySelectorAll('[data-ob-content] [data-uk-text]').forEach(function (el) {
-      if (!el.closest('button, a, [data-ob-no-skeleton]')) el.setAttribute('data-ob-skeleton', '');
-    });
     (root || document).querySelectorAll('[data-uk-text]').forEach(function (el) {
       var v = pick(m, el.getAttribute('data-uk-text'));
       if (v !== undefined && v !== null) el.textContent = v;
@@ -112,29 +109,70 @@ window.SDUK = (function () {
     return '<img alt="" src="' + ASSETS + name + '" class="' + (cls || '') + '" />';
   }
 
-  /** Same footer as the rest of the onboarding flow. */
+  function dotsHtml(current) {
+    var out = '';
+    for (var i = 0; i < DOTS; i += 1) {
+      var inner;
+      if (i < current) inner = img('step-done.svg', 'size-5');
+      else if (i === current) inner = '<span class="relative block size-[10px]"><img alt="" src="' + ASSETS + 'step-current.svg" class="absolute -inset-1/2 block size-[200%] max-w-none" /></span>';
+      else inner = '<span class="block size-[10px] rounded-[5px] bg-white opacity-15"></span>';
+      out += '<span class="flex size-5 items-center justify-center">' + inner + '</span>';
+    }
+    return out;
+  }
+
+  /** Figma header: back arrow + step dots, full width on any screen. */
+  function renderHeader() {
+    var step = document.body.getAttribute('data-uk-step');
+    var host = document.querySelector('[data-uk-header]');
+    if (step === null || !host) return;
+    var back = document.body.getAttribute('data-uk-back');
+    host.className = 'sticky top-0 z-20 shrink-0 bg-[#1e326f] p-4 sm:px-6 lg:py-6';
+    host.innerHTML =
+      '<div class="mx-auto flex w-full max-w-[720px] items-center justify-end gap-9 rounded-[10px] border-8 border-white/[0.02] bg-white/5 p-4 backdrop-blur-[12px]">' +
+        '<div class="flex min-w-px flex-1 items-center gap-4">' +
+          '<button type="button" data-uk-back-btn class="-m-1 cursor-pointer rounded-md p-1 hover:bg-white/10" aria-label="Back">' + img('arrow-left.svg', 'size-6') + '</button>' +
+          '<span class="hidden text-sm font-medium text-white/80 sm:block">' + (STEP_LABELS[Number(step)] || '') + '</span>' +
+        '</div>' +
+        '<div class="flex items-center gap-[10px]" aria-label="Step ' + (Number(step) + 1) + ' of ' + DOTS + '">' + dotsHtml(Number(step)) + '</div>' +
+      '</div>';
+    host.querySelector('[data-uk-back-btn]').addEventListener('click', function () {
+      if (back) go(back); else history.back();
+    });
+  }
+
+  var STEP_LABELS = ['Verification', 'Confirm Identity', 'Review Documents', 'Provide Signature', 'Receive Payment', 'Complete'];
+
   function renderFooter() {
     document.querySelectorAll('[data-uk-footer]').forEach(function (host) {
-      host.className = 'flex items-center justify-center gap-1.5 px-6 py-5';
-      host.innerHTML = img('shield-check.svg', 'size-[18px]') +
-        '<span class="text-xs text-gray-700">Powered by <span class="font-bold">Transcard</span>' +
-          '<span class="mx-1">|</span><a href="#" class="text-gray-700 hover:underline">Terms of Use</a>' +
-          '<span class="mx-0.5">&bull;</span><a href="#" class="text-gray-700 hover:underline">Privacy Policy</a>' +
-          '<span class="mx-0.5">&bull;</span><a href="#" class="text-gray-700 hover:underline">E-Sign Consent</a></span>';
+      host.className = 'flex flex-col items-center justify-end gap-4 p-6 ' + (host.getAttribute('data-uk-footer') || '');
+      host.innerHTML =
+        '<button type="button" class="flex cursor-pointer items-center gap-1 rounded bg-gray-100 px-1.5 py-0.5 text-xs font-semibold text-gray-600">' +
+          img('flag-gb.svg', 'h-3 w-4 rounded-[2px]') + 'English' + img('icon-chevron-down.svg', 'size-4') + '</button>' +
+        '<div class="flex items-center gap-2 text-xs whitespace-nowrap">' +
+          '<a href="#" class="rounded px-1.5 py-0.5 font-semibold text-gray-700 hover:underline">Terms of Use</a><span class="font-medium text-gray-500">•</span>' +
+          '<a href="#" class="rounded px-1.5 py-0.5 font-semibold text-gray-700 hover:underline">Privacy Policy</a><span class="font-medium text-gray-500">•</span>' +
+          '<a href="#" class="rounded px-1.5 py-0.5 font-semibold text-gray-700 hover:underline">E-Sign Consent</a>' +
+        '</div>' +
+        '<div class="flex items-center gap-[5px]">' + img('shield-check.svg', 'size-[18px]') +
+          '<span class="text-xs font-medium text-gray-900 opacity-60">Powered by <span class="font-semibold">Transcard</span></span></div>';
     });
   }
 
   // ── Behaviour helpers ──
 
-  /** Same exit fade as every other onboarding step. */
   function go(href) {
-    if (window.OnboardingTransitions) window.OnboardingTransitions.navigate(href);
-    else window.location.href = href;
+    document.body.classList.add('opacity-0');
+    setTimeout(function () { window.location.href = href; }, 150);
   }
 
-  /** Buttons carry their own disabled: styles, as elsewhere in the flow. */
+  /** Primary button: enabled/disabled look matches Figma (40% when off). */
   function setEnabled(btn, on) {
-    if (btn) btn.disabled = !on;
+    if (!btn) return;
+    btn.disabled = !on;
+    btn.classList.toggle('opacity-40', !on);
+    btn.classList.toggle('cursor-not-allowed', !on);
+    btn.classList.toggle('cursor-pointer', on);
   }
 
   /** Re-checks a form on every input: `ready()` decides whether `btn` is on. */
@@ -302,6 +340,7 @@ window.SDUK = (function () {
   }
 
   document.addEventListener('DOMContentLoaded', function () {
+    renderHeader();
     renderFooter();
     bind();
     document.body.classList.add('transition-opacity', 'duration-150');
@@ -326,6 +365,7 @@ window.SDUK = (function () {
     infoModal: infoModal,
     closeModal: closeModal,
     confirmModal: confirmModal,
+    closeX: '<button type="button" data-uk-close aria-label="Close" class="absolute right-4 top-4 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>',
     initConsents: initConsents
   };
 })();

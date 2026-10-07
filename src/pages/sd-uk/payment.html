@@ -11,33 +11,14 @@
   <link rel="stylesheet" href="../../styles/sd-uk.css">
   <script src="../../data/sd-uk-claim.js"></script>
   <script src="../../scripts/sd-uk-flow.js"></script>
-  <script src="../../scripts/onboarding-transitions.js"></script>
-  <script src="../../scripts/onboarding-stepper.js"></script>
-  <script src="../../scripts/onboarding-mobile-header.js"></script>
 </head>
 <!-- SMART Disburse UK · 6. Choose payment method — virtual card or bank account -->
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
-    <!-- LEFT SIDEBAR (same as the onboarding flow) -->
-    <div class="hidden lg:flex bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex-col px-10 py-[56px] gap-[35px]">
-      <div class="flex h-[60px] w-full max-w-[246px] shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white/5" title="Client logo">
-        <img alt="" src="../../assets/sd-uk/logo-placeholder.svg" class="size-[30px] opacity-60">
-      </div>
-      <nav aria-label="Progress" data-ob-stepper></nav>
-      <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
-        <a href="contact.html" class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
-          <span class="flex-1 text-xs font-medium">Contact <span data-uk-text="payer.name"></span></span>
-        </a>
-      </div>
-    </div>
-
-    <!-- RIGHT COLUMN -->
-    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
-      <div class="flex flex-1 flex-col lg:min-h-screen">
-        <div data-ob-content class="flex flex-1 flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
-          <div class="flex w-full max-w-[640px] flex-col gap-6">
-      <div data-ob-tone="dark" class="uk-amount relative flex w-full flex-col items-center overflow-hidden rounded-2xl">
+<body data-uk-step="4" data-uk-back="sign.html" class="min-h-screen bg-[#1e326f] font-['Inter'] antialiased">
+  <div class="flex min-h-screen w-full flex-col bg-[#1e326f]">
+    <div data-uk-header></div>
+    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
+      <div class="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-6">
+      <div class="uk-amount relative flex w-full flex-col items-center overflow-hidden rounded-2xl">
         <img alt="" src="../../assets/sd-uk/bubble-1.svg" class="pointer-events-none absolute top-[calc(50%-72px)] left-[calc(50%-113.5px)] size-[162px] max-w-none -translate-x-1/2 -translate-y-1/2 -rotate-[105deg]">
         <img alt="" src="../../assets/sd-uk/bubble-2.svg" class="pointer-events-none absolute top-[calc(50%+95.81px)] left-[calc(50%-109.55px)] size-[117px] max-w-none -translate-x-1/2 -translate-y-1/2 -rotate-[105deg]">
         <img alt="" src="../../assets/sd-uk/bubble-3.svg" class="pointer-events-none absolute top-[calc(50%+27.25px)] left-[calc(50%+161.16px)] size-[147px] max-w-none -translate-x-1/2 -translate-y-1/2 -rotate-[105deg]">
@@ -71,14 +52,12 @@
           </a>
         </div>
       </div>
-          </div>
-          <div class="mt-auto flex w-full max-w-[640px] flex-col gap-4 pt-10">
+      <div class="flex flex-1 flex-col justify-end gap-6">
 
-          </div>
-        </div>
         <div data-uk-footer></div>
       </div>
-    </div>
+      </div>
+    </main>
   </div>
   <script>
     SDUK.ready(function () {

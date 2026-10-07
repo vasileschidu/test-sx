@@ -11,49 +11,24 @@
   <link rel="stylesheet" href="../../styles/sd-uk.css">
   <script src="../../data/sd-uk-claim.js"></script>
   <script src="../../scripts/sd-uk-flow.js"></script>
-  <script src="../../scripts/onboarding-transitions.js"></script>
-  <script src="../../scripts/onboarding-stepper.js"></script>
-  <script src="../../scripts/onboarding-mobile-header.js"></script>
 </head>
 <!-- SMART Disburse UK · 8. Bank account — sort code + account number -->
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
-    <!-- LEFT SIDEBAR (same as the onboarding flow) -->
-    <div class="hidden lg:flex bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex-col px-10 py-[56px] gap-[35px]">
-      <div class="flex h-[60px] w-full max-w-[246px] shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white/5" title="Client logo">
-        <img alt="" src="../../assets/sd-uk/logo-placeholder.svg" class="size-[30px] opacity-60">
-      </div>
-      <nav aria-label="Progress" data-ob-stepper></nav>
-      <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
-        <a href="contact.html" class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
-          <span class="flex-1 text-xs font-medium">Contact <span data-uk-text="payer.name"></span></span>
-        </a>
-      </div>
-    </div>
-
-    <!-- RIGHT COLUMN -->
-    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
-      <div class="flex flex-1 flex-col lg:min-h-screen">
-        <div data-ob-content class="flex flex-1 flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
-          <div class="flex w-full max-w-[640px] flex-col gap-6">
+<body data-uk-step="4" data-uk-back="payment.html" class="min-h-screen bg-[#1e326f] font-['Inter'] antialiased">
+  <div class="flex min-h-screen w-full flex-col bg-[#1e326f]">
+    <div data-uk-header></div>
+    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
+      <div class="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-6">
       <div class="flex flex-col gap-4">
         <h1 class="text-3xl font-semibold leading-9 text-gray-900">Enter Your<br>Bank Account Details</h1>
         <p class="text-sm leading-5 text-gray-500"><span class="font-semibold text-gray-900" data-uk-text="amount"></span> will be deposited to your bank account</p>
       </div>
       <div class="flex gap-3 rounded-md bg-blue-50 p-4"><svg viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0 text-blue-500"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg><p class="text-sm leading-5 text-blue-700">It's important to verify your entries to ensure payment is received to your valid bank account.</p></div>
       <form id="bank-form" class="flex flex-col gap-6" autocomplete="off">
-        <fieldset>
-          <legend class="text-sm/6 font-semibold text-gray-900">Account Type</legend>
-          <div class="mt-4 space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10">
-            <label class="flex cursor-pointer items-center">
-              <input type="radio" name="b-type" value="Current" checked class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden" />
-              <span class="ml-3 block text-sm/6 font-medium text-gray-900">Current</span>
-            </label>
-            <label class="flex cursor-pointer items-center">
-              <input type="radio" name="b-type" value="Savings" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden" />
-              <span class="ml-3 block text-sm/6 font-medium text-gray-900">Savings</span>
-            </label>
+        <fieldset class="flex flex-col gap-3">
+          <legend class="mb-3 text-sm leading-5 text-gray-900">Account Type</legend>
+          <div class="flex gap-6">
+            <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-900"><input type="radio" name="b-type" value="Current" checked class="size-4 cursor-pointer accent-blue-600">Current</label>
+            <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-900"><input type="radio" name="b-type" value="Savings" class="size-4 cursor-pointer accent-blue-600">Savings</label>
           </div>
         </fieldset>
           <div class="flex flex-col gap-2">
@@ -75,14 +50,12 @@
             <p class="hidden text-sm text-red-600" data-mismatch>Account numbers don't match.</p>
           </div>
       </form>
-          </div>
-          <div class="mt-auto flex w-full max-w-[640px] flex-col gap-4 pt-10">
-        <button type="button" id="bank-next" disabled class="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">Next<img alt="" src="../../assets/sd-uk/icon-arrow-right.svg" class="size-5"></button>
-          </div>
-        </div>
+      <div class="flex flex-1 flex-col justify-end gap-6">
+        <button type="button" id="bank-next" disabled class="uk-grad flex h-14 w-full items-center justify-center gap-2 rounded-lg px-3.5 text-base font-semibold text-white shadow-[0_16px_24px_0_rgba(55,115,255,0.16)] transition-opacity opacity-40 cursor-not-allowed">Next<img alt="" src="../../assets/sd-uk/icon-arrow-right.svg" class="size-5"></button>
         <div data-uk-footer></div>
       </div>
-    </div>
+      </div>
+    </main>
   </div>
   <script>
     SDUK.ready(function () {

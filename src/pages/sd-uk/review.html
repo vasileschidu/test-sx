@@ -11,117 +11,116 @@
   <link rel="stylesheet" href="../../styles/sd-uk.css">
   <script src="../../data/sd-uk-claim.js"></script>
   <script src="../../scripts/sd-uk-flow.js"></script>
-  <script src="../../scripts/onboarding-transitions.js"></script>
-  <script src="../../scripts/onboarding-stepper.js"></script>
-  <script src="../../scripts/onboarding-mobile-header.js"></script>
 </head>
 <!-- SMART Disburse UK · 4. Document review — open the claim form, accept or dispute -->
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
-    <!-- LEFT SIDEBAR (same as the onboarding flow) -->
-    <div class="hidden lg:flex bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex-col px-10 py-[56px] gap-[35px]">
-      <div class="flex h-[60px] w-full max-w-[246px] shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white/5" title="Client logo">
-        <img alt="" src="../../assets/sd-uk/logo-placeholder.svg" class="size-[30px] opacity-60">
-      </div>
-      <nav aria-label="Progress" data-ob-stepper></nav>
-      <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
-        <a href="contact.html" class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
-          <span class="flex-1 text-xs font-medium">Contact <span data-uk-text="payer.name"></span></span>
-        </a>
-      </div>
-    </div>
-
-    <!-- RIGHT COLUMN -->
-    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
-      <div class="flex flex-1 flex-col lg:min-h-screen">
-        <div data-ob-content class="flex flex-1 flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
-          <div class="flex w-full max-w-[640px] flex-col gap-6">
+<body data-uk-step="2" data-uk-back="claim.html" class="min-h-screen bg-[#1e326f] font-['Inter'] antialiased">
+  <div class="flex min-h-screen w-full flex-col bg-[#1e326f]">
+    <div data-uk-header></div>
+    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
+      <div class="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-6">
       <div class="flex flex-col gap-4">
         <h1 class="text-3xl font-semibold leading-9 text-gray-900">Review your claim</h1>
         <p class="text-sm leading-5 text-gray-500">Please tap to review the documents below before proceeding with your payment</p>
       </div>
-      <!-- Classic SD attachments list: Review opens the document, "I have read" ticks it -->
-      <div class="px-4 py-2 sm:px-0">
-        <dt class="text-sm/6 font-medium text-gray-900">Attachments</dt>
-        <ul role="list" class="mt-4 divide-y divide-gray-100 rounded-md border border-gray-200">
-          <li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm">
-            <div class="flex w-0 flex-1 items-center">
-              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400"><path d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>
-              <div class="ml-4 flex min-w-0 flex-1 flex-col">
-                <button type="button" data-doc-view class="cursor-pointer truncate text-left font-medium text-gray-900 hover:text-blue-600 hover:underline"><span data-uk-text="claim.document.fileName"></span>.pdf</button>
-                <span class="text-xs text-gray-400" data-uk-text="claim.document.size"></span>
-              </div>
-            </div>
-            <div class="ml-4 shrink-0">
-              <button type="button" id="doc-open" class="cursor-pointer rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Review</button>
-              <div id="doc-1-status" class="hidden h-6 shrink-0 items-center"><div class="group grid size-4 grid-cols-1"><input id="doc-1-checkbox" type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto" /><svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /><path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100" /></svg></div></div>
-            </div>
-          </li>
-        </ul>
+      <button type="button" id="doc-message" aria-expanded="true" class="flex w-full cursor-pointer flex-col gap-2 rounded-md bg-gray-50 p-4 text-left">
+        <span class="flex w-full items-start gap-2">
+          <img alt="" src="../../assets/sd-uk/icon-mail-blue.svg" class="size-5">
+          <span class="min-w-px flex-1 text-sm leading-5 font-medium text-gray-900" data-uk-text="claim.document.title">Insurance claim</span>
+          <img alt="" src="../../assets/sd-uk/icon-chevron-up.svg" class="size-5 transition-transform" data-chevron>
+        </span>
+        <span class="text-sm leading-5 text-gray-500" data-doc-intro data-uk-text="claim.document.intro"></span>
+      </button>
+      <div class="flex flex-col gap-2.5">
+        <p class="text-xs leading-4 font-medium tracking-[0.6px] text-gray-600 uppercase">Attachments</p>
+        <button type="button" id="doc-open" class="flex w-full cursor-pointer items-center gap-3 rounded-lg border border-gray-300 bg-white p-4 text-left drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] hover:bg-gray-50">
+          <span class="h-[42px] w-[30px] shrink-0 overflow-hidden rounded-[1.2px] border border-gray-300"><img alt="" src="../../assets/sd-uk/claim-form/thumb.jpg" class="size-full object-cover object-top"></span>
+          <span class="flex min-w-px flex-1 flex-col gap-0.5">
+            <span class="truncate text-base leading-6 text-gray-900" data-uk-text="claim.document.fileName"></span>
+            <span class="flex items-center gap-2 text-xs leading-4 text-gray-500"><span data-uk-text="claim.document.type"></span><span class="size-0.5 rounded-full bg-gray-400"></span><span data-uk-text="claim.document.size"></span></span>
+          </span>
+          <span class="hidden shrink-0 items-center gap-1 text-xs font-medium text-green-600" data-doc-done><svg viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"/></svg>Accepted</span>
+        </button>
       </div>
-          </div>
-          <div class="mt-auto flex w-full max-w-[640px] flex-col gap-4 pt-10">
+      <div class="flex flex-1 flex-col justify-end gap-6">
         <div class="flex flex-col gap-4">
-        <button type="button" id="doc-accept" disabled class="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">Accept</button>
-        <button type="button" id="doc-dispute" class="inline-flex h-11 w-full cursor-pointer items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">Dispute</button>
-        </div>
-          </div>
+        <button type="button" id="doc-accept" disabled class="uk-grad flex h-14 w-full items-center justify-center gap-2 rounded-lg px-3.5 text-base font-semibold text-white shadow-[0_16px_24px_0_rgba(55,115,255,0.16)] transition-opacity opacity-40 cursor-not-allowed">Accept</button>
+        <button type="button" id="doc-dispute" class="flex h-14 w-full cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white px-3.5 text-base font-semibold text-gray-700 shadow-xs hover:bg-gray-50">Dispute</button>
         </div>
         <div data-uk-footer></div>
       </div>
+      </div>
+    </main>
+  </div>
+  <!-- Full-screen document viewer (Figma 4.1) -->
+  <div id="doc-viewer" class="fixed inset-0 z-40 hidden flex-col bg-white lg:inset-x-auto lg:inset-y-8 lg:left-1/2 lg:w-[760px] lg:-translate-x-1/2 lg:overflow-hidden lg:rounded-2xl lg:shadow-[0_0_0_100vmax_rgba(17,24,39,0.6)]">
+    <div class="flex items-center justify-between px-4 pt-4">
+      <button type="button" data-viewer-close aria-label="Close" class="-m-1 cursor-pointer rounded-md p-1 text-gray-700 hover:bg-gray-100"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
+      <div class="flex items-center gap-4 text-gray-700">
+        <button type="button" aria-label="Share" class="-m-1 cursor-pointer rounded-md p-1 hover:bg-gray-100"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"/></svg></button>
+        <a href="../../assets/sd-uk/claim-form/page-1.jpg" download aria-label="Download" class="-m-1 rounded-md p-1 hover:bg-gray-100"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg></a>
+      </div>
+    </div>
+    <p class="px-4 pt-4 pb-4 text-xl leading-7 font-semibold break-all text-gray-900"><span data-uk-text="claim.document.fileName"></span>.pdf</p>
+    <div class="flex-1 overflow-y-auto bg-gray-100 px-6 py-6">
+      <div class="flex flex-col gap-6" data-viewer-pages></div>
+    </div>
+    <div class="flex justify-end border-t border-gray-200 bg-white px-4 py-3">
+      <button type="button" id="viewer-accept" class="h-10 cursor-pointer rounded-md bg-emerald-400 px-4 text-base font-semibold text-white hover:bg-emerald-500">Accept</button>
     </div>
   </div>
   <script>
     SDUK.ready(function () {
       var accept = document.getElementById('doc-accept');
-      var reviewBtn = document.getElementById('doc-open');
-      var status = document.getElementById('doc-1-status');
-      var box = document.getElementById('doc-1-checkbox');
+      var viewer = document.getElementById('doc-viewer');
+      var pagesHost = viewer.querySelector('[data-viewer-pages]');
+      for (var i = 1; i <= SDUK.data.claim.document.pages; i++) {
+        pagesHost.insertAdjacentHTML('beforeend', '<img alt="Page ' + i + '" loading="lazy" src="../../assets/sd-uk/claim-form/page-' + i + '.jpg" class="w-full bg-white shadow-sm">');
+      }
 
-      function paint() {
+      function paintAccepted() {
         var ok = !!SDUK.getState().docAccepted;
-        reviewBtn.classList.toggle('hidden', ok);
-        status.classList.toggle('hidden', !ok);
-        status.classList.toggle('flex', ok);
-        box.checked = ok;
         SDUK.setEnabled(accept, ok);
+        document.querySelector('[data-doc-done]').classList.toggle('hidden', !ok);
+        document.querySelector('[data-doc-done]').classList.toggle('flex', ok);
       }
-      paint();
-      box.addEventListener('change', function () { SDUK.saveState({ docAccepted: box.checked }); paint(); });
+      paintAccepted();
 
-      // Same dialog as the classic Review Documents step.
-      // The file name opens the document any time, even once it is ticked (as in Get Paid).
-      function openDoc() {
-        var pages = '';
-        for (var i = 1; i <= SDUK.data.claim.document.pages; i++) {
-          pages += '<img alt="Page ' + i + '" loading="lazy" src="' + SDUK.assets + 'claim-form/page-' + i + '.jpg" class="w-full bg-white shadow-sm">';
-        }
-        var panel = SDUK.modal({ bare: true, size: 'sm:w-full sm:max-w-4xl', html:
-          '<div class="border-b border-gray-200 px-6 py-4"><h3 class="text-xl font-semibold text-gray-900">Review Document</h3></div>' +
-          '<div class="px-6 py-5"><div class="flex h-[60vh] w-full flex-col gap-6 overflow-y-auto rounded-md border border-gray-200 bg-gray-100 p-6">' + pages + '</div></div>' +
-          '<div class="border-t border-gray-200 px-6 py-4"><div class="flex justify-end">' +
-            '<button type="button" data-read class="inline-flex cursor-pointer items-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">I have read</button>' +
-          '</div></div>' });
-        panel.querySelector('[data-read]').addEventListener('click', function () {
-          SDUK.saveState({ docAccepted: true });
-          SDUK.closeModal();
-          paint();
-        });
+      function setViewer(open) {
+        viewer.classList.toggle('hidden', !open);
+        viewer.classList.toggle('flex', open);
+        document.documentElement.style.overflow = open ? 'hidden' : '';
       }
-      reviewBtn.addEventListener('click', openDoc);
-      document.querySelector('[data-doc-view]').addEventListener('click', openDoc);
+      document.getElementById('doc-open').addEventListener('click', function () { setViewer(true); });
+      viewer.querySelector('[data-viewer-close]').addEventListener('click', function () { setViewer(false); });
+      document.getElementById('viewer-accept').addEventListener('click', function () {
+        SDUK.saveState({ docAccepted: true });
+        setViewer(false);
+        paintAccepted();
+      });
+
+      var msg = document.getElementById('doc-message');
+      msg.addEventListener('click', function () {
+        var open = msg.getAttribute('aria-expanded') !== 'true';
+        msg.setAttribute('aria-expanded', open ? 'true' : 'false');
+        msg.querySelector('[data-doc-intro]').classList.toggle('hidden', !open);
+        msg.querySelector('[data-chevron]').classList.toggle('rotate-180', !open);
+      });
 
       accept.addEventListener('click', function () { if (!accept.disabled) SDUK.go('sign.html'); });
 
       document.getElementById('doc-dispute').addEventListener('click', function () {
-        SDUK.confirmModal({
-          icon: 'warn',
-          title: 'Dispute Documents',
-          body: '<p>Are you sure you want to dispute the documents?</p><p class="mt-3">The payment request will be cancelled and you’ll need to contact <span class="font-semibold text-gray-900">' + SDUK.data.payer.name + '</span> to receive the payment.</p>',
-          cancel: 'Cancel', confirm: 'Dispute', tone: 'danger',
-          onConfirm: function () { SDUK.closeModal(); SDUK.go('contact.html'); }
-        });
+        var m = SDUK.modal({ html:
+          '<div class="flex flex-col items-center gap-4 px-6 pt-0 pb-6 text-center">' +
+            '<svg viewBox="0 0 24 24" fill="currentColor" class="size-10 text-red-600"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd"/></svg>' +
+            '<p class="text-lg leading-7 font-medium text-gray-900">Dispute Documents</p>' +
+            '<div class="flex flex-col gap-4 text-sm leading-5 text-gray-500"><p>Are you sure you want to dispute the documents?</p>' +
+            '<p>The payment request will be cancelled and you’ll need to contact <span class="font-semibold text-gray-900">' + SDUK.data.payer.name + '</span> to receive the payment.</p></div>' +
+          '</div>' +
+          '<div class="flex flex-col gap-3 px-6 pb-6">' +
+            '<button type="button" data-confirm-dispute class="h-12 w-full cursor-pointer rounded-md bg-red-600 text-base font-semibold text-white hover:bg-red-500">Dispute</button>' +
+            '<button type="button" data-uk-close class="h-12 w-full cursor-pointer rounded-md border border-gray-300 bg-white text-base font-semibold text-gray-700 hover:bg-gray-50">Cancel</button>' +
+          '</div>' });
+        m.querySelector('[data-confirm-dispute]').addEventListener('click', function () { SDUK.go('contact.html'); });
       });
     });
   </script>

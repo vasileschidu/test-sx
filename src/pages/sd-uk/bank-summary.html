@@ -11,122 +11,72 @@
   <link rel="stylesheet" href="../../styles/sd-uk.css">
   <script src="../../data/sd-uk-claim.js"></script>
   <script src="../../scripts/sd-uk-flow.js"></script>
-  <script src="../../scripts/onboarding-transitions.js"></script>
-  <script src="../../scripts/onboarding-stepper.js"></script>
-  <script src="../../scripts/onboarding-mobile-header.js"></script>
 </head>
 <!-- SMART Disburse UK · 8.2 Bank account — summary and consent -->
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
-    <!-- LEFT SIDEBAR (same as the onboarding flow) -->
-    <div class="hidden lg:flex bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex-col px-10 py-[56px] gap-[35px]">
-      <div class="flex h-[60px] w-full max-w-[246px] shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white/5" title="Client logo">
-        <img alt="" src="../../assets/sd-uk/logo-placeholder.svg" class="size-[30px] opacity-60">
-      </div>
-      <nav aria-label="Progress" data-ob-stepper></nav>
-      <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
-        <a href="contact.html" class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
-          <span class="flex-1 text-xs font-medium">Contact <span data-uk-text="payer.name"></span></span>
-        </a>
-      </div>
-    </div>
-
-    <!-- RIGHT COLUMN -->
-    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
-      <div class="flex flex-1 flex-col lg:min-h-screen">
-        <div data-ob-content class="flex flex-1 flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
-          <div class="flex w-full max-w-[640px] flex-col gap-6">
+<body data-uk-step="4" data-uk-back="bank-billing.html" class="min-h-screen bg-[#1e326f] font-['Inter'] antialiased">
+  <div class="flex min-h-screen w-full flex-col bg-[#1e326f]">
+    <div data-uk-header></div>
+    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
+      <div class="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-6">
       <div class="flex flex-col gap-4">
         <h1 class="text-3xl font-semibold leading-9 text-gray-900">One Final Step</h1>
         <p class="text-sm leading-5 text-gray-500">Make sure all the details are accurate</p>
       </div>
-        <div class="flex w-full flex-col overflow-hidden rounded-md">
-          <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
-            <dl class="w-full">
-              <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt class="text-sm/6 font-medium text-gray-900">Amount</dt>
-                <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0" data-uk-text="amount"></dd>
-              </div>
-              <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt class="text-sm/6 font-medium text-gray-900">Method of Payment</dt>
-                <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0" data-static="Bank Transfer"></dd>
-              </div>
-              <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt class="text-sm/6 font-medium text-gray-900">Processing Time</dt>
-                <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0" data-static="Up to 3 days"></dd>
-              </div>
-              <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt class="text-sm/6 font-medium text-gray-900">Paid by</dt>
-                <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0" data-uk-text="payer.name"></dd>
-              </div>
-            </dl>
-          </div>
+      <div class="uk-amount relative flex w-full flex-col items-center overflow-hidden rounded-2xl">
+        <img alt="" src="../../assets/sd-uk/bubble-1.svg" class="pointer-events-none absolute top-[calc(50%-72px)] left-[calc(50%-113.5px)] size-[162px] max-w-none -translate-x-1/2 -translate-y-1/2 -rotate-[105deg]">
+        <img alt="" src="../../assets/sd-uk/bubble-2.svg" class="pointer-events-none absolute top-[calc(50%+95.81px)] left-[calc(50%-109.55px)] size-[117px] max-w-none -translate-x-1/2 -translate-y-1/2 -rotate-[105deg]">
+        <img alt="" src="../../assets/sd-uk/bubble-3.svg" class="pointer-events-none absolute top-[calc(50%+27.25px)] left-[calc(50%+161.16px)] size-[147px] max-w-none -translate-x-1/2 -translate-y-1/2 -rotate-[105deg]">
+        <div class="relative flex flex-col items-center gap-3 px-5 py-6">
+          <p class="text-xs leading-4 font-medium tracking-[0.6px] text-blue-200 uppercase">payment amount</p>
+          <p class="flex text-5xl leading-[48px]"><span class="text-white" data-uk-text="amountWhole">£475</span><span class="text-blue-500" data-uk-text="amountPence">.00</span></p>
+          <button type="button" data-uk-eta class="flex cursor-pointer items-center gap-1.5 rounded-full whitespace-nowrap bg-blue-800 py-1 pr-1 pl-3 sm:pl-4"><span class="text-[10px] leading-4 font-medium tracking-[0.5px] text-blue-400 uppercase sm:tracking-[0.7px]"><span class="hidden sm:inline">Estimated </span>Processing Time:</span><span class="flex items-center gap-0.5 rounded-full bg-amber-500 py-0.5 pr-1.5 pl-1"><img alt="" src="../../assets/sd-uk/badge-check.svg" class="size-3.5"><span class="text-xs leading-4 text-white">Up to 3 Days</span></span><img alt="" src="../../assets/sd-uk/info-circle-blue.svg" class="size-5"></button>
         </div>
-        <div class="flex w-full flex-col overflow-hidden rounded-md">
-          <div class="flex items-center justify-between bg-gray-100 px-5 py-2.5">
-            <span class="text-sm font-semibold text-gray-900">Bank Details</span><a href="bank.html" class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-gray-600 transition-colors hover:bg-gray-200">Edit <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5"><path d="M2.695 14.763l-1.262 3.154a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.885L17.5 5.5a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.885 1.343Z" /></svg></a>
+      </div>
+      <div class="flex flex-col gap-3">
+        <div class="flex flex-col gap-4 rounded-lg bg-gray-50 p-6">
+          <div class="flex items-center gap-4">
+            <div class="flex min-w-px flex-1 flex-col gap-4">
+              <div><p class="text-xs leading-4 font-medium text-gray-500">Account Holder First Name</p><p class="text-base leading-6 text-gray-900" data-holder-first></p></div>
+              <div><p class="text-xs leading-4 font-medium text-gray-500">Account Holder Last Name</p><p class="text-base leading-6 text-gray-900" data-holder-last></p></div>
+              <div><p class="text-xs leading-4 font-medium text-gray-500">Sort Code</p><p class="text-base leading-6 text-gray-900" data-uk-text="bank.sortCode"></p></div>
+              <div><p class="text-xs leading-4 font-medium text-gray-500">Account Number</p><p class="text-base leading-6 text-gray-900" data-uk-text="bank.accountNumber"></p></div>
+            </div>
+            <a href="bank.html" class="shrink-0 py-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</a>
           </div>
-          <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
-            <dl class="w-full">
-              <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt class="text-sm/6 font-medium text-gray-900">Account Type</dt>
-                <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0" data-bank-type></dd>
-              </div>
-              <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt class="text-sm/6 font-medium text-gray-900">Account Holder Name</dt>
-                <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0" data-holder></dd>
-              </div>
-              <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt class="text-sm/6 font-medium text-gray-900">Sort Code</dt>
-                <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 font-['Roboto_Mono'] tracking-wider" data-uk-text="bank.sortCode"></dd>
-              </div>
-              <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt class="text-sm/6 font-medium text-gray-900">Account Number</dt>
-                <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 font-['Roboto_Mono'] tracking-wider" data-uk-text="bank.accountNumber"></dd>
-              </div>
-            </dl>
-          </div>
+          <div class="flex gap-3 rounded-md bg-blue-50 p-4"><svg viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0 text-blue-500"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg><p class="text-sm leading-5 text-blue-700">It's important to verify your entries to ensure payment is received to your valid bank account.</p></div>
         </div>
-        <div class="flex w-full flex-col overflow-hidden rounded-md">
-          <div class="flex items-center justify-between bg-gray-100 px-5 py-2.5">
-            <span class="text-sm font-semibold text-gray-900">Billing Address</span><a href="bank-billing.html" class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-gray-600 transition-colors hover:bg-gray-200">Edit <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5"><path d="M2.695 14.763l-1.262 3.154a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.885L17.5 5.5a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.885 1.343Z" /></svg></a>
+        <div class="flex items-center gap-4 rounded-lg bg-gray-50 p-6">
+          <div class="flex min-w-px flex-1 flex-col">
+            <p class="text-xs leading-4 font-medium text-gray-500">Billing Address</p>
+            <p class="text-base leading-6 text-gray-900 whitespace-pre-line" data-uk-text="addressLines"></p>
           </div>
-          <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
-            <dl class="w-full">
-              <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                <dt class="text-sm/6 font-medium text-gray-900">Address</dt>
-                <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 whitespace-pre-line" data-uk-text="addressLines"></dd>
-              </div>
-            </dl>
-          </div>
+          <a href="bank-billing.html" class="shrink-0 py-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</a>
         </div>
+      </div>
         <div class="flex flex-col overflow-hidden rounded-lg border border-gray-200" data-uk-consents>
           <div class="flex gap-3 bg-gray-50 p-3"><img alt="" src="../../assets/sd-uk/info-circle-gray.svg" class="size-[18px] shrink-0"><p class="flex-1 text-xs leading-4 text-gray-800">Please review below terms. Once reviewed, please return to this page to express your consent by marking the appropriate checkboxes.</p></div>
           <div class="flex items-center gap-6 border-t border-gray-200 p-3.5"><p class="flex-1 text-xs leading-4 font-medium text-gray-700">I've read and consent to the <span class="text-blue-600">Terms of Use</span>.</p><button type="button" data-uk-review="terms" data-uk-review-title="Terms of Use" class="shrink-0 cursor-pointer text-xs leading-4 font-semibold text-blue-600 hover:text-blue-700">Review</button></div>
           <div class="flex items-center gap-6 border-t border-gray-200 p-3.5"><p class="flex-1 text-xs leading-4 font-medium text-gray-700">I consent to Transcard collecting, using, and storing my personal information (e.g. name, email address, phone number, date of birth, and associated financial details) to process payments. This information may be shared with regulators and service providers. For details, see our <span class="text-blue-600">Privacy Policy</span>.</p><button type="button" data-uk-review="privacy" data-uk-review-title="Privacy Policy" class="shrink-0 cursor-pointer text-xs leading-4 font-semibold text-blue-600 hover:text-blue-700">Review</button></div>
           <div class="flex items-center gap-6 border-t border-gray-200 p-3.5"><p class="flex-1 text-xs leading-4 font-medium text-gray-700">I've read and consent to the <span class="text-blue-600">E-Sign Consent</span>.</p><button type="button" data-uk-review="esign" data-uk-review-title="E-Sign Consent" class="shrink-0 cursor-pointer text-xs leading-4 font-semibold text-blue-600 hover:text-blue-700">Review</button></div>
         </div>
-          </div>
-          <div class="mt-auto flex w-full max-w-[640px] flex-col gap-4 pt-10">
-        <button type="button" id="bank-confirm" disabled class="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">Deposit <span data-uk-text="amount"></span></button>
-          </div>
-        </div>
+      <div class="flex flex-1 flex-col justify-end gap-6">
+        <button type="button" id="bank-confirm" disabled class="uk-grad flex h-14 w-full items-center justify-center gap-2 rounded-lg px-3.5 text-base font-semibold text-white shadow-[0_16px_24px_0_rgba(55,115,255,0.16)] transition-opacity opacity-40 cursor-not-allowed">Deposit <span data-uk-text="amount"></span></button>
         <div data-uk-footer></div>
       </div>
-    </div>
+      </div>
+    </main>
   </div>
   <script>
     SDUK.ready(function () {
-      document.querySelectorAll('[data-static]').forEach(function (el) { el.textContent = el.getAttribute('data-static'); });
       var b = SDUK.model().bank, m = SDUK.model();
-      document.querySelector('[data-holder]').textContent = ((b.holderFirst || m.claimant.firstName) + ' ' + (b.holderLast || m.claimant.lastName)).trim();
-      document.querySelector('[data-bank-type]').textContent = b.type || 'Current';
+      document.querySelector('[data-holder-first]').textContent = b.holderFirst || m.claimant.firstName;
+      document.querySelector('[data-holder-last]').textContent = b.holderLast || m.claimant.lastName;
       var btn = document.getElementById('bank-confirm');
       var root = document.querySelector('[data-uk-consents]');
       var check = function () { SDUK.setEnabled(btn, allDone()); };
       var allDone = SDUK.initConsents(root, check);
       check();
+      document.querySelector('[data-uk-eta]').addEventListener('click', function () { SDUK.infoModal('Estimated processing time', '<p>Most UK bank transfers arrive the same day through Faster Payments. Allow up to 3 working days.</p>'); });
       btn.addEventListener('click', function () { if (!btn.disabled) SDUK.go('bank-done.html'); });
     });
   </script>
