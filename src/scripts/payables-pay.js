@@ -121,7 +121,7 @@
     if (!el) return;
     var styles = {
       ready_to_pay:
-        "bg-gray-50 text-gray-600 inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20",
+        "border border-gray-200 bg-gray-100 text-gray-900 dark:border-white/15 dark:bg-white/10 dark:text-gray-200",
       in_progress:
         "bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30",
       scheduled:
@@ -131,18 +131,27 @@
         "bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20",
     };
     var labels = {
-      ready_to_pay: "Ready to Pay",
+      ready_to_pay: "Unprocessed",
       in_progress: "In Progress",
       scheduled: "Scheduled",
       paid: "Paid",
       exception: "Exception",
     };
     var key = String(status || "ready_to_pay");
-    el.className =
-      "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium inset-ring " +
-      (styles[key] || styles.ready_to_pay);
+    var isReady = key === "ready_to_pay";
+    el.className = isReady
+      ? "inline-flex items-center gap-0.5 rounded border py-0.5 pr-2 pl-1 text-sm leading-5 font-medium " +
+        styles.ready_to_pay
+      : "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium inset-ring " +
+        (styles[key] || styles.ready_to_pay);
     el.innerHTML =
-      key === "scheduled"
+      isReady
+        ? '<img src="../../../src/assets/table/flag.svg" width="14" height="14" alt="" class="shrink-0" /><span>' +
+          escapeHtml(
+            String(statusLabel || labels.ready_to_pay),
+          ) +
+          "</span>"
+        : key === "scheduled"
         ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg><span class="leading-none">' +
           escapeHtml(
             String(statusLabel || labels[key] || labels.ready_to_pay),
@@ -172,7 +181,7 @@
     if (status === "exception") {
       return { key: "exception", label: "Exception" };
     }
-    return { key: "ready_to_pay", label: "Ready to Pay" };
+    return { key: "ready_to_pay", label: "Unprocessed" };
   }
 
   function isConfirmedPayableRow(row) {
@@ -1922,11 +1931,11 @@
     var badge = document.getElementById(badgeId);
     if (!badge) return;
     if (isComplete) {
-      badge.className = STEP_BADGE_COMPLETE_CLASS;
+      badge.className = "sr-only";
       badge.innerHTML = STEP_BADGE_CHECK_ICON;
       badge.setAttribute("aria-label", "Step " + displayNumber + " complete");
     } else {
-      badge.className = STEP_BADGE_NUMBER_CLASS;
+      badge.className = "sr-only";
       badge.textContent = String(displayNumber);
       badge.setAttribute("aria-label", "Step " + displayNumber);
     }
@@ -2037,10 +2046,14 @@
 
     var canSubmit = step1Done && step2Done;
     var payBtn = document.getElementById("gp-submit-btn");
+    var footerPayBtn = document.getElementById("gp-footer-pay-btn");
     var scheduleBtn =
       document.getElementById("pp-schedule-simple-btn") ||
       document.getElementById("pp-schedule-chip-date-btn");
     if (payBtn) payBtn.disabled = !canSubmit;
+    if (footerPayBtn) footerPayBtn.disabled = !canSubmit;
+    var footerPayMenu = document.getElementById("gp-footer-pay-menu");
+    if (footerPayMenu) footerPayMenu.disabled = !canSubmit;
     if (scheduleBtn) scheduleBtn.disabled = false;
     updateSmartTestEmailUi("smart_disburse");
     updateSmartTestEmailUi("smart_exchange");
@@ -2456,6 +2469,8 @@
     }
 
     if (submitBtn) submitBtn.classList.toggle("hidden", isConfirmed);
+    var footerPayGroup = document.getElementById("gp-footer-pay-group");
+    if (footerPayGroup) footerPayGroup.classList.toggle("hidden", isConfirmed);
     if (headerCancelBtn)
       headerCancelBtn.classList.toggle(
         "hidden",
@@ -4501,49 +4516,73 @@
     setInputValue("gp-pmc-check-memo-mobile", memo);
   }
 
-  function buildPayPageActivityLogItem(item, showLine) {
-    var dotClassesByType = {
-      processing:
-        "bg-blue-100 ring-1 ring-blue-700/40 dark:bg-blue-400/15 dark:ring-blue-400/30",
-      scheduled:
-        "bg-gray-200 ring-1 ring-gray-400/40 dark:bg-white/15 dark:ring-white/20",
-      pending:
-        "bg-yellow-100 ring-1 ring-yellow-700/40 dark:bg-yellow-400/15 dark:ring-yellow-400/30",
-      success:
-        "bg-green-100 ring-1 ring-green-700/40 dark:bg-green-400/15 dark:ring-green-400/30",
-      completed:
-        "bg-green-100 ring-1 ring-green-700/40 dark:bg-green-400/15 dark:ring-green-400/30",
-      failed:
-        "bg-red-100 ring-1 ring-red-700/40 dark:bg-red-400/15 dark:ring-red-400/30",
-      event:
-        "bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20",
-    };
-    var dotClasses =
-      dotClassesByType[item && item.type] || dotClassesByType.event;
-    var lineHtml = showLine
-      ? '<div class="absolute top-0 -bottom-6 left-0 flex w-6 justify-center"><div class="w-px bg-gray-200 dark:bg-white/10"></div></div>'
-      : "";
+  function formatSlashDate(value) {
+    if (!value) return "";
+    var date = new Date(String(value).slice(0, 10) + "T00:00:00");
+    if (isNaN(date.getTime())) return "";
+    var month = String(date.getMonth() + 1).padStart(2, "0");
+    var day = String(date.getDate()).padStart(2, "0");
+    return month + "/" + day + "/" + date.getFullYear();
+  }
 
+  function formatActivityStamp(label) {
+    var text = String(label || "").trim();
+    if (!text) return "";
+    if (/\([A-Z]{2,5}\)$/.test(text)) return text;
+    return text + " (EST)";
+  }
+
+  function decoratePayPageActivityItem(item, row) {
+    if (!item) return item;
+    var status = String((row && row.status) || "")
+      .trim()
+      .toLowerCase();
+    var next = {
+      kind: item.kind,
+      title: item.title,
+      description: item.description,
+      dateLabel: formatActivityStamp(item.dateLabel),
+    };
+    if (
+      item.kind === "created" &&
+      (status === "ready_to_pay" || status === "pending")
+    ) {
+      var payableId = String((row && (row.billNumber || row.id)) || "").trim();
+      var due = formatSlashDate(row && row.dueDate);
+      next.title = "Unprocessed";
+      next.description =
+        "Payment for payable id" +
+        (payableId ? " #" + payableId : "") +
+        " is pending initiation" +
+        (due ? " on " + due : "");
+    }
+    return next;
+  }
+
+  function buildPayPageActivityLogItem(item, isLast) {
+    var descriptionHtml = escapeHtml((item && item.description) || "").replace(
+      /#([A-Za-z0-9-]+)/g,
+      '<span class="font-medium text-blue-600 dark:text-blue-400">#$1</span>',
+    );
     return (
-      '<div class="relative flex gap-4">' +
-      lineHtml +
-      '<div class="relative flex size-6 flex-none items-center justify-center bg-white dark:bg-gray-900">' +
-      '<div class="size-1.5 rounded-full ' +
-      dotClasses +
-      '"></div>' +
+      '<div class="flex items-start gap-4">' +
+      '<div class="flex shrink-0 items-start pt-1.5">' +
+      '<img src="../../../src/assets/table/flag.svg" width="14" height="14" alt="" class="shrink-0" />' +
       "</div>" +
-      '<div class="flex flex-col gap-1 pb-6">' +
-      '<p class="text-base font-medium text-gray-900 dark:text-white">' +
+      '<div class="flex flex-col gap-1' +
+      (isLast ? "" : " pb-6") +
+      '">' +
+      '<p class="text-base leading-6 font-medium text-gray-900 dark:text-white">' +
       escapeHtml((item && item.title) || "") +
       "</p>" +
+      '<p class="text-sm leading-5 font-normal text-gray-700 dark:text-gray-300">' +
+      descriptionHtml +
+      "</p>" +
       (item && item.dateLabel
-        ? '<p class="text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">' +
+        ? '<p class="text-xs leading-4 font-medium text-gray-400 dark:text-gray-500">' +
           escapeHtml(item.dateLabel) +
           "</p>"
         : "") +
-      '<p class="text-sm text-gray-700 dark:text-gray-300">' +
-      escapeHtml((item && item.description) || "") +
-      "</p>" +
       "</div>" +
       "</div>"
     );
@@ -4556,6 +4595,9 @@
       typeof window.getActivityLog === "function"
         ? window.getActivityLog(row)
         : [];
+    log = log.map(function (item) {
+      return decoratePayPageActivityItem(item, row);
+    });
     if (!log.length) {
       content.innerHTML =
         '<div class="rounded-lg border border-dashed border-gray-300 bg-gray-50/70 px-4 py-5 text-center dark:border-white/15 dark:bg-white/5">' +
@@ -4569,7 +4611,7 @@
     }
     content.innerHTML = log
       .map(function (item, idx) {
-        return buildPayPageActivityLogItem(item, idx < log.length - 1);
+        return buildPayPageActivityLogItem(item, idx === log.length - 1);
       })
       .join("");
   }
@@ -4947,6 +4989,21 @@
     var entryBtn = document.getElementById("gp-submit-btn");
     var confirmBtn = document.getElementById("pp-payment-confirm-submit-btn");
     if (!entryBtn || !confirmBtn) return;
+
+    var footerPayBtn = document.getElementById("gp-footer-pay-btn");
+    if (footerPayBtn) {
+      footerPayBtn.addEventListener("click", function (event) {
+        event.preventDefault();
+        entryBtn.click();
+      });
+    }
+    var footerPayMenu = document.getElementById("gp-footer-pay-menu");
+    if (footerPayMenu) {
+      footerPayMenu.addEventListener("click", function () {
+        var scheduleBtn = document.getElementById("pp-schedule-simple-btn");
+        if (scheduleBtn) scheduleBtn.click();
+      });
+    }
 
     entryBtn.addEventListener("click", function (event) {
       event.preventDefault();
@@ -7030,7 +7087,7 @@
 
     function resetSelection() {
       selectedEl.innerHTML =
-        '<span class="truncate text-gray-400 dark:text-gray-500">Select origination account</span>';
+        '<span class="truncate text-base leading-6 font-normal text-gray-400 dark:text-gray-500">Select account</span>';
       optionsEl.setAttribute("data-selected-value", "");
       optionsEl.querySelectorAll("el-option").forEach(function (opt) {
         opt.removeAttribute("aria-selected");
@@ -7149,25 +7206,22 @@
   function populatePage(row, payeeProfile) {
     if (!row) return;
     setText("gp-date-label", "Due Date");
-    setText("gp-customer-label", "Payee");
-    setText("gp-invoice-label", "Bill #");
+    setText("gp-customer-label", "Vendor");
+    setText("gp-invoice-label", "Bill Reference");
 
     setText("gp-amount", formatMoney(row.amount, row.currency));
+    setText("gp-header-pay-amount", formatMoney(row.amount, row.currency));
+    setText("gp-footer-pay-amount", formatMoney(row.amount, row.currency));
     setText("gp-currency", row.currency || "USD");
     setText("gp-date", formatDate(row.dueDate));
     var dueDateField = document.getElementById("gp-date");
     var dueDateTooltip = document.getElementById("gp-date-past-due-tooltip");
-    var pastDue = isPastDue(row.dueDate);
     if (dueDateField) {
-      dueDateField.classList.toggle("text-gray-600", !pastDue);
-      dueDateField.classList.toggle("dark:text-gray-400", !pastDue);
-      dueDateField.classList.toggle("text-red-600", pastDue);
-      dueDateField.classList.toggle("dark:text-red-400", pastDue);
-      dueDateField.setAttribute("title", pastDue ? "Past due" : "");
+      dueDateField.classList.add("text-gray-700", "dark:text-gray-200");
+      dueDateField.classList.remove("text-red-600", "dark:text-red-400");
+      dueDateField.removeAttribute("title");
     }
-    if (dueDateTooltip) {
-      dueDateTooltip.classList.toggle("hidden", !pastDue);
-    }
+    if (dueDateTooltip) dueDateTooltip.classList.add("hidden");
     setText(
       "gp-customer",
       (payeeProfile && payeeProfile.name) || row.payeeName,
@@ -7179,11 +7233,8 @@
     setText("gp-invoice", row.billNumber);
     var payeeCopyButton = document.getElementById("gp-customer-copy");
     if (payeeCopyButton) {
-      var hasVendorId = !!String(
-        (payeeProfile && payeeProfile.vendorId) || "",
-      ).trim();
-      payeeCopyButton.classList.toggle("hidden", !hasVendorId);
-      payeeCopyButton.classList.toggle("inline-flex", hasVendorId);
+      payeeCopyButton.classList.add("hidden");
+      payeeCopyButton.classList.remove("inline-flex");
     }
     var headerMeta = document.getElementById("pp-header-date-meta");
     var statusDateChip = document.getElementById("pp-status-date-chip");
@@ -7237,12 +7288,12 @@
         : [];
     if (!attachments.length) {
       attachmentsWrap.innerHTML =
-        '<span class="text-sm font-normal leading-5 text-gray-600 dark:text-gray-400">--</span>';
+        '<span class="text-base leading-6 font-medium text-gray-700 dark:text-gray-200">--</span>';
       return;
     }
 
     var iconSvg =
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" /></svg>';
+      '<img src="../../../src/assets/table/document-text-14.svg" width="14" height="14" alt="" class="shrink-0" />';
 
     attachmentsWrap.innerHTML = attachments
       .map(function (att, idx) {
@@ -7251,7 +7302,7 @@
           '<button type="button" command="show-modal" commandfor="gp-review-dialog" data-attachment-index="' +
           idx +
           '"' +
-          ' class="inline-flex cursor-pointer items-center gap-1.5 rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">' +
+          ' class="inline-flex cursor-pointer items-center gap-0.5 rounded border border-gray-200 bg-gray-100 py-0.5 pr-2 pl-1 text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">' +
           iconSvg +
           '<span class="truncate max-w-[220px]">' +
           name +

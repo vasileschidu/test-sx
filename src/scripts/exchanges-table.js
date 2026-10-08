@@ -241,7 +241,7 @@
 
   var CLASS_NAMES = {
     tbody: "bg-white dark:bg-gray-900",
-    row: "transition-colors duration-300 motion-reduce:transition-none",
+    row: "",
     cellBorder: " border-b border-gray-200 dark:border-white/10",
     actionCell:
       "bg-white h-[52px] align-middle py-0 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2",
@@ -1900,7 +1900,7 @@
       '" class="' +
       CLASS_NAMES.row +
       (IS_SUPPLIER_PORTAL
-        ? " cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5"
+        ? " group cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5"
         : "") +
       '">';
 
@@ -1938,6 +1938,8 @@
           actionClass = actionClass
             .replace("w-32 min-w-32", "w-[140px] min-w-[140px]")
             .replace("sm:pr-2", "pr-0");
+          actionClass +=
+            " group-hover:bg-gray-50 dark:group-hover:bg-white/5";
         }
         html +=
           '<td data-action-column class="' +
@@ -3128,10 +3130,8 @@
         icon.classList.remove("rotate-90");
       }
       mainRow.classList.remove("bg-gray-100", "dark:bg-white/5");
-      if (stickyCell)
-        stickyCell.classList.remove("!bg-gray-100", "dark:!bg-gray-900");
-      if (actionCell)
-        actionCell.classList.remove("!bg-gray-100", "dark:!bg-gray-900");
+      setExpandedActionBackground(stickyCell, false);
+      setExpandedActionBackground(actionCell, false);
     } else {
       detailRow.classList.remove("hidden");
       if (icon) {
@@ -3139,11 +3139,18 @@
         else icon.style.transform = "rotate(90deg)";
       }
       mainRow.classList.add("bg-gray-100", "dark:bg-white/5");
-      if (stickyCell)
-        stickyCell.classList.add("!bg-gray-100", "dark:!bg-gray-900");
-      if (actionCell)
-        actionCell.classList.add("!bg-gray-100", "dark:!bg-gray-900");
+      setExpandedActionBackground(stickyCell, true);
+      setExpandedActionBackground(actionCell, true);
     }
+  }
+
+  function setExpandedActionBackground(cell, expanded) {
+    if (!cell) return;
+    cell.classList.remove("!bg-gray-100", "dark:!bg-gray-900");
+    cell.classList.toggle("bg-white", !expanded);
+    cell.classList.toggle("dark:bg-gray-900", !expanded);
+    cell.classList.toggle("bg-gray-100", expanded);
+    cell.classList.toggle("dark:bg-white/5", expanded);
   }
 
   function attachToggleListeners(table) {
