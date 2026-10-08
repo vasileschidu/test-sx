@@ -6998,20 +6998,20 @@
     return buildEntryActivityLogItems(entry);
   }
 
-  var ATTACHMENT_ICON =
-    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500">' +
-    '<path fill-rule="evenodd" clip-rule="evenodd" d="M15.621 4.379a3 3 0 0 0-4.242 0l-7 7a3 3 0 0 0 4.241 4.243h.001l.497-.5a.75.75 0 0 1 1.064 1.057l-.498.501-.002.002a4.5 4.5 0 0 1-6.364-6.364l7-7a4.5 4.5 0 0 1 6.368 6.36l-3.455 3.553A2.625 2.625 0 1 1 9.52 9.52l3.45-3.451a.75.75 0 1 1 1.061 1.06l-3.45 3.451a1.125 1.125 0 0 0 1.587 1.595l3.454-3.553a3 3 0 0 0 0-4.242Z" />' +
-    "</svg>";
+  var GET_PAID_ASSET_ROOT = "../../assets/get-paid/";
 
+  var ATTACHMENT_ICON =
+    '<img src="' +
+    GET_PAID_ASSET_ROOT +
+    'paper-clip.svg" alt="" width="20" height="20" class="size-5 shrink-0" />';
+
+  // Reviewed state: green check. The hidden checkbox keeps the checked state
+  // that updateGetPaidStepStates() and the review dialog read.
   var CHECKBOX_STATUS_HTML =
-    '<div class="flex h-6 shrink-0 items-center">' +
-    '<div class="group grid size-4 grid-cols-1 opacity-60">' +
-    '<input type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
-    '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
-    '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
-    "</svg>" +
-    "</div>" +
-    "</div>";
+    '<img src="' +
+    GET_PAID_ASSET_ROOT +
+    'check-20.svg" alt="Reviewed" width="20" height="20" class="size-5 shrink-0" />' +
+    '<input type="checkbox" class="hidden" tabindex="-1" aria-hidden="true" />';
 
   var STEP_BADGE_NUMBER_CLASS =
     "inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300";
@@ -7281,25 +7281,45 @@
       getConfirmSummaryDestination(paymentValue) || "—";
   }
 
+  function getAttachmentDisplayParts(att) {
+    var name = String((att && att.name) || "");
+    var dot = name.lastIndexOf(".");
+    var ext = dot > 0 ? name.slice(dot + 1).toUpperCase() : "";
+    var baseName = dot > 0 ? name.slice(0, dot) : name;
+    var size = String((att && att.size) || "").trim();
+    var sizeMatch = size.match(/^([\d.,]+)\s*([a-z]+)$/i);
+    if (sizeMatch) size = sizeMatch[1] + " " + sizeMatch[2].toUpperCase();
+    return { name: baseName, type: ext, size: size };
+  }
+
   function buildAttachmentItem(att, idx) {
+    var parts = getAttachmentDisplayParts(att);
+    var metaHtml = [parts.type, parts.size]
+      .filter(Boolean)
+      .map(function (part) {
+        return "<span>" + escapeHtml(part) + "</span>";
+      })
+      .join(
+        '<img src="' +
+          GET_PAID_ASSET_ROOT +
+          'dot-2.svg" alt="" width="2" height="2" class="size-0.5 shrink-0" />',
+      );
     return (
-      '<li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm/6">' +
-      '<div class="flex w-0 flex-1 items-center">' +
+      '<li class="flex items-center gap-3 p-3.5">' +
       ATTACHMENT_ICON +
-      '<div class="ml-4 flex min-w-0 flex-1 gap-2">' +
+      '<div class="flex min-w-0 flex-1 flex-col gap-0.5">' +
       '<button type="button" command="show-modal" commandfor="gp-review-dialog"' +
-      ' class="gp-review-name-trigger truncate font-medium text-gray-900 underline decoration-transparent underline-offset-2 transition-colors hover:text-gray-700 hover:decoration-gray-400 dark:text-white dark:hover:text-gray-200 dark:hover:decoration-white/30"' +
+      ' class="gp-review-name-trigger cursor-pointer truncate text-left text-sm leading-5 font-semibold text-gray-700 underline decoration-transparent underline-offset-2 transition-colors hover:text-gray-900 hover:decoration-gray-400 dark:text-gray-200 dark:hover:text-white dark:hover:decoration-white/30"' +
       ' data-attach-idx="' +
       idx +
       '">' +
-      escapeHtml(att.name || "") +
+      escapeHtml(parts.name) +
       "</button>" +
-      '<span class="shrink-0 text-gray-400 dark:text-gray-500">' +
-      escapeHtml(att.size || "") +
-      "</span>" +
+      '<div class="flex items-center gap-2 text-xs leading-4 font-normal text-gray-500 dark:text-gray-400">' +
+      metaHtml +
       "</div>" +
       "</div>" +
-      '<div class="ml-4 shrink-0 flex items-center">' +
+      '<div class="flex shrink-0 items-center">' +
       '<button type="button" command="show-modal" commandfor="gp-review-dialog"' +
       ' class="gp-review-trigger inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"' +
       ' data-attach-idx="' +
@@ -7325,7 +7345,7 @@
       items += buildAttachmentItem(att, idx);
     });
     return (
-      '<ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200 dark:divide-white/5 dark:border-white/10">' +
+      '<ul role="list" class="divide-y divide-gray-200 overflow-clip rounded-lg border border-gray-200 dark:divide-white/10 dark:border-white/10">' +
       items +
       "</ul>"
     );
@@ -7339,11 +7359,11 @@
 
     if (docStep) {
       docStep.classList.toggle("hidden", !docRequired);
-      docStep.classList.toggle("sm:grid", docRequired);
+      docStep.classList.toggle("sm:flex", docRequired);
     }
     if (signatureStep) {
       signatureStep.classList.toggle("hidden", !signatureRequired);
-      signatureStep.classList.toggle("sm:grid", signatureRequired);
+      signatureStep.classList.toggle("sm:flex", signatureRequired);
     }
     var step3DisplayNum =
       1 + (docRequired ? 1 : 0) + (signatureRequired ? 1 : 0);
@@ -7354,7 +7374,7 @@
     var confirmStep = document.getElementById("gp-confirm-step");
     if (confirmStep) {
       confirmStep.classList.toggle("hidden", !SPEEDBUMP_ENABLED);
-      confirmStep.classList.toggle("sm:grid", SPEEDBUMP_ENABLED);
+      confirmStep.classList.toggle("sm:flex", SPEEDBUMP_ENABLED);
     }
   }
 
@@ -7369,32 +7389,25 @@
     });
     var selectedContent = sel.querySelector("el-selectedcontent");
     var labelMap = {
-      "payers-card": "Accept Payer's Card",
-      "bank-account": "Send to Bank Account",
+      "payers-card": "Quick Pay",
+      "bank-account": "Bank Account",
       "paper-check": "Request a Paper Check",
     };
     if (selectedContent) {
       var label = displayLabel || labelMap[value] || value;
-      if (value === "payers-card") {
+      var selectedIcon =
+        value === "payers-card"
+          ? "credit-card-sparkle-20.svg"
+          : value === "bank-account"
+            ? "building-library-20.svg"
+            : "";
+      if (selectedIcon) {
         selectedContent.innerHTML =
           '<span class="flex min-w-0 items-center gap-2">' +
-          '<span class="shrink-0 text-gray-600 dark:text-gray-400">' +
-          '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">' +
-          '<path d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>' +
-          "</svg>" +
-          "</span>" +
-          '<span class="truncate font-medium text-gray-900 dark:text-white">' +
-          escapeHtml(label) +
-          "</span>" +
-          "</span>";
-      } else if (value === "bank-account") {
-        selectedContent.innerHTML =
-          '<span class="flex min-w-0 items-center gap-2">' +
-          '<span class="shrink-0 text-gray-600 dark:text-gray-400">' +
-          '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">' +
-          '<path d="M12 21V12.75M15.75 21V12.75M8.25 21V12.75M3 9L12 3L21 9M19.5 21V10.3325C17.0563 9.94906 14.5514 9.75 12 9.75C9.44861 9.75 6.94372 9.94906 4.5 10.3325V21M3 21H21M12 6.75H12.0075V6.7575H12V6.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></path>' +
-          "</svg>" +
-          "</span>" +
+          '<img src="' +
+          GET_PAID_ASSET_ROOT +
+          selectedIcon +
+          '" alt="" width="20" height="20" class="size-5 shrink-0" />' +
           '<span class="truncate font-medium text-gray-900 dark:text-white">' +
           escapeHtml(label) +
           "</span>" +
@@ -7439,11 +7452,11 @@
       methodType === "smart_exchange" ||
       paymentMethod.toLowerCase().indexOf("smart exchange") !== -1
     ) {
-      return "Accept Payer's Card";
+      return "Quick Pay";
     }
-    if (paymentValue === "bank-account") return "Send to Bank Account";
+    if (paymentValue === "bank-account") return "Bank Account";
     if (paymentValue === "paper-check") return "Request a Paper Check";
-    return "Accept Payer's Card";
+    return "Quick Pay";
   }
 
   function getManualPendingGetPaidMethodLabel(paymentValue) {
@@ -7817,45 +7830,58 @@
     syncGetPaidDeclineMessage(entry);
   }
 
+  var GET_PAID_BADGE_BASE_CLASS =
+    "inline-flex items-center gap-0.5 rounded border py-0.5 pr-2 text-sm leading-5 font-medium";
+  var GET_PAID_BADGE_TONES = {
+    yellow:
+      "border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-400",
+    green:
+      "border-green-300 bg-green-100 text-green-800 dark:border-green-400/30 dark:bg-green-400/10 dark:text-green-400",
+    red: "border-red-300 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400",
+    blue: "border-blue-300 bg-blue-100 text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-400",
+  };
+
+  function setGetPaidHeaderBadge(badge, text, tone, showClock) {
+    var textEl = badge.querySelector("[data-badge-text]");
+    var iconEl = badge.querySelector("[data-badge-icon]");
+    var hasClock = !!(showClock && iconEl);
+    badge.className =
+      GET_PAID_BADGE_BASE_CLASS +
+      " " +
+      GET_PAID_BADGE_TONES[tone] +
+      (hasClock ? " pl-1" : " pl-2");
+    if (textEl) textEl.textContent = text;
+    else badge.textContent = text;
+    if (iconEl) iconEl.classList.toggle("hidden", !hasClock);
+  }
+
   function syncGetPaidHeaderStatus(entry) {
     var badge = document.getElementById("gp-status-badge");
     if (!badge || !entry) return;
     badge.removeAttribute("title");
     if (entry.status === "paid") {
-      badge.textContent = "Paid";
-      badge.className =
-        "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:inset-ring-green-400/30";
+      setGetPaidHeaderBadge(badge, "Paid", "green", false);
       return;
     }
     if (entry.status === "declined") {
-      badge.textContent = "Declined";
-      badge.className =
-        "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-red-50 text-red-700 inset-ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:inset-ring-red-400/30";
+      setGetPaidHeaderBadge(badge, "Declined", "red", false);
       return;
     }
     if (entry.status === "exception") {
-      badge.textContent = "Exception";
-      badge.className =
-        "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-red-50 text-red-700 inset-ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:inset-ring-red-400/30";
+      setGetPaidHeaderBadge(badge, "Exception", "red", false);
       return;
     }
     if (entry.status === "processing") {
-      badge.textContent = "Processing";
+      setGetPaidHeaderBadge(badge, "Processing", "blue", false);
       badge.title =
         "ACH is processing automatically. Standard ACH processing time is typically 1-2 business days.";
-      badge.className =
-        "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/20";
       return;
     }
     if (isPendingAutoProcessingEntry(entry)) {
-      badge.textContent = "Pending";
-      badge.className =
-        "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20";
+      setGetPaidHeaderBadge(badge, "Pending", "yellow", true);
       return;
     }
-    badge.textContent = "Pending Your Action";
-    badge.className =
-      "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20";
+    setGetPaidHeaderBadge(badge, "Pending Your Action", "yellow", true);
   }
 
   function openGetPaidPanel(entry) {
@@ -8812,6 +8838,31 @@
     // Back button
     var backBtn = document.getElementById("get-paid-back");
     if (backBtn) backBtn.addEventListener("click", closeGetPaidPanel);
+
+    // Footer submit mirrors the header submit (state, label and visibility)
+    var headerSubmit = document.getElementById("gp-submit-btn");
+    var footerSubmit = document.getElementById("gp-submit-btn-footer");
+    if (headerSubmit && footerSubmit) {
+      var syncFooterSubmit = function () {
+        footerSubmit.disabled = headerSubmit.disabled;
+        footerSubmit.textContent = headerSubmit.textContent;
+        footerSubmit.parentElement.classList.toggle(
+          "hidden",
+          headerSubmit.classList.contains("hidden"),
+        );
+      };
+      new MutationObserver(syncFooterSubmit).observe(headerSubmit, {
+        attributes: true,
+        attributeFilter: ["disabled", "class"],
+        childList: true,
+        characterData: true,
+        subtree: true,
+      });
+      footerSubmit.addEventListener("click", function () {
+        if (!headerSubmit.disabled) headerSubmit.click();
+      });
+      syncFooterSubmit();
+    }
 
     // Receivable Summary toggle
     var receivableToggle = document.getElementById("gp-receivable-toggle");
