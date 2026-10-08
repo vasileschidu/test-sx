@@ -225,19 +225,16 @@
 
   function createCardAccountRow(card, options) {
     options = options || {};
+    var name = card.vendorName || card.holderName || "Card";
     return createAccountDetailsComponent({
       id: card.id,
-      mediaHtml: createMiniCardComponent({
-        brand: card.brand,
-        last4: card.last4,
-      }),
-      mediaClass: "flex h-8 w-10 shrink-0 items-center justify-center",
-      title: card.vendorName || card.holderName || "Card",
-      subtitle: card.expiration
-        ? "Expires " + card.expiration
-        : "••••" + escapeHtml(card.last4 || ""),
+      expandable: false,
+      mediaHtml: getCardBrandLogoMarkup(card.brand, "medium"),
+      mediaClass:
+        "flex size-[34px] shrink-0 items-center justify-center rounded-full",
+      title: card.last4 ? name + " •••• " + card.last4 : name,
+      subtitle: card.expiration ? "Expiration " + card.expiration : "",
       actionsHtml: options.actionsHtml || "",
-      bodyHtml: options.bodyHtml || buildCardDetailBody(card),
       afterRender: options.afterRender,
     });
   }
@@ -248,10 +245,14 @@
       "flex flex-col self-stretch rounded-lg bg-gray-50 dark:bg-white/5";
     if (config && config.id)
       row.setAttribute("data-account-details-id", config.id);
+    var expandable = !config || config.expandable !== false;
     row.innerHTML =
-      '<div data-method-header class="flex items-center justify-between gap-3 rounded-lg p-3">' +
+      '<div data-method-header class="flex items-center justify-between gap-' +
+      (expandable ? "3" : "6") +
+      ' rounded-lg p-3">' +
       '<div data-method-click-target class="flex min-w-0 grow items-center gap-3">' +
       buildExpandableHeader({
+        expandable: expandable,
         mediaHtml: config.mediaHtml || "",
         mediaClass: config.mediaClass || "",
         iconHtml: config.iconHtml || "",
@@ -261,11 +262,13 @@
       }) +
       "</div>" +
       "</div>" +
-      '<div data-method-body class="hidden px-3 pb-3">' +
-      '<div class="min-w-0">' +
-      (config.bodyHtml || "") +
-      "</div>" +
-      "</div>";
+      (expandable
+        ? '<div data-method-body class="hidden px-3 pb-3">' +
+          '<div class="min-w-0">' +
+          (config.bodyHtml || "") +
+          "</div>" +
+          "</div>"
+        : "");
     attachAccordionBehavior(row);
     attachCopyBehavior(row);
     if (typeof config.afterRender === "function") config.afterRender(row);
@@ -276,12 +279,19 @@
     var mediaHtml = config.mediaHtml || config.iconHtml || "";
     var mediaClass =
       config.mediaClass || "flex size-10 items-center justify-center";
+    var expandable = config.expandable !== false;
     return (
       "" +
-      '<div class="grid min-w-0 grow grid-cols-[auto_auto_minmax(0,1fr)] items-center gap-3">' +
-      '  <button type="button" data-method-toggle class="shrink-0 rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300" aria-expanded="false">' +
-      createChevronIcon() +
-      "  </button>" +
+      '<div class="grid min-w-0 grow ' +
+      (expandable
+        ? "grid-cols-[auto_auto_minmax(0,1fr)]"
+        : "grid-cols-[auto_minmax(0,1fr)]") +
+      ' items-center gap-3">' +
+      (expandable
+        ? '  <button type="button" data-method-toggle class="shrink-0 rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300" aria-expanded="false">' +
+          createChevronIcon() +
+          "  </button>"
+        : "") +
       '  <div class="' +
       mediaClass +
       '">' +

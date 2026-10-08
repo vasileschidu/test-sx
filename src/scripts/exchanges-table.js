@@ -3614,6 +3614,7 @@
         columns: columns,
         rowCount: Math.min(10, paginationState.pageSize || DEFAULT_PAGE_SIZE),
         includeHeader: true,
+        headerHtml: buildTheadHTML(columns),
       });
     } else {
       table.innerHTML =
@@ -9561,12 +9562,12 @@
       if (sigMode === "draw") {
         if (tabDraw) {
           tabDraw.className =
-            "rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900 dark:bg-white/10 dark:text-white";
+            "cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-base leading-6 font-semibold text-gray-900 dark:bg-white/10 dark:text-white";
           tabDraw.setAttribute("aria-current", "page");
         }
         if (tabType) {
           tabType.className =
-            "rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300";
+            "cursor-pointer rounded-md px-3 py-2 text-base leading-6 font-semibold text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white";
           tabType.removeAttribute("aria-current");
         }
         if (typeWrap) typeWrap.classList.add("hidden");
@@ -9574,12 +9575,12 @@
       } else {
         if (tabType) {
           tabType.className =
-            "rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900 dark:bg-white/10 dark:text-white";
+            "cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-base leading-6 font-semibold text-gray-900 dark:bg-white/10 dark:text-white";
           tabType.setAttribute("aria-current", "page");
         }
         if (tabDraw) {
           tabDraw.className =
-            "rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300";
+            "cursor-pointer rounded-md px-3 py-2 text-base leading-6 font-semibold text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white";
           tabDraw.removeAttribute("aria-current");
         }
         if (typeWrap) typeWrap.classList.remove("hidden");

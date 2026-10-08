@@ -284,6 +284,7 @@ window.__ppStorageKey = function (name) {
     function setDirty(nextDirty) {
       isDirty = !!nextDirty;
       if (undoBtn) undoBtn.disabled = !isDirty;
+      if (saveBtn && config.disableSaveWhenClean) saveBtn.disabled = !isDirty;
     }
 
     if (undoBtn) {
@@ -396,9 +397,9 @@ window.__ppStorageKey = function (name) {
     return (
       "" +
       '<el-dropdown class="shrink-0 inline-block">' +
-      '  <button type="button" class="rounded-md p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-600 transition-colors dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">' +
+      '  <button type="button" class="rounded p-[5px] text-gray-500 hover:bg-gray-200 hover:text-gray-600 transition-colors dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">' +
       '    <span class="sr-only">Open card actions</span>' +
-      '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">' +
+      '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-[18px]">' +
       '      <path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z" />' +
       "    </svg>" +
       "  </button>" +
@@ -913,7 +914,7 @@ window.__ppStorageKey = function (name) {
     var hiddenCount = Math.max(filteredCards.length - INITIAL_VISIBLE, 0);
     if (!isExpanded && hiddenCount > 0) {
       cardsToggleBtn.style.display = "inline-flex";
-      cardsToggleLabel.textContent = "Show more (" + hiddenCount + ")";
+      cardsToggleLabel.textContent = "Show all (" + filteredCards.length + ")";
       cardsToggleIcon.classList.remove("rotate-180");
     } else if (isExpanded && filteredCards.length > INITIAL_VISIBLE) {
       cardsToggleBtn.style.display = "inline-flex";
@@ -1108,6 +1109,7 @@ window.__ppStorageKey = function (name) {
   var footerActions = window.__ppInitFooterActions({
     undoBtn: undoBtn,
     saveBtn: saveBtn,
+    disableSaveWhenClean: true,
     onUndo: function () {
       window.location.reload();
     },
@@ -1343,53 +1345,53 @@ window.__ppStorageKey = function (name) {
       '<div class="pp-adv-row flex w-full items-center gap-4 px-2 py-3">' +
       '<div class="min-w-0 flex-1">' +
       '<el-select data-adv-payer-select class="block w-full">' +
-      '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
-      '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"><span class="text-gray-400 dark:text-gray-500">Select payer</span></el-selectedcontent>' +
-      '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
+      '<button type="button" class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-sm leading-5 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
+      '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-900 dark:text-white"><span class="font-normal text-gray-400 dark:text-gray-500">Select payer</span></el-selectedcontent>' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>' +
       "</button>" +
       '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-payer-options></el-options>' +
       "</el-select>" +
       "</div>" +
       '<div class="min-w-0 flex-1">' +
       '<el-select data-adv-entity-select value="all-entities" class="block w-full">' +
-      '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
-      '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white">All entities</el-selectedcontent>' +
-      '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
+      '<button type="button" class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-gray-50 px-3 text-left text-sm leading-5 font-medium text-gray-500 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-gray-400 dark:outline-white/10">' +
+      '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-500 dark:text-gray-400">All entities</el-selectedcontent>' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>' +
       "</button>" +
       '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-entity-options></el-options>' +
       "</el-select>" +
       "</div>" +
       '<div class="min-w-0 flex-1">' +
       '<el-select data-adv-method-select data-method-slot="1" class="block w-full">' +
-      '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
-      '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"><span class="text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
-      '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
+      '<button type="button" class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-sm leading-5 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
+      '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-900 dark:text-white"><span class="font-normal text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>' +
       "</button>" +
       '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
       "</el-select>" +
       "</div>" +
       '<div class="min-w-0 flex-1">' +
       '<el-select data-adv-method-select data-method-slot="2" class="block w-full">' +
-      '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
-      '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"><span class="text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
-      '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
+      '<button type="button" class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-sm leading-5 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
+      '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-900 dark:text-white"><span class="font-normal text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>' +
       "</button>" +
       '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
       "</el-select>" +
       "</div>" +
       '<div class="min-w-0 flex-1">' +
       '<el-select data-adv-method-select data-method-slot="3" class="block w-full">' +
-      '<button type="button" class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
-      '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"><span class="text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
-      '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
+      '<button type="button" class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-sm leading-5 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
+      '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-900 dark:text-white"><span class="font-normal text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>' +
       "</button>" +
       '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
       "</el-select>" +
       "</div>" +
       '<div class="shrink-0">' +
-      '<button type="button" data-adv-remove-row class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">' +
+      '<button type="button" data-adv-remove-row class="inline-flex rounded p-[5px] text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">' +
       '<span class="sr-only">Remove row</span>' +
-      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path fill-rule="evenodd" d="M6 18L18 6M6 6l12 12" clip-rule="evenodd" /></svg>' +
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-[18px]" aria-hidden="true"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg>' +
       "</button>" +
       "</div>" +
       "</div>"
@@ -1465,6 +1467,7 @@ window.__ppStorageKey = function (name) {
   var footerActions = window.__ppInitFooterActions({
     undoBtn: undoBtn,
     saveBtn: saveBtn,
+    disableSaveWhenClean: true,
     onUndo: function () {
       window.location.reload();
     },
@@ -1473,6 +1476,13 @@ window.__ppStorageKey = function (name) {
       setDirty(false);
     },
   });
+
+  // At least one method is always set, so the primary slot is never empty.
+  function ensurePrimaryMethod() {
+    if (!getSelectedValue(gpSelects[0])) {
+      setSelectedValue(gpSelects[0], "payers-card");
+    }
+  }
 
   function getSelectedValue(selectEl) {
     if (selectEl && typeof selectEl.value === "string" && selectEl.value)
@@ -1541,6 +1551,7 @@ window.__ppStorageKey = function (name) {
     }, 0);
   }
 
+  ensurePrimaryMethod();
   savedSnapshot = getSnapshot();
 
   gpSelects.forEach(function (selectEl) {
@@ -1551,6 +1562,7 @@ window.__ppStorageKey = function (name) {
   window.__ppGetGpSelectedValue = getSelectedValue;
   window.__ppApplyUniqueSelection = applyUniqueSelection;
   window.__ppUpdateGpSavedSnapshot = function () {
+    ensurePrimaryMethod();
     savedSnapshot = getSnapshot();
     footerActions.setDirty(false);
   };
@@ -3117,10 +3129,6 @@ window.__ppStorageKey = function (name) {
     var showInlineVerify =
       status === "in_progress" && stpStep === "bank_verification_required";
     var isEnabled = status === "enabled";
-    if (stpCardContainer) {
-      stpCardContainer.classList.toggle("pr-0", !showOptIn);
-      stpCardContainer.classList.toggle("pr-3", showOptIn);
-    }
     if (stpLearnMoreMenuBtn) {
       stpLearnMoreMenuBtn.textContent = isEnabled
         ? "Changed payment processors"
@@ -3129,7 +3137,11 @@ window.__ppStorageKey = function (name) {
     if (stpStatusBadge) {
       var showStatusBadge = status === "in_progress" || status === "enabled";
       stpStatusBadge.hidden = !showStatusBadge;
-      if (status === "enabled") {
+      if (showInlineVerify) {
+        stpStatusBadge.textContent = "Action Required";
+        stpStatusBadge.className =
+          "inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300";
+      } else if (status === "enabled") {
         stpStatusBadge.textContent = "Opted in";
         stpStatusBadge.className =
           "inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30";
@@ -3145,6 +3157,7 @@ window.__ppStorageKey = function (name) {
     }
     if (stpInlineVerifyAlert) {
       stpInlineVerifyAlert.classList.toggle("hidden", !showInlineVerify);
+      syncStpVerifyDate(showInlineVerify);
     }
     if (stpFullyAutomatedWrap) {
       stpFullyAutomatedWrap.classList.toggle("hidden", !isEnabled);
@@ -3159,6 +3172,39 @@ window.__ppStorageKey = function (name) {
     stpOptInBtn.disabled = false;
     stpOptInBtn.classList.remove("hidden");
     stpOptInBtn.className = STP_DISABLED_CLASS;
+  }
+
+  // The STP state has no start date, so remember when verification was first
+  // requested on this device and show it as "Date initiated".
+  var STP_VERIFY_DATE_KEY = "pp-stp-verify-initiated-at";
+
+  function syncStpVerifyDate(isVisible) {
+    var dateEl = document.getElementById("pp-stp-inline-verify-date");
+    if (!dateEl) return;
+    var stored = "";
+    try {
+      stored = localStorage.getItem(STP_VERIFY_DATE_KEY) || "";
+      if (isVisible && !stored) {
+        stored = new Date().toISOString();
+        localStorage.setItem(STP_VERIFY_DATE_KEY, stored);
+      } else if (!isVisible && stored) {
+        localStorage.removeItem(STP_VERIFY_DATE_KEY);
+        stored = "";
+      }
+    } catch (err) {
+      /* storage unavailable */
+    }
+    var date = stored ? new Date(stored) : null;
+    var hasDate = !!(isVisible && date && !isNaN(date.getTime()));
+    dateEl.textContent = hasDate
+      ? "Date initiated: " +
+        date.toLocaleDateString("en-US", {
+          month: "long",
+          day: "numeric",
+          year: "numeric",
+        })
+      : "";
+    dateEl.classList.toggle("hidden", !hasDate);
   }
 
   function syncStpStatus(status, state) {

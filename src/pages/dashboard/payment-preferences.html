@@ -208,7 +208,7 @@
                     <nav aria-label="Tabs" class="-mb-px flex space-x-6">
                       <button
                         type="button"
-                        class="tab-btn border-b-2 border-blue-500 px-1 py-4 text-sm font-medium whitespace-nowrap text-blue-600 dark:text-blue-400 dark:border-blue-400"
+                        class="tab-btn border-b-2 border-blue-500 px-1 py-4 text-sm font-medium whitespace-nowrap text-blue-600 transition-colors dark:text-blue-400 dark:border-blue-400 cursor-pointer"
                         data-tab="payment-methods"
                         aria-current="page"
                       >
@@ -239,55 +239,37 @@
                 <div class="flex flex-col gap-6 p-4 sm:p-6">
                   <!-- ===== SECTION 1: PAYERS' CARDS ===== -->
                   <div
-                    class="grid grid-cols-1 items-start gap-6 xl:grid-cols-3 xl:gap-10"
+                    class="grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,500fr)_minmax(0,676fr)] xl:gap-14"
                   >
                     <!-- Left: title + description -->
                     <div
                       class="self-start flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-40"
                     >
-                      <div class="flex flex-col gap-2">
+                      <div class="flex flex-col gap-1">
                         <h3
-                          class="text-base/7 font-semibold text-gray-900 dark:text-white"
+                          class="text-sm leading-5 font-semibold text-gray-900 dark:text-white"
                         >
                           Payers' Cards
                         </h3>
                         <p
-                          class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400"
+                          class="max-w-2xl text-sm leading-5 text-gray-500 dark:text-gray-400"
                         >
-                          Accept payment by card.
+                          Accept payment by card, no bank account details
+                          required.
                         </p>
                       </div>
                     </div>
 
                     <!-- Right: card details -->
-                    <div
-                      class="flex w-full flex-col items-start gap-6 min-w-0 xl:col-span-2"
-                    >
+                    <div class="flex w-full flex-col items-start gap-6 min-w-0">
                       <!-- STP block (R3 compact variant) -->
                       <div class="w-full flex flex-col gap-2">
                         <div
                           id="pp-stp-card-container"
-                          class="flex w-full flex-col gap-3 rounded-lg bg-gray-50 py-3 pl-3 pr-0 sm:flex-row sm:items-center sm:justify-between sm:gap-6 dark:bg-white/5"
+                          class="flex w-full flex-col gap-3 rounded-lg bg-gray-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 dark:bg-white/5"
                         >
-                          <div class="flex min-w-0 flex-1 items-start gap-3">
-                            <div class="shrink-0 pt-0.5">
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                              >
-                                <path
-                                  d="M1.875 6.875H18.125M1.875 7.5H18.125M4.375 11.875H9.375M4.375 13.75H6.875M18.125 9.16667V5.625C18.125 4.58947 17.2855 3.75 16.25 3.75H3.75C2.71447 3.75 1.875 4.58947 1.875 5.625V14.375C1.875 15.4105 2.71447 16.25 3.75 16.25H11.6667M16.25 16.4583L16.5785 15.4727C16.7652 14.9128 17.2045 14.4735 17.7644 14.2869L18.75 13.9583L17.7644 13.6298C17.2045 13.4432 16.7652 13.0038 16.5785 12.4439L16.25 11.4583L15.9215 12.4439C15.7348 13.0038 15.2955 13.4432 14.7356 13.6298L13.75 13.9583L14.7356 14.2869C15.2955 14.4735 15.7348 14.9128 15.9215 15.4727L16.25 16.4583Z"
-                                  stroke="#2563EB"
-                                  stroke-width="1.5"
-                                  stroke-linecap="round"
-                                  stroke-linejoin="round"
-                                />
-                              </svg>
-                            </div>
-                            <div class="min-w-0">
+                          <div class="flex min-w-0 flex-1 items-start pt-0.5">
+                            <div class="min-w-0 flex-1">
                               <div
                                 class="flex w-full items-center justify-between gap-3"
                               >
@@ -296,7 +278,7 @@
                                     <p
                                       class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100"
                                     >
-                                      Automatic Card Processing (STP)
+                                      Automatic Card Processing
                                     </p>
                                   </div>
                                   <div class="shrink-0">
@@ -314,7 +296,7 @@
                                   <el-dropdown class="inline-block">
                                     <button
                                       type="button"
-                                      class="shrink-0 rounded-md p-1.5 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-600 active:bg-gray-200 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:active:bg-white/10 cursor-pointer"
+                                      class="shrink-0 rounded p-[5px] text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-600 active:bg-gray-200 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:active:bg-white/10 cursor-pointer"
                                     >
                                       <span class="sr-only"
                                         >Open STP options</span
@@ -323,7 +305,7 @@
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 20 20"
                                         fill="currentColor"
-                                        class="size-4"
+                                        class="size-[18px]"
                                       >
                                         <path
                                           d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"
@@ -358,9 +340,8 @@
                               <p
                                 class="mt-1 text-sm font-normal leading-5 text-gray-500 dark:text-gray-400"
                               >
-                                Automatically process eligible payments with no
-                                manual steps. This option can be turned off
-                                anytime.
+                                Card payments are automatically processed and
+                                settled to the business bank account.
                               </p>
                               <div
                                 id="pp-stp-fully-automated-wrap"
@@ -407,7 +388,7 @@
                               </div>
                             </div>
                           </div>
-                          <div class="flex w-full items-center gap-3 sm:w-auto">
+                          <div class="contents">
                             <button
                               id="pp-stp-opt-in-btn"
                               type="button"
@@ -419,55 +400,61 @@
                         </div>
                         <div
                           id="pp-stp-inline-verify-alert"
-                          class="hidden w-full rounded-lg border border-amber-200 bg-amber-50 p-3 dark:border-amber-400/30 dark:bg-amber-500/10"
+                          class="hidden w-full rounded-md bg-yellow-50 p-4 dark:bg-yellow-400/10"
                         >
                           <div class="flex min-w-0 items-start gap-3">
-                            <div
-                              class="shrink-0 pt-0.5 text-yellow-500 dark:text-yellow-500"
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              fill="none"
+                              aria-hidden="true"
+                              class="size-5 shrink-0"
                             >
-                              <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="20"
-                                height="20"
-                                viewBox="0 0 20 20"
-                                fill="none"
-                              >
-                                <path
-                                  fill-rule="evenodd"
-                                  clip-rule="evenodd"
-                                  d="M8.27598 3.0253C9.0322 1.65823 10.9678 1.65823 11.724 3.0253L17.2431 13.0025C17.9848 14.3433 17.0319 16 15.5191 16H4.48093C2.96807 16 2.01521 14.3433 2.75691 13.0025L8.27598 3.0253ZM10.9889 12.983C10.9889 13.5384 10.5461 13.9887 9.99992 13.9887C9.45369 13.9887 9.01089 13.5384 9.01089 12.983C9.01089 12.4276 9.45369 11.9773 9.99992 11.9773C10.5461 11.9773 10.9889 12.4276 10.9889 12.983ZM9.99991 4.93733C9.45369 4.93733 9.01089 5.3876 9.01089 5.94303V8.96016C9.01089 9.51559 9.45369 9.96587 9.99991 9.96587C10.5461 9.96587 10.9889 9.51559 10.9889 8.96016V5.94303C10.9889 5.3876 10.5461 4.93733 9.99991 4.93733Z"
-                                  fill="#FBBF24"
-                                />
-                              </svg>
-                            </div>
-                            <div class="min-w-0">
-                              <p
-                                class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100"
-                              >
-                                One more step till final setup
-                              </p>
-                              <p
-                                class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300"
-                              >
-                                To complete Automatic Card Processing set-up,
-                                please confirm the small deposit amount.
-                              </p>
-                              <div class="mt-3 flex items-center gap-3">
-                                <button
-                                  id="pp-stp-inline-verify-btn"
-                                  type="button"
-                                  class="inline-flex items-center justify-center rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-200 dark:ring-white/10 dark:hover:bg-white/20 cursor-pointer"
-                                >
-                                  Verify now
-                                </button>
-                                <button
-                                  id="pp-stp-inline-learn-more-btn"
-                                  type="button"
-                                  class="inline-flex items-center justify-center rounded-md px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-900/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer"
-                                >
-                                  Don’t see a small deposit?
-                                </button>
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M8.27598 3.0253C9.0322 1.65823 10.9678 1.65823 11.724 3.0253L17.2431 13.0025C17.9848 14.3433 17.0319 16 15.5191 16H4.48093C2.96807 16 2.01521 14.3433 2.75691 13.0025L8.27598 3.0253ZM10.9889 12.983C10.9889 13.5384 10.5461 13.9887 9.99992 13.9887C9.45369 13.9887 9.01089 13.5384 9.01089 12.983C9.01089 12.4276 9.45369 11.9773 9.99992 11.9773C10.5461 11.9773 10.9889 12.4276 10.9889 12.983ZM9.99991 4.93733C9.45369 4.93733 9.01089 5.3876 9.01089 5.94303V8.96016C9.01089 9.51559 9.45369 9.96587 9.99991 9.96587C10.5461 9.96587 10.9889 9.51559 10.9889 8.96016V5.94303C10.9889 5.3876 10.5461 4.93733 9.99991 4.93733Z"
+                                fill="#FBBF24"
+                              />
+                            </svg>
+                            <div class="flex min-w-0 flex-1 flex-col gap-4">
+                              <div class="flex flex-col gap-3">
+                                <div class="flex flex-col gap-2">
+                                  <p
+                                    class="text-sm leading-5 font-semibold text-yellow-800 dark:text-yellow-300"
+                                  >
+                                    Automatic Card Processing
+                                  </p>
+                                  <p
+                                    class="text-sm leading-5 font-normal text-yellow-700 dark:text-yellow-200/80"
+                                  >
+                                    To complete set-up, please confirm the small
+                                    deposit amount.
+                                  </p>
+                                </div>
+                                <div class="flex flex-wrap items-center gap-4">
+                                  <button
+                                    id="pp-stp-inline-verify-btn"
+                                    type="button"
+                                    class="inline-flex cursor-pointer items-center justify-center rounded border border-gray-300 bg-white px-2 py-1 text-sm leading-5 font-semibold text-gray-800 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20"
+                                  >
+                                    Verify now &rarr;
+                                  </button>
+                                  <button
+                                    id="pp-stp-inline-learn-more-btn"
+                                    type="button"
+                                    class="inline-flex cursor-pointer items-center justify-center rounded px-2 py-1 text-sm leading-5 font-semibold text-gray-800 hover:bg-yellow-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-200 dark:hover:bg-white/10"
+                                  >
+                                    Don&rsquo;t see a small deposit?
+                                  </button>
+                                </div>
                               </div>
+                              <p
+                                id="pp-stp-inline-verify-date"
+                                class="hidden text-xs leading-4 font-normal text-gray-500 dark:text-gray-400"
+                              ></p>
                             </div>
                           </div>
                         </div>
@@ -487,11 +474,11 @@
                           >
                             Cards
                           </h4>
-                          <div
-                            class="flex flex-col gap-3 sm:flex-row sm:items-center"
-                          >
+                          <div class="flex flex-wrap items-center gap-4">
                             <!-- Search -->
-                            <div class="relative w-full max-w-[380px]">
+                            <div
+                              class="relative w-full min-w-[248px] max-w-[408px] flex-1"
+                            >
                               <div
                                 class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"
                               >
@@ -499,7 +486,7 @@
                                   xmlns="http://www.w3.org/2000/svg"
                                   viewBox="0 0 20 20"
                                   fill="currentColor"
-                                  class="size-4 text-gray-400 dark:text-gray-500"
+                                  class="size-5 text-gray-400 dark:text-gray-500"
                                 >
                                   <path
                                     fill-rule="evenodd"
@@ -512,13 +499,13 @@
                                 id="pp-cards-search-input"
                                 type="text"
                                 placeholder="Search customer"
-                                class="block w-full rounded-md border-0 bg-white py-1.5 pl-9 pr-3 text-sm font-medium text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10 dark:placeholder:text-gray-500 dark:focus:ring-blue-500"
+                                class="block h-8 w-full rounded-md border-0 bg-white pr-3 pl-10 text-sm leading-5 font-normal text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10 dark:placeholder:text-gray-500 dark:focus:ring-blue-500"
                               />
                             </div>
-                            <div class="flex items-center gap-3 sm:ml-auto">
+                            <div class="ml-auto flex items-center gap-4">
                               <!-- Active only checkbox -->
                               <label
-                                class="whitespace-nowrap flex items-center gap-2 cursor-pointer rounded-lg bg-gray-50 px-3 py-1.5 dark:bg-white/5"
+                                class="whitespace-nowrap flex items-center gap-3 cursor-pointer rounded-lg bg-gray-50 px-2 py-1.5 dark:bg-white/5"
                               >
                                 <div class="group grid size-4 grid-cols-1">
                                   <input
@@ -554,13 +541,13 @@
                                 <button
                                   id="pp-cards-filter-btn"
                                   type="button"
-                                  class="whitespace-nowrap inline-flex items-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10 cursor-pointer"
+                                  class="whitespace-nowrap inline-flex items-center gap-1 rounded border border-gray-300 bg-white px-2 py-1 text-sm leading-5 font-semibold text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer"
                                 >
                                   <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     viewBox="0 0 20 20"
                                     fill="currentColor"
-                                    class="size-4"
+                                    class="size-[18px] text-gray-500 dark:text-gray-400"
                                   >
                                     <path
                                       d="M10 4.75a.75.75 0 0 1 .75.75v3.75h3.75a.75.75 0 0 1 0 1.5h-3.75v3.75a.75.75 0 0 1-1.5 0v-3.75H5.5a.75.75 0 0 1 0-1.5h3.75V5.5a.75.75 0 0 1 .75-.75Z"
@@ -733,7 +720,7 @@
                         <button
                           id="pp-payer-cards-toggle"
                           type="button"
-                          class="hidden self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100 cursor-pointer"
+                          class="hidden self-start whitespace-nowrap inline-flex items-center gap-1 rounded px-3 py-4 text-sm leading-5 font-semibold text-gray-700 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300 dark:hover:text-gray-100 cursor-pointer"
                         >
                           <span id="pp-payer-cards-toggle-label">Show all</span>
                           <svg
@@ -741,7 +728,7 @@
                             xmlns="http://www.w3.org/2000/svg"
                             viewBox="0 0 20 20"
                             fill="currentColor"
-                            class="size-4 transition-transform"
+                            class="size-[18px] text-gray-500 transition-transform dark:text-gray-400"
                           >
                             <path
                               fill-rule="evenodd"
@@ -761,7 +748,7 @@
 
                   <!-- ===== SECTION 2: PAYMENT ACCOUNT DETAILS ===== -->
                   <div
-                    class="grid grid-cols-1 items-start gap-6 xl:grid-cols-3 xl:gap-10"
+                    class="grid grid-cols-1 items-start gap-6 xl:grid-cols-[minmax(0,500fr)_minmax(0,676fr)] xl:gap-14"
                   >
                     <!-- Left: title + description -->
                     <div
@@ -782,9 +769,7 @@
                     </div>
 
                     <!-- Right: payment account details -->
-                    <div
-                      class="flex w-full flex-col items-start gap-6 min-w-0 xl:col-span-2"
-                    >
+                    <div class="flex w-full flex-col items-start gap-6 min-w-0">
                       <!-- Bank Accounts -->
                       <div class="flex flex-col w-full gap-3">
                         <h4
@@ -946,33 +931,38 @@
 
               <!-- Tab: Global Preferences (hidden) -->
               <div id="tab-global-preferences" class="tab-panel hidden">
-                <div class="flex flex-col gap-6 p-4 sm:p-6">
+                <div class="flex flex-col">
                   <!-- ===== SECTION: SET DEFAULT PAYMENT METHODS ===== -->
                   <div
-                    class="grid grid-cols-1 items-start gap-6 xl:grid-cols-2 xl:gap-10"
+                    class="grid grid-cols-1 items-start gap-6 px-4 py-6 sm:px-6 sm:py-9 xl:grid-cols-2 xl:gap-14"
                   >
                     <!-- Left: title + description -->
                     <div
                       class="self-start flex flex-col items-start gap-3 min-w-0 xl:sticky xl:top-40"
                     >
-                      <div class="flex flex-col gap-2">
+                      <div class="flex flex-col gap-1">
                         <h3
-                          class="text-base/7 font-semibold text-gray-900 dark:text-white"
+                          class="text-xl leading-8 font-semibold text-gray-900 dark:text-white"
                         >
                           Set Default Payment Methods
                         </h3>
                         <p
-                          class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400"
+                          class="max-w-2xl text-sm leading-5 text-gray-500 dark:text-gray-400"
                         >
                           Set the order of payment preferences. If the primary
                           method is not supported by the payer, we will
                           automatically default to the next choice.
                         </p>
                         <p
-                          class="max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400"
+                          class="mt-5 max-w-2xl text-sm leading-5 text-gray-500 dark:text-gray-400"
                         >
                           Payer specific payment preferences can be set within
-                          Advanced Settings.
+                          <a
+                            href="?tab=advanced-settings"
+                            data-tab-link="advanced-settings"
+                            class="rounded-sm font-medium text-blue-600 underline hover:text-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                            >Advanced Settings</a
+                          >.
                         </p>
                       </div>
                     </div>
@@ -981,11 +971,11 @@
                     <div class="flex w-full flex-col items-start gap-4 min-w-0">
                       <!-- Card container -->
                       <div
-                        class="flex min-w-[416px] flex-1 flex-col items-start justify-center gap-4 self-stretch rounded-lg bg-gray-50 p-4 dark:bg-white/5"
+                        class="flex min-w-0 flex-1 flex-col items-start justify-center gap-5 self-stretch rounded-lg bg-gray-50 p-4 dark:bg-white/5"
                       >
                         <div class="flex items-start gap-4 self-stretch">
                           <span
-                            class="mt-2 inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300"
+                            class="mt-2 inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-sm leading-5 font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300"
                             >1</span
                           >
                           <div class="flex w-full flex-col gap-4">
@@ -996,26 +986,26 @@
                             >
                               <button
                                 type="button"
-                                class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                                class="grid h-10 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-base leading-6 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
                               >
                                 <el-selectedcontent
-                                  class="col-start-1 row-start-1 flex items-center gap-2 pr-6 font-medium text-gray-900 dark:text-white"
+                                  class="col-start-1 row-start-1 flex min-w-0 items-center gap-2 pr-7 font-medium text-gray-900 dark:text-white"
                                 >
                                   <span
-                                    class="truncate text-gray-400 dark:text-gray-500"
-                                    >Select payment method</span
+                                    class="truncate font-normal text-gray-400 dark:text-gray-500"
+                                    >Select primary method</span
                                   >
                                 </el-selectedcontent>
                                 <svg
-                                  viewBox="0 0 16 16"
+                                  viewBox="0 0 20 20"
                                   fill="currentColor"
                                   aria-hidden="true"
-                                  class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
+                                  class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"
                                 >
                                   <path
-                                    d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                                    clip-rule="evenodd"
                                     fill-rule="evenodd"
+                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd"
                                   />
                                 </svg>
                               </button>
@@ -1515,7 +1505,7 @@
                         </div>
                         <div class="flex items-start gap-4 self-stretch">
                           <span
-                            class="mt-2 inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300"
+                            class="mt-2 inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-sm leading-5 font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300"
                             >2</span
                           >
                           <div class="flex w-full flex-col gap-4">
@@ -1526,26 +1516,26 @@
                             >
                               <button
                                 type="button"
-                                class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                                class="grid h-10 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-base leading-6 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
                               >
                                 <el-selectedcontent
-                                  class="col-start-1 row-start-1 flex items-center gap-2 pr-6 font-medium text-gray-900 dark:text-white"
+                                  class="col-start-1 row-start-1 flex min-w-0 items-center gap-2 pr-7 font-medium text-gray-900 dark:text-white"
                                 >
                                   <span
-                                    class="truncate text-gray-400 dark:text-gray-500"
-                                    >Select payment method</span
+                                    class="truncate font-normal text-gray-400 dark:text-gray-500"
+                                    >Select secondary method</span
                                   >
                                 </el-selectedcontent>
                                 <svg
-                                  viewBox="0 0 16 16"
+                                  viewBox="0 0 20 20"
                                   fill="currentColor"
                                   aria-hidden="true"
-                                  class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
+                                  class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"
                                 >
                                   <path
-                                    d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                                    clip-rule="evenodd"
                                     fill-rule="evenodd"
+                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd"
                                   />
                                 </svg>
                               </button>
@@ -2044,7 +2034,7 @@
                         </div>
                         <div class="flex items-start gap-4 self-stretch">
                           <span
-                            class="mt-2 inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300"
+                            class="mt-2 inline-flex size-6 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-sm leading-5 font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300"
                             >3</span
                           >
                           <div class="flex w-full flex-col gap-4">
@@ -2055,26 +2045,26 @@
                             >
                               <button
                                 type="button"
-                                class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                                class="grid h-10 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-base leading-6 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
                               >
                                 <el-selectedcontent
-                                  class="col-start-1 row-start-1 flex items-center gap-2 pr-6 font-medium text-gray-900 dark:text-white"
+                                  class="col-start-1 row-start-1 flex min-w-0 items-center gap-2 pr-7 font-medium text-gray-900 dark:text-white"
                                 >
                                   <span
-                                    class="truncate text-gray-400 dark:text-gray-500"
-                                    >Select payment method</span
+                                    class="truncate font-normal text-gray-400 dark:text-gray-500"
+                                    >Select third method</span
                                   >
                                 </el-selectedcontent>
                                 <svg
-                                  viewBox="0 0 16 16"
+                                  viewBox="0 0 20 20"
                                   fill="currentColor"
                                   aria-hidden="true"
-                                  class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
+                                  class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"
                                 >
                                   <path
-                                    d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                                    clip-rule="evenodd"
                                     fill-rule="evenodd"
+                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd"
                                   />
                                 </svg>
                               </button>
@@ -2571,49 +2561,50 @@
                             </div>
                           </div>
                         </div>
+                        <!-- Why link -->
+                        <button
+                          type="button"
+                          class="-mt-1 ml-10 inline-flex cursor-pointer items-center gap-1 rounded text-xs leading-4 font-semibold whitespace-nowrap text-blue-600 hover:text-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
+                            class="size-4 text-blue-500 dark:text-blue-400"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM8.94 6.94a.75.75 0 1 1-1.061-1.061 3 3 0 1 1 2.871 5.026v.345a.75.75 0 0 1-1.5 0v-.5c0-.72.57-1.172 1.081-1.287A1.5 1.5 0 1 0 8.94 6.94ZM10 15a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                          Why set multiple payment methods?
+                        </button>
                       </div>
                       <!-- /card container -->
-
-                      <!-- Why link -->
-                      <button
-                        type="button"
-                        class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300 cursor-pointer"
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          class="size-4"
-                        >
-                          <path
-                            fill-rule="evenodd"
-                            d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM8.94 6.94a.75.75 0 1 1-1.061-1.061 3 3 0 1 1 2.871 5.026v.345a.75.75 0 0 1-1.5 0v-.5c0-.72.57-1.172 1.081-1.287A1.5 1.5 0 1 0 8.94 6.94ZM10 15a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"
-                            clip-rule="evenodd"
-                          />
-                        </svg>
-                        Why set multiple payment methods?
-                      </button>
                     </div>
                     <!-- /right content -->
                   </div>
                   <!-- /section -->
 
                   <div
-                    class="-mx-4 border-t border-gray-200 px-4 pt-4 dark:border-white/10 sm:-mx-6 sm:px-6"
+                    class="border-t border-gray-200 px-4 py-4 sm:px-6 dark:border-white/10"
                   >
-                    <div class="flex w-full justify-end gap-3">
+                    <div class="flex w-full justify-end gap-4">
                       <button
                         id="gp-default-payment-undo-btn"
                         type="button"
                         disabled
-                        class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10"
+                        class="cursor-pointer rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm leading-5 font-semibold text-gray-700 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:text-gray-500 disabled:opacity-40 disabled:hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:disabled:hover:bg-white/5"
                       >
-                        Undo
+                        Cancel
                       </button>
                       <button
                         id="gp-default-payment-save-btn"
                         type="button"
-                        class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+                        disabled
+                        class="cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm leading-5 font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400"
                       >
                         Save
                       </button>
@@ -2624,342 +2615,50 @@
 
               <!-- Tab: Advanced Settings (hidden) -->
               <div id="tab-advanced-settings" class="tab-panel hidden">
-                <div class="flex flex-col gap-6 p-4 sm:p-6">
-                  <div class="flex w-full flex-col gap-5">
-                    <div class="flex w-full items-center gap-6">
-                      <div class="flex min-w-0 flex-1 items-center gap-4">
-                        <div class="flex min-w-0 flex-1 flex-col gap-2">
-                          <div class="flex w-full items-center gap-2">
-                            <h3
-                              class="text-base/7 font-semibold text-gray-900 dark:text-white"
+                <div class="flex flex-col">
+                  <div class="flex flex-col gap-6 px-4 pt-6 sm:px-6 sm:pt-9">
+                    <div class="flex w-full flex-col gap-3">
+                      <div class="flex w-full items-center gap-6">
+                        <div class="flex min-w-0 flex-1 items-center gap-4">
+                          <div class="flex min-w-0 flex-1 flex-col gap-2">
+                            <div class="flex w-full items-center gap-2">
+                              <h3
+                                class="text-lg leading-6 font-semibold text-gray-900 dark:text-white"
+                              >
+                                Customize Default Preferences by Payer
+                              </h3>
+                            </div>
+                            <p
+                              class="w-full max-w-2xl text-sm leading-5 text-gray-500 dark:text-gray-400"
                             >
-                              Customize Default Preferences by Payer
-                            </h3>
+                              Global Preferences will remain the same for all
+                              other payers.
+                            </p>
                           </div>
-                          <p
-                            class="w-full max-w-2xl text-sm/6 text-gray-500 dark:text-gray-400"
-                          >
-                            Global Preferences will remain the same for all
-                            other payers.
-                          </p>
                         </div>
                       </div>
+                      <div
+                        class="h-px w-full bg-gray-200 dark:bg-white/10"
+                      ></div>
                     </div>
-                    <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
-                  </div>
 
-                  <div
-                    id="pp-adv-empty-state"
-                    class="flex w-full flex-col items-center justify-center gap-4 px-4 py-8"
-                  >
                     <div
-                      class="flex w-full max-w-[432px] flex-col items-center"
-                    >
-                      <p
-                        class="w-full text-center text-sm font-normal leading-5 text-gray-500 dark:text-gray-400"
-                      >
-                        No payer specific payment preferences added.
-                      </p>
-                    </div>
-                    <button
-                      id="pp-adv-customize-btn"
-                      type="button"
-                      class="inline-flex items-center justify-center gap-1 rounded bg-blue-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
-                    >
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        class="size-5"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M9.25 4a.75.75 0 0 1 1.5 0v5.25H16a.75.75 0 0 1 0 1.5h-5.25V16a.75.75 0 0 1-1.5 0v-5.25H4a.75.75 0 0 1 0-1.5h5.25V4Z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                      Customize
-                    </button>
-                  </div>
-
-                  <div id="pp-adv-table-state" class="hidden w-full rounded-lg">
-                    <div
-                      class="flex w-full items-center gap-4 bg-gray-50 px-2 py-1 dark:bg-white/5"
+                      id="pp-adv-empty-state"
+                      class="flex w-full flex-col items-center justify-center gap-4 px-4 py-8"
                     >
                       <div
-                        class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400"
+                        class="flex w-full max-w-[432px] flex-col items-center"
                       >
-                        Payer Name
-                      </div>
-                      <div
-                        class="min-w-0 flex-1 items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400 sm:flex"
-                      >
-                        <span>Entity on File with Payer</span>
-                        <button
-                          type="button"
-                          aria-label="Entity on file information"
-                          class="hidden sm:inline-flex items-center rounded-md bg-gray-100 p-1 text-gray-400 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200 transition-colors cursor-pointer"
+                        <p
+                          class="w-full text-center text-sm font-normal leading-5 text-gray-500 dark:text-gray-400"
                         >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="14"
-                            height="14"
-                            viewBox="0 0 14 14"
-                            fill="none"
-                          >
-                            <path
-                              fill-rule="evenodd"
-                              clip-rule="evenodd"
-                              d="M1.3125 7.00001C1.3125 3.85888 3.85888 1.3125 7 1.3125C10.1411 1.3125 12.6875 3.85888 12.6875 7.00001C12.6875 10.1411 10.1411 12.6875 7 12.6875C3.85888 12.6875 1.3125 10.1411 1.3125 7.00001ZM6.39114 6.1591C7.05978 5.82478 7.81264 6.42871 7.63133 7.15395L7.21774 8.80831L7.24194 8.79621C7.45805 8.68815 7.72085 8.77575 7.82891 8.99186C7.93697 9.20798 7.84937 9.47077 7.63325 9.57883L7.60905 9.59093C6.94041 9.92525 6.18755 9.32133 6.36886 8.59609L6.78245 6.94173L6.75825 6.95383C6.54214 7.06189 6.27934 6.97429 6.17128 6.75817C6.06323 6.54206 6.15082 6.27926 6.36694 6.1712L6.39114 6.1591ZM7 5.25001C7.24162 5.25001 7.4375 5.05413 7.4375 4.81251C7.4375 4.57088 7.24162 4.375 7 4.375C6.75838 4.375 6.5625 4.57088 6.5625 4.81251C6.5625 5.05413 6.75838 5.25001 7 5.25001Z"
-                              fill="#9CA3AF"
-                            />
-                          </svg>
-                        </button>
+                          No payer specific payment preferences added.
+                        </p>
                       </div>
-                      <div
-                        class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400"
-                      >
-                        Primary Method of Payment
-                      </div>
-                      <div
-                        class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400"
-                      >
-                        Secondary Method of Payment
-                      </div>
-                      <div
-                        class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400"
-                      >
-                        Third Method of Payment
-                      </div>
-                      <div class="size-7 shrink-0"></div>
-                    </div>
-                    <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
-
-                    <div id="pp-adv-rows" class="w-full">
-                      <div
-                        class="pp-adv-row flex w-full items-center gap-4 px-2 py-3"
-                      >
-                        <div class="min-w-0 flex-1">
-                          <el-select data-adv-payer-select class="block w-full">
-                            <button
-                              type="button"
-                              class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                            >
-                              <el-selectedcontent
-                                class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"
-                              >
-                                <span class="text-gray-400 dark:text-gray-500"
-                                  >Select payer</span
-                                >
-                              </el-selectedcontent>
-                              <svg
-                                viewBox="0 0 16 16"
-                                fill="currentColor"
-                                aria-hidden="true"
-                                class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
-                              >
-                                <path
-                                  d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                                  clip-rule="evenodd"
-                                  fill-rule="evenodd"
-                                />
-                              </svg>
-                            </button>
-                            <el-options
-                              anchor="bottom start"
-                              popover
-                              class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
-                              data-adv-payer-options
-                            >
-                            </el-options>
-                          </el-select>
-                        </div>
-                        <div class="min-w-0 flex-1">
-                          <el-select
-                            data-adv-entity-select
-                            value="all-entities"
-                            class="block w-full"
-                          >
-                            <button
-                              type="button"
-                              class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                            >
-                              <el-selectedcontent
-                                class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"
-                              >
-                                All entities
-                              </el-selectedcontent>
-                              <svg
-                                viewBox="0 0 16 16"
-                                fill="currentColor"
-                                aria-hidden="true"
-                                class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
-                              >
-                                <path
-                                  d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                                  clip-rule="evenodd"
-                                  fill-rule="evenodd"
-                                />
-                              </svg>
-                            </button>
-                            <el-options
-                              anchor="bottom start"
-                              popover
-                              class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
-                              data-adv-entity-options
-                            >
-                            </el-options>
-                          </el-select>
-                        </div>
-                        <div class="min-w-0 flex-1">
-                          <el-select
-                            data-adv-method-select
-                            data-method-slot="1"
-                            class="block w-full"
-                          >
-                            <button
-                              type="button"
-                              class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                            >
-                              <el-selectedcontent
-                                class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"
-                              >
-                                <span class="text-gray-400 dark:text-gray-500"
-                                  >Select payment method</span
-                                >
-                              </el-selectedcontent>
-                              <svg
-                                viewBox="0 0 16 16"
-                                fill="currentColor"
-                                aria-hidden="true"
-                                class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
-                              >
-                                <path
-                                  d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                                  clip-rule="evenodd"
-                                  fill-rule="evenodd"
-                                />
-                              </svg>
-                            </button>
-                            <el-options
-                              anchor="bottom start"
-                              popover
-                              class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
-                              data-adv-method-options
-                            >
-                            </el-options>
-                          </el-select>
-                        </div>
-                        <div class="min-w-0 flex-1">
-                          <el-select
-                            data-adv-method-select
-                            data-method-slot="2"
-                            class="block w-full"
-                          >
-                            <button
-                              type="button"
-                              class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                            >
-                              <el-selectedcontent
-                                class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"
-                              >
-                                <span class="text-gray-400 dark:text-gray-500"
-                                  >Select payment method</span
-                                >
-                              </el-selectedcontent>
-                              <svg
-                                viewBox="0 0 16 16"
-                                fill="currentColor"
-                                aria-hidden="true"
-                                class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
-                              >
-                                <path
-                                  d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                                  clip-rule="evenodd"
-                                  fill-rule="evenodd"
-                                />
-                              </svg>
-                            </button>
-                            <el-options
-                              anchor="bottom start"
-                              popover
-                              class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
-                              data-adv-method-options
-                            >
-                            </el-options>
-                          </el-select>
-                        </div>
-                        <div class="min-w-0 flex-1">
-                          <el-select
-                            data-adv-method-select
-                            data-method-slot="3"
-                            class="block w-full"
-                          >
-                            <button
-                              type="button"
-                              class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
-                            >
-                              <el-selectedcontent
-                                class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"
-                              >
-                                <span class="text-gray-400 dark:text-gray-500"
-                                  >Select payment method</span
-                                >
-                              </el-selectedcontent>
-                              <svg
-                                viewBox="0 0 16 16"
-                                fill="currentColor"
-                                aria-hidden="true"
-                                class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"
-                              >
-                                <path
-                                  d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                                  clip-rule="evenodd"
-                                  fill-rule="evenodd"
-                                />
-                              </svg>
-                            </button>
-                            <el-options
-                              anchor="bottom start"
-                              popover
-                              class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
-                              data-adv-method-options
-                            >
-                            </el-options>
-                          </el-select>
-                        </div>
-                        <div class="shrink-0">
-                          <button
-                            type="button"
-                            data-adv-remove-row
-                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer"
-                          >
-                            <span class="sr-only">Remove row</span>
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 24 24"
-                              fill="none"
-                              stroke="currentColor"
-                              stroke-width="1.5"
-                              class="size-5"
-                              aria-hidden="true"
-                            >
-                              <path
-                                fill-rule="evenodd"
-                                d="M6 18L18 6M6 6l12 12"
-                                clip-rule="evenodd"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
-                    <div class="flex w-full items-center py-5">
                       <button
-                        id="pp-adv-add-payer-btn"
+                        id="pp-adv-customize-btn"
                         type="button"
-                        class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"
+                        class="inline-flex items-center justify-center gap-1 rounded bg-blue-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -2973,27 +2672,336 @@
                             clip-rule="evenodd"
                           />
                         </svg>
-                        Customize another payer
+                        Customize
                       </button>
                     </div>
-                  </div>
 
+                    <div
+                      id="pp-adv-table-state"
+                      class="hidden w-full rounded-lg"
+                    >
+                      <div
+                        class="flex w-full items-center gap-4 bg-gray-50 px-2 py-1 dark:bg-white/5"
+                      >
+                        <div
+                          class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400"
+                        >
+                          Payer Name
+                        </div>
+                        <div
+                          class="min-w-0 flex-1 items-center gap-1 text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 sm:flex"
+                        >
+                          <span>Entity on File with Payer</span>
+                          <button
+                            type="button"
+                            aria-label="Entity on file information"
+                            data-tooltip="This information has been sourced from the customer's ERP system. It may be inaccurate or outdated. Leave the default setting if you're unsure"
+                            data-tooltip-side="top"
+                            class="hidden sm:inline-flex items-center rounded-full focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+                          >
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="14"
+                              height="14"
+                              viewBox="0 0 14 14"
+                              fill="none"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                clip-rule="evenodd"
+                                d="M1.3125 7.00001C1.3125 3.85888 3.85888 1.3125 7 1.3125C10.1411 1.3125 12.6875 3.85888 12.6875 7.00001C12.6875 10.1411 10.1411 12.6875 7 12.6875C3.85888 12.6875 1.3125 10.1411 1.3125 7.00001ZM6.39114 6.1591C7.05978 5.82478 7.81264 6.42871 7.63133 7.15395L7.21774 8.80831L7.24194 8.79621C7.45805 8.68815 7.72085 8.77575 7.82891 8.99186C7.93697 9.20798 7.84937 9.47077 7.63325 9.57883L7.60905 9.59093C6.94041 9.92525 6.18755 9.32133 6.36886 8.59609L6.78245 6.94173L6.75825 6.95383C6.54214 7.06189 6.27934 6.97429 6.17128 6.75817C6.06323 6.54206 6.15082 6.27926 6.36694 6.1712L6.39114 6.1591ZM7 5.25001C7.24162 5.25001 7.4375 5.05413 7.4375 4.81251C7.4375 4.57088 7.24162 4.375 7 4.375C6.75838 4.375 6.5625 4.57088 6.5625 4.81251C6.5625 5.05413 6.75838 5.25001 7 5.25001Z"
+                                fill="#9CA3AF"
+                              />
+                            </svg>
+                          </button>
+                        </div>
+                        <div
+                          class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400"
+                        >
+                          Primary Method of Payment
+                        </div>
+                        <div
+                          class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400"
+                        >
+                          Secondary Method of Payment
+                        </div>
+                        <div
+                          class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400"
+                        >
+                          Third Method of Payment
+                        </div>
+                        <div class="size-7 shrink-0"></div>
+                      </div>
+                      <div
+                        class="h-px w-full bg-gray-200 dark:bg-white/10"
+                      ></div>
+
+                      <div id="pp-adv-rows" class="w-full">
+                        <div
+                          class="pp-adv-row flex w-full items-center gap-4 px-2 py-3"
+                        >
+                          <div class="min-w-0 flex-1">
+                            <el-select
+                              data-adv-payer-select
+                              class="block w-full"
+                            >
+                              <button
+                                type="button"
+                                class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-sm leading-5 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                              >
+                                <el-selectedcontent
+                                  class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-900 dark:text-white"
+                                >
+                                  <span
+                                    class="font-normal text-gray-400 dark:text-gray-500"
+                                    >Select payer</span
+                                  >
+                                </el-selectedcontent>
+                                <svg
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                  aria-hidden="true"
+                                  class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd"
+                                  />
+                                </svg>
+                              </button>
+                              <el-options
+                                anchor="bottom start"
+                                popover
+                                class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                data-adv-payer-options
+                              >
+                              </el-options>
+                            </el-select>
+                          </div>
+                          <div class="min-w-0 flex-1">
+                            <el-select
+                              data-adv-entity-select
+                              value="all-entities"
+                              class="block w-full"
+                            >
+                              <button
+                                type="button"
+                                class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-gray-50 px-3 text-left text-sm leading-5 font-medium text-gray-500 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-gray-400 dark:outline-white/10"
+                              >
+                                <el-selectedcontent
+                                  class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-500 dark:text-gray-400"
+                                >
+                                  All entities
+                                </el-selectedcontent>
+                                <svg
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                  aria-hidden="true"
+                                  class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd"
+                                  />
+                                </svg>
+                              </button>
+                              <el-options
+                                anchor="bottom start"
+                                popover
+                                class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                data-adv-entity-options
+                              >
+                              </el-options>
+                            </el-select>
+                          </div>
+                          <div class="min-w-0 flex-1">
+                            <el-select
+                              data-adv-method-select
+                              data-method-slot="1"
+                              class="block w-full"
+                            >
+                              <button
+                                type="button"
+                                class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-sm leading-5 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                              >
+                                <el-selectedcontent
+                                  class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-900 dark:text-white"
+                                >
+                                  <span
+                                    class="font-normal text-gray-400 dark:text-gray-500"
+                                    >Select payment method</span
+                                  >
+                                </el-selectedcontent>
+                                <svg
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                  aria-hidden="true"
+                                  class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd"
+                                  />
+                                </svg>
+                              </button>
+                              <el-options
+                                anchor="bottom start"
+                                popover
+                                class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                data-adv-method-options
+                              >
+                              </el-options>
+                            </el-select>
+                          </div>
+                          <div class="min-w-0 flex-1">
+                            <el-select
+                              data-adv-method-select
+                              data-method-slot="2"
+                              class="block w-full"
+                            >
+                              <button
+                                type="button"
+                                class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-sm leading-5 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                              >
+                                <el-selectedcontent
+                                  class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-900 dark:text-white"
+                                >
+                                  <span
+                                    class="font-normal text-gray-400 dark:text-gray-500"
+                                    >Select payment method</span
+                                  >
+                                </el-selectedcontent>
+                                <svg
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                  aria-hidden="true"
+                                  class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd"
+                                  />
+                                </svg>
+                              </button>
+                              <el-options
+                                anchor="bottom start"
+                                popover
+                                class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                data-adv-method-options
+                              >
+                              </el-options>
+                            </el-select>
+                          </div>
+                          <div class="min-w-0 flex-1">
+                            <el-select
+                              data-adv-method-select
+                              data-method-slot="3"
+                              class="block w-full"
+                            >
+                              <button
+                                type="button"
+                                class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-sm leading-5 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                              >
+                                <el-selectedcontent
+                                  class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-900 dark:text-white"
+                                >
+                                  <span
+                                    class="font-normal text-gray-400 dark:text-gray-500"
+                                    >Select payment method</span
+                                  >
+                                </el-selectedcontent>
+                                <svg
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                  aria-hidden="true"
+                                  class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd"
+                                  />
+                                </svg>
+                              </button>
+                              <el-options
+                                anchor="bottom start"
+                                popover
+                                class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                data-adv-method-options
+                              >
+                              </el-options>
+                            </el-select>
+                          </div>
+                          <div class="shrink-0">
+                            <button
+                              type="button"
+                              data-adv-remove-row
+                              class="inline-flex rounded p-[5px] text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer"
+                            >
+                              <span class="sr-only">Remove row</span>
+                              <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                viewBox="0 0 20 20"
+                                fill="currentColor"
+                                class="size-[18px]"
+                                aria-hidden="true"
+                              >
+                                <path
+                                  d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                      <div
+                        class="h-px w-full bg-gray-200 dark:bg-white/10"
+                      ></div>
+                      <div class="flex w-full items-center py-5">
+                        <button
+                          id="pp-adv-add-payer-btn"
+                          type="button"
+                          class="self-start whitespace-nowrap inline-flex items-center gap-1 rounded px-2 py-1 text-sm leading-5 font-semibold text-blue-600 hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:bg-blue-500/10 cursor-pointer"
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
+                            class="size-[18px]"
+                          >
+                            <path
+                              fill-rule="evenodd"
+                              d="M9.25 4a.75.75 0 0 1 1.5 0v5.25H16a.75.75 0 0 1 0 1.5h-5.25V16a.75.75 0 0 1-1.5 0v-5.25H4a.75.75 0 0 1 0-1.5h5.25V4Z"
+                              clip-rule="evenodd"
+                            />
+                          </svg>
+                          Customize another payer
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                   <div
-                    class="-mx-4 border-t border-gray-200 px-4 pt-4 dark:border-white/10 sm:-mx-6 sm:px-6"
+                    class="border-t border-gray-200 px-4 py-4 sm:px-6 dark:border-white/10"
                   >
-                    <div class="flex w-full justify-end gap-3">
+                    <div class="flex w-full justify-end gap-4">
                       <button
                         id="pp-adv-undo-btn"
                         type="button"
                         disabled
-                        class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10"
+                        class="cursor-pointer rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm leading-5 font-semibold text-gray-700 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:text-gray-500 disabled:opacity-40 disabled:hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10 dark:disabled:hover:bg-white/5"
                       >
-                        Undo
+                        Cancel
                       </button>
                       <button
                         id="pp-adv-save-btn"
                         type="button"
-                        class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"
+                        disabled
+                        class="cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm leading-5 font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400"
                       >
                         Save
                       </button>

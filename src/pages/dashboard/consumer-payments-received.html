@@ -528,13 +528,13 @@
                           </span>
                           <span id="gp-signed-badge" class="hidden">
                             <span
-                              class="inline-flex items-center gap-1.5 rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/20 dark:bg-blue-400/15 dark:text-blue-300 dark:inset-ring-blue-500/30"
+                              class="inline-flex items-center gap-1.5 rounded-md bg-emerald-50 px-2 py-1 text-sm leading-5 font-semibold text-emerald-800 dark:bg-emerald-400/10 dark:text-emerald-300"
                             >
                               <svg
                                 xmlns="http://www.w3.org/2000/svg"
                                 viewBox="0 0 20 20"
                                 fill="currentColor"
-                                class="size-3.5"
+                                class="size-4 shrink-0 text-emerald-500 dark:text-emerald-400"
                               >
                                 <path
                                   fill-rule="evenodd"
@@ -2486,55 +2486,48 @@
           class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6"
         >
           <el-dialog-panel
-            class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-900 dark:ring-1 dark:ring-white/10 text-left shadow-xl transition-all w-full data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-2xl data-closed:sm:translate-y-0 data-closed:sm:scale-95"
+            class="relative transform overflow-hidden rounded-lg bg-white dark:bg-gray-900 dark:ring-1 dark:ring-white/10 text-left shadow-xl transition-all w-full data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95"
           >
             <div
-              class="border-b border-gray-200 dark:border-white/10 px-6 py-4 flex items-center justify-between"
+              class="flex items-center gap-2 border-b border-gray-200 py-2 pr-3 pl-6 dark:border-white/10"
             >
               <h3
                 id="gp-signature-dialog-title"
-                class="text-xl font-semibold text-gray-900 dark:text-white"
+                class="flex-1 text-base leading-6 font-medium text-gray-900 dark:text-white"
               >
-                Provide Signature
+                Signature
               </h3>
               <button
                 type="button"
                 command="close"
                 commandfor="gp-signature-dialog"
-                class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer"
+                class="inline-flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10"
               >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="1.5"
-                  class="size-5"
-                  aria-hidden="true"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    d="M6 18L18 6M6 6l12 12"
-                  />
-                </svg>
+                <img
+                  src="../../assets/get-paid/x-24.svg"
+                  alt=""
+                  width="24"
+                  height="24"
+                  class="size-6"
+                />
+                <span class="sr-only">Close</span>
               </button>
             </div>
-            <div class="px-6 py-5">
+            <div class="p-6">
               <!-- Draw / Type tabs -->
-              <nav aria-label="Signature mode" class="flex space-x-4">
+              <nav aria-label="Signature mode" class="flex gap-6">
                 <button
                   id="gp-tab-draw"
                   type="button"
                   aria-current="page"
-                  class="rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900 dark:bg-white/10 dark:text-white"
+                  class="cursor-pointer rounded-md bg-gray-100 px-3 py-2 text-base leading-6 font-semibold text-gray-900 dark:bg-white/10 dark:text-white"
                 >
                   Draw
                 </button>
                 <button
                   id="gp-tab-type"
                   type="button"
-                  class="rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300"
+                  class="cursor-pointer rounded-md px-3 py-2 text-base leading-6 font-semibold text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                 >
                   Type
                 </button>
@@ -2566,22 +2559,22 @@
                 <button
                   id="gp-clear-signature"
                   type="button"
-                  class="absolute top-4 right-4 rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-gray-800 dark:text-white dark:inset-ring-white/10"
+                  class="absolute top-4 right-4 cursor-pointer rounded border border-gray-300 bg-white px-1.5 py-0.5 text-xs leading-4 font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700"
                 >
                   Clear
                 </button>
               </div>
             </div>
             <div
-              class="border-t border-gray-200 dark:border-white/10 px-6 py-4"
+              class="border-t border-gray-200 px-6 py-5 dark:border-white/10"
             >
-              <div class="flex justify-end gap-3">
+              <div class="flex justify-end gap-6">
                 <button
                   id="gp-cancel-sign-btn"
                   type="button"
                   command="close"
                   commandfor="gp-signature-dialog"
-                  class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-white dark:inset-ring-white/5 dark:hover:bg-white/20"
+                  class="cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-2 text-base leading-6 font-semibold text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/10 dark:text-white dark:hover:bg-white/20"
                 >
                   Cancel
                 </button>
@@ -2589,7 +2582,7 @@
                   id="gp-sign-btn"
                   type="button"
                   disabled
-                  class="inline-flex items-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                  class="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-blue-600 px-3 py-2 text-base leading-6 font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400"
                 >
                   Sign
                 </button>

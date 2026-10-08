@@ -31,6 +31,16 @@
       tabEl.classList.toggle("border-transparent", !isActive);
       tabEl.classList.toggle("text-gray-500", !isActive);
       tabEl.classList.toggle("dark:text-gray-400", !isActive);
+      // Hover styles only apply to inactive tabs; every tab keeps the pointer.
+      [
+        "hover:border-blue-300",
+        "hover:text-blue-500",
+        "dark:hover:text-blue-400",
+        "dark:hover:border-blue-500",
+      ].forEach(function (cls) {
+        tabEl.classList.toggle(cls, !isActive);
+      });
+      tabEl.classList.add("cursor-pointer");
       if (isActive) {
         tabEl.setAttribute("aria-current", "page");
       } else {
@@ -71,6 +81,16 @@
         applyTab(nextTab);
         setUrlTab(nextTab, false);
       });
+    });
+
+    document.addEventListener("click", function (event) {
+      var link = event.target.closest("[data-tab-link]");
+      if (!link) return;
+      event.preventDefault();
+      var nextTab = normalizeTab(link.getAttribute("data-tab-link"));
+      applyTab(nextTab);
+      setUrlTab(nextTab, false);
+      window.scrollTo(0, 0);
     });
 
     var mobileSelect = document.getElementById("pp-tab-select");
