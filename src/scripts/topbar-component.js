@@ -336,6 +336,132 @@
             '</button>';
     }
 
+    /** Consumer portal user menu (Figma "User Dropdown Menu"): name + role, Profile, Sign out. */
+    function consumerAccountMenuHtml() {
+        var itemCls = 'group flex w-full items-center gap-3 px-4 py-3 text-sm font-medium leading-5 text-gray-900 transition-colors hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:text-white dark:hover:bg-white/5 dark:focus:bg-white/5';
+        var signOutIcon = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M3 4.25A.75.75 0 0 1 3.75 3.5h0a.75.75 0 0 1 .75.75v11.5a.75.75 0 0 1-1.5 0V4.25Z" clip-rule="evenodd"/><path fill-rule="evenodd" d="M7 10a.75.75 0 0 1 .75-.75h6.69l-2.22-2.22a.75.75 0 1 1 1.06-1.06l3.5 3.5a.75.75 0 0 1 0 1.06l-3.5 3.5a.75.75 0 1 1-1.06-1.06l2.22-2.22H7.75A.75.75 0 0 1 7 10Z" clip-rule="evenodd"/></svg>';
+        return '' +
+            '<div class="border-b border-gray-200 px-4 py-3 dark:border-white/10">' +
+            '  <p data-topbar-profile-name class="truncate text-base font-semibold leading-6 text-gray-900 dark:text-white">Johnny Anderson</p>' +
+            '  <p class="truncate text-sm leading-5 text-gray-500 dark:text-gray-400">Role</p>' +
+            '</div>' +
+            '<a href="' + currentAccountLinks().profile.href + '" class="' + itemCls + '"><span>Profile</span></a>' +
+            '<a href="#" class="' + itemCls + '">' + signOutIcon + '<span>Sign out</span></a>';
+    }
+
+    function businessInitials(name) {
+        var words = String(name || '').trim().split(/\s+/).filter(Boolean);
+        return ((words[0] || '').charAt(0) + (words[1] || '').charAt(0)).toUpperCase() || '?';
+    }
+
+    /** Consumer portal business switcher (Figma "Business Change"): current business card, then the other businesses. */
+    function consumerBusinessMenuHtml() {
+        var plans = window.AppPlans;
+        if (!plans) return '';
+        var active = plans.getActiveBusiness();
+        var badge = function (text) {
+            return '<span class="inline-flex w-fit items-center rounded-sm border border-gray-200 bg-gray-100 px-2 pt-px text-xs leading-4 text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-200">' + text + '</span>';
+        };
+        var current = '' +
+            '<div class="border-b border-gray-200 p-3 dark:border-white/10">' +
+            '  <div class="flex items-start gap-3 rounded-lg bg-gray-50 p-4 dark:bg-white/5">' +
+            '    <span class="flex size-12 shrink-0 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-lg leading-6 text-white dark:border-gray-800">' + businessInitials(active.name) + '</span>' +
+            '    <span class="flex min-w-0 flex-1 flex-col gap-1">' +
+            '      <span class="truncate text-base font-semibold leading-6 text-gray-900 dark:text-white">' + active.name + '</span>' +
+            '      ' + badge(active.view || '') +
+            '    </span>' +
+            '  </div>' +
+            '</div>';
+        var others = plans.getBusinesses().filter(function (business) { return business.id !== active.id; }).map(function (business) {
+            return '<button type="button" data-topbar-business="' + business.id + '" class="flex w-full cursor-pointer items-center gap-3 border-b border-gray-200 p-4 text-left transition-colors last:border-b-0 hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:border-white/10 dark:hover:bg-white/5 dark:focus:bg-white/5">' +
+                '<span class="flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-white bg-indigo-500 text-base leading-6 text-white dark:border-gray-800">' + businessInitials(business.name) + '</span>' +
+                '<span class="flex min-w-0 flex-1 flex-col items-start">' +
+                '<span class="w-full truncate text-sm font-medium leading-5 text-gray-700 dark:text-gray-200">' + business.name + '</span>' +
+                badge(business.view || '') +
+                '</span></button>';
+        }).join('');
+        return current + others;
+    }
+
+    function consumerBusinessMenuClass() {
+        return 'w-[361px] origin-top-right overflow-hidden rounded-lg bg-white shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline outline-transparent transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800';
+    }
+
+    /** Consumer portal notifications (Figma "Notification Modal"): right-hand panel opened from the bell. */
+    function ensureConsumerNotificationPanel() {
+        var existing = document.getElementById('consumer-notification-panel');
+        if (existing) return existing;
+        var exclamation = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-yellow-500"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>';
+        var close = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg>';
+        var panel = document.createElement('div');
+        panel.id = 'consumer-notification-panel';
+        panel.className = 'invisible fixed inset-0 z-[90] transition-[visibility] duration-300';
+        panel.setAttribute('role', 'dialog');
+        panel.setAttribute('aria-modal', 'true');
+        panel.setAttribute('aria-labelledby', 'consumer-notification-title');
+        panel.innerHTML = '' +
+            '<div data-notification-backdrop class="absolute inset-0 bg-gray-900/75 opacity-0 transition-opacity duration-300"></div>' +
+            '<div data-notification-sheet class="absolute inset-y-0 right-0 flex w-full max-w-[512px] translate-x-full flex-col bg-white shadow-xl transition-transform duration-300 ease-in-out dark:bg-gray-900">' +
+            '  <div class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">' +
+            '    <h2 id="consumer-notification-title" class="flex-1 text-lg leading-6 font-medium text-gray-900 dark:text-white">Notifications</h2>' +
+            '    <button type="button" data-notification-close aria-label="Close notifications" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' + close + '</button>' +
+            '  </div>' +
+            '  <div class="flex flex-1 flex-col gap-4 overflow-y-auto p-6">' +
+            '    <div class="overflow-hidden rounded-md bg-yellow-50 dark:bg-yellow-500/10">' +
+            '      <div class="flex items-start gap-3 p-4">' + exclamation +
+            '        <div class="flex min-w-0 flex-1 flex-col gap-2 text-sm leading-5">' +
+            '          <p class="font-medium text-yellow-800 dark:text-yellow-300">Attention needed</p>' +
+            '          <p class="text-yellow-700 dark:text-yellow-200">4 unpaid Invoices are due today.</p>' +
+            '        </div>' +
+            '      </div>' +
+            '      <div class="pr-4 pb-4 pl-12"><a href="#" class="inline-flex items-center rounded-sm bg-yellow-500 px-1.5 py-0.5 text-xs leading-4 font-semibold text-white shadow-xs transition-colors hover:bg-yellow-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-600">Pay Now</a></div>' +
+            '    </div>' +
+            '  </div>' +
+            '</div>';
+        document.body.appendChild(panel);
+
+        var sheet = panel.querySelector('[data-notification-sheet]');
+        var backdrop = panel.querySelector('[data-notification-backdrop]');
+        var opener = null;
+        function setOpen(open) {
+            if (open) {
+                panel.classList.remove('invisible');
+                // force a frame so the slide-in transition runs
+                void sheet.offsetWidth;
+                sheet.classList.remove('translate-x-full');
+                backdrop.classList.remove('opacity-0');
+                document.documentElement.style.overflow = 'hidden';
+                panel.querySelector('[data-notification-close]').focus();
+            } else {
+                sheet.classList.add('translate-x-full');
+                backdrop.classList.add('opacity-0');
+                panel.classList.add('invisible');
+                document.documentElement.style.overflow = '';
+                if (opener) { opener.focus(); opener = null; }
+            }
+        }
+        panel._open = function (trigger) { opener = trigger || null; setOpen(true); };
+        panel.addEventListener('click', function (e) {
+            if (e.target === backdrop || e.target.closest('[data-notification-close]')) setOpen(false);
+        });
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape' && !panel.classList.contains('invisible')) setOpen(false);
+        });
+        return panel;
+    }
+
+    function bindConsumerNotifications(host) {
+        host.addEventListener('click', function (event) {
+            var trigger = event.target.closest('[data-consumer-notification-trigger]');
+            if (!trigger) return;
+            ensureConsumerNotificationPanel()._open(trigger);
+        });
+    }
+
+    function consumerUserMenuClass() {
+        return 'w-[206px] origin-top-right overflow-hidden rounded-md bg-white pt-1 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline outline-transparent transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800';
+    }
+
     function headerMenuClass(widthClass) {
         return (widthClass || 'w-64') +
             ' origin-top-right rounded-xl bg-white/85 p-1 shadow-lg ring-1 ring-zinc-950/10 outline outline-transparent backdrop-blur-xl transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800/85 dark:ring-white/10';
@@ -366,6 +492,7 @@
                         if (active && !check) b.insertAdjacentHTML('beforeend', '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="ml-auto size-4 shrink-0 text-blue-600 group-focus:text-white dark:text-blue-400"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd"/></svg>');
                         if (!active && check) check.remove();
                     });
+                    bar.querySelectorAll('[data-topbar-business-menu]').forEach(function (menu) { menu.innerHTML = consumerBusinessMenuHtml(); });
                     syncAccountLinks(bar);
                 });
             }
@@ -393,6 +520,7 @@
             var title = this.getAttribute('data-title') || pageTitleFromPath(pagePath);
             this.innerHTML = this.render(title, pagePath);
             bindBusinessSwitcher(this);
+            bindConsumerNotifications(this);
             this._renderAlerts();
             this._observeAlertHost();
             if (window.AppPlans && !this._planAlertBound) {
@@ -740,23 +868,23 @@
                 '  <div class="flex items-center justify-between gap-8 px-6 pt-6 pb-4">' +
                 '    <p class="min-w-0 flex-1 text-2xl font-bold leading-8 text-gray-900 dark:text-white">Hello, <span data-topbar-greeting-name>Johnny Anderson</span></p>' +
                 '    <div class="flex shrink-0 items-center gap-6">' +
-                '      <button type="button" data-topbar-notification-trigger aria-label="Notifications, 6 unread" class="group relative flex size-9 shrink-0 items-center justify-center rounded-md p-1.5 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-600 active:bg-gray-200 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:active:bg-white/10 cursor-pointer">' +
+                '      <button type="button" data-topbar-notification-trigger data-consumer-notification-trigger aria-haspopup="dialog" aria-label="Notifications, 6 unread" class="group relative flex size-9 shrink-0 items-center justify-center rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-600 active:bg-gray-200 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:active:bg-white/10 cursor-pointer">' +
                 '        <span aria-hidden="true" class="absolute top-[-2px] left-[18px] z-[2] flex h-4 min-w-4 items-center justify-center rounded-full border border-red-200 bg-red-500 px-1 text-center text-xs font-medium leading-4 text-white">6</span>' +
                 '        <img src="' + assetBase + 'bell.svg" alt="" class="transition-[filter] group-hover:brightness-[.7] dark:group-hover:brightness-125" />' +
                 '      </button>' +
                 '      <el-dropdown class="relative hidden sm:block">' +
-                '        <button type="button" aria-label="Select business" class="flex h-10 w-[238px] min-w-0 items-center justify-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-2 text-left shadow-sm transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:hover:bg-white/10">' +
+                '        <button type="button" aria-label="Select business" class="flex h-10 w-[238px] min-w-0 items-center justify-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-2 text-left shadow-sm transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] aria-expanded:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] cursor-pointer dark:border-white/20 dark:bg-white/5 dark:hover:bg-white/10 dark:focus-visible:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6] dark:aria-expanded:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6]">' +
                 '          <span class="flex size-5 shrink-0 items-center justify-center"><img src="' + assetBase + 'business.svg" alt="" /></span>' +
                 '          <span data-topbar-org-name class="min-w-0 flex-1 truncate text-base font-semibold leading-6 text-gray-800 dark:text-gray-100">' + activeBusinessName() + '</span>' +
                 '          <span class="flex size-5 shrink-0 items-center justify-center"><img src="' + assetBase + 'selector.svg" alt="" /></span>' +
                 '        </button>' +
-                '        <el-menu anchor="bottom end" popover class="' + headerMenuClass('min-w-72') + '">' + organizationMenuHtml() + '</el-menu>' +
+                '        <el-menu data-topbar-business-menu anchor="bottom end" popover class="' + consumerBusinessMenuClass() + '">' + consumerBusinessMenuHtml() + '</el-menu>' +
                 '      </el-dropdown>' +
                 '      <el-dropdown class="relative">' +
-                '        <button type="button" aria-label="Open user menu" class="flex size-10 shrink-0 items-center justify-center rounded-full transition-colors hover:ring-2 hover:ring-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:ring-white/20">' +
+                '        <button type="button" aria-label="Open user menu" class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full shadow-[0px_1px_2px_rgba(0,0,0,0.05)] transition-shadow hover:ring-2 hover:ring-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-expanded:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] aria-expanded:hover:ring-0 dark:hover:ring-white/20 dark:aria-expanded:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6]">' +
                 '          <img src="' + assetBase + 'avatar-cody-fisher.jpg" alt="" class="size-10 rounded-full border-2 border-white object-cover dark:border-gray-800" />' +
                 '        </button>' +
-                '        <el-menu anchor="bottom end" popover class="' + headerMenuClass('min-w-64') + '">' + accountMenuHtml() + '</el-menu>' +
+                '        <el-menu anchor="bottom end" popover class="' + consumerUserMenuClass() + '">' + consumerAccountMenuHtml() + '</el-menu>' +
                 '      </el-dropdown>' +
                 '    </div>' +
                 '  </div>' +

@@ -599,3 +599,28 @@ window.addEventListener('load', function () { syncDesktopNavCurrentIndicator(tru
 if (document.fonts && document.fonts.ready) {
     document.fonts.ready.then(function () { syncDesktopNavCurrentIndicator(true); });
 }
+
+/* Consumer portal icons are images: show the blue (active) artwork on hover/focus of inactive items. */
+(function () {
+    function swapConsumerIcons(e, toActive) {
+        var item = e.target.closest && e.target.closest('.nav-item');
+        if (!item || item.classList.contains('is-active')) return;
+        item.querySelectorAll('[data-consumer-nav-icon]').forEach(function (icon) {
+            icon.src = icon.getAttribute(toActive ? 'data-active-src' : 'data-inactive-src');
+        });
+    }
+    function preload() {
+        document.querySelectorAll('[data-consumer-nav-icon]').forEach(function (icon) {
+            new Image().src = icon.getAttribute('data-active-src');
+        });
+    }
+    window.addEventListener('load', preload);
+    document.addEventListener('mouseover', function (e) { swapConsumerIcons(e, true); });
+    document.addEventListener('mouseout', function (e) {
+        var item = e.target.closest && e.target.closest('.nav-item');
+        if (item && e.relatedTarget && item.contains(e.relatedTarget)) return;
+        swapConsumerIcons(e, false);
+    });
+    document.addEventListener('focusin', function (e) { swapConsumerIcons(e, true); });
+    document.addEventListener('focusout', function (e) { swapConsumerIcons(e, false); });
+})();
