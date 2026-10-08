@@ -108,11 +108,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
     <script src="../../../src/scripts/sidebar-boot.js"></script>
     <script src="../../../src/scripts/app-plans.js"></script>
-    <script src="../../../src/scripts/nav-component.js?v=consumer-sidebar-top-spacing-20261002"></script>
+    <script src="../../../src/scripts/nav-component.js?v=consumer-help-20261008b"></script>
     <script src="../../../src/scripts/stp-state.js"></script>
     <script src="../../../src/scripts/app-switch.js"></script>
     <script src="../../../src/scripts/topbar-component.js?v=consumer-notifications-20261008b"></script>
-    <script src="../../../src/scripts/sidebar.js?v=consumer-icon-hover-20261008" defer></script>
+    <script src="../../../src/scripts/sidebar.js?v=consumer-help-20261008b" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
     <script src="../../../src/scripts/shared.js" defer></script>
     <script src="../../../src/scripts/shell-navigation.js?v=consumer-shell-20261002" defer></script>
@@ -339,21 +339,14 @@
                                                             <path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
                                                         </svg>
                                                     </button>
-                                                    <el-options anchor="bottom start" popover class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
+                                                    <el-options anchor="bottom start" popover class="max-h-[21rem] w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
                                                         <!-- Accept Payer's Card -->
                                                         <el-option value="payers-card"
                                                             class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
                                                             <div class="flex items-center gap-3">
                                                                 <div
-                                                                    class="shrink-0 text-blue-600 in-[el-selectedcontent]:text-gray-600 dark:in-[el-selectedcontent]:text-gray-400">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20"
-                                                                        height="20" viewBox="0 0 24 24" fill="none">
-                                                                        <path
-                                                                            d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z"
-                                                                            stroke="currentColor" stroke-width="1.5"
-                                                                            stroke-linecap="round"
-                                                                            stroke-linejoin="round" />
-                                                                    </svg>
+                                                                    class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.5 4C1.67157 4 1 4.67157 1 5.5V6H19V5.5C19 4.67157 18.3284 4 17.5 4H2.5ZM19 8.5H1V14.5C1 15.3284 1.67157 16 2.5 16H12.1C12.0344 15.6769 12 15.3425 12 15C12 12.2386 14.2386 10 17 10C17.7111 10 18.3875 10.1484 19 10.416V8.5ZM3.75 12.5C3.33579 12.5 3 12.8358 3 13.25C3 13.6642 3.33579 14 3.75 14H5.25C5.66421 14 6 13.6642 6 13.25C6 12.8358 5.66421 12.5 5.25 12.5H3.75ZM7 13.25C7 12.8358 7.33579 12.5 7.75 12.5H9.25C9.66421 12.5 10 12.8358 10 13.25C10 13.6642 9.66421 14 9.25 14H7.75C7.33579 14 7 13.6642 7 13.25ZM17 12C17.4304 12 17.8126 12.2754 17.9487 12.6838L18.1325 13.2351C18.232 13.5337 18.4663 13.768 18.7649 13.8675L19.3162 14.0513C19.7246 14.1874 20 14.5696 20 15C20 15.4304 19.7246 15.8126 19.3162 15.9487L18.7649 16.1325C18.4663 16.232 18.232 16.4663 18.1325 16.7649L17.9487 17.3162C17.8126 17.7246 17.4304 18 17 18C16.5696 18 16.1874 17.7246 16.0513 17.3162L15.8675 16.7649C15.768 16.4663 15.5337 16.232 15.2351 16.1325L14.6838 15.9487C14.2754 15.8126 14 15.4304 14 15C14 14.5696 14.2754 14.1874 14.6838 14.0513L15.2351 13.8675C15.5337 13.768 15.768 13.5337 15.8675 13.2351L16.0513 12.6838C16.1874 12.2754 16.5696 12 17 12Z"/></svg>
                                                                 </div>
                                                                 <div>
                                                                     <span
@@ -382,9 +375,9 @@
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>
                                                                 </div>
                                                                 <div class="in-[el-selectedcontent]:hidden">
-                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Bank Account</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>Wells Fargo Account</span></span>
+                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Wells Fargo Account</span></span>
                                                                     <span
-                                                                        class="block text-sm text-gray-500 dark:text-gray-400">Wells Fargo Account ••••8419</span>
+                                                                        class="block text-sm text-gray-500 dark:text-gray-400">••••8419</span>
                                                                 </div>
                                                                 <span
                                                                     class="hidden in-[el-selectedcontent]:block truncate font-medium">Wells
@@ -408,9 +401,9 @@
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>
                                                                 </div>
                                                                 <div class="in-[el-selectedcontent]:hidden">
-                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Bank Account</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>Citibank Account</span></span>
+                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Citibank Account</span></span>
                                                                     <span
-                                                                        class="block text-sm text-gray-500 dark:text-gray-400">Citibank Account ••••3674</span>
+                                                                        class="block text-sm text-gray-500 dark:text-gray-400">••••3674</span>
                                                                 </div>
                                                                 <span
                                                                     class="hidden in-[el-selectedcontent]:block truncate font-medium">Citibank
@@ -440,7 +433,7 @@
                                                                     </svg>
                                                                 </div>
                                                                 <div class="in-[el-selectedcontent]:hidden">
-                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Paper Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>San Francisco Office</span></span>
+                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>San Francisco Office</span></span>
                                                                     <span class="block text-sm text-gray-500 dark:text-gray-400">San Francisco Office, San Francisco, CA</span>
                                                                 </div>
                                                                 <span
@@ -471,7 +464,7 @@
                                                                     </svg>
                                                                 </div>
                                                                 <div class="in-[el-selectedcontent]:hidden">
-                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Paper Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>New York Office</span></span>
+                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>New York Office</span></span>
                                                                     <span class="block text-sm text-gray-500 dark:text-gray-400">New York Office, New York, NY</span>
                                                                 </div>
                                                                 <span
@@ -556,14 +549,12 @@
                                                             <path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
                                                         </svg>
                                                     </button>
-                                                    <el-options anchor="bottom start" popover class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
+                                                    <el-options anchor="bottom start" popover class="max-h-[21rem] w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
                                                         <el-option value="payers-card"
                                                             class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
                                                             <div class="flex items-center gap-3">
-                                                                <div class="shrink-0 text-blue-600 in-[el-selectedcontent]:text-gray-600 dark:in-[el-selectedcontent]:text-gray-400">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                                                        <path d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                                                    </svg>
+                                                                <div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.5 4C1.67157 4 1 4.67157 1 5.5V6H19V5.5C19 4.67157 18.3284 4 17.5 4H2.5ZM19 8.5H1V14.5C1 15.3284 1.67157 16 2.5 16H12.1C12.0344 15.6769 12 15.3425 12 15C12 12.2386 14.2386 10 17 10C17.7111 10 18.3875 10.1484 19 10.416V8.5ZM3.75 12.5C3.33579 12.5 3 12.8358 3 13.25C3 13.6642 3.33579 14 3.75 14H5.25C5.66421 14 6 13.6642 6 13.25C6 12.8358 5.66421 12.5 5.25 12.5H3.75ZM7 13.25C7 12.8358 7.33579 12.5 7.75 12.5H9.25C9.66421 12.5 10 12.8358 10 13.25C10 13.6642 9.66421 14 9.25 14H7.75C7.33579 14 7 13.6642 7 13.25ZM17 12C17.4304 12 17.8126 12.2754 17.9487 12.6838L18.1325 13.2351C18.232 13.5337 18.4663 13.768 18.7649 13.8675L19.3162 14.0513C19.7246 14.1874 20 14.5696 20 15C20 15.4304 19.7246 15.8126 19.3162 15.9487L18.7649 16.1325C18.4663 16.232 18.232 16.4663 18.1325 16.7649L17.9487 17.3162C17.8126 17.7246 17.4304 18 17 18C16.5696 18 16.1874 17.7246 16.0513 17.3162L15.8675 16.7649C15.768 16.4663 15.5337 16.232 15.2351 16.1325L14.6838 15.9487C14.2754 15.8126 14 15.4304 14 15C14 14.5696 14.2754 14.1874 14.6838 14.0513L15.2351 13.8675C15.5337 13.768 15.768 13.5337 15.8675 13.2351L16.0513 12.6838C16.1874 12.2754 16.5696 12 17 12Z"/></svg>
                                                                 </div>
                                                                 <div>
                                                                     <span class="block truncate font-medium group-aria-selected/option:font-semibold">Accept Payer's Card</span>
@@ -583,8 +574,8 @@
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>
                                                                 </div>
                                                                 <div class="in-[el-selectedcontent]:hidden">
-                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Bank Account</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>Wells Fargo Account</span></span>
-                                                                    <span class="block text-sm text-gray-500 dark:text-gray-400">Wells Fargo Account ••••8419</span>
+                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Wells Fargo Account</span></span>
+                                                                    <span class="block text-sm text-gray-500 dark:text-gray-400">••••8419</span>
                                                                 </div>
                                                                 <span class="hidden in-[el-selectedcontent]:block truncate font-medium">Wells Fargo Account ••••8419</span>
                                                             </div>
@@ -601,8 +592,8 @@
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>
                                                                 </div>
                                                                 <div class="in-[el-selectedcontent]:hidden">
-                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Bank Account</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>Citibank Account</span></span>
-                                                                    <span class="block text-sm text-gray-500 dark:text-gray-400">Citibank Account ••••3674</span>
+                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Citibank Account</span></span>
+                                                                    <span class="block text-sm text-gray-500 dark:text-gray-400">••••3674</span>
                                                                 </div>
                                                                 <span class="hidden in-[el-selectedcontent]:block truncate font-medium">Citibank Account ••••3674</span>
                                                             </div>
@@ -621,7 +612,7 @@
                                                                     </svg>
                                                                 </div>
                                                                 <div class="in-[el-selectedcontent]:hidden">
-                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Paper Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>San Francisco Office</span></span>
+                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>San Francisco Office</span></span>
                                                                     <span class="block text-sm text-gray-500 dark:text-gray-400">San Francisco Office, San Francisco, CA</span>
                                                                 </div>
                                                                 <span class="hidden in-[el-selectedcontent]:block truncate font-medium">San Francisco Office</span>
@@ -641,7 +632,7 @@
                                                                     </svg>
                                                                 </div>
                                                                 <div class="in-[el-selectedcontent]:hidden">
-                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Paper Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>New York Office</span></span>
+                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>New York Office</span></span>
                                                                     <span class="block text-sm text-gray-500 dark:text-gray-400">New York Office, New York, NY</span>
                                                                 </div>
                                                                 <span class="hidden in-[el-selectedcontent]:block truncate font-medium">New York Office</span>
@@ -720,14 +711,12 @@
                                                             <path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
                                                         </svg>
                                                     </button>
-                                                    <el-options anchor="bottom start" popover class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
+                                                    <el-options anchor="bottom start" popover class="max-h-[21rem] w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
                                                         <el-option value="payers-card"
                                                             class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
                                                             <div class="flex items-center gap-3">
-                                                                <div class="shrink-0 text-blue-600 in-[el-selectedcontent]:text-gray-600 dark:in-[el-selectedcontent]:text-gray-400">
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
-                                                                        <path d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
-                                                                    </svg>
+                                                                <div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">
+                                                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.5 4C1.67157 4 1 4.67157 1 5.5V6H19V5.5C19 4.67157 18.3284 4 17.5 4H2.5ZM19 8.5H1V14.5C1 15.3284 1.67157 16 2.5 16H12.1C12.0344 15.6769 12 15.3425 12 15C12 12.2386 14.2386 10 17 10C17.7111 10 18.3875 10.1484 19 10.416V8.5ZM3.75 12.5C3.33579 12.5 3 12.8358 3 13.25C3 13.6642 3.33579 14 3.75 14H5.25C5.66421 14 6 13.6642 6 13.25C6 12.8358 5.66421 12.5 5.25 12.5H3.75ZM7 13.25C7 12.8358 7.33579 12.5 7.75 12.5H9.25C9.66421 12.5 10 12.8358 10 13.25C10 13.6642 9.66421 14 9.25 14H7.75C7.33579 14 7 13.6642 7 13.25ZM17 12C17.4304 12 17.8126 12.2754 17.9487 12.6838L18.1325 13.2351C18.232 13.5337 18.4663 13.768 18.7649 13.8675L19.3162 14.0513C19.7246 14.1874 20 14.5696 20 15C20 15.4304 19.7246 15.8126 19.3162 15.9487L18.7649 16.1325C18.4663 16.232 18.232 16.4663 18.1325 16.7649L17.9487 17.3162C17.8126 17.7246 17.4304 18 17 18C16.5696 18 16.1874 17.7246 16.0513 17.3162L15.8675 16.7649C15.768 16.4663 15.5337 16.232 15.2351 16.1325L14.6838 15.9487C14.2754 15.8126 14 15.4304 14 15C14 14.5696 14.2754 14.1874 14.6838 14.0513L15.2351 13.8675C15.5337 13.768 15.768 13.5337 15.8675 13.2351L16.0513 12.6838C16.1874 12.2754 16.5696 12 17 12Z"/></svg>
                                                                 </div>
                                                                 <div>
                                                                     <span class="block truncate font-medium group-aria-selected/option:font-semibold">Accept Payer's Card</span>
@@ -747,8 +736,8 @@
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>
                                                                 </div>
                                                                 <div class="in-[el-selectedcontent]:hidden">
-                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Bank Account</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>Wells Fargo Account</span></span>
-                                                                    <span class="block text-sm text-gray-500 dark:text-gray-400">Wells Fargo Account ••••8419</span>
+                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Wells Fargo Account</span></span>
+                                                                    <span class="block text-sm text-gray-500 dark:text-gray-400">••••8419</span>
                                                                 </div>
                                                                 <span class="hidden in-[el-selectedcontent]:block truncate font-medium">Wells Fargo Account ••••8419</span>
                                                             </div>
@@ -765,8 +754,8 @@
                                                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>
                                                                 </div>
                                                                 <div class="in-[el-selectedcontent]:hidden">
-                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Bank Account</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>Citibank Account</span></span>
-                                                                    <span class="block text-sm text-gray-500 dark:text-gray-400">Citibank Account ••••3674</span>
+                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Citibank Account</span></span>
+                                                                    <span class="block text-sm text-gray-500 dark:text-gray-400">••••3674</span>
                                                                 </div>
                                                                 <span class="hidden in-[el-selectedcontent]:block truncate font-medium">Citibank Account ••••3674</span>
                                                             </div>
@@ -785,7 +774,7 @@
                                                                     </svg>
                                                                 </div>
                                                                 <div class="in-[el-selectedcontent]:hidden">
-                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Paper Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>San Francisco Office</span></span>
+                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>San Francisco Office</span></span>
                                                                     <span class="block text-sm text-gray-500 dark:text-gray-400">San Francisco Office, San Francisco, CA</span>
                                                                 </div>
                                                                 <span class="hidden in-[el-selectedcontent]:block truncate font-medium">San Francisco Office</span>
@@ -805,7 +794,7 @@
                                                                     </svg>
                                                                 </div>
                                                                 <div class="in-[el-selectedcontent]:hidden">
-                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Paper Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>New York Office</span></span>
+                                                                    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>New York Office</span></span>
                                                                     <span class="block text-sm text-gray-500 dark:text-gray-400">New York Office, New York, NY</span>
                                                                 </div>
                                                                 <span class="hidden in-[el-selectedcontent]:block truncate font-medium">New York Office</span>
@@ -875,14 +864,6 @@
                                     </div>
                                     <!-- /card container -->
 
-                                    <!-- Why link -->
-                                    <button type="button" class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300 cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">
-                                            <path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0ZM8.94 6.94a.75.75 0 1 1-1.061-1.061 3 3 0 1 1 2.871 5.026v.345a.75.75 0 0 1-1.5 0v-.5c0-.72.57-1.172 1.081-1.287A1.5 1.5 0 1 0 8.94 6.94ZM10 15a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" />
-                                        </svg>
-                                        Why set multiple payment methods?
-                                    </button>
-
                                 </div>
                                 <!-- /right content -->
 
@@ -893,7 +874,7 @@
                                 <div class="flex w-full justify-end gap-3">
                                     <button id="gp-default-payment-undo-btn" type="button" disabled
                                         class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">
-                                        Undo
+                                        Cancel
                                     </button>
                                     <button id="gp-default-payment-save-btn" type="button"
                                         class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
@@ -1049,14 +1030,14 @@
                                 </div>
                             </div>
 
-                            <div class="-mx-4 border-t border-gray-200 px-4 pt-4 dark:border-white/10 sm:-mx-6 sm:px-6">
+                            <div data-pp-adv-footer-on-customize class="hidden -mx-4 border-t border-gray-200 px-4 pt-4 dark:border-white/10 sm:-mx-6 sm:px-6">
                                 <div class="flex w-full justify-end gap-3">
                                     <button id="pp-adv-undo-btn" type="button" disabled
                                         class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">
-                                        Undo
+                                        Cancel
                                     </button>
-                                    <button id="pp-adv-save-btn" type="button"
-                                        class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
+                                    <button id="pp-adv-save-btn" type="button" disabled
+                                        class="rounded-md bg-blue-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
                                         Save
                                     </button>
                                 </div>
@@ -1208,66 +1189,173 @@
             <el-dialog-backdrop
                 class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
             <div tabindex="0"
-                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-4 md:p-6">
+                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
-                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
-                    <div class="flex self-stretch items-center justify-between gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
-                        <h2 class="text-lg font-medium text-gray-900 dark:text-white">Add Bank Account</h2>
-                        <button type="button" command="close" commandfor="pp-add-bank-account-dialog"
-                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
-                            <span class="sr-only">Close</span>
+                    class="relative w-full max-w-lg transform overflow-hidden rounded-[10px] bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in dark:bg-gray-900">
+                    <div class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
+                        <h3 class="flex-1 text-lg/6 font-medium text-gray-900 dark:text-white">Add Bank Account</h3>
+                        <button type="button" command="close" commandfor="pp-add-bank-account-dialog" aria-label="Close"
+                            class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
-                                <path fill-rule="evenodd"
-                                    d="M6 18L18 6M6 6l12 12" clip-rule="evenodd" />
+                                stroke="currentColor" stroke-width="1.5" class="size-6" aria-hidden="true">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
-                    <div class="px-6 pt-4 pb-6">
-                        <div class="flex self-stretch flex-col items-start justify-center gap-4">
-                            <div class="flex w-full flex-col gap-2">
-                                <label for="pp-bank-account-name"
-                                    class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200">Name on Account</label>
-                                <input id="pp-bank-account-name" type="text" placeholder="Account Name"
-                                    class="block w-full rounded-md bg-white py-2.5 px-4 text-sm font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                            </div>
-                            <div class="flex w-full flex-col gap-2">
-                                <label for="pp-bank-routing-number"
-                                    class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200">Routing Number</label>
-                                <input id="pp-bank-routing-number" type="text" inputmode="numeric" maxlength="9" placeholder="000000000"
-                                    class="block w-full rounded-md bg-white py-2.5 px-4 text-sm font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                            </div>
-                            <div class="flex w-full flex-col gap-2">
-                                <label for="pp-bank-account-number"
-                                    class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200">Account Number</label>
-                                <input id="pp-bank-account-number" type="text" inputmode="numeric" placeholder="0000-0000-0000"
-                                    class="block w-full rounded-md bg-white py-2.5 px-4 text-sm font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                            </div>
-                            <div class="flex w-full flex-col gap-2">
-                                <label for="pp-bank-account-number-confirm"
-                                    class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200">Confirm Account Number</label>
-                                <input id="pp-bank-account-number-confirm" type="text" inputmode="numeric" placeholder="0000-0000-0000"
-                                    class="block w-full rounded-md bg-white py-2.5 px-4 text-sm font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                            </div>
-                            <div class="flex w-full flex-col gap-2">
-                                <div class="flex items-center justify-between">
-                                    <label for="pp-bank-account-nickname"
-                                        class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200">Account Nickname</label>
-                                    <span class="text-sm text-gray-400 dark:text-gray-500">Optional</span>
+                    <div class="flex flex-col gap-4 px-6 pt-4 pb-6">
+
+                        <!-- Account Information -->
+                        <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-white/10">
+                            <div class="border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm/5 font-semibold text-gray-900 dark:border-white/10 dark:bg-white/5 dark:text-white">Account Information</div>
+                            <div class="flex flex-col gap-4 p-4">
+                                <div class="flex flex-col gap-1">
+                                    <label for="pp-bank-account-name" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Name on Account</label>
+                                    <input id="pp-bank-account-name" type="text" placeholder="Account Name" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
                                 </div>
-                                <input id="pp-bank-account-nickname" type="text" placeholder="Account Nickname"
-                                    class="block w-full rounded-md bg-white py-2.5 px-4 text-sm font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-bank-routing-number" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Routing Number</label>
+                                <input id="pp-bank-routing-number" type="text" inputmode="numeric" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-bank-account-number" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Account Number</label>
+                                <input id="pp-bank-account-number" type="text" inputmode="numeric" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-bank-account-number-confirm" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Confirm Account Number</label>
+                                <input id="pp-bank-account-number-confirm" type="text" inputmode="numeric" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-start gap-1"><label for="pp-bank-account-nickname" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Account Nickname</label><span class="flex-1 text-right text-sm/5 text-gray-400 dark:text-gray-500">Optional</span></div>
+                                <input id="pp-bank-account-nickname" type="text" placeholder="e.g. Primary Account" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                            </div>
                             </div>
                         </div>
+
+                        <!-- Address -->
+                        <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-white/10">
+                            <div class="border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm/5 font-semibold text-gray-900 dark:border-white/10 dark:bg-white/5 dark:text-white">Address</div>
+                            <div class="flex flex-col gap-4 p-4">
+                                <div class="flex flex-col gap-1">
+                                    <label for="pp-add-bank-country" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Country</label>
+                                    <div class="grid grid-cols-1">
+                                        <span id="pp-add-bank-country-flag" class="fi fi-us pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm"></span>
+                                        <select id="pp-add-bank-country" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white pr-8 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 pl-10">
+                                            <option value="us">United States</option>
+                                            <option value="ca">Canada</option>
+                                            <option value="mx">Mexico</option>
+                                            <option value="gb">United Kingdom</option>
+                                            <option value="au">Australia</option>
+                                            <option value="de">Germany</option>
+                                            <option value="fr">France</option>
+                                        </select>
+                                        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+                                    </div>
+                                </div>
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-add-bank-line1" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Line 1</label>
+                                <input id="pp-add-bank-line1" type="text" autocomplete="address-line1" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-start gap-1"><label for="pp-add-bank-line2" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Line 2</label><span class="flex-1 text-right text-sm/5 text-gray-400 dark:text-gray-500">Optional</span></div>
+                                <input id="pp-add-bank-line2" type="text" autocomplete="address-line2" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-start gap-1"><label for="pp-add-bank-line3" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Line 3</label><span class="flex-1 text-right text-sm/5 text-gray-400 dark:text-gray-500">Optional</span></div>
+                                <input id="pp-add-bank-line3" type="text" autocomplete="address-line3" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-add-bank-city" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">City</label>
+                                <input id="pp-add-bank-city" type="text" autocomplete="address-level2" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                            </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="flex flex-col gap-1">
+                                        <label for="pp-add-bank-state" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">State / Province</label>
+                                        <div class="grid grid-cols-1">
+                                            <select id="pp-add-bank-state" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white pr-8 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 pl-3">
+                                            <option value="Alabama">Alabama</option>
+                                            <option value="Alaska">Alaska</option>
+                                            <option value="Arizona">Arizona</option>
+                                            <option value="Arkansas">Arkansas</option>
+                                            <option value="California">California</option>
+                                            <option value="Colorado">Colorado</option>
+                                            <option value="Connecticut">Connecticut</option>
+                                            <option value="Delaware">Delaware</option>
+                                            <option value="District of Columbia">District of Columbia</option>
+                                            <option value="Florida">Florida</option>
+                                            <option value="Georgia">Georgia</option>
+                                            <option value="Hawaii">Hawaii</option>
+                                            <option value="Idaho">Idaho</option>
+                                            <option value="Illinois">Illinois</option>
+                                            <option value="Indiana">Indiana</option>
+                                            <option value="Iowa">Iowa</option>
+                                            <option value="Kansas">Kansas</option>
+                                            <option value="Kentucky">Kentucky</option>
+                                            <option value="Louisiana">Louisiana</option>
+                                            <option value="Maine">Maine</option>
+                                            <option value="Maryland">Maryland</option>
+                                            <option value="Massachusetts">Massachusetts</option>
+                                            <option value="Michigan">Michigan</option>
+                                            <option value="Minnesota">Minnesota</option>
+                                            <option value="Mississippi">Mississippi</option>
+                                            <option value="Missouri">Missouri</option>
+                                            <option value="Montana">Montana</option>
+                                            <option value="Nebraska">Nebraska</option>
+                                            <option value="Nevada">Nevada</option>
+                                            <option value="New Hampshire">New Hampshire</option>
+                                            <option value="New Jersey">New Jersey</option>
+                                            <option value="New Mexico">New Mexico</option>
+                                            <option value="New York">New York</option>
+                                            <option value="North Carolina">North Carolina</option>
+                                            <option value="North Dakota">North Dakota</option>
+                                            <option value="Ohio">Ohio</option>
+                                            <option value="Oklahoma">Oklahoma</option>
+                                            <option value="Oregon">Oregon</option>
+                                            <option value="Pennsylvania">Pennsylvania</option>
+                                            <option value="Rhode Island">Rhode Island</option>
+                                            <option value="South Carolina">South Carolina</option>
+                                            <option value="South Dakota">South Dakota</option>
+                                            <option value="Tennessee">Tennessee</option>
+                                            <option value="Texas">Texas</option>
+                                            <option value="Utah">Utah</option>
+                                            <option value="Vermont">Vermont</option>
+                                            <option value="Virginia">Virginia</option>
+                                            <option value="Washington">Washington</option>
+                                            <option value="West Virginia">West Virginia</option>
+                                            <option value="Wisconsin">Wisconsin</option>
+                                            <option value="Wyoming">Wyoming</option>
+                                            </select>
+                                            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <label for="pp-add-bank-zip" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Zip / Postal Code</label>
+                                        <input id="pp-add-bank-zip" type="text" autocomplete="postal-code" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Default -->
+                        <label class="flex cursor-pointer items-start gap-3 rounded-md bg-gray-50 p-3 dark:bg-white/5">
+                            <span class="group mt-0.5 grid size-4 shrink-0 grid-cols-1">
+                                <input id="pp-add-bank-default" type="checkbox"
+                                    class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5" />
+                                <svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                            </span>
+                            <span class="flex items-center gap-1 text-sm/5 font-medium text-gray-700 dark:text-gray-300">
+                                Set as default for future payments
+                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-400"><title>The default account is preselected for future payments.</title><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg>
+                            </span>
+                        </label>
                     </div>
-                    <div class="flex justify-end gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                    <div class="flex items-start justify-end gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
                         <button type="button" command="close" commandfor="pp-add-bank-account-dialog"
-                            class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+                            class="cursor-pointer rounded-md bg-white px-3.5 py-2.5 text-base font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">
                             Cancel
                         </button>
                         <button id="pp-add-bank-account-save-btn" type="button"
-                            class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
-                            Add
+                            class="cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                            Save
                         </button>
                     </div>
                 </el-dialog-panel>
@@ -1276,7 +1364,7 @@
     </el-dialog>
 
     <!-- ===== ADD ADDRESS MODAL ===== -->
-    <el-dialog>
+        <el-dialog>
         <dialog id="pp-add-check-dialog"
             class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
             <el-dialog-backdrop
@@ -1284,95 +1372,127 @@
             <div tabindex="0"
                 class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
-                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
-                    <div class="flex self-stretch items-center justify-between gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Add Address</h3>
-                        <button type="button" command="close" commandfor="pp-add-check-dialog"
-                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                    class="relative w-full max-w-lg transform overflow-hidden rounded-[10px] bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in dark:bg-gray-900">
+                    <div class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
+                        <h3 class="flex-1 text-lg/6 font-medium text-gray-900 dark:text-white">Add Address</h3>
+                        <button type="button" command="close" commandfor="pp-add-check-dialog" aria-label="Close"
+                            class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                stroke="currentColor" stroke-width="1.5" class="size-6" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
-                    <div class="px-6 pt-4 pb-6">
-                        <div class="flex self-stretch flex-col items-start justify-center gap-4">
-                            <div class="w-full">
-                                <label for="pp-add-check-nickname" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Nickname</label>
-                                <div class="mt-2">
-                                    <input id="pp-add-check-nickname" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                </div>
-                            </div>
-                            <div class="w-full">
-                                <label for="pp-add-check-line1" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 1</label>
-                                <div class="mt-2">
-                                    <input id="pp-add-check-line1" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                </div>
-                            </div>
-                            <div class="w-full">
-                                <div class="flex items-baseline justify-between">
-                                    <label for="pp-add-check-line2" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 2</label>
-                                    <span class="text-sm/6 text-gray-400 dark:text-gray-500">Optional</span>
-                                </div>
-                                <div class="mt-2">
-                                    <input id="pp-add-check-line2" type="text" placeholder="Suite, floor, unit..."
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                </div>
-                            </div>
-                            <div class="w-full">
-                                <label for="pp-add-check-city" class="block text-sm/6 font-medium text-gray-900 dark:text-white">City</label>
-                                <div class="mt-2">
-                                    <input id="pp-add-check-city" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                </div>
-                            </div>
-                            <div class="grid w-full grid-cols-2 gap-4">
-                                <div>
-                                    <label for="pp-add-check-state" class="block text-sm/6 font-medium text-gray-900 dark:text-white">State / Province</label>
-                                    <div class="mt-2">
-                                        <input id="pp-add-check-state" type="text"
-                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="pp-add-check-zip" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Zip / Postal Code</label>
-                                    <div class="mt-2">
-                                        <input id="pp-add-check-zip" type="text"
-                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="w-full">
-                                <label for="pp-add-check-country" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Country</label>
-                                <div class="mt-2 grid grid-cols-1">
-                                    <span id="pp-add-check-country-flag" class="fi fi-us pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm"></span>
-                                    <select id="pp-add-check-country" name="pp-add-check-country"
-                                        class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-10 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
-                                        <option value="us" selected>United States</option>
+                    <div class="flex flex-col gap-4 px-6 pt-4 pb-6">
+                        <div class="flex flex-col gap-1">
+                            <label for="pp-add-check-country" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Country</label>
+                            <div class="grid grid-cols-1">
+                                <span id="pp-add-check-country-flag" class="fi fi-us pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm"></span>
+                                <select id="pp-add-check-country" name="pp-add-check-country" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white pr-8 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 pl-10">
+                                        <option value="us">United States</option>
                                         <option value="ca">Canada</option>
                                         <option value="mx">Mexico</option>
                                         <option value="gb">United Kingdom</option>
                                         <option value="au">Australia</option>
                                         <option value="de">Germany</option>
                                         <option value="fr">France</option>
+                                </select>
+                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label for="pp-add-check-nickname" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Nickname</label>
+                            <input id="pp-add-check-nickname" type="text" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label for="pp-add-check-line1" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Line 1</label>
+                            <input id="pp-add-check-line1" type="text" autocomplete="address-line1" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-start gap-1"><label for="pp-add-check-line2" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Line 2</label><span class="flex-1 text-right text-sm/5 text-gray-400 dark:text-gray-500">Optional</span></div>
+                            <input id="pp-add-check-line2" type="text" placeholder="Address Line 2" autocomplete="address-line2" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-start gap-1"><label for="pp-add-check-line3" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Line 3</label><span class="flex-1 text-right text-sm/5 text-gray-400 dark:text-gray-500">Optional</span></div>
+                            <input id="pp-add-check-line3" type="text" placeholder="Address Line 3" autocomplete="address-line3" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label for="pp-add-check-city" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">City</label>
+                            <input id="pp-add-check-city" type="text" autocomplete="address-level2" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-add-check-state" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">State/Province</label>
+                                <div class="grid grid-cols-1">
+                                    <select id="pp-add-check-state" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white pr-8 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 pl-3">
+                                        <option value="AL">Alabama</option>
+                                        <option value="AK">Alaska</option>
+                                        <option value="AZ">Arizona</option>
+                                        <option value="AR">Arkansas</option>
+                                        <option value="CA">California</option>
+                                        <option value="CO">Colorado</option>
+                                        <option value="CT">Connecticut</option>
+                                        <option value="DE">Delaware</option>
+                                        <option value="DC">District of Columbia</option>
+                                        <option value="FL">Florida</option>
+                                        <option value="GA">Georgia</option>
+                                        <option value="HI">Hawaii</option>
+                                        <option value="ID">Idaho</option>
+                                        <option value="IL">Illinois</option>
+                                        <option value="IN">Indiana</option>
+                                        <option value="IA">Iowa</option>
+                                        <option value="KS">Kansas</option>
+                                        <option value="KY">Kentucky</option>
+                                        <option value="LA">Louisiana</option>
+                                        <option value="ME">Maine</option>
+                                        <option value="MD">Maryland</option>
+                                        <option value="MA">Massachusetts</option>
+                                        <option value="MI">Michigan</option>
+                                        <option value="MN">Minnesota</option>
+                                        <option value="MS">Mississippi</option>
+                                        <option value="MO">Missouri</option>
+                                        <option value="MT">Montana</option>
+                                        <option value="NE">Nebraska</option>
+                                        <option value="NV">Nevada</option>
+                                        <option value="NH">New Hampshire</option>
+                                        <option value="NJ">New Jersey</option>
+                                        <option value="NM">New Mexico</option>
+                                        <option value="NY">New York</option>
+                                        <option value="NC">North Carolina</option>
+                                        <option value="ND">North Dakota</option>
+                                        <option value="OH">Ohio</option>
+                                        <option value="OK">Oklahoma</option>
+                                        <option value="OR">Oregon</option>
+                                        <option value="PA">Pennsylvania</option>
+                                        <option value="RI">Rhode Island</option>
+                                        <option value="SC">South Carolina</option>
+                                        <option value="SD">South Dakota</option>
+                                        <option value="TN">Tennessee</option>
+                                        <option value="TX">Texas</option>
+                                        <option value="UT">Utah</option>
+                                        <option value="VT">Vermont</option>
+                                        <option value="VA">Virginia</option>
+                                        <option value="WA">Washington</option>
+                                        <option value="WV">West Virginia</option>
+                                        <option value="WI">Wisconsin</option>
+                                        <option value="WY">Wyoming</option>
                                     </select>
-                                    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
-                                        class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
-                                        <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
-                                    </svg>
+                                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
                                 </div>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-add-check-zip" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Zip/Postal Code</label>
+                                <input id="pp-add-check-zip" type="text" autocomplete="postal-code" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
                             </div>
                         </div>
                     </div>
-                    <div class="flex justify-end gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                    <div class="flex items-start justify-end gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
                         <button type="button" command="close" commandfor="pp-add-check-dialog"
-                            class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+                            class="cursor-pointer rounded-md bg-white px-3.5 py-2.5 text-base font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">
                             Cancel
                         </button>
                         <button id="pp-add-check-save-btn" type="button"
-                            class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
+                            class="cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                             Add
                         </button>
                     </div>
@@ -1390,67 +1510,171 @@
             <div tabindex="0"
                 class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
-                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
-                    <div class="flex self-stretch items-center justify-between gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Edit Bank Account</h3>
-                        <button type="button" command="close" commandfor="pp-edit-bank-dialog"
-                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                    class="relative w-full max-w-lg transform overflow-hidden rounded-[10px] bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in dark:bg-gray-900">
+                    <div class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
+                        <h3 class="flex-1 text-lg/6 font-medium text-gray-900 dark:text-white">Edit Bank Account</h3>
+                        <button type="button" command="close" commandfor="pp-edit-bank-dialog" aria-label="Close"
+                            class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                stroke="currentColor" stroke-width="1.5" class="size-6" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
-                    <div class="px-6 pt-4 pb-6">
-                        <div class="flex self-stretch flex-col items-start justify-center gap-4">
-                            <div class="w-full">
-                                <label for="pp-edit-bank-name" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Name on Account</label>
-                                <div class="mt-2">
-                                    <input id="pp-edit-bank-name" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                    <div class="flex flex-col gap-4 px-6 pt-4 pb-6">
+
+                        <!-- Account Information -->
+                        <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-white/10">
+                            <div class="border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm/5 font-semibold text-gray-900 dark:border-white/10 dark:bg-white/5 dark:text-white">Account Information</div>
+                            <div class="flex flex-col gap-4 p-4">
+                                <div class="flex flex-col gap-1">
+                                    <label for="pp-edit-bank-name" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Name on Account</label>
+                                    <input id="pp-edit-bank-name" type="text" readonly placeholder="Account Name" class="block h-10 w-full cursor-not-allowed rounded-md bg-gray-50 px-3 text-base font-medium text-gray-500 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:font-normal dark:bg-white/5 dark:text-gray-400 dark:outline-white/10" />
                                 </div>
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-edit-bank-routing" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Routing Number</label>
+                                <input id="pp-edit-bank-routing" type="text" inputmode="numeric" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
                             </div>
-                            <div class="w-full">
-                                <label for="pp-edit-bank-routing" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Routing Number</label>
-                                <div class="mt-2">
-                                    <input id="pp-edit-bank-routing" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                </div>
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-edit-bank-account" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Account Number</label>
+                                <input id="pp-edit-bank-account" type="text" inputmode="numeric" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
                             </div>
-                            <div class="w-full">
-                                <label for="pp-edit-bank-account" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Account Number</label>
-                                <div class="mt-2">
-                                    <input id="pp-edit-bank-account" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                </div>
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-edit-bank-confirm" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Confirm Account Number</label>
+                                <input id="pp-edit-bank-confirm" type="text" inputmode="numeric" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
                             </div>
-                            <div class="w-full">
-                                <label for="pp-edit-bank-confirm" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Confirm Account Number</label>
-                                <div class="mt-2">
-                                    <input id="pp-edit-bank-confirm" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                </div>
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-start gap-1"><label for="pp-edit-bank-nickname" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Account Nickname</label><span class="flex-1 text-right text-sm/5 text-gray-400 dark:text-gray-500">Optional</span></div>
+                                <input id="pp-edit-bank-nickname" type="text" placeholder="e.g. Primary Account" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
                             </div>
-                            <div class="w-full">
-                                <div class="flex items-baseline justify-between">
-                                    <label for="pp-edit-bank-nickname" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Account Nickname</label>
-                                    <span class="text-sm/6 text-gray-400 dark:text-gray-500">Optional</span>
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="overflow-hidden rounded-lg border border-gray-200 dark:border-white/10">
+                            <div class="border-b border-gray-200 bg-gray-50 px-4 py-2 text-sm/5 font-semibold text-gray-900 dark:border-white/10 dark:bg-white/5 dark:text-white">Address</div>
+                            <div class="flex flex-col gap-4 p-4">
+                                <div class="flex flex-col gap-1">
+                                    <label for="pp-edit-bank-country" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Country</label>
+                                    <div class="grid grid-cols-1">
+                                        <span id="pp-edit-bank-country-flag" class="fi fi-us pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm"></span>
+                                        <select id="pp-edit-bank-country" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white pr-8 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 pl-10">
+                                            <option value="us">United States</option>
+                                            <option value="ca">Canada</option>
+                                            <option value="mx">Mexico</option>
+                                            <option value="gb">United Kingdom</option>
+                                            <option value="au">Australia</option>
+                                            <option value="de">Germany</option>
+                                            <option value="fr">France</option>
+                                        </select>
+                                        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+                                    </div>
                                 </div>
-                                <div class="mt-2">
-                                    <input id="pp-edit-bank-nickname" type="text" placeholder="e.g. Primary Account"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-edit-bank-line1" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Line 1</label>
+                                <input id="pp-edit-bank-line1" type="text" autocomplete="address-line1" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-start gap-1"><label for="pp-edit-bank-line2" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Line 2</label><span class="flex-1 text-right text-sm/5 text-gray-400 dark:text-gray-500">Optional</span></div>
+                                <input id="pp-edit-bank-line2" type="text" autocomplete="address-line2" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <div class="flex items-start gap-1"><label for="pp-edit-bank-line3" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Line 3</label><span class="flex-1 text-right text-sm/5 text-gray-400 dark:text-gray-500">Optional</span></div>
+                                <input id="pp-edit-bank-line3" type="text" autocomplete="address-line3" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-edit-bank-city" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">City</label>
+                                <input id="pp-edit-bank-city" type="text" autocomplete="address-level2" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                            </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="flex flex-col gap-1">
+                                        <label for="pp-edit-bank-state" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">State / Province</label>
+                                        <div class="grid grid-cols-1">
+                                            <select id="pp-edit-bank-state" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white pr-8 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 pl-3">
+                                            <option value="Alabama">Alabama</option>
+                                            <option value="Alaska">Alaska</option>
+                                            <option value="Arizona">Arizona</option>
+                                            <option value="Arkansas">Arkansas</option>
+                                            <option value="California">California</option>
+                                            <option value="Colorado">Colorado</option>
+                                            <option value="Connecticut">Connecticut</option>
+                                            <option value="Delaware">Delaware</option>
+                                            <option value="District of Columbia">District of Columbia</option>
+                                            <option value="Florida">Florida</option>
+                                            <option value="Georgia">Georgia</option>
+                                            <option value="Hawaii">Hawaii</option>
+                                            <option value="Idaho">Idaho</option>
+                                            <option value="Illinois">Illinois</option>
+                                            <option value="Indiana">Indiana</option>
+                                            <option value="Iowa">Iowa</option>
+                                            <option value="Kansas">Kansas</option>
+                                            <option value="Kentucky">Kentucky</option>
+                                            <option value="Louisiana">Louisiana</option>
+                                            <option value="Maine">Maine</option>
+                                            <option value="Maryland">Maryland</option>
+                                            <option value="Massachusetts">Massachusetts</option>
+                                            <option value="Michigan">Michigan</option>
+                                            <option value="Minnesota">Minnesota</option>
+                                            <option value="Mississippi">Mississippi</option>
+                                            <option value="Missouri">Missouri</option>
+                                            <option value="Montana">Montana</option>
+                                            <option value="Nebraska">Nebraska</option>
+                                            <option value="Nevada">Nevada</option>
+                                            <option value="New Hampshire">New Hampshire</option>
+                                            <option value="New Jersey">New Jersey</option>
+                                            <option value="New Mexico">New Mexico</option>
+                                            <option value="New York">New York</option>
+                                            <option value="North Carolina">North Carolina</option>
+                                            <option value="North Dakota">North Dakota</option>
+                                            <option value="Ohio">Ohio</option>
+                                            <option value="Oklahoma">Oklahoma</option>
+                                            <option value="Oregon">Oregon</option>
+                                            <option value="Pennsylvania">Pennsylvania</option>
+                                            <option value="Rhode Island">Rhode Island</option>
+                                            <option value="South Carolina">South Carolina</option>
+                                            <option value="South Dakota">South Dakota</option>
+                                            <option value="Tennessee">Tennessee</option>
+                                            <option value="Texas">Texas</option>
+                                            <option value="Utah">Utah</option>
+                                            <option value="Vermont">Vermont</option>
+                                            <option value="Virginia">Virginia</option>
+                                            <option value="Washington">Washington</option>
+                                            <option value="West Virginia">West Virginia</option>
+                                            <option value="Wisconsin">Wisconsin</option>
+                                            <option value="Wyoming">Wyoming</option>
+                                            </select>
+                                            <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col gap-1">
+                                        <label for="pp-edit-bank-zip" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Zip / Postal Code</label>
+                                        <input id="pp-edit-bank-zip" type="text" autocomplete="postal-code" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Default -->
+                        <label class="flex cursor-pointer items-start gap-3 rounded-md bg-gray-50 p-3 dark:bg-white/5">
+                            <span class="group mt-0.5 grid size-4 shrink-0 grid-cols-1">
+                                <input id="pp-edit-bank-default" type="checkbox"
+                                    class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5" />
+                                <svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                            </span>
+                            <span class="flex items-center gap-1 text-sm/5 font-medium text-gray-700 dark:text-gray-300">
+                                Set as default for future payments
+                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-400"><title>The default account is preselected for future payments.</title><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg>
+                            </span>
+                        </label>
                     </div>
-                    <div class="flex justify-end gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                    <div class="flex items-start justify-end gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
                         <button type="button" command="close" commandfor="pp-edit-bank-dialog"
-                            class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+                            class="cursor-pointer rounded-md bg-white px-3.5 py-2.5 text-base font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">
                             Cancel
                         </button>
                         <button id="pp-edit-bank-save-btn" type="button"
-                            class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
-                            Update
+                            class="cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                            Save
                         </button>
                     </div>
                 </el-dialog-panel>
@@ -1459,7 +1683,7 @@
     </el-dialog>
 
     <!-- ===== EDIT ADDRESS MODAL ===== -->
-    <el-dialog>
+        <el-dialog>
         <dialog id="pp-edit-check-dialog"
             class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
             <el-dialog-backdrop
@@ -1467,95 +1691,127 @@
             <div tabindex="0"
                 class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
-                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
-                    <div class="flex self-stretch items-center justify-between gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-white">Edit Address</h3>
-                        <button type="button" command="close" commandfor="pp-edit-check-dialog"
-                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                    class="relative w-full max-w-lg transform overflow-hidden rounded-[10px] bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in dark:bg-gray-900">
+                    <div class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">
+                        <h3 class="flex-1 text-lg/6 font-medium text-gray-900 dark:text-white">Edit Address</h3>
+                        <button type="button" command="close" commandfor="pp-edit-check-dialog" aria-label="Close"
+                            class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
+                                stroke="currentColor" stroke-width="1.5" class="size-6" aria-hidden="true">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </button>
                     </div>
-                    <div class="px-6 pt-4 pb-6">
-                        <div class="flex self-stretch flex-col items-start justify-center gap-4">
-                            <div class="w-full">
-                                <label for="pp-edit-check-nickname" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Nickname</label>
-                                <div class="mt-2">
-                                    <input id="pp-edit-check-nickname" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                </div>
-                            </div>
-                            <div class="w-full">
-                                <label for="pp-edit-check-line1" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 1</label>
-                                <div class="mt-2">
-                                    <input id="pp-edit-check-line1" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                </div>
-                            </div>
-                            <div class="w-full">
-                                <div class="flex items-baseline justify-between">
-                                    <label for="pp-edit-check-line2" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 2</label>
-                                    <span class="text-sm/6 text-gray-400 dark:text-gray-500">Optional</span>
-                                </div>
-                                <div class="mt-2">
-                                    <input id="pp-edit-check-line2" type="text" placeholder="Suite, floor, unit..."
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                </div>
-                            </div>
-                            <div class="w-full">
-                                <label for="pp-edit-check-city" class="block text-sm/6 font-medium text-gray-900 dark:text-white">City</label>
-                                <div class="mt-2">
-                                    <input id="pp-edit-check-city" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                </div>
-                            </div>
-                            <div class="grid w-full grid-cols-2 gap-4">
-                                <div>
-                                    <label for="pp-edit-check-state" class="block text-sm/6 font-medium text-gray-900 dark:text-white">State / Province</label>
-                                    <div class="mt-2">
-                                        <input id="pp-edit-check-state" type="text"
-                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                    </div>
-                                </div>
-                                <div>
-                                    <label for="pp-edit-check-zip" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Zip / Postal Code</label>
-                                    <div class="mt-2">
-                                        <input id="pp-edit-check-zip" type="text"
-                                            class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="w-full">
-                                <label for="pp-edit-check-country" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Country</label>
-                                <div class="mt-2 grid grid-cols-1">
-                                    <span id="pp-edit-check-country-flag" class="fi fi-us pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm"></span>
-                                    <select id="pp-edit-check-country" name="pp-edit-check-country"
-                                        class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-10 text-base font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
-                                        <option value="us" selected>United States</option>
+                    <div class="flex flex-col gap-4 px-6 pt-4 pb-6">
+                        <div class="flex flex-col gap-1">
+                            <label for="pp-edit-check-country" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Country</label>
+                            <div class="grid grid-cols-1">
+                                <span id="pp-edit-check-country-flag" class="fi fi-us pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm"></span>
+                                <select id="pp-edit-check-country" name="pp-edit-check-country" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white pr-8 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 pl-10">
+                                        <option value="us">United States</option>
                                         <option value="ca">Canada</option>
                                         <option value="mx">Mexico</option>
                                         <option value="gb">United Kingdom</option>
                                         <option value="au">Australia</option>
                                         <option value="de">Germany</option>
                                         <option value="fr">France</option>
+                                </select>
+                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
+                            </div>
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label for="pp-edit-check-nickname" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Nickname</label>
+                            <input id="pp-edit-check-nickname" type="text" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label for="pp-edit-check-line1" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Line 1</label>
+                            <input id="pp-edit-check-line1" type="text" autocomplete="address-line1" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-start gap-1"><label for="pp-edit-check-line2" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Line 2</label><span class="flex-1 text-right text-sm/5 text-gray-400 dark:text-gray-500">Optional</span></div>
+                            <input id="pp-edit-check-line2" type="text" placeholder="Address Line 2" autocomplete="address-line2" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <div class="flex items-start gap-1"><label for="pp-edit-check-line3" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Address Line 3</label><span class="flex-1 text-right text-sm/5 text-gray-400 dark:text-gray-500">Optional</span></div>
+                            <input id="pp-edit-check-line3" type="text" placeholder="Address Line 3" autocomplete="address-line3" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                        </div>
+                        <div class="flex flex-col gap-1">
+                            <label for="pp-edit-check-city" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">City</label>
+                            <input id="pp-edit-check-city" type="text" autocomplete="address-level2" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
+                        </div>
+                        <div class="grid grid-cols-2 gap-6">
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-edit-check-state" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">State/Province</label>
+                                <div class="grid grid-cols-1">
+                                    <select id="pp-edit-check-state" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white pr-8 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 pl-3">
+                                        <option value="AL">Alabama</option>
+                                        <option value="AK">Alaska</option>
+                                        <option value="AZ">Arizona</option>
+                                        <option value="AR">Arkansas</option>
+                                        <option value="CA">California</option>
+                                        <option value="CO">Colorado</option>
+                                        <option value="CT">Connecticut</option>
+                                        <option value="DE">Delaware</option>
+                                        <option value="DC">District of Columbia</option>
+                                        <option value="FL">Florida</option>
+                                        <option value="GA">Georgia</option>
+                                        <option value="HI">Hawaii</option>
+                                        <option value="ID">Idaho</option>
+                                        <option value="IL">Illinois</option>
+                                        <option value="IN">Indiana</option>
+                                        <option value="IA">Iowa</option>
+                                        <option value="KS">Kansas</option>
+                                        <option value="KY">Kentucky</option>
+                                        <option value="LA">Louisiana</option>
+                                        <option value="ME">Maine</option>
+                                        <option value="MD">Maryland</option>
+                                        <option value="MA">Massachusetts</option>
+                                        <option value="MI">Michigan</option>
+                                        <option value="MN">Minnesota</option>
+                                        <option value="MS">Mississippi</option>
+                                        <option value="MO">Missouri</option>
+                                        <option value="MT">Montana</option>
+                                        <option value="NE">Nebraska</option>
+                                        <option value="NV">Nevada</option>
+                                        <option value="NH">New Hampshire</option>
+                                        <option value="NJ">New Jersey</option>
+                                        <option value="NM">New Mexico</option>
+                                        <option value="NY">New York</option>
+                                        <option value="NC">North Carolina</option>
+                                        <option value="ND">North Dakota</option>
+                                        <option value="OH">Ohio</option>
+                                        <option value="OK">Oklahoma</option>
+                                        <option value="OR">Oregon</option>
+                                        <option value="PA">Pennsylvania</option>
+                                        <option value="RI">Rhode Island</option>
+                                        <option value="SC">South Carolina</option>
+                                        <option value="SD">South Dakota</option>
+                                        <option value="TN">Tennessee</option>
+                                        <option value="TX">Texas</option>
+                                        <option value="UT">Utah</option>
+                                        <option value="VT">Vermont</option>
+                                        <option value="VA">Virginia</option>
+                                        <option value="WA">Washington</option>
+                                        <option value="WV">West Virginia</option>
+                                        <option value="WI">Wisconsin</option>
+                                        <option value="WY">Wyoming</option>
                                     </select>
-                                    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
-                                        class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
-                                        <path d="M4.22 6.22a.75.75 0 0 1 1.06 0L8 8.94l2.72-2.72a.75.75 0 1 1 1.06 1.06l-3.25 3.25a.75.75 0 0 1-1.06 0L4.22 7.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" fill-rule="evenodd" />
-                                    </svg>
+                                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
                                 </div>
+                            </div>
+                            <div class="flex flex-col gap-1">
+                                <label for="pp-edit-check-zip" class="block text-sm/5 font-medium text-gray-700 dark:text-gray-300">Zip/Postal Code</label>
+                                <input id="pp-edit-check-zip" type="text" autocomplete="postal-code" class="block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10" />
                             </div>
                         </div>
                     </div>
-                    <div class="flex justify-end gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                    <div class="flex items-start justify-end gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
                         <button type="button" command="close" commandfor="pp-edit-check-dialog"
-                            class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
+                            class="cursor-pointer rounded-md bg-white px-3.5 py-2.5 text-base font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">
                             Cancel
                         </button>
                         <button id="pp-edit-check-save-btn" type="button"
-                            class="rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer">
+                            class="cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                             Update
                         </button>
                     </div>
@@ -2096,7 +2352,7 @@
         // Same page as the Supplier Portal, pointed at the consumer's own data.
         window.PAYMENT_PREFERENCES_CONFIG = { dataset: 'consumer-payment-preferences', storagePrefix: 'cp_pp_' };
     </script>
-    <script src="../../../src/scripts/pages/payment-preferences-page.js" defer></script>
+    <script src="../../../src/scripts/pages/payment-preferences-page.js?v=adv-footer-20261008k" defer></script>
 
 </body>
 

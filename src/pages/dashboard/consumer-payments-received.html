@@ -34,11 +34,11 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
     <script src="../../../src/scripts/sidebar-boot.js"></script>
     <script src="../../../src/scripts/app-plans.js"></script>
-    <script src="../../../src/scripts/nav-component.js?v=consumer-sidebar-top-spacing-20261002"></script>
+    <script src="../../../src/scripts/nav-component.js?v=consumer-help-20261008b"></script>
     <script src="../../../src/scripts/stp-state.js"></script>
     <script src="../../../src/scripts/app-switch.js"></script>
     <script src="../../../src/scripts/topbar-component.js?v=consumer-notifications-20261008b"></script>
-    <script src="../../../src/scripts/sidebar.js?v=consumer-icon-hover-20261008" defer></script>
+    <script src="../../../src/scripts/sidebar.js?v=consumer-help-20261008b" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
     <script src="../../../src/scripts/shared.js" defer></script>
     <script src="../../../src/scripts/shell-navigation.js?v=consumer-shell-20261002" defer></script>
@@ -390,21 +390,14 @@
                                                     </svg>
                                                 </button>
                                                 <el-options anchor="bottom start" popover
-                                                    class="max-h-60 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
+                                                    class="max-h-[21rem] w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
                                                     <!-- Accept Payer's Card -->
                                                     <el-option value="payers-card"
                                                         class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
                                                         <div class="flex items-center gap-3">
                                                             <div
-                                                                class="shrink-0 text-blue-600 in-[el-selectedcontent]:text-gray-600 dark:in-[el-selectedcontent]:text-gray-400">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20"
-                                                                    height="20" viewBox="0 0 24 24" fill="none">
-                                                                    <path
-                                                                        d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round"
-                                                                        stroke-linejoin="round" />
-                                                                </svg>
+                                                                class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.5 4C1.67157 4 1 4.67157 1 5.5V6H19V5.5C19 4.67157 18.3284 4 17.5 4H2.5ZM19 8.5H1V14.5C1 15.3284 1.67157 16 2.5 16H12.1C12.0344 15.6769 12 15.3425 12 15C12 12.2386 14.2386 10 17 10C17.7111 10 18.3875 10.1484 19 10.416V8.5ZM3.75 12.5C3.33579 12.5 3 12.8358 3 13.25C3 13.6642 3.33579 14 3.75 14H5.25C5.66421 14 6 13.6642 6 13.25C6 12.8358 5.66421 12.5 5.25 12.5H3.75ZM7 13.25C7 12.8358 7.33579 12.5 7.75 12.5H9.25C9.66421 12.5 10 12.8358 10 13.25C10 13.6642 9.66421 14 9.25 14H7.75C7.33579 14 7 13.6642 7 13.25ZM17 12C17.4304 12 17.8126 12.2754 17.9487 12.6838L18.1325 13.2351C18.232 13.5337 18.4663 13.768 18.7649 13.8675L19.3162 14.0513C19.7246 14.1874 20 14.5696 20 15C20 15.4304 19.7246 15.8126 19.3162 15.9487L18.7649 16.1325C18.4663 16.232 18.232 16.4663 18.1325 16.7649L17.9487 17.3162C17.8126 17.7246 17.4304 18 17 18C16.5696 18 16.1874 17.7246 16.0513 17.3162L15.8675 16.7649C15.768 16.4663 15.5337 16.232 15.2351 16.1325L14.6838 15.9487C14.2754 15.8126 14 15.4304 14 15C14 14.5696 14.2754 14.1874 14.6838 14.0513L15.2351 13.8675C15.5337 13.768 15.768 13.5337 15.8675 13.2351L16.0513 12.6838C16.1874 12.2754 16.5696 12 17 12Z"/></svg>
                                                             </div>
                                                             <div>
                                                                 <span

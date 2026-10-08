@@ -173,11 +173,13 @@
                 config = config || {};
                 var undoBtn = config.undoBtn || null;
                 var saveBtn = config.saveBtn || null;
+                var disableSaveWhenClean = !!config.disableSaveWhenClean;
                 var isDirty = false;
 
                 function setDirty(nextDirty) {
                     isDirty = !!nextDirty;
                     if (undoBtn) undoBtn.disabled = !isDirty;
+                    if (saveBtn && disableSaveWhenClean) saveBtn.disabled = !isDirty;
                 }
 
                 if (undoBtn) {
@@ -878,11 +880,18 @@
             var rowsWrap = document.getElementById('pp-adv-rows');
             if (!emptyState || !tableState || !customizeBtn || !rowsWrap) return;
             var customersCache = [];
+            var advFooterEl = saveBtn ? saveBtn.closest('[data-pp-adv-footer-on-customize]') : null;
             var footerActions = window.__ppInitFooterActions({
                 undoBtn: undoBtn,
                 saveBtn: saveBtn,
+                disableSaveWhenClean: !!advFooterEl,
                 onUndo: function () { window.location.reload(); }
             });
+
+            // Consumer portal: Cancel / Save show while customizing and stay disabled until a selection is made.
+            function syncAdvFooter() {
+                if (advFooterEl) advFooterEl.classList.toggle('hidden', tableState.classList.contains('hidden'));
+            }
 
             function setAdvancedDirty(isDirty) {
                 footerActions.setDirty(isDirty);
@@ -971,15 +980,33 @@
                 });
             }
 
+            // The Global Preferences "Method of Payment" dropdown is the one shared component:
+            // rows take its options and its styling, so changes there apply everywhere.
+            function getGlobalMethodSelect() {
+                return document.querySelector('el-select[name="gp-default-payment-method-1"]');
+            }
+
             function getMethodOptionsTemplateHtml() {
-                var source = document.querySelector('el-select[name="gp-default-payment-method-1"] el-options');
+                var source = getGlobalMethodSelect() && getGlobalMethodSelect().querySelector('el-options');
                 return source ? source.innerHTML : '';
             }
 
             function hydrateMethodSelects() {
                 var optionsHtml = getMethodOptionsTemplateHtml();
                 if (!optionsHtml) return;
+                var globalSelect = getGlobalMethodSelect();
+                var globalOptions = globalSelect.querySelector('el-options');
+                var globalButton = globalSelect.querySelector(':scope > button');
+                var globalContent = globalSelect.querySelector('el-selectedcontent');
+                rowsWrap.querySelectorAll('[data-adv-method-select]').forEach(function (selectEl) {
+                    var button = selectEl.querySelector(':scope > button');
+                    var content = selectEl.querySelector('el-selectedcontent');
+                    if (button && globalButton) button.className = globalButton.className;
+                    if (content && globalContent) content.className = globalContent.className;
+                });
                 rowsWrap.querySelectorAll('[data-adv-method-options]').forEach(function (optsEl) {
+                    // Advanced Settings rows are narrow, so their lists keep a fixed 416px width.
+                    optsEl.className = globalOptions.className.replace('w-(--button-width)', 'w-[416px] max-w-[calc(100vw-2rem)]');
                     optsEl.innerHTML = optionsHtml;
                 });
                 rowsWrap.querySelectorAll('.pp-adv-row').forEach(function (rowEl) {
@@ -1033,7 +1060,7 @@
                                     '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"><span class="text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
                                     '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
                                 '</button>' +
-                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
+                                '<el-options anchor="bottom start" popover class="max-h-[21rem] min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
                             '</el-select>' +
                         '</div>' +
                         '<div class="min-w-0 flex-1">' +
@@ -1042,7 +1069,7 @@
                                     '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"><span class="text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
                                     '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
                                 '</button>' +
-                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
+                                '<el-options anchor="bottom start" popover class="max-h-[21rem] min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
                             '</el-select>' +
                         '</div>' +
                         '<div class="min-w-0 flex-1">' +
@@ -1051,7 +1078,7 @@
                                     '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white"><span class="text-gray-400 dark:text-gray-500">Select payment method</span></el-selectedcontent>' +
                                     '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
                                 '</button>' +
-                                '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
+                                '<el-options anchor="bottom start" popover class="max-h-[21rem] min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10" data-adv-method-options></el-options>' +
                             '</el-select>' +
                         '</div>' +
                         '<div class="shrink-0">' +
@@ -1072,6 +1099,7 @@
                 emptyState.classList.add('hidden');
                 tableState.classList.remove('hidden');
                 setAdvancedDirty(false);
+                syncAdvFooter();
             });
 
             if (addPayerBtn) {
@@ -1094,6 +1122,7 @@
                 if (!rowsWrap.querySelector('.pp-adv-row')) {
                     tableState.classList.add('hidden');
                     emptyState.classList.remove('hidden');
+                    syncAdvFooter();
                 }
             });
 
@@ -1119,6 +1148,7 @@
                 hydrateMethodSelects();
             });
             setAdvancedDirty(false);
+            syncAdvFooter();
         })();
 
         (function () {
@@ -1230,11 +1260,21 @@
             var accountInput = document.getElementById('pp-bank-account-number');
             var confirmAccountInput = document.getElementById('pp-bank-account-number-confirm');
             var nicknameInput = document.getElementById('pp-bank-account-nickname');
+            var addBankCountrySelect = document.getElementById('pp-add-bank-country');
+            var addBankCountryFlag = document.getElementById('pp-add-bank-country-flag');
+            var addBankLine1Input = document.getElementById('pp-add-bank-line1');
+            var addBankLine2Input = document.getElementById('pp-add-bank-line2');
+            var addBankLine3Input = document.getElementById('pp-add-bank-line3');
+            var addBankCityInput = document.getElementById('pp-add-bank-city');
+            var addBankStateSelect = document.getElementById('pp-add-bank-state');
+            var addBankZipInput = document.getElementById('pp-add-bank-zip');
+            var addBankDefaultInput = document.getElementById('pp-add-bank-default');
             var addCheckDialog = document.getElementById('pp-add-check-dialog');
             var addCheckSaveBtn = document.getElementById('pp-add-check-save-btn');
             var addCheckNicknameInput = document.getElementById('pp-add-check-nickname');
             var addCheckLine1Input = document.getElementById('pp-add-check-line1');
             var addCheckLine2Input = document.getElementById('pp-add-check-line2');
+            var addCheckLine3Input = document.getElementById('pp-add-check-line3');
             var addCheckCityInput = document.getElementById('pp-add-check-city');
             var addCheckStateInput = document.getElementById('pp-add-check-state');
             var addCheckZipInput = document.getElementById('pp-add-check-zip');
@@ -1247,11 +1287,21 @@
             var editBankAccountInput = document.getElementById('pp-edit-bank-account');
             var editBankConfirmInput = document.getElementById('pp-edit-bank-confirm');
             var editBankNicknameInput = document.getElementById('pp-edit-bank-nickname');
+            var editBankCountrySelect = document.getElementById('pp-edit-bank-country');
+            var editBankCountryFlag = document.getElementById('pp-edit-bank-country-flag');
+            var editBankLine1Input = document.getElementById('pp-edit-bank-line1');
+            var editBankLine2Input = document.getElementById('pp-edit-bank-line2');
+            var editBankLine3Input = document.getElementById('pp-edit-bank-line3');
+            var editBankCityInput = document.getElementById('pp-edit-bank-city');
+            var editBankStateSelect = document.getElementById('pp-edit-bank-state');
+            var editBankZipInput = document.getElementById('pp-edit-bank-zip');
+            var editBankDefaultInput = document.getElementById('pp-edit-bank-default');
             var editCheckDialog = document.getElementById('pp-edit-check-dialog');
             var editCheckSaveBtn = document.getElementById('pp-edit-check-save-btn');
             var editCheckNicknameInput = document.getElementById('pp-edit-check-nickname');
             var editCheckLine1Input = document.getElementById('pp-edit-check-line1');
             var editCheckLine2Input = document.getElementById('pp-edit-check-line2');
+            var editCheckLine3Input = document.getElementById('pp-edit-check-line3');
             var editCheckCityInput = document.getElementById('pp-edit-check-city');
             var editCheckStateInput = document.getElementById('pp-edit-check-state');
             var editCheckZipInput = document.getElementById('pp-edit-check-zip');
@@ -1426,6 +1476,44 @@
                 accountInput.value = defaults.accountNumber;
                 confirmAccountInput.value = defaults.accountNumber;
                 nicknameInput.value = defaults.nickname;
+                addBankCountrySelect.value = 'us';
+                updateAddBankCountryFlag();
+                addBankLine1Input.value = '1200 Market Street';
+                addBankLine2Input.value = '';
+                addBankLine3Input.value = '';
+                addBankCityInput.value = 'San Francisco';
+                setCheckStateSelect(addBankStateSelect, 'CA');
+                addBankZipInput.value = '94102';
+                addBankDefaultInput.checked = false;
+            }
+
+            function updateAddBankCountryFlag() {
+                addBankCountryFlag.className = 'fi fi-' + (addBankCountrySelect.value || 'us') + ' pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm';
+            }
+
+            function buildAddBankAddress() {
+                var countryText = addBankCountrySelect.value === 'us' ? 'US' : (addBankCountrySelect.options[addBankCountrySelect.selectedIndex] || {}).text || '';
+                var stateName = addBankStateSelect.value;
+                var cityLine = [addBankCityInput.value.trim(), [stateName, addBankZipInput.value.trim()].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+                return [addBankLine1Input.value, addBankLine2Input.value, addBankLine3Input.value]
+                    .map(function (l) { return l.trim(); }).filter(Boolean)
+                    .concat(cityLine ? [cityLine] : [], countryText ? [countryText] : []).join('\n');
+            }
+
+            // State/Province is a dropdown of US state codes; values we can't match are kept as extra options.
+            function setCheckStateSelect(select, value) {
+                var raw = String(value || '').trim();
+                var codes = (typeof US_STATE_CODES === 'object' && US_STATE_CODES) || {};
+                var code = codes[raw.toUpperCase()] ? raw.toUpperCase()
+                    : Object.keys(codes).filter(function (k) { return codes[k].toLowerCase() === raw.toLowerCase(); })[0] || raw;
+                var has = Array.prototype.some.call(select.options, function (o) { return o.value === code; });
+                if (code && !has) {
+                    var extra = document.createElement('option');
+                    extra.value = code;
+                    extra.textContent = raw;
+                    select.appendChild(extra);
+                }
+                select.value = code;
             }
 
             function buildDefaultCheckFormValues() {
@@ -1446,8 +1534,9 @@
                 addCheckNicknameInput.value = defaults.nickname;
                 addCheckLine1Input.value = defaults.line1;
                 addCheckLine2Input.value = defaults.line2;
+                addCheckLine3Input.value = '';
                 addCheckCityInput.value = defaults.city;
-                addCheckStateInput.value = defaults.state;
+                setCheckStateSelect(addCheckStateInput, defaults.state);
                 addCheckZipInput.value = defaults.zip;
                 addCheckCountrySelect.value = defaults.country;
                 updateAddCheckCountryFlag();
@@ -1462,7 +1551,8 @@
                 var country = lines.length ? lines.pop() : 'United States';
                 var cityStateZip = lines.length ? lines.pop() : '';
                 var line1 = lines.length ? lines.shift() : '';
-                var line2 = lines.length ? lines.join(', ') : '';
+                var line2 = lines.length ? lines.shift() : '';
+                var line3 = lines.length ? lines.join(', ') : '';
                 var city = '';
                 var state = '';
                 var zip = '';
@@ -1476,7 +1566,7 @@
                     city = (cityStateParts[0] || '').trim();
                     state = (cityStateParts[1] || '').trim();
                 }
-                return { line1: line1, line2: line2, city: city, state: state, zip: zip, country: country };
+                return { line1: line1, line2: line2, line3: line3, city: city, state: state, zip: zip, country: country };
             }
 
             function openDeleteBankConfirm(account) {
@@ -1520,8 +1610,8 @@
                     '    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>' +
                     '  </div>' +
                     '  <div class="in-[el-selectedcontent]:hidden">' +
-                    '    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Bank Account</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>' + account.name + '</span></span>' +
-                    '    <span class="block text-sm text-gray-500 dark:text-gray-400">' + account.name + ' ••••' + account.last4 + '</span>' +
+                    '    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>' + account.name + '</span></span>' +
+                    '    <span class="block text-sm text-gray-500 dark:text-gray-400">••••' + account.last4 + '</span>' +
                     '  </div>' +
                     '  <span class="hidden in-[el-selectedcontent]:block truncate font-medium">' + account.name + ' ••••' + account.last4 + '</span>' +
                     '</div>' +
@@ -1544,7 +1634,7 @@
                     '    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z" fill="#6B7280"/></svg>' +
                     '  </div>' +
                     '  <div class="in-[el-selectedcontent]:hidden">' +
-                    '    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Paper Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>' + address.displayName + '</span></span>' +
+                    '    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>' + address.displayName + '</span></span>' +
                     '    <span class="block text-sm text-gray-500 dark:text-gray-400">' + address.summary + '</span>' +
                     '  </div>' +
                     '  <span class="hidden in-[el-selectedcontent]:block truncate font-medium">' + address.displayName + '</span>' +
@@ -1765,6 +1855,67 @@
                 confirmAccountInput.value = formatAccountNumber(confirmAccountInput.value);
             });
 
+            // Address is stored as "line1\n[line2\n[line3\n]]City, ST 12345\nCountry".
+            function parseBankAddress(raw) {
+                var lines = String(raw || '').split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+                var out = { line1: '', line2: '', line3: '', city: '', state: '', zip: '', country: 'us' };
+                if (!lines.length) return out;
+                var last = lines[lines.length - 1];
+                if (/^[A-Za-z ]{2,}$/.test(last) && lines.length > 1) {
+                    var countryCode = mapCountryNameToCode(last);
+                    out.country = last.toLowerCase() === 'us' || last.toLowerCase() === 'usa' ? 'us' : countryCode;
+                    lines.pop();
+                }
+                var cityLine = lines.length > 1 ? lines.pop() : '';
+                var m = /^(.*?),\s*(.+?)\s+([A-Za-z]\d[A-Za-z] ?\d[A-Za-z]\d|\d[\w -]*)$/.exec(cityLine) || /^(.*?),\s*(.+)$/.exec(cityLine);
+                if (m) { out.city = m[1].trim(); out.state = m[2].trim(); out.zip = (m[3] || '').trim(); }
+                else out.city = cityLine;
+                out.line1 = lines[0] || '';
+                out.line2 = lines[1] || '';
+                out.line3 = lines[2] || '';
+                return out;
+            }
+
+            var US_STATE_CODES = { AL: 'Alabama', AK: 'Alaska', AZ: 'Arizona', AR: 'Arkansas', CA: 'California', CO: 'Colorado', CT: 'Connecticut', DE: 'Delaware', DC: 'District of Columbia', FL: 'Florida', GA: 'Georgia', HI: 'Hawaii', ID: 'Idaho', IL: 'Illinois', IN: 'Indiana', IA: 'Iowa', KS: 'Kansas', KY: 'Kentucky', LA: 'Louisiana', ME: 'Maine', MD: 'Maryland', MA: 'Massachusetts', MI: 'Michigan', MN: 'Minnesota', MS: 'Mississippi', MO: 'Missouri', MT: 'Montana', NE: 'Nebraska', NV: 'Nevada', NH: 'New Hampshire', NJ: 'New Jersey', NM: 'New Mexico', NY: 'New York', NC: 'North Carolina', ND: 'North Dakota', OH: 'Ohio', OK: 'Oklahoma', OR: 'Oregon', PA: 'Pennsylvania', RI: 'Rhode Island', SC: 'South Carolina', SD: 'South Dakota', TN: 'Tennessee', TX: 'Texas', UT: 'Utah', VT: 'Vermont', VA: 'Virginia', WA: 'Washington', WV: 'West Virginia', WI: 'Wisconsin', WY: 'Wyoming' };
+
+            function updateEditBankCountryFlag() {
+                editBankCountryFlag.className = 'fi fi-' + (editBankCountrySelect.value || 'us') + ' pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm';
+            }
+
+            function setEditBankState(value) {
+                var name = US_STATE_CODES[String(value || '').toUpperCase()] || value || '';
+                var has = Array.prototype.some.call(editBankStateSelect.options, function (o) { return o.value === name; });
+                if (name && !has) {
+                    var extra = document.createElement('option');
+                    extra.value = name;
+                    extra.textContent = name;
+                    editBankStateSelect.appendChild(extra);
+                }
+                editBankStateSelect.value = name;
+            }
+
+            function fillEditBankAddress(account) {
+                var a = parseBankAddress(account.address);
+                editBankCountrySelect.value = a.country;
+                updateEditBankCountryFlag();
+                editBankLine1Input.value = a.line1;
+                editBankLine2Input.value = a.line2;
+                editBankLine3Input.value = a.line3;
+                editBankCityInput.value = a.city;
+                setEditBankState(a.state);
+                editBankZipInput.value = a.zip;
+            }
+
+            function buildEditBankAddress() {
+                var countryText = editBankCountrySelect.value === 'us' ? 'US' : (editBankCountrySelect.options[editBankCountrySelect.selectedIndex] || {}).text || '';
+                var stateName = editBankStateSelect.value;
+                var stateCode = Object.keys(US_STATE_CODES).filter(function (k) { return US_STATE_CODES[k] === stateName; })[0] || stateName;
+                var cityLine = [editBankCityInput.value.trim(), [stateCode, editBankZipInput.value.trim()].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+                return [editBankLine1Input.value, editBankLine2Input.value, editBankLine3Input.value]
+                    .map(function (l) { return l.trim(); }).filter(Boolean)
+                    .concat(cityLine ? [cityLine] : [], countryText ? [countryText] : []).join('\n');
+            }
+
             bankList.addEventListener('click', function (event) {
                 var editBtn = event.target.closest('[data-edit-bank-account-id]');
                 if (editBtn) {
@@ -1777,6 +1928,8 @@
                     editBankAccountInput.value = account.accountNumber || '';
                     editBankConfirmInput.value = account.accountNumber || '';
                     editBankNicknameInput.value = account.nickname || '';
+                    fillEditBankAddress(account);
+                    editBankDefaultInput.checked = !!account.isDefault;
                     if (typeof editBankDialog.showModal === 'function') editBankDialog.showModal();
                     return;
                 }
@@ -1810,8 +1963,9 @@
                     editCheckNicknameInput.value = address.displayName || '';
                     editCheckLine1Input.value = parsed.line1;
                     editCheckLine2Input.value = parsed.line2;
+                    editCheckLine3Input.value = parsed.line3;
                     editCheckCityInput.value = parsed.city;
-                    editCheckStateInput.value = parsed.state;
+                    setCheckStateSelect(editCheckStateInput, parsed.state);
                     editCheckZipInput.value = parsed.zip;
                     editCheckCountrySelect.value = mapCountryNameToCode(parsed.country);
                     updateEditCheckCountryFlag();
@@ -1857,8 +2011,11 @@
                     last4: last4,
                     nickname: nickname,
                     routing: routingDigits,
-                    accountNumber: formatAccountNumber(accountDigits)
+                    accountNumber: formatAccountNumber(accountDigits),
+                    address: buildAddBankAddress(),
+                    isDefault: !!addBankDefaultInput.checked
                 };
+                if (newAccount.isDefault) bankAccounts.forEach(function (item) { item.isDefault = false; });
                 bankAccounts.push(newAccount);
                 saveBankAccounts();
                 renderAllViews();
@@ -1873,8 +2030,10 @@
             });
 
             addCheckCountrySelect.addEventListener('change', updateAddCheckCountryFlag);
+            addBankCountrySelect.addEventListener('change', updateAddBankCountryFlag);
             editCheckCountrySelect.addEventListener('change', updateEditCheckCountryFlag);
 
+            editBankCountrySelect.addEventListener('change', updateEditBankCountryFlag);
             editBankRoutingInput.addEventListener('input', function () {
                 editBankRoutingInput.value = sanitizeDigits(editBankRoutingInput.value, 9);
             });
@@ -1904,6 +2063,9 @@
                 account.name = accountName;
                 account.nickname = nickname;
                 account.routing = routingDigits;
+                account.address = buildEditBankAddress();
+                if (editBankDefaultInput.checked) bankAccounts.forEach(function (item) { item.isDefault = item.id === account.id; });
+                else account.isDefault = false;
                 if (accountDigits) {
                     account.accountNumber = formatAccountNumber(accountDigits);
                     account.last4 = accountDigits.slice(-4);
@@ -1923,6 +2085,7 @@
                 var nickname = (editCheckNicknameInput.value || '').trim();
                 var line1 = (editCheckLine1Input.value || '').trim();
                 var line2 = (editCheckLine2Input.value || '').trim();
+                var line3 = (editCheckLine3Input.value || '').trim();
                 var city = (editCheckCityInput.value || '').trim();
                 var state = (editCheckStateInput.value || '').trim();
                 var zip = (editCheckZipInput.value || '').trim();
@@ -1936,6 +2099,7 @@
                 var companyName = (address.name || 'Nexus Financial Group').trim();
                 var addressLines = [companyName, line1];
                 if (line2) addressLines.push(line2);
+                if (line3) addressLines.push(line3);
                 addressLines.push(cityState + ' ' + zip);
                 addressLines.push(countryName);
 
@@ -1955,6 +2119,7 @@
                 var nickname = (addCheckNicknameInput.value || '').trim();
                 var line1 = (addCheckLine1Input.value || '').trim();
                 var line2 = (addCheckLine2Input.value || '').trim();
+                var line3 = (addCheckLine3Input.value || '').trim();
                 var city = (addCheckCityInput.value || '').trim();
                 var state = (addCheckStateInput.value || '').trim();
                 var zip = (addCheckZipInput.value || '').trim();
@@ -1967,6 +2132,7 @@
 
                 var addressLines = ['Nexus Financial Group', line1];
                 if (line2) addressLines.push(line2);
+                if (line3) addressLines.push(line3);
                 addressLines.push(cityState + ' ' + zip);
                 addressLines.push(countryName);
 

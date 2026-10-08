@@ -79,6 +79,9 @@
   var SECONDARY_BTN = 'cursor-pointer rounded-sm bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/10 dark:text-gray-200 dark:inset-ring-white/10 dark:hover:bg-white/20';
   var PRIMARY_BTN = 'cursor-pointer rounded-sm bg-blue-600 px-2 py-1 text-sm font-semibold whitespace-nowrap text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600';
   var INPUT = 'block h-10 w-full max-w-96 rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 dark:bg-white/5 dark:text-white dark:outline-white/10';
+  var MODAL_INPUT = 'block h-10 w-full rounded-md bg-white px-3 text-base font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 placeholder:font-normal focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 dark:bg-white/5 dark:text-white dark:outline-white/10';
+  var MODAL_SECONDARY_BTN = 'cursor-pointer rounded-md bg-white px-3.5 py-2.5 text-base font-semibold text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-200 dark:inset-ring-white/10 dark:hover:bg-white/20';
+  var MODAL_PRIMARY_BTN = 'cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
   var ROW = 'grid grid-cols-1 gap-x-6 gap-y-2 sm:grid-cols-3 sm:items-center';
 
   // ── Details ──
@@ -111,7 +114,7 @@
     }
     var action = field.readonly ? field.action : (field.emptyAction && !profile[field.key] ? field.emptyAction : 'Edit');
     var attr = field.readonly ? 'data-mp-reset' : 'data-mp-edit="' + field.key + '"';
-    return '<div class="' + ROW + ' sm:min-h-8">' + label +
+    return '<div class="' + ROW + ' sm:min-h-10">' + label +
       '<div class="truncate text-sm text-gray-600 dark:text-gray-400">' + escapeHtml(valueText(field)) + '</div>' +
       '<div class="flex sm:justify-end"><button type="button" ' + attr + (editing ? ' disabled' : '') + ' class="' + LINK_BTN + ' disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"' +
         ' aria-label="' + escapeHtml(action + ' ' + field.label.toLowerCase()) + '">' + escapeHtml(action) + '</button></div>' +
@@ -148,10 +151,10 @@
     var hasPhone = !!profile.phone;
     var on = !!(profile.alerts[group.key] || {})[channel] && (isEmail || hasPhone);
     var sub = isEmail
-      ? escapeHtml(profile.email) + '<span aria-hidden="true">·</span><button type="button" data-mp-edit="email" aria-label="Edit email" class="cursor-pointer rounded-sm p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10 dark:hover:text-gray-300">' + ICON_PENCIL + '</button>'
+      ? escapeHtml(profile.email) + '<span aria-hidden="true">·</span><button type="button" data-mp-modal="' + group.key + ':email" aria-label="Edit email" class="cursor-pointer rounded-sm p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10 dark:hover:text-gray-300">' + ICON_PENCIL + '</button>'
       : (hasPhone
-        ? escapeHtml(formatPhone(profile.phone)) + '<span aria-hidden="true">·</span><button type="button" data-mp-edit="phone" aria-label="Edit mobile number" class="cursor-pointer rounded-sm p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10 dark:hover:text-gray-300">' + ICON_PENCIL + '</button>'
-        : 'No mobile<span aria-hidden="true">·</span><button type="button" data-mp-edit="phone" class="cursor-pointer text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400">Add number</button>');
+        ? escapeHtml(formatPhone(profile.phone)) + '<span aria-hidden="true">·</span><button type="button" data-mp-modal="' + group.key + ':phone" aria-label="Edit mobile number" class="cursor-pointer rounded-sm p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10 dark:hover:text-gray-300">' + ICON_PENCIL + '</button>'
+        : 'No mobile<span aria-hidden="true">·</span><button type="button" data-mp-modal="' + group.key + ':phone" class="cursor-pointer text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400">Add number</button>');
     var name = isEmail ? 'Email' : 'Text message (SMS)';
     return '<div class="flex items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white px-3 py-2.5 dark:border-white/10 dark:bg-white/5">' +
       '<div class="flex min-w-0 items-center gap-3">' +
@@ -183,7 +186,7 @@
 
   function renderSkeleton() {
     $('mp-details').innerHTML = FIELDS.map(function (f) {
-      return '<div class="' + ROW + ' sm:min-h-8" aria-hidden="true"><div class="text-sm font-medium text-gray-900 dark:text-gray-100">' + f.label + '</div>' +
+      return '<div class="' + ROW + ' sm:min-h-10" aria-hidden="true"><div class="text-sm font-medium text-gray-900 dark:text-gray-100">' + f.label + '</div>' +
         bar(({ fullName: '9rem', email: '10rem', phone: '6rem', password: '6rem' })[f.key], '1rem') + '<div class="flex sm:justify-end">' + bar('3rem', '1rem') + '</div></div>';
     }).join('');
     $('mp-alerts').innerHTML = ALERT_GROUPS.map(function (g) {
@@ -224,6 +227,136 @@
     showToast(key === 'phone' && !hadPhone ? 'Mobile number added — you can now turn on text alerts' : label + ' updated');
   }
 
+  // ── Modals (Reset Password, alert phone / email) ──
+
+  var modalState = null;
+
+  function modalField(f) {
+    var id = 'mp-modal-' + f.name;
+    return '<div class="flex flex-col gap-1">' +
+      (f.label ? '<label for="' + id + '" class="text-sm font-medium text-gray-700 dark:text-gray-300">' + escapeHtml(f.label) + '</label>' : '') +
+      '<input id="' + id + '" name="' + f.name + '" type="' + f.type + '" autocomplete="' + (f.autocomplete || 'off') + '"' +
+        (f.placeholder ? ' placeholder="' + escapeHtml(f.placeholder) + '"' : '') +
+        ' value="' + escapeHtml(f.value || '') + '" aria-label="' + escapeHtml(f.label || f.ariaLabel || '') + '" class="' + MODAL_INPUT + '" />' +
+      '<p data-mp-modal-error="' + f.name + '" class="hidden text-sm text-red-600 dark:text-red-400"></p>' +
+    '</div>';
+  }
+
+  function openModal(cfg) {
+    closeModal(true);
+    var overlay = document.createElement('div');
+    overlay.className = 'fixed inset-0 z-[90] flex items-center justify-center overflow-y-auto bg-gray-900/75 p-4';
+    overlay.setAttribute('data-mp-modal-overlay', '');
+    overlay.innerHTML =
+      '<form role="dialog" aria-modal="true" aria-labelledby="mp-modal-title" novalidate class="w-full max-w-lg overflow-hidden rounded-[10px] bg-white shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] dark:bg-gray-900">' +
+        '<div class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10">' +
+          '<h2 id="mp-modal-title" class="flex-1 text-lg leading-6 font-medium text-gray-900 dark:text-white">' + escapeHtml(cfg.title) + '</h2>' +
+          '<button type="button" data-mp-modal-close aria-label="Close" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
+            '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>' +
+        '</div>' +
+        '<div class="flex flex-col gap-4 px-6 pt-4 pb-6">' + cfg.fields.map(modalField).join('') + '</div>' +
+        '<div class="flex items-start justify-end gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">' +
+          '<button type="button" data-mp-modal-close class="' + MODAL_SECONDARY_BTN + '">Cancel</button>' +
+          '<button type="submit" class="' + MODAL_PRIMARY_BTN + '">' + escapeHtml(cfg.submitLabel) + '</button>' +
+        '</div>' +
+      '</form>';
+    document.body.appendChild(overlay);
+    document.documentElement.style.overflow = 'hidden';
+    modalState = { overlay: overlay, cfg: cfg, opener: document.activeElement };
+    var first = overlay.querySelector('input');
+    if (first) {
+      first.focus();
+      try { first.setSelectionRange(first.value.length, first.value.length); } catch (e) {}
+    }
+  }
+
+  function closeModal(silent) {
+    if (!modalState) return;
+    modalState.overlay.remove();
+    document.documentElement.style.overflow = '';
+    var opener = modalState.opener;
+    modalState = null;
+    if (!silent && opener && document.contains(opener) && opener.focus) opener.focus();
+  }
+
+  function setModalErrors(errors) {
+    var firstBad = null;
+    modalState.overlay.querySelectorAll('[data-mp-modal-error]').forEach(function (node) {
+      var name = node.getAttribute('data-mp-modal-error');
+      var input = modalState.overlay.querySelector('[name="' + name + '"]');
+      var msg = errors[name] || '';
+      node.textContent = msg;
+      node.classList.toggle('hidden', !msg);
+      if (msg) { input.setAttribute('aria-invalid', 'true'); if (!firstBad) firstBad = input; }
+      else input.removeAttribute('aria-invalid');
+    });
+    if (firstBad) firstBad.focus();
+  }
+
+  function submitModal(form) {
+    var values = {};
+    modalState.cfg.fields.forEach(function (f) { values[f.name] = form.elements[f.name].value; });
+    var errors = modalState.cfg.validate(values) || {};
+    if (Object.keys(errors).length) { setModalErrors(errors); return; }
+    var done = modalState.cfg.onSubmit(values);
+    closeModal();
+    if (done) showToast(done);
+  }
+
+  function openResetPassword() {
+    openModal({
+      title: 'Reset Password',
+      submitLabel: 'Update password',
+      fields: [
+        { name: 'current', label: 'Current password', type: 'password', autocomplete: 'current-password' },
+        { name: 'next', label: 'New password', type: 'password', autocomplete: 'new-password' },
+        { name: 'confirm', label: 'Confirm new password', type: 'password', autocomplete: 'new-password' }
+      ],
+      validate: function (v) {
+        var e = {};
+        if (!v.current) e.current = 'Enter your current password.';
+        if (v.next.length < 8) e.next = 'Use at least 8 characters.';
+        else if (v.next === v.current) e.next = 'Choose a password different from your current one.';
+        if (v.confirm !== v.next) e.confirm = 'Passwords don’t match.';
+        return e;
+      },
+      onSubmit: function () { return 'Password updated'; }
+    });
+  }
+
+  function openAlertContactModal(groupKey, channel) {
+    var key = channel === 'email' ? 'email' : 'phone';
+    var hadValue = !!profile[key];
+    var noun = key === 'email' ? 'email' : 'phone number';
+    openModal({
+      title: (hadValue ? 'Edit ' : 'Add ') + groupKey + ' alerts ' + noun,
+      submitLabel: hadValue ? 'Update' : 'Add',
+      fields: [{
+        name: 'value',
+        type: key === 'email' ? 'email' : 'tel',
+        autocomplete: key === 'email' ? 'email' : 'tel',
+        placeholder: key === 'email' ? 'you@example.com' : '(555) 123-4567',
+        ariaLabel: groupKey + ' alerts ' + noun,
+        value: key === 'phone' ? formatPhone(profile.phone) : profile.email
+      }],
+      validate: function (v) {
+        var msg = validate(key, v.value);
+        return msg ? { value: msg } : {};
+      },
+      onSubmit: function (v) {
+        var value = String(v.value).trim();
+        if (key === 'phone') value = value.replace(/\D/g, '').replace(/^1(?=\d{10}$)/, '');
+        if (key === 'email') value = value.toLowerCase();
+        var changed = profile[key] !== value;
+        profile[key] = value;
+        save();
+        render();
+        if (!changed) return '';
+        return key === 'phone' && !hadValue ? 'Mobile number added — you can now turn on text alerts' : (key === 'email' ? 'Email' : 'Phone') + ' updated';
+      }
+    });
+  }
+
   // ── Wiring ──
 
   function bind() {
@@ -234,15 +367,21 @@
       var edit = t.closest('[data-mp-edit]');
       if (edit && !edit.disabled) { startEdit(edit.getAttribute('data-mp-edit')); return; }
       if (t.closest('[data-mp-cancel]')) { cancelEdit(); return; }
-      if (t.closest('[data-mp-reset]')) { showToast('Password reset link sent to ' + profile.email); }
+      if (t.closest('[data-mp-reset]')) { openResetPassword(); return; }
+      var contact = t.closest('[data-mp-modal]');
+      if (contact) { var parts = contact.getAttribute('data-mp-modal').split(':'); openAlertContactModal(parts[0], parts[1]); return; }
+      if (modalState && (t.closest('[data-mp-modal-close]') || t === modalState.overlay)) closeModal();
     });
     document.addEventListener('submit', function (event) {
+      var modalForm = modalState && event.target.closest('[data-mp-modal-overlay] form');
+      if (modalForm) { event.preventDefault(); submitModal(modalForm); return; }
       var form = event.target.closest('[data-mp-form]');
       if (!form) return;
       event.preventDefault();
       commit(form);
     });
     document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && modalState) { event.preventDefault(); closeModal(); return; }
       if (event.key === 'Escape' && editing) { event.preventDefault(); cancelEdit(); }
     });
     document.addEventListener('change', function (event) {

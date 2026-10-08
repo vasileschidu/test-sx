@@ -624,3 +624,76 @@ if (document.fonts && document.fonts.ready) {
     document.addEventListener('focusin', function (e) { swapConsumerIcons(e, true); });
     document.addEventListener('focusout', function (e) { swapConsumerIcons(e, false); });
 })();
+
+/* Consumer portal "Help from Transcard": support popover (Figma "Transcard Support Team/Dropdown"). */
+(function () {
+    var popover = null;
+    var activeTrigger = null;
+
+    function build() {
+        var el = document.createElement('div');
+        el.id = 'help-support-popover';
+        el.setAttribute('role', 'dialog');
+        el.setAttribute('aria-label', 'Support Team');
+        el.className = 'fixed z-[85] hidden w-[388px] max-w-[calc(100vw-16px)] overflow-hidden rounded-lg bg-white shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] dark:bg-gray-800';
+        el.innerHTML = '' +
+            '<div class="flex items-center gap-4 p-6">' +
+            '  <div class="flex min-w-0 flex-1 flex-col gap-1.5">' +
+            '    <p class="text-sm leading-5 font-medium text-gray-900 dark:text-white">Support Team</p>' +
+            '    <div class="flex flex-wrap items-center gap-x-2 text-sm leading-5 text-gray-500 dark:text-gray-400">' +
+            '      <span>support@transcard.com</span><span aria-hidden="true" class="h-[13px] w-px bg-gray-300 dark:bg-white/20"></span><span>800-890-3128</span>' +
+            '    </div>' +
+            '  </div>' +
+            '</div>' +
+            '<div class="flex h-[53px] border-t border-gray-200 dark:border-white/10">' +
+            '  <a href="mailto:support@transcard.com" class="flex flex-1 items-center justify-center gap-2 text-base leading-6 font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-hidden focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5">' +
+            '    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-500"><path d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z"/><path d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z"/></svg>Email</a>' +
+            '  <span aria-hidden="true" class="w-px bg-gray-200 dark:bg-white/10"></span>' +
+            '  <a href="tel:8008903128" class="flex flex-1 items-center justify-center gap-2 text-base leading-6 font-semibold text-gray-700 transition-colors hover:bg-gray-50 focus-visible:outline-hidden focus-visible:bg-gray-50 dark:text-gray-200 dark:hover:bg-white/5">' +
+            '    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-500"><path fill-rule="evenodd" d="M2 3.5A1.5 1.5 0 0 1 3.5 2h1.148a1.5 1.5 0 0 1 1.465 1.175l.716 3.223a1.5 1.5 0 0 1-1.052 1.767l-.933.267c-.41.117-.643.555-.48.95a11.542 11.542 0 0 0 6.254 6.254c.395.163.833-.07.95-.48l.267-.933a1.5 1.5 0 0 1 1.767-1.052l3.223.716A1.5 1.5 0 0 1 18 15.352V16.5a1.5 1.5 0 0 1-1.5 1.5H15c-1.149 0-2.263-.15-3.326-.43A13.022 13.022 0 0 1 2.43 8.326 13.019 13.019 0 0 1 2 5V3.5Z" clip-rule="evenodd"/></svg>Call</a>' +
+            '</div>';
+        document.body.appendChild(el);
+        return el;
+    }
+
+    function position(trigger) {
+        var r = trigger.getBoundingClientRect();
+        var collapsed = !!trigger.closest('[data-sidebar-collapsed-help]');
+        var w = popover.offsetWidth, h = popover.offsetHeight;
+        var left = collapsed ? r.right + 8 : r.left;
+        var top = collapsed ? r.top : r.bottom + 6;
+        left = Math.max(8, Math.min(left, window.innerWidth - w - 8));
+        if (top + h > window.innerHeight - 8) top = Math.max(8, r.top - h - 6);
+        popover.style.left = left + 'px';
+        popover.style.top = top + 'px';
+    }
+
+    function setOpen(open, trigger) {
+        if (open) {
+            popover = popover || build();
+            popover.classList.remove('hidden');
+            activeTrigger = trigger;
+            trigger.setAttribute('aria-expanded', 'true');
+            position(trigger);
+        } else if (popover && activeTrigger) {
+            popover.classList.add('hidden');
+            activeTrigger.setAttribute('aria-expanded', 'false');
+            activeTrigger = null;
+        }
+    }
+
+    document.addEventListener('click', function (e) {
+        var trigger = e.target.closest && e.target.closest('[data-help-trigger]');
+        if (trigger) {
+            var wasOpen = activeTrigger === trigger;
+            setOpen(false);
+            if (!wasOpen) setOpen(true, trigger);
+            return;
+        }
+        if (activeTrigger && !(popover && popover.contains(e.target))) setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && activeTrigger) { var t = activeTrigger; setOpen(false); t.focus(); }
+    });
+    window.addEventListener('resize', function () { if (activeTrigger) position(activeTrigger); });
+})();
