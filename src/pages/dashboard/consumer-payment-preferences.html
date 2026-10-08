@@ -483,58 +483,6 @@
                                                         </el-option>
                                                     </el-options>
                                                 </el-select>
-                                                <!-- Bank account details (shown after selecting a bank) -->
-                                                <div id="gp-details-bank-1" class="hidden">
-                                                    <div class="flex flex-col items-start self-stretch">
-                                                        <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
-                                                            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Account Details</span>
-                                                        </div>
-                                                        <div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name</span>
-                                                                <span id="gp-bank-name-1" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span>
-                                                                <span id="gp-bank-acct-1" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span>
-                                                                <span id="gp-bank-routing-1" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div id="gp-bank-address-row-1" class="hidden grid grid-cols-2 gap-4 self-stretch items-start">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Address</span>
-                                                                <span id="gp-bank-address-1" class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch items-start">
-                                                                <span></span>
-                                                                <button type="button" id="gp-bank-reveal-btn-1" class="inline-flex w-fit self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">
-                                                                    <svg data-icon="reveal" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" /><path fill-rule="evenodd" d="M1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C2.32719 4.97038 4.93238 3 7.99777 3C11.0653 3 13.672 4.97316 14.6179 7.71951C14.6811 7.90313 14.681 8.10274 14.6176 8.2863C13.6701 11.0296 11.0649 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" clip-rule="evenodd" /></svg>
-                                                                    <svg data-icon="hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5 hidden"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.28033 2.21967C2.98744 1.92678 2.51256 1.92678 2.21967 2.21967C1.92678 2.51256 1.92678 2.98744 2.21967 3.28033L12.7197 13.7803C13.0126 14.0732 13.4874 14.0732 13.7803 13.7803C14.0732 13.4874 14.0732 13.0126 13.7803 12.7197L12.4577 11.397C13.438 10.5863 14.1937 9.51366 14.6176 8.2863C14.681 8.10274 14.6811 7.90313 14.6179 7.71951C13.672 4.97316 11.0653 3 7.99777 3C6.85414 3 5.77457 3.27425 4.82123 3.76057L3.28033 2.21967Z" /><path d="M6.47602 5.41536L7.61147 6.55081C7.73539 6.51767 7.86563 6.5 8 6.5C8.82843 6.5 9.5 7.17157 9.5 8C9.5 8.13437 9.48233 8.26461 9.44919 8.38853L10.5846 9.52398C10.8486 9.07734 11 8.55636 11 8C11 6.34315 9.65685 5 8 5C7.44364 5 6.92266 5.15145 6.47602 5.41536Z" /><path d="M7.81206 10.9942L9.62754 12.8097C9.10513 12.9341 8.56002 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C1.63675 6.96935 2.01588 6.28191 2.49314 5.67529L5.00579 8.18794C5.09895 9.69509 6.30491 10.901 7.81206 10.9942Z" /></svg>
-                                                                    <span id="gp-bank-reveal-text-1">Reveal Details</span>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Mailing address details (shown after selecting a paper check) -->
-                                                <div id="gp-details-check-1" class="hidden">
-                                                    <div class="flex flex-col items-start self-stretch">
-                                                        <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
-                                                            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Mailing Address</span>
-                                                        </div>
-                                                        <div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Recipient Name</span>
-                                                                <span id="gp-check-name-1" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Mailing Address</span>
-                                                                <span id="gp-check-addr-1" class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line"></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="flex items-start gap-4 self-stretch">
@@ -645,58 +593,6 @@
                                                         </el-option>
                                                     </el-options>
                                                 </el-select>
-                                                <!-- Bank account details (shown after selecting a bank) -->
-                                                <div id="gp-details-bank-2" class="hidden">
-                                                    <div class="flex flex-col items-start self-stretch">
-                                                        <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
-                                                            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Account Details</span>
-                                                        </div>
-                                                        <div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name</span>
-                                                                <span id="gp-bank-name-2" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span>
-                                                                <span id="gp-bank-acct-2" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span>
-                                                                <span id="gp-bank-routing-2" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div id="gp-bank-address-row-2" class="hidden grid grid-cols-2 gap-4 self-stretch items-start">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Address</span>
-                                                                <span id="gp-bank-address-2" class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch items-start">
-                                                                <span></span>
-                                                                <button type="button" id="gp-bank-reveal-btn-2" class="inline-flex w-fit self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">
-                                                                    <svg data-icon="reveal" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" /><path fill-rule="evenodd" d="M1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C2.32719 4.97038 4.93238 3 7.99777 3C11.0653 3 13.672 4.97316 14.6179 7.71951C14.6811 7.90313 14.681 8.10274 14.6176 8.2863C13.6701 11.0296 11.0649 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" clip-rule="evenodd" /></svg>
-                                                                    <svg data-icon="hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5 hidden"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.28033 2.21967C2.98744 1.92678 2.51256 1.92678 2.21967 2.21967C1.92678 2.51256 1.92678 2.98744 2.21967 3.28033L12.7197 13.7803C13.0126 14.0732 13.4874 14.0732 13.7803 13.7803C14.0732 13.4874 14.0732 13.0126 13.7803 12.7197L12.4577 11.397C13.438 10.5863 14.1937 9.51366 14.6176 8.2863C14.681 8.10274 14.6811 7.90313 14.6179 7.71951C13.672 4.97316 11.0653 3 7.99777 3C6.85414 3 5.77457 3.27425 4.82123 3.76057L3.28033 2.21967Z" /><path d="M6.47602 5.41536L7.61147 6.55081C7.73539 6.51767 7.86563 6.5 8 6.5C8.82843 6.5 9.5 7.17157 9.5 8C9.5 8.13437 9.48233 8.26461 9.44919 8.38853L10.5846 9.52398C10.8486 9.07734 11 8.55636 11 8C11 6.34315 9.65685 5 8 5C7.44364 5 6.92266 5.15145 6.47602 5.41536Z" /><path d="M7.81206 10.9942L9.62754 12.8097C9.10513 12.9341 8.56002 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C1.63675 6.96935 2.01588 6.28191 2.49314 5.67529L5.00579 8.18794C5.09895 9.69509 6.30491 10.901 7.81206 10.9942Z" /></svg>
-                                                                    <span id="gp-bank-reveal-text-2">Reveal Details</span>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Mailing address details (shown after selecting a paper check) -->
-                                                <div id="gp-details-check-2" class="hidden">
-                                                    <div class="flex flex-col items-start self-stretch">
-                                                        <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
-                                                            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Mailing Address</span>
-                                                        </div>
-                                                        <div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Recipient Name</span>
-                                                                <span id="gp-check-name-2" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Mailing Address</span>
-                                                                <span id="gp-check-addr-2" class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line"></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
                                         <div class="flex items-start gap-4 self-stretch">
@@ -807,58 +703,6 @@
                                                         </el-option>
                                                     </el-options>
                                                 </el-select>
-                                                <!-- Bank account details (shown after selecting a bank) -->
-                                                <div id="gp-details-bank-3" class="hidden">
-                                                    <div class="flex flex-col items-start self-stretch">
-                                                        <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
-                                                            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Account Details</span>
-                                                        </div>
-                                                        <div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name</span>
-                                                                <span id="gp-bank-name-3" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span>
-                                                                <span id="gp-bank-acct-3" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span>
-                                                                <span id="gp-bank-routing-3" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div id="gp-bank-address-row-3" class="hidden grid grid-cols-2 gap-4 self-stretch items-start">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Address</span>
-                                                                <span id="gp-bank-address-3" class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch items-start">
-                                                                <span></span>
-                                                                <button type="button" id="gp-bank-reveal-btn-3" class="inline-flex w-fit self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">
-                                                                    <svg data-icon="reveal" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" /><path fill-rule="evenodd" d="M1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C2.32719 4.97038 4.93238 3 7.99777 3C11.0653 3 13.672 4.97316 14.6179 7.71951C14.6811 7.90313 14.681 8.10274 14.6176 8.2863C13.6701 11.0296 11.0649 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" clip-rule="evenodd" /></svg>
-                                                                    <svg data-icon="hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5 hidden"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.28033 2.21967C2.98744 1.92678 2.51256 1.92678 2.21967 2.21967C1.92678 2.51256 1.92678 2.98744 2.21967 3.28033L12.7197 13.7803C13.0126 14.0732 13.4874 14.0732 13.7803 13.7803C14.0732 13.4874 14.0732 13.0126 13.7803 12.7197L12.4577 11.397C13.438 10.5863 14.1937 9.51366 14.6176 8.2863C14.681 8.10274 14.6811 7.90313 14.6179 7.71951C13.672 4.97316 11.0653 3 7.99777 3C6.85414 3 5.77457 3.27425 4.82123 3.76057L3.28033 2.21967Z" /><path d="M6.47602 5.41536L7.61147 6.55081C7.73539 6.51767 7.86563 6.5 8 6.5C8.82843 6.5 9.5 7.17157 9.5 8C9.5 8.13437 9.48233 8.26461 9.44919 8.38853L10.5846 9.52398C10.8486 9.07734 11 8.55636 11 8C11 6.34315 9.65685 5 8 5C7.44364 5 6.92266 5.15145 6.47602 5.41536Z" /><path d="M7.81206 10.9942L9.62754 12.8097C9.10513 12.9341 8.56002 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C1.63675 6.96935 2.01588 6.28191 2.49314 5.67529L5.00579 8.18794C5.09895 9.69509 6.30491 10.901 7.81206 10.9942Z" /></svg>
-                                                                    <span id="gp-bank-reveal-text-3">Reveal Details</span>
-                                                                </button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                                <!-- Mailing address details (shown after selecting a paper check) -->
-                                                <div id="gp-details-check-3" class="hidden">
-                                                    <div class="flex flex-col items-start self-stretch">
-                                                        <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
-                                                            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Mailing Address</span>
-                                                        </div>
-                                                        <div class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5">
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Recipient Name</span>
-                                                                <span id="gp-check-name-3" class="text-sm font-normal text-gray-700 dark:text-gray-300"></span>
-                                                            </div>
-                                                            <div class="grid grid-cols-2 gap-4 self-stretch">
-                                                                <span class="text-sm font-medium text-gray-900 dark:text-gray-100">Mailing Address</span>
-                                                                <span id="gp-check-addr-3" class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line"></span>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -2352,7 +2196,7 @@
         // Same page as the Supplier Portal, pointed at the consumer's own data.
         window.PAYMENT_PREFERENCES_CONFIG = { dataset: 'consumer-payment-preferences', storagePrefix: 'cp_pp_' };
     </script>
-    <script src="../../../src/scripts/pages/payment-preferences-page.js?v=adv-footer-20261008k" defer></script>
+    <script src="../../../src/scripts/pages/payment-preferences-page.js?v=adv-footer-20261008l" defer></script>
 
 </body>
 

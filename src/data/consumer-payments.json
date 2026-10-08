@@ -59,7 +59,7 @@
       "invoice": "KQ5-B",
       "customer": "Optum Pay",
       "dateInitiated": "2024-06-28",
-      "paymentMethod": "Smart Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "pending",
       "methodType": "smart_exchange",
@@ -84,7 +84,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-28T09:15",
             "type": "event"
           },
@@ -105,7 +105,7 @@
       "invoice": "TA6-D",
       "customer": "Optum Pay",
       "dateInitiated": "2024-06-28",
-      "paymentMethod": "Smart Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "pending",
       "methodType": "smart_exchange",
@@ -130,7 +130,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-28T09:15",
             "type": "event"
           },
@@ -151,7 +151,7 @@
       "invoice": "LC7-C",
       "customer": "State of New Jersey",
       "dateInitiated": "2024-06-25",
-      "paymentMethod": "Smart Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "pending",
       "methodType": "smart_exchange",
@@ -181,7 +181,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-25T09:15",
             "type": "event"
           },
@@ -202,7 +202,7 @@
       "invoice": "TN1-F",
       "customer": "State of New Jersey",
       "dateInitiated": "2024-06-22",
-      "paymentMethod": "Smart Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "pending",
       "methodType": "smart_exchange",
@@ -236,7 +236,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-22T09:15",
             "type": "event"
           },
@@ -257,7 +257,7 @@
       "invoice": "WL9-E",
       "customer": "Aetna",
       "dateInitiated": "2024-06-15",
-      "paymentMethod": "Smart Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "pending",
       "methodType": "smart_exchange",
@@ -282,7 +282,7 @@
         "activityLog": [
           {
             "user": "Aetna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-15T09:15",
             "type": "event"
           },
@@ -303,7 +303,7 @@
       "invoice": "FX8-C",
       "customer": "Aetna",
       "dateInitiated": "2024-06-15",
-      "paymentMethod": "Smart Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "pending",
       "methodType": "smart_exchange",
@@ -328,7 +328,7 @@
         "activityLog": [
           {
             "user": "Aetna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-15T09:15",
             "type": "event"
           },
@@ -349,7 +349,7 @@
       "invoice": "LZ9-H",
       "customer": "Humana",
       "dateInitiated": "2024-06-01",
-      "paymentMethod": "Smart Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "exception",
       "methodType": "smart_exchange",
@@ -374,7 +374,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-01T09:15",
             "type": "event"
           },
@@ -401,7 +401,7 @@
       "invoice": "XL5-C",
       "customer": "Cigna",
       "dateInitiated": "2024-05-30",
-      "paymentMethod": "Smart Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "exception",
       "methodType": "smart_exchange",
@@ -426,7 +426,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-30T09:15",
             "type": "event"
           },
@@ -453,7 +453,7 @@
       "invoice": "TX2-G",
       "customer": "State of California",
       "dateInitiated": "2024-06-14",
-      "paymentMethod": "Smart Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "exception",
       "methodType": "smart_exchange",
@@ -478,7 +478,7 @@
         "activityLog": [
           {
             "user": "State of California",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-14T09:15",
             "type": "event"
           },
@@ -505,7 +505,7 @@
       "invoice": "VM8-E",
       "customer": "Allstate",
       "dateInitiated": "2024-05-13",
-      "paymentMethod": "Smart Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "exception",
       "methodType": "smart_exchange",
@@ -530,7 +530,7 @@
         "activityLog": [
           {
             "user": "Allstate",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-13T09:15",
             "type": "event"
           },
@@ -557,7 +557,7 @@
       "invoice": "PB2-C",
       "customer": "UnitedHealthcare",
       "dateInitiated": "2024-05-27",
-      "paymentMethod": "Smart Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "exception",
       "methodType": "smart_exchange",
@@ -582,7 +582,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-27T09:15",
             "type": "event"
           },
@@ -609,7 +609,7 @@
       "invoice": "TC3-H",
       "customer": "Progressive Insurance",
       "dateInitiated": "2024-06-04",
-      "paymentMethod": "Smart Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "exception",
       "methodType": "smart_exchange",
@@ -634,7 +634,7 @@
         "activityLog": [
           {
             "user": "Progressive Insurance",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-04T09:15",
             "type": "event"
           },
@@ -681,7 +681,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-12T09:15",
             "type": "event"
           },
@@ -732,7 +732,7 @@
         "activityLog": [
           {
             "user": "State of California",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-10T09:15",
             "type": "event"
           },
@@ -783,7 +783,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-10T09:15",
             "type": "event"
           },
@@ -834,7 +834,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-10T09:15",
             "type": "event"
           },
@@ -885,7 +885,7 @@
         "activityLog": [
           {
             "user": "State of California",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-10T09:15",
             "type": "event"
           },
@@ -936,7 +936,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-09T09:15",
             "type": "event"
           },
@@ -988,7 +988,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-09T09:15",
             "type": "event"
           },
@@ -1040,7 +1040,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-08T09:15",
             "type": "event"
           },
@@ -1092,7 +1092,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-07T09:15",
             "type": "event"
           },
@@ -1143,7 +1143,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-06T09:15",
             "type": "event"
           },
@@ -1194,7 +1194,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-04T09:15",
             "type": "event"
           },
@@ -1245,7 +1245,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-06-02T09:15",
             "type": "event"
           },
@@ -1297,7 +1297,7 @@
         "activityLog": [
           {
             "user": "Allstate",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-31T09:15",
             "type": "event"
           },
@@ -1349,7 +1349,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-29T09:15",
             "type": "event"
           },
@@ -1401,7 +1401,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-28T09:15",
             "type": "event"
           },
@@ -1453,7 +1453,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-25T09:15",
             "type": "event"
           },
@@ -1504,7 +1504,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-25T09:15",
             "type": "event"
           },
@@ -1556,7 +1556,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-23T09:15",
             "type": "event"
           },
@@ -1608,7 +1608,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-23T09:15",
             "type": "event"
           },
@@ -1660,7 +1660,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-22T09:15",
             "type": "event"
           },
@@ -1712,7 +1712,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-21T09:15",
             "type": "event"
           },
@@ -1764,7 +1764,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-20T09:15",
             "type": "event"
           },
@@ -1815,7 +1815,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-19T09:15",
             "type": "event"
           },
@@ -1867,7 +1867,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-16T09:15",
             "type": "event"
           },
@@ -1919,7 +1919,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-15T09:15",
             "type": "event"
           },
@@ -1970,7 +1970,7 @@
         "activityLog": [
           {
             "user": "Aetna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-12T09:15",
             "type": "event"
           },
@@ -2021,7 +2021,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-11T09:15",
             "type": "event"
           },
@@ -2072,7 +2072,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-08T09:15",
             "type": "event"
           },
@@ -2123,7 +2123,7 @@
         "activityLog": [
           {
             "user": "State of California",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-08T09:15",
             "type": "event"
           },
@@ -2175,7 +2175,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-08T09:15",
             "type": "event"
           },
@@ -2226,7 +2226,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-07T09:15",
             "type": "event"
           },
@@ -2277,7 +2277,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-04T09:15",
             "type": "event"
           },
@@ -2328,7 +2328,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-05-02T09:15",
             "type": "event"
           },
@@ -2379,7 +2379,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-29T09:15",
             "type": "event"
           },
@@ -2430,7 +2430,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-27T09:15",
             "type": "event"
           },
@@ -2482,7 +2482,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-27T09:15",
             "type": "event"
           },
@@ -2533,7 +2533,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-26T09:15",
             "type": "event"
           },
@@ -2585,7 +2585,7 @@
         "activityLog": [
           {
             "user": "Progressive Insurance",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-24T09:15",
             "type": "event"
           },
@@ -2637,7 +2637,7 @@
         "activityLog": [
           {
             "user": "Allstate",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-21T09:15",
             "type": "event"
           },
@@ -2688,7 +2688,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-20T09:15",
             "type": "event"
           },
@@ -2739,7 +2739,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-20T09:15",
             "type": "event"
           },
@@ -2790,7 +2790,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-18T09:15",
             "type": "event"
           },
@@ -2841,7 +2841,7 @@
         "activityLog": [
           {
             "user": "Aetna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-15T09:15",
             "type": "event"
           },
@@ -2893,7 +2893,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-14T09:15",
             "type": "event"
           },
@@ -2944,7 +2944,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-13T09:15",
             "type": "event"
           },
@@ -2996,7 +2996,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-10T09:15",
             "type": "event"
           },
@@ -3047,7 +3047,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-09T09:15",
             "type": "event"
           },
@@ -3099,7 +3099,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-09T09:15",
             "type": "event"
           },
@@ -3150,7 +3150,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-09T09:15",
             "type": "event"
           },
@@ -3202,7 +3202,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-06T09:15",
             "type": "event"
           },
@@ -3253,7 +3253,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-06T09:15",
             "type": "event"
           },
@@ -3305,7 +3305,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-05T09:15",
             "type": "event"
           },
@@ -3356,7 +3356,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-04T09:15",
             "type": "event"
           },
@@ -3408,7 +3408,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-03T09:15",
             "type": "event"
           },
@@ -3459,7 +3459,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-03T09:15",
             "type": "event"
           },
@@ -3511,7 +3511,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-03T09:15",
             "type": "event"
           },
@@ -3562,7 +3562,7 @@
         "activityLog": [
           {
             "user": "State of California",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-02T09:15",
             "type": "event"
           },
@@ -3613,7 +3613,7 @@
         "activityLog": [
           {
             "user": "State of California",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-04-01T09:15",
             "type": "event"
           },
@@ -3665,7 +3665,7 @@
         "activityLog": [
           {
             "user": "State of California",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-31T09:15",
             "type": "event"
           },
@@ -3716,7 +3716,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-30T09:15",
             "type": "event"
           },
@@ -3767,7 +3767,7 @@
         "activityLog": [
           {
             "user": "Progressive Insurance",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-30T09:15",
             "type": "event"
           },
@@ -3819,7 +3819,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-29T09:15",
             "type": "event"
           },
@@ -3871,7 +3871,7 @@
         "activityLog": [
           {
             "user": "Allstate",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-29T09:15",
             "type": "event"
           },
@@ -3923,7 +3923,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-28T09:15",
             "type": "event"
           },
@@ -3974,7 +3974,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-27T09:15",
             "type": "event"
           },
@@ -4025,7 +4025,7 @@
         "activityLog": [
           {
             "user": "Aetna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-24T09:15",
             "type": "event"
           },
@@ -4077,7 +4077,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-23T09:15",
             "type": "event"
           },
@@ -4129,7 +4129,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-21T09:15",
             "type": "event"
           },
@@ -4180,7 +4180,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-20T09:15",
             "type": "event"
           },
@@ -4231,7 +4231,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-17T09:15",
             "type": "event"
           },
@@ -4283,7 +4283,7 @@
         "activityLog": [
           {
             "user": "State of California",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-14T09:15",
             "type": "event"
           },
@@ -4334,7 +4334,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-14T09:15",
             "type": "event"
           },
@@ -4386,7 +4386,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-13T09:15",
             "type": "event"
           },
@@ -4437,7 +4437,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-10T09:15",
             "type": "event"
           },
@@ -4489,7 +4489,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-09T09:15",
             "type": "event"
           },
@@ -4540,7 +4540,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-09T09:15",
             "type": "event"
           },
@@ -4592,7 +4592,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-08T09:15",
             "type": "event"
           },
@@ -4644,7 +4644,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-06T09:15",
             "type": "event"
           },
@@ -4696,7 +4696,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-03T09:15",
             "type": "event"
           },
@@ -4747,7 +4747,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-03-01T09:15",
             "type": "event"
           },
@@ -4799,7 +4799,7 @@
         "activityLog": [
           {
             "user": "Allstate",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-28T09:15",
             "type": "event"
           },
@@ -4851,7 +4851,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-28T09:15",
             "type": "event"
           },
@@ -4903,7 +4903,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-25T09:15",
             "type": "event"
           },
@@ -4955,7 +4955,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-24T09:15",
             "type": "event"
           },
@@ -5006,7 +5006,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-23T09:15",
             "type": "event"
           },
@@ -5057,7 +5057,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-22T09:15",
             "type": "event"
           },
@@ -5108,7 +5108,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-20T09:15",
             "type": "event"
           },
@@ -5159,7 +5159,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-19T09:15",
             "type": "event"
           },
@@ -5210,7 +5210,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-16T09:15",
             "type": "event"
           },
@@ -5261,7 +5261,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-15T09:15",
             "type": "event"
           },
@@ -5312,7 +5312,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-15T09:15",
             "type": "event"
           },
@@ -5364,7 +5364,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-14T09:15",
             "type": "event"
           },
@@ -5416,7 +5416,7 @@
         "activityLog": [
           {
             "user": "State of California",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-13T09:15",
             "type": "event"
           },
@@ -5468,7 +5468,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-11T09:15",
             "type": "event"
           },
@@ -5520,7 +5520,7 @@
         "activityLog": [
           {
             "user": "Allstate",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-10T09:15",
             "type": "event"
           },
@@ -5571,7 +5571,7 @@
         "activityLog": [
           {
             "user": "Allstate",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-08T09:15",
             "type": "event"
           },
@@ -5622,7 +5622,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-06T09:15",
             "type": "event"
           },
@@ -5673,7 +5673,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-06T09:15",
             "type": "event"
           },
@@ -5724,7 +5724,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-05T09:15",
             "type": "event"
           },
@@ -5775,7 +5775,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-02T09:15",
             "type": "event"
           },
@@ -5827,7 +5827,7 @@
         "activityLog": [
           {
             "user": "Progressive Insurance",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-02-01T09:15",
             "type": "event"
           },
@@ -5879,7 +5879,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-31T09:15",
             "type": "event"
           },
@@ -5930,7 +5930,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-28T09:15",
             "type": "event"
           },
@@ -5981,7 +5981,7 @@
         "activityLog": [
           {
             "user": "Aetna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-26T09:15",
             "type": "event"
           },
@@ -6033,7 +6033,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-25T09:15",
             "type": "event"
           },
@@ -6085,7 +6085,7 @@
         "activityLog": [
           {
             "user": "Aetna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-23T09:15",
             "type": "event"
           },
@@ -6137,7 +6137,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-23T09:15",
             "type": "event"
           },
@@ -6188,7 +6188,7 @@
         "activityLog": [
           {
             "user": "Allstate",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-23T09:15",
             "type": "event"
           },
@@ -6240,7 +6240,7 @@
         "activityLog": [
           {
             "user": "Progressive Insurance",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-22T09:15",
             "type": "event"
           },
@@ -6292,7 +6292,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-21T09:15",
             "type": "event"
           },
@@ -6344,7 +6344,7 @@
         "activityLog": [
           {
             "user": "Progressive Insurance",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-19T09:15",
             "type": "event"
           },
@@ -6395,7 +6395,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-17T09:15",
             "type": "event"
           },
@@ -6446,7 +6446,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-16T09:15",
             "type": "event"
           },
@@ -6497,7 +6497,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-15T09:15",
             "type": "event"
           },
@@ -6548,7 +6548,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-13T09:15",
             "type": "event"
           },
@@ -6599,7 +6599,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-10T09:15",
             "type": "event"
           },
@@ -6651,7 +6651,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-10T09:15",
             "type": "event"
           },
@@ -6703,7 +6703,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-09T09:15",
             "type": "event"
           },
@@ -6755,7 +6755,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-08T09:15",
             "type": "event"
           },
@@ -6806,7 +6806,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-05T09:15",
             "type": "event"
           },
@@ -6857,7 +6857,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-05T09:15",
             "type": "event"
           },
@@ -6909,7 +6909,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-04T09:15",
             "type": "event"
           },
@@ -6961,7 +6961,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-03T09:15",
             "type": "event"
           },
@@ -7012,7 +7012,7 @@
         "activityLog": [
           {
             "user": "Progressive Insurance",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-02T09:15",
             "type": "event"
           },
@@ -7063,7 +7063,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2024-01-01T09:15",
             "type": "event"
           },
@@ -7115,7 +7115,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-31T09:15",
             "type": "event"
           },
@@ -7166,7 +7166,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-28T09:15",
             "type": "event"
           },
@@ -7218,7 +7218,7 @@
         "activityLog": [
           {
             "user": "State Farm",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-28T09:15",
             "type": "event"
           },
@@ -7270,7 +7270,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-25T09:15",
             "type": "event"
           },
@@ -7322,7 +7322,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-22T09:15",
             "type": "event"
           },
@@ -7373,7 +7373,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-21T09:15",
             "type": "event"
           },
@@ -7424,7 +7424,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-21T09:15",
             "type": "event"
           },
@@ -7476,7 +7476,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-20T09:15",
             "type": "event"
           },
@@ -7527,7 +7527,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-19T09:15",
             "type": "event"
           },
@@ -7578,7 +7578,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-17T09:15",
             "type": "event"
           },
@@ -7629,7 +7629,7 @@
         "activityLog": [
           {
             "user": "Allstate",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-14T09:15",
             "type": "event"
           },
@@ -7680,7 +7680,7 @@
         "activityLog": [
           {
             "user": "Humana",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-11T09:15",
             "type": "event"
           },
@@ -7731,7 +7731,7 @@
         "activityLog": [
           {
             "user": "Optum Pay",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-10T09:15",
             "type": "event"
           },
@@ -7782,7 +7782,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-07T09:15",
             "type": "event"
           },
@@ -7833,7 +7833,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-06T09:15",
             "type": "event"
           },
@@ -7885,7 +7885,7 @@
         "activityLog": [
           {
             "user": "Aetna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-05T09:15",
             "type": "event"
           },
@@ -7937,7 +7937,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-04T09:15",
             "type": "event"
           },
@@ -7989,7 +7989,7 @@
         "activityLog": [
           {
             "user": "State of New Jersey",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-04T09:15",
             "type": "event"
           },
@@ -8041,7 +8041,7 @@
         "activityLog": [
           {
             "user": "Kaiser Permanente",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-12-01T09:15",
             "type": "event"
           },
@@ -8092,7 +8092,7 @@
         "activityLog": [
           {
             "user": "Aetna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-11-29T09:15",
             "type": "event"
           },
@@ -8143,7 +8143,7 @@
         "activityLog": [
           {
             "user": "Progressive Insurance",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-11-29T09:15",
             "type": "event"
           },
@@ -8194,7 +8194,7 @@
         "activityLog": [
           {
             "user": "Allstate",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-11-28T09:15",
             "type": "event"
           },
@@ -8246,7 +8246,7 @@
         "activityLog": [
           {
             "user": "Allstate",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-11-27T09:15",
             "type": "event"
           },
@@ -8297,7 +8297,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-11-27T09:15",
             "type": "event"
           },
@@ -8349,7 +8349,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-11-26T09:15",
             "type": "event"
           },
@@ -8400,7 +8400,7 @@
         "activityLog": [
           {
             "user": "Allstate",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-11-24T09:15",
             "type": "event"
           },
@@ -8452,7 +8452,7 @@
         "activityLog": [
           {
             "user": "UnitedHealthcare",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-11-24T09:15",
             "type": "event"
           },
@@ -8504,7 +8504,7 @@
         "activityLog": [
           {
             "user": "Cigna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-11-23T09:15",
             "type": "event"
           },
@@ -8555,7 +8555,7 @@
         "activityLog": [
           {
             "user": "Blue Cross Blue Shield",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-11-20T09:15",
             "type": "event"
           },
@@ -8607,7 +8607,7 @@
         "activityLog": [
           {
             "user": "State of California",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-11-19T09:15",
             "type": "event"
           },
@@ -8658,7 +8658,7 @@
         "activityLog": [
           {
             "user": "Aetna",
-            "action": "sent a Smart Disburse payment",
+            "action": "sent a SMART Exchange payment",
             "date": "2023-11-18T09:15",
             "type": "event"
           },

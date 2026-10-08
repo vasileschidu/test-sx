@@ -1,6 +1,6 @@
 <!--
   @file dashboard/consumer-payments-received.html
-  @description Consumer Portal — Payments Received. Every Smart Disburse token a
+  @description Consumer Portal — Payments Received. Every SMART Exchange token a
     person or business has been sent, in the same shell and table as the
     Supplier Portal: the table, Get Paid panel and dialogs are shared
     (exchanges-table.js), configured below to read the consumer's own data.
@@ -48,7 +48,7 @@
         window.EXCHANGES_TABLE_CONFIG = {
             dataset: 'consumer-payments',
             storageKey: 'cp_payment_overrides_v1',
-            methodLabels: { smart_exchange: 'Smart Disburse' },
+            methodLabels: { smart_exchange: 'SMART Exchange' },
             statusLabels: { pending: 'Pending Your Action' },
             showTokenMethod: true
         };
@@ -85,33 +85,21 @@
 
                 <!-- ===== GET PAID PANEL ===== -->
                 <div id="get-paid-panel"
-                    class="hidden rounded-xl border border-gray-200 dark:border-white/10 bg-white shadow-xs dark:bg-gray-900 overflow-clip mb-4">
+                    class="hidden mx-auto w-full max-w-[1280px] rounded-xl border border-gray-200 dark:border-white/10 bg-white shadow-xs dark:bg-gray-900 overflow-clip mb-4">
 
                     <!-- Panel Header -->
-                    <div class="border-b border-gray-200 px-4 py-3 dark:border-white/10">
-                        <div class="flex w-full items-center justify-between gap-4">
-                            <div class="flex items-center gap-3">
-                                <button id="get-paid-back" type="button"
-                                    class="inline-flex h-8 w-8 items-center justify-center rounded-md p-1 text-gray-600 transition-colors hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                        stroke="currentColor" class="size-5">
-                                        <path stroke-linecap="round" stroke-linejoin="round"
-                                            d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                                    </svg>
-                                    <span class="sr-only">Back</span>
-                                </button>
-                                <h2 class="text-base font-semibold text-gray-900 dark:text-white">Get Paid</h2>
-                            </div>
-                            <button type="button"
-                                class="inline-flex items-center gap-1.5 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-700 transition-colors hover:bg-gray-200 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
-                                    class="size-4">
-                                    <path fill-rule="evenodd"
-                                        d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z"
-                                        clip-rule="evenodd" />
+                    <div class="px-4 pt-4 sm:px-6 sm:pt-6">
+                        <div class="flex w-full items-center gap-4 border-b border-gray-200 pb-4 dark:border-white/10">
+                            <button id="get-paid-back" type="button"
+                                class="inline-flex size-8 items-center justify-center rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500 dark:text-gray-500 dark:hover:bg-white/10">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                                    stroke="currentColor" class="size-6">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
                                 </svg>
-                                Refresh
+                                <span class="sr-only">Back</span>
                             </button>
+                            <h2 class="text-lg/6 font-medium text-gray-900 dark:text-white">Get Paid</h2>
                         </div>
                     </div>
 
@@ -132,8 +120,7 @@
                                             <span id="gp-currency" class="text-2xl text-gray-500 dark:text-gray-400"></span>
                                         </div>
                                         <span id="gp-status-badge"
-                                            class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20">Pending
-                                            Your Action</span>
+                                            class="inline-flex items-center gap-0.5 rounded-sm border border-yellow-300 bg-yellow-100 py-0.5 pr-2 pl-1 text-sm/5 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-500">Pending Your Action</span>
                                     </div>
                                     <div id="gp-decline-message" class="hidden max-w-2xl">
                                         <p class="text-sm/5 font-semibold text-red-600 dark:text-red-400">Declining reason</p>
@@ -158,32 +145,32 @@
 
                                 <!-- Date Initiated -->
                                 <div class="flex flex-col items-start gap-1">
-                                    <span class="text-sm font-medium leading-5 text-gray-900 dark:text-gray-100">Date
+                                    <span class="text-xs/4 font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400">Date
                                         Initiated</span>
                                     <span id="gp-date"
-                                        class="text-sm font-normal leading-5 text-gray-600 dark:text-gray-400"></span>
+                                        class="text-base/6 font-medium text-gray-700 dark:text-gray-200"></span>
                                 </div>
 
-                                <div class="h-px w-full shrink-0 bg-gray-200 dark:bg-white/10 sm:h-8 sm:w-px"></div>
+                                <div class="h-px w-full shrink-0 bg-gray-200 dark:bg-white/10 sm:h-[52px] sm:w-px"></div>
 
                                 <!-- Customer -->
                                 <div class="flex flex-col items-start gap-1 min-w-0">
                                     <span
-                                        class="text-sm font-medium leading-5 text-gray-900 dark:text-gray-100">Customer</span>
+                                        class="text-xs/4 font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400">Customer</span>
                                     <span id="gp-customer"
-                                        class="text-sm font-normal leading-5 text-gray-600 dark:text-gray-400 truncate"></span>
+                                        class="text-base/6 font-medium text-gray-700 dark:text-gray-200 truncate"></span>
                                 </div>
 
-                                <div class="h-px w-full shrink-0 bg-gray-200 dark:bg-white/10 sm:h-8 sm:w-px"></div>
+                                <div class="h-px w-full shrink-0 bg-gray-200 dark:bg-white/10 sm:h-[52px] sm:w-px"></div>
 
                                 <!-- Invoice # -->
                                 <div class="flex flex-col items-start gap-1">
-                                    <span class="text-sm font-medium leading-5 text-gray-900 dark:text-gray-100">Invoice
+                                    <span class="text-xs/4 font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400">Invoice
                                         #</span>
                                     <button id="gp-invoice-copy" data-copy-id="gp-invoice" type="button"
                                         class="copy-btn inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer">
                                         <span id="gp-invoice"
-                                            class="text-sm font-normal leading-5 text-gray-600 dark:text-gray-400"></span>
+                                            class="text-base/6 font-medium text-gray-700 dark:text-gray-200"></span>
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                             fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500">
                                             <path
@@ -195,7 +182,7 @@
                                 </div>
 
                                 <div id="gp-decline-date-separator"
-                                    class="hidden h-px w-full shrink-0 bg-gray-200 dark:bg-white/10 sm:h-8 sm:w-px"></div>
+                                    class="hidden h-px w-full shrink-0 bg-gray-200 dark:bg-white/10 sm:h-[52px] sm:w-px"></div>
 
                                 <!-- Declining Date -->
                                 <div id="gp-decline-date-item" class="hidden flex-col items-start gap-1">
@@ -206,7 +193,7 @@
                                 </div>
 
                                 <div id="gp-decline-reason-separator"
-                                    class="hidden h-px w-full shrink-0 bg-gray-200 dark:bg-white/10 sm:h-8 sm:w-px"></div>
+                                    class="hidden h-px w-full shrink-0 bg-gray-200 dark:bg-white/10 sm:h-[52px] sm:w-px"></div>
 
                                 <!-- Declining Reason -->
                                 <div id="gp-decline-reason-item" class="hidden min-w-0 flex-col items-start gap-1">
@@ -220,22 +207,22 @@
 
                             <!-- Steps -->
                             <div class="mt-6 px-0">
-                                <h3 class="text-base/7 font-semibold text-gray-900 dark:text-white">Follow these easy
+                                <h3 class="text-lg/6 font-medium text-gray-900 dark:text-white">Follow these easy
                                     steps to Get Paid:</h3>
                             </div>
                             <div class="mt-2 border-t border-gray-200 dark:border-white/10">
-                                <dl class="divide-y divide-gray-200 dark:divide-white/10">
+                                <dl class="[&>*]:border-gray-200 dark:[&>*]:border-white/10 [&>:not(.hidden)~:not(.hidden)]:border-t">
 
                                     <!-- Step 1: Review Documents -->
-                                    <div id="gp-documents-step" class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
-                                        <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
+                                    <div id="gp-documents-step" class="py-6 sm:flex sm:items-start sm:gap-4">
+                                        <dt class="text-sm/5 font-semibold text-gray-700 dark:text-gray-200 sm:w-[480px] sm:shrink-0 sm:pt-1">
                                             <div class="flex items-center gap-2">
                                                 <span id="gp-step-1-badge"
                                                     class="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">1</span>
                                                 Review Documents
                                             </div>
                                         </dt>
-                                        <dd class="mt-3 text-sm text-gray-900 sm:col-span-2 sm:mt-0 dark:text-white">
+                                        <dd class="mt-3 text-sm text-gray-900 sm:mt-0 sm:min-w-0 sm:flex-1 dark:text-white">
                                             <div id="gp-attachments" class="w-full max-w-[400px]">
                                                 <ul role="list"
                                                     class="divide-y divide-gray-200 rounded-md border border-gray-200 dark:divide-white/5 dark:border-white/10">
@@ -325,15 +312,15 @@
                                     </div>
 
                                     <!-- Step 2: Signature -->
-                                    <div id="gp-signature-step" class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
-                                        <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
+                                    <div id="gp-signature-step" class="py-6 sm:flex sm:items-start sm:gap-4">
+                                        <dt class="text-sm/5 font-semibold text-gray-700 dark:text-gray-200 sm:w-[480px] sm:shrink-0 sm:pt-1">
                                             <div class="flex items-center gap-2">
                                                 <span id="gp-step-2-badge"
                                                     class="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">2</span>
                                                 Signature
                                             </div>
                                         </dt>
-                                        <dd class="mt-3 text-sm text-gray-900 sm:col-span-2 sm:mt-0 dark:text-white">
+                                        <dd class="mt-3 text-sm text-gray-900 sm:mt-0 sm:min-w-0 sm:flex-1 dark:text-white">
                                             <span id="gp-signature-trigger">
                                                 <button type="button" command="show-modal"
                                                     commandfor="gp-signature-dialog"
@@ -349,9 +336,9 @@
                                             </span>
                                             <span id="gp-signed-badge" class="hidden">
                                                 <span
-                                                    class="inline-flex items-center gap-1.5 rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/20 dark:bg-blue-400/15 dark:text-blue-300 dark:inset-ring-blue-500/30">
+                                                    class="inline-flex items-center justify-center gap-1 rounded-md bg-emerald-50 px-2.5 py-1.5 text-sm font-semibold text-emerald-900 dark:bg-emerald-400/10 dark:text-emerald-300">
                                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                                        fill="currentColor" class="size-3.5">
+                                                        fill="currentColor" class="size-[18px] text-emerald-500">
                                                         <path fill-rule="evenodd"
                                                             d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
                                                             clip-rule="evenodd" />
@@ -363,21 +350,21 @@
                                     </div>
 
                                     <!-- Step 3: Select Payment Method -->
-                                    <div class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
-                                        <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
+                                    <div class="py-6 sm:flex sm:items-start sm:gap-4">
+                                        <dt class="text-sm/5 font-semibold text-gray-700 dark:text-gray-200 sm:w-[480px] sm:shrink-0 sm:pt-1">
                                             <div class="flex items-center gap-2">
                                                 <span id="gp-step-3-badge"
                                                     class="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">3</span>
                                                 Select Payment Method
                                             </div>
                                         </dt>
-                                        <dd class="mt-3 text-sm text-gray-900 sm:col-span-2 sm:mt-0 dark:text-white">
+                                        <dd class="mt-3 text-sm text-gray-900 sm:mt-0 sm:min-w-0 sm:flex-1 dark:text-white">
                                             <label
                                                 class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Method
                                                 of Payment</label>
                                             <el-select name="paymentMethod" class="mt-2 block w-full max-w-[512px]">
                                                 <button type="button"
-                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                    class="grid w-full cursor-default grid-cols-1 rounded-md bg-white h-10 content-center py-0 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                     <el-selectedcontent
                                                         class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-gray-900 dark:text-white"><span
                                                             class="truncate text-gray-400 dark:text-gray-500">Select
@@ -390,88 +377,42 @@
                                                     </svg>
                                                 </button>
                                                 <el-options anchor="bottom start" popover
-                                                    class="max-h-[21rem] w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10">
-                                                    <!-- Accept Payer's Card -->
+                                                    class="max-h-[21rem] w-(--button-width) overflow-auto rounded-md bg-white pt-1 text-sm shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10">
                                                     <el-option value="payers-card"
-                                                        class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
-                                                        <div class="flex items-center gap-3">
-                                                            <div
-                                                                class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">
+                                                        class="group/option block cursor-default select-none border-b border-gray-200 px-4 py-3 text-gray-900 last:border-b-0 aria-selected:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
+                                                        <div class="flex items-start gap-3 in-[el-selectedcontent]:items-center">
+                                                            <div class="shrink-0 py-0.5 text-gray-500 in-[el-selectedcontent]:py-0 dark:text-gray-400">
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.5 4C1.67157 4 1 4.67157 1 5.5V6H19V5.5C19 4.67157 18.3284 4 17.5 4H2.5ZM19 8.5H1V14.5C1 15.3284 1.67157 16 2.5 16H12.1C12.0344 15.6769 12 15.3425 12 15C12 12.2386 14.2386 10 17 10C17.7111 10 18.3875 10.1484 19 10.416V8.5ZM3.75 12.5C3.33579 12.5 3 12.8358 3 13.25C3 13.6642 3.33579 14 3.75 14H5.25C5.66421 14 6 13.6642 6 13.25C6 12.8358 5.66421 12.5 5.25 12.5H3.75ZM7 13.25C7 12.8358 7.33579 12.5 7.75 12.5H9.25C9.66421 12.5 10 12.8358 10 13.25C10 13.6642 9.66421 14 9.25 14H7.75C7.33579 14 7 13.6642 7 13.25ZM17 12C17.4304 12 17.8126 12.2754 17.9487 12.6838L18.1325 13.2351C18.232 13.5337 18.4663 13.768 18.7649 13.8675L19.3162 14.0513C19.7246 14.1874 20 14.5696 20 15C20 15.4304 19.7246 15.8126 19.3162 15.9487L18.7649 16.1325C18.4663 16.232 18.232 16.4663 18.1325 16.7649L17.9487 17.3162C17.8126 17.7246 17.4304 18 17 18C16.5696 18 16.1874 17.7246 16.0513 17.3162L15.8675 16.7649C15.768 16.4663 15.5337 16.232 15.2351 16.1325L14.6838 15.9487C14.2754 15.8126 14 15.4304 14 15C14 14.5696 14.2754 14.1874 14.6838 14.0513L15.2351 13.8675C15.5337 13.768 15.768 13.5337 15.8675 13.2351L16.0513 12.6838C16.1874 12.2754 16.5696 12 17 12Z"/></svg>
                                                             </div>
-                                                            <div>
-                                                                <span
-                                                                    class="block truncate font-normal group-aria-selected/option:font-semibold">Accept
-                                                                    Payer's Card</span>
-                                                                <span
-                                                                    class="block text-sm text-gray-500 in-[el-selectedcontent]:hidden dark:text-gray-400">No
-                                                                    bank account details required, immediate</span>
+                                                            <div class="min-w-0 flex-1">
+                                                                <span class="block truncate text-sm/5 font-semibold text-gray-900 dark:text-white">Instant Virtual Card</span>
+                                                                <span class="mt-1 block text-sm/5 font-normal text-gray-500 in-[el-selectedcontent]:hidden dark:text-gray-400">Funds expected instantly</span>
                                                             </div>
                                                         </div>
-                                                        <span
-                                                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-indigo-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">
-                                                            <svg viewBox="0 0 20 20" fill="currentColor"
-                                                                aria-hidden="true" class="size-5">
-                                                                <path
-                                                                    d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
-                                                                    clip-rule="evenodd" fill-rule="evenodd" />
-                                                            </svg>
-                                                        </span>
                                                     </el-option>
-                                                    <!-- Send to Bank Account -->
                                                     <el-option value="bank-account"
-                                                        class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
-                                                        <div class="flex items-center gap-3">
-                                                            <div
-                                                                class="shrink-0 text-blue-600 in-[el-selectedcontent]:text-gray-600 dark:in-[el-selectedcontent]:text-gray-400">
-                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20"
-                                                                    height="20" viewBox="0 0 24 24" fill="none">
-                                                                    <path
-                                                                        d="M12 21V12.75M15.75 21V12.75M8.25 21V12.75M3 9L12 3L21 9M19.5 21V10.3325C17.0563 9.94906 14.5514 9.75 12 9.75C9.44861 9.75 6.94372 9.94906 4.5 10.3325V21M3 21H21M12 6.75H12.0075V6.7575H12V6.75Z"
-                                                                        stroke="currentColor" stroke-width="1.5"
-                                                                        stroke-linecap="round"
-                                                                        stroke-linejoin="round" />
-                                                                </svg>
+                                                        class="group/option block cursor-default select-none border-b border-gray-200 px-4 py-3 text-gray-900 last:border-b-0 aria-selected:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
+                                                        <div class="flex items-start gap-3 in-[el-selectedcontent]:items-center">
+                                                            <div class="shrink-0 py-0.5 text-gray-500 in-[el-selectedcontent]:py-0 dark:text-gray-400">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.67411 2.07459C9.88011 1.97514 10.1202 1.97514 10.3262 2.07459L17.5762 5.57459C17.9493 5.75467 18.1057 6.20304 17.9256 6.57606C17.7576 6.92403 17.3561 7.08351 17.0002 6.95718V16.5H17.2502C17.6644 16.5 18.0002 16.8358 18.0002 17.25C18.0002 17.6642 17.6644 18 17.2502 18H2.75017C2.33596 18 2.00017 17.6642 2.00017 17.25C2.00017 16.8358 2.33596 16.5 2.75017 16.5H3.00017V6.95718C2.6442 7.08351 2.24274 6.92403 2.07476 6.57606C1.89468 6.20304 2.05109 5.75467 2.42411 5.57459L9.67411 2.07459ZM11 6C11 6.55228 10.5523 7 10 7C9.44772 7 9 6.55228 9 6C9 5.44772 9.44772 5 10 5C10.5523 5 11 5.44772 11 6ZM7.5 9.75C7.5 9.33579 7.16421 9 6.75 9C6.33579 9 6 9.33579 6 9.75V15.25C6 15.6642 6.33579 16 6.75 16C7.16421 16 7.5 15.6642 7.5 15.25V9.75ZM10.75 9.75C10.75 9.33579 10.4142 9 10 9C9.58579 9 9.25 9.33579 9.25 9.75V15.25C9.25 15.6642 9.58579 16 10 16C10.4142 16 10.75 15.6642 10.75 15.25V9.75ZM14 9.75C14 9.33579 13.6642 9 13.25 9C12.8358 9 12.5 9.33579 12.5 9.75V15.25C12.5 15.6642 12.8358 16 13.25 16C13.6642 16 14 15.6642 14 15.25V9.75Z"/></svg>
                                                             </div>
-                                                            <div>
-                                                                <span
-                                                                    class="block truncate font-normal group-aria-selected/option:font-semibold">Send
-                                                                    to Bank Account</span>
-                                                                <span
-                                                                    class="block text-sm text-gray-500 in-[el-selectedcontent]:hidden dark:text-gray-400">Typically
-                                                                    processed in 1-3 business days</span>
+                                                            <div class="min-w-0 flex-1">
+                                                                <span class="block truncate text-sm/5 font-semibold text-gray-900 dark:text-white">Send to my Bank Account</span>
+                                                                <span class="mt-1 block text-sm/5 font-normal text-gray-500 in-[el-selectedcontent]:hidden dark:text-gray-400">Expected from instantly up to 3 days</span>
                                                             </div>
                                                         </div>
-                                                        <span
-                                                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-indigo-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">
-                                                            <svg viewBox="0 0 20 20" fill="currentColor"
-                                                                aria-hidden="true" class="size-5">
-                                                                <path
-                                                                    d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
-                                                                    clip-rule="evenodd" fill-rule="evenodd" />
-                                                            </svg>
-                                                        </span>
                                                     </el-option>
-                                                    <!-- Request a Paper Check -->
                                                     <el-option value="paper-check"
-                                                        class="group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
-                                                        <div>
-                                                            <span
-                                                                class="block truncate font-normal group-aria-selected/option:font-semibold">Request
-                                                                a Paper Check</span>
-                                                            <span
-                                                                class="block text-sm text-gray-500 in-[el-selectedcontent]:hidden dark:text-gray-400">Slowest
-                                                                form of payment (approximately 7-10 days)</span>
+                                                        class="group/option block cursor-default select-none border-b border-gray-200 px-4 py-3 text-gray-900 last:border-b-0 aria-selected:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">
+                                                        <div class="flex items-start gap-3 in-[el-selectedcontent]:items-center">
+                                                            <div class="shrink-0 py-0.5 text-gray-500 in-[el-selectedcontent]:py-0 dark:text-gray-400">
+                                                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M3 4C3 2.89543 3.89543 2 5 2H15C16.1046 2 17 2.89543 17 4V18L13.5 16L10 18L6.5 16L3 18V4ZM6 6C6 5.44772 6.44772 5 7 5H13C13.5523 5 14 5.44772 14 6C14 6.55228 13.5523 7 13 7H7C6.44772 7 6 6.55228 6 6ZM6 10C6 9.44772 6.44772 9 7 9H13C13.5523 9 14 9.44772 14 10C14 10.5523 13.5523 11 13 11H7C6.44772 11 6 10.5523 6 10Z"/></svg>
+                                                            </div>
+                                                            <div class="min-w-0 flex-1">
+                                                                <span class="block truncate text-sm/5 font-semibold text-gray-900 dark:text-white">I want a check</span>
+                                                                <span class="mt-1 block text-sm/5 font-normal text-gray-500 in-[el-selectedcontent]:hidden dark:text-gray-400">Slowest payment method</span>
+                                                            </div>
                                                         </div>
-                                                        <span
-                                                            class="absolute inset-y-0 right-0 flex items-center pr-3 text-indigo-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">
-                                                            <svg viewBox="0 0 20 20" fill="currentColor"
-                                                                aria-hidden="true" class="size-5">
-                                                                <path
-                                                                    d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z"
-                                                                    clip-rule="evenodd" fill-rule="evenodd" />
-                                                            </svg>
-                                                        </span>
                                                     </el-option>
                                                 </el-options>
                                             </el-select>
@@ -579,7 +520,7 @@
                                                     <el-select name="bankAccountSelect" id="gp-bank-account-select"
                                                         class="block w-full max-w-[512px]">
                                                         <button type="button"
-                                                            class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                            class="grid w-full cursor-default grid-cols-1 rounded-md bg-white h-10 content-center py-0 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                             <el-selectedcontent
                                                                 class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-gray-900 dark:text-white"><span
                                                                     class="truncate text-gray-400 dark:text-gray-500">Select
@@ -730,7 +671,7 @@
                                                     <el-select name="checkAddressSelect" id="gp-check-address-select"
                                                         class="block w-full max-w-[512px]">
                                                         <button type="button"
-                                                            class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                                            class="grid w-full cursor-default grid-cols-1 rounded-md bg-white h-10 content-center py-0 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-indigo-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                             <el-selectedcontent
                                                                 class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-gray-900 dark:text-white"><span
                                                                     class="truncate text-gray-400 dark:text-gray-500">Select
@@ -885,15 +826,15 @@
                                     </div>
 
                                     <!-- Step 4: Confirm and Submit -->
-                                    <div id="gp-confirm-step" class="py-6 sm:grid sm:grid-cols-3 sm:gap-4">
-                                        <dt class="text-sm/6 font-semibold text-gray-900 dark:text-gray-100">
+                                    <div id="gp-confirm-step" class="py-6 sm:flex sm:items-start sm:gap-4">
+                                        <dt class="text-sm/5 font-semibold text-gray-700 dark:text-gray-200 sm:w-[480px] sm:shrink-0 sm:pt-1">
                                             <div class="flex items-center gap-2">
                                                 <span id="gp-step-4-badge"
                                                     class="inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">4</span>
                                                 Confirm and Submit
                                             </div>
                                         </dt>
-                                        <dd class="mt-3 text-sm text-gray-900 sm:col-span-2 sm:mt-0 dark:text-white">
+                                        <dd class="mt-3 text-sm text-gray-900 sm:mt-0 sm:min-w-0 sm:flex-1 dark:text-white">
                                             <h4 class="text-sm font-semibold text-gray-900 dark:text-white">Confirm
                                                 your payment details</h4>
                                             <p class="mt-1 text-sm font-normal text-gray-700 dark:text-gray-300">Once
@@ -958,49 +899,57 @@
                         </div>
 
                         <!-- Summary + activity aligned with steps column -->
-                        <div class="mt-9 px-0">
+                        <div class="px-0">
 
                             <!-- Receivable Summary (collapsible, collapsed by default) -->
-                            <div class="border-t border-gray-200 dark:border-white/10">
+                            <div>
                                 <button type="button" id="gp-receivable-toggle"
-                                    class="w-full flex items-center justify-between py-4 text-left">
-                                    <span class="text-base font-semibold text-gray-900 dark:text-white">Receivable
+                                    class="mt-9 w-full flex items-center justify-between gap-6 border-b border-gray-200 pb-4 text-left dark:border-white/10">
+                                    <span class="text-lg/6 font-medium text-gray-900 dark:text-white">Receivable
                                         Summary</span>
                                     <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                         fill="currentColor"
-                                        class="size-5 text-gray-400 dark:text-gray-500 transition-transform">
+                                        class="size-5 rotate-180 text-gray-400 dark:text-gray-500 transition-transform">
                                         <path fill-rule="evenodd"
                                             d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
                                             clip-rule="evenodd" />
                                     </svg>
                                 </button>
-                                <div id="gp-receivable-content" class="hidden pb-4">
+                                <div id="gp-receivable-content" class="pt-6">
                                     <p class="text-sm text-gray-500 dark:text-gray-400">No receivable details available.
                                     </p>
                                 </div>
                             </div>
 
                             <!-- Activity Log (collapsed by default) -->
-                            <div class="border-t border-b border-gray-200 dark:border-white/10">
+                            <div>
                                 <button type="button" id="gp-activity-toggle"
-                                    class="w-full flex items-center justify-between py-4 text-left">
-                                    <span class="text-base font-semibold text-gray-900 dark:text-white">Activity
+                                    class="mt-9 w-full flex items-center justify-between gap-6 border-b border-gray-200 pb-4 text-left dark:border-white/10">
+                                    <span class="text-lg/6 font-medium text-gray-900 dark:text-white">Activity
                                         Log</span>
                                     <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                         fill="currentColor"
-                                        class="size-5 text-gray-400 dark:text-gray-500 transition-transform">
+                                        class="size-5 rotate-180 text-gray-400 dark:text-gray-500 transition-transform">
                                         <path fill-rule="evenodd"
                                             d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
                                             clip-rule="evenodd" />
                                     </svg>
                                 </button>
-                                <div id="gp-activity-content" class="hidden pb-6">
+                                <div id="gp-activity-content" class="pt-6 pb-6">
                                     <!-- populated by JS -->
                                 </div>
                             </div>
 
                         </div>
 
+                    </div>
+
+                    <!-- Panel Footer: mirrors the header submit button -->
+                    <div class="flex items-center justify-end border-t border-gray-200 p-4 sm:p-6 dark:border-white/10">
+                        <button id="gp-submit-btn-footer" type="button" disabled
+                            class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-blue-600 sm:w-auto">
+                            Submit and Get Paid
+                        </button>
                     </div>
                 </div>
                 <!-- ===== END GET PAID PANEL ===== -->
@@ -1158,7 +1107,7 @@
                                                                         <span id="sx-table-filter-date-from-mask-filled" class="font-medium text-gray-900 dark:text-white"></span><span id="sx-table-filter-date-from-mask-empty" class="font-normal text-gray-400 dark:text-gray-500">MM / DD / YYYY</span>
                                                                     </span>
                                                                     <input id="sx-table-filter-date-from-input" type="text" inputmode="numeric" placeholder="MM / DD / YYYY"
-                                                                        class="relative z-10 block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-transparent caret-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-transparent focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:caret-white dark:outline-white/10 dark:placeholder:text-transparent" />
+                                                                        class="relative z-10 block w-full rounded-md bg-transparent px-3 h-10 py-0 text-base text-transparent caret-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-transparent focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:caret-white dark:outline-white/10 dark:placeholder:text-transparent" />
                                                                 </div>
                                                             </div>
                                                             <div>
@@ -1169,7 +1118,7 @@
                                                                         <span id="sx-table-filter-date-to-mask-filled" class="font-medium text-gray-900 dark:text-white"></span><span id="sx-table-filter-date-to-mask-empty" class="font-normal text-gray-400 dark:text-gray-500">MM / DD / YYYY</span>
                                                                     </span>
                                                                     <input id="sx-table-filter-date-to-input" type="text" inputmode="numeric" placeholder="MM / DD / YYYY"
-                                                                        class="relative z-10 block w-full rounded-md bg-transparent px-3 py-1.5 text-base text-transparent caret-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-transparent focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:caret-white dark:outline-white/10 dark:placeholder:text-transparent" />
+                                                                        class="relative z-10 block w-full rounded-md bg-transparent px-3 h-10 py-0 text-base text-transparent caret-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-transparent focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:caret-white dark:outline-white/10 dark:placeholder:text-transparent" />
                                                                 </div>
                                                             </div>
                                                         </div>
@@ -1234,7 +1183,7 @@
                     </div>
 
                     <!-- ===== STATUS TABS ===== -->
-                    <div class="border-t border-b border-gray-200 px-4 py-2 sm:px-6 dark:border-white/10">
+                    <div class="border-t border-gray-200 px-4 py-4 sm:px-6 dark:border-white/10">
 
                         <div class="grid grid-cols-1 sm:hidden">
                             <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
@@ -1252,25 +1201,25 @@
                             </svg>
                         </div>
                         <div class="hidden sm:flex sm:items-center sm:justify-between sm:gap-4">
-                            <nav aria-label="Tabs" class="flex space-x-4">
+                            <nav aria-label="Tabs" class="flex gap-9">
                                 <!-- Current: "bg-indigo-100 dark:bg-indigo-500/20 text-indigo-700 dark:text-indigo-300", Default: "text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200" -->
                                 <a href="#" data-tab="pending" aria-current="page"
-                                    class="inline-flex items-center gap-2 rounded-md bg-blue-100 px-3 py-2 text-sm font-medium text-blue-700 dark:bg-blue-500/20 dark:text-blue-300">
+                                    class="inline-flex items-center gap-2 rounded-md bg-blue-50 px-3 py-2 text-sm/5 font-medium text-blue-600 dark:bg-blue-500/20 dark:text-blue-300">
                                     <span>Pending</span>
                                     <span data-tab-count="pending"
-                                        class="inline-flex items-center rounded-full bg-blue-50 px-2 py-1 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30">0</span>
+                                        class="inline-flex items-center rounded-full border border-blue-200 bg-blue-100 px-2 py-0.5 text-xs/4 font-medium text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-300">0</span>
                                 </a>
                                 <a href="#" data-tab="paid"
-                                    class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                    class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm/5 font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                                     <span>Paid</span>
                                     <span data-tab-count="paid"
-                                        class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">0</span>
+                                        class="inline-flex items-center rounded-full border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs/4 font-medium text-gray-800 dark:border-gray-400/20 dark:bg-gray-400/10 dark:text-gray-300">0</span>
                                 </a>
                                 <a href="#" data-tab="exceptions"
-                                    class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
+                                    class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm/5 font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200">
                                     <span>Exceptions</span>
                                     <span data-tab-count="exceptions"
-                                        class="inline-flex items-center rounded-full bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">0</span>
+                                        class="inline-flex items-center rounded-full border border-red-200 bg-red-100 px-2 py-0.5 text-xs/4 font-medium text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-300">0</span>
                                 </a>
                             </nav>
                         </div>
@@ -1295,7 +1244,7 @@
 
                     <!-- ===== PAGINATION (rendered by exchanges-table.js) ===== -->
                     <div data-pagination
-                        class="sticky bottom-0 z-20 border-t border-gray-200 bg-white px-4 py-3 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:rounded-b-lg sm:px-6">
+                        class="sticky bottom-0 z-20 border-t border-gray-200 bg-white py-4 pl-4 pr-6 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:border-white/10 dark:bg-gray-900 dark:shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.3)] sm:rounded-b-lg sm:px-6">
                     </div>
 
                 </div>
@@ -1425,7 +1374,7 @@
                                 class="block text-sm/6 font-medium text-gray-900 dark:text-white">Your Full Name</label>
                             <div class="mt-2">
                                 <input id="gp-fullName" type="text" placeholder="Type your full name"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                    class="block w-full rounded-md bg-white px-3 h-10 py-0 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                             </div>
                         </div>
                         <!-- Canvas -->
@@ -1892,28 +1841,28 @@
                             <label for="gp-edit-bank-name" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Name on Account</label>
                             <div class="mt-2">
                                 <input id="gp-edit-bank-name" type="text"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                    class="block w-full rounded-md bg-white px-3 h-10 py-0 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                             </div>
                         </div>
                         <div>
                             <label for="gp-edit-bank-routing" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Routing Number</label>
                             <div class="mt-2">
                                 <input id="gp-edit-bank-routing" type="text"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                    class="block w-full rounded-md bg-white px-3 h-10 py-0 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                             </div>
                         </div>
                         <div>
                             <label for="gp-edit-bank-account" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Account Number</label>
                             <div class="mt-2">
                                 <input id="gp-edit-bank-account" type="text"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                    class="block w-full rounded-md bg-white px-3 h-10 py-0 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                             </div>
                         </div>
                         <div>
                             <label for="gp-edit-bank-confirm" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Confirm Account Number</label>
                             <div class="mt-2">
                                 <input id="gp-edit-bank-confirm" type="text"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                    class="block w-full rounded-md bg-white px-3 h-10 py-0 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                             </div>
                         </div>
                         <div>
@@ -1923,7 +1872,7 @@
                             </div>
                             <div class="mt-2">
                                 <input id="gp-edit-bank-nickname" type="text" placeholder="e.g. Primary Account"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                    class="block w-full rounded-md bg-white px-3 h-10 py-0 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                             </div>
                         </div>
                     </div>
@@ -1970,14 +1919,14 @@
                             <label for="gp-edit-check-nickname" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Nickname</label>
                             <div class="mt-2">
                                 <input id="gp-edit-check-nickname" type="text"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                    class="block w-full rounded-md bg-white px-3 h-10 py-0 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                             </div>
                         </div>
                         <div>
                             <label for="gp-edit-check-line1" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Address Line 1</label>
                             <div class="mt-2">
                                 <input id="gp-edit-check-line1" type="text"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                    class="block w-full rounded-md bg-white px-3 h-10 py-0 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                             </div>
                         </div>
                         <div>
@@ -1987,14 +1936,14 @@
                             </div>
                             <div class="mt-2">
                                 <input id="gp-edit-check-line2" type="text" placeholder="Suite, floor, unit…"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                    class="block w-full rounded-md bg-white px-3 h-10 py-0 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                             </div>
                         </div>
                         <div>
                             <label for="gp-edit-check-city" class="block text-sm/6 font-medium text-gray-900 dark:text-white">City</label>
                             <div class="mt-2">
                                 <input id="gp-edit-check-city" type="text"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                    class="block w-full rounded-md bg-white px-3 h-10 py-0 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-4">
@@ -2002,14 +1951,14 @@
                                 <label for="gp-edit-check-state" class="block text-sm/6 font-medium text-gray-900 dark:text-white">State / Province</label>
                                 <div class="mt-2">
                                     <input id="gp-edit-check-state" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 h-10 py-0 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                             <div>
                                 <label for="gp-edit-check-zip" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Zip / Postal Code</label>
                                 <div class="mt-2">
                                     <input id="gp-edit-check-zip" type="text"
-                                        class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        class="block w-full rounded-md bg-white px-3 h-10 py-0 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
                                 </div>
                             </div>
                         </div>
@@ -2018,7 +1967,7 @@
                             <div class="mt-2 grid grid-cols-1">
                                 <span id="gp-edit-check-country-flag" class="fi fi-us col-start-1 row-start-1 pointer-events-none z-10 self-center justify-self-start ml-3 rounded-sm"></span>
                                 <select id="gp-edit-check-country" name="gp-edit-check-country"
-                                    class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white py-1.5 pr-8 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
+                                    class="col-start-1 row-start-1 w-full appearance-none rounded-md bg-white h-10 py-0 pr-8 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                     <option value="us" selected>United States</option>
                                     <option value="ca">Canada</option>
                                     <option value="mx">Mexico</option>
@@ -2051,7 +2000,7 @@
     </el-dialog>
 
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
-    <script src="../../../src/scripts/exchanges-table.js?v=20261001b"></script>
+    <script src="../../../src/scripts/exchanges-table.js?v=consumer-table-20261008h"></script>
 
 </body>
 

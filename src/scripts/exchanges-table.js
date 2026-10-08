@@ -63,9 +63,21 @@
   var TAB_NAV_SELECTOR = 'nav[aria-label="Tabs"]';
   var TAB_SELECT_SELECTOR = '[data-sx-tab-select]';
 
-  var ACTIVE_TAB_LINK_CLASSES = ['bg-blue-100', 'text-blue-700', 'dark:bg-blue-500/20', 'dark:text-blue-300'];
+  // Consumer Portal table follows its own Figma table (tabs, rows, separators).
+  var IS_CONSUMER_TABLE = PAGE_CONFIG.dataset === 'consumer-payments';
+
+  var ACTIVE_TAB_LINK_CLASSES = IS_CONSUMER_TABLE
+    ? ['bg-blue-50', 'text-blue-600', 'dark:bg-blue-500/20', 'dark:text-blue-300']
+    : ['bg-blue-100', 'text-blue-700', 'dark:bg-blue-500/20', 'dark:text-blue-300'];
   var INACTIVE_TAB_LINK_CLASSES = ['text-gray-500', 'dark:text-gray-400'];
-  var ACTIVE_BADGE_CLASSES = [
+  var ACTIVE_BADGE_CLASSES = IS_CONSUMER_TABLE ? [
+    'bg-blue-100',
+    'text-blue-800',
+    'border-blue-200',
+    'dark:bg-blue-400/10',
+    'dark:text-blue-300',
+    'dark:border-blue-400/30',
+  ] : [
     'bg-blue-50',
     'text-blue-700',
     'inset-ring-blue-700/10',
@@ -73,7 +85,14 @@
     'dark:text-blue-400',
     'dark:inset-ring-blue-400/30',
   ];
-  var INACTIVE_BADGE_CLASSES = [
+  var INACTIVE_BADGE_CLASSES = IS_CONSUMER_TABLE ? [
+    'bg-gray-100',
+    'text-gray-800',
+    'border-gray-200',
+    'dark:bg-gray-400/10',
+    'dark:text-gray-300',
+    'dark:border-gray-400/20',
+  ] : [
     'bg-gray-50',
     'text-gray-600',
     'inset-ring-gray-500/10',
@@ -1103,19 +1122,22 @@
     var html = '<thead><tr>';
 
     columns.forEach(function (col) {
-      var base = 'border-b border-gray-200 dark:border-white/10';
+      var base = IS_CONSUMER_TABLE ? '' : 'border-b border-gray-200 dark:border-white/10';
 
       if (col.type === 'expand') {
-        html += '<th scope="col" class="' + base + ' w-10 min-w-10 h-12 py-3.5 px-0 text-center whitespace-nowrap"><span class="sr-only">Expand</span></th>';
+        html += '<th scope="col" class="' + base + ' w-10 min-w-10 ' + (IS_CONSUMER_TABLE ? 'h-[52px] py-2' : 'h-12 py-3.5') + ' px-0 text-center whitespace-nowrap"><span class="sr-only">Expand</span></th>';
         return;
       }
 
       if (col.type === 'action') {
-        html += '<th data-action-column scope="col" class="' + base + ' bg-white py-3.5 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 dark:bg-gray-900 sm:pr-2"><span class="sr-only">Action</span></th>';
+        html += '<th data-action-column scope="col" class="' + base + ' bg-white ' + (IS_CONSUMER_TABLE ? 'h-[52px] py-2' : 'py-3.5') + ' pr-4 pl-3 whitespace-nowrap w-32 min-w-32 dark:bg-gray-900 sm:pr-2"><span class="sr-only">Action</span></th>';
         return;
       }
 
-      var thClass = base + ' px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white';
+      var alignRight = IS_CONSUMER_TABLE && col.key === 'amount';
+      var thClass = IS_CONSUMER_TABLE
+        ? 'h-[52px] px-3 py-2 ' + (alignRight ? 'text-right' : 'text-left') + ' text-xs font-medium uppercase tracking-[0.6px] whitespace-nowrap text-gray-500 dark:text-gray-400'
+        : base + ' px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white';
       html += '<th scope="col" class="' + thClass + '">';
 
       if (col.sortable || col.filterable) {
@@ -1123,7 +1145,10 @@
         if (col.sortable) {
           headerBtnAttrs += ' data-sort-key="' + escapeHtml(col.key || '') + '"';
         }
-        html += '<button type="button"' + headerBtnAttrs + ' class="group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white">';
+        var headerBtnClass = IS_CONSUMER_TABLE
+          ? 'group flex w-full cursor-pointer items-center gap-x-1 rounded-md ' + (alignRight ? 'justify-end text-right' : 'text-left') + ' text-xs font-medium uppercase tracking-[0.6px] text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400'
+          : 'group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white';
+        html += '<button type="button"' + headerBtnAttrs + ' class="' + headerBtnClass + '">';
         html += '<span>' + escapeHtml(col.label) + '</span>';
 
         if (col.sortable) {
@@ -1139,14 +1164,25 @@
       html += '</th>';
     });
 
-    html += '</tr></thead>';
+    html += '</tr>';
+    if (IS_CONSUMER_TABLE) html += buildSeparatorRowHTML(columns.length);
+    html += '</thead>';
     return html;
   }
 
+  // A one-pixel separator row (Figma "Separator"), used instead of per-cell borders.
+  function buildSeparatorRowHTML(colCount) {
+    return '<tr aria-hidden="true" data-row-separator><td colspan="' + colCount + '" class="bg-gray-200 p-0 dark:bg-white/10" style="height:1px;line-height:0;font-size:0"></td></tr>';
+  }
+
   function buildSortBadgeHTML(sortDirection) {
-    var sortBtnClass = sortDirection
+    var sortBtnClass = IS_CONSUMER_TABLE
+      ? (sortDirection
+        ? 'inline-flex size-5 items-center justify-center text-blue-600 dark:text-blue-400'
+        : 'inline-flex size-5 items-center justify-center text-gray-400 group-hover:text-gray-600 dark:text-gray-500')
+      : (sortDirection
       ? 'inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300'
-      : 'inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400';
+      : 'inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400');
     var sortIcon = sortDirection === 'asc'
       ? ICON_SORT_ASC
       : (sortDirection === 'desc' ? ICON_SORT_DESC : ICON_SORT);
@@ -1185,8 +1221,11 @@
     switch (col.key) {
       case 'amount':
         return formatCurrency(entry.amount, entry.currency) +
-          ' <span class="text-gray-500 dark:text-gray-400">' + escapeHtml(entry.currency) + '</span>';
+          ' <span class="' + (IS_CONSUMER_TABLE ? 'font-normal ' : '') + 'text-gray-500 dark:text-gray-400">' + escapeHtml(entry.currency) + '</span>';
       case 'invoice':
+        if (IS_CONSUMER_TABLE) {
+          return '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer p-0 text-sm font-normal text-gray-500 transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-white">' + escapeHtml(entry.invoice) + '</button>';
+        }
         return '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer p-0 text-sm font-medium text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">#' + escapeHtml(entry.invoice) + '</button>';
       case 'dateInitiated':
         return formatDate(entry.dateInitiated);
@@ -1255,7 +1294,24 @@
     return '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(method) + '</span>';
   }
 
+  var CONSUMER_STATUS_STYLES = {
+    pending: 'border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300',
+    processing: 'border-blue-300 bg-blue-100 text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-300',
+    paid: 'border-green-300 bg-green-100 text-green-800 dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-400',
+    exception: 'border-red-300 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400',
+    declined: 'border-red-300 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400'
+  };
+  var CONSUMER_PENDING_CLOCK_ICON = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0 text-yellow-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd"/></svg>';
+
   function renderStatus(status) {
+    if (IS_CONSUMER_TABLE) {
+      var consumerClasses = CONSUMER_STATUS_STYLES[status] || CONSUMER_STATUS_STYLES.pending;
+      return '<span' + (status === 'processing' ? ' data-processing-tooltip="true"' : '') +
+        ' class="inline-flex items-center gap-0.5 rounded-[4px] border py-0.5 ' + (status === 'pending' ? 'pr-2 pl-1' : 'px-2') + ' text-sm/5 font-medium whitespace-nowrap ' + consumerClasses + '">' +
+        (status === 'pending' ? CONSUMER_PENDING_CLOCK_ICON : '') +
+        escapeHtml(getStatusLabel(status)) +
+      '</span>';
+    }
     var badgeClasses = STATUS_STYLES[status] || STATUS_STYLES.pending;
     if (status === 'processing') {
       return '<span data-processing-tooltip="true" class="inline-flex cursor-default items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + badgeClasses + '">' +
@@ -1332,6 +1388,15 @@
   }
 
   function renderActionCell(entry) {
+    if (IS_CONSUMER_TABLE) {
+      // Consumer Portal: the primary action only — no three-dot menu.
+      if (requiresGetPaidAction(entry) || (entry.status === 'pending' && entry.methodType === 'smart_exchange')) {
+        return '<div class="inline-flex items-center justify-end gap-2">' +
+          '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Get paid</button>' +
+        '</div>';
+      }
+      return '';
+    }
     if (requiresGetPaidAction(entry) || (entry.status === 'pending' && entry.methodType === 'smart_exchange')) {
       return '<div class="inline-flex items-center justify-end gap-2">' +
         '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500">Get paid</button>' +
@@ -1357,13 +1422,13 @@
   // ── Row builders ──
 
   function buildMainRowHTML(entry, columns, isLast) {
-    var cb = isLast ? '' : CLASS_NAMES.cellBorder;
+    var cb = (isLast || IS_CONSUMER_TABLE) ? '' : CLASS_NAMES.cellBorder;
     var html = '<tr data-row data-method-type="' + escapeHtml(String(entry.methodType || '')) + '" data-invoice="' + escapeHtml(String(entry.invoice || '')) + '" class="' + CLASS_NAMES.row + '">';
 
     columns.forEach(function (col) {
       if (col.type === 'expand') {
         html +=
-          '<td class="h-12 w-10 min-w-10 align-middle py-2 px-0 text-center whitespace-nowrap' + cb + '">' +
+          '<td class="' + (IS_CONSUMER_TABLE ? 'h-[52px]' : 'h-12') + ' w-10 min-w-10 align-middle py-2 px-0 text-center whitespace-nowrap' + cb + '">' +
             '<button data-row-toggle class="inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20">' +
               '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
                 '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />' +
@@ -1382,12 +1447,13 @@
       }
 
       var cellClass;
+      var cellPad = IS_CONSUMER_TABLE ? 'h-[52px] align-middle px-3 py-2' : 'h-12 align-middle px-2 py-2';
       if (col.type === 'status' || col.type === 'paymentMethod') {
-        cellClass = 'h-12 align-middle px-2 py-2 whitespace-nowrap' + cb;
+        cellClass = cellPad + ' whitespace-nowrap' + cb;
       } else if (col.key === 'invoice' || col.key === 'dateInitiated') {
-        cellClass = 'h-12 align-middle px-2 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb;
+        cellClass = cellPad + ' text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb;
       } else {
-        cellClass = 'h-12 align-middle px-2 py-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb;
+        cellClass = cellPad + ' text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + (IS_CONSUMER_TABLE && col.key === 'amount' ? ' text-right' : '') + cb;
       }
 
       html += '<td class="' + cellClass + '">' + renderCellValue(col, entry) + '</td>';
@@ -1416,6 +1482,16 @@
 
   function buildStatusSection(entry) {
     var displayStatus = getDisplayStatus(entry);
+    if (IS_CONSUMER_TABLE) {
+      return (
+        '<div class="flex">' +
+          '<div class="' + DETAIL_LABEL + '">Status</div>' +
+          '<div class="flex flex-1 flex-col items-start justify-center gap-2 px-4 py-3.5">' +
+            renderStatus(displayStatus) +
+          '</div>' +
+        '</div>'
+      );
+    }
     var statusClass = STATUS_STYLES[displayStatus] || STATUS_STYLES.pending;
     var declineReason = entry.status === 'declined' ? getDeclineReason(entry) : '';
     return (
@@ -1433,14 +1509,33 @@
     );
   }
 
+  var CONSUMER_DOC_ICON = '<svg viewBox="0 0 14 14" width="14" height="14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.8 2.8C2.8 2.0268 3.4268 1.4 4.2 1.4H7.41005C7.78135 1.4 8.13745 1.5475 8.4 1.81005L10.7899 4.2C11.0525 4.46255 11.2 4.81865 11.2 5.18995V11.2C11.2 11.9732 10.5732 12.6 9.8 12.6H4.2C3.4268 12.6 2.8 11.9732 2.8 11.2V2.8ZM4.2 7C4.2 6.6134 4.5134 6.3 4.9 6.3H9.1C9.4866 6.3 9.8 6.6134 9.8 7C9.8 7.3866 9.4866 7.7 9.1 7.7H4.9C4.5134 7.7 4.2 7.3866 4.2 7ZM4.9 9.1C4.5134 9.1 4.2 9.4134 4.2 9.8C4.2 10.1866 4.5134 10.5 4.9 10.5H9.1C9.4866 10.5 9.8 10.1866 9.8 9.8C9.8 9.4134 9.4866 9.1 9.1 9.1H4.9Z" class="fill-gray-400 dark:fill-gray-500"/></svg>';
+
   function buildAttachmentsSection(entry) {
     var attachments = entry.details.attachments;
+    if (IS_CONSUMER_TABLE) {
+      var consumerBadges = '';
+      (attachments || []).forEach(function (att, idx) {
+        consumerBadges +=
+          '<button type="button" data-attachment-preview="true" data-attachment-name="' + escapeHtml(att.name || '') + '" data-attachment-index="' + idx + '" command="show-modal" commandfor="gp-review-dialog" class="inline-flex items-center gap-0.5 rounded-[4px] border border-gray-200 bg-gray-100 py-0.5 pl-1 pr-2 text-sm/5 font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer">' +
+            CONSUMER_DOC_ICON + escapeHtml(att.name || '') +
+          '</button>';
+      });
+      return (
+        '<div class="flex">' +
+          '<div class="' + DETAIL_LABEL + '">Attachments</div>' +
+          '<div class="flex min-h-[52px] flex-1 flex-wrap items-center gap-2 px-4 py-3.5">' +
+            (consumerBadges || '<span class="text-sm/5 text-gray-400 dark:text-gray-500">&mdash;</span>') +
+          '</div>' +
+        '</div>'
+      );
+    }
     if (!attachments || !attachments.length) return '';
 
     var badges = '';
     attachments.forEach(function (att, idx) {
       badges +=
-        '<button type="button" data-attachment-preview="true" data-attachment-name="' + escapeHtml(att.name || '') + '" data-attachment-index="' + idx + '" command="show-modal" commandfor="gp-review-dialog" class="inline-flex items-center gap-1.5 rounded border border-gray-200 bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer">' +
+        '<button type="button" data-attachment-preview="true" data-attachment-name="' + escapeHtml(att.name || '') + '" data-attachment-index="' + idx + '" command="show-modal" commandfor="gp-review-dialog" class="inline-flex items-center ' + (IS_CONSUMER_TABLE ? 'gap-0.5 rounded-[4px] pl-1 pr-2' : 'gap-1.5 rounded px-2') + ' border border-gray-200 bg-gray-100 py-0.5 text-sm font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer">' +
           ICON_DOCUMENT +
           escapeHtml(att.name || '') +
         '</button>';
@@ -1833,6 +1928,69 @@
     };
   }
 
+  var CONSUMER_SX_LOGO = '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" aria-hidden="true" class="size-[18px] shrink-0"><defs><linearGradient id="sxg1" x1="2" y1="11.37" x2="9.59" y2="1.09" gradientUnits="userSpaceOnUse"><stop stop-color="#FB9131"/><stop offset="1" stop-color="#FBC734"/></linearGradient><linearGradient id="sxg2" x1="15.63" y1="6.24" x2="8.04" y2="16.52" gradientUnits="userSpaceOnUse"><stop stop-color="#FB9131"/><stop offset="1" stop-color="#FBC734"/></linearGradient></defs><path d="M6.354 13.486c.333.196.753-.044.753-.431V7.708a.8.8 0 0 0-.368-.646L2.754 4.71c-.333-.197-.754.044-.754.431v5.786l4.354 2.559Z" fill="#FFCD49"/><path opacity=".8" d="M2 10.935V5.119c0-.267.142-.513.372-.648L8.84.69c.333-.195.752.045.752.431v4.531c0 .534-.284 1.028-.745 1.297L2 10.935Z" fill="url(#sxg1)"/><path d="M11.276 4.12c-.334-.196-.754.044-.754.431v5.347c0 .266.14.511.369.646l3.984 2.352c.333.197.754-.043.754-.43V6.678L11.276 4.12Z" fill="#FFCD49"/><path opacity=".8" d="M15.63 6.671v5.816c0 .267-.142.513-.372.648l-6.468 3.781c-.333.195-.752-.045-.752-.431v-4.531c0-.534.284-1.028.745-1.297l6.847-3.986Z" fill="url(#sxg2)"/></svg>';
+  var CONSUMER_CHEVRON_RIGHT = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.293 14.707a1 1 0 0 1 0-1.414L10.586 10 7.293 6.707a1 1 0 0 1 1.414-1.414l4 4a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0Z"/></svg>';
+  var CONSUMER_AVATAR = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="size-6 shrink-0"><rect width="24" height="24" rx="12" fill="#F3F4F6"/><path d="M2.078 18.752A11.96 11.96 0 0 1 12.004 15c3.803 0 7.276 1.416 9.92 3.749A11.99 11.99 0 0 1 12 24c-4.124 0-7.762-2.08-9.922-5.248Z" fill="#D1D5DB"/><circle cx="12" cy="9" r="4" fill="#D1D5DB"/></svg>';
+  var CONSUMER_TH = 'px-4 py-2 text-xs/4 font-medium uppercase tracking-[0.6px] text-gray-500 dark:text-gray-400 whitespace-nowrap';
+
+  function buildConsumerPaymentMethodDetails(variant, revealAttr, revealLink) {
+    var entry = variant.consumerEntry;
+    var payee = getResolvedPayee(entry);
+    var payeeName = (payee && (payee.name || (payee.bankAccounts && payee.bankAccounts[0] && payee.bankAccounts[0].name))) || 'Johnny Anderson';
+    var logo = entry.methodType === 'card' ? ICON_VISA : (entry.methodType === 'ach' ? ICON_ACH : CONSUMER_SX_LOGO);
+    var isUnselected = variant.titleLabel === 'No Payment Method Selected';
+    var detailMethod = isUnselected
+      ? '<span class="text-gray-900 dark:text-white">&mdash;</span>'
+      : renderPaymentMethod(entry);
+    var extraRows = isUnselected ? '' : variant.rawCardHtml
+      ? ('<div class="mt-3 w-[460px] max-w-full pl-4">' + variant.rawCardHtml + '</div>')
+      : (variant.rowsHtml
+        ? (
+          '<div' + revealAttr + ' class="mt-3 flex w-[460px] max-w-full flex-col gap-2 pl-4">' +
+            '<div class="flex gap-6">' +
+              '<div class="flex-1 text-sm font-medium text-gray-900 dark:text-white">' + variant.titleLabel + '</div>' +
+              '<div class="flex-1 flex items-center">' + revealLink + '</div>' +
+            '</div>' +
+            '<dl class="flex flex-col gap-3 border-t border-gray-200 pt-2 dark:border-white/10">' + variant.rowsHtml + '</dl>' +
+          '</div>'
+        )
+        : '');
+    return (
+      '<div class="flex">' +
+        '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
+        '<div class="flex min-w-0 flex-1 items-start gap-9 p-4">' +
+          '<div class="flex w-[152px] shrink-0 items-center gap-1">' +
+            logo +
+            '<span class="text-sm/5 font-semibold text-gray-800 dark:text-gray-200 whitespace-nowrap">' + escapeHtml(variant.typeLabel || '') + '</span>' +
+          '</div>' +
+          '<div class="flex shrink-0 items-start pt-1">' + CONSUMER_CHEVRON_RIGHT + '</div>' +
+          '<div class="flex min-w-0 flex-1 flex-col">' +
+            '<div class="pl-4 pb-2 text-sm/5 font-semibold text-gray-900 dark:text-white">Single-Party Payment</div>' +
+            '<div class="border-t border-gray-200 dark:border-white/10"></div>' +
+            '<div class="mt-2 grid grid-cols-[minmax(0,1fr)_170px_150px_200px]">' +
+              '<div class="col-span-4 grid grid-cols-subgrid border-b border-dashed border-gray-100 dark:border-white/10">' +
+                '<div class="' + CONSUMER_TH + '">Payee Name</div>' +
+                '<div class="' + CONSUMER_TH + '">Payment Method</div>' +
+                '<div class="' + CONSUMER_TH + ' text-right">Amount</div>' +
+                '<div class="' + CONSUMER_TH + ' text-right">Status</div>' +
+              '</div>' +
+              '<div class="col-span-4 grid grid-cols-subgrid items-center bg-gray-50 dark:bg-white/5">' +
+                '<div class="flex min-w-0 items-center gap-2.5 px-4 py-3">' + CONSUMER_AVATAR +
+                  '<span class="truncate text-sm/5 font-medium text-gray-900 dark:text-white">' + escapeHtml(payeeName) + '</span>' +
+                  '<span class="inline-flex shrink-0 items-center rounded-full border border-blue-200 bg-blue-100 px-2 py-0.5 text-xs/4 font-medium text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-300">You</span>' +
+                '</div>' +
+                '<div class="px-4 py-3 text-sm/5 font-medium text-gray-900 dark:text-white">' + detailMethod + '</div>' +
+                '<div class="px-4 py-4 text-right text-sm/5 whitespace-nowrap"><span class="font-medium text-gray-900 dark:text-white">' + escapeHtml(formatCurrency(entry.amount, entry.currency)) + '</span> <span class="font-normal text-gray-500 dark:text-gray-400">' + escapeHtml(entry.currency || 'USD') + '</span></div>' +
+                '<div class="flex justify-end px-4 py-3.5">' + renderStatus(getDisplayStatus(entry)) + '</div>' +
+              '</div>' +
+            '</div>' +
+            extraRows +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
   function buildPaymentMethodDetailsSection(variant) {
     var revealKind = variant.revealKind;
     var revealAttr = revealKind === 'card'
@@ -1855,6 +2013,10 @@
           '</button>'
         )
         : '');
+
+    if (IS_CONSUMER_TABLE && variant.consumerEntry) {
+      return buildConsumerPaymentMethodDetails(variant, revealAttr, revealLink);
+    }
 
     if (variant.rawCardHtml) {
       return (
@@ -1899,6 +2061,7 @@
     var info = payment && payment.details ? payment.details.paymentInfo : null;
     var variant = getPaymentMethodDetailsVariant(status, methodType, payment, info || {}, payee);
     if (!variant) return '';
+    variant.consumerEntry = payment;
     return buildPaymentMethodDetailsSection(variant);
   }
 
@@ -1920,7 +2083,37 @@
     return (description || '') + '<span class="text-gray-700 dark:text-gray-300"><span class="mx-1.5 text-base leading-none align-middle">&middot;</span>' + escapeHtml(timestampLabel) + '</span>';
   }
 
+  // Figma activity-log icons (14px): clock = pending, in-progress ring = initiated.
+  // Paid / exception variants are not in the file, so they follow the same solid style.
+  var CONSUMER_ACTIVITY_ICONS = {
+    yellow: '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 12.6C10.0928 12.6 12.6 10.0928 12.6 7C12.6 3.90721 10.0928 1.4 7 1.4C3.90721 1.4 1.4 3.90721 1.4 7C1.4 10.0928 3.90721 12.6 7 12.6ZM7.7 4.2C7.7 3.8134 7.3866 3.5 7 3.5C6.6134 3.5 6.3 3.8134 6.3 4.2V7C6.3 7.18565 6.37375 7.3637 6.50503 7.49497L8.48492 9.47487C8.75829 9.74824 9.20151 9.74824 9.47487 9.47487C9.74824 9.20151 9.74824 8.75829 9.47487 8.48492L7.7 6.71005V4.2Z" fill="#F59E0B"/></svg>',
+    gray: '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><g fill="#6B7280"><path d="M7.35005 12.5892C7.15712 12.6011 6.99999 12.4433 6.99999 12.25V11.55C6.99999 11.3567 7.15724 11.2015 7.34988 11.1856C9.50577 11.0078 11.2 9.20176 11.2 6.99999C11.2 4.79823 9.50577 2.99216 7.34988 2.81436C7.15724 2.79847 6.99999 2.64329 6.99999 2.44999V1.74999C6.99999 1.55669 7.15712 1.39886 7.35005 1.41076C10.2798 1.59146 12.6 4.02477 12.6 6.99999C12.6 9.97522 10.2798 12.4085 7.35005 12.5892Z"/><path d="M5.5433 10.9405C5.74655 11.0157 5.85735 11.245 5.76843 11.4426L5.48432 12.0739C5.41196 12.2348 5.23079 12.3177 5.06531 12.2568C4.81773 12.1657 4.57837 12.0575 4.34864 11.9338C4.19345 11.8503 4.13551 11.6597 4.20784 11.499L4.49194 10.8677C4.58088 10.67 4.82604 10.6009 5.01701 10.7033C5.18586 10.7939 5.36162 10.8733 5.5433 10.9405Z"/><path d="M4.34865 2.06619C4.19346 2.14976 4.13552 2.3403 4.20785 2.50103L4.49195 3.13236C4.58089 3.33 4.82604 3.39914 5.01702 3.29666C5.18587 3.20606 5.36163 3.12667 5.54331 3.05949C5.74655 2.98433 5.85736 2.75501 5.76843 2.5574L5.48433 1.92607C5.41197 1.76526 5.2308 1.68227 5.06532 1.74319C4.81774 1.83433 4.57838 1.94247 4.34865 2.06619Z"/><path d="M1.41352 6.6076C1.40479 6.7337 1.40024 6.86095 1.4 6.98921V7.0108C1.40024 7.13907 1.40479 7.26632 1.41352 7.39243C1.42572 7.56856 1.57583 7.70002 1.75238 7.70002H2.44445C2.66088 7.70002 2.82449 7.50533 2.8098 7.2894C2.80329 7.19378 2.79999 7.09728 2.79999 7.00001C2.79999 6.90274 2.80329 6.80625 2.8098 6.71063C2.82449 6.4947 2.66088 6.30002 2.44445 6.30002H1.75238C1.57583 6.30002 1.42571 6.43147 1.41352 6.6076Z"/><path d="M2.5302 10.3741C2.63653 10.5147 2.83376 10.5429 2.98159 10.4468L3.56193 10.0696C3.74358 9.95155 3.77448 9.69884 3.64407 9.52585C3.5283 9.37227 3.42282 9.21049 3.32867 9.04153C3.22327 8.85239 2.97989 8.77818 2.79835 8.89619L2.21796 9.27344C2.06998 9.36962 2.01573 9.56156 2.10144 9.71583C2.22914 9.94566 2.37254 10.1656 2.5302 10.3741Z"/><path d="M2.79835 5.10381C2.9799 5.22181 3.22328 5.1476 3.32868 4.95846C3.42283 4.78951 3.52831 4.62773 3.64408 4.47415C3.77449 4.30116 3.74359 4.04845 3.56195 3.93038L2.98161 3.55316C2.83377 3.45706 2.63655 3.48524 2.53022 3.62589C2.37256 3.83442 2.22915 4.05433 2.10145 4.28416C2.01574 4.43843 2.06999 4.63037 2.21797 4.72655L2.79835 5.10381Z"/></g></svg>',
+    green: '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 12.6C10.0928 12.6 12.6 10.0928 12.6 7C12.6 3.90721 10.0928 1.4 7 1.4C3.90721 1.4 1.4 3.90721 1.4 7C1.4 10.0928 3.90721 12.6 7 12.6ZM9.3 5.8C9.5 5.5 9.4 5.2 9.1 5C8.8 4.8 8.5 4.9 8.3 5.2L6.3 8.1L5.2 7C4.9 6.8 4.6 6.8 4.4 7C4.2 7.3 4.2 7.6 4.4 7.8L6 9.4C6.1 9.5 6.3 9.6 6.5 9.5C6.6 9.5 6.8 9.4 6.9 9.3L9.3 5.8Z" fill="#16A34A"/></svg>',
+    red: '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 12.6C10.0928 12.6 12.6 10.0928 12.6 7C12.6 3.90721 10.0928 1.4 7 1.4C3.90721 1.4 1.4 3.90721 1.4 7C1.4 10.0928 3.90721 12.6 7 12.6ZM7.7 4.2C7.7 3.8 7.4 3.5 7 3.5C6.6 3.5 6.3 3.8 6.3 4.2V7C6.3 7.4 6.6 7.7 7 7.7C7.4 7.7 7.7 7.4 7.7 7ZM7 10.5C7.4 10.5 7.7 10.2 7.7 9.8C7.7 9.4 7.4 9.1 7 9.1C6.6 9.1 6.3 9.4 6.3 9.8C6.3 10.2 6.6 10.5 7 10.5Z" fill="#DC2626"/></svg>'
+  };
+
+  function getConsumerActivityIcon(dotClasses) {
+    var key = /bg-yellow/.test(dotClasses) ? 'yellow'
+      : /bg-green/.test(dotClasses) ? 'green'
+      : /bg-red/.test(dotClasses) ? 'red' : 'gray';
+    return CONSUMER_ACTIVITY_ICONS[key];
+  }
+
   function buildActivityLogItem(dotClasses, title, description, timestampLabel, showLine) {
+    if (IS_CONSUMER_TABLE) {
+      return (
+        '<div class="flex gap-4">' +
+          '<div class="flex w-3.5 flex-none self-stretch flex-col items-center gap-1.5 pt-1.5">' +
+            getConsumerActivityIcon(dotClasses) +
+            (showLine ? '<div class="flex-1 w-0.5 bg-gray-200 dark:bg-white/10"></div>' : '') +
+          '</div>' +
+          '<div class="flex min-w-0 flex-col gap-1 pb-6">' +
+            '<p class="text-base/6 font-medium text-gray-900 dark:text-white">' + title + '</p>' +
+            '<p class="text-sm/5 text-gray-700 dark:text-gray-300">' + buildInlineActivityDescription(description, timestampLabel) + '</p>' +
+          '</div>' +
+        '</div>'
+      );
+    }
     var lineHtml = showLine
       ? '<div class="flex-1 w-px bg-gray-200 dark:bg-white/10"></div>'
       : '';
@@ -2045,7 +2238,7 @@
 
   function buildDetailRowHTML(entry, colCount, isLast) {
     var paymentSection = buildPaymentInfoSection(entry);
-    var detailCellClass = isLast
+    var detailCellClass = (isLast || IS_CONSUMER_TABLE)
       ? 'bg-white dark:bg-gray-900'
       : CLASS_NAMES.detailCell;
     return (
@@ -2067,6 +2260,7 @@
       '<tbody class="' + CLASS_NAMES.tbody + (rowHighlightClass ? (' ' + rowHighlightClass) : '') + '">' +
         buildMainRowHTML(entry, columns, isLast) +
         buildDetailRowHTML(entry, columns.length, isLast) +
+        (IS_CONSUMER_TABLE && !isLast ? buildSeparatorRowHTML(columns.length) : '') +
       '</tbody>'
     );
   }
@@ -2450,6 +2644,42 @@
         '</div>' +
       '</div>';
 
+    if (IS_CONSUMER_TABLE) {
+      var navBtn = 'flex items-center justify-center rounded-md border border-gray-300 bg-white p-1.5 text-gray-400 shadow-xs size-8 dark:border-white/10 dark:bg-white/5 dark:text-gray-500';
+      var navOff = ' opacity-40 pointer-events-none';
+      var navOn = ' cursor-pointer hover:bg-gray-50 dark:hover:bg-white/10';
+      var arrow = function (d) { return '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="' + d + '" clip-rule="evenodd"/></svg>'; };
+      var P_DOUBLE_LEFT = 'M15.79 14.77a.75.75 0 0 1-1.06.02l-4.5-4.25a.75.75 0 0 1 0-1.08l4.5-4.25a.75.75 0 1 1 1.04 1.08L11.832 10l3.938 3.71a.75.75 0 0 1 .02 1.06Zm-6 0a.75.75 0 0 1-1.06.02l-4.5-4.25a.75.75 0 0 1 0-1.08l4.5-4.25a.75.75 0 1 1 1.04 1.08L5.832 10l3.938 3.71a.75.75 0 0 1 .02 1.06Z';
+      var P_LEFT = 'M12.79 5.23a.75.75 0 0 1-.02 1.06L8.832 10l3.938 3.71a.75.75 0 1 1-1.04 1.08l-4.5-4.25a.75.75 0 0 1 0-1.08l4.5-4.25a.75.75 0 0 1 1.06.02Z';
+      var P_RIGHT = 'M7.21 14.77a.75.75 0 0 1 .02-1.06L11.168 10 7.23 6.29a.75.75 0 1 1 1.04-1.08l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 0 1-1.06-.02Z';
+      var P_DOUBLE_RIGHT = 'M4.21 5.23a.75.75 0 0 1 1.06-.02l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 1 1-1.04-1.08L8.168 10 4.23 6.29a.75.75 0 0 1-.02-1.06Zm6 0a.75.75 0 0 1 1.06-.02l4.5 4.25a.75.75 0 0 1 0 1.08l-4.5 4.25a.75.75 0 1 1-1.04-1.08L14.168 10l-3.938-3.71a.75.75 0 0 1-.02-1.06Z';
+      var consumerOptions = '';
+      PAGE_SIZE_OPTIONS.forEach(function (opt) {
+        consumerOptions += '<a href="#" data-page-size="' + opt + '" class="block px-4 py-3 text-sm font-medium text-gray-900 hover:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:hover:bg-white/5 ' + (opt === size ? 'bg-gray-50 dark:bg-white/5' : '') + '">' + opt + '</a>';
+      });
+      container.innerHTML =
+        '<div class="flex flex-wrap items-center justify-end gap-4">' +
+          '<p class="text-sm/5 text-gray-700 dark:text-gray-300">Rows per Page:</p>' +
+          '<el-dropdown class="inline-block">' +
+            '<button type="button" class="flex h-10 w-[75px] cursor-pointer items-center justify-between gap-2 rounded-md border border-gray-300 bg-white px-3 text-base font-medium text-gray-900 shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-expanded:border-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-white">' +
+              '<span>' + size + '</span>' +
+              '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>' +
+            '</button>' +
+            '<el-menu anchor="top start" popover class="w-[75px] origin-bottom overflow-hidden rounded-md bg-white pt-1 shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:outline-white/10">' +
+              '<div>' + consumerOptions + '</div>' +
+            '</el-menu>' +
+          '</el-dropdown>' +
+          '<p class="text-sm/5 text-gray-700 dark:text-gray-300">Showing <span class="font-semibold">' + start + ' - ' + end + '</span> of <span class="font-semibold">' + total + '</span> results</p>' +
+          '<div class="flex gap-2">' +
+            '<a href="#" data-page-first aria-label="First page" class="' + navBtn + (isFirstPage ? navOff : navOn) + '">' + arrow(P_DOUBLE_LEFT) + '</a>' +
+            '<a href="#" data-page-prev aria-label="Previous page" class="' + navBtn + (isFirstPage ? navOff : navOn) + '">' + arrow(P_LEFT) + '</a>' +
+            '<a href="#" data-page-next aria-label="Next page" class="' + navBtn + (isLastPage ? navOff : navOn) + '">' + arrow(P_RIGHT) + '</a>' +
+            '<a href="#" data-page-last aria-label="Last page" class="' + navBtn + (isLastPage ? navOff : navOn) + '">' + arrow(P_DOUBLE_RIGHT) + '</a>' +
+          '</div>' +
+        '</div>';
+      return;
+    }
+
     container.innerHTML = mobileHTML + desktopHTML;
   }
 
@@ -2593,6 +2823,10 @@
 
   function setTabVisualState(tab, isActive) {
     var badge = tab.querySelector(TAB_COUNT_SELECTOR);
+    // Consumer table: the Exceptions count keeps its red badge whether or not the tab is active.
+    if (IS_CONSUMER_TABLE && badge && badge.getAttribute('data-tab-count') === 'exceptions') {
+      badge = null;
+    }
 
     if (isActive) {
       tab.classList.add.apply(tab.classList, ACTIVE_TAB_LINK_CLASSES);
@@ -2718,6 +2952,21 @@
           paginationState.currentPage--;
           renderCurrentPage();
         }
+        return;
+      }
+
+      // First / last page (Consumer Portal footer)
+      var firstBtn = event.target.closest('[data-page-first]');
+      if (firstBtn) {
+        event.preventDefault();
+        if (paginationState.currentPage > 1) { paginationState.currentPage = 1; renderCurrentPage(); }
+        return;
+      }
+      var lastBtn = event.target.closest('[data-page-last]');
+      if (lastBtn) {
+        event.preventDefault();
+        var lastPage = getTotalPages();
+        if (paginationState.currentPage < lastPage) { paginationState.currentPage = lastPage; renderCurrentPage(); }
         return;
       }
 
@@ -5100,7 +5349,7 @@
     var badge = document.getElementById('gp-step-' + stepNum + '-badge');
     if (!badge) return;
     var displayNum = badge.getAttribute('data-step-display') || String(stepNum);
-    if (isComplete) {
+    if (isComplete && !IS_CONSUMER_TABLE) {
       badge.className = STEP_BADGE_COMPLETE_CLASS;
       badge.innerHTML = STEP_BADGE_CHECK_ICON;
       badge.setAttribute('aria-label', 'Step ' + displayNum + ' complete');
@@ -5317,7 +5566,34 @@
     destinationEl.textContent = getConfirmSummaryDestination(paymentValue) || '—';
   }
 
+  function buildConsumerAttachmentItem(att, idx) {
+    var parts = String(att.size || '').split('·');
+    var type = (parts[0] || 'PDF').trim();
+    var size = (parts[1] || '').trim();
+    return (
+      '<li class="flex items-center gap-3 p-3.5">' +
+        ATTACHMENT_ICON +
+        '<div class="flex min-w-0 flex-1 flex-col gap-0.5">' +
+          '<button type="button" command="show-modal" commandfor="gp-review-dialog"' +
+            ' class="gp-review-name-trigger truncate text-left text-sm/5 font-semibold text-gray-700 transition-colors hover:text-gray-900 dark:text-gray-200 dark:hover:text-white"' +
+            ' data-attach-idx="' + idx + '">' + escapeHtml(att.name || '') + '</button>' +
+          '<span class="flex items-center gap-2 text-xs/4 text-gray-500 dark:text-gray-400">' + escapeHtml(type) +
+            (size ? '<span aria-hidden="true" class="size-0.5 rounded-full bg-gray-400"></span>' + escapeHtml(size) : '') + '</span>' +
+        '</div>' +
+        '<div class="shrink-0 flex items-center">' +
+          '<button type="button" command="show-modal" commandfor="gp-review-dialog"' +
+            ' class="gp-review-trigger inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"' +
+            ' data-attach-idx="' + idx + '">Review</button>' +
+          '<div id="gp-attach-' + idx + '-status" class="hidden">' +
+            CHECKBOX_STATUS_HTML +
+          '</div>' +
+        '</div>' +
+      '</li>'
+    );
+  }
+
   function buildAttachmentItem(att, idx) {
+    if (IS_CONSUMER_TABLE) return buildConsumerAttachmentItem(att, idx);
     return (
       '<li class="flex items-center justify-between py-4 pr-5 pl-4 text-sm/6">' +
         '<div class="flex w-0 flex-1 items-center">' +
@@ -5348,7 +5624,7 @@
     }
     var items = '';
     list.forEach(function (att, idx) { items += buildAttachmentItem(att, idx); });
-    return '<ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200 dark:divide-white/5 dark:border-white/10">' + items + '</ul>';
+    return '<ul role="list" class="divide-y divide-gray-200 overflow-clip rounded-lg border border-gray-200 dark:divide-white/10 dark:border-white/10">' + items + '</ul>';
   }
 
   function syncGetPaidRequirementSections(entry) {
@@ -5357,13 +5633,14 @@
     var docRequired = requiresDocumentReview(entry);
     var signatureRequired = requiresSignature(entry);
 
+    var stepDisplayClass = IS_CONSUMER_TABLE ? 'sm:flex' : 'sm:grid';
     if (docStep) {
       docStep.classList.toggle('hidden', !docRequired);
-      docStep.classList.toggle('sm:grid', docRequired);
+      docStep.classList.toggle(stepDisplayClass, docRequired);
     }
     if (signatureStep) {
       signatureStep.classList.toggle('hidden', !signatureRequired);
-      signatureStep.classList.toggle('sm:grid', signatureRequired);
+      signatureStep.classList.toggle(stepDisplayClass, signatureRequired);
     }
     var step3DisplayNum = 1 + (docRequired ? 1 : 0) + (signatureRequired ? 1 : 0);
     setGetPaidStepDisplayNumber(1, 1);
@@ -5373,7 +5650,7 @@
     var confirmStep = document.getElementById('gp-confirm-step');
     if (confirmStep) {
       confirmStep.classList.toggle('hidden', !SPEEDBUMP_ENABLED);
-      confirmStep.classList.toggle('sm:grid', SPEEDBUMP_ENABLED);
+      confirmStep.classList.toggle(stepDisplayClass, SPEEDBUMP_ENABLED);
     }
   }
 
@@ -5388,9 +5665,9 @@
     });
     var selectedContent = sel.querySelector('el-selectedcontent');
     var labelMap = {
-      'payers-card': "Accept Payer's Card",
-      'bank-account': 'Send to Bank Account',
-      'paper-check': 'Request a Paper Check'
+      'payers-card': IS_CONSUMER_TABLE ? 'Instant Virtual Card' : "Accept Payer's Card",
+      'bank-account': IS_CONSUMER_TABLE ? 'Send to my Bank Account' : 'Send to Bank Account',
+      'paper-check': IS_CONSUMER_TABLE ? 'I want a check' : 'Request a Paper Check'
     };
     if (selectedContent) {
       var label = displayLabel || labelMap[value] || value;
@@ -5746,6 +6023,19 @@
     syncGetPaidDeclineMessage(entry);
   }
 
+  var PENDING_CLOCK_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-3.5 text-yellow-500">' +
+      '<path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Zm.75-10.25a.75.75 0 0 0-1.5 0V8c0 .2.08.39.22.53l2 2a.75.75 0 1 0 1.06-1.06L8.75 7.69V4.75Z" clip-rule="evenodd" />' +
+    '</svg>';
+
+  function applyConsumerPendingBadge(badge) {
+    if (!IS_CONSUMER_TABLE) return;
+    var label = badge.textContent;
+    badge.className = 'inline-flex items-center gap-0.5 rounded-sm border border-yellow-300 bg-yellow-100 py-0.5 pr-2 pl-1 text-sm/5 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-500';
+    badge.innerHTML = PENDING_CLOCK_ICON + '<span></span>';
+    badge.lastChild.textContent = label;
+  }
+
   function syncGetPaidHeaderStatus(entry) {
     var badge = document.getElementById('gp-status-badge');
     if (!badge || !entry) return;
@@ -5774,10 +6064,36 @@
     if (isPendingAutoProcessingEntry(entry)) {
       badge.textContent = 'Pending';
       badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20';
+      applyConsumerPendingBadge(badge);
       return;
     }
     badge.textContent = 'Pending Your Action';
     badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20';
+    applyConsumerPendingBadge(badge);
+  }
+
+  function buildGetPaidReceivableSummary(entry) {
+    var item = (entry.details && entry.details.notes) || ('Invoice #' + entry.invoice);
+    var money = formatCurrency(entry.amount, entry.currency);
+    var cur = '<span class="font-normal text-gray-500 dark:text-gray-400">' + escapeHtml(entry.currency) + '</span>';
+    var th = 'px-4 py-3 text-xs/4 font-medium tracking-wider text-gray-500 uppercase dark:text-gray-400';
+    var td = 'px-4 py-3 text-sm/5 font-medium whitespace-nowrap';
+    return (
+      '<div class="overflow-x-auto"><table class="w-full min-w-max text-left">' +
+        '<thead class="border-b border-dashed border-gray-200 dark:border-white/10"><tr>' +
+          '<th scope="col" class="' + th + '">Item (1)</th>' +
+          '<th scope="col" class="' + th + ' w-[140px]">Quantity</th>' +
+          '<th scope="col" class="' + th + ' w-[162px] text-right">Unit price</th>' +
+          '<th scope="col" class="' + th + ' w-[162px] text-right">Amount</th>' +
+        '</tr></thead>' +
+        '<tbody><tr class="border-b border-dashed border-gray-200 dark:border-white/10">' +
+          '<td class="' + td + ' text-gray-900 dark:text-white">' + escapeHtml(item) + '</td>' +
+          '<td class="' + td + ' text-gray-500 dark:text-gray-400">1</td>' +
+          '<td class="' + td + ' text-right text-gray-900 dark:text-white">' + escapeHtml(money) + ' ' + cur + '</td>' +
+          '<td class="' + td + ' text-right text-gray-900 dark:text-white">' + escapeHtml(money) + ' ' + cur + '</td>' +
+        '</tr></tbody>' +
+      '</table></div>'
+    );
   }
 
   function openGetPaidPanel(entry) {
@@ -5825,11 +6141,16 @@
     syncGetPaidRequirementSections(entry);
     if (attachEl) attachEl.innerHTML = buildGetPaidAttachments(getEntryAttachments(entry));
     if (activityEl) activityEl.innerHTML = buildGetPaidActivityLog(entry);
+    var receivableEl = document.getElementById('gp-receivable-content');
+    if (IS_CONSUMER_TABLE && receivableEl) receivableEl.innerHTML = buildGetPaidReceivableSummary(entry);
     var activityToggle = document.getElementById('gp-activity-toggle');
-    if (activityEl) activityEl.classList.add('hidden');
+    // Consumer layout shows the activity log expanded (chevron up); the
+    // supplier layout keeps it collapsed until toggled.
+    var activityOpen = IS_CONSUMER_TABLE;
+    if (activityEl) activityEl.classList.toggle('hidden', !activityOpen);
     if (activityToggle) {
       var activityIcon = activityToggle.querySelector('[data-collapse-icon]');
-      if (activityIcon) activityIcon.classList.remove('rotate-180');
+      if (activityIcon) activityIcon.classList.toggle('rotate-180', activityOpen);
     }
 
     // Reset signature state
@@ -6547,6 +6868,22 @@
     // Edit modals
     initEditBankModal();
     initEditCheckModal();
+
+    // Footer submit button mirrors the header one (state, label, click)
+    var footerSubmitBtn = document.getElementById('gp-submit-btn-footer');
+    var headerSubmitBtn = document.getElementById('gp-submit-btn');
+    if (footerSubmitBtn && headerSubmitBtn) {
+      var syncFooterSubmit = function () {
+        footerSubmitBtn.disabled = headerSubmitBtn.disabled;
+        footerSubmitBtn.textContent = headerSubmitBtn.textContent;
+        footerSubmitBtn.classList.toggle('hidden', headerSubmitBtn.classList.contains('hidden'));
+      };
+      new MutationObserver(syncFooterSubmit).observe(headerSubmitBtn, {
+        attributes: true, attributeFilter: ['disabled', 'class'], childList: true, characterData: true, subtree: true
+      });
+      footerSubmitBtn.addEventListener('click', function () { headerSubmitBtn.click(); });
+      syncFooterSubmit();
+    }
 
     // Back button
     var backBtn = document.getElementById('get-paid-back');
