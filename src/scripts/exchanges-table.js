@@ -82,8 +82,8 @@
     'dark:inset-ring-gray-400/20',
   ];
 
-  var DEFAULT_PAGE_SIZE = 16;
-  var PAGE_SIZE_OPTIONS = [10, 16, 25, 50];
+  var DEFAULT_PAGE_SIZE = 10;
+  var PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 100];
   var TAB_SWITCH_SKELETON_MS = 500;
   var INITIAL_TABLE_SKELETON_MS = 500;
   var MANUAL_REFRESH_SKELETON_MS = 1000;

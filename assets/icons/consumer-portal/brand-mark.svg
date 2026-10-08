@@ -1,0 +1,32 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="19.9483" height="23.1276" viewBox="0 0 19.9483 23.1276" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Vector">
+<g id="Vector_2">
+<path id="Polygon 69" d="M9.97413 4.72164L15.9313 8.16099V15.0397L9.97413 18.4791L4.01699 15.0397V8.16099L9.97413 4.72164Z" fill="url(#paint0_linear_0_89)"/>
+<path id="Vector_3" d="M9.97413 11.6004L15.9312 8.16238V15.0384L9.97413 18.4861L9.97413 11.6004Z" fill="url(#paint1_linear_0_89)"/>
+<path id="Polygon 72" d="M9.97413 15.3837L13.2506 13.492L13.2506 9.70874L9.97413 7.8171L6.6977 9.70874L6.6977 13.492L9.97413 15.3837Z" fill="url(#paint2_linear_0_89)"/>
+</g>
+<path id="Union" fill-rule="evenodd" clip-rule="evenodd" d="M19.8409 5.90388L9.97436 0.207422L0.107812 5.90388V17.2968L9.97436 22.9932L19.8409 17.2968V5.90388ZM1.64115 16.4115V6.78915L9.97436 1.97796L18.3076 6.78915V16.4115L9.97436 21.2227L1.64115 16.4115Z" fill="#C4ECF5"/>
+<g id="Vector_4">
+<ellipse id="Vector_5" cx="9.97413" cy="1.03181" rx="1.03181" ry="1.03181" fill="#3290FF"/>
+<ellipse id="Vector_6" cx="9.97413" cy="22.0958" rx="1.03181" ry="1.0318" fill="#3290FF"/>
+<circle id="Vector_7" cx="1.03181" cy="6.36171" r="1.03181" fill="#3290FF"/>
+<ellipse id="Vector_8" cx="18.9164" cy="6.36171" rx="1.03181" ry="1.03181" fill="#3290FF"/>
+<circle id="Vector_9" cx="1.03181" cy="16.7658" r="1.03181" fill="#3290FF"/>
+<ellipse id="Vector_10" cx="18.9164" cy="16.7658" rx="1.03181" ry="1.03181" fill="#3290FF"/>
+</g>
+</g>
+<defs>
+<linearGradient id="paint0_linear_0_89" x1="9.96187" y1="4.68855" x2="10.956" y2="18.5991" gradientUnits="userSpaceOnUse">
+<stop stop-color="#3099FF"/>
+<stop offset="1" stop-color="#3D5CFF"/>
+</linearGradient>
+<linearGradient id="paint1_linear_0_89" x1="10.633" y1="13.3333" x2="12.9527" y2="18.4861" gradientUnits="userSpaceOnUse">
+<stop stop-color="#003FD0"/>
+<stop offset="1" stop-color="#2A60DD" stop-opacity="0"/>
+</linearGradient>
+<linearGradient id="paint2_linear_0_89" x1="8.74714" y1="8.8333" x2="8.74714" y2="15.3837" gradientUnits="userSpaceOnUse">
+<stop stop-color="#2CB2FF" stop-opacity="0"/>
+<stop offset="1" stop-color="#1FAEFF"/>
+</linearGradient>
+</defs>
+</svg>

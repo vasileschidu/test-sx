@@ -19,11 +19,12 @@
   var editing = null;        // field key being edited
   var error = '';
   var toastTimer = null;
+  var listenersBound = false;
+  var initGeneration = 0;
 
   var FIELDS = [
     { key: 'fullName', label: 'Full name', type: 'text', autocomplete: 'name', placeholder: 'Your full name' },
-    { key: 'username', label: 'Username', type: 'text', autocomplete: 'username', placeholder: 'Username' },
-    { key: 'email', label: 'Email', type: 'email', autocomplete: 'email', placeholder: 'you@example.com' },
+    { key: 'email', label: 'Email / Username', type: 'email', autocomplete: 'email', placeholder: 'you@example.com' },
     { key: 'phone', label: 'Phone', type: 'tel', autocomplete: 'tel', placeholder: '(555) 123-4567', emptyAction: 'Add number' },
     { key: 'password', label: 'Password', readonly: true, action: 'Reset password' }
   ];
@@ -63,7 +64,6 @@
   function validate(key, value) {
     var v = String(value || '').trim();
     if (key === 'fullName' && v.length < 2) return 'Enter your full name.';
-    if (key === 'username' && !/^[a-z0-9._-]{3,30}$/i.test(v)) return 'Use 3–30 letters, numbers, dots, dashes or underscores.';
     if (key === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)) return 'Enter a valid email address.';
     if (key === 'phone') {
       var d = v.replace(/\D/g, '');
@@ -184,7 +184,7 @@
   function renderSkeleton() {
     $('mp-details').innerHTML = FIELDS.map(function (f) {
       return '<div class="' + ROW + ' sm:min-h-8" aria-hidden="true"><div class="text-sm font-medium text-gray-900 dark:text-gray-100">' + f.label + '</div>' +
-        bar(['9rem', '6rem', '10rem', '2rem', '6rem'][FIELDS.indexOf(f)], '1rem') + '<div class="flex sm:justify-end">' + bar('3rem', '1rem') + '</div></div>';
+        bar(({ fullName: '9rem', email: '10rem', phone: '6rem', password: '6rem' })[f.key], '1rem') + '<div class="flex sm:justify-end">' + bar('3rem', '1rem') + '</div></div>';
     }).join('');
     $('mp-alerts').innerHTML = ALERT_GROUPS.map(function (g) {
       var card = '<div class="flex items-center justify-between gap-4 rounded-xl border border-gray-200 px-3 py-2.5 dark:border-white/10"><div class="flex items-center gap-3">' + bar('2.125rem', '2.125rem') + '<div class="flex flex-col gap-1.5">' + bar('3rem', '0.9rem') + bar('9rem', '0.9rem') + '</div></div>' + bar('1.75rem', '1.125rem') + '</div>';
@@ -227,6 +227,8 @@
   // ── Wiring ──
 
   function bind() {
+    if (listenersBound) return;
+    listenersBound = true;
     document.addEventListener('click', function (event) {
       var t = event.target;
       var edit = t.closest('[data-mp-edit]');
@@ -255,7 +257,9 @@
     });
   }
 
-  document.addEventListener('DOMContentLoaded', function () {
+  function init() {
+    if (!$('mp-details')) return;
+    var generation = ++initGeneration;
     bind();
     renderSkeleton();
     var delay = LOAD_MIN_MS + Math.random() * (LOAD_MAX_MS - LOAD_MIN_MS);
@@ -263,11 +267,18 @@
     Promise.resolve(window.DataSource ? window.DataSource.load('consumer-profile') : null)
       .catch(function () { return null; })
       .then(function (seed) {
+        if (generation !== initGeneration || !$('mp-details')) return;
         var stored = null;
         try { stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) {}
-        profile = Object.assign({ fullName: '', username: '', email: '', phone: '', alerts: {} }, seed || {}, stored || {});
+        profile = Object.assign({ fullName: '', email: '', phone: '', alerts: {} }, seed || {}, stored || {});
         profile.alerts = Object.assign({ critical: { email: true, sms: false }, account: { email: true, sms: false } }, profile.alerts || {});
-        setTimeout(render, Math.max(0, delay - (Date.now() - started)));
+        setTimeout(function () {
+          if (generation === initGeneration && $('mp-details')) render();
+        }, Math.max(0, delay - (Date.now() - started)));
       });
-  });
+  }
+
+  window.initConsumerMyProfile = init;
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  else init();
 })();

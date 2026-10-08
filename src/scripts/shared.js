@@ -35,6 +35,44 @@
     (document.head || document.documentElement).appendChild(style);
 })();
 
+/* ===== Table row separators ===== */
+// Table implementations render independently, so keep the final data row clean
+// across static, paginated, and dynamically rendered tables.
+(function injectTableLastRowStyles() {
+    if (document.getElementById('shell-table-last-row-styles')) return;
+    var style = document.createElement('style');
+    style.id = 'shell-table-last-row-styles';
+    style.textContent = [
+        'table tbody:last-of-type > tr:last-child,',
+        'table tbody:last-of-type > tr:last-child > th,',
+        'table tbody:last-of-type > tr:last-child > td { border-bottom-width: 0 !important; }'
+    ].join('\n');
+    (document.head || document.documentElement).appendChild(style);
+})();
+
+/* ===== Modal close button hover ===== */
+// Match icon-only modal close buttons to the Manage Columns close control.
+(function injectModalCloseHoverStyles() {
+    if (document.getElementById('shell-modal-close-hover-styles')) return;
+    var style = document.createElement('style');
+    style.id = 'shell-modal-close-hover-styles';
+    style.textContent = [
+        'dialog button[command="close"]:has(svg):hover,',
+        'dialog button[command="close"]:has(img):hover,',
+        'dialog button[aria-label*="close" i]:hover,',
+        'dialog button[data-mc-dispute-close]:hover {',
+        '  background-color: rgb(243 244 246); color: rgb(107 114 128);',
+        '}',
+        '.dark dialog button[command="close"]:has(svg):hover,',
+        '.dark dialog button[command="close"]:has(img):hover,',
+        '.dark dialog button[aria-label*="close" i]:hover,',
+        '.dark dialog button[data-mc-dispute-close]:hover {',
+        '  background-color: rgb(255 255 255 / 0.1); color: rgb(209 213 219);',
+        '}'
+    ].join('\n');
+    (document.head || document.documentElement).appendChild(style);
+})();
+
 /* ===== Hover tooltips ===== */
 
 /**
@@ -367,6 +405,16 @@ function initBreadcrumbs() {
         : (document.body && document.body.getAttribute('data-page')
             ? document.body.getAttribute('data-page')
             : ((window.location.pathname || '').split('/').pop() || ''));
+
+    // Consumer Portal breadcrumbs are rendered by app-topbar with the Figma
+    // chevrons. Do not replace them with the legacy shared breadcrumb markup.
+    if (path === 'consumer-payments-received.html' ||
+        path === 'consumer-my-cards.html' ||
+        path === 'consumer-payment-preferences.html' ||
+        path === 'consumer-my-profile.html') {
+        return;
+    }
+
     var items = BREADCRUMB_CONFIGS[path] || [];
     if (!items.length) return;
 
