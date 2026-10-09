@@ -51,6 +51,18 @@ window.OBModal = (function () {
     });
   }
 
+  /**
+   * Agreement text (src/data/sd-virtual-card.json "agreements[].body"): one
+   * paragraph per item; an item starting "## " is a section heading. The
+   * contact email becomes a mail link.
+   */
+  function agreementHtml(body) {
+    return (body || []).map(function (p) {
+      if (p.indexOf('## ') === 0) return '<p class="pt-2 font-semibold text-[#111827]">' + escapeHtml(p.slice(3)) + '</p>';
+      return '<p>' + escapeHtml(p).replace(/sales@transcard\.com/g, '<a href="mailto:sales@transcard.com" class="underline">sales@transcard.com</a>') + '</p>';
+    }).join('');
+  }
+
   function getState() {
     return window.SDOnboardingContext ? window.SDOnboardingContext.getState() : {};
   }
@@ -198,6 +210,7 @@ window.OBModal = (function () {
     validateData: validateData,
     loadJson: loadJson,
     escapeHtml: escapeHtml,
+    agreementHtml: agreementHtml,
     clientName: clientName,
     loadContact: loadContact,
     illustration: illustration,

@@ -7,7 +7,7 @@
   "methods": [
     { "id": "instant-virtual-card", "label": "Instant Virtual Card", "detail": "Funds expected instantly", "icon": "icon-card-sparkle-outline.svg", "href": "instant-virtual-card.html" },
     { "id": "debit-card", "label": "Send to my Debit Card", "detail": "Funds expected instantly", "icon": "icon-credit-card-outline.svg", "href": "debit-card-details.html" },
-    { "id": "bank-account", "label": "Send to my Bank Account", "detail": "Expected from instantly up to 3 days", "icon": "icon-building-library-outline.svg", "href": "bank-details.html" },
+    { "id": "bank-account", "label": "Send to my Bank Account", "detail": "Expected from instantly up to 3\u00a0days", "icon": "icon-building-library-outline.svg", "href": "bank-details.html" },
     { "id": "check", "label": "I want a check", "detail": "(Slowest payment method)", "compact": true, "href": "check-request.html" }
   ]
 }

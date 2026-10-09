@@ -88,7 +88,7 @@ window.OBVirtualCardHow = (function () {
         '<div class="flex flex-col gap-4 px-6 pb-6">' +
           '<h2 id="vc-terms-title" class="text-lg leading-6 font-medium text-[#111827]">' + esc(terms.title) + '</h2>' +
           '<div class="max-h-[50vh] space-y-3 overflow-y-auto text-sm leading-5 text-[#374151]">' +
-            terms.body.map(function (p) { return '<p>' + esc(p) + '</p>'; }).join('') +
+            M.agreementHtml(terms.body) +
           '</div>' +
           '<button type="button" data-ob-modal-close class="' + M.BUTTON + ' bg-[#2563eb] text-white hover:bg-[#3b82f6] focus-visible:outline-[#2563eb]">OK</button>' +
         '</div>',

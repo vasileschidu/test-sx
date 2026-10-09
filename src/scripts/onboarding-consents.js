@@ -68,15 +68,12 @@ window.OBConsents = (function () {
           '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5"></button>' +
       '</div>' +
       '<div class="flex min-h-0 flex-1 flex-col p-6">' +
-        '<div data-vcs-scroll tabindex="0" aria-label="' + esc(a.title) + '" class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] bg-[#f9fafb] p-4 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+        '<div data-vcs-scroll tabindex="0" aria-label="' + esc(a.title) + '" class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] bg-[#f9fafb] p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600">' +
           '<div class="flex flex-col gap-4 text-sm leading-5 text-[#374151]">' +
             '<p class="text-base leading-6 font-semibold text-[#111827]">' + esc(a.title) + '</p>' +
-            a.body.map(function (p) {
-              return '<p>' + esc(p).replace('sales@transcard.com', '<a href="mailto:sales@transcard.com" class="underline">sales@transcard.com</a>') + '</p>';
-            }).join('') +
+            window.OBModal.agreementHtml(a.body) +
           '</div>' +
         '</div>' +
-        '<p data-vcs-hint class="pt-3 text-xs leading-4 text-[#6b7280]">Scroll to the end to accept.</p>' +
       '</div>' +
       '<div class="flex shrink-0 items-center gap-2.5 border-t border-[#e5e7eb] px-6 py-5">' +
         '<div class="flex flex-1 items-center gap-2.5" aria-label="' + (index + 1) + ' of ' + agreements.length + '">' + dots(index) + '</div>' +
@@ -84,20 +81,19 @@ window.OBConsents = (function () {
         '<button type="button" data-vcs-accept disabled class="' + SMALL + ' bg-[#2563eb] text-white hover:bg-[#3b82f6] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-[#2563eb]">Accept</button>' +
       '</div>',
       'vcs-review-title',
-      { bare: true, panelClass: 'relative flex h-[min(752px,calc(100dvh-2rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5' }
+      { bare: true, panelClass: 'relative flex max-h-[min(752px,calc(100dvh-2rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5' }
     );
 
     var scroller = backdrop.querySelector('[data-vcs-scroll]');
     var accept = backdrop.querySelector('[data-vcs-accept]');
-    var hint = backdrop.querySelector('[data-vcs-hint]');
     function checkEnd() {
       // Accept unlocks once the reader reaches the end (or nothing to scroll).
       if (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 8) {
         accept.disabled = false;
-        hint.classList.add('invisible');
       }
     }
     scroller.addEventListener('scroll', checkEnd);
+    // The dialog shrinks to a short text (it has a max height, not a fixed one).
     requestAnimationFrame(checkEnd);
 
     accept.addEventListener('click', function () {

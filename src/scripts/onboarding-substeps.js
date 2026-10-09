@@ -6,8 +6,7 @@
  * Markup: <div data-ob-substeps="Account Information|Summary" data-ob-substep="0"></div>
  * Each step gets a 2px top line (blue once reached) and a bullet: a check for
  * completed steps, the ringed blue dot for the current one, a gray dot ahead.
- * data-ob-substeps-desktop shows it on desktop only (the mobile designs of
- * three-step flows leave it out; the top bar already shows progress).
+ * Desktop only: on mobile the top bar already shows progress.
  */
 (function () {
   'use strict';
@@ -27,7 +26,7 @@
   function render(el) {
     var labels = el.getAttribute('data-ob-substeps').split('|');
     var current = Number(el.getAttribute('data-ob-substep') || 0);
-    el.className = (el.hasAttribute('data-ob-substeps-desktop') ? 'hidden lg:flex' : 'flex') + ' w-full items-start';
+    el.className = 'hidden w-full items-start lg:flex';
     el.setAttribute('role', 'list');
     el.setAttribute('aria-label', 'Progress');
     el.innerHTML = labels.map(function (label, i) {

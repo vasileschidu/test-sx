@@ -197,7 +197,11 @@
             '</div>' +
             '<div class="flex flex-col gap-2.5">' +
               '<h2 id="doc-viewer-title" class="text-2xl leading-8 font-semibold text-[#1f2937]">' + esc(doc.name) + '</h2>' +
-              '<p class="text-sm leading-5 text-[#6b7280]">' + esc(doc.description) + '</p>' +
+              // On mobile a long description is cut to two lines ending "… Show more".
+              '<p id="doc-viewer-desc" data-doc-desc class="text-sm leading-5 text-[#6b7280]">' +
+                '<span data-doc-desc-text>' + esc(doc.description) + '</span>' +
+                '<button type="button" data-doc-more hidden aria-expanded="false" aria-controls="doc-viewer-desc" class="ml-0.5 cursor-pointer rounded px-1.5 font-semibold whitespace-nowrap text-[#374151] hover:text-[#111827] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Show more</button>' +
+              '</p>' +
             '</div>' +
           '</div>' +
           '<button type="button" data-ob-modal-close class="inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
@@ -206,12 +210,15 @@
           '</button>' +
         '</div>' +
 
-        '<div class="flex min-h-0 flex-1 flex-col p-6">' +
-          '<div tabindex="0" aria-label="' + esc(doc.name) + ' document" class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] bg-[#f9fafb] p-4 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+        '<div class="relative flex min-h-0 flex-1 flex-col p-6">' +
+          '<div data-doc-preview tabindex="0" aria-label="' + esc(doc.name) + ' document" class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] bg-[#f9fafb] p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600 max-sm:cursor-pointer">' +
             '<div data-doc-pages class="flex flex-col gap-4">' +
               '<p class="py-10 text-center text-sm leading-5 text-[#6b7280]">Loading document…</p>' +
             '</div>' +
           '</div>' +
+          // Phones: the preview is small, so a tap opens the PDF full screen.
+          '<span aria-hidden="true" class="pointer-events-none absolute bottom-9 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-[#111827]/80 px-3 py-1.5 text-xs leading-4 font-medium whitespace-nowrap text-white shadow-lg sm:hidden">' +
+            '<img src="' + ASSETS + 'icon-expand.svg" alt="" width="16" height="16" class="size-4">Tap to open full screen</span>' +
         '</div>' +
 
         '<div class="flex shrink-0 items-center gap-2.5 border-t border-[#e5e7eb] px-6 py-5">' +
@@ -226,6 +233,62 @@
         '</div>';
     }
 
+    /**
+     * Mobile: a description longer than two lines is cut to fit them, ending
+     * with "… Show more" on the second line; "Show less" restores the cut.
+     * The link is the design system's Button/Link Secondary (gray-700, semibold).
+     */
+    function bindMore(backdrop, full) {
+      var desc = backdrop.querySelector('[data-doc-desc]');
+      var text = backdrop.querySelector('[data-doc-desc-text]');
+      var more = backdrop.querySelector('[data-doc-more]');
+      var mobile = window.matchMedia('(max-width: 1023px)');
+      var open = false;
+      var LINE = 20;  // leading-5
+
+      function fits() { return desc.offsetHeight <= LINE * 2 + 1; }
+
+      function sync() {
+        text.textContent = full;
+        more.hidden = true;
+        // Desktop, or short enough for two lines: the whole text, no link.
+        if (!mobile.matches || fits()) return;
+        more.hidden = false;
+        if (open) return;  // expanded: full text + "Show less"
+        // Longest cut (at a word break) that keeps "… Show more" on two lines.
+        var words = full.split(' ');
+        var lo = 1, hi = words.length - 1, best = 1;
+        while (lo <= hi) {
+          var mid = (lo + hi) >> 1;
+          text.textContent = words.slice(0, mid).join(' ').replace(/[\s,.;:]+$/, '') + '…';
+          if (fits()) { best = mid; lo = mid + 1; } else hi = mid - 1;
+        }
+        text.textContent = words.slice(0, best).join(' ').replace(/[\s,.;:]+$/, '') + '…';
+      }
+
+      more.addEventListener('click', function () {
+        open = !open;
+        more.textContent = open ? 'Show less' : 'Show more';
+        more.setAttribute('aria-expanded', open ? 'true' : 'false');
+        sync();
+      });
+      requestAnimationFrame(sync);
+      syncMore = sync;
+    }
+    var syncMore = null;
+    window.addEventListener('resize', function () { if (syncMore) syncMore(); });
+
+    /** Phones only: tapping the preview opens the PDF in the phone's own viewer (zoom, scroll). */
+    function bindFullScreen(backdrop, doc) {
+      var preview = backdrop.querySelector('[data-doc-preview]');
+      var mobile = window.matchMedia('(max-width: 639px)');
+      function open() { window.open(doc.file, '_blank', 'noopener'); }
+      preview.addEventListener('click', function () { if (mobile.matches) open(); });
+      preview.addEventListener('keydown', function (event) {
+        if (mobile.matches && (event.key === 'Enter' || event.key === ' ')) { event.preventDefault(); open(); }
+      });
+    }
+
     function openViewer(index) {
       var backdrop = window.OBModal.open(viewerMarkup(index), 'doc-viewer-title', {
         bare: true,
@@ -237,6 +300,8 @@
         else window.OBModal.close();
       });
       renderPdf(backdrop.querySelector('[data-doc-pages]'), docs[index].file);
+      bindMore(backdrop, docs[index].description);
+      bindFullScreen(backdrop, docs[index]);
       var prev = backdrop.querySelector('[data-doc-prev]');
       prev.addEventListener('click', function () {
         if (index > 0) openViewer(index - 1);

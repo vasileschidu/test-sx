@@ -1,11 +1,11 @@
 <svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="20" height="22" viewBox="0 0 20 22" fill="none" xmlns="http://www.w3.org/2000/svg">
 <g id="Frame 1240">
-<circle id="Ellipse 1" cx="14.5" cy="5.5" r="5.5" fill="#2F68ED"/>
 <g id="Bell">
 <g id="Icon">
 <path d="M10 4C6.68632 4 4.00003 6.68629 4.00003 10V13.5858L3.29292 14.2929C3.00692 14.5789 2.92137 15.009 3.07615 15.3827C3.23093 15.7564 3.59557 16 4.00003 16H16C16.4045 16 16.7691 15.7564 16.9239 15.3827C17.0787 15.009 16.9931 14.5789 16.7071 14.2929L16 13.5858V10C16 6.68629 13.3137 4 10 4Z" fill="white"/>
 <path d="M10 20C8.34315 20 7 18.6569 7 17H13C13 18.6569 11.6569 20 10 20Z" fill="white"/>
 </g>
 </g>
+<circle id="Ellipse 1" cx="14.5" cy="5.5" r="5.5" fill="#2F68ED"/>
 </g>
 </svg>

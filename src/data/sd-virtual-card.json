@@ -117,9 +117,27 @@
       "title": "Terms of Use for SMART Suite",
       "body": [
         "All products and services provided by Transcard are subject to the Terms of Use and disclaimers of the applicable agreement governing their supply and use. Where country specific Terms of Use conflict with these Transcard Terms of Use, the country specific Terms of Use shall prevail for products and services taken within that country. Please carefully review any of the country specific Terms of Use as outlined within the supplement links.",
+        "## 1. About these Terms",
         "These Terms & Conditions (these “Terms”) are a legally binding agreement governing access to and use of our Service between you (the “you”, “your”) and Transcard Payments, LLC, a Nevada limited liability company, its officers, directors, consultants, agents, employees and affiliates (collectively, “Company”, “we”, “our”, “us”) with offices located at 1010 Market Street, Chattanooga, TN, 37402 (the “Licensee”). For direct communication you can reach us at sales@transcard.com.",
         "As used in these Terms, “Service” refers to our online platform, website, the App, any software, programs, documentation, tools, and components, and any updates (including software maintenance, service information, help content, bug fixes or maintenance releases) provided to you by us, directly or indirectly. To use the Service, you must agree to all the terms in these Terms. We may present to you an offer from a Bank to open one or more of the following: a Transcard deposit account (“Banking Account”), a Transcard debit card (“Transcard Debit Card”) and, individually and collectively, with the Banking Account and Transcard Card, (the “Bank Products”). Our Services may be provided to you to help you view, manage and access your Bank Products.",
         "The Bank Products are made available by a bank, member of the Federal Deposit Insurance Corporation (each, a “Bank”), in partnership with us. We operate software that allows you to access services of Bank but we do not provide banking services. All banking, lending and money transmission services are provided by the Bank. The Bank Products are each governed by the Terms of Use you enter into with each Bank (the “Bank Agreement”). The Bank Products are not offered by us, and instead are offered by Bank.",
+        "## 2. Eligibility",
+        "To use the Service you must be at least 18 years old, a resident of the United States, and able to enter into a legally binding contract. You confirm that the information you provide is true, accurate and complete, and that you will keep it up to date.",
+        "## 3. Receiving your payment",
+        "The Service lets you receive a payment sent to you by a company you have a relationship with (the “Payer”). You can choose how to receive it, for example on a Virtual Card, to a debit card, to a bank account or by paper check. Available options, processing times and any fees are shown before you confirm.",
+        "Processing times are estimates. Payments may be delayed or returned if the details you provide do not match the records of your bank or card issuer, if additional verification is required, or if the payment is flagged by our fraud prevention controls.",
+        "## 4. Your responsibilities",
+        "You are responsible for keeping your account details, verification codes and any card credentials confidential. Do not share them with anyone. Tell us immediately at sales@transcard.com if you believe someone has used them without your permission.",
+        "You agree not to use the Service for any unlawful purpose, to provide false information, to interfere with its operation, or to attempt to access accounts or data that are not yours.",
+        "## 5. Fees",
+        "We do not charge you to receive a payment unless a fee is clearly shown before you confirm your payment method. Your bank or card issuer may charge its own fees, which are not controlled by us.",
+        "## 6. Limitation of liability",
+        "To the fullest extent permitted by law, the Service is provided “as is” and “as available”. We are not liable for indirect, incidental or consequential losses, or for delays or failures caused by events outside our reasonable control, including the actions of banks, card networks or the Payer.",
+        "## 7. Ending the Service",
+        "We may suspend or end your access to the Service if you breach these Terms, if required by law, or to protect you, the Payer or us from fraud. Sections that by their nature should survive, including liability limitations, will continue to apply.",
+        "## 8. Governing law",
+        "These Terms are governed by the laws of the State of Tennessee and applicable federal law, without regard to conflict of law principles.",
+        "## 9. Changes to these Terms",
         "We may change these Terms from time to time. If we make material changes, we will let you know before they take effect. By continuing to use the Service after the changes take effect, you agree to the updated Terms."
       ]
     },
@@ -128,11 +146,23 @@
       "name": "Privacy Policy",
       "title": "Privacy Policy",
       "body": [
-        "This Privacy Policy explains how Transcard Payments, LLC collects, uses and shares personal information when you receive a payment through SMART Disburse.",
-        "We collect the details you give us, such as your name, date of birth, Social Security Number, address, phone number and email address, to verify your identity, issue your Virtual Card and meet our legal and regulatory obligations.",
-        "We share your information only with the issuing Bank, the company that sent you the payment, and service providers that help us run the Service, and only as needed for those purposes. We do not sell your personal information.",
-        "We keep your information for as long as needed to provide the Service and to meet legal requirements. You can ask us to access or correct your information by contacting sales@transcard.com.",
-        "We use industry-standard safeguards, including encryption in transit and at rest, to protect your information."
+        "This Privacy Policy explains how Transcard Payments, LLC (“we”, “us”) collects, uses and shares personal information when you receive a payment through SMART Disburse.",
+        "## 1. Information we collect",
+        "Information you give us: your name, date of birth, Social Security Number, mailing address, phone number and email address, and the details of the payment method you choose, such as bank account, debit card or mailing details.",
+        "Information we receive from others: details of the payment from the company that sent it to you, and verification results from identity, bank and card networks.",
+        "Information collected automatically: device and browser type, IP address, and how you interact with the Service, used to keep it secure and working properly.",
+        "## 2. How we use your information",
+        "We use your information to verify your identity, deliver your payment by the method you choose, send you receipts and service messages, prevent fraud, and meet our legal and regulatory obligations, including anti-money-laundering requirements.",
+        "## 3. How we share your information",
+        "We share your information only with the issuing Bank, the company that sent you the payment, card networks and service providers that help us run the Service, and only as needed for those purposes. We may also share information when required by law or to protect our rights. We do not sell your personal information.",
+        "## 4. How long we keep it",
+        "We keep your information for as long as needed to provide the Service and to meet legal, accounting and reporting requirements, which is usually at least five years after your payment.",
+        "## 5. How we protect it",
+        "We use industry-standard safeguards, including encryption in transit and at rest, access controls and regular security reviews. No system is completely secure, so please keep your verification codes and card details private.",
+        "## 6. Your choices and rights",
+        "You can ask us to access or correct your information, or ask questions about this policy, by contacting sales@transcard.com. Depending on where you live, you may have additional rights under state law.",
+        "## 7. Changes to this policy",
+        "We may update this Privacy Policy from time to time. We will tell you about material changes before they take effect."
       ]
     },
     {
@@ -140,11 +170,19 @@
       "name": "E-Sign Consent",
       "title": "Consent to Electronic Communications (E-Sign)",
       "body": [
-        "By accepting, you agree to receive disclosures, notices, agreements and other communications about your Virtual Card electronically rather than on paper.",
+        "By accepting, you agree to receive disclosures, notices, agreements, receipts and other communications about your payment electronically rather than on paper.",
+        "## 1. Scope of your consent",
+        "Your consent covers all communications related to this payment and the payment method you choose, including these agreements, receipts, notices of changes, and any statements or tax documents we are required to provide.",
+        "## 2. How we will deliver communications",
         "Electronic communications may be shown on screen during this process or sent to the email address you provided. They have the same legal effect as if they were printed and signed by hand.",
-        "You can withdraw your consent at any time by contacting sales@transcard.com. Withdrawing consent may mean we can no longer issue or service your Virtual Card electronically.",
-        "To access electronic communications you need a device with an internet connection, a current web browser and software that can open PDF files.",
-        "Please keep your email address up to date so you continue to receive communications about your payment."
+        "## 3. Requesting paper copies",
+        "You can ask for a paper copy of any communication at no charge by contacting sales@transcard.com within 90 days of receiving it.",
+        "## 4. Withdrawing your consent",
+        "You can withdraw your consent at any time by contacting sales@transcard.com. Withdrawing consent does not affect communications already delivered, and may mean we can no longer deliver your payment by an electronic method.",
+        "## 5. System requirements",
+        "To access electronic communications you need a device with an internet connection, a current web browser, an email account and software that can open PDF files.",
+        "## 6. Keeping your details up to date",
+        "Please keep your email address up to date so you continue to receive communications about your payment. You can update it in the account information step or by contacting us."
       ]
     }
   ]
