@@ -29,15 +29,12 @@
       {
         "key": "paymentMethod",
         "label": "Payment Method",
-        "sortable": true,
         "type": "paymentMethod"
       },
       {
         "key": "status",
         "label": "Status",
-        "sortable": true,
-        "type": "status",
-        "filterable": true
+        "type": "status"
       },
       {
         "key": "failureReason",

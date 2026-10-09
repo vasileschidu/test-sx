@@ -61,6 +61,60 @@
         .dark #gp-signature-canvas {
             --gp-ink-color: #ffffff;
         }
+
+        /* Smooth row selected state: row and every cell (incl. sticky/action cells) fade together */
+        #exchanges-table tr[data-row],
+        #exchanges-table tr[data-row] > td {
+            transition: background-color 150ms ease-out;
+        }
+
+        /* Row hover + selected colors are both painted on the cells, so hover -> selected is one continuous fade.
+           Cells keep an opaque base color: fading back to `transparent` leaves a stale gray paint in Chrome. */
+        #exchanges-table tr[data-row] > td {
+            background-color: #ffffff;
+        }
+
+        .dark #exchanges-table tr[data-row] > td {
+            background-color: #111827;
+        }
+
+        #exchanges-table tr[data-row]:hover > td {
+            background-color: #f9fafb;
+        }
+
+        #exchanges-table tr[data-row].bg-gray-100 > td,
+        #exchanges-table tr[data-row].bg-gray-100:hover > td {
+            background-color: #f3f4f6;
+        }
+
+        .dark #exchanges-table tr[data-row]:hover > td {
+            background-color: #181f2d;
+        }
+
+        .dark #exchanges-table tr[data-row].bg-gray-100 > td,
+        .dark #exchanges-table tr[data-row].bg-gray-100:hover > td {
+            background-color: #1d2432;
+        }
+
+        #exchanges-table tr[data-detail]:not(.hidden) > td {
+            animation: sx-row-detail-in 160ms ease-out;
+        }
+
+        @keyframes sx-row-detail-in {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            #exchanges-table tr[data-row],
+            #exchanges-table tr[data-row] > td {
+                transition: none;
+            }
+
+            #exchanges-table tr[data-detail]:not(.hidden) > td {
+                animation: none;
+            }
+        }
     </style>
 
 </head>
@@ -1183,7 +1237,7 @@
                     </div>
 
                     <!-- ===== STATUS TABS ===== -->
-                    <div class="border-t border-gray-200 px-4 py-4 sm:px-6 dark:border-white/10">
+                    <div class="border-t border-b border-gray-200 px-4 py-4 sm:px-6 dark:border-white/10">
 
                         <div class="grid grid-cols-1 sm:hidden">
                             <!-- Use an "onChange" listener to redirect the user to the selected tab URL. -->
