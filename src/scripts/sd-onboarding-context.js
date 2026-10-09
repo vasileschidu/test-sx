@@ -163,7 +163,9 @@ window.SDOnboardingContext = (function () {
       payeeId: String(payee.id || '').trim(),
       payeeName: String(payee.name || payable.payeeName || '').trim(),
       vendorId: String(payee.vendorId || '').trim(),
-      senderName: String(params.get('sender') || state.senderName || 'SMART Hub').trim(),
+      // Only a ?sender= link overrides the default; a name merely remembered
+      // from an earlier visit must not stick once the default changes.
+      senderName: String(params.get('sender') || state.senderFromUrl || 'Horizon Inc.').trim(),
       recipientEmail: String(params.get('email') || state.recipientEmail || '').trim(),
       attachments: payable.details && Array.isArray(payable.details.attachments) ? payable.details.attachments : [],
       summary: payable.details && payable.details.summary ? String(payable.details.summary) : '',
@@ -206,6 +208,7 @@ window.SDOnboardingContext = (function () {
         billNumber: context.billNumber,
         payeeId: context.payeeId,
         senderName: context.senderName,
+        senderFromUrl: params.get('sender') || state.senderFromUrl || '',
         recipientEmail: context.recipientEmail,
         amount: context.amount,
         paymentAmount: context.amount,

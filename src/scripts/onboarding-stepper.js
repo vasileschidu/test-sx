@@ -11,7 +11,8 @@
  *
  * Markup: <nav aria-label="Progress" data-ob-stepper data-ob-step="signature">
  * The step id is normally inferred from the filename, so the attribute is only
- * needed when a page wants to claim a different step.
+ * needed when a page wants to claim a different step. data-ob-step="none"
+ * shows every step as upcoming (the welcome screen, before the flow starts).
  */
 (function () {
   'use strict';
@@ -22,15 +23,16 @@
    * reuse this stepper and the mobile header with its own steps.
    */
   var STEPS = window.OB_FLOW_STEPS || [
-    { id: 'confirm-identity', label: 'Confirm Identity', href: 'confirm-identity.html' },
-    { id: 'confirm-business-details', label: 'Confirm Business Details', href: 'confirm-business-details.html' },
-    { id: 'review-documents', label: 'Review Documents', href: 'review-documents.html' },
-    { id: 'signature', label: 'Provide Signature', href: 'signature.html' },
-    { id: 'paywall', label: 'Confirm Payment', href: 'paywall.html',
-      alsoMatches: ['instant-virtual-card', 'debit-card-details', 'debit-account-info'] },
-    { id: 'summary', label: 'Summary', href: 'summary.html' },
-    { id: 'create-account', label: 'Create an Account', href: 'create-account.html' },
-    { id: 'complete', label: 'Complete', href: 'complete.html' }
+    { id: 'verification', label: 'Verification Step', href: 'confirm-identity.html',
+      alsoMatches: ['confirm-identity'] },
+    { id: 'identity', label: 'Confirm Identity', href: 'confirm-business-details.html',
+      alsoMatches: ['confirm-business-details'] },
+    { id: 'documents', label: 'Review Documents', href: 'review-documents.html',
+      alsoMatches: ['review-documents', 'signature'] },
+    { id: 'payment', label: 'Receive Payment', href: 'paywall.html',
+      alsoMatches: ['paywall', 'instant-virtual-card', 'debit-card-details', 'debit-account-info', 'summary'] },
+    { id: 'complete', label: 'Complete Payment', href: 'create-account.html',
+      alsoMatches: ['create-account', 'complete'] }
   ];
 
   var CHECK = 'M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z';
@@ -47,13 +49,14 @@
   }
 
   function done(step) {
-    return '<li><a href="' + step.href + '" class="group">' +
+    // Completed steps keep their look on hover: no colour change on the check.
+    return '<li><a href="' + step.href + '" class="rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">' +
       '<span class="flex items-start">' +
         '<span class="relative flex size-5 shrink-0 items-center justify-center">' +
-          '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-full text-white group-hover:text-blue-300">' +
+          '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-full text-white">' +
             '<path d="' + CHECK + '" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
         '</span>' +
-        '<span class="ml-3 text-sm font-medium text-white group-hover:text-white">' + step.label + '</span>' +
+        '<span class="ml-3 text-sm font-medium text-white">' + step.label + '</span>' +
       '</span></a></li>';
   }
 
@@ -66,13 +69,17 @@
       '<span class="ml-3 text-sm font-medium text-white">' + step.label + '</span></a></li>';
   }
 
+  /**
+   * Steps ahead of the current one are plain text, not links: the user has to
+   * finish the current step before moving on, so they get no hover state.
+   */
   function upcoming(step) {
-    return '<li><a href="' + step.href + '" class="group"><div class="flex items-start">' +
+    return '<li aria-disabled="true"><div class="flex cursor-default items-start">' +
       '<div aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">' +
-        '<div class="size-2 rounded-full bg-white/15 group-hover:bg-white/25"></div>' +
+        '<div class="size-2 rounded-full bg-white/15"></div>' +
       '</div>' +
-      '<p class="ml-3 text-sm font-medium text-white/30 group-hover:text-white">' + step.label + '</p>' +
-      '</div></a></li>';
+      '<p class="ml-3 text-sm font-medium text-white/30">' + step.label + '</p>' +
+      '</div></li>';
   }
 
   function render(nav) {
@@ -80,7 +87,7 @@
     if (!id) return;
     var at = -1;
     for (var i = 0; i < STEPS.length; i += 1) if (STEPS[i].id === id) at = i;
-    if (at === -1) return;
+    if (at === -1 && id !== 'none') return;
     nav.innerHTML = '<ol role="list" class="space-y-6">' + STEPS.map(function (step, index) {
       if (index < at) return done(step);
       if (index === at) return current(step);

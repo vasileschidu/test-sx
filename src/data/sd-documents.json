@@ -1,0 +1,36 @@
+{
+  "headerText": "documents",
+  "message": {
+    "title": "Documents",
+    "body": "These documents support your $487.00 claim payment from Horizon Inc. Open each one, read it through and select Next to mark it as Done."
+  },
+  "documents": [
+    {
+      "id": "property-inspection-report",
+      "name": "Property Inspection Report",
+      "listName": "Property Inspection Report",
+      "type": "PDF",
+      "size": "69.2 KB",
+      "file": "../../assets/onboarding/documents/property-inspection-report.pdf",
+      "description": "Independent adjuster’s assessment of the claim, including damage findings and the recommended settlement figure for your review."
+    },
+    {
+      "id": "repair-cost-estimate",
+      "name": "Repair Cost Estimate",
+      "listName": "Repair Cost Estimate",
+      "type": "PDF",
+      "size": "76.2 KB",
+      "file": "../../assets/onboarding/documents/repair-cost-estimate.pdf",
+      "description": "Supporting documentation and itemised cost breakdown referenced in the primary adjuster report. Please confirm the figures match your records."
+    },
+    {
+      "id": "settlement-agreement",
+      "name": "Settlement Agreement",
+      "listName": "Settlement Agreement",
+      "type": "PDF",
+      "size": "68.7 KB",
+      "file": "../../assets/onboarding/documents/settlement-agreement.pdf",
+      "description": "Final summary and payment authorisation terms. By accepting, you confirm you’ve reviewed the disbursement details."
+    }
+  ]
+}

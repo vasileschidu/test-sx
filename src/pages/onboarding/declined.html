@@ -1,0 +1,57 @@
+<!--
+  @file onboarding/declined.html
+  @description Shown after the payee declines the payment (Figma "Your SMART
+    Disburse access has been revoked", nodes 20211:44175 / 20211:47952).
+    Content is filled by src/scripts/onboarding-declined.js.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Declined · SMART Disburse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js"></script>
+  <script src="../../../src/scripts/onboarding-modal.js"></script>
+  <script src="../../../src/scripts/onboarding-declined.js"></script>
+</head>
+
+<body class="min-h-full bg-white font-['Inter'] antialiased lg:bg-gray-100">
+  <main class="flex min-h-screen w-full justify-center px-4 pt-16 pb-8 lg:items-center lg:py-12">
+    <div class="flex w-full max-w-[512px] flex-col gap-8 bg-white lg:rounded-lg lg:p-8">
+
+      <div class="flex w-full flex-col gap-4">
+        <div class="flex size-12 items-center justify-center rounded-full bg-[#fef2f2]">
+          <img src="../../assets/onboarding/icon-x-circle-red.svg" alt="" width="24" height="24" class="size-6">
+        </div>
+        <h1 class="text-2xl leading-8 font-semibold text-gray-900">Your SMART Disburse access has been revoked</h1>
+
+        <dl class="flex w-full flex-col gap-2 rounded-lg border border-gray-200 bg-gray-50 p-4">
+          <div class="flex flex-col gap-0.5">
+            <dt class="text-sm leading-5 text-gray-600">Reason</dt>
+            <dd class="text-sm leading-5 font-medium text-gray-900">Payment Declined by <span data-declined-by>you</span></dd>
+          </div>
+          <div class="flex flex-col gap-0.5">
+            <dt class="text-sm leading-5 text-gray-600">Details</dt>
+            <dd class="text-sm leading-5 font-medium text-gray-900">
+              <span data-declined-reason>—</span>
+              <span data-declined-note class="block font-normal text-gray-500"></span>
+            </dd>
+          </div>
+        </dl>
+      </div>
+
+      <div class="flex w-full flex-col gap-2">
+        <p class="text-sm leading-5 text-gray-700">Need assistance?</p>
+        <div data-client-contact class="flex w-full rounded-lg border border-gray-200 p-4"></div>
+      </div>
+
+      <div data-ob-language class="flex justify-center"></div>
+    </div>
+  </main>
+</body>
+</html>

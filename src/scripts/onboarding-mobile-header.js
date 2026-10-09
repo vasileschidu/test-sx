@@ -9,6 +9,11 @@
  *
  * The hamburger opens a sheet holding the full stepper plus the Contact /
  * Decline actions, i.e. everything the sidebar carries on desktop.
+ *
+ * A flow can instead set window.OB_MOBILE_MENU to a list of
+ * { label, icon, onSelect } before DOMContentLoaded: the hamburger then turns
+ * into a close button and opens just those actions in a dropdown card over the
+ * blurred page (the UK claim demo and the SMART Disburse flow use this).
  */
 (function () {
   'use strict';
@@ -108,6 +113,34 @@
     return sheet;
   }
 
+  /** Dropdown variant: the flow's own actions in a card under the bar. */
+  function buildDropdown(items) {
+    var menu = document.createElement('div');
+    menu.setAttribute('data-ob-menu', '');
+    menu.className = 'fixed inset-0 z-40 hidden lg:hidden';
+    menu.innerHTML =
+      '<div data-ob-menu-close data-ob-menu-fade class="absolute inset-0 bg-black/75 opacity-0 backdrop-blur-[5px] transition-opacity duration-200 ease-out"></div>' +
+      // Sits exactly over the hamburger, so the button reads as turning into a close.
+      '<button type="button" data-ob-menu-close data-ob-menu-focus ' +
+        'class="absolute top-4 right-4 inline-flex cursor-pointer items-center justify-center rounded-md bg-white p-1.5 text-gray-500 shadow-xs transition-colors hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white">' +
+        '<span class="sr-only">Close menu</span>' + ICON_CLOSE +
+      '</button>' +
+      '<div role="menu" data-ob-menu-fade data-ob-menu-panel ' +
+        'class="absolute inset-x-4 top-14 origin-top scale-95 overflow-hidden rounded-md bg-white pt-1 opacity-0 shadow-lg ring-1 ring-black/5 transition duration-150 ease-out"></div>';
+
+    var panel = menu.querySelector('[data-ob-menu-panel]');
+    items.forEach(function (item, i) {
+      var btn = document.createElement('button');
+      btn.type = 'button';
+      btn.setAttribute('role', 'menuitem');
+      btn.setAttribute('data-ob-menu-item', String(i));
+      btn.className = 'flex w-full cursor-pointer items-start gap-3 p-4 text-left text-sm leading-5 font-medium text-gray-900 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none';
+      btn.innerHTML = '<span class="shrink-0 text-gray-500">' + (item.icon || '') + '</span><span>' + item.label + '</span>';
+      panel.appendChild(btn);
+    });
+    return menu;
+  }
+
   document.addEventListener('DOMContentLoaded', function () {
     var nav = document.querySelector(NAV_SELECTOR);
     if (!nav) return;
@@ -123,17 +156,49 @@
     var bar = buildBar(progress);
     container.insertBefore(bar, container.firstChild);
 
-    var sheet = buildSheet(nav, actions);
+    var items = Array.isArray(window.OB_MOBILE_MENU) && window.OB_MOBILE_MENU.length ? window.OB_MOBILE_MENU : null;
+    var sheet = items ? buildDropdown(items) : buildSheet(nav, actions);
     document.body.appendChild(sheet);
 
     var openBtn = bar.querySelector('[data-ob-menu-open]');
+    var isOpen = false;
+    var hideTimer = null;
     function setOpen(open) {
-      sheet.classList.toggle('hidden', !open);
+      if (open === isOpen) return;
+      isOpen = open;
       openBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
       document.documentElement.style.overflow = open ? 'hidden' : '';
+      if (!items) { sheet.classList.toggle('hidden', !open); return; }
+
+      // Dropdown fades the backdrop and scales the card in/out.
+      var faders = sheet.querySelectorAll('[data-ob-menu-fade]');
+      var panel = sheet.querySelector('[data-ob-menu-panel]');
+      clearTimeout(hideTimer);
+      if (open) {
+        sheet.classList.remove('hidden');
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            faders.forEach(function (el) { el.classList.remove('opacity-0'); });
+            panel.classList.remove('scale-95');
+          });
+        });
+        sheet.querySelector('[data-ob-menu-focus]').focus();
+      } else {
+        faders.forEach(function (el) { el.classList.add('opacity-0'); });
+        panel.classList.add('scale-95');
+        hideTimer = setTimeout(function () { sheet.classList.add('hidden'); }, 200);
+        openBtn.focus();
+      }
     }
     openBtn.addEventListener('click', function () { setOpen(true); });
     sheet.addEventListener('click', function (event) {
+      var item = event.target.closest('[data-ob-menu-item]');
+      if (item) {
+        setOpen(false);
+        var action = items[Number(item.getAttribute('data-ob-menu-item'))];
+        if (action && action.onSelect) action.onSelect();
+        return;
+      }
       if (event.target.closest('[data-ob-menu-close]')) setOpen(false);
     });
     document.addEventListener('keydown', function (event) {

@@ -1,0 +1,61 @@
+<!--
+  @file onboarding/revoked.html
+  @description Shown when the payee runs out of verification attempts (Figma
+    "OTP Verification - Revoked", nodes 19462:81110 / 19462:81088).
+    Filled by src/scripts/onboarding-revoked.js.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Revoked · SMART Disburse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
+  <script src="../../../src/scripts/onboarding-modal.js"></script>
+  <script src="../../../src/scripts/onboarding-revoked.js"></script>
+</head>
+
+<body class="min-h-full bg-gray-100 font-['Inter'] antialiased">
+  <main class="flex min-h-screen w-full items-center justify-center px-3.5 py-8 lg:py-12">
+    <div class="w-full max-w-[500px] rounded-lg bg-white p-4 lg:p-6">
+      <div class="flex flex-col gap-16 p-4 lg:p-9">
+
+        <div class="flex flex-col items-center gap-3">
+          <div class="flex size-12 items-center justify-center rounded-full bg-[#fef2f2]">
+            <img src="../../assets/onboarding/icon-x-circle-revoked.svg" alt="" width="24" height="24" class="size-6">
+          </div>
+          <div class="flex w-full flex-col gap-6">
+            <h1 class="text-center text-xl leading-7 font-semibold text-gray-900">Unfortunately, your payment was revoked.</h1>
+            <div class="flex flex-col items-center gap-4">
+              <p class="text-center text-sm leading-5 text-gray-700">
+                <span class="font-semibold">Revocation reason:</span> <span data-revoked-reason>Exhausted attempts to provide Verification Code</span> by
+                <span data-revoked-recipient class="font-semibold">Rachel Morris</span>.
+                <br><br>
+                Please contact <span data-revoked-company class="font-semibold">Horizon Inc.</span> for further information.
+              </p>
+              <div class="flex w-full flex-col gap-4">
+                <a data-revoked-phone href="#" class="flex h-14 items-center justify-center gap-2.5 rounded-lg bg-[#eff6ff] p-4 text-sm leading-5 font-semibold text-[#3b82f6] hover:bg-blue-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                  <img src="../../assets/onboarding/icon-phone-solid.svg" alt="" width="18" height="18" class="size-[18px]">
+                  <span data-revoked-phone-text>—</span>
+                </a>
+                <a data-revoked-email href="#" class="flex h-14 items-center justify-center gap-2.5 rounded-lg bg-[#eff6ff] p-4 text-sm leading-5 font-semibold text-[#3b82f6] hover:bg-blue-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                  <img src="../../assets/onboarding/icon-mail-solid.svg" alt="" width="18" height="18" class="size-[18px]">
+                  <span data-revoked-email-text>—</span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p class="text-center text-xs leading-4 text-gray-600">
+          Please quote reference: <span data-revoked-reference class="font-medium text-gray-800">—</span>
+        </p>
+      </div>
+    </div>
+  </main>
+</body>
+</html>

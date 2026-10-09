@@ -1,0 +1,7 @@
+{
+  "channel": "email",
+  "codeLength": 6,
+  "validitySeconds": 120,
+  "maxAttempts": 3,
+  "incorrectDemoCode": "000000"
+}

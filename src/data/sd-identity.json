@@ -1,0 +1,30 @@
+{
+  "maxAttempts": 3,
+  "fields": [
+    {
+      "id": "claimNumber",
+      "label": "Your claim number",
+      "placeholder": "000000",
+      "minLength": 1,
+      "maxLength": 12,
+      "requiredMessage": "Claim number is required"
+    },
+    {
+      "id": "ssnLast4",
+      "label": "The last 4-digits of your SSN number",
+      "placeholder": "0000",
+      "minLength": 4,
+      "maxLength": 4,
+      "requiredMessage": "SSN number is required"
+    },
+    {
+      "id": "zipCode",
+      "label": "Your mailing zip code",
+      "placeholder": "000000",
+      "minLength": 5,
+      "maxLength": 6,
+      "requiredMessage": "Mailing zip code is required"
+    }
+  ],
+  "demoInvalidRule": "An answer made only of zeros counts as incorrect."
+}

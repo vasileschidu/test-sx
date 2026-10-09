@@ -1,14 +1,15 @@
 {
-  "flow": "SMART Exchange",
+  "flow": "SMART Disburse",
   "steps": [
-    { "id": "confirm-identity",         "label": "Confirm Identity",         "href": "confirm-identity.html" },
-    { "id": "confirm-business-details", "label": "Confirm Business Details", "href": "confirm-business-details.html" },
-    { "id": "review-documents",         "label": "Review Documents",         "href": "review-documents.html" },
-    { "id": "signature",                "label": "Provide Signature",        "href": "signature.html" },
-    { "id": "paywall",                  "label": "Confirm Payment",          "href": "paywall.html",
-      "alsoMatches": ["instant-virtual-card", "debit-card-details", "debit-account-info"] },
-    { "id": "summary",                  "label": "Summary",                  "href": "summary.html" },
-    { "id": "create-account",           "label": "Create an Account",        "href": "create-account.html" },
-    { "id": "complete",                 "label": "Complete",                 "href": "complete.html" }
+    { "id": "verification", "label": "Verification Step", "href": "confirm-identity.html",
+      "alsoMatches": ["confirm-identity"] },
+    { "id": "identity",     "label": "Confirm Identity",  "href": "confirm-business-details.html",
+      "alsoMatches": ["confirm-business-details"] },
+    { "id": "documents",    "label": "Review Documents",  "href": "review-documents.html",
+      "alsoMatches": ["review-documents", "signature"] },
+    { "id": "payment",      "label": "Receive Payment",   "href": "paywall.html",
+      "alsoMatches": ["paywall", "instant-virtual-card", "debit-card-details", "debit-account-info", "summary"] },
+    { "id": "complete",     "label": "Complete Payment",  "href": "create-account.html",
+      "alsoMatches": ["create-account", "complete"] }
   ]
 }
