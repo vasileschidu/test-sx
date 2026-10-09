@@ -1,16 +1,23 @@
 <!--
   @file onboarding/debit-card-details.html
-  @description Send to my Debit Card — Step 1: Card Details
+  @description Send to my Debit Card · Card Details (Figma "Debit Card",
+    node 21923:104799, "9. MC Send - Card Details"): name, card number and
+    expiry, with the field errors and the "card details are invalid" alert.
+    Content from Figma, styling as the other payment flows. Logic:
+    src/scripts/debit-card.js, content: src/data/sd-debit.json.
 -->
 <!doctype html>
-<html class="h-full">
+<html lang="en" class="h-full">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Debit Card Details · SMART Disburse</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/data-source.js"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
   <script src="../../../src/scripts/onboarding-transitions.js"></script>
   <script src="../../../src/scripts/onboarding-sidebar.js"></script>
   <script src="../../../src/scripts/onboarding-field.js"></script>
@@ -18,213 +25,63 @@
   <script src="../../../src/scripts/onboarding-decline.js"></script>
   <script src="../../../src/scripts/onboarding-stepper.js"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var KEY = 'sd-onboarding-state';
-      var REQUIRED = ['debit-card-number', 'debit-name-on-card', 'debit-expiry-mm', 'debit-expiry-yy', 'debit-cvv'];
-      var nextButton = document.getElementById('next-button');
-
-      function getState() {
-        try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
-      }
-      function saveState(patch) {
-        var s = getState(); Object.assign(s, patch); sessionStorage.setItem(KEY, JSON.stringify(s));
-      }
-
-      // Disable browser autofill/payment tooltips on all card inputs
-      ['debit-card-number', 'debit-name-on-card', 'debit-expiry-mm', 'debit-expiry-yy', 'debit-cvv'].forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) el.setAttribute('autocomplete', 'nope-' + Math.random().toString(36).slice(2));
-      });
-
-      // Restore saved values
-      var saved = getState().debitCard || {};
-      ['debit-card-number', 'debit-name-on-card', 'debit-expiry', 'debit-cvv'].forEach(function (id) {
-        var el = document.getElementById(id);
-        var key = id.replace('debit-', '').replace(/-([a-z])/g, function (_, c) { return c.toUpperCase(); });
-        if (el && saved[key]) el.value = saved[key];
-      });
-
-      function updateNext() {
-        var allFilled = REQUIRED.every(function (id) {
-          var el = document.getElementById(id);
-          return el && el.value.trim() !== '';
-        });
-        nextButton.disabled = !allFilled;
-      }
-
-      // Card number: groups of 4 digits separated by spaces, max 19 chars
-      var cardNumberEl = document.getElementById('debit-card-number');
-      cardNumberEl.addEventListener('input', function () {
-        var digits = cardNumberEl.value.replace(/\D/g, '').slice(0, 16);
-        cardNumberEl.value = digits.replace(/(.{4})/g, '$1 ').trim();
-        var dc = getState().debitCard || {};
-        dc.cardNumber = cardNumberEl.value;
-        saveState({ debitCard: dc });
-        updateNext();
-      });
-
-      // Expiry: smart MM/YY formatting
-      var expiryMm = document.getElementById('debit-expiry-mm');
-      var expiryYy = document.getElementById('debit-expiry-yy');
-
-      function getExpiry() { return expiryMm.value + '/' + expiryYy.value; }
-
-      expiryMm.addEventListener('input', function () {
-        expiryMm.value = expiryMm.value.replace(/\D/g, '').slice(0, 2);
-        if (expiryMm.value.length === 2) expiryYy.focus();
-        var dc = getState().debitCard || {};
-        dc.expiry = getExpiry();
-        saveState({ debitCard: dc });
-        updateNext();
-      });
-      expiryYy.addEventListener('input', function () {
-        expiryYy.value = expiryYy.value.replace(/\D/g, '').slice(0, 2);
-        var dc = getState().debitCard || {};
-        dc.expiry = getExpiry();
-        saveState({ debitCard: dc });
-        updateNext();
-      });
-      expiryYy.addEventListener('keydown', function (e) {
-        if (e.key === 'Backspace' && expiryYy.value === '') expiryMm.focus();
-      });
-
-      // CVV: digits only, max 4
-      var cvvEl = document.getElementById('debit-cvv');
-      cvvEl.addEventListener('input', function () {
-        cvvEl.value = cvvEl.value.replace(/\D/g, '').slice(0, 4);
-        var dc = getState().debitCard || {};
-        dc.cvv = cvvEl.value;
-        saveState({ debitCard: dc });
-        updateNext();
-      });
-
-      // Name on card
-      var nameEl = document.getElementById('debit-name-on-card');
-      nameEl.addEventListener('input', function () {
-        var dc = getState().debitCard || {};
-        dc.nameOnCard = nameEl.value;
-        saveState({ debitCard: dc });
-        updateNext();
-      });
-
-      nextButton.addEventListener('click', function () {
-        if (!nextButton.disabled) window.location.href = 'debit-account-info.html';
-      });
-
-      updateNext();
-    });
-  </script>
+  <script src="../../../src/scripts/onboarding-substeps.js"></script>
+  <script src="../../../src/scripts/onboarding-debit.js"></script>
+  <script src="../../../src/scripts/debit-card.js"></script>
 </head>
 
 <body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
 
   <!-- CONTAINER -->
-  <div class="mx-auto max-w-[1024px] w-full min-h-screen bg-white flex flex-col lg:h-screen lg:flex-row lg:overflow-hidden">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
 
     <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js -->
     <div data-ob-sidebar></div>
 
     <!-- RIGHT COLUMN (scrolls) -->
-    <div class="flex-1 flex flex-col lg:min-h-0 lg:overflow-y-auto">
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
       <div class="flex flex-1 flex-col lg:min-h-screen">
 
-        <!-- Content area -->
-        <div data-ob-content class="flex-1 flex flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
-          <div class="w-full max-w-[640px]">
+        <form id="debit-form" novalidate data-ob-content class="flex flex-1 flex-col gap-14">
 
-            <h1 class="text-3xl font-semibold text-gray-900">Enter Your Debit Card Details</h1>
-            <p class="mt-2 text-sm text-gray-500"><span class="font-semibold text-gray-700">$3,526.00</span> will be deposited directly to your bank account using your debit card.</p>
+          <div class="flex flex-col gap-9 px-4 pt-10 lg:px-14 lg:pt-14">
+            <div data-ob-substeps-desktop data-ob-substeps="Card Details|Account Information|Summary" data-ob-substep="0"></div>
 
-            <div class="mt-10 space-y-6">
-
-              <!-- Card Number -->
-              <div class="sm:max-w-[430px]">
-                <label for="debit-card-number" class="block text-sm/6 font-medium text-gray-900">Card number</label>
-                <div class="mt-2">
-                  <input id="debit-card-number" type="text" name="debit-card-number"
-                    placeholder="XXXX XXXX XXXX XXXX"
-                    inputmode="numeric"
-                    autocomplete="new-password"
-                    data-lpignore="true" data-1p-ignore
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
-                </div>
+            <div class="flex w-full flex-col gap-6">
+              <div class="flex w-full flex-col gap-3">
+                <h1 class="text-3xl leading-9 text-[#1f2937]">Enter Your <span class="font-semibold">Debit Card Details</span></h1>
+                <p class="text-sm leading-5 text-[#6b7280]"><span data-ob-skeleton data-debit-amount class="font-medium text-[#1f2937]">$487.00</span> will be deposited directly to your bank account using your debit card</p>
+                <p data-debit-fee hidden class="text-sm leading-5 text-[#6b7280]">A <span data-debit-fee-amount class="font-medium">$0.00</span> fee will be charged</p>
               </div>
 
-              <!-- Name on Card -->
-              <div class="sm:max-w-[430px]">
-                <label for="debit-name-on-card" class="block text-sm/6 font-medium text-gray-900">Name on card</label>
-                <div class="mt-2">
-                  <input id="debit-name-on-card" type="text" name="debit-name-on-card"
-                    placeholder="Cardholder name"
-                    autocomplete="new-password"
-                    data-lpignore="true" data-1p-ignore
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
-                </div>
-              </div>
+              <!-- Fields, rendered by debit-card.js -->
+              <div data-debit-fields class="flex w-full flex-col gap-6"></div>
 
-              <!-- Expiry + CVV -->
-              <div class="flex gap-6">
-
-                <div>
-                  <label class="block text-sm/6 font-medium text-gray-900">Expiration date</label>
-                  <div class="mt-2 inline-flex items-center rounded-md outline-1 -outline-offset-1 outline-gray-300 has-[input:focus]:outline-2 has-[input:focus]:-outline-offset-2 has-[input:focus]:outline-blue-600 bg-white">
-                    <input id="debit-expiry-mm" type="text" name="debit-expiry-mm"
-                      placeholder="MM"
-                      inputmode="numeric"
-                      autocomplete="new-password"
-                      data-lpignore="true" data-1p-ignore
-                      maxlength="2"
-                      class="w-[38px] bg-transparent py-1.5 pl-3 pr-0 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" />
-                    <span class="py-1.5 text-base text-gray-400 select-none sm:text-sm/6">&nbsp;/&nbsp;</span>
-                    <input id="debit-expiry-yy" type="text" name="debit-expiry-yy"
-                      placeholder="YY"
-                      inputmode="numeric"
-                      autocomplete="new-password"
-                      data-lpignore="true" data-1p-ignore
-                      maxlength="2"
-                      class="w-[38px] bg-transparent py-1.5 pl-0 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" />
-                  </div>
-                </div>
-
-                <div>
-                  <label for="debit-cvv" class="block text-sm/6 font-medium text-gray-900">Security code</label>
-                  <div class="mt-2">
-                    <input id="debit-cvv" type="text" name="debit-cvv"
-                      placeholder="CVV"
-                      inputmode="numeric"
-                      autocomplete="new-password"
-                      data-lpignore="true" data-1p-ignore
-                      maxlength="4"
-                      class="block w-[80px] rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
-                  </div>
-                </div>
-
-              </div>
-
+              <!-- "Card details are invalid" -->
+              <div data-debit-alert hidden></div>
             </div>
           </div>
 
           <!-- Actions -->
-          <div class="w-full max-w-[640px] mt-auto pt-10 pb-6">
-            <div class="flex items-center gap-6">
-              <a href="paywall.html" class="h-11 flex-1 inline-flex items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">
-                Back
-              </a>
-              <button id="next-button" type="button" disabled class="inline-flex h-11 flex-1 items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">
+          <div class="mt-auto flex flex-col items-center gap-6 px-4 pb-6 lg:px-14 lg:pb-14">
+            <div class="flex w-full gap-8">
+              <a href="paywall.html"
+                class="hidden flex-1 items-center justify-center rounded-[10px] border border-gray-300 bg-white px-[25px] py-4 text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+              <button type="submit"
+                class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white shadow-xs hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                 Next
-                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="-mr-0.5 size-5">
-                  <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.19L10.22 5.53a.75.75 0 1 1 1.06-1.06l5 5a.75.75 0 0 1 0 1.06l-5 5a.75.75 0 1 1-1.06-1.06l3.72-3.72H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
-                </svg>
+                <img src="../../assets/onboarding/icon-arrow-narrow-right.svg" alt="" width="20" height="20" class="size-5">
               </button>
             </div>
+            <a href="bank-details.html"
+              class="rounded-md px-2.5 py-1.5 text-sm leading-5 text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+              I'd rather use my <span class="font-semibold text-[#3671fb]">routing and account</span> number
+            </a>
           </div>
+        </form>
 
-        </div>
-
-        <!-- Footer -->
+        <!-- Footer: on desktop the sidebar carries it -->
         <div data-ob-footer class="lg:hidden"></div>
-
       </div>
     </div>
 

@@ -12,7 +12,8 @@
  * Markup: <nav aria-label="Progress" data-ob-stepper data-ob-step="signature">
  * The step id is normally inferred from the filename, so the attribute is only
  * needed when a page wants to claim a different step. data-ob-step="none"
- * shows every step as upcoming (the welcome screen, before the flow starts).
+ * shows every step as upcoming (the welcome screen, before the flow starts);
+ * data-ob-step="all" shows every step done, without links (the flow is over).
  */
 (function () {
   'use strict';
@@ -30,9 +31,9 @@
     { id: 'documents', label: 'Review Documents', href: 'review-documents.html',
       alsoMatches: ['review-documents', 'signature'] },
     { id: 'payment', label: 'Receive Payment', href: 'paywall.html',
-      alsoMatches: ['paywall', 'instant-virtual-card', 'debit-card-details', 'debit-account-info', 'summary'] },
+      alsoMatches: ['paywall', 'instant-virtual-card', 'virtual-card-summary', 'bank-details', 'bank-account-info', 'bank-summary', 'check-request', 'check-summary', 'debit-summary', 'debit-card-details', 'debit-account-info', 'summary'] },
     { id: 'complete', label: 'Complete Payment', href: 'create-account.html',
-      alsoMatches: ['create-account', 'complete'] }
+      alsoMatches: ['create-account', 'complete', 'card-created', 'bank-submitted', 'check-submitted', 'debit-submitted'] }
   ];
 
   var CHECK = 'M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z';
@@ -48,16 +49,19 @@
     return null;
   }
 
-  function done(step) {
+  function done(step, finished) {
     // Completed steps keep their look on hover: no colour change on the check.
-    return '<li><a href="' + step.href + '" class="rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">' +
+    // Once the whole flow is finished there is nothing to go back to.
+    var open = finished ? '<li><div>' : '<li><a href="' + step.href + '" class="rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">';
+    var shut = finished ? '</div></li>' : '</a></li>';
+    return open +
       '<span class="flex items-start">' +
         '<span class="relative flex size-5 shrink-0 items-center justify-center">' +
           '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-full text-white">' +
             '<path d="' + CHECK + '" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
         '</span>' +
         '<span class="ml-3 text-sm font-medium text-white">' + step.label + '</span>' +
-      '</span></a></li>';
+      '</span>' + shut;
   }
 
   function current(step) {
@@ -87,9 +91,11 @@
     if (!id) return;
     var at = -1;
     for (var i = 0; i < STEPS.length; i += 1) if (STEPS[i].id === id) at = i;
+    var finished = id === 'all';
+    if (finished) at = STEPS.length;
     if (at === -1 && id !== 'none') return;
     nav.innerHTML = '<ol role="list" class="space-y-6">' + STEPS.map(function (step, index) {
-      if (index < at) return done(step);
+      if (index < at) return done(step, finished);
       if (index === at) return current(step);
       return upcoming(step);
     }).join('') + '</ol>';

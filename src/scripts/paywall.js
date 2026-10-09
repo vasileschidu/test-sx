@@ -74,18 +74,18 @@
     if (method.compact) {
       return '<li><button type="button" data-pay-method="' + i + '" class="' + cls + '">' +
         '<span class="flex min-w-0 flex-1 flex-wrap gap-x-1.5 text-xs leading-4">' +
-          '<span class="font-semibold text-[#111827]">' + esc(method.label) + '</span>' +
-          '<span class="text-[#6b7280]">' + esc(method.detail) + '</span>' +
+          '<span data-ob-skeleton class="font-semibold text-[#111827]">' + esc(method.label) + '</span>' +
+          '<span data-ob-skeleton class="text-[#6b7280]">' + esc(method.detail) + '</span>' +
         '</span>' + chevron + '</button></li>';
     }
     return '<li><button type="button" data-pay-method="' + i + '" class="' + cls + '">' +
       '<span class="flex min-w-0 flex-1 items-center gap-3">' +
-        '<span class="flex size-8 shrink-0 items-center justify-center rounded-md bg-[#f9fafb]">' +
+        '<span data-ob-skeleton class="flex size-8 shrink-0 items-center justify-center rounded-md bg-[#f9fafb]">' +
           '<img src="' + ASSETS + method.icon + '" alt="" width="24" height="24" class="size-6">' +
         '</span>' +
-        '<span class="flex min-w-0 flex-col">' +
-          '<span class="text-sm leading-5 font-semibold text-[#111827]">' + esc(method.label) + '</span>' +
-          '<span class="text-xs leading-4 text-[#6b7280]">' + esc(method.detail) + '</span>' +
+        '<span class="flex min-w-0 flex-col items-start gap-0.5">' +
+          '<span data-ob-skeleton class="text-sm leading-5 font-semibold text-[#111827]">' + esc(method.label) + '</span>' +
+          '<span data-ob-skeleton class="text-xs leading-4 text-[#6b7280]">' + esc(method.detail) + '</span>' +
         '</span>' +
       '</span>' + chevron + '</button></li>';
   }
@@ -100,13 +100,7 @@
       if (!btn) return;
       var method = data.methods[Number(btn.getAttribute('data-pay-method'))];
       saveState(Object.assign({ paymentMethod: method.id }, method.state || {}));
-      if (method.href) {
-        window.location.href = method.href;
-      } else {
-        // No screen for paper checks in the prototype yet.
-        infoDialog('icon-calendar-lined.svg', 'Paper check',
-          '<p class="text-sm leading-5 text-[#6b7280]">A paper check isn’t available in this prototype yet. Please choose another payment method.</p>');
-      }
+      window.OBGo(method.href);
     });
 
     document.querySelector('[data-pay-chip="message"]').addEventListener('click', function () {
@@ -132,7 +126,8 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    fetch(DATA_PATH, { cache: 'no-cache' })
+    // The methods list is built from data: the page skeleton waits for it.
+    var ready = fetch(DATA_PATH, { cache: 'no-cache' })
       .then(function (res) { return res.json(); })
       .then(function (data) {
         if (!validateData(data, ['message', 'expirationDate', 'methods'])) throw new Error('sd-payment.json is missing fields');
@@ -143,5 +138,6 @@
         var list = document.querySelector('[data-pay-methods]');
         if (list) list.innerHTML = '<li class="text-sm text-[#6b7280]">Payment methods are unavailable right now. Please try again later.</li>';
       });
+    if (window.OnboardingTransitions && window.OnboardingTransitions.waitFor) window.OnboardingTransitions.waitFor(ready);
   });
 })();

@@ -1,0 +1,107 @@
+<!--
+  @file onboarding/debit-summary.html
+  @description Send to my Debit Card · Summary, "One Final Step" (Figma "Debit
+    Card", "11. MC Send - Summary"; content only): the card, address and
+    contact details with Edit links and the consents before "Deposit", which
+    asks for a signature. Logic: src/scripts/virtual-card-summary.js
+    (data-vcs-variant="debit").
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>One Final Step · SMART Disburse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Meow+Script&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/data-source.js"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js"></script>
+  <script src="../../../src/scripts/onboarding-field.js"></script>
+  <script src="../../../src/scripts/onboarding-modal.js"></script>
+  <script src="../../../src/scripts/onboarding-decline.js"></script>
+  <script src="../../../src/scripts/onboarding-stepper.js"></script>
+  <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
+  <script src="../../../src/scripts/onboarding-substeps.js"></script>
+  <script src="../../../src/scripts/onboarding-consents.js"></script>
+  <script src="../../../src/scripts/onboarding-sign.js"></script>
+  <script src="../../../src/scripts/onboarding-debit.js"></script>
+  <script src="../../../src/scripts/virtual-card-summary.js"></script>
+</head>
+
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+
+  <!-- CONTAINER -->
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+
+    <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js -->
+    <div data-ob-sidebar></div>
+
+    <!-- RIGHT COLUMN (scrolls) -->
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col lg:min-h-screen">
+
+        <div data-ob-content data-vcs-variant="debit" class="flex flex-1 flex-col gap-14">
+          <div class="flex flex-col gap-9 px-4 pt-10 lg:px-14 lg:pt-14">
+            <div data-ob-substeps-desktop data-ob-substeps="Card Details|Account Information|Summary" data-ob-substep="2"></div>
+
+            <div class="flex w-full flex-col gap-9">
+              <div class="flex w-full flex-col gap-6">
+                <div class="flex flex-col gap-2.5">
+                  <h1 class="text-3xl leading-9 text-[#1f2937]">One <span class="font-semibold">Final Step</span></h1>
+                  <p class="text-sm leading-5 text-[#6b7280]">Make sure all the details are accurate</p>
+                </div>
+
+                <!-- Payment amount -->
+                <section aria-label="Payment amount" data-ob-tone="dark"
+                  class="relative h-[173px] w-full overflow-hidden rounded-2xl bg-[linear-gradient(149deg,#3773ff_3.3%,#2254ca_99.2%)] shadow-[0px_20px_50px_-12px_rgba(0,0,0,0.25)]">
+                  <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+                    <span class="absolute top-[-85.37px] left-[-41.37px] flex size-[198.7px] items-center justify-center"><img src="../../assets/onboarding/bubble-1.svg" alt="" width="162.266" height="162.266" class="block max-w-none -rotate-[105deg]"></span>
+                    <span class="absolute top-[110.25px] left-[-9.61px] flex size-[143.1px] items-center justify-center"><img src="../../assets/onboarding/bubble-2.svg" alt="" width="116.858" height="116.858" class="block max-w-none -rotate-[105deg]"></span>
+                    <span class="absolute top-[23.12px] left-[242.54px] flex size-[180.2px] items-center justify-center"><img src="../../assets/onboarding/bubble-3.svg" alt="" width="147.167" height="147.167" class="block max-w-none -rotate-[105deg]"></span>
+                  </div>
+                  <div class="relative flex h-full flex-col items-center gap-3 pt-6 pb-[25px]">
+                    <p class="text-xs leading-5 font-medium tracking-[0.3px] text-[#bfdbfe] uppercase">Payment Amount</p>
+                    <p data-ob-skeleton class="text-5xl leading-[48px] whitespace-nowrap"><span data-vcs-integer class="text-white">$487</span><span data-vcs-decimal class="text-[#3b82f6]">.00</span></p>
+                    <p class="flex items-center gap-1 rounded-[14px] bg-[#1e40af] py-1 pr-[5px] pl-4">
+                      <span class="text-[10px] leading-5 font-medium tracking-[1px] whitespace-nowrap text-[#60a5fa] uppercase">Estimated Processing Time:</span>
+                      <span class="flex items-center gap-0.5 rounded-[30px] bg-[#10b981] px-1.5 py-0.5 text-xs leading-3 whitespace-nowrap text-white">
+                        <img src="../../assets/onboarding/icon-check-circle-badge.svg" alt="" width="14" height="14" class="size-3.5">Instant
+                      </span>
+                    </p>
+                  </div>
+                </section>
+              </div>
+
+              <!-- Entered details, rendered by virtual-card-summary.js -->
+              <div data-vcs-groups class="flex w-full flex-col gap-3"></div>
+            </div>
+
+            <!-- Consents -->
+            <ul data-vcs-consents role="list" class="flex w-full flex-col divide-y divide-[#e5e7eb] overflow-hidden rounded-lg border border-[#e5e7eb]"></ul>
+          </div>
+
+          <!-- Actions -->
+          <div class="mt-auto flex px-4 pb-6 lg:px-14 lg:pb-14">
+            <div class="flex w-full gap-8">
+              <a href="debit-account-info.html"
+                class="hidden flex-1 items-center justify-center rounded-[10px] border border-gray-300 bg-white px-[25px] py-4 text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+              <button type="button" data-vcs-submit disabled
+                class="flex flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-[25px] py-4 text-base leading-6 font-medium text-white shadow-xs hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
+                Deposit <span data-vcs-deposit-amount class="ml-1">$487.00</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer: on desktop the sidebar carries it -->
+        <div data-ob-footer class="lg:hidden"></div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

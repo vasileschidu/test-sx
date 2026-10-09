@@ -116,7 +116,7 @@
         saveState({ identity: { attemptsUsed: attemptsUsed } });
         if (attemptsUsed >= max) {
           saveState({ revokedReason: 'Exhausted attempts to confirm identity' });
-          window.location.href = REVOKED_URL;
+          window.OBGo(REVOKED_URL);
           return;
         }
         // As designed: every answer is flagged, without saying which one was wrong.
@@ -128,7 +128,7 @@
         return;
       }
       saveState({ identity: { attemptsUsed: 0, confirmedAt: new Date().toISOString() } });
-      window.location.href = NEXT_URL;
+      window.OBGo(NEXT_URL);
     });
 
     // "To collect your $487.00, …" — the amount from the welcome screen.
@@ -142,7 +142,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    fetch(DATA_PATH, { cache: 'no-cache' })
+    var ready = fetch(DATA_PATH, { cache: 'no-cache' })
       .then(function (res) { return res.json(); })
       .then(function (data) {
         if (!validateData(data, ['maxAttempts', 'fields'])) throw new Error('sd-identity.json is missing fields');
@@ -153,5 +153,6 @@
         var card = document.querySelector('[data-identity-card]');
         if (card) card.textContent = 'Identity questions are unavailable right now. Please try again later.';
       });
+    if (window.OnboardingTransitions && window.OnboardingTransitions.waitFor) window.OnboardingTransitions.waitFor(ready);
   });
 })();

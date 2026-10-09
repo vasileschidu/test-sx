@@ -12,7 +12,8 @@
  *
  * Prototype rules (src/data/sd-verification.json): any 6-digit code passes
  * except `incorrectDemoCode`, so the error state can be shown on demand.
- * The channel is email unless the link carries ?channel=phone.
+ * The channel comes from `channel` in the data: "email", "phone" or "random"
+ * (a coin flip on every visit). ?channel=email|phone in the link overrides it.
  */
 (function () {
   'use strict';
@@ -79,7 +80,9 @@
     var submitBtn = $('[data-verify-submit]');
 
     var params = new URLSearchParams(window.location.search);
-    var channelKey = params.get('channel') === 'phone' ? 'phone' : (config.channel === 'phone' ? 'phone' : 'email');
+    var asked = params.get('channel');
+    var channelKey = (asked === 'email' || asked === 'phone') ? asked : config.channel;
+    if (channelKey !== 'email' && channelKey !== 'phone') channelKey = Math.random() < 0.5 ? 'email' : 'phone';
     var channel = CHANNELS[channelKey];
     var max = config.maxAttempts;
     var attemptsUsed = (getState().verification || {}).attemptsUsed || 0;
@@ -118,7 +121,7 @@
       if (remaining() === 0) {
         clearInterval(timer);
         saveState({ revokedReason: 'Exhausted attempts to provide Verification Code' });
-        window.location.href = REVOKED_URL;
+        window.OBGo(REVOKED_URL);
         return false;
       }
       return true;
@@ -206,7 +209,7 @@
       }
       clearInterval(timer);
       saveState({ verification: { attemptsUsed: 0, verifiedAt: new Date().toISOString() } });
-      window.location.href = NEXT_URL;
+      window.OBGo(NEXT_URL);
     });
 
     var ctx = window.SDOnboardingContext;

@@ -10,7 +10,8 @@
  *
  * The mobile header clones the progress nav and the first `.mt-auto` element
  * (the Contact / Decline card) into its sheet, so keep the nav a direct child
- * of the sidebar and keep `mt-auto` on that card.
+ * of the sidebar and keep `mt-auto` on that card. data-ob-no-decline on the
+ * slot drops "Decline Payment" from that card (once the payment is done).
  *
  * It also renders the light page footer (Figma "SD Footer/Mobile(2.1)", node
  * 19447:65057) into every <div data-ob-footer></div>. The slot keeps its own
@@ -157,7 +158,8 @@
     });
   }
 
-  function markup() {
+  /** noDecline: the payment is already done, so only Contact Us is offered. */
+  function markup(noDecline) {
     return (
       // Top icon: shown as in the design, no behaviour yet.
       '<div class="flex shrink-0 items-center rounded-lg bg-gray-900/25 p-2.5">' +
@@ -171,8 +173,9 @@
       '<div class="flex w-[212px] shrink-0 flex-col gap-6">' +
         '<div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">' +
           action('icon-envelope.svg', 'Contact Us', 'data-ob-contact') +
+          (noDecline ? '' :
           '<div class="h-px w-full self-stretch bg-white/10"></div>' +
-          action('icon-x-circle.svg', 'Decline Payment', 'data-ob-decline') +
+          action('icon-x-circle.svg', 'Decline Payment', 'data-ob-decline')) +
         '</div>' +
 
         '<div class="flex flex-col items-center gap-4">' +
@@ -212,9 +215,11 @@
   function init() {
     var slots = document.querySelectorAll('[data-ob-sidebar]');
     for (var i = 0; i < slots.length; i += 1) {
+      // On short windows the menu scrolls on its own instead of being cut off.
       slots[i].className = 'hidden lg:flex w-[325px] shrink-0 self-stretch flex-col items-end gap-8 ' +
+        'overflow-y-auto overscroll-contain [scrollbar-width:thin] [scrollbar-color:rgba(255,255,255,0.25)_transparent] ' +
         'bg-gradient-to-b from-[#1E326F] to-[#090C38] px-14 pt-14 pb-8';
-      slots[i].innerHTML = markup();
+      slots[i].innerHTML = markup(slots[i].hasAttribute('data-ob-no-decline'));
       // A page can pick the stepper state on the slot, e.g. data-ob-step="none".
       var step = slots[i].getAttribute('data-ob-step');
       if (step) slots[i].querySelector('[data-ob-stepper]').setAttribute('data-ob-step', step);

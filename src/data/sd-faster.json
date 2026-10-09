@@ -1,0 +1,15 @@
+{
+  "title": "Get your money faster",
+  "options": [
+    {
+      "id": "instant-virtual-card",
+      "label": "Instantly on a Virtual Card",
+      "href": "instant-virtual-card.html"
+    },
+    {
+      "id": "debit-card",
+      "label": "Route using a Debit Card number",
+      "href": "debit-card-details.html"
+    }
+  ]
+}

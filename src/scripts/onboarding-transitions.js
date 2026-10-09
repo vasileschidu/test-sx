@@ -30,7 +30,13 @@
   var STYLE_ID = 'ob-transition-styles';
   var MIN_DELAY_MS = 1000;
   var MAX_DELAY_MS = 1500;
-  var EXIT_DURATION_MS = 200;
+  var EXIT_DURATION_MS = 260;
+
+  // Browsers with cross-document View Transitions cross-fade one page into the
+  // next themselves; the menu and the phone top bar are named so they stay put
+  // and only the content changes. Others get the manual fade-out / fade-in.
+  var NATIVE_PAGE_TRANSITIONS = !!(window.CSS && CSS.supports && CSS.supports('view-transition-name: ob') &&
+    'onpagereveal' in window);
 
   // Replaced elements grow no ::before/::after boxes, so form controls are
   // masked with their own background instead of a pseudo-element overlay.
@@ -43,6 +49,9 @@
   var MIN_REGION_INSET = 12;
 
   var readyCallbacks = [];
+  // Content a page builds from data (lists, form fields) after load. The scan
+  // waits for it, so those parts get skeletons too instead of popping in.
+  var pendingContent = [];
   var isReady = false;
 
   function prefersReducedMotion() {
@@ -90,18 +99,28 @@
       '@keyframes obPulse{0%,100%{opacity:1}50%{opacity:.55}}',
       // A plain crossfade, no travel: moving already-settled layout is what
       // makes the step look like it loads twice.
-      '.ob-settle{animation:obSettle .3s ease-out both;}',
+      '.ob-settle{animation:obSettle .45s cubic-bezier(.4,0,.2,1) both;}',
       '@keyframes obSettle{from{opacity:0}to{opacity:1}}',
       // The page-enter fade is a plain CSS rule, not a class added from JS:
       // by the time a script can add a class the browser has already painted,
       // so an animation starting at opacity 0 blinks the whole page out first.
       // No transform either — it would make <body> a containing block for
       // fixed-position dialogs while it runs.
-      'body{animation:obEnter .4s ease-out both;}',
-      '@keyframes obEnter{from{opacity:0}to{opacity:1}}',
-      'html.ob-leaving body{opacity:0;transition:opacity ' + EXIT_DURATION_MS + 'ms ease-in;}',
+      NATIVE_PAGE_TRANSITIONS
+        ? '@view-transition{navigation:auto;}' +
+          '[data-ob-sidebar]{view-transition-name:ob-sidebar;}' +
+          '[data-ob-mobile-header]{view-transition-name:ob-mobile-header;}' +
+          '[data-ob-footer]{view-transition-name:ob-footer;}' +
+          '::view-transition-old(root){animation:obVtOut .28s cubic-bezier(.4,0,1,1) both;}' +
+          '::view-transition-new(root){animation:obVtIn .38s cubic-bezier(0,0,.2,1) .06s both;}' +
+          '@keyframes obVtOut{to{opacity:0}}' +
+          '@keyframes obVtIn{from{opacity:0}}'
+        : 'body{animation:obEnter .45s cubic-bezier(0,0,.2,1) both;}' +
+          '@keyframes obEnter{from{opacity:0}to{opacity:1}}' +
+          'html.ob-leaving body{opacity:0;transition:opacity ' + EXIT_DURATION_MS + 'ms cubic-bezier(.4,0,1,1);}',
       '@media (prefers-reduced-motion: reduce){',
       '.ob-skel,.ob-skel-field{animation:none;}',
+      '::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important;}',
       '.ob-settle,body{animation:obFade .01s both;}',
       '@keyframes obFade{to{opacity:1}}',
       'html.ob-leaving body{transition:none;}',
@@ -331,7 +350,8 @@
 
   function navigate(href) {
     if (!href) return;
-    if (prefersReducedMotion()) {
+    // Native cross-fade (or reduced motion): just go, the browser handles it.
+    if (prefersReducedMotion() || NATIVE_PAGE_TRANSITIONS) {
       window.location.href = href;
       return;
     }
@@ -357,7 +377,20 @@
     });
   }
 
+  /**
+   * A page that renders part of its content asynchronously registers that work
+   * here (call it during DOMContentLoaded). Until it settles, anything marked
+   * [data-ob-skeleton] stays hidden; then the scan masks it like the rest.
+   */
+  function waitFor(promise) {
+    pendingContent.push(Promise.resolve(promise).catch(function () {}));
+  }
+
   function initStep() {
+    Promise.all(pendingContent).then(scanStep);
+  }
+
+  function scanStep() {
     var root = document.querySelector('[data-ob-content]');
     if (!root) {
       flushReady();
@@ -403,8 +436,12 @@
   });
   initExitTransitions();
 
+  /** Script-driven page changes use the same fade-out as links. */
+  window.OBGo = function (href) { navigate(href); };
+
   window.OnboardingTransitions = {
     navigate: navigate,
-    whenReady: whenReady
+    whenReady: whenReady,
+    waitFor: waitFor
   };
 })();

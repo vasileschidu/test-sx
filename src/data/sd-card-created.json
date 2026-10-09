@@ -1,0 +1,27 @@
+{
+  "card": {
+    "number": "5115-9502-8176-1020",
+    "cvc": "911",
+    "type": "debit",
+    "validYears": 3
+  },
+  "trademark": "Mastercard and the circles design are registered trademarks of Mastercard International Incorporated.",
+  "receipt": {
+    "title": "Get your receipt",
+    "text": "Leave an email where we can send the receipt for this transaction.",
+    "consent": "I accept receiving email from",
+    "consentLink": "Terms of Use",
+    "requiredMessage": "The email field is required",
+    "invalidMessage": "The email you entered is not valid"
+  },
+  "finishUrl": "../smart-disburse/index.html",
+  "checkHow": {
+    "title": "How this works",
+    "items": [
+      "Your check is printed and mailed to the mailing address on your receipt.",
+      "It usually arrives within 7-10 business days.",
+      "Deposit it at your bank, at an ATM or with your bank's mobile app.",
+      "The check is valid for 180 days from the issue date."
+    ]
+  }
+}

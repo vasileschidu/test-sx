@@ -8,8 +8,8 @@
     { "id": "documents",    "label": "Review Documents",  "href": "review-documents.html",
       "alsoMatches": ["review-documents", "signature"] },
     { "id": "payment",      "label": "Receive Payment",   "href": "paywall.html",
-      "alsoMatches": ["paywall", "instant-virtual-card", "debit-card-details", "debit-account-info", "summary"] },
+      "alsoMatches": ["paywall", "instant-virtual-card", "virtual-card-summary", "bank-details", "bank-account-info", "bank-summary", "check-request", "check-summary", "debit-summary", "debit-card-details", "debit-account-info", "summary"] },
     { "id": "complete",     "label": "Complete Payment",  "href": "create-account.html",
-      "alsoMatches": ["create-account", "complete"] }
+      "alsoMatches": ["create-account", "complete", "card-created", "bank-submitted", "check-submitted", "debit-submitted"] }
   ]
 }

@@ -239,7 +239,7 @@ window.OBDecline = (function () {
           declined: { reason: selected, note: note.value.trim(), declinedAt: new Date().toISOString() }
         });
       }
-      window.location.href = 'declined.html';
+      window.OBGo('declined.html');
     });
 
     return backdrop;

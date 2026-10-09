@@ -1,0 +1,20 @@
+{
+  "fee": 2.5,
+  "messages": {
+    "nameRequired": "Name on Debit Card is required",
+    "nameInvalid": "The name you entered is not valid",
+    "numberRequired": "Debit Card Number is required",
+    "numberInvalid": "The Debit Card Number provided is not a valid debit card number",
+    "monthRequired": "MM is required",
+    "monthInvalid": "The expiry month you entered is not valid",
+    "yearRequired": "YY is required",
+    "yearInvalid": "The expiry year you entered is not valid",
+    "expired": "This card has expired"
+  },
+  "declined": "Unfortunately, provided debit card details are invalid. Please enter valid debit card number and expiry date.",
+  "declinedDemoNumber": "4000000000000002",
+  "trademark": [
+    "Mastercard and the Mastercard Brand Mark are registered trademarks of Mastercard International Incorporated.",
+    "Visa and the Visa Brand Mark are registered trademarks of Visa Incorporated."
+  ]
+}

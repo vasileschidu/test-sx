@@ -1,0 +1,123 @@
+<!--
+  @file onboarding/card-created.html
+  @description Step 5 "Complete Payment" for the Instant Virtual Card (Figma
+    "5. Complete Payment", node 19484:120301): "Card Created!", the new card
+    and its receipt, Download Receipt (asks "Get your receipt" first) /
+    Finish and Close. Every step is done, so the menu shows all checks and
+    only Contact Us; mobile has no top bar. Logic:
+    src/scripts/card-created.js, content: src/data/sd-card-created.json.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Card Created · SMART Disburse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/data-source.js"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js"></script>
+  <script src="../../../src/scripts/onboarding-field.js"></script>
+  <script src="../../../src/scripts/onboarding-modal.js"></script>
+  <script src="../../../src/scripts/onboarding-stepper.js"></script>
+  <script src="../../../src/scripts/onboarding-vc-how.js"></script>
+  <script src="../../../src/scripts/card-created.js"></script>
+</head>
+
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+
+  <!-- CONTAINER -->
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+
+    <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js; every step done, no Decline -->
+    <div data-ob-sidebar data-ob-step="all" data-ob-no-decline></div>
+
+    <!-- RIGHT COLUMN (scrolls) -->
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col bg-[linear-gradient(180deg,#ecfdf5_0%,rgba(236,253,245,0)_64.668%)] lg:min-h-screen lg:bg-none">
+
+        <div data-ob-content class="flex flex-1 flex-col gap-10 px-4 pt-14 lg:gap-14 lg:px-0 lg:pt-0">
+
+          <!-- Card Created! + card + receipt -->
+          <div data-cc-capture class="flex w-full flex-col items-center gap-14 lg:gap-6 lg:bg-[linear-gradient(180deg,#ecfdf5_0%,rgba(236,253,245,0)_25.234%)] lg:px-14 lg:pt-14">
+            <div class="flex flex-col items-center gap-2">
+              <span class="relative block size-[45px]" aria-hidden="true">
+                <img src="../../assets/onboarding/cc-success-check.svg" alt="" width="95" height="95" class="absolute top-[-16px] left-[-25px] block max-w-none">
+              </span>
+              <h1 class="text-center text-3xl leading-9 whitespace-nowrap text-[#1f2937]">Card Created!</h1>
+            </div>
+
+            <div data-cc-receipt class="flex flex-col items-center">
+              <!-- Card, filled by card-created.js -->
+              <div data-cc-card data-ob-tone="dark" role="img" aria-label="Your Virtual Card"
+                class="relative z-[2] h-[219px] w-[344px] shrink-0 overflow-hidden rounded-[10px] bg-gradient-to-b from-[#1e326f] to-[#090c38] shadow-[0px_20px_50px_-12px_rgba(0,0,0,0.25)]">
+                <div class="absolute top-5 left-5 h-[179px] w-[305px] text-white">
+                  <p class="absolute top-0 left-[226px] rounded-[40px] bg-white/20 pr-1.5 pb-px pl-2 font-['Roboto_Mono'] text-xs leading-4 whitespace-nowrap">CVC2: <span data-cc-cvc data-ob-skeleton>911</span></p>
+                  <p class="absolute top-[30px] left-0 text-[27px] leading-[46px] font-semibold whitespace-nowrap"><span data-cc-amount data-ob-skeleton>$487.00</span></p>
+                  <p class="absolute top-[61px] right-[4px] font-['Roboto_Mono'] text-xs font-semibold whitespace-nowrap" data-cc-type>debit</p>
+                  <p class="absolute top-[77px] right-[54px] font-['Roboto_Mono'] text-[22px] leading-[24.788px] whitespace-nowrap"><span data-cc-number data-ob-skeleton>5115-9502-8176-1020</span></p>
+                  <div class="absolute top-[113px] left-[85px] flex items-center gap-2 whitespace-nowrap">
+                    <p class="font-['Roboto_Mono'] text-[10px] leading-[10.8px] font-semibold">VALID<br>THRU</p>
+                    <p class="font-['Roboto_Mono'] text-sm leading-[16.8px]"><span data-cc-valid data-ob-skeleton>04/29</span></p>
+                  </div>
+                  <p class="absolute top-[159.72px] left-0 max-w-[240px] truncate font-['Roboto_Mono'] text-sm font-semibold uppercase"><span data-cc-holder data-ob-skeleton>&nbsp;</span></p>
+                  <img src="../../assets/onboarding/cc-mastercard.svg" alt="Mastercard" width="52.0005" height="31.7201" class="absolute top-[147px] right-0 block">
+                </div>
+              </div>
+
+              <!-- Receipt -->
+              <div class="relative z-[1] flex flex-col items-start border-x border-t border-[#d1d5db] bg-white pt-10">
+                <div class="flex w-[300px] flex-col items-center gap-6 px-4">
+                  <div class="flex flex-col items-center gap-2">
+                    <button type="button" data-cc-trademark aria-expanded="false" aria-controls="cc-trademark-text"
+                      class="flex cursor-pointer items-center justify-center gap-2 rounded px-1 text-xs leading-[18px] text-[#6b7280] hover:text-[#374151] focus-visible:outline-2 focus-visible:outline-blue-600">
+                      <img src="../../assets/onboarding/cc-info.svg" alt="" width="12.8" height="12.8" class="block size-[12.8px]">Trademark Disclaimer
+                    </button>
+                    <p id="cc-trademark-text" data-cc-trademark-text hidden class="w-[268px] text-center text-xs leading-4 text-[#6b7280]"></p>
+                  </div>
+
+                  <div class="flex w-full flex-col items-center gap-4 rounded-md bg-[#f9fafb] px-4 py-5 text-center">
+                    <p class="w-full text-sm leading-5 text-[#6b7280]">Here’s your brand new Virtual Card, loaded with your <span data-cc-loaded data-ob-skeleton class="font-semibold text-[#1f2937]">$487.00</span>.</p>
+                    <button type="button" data-cc-how class="cursor-pointer rounded text-sm leading-5 font-medium text-[#3671fb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" data-cc-no-pdf>How to use this card</button>
+                  </div>
+
+                  <!-- Details, filled by card-created.js -->
+                  <dl data-cc-details class="flex w-[268px] flex-col gap-3"></dl>
+                </div>
+                <!-- Torn receipt edge: the scallops and bottom line. The graphic's own side
+                     lines are cropped off so the receipt's border runs to the bottom. -->
+                <div aria-hidden="true" class="relative h-[26px] w-[300px] overflow-hidden">
+                  <img src="../../assets/onboarding/cc-receipt-edge.svg" alt="" width="302" height="26" class="absolute top-[0.5px] left-[-2px] block h-[26px] w-[304px] max-w-none">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-1 flex-col items-center justify-end lg:min-h-[184px] lg:px-14 lg:pb-14">
+            <div class="flex w-full max-w-[588px] flex-col gap-4">
+              <button type="button" data-cc-download
+                class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[25px] pl-[23px] text-base leading-6 font-medium text-white shadow-xs hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:bg-[linear-gradient(163deg,#3773ff_3.3%,#2254ca_99.2%)]">
+                <img src="../../assets/onboarding/icon-download-solid.svg" alt="" width="20" height="20" class="size-5">
+                Download Receipt
+              </button>
+              <button type="button" data-cc-finish
+                class="flex w-full cursor-pointer items-center justify-center rounded-[10px] border border-[#d1d5db] bg-white px-[25px] py-4 text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                Finish and Close
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer: on desktop the sidebar carries it -->
+        <div data-ob-footer class="lg:hidden"></div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

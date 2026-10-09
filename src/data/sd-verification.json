@@ -1,5 +1,5 @@
 {
-  "channel": "email",
+  "channel": "random",
   "codeLength": 6,
   "validitySeconds": 120,
   "maxAttempts": 3,

@@ -154,7 +154,8 @@ window.OBModal = (function () {
     var dialog = backdrop.querySelector('[data-ob-modal-dialog]');
 
     function onKeydown(event) {
-      if (event.key === 'Escape') { close(); return; }
+      // A dialog marked busy (e.g. "processing") can't be dismissed.
+      if (event.key === 'Escape') { if (!backdrop.hasAttribute('data-busy')) close(); return; }
       if (event.key !== 'Tab') return;
       // Keep focus inside the dialog.
       var focusable = Array.prototype.filter.call(
@@ -169,6 +170,7 @@ window.OBModal = (function () {
     }
 
     backdrop.addEventListener('click', function (event) {
+      if (backdrop.hasAttribute('data-busy')) return;
       if (event.target === backdrop || event.target.closest('[data-ob-modal-close]')) close();
     });
 

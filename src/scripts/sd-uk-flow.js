@@ -291,6 +291,29 @@ window.SDUK = (function () {
     };
   }
 
+  // ── Mobile menu ──
+  //
+  // On phones the hamburger opens these actions in a dropdown instead of the
+  // stepper sheet (read by onboarding-mobile-header.js, which loads after this).
+
+  var MENU_ICONS = {
+    mail: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z"/><path d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z"/></svg>',
+    decline: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" clip-rule="evenodd"/></svg>'
+  };
+
+  window.OB_MOBILE_MENU = [
+    { label: 'Contact Us', icon: MENU_ICONS.mail, onSelect: function () { go('contact.html'); } },
+    { label: 'Decline Payment', icon: MENU_ICONS.decline, onSelect: function () {
+      confirmModal({
+        icon: 'warn',
+        title: 'Decline Payment',
+        body: '<p>Are you sure you want to decline this payment?</p><p class="mt-3">The payment request will be cancelled and you’ll need to contact <span class="font-semibold text-gray-900">' + ((data.payer && data.payer.name) || 'the payer') + '</span> to receive it.</p>',
+        cancel: 'Cancel', confirm: 'Decline', tone: 'danger',
+        onConfirm: function () { closeModal(); go('contact.html'); }
+      });
+    } }
+  ];
+
   // ── Boot ──
 
   // Page scripts run through ready() so they see the bound values and the shell.

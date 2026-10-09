@@ -1,0 +1,84 @@
+<!--
+  @file onboarding/check-request.html
+  @description Request a Check · Check Request, "Send me a Check" (Figma
+    "4.3. Request a Check", node 20322:74110). The Virtual Card's account
+    form (data-vc-variant="check"), rendered and validated by
+    src/scripts/virtual-card.js; next is check-summary.html.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Send me a Check · SMART Disburse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/data-source.js"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js"></script>
+  <script src="../../../src/scripts/onboarding-field.js"></script>
+  <script src="../../../src/scripts/onboarding-modal.js"></script>
+  <script src="../../../src/scripts/onboarding-decline.js"></script>
+  <script src="../../../src/scripts/onboarding-stepper.js"></script>
+  <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
+  <script src="../../../src/scripts/onboarding-substeps.js"></script>
+  <script src="../../../src/scripts/virtual-card.js"></script>
+</head>
+
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+
+  <!-- CONTAINER -->
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+
+    <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js -->
+    <div data-ob-sidebar></div>
+
+    <!-- RIGHT COLUMN (scrolls) -->
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col lg:min-h-screen">
+
+        <form id="vc-form" data-vc-variant="check" novalidate data-ob-content class="flex flex-1 flex-col gap-14">
+
+          <div class="flex flex-col gap-9 px-4 pt-10 lg:px-14 lg:pt-14">
+            <div data-ob-substeps="Check Request|Summary" data-ob-substep="0"></div>
+
+            <div class="flex w-full flex-col gap-6">
+              <div class="flex w-full flex-col gap-3">
+                <h1 class="text-3xl leading-9 text-[#111827]">Send me a <span class="font-semibold">Check</span></h1>
+                <p class="text-sm leading-5 text-[#6b7280]"><span data-ob-skeleton data-vc-amount class="font-medium text-[#1f2937]">$487.00</span> will be sent to you via a check, please fill in the necessary details</p>
+              </div>
+
+              <!-- Field groups, rendered by virtual-card.js -->
+              <div data-vc-sections class="flex w-full flex-col gap-4"></div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="mt-auto flex flex-col items-center gap-6 px-4 pb-6 lg:px-14 lg:pb-14">
+            <div class="flex w-full gap-8">
+              <a href="paywall.html"
+                class="hidden flex-1 items-center justify-center rounded-[10px] border border-gray-300 bg-white px-[25px] py-4 text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+              <button type="submit"
+                class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white shadow-xs hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                Next
+                <img src="../../assets/onboarding/icon-arrow-narrow-right.svg" alt="" width="20" height="20" class="size-5">
+              </button>
+            </div>
+            <button type="button" data-vc-bank
+              class="cursor-pointer rounded-md px-2.5 py-1.5 text-sm leading-5 text-[#3671fb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+              I'd rather send it directly to my <span class="font-semibold">bank account</span>
+            </button>
+          </div>
+        </form>
+
+        <!-- Footer: on desktop the sidebar carries it -->
+        <div data-ob-footer class="lg:hidden"></div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

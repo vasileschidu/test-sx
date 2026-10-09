@@ -1,0 +1,112 @@
+<!--
+  @file onboarding/debit-submitted.html
+  @description Step 5 "Complete Payment" for Send to my Debit Card (Figma "Debit
+    Card", "12. MC Send - Final Screen"; content only): "Successfully
+    Submitted!", the payment amount ("Instant") and the receipt starting with
+    the card, Download Receipt / Finish and Close. Logic:
+    src/scripts/card-created.js (data-cc-variant="debit").
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Successfully Submitted · SMART Disburse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/data-source.js"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js"></script>
+  <script src="../../../src/scripts/onboarding-field.js"></script>
+  <script src="../../../src/scripts/onboarding-modal.js"></script>
+  <script src="../../../src/scripts/onboarding-stepper.js"></script>
+    <script src="../../../src/scripts/onboarding-debit.js"></script>
+  <script src="../../../src/scripts/card-created.js"></script>
+</head>
+
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+
+  <!-- CONTAINER -->
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+
+    <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js; every step done, no Decline -->
+    <div data-ob-sidebar data-ob-step="all" data-ob-no-decline></div>
+
+    <!-- RIGHT COLUMN (scrolls) -->
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col bg-[linear-gradient(180deg,#ecfdf5_0%,rgba(236,253,245,0)_64.668%)] lg:min-h-screen lg:bg-none">
+
+        <div data-ob-content class="flex flex-1 flex-col gap-10 px-4 pt-14 lg:gap-14 lg:px-0 lg:pt-0">
+
+          <!-- Successfully Submitted! + amount + receipt -->
+          <div data-cc-capture data-cc-variant="debit" class="flex w-full flex-col items-center gap-14 lg:gap-9 lg:bg-[linear-gradient(180deg,#ecfdf5_0%,rgba(236,253,245,0)_25.234%)] lg:px-14 lg:pt-14">
+            <div class="flex flex-col items-center gap-2">
+              <span class="relative block size-[45px]" aria-hidden="true">
+                <img src="../../assets/onboarding/cc-success-check.svg" alt="" width="95" height="95" class="absolute top-[-16px] left-[-25px] block max-w-none">
+              </span>
+              <h1 class="text-center text-3xl leading-9 text-[#1f2937]">Successfully<br>Submitted!</h1>
+            </div>
+
+            <div data-cc-receipt class="flex w-full flex-col items-center">
+              <!-- Payment amount -->
+              <section aria-label="Payment amount" data-ob-tone="dark"
+                class="relative z-[2] h-[173px] w-full overflow-hidden rounded-2xl bg-[linear-gradient(137deg,#3773ff_3.3%,#2254ca_99.2%)] shadow-[0px_20px_50px_-12px_rgba(0,0,0,0.25)]">
+                <div aria-hidden="true" class="pointer-events-none absolute inset-0">
+                  <span class="absolute top-[-85.37px] left-[-41.37px] flex size-[198.7px] items-center justify-center"><img src="../../assets/onboarding/bubble-1.svg" alt="" width="162.266" height="162.266" class="block max-w-none -rotate-[105deg]"></span>
+                  <span class="absolute top-[110.25px] left-[-9.61px] flex size-[143.1px] items-center justify-center"><img src="../../assets/onboarding/bubble-2.svg" alt="" width="116.858" height="116.858" class="block max-w-none -rotate-[105deg]"></span>
+                  <span class="absolute top-[23.12px] left-[242.54px] flex size-[180.2px] items-center justify-center"><img src="../../assets/onboarding/bubble-3.svg" alt="" width="147.167" height="147.167" class="block max-w-none -rotate-[105deg]"></span>
+                </div>
+                <div class="relative flex h-full flex-col items-center gap-3 pt-6 pb-[25px]">
+                  <p class="text-xs leading-5 font-medium tracking-[0.3px] text-[#bfdbfe] uppercase">Payment Amount</p>
+                  <p data-ob-skeleton class="text-5xl leading-[48px] whitespace-nowrap"><span data-cc-integer class="text-white">$487</span><span data-cc-decimal class="text-[#3b82f6]">.00</span></p>
+                  <p class="flex items-center gap-1.5 rounded-full bg-[#1e40af] py-1 pr-1 pl-4">
+                    <span class="text-[10px] leading-4 font-medium tracking-[0.7px] whitespace-nowrap text-[#60a5fa] uppercase">Estimated Processing Time:</span>
+                    <span class="flex items-center gap-0.5 rounded-full bg-[#10b981] py-0.5 pr-1.5 pl-1 text-xs leading-4 whitespace-nowrap text-white">
+                      <img src="../../assets/onboarding/icon-check-circle-badge.svg" alt="" width="14" height="14" class="size-3.5">Instant
+                    </span>
+                  </p>
+                </div>
+              </section>
+
+              <!-- Receipt -->
+              <div class="relative z-[1] flex flex-col items-start border-x border-t border-[#d1d5db] bg-white pt-6">
+                <div class="flex w-[300px] flex-col items-center px-4 pt-4">
+                  <!-- Details, filled by card-created.js -->
+                  <dl data-cc-details class="flex w-[268px] flex-col gap-3"></dl>
+                </div>
+                <!-- Torn receipt edge: the scallops and bottom line. The graphic's own side
+                     lines are cropped off so the receipt's border runs to the bottom. -->
+                <div aria-hidden="true" class="relative h-[26px] w-[300px] overflow-hidden">
+                  <img src="../../assets/onboarding/cc-receipt-edge.svg" alt="" width="302" height="26" class="absolute top-[0.5px] left-[-2px] block h-[26px] w-[304px] max-w-none">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="flex flex-1 flex-col items-center justify-end lg:min-h-[184px] lg:px-14 lg:pb-14">
+            <div class="flex w-full max-w-[588px] flex-col gap-4">
+              <button type="button" data-cc-download
+                class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[25px] pl-[23px] text-base leading-6 font-medium text-white shadow-xs hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:bg-[linear-gradient(163deg,#3773ff_3.3%,#2254ca_99.2%)]">
+                <img src="../../assets/onboarding/icon-download-solid.svg" alt="" width="20" height="20" class="size-5">
+                Download Receipt
+              </button>
+              <button type="button" data-cc-finish
+                class="flex w-full cursor-pointer items-center justify-center rounded-[10px] border border-[#d1d5db] bg-white px-[25px] py-4 text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                Finish and Close
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Footer: on desktop the sidebar carries it -->
+        <div data-ob-footer class="lg:hidden"></div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

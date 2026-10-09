@@ -99,7 +99,7 @@
     var part = function (file, cls) {
       return '<span class="absolute block ' + cls + '"><img src="' + ASSETS + file + '" alt="" class="absolute inset-0 block size-full max-w-none"></span>';
     };
-    return '<span aria-hidden="true" class="relative block h-[42px] w-[30px] shrink-0 overflow-hidden rounded-[1.24px] border border-[#d1d5db] bg-white">' +
+    return '<span aria-hidden="true" data-ob-skeleton class="relative block h-[42px] w-[30px] shrink-0 overflow-hidden rounded-[1.24px] border border-[#d1d5db] bg-white">' +
       part('doc-thumb-body.svg', 'inset-[5.68%_4.07%_22.92%_4.95%]') +
       part(line, 'top-[37.75px] left-[1.54px] h-[1.16px] w-[15.54px]') +
       part('doc-thumb-logo.svg', 'inset-[80.46%_77.72%_15.66%_4.94%]') +
@@ -145,9 +145,9 @@
             'class="flex w-full cursor-pointer items-center gap-3 rounded-lg border bg-white p-4 text-left shadow-xs hover:bg-gray-50 ' +
             'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ' + (invalid ? 'border-[#ef4444]' : 'border-[#d1d5db]') + '">' +
             thumbnail(i) +
-            '<span class="flex min-w-0 flex-1 flex-col gap-0.5 pb-0.5">' +
-              '<span class="truncate text-base leading-6 text-[#111827]">' + esc(doc.name) + '</span>' +
-              '<span class="flex items-center gap-2 text-xs leading-4 text-[#6b7280]">' + esc(doc.type) +
+            '<span class="flex min-w-0 flex-1 flex-col items-start gap-0.5 pb-0.5">' +
+              '<span data-ob-skeleton class="max-w-full truncate text-base leading-6 text-[#111827]">' + esc(doc.name) + '</span>' +
+              '<span data-ob-skeleton class="flex items-center gap-2 text-xs leading-4 text-[#6b7280]">' + esc(doc.type) +
                 '<img src="' + ASSETS + 'dot-gray.svg" alt="" width="2" height="2" class="size-0.5">' + esc(doc.size) + '</span>' +
             '</span>' +
             (done
@@ -250,7 +250,7 @@
 
     nextBtn.addEventListener('click', function () {
       if (docs.every(isReviewed)) {
-        window.location.href = NEXT_URL;
+        window.OBGo(NEXT_URL);
         return;
       }
       showErrors = true;
@@ -262,7 +262,8 @@
   }
 
   document.addEventListener('DOMContentLoaded', function () {
-    fetch(DATA_PATH, { cache: 'no-cache' })
+    // The attachments are built from data: the page skeleton waits for them.
+    var ready = fetch(DATA_PATH, { cache: 'no-cache' })
       .then(function (res) { return res.json(); })
       .then(function (data) {
         if (!validateData(data, ['headerText', 'documents'])) throw new Error('sd-documents.json is missing fields');
@@ -273,5 +274,6 @@
         var list = document.querySelector('[data-docs-list]');
         if (list) list.innerHTML = '<li class="text-sm text-[#6b7280]">Documents are unavailable right now. Please try again later.</li>';
       });
+    if (window.OnboardingTransitions && window.OnboardingTransitions.waitFor) window.OnboardingTransitions.waitFor(ready);
   });
 })();
