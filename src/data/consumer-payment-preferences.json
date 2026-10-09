@@ -3,86 +3,62 @@
     {
       "id": "optum-pay",
       "name": "Optum Pay",
-      "vendorEntries": [
-        "Optum Pay"
-      ]
+      "vendorEntries": ["Optum Pay"]
     },
     {
       "id": "state-of-new-jersey",
       "name": "State of New Jersey",
-      "vendorEntries": [
-        "State of New Jersey"
-      ]
+      "vendorEntries": ["State of New Jersey"]
     },
     {
       "id": "aetna",
       "name": "Aetna",
-      "vendorEntries": [
-        "Aetna"
-      ]
+      "vendorEntries": ["Aetna"]
     },
     {
       "id": "unitedhealthcare",
       "name": "UnitedHealthcare",
-      "vendorEntries": [
-        "UnitedHealthcare"
-      ]
+      "vendorEntries": ["UnitedHealthcare"]
     },
     {
       "id": "cigna",
       "name": "Cigna",
-      "vendorEntries": [
-        "Cigna"
-      ]
+      "vendorEntries": ["Cigna"]
     },
     {
       "id": "blue-cross-blue-shield",
       "name": "Blue Cross Blue Shield",
-      "vendorEntries": [
-        "Blue Cross Blue Shield"
-      ]
+      "vendorEntries": ["Blue Cross Blue Shield"]
     },
     {
       "id": "humana",
       "name": "Humana",
-      "vendorEntries": [
-        "Humana"
-      ]
+      "vendorEntries": ["Humana"]
     },
     {
       "id": "kaiser-permanente",
       "name": "Kaiser Permanente",
-      "vendorEntries": [
-        "Kaiser Permanente"
-      ]
+      "vendorEntries": ["Kaiser Permanente"]
     },
     {
       "id": "state-of-california",
       "name": "State of California",
-      "vendorEntries": [
-        "State of California"
-      ]
+      "vendorEntries": ["State of California"]
     },
     {
       "id": "progressive-insurance",
       "name": "Progressive Insurance",
-      "vendorEntries": [
-        "Progressive Insurance"
-      ]
+      "vendorEntries": ["Progressive Insurance"]
     },
     {
       "id": "state-farm",
       "name": "State Farm",
-      "vendorEntries": [
-        "State Farm"
-      ]
+      "vendorEntries": ["State Farm"]
     },
     {
       "id": "allstate",
       "name": "Allstate",
-      "vendorEntries": [
-        "Allstate"
-      ]
+      "vendorEntries": ["Allstate"]
     }
   ],
   "bankAccounts": [

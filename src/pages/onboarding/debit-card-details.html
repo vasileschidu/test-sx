@@ -4,272 +4,419 @@
 -->
 <!doctype html>
 <html class="h-full">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-  <script src="../../../src/scripts/onboarding-transitions.js"></script>
-  <script src="../../../src/scripts/onboarding-stepper.js"></script>
-  <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      var KEY = 'sd-onboarding-state';
-      var REQUIRED = ['debit-card-number', 'debit-name-on-card', 'debit-expiry-mm', 'debit-expiry-yy', 'debit-cvv'];
-      var nextButton = document.getElementById('next-button');
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="../../../src/scripts/onboarding-transitions.js"></script>
+    <script src="../../../src/scripts/onboarding-stepper.js"></script>
+    <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        var KEY = "sd-onboarding-state";
+        var REQUIRED = [
+          "debit-card-number",
+          "debit-name-on-card",
+          "debit-expiry-mm",
+          "debit-expiry-yy",
+          "debit-cvv",
+        ];
+        var nextButton = document.getElementById("next-button");
 
-      function getState() {
-        try { return JSON.parse(sessionStorage.getItem(KEY) || '{}'); } catch (e) { return {}; }
-      }
-      function saveState(patch) {
-        var s = getState(); Object.assign(s, patch); sessionStorage.setItem(KEY, JSON.stringify(s));
-      }
+        function getState() {
+          try {
+            return JSON.parse(sessionStorage.getItem(KEY) || "{}");
+          } catch (e) {
+            return {};
+          }
+        }
+        function saveState(patch) {
+          var s = getState();
+          Object.assign(s, patch);
+          sessionStorage.setItem(KEY, JSON.stringify(s));
+        }
 
-      // Disable browser autofill/payment tooltips on all card inputs
-      ['debit-card-number', 'debit-name-on-card', 'debit-expiry-mm', 'debit-expiry-yy', 'debit-cvv'].forEach(function (id) {
-        var el = document.getElementById(id);
-        if (el) el.setAttribute('autocomplete', 'nope-' + Math.random().toString(36).slice(2));
-      });
-
-      // Restore saved values
-      var saved = getState().debitCard || {};
-      ['debit-card-number', 'debit-name-on-card', 'debit-expiry', 'debit-cvv'].forEach(function (id) {
-        var el = document.getElementById(id);
-        var key = id.replace('debit-', '').replace(/-([a-z])/g, function (_, c) { return c.toUpperCase(); });
-        if (el && saved[key]) el.value = saved[key];
-      });
-
-      function updateNext() {
-        var allFilled = REQUIRED.every(function (id) {
+        // Disable browser autofill/payment tooltips on all card inputs
+        [
+          "debit-card-number",
+          "debit-name-on-card",
+          "debit-expiry-mm",
+          "debit-expiry-yy",
+          "debit-cvv",
+        ].forEach(function (id) {
           var el = document.getElementById(id);
-          return el && el.value.trim() !== '';
+          if (el)
+            el.setAttribute(
+              "autocomplete",
+              "nope-" + Math.random().toString(36).slice(2),
+            );
         });
-        nextButton.disabled = !allFilled;
-      }
 
-      // Card number: groups of 4 digits separated by spaces, max 19 chars
-      var cardNumberEl = document.getElementById('debit-card-number');
-      cardNumberEl.addEventListener('input', function () {
-        var digits = cardNumberEl.value.replace(/\D/g, '').slice(0, 16);
-        cardNumberEl.value = digits.replace(/(.{4})/g, '$1 ').trim();
-        var dc = getState().debitCard || {};
-        dc.cardNumber = cardNumberEl.value;
-        saveState({ debitCard: dc });
+        // Restore saved values
+        var saved = getState().debitCard || {};
+        [
+          "debit-card-number",
+          "debit-name-on-card",
+          "debit-expiry",
+          "debit-cvv",
+        ].forEach(function (id) {
+          var el = document.getElementById(id);
+          var key = id
+            .replace("debit-", "")
+            .replace(/-([a-z])/g, function (_, c) {
+              return c.toUpperCase();
+            });
+          if (el && saved[key]) el.value = saved[key];
+        });
+
+        function updateNext() {
+          var allFilled = REQUIRED.every(function (id) {
+            var el = document.getElementById(id);
+            return el && el.value.trim() !== "";
+          });
+          nextButton.disabled = !allFilled;
+        }
+
+        // Card number: groups of 4 digits separated by spaces, max 19 chars
+        var cardNumberEl = document.getElementById("debit-card-number");
+        cardNumberEl.addEventListener("input", function () {
+          var digits = cardNumberEl.value.replace(/\D/g, "").slice(0, 16);
+          cardNumberEl.value = digits.replace(/(.{4})/g, "$1 ").trim();
+          var dc = getState().debitCard || {};
+          dc.cardNumber = cardNumberEl.value;
+          saveState({ debitCard: dc });
+          updateNext();
+        });
+
+        // Expiry: smart MM/YY formatting
+        var expiryMm = document.getElementById("debit-expiry-mm");
+        var expiryYy = document.getElementById("debit-expiry-yy");
+
+        function getExpiry() {
+          return expiryMm.value + "/" + expiryYy.value;
+        }
+
+        expiryMm.addEventListener("input", function () {
+          expiryMm.value = expiryMm.value.replace(/\D/g, "").slice(0, 2);
+          if (expiryMm.value.length === 2) expiryYy.focus();
+          var dc = getState().debitCard || {};
+          dc.expiry = getExpiry();
+          saveState({ debitCard: dc });
+          updateNext();
+        });
+        expiryYy.addEventListener("input", function () {
+          expiryYy.value = expiryYy.value.replace(/\D/g, "").slice(0, 2);
+          var dc = getState().debitCard || {};
+          dc.expiry = getExpiry();
+          saveState({ debitCard: dc });
+          updateNext();
+        });
+        expiryYy.addEventListener("keydown", function (e) {
+          if (e.key === "Backspace" && expiryYy.value === "") expiryMm.focus();
+        });
+
+        // CVV: digits only, max 4
+        var cvvEl = document.getElementById("debit-cvv");
+        cvvEl.addEventListener("input", function () {
+          cvvEl.value = cvvEl.value.replace(/\D/g, "").slice(0, 4);
+          var dc = getState().debitCard || {};
+          dc.cvv = cvvEl.value;
+          saveState({ debitCard: dc });
+          updateNext();
+        });
+
+        // Name on card
+        var nameEl = document.getElementById("debit-name-on-card");
+        nameEl.addEventListener("input", function () {
+          var dc = getState().debitCard || {};
+          dc.nameOnCard = nameEl.value;
+          saveState({ debitCard: dc });
+          updateNext();
+        });
+
+        nextButton.addEventListener("click", function () {
+          if (!nextButton.disabled)
+            window.location.href = "debit-account-info.html";
+        });
+
         updateNext();
       });
+    </script>
+  </head>
 
-      // Expiry: smart MM/YY formatting
-      var expiryMm = document.getElementById('debit-expiry-mm');
-      var expiryYy = document.getElementById('debit-expiry-yy');
+  <body
+    class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6"
+  >
+    <!-- CONTAINER -->
+    <div
+      class="mx-auto max-w-[1024px] w-full min-h-screen bg-white flex flex-col lg:h-screen lg:flex-row lg:overflow-hidden"
+    >
+      <!-- LEFT SIDEBAR -->
+      <div
+        class="hidden lg:flex bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex-col px-10 py-[56px] gap-[35px]"
+      >
+        <!-- Logo (placeholder) -->
+        <div
+          class="h-[60px] w-full max-w-[246px] shrink-0 overflow-hidden rounded-xl bg-white px-4 py-2"
+        >
+          <img
+            src="https://tailwindcss.com/plus-assets/img/logos/158x48/transistor-logo-gray-900.svg"
+            alt="Transistor"
+            width="158"
+            height="48"
+            class="h-full w-full object-contain"
+          />
+        </div>
 
-      function getExpiry() { return expiryMm.value + '/' + expiryYy.value; }
+        <!-- Stepper Nav -->
+        <nav aria-label="Progress" data-ob-stepper></nav>
 
-      expiryMm.addEventListener('input', function () {
-        expiryMm.value = expiryMm.value.replace(/\D/g, '').slice(0, 2);
-        if (expiryMm.value.length === 2) expiryYy.focus();
-        var dc = getState().debitCard || {};
-        dc.expiry = getExpiry();
-        saveState({ debitCard: dc });
-        updateNext();
-      });
-      expiryYy.addEventListener('input', function () {
-        expiryYy.value = expiryYy.value.replace(/\D/g, '').slice(0, 2);
-        var dc = getState().debitCard || {};
-        dc.expiry = getExpiry();
-        saveState({ debitCard: dc });
-        updateNext();
-      });
-      expiryYy.addEventListener('keydown', function (e) {
-        if (e.key === 'Backspace' && expiryYy.value === '') expiryMm.focus();
-      });
+        <!-- Contact / Decline -->
+        <div
+          class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3"
+        >
+          <button
+            type="button"
+            class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              aria-hidden="true"
+              class="size-4 shrink-0"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+              />
+            </svg>
+            <span class="flex-1 text-xs font-medium">Contact us</span>
+          </button>
 
-      // CVV: digits only, max 4
-      var cvvEl = document.getElementById('debit-cvv');
-      cvvEl.addEventListener('input', function () {
-        cvvEl.value = cvvEl.value.replace(/\D/g, '').slice(0, 4);
-        var dc = getState().debitCard || {};
-        dc.cvv = cvvEl.value;
-        saveState({ debitCard: dc });
-        updateNext();
-      });
+          <div class="h-px w-full self-stretch bg-white/10"></div>
 
-      // Name on card
-      var nameEl = document.getElementById('debit-name-on-card');
-      nameEl.addEventListener('input', function () {
-        var dc = getState().debitCard || {};
-        dc.nameOnCard = nameEl.value;
-        saveState({ debitCard: dc });
-        updateNext();
-      });
-
-      nextButton.addEventListener('click', function () {
-        if (!nextButton.disabled) window.location.href = 'debit-account-info.html';
-      });
-
-      updateNext();
-    });
-  </script>
-</head>
-
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
-
-  <!-- CONTAINER -->
-  <div class="mx-auto max-w-[1024px] w-full min-h-screen bg-white flex flex-col lg:h-screen lg:flex-row lg:overflow-hidden">
-
-    <!-- LEFT SIDEBAR -->
-    <div class="hidden lg:flex bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex-col px-10 py-[56px] gap-[35px]">
-
-      <!-- Logo (placeholder) -->
-      <div class="h-[60px] w-full max-w-[246px] shrink-0 overflow-hidden rounded-xl bg-white px-4 py-2">
-        <img src="https://tailwindcss.com/plus-assets/img/logos/158x48/transistor-logo-gray-900.svg"
-          alt="Transistor" width="158" height="48" class="h-full w-full object-contain" />
+          <button
+            type="button"
+            class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              aria-hidden="true"
+              class="size-4 shrink-0"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+              />
+            </svg>
+            <span class="flex-1 text-xs font-medium">Decline Payment</span>
+          </button>
+        </div>
       </div>
 
-      <!-- Stepper Nav -->
-      <nav aria-label="Progress" data-ob-stepper></nav>
+      <!-- RIGHT COLUMN (scrolls) -->
+      <div class="flex-1 flex flex-col lg:min-h-0 lg:overflow-y-auto">
+        <div class="flex flex-1 flex-col lg:min-h-screen">
+          <!-- Content area -->
+          <div
+            data-ob-content
+            class="flex-1 flex flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12"
+          >
+            <div class="w-full max-w-[640px]">
+              <h1 class="text-3xl font-semibold text-gray-900">
+                Enter Your Debit Card Details
+              </h1>
+              <p class="mt-2 text-sm text-gray-500">
+                <span class="font-semibold text-gray-700">$3,526.00</span> will
+                be deposited directly to your bank account using your debit
+                card.
+              </p>
 
-      <!-- Contact / Decline -->
-      <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
-
-        <button type="button"
-          class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
-          </svg>
-          <span class="flex-1 text-xs font-medium">Contact us</span>
-        </button>
-
-        <div class="h-px w-full self-stretch bg-white/10"></div>
-
-        <button type="button"
-          class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0">
-            <path stroke-linecap="round" stroke-linejoin="round" d="m9.75 9.75 4.5 4.5m0-4.5-4.5 4.5M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-          </svg>
-          <span class="flex-1 text-xs font-medium">Decline Payment</span>
-        </button>
-
-      </div>
-    </div>
-
-    <!-- RIGHT COLUMN (scrolls) -->
-    <div class="flex-1 flex flex-col lg:min-h-0 lg:overflow-y-auto">
-      <div class="flex flex-1 flex-col lg:min-h-screen">
-
-        <!-- Content area -->
-        <div data-ob-content class="flex-1 flex flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
-          <div class="w-full max-w-[640px]">
-
-            <h1 class="text-3xl font-semibold text-gray-900">Enter Your Debit Card Details</h1>
-            <p class="mt-2 text-sm text-gray-500"><span class="font-semibold text-gray-700">$3,526.00</span> will be deposited directly to your bank account using your debit card.</p>
-
-            <div class="mt-10 space-y-6">
-
-              <!-- Card Number -->
-              <div class="sm:max-w-[430px]">
-                <label for="debit-card-number" class="block text-sm/6 font-medium text-gray-900">Card number</label>
-                <div class="mt-2">
-                  <input id="debit-card-number" type="text" name="debit-card-number"
-                    placeholder="XXXX XXXX XXXX XXXX"
-                    inputmode="numeric"
-                    autocomplete="new-password"
-                    data-lpignore="true" data-1p-ignore
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
-                </div>
-              </div>
-
-              <!-- Name on Card -->
-              <div class="sm:max-w-[430px]">
-                <label for="debit-name-on-card" class="block text-sm/6 font-medium text-gray-900">Name on card</label>
-                <div class="mt-2">
-                  <input id="debit-name-on-card" type="text" name="debit-name-on-card"
-                    placeholder="Cardholder name"
-                    autocomplete="new-password"
-                    data-lpignore="true" data-1p-ignore
-                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
-                </div>
-              </div>
-
-              <!-- Expiry + CVV -->
-              <div class="flex gap-6">
-
-                <div>
-                  <label class="block text-sm/6 font-medium text-gray-900">Expiration date</label>
-                  <div class="mt-2 inline-flex items-center rounded-md outline-1 -outline-offset-1 outline-gray-300 has-[input:focus]:outline-2 has-[input:focus]:-outline-offset-2 has-[input:focus]:outline-blue-600 bg-white">
-                    <input id="debit-expiry-mm" type="text" name="debit-expiry-mm"
-                      placeholder="MM"
-                      inputmode="numeric"
-                      autocomplete="new-password"
-                      data-lpignore="true" data-1p-ignore
-                      maxlength="2"
-                      class="w-[38px] bg-transparent py-1.5 pl-3 pr-0 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" />
-                    <span class="py-1.5 text-base text-gray-400 select-none sm:text-sm/6">&nbsp;/&nbsp;</span>
-                    <input id="debit-expiry-yy" type="text" name="debit-expiry-yy"
-                      placeholder="YY"
-                      inputmode="numeric"
-                      autocomplete="new-password"
-                      data-lpignore="true" data-1p-ignore
-                      maxlength="2"
-                      class="w-[38px] bg-transparent py-1.5 pl-0 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6" />
-                  </div>
-                </div>
-
-                <div>
-                  <label for="debit-cvv" class="block text-sm/6 font-medium text-gray-900">Security code</label>
+              <div class="mt-10 space-y-6">
+                <!-- Card Number -->
+                <div class="sm:max-w-[430px]">
+                  <label
+                    for="debit-card-number"
+                    class="block text-sm/6 font-medium text-gray-900"
+                    >Card number</label
+                  >
                   <div class="mt-2">
-                    <input id="debit-cvv" type="text" name="debit-cvv"
-                      placeholder="CVV"
+                    <input
+                      id="debit-card-number"
+                      type="text"
+                      name="debit-card-number"
+                      placeholder="XXXX XXXX XXXX XXXX"
                       inputmode="numeric"
                       autocomplete="new-password"
-                      data-lpignore="true" data-1p-ignore
-                      maxlength="4"
-                      class="block w-[80px] rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6" />
+                      data-lpignore="true"
+                      data-1p-ignore
+                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    />
                   </div>
                 </div>
 
+                <!-- Name on Card -->
+                <div class="sm:max-w-[430px]">
+                  <label
+                    for="debit-name-on-card"
+                    class="block text-sm/6 font-medium text-gray-900"
+                    >Name on card</label
+                  >
+                  <div class="mt-2">
+                    <input
+                      id="debit-name-on-card"
+                      type="text"
+                      name="debit-name-on-card"
+                      placeholder="Cardholder name"
+                      autocomplete="new-password"
+                      data-lpignore="true"
+                      data-1p-ignore
+                      class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                    />
+                  </div>
+                </div>
+
+                <!-- Expiry + CVV -->
+                <div class="flex gap-6">
+                  <div>
+                    <label class="block text-sm/6 font-medium text-gray-900"
+                      >Expiration date</label
+                    >
+                    <div
+                      class="mt-2 inline-flex items-center rounded-md outline-1 -outline-offset-1 outline-gray-300 has-[input:focus]:outline-2 has-[input:focus]:-outline-offset-2 has-[input:focus]:outline-blue-600 bg-white"
+                    >
+                      <input
+                        id="debit-expiry-mm"
+                        type="text"
+                        name="debit-expiry-mm"
+                        placeholder="MM"
+                        inputmode="numeric"
+                        autocomplete="new-password"
+                        data-lpignore="true"
+                        data-1p-ignore
+                        maxlength="2"
+                        class="w-[38px] bg-transparent py-1.5 pl-3 pr-0 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                      />
+                      <span
+                        class="py-1.5 text-base text-gray-400 select-none sm:text-sm/6"
+                        >&nbsp;/&nbsp;</span
+                      >
+                      <input
+                        id="debit-expiry-yy"
+                        type="text"
+                        name="debit-expiry-yy"
+                        placeholder="YY"
+                        inputmode="numeric"
+                        autocomplete="new-password"
+                        data-lpignore="true"
+                        data-1p-ignore
+                        maxlength="2"
+                        class="w-[38px] bg-transparent py-1.5 pl-0 pr-3 text-base text-gray-900 placeholder:text-gray-400 focus:outline-none sm:text-sm/6"
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label
+                      for="debit-cvv"
+                      class="block text-sm/6 font-medium text-gray-900"
+                      >Security code</label
+                    >
+                    <div class="mt-2">
+                      <input
+                        id="debit-cvv"
+                        type="text"
+                        name="debit-cvv"
+                        placeholder="CVV"
+                        inputmode="numeric"
+                        autocomplete="new-password"
+                        data-lpignore="true"
+                        data-1p-ignore
+                        maxlength="4"
+                        class="block w-[80px] rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"
+                      />
+                    </div>
+                  </div>
+                </div>
               </div>
+            </div>
 
+            <!-- Actions -->
+            <div class="w-full max-w-[640px] mt-auto pt-10 pb-6">
+              <div class="flex items-center gap-6">
+                <a
+                  href="paywall.html"
+                  class="h-11 flex-1 inline-flex items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50"
+                >
+                  Back
+                </a>
+                <button
+                  id="next-button"
+                  type="button"
+                  disabled
+                  class="inline-flex h-11 flex-1 items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300"
+                >
+                  Next
+                  <svg
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    aria-hidden="true"
+                    class="-mr-0.5 size-5"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M3 10a.75.75 0 0 1 .75-.75h10.19L10.22 5.53a.75.75 0 1 1 1.06-1.06l5 5a.75.75 0 0 1 0 1.06l-5 5a.75.75 0 1 1-1.06-1.06l3.72-3.72H3.75A.75.75 0 0 1 3 10Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
             </div>
           </div>
 
-          <!-- Actions -->
-          <div class="w-full max-w-[640px] mt-auto pt-10 pb-6">
-            <div class="flex items-center gap-6">
-              <a href="paywall.html" class="h-11 flex-1 inline-flex items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">
-                Back
-              </a>
-              <button id="next-button" type="button" disabled class="inline-flex h-11 flex-1 items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">
-                Next
-                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="-mr-0.5 size-5">
-                  <path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.19L10.22 5.53a.75.75 0 1 1 1.06-1.06l5 5a.75.75 0 0 1 0 1.06l-5 5a.75.75 0 1 1-1.06-1.06l3.72-3.72H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" />
-                </svg>
-              </button>
-            </div>
+          <!-- Footer -->
+          <div class="flex items-center justify-center gap-1.5 py-5 px-6">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+            >
+              <path
+                d="M8.91309 1.125C11.4548 3.2985 15.5771 3.43066 15.5771 3.43066V9.22656C15.5767 12.7831 8.91309 16.875 8.91309 16.875C8.86421 16.8449 2.25042 12.77 2.25 9.22656V3.43066C2.25 3.43066 6.37134 3.29832 8.91309 1.125ZM7.2793 9.90918C7.2091 9.94947 7.16702 10.0229 7.16699 10.1035V12.5801C7.16699 12.6002 7.17163 12.6209 7.18164 12.6377C7.21173 12.6914 7.28048 12.708 7.33398 12.6777L11.2783 10.3828C11.3134 10.3627 11.3352 10.3254 11.3369 10.2852V7.54785L7.2793 9.90918ZM7.33398 5.21191C7.28052 5.18171 7.21343 5.19831 7.18164 5.25195C7.17161 5.26875 7.16699 5.28942 7.16699 5.30957V7.78613C7.16699 7.86667 7.2082 7.94112 7.27832 7.98145L8.46582 8.6709L10.8701 7.27051L7.33398 5.21191Z"
+                fill="#0089CF"
+              />
+            </svg>
+            <span class="text-xs text-gray-700">
+              Powered by <span class="font-bold">Transcard</span>
+              <span class="mx-1">|</span>
+              <a href="#" class="text-gray-700 hover:underline">Terms of Use</a>
+              <span class="mx-0.5">&bull;</span>
+              <a href="#" class="text-gray-700 hover:underline"
+                >Privacy Policy</a
+              >
+              <span class="mx-0.5">&bull;</span>
+              <a href="#" class="text-gray-700 hover:underline"
+                >E-Sign Consent</a
+              >
+            </span>
           </div>
-
         </div>
-
-        <!-- Footer -->
-        <div class="flex items-center justify-center gap-1.5 py-5 px-6">
-          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 18 18" fill="none">
-            <path d="M8.91309 1.125C11.4548 3.2985 15.5771 3.43066 15.5771 3.43066V9.22656C15.5767 12.7831 8.91309 16.875 8.91309 16.875C8.86421 16.8449 2.25042 12.77 2.25 9.22656V3.43066C2.25 3.43066 6.37134 3.29832 8.91309 1.125ZM7.2793 9.90918C7.2091 9.94947 7.16702 10.0229 7.16699 10.1035V12.5801C7.16699 12.6002 7.17163 12.6209 7.18164 12.6377C7.21173 12.6914 7.28048 12.708 7.33398 12.6777L11.2783 10.3828C11.3134 10.3627 11.3352 10.3254 11.3369 10.2852V7.54785L7.2793 9.90918ZM7.33398 5.21191C7.28052 5.18171 7.21343 5.19831 7.18164 5.25195C7.17161 5.26875 7.16699 5.28942 7.16699 5.30957V7.78613C7.16699 7.86667 7.2082 7.94112 7.27832 7.98145L8.46582 8.6709L10.8701 7.27051L7.33398 5.21191Z" fill="#0089CF"/>
-          </svg>
-          <span class="text-xs text-gray-700">
-            Powered by <span class="font-bold">Transcard</span>
-            <span class="mx-1">|</span>
-            <a href="#" class="text-gray-700 hover:underline">Terms of Use</a>
-            <span class="mx-0.5">&bull;</span>
-            <a href="#" class="text-gray-700 hover:underline">Privacy Policy</a>
-            <span class="mx-0.5">&bull;</span>
-            <a href="#" class="text-gray-700 hover:underline">E-Sign Consent</a>
-          </span>
-        </div>
-
       </div>
     </div>
-
-  </div>
-</body>
+  </body>
 </html>
