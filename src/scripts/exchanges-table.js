@@ -69,7 +69,9 @@
   var ACTIVE_TAB_LINK_CLASSES = IS_CONSUMER_TABLE
     ? ['bg-blue-50', 'text-blue-600', 'dark:bg-blue-500/20', 'dark:text-blue-300']
     : ['bg-blue-100', 'text-blue-700', 'dark:bg-blue-500/20', 'dark:text-blue-300'];
+  var ACTIVE_EXCEPTIONS_TAB_CLASSES = ['bg-red-50', 'text-red-600', 'dark:bg-red-500/20', 'dark:text-red-300'];
   var INACTIVE_TAB_LINK_CLASSES = ['text-gray-500', 'dark:text-gray-400'];
+  var INACTIVE_TAB_HOVER_CLASSES = ['hover:text-gray-700', 'dark:hover:text-gray-200'];
   var ACTIVE_BADGE_CLASSES = IS_CONSUMER_TABLE ? [
     'bg-blue-100',
     'text-blue-800',
@@ -239,6 +241,7 @@
     smart_exchange: 'SMART Exchange',
     card: 'Card',
     ach: 'ACH',
+    check: 'Check',
   };
   Object.assign(STATUS_LABELS, PAGE_CONFIG.statusLabels || {});
   Object.assign(METHOD_TYPE_LABELS, PAGE_CONFIG.methodLabels || {});
@@ -673,7 +676,41 @@
         return col && col.key !== 'failureReason';
       });
     }
+    if (IS_CONSUMER_TABLE) {
+      visibleColumns = visibleColumns.filter(function (col) {
+        return col && col.key !== 'dateProcessed' && col.key !== 'paymentReference';
+      });
+      if (normalizeTabKey(_activeTableTabKey || 'pending') === 'paid') {
+        // The Paid tab adds Date Processed and Payment Reference; the existing
+        // payment-method column keeps the rail label, the reference holds the account/card.
+        var withPaid = [];
+        visibleColumns.forEach(function (col) {
+          withPaid.push(col);
+          if (col.key === 'dateInitiated') withPaid.push({ key: 'dateProcessed', label: 'Date Processed', sortable: true });
+          if (col.type === 'paymentMethod') withPaid.push({ key: 'paymentReference', label: 'Payment Reference', type: 'paymentReference' });
+        });
+        visibleColumns = withPaid;
+      } else if (normalizeTabKey(_activeTableTabKey || 'pending') === 'exceptions') {
+        // Exceptions mirrors Paid's layout: Payment Reference follows the payment method.
+        var withRef = [];
+        visibleColumns.forEach(function (col) {
+          withRef.push(col);
+          if (col.type === 'paymentMethod') withRef.push({ key: 'paymentReference', label: 'Payment Reference', type: 'paymentReference' });
+        });
+        visibleColumns = withRef;
+      }
+    }
     return visibleColumns;
+  }
+
+  // Date a paid entry settled: the "complete" activity event, else the last event.
+  function getDateProcessedIso(entry) {
+    if (!entry || entry.status !== 'paid') return '';
+    var log = (entry.details && entry.details.activityLog) || [];
+    var done = null;
+    log.forEach(function (item) { if (item && item.type === 'complete') done = item; });
+    var last = done || log[log.length - 1];
+    return last && last.date ? String(last.date).slice(0, 10) : '';
   }
 
   function ensureCompleteExchangeColumns(columns) {
@@ -820,9 +857,10 @@
         return (av > bv ? 1 : -1) * multiplier;
       }
 
-      if (key === 'dateInitiated') {
-        av = new Date(String(a && a.dateInitiated || '') + 'T00:00:00').getTime();
-        bv = new Date(String(b && b.dateInitiated || '') + 'T00:00:00').getTime();
+      if (key === 'dateInitiated' || key === 'dateProcessed') {
+        var dateOf = key === 'dateProcessed' ? getDateProcessedIso : function (e) { return e && e.dateInitiated; };
+        av = new Date(String(dateOf(a) || '') + 'T00:00:00').getTime();
+        bv = new Date(String(dateOf(b) || '') + 'T00:00:00').getTime();
         av = Number.isFinite(av) ? av : 0;
         bv = Number.isFinite(bv) ? bv : 0;
         if (av === bv) return 0;
@@ -867,14 +905,15 @@
 
   function normalizeMethodTypeValue(entry) {
     var methodType = String(entry && entry.methodType || '').trim().toLowerCase();
-    if (methodType === 'card' || methodType === 'ach' || methodType === 'smart_exchange') return methodType;
+    if (methodType === 'card' || methodType === 'ach' || methodType === 'check' || methodType === 'smart_exchange') return methodType;
 
     var infoType = String(entry && entry.details && entry.details.paymentInfo && entry.details.paymentInfo.type || '').trim().toLowerCase();
-    if (infoType === 'card' || infoType === 'ach') return infoType;
+    if (infoType === 'card' || infoType === 'ach' || infoType === 'check') return infoType;
     if (infoType === 'smartexchange' || infoType === 'smart_exchange') return 'smart_exchange';
 
     var method = String(entry && entry.paymentMethod || '').trim().toLowerCase();
     if (method === 'card') return 'card';
+    if (method === 'check' || method === 'paper check') return 'check';
     if (method === 'ach' || method === 'bank account') return 'ach';
     if (method === 'smart exchange') return 'smart_exchange';
     return 'smart_exchange';
@@ -1094,6 +1133,7 @@
       payeeId: typeof entry.payeeId === 'string' ? entry.payeeId : ((_myBusiness && _myBusiness.id) || 'my-business'),
       details: normalizeDetails(entry.details),
     };
+    if (entry.paymentReference && typeof entry.paymentReference === 'object') normalized.paymentReference = entry.paymentReference;
     var overrides = readExchangeEntryOverrides();
     var saved = overrides[normalized.invoice];
     if (saved && typeof saved === 'object') {
@@ -1208,10 +1248,29 @@
 
   // ── Cell renderers by type ──
 
+  // Figma "Icon20/Solid/Receipt": used for paper-check payments.
+  var ICON_CHECK_RECEIPT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-500 dark:text-gray-400 shrink-0"><path fill-rule="evenodd" d="M4 2.5A1.5 1.5 0 0 1 5.5 1h9A1.5 1.5 0 0 1 16 2.5V18l-2.25-1.5L11.5 18l-1.5-1.5L8.5 18l-2.25-1.5L4 18V2.5ZM7 6a.75.75 0 0 1 .75-.75h4.5a.75.75 0 0 1 0 1.5h-4.5A.75.75 0 0 1 7 6Zm.75 2.75a.75.75 0 0 0 0 1.5h4.5a.75.75 0 0 0 0-1.5h-4.5Z" clip-rule="evenodd"/></svg>';
+
+  var CONSUMER_MASTERCARD_FLAG = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="16" viewBox="0 0 24 16" aria-hidden="true" class="shrink-0"><rect width="24" height="16" rx="4" fill="#01326f"/><circle cx="9.6" cy="8" r="4.4" fill="#eb001b"/><circle cx="14.4" cy="8" r="4.4" fill="#f79e1b"/><path d="M12 4.6a4.4 4.4 0 0 1 0 6.8 4.4 4.4 0 0 1 0-6.8Z" fill="#ff5f00"/></svg>';
+
   function renderCellValue(col, entry) {
     switch (col.type) {
       case 'paymentMethod':
+        if (IS_CONSUMER_TABLE && normalizeTabKey(_activeTableTabKey || 'pending') === 'paid') {
+          return '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(METHOD_TYPE_LABELS.smart_exchange) + '</span>';
+        }
         return renderPaymentMethod(entry);
+      case 'paymentReference':
+        // Figma: Mastercard flag / bank (library) icon + last four, 4px gap, centred in the row.
+        if (entry.paymentReference && entry.paymentReference.last4) {
+          var ref = entry.paymentReference;
+          var refIcon = ref.type === 'card' ? CONSUMER_MASTERCARD_FLAG : ref.type === 'check' ? ICON_CHECK_RECEIPT : ICON_ACH;
+          return '<span class="flex h-full items-center gap-1 leading-5">' + refIcon +
+            '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(ref.last4) + '</span></span>';
+        }
+        return renderPaymentMethod(entry)
+          .split(ICON_VISA).join(CONSUMER_MASTERCARD_FLAG)
+          .replace('inline-flex items-center gap-x-2', 'flex h-full items-center gap-1 leading-5');
       case 'status':
         return renderStatus(getDisplayStatus(entry));
       default:
@@ -1229,6 +1288,8 @@
         return '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer p-0 text-sm font-medium text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">#' + escapeHtml(entry.invoice) + '</button>';
       case 'dateInitiated':
         return formatDate(entry.dateInitiated);
+      case 'dateProcessed':
+        return getDateProcessedIso(entry) ? formatDate(getDateProcessedIso(entry)) : '-';
       case 'failureReason':
         return escapeHtml(getFailureReason(entry) || '--');
       default:
@@ -1250,6 +1311,13 @@
       return '<span class="inline-flex items-center gap-x-2">' +
         ICON_ACH +
         '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(achLast4 || '') + '</span>' +
+        '</span>';
+    }
+
+    if (entry.methodType === 'check') {
+      return '<span class="inline-flex items-center gap-x-2">' +
+        ICON_CHECK_RECEIPT +
+        '<span class="text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(getDigits(ending).slice(-4)) + '</span>' +
         '</span>';
     }
 
@@ -1298,17 +1366,21 @@
     pending: 'border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300',
     processing: 'border-blue-300 bg-blue-100 text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-300',
     paid: 'border-green-300 bg-green-100 text-green-800 dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-400',
-    exception: 'border-red-300 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400',
-    declined: 'border-red-300 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400'
+    exception: 'border-red-200 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400',
+    declined: 'border-red-200 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400'
   };
   var CONSUMER_PENDING_CLOCK_ICON = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0 text-yellow-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd"/></svg>';
+
+  var CONSUMER_EXCEPTION_ICON = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0 text-red-500"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>';
+
+  var CONSUMER_PAID_CHECK_ICON = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0 text-green-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"/></svg>';
 
   function renderStatus(status) {
     if (IS_CONSUMER_TABLE) {
       var consumerClasses = CONSUMER_STATUS_STYLES[status] || CONSUMER_STATUS_STYLES.pending;
       return '<span' + (status === 'processing' ? ' data-processing-tooltip="true"' : '') +
-        ' class="inline-flex items-center gap-0.5 rounded-[4px] border py-0.5 ' + (status === 'pending' ? 'pr-2 pl-1' : 'px-2') + ' text-sm/5 font-medium whitespace-nowrap ' + consumerClasses + '">' +
-        (status === 'pending' ? CONSUMER_PENDING_CLOCK_ICON : '') +
+        ' class="inline-flex items-center gap-0.5 rounded-[4px] border py-0.5 ' + (status === 'pending' || status === 'paid' || status === 'exception' || status === 'declined' ? 'pr-2 pl-1' : 'px-2') + ' text-sm/5 font-medium whitespace-nowrap ' + consumerClasses + '">' +
+        (status === 'pending' ? CONSUMER_PENDING_CLOCK_ICON : status === 'paid' ? CONSUMER_PAID_CHECK_ICON : (status === 'exception' || status === 'declined') ? CONSUMER_EXCEPTION_ICON : '') +
         escapeHtml(getStatusLabel(status)) +
       '</span>';
     }
@@ -1364,7 +1436,7 @@
 
   function renderActionMenu(entry, includeDecline, includeCardDetails) {
     var itemsHtml =
-      '<a href="#" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="block cursor-pointer px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>';
+      '<a href="#" ' + (IS_CONSUMER_TABLE ? 'data-consumer-view-details' : 'data-get-paid-invoice') + '="' + escapeHtml(entry.invoice) + '" class="block cursor-pointer px-3 py-1.5 text-left text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View details</a>';
     if (includeCardDetails) {
       itemsHtml +=
         '<a href="#" data-view-card-invoice="' + escapeHtml(entry.invoice) + '" class="block cursor-pointer px-3 py-1.5 text-sm whitespace-nowrap text-gray-700 focus:bg-gray-100 focus:text-gray-900 focus:outline-hidden dark:text-gray-300 dark:focus:bg-white/5 dark:focus:text-white">View card details</a>';
@@ -1395,6 +1467,7 @@
           '<button type="button" data-get-paid-invoice="' + escapeHtml(entry.invoice) + '" class="cursor-pointer rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Get paid</button>' +
         '</div>';
       }
+      if (entry.status === 'paid') return renderActionMenu(entry, false);
       return '';
     }
     if (requiresGetPaidAction(entry) || (entry.status === 'pending' && entry.methodType === 'smart_exchange')) {
@@ -1448,9 +1521,9 @@
 
       var cellClass;
       var cellPad = IS_CONSUMER_TABLE ? 'h-[52px] align-middle px-3 py-2' : 'h-12 align-middle px-2 py-2';
-      if (col.type === 'status' || col.type === 'paymentMethod') {
+      if (col.type === 'status' || col.type === 'paymentMethod' || col.type === 'paymentReference') {
         cellClass = cellPad + ' whitespace-nowrap' + cb;
-      } else if (col.key === 'invoice' || col.key === 'dateInitiated') {
+      } else if (col.key === 'invoice' || col.key === 'dateInitiated' || col.key === 'dateProcessed') {
         cellClass = cellPad + ' text-sm whitespace-nowrap text-gray-500 dark:text-gray-400' + cb;
       } else {
         cellClass = cellPad + ' text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + (IS_CONSUMER_TABLE && col.key === 'amount' ? ' text-right' : '') + cb;
@@ -1469,12 +1542,20 @@
   var DETAIL_SEPARATOR = '<div class="border-t border-gray-200 dark:border-white/10"></div>';
 
   function buildNotesSection(entry) {
-    if (!entry.details.notes) return '';
+    var noteText = entry.details.notes || '';
+    if (IS_CONSUMER_TABLE && (entry.status === 'exception' || entry.status === 'declined')) {
+      // The failure message lives in Notes rather than under the payment method details.
+      var failureText = String(entry.details.failureReason || getExceptionContextMessage(entry)).trim();
+      failureText = failureText.charAt(0).toUpperCase() + failureText.slice(1);
+      if (!/[.!?]$/.test(failureText)) failureText += '.';
+      noteText = noteText ? (String(noteText).trim() + ' ' + failureText) : failureText;
+    }
+    if (!noteText) return '';
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Notes</div>' +
         '<div class="flex-1 p-4 text-sm font-medium text-gray-900 dark:text-white">' +
-          escapeHtml(entry.details.notes) +
+          escapeHtml(noteText) +
         '</div>' +
       '</div>'
     );
@@ -1827,6 +1908,11 @@
         titleLabel: '',
         revealKind: '',
         rawCardHtml: achRows,
+        consumerFields: {
+          kind: 'ach', name: achName, address: achAddress,
+          accountMasked: achAccountMasked, accountRevealed: achAccountRevealed,
+          routingMasked: achRoutingMasked, routingRevealed: achRoutingRevealed
+        },
       };
     }
 
@@ -1898,6 +1984,25 @@
         titleLabel: '',
         revealKind: '',
         rawCardHtml: cardRows,
+        consumerFields: { kind: 'card', details: cardDetails },
+      };
+    }
+
+    if (methodType === 'check') {
+      return {
+        key: 'check',
+        consumerFields: {
+          kind: 'check', payee: getSafeTextValue(info && info.payee), address: getSafeMultilineValue(info && info.mailingAddress),
+          checkNumber: getSafeTextValue(info && info.checkNumber), mailedDate: getSafeTextValue(info && info.mailedDate)
+        },
+        typeLabel: 'Check',
+        titleLabel: 'Check Details',
+        revealKind: '',
+        rowsHtml:
+          buildPaymentInfoRow('Payee', getSafeTextValue(info && info.payee), false) +
+          buildPaymentInfoRow('Mailing Address', getSafeMultilineValue(info && info.mailingAddress), false) +
+          buildPaymentInfoRow('Check Number', getSafeTextValue(info && info.checkNumber), false) +
+          buildPaymentInfoRow('Mailed Date', getSafeTextValue(info && info.mailedDate), false),
       };
     }
 
@@ -1933,11 +2038,108 @@
   var CONSUMER_AVATAR = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="size-6 shrink-0"><rect width="24" height="24" rx="12" fill="#F3F4F6"/><path d="M2.078 18.752A11.96 11.96 0 0 1 12.004 15c3.803 0 7.276 1.416 9.92 3.749A11.99 11.99 0 0 1 12 24c-4.124 0-7.762-2.08-9.922-5.248Z" fill="#D1D5DB"/><circle cx="12" cy="9" r="4" fill="#D1D5DB"/></svg>';
   var CONSUMER_TH = 'px-4 py-2 text-xs/4 font-medium uppercase tracking-[0.6px] text-gray-500 dark:text-gray-400 whitespace-nowrap';
 
+  var CONSUMER_MASTERCARD_BADGE = CONSUMER_MASTERCARD_FLAG.replace('width="24" height="16"', 'width="30" height="20"');
+
+  // Paid rows: Figma "AP/Payable Table/MoP Details" — SMART path, method, then a 380px details column.
+  function buildConsumerPaidMethodDetails(variant) {
+    var f = variant.consumerFields;
+    if (!f) return '';
+    var entry = variant.consumerEntry;
+    var labelCls = 'text-sm/5 font-medium text-gray-900 dark:text-white';
+    var valueCls = 'text-sm/5 font-normal text-gray-700 dark:text-gray-300';
+    var copyIcon = '<span data-paid-copy-icon class="shrink-0 [&>svg]:size-[18px]">' + ICON_COPY + '</span>';
+    function row(label, valueHtml, extraCls) {
+      return '<div class="flex items-start gap-6">' +
+        '<div class="flex-1 ' + labelCls + '">' + label + '</div>' +
+        '<div class="flex-1 ' + (extraCls || valueCls) + '">' + valueHtml + '</div>' +
+      '</div>';
+    }
+    function copyRow(label, id, masked, revealed, attrs, ctl) {
+      return '<div class="flex items-start gap-6">' +
+        '<div class="flex-1 ' + labelCls + '">' + label + '</div>' +
+        '<div class="flex-1 min-w-0">' +
+          '<button type="button" data-paid-copy="' + id + '" title="Copy" class="copy-btn flex w-full cursor-pointer items-center justify-between gap-6 text-left ' + valueCls + '">' +
+            '<span id="' + id + '" ' + attrs + ' data-masked="' + escapeHtml(masked) + '" data-revealed="' + escapeHtml(revealed || masked) + '">' + escapeHtml(masked) + '</span>' +
+            copyIcon +
+          '</button>' +
+        '</div>' +
+      '</div>';
+    }
+    function revealBtn(attr, textAttr) {
+      return '<button type="button" ' + attr + ' data-revealed="false" class="inline-flex cursor-pointer items-center gap-1 rounded-[4px] py-0.5 text-xs/4 font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400">' +
+        '<span data-icon="reveal">' + ICON_EYE + '</span>' +
+        '<span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span>' +
+        '<span ' + textAttr + '>Reveal Details</span>' +
+      '</button>';
+    }
+    var wrapAttr = '';
+    var title = 'Details';
+    var action = '';
+    var rows = '';
+    if (f.kind === 'card') {
+      var c = f.details;
+      var id1 = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var id2 = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var id3 = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      wrapAttr = ' data-payment-info-card';
+      title = 'Card Details';
+      action = revealBtn('data-card-reveal-toggle', 'data-card-reveal-text');
+      rows =
+        row('Cardholder Name', getSafeTextValue(c.cardHolderName)) +
+        row('Cardholder Address', getSafeMultilineValue(c.cardHolderAddress), 'text-sm/5 font-normal text-gray-600 dark:text-gray-400') +
+        row('Type', CONSUMER_MASTERCARD_BADGE) +
+        copyRow('Card Number', id1, c.maskedCardNumber, c.fullCardNumber, 'data-mask-field="card-number"', 'data-card-copy-control') +
+        copyRow('Expires', id2, c.expiryFull, c.expiryFull, 'data-mask-field="card-expiry"', 'data-card-copy-control') +
+        copyRow('CVC2', id3, c.maskedCvc, c.cvcValue, 'data-mask-field="card-cvc"', 'data-card-copy-control');
+    } else if (f.kind === 'ach') {
+      var a1 = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      var a2 = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
+      wrapAttr = ' data-ach-info-card';
+      title = 'Account Details';
+      action = revealBtn('data-ach-reveal-toggle', 'data-ach-reveal-text');
+      rows =
+        row('Name', f.name) +
+        copyRow('Account Number', a1, f.accountMasked, f.accountRevealed, 'data-ach-mask-field="true"', 'data-ach-copy-control') +
+        copyRow('Routing Number', a2, f.routingMasked, f.routingRevealed, 'data-ach-mask-field="true"', 'data-ach-copy-control') +
+        row('Address', f.address, 'text-sm/5 font-normal text-gray-600 dark:text-gray-400');
+    } else if (f.kind === 'check') {
+      title = 'Check Details';
+      rows =
+        row('Payee', f.payee) +
+        row('Mailing Address', f.address, 'text-sm/5 font-normal text-gray-600 dark:text-gray-400') +
+        row('Check Number', f.checkNumber) +
+        row('Mailed Date', f.mailedDate);
+    }
+    var methodName = f.kind === 'card' ? 'Card' : (f.kind === 'ach' ? 'Bank Account' : 'Check');
+    return (
+      '<div class="flex">' +
+        '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
+        '<div class="flex min-w-0 flex-1 items-start gap-9 p-4">' +
+          '<div class="flex w-[152px] shrink-0 items-center gap-1">' + CONSUMER_SX_LOGO.replace(/sxg(\d)/g, 'sxg$1-pd' + (++paymentInfoCopyIdCounter)) +
+            '<span class="text-sm/5 font-semibold text-gray-800 whitespace-nowrap dark:text-gray-200">' + escapeHtml(METHOD_TYPE_LABELS.smart_exchange) + '</span>' +
+          '</div>' +
+          '<div class="flex shrink-0 items-center self-start">' + CONSUMER_CHEVRON_RIGHT + '</div>' +
+          '<div class="flex min-w-[56px] shrink-0 items-start"><span class="text-sm/5 font-semibold text-gray-800 whitespace-nowrap dark:text-gray-200">' + methodName + '</span></div>' +
+          '<div class="flex shrink-0 items-center self-start">' + CONSUMER_CHEVRON_RIGHT + '</div>' +
+          '<div' + wrapAttr + ' class="flex w-[380px] max-w-full flex-col gap-2">' +
+            '<div class="flex items-center gap-6">' +
+              '<div class="flex-1 text-sm/5 font-semibold text-gray-900 dark:text-white">' + title + '</div>' +
+              '<div class="flex flex-1 items-center">' + action + '</div>' +
+            '</div>' +
+            '<div class="border-t border-gray-200 dark:border-white/10"></div>' +
+            rows +
+          '</div>' +
+        '</div>' +
+      '</div>'
+    );
+  }
+
   function buildConsumerPaymentMethodDetails(variant, revealAttr, revealLink) {
     var entry = variant.consumerEntry;
+    if (entry && (entry.status === 'paid' || variant.consumerExceptionEntry) && variant.consumerFields) return buildConsumerPaidMethodDetails(variant);
     var payee = getResolvedPayee(entry);
     var payeeName = (payee && (payee.name || (payee.bankAccounts && payee.bankAccounts[0] && payee.bankAccounts[0].name))) || 'Johnny Anderson';
-    var logo = entry.methodType === 'card' ? ICON_VISA : (entry.methodType === 'ach' ? ICON_ACH : CONSUMER_SX_LOGO);
+    var logo = entry.methodType === 'card' ? ICON_VISA : (entry.methodType === 'ach' ? ICON_ACH : (entry.methodType === 'check' ? ICON_CHECK_RECEIPT : CONSUMER_SX_LOGO));
     var isUnselected = variant.titleLabel === 'No Payment Method Selected';
     var detailMethod = isUnselected
       ? '<span class="text-gray-900 dark:text-white">&mdash;</span>'
@@ -2059,9 +2261,28 @@
     var payment = params.payment;
     var payee = params.payee;
     var info = payment && payment.details ? payment.details.paymentInfo : null;
-    var variant = getPaymentMethodDetailsVariant(status, methodType, payment, info || {}, payee);
+    var sourcePayment = payment;
+    if (IS_CONSUMER_TABLE && payment && (status === 'exception' || status === 'declined') && payment.paymentReference && payment.paymentReference.last4) {
+      // Exceptions show the same method breakdown as Paid, driven by the payment reference.
+      var ref = payment.paymentReference;
+      var refLast4 = String(ref.last4);
+      var refPayee = getResolvedPayee(payment);
+      methodType = ref.type === 'card' || ref.type === 'check' ? ref.type : 'ach';
+      sourcePayment = Object.assign({}, payment, { methodType: methodType, paymentMethodEnding: refLast4 });
+      if (methodType === 'card') info = { cardNumber: refLast4 };
+      else if (methodType === 'check') {
+        info = {
+          payee: refPayee && (refPayee.legalName || refPayee.name) || '',
+          mailingAddress: refPayee && ((refPayee.mailingAddress && refPayee.mailingAddress.address) || refPayee.address) || '',
+          checkNumber: refLast4,
+          mailedDate: ''
+        };
+      } else info = {};
+    }
+    var variant = getPaymentMethodDetailsVariant(status, methodType, sourcePayment, info || {}, payee);
     if (!variant) return '';
-    variant.consumerEntry = payment;
+    variant.consumerEntry = sourcePayment;
+    variant.consumerExceptionEntry = payment;
     return buildPaymentMethodDetailsSection(variant);
   }
 
@@ -2161,15 +2382,15 @@
       items += buildActivityLogItem(
         'bg-green-100 ring-1 ring-green-700/60 dark:bg-green-400/10 dark:ring-green-400/20',
         'Paid',
-        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been processed',
-        processedDate,
+        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been processed' + (IS_CONSUMER_TABLE && processedDate ? ' on ' + processedDate : ''),
+        IS_CONSUMER_TABLE ? '' : processedDate,
         true
       );
       items += buildActivityLogItem(
         'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
         'Initiated',
-        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated',
-        initiatedDate,
+        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated' + (IS_CONSUMER_TABLE && initiatedDate ? ' on ' + initiatedDate : ''),
+        IS_CONSUMER_TABLE ? '' : initiatedDate,
         false
       );
 
@@ -2181,14 +2402,14 @@
       var reason = getDeclineReason(entry);
       var exceptionDescription = declined
         ? 'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> was declined.'
-        : 'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has an exception and needs review.';
+        : 'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has failed.';
       if (reason) {
         exceptionDescription += '<span class="mt-1 block text-gray-700 dark:text-gray-300">Reason: ' + escapeHtml(reason) + '</span>';
       }
 
       items += buildActivityLogItem(
         'bg-red-100 ring-1 ring-red-700/60 dark:bg-red-400/10 dark:ring-red-400/20',
-        declined ? 'Declined' : 'Payment Exception',
+        declined ? 'Declined' : 'Payment Failed',
         exceptionDescription,
         failedDate,
         true
@@ -2400,6 +2621,16 @@
         cycleSortDirection(sortKey);
         refreshTableForActiveTab();
         syncSortBadges(table);
+        return;
+      }
+
+      // Paid row details: copy always yields the full value, even while it is masked on screen.
+      var paidCopyBtn = event.target.closest('[data-paid-copy]');
+      if (paidCopyBtn && table.contains(paidCopyBtn)) {
+        event.preventDefault();
+        var paidCopyEl = document.getElementById(paidCopyBtn.getAttribute('data-paid-copy'));
+        var paidCopyText = paidCopyEl ? (paidCopyEl.getAttribute('data-revealed') || paidCopyEl.textContent || '').trim() : '';
+        if (paidCopyText) copyTextFallback(paidCopyText, paidCopyBtn.querySelector('[data-paid-copy-icon]') || paidCopyBtn);
         return;
       }
 
@@ -2710,6 +2941,7 @@
         columns: columns,
         rowCount: Math.min(10, paginationState.pageSize || DEFAULT_PAGE_SIZE),
         includeHeader: true,
+        variant: IS_CONSUMER_TABLE ? 'consumer' : '',
       });
     } else {
       table.innerHTML = '<tbody><tr><td class="px-4 py-8 text-sm text-gray-500 dark:text-gray-400">Loading...</td></tr></tbody>';
@@ -2828,16 +3060,22 @@
       badge = null;
     }
 
+    // Consumer table: the selected Exceptions tab is red (Figma) instead of blue.
+    var isConsumerExceptions = IS_CONSUMER_TABLE && tab.getAttribute('data-tab') === 'exceptions';
+    var activeClasses = isConsumerExceptions ? ACTIVE_EXCEPTIONS_TAB_CLASSES : ACTIVE_TAB_LINK_CLASSES;
+
     if (isActive) {
-      tab.classList.add.apply(tab.classList, ACTIVE_TAB_LINK_CLASSES);
+      tab.classList.add.apply(tab.classList, activeClasses);
       tab.classList.remove.apply(tab.classList, INACTIVE_TAB_LINK_CLASSES);
+      tab.classList.remove.apply(tab.classList, INACTIVE_TAB_HOVER_CLASSES);
       if (badge) {
         badge.classList.add.apply(badge.classList, ACTIVE_BADGE_CLASSES);
         badge.classList.remove.apply(badge.classList, INACTIVE_BADGE_CLASSES);
       }
     } else {
-      tab.classList.remove.apply(tab.classList, ACTIVE_TAB_LINK_CLASSES);
+      tab.classList.remove.apply(tab.classList, activeClasses);
       tab.classList.add.apply(tab.classList, INACTIVE_TAB_LINK_CLASSES);
+      tab.classList.add.apply(tab.classList, INACTIVE_TAB_HOVER_CLASSES);
       if (badge) {
         badge.classList.remove.apply(badge.classList, ACTIVE_BADGE_CLASSES);
         badge.classList.add.apply(badge.classList, INACTIVE_BADGE_CLASSES);
@@ -7296,6 +7534,19 @@
         return;
       }
 
+      if (e.target.closest('#sx-view-details-download')) {
+        e.preventDefault();
+        downloadViewDetails();
+        return;
+      }
+
+      var viewDetailsBtn = e.target.closest('[data-consumer-view-details]');
+      if (viewDetailsBtn) {
+        e.preventDefault();
+        openViewDetailsModal(findEntryByInvoice(viewDetailsBtn.getAttribute('data-consumer-view-details')));
+        return;
+      }
+
       var btn = e.target.closest('[data-get-paid-invoice]');
       if (!btn) return;
       e.preventDefault();
@@ -7532,6 +7783,87 @@
     setCanvasSize();
     updateSignBtn();
     setMode('draw');
+  }
+
+  // ── Consumer "View details" modal (Figma: Modal - Confirmation) ──
+
+  function getViewDetailsTransactionId(entry) {
+    // Deterministic 20-char reference derived from the invoice (no id exists in the data).
+    var seed = String(entry.invoice || '') + '|' + String(entry.dateInitiated || '') + '|' + String(entry.amount || '');
+    var out = '';
+    var h = 2166136261;
+    for (var i = 0; out.length < 20; i += 1) {
+      h ^= seed.charCodeAt(i % seed.length) + i;
+      h = Math.imul(h, 16777619) >>> 0;
+      out += h.toString(36).toUpperCase().slice(-2);
+    }
+    return out.slice(0, 20);
+  }
+
+  function getViewDetailsRows(entry) {
+    var info = (entry.details && entry.details.paymentInfo) || {};
+    var processed = getDateProcessedIso(entry) || entry.dateInitiated;
+    var rows = [
+      ['Transaction ID', getViewDetailsTransactionId(entry)],
+      ['Payment date', formatDateLong(processed)]
+    ];
+    if (entry.methodType === 'card') {
+      var cardDetails = getPayerCardDetailsForRender(entry, info, getCustomerForEntry(entry));
+      rows.push(['Payment method', 'Card']);
+      rows.push(['Card number', cardDetails && cardDetails.maskedCardNumber || ('•••• ' + getDigits(entry.paymentMethodEnding).slice(-4))]);
+    } else if (entry.methodType === 'check') {
+      rows.push(['Payment method', 'Check']);
+      rows.push(['Check number', info.checkNumber || ('••••' + getDigits(entry.paymentMethodEnding).slice(-4))]);
+      rows.push(['Mailed date', info.mailedDate || '']);
+    } else {
+      rows.push(['Payment method', 'Bank Transfer']);
+      rows.push(['Bank', info.bankName || '']);
+      rows.push(['Account number', info.accountNumber || ('••••' + getDigits(entry.paymentMethodEnding).slice(-4))]);
+    }
+    return rows.filter(function (row) { return String(row[1] || '').trim() !== ''; });
+  }
+
+  function formatDateLong(isoDate) {
+    var parsed = new Date(String(isoDate) + 'T00:00:00');
+    if (Number.isNaN(parsed.getTime())) return String(isoDate || '');
+    return parsed.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  }
+
+  var _viewDetailsEntry = null;
+
+  function openViewDetailsModal(entry) {
+    var dialog = document.getElementById('sx-view-details-dialog');
+    if (!dialog || !entry) return;
+    _viewDetailsEntry = entry;
+    var amountEl = document.getElementById('sx-view-details-amount');
+    if (amountEl) amountEl.textContent = formatCurrency(entry.amount, entry.currency);
+    var rowsEl = document.getElementById('sx-view-details-rows');
+    if (rowsEl) {
+      rowsEl.innerHTML = getViewDetailsRows(entry).map(function (row) {
+        return '<div class="flex items-start gap-6">' +
+          '<div class="flex-1 text-xs/4 font-normal text-gray-500 dark:text-gray-400">' + escapeHtml(row[0]) + '</div>' +
+          '<div class="min-w-0 flex-1 break-words text-xs/4 font-medium text-gray-900 dark:text-white">' + escapeHtml(row[1]) + '</div>' +
+        '</div>';
+      }).join('');
+    }
+    if (typeof dialog.showModal === 'function' && !dialog.open) dialog.showModal();
+  }
+
+  function downloadViewDetails() {
+    var entry = _viewDetailsEntry;
+    if (!entry) return;
+    var lines = ['Payment details', 'Invoice: ' + entry.invoice, 'Payer: ' + entry.customer,
+      'Amount: ' + formatCurrency(entry.amount, entry.currency) + ' ' + entry.currency];
+    getViewDetailsRows(entry).forEach(function (row) { lines.push(row[0] + ': ' + row[1]); });
+    var blob = new Blob([lines.join('\n') + '\n'], { type: 'text/plain' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = 'payment-details-' + String(entry.invoice || 'payment') + '.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function () { URL.revokeObjectURL(url); }, 0);
   }
 
   function copyTextFallback(text, triggerEl) {

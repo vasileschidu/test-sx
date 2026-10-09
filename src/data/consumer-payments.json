@@ -383,12 +383,16 @@
           },
           {
             "user": "System",
-            "action": "payment failed \u2014 bank account could not be verified",
+            "action": "payment failed — bank account could not be verified",
             "date": "2024-06-01T15:40",
             "type": "failed"
           }
         ],
         "failureReason": "Bank account could not be verified"
+      },
+      "paymentReference": {
+        "type": "card",
+        "last4": "5612"
       }
     },
     {
@@ -435,12 +439,16 @@
           },
           {
             "user": "System",
-            "action": "payment failed \u2014 virtual card expired before it was used",
+            "action": "payment failed — virtual card expired before it was used",
             "date": "2024-05-30T15:40",
             "type": "failed"
           }
         ],
         "failureReason": "Virtual card expired before it was used"
+      },
+      "paymentReference": {
+        "type": "check",
+        "last4": "5463"
       }
     },
     {
@@ -487,12 +495,16 @@
           },
           {
             "user": "System",
-            "action": "payment failed \u2014 name on account does not match payee",
+            "action": "payment failed — name on account does not match payee",
             "date": "2024-06-14T15:40",
             "type": "failed"
           }
         ],
         "failureReason": "Name on account does not match payee"
+      },
+      "paymentReference": {
+        "type": "ach",
+        "last4": "1010"
       }
     },
     {
@@ -539,12 +551,16 @@
           },
           {
             "user": "System",
-            "action": "payment failed \u2014 ach transfer returned by bank (r03)",
+            "action": "payment failed — ach transfer returned by bank (r03)",
             "date": "2024-05-13T15:40",
             "type": "failed"
           }
         ],
         "failureReason": "ACH transfer returned by bank (R03)"
+      },
+      "paymentReference": {
+        "type": "card",
+        "last4": "5612"
       }
     },
     {
@@ -591,12 +607,16 @@
           },
           {
             "user": "System",
-            "action": "payment failed \u2014 payment voided by payer",
+            "action": "payment failed — payment voided by payer",
             "date": "2024-05-27T15:40",
             "type": "failed"
           }
         ],
         "failureReason": "Payment voided by payer"
+      },
+      "paymentReference": {
+        "type": "check",
+        "last4": "3463"
       }
     },
     {
@@ -643,12 +663,16 @@
           },
           {
             "user": "System",
-            "action": "payment failed \u2014 card declined at redemption",
+            "action": "payment failed — card declined at redemption",
             "date": "2024-06-04T15:40",
             "type": "failed"
           }
         ],
         "failureReason": "Card declined at redemption"
+      },
+      "paymentReference": {
+        "type": "ach",
+        "last4": "1111"
       }
     },
     {
@@ -672,7 +696,7 @@
           "cardType": "Visa",
           "cardNumber": "6085",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -721,8 +745,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -772,8 +796,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -823,8 +847,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -863,20 +887,19 @@
       "invoice": "EJ7-B",
       "customer": "State of California",
       "dateInitiated": "2024-06-10",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "3674",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5021",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Unclaimed property payout from State of California.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5021",
+          "mailedDate": "Jun 11, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -900,7 +923,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-06-10T18:03",
             "type": "complete"
           }
@@ -925,8 +948,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -979,7 +1002,7 @@
           "cardType": "Visa",
           "cardNumber": "4702",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1031,7 +1054,7 @@
           "cardType": "Visa",
           "cardNumber": "3651",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1083,7 +1106,7 @@
           "cardType": "Visa",
           "cardNumber": "6083",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1132,8 +1155,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -1183,8 +1206,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -1223,20 +1246,19 @@
       "invoice": "EP3-F",
       "customer": "Optum Pay",
       "dateInitiated": "2024-06-02",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "3674",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5049",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Provider claim reimbursement from Optum Pay.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5049",
+          "mailedDate": "Jun 3, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -1260,7 +1282,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-06-02T18:03",
             "type": "complete"
           }
@@ -1288,7 +1310,7 @@
           "cardType": "Visa",
           "cardNumber": "4224",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1340,7 +1362,7 @@
           "cardType": "Visa",
           "cardNumber": "9297",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1392,7 +1414,7 @@
           "cardType": "Visa",
           "cardNumber": "9195",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1444,7 +1466,7 @@
           "cardType": "Visa",
           "cardNumber": "8934",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1493,8 +1515,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -1547,7 +1569,7 @@
           "cardType": "Visa",
           "cardNumber": "3795",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1599,7 +1621,7 @@
           "cardType": "Visa",
           "cardNumber": "7656",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1651,7 +1673,7 @@
           "cardType": "Visa",
           "cardNumber": "8906",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1703,7 +1725,7 @@
           "cardType": "Visa",
           "cardNumber": "6580",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1755,7 +1777,7 @@
           "cardType": "Visa",
           "cardNumber": "1149",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1804,8 +1826,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -1858,7 +1880,7 @@
           "cardType": "Visa",
           "cardNumber": "9970",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1910,7 +1932,7 @@
           "cardType": "Visa",
           "cardNumber": "8222",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -1959,8 +1981,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -1999,20 +2021,19 @@
       "invoice": "LT5-G",
       "customer": "Optum Pay",
       "dateInitiated": "2024-05-11",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "8419",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5077",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Provider claim reimbursement from Optum Pay.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5077",
+          "mailedDate": "May 12, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -2036,7 +2057,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-05-11T18:03",
             "type": "complete"
           }
@@ -2061,8 +2082,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -2112,8 +2133,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -2166,7 +2187,7 @@
           "cardType": "Visa",
           "cardNumber": "2164",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -2215,8 +2236,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -2255,20 +2276,19 @@
       "invoice": "JW6-E",
       "customer": "Blue Cross Blue Shield",
       "dateInitiated": "2024-05-04",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "8419",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5105",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Claim overpayment refund from Blue Cross Blue Shield.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5105",
+          "mailedDate": "May 5, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -2292,7 +2312,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-05-04T18:03",
             "type": "complete"
           }
@@ -2317,8 +2337,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -2368,8 +2388,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -2419,8 +2439,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -2473,7 +2493,7 @@
           "cardType": "Visa",
           "cardNumber": "5847",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -2511,20 +2531,19 @@
       "invoice": "KL9-F",
       "customer": "Kaiser Permanente",
       "dateInitiated": "2024-04-26",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "3674",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5133",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Premium refund from Kaiser Permanente.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5133",
+          "mailedDate": "Apr 27, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -2548,7 +2567,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-04-26T18:03",
             "type": "complete"
           }
@@ -2576,7 +2595,7 @@
           "cardType": "Visa",
           "cardNumber": "5544",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -2628,7 +2647,7 @@
           "cardType": "Visa",
           "cardNumber": "2633",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -2677,8 +2696,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -2728,8 +2747,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -2779,8 +2798,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -2819,20 +2838,19 @@
       "invoice": "KJ6-F",
       "customer": "Aetna",
       "dateInitiated": "2024-04-15",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "8419",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5161",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Out-of-network claim reimbursement from Aetna.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5161",
+          "mailedDate": "Apr 16, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -2856,7 +2874,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-04-15T18:03",
             "type": "complete"
           }
@@ -2884,7 +2902,7 @@
           "cardType": "Visa",
           "cardNumber": "8989",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -2933,8 +2951,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -2987,7 +3005,7 @@
           "cardType": "Visa",
           "cardNumber": "5343",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -3036,8 +3054,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -3090,7 +3108,7 @@
           "cardType": "Visa",
           "cardNumber": "2730",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -3139,8 +3157,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -3193,7 +3211,7 @@
           "cardType": "Visa",
           "cardNumber": "7339",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -3231,20 +3249,19 @@
       "invoice": "GD4-C",
       "customer": "UnitedHealthcare",
       "dateInitiated": "2024-04-06",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "8419",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5189",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Claim reimbursement from UnitedHealthcare.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5189",
+          "mailedDate": "Apr 7, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -3268,7 +3285,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-04-06T18:03",
             "type": "complete"
           }
@@ -3296,7 +3313,7 @@
           "cardType": "Visa",
           "cardNumber": "8752",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -3345,8 +3362,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -3399,7 +3416,7 @@
           "cardType": "Visa",
           "cardNumber": "3124",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -3448,8 +3465,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -3502,7 +3519,7 @@
           "cardType": "Visa",
           "cardNumber": "9676",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -3551,8 +3568,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -3591,20 +3608,19 @@
       "invoice": "DS3-C",
       "customer": "State of California",
       "dateInitiated": "2024-04-01",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "8419",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5217",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Unclaimed property payout from State of California.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5217",
+          "mailedDate": "Apr 2, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -3628,7 +3644,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-04-01T18:03",
             "type": "complete"
           }
@@ -3656,7 +3672,7 @@
           "cardType": "Visa",
           "cardNumber": "4365",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -3705,8 +3721,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -3756,8 +3772,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -3810,7 +3826,7 @@
           "cardType": "Visa",
           "cardNumber": "2050",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -3862,7 +3878,7 @@
           "cardType": "Visa",
           "cardNumber": "9613",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -3914,7 +3930,7 @@
           "cardType": "Visa",
           "cardNumber": "9660",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -3963,8 +3979,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -4003,20 +4019,19 @@
       "invoice": "RQ5-F",
       "customer": "Aetna",
       "dateInitiated": "2024-03-24",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "8419",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5245",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Out-of-network claim reimbursement from Aetna.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5245",
+          "mailedDate": "Mar 25, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -4040,7 +4055,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-03-24T18:03",
             "type": "complete"
           }
@@ -4068,7 +4083,7 @@
           "cardType": "Visa",
           "cardNumber": "7582",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -4120,7 +4135,7 @@
           "cardType": "Visa",
           "cardNumber": "9182",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -4169,8 +4184,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -4220,8 +4235,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -4274,7 +4289,7 @@
           "cardType": "Visa",
           "cardNumber": "2933",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -4323,8 +4338,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -4377,7 +4392,7 @@
           "cardType": "Visa",
           "cardNumber": "3506",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -4415,20 +4430,19 @@
       "invoice": "GX3-B",
       "customer": "State Farm",
       "dateInitiated": "2024-03-10",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "8419",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5273",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Property claim settlement from State Farm.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5273",
+          "mailedDate": "Mar 11, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -4452,7 +4466,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-03-10T18:03",
             "type": "complete"
           }
@@ -4480,7 +4494,7 @@
           "cardType": "Visa",
           "cardNumber": "2883",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -4529,8 +4543,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -4583,7 +4597,7 @@
           "cardType": "Visa",
           "cardNumber": "2879",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -4635,7 +4649,7 @@
           "cardType": "Visa",
           "cardNumber": "9832",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -4687,7 +4701,7 @@
           "cardType": "Visa",
           "cardNumber": "6411",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -4736,8 +4750,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -4790,7 +4804,7 @@
           "cardType": "Visa",
           "cardNumber": "5058",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -4842,7 +4856,7 @@
           "cardType": "Visa",
           "cardNumber": "2477",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -4894,7 +4908,7 @@
           "cardType": "Visa",
           "cardNumber": "7270",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -4946,7 +4960,7 @@
           "cardType": "Visa",
           "cardNumber": "2275",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -4995,8 +5009,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -5035,20 +5049,19 @@
       "invoice": "RA3-H",
       "customer": "State of New Jersey",
       "dateInitiated": "2024-02-22",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "3674",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5301",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "State tax refund from State of New Jersey.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5301",
+          "mailedDate": "Feb 23, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -5072,7 +5085,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-02-22T18:03",
             "type": "complete"
           }
@@ -5097,8 +5110,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -5148,8 +5161,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -5199,8 +5212,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -5239,20 +5252,19 @@
       "invoice": "XV6-D",
       "customer": "Blue Cross Blue Shield",
       "dateInitiated": "2024-02-15",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "3674",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5329",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Claim overpayment refund from Blue Cross Blue Shield.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5329",
+          "mailedDate": "Feb 16, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -5276,7 +5288,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-02-15T18:03",
             "type": "complete"
           }
@@ -5301,8 +5313,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -5355,7 +5367,7 @@
           "cardType": "Visa",
           "cardNumber": "4140",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -5407,7 +5419,7 @@
           "cardType": "Visa",
           "cardNumber": "5192",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -5459,7 +5471,7 @@
           "cardType": "Visa",
           "cardNumber": "1843",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -5511,7 +5523,7 @@
           "cardType": "Visa",
           "cardNumber": "9112",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -5560,8 +5572,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -5611,8 +5623,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -5651,20 +5663,19 @@
       "invoice": "HF6-F",
       "customer": "State Farm",
       "dateInitiated": "2024-02-06",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "8419",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5357",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Property claim settlement from State Farm.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5357",
+          "mailedDate": "Feb 7, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -5688,7 +5699,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-02-06T18:03",
             "type": "complete"
           }
@@ -5713,8 +5724,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -5764,8 +5775,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -5818,7 +5829,7 @@
           "cardType": "Visa",
           "cardNumber": "4800",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -5870,7 +5881,7 @@
           "cardType": "Visa",
           "cardNumber": "3704",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -5919,8 +5930,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -5959,20 +5970,19 @@
       "invoice": "ZN9-C",
       "customer": "Aetna",
       "dateInitiated": "2024-01-26",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "3674",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5385",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Out-of-network claim reimbursement from Aetna.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5385",
+          "mailedDate": "Jan 27, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -5996,7 +6006,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-01-26T18:03",
             "type": "complete"
           }
@@ -6024,7 +6034,7 @@
           "cardType": "Visa",
           "cardNumber": "8669",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -6076,7 +6086,7 @@
           "cardType": "Visa",
           "cardNumber": "2227",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -6128,7 +6138,7 @@
           "cardType": "Visa",
           "cardNumber": "8068",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -6177,8 +6187,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -6231,7 +6241,7 @@
           "cardType": "Visa",
           "cardNumber": "3525",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -6283,7 +6293,7 @@
           "cardType": "Visa",
           "cardNumber": "5313",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -6335,7 +6345,7 @@
           "cardType": "Visa",
           "cardNumber": "9870",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -6384,8 +6394,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -6435,8 +6445,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -6475,20 +6485,19 @@
       "invoice": "PX7-F",
       "customer": "Humana",
       "dateInitiated": "2024-01-15",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "8419",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5413",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Pharmacy claim reimbursement from Humana.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5413",
+          "mailedDate": "Jan 16, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -6512,7 +6521,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-01-15T18:03",
             "type": "complete"
           }
@@ -6537,8 +6546,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -6588,8 +6597,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -6642,7 +6651,7 @@
           "cardType": "Visa",
           "cardNumber": "1826",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -6694,7 +6703,7 @@
           "cardType": "Visa",
           "cardNumber": "3670",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -6746,7 +6755,7 @@
           "cardType": "Visa",
           "cardNumber": "5038",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -6795,8 +6804,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -6835,20 +6844,19 @@
       "invoice": "QM1-G",
       "customer": "Optum Pay",
       "dateInitiated": "2024-01-05",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "8419",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5441",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Provider claim reimbursement from Optum Pay.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5441",
+          "mailedDate": "Jan 6, 2024"
         },
         "attachments": [],
         "activityLog": [
@@ -6872,7 +6880,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2024-01-05T18:03",
             "type": "complete"
           }
@@ -6900,7 +6908,7 @@
           "cardType": "Visa",
           "cardNumber": "8832",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -6952,7 +6960,7 @@
           "cardType": "Visa",
           "cardNumber": "8520",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -7001,8 +7009,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -7052,8 +7060,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -7106,7 +7114,7 @@
           "cardType": "Visa",
           "cardNumber": "4638",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -7155,8 +7163,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -7209,7 +7217,7 @@
           "cardType": "Visa",
           "cardNumber": "4225",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -7261,7 +7269,7 @@
           "cardType": "Visa",
           "cardNumber": "4726",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -7313,7 +7321,7 @@
           "cardType": "Visa",
           "cardNumber": "1292",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -7351,20 +7359,19 @@
       "invoice": "YC7-H",
       "customer": "Humana",
       "dateInitiated": "2023-12-21",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "3674",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5469",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Pharmacy claim reimbursement from Humana.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5469",
+          "mailedDate": "Dec 22, 2023"
         },
         "attachments": [],
         "activityLog": [
@@ -7388,7 +7395,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2023-12-21T18:03",
             "type": "complete"
           }
@@ -7413,8 +7420,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -7467,7 +7474,7 @@
           "cardType": "Visa",
           "cardNumber": "9036",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -7516,8 +7523,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -7567,8 +7574,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -7607,20 +7614,19 @@
       "invoice": "MC2-G",
       "customer": "Allstate",
       "dateInitiated": "2023-12-14",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "8419",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5497",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Auto claim settlement from Allstate.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5497",
+          "mailedDate": "Dec 15, 2023"
         },
         "attachments": [],
         "activityLog": [
@@ -7644,7 +7650,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2023-12-14T18:03",
             "type": "complete"
           }
@@ -7669,8 +7675,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -7720,8 +7726,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -7771,8 +7777,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -7811,20 +7817,19 @@
       "invoice": "LQ4-C",
       "customer": "State of New Jersey",
       "dateInitiated": "2023-12-06",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "8419",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5525",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "State tax refund from State of New Jersey.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5525",
+          "mailedDate": "Dec 7, 2023"
         },
         "attachments": [],
         "activityLog": [
@@ -7848,7 +7853,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2023-12-06T18:03",
             "type": "complete"
           }
@@ -7876,7 +7881,7 @@
           "cardType": "Visa",
           "cardNumber": "6139",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -7928,7 +7933,7 @@
           "cardType": "Visa",
           "cardNumber": "5962",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -7980,7 +7985,7 @@
           "cardType": "Visa",
           "cardNumber": "5219",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -8032,7 +8037,7 @@
           "cardType": "Visa",
           "cardNumber": "5545",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -8081,8 +8086,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -8132,8 +8137,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -8183,8 +8188,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -8237,7 +8242,7 @@
           "cardType": "Visa",
           "cardNumber": "2488",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -8275,20 +8280,19 @@
       "invoice": "UQ6-B",
       "customer": "Blue Cross Blue Shield",
       "dateInitiated": "2023-11-27",
-      "paymentMethod": "ACH",
-      "paymentMethodEnding": "3674",
+      "paymentMethod": "Check",
+      "paymentMethodEnding": "5553",
       "status": "paid",
-      "methodType": "ach",
+      "methodType": "check",
       "payeeId": "johnny-anderson",
       "details": {
         "notes": "Claim overpayment refund from Blue Cross Blue Shield.",
         "paymentInfo": {
-          "type": "ach",
-          "accountHolder": "Johnny Anderson",
-          "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
-          "accountType": "Personal Checking"
+          "type": "check",
+          "payee": "Johnny Anderson",
+          "mailingAddress": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+          "checkNumber": "••••5553",
+          "mailedDate": "Nov 28, 2023"
         },
         "attachments": [],
         "activityLog": [
@@ -8312,7 +8316,7 @@
           },
           {
             "user": "System",
-            "action": "payment deposited to your bank account",
+            "action": "check mailed to your address",
             "date": "2023-11-27T18:03",
             "type": "complete"
           }
@@ -8340,7 +8344,7 @@
           "cardType": "Visa",
           "cardNumber": "4662",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -8389,8 +8393,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -8443,7 +8447,7 @@
           "cardType": "Visa",
           "cardNumber": "6866",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -8495,7 +8499,7 @@
           "cardType": "Visa",
           "cardNumber": "9247",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -8544,8 +8548,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Citibank",
-          "routingNumber": "\u2022\u2022\u2022\u20220089",
-          "accountNumber": "\u2022\u2022\u2022\u20223674",
+          "routingNumber": "••••0089",
+          "accountNumber": "••••3674",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -8598,7 +8602,7 @@
           "cardType": "Visa",
           "cardNumber": "4995",
           "expires": "12/2027",
-          "cvc": "\u2022\u2022\u2022"
+          "cvc": "•••"
         },
         "attachments": [],
         "activityLog": [
@@ -8647,8 +8651,8 @@
           "type": "ach",
           "accountHolder": "Johnny Anderson",
           "bankName": "Wells Fargo",
-          "routingNumber": "\u2022\u2022\u2022\u20222847",
-          "accountNumber": "\u2022\u2022\u2022\u20228419",
+          "routingNumber": "••••2847",
+          "accountNumber": "••••8419",
           "accountType": "Personal Checking"
         },
         "attachments": [],
@@ -8689,9 +8693,9 @@
         "displayName": "Chase Bank Account",
         "name": "Johnny Anderson",
         "bankName": "Chase Bank",
-        "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u20222956",
+        "maskedAccount": "•••••••••••••2956",
         "accountNumber": "000071209432956",
-        "maskedRouting": "\u2022\u2022\u2022\u2022\u20220021",
+        "maskedRouting": "•••••0021",
         "routingNumber": "021000021",
         "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS"
       },
@@ -8700,9 +8704,9 @@
         "displayName": "Wells Fargo Account",
         "name": "Johnny Anderson",
         "bankName": "Wells Fargo",
-        "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u20228419",
+        "maskedAccount": "•••••••••••••8419",
         "accountNumber": "000048390108419",
-        "maskedRouting": "\u2022\u2022\u2022\u2022\u20225667",
+        "maskedRouting": "•••••5667",
         "routingNumber": "121005667",
         "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS"
       },
@@ -8711,9 +8715,9 @@
         "displayName": "Citibank Account",
         "name": "Johnny Anderson",
         "bankName": "Citibank",
-        "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u20223674",
+        "maskedAccount": "•••••••••••••3674",
         "accountNumber": "000040198913674",
-        "maskedRouting": "\u2022\u2022\u2022\u2022\u20220089",
+        "maskedRouting": "•••••0089",
         "routingNumber": "021000089",
         "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS"
       },
@@ -8722,9 +8726,9 @@
         "displayName": "Bank of America Account",
         "name": "Johnny Anderson",
         "bankName": "Bank of America",
-        "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u20225281",
+        "maskedAccount": "•••••••••••••5281",
         "accountNumber": "000033887145281",
-        "maskedRouting": "\u2022\u2022\u2022\u2022\u20229593",
+        "maskedRouting": "•••••9593",
         "routingNumber": "026009593",
         "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS"
       },
@@ -8733,9 +8737,9 @@
         "displayName": "Capital One Account",
         "name": "Johnny Anderson",
         "bankName": "Capital One",
-        "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u2022\u20221147",
+        "maskedAccount": "•••••••••••••1147",
         "accountNumber": "000052618341147",
-        "maskedRouting": "\u2022\u2022\u2022\u2022\u20225515",
+        "maskedRouting": "•••••5515",
         "routingNumber": "051405515",
         "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS"
       }
