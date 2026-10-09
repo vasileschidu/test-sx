@@ -3,7 +3,7 @@
  *
  * Manages the document-review workflow on the onboarding "Review Documents" step.
  * Each document has a "Review" button that opens a modal dialog. When the user
- * clicks "I have read", the review button is replaced with a checked checkbox.
+ * clicks "Done", the review button is replaced with a green check icon.
  * The "Next" navigation button is enabled only after every document has been
  * marked as read.
  */
@@ -14,26 +14,25 @@ document.addEventListener('DOMContentLoaded', () => {
   /** @type {NodeListOf<HTMLButtonElement>} All "Review" trigger buttons */
   const reviewButtons = document.querySelectorAll('.review-trigger');
 
-  /** @type {HTMLButtonElement} The "I have read" button inside the review dialog */
+  /** @type {HTMLButtonElement} The "Done" button inside the review dialog */
   const markReadButton = document.getElementById('mark-read-btn');
 
   /** @type {HTMLButtonElement} The "Next" navigation button */
   const nextButton = document.getElementById('next-button');
 
-  /** @type {HTMLInputElement[]} Checkboxes that track read-status for each document */
-  const checkboxes = Array.from(document.querySelectorAll('input[id$="-checkbox"]'));
+  /** @type {HTMLElement[]} Read-status indicators for each document */
+  const statuses = Array.from(document.querySelectorAll('[id$="-status"]'));
 
   /**
-   * Enable or disable the "Next" button based on whether every document
-   * checkbox is checked.
+   * Enable or disable the "Next" button based on whether every visible
+   * document has been marked as read.
    */
   function updateNextButtonState() {
-    const visibleCheckboxes = checkboxes.filter((checkbox) => {
-      if (!checkbox) return false;
-      const row = checkbox.closest('li');
+    const visible = statuses.filter((status) => {
+      const row = status.closest('li');
       return !(row && row.classList.contains('hidden'));
     });
-    nextButton.disabled = !visibleCheckboxes.length || !visibleCheckboxes.every((checkbox) => checkbox.checked);
+    nextButton.disabled = !visible.length || !visible.every((status) => !status.classList.contains('hidden'));
   }
 
   // When a review button is clicked, record which document is being reviewed.
@@ -44,26 +43,18 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // When the user confirms they have read the document, hide the review button,
-  // show the checkbox status, check the checkbox, and re-evaluate the Next button.
+  // show the check icon, and re-evaluate the Next button.
   markReadButton.addEventListener('click', () => {
     if (!activeDocId) return;
 
     const reviewButton = document.querySelector(`.review-trigger[data-doc-id="${activeDocId}"]`);
     const status = document.getElementById(`${activeDocId}-status`);
-    const checkbox = document.getElementById(`${activeDocId}-checkbox`);
     if (!reviewButton || !status) return;
 
     reviewButton.classList.add('hidden');
     status.classList.remove('hidden');
-    if (checkbox) checkbox.checked = true;
     activeDocId = null;
     updateNextButtonState();
-  });
-
-  // Allow manual toggling of checkboxes to also update the Next button state.
-  checkboxes.forEach((checkbox) => {
-    if (!checkbox) return;
-    checkbox.addEventListener('change', updateNextButtonState);
   });
 
   // Navigate to the next step when the Next button is clicked (and enabled).

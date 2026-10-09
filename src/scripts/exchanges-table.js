@@ -5562,14 +5562,7 @@
     '</svg>';
 
   var CHECKBOX_STATUS_HTML =
-    '<div class="flex h-6 shrink-0 items-center">' +
-      '<div class="group grid size-4 grid-cols-1 opacity-60">' +
-        '<input type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
-        '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
-          '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
-        '</svg>' +
-      '</div>' +
-    '</div>';
+    '<svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5 shrink-0 text-emerald-500 dark:text-emerald-400" role="img" aria-label="Reviewed"><path d="M4.5 10.5l3.5 3.5 7.5-8" stroke-linecap="round" stroke-linejoin="round" /></svg>';
 
   var STEP_BADGE_NUMBER_CLASS =
     'inline-flex size-5 shrink-0 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300';
@@ -5717,7 +5710,7 @@
 
     // Step 1: all document review actions are complete
     var openReviewBtns = document.querySelectorAll('#gp-attachments .gp-review-trigger:not(.hidden)');
-    var statusChecks = document.querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"] input[type="checkbox"]');
+    var statusChecks = document.querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"]');
     var step1Done = !docRequired || (statusChecks.length > 0 && openReviewBtns.length === 0);
 
     // Step 2: signature has been completed
@@ -6079,11 +6072,6 @@
     });
     document.querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"]').forEach(function (status) {
       status.classList.remove('hidden');
-      var checkbox = status.querySelector('input[type="checkbox"]');
-      if (checkbox) {
-        checkbox.checked = true;
-        checkbox.disabled = true;
-      }
     });
 
     if (sigTrigger) sigTrigger.classList.add('hidden');
@@ -6240,11 +6228,6 @@
     var declineBtn = document.getElementById('gp-decline-btn');
     document.querySelectorAll('#gp-attachments [id^="gp-attach-"][id$="-status"]').forEach(function (status) {
       status.classList.add('hidden');
-      var checkbox = status.querySelector('input[type="checkbox"]');
-      if (checkbox) {
-        checkbox.checked = false;
-        checkbox.disabled = true;
-      }
     });
     document.querySelectorAll('#gp-attachments .gp-review-trigger').forEach(function (btn) {
       btn.classList.add('hidden');
@@ -7593,10 +7576,10 @@
       if (trigger) {
         activeAttachIdx = trigger.getAttribute('data-attach-idx');
         var isDeclined = !!(_activeGetPaidEntry && _activeGetPaidEntry.status === 'declined');
-        markReadBtn.textContent = isDeclined ? 'Close' : 'I have read';
+        markReadBtn.textContent = isDeclined ? 'Close' : 'Done';
         markReadBtn.className = isDeclined
-          ? 'inline-flex items-center gap-x-2 rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer'
-          : 'inline-flex items-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer';
+          ? 'inline-flex items-center gap-x-2 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer'
+          : 'inline-flex items-center gap-x-2 rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer';
       }
     });
 
@@ -7615,8 +7598,6 @@
       }
       if (status) {
         status.classList.remove('hidden');
-        var checkbox = status.querySelector('input[type="checkbox"]');
-        if (checkbox) checkbox.checked = true;
       }
       activeAttachIdx = null;
       updateGetPaidStepStates();

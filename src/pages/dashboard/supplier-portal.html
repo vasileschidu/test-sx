@@ -250,21 +250,7 @@
                                                                 commandfor="gp-review-dialog"
                                                                 class="gp-review-trigger inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"
                                                                 data-attach-idx="0">Review</button>
-                                                            <div id="gp-attach-0-status" class="hidden">
-                                                                <div class="flex h-6 shrink-0 items-center">
-                                                                    <div class="group grid size-4 grid-cols-1">
-                                                                        <input id="gp-attach-0-checkbox" type="checkbox"
-                                                                            class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
-                                                                        <svg viewBox="0 0 14 14" fill="none"
-                                                                            class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">
-                                                                            <path d="M3 8L6 11L11 3.5" stroke-width="2"
-                                                                                stroke-linecap="round"
-                                                                                stroke-linejoin="round"
-                                                                                class="opacity-0 group-has-checked:opacity-100" />
-                                                                        </svg>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                            <div id="gp-attach-0-status" class="hidden"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5 shrink-0 text-emerald-500 dark:text-emerald-400" role="img" aria-label="Reviewed"><path d="M4.5 10.5l3.5 3.5 7.5-8" stroke-linecap="round" stroke-linejoin="round" /></svg></div>
                                                         </div>
                                                     </li>
                                                     <li
@@ -290,21 +276,7 @@
                                                                 commandfor="gp-review-dialog"
                                                                 class="gp-review-trigger inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"
                                                                 data-attach-idx="1">Review</button>
-                                                            <div id="gp-attach-1-status" class="hidden">
-                                                                <div class="flex h-6 shrink-0 items-center">
-                                                                    <div class="group grid size-4 grid-cols-1">
-                                                                        <input id="gp-attach-1-checkbox" type="checkbox"
-                                                                            class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
-                                                                        <svg viewBox="0 0 14 14" fill="none"
-                                                                            class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">
-                                                                            <path d="M3 8L6 11L11 3.5" stroke-width="2"
-                                                                                stroke-linecap="round"
-                                                                                stroke-linejoin="round"
-                                                                                class="opacity-0 group-has-checked:opacity-100" />
-                                                                        </svg>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
+                                                            <div id="gp-attach-1-status" class="hidden"><svg viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5 shrink-0 text-emerald-500 dark:text-emerald-400" role="img" aria-label="Reviewed"><path d="M4.5 10.5l3.5 3.5 7.5-8" stroke-linecap="round" stroke-linejoin="round" /></svg></div>
                                                         </div>
                                                     </li>
                                                 </ul>
@@ -1354,37 +1326,61 @@
 
     <!-- ===== GET PAID: PDF REVIEW MODAL ===== -->
     <el-dialog>
-        <dialog id="gp-review-dialog" aria-labelledby="gp-review-dialog-title"
+        <dialog id="gp-review-dialog" data-review-modal aria-labelledby="gp-review-dialog-title"
             class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
             <el-dialog-backdrop
                 class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
             <div tabindex="0"
                 class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
-                    class="relative transform overflow-hidden rounded-xl bg-white dark:bg-gray-900 dark:ring-1 dark:ring-white/10 text-left shadow-xl transition-all w-full data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-4xl data-closed:sm:translate-y-0 data-closed:sm:scale-95">
-                    <div class="border-b border-gray-200 dark:border-white/10 px-6 py-4 flex items-center justify-between">
-                        <h3 id="gp-review-dialog-title" class="text-xl font-semibold text-gray-900 dark:text-white">
-                            Review Document</h3>
+                    class="relative flex max-h-[90vh] w-full transform flex-col overflow-hidden rounded-lg bg-white text-left shadow-[0_10px_15px_-3px_rgba(0,0,0,0.1),0_4px_6px_-2px_rgba(0,0,0,0.05),0_0_0_1px_rgba(0,0,0,0.05)] transition-all dark:bg-gray-900 dark:ring-1 dark:ring-white/10 data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-4xl data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+                    <div class="flex items-start gap-2 border-b border-gray-200 p-6 dark:border-white/10">
+                        <div class="flex min-w-0 flex-1 flex-col gap-4">
+                            <div data-review-steps class="flex items-center gap-5">
+                                <div data-review-dots class="flex items-center gap-2.5"></div>
+                                <span data-review-count class="text-sm/5 text-gray-500 dark:text-gray-400">1 of 1</span>
+                            </div>
+                            <div class="flex flex-col gap-2.5">
+                                <h3 id="gp-review-dialog-title" data-review-title class="text-2xl/8 font-semibold text-gray-800 dark:text-white">Review Document</h3>
+                                <p class="text-sm/5 text-gray-500 dark:text-gray-400">Please read the document below before continuing.</p>
+                            </div>
+                        </div>
                         <button type="button" command="close" commandfor="gp-review-dialog"
-                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+                            class="cursor-pointer rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300">
                             <span class="sr-only">Close</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                            <svg viewBox="0 0 20 20" fill="currentColor" class="size-5" aria-hidden="true">
+                                <path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" />
                             </svg>
                         </button>
                     </div>
-                    <div class="px-6 py-5">
-                        <div
-                            class="h-[60vh] w-full rounded-md border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5">
-                        </div>
+                    <div class="flex min-h-0 flex-1 flex-col p-6">
+                        <div class="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">
+                            <p data-review-heading class="text-base/6 font-semibold text-gray-900 dark:text-white">Document</p>
+                            <p class="text-sm/5 text-gray-700 dark:text-gray-300">All products and services provided by Transcard are subject to the Terms of Use and disclaimers of the applicable agreement governing their supply and use. Where country specific Terms of Use conflict with these Transcard Terms of Use, the country specific Terms of Use shall prevail for products and services taken within that country. Please carefully review any of the country specific Terms of Use as outlined within the supplement links.</p>
+                            <p class="text-sm/5 text-gray-700 dark:text-gray-300">These Terms &amp; Conditions (these “Terms”) are a legally binding agreement governing access to and use of our Service between you (the “you”, “your”) and Transcard Payments, LLC, a Nevada limited liability company, its officers, directors, consultants, agents, employees and affiliates (collectively, “Company”, “we”, “our”, “us”) with offices located at 1010 Market Street, Chattanooga, TN, 37402 (the “Licensee”). For direct communication you can reach us at <a href="mailto:sales@transcard.com" class="underline">sales@transcard.com</a>.</p>
+                            <p class="text-sm/5 text-gray-700 dark:text-gray-300">As used in these Terms, “Service” refers to our online platform, website, the App, any software, programs, documentation, tools, and components, and any updates (including software maintenance, service information, help content, bug fixes or maintenance releases) provided to you by us, directly or indirectly. To use the Service, you must agree to all the terms in these Terms. We may present to you an offer from a Bank to open one or more of the following: a Transcard deposit account (“Banking Account”), a Transcard debit card (“Transcard Debit Card”) and, individually and collectively, with the Banking Account and Transcard Card, (the “Bank Products”). Our Services may be provided to you to help you view, manage and access your Bank Products. The Bank Products are made available by a bank, member of the Federal Deposit Insurance Corporation (each, a “Bank”), in partnership with us. We operate software that allows you to access services of Bank but we do not provide banking services. All banking, lending and money transmission services are provided by the Bank. The Bank Products are each governed by the Terms of Use you enter into with each Bank (the “Bank Agreement”). The Bank Products are not offered by us, and instead are offered by Bank.</p>
+                            <p class="text-sm/5 text-gray-700 dark:text-gray-300">These Terms &amp; Conditions (these “Terms”) are a legally binding agreement governing access to and use of our Service between you (the “you”, “your”) and Transcard Payments, LLC, a Nevada limited liability company, its officers, directors, consultants, agents, employees and affiliates (collectively, “Company”, “we”, “our”, “us”) with offices located at 1010 Market Street, Chattanooga, TN, 37402 (the “Licensee”). For direct communication you can reach us at <a href="mailto:sales@transcard.com" class="underline">sales@transcard.com</a>.</p>
+                            <p class="text-sm/5 text-gray-700 dark:text-gray-300">As used in these Terms, “Service” refers to our online platform, website, the App, any software, programs, documentation, tools, and components, and any updates (including software maintenance, service information, help content, bug fixes or maintenance releases) provided to you by us, directly or indirectly. To use the Service, you must agree to all the terms in these Terms. We may present to you an offer from a Bank to open one or more of the following: a Transcard deposit account (“Banking Account”), a Transcard debit card (“Transcard Debit Card”) and, individually and collectively, with the Banking Account and Transcard Card, (the “Bank Products”). Our Services may be provided to you to help you view, manage and access your Bank Products. The Bank Products are made available by a bank, member of the Federal Deposit Insurance Corporation (each, a “Bank”), in partnership with us. We operate software that allows you to access services of Bank but we do not provide banking services. All banking, lending and money transmission services are provided by the Bank. The Bank Products are each governed by the Terms of Use you enter into with each Bank (the “Bank Agreement”). The Bank Products are not offered by us, and instead are offered by Bank.</p>
+                                                    </div>
                     </div>
-                    <div class="border-t border-gray-200 dark:border-white/10 px-6 py-4">
-                        <div class="flex justify-end">
-                            <button id="gp-mark-read-btn" type="button" command="close" commandfor="gp-review-dialog"
-                                class="inline-flex items-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
-                                I have read
+                    <div class="flex items-center justify-end border-t border-gray-200 px-6 py-5 dark:border-white/10">
+                        <div class="flex flex-1">
+                            <button type="button" data-review-download data-review-download-src="../onboarding/sample-lorem.pdf"
+                                class="inline-flex cursor-pointer items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-200 dark:hover:bg-white/10">
+                                <svg viewBox="0 0 20 20" fill="currentColor" class="size-[18px]" aria-hidden="true">
+                                    <path d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.614L6.295 8.235a.75.75 0 1 0-1.09 1.03l4.25 4.5a.75.75 0 0 0 1.09 0l4.25-4.5a.75.75 0 0 0-1.09-1.03l-2.955 3.129V2.75Z" />
+                                    <path d="M3.5 12.75a.75.75 0 0 0-1.5 0v2.5A2.75 2.75 0 0 0 4.75 18h10.5A2.75 2.75 0 0 0 18 15.25v-2.5a.75.75 0 0 0-1.5 0v2.5c0 .69-.56 1.25-1.25 1.25H4.75c-.69 0-1.25-.56-1.25-1.25v-2.5Z" />
+                                </svg>
+                                Download
                             </button>
+                        </div>
+                        <div class="flex items-center gap-2.5">
+                            <button type="button" data-review-prev disabled
+                                class="inline-flex cursor-pointer items-center justify-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">Previous</button>
+                            <button type="button" data-review-next
+                                class="hidden inline-flex cursor-pointer items-center justify-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">Next</button>
+                            <button id="gp-mark-read-btn" type="button" command="close" commandfor="gp-review-dialog"
+                                class="inline-flex cursor-pointer items-center justify-center rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Done</button>
                         </div>
                     </div>
                 </el-dialog-panel>
@@ -2056,6 +2052,7 @@
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
     <script src="../../../src/scripts/exchanges-table.js?v=20261001b"></script>
 
+  <script src="../../../src/scripts/review-modal.js"></script>
 </body>
 
 </html>
