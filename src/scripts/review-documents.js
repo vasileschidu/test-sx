@@ -211,13 +211,13 @@
         '</div>' +
 
         '<div class="relative flex min-h-0 flex-1 flex-col p-6">' +
-          '<div data-doc-preview tabindex="0" aria-label="' + esc(doc.name) + ' document" class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] bg-[#f9fafb] p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600 max-sm:cursor-pointer">' +
+          '<div data-doc-preview tabindex="0" aria-label="' + esc(doc.name) + ' document" class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] bg-[#f9fafb] p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600 max-md:cursor-pointer">' +
             '<div data-doc-pages class="flex flex-col gap-4">' +
               '<p class="py-10 text-center text-sm leading-5 text-[#6b7280]">Loading document…</p>' +
             '</div>' +
           '</div>' +
           // Phones: the preview is small, so a tap opens the PDF full screen.
-          '<span aria-hidden="true" class="pointer-events-none absolute bottom-9 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-[#111827]/80 px-3 py-1.5 text-xs leading-4 font-medium whitespace-nowrap text-white shadow-lg sm:hidden">' +
+          '<span aria-hidden="true" class="pointer-events-none absolute bottom-9 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-[#111827]/80 px-3 py-1.5 text-xs leading-4 font-medium whitespace-nowrap text-white shadow-lg md:hidden">' +
             '<img src="' + ASSETS + 'icon-expand.svg" alt="" width="16" height="16" class="size-4">Tap to open full screen</span>' +
         '</div>' +
 
@@ -278,10 +278,10 @@
     var syncMore = null;
     window.addEventListener('resize', function () { if (syncMore) syncMore(); });
 
-    /** Phones only: tapping the preview opens the PDF in the phone's own viewer (zoom, scroll). */
+    /** Mobile only (≤ 767px): tapping the preview opens the PDF in the phone's own viewer (zoom, scroll). */
     function bindFullScreen(backdrop, doc) {
       var preview = backdrop.querySelector('[data-doc-preview]');
-      var mobile = window.matchMedia('(max-width: 639px)');
+      var mobile = window.matchMedia('(max-width: 767px)');
       function open() { window.open(doc.file, '_blank', 'noopener'); }
       preview.addEventListener('click', function () { if (mobile.matches) open(); });
       preview.addEventListener('keydown', function (event) {

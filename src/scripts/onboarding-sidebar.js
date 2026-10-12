@@ -13,6 +13,9 @@
  * of the sidebar and keep `mt-auto` on that card. data-ob-no-decline on the
  * slot drops "Decline Payment" from that card (once the payment is done).
  *
+ * On mobile and tablet (below 1024px) it also caps the content and footer
+ * at 640px, centred; the top bar stays full width (the mobile layout otherwise stretches edge to edge).
+ *
  * It also renders the light page footer (Figma "SD Footer/Mobile(2.1)", node
  * 19447:65057) into every <div data-ob-footer></div>. The slot keeps its own
  * classes, e.g. `lg:hidden` on pages whose sidebar already carries the footer.
@@ -25,6 +28,24 @@
   var TERMS = ['Terms of Use', 'Privacy Policy', 'E-Sign Consent'];
 
   var LINK = 'rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white';
+
+  // Mobile and tablet (below 1024px): the page content and the footer are
+  // capped and centred instead of stretching edge to edge (large phones in
+  // landscape, tablets); the top bar keeps its full width. Desktop (left menu)
+  // starts at 1024px.
+  var TABLET_WIDTH = '640px';
+  (function narrowLayout() {
+    if (document.getElementById('ob-tablet-layout')) return;
+    var style = document.createElement('style');
+    style.id = 'ob-tablet-layout';
+    style.textContent =
+      '@media (max-width: 1023px) {' +
+        '[data-ob-content], [data-ob-footer] > * {' +
+          'width: 100%; max-width: ' + TABLET_WIDTH + '; margin-left: auto; margin-right: auto;' +
+        '}' +
+      '}';
+    document.head.appendChild(style);
+  })();
 
   // Mobile hamburger (Figma node 19652:43095): Contact / Decline in a dropdown
   // card over the blurred page. Read by onboarding-mobile-header.js on
