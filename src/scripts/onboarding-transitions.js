@@ -38,6 +38,22 @@
   var NATIVE_PAGE_TRANSITIONS = !!(window.CSS && CSS.supports && CSS.supports('view-transition-name: ob') &&
     'onpagereveal' in window);
 
+  /**
+   * Resolves once the page-enter transition is over. While a native view
+   * transition runs, the named parts (sidebar, mobile header, footer) are drawn
+   * above the whole page — a dialog opened during it would sit under the
+   * sidebar. Registered here, in <head>, so the pagereveal event isn't missed.
+   */
+  var revealed = new Promise(function (resolve) {
+    if (!NATIVE_PAGE_TRANSITIONS) { resolve(); return; }
+    window.addEventListener('pagereveal', function (event) {
+      if (event.viewTransition) event.viewTransition.finished.then(resolve, resolve);
+      else resolve();
+    }, { once: true });
+    // Never hold a dialog back for long if the event doesn't come.
+    window.setTimeout(resolve, 1500);
+  });
+
   // Replaced elements grow no ::before/::after boxes, so form controls are
   // masked with their own background instead of a pseudo-element overlay.
   var FIELD_SELECTOR = 'input,textarea,select,canvas';
@@ -76,6 +92,11 @@
       '.ob-skel{position:relative!important;overflow:hidden!important;pointer-events:none!important;color:transparent!important;caret-color:transparent;text-shadow:none!important;border-color:var(--ob-skel-bg)!important;border-radius:var(--ob-skel-radius)!important;}',
       '.ob-skel>*{visibility:hidden!important;}',
       '.ob-skel::after{content:"";position:absolute;inset:0;border-radius:inherit;background:var(--ob-skel-bg);pointer-events:none;}',
+      // Large figures: `text` hugs the digits' cap height instead of the whole
+      // line box, and `decimal` also leaves the leading "." uncovered so the
+      // two bars read as "$487" · "00". Both need an inline-block host.
+      '.ob-skel[data-ob-skeleton="text"]::after,.ob-skel[data-ob-skeleton="decimal"]::after{top:.14em;bottom:.14em;}',
+      '.ob-skel[data-ob-skeleton="decimal"]::after{left:.34em;}',
       '.ob-skel-field{color:transparent!important;-webkit-text-fill-color:transparent!important;caret-color:transparent!important;border-color:transparent!important;box-shadow:none!important;outline:none!important;appearance:none!important;-webkit-appearance:none!important;background:var(--ob-skel-bg)!important;border-radius:var(--ob-skel-radius)!important;}',
       '.ob-skel-field::placeholder{color:transparent!important;}',
       '.ob-skel-hide{visibility:hidden!important;}',
@@ -350,6 +371,8 @@
 
   function navigate(href) {
     if (!href) return;
+    // Multi-Party reroutes a few hops (onboarding-flow.js).
+    if (window.OBFlow) href = window.OBFlow.route(href);
     // Native cross-fade (or reduced motion): just go, the browser handles it.
     if (prefersReducedMotion() || NATIVE_PAGE_TRANSITIONS) {
       window.location.href = href;
@@ -442,6 +465,7 @@
   window.OnboardingTransitions = {
     navigate: navigate,
     whenReady: whenReady,
-    waitFor: waitFor
+    waitFor: waitFor,
+    afterReveal: function (fn) { return revealed.then(fn); }
   };
 })();

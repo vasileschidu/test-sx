@@ -2,7 +2,8 @@
  * review-documents.js
  * Step 3 "Review Documents" (Figma "3. Review Documents", node 19468:87528).
  *
- *   - Lists the attachments from src/data/sd-documents.json.
+ *   - Lists the attachments from src/data/sd-documents.json (Multi-Party:
+ *     src/data/sd-documents-mp.json).
  *   - Clicking one opens the document viewer (shared OBModal shell) at that
  *     document: "n of N" step dots, Download, Previous, Next / Done.
  *     Next (or Done on the last one) marks the open document as reviewed.
@@ -18,7 +19,10 @@
 (function () {
   'use strict';
 
-  var DATA_PATH = '../../data/sd-documents.json';
+  // Multi-Party has its own documents (the claim is shared between co-payees).
+  var DATA_PATH = window.OBFlow && window.OBFlow.isMultiParty()
+    ? '../../data/sd-documents-mp.json'
+    : '../../data/sd-documents.json';
   var ASSETS = '../../assets/onboarding/';
   var NEXT_URL = 'paywall.html';
   var PDFJS = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/';
@@ -107,6 +111,25 @@
     '</span>';
   }
 
+  /**
+   * The message names the amount and sender as {amount} / {sender}: they come
+   * from the payment context, so Multi-Party shows the user's own share.
+   * {total} is the whole Multi-Party claim payment.
+   */
+  function fillMessage(template) {
+    var el = document.querySelector('[data-docs-message]');
+    var ctx = window.SDOnboardingContext;
+    function render(state) {
+      var payable = (state && state.payableContext) || {};
+      el.textContent = template
+        .replace('{amount}', payable.amountFormatted || '')
+        .replace('{total}', window.OBFlow ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(window.OBFlow.TOTAL) : '')
+        .replace('{sender}', payable.senderName || window.OBModal.clientName());
+    }
+    render(ctx ? ctx.getState() : null);
+    if (ctx && ctx.bootstrap) ctx.bootstrap().then(render);
+  }
+
   function init(data) {
     var docs = data.documents;
     var listEl = document.querySelector('[data-docs-list]');
@@ -123,7 +146,7 @@
     document.querySelector('[data-docs-header]').textContent = data.headerText;
     if (data.message) {
       document.querySelector('[data-docs-message-title]').textContent = data.message.title;
-      document.querySelector('[data-docs-message]').textContent = data.message.body;
+      fillMessage(data.message.body);
     }
     var toggle = document.querySelector('[data-docs-message-toggle]');
     toggle.addEventListener('click', function () {
@@ -142,7 +165,7 @@
         var invalid = showErrors && !done;
         return '<li>' +
           '<button type="button" data-doc-open="' + i + '" ' +
-            'class="flex w-full cursor-pointer items-center gap-3 rounded-lg border bg-white p-4 text-left shadow-xs hover:bg-gray-50 ' +
+            'class="group flex w-full cursor-pointer items-center gap-3 rounded-lg border bg-white p-4 text-left shadow-xs hover:bg-gray-50 ' +
             'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ' + (invalid ? 'border-[#ef4444]' : 'border-[#d1d5db]') + '">' +
             thumbnail(i) +
             '<span class="flex min-w-0 flex-1 flex-col items-start gap-0.5 pb-0.5">' +
@@ -152,7 +175,9 @@
             '</span>' +
             (done
               ? '<img src="' + ASSETS + 'icon-check-circle-green.svg" alt="Reviewed" width="20" height="20" class="size-5 shrink-0">'
-              : '<img src="' + ASSETS + 'icon-chevron-right-mini.svg" alt="" width="20" height="20" class="size-5 shrink-0">') +
+              : '<img src="' + ASSETS + 'icon-chevron-right-mini.svg" alt="" width="20" height="20" ' +
+                'class="size-5 shrink-0 transition duration-200 ease-out group-hover:translate-x-1 group-hover:brightness-[0.8] ' +
+                'group-focus-visible:translate-x-1 group-focus-visible:brightness-[0.8] motion-reduce:transition-none">') +
           '</button>' +
         '</li>';
       }).join('');

@@ -20,7 +20,7 @@
 
   /**
    * Inline copy of src/data/onboarding-steps.json — keep in sync.
-   * Another flow (e.g. the UK claim demo) can set window.OB_FLOW_STEPS first to
+   * Another flow can set window.OB_FLOW_STEPS first to
    * reuse this stepper and the mobile header with its own steps.
    */
   var STEPS = window.OB_FLOW_STEPS || [
@@ -35,6 +35,8 @@
     { id: 'complete', label: 'Complete Payment', href: 'create-account.html',
       alsoMatches: ['create-account', 'complete', 'card-created', 'bank-submitted', 'check-submitted', 'debit-submitted'] }
   ];
+  // Multi-Party adds its Current Allocation step (onboarding-flow.js).
+  if (window.OBFlow) STEPS = window.OBFlow.steps(STEPS);
 
   var CHECK = 'M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z';
 

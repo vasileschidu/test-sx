@@ -13,7 +13,7 @@
  * A flow can instead set window.OB_MOBILE_MENU to a list of
  * { label, icon, onSelect } before DOMContentLoaded: the hamburger then turns
  * into a close button and opens just those actions in a dropdown card over the
- * blurred page (the UK claim demo and the SMART Disburse flow use this).
+ * blurred page (the SMART Disburse flow uses this).
  */
 (function () {
   'use strict';

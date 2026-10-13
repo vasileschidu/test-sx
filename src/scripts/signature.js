@@ -224,8 +224,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
   nextButton.addEventListener('click', () => {
     if (!nextButton.disabled) {
-      // A flow can point the button elsewhere (the UK claim demo uses data-next).
-      window.location.href = nextButton.getAttribute('data-next') || 'paywall.html';
+      // A flow can point the button elsewhere with data-next.
+      var next = nextButton.getAttribute('data-next') || 'paywall.html';
+      if (window.OBGo) window.OBGo(next);
+      else window.location.href = next;
     }
   });
   updateNextButtonState();

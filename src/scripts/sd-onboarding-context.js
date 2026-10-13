@@ -203,6 +203,11 @@ window.SDOnboardingContext = (function () {
       var payee = findPayee(getArray(results[1]), params, state, payable);
       var context = buildContext(payable, payee, params, state);
       if (!context) return getState();
+      // Multi-Party: the payment screens show the user's own share.
+      if (window.OBFlow && window.OBFlow.isMultiParty()) {
+        context.amount = window.OBFlow.myShare();
+        context.amountFormatted = formatMoney(context.amount, context.currency);
+      }
       return saveState({
         payableId: context.payableId,
         billNumber: context.billNumber,

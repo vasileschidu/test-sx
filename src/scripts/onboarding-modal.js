@@ -84,16 +84,32 @@ window.OBModal = (function () {
 
   // ---- Contact card ---------------------------------------------------------
 
+  /**
+   * A value with a copy button (Figma "Copy", node 20102:32395):
+   *   hover / focus  icon darkens on a gray-100 chip, tooltip "Copy"
+   *   pressed        icon turns into a green check, tooltip "Copied"
+   *   pointer away   the check stays, the tooltip hides
+   *   after ~2s      back to the copy icon
+   * The tooltip is visual only; the result is announced through a live region.
+   */
   function copyRow(label, valueHtml, copyValue) {
     return '<div class="flex flex-col gap-0.5">' +
       '<dt class="text-sm leading-5 text-gray-600">' + label + '</dt>' +
       '<dd class="flex items-center gap-3.5">' +
         '<span class="min-w-0 flex-1 truncate">' + valueHtml + '</span>' +
         '<button type="button" data-ob-copy="' + escapeHtml(copyValue) + '" ' +
-          'class="relative flex size-[18px] shrink-0 cursor-pointer items-center justify-center rounded hover:opacity-70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
+          'class="group relative flex size-[18px] shrink-0 cursor-pointer items-center justify-center rounded-[4px] ' +
+          '[&:hover:not([data-copied])]:bg-[#f3f4f6] [&:hover:not([data-copied])]:shadow-[0_0_0_4px_#f3f4f6] ' +
+          'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600">' +
           '<span class="sr-only">Copy ' + label + '</span>' +
-          '<img src="' + ASSETS + 'icon-duplicate.svg" alt="" width="18" height="18" class="size-[18px]">' +
-          '<span data-ob-copied role="status" class="pointer-events-none absolute right-full mr-2 hidden whitespace-nowrap text-xs font-medium text-green-600">Copied</span>' +
+          '<img src="' + ASSETS + 'icon-duplicate.svg" alt="" width="18" height="18" class="size-[18px] group-hover:hidden group-data-copied:hidden">' +
+          '<img src="' + ASSETS + 'icon-duplicate-dark.svg" alt="" width="18" height="18" class="hidden size-[18px] group-hover:block group-data-copied:hidden">' +
+          '<img src="' + ASSETS + 'icon-copy-check-green.svg" alt="" width="18" height="18" class="hidden size-[18px] group-data-copied:block">' +
+          '<span aria-hidden="true" class="pointer-events-none invisible absolute bottom-full left-1/2 z-10 mb-2 max-w-[200px] -translate-x-1/2 translate-y-1 rounded-lg bg-[#111827] px-2.5 py-1 text-sm leading-5 whitespace-nowrap text-[#f3f4f6] opacity-0 drop-shadow-[0_10px_7.5px_rgba(0,0,0,0.1)] transition duration-150 ease-out ' +
+            'group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:visible group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transition-none">' +
+            '<span class="group-data-copied:hidden">Copy</span><span class="hidden group-data-copied:inline">Copied</span>' +
+          '</span>' +
+          '<span data-ob-copied role="status" class="sr-only"></span>' +
         '</button>' +
       '</dd>' +
     '</div>';
@@ -127,9 +143,14 @@ window.OBModal = (function () {
     var value = btn.getAttribute('data-ob-copy');
     if (!value || !navigator.clipboard) return;
     navigator.clipboard.writeText(value).then(function () {
-      var note = btn.querySelector('[data-ob-copied]');
-      note.classList.remove('hidden');
-      setTimeout(function () { note.classList.add('hidden'); }, 1500);
+      var status = btn.querySelector('[data-ob-copied]');
+      clearTimeout(btn._copiedTimer);
+      btn.setAttribute('data-copied', '');
+      status.textContent = 'Copied';
+      btn._copiedTimer = setTimeout(function () {
+        btn.removeAttribute('data-copied');
+        status.textContent = '';
+      }, 2000);
     });
   });
 

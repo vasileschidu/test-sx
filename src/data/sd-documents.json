@@ -2,7 +2,7 @@
   "headerText": "documents",
   "message": {
     "title": "Documents",
-    "body": "These documents support your $487.00 claim payment from Horizon Inc. Open each one, read it through and select Next to mark it as Done."
+    "body": "{sender} sent these documents to support your {amount} claim payment. Open each one, read it through and select Next to mark it as Done."
   },
   "documents": [
     {

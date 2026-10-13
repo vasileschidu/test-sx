@@ -1,0 +1,55 @@
+<!--
+  @file onboarding/allocation.html
+  @description Multi-Party step "Current Allocation" (Figma "MPP - 5. Multi-Party Payments",
+    node 14220:115456): the split between the parties, Accept and Continue, Change,
+    and Dispute Total Amount for the primary party.
+    Rendered by src/scripts/onboarding-multi-party.js.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Current Allocation · SMART Disburse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/data-source.js"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js?v=20261013b"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js"></script>
+  <script src="../../../src/scripts/onboarding-field.js?v=20261013a"></script>
+  <script src="../../../src/scripts/onboarding-modal.js?v=20261013b"></script>
+  <script src="../../../src/scripts/onboarding-flow.js?v=20261013i"></script>
+  <script src="../../../src/scripts/onboarding-stepper.js?v=20261013a"></script>
+  <script src="../../../src/scripts/onboarding-decline.js"></script>
+  <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
+  <script src="../../../src/scripts/onboarding-multi-party.js?v=20261013h"></script>
+</head>
+
+<body data-mp-page="allocation" class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+
+  <!-- CONTAINER -->
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+
+    <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js -->
+    <div data-ob-sidebar></div>
+
+    <!-- RIGHT COLUMN (scrolls) -->
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col lg:min-h-screen">
+
+        <!-- Rendered by onboarding-multi-party.js -->
+        <div data-ob-content data-ob-no-skeleton class="flex flex-1 flex-col">
+          <div data-mp-root class="flex flex-1 flex-col gap-6 px-4 pt-10 pb-6 lg:px-14 lg:pt-14 lg:pb-14"></div>
+        </div>
+
+        <!-- Footer: on desktop the sidebar carries it -->
+        <div data-ob-footer class="lg:hidden"></div>
+      </div>
+    </div>
+
+  </div>
+</body>
+</html>

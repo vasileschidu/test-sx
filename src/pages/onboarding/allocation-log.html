@@ -1,0 +1,37 @@
+<!--
+  @file onboarding/allocation-log.html
+  @description Multi-Party "Allocation Log" (Figma "MPP - 6.6. Allocations log",
+    node 14220:119806): every allocation, newest first.
+    Rendered by src/scripts/onboarding-multi-party.js.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Allocation Log · SMART Disburse</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../../src/scripts/data-source.js"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js?v=20261013b"></script>
+  <script src="../../../src/scripts/onboarding-field.js?v=20261013a"></script>
+  <script src="../../../src/scripts/onboarding-modal.js?v=20261013b"></script>
+  <script src="../../../src/scripts/onboarding-flow.js?v=20261013i"></script>
+  <script src="../../../src/scripts/onboarding-stepper.js?v=20261013a"></script>
+  <script src="../../../src/scripts/onboarding-multi-party.js?v=20261013h"></script>
+</head>
+
+<body data-mp-page="log" class="min-h-screen bg-white antialiased font-['Inter'] lg:bg-gray-200">
+
+  <!-- Full-screen panel, no sidebar (Figma shows these screens over the flow) -->
+  <main class="mx-auto flex min-h-screen w-full max-w-[699px] flex-col bg-white">
+    <div data-ob-content data-ob-no-skeleton class="flex flex-1 flex-col">
+      <!-- Rendered by onboarding-multi-party.js -->
+      <div data-mp-root class="flex flex-1 flex-col gap-4 px-4 pt-10 pb-6 lg:px-14 lg:pt-14 lg:pb-14"></div>
+    </div>
+  </main>
+</body>
+</html>

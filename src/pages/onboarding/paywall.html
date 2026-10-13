@@ -16,13 +16,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="../../../src/scripts/data-source.js"></script>
-  <script src="../../../src/scripts/sd-onboarding-context.js"></script>
-  <script src="../../../src/scripts/onboarding-transitions.js"></script>
+  <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js?v=20261013b"></script>
   <script src="../../../src/scripts/onboarding-sidebar.js"></script>
-  <script src="../../../src/scripts/onboarding-field.js"></script>
-  <script src="../../../src/scripts/onboarding-modal.js"></script>
+  <script src="../../../src/scripts/onboarding-field.js?v=20261013a"></script>
+  <script src="../../../src/scripts/onboarding-modal.js?v=20261013b"></script>
   <script src="../../../src/scripts/onboarding-decline.js"></script>
-  <script src="../../../src/scripts/onboarding-stepper.js"></script>
+  <script src="../../../src/scripts/onboarding-flow.js?v=20261013i"></script>
+  <script src="../../../src/scripts/onboarding-stepper.js?v=20261013a"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
   <script src="../../../src/scripts/paywall.js"></script>
 </head>
@@ -57,7 +58,7 @@
             </div>
             <div class="relative flex flex-col items-center gap-3 px-5 pt-6 pb-8">
               <p class="text-xs leading-4 font-medium tracking-[0.6px] text-[#bfdbfe] uppercase">Payment amount</p>
-              <p data-ob-skeleton class="text-5xl leading-[48px]"><span data-pay-integer class="text-white">$487</span><span data-pay-decimal class="text-[#3b82f6]">.00</span></p>
+              <p class="text-5xl leading-[48px]"><span data-pay-integer data-ob-skeleton="text" class="inline-block align-top text-white">$487</span><span data-pay-decimal data-ob-skeleton="decimal" class="inline-block align-top text-white">.00</span></p>
               <p class="flex items-center gap-1.5 rounded-full bg-[#1e40af] px-4 py-1 whitespace-nowrap">
                 <span class="text-[10px] leading-4 font-medium tracking-[0.7px] text-[#60a5fa] uppercase">From</span>
                 <span data-ob-skeleton data-pay-sender class="text-sm leading-5 text-white">Horizon Inc.</span>
