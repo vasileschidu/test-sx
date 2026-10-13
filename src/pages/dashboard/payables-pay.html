@@ -618,7 +618,7 @@
                           >
                             <button
                               type="button"
-                              class="grid h-10 w-full cursor-default grid-cols-1 rounded-md border border-gray-300 bg-white py-0 pr-3 pl-3 text-left text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white"
+                              class="grid h-10 w-full cursor-default grid-cols-1 rounded-md border border-gray-300 bg-white py-0 pr-3 pl-3 text-left text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white"
                             >
                               <el-selectedcontent
                                 id="pp-orig-bank-selected"
@@ -643,9 +643,9 @@
                             </button>
                             <el-options
                               id="pp-orig-bank-options"
-                              anchor="bottom start"
+                              data-max-height="420"
                               popover
-                              class="w-(--button-width) overflow-auto rounded-md bg-white text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                              class="overflow-auto rounded-md bg-white shadow-lg outline-1 outline-black/5 data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10"
                             >
                             </el-options>
                           </el-select>
@@ -895,7 +895,7 @@
                         >
                           <button
                             type="button"
-                            class="grid h-10 w-full cursor-default grid-cols-1 rounded-md border border-gray-300 bg-white py-0 pr-3 pl-3 text-left text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white"
+                            class="grid h-10 w-full cursor-default grid-cols-1 rounded-md border border-gray-300 bg-white py-0 pr-3 pl-3 text-left text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white"
                           >
                             <el-selectedcontent
                               id="pp-pay-method-selected"
@@ -920,9 +920,9 @@
                           </button>
                           <el-options
                             id="pp-pay-method-options"
-                            anchor="bottom start"
+                            data-max-height="560"
                             popover
-                            class="max-h-80 w-(--button-width) overflow-auto divide-y divide-gray-200 rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10"
+                            class="overflow-auto rounded-md bg-white shadow-lg outline-1 outline-black/5 data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10"
                           >
                             <!-- Accept Payer's Card -->
                             <el-option
@@ -1071,60 +1071,52 @@
                         <!-- Payment Method Details (shown after selection) -->
                         <div
                           id="gp-payment-method-details"
-                          class="hidden mt-4 w-full max-w-[512px]"
+                          class="hidden mt-4 w-full"
                         >
                           <!-- Accept Payer's Card -->
                           <div id="gp-pmc-payers-card" class="hidden">
-                            <fieldset class="mt-3 w-full max-w-[512px]">
+                            <div class="flex flex-col gap-4">
+                            <fieldset class="flex w-full flex-col gap-2.5">
                               <legend
                                 id="pp-card-section-title"
-                                class="text-sm/6 font-semibold text-gray-900 dark:text-white"
+                                class="text-sm leading-5 font-medium text-gray-900 dark:text-white"
                               >
                                 Select a card to pay with
                               </legend>
                               <p
                                 id="pp-card-section-description"
-                                class="mt-1 text-sm/6 text-gray-600 dark:text-gray-400"
+                                class="text-sm leading-5 font-normal text-gray-500 dark:text-gray-400"
                               >
-                                Choose whether to use an existing virtual card
-                                or create a new one for this payment.
+                                Simply load your card with the amount of the
+                                invoice, and send the card to your customer for
+                                a hassle-free checkout experience.
                               </p>
-                              <div
-                                id="pp-card-source-radios"
-                                class="mt-6 space-y-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-10"
-                              >
-                                <label class="flex items-center">
+                              <!-- Card source is driven by the card dropdown
+                                   (select a card / "Create New Card"); the radios
+                                   stay as the state source for existing logic. -->
+                              <div class="hidden">
+                                <div id="pp-card-source-radios">
                                   <input
                                     id="pp-card-source-existing"
                                     type="radio"
                                     name="pp-card-source"
                                     value="existing"
-                                    class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden"
+                                    tabindex="-1"
                                   />
-                                  <span
-                                    class="ml-3 block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                    >Use Existing Card</span
-                                  >
-                                </label>
-                                <label class="flex items-center">
                                   <input
                                     id="pp-card-source-new"
                                     type="radio"
                                     name="pp-card-source"
                                     value="new"
-                                    class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden"
+                                    tabindex="-1"
                                   />
-                                  <span
-                                    class="ml-3 block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                    >Create New Card</span
-                                  >
-                                </label>
+                                </div>
                               </div>
                             </fieldset>
 
                             <div
                               id="pp-card-existing-selector-wrap"
-                              class="mt-4 hidden w-full max-w-[512px]"
+                              class="w-full rounded-md bg-gray-50 dark:bg-white/5"
                             >
                               <el-select
                                 name="payeeCardSelect"
@@ -1133,18 +1125,17 @@
                               >
                                 <button
                                   type="button"
-                                  class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                                  class="grid h-10 w-full cursor-default grid-cols-1 rounded-md border border-gray-300 bg-white py-0 pr-3 pl-3 text-left text-base leading-6 font-medium text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white"
                                 >
                                   <el-selectedcontent
                                     id="pp-pay-card-selected"
-                                    class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-gray-900 dark:text-white"
+                                    class="col-start-1 row-start-1 flex min-w-0 items-center gap-2 pr-6 text-gray-900 dark:text-white"
                                     ><span
                                       class="truncate font-normal text-gray-400 dark:text-gray-500"
-                                      >Select card</span
+                                      >Select a card</span
                                     ></el-selectedcontent
                                   >
-                                  <svg
-                                    id="pp-pay-card-chevron-icon"
+                                  <svg id="pp-pay-card-chevron-icon"
                                     viewBox="0 0 16 16"
                                     fill="currentColor"
                                     aria-hidden="true"
@@ -1159,24 +1150,84 @@
                                 </button>
                                 <el-options
                                   id="pp-pay-card-options"
-                                  anchor="bottom start"
+                                  data-max-height="420"
                                   popover
-                                  class="w-(--button-width) overflow-auto rounded-md bg-white text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                  class="overflow-auto rounded-md bg-white shadow-lg outline-1 outline-black/5 data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10"
                                 >
                                 </el-options>
                               </el-select>
+                              <div id="pp-card-balance-panel" class="hidden">
+                              <div class="flex items-start gap-6 p-4">
+                                <div class="flex flex-col">
+                                  <p
+                                    class="text-sm leading-5 font-medium text-gray-900 dark:text-white"
+                                  >
+                                    Current Card Balance
+                                  </p>
+                                  <p
+                                    id="pp-card-current-balance"
+                                    class="text-sm leading-5 font-normal text-gray-700 dark:text-gray-300"
+                                  >
+                                    $0.00
+                                  </p>
+                                </div>
+                                <div
+                                  class="h-11 w-px shrink-0 bg-gray-200 dark:bg-white/10"
+                                ></div>
+                                <div class="flex flex-col">
+                                  <p
+                                    class="text-sm leading-5 font-medium text-gray-900 dark:text-white"
+                                  >
+                                    Projected Balance
+                                  </p>
+                                  <div class="flex items-center gap-2">
+                                    <span
+                                      id="pp-card-projected-balance"
+                                      class="text-sm leading-5 font-normal text-gray-700 dark:text-gray-300"
+                                      >$0.00</span
+                                    >
+                                    <svg
+                                        id="pp-card-projected-warning"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        class="hidden size-[18px] shrink-0 text-amber-500"
+                                      >
+                                        <path
+                                          fill-rule="evenodd"
+                                          d="M8.257 3.099c.765-1.36 2.72-1.36 3.485 0l5.58 9.92c.75 1.334-.213 2.981-1.742 2.981H4.42c-1.53 0-2.492-1.647-1.742-2.98l5.58-9.921ZM11 7a1 1 0 1 0-2 0v3a1 1 0 1 0 2 0V7Zm-1 7.25a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5Z"
+                                          clip-rule="evenodd"
+                                        />
+                                      </svg>
+                                    <svg
+                                      id="pp-card-projected-ok"
+                                      viewBox="0 0 20 20"
+                                      fill="currentColor"
+                                      aria-hidden="true"
+                                      class="hidden size-[18px] shrink-0 text-emerald-500"
+                                    >
+                                      <path
+                                        fill-rule="evenodd"
+                                        d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z"
+                                        clip-rule="evenodd"
+                                      />
+                                    </svg>
+                                  </div>
+                                </div>
+                              </div>
+                              </div>
                             </div>
 
                             <div
                               id="pp-card-created-summary"
-                              class="mt-4 hidden w-full max-w-[512px] rounded-xl border border-dashed border-gray-300 bg-white p-4 dark:border-white/10 dark:bg-white/5"
+                              class="hidden w-full rounded-xl border border-dashed border-gray-300 bg-white p-4 dark:border-white/10 dark:bg-white/5"
                             >
                               <div id="pp-card-created-label">--</div>
                             </div>
 
                             <div
                               id="pp-card-paid-reveal-section"
-                              class="mt-4 hidden w-fit max-w-[512px]"
+                              class="hidden w-fit"
                             >
                               <div
                                 class="flex items-center gap-3 rounded-lg bg-gray-100 pr-2 dark:bg-white/5"
@@ -1221,40 +1272,72 @@
 
                             <div
                               id="pp-card-funding-method-wrap"
-                              class="mt-6 hidden w-full max-w-[512px] border-t border-gray-200 pt-6 dark:border-white/10"
+                              class="hidden w-full pt-4"
                             >
-                              <fieldset class="min-w-0">
-                                <legend
-                                  class="text-sm/6 font-semibold text-gray-900 dark:text-white"
-                                >
-                                  Choose How This Card Will Be Funded
-                                </legend>
-                                <p
-                                  class="mt-1 text-sm/6 text-gray-600 dark:text-gray-400"
-                                >
-                                  Add funds to this virtual card before payment,
-                                  or use funds already available on the card. If
-                                  you choose Spend Balance, no additional
-                                  transfer will be initiated.
-                                </p>
+                              <!-- Hidden radios remain the funding state source;
+                                   the dropdown below drives them. -->
+                              <div class="hidden">
+                                <div id="pp-card-funding-method-radios"></div>
+                              </div>
+                              <div class="grid w-full grid-cols-2 gap-6">
+                                <div class="flex min-w-0 flex-col gap-1">
+                                  <p
+                                    class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
+                                  >
+                                    Select Funding Method
+                                  </p>
+                                  <el-select
+                                    name="payeeCardFundingSelect"
+                                    id="pp-card-funding-select"
+                                    class="block w-full"
+                                  >
+                                    <button
+                                      type="button"
+                                      class="grid h-10 w-full cursor-default grid-cols-1 rounded-md border border-gray-300 bg-white py-0 pr-3 pl-3 text-left text-base leading-6 font-medium text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white"
+                                    >
+                                      <el-selectedcontent
+                                        id="pp-card-funding-selected"
+                                        class="col-start-1 row-start-1 flex min-w-0 items-center gap-2 pr-6 text-gray-900 dark:text-white"
+                                        ><span
+                                          class="truncate font-normal text-gray-400 dark:text-gray-500"
+                                          >Funding method</span
+                                        ></el-selectedcontent
+                                      >
+                                      <svg
+                                    viewBox="0 0 16 16"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                    class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 dark:text-gray-400"
+                                  >
+                                    <path
+                                      d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
+                                      clip-rule="evenodd"
+                                      fill-rule="evenodd"
+                                    />
+                                  </svg>
+                                    </button>
+                                    <el-options
+                                      id="pp-card-funding-options"
+                                      data-max-height="360"
+                                      data-min-width="372"
+                                      popover
+                                      class="overflow-auto rounded-md bg-white shadow-lg outline-1 outline-black/5 data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10"
+                                    >
+                                    </el-options>
+                                  </el-select>
+                                </div>
                                 <div
-                                  id="pp-card-funding-method-radios"
-                                  class="mt-6 flex w-full items-center gap-10"
-                                ></div>
-                              </fieldset>
-
-                              <div
-                                id="pp-card-funding-details-wrap"
-                                class="mt-4 hidden w-full border-b border-gray-200 pb-6 dark:border-white/10"
-                              >
-                                <div class="grid w-full gap-4 sm:grid-cols-2">
+                                  id="pp-card-funding-details-wrap"
+                                  class="hidden min-w-0"
+                                >
                                   <div
                                     id="pp-card-funding-amount-wrap"
                                     class="hidden min-w-0"
                                   >
+                                  <div class="flex min-w-0 flex-col gap-1">
                                     <label
                                       for="pp-card-funding-amount"
-                                      class="flex min-h-[24px] items-center gap-1.5 text-sm/6 font-medium text-gray-900 dark:text-white"
+                                      class="flex h-5 items-center gap-1 text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
                                     >
                                       <span>Funding Amount</span>
                                       <span
@@ -1263,7 +1346,7 @@
                                       >
                                         <button
                                           type="button"
-                                          class="inline-flex rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300"
+                                          class="inline-flex rounded-full text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300"
                                         >
                                           <span class="sr-only"
                                             >Explain funding amount</span
@@ -1272,7 +1355,7 @@
                                             xmlns="http://www.w3.org/2000/svg"
                                             viewBox="0 0 20 20"
                                             fill="currentColor"
-                                            class="size-5"
+                                            class="size-4"
                                           >
                                             <path
                                               fill-rule="evenodd"
@@ -1292,85 +1375,34 @@
                                         </span>
                                       </span>
                                     </label>
-                                    <div class="mt-2">
-                                      <div class="relative">
-                                        <span
-                                          class="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 text-sm font-medium text-gray-500 dark:text-gray-400"
-                                          >$</span
-                                        >
-                                        <input
-                                          id="pp-card-funding-amount"
-                                          type="text"
-                                          inputmode="decimal"
-                                          placeholder="0.00"
-                                          class="block h-[38px] w-full rounded-md bg-white px-3 py-1.5 pl-8 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:disabled:bg-white/5 dark:disabled:text-gray-400 dark:disabled:outline-white/10"
-                                        />
-                                      </div>
+                                    <div class="relative">
+                                      <img
+                                        src="../../../src/assets/pay/currency-dollar-20.svg"
+                                        alt=""
+                                        width="20"
+                                        height="20"
+                                        class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2"
+                                      />
+                                      <input
+                                        id="pp-card-funding-amount"
+                                        type="text"
+                                        inputmode="decimal"
+                                        placeholder="0.00"
+                                        class="block h-10 w-full rounded-md bg-white px-3 py-1.5 pl-10 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:disabled:bg-white/5 dark:disabled:text-gray-400 dark:disabled:outline-white/10"
+                                      />
                                     </div>
+                                    <p
+                                      id="pp-card-funding-deficit"
+                                      class="hidden text-sm leading-5 font-normal text-gray-500 dark:text-gray-400"
+                                    >
+                                      Deficit offset:
+                                      <button
+                                        type="button"
+                                        id="pp-card-funding-deficit-btn"
+                                        class="cursor-pointer font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400"
+                                      ></button>
+                                    </p>
                                   </div>
-                                  <div
-                                    id="pp-card-balance-panel"
-                                    class="hidden min-w-0"
-                                  >
-                                    <div
-                                      class="flex min-h-[24px] items-center gap-1.5"
-                                    >
-                                      <p
-                                        class="text-sm/6 font-medium text-gray-900 dark:text-white"
-                                      >
-                                        Projected Card Balance
-                                      </p>
-                                      <span class="group relative inline-flex">
-                                        <button
-                                          type="button"
-                                          class="inline-flex rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300"
-                                        >
-                                          <span class="sr-only"
-                                            >Explain projected balance</span
-                                          >
-                                          <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            viewBox="0 0 20 20"
-                                            fill="currentColor"
-                                            class="size-5"
-                                          >
-                                            <path
-                                              fill-rule="evenodd"
-                                              d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z"
-                                              clip-rule="evenodd"
-                                            />
-                                          </svg>
-                                        </button>
-                                        <span
-                                          role="tooltip"
-                                          class="pointer-events-none invisible absolute bottom-full left-1/2 z-50 mb-2 w-64 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-xs font-medium leading-5 text-white opacity-0 shadow-lg transition duration-100 ease-out group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 dark:bg-black"
-                                        >
-                                          Balance after the selected funding
-                                          method is applied to the card, before
-                                          this payable is charged.
-                                        </span>
-                                      </span>
-                                      <svg
-                                        id="pp-card-projected-warning"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                        class="hidden size-4 text-amber-500"
-                                      >
-                                        <path
-                                          fill-rule="evenodd"
-                                          d="M8.257 3.099c.765-1.36 2.72-1.36 3.485 0l5.58 9.92c.75 1.334-.213 2.981-1.742 2.981H4.42c-1.53 0-2.492-1.647-1.742-2.98l5.58-9.921ZM11 7a1 1 0 1 0-2 0v3a1 1 0 1 0 2 0V7Zm-1 7.25a1.25 1.25 0 1 0 0-2.5 1.25 1.25 0 0 0 0 2.5Z"
-                                          clip-rule="evenodd"
-                                        />
-                                      </svg>
-                                    </div>
-                                    <div
-                                      class="mt-2 flex h-[38px] items-center rounded-md border border-dashed border-gray-300 bg-gray-50 px-3 py-1.5 text-base font-semibold text-gray-900 dark:border-white/10 dark:bg-white/5 dark:text-white sm:text-sm/6"
-                                    >
-                                      <span id="pp-card-projected-balance"
-                                        >$0.00</span
-                                      >
-                                    </div>
                                   </div>
                                 </div>
                               </div>
@@ -1378,98 +1410,148 @@
 
                             <fieldset
                               id="pp-card-sending-methods"
-                              class="mt-6 hidden w-full max-w-[512px] border-0 p-0"
+                              class="hidden w-full border-0 mt-6 p-0"
                             >
                               <legend
-                                class="text-sm/6 font-semibold text-gray-900 dark:text-white"
+                                class="mb-1 text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
                               >
-                                Select Sending Method
+                                Sending Method
                               </legend>
-                              <p
-                                class="mt-1 text-sm/6 text-gray-600 dark:text-gray-400"
-                              >
-                                Choose how the card details should be shared
-                                with your vendor.
-                              </p>
-                              <div class="mt-6 space-y-6">
-                                <div class="flex items-center">
-                                  <input
-                                    id="pp-card-sending-on-file"
-                                    type="radio"
-                                    name="pp-card-sending-method"
-                                    value="on_file"
-                                    checked
-                                    class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden"
-                                  />
+                              <div class="flex flex-col gap-2.5">
+                                <div
+                                  class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5"
+                                >
                                   <label
                                     for="pp-card-sending-on-file"
-                                    class="ml-3 block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                    >Do nothing, card is on file with my
-                                    vendor</label
+                                    class="flex cursor-pointer items-center gap-2.5"
                                   >
+                                    <input
+                                      id="pp-card-sending-on-file"
+                                      type="radio"
+                                      name="pp-card-sending-method"
+                                      value="on_file" checked
+                                      class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden"
+                                    />
+                                    <span class="flex items-center gap-1">
+                                      <span
+                                        class="text-sm leading-5 font-medium text-gray-900 dark:text-white"
+                                        >Do nothing, card is on file with my vendor</span
+                                      >
+                                    </span>
+                                  </label>
                                 </div>
-                                <div class="flex items-center">
-                                  <input
-                                    id="pp-card-sending-delivery-website"
-                                    type="radio"
-                                    name="pp-card-sending-method"
-                                    value="delivery_website"
-                                    class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden"
-                                  />
+                                <div
+                                  class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5"
+                                >
                                   <label
                                     for="pp-card-sending-delivery-website"
-                                    class="ml-3 block text-sm/6 font-medium text-gray-900 dark:text-white"
-                                    >Send securely via Delivery Website</label
+                                    class="flex cursor-pointer items-center gap-2.5"
                                   >
-                                </div>
-                              </div>
-                              <div
-                                id="pp-card-delivery-details"
-                                class="mt-4 hidden rounded-lg bg-gray-50 p-3 dark:bg-white/5"
-                              >
-                                <h4
-                                  class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100"
-                                >
-                                  Where should we send the secure card-delivery
-                                  link?
-                                </h4>
-                                <p
-                                  class="mt-1 text-sm font-normal leading-5 text-gray-500 dark:text-gray-400"
-                                >
-                                  Provide your vendor's email address and/or
-                                  phone number so they can securely receive the
-                                  virtual card details.
-                                </p>
-                                <div class="mt-4">
-                                  <div
-                                    id="pp-card-delivery-contact-combobox"
-                                    class="relative w-full"
-                                  >
-                                    <div
-                                      id="pp-card-delivery-contact-input-wrap"
-                                      class="flex min-h-[38px] w-full flex-wrap items-center gap-1.5 rounded-md bg-white py-1.5 pr-2 pl-3 text-sm/6 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                                    <input
+                                      id="pp-card-sending-delivery-website"
+                                      type="radio"
+                                      name="pp-card-sending-method"
+                                      value="delivery_website"
+                                      class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden"
+                                    />
+                                    <span class="flex items-center gap-1">
+                                      <span
+                                        class="text-sm leading-5 font-medium text-gray-900 dark:text-white"
+                                        >Send securely via Delivery Website</span
+                                      >
+                                    </span>
+                                  </label>
+                                  <div id="pp-card-delivery-details" class="hidden">
+                                  <div class="flex flex-col gap-4">
+                                    <p
+                                      class="text-sm leading-5 font-normal text-gray-500 dark:text-gray-400"
                                     >
+                                      Provide your payee's email address and/or
+                                      phone number where the card token will be
+                                      sent to.
+                                    </p>
+                                    <div class="flex flex-col gap-1">
+                                      <label
+                                        for="pp-card-delivery-contact-input"
+                                        class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
+                                        >Contact Addresses</label
+                                      >
                                       <div
-                                        id="pp-card-delivery-contact-tokens"
-                                        class="contents"
-                                      ></div>
-                                      <input
-                                        id="pp-card-delivery-contact-input"
-                                        name="cardDeliveryContactInput"
-                                        type="text"
-                                        autocomplete="off"
-                                        placeholder="Choose destination"
-                                        class="min-w-[160px] flex-1 border-0 bg-transparent p-0 text-sm font-normal text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-white dark:placeholder:text-gray-500"
-                                      />
+                                        id="pp-card-delivery-contact-combobox"
+                                        class="relative w-full"
+                                      >
+                                        <div
+                                          id="pp-card-delivery-contact-input-wrap"
+                                          class="flex min-h-[38px] w-full flex-wrap items-center gap-1.5 rounded-md bg-white py-1.5 pr-2 pl-3 text-sm/6 text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-within:outline-2 focus-within:-outline-offset-2 focus-within:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                                        >
+                                          <div
+                                            id="pp-card-delivery-contact-tokens"
+                                            class="contents"
+                                          ></div>
+                                          <input
+                                            id="pp-card-delivery-contact-input"
+                                            name="cardDeliveryContactInput"
+                                            type="text"
+                                            autocomplete="off"
+                                            placeholder="Email address or phone number"
+                                            class="min-w-[160px] flex-1 border-0 bg-transparent p-0 text-sm font-normal text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-white dark:placeholder:text-gray-500"
+                                          />
+                                        </div>
+                                        <div
+                                          id="pp-card-delivery-contact-list"
+                                          class="hidden absolute z-30 mt-1 w-full overflow-auto rounded-md bg-white text-base shadow-lg outline-1 outline-black/5 sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                        ></div>
+                                      </div>
                                     </div>
-                                    <div
-                                      id="pp-card-delivery-contact-list"
-                                      class="hidden absolute z-30 mt-1 w-full overflow-auto rounded-md bg-white text-base shadow-lg outline-1 outline-black/5 sm:text-sm dark:bg-gray-800 dark:outline-white/10"
-                                    ></div>
                                   </div>
+                                  </div>
+                                </div>
+                                <div
+                                  class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5"
+                                >
+                                  <label
+                                    for="pp-card-sending-display-details"
+                                    class="flex cursor-pointer items-center gap-2.5"
+                                  >
+                                    <input
+                                      id="pp-card-sending-display-details"
+                                      type="radio"
+                                      name="pp-card-sending-method"
+                                      value="display_details"
+                                      class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400 forced-colors:appearance-auto forced-colors:before:hidden"
+                                    />
+                                    <span class="flex items-center gap-1">
+                                      <span
+                                        class="text-sm leading-5 font-medium text-gray-900 dark:text-white"
+                                        >Display the card details</span
+                                      >
+                                      <svg
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        aria-hidden="true"
+                                        class="size-3.5 shrink-0 text-gray-400"
+                                      >
+                                        <path
+                                          fill-rule="evenodd"
+                                          d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z"
+                                          clip-rule="evenodd"
+                                        />
+                                      </svg>
+                                    </span>
+                                  </label>
+                                  <p
+                                    id="pp-card-display-details"
+                                    class="hidden text-sm leading-5 font-normal text-gray-500 dark:text-gray-400"
+                                  >
+                                    Please note that card details will be shown
+                                    on the final payment confirmation page after
+                                    finalizing this invoice for you to send
+                                    manually.
+                                  </p>
                                 </div>
                               </div>
                             </fieldset>
+                            </div>
                           </div>
 
                           <!-- Send to Bank Account -->
@@ -1478,7 +1560,7 @@
                             <el-select
                               name="bankAccountSelect"
                               id="gp-bank-account-select"
-                              class="block w-full max-w-[512px]"
+                              class="block w-full"
                             >
                               <button
                                 type="button"
@@ -1536,90 +1618,55 @@
 
                             <!-- Bank account details (shown after selecting a bank) -->
                             <div id="gp-pmc-bank-details" class="hidden mt-4">
-                              <div
-                                class="flex flex-col items-start self-stretch"
-                              >
-                                <!-- header -->
+                              <div class="flex flex-col gap-4 self-stretch">
                                 <div
-                                  class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10"
+                                  class="flex flex-col items-start self-stretch overflow-hidden rounded-lg border border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"
                                 >
-                                  <span
-                                    class="text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                    >Account Details</span
-                                  >
-                                  <button
-                                    type="button"
-                                    id="gp-edit-bank-btn"
-                                    class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-200 transition-colors dark:text-gray-400 dark:hover:bg-white/10"
-                                  >
-                                    Edit
-                                    <svg
-                                      xmlns="http://www.w3.org/2000/svg"
-                                      viewBox="0 0 20 20"
-                                      fill="currentColor"
-                                      class="size-3.5"
-                                    >
-                                      <path
-                                        d="M2.695 14.763l-1.262 3.154a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.885L17.5 5.5a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.885 1.343Z"
-                                      />
-                                    </svg>
-                                  </button>
-                                </div>
-                                <!-- body -->
-                                <div
-                                  class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"
-                                >
+                                  <!-- header -->
                                   <div
-                                    class="grid grid-cols-2 gap-4 self-stretch"
+                                    class="flex items-center justify-between self-stretch border-b border-gray-200 bg-gray-100 px-4 py-2 dark:border-white/10 dark:bg-white/10"
                                   >
                                     <span
-                                      class="text-sm font-medium text-gray-900 dark:text-gray-100"
-                                      >Name</span
-                                    >
-                                    <span
-                                      id="gp-pmc-bank-name-val"
-                                      class="text-sm font-normal text-gray-700 dark:text-gray-300"
-                                    ></span>
-                                  </div>
-                                  <div
-                                    class="grid grid-cols-2 gap-4 self-stretch"
-                                  >
-                                    <span
-                                      class="text-sm font-medium text-gray-900 dark:text-gray-100"
-                                      >Account Number</span
+                                      class="text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100"
+                                      >Account Details</span
                                     >
                                     <button
                                       type="button"
-                                      id="gp-pmc-bank-acct-copy-btn"
-                                      data-copy-id="gp-pmc-bank-acct"
-                                      data-copy-enabled="false"
-                                      class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"
+                                      id="gp-edit-bank-btn"
+                                      class="inline-flex cursor-pointer items-center gap-1 rounded py-0.5 text-xs leading-4 font-semibold text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white"
                                     >
-                                      <span
-                                        id="gp-pmc-bank-acct"
-                                        class="text-sm font-normal"
-                                      ></span>
+                                      Edit
                                       <svg
-                                        data-copy-icon="true"
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 20 20"
                                         fill="currentColor"
-                                        class="hidden size-4 shrink-0 text-gray-400 dark:text-gray-500"
+                                        aria-hidden="true"
+                                        class="size-4"
                                       >
                                         <path
-                                          d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z"
+                                          d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"
                                         />
                                         <path
-                                          d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z"
+                                          d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"
                                         />
                                       </svg>
                                     </button>
                                   </div>
-                                  <div
-                                    class="grid grid-cols-2 gap-4 self-stretch"
-                                  >
+                                  <!-- body -->
+                                  <div class="flex flex-col items-start gap-2 self-stretch p-4">
+                                  <div class="grid grid-cols-2 gap-6 self-stretch">
                                     <span
-                                      class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                                      class="text-sm leading-5 font-medium text-gray-900 dark:text-gray-100"
+                                      >Account Holder Name</span
+                                    >
+                                    <span
+                                      id="gp-pmc-bank-name-val"
+                                      class="text-sm leading-5 font-normal text-gray-700 dark:text-gray-300"
+                                    ></span>
+                                  </div>
+                                  <div class="grid grid-cols-2 gap-6 self-stretch">
+                                    <span
+                                      class="text-sm leading-5 font-medium text-gray-900 dark:text-gray-100"
                                       >Routing Number</span
                                     >
                                     <button
@@ -1627,11 +1674,11 @@
                                       id="gp-pmc-bank-routing-copy-btn"
                                       data-copy-id="gp-pmc-bank-routing"
                                       data-copy-enabled="false"
-                                      class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"
+                                      class="copy-btn -mx-1.5 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 text-gray-700 dark:text-gray-300 pointer-events-none"
                                     >
                                       <span
                                         id="gp-pmc-bank-routing"
-                                        class="text-sm font-normal"
+                                        class="text-sm leading-5 font-normal"
                                       ></span>
                                       <svg
                                         data-copy-icon="true"
@@ -1649,31 +1696,61 @@
                                       </svg>
                                     </button>
                                   </div>
-                                  <div
-                                    class="grid grid-cols-2 gap-4 self-stretch items-start"
-                                  >
+                                  <div class="grid grid-cols-2 gap-6 self-stretch">
                                     <span
-                                      class="text-sm font-medium text-gray-900 dark:text-gray-100"
-                                      >Address</span
+                                      class="text-sm leading-5 font-medium text-gray-900 dark:text-gray-100"
+                                      >Account Number</span
                                     >
-                                    <div
-                                      class="flex flex-col items-start gap-1.5"
+                                    <button
+                                      type="button"
+                                      id="gp-pmc-bank-acct-copy-btn"
+                                      data-copy-id="gp-pmc-bank-acct"
+                                      data-copy-enabled="false"
+                                      class="copy-btn -mx-1.5 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 text-gray-700 dark:text-gray-300 pointer-events-none"
                                     >
                                       <span
-                                        id="gp-pmc-bank-address"
-                                        class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line"
+                                        id="gp-pmc-bank-acct"
+                                        class="text-sm leading-5 font-normal"
                                       ></span>
+                                      <svg
+                                        data-copy-icon="true"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        class="hidden size-4 shrink-0 text-gray-400 dark:text-gray-500"
+                                      >
+                                        <path
+                                          d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z"
+                                        />
+                                        <path
+                                          d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z"
+                                        />
+                                      </svg>
+                                    </button>
+                                  </div>
+                                  <div class="grid grid-cols-2 gap-6 self-stretch items-start">
+                                    <span
+                                      class="text-sm leading-5 font-medium text-gray-900 dark:text-gray-100"
+                                      >Address</span
+                                    >
+                                    <span
+                                      id="gp-pmc-bank-address"
+                                      class="text-sm leading-5 font-normal text-gray-700 whitespace-pre-line dark:text-gray-300"
+                                    ></span>
+                                  </div>
+                                    <div class="grid grid-cols-2 gap-6 self-stretch pt-2">
+                                      <span aria-hidden="true"></span>
                                       <button
                                         type="button"
                                         id="gp-pmc-reveal-btn"
-                                        class="inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer"
+                                        class="inline-flex w-fit cursor-pointer items-center gap-1 rounded py-0.5 text-xs leading-4 font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
                                       >
                                         <svg
                                           data-icon="reveal"
                                           xmlns="http://www.w3.org/2000/svg"
                                           viewBox="0 0 16 16"
                                           fill="currentColor"
-                                          class="size-3.5"
+                                          class="size-4"
                                         >
                                           <path
                                             d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z"
@@ -1689,7 +1766,7 @@
                                           xmlns="http://www.w3.org/2000/svg"
                                           viewBox="0 0 16 16"
                                           fill="currentColor"
-                                          class="size-3.5 hidden"
+                                          class="size-4 hidden"
                                         >
                                           <path
                                             fill-rule="evenodd"
@@ -1711,37 +1788,31 @@
                                   </div>
                                 </div>
                                 <div
-                                  class="mt-4 rounded-md bg-gray-100 p-[10px] dark:bg-white/10"
+                                  class="flex items-start gap-3 rounded-md bg-blue-50 p-4 dark:bg-blue-500/10"
                                 >
-                                  <div class="flex items-start gap-2.5">
-                                    <div class="shrink-0">
-                                      <svg
-                                        xmlns="http://www.w3.org/2000/svg"
-                                        viewBox="0 0 16 16"
-                                        fill="currentColor"
-                                        aria-hidden="true"
-                                        class="size-3 text-gray-500 dark:text-gray-400"
-                                      >
-                                        <path
-                                          fill-rule="evenodd"
-                                          d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM9 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6.75 8a.75.75 0 0 0 0 1.5h.75v1.75a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8.25 8h-1.5Z"
-                                          clip-rule="evenodd"
-                                        />
-                                      </svg>
-                                    </div>
-                                    <div class="min-w-0">
-                                      <p
-                                        class="text-xs text-gray-600 dark:text-gray-300"
-                                      >
-                                        If your Routing Number, Account Number
-                                        or Address records (as registered under
-                                        the bank account) are no longer
-                                        accurate, please update the details in
-                                        your ERP. Once your details are updated,
-                                        please "Refresh" to reflect the changes.
-                                      </p>
-                                    </div>
-                                  </div>
+                                  <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    viewBox="0 0 20 20"
+                                    fill="currentColor"
+                                    aria-hidden="true"
+                                    class="size-5 shrink-0 text-blue-500"
+                                  >
+                                    <path
+                                      fill-rule="evenodd"
+                                      d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z"
+                                      clip-rule="evenodd"
+                                    />
+                                  </svg>
+                                  <p
+                                    class="min-w-0 flex-1 text-sm leading-5 font-medium text-blue-800 dark:text-blue-300"
+                                  >
+                                    If your Routing Number, Account Number or
+                                    Address records (as registered under the
+                                    bank account) are no longer accurate, please
+                                    update the details in your ERP. Once your
+                                    details are updated, please "Refresh" to
+                                    reflect the changes.
+                                  </p>
                                 </div>
                               </div>
                             </div>
@@ -1753,7 +1824,7 @@
                             <el-select
                               name="checkAddressSelect"
                               id="gp-check-address-select"
-                              class="block w-full max-w-[512px]"
+                              class="block w-full"
                             >
                               <button
                                 type="button"
@@ -1930,60 +2001,68 @@
                             <!-- Address details (shown after selecting an address) -->
                             <div id="gp-pmc-check-details" class="hidden mt-4">
                               <div
-                                class="flex flex-col items-start self-stretch"
+                                class="flex flex-col items-start self-stretch overflow-hidden rounded-lg border border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"
                               >
                                 <!-- header -->
                                 <div
-                                  class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10"
+                                  class="flex items-center justify-between self-stretch border-b border-gray-200 bg-gray-100 px-4 py-2 dark:border-white/10 dark:bg-white/10"
                                 >
                                   <span
-                                    class="text-sm font-semibold text-gray-900 dark:text-gray-100"
-                                    >Mailing Address</span
+                                    class="text-sm leading-5 font-semibold text-gray-900 dark:text-gray-100"
+                                    >Account Details</span
                                   >
                                   <button
                                     type="button"
                                     id="gp-edit-check-btn"
-                                    class="inline-flex items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-200 transition-colors dark:text-gray-400 dark:hover:bg-white/10"
+                                    class="inline-flex cursor-pointer items-center gap-1 rounded py-0.5 text-xs leading-4 font-semibold text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white"
                                   >
                                     Edit
                                     <svg
                                       xmlns="http://www.w3.org/2000/svg"
                                       viewBox="0 0 20 20"
                                       fill="currentColor"
-                                      class="size-3.5"
+                                      aria-hidden="true"
+                                      class="size-4"
                                     >
                                       <path
-                                        d="M2.695 14.763l-1.262 3.154a.5.5 0 0 0 .65.65l3.155-1.262a4 4 0 0 0 1.343-.885L17.5 5.5a2.121 2.121 0 0 0-3-3L3.58 13.42a4 4 0 0 0-.885 1.343Z"
+                                        d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"
+                                      />
+                                      <path
+                                        d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"
                                       />
                                     </svg>
                                   </button>
                                 </div>
                                 <!-- body -->
-                                <div
-                                  class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"
-                                >
-                                  <div
-                                    class="grid grid-cols-2 gap-4 self-stretch items-center"
-                                  >
+                                <div class="flex flex-col items-start gap-2 self-stretch p-4">
+                                  <div class="grid grid-cols-2 gap-6 self-stretch">
                                     <span
-                                      class="text-sm font-medium text-gray-900 dark:text-gray-100"
-                                      >Recipient Name</span
+                                      class="text-sm leading-5 font-medium text-gray-900 dark:text-gray-100"
+                                      >Check Number</span
+                                    >
+                                    <span
+                                      id="gp-pmc-check-number"
+                                      class="text-sm leading-5 font-normal text-gray-700 dark:text-gray-300"
+                                    ></span>
+                                  </div>
+                                  <div class="grid grid-cols-2 gap-6 self-stretch">
+                                    <span
+                                      class="text-sm leading-5 font-medium text-gray-900 dark:text-gray-100"
+                                      >Name or Company Name</span
                                     >
                                     <span
                                       id="gp-pmc-check-name"
-                                      class="text-sm font-normal text-gray-700 dark:text-gray-300"
+                                      class="text-sm leading-5 font-normal text-gray-700 dark:text-gray-300"
                                     ></span>
                                   </div>
-                                  <div
-                                    class="grid grid-cols-2 gap-4 self-stretch"
-                                  >
+                                  <div class="grid grid-cols-2 gap-6 self-stretch">
                                     <span
-                                      class="text-sm font-medium text-gray-900 dark:text-gray-100"
-                                      >Mailing Address</span
+                                      class="text-sm leading-5 font-medium text-gray-900 dark:text-gray-100"
+                                      >Address</span
                                     >
                                     <span
                                       id="gp-pmc-check-address"
-                                      class="text-sm font-normal text-gray-700 dark:text-gray-300 whitespace-pre-line"
+                                      class="text-sm leading-5 font-normal text-gray-700 whitespace-pre-line dark:text-gray-300"
                                     ></span>
                                   </div>
                                 </div>
@@ -1991,55 +2070,55 @@
                             </div>
                             <div
                               id="gp-pmc-check-fields"
-                              class="hidden mt-4 flex flex-col items-start gap-3 self-stretch"
+                              class="hidden mt-4 flex flex-col items-start gap-4 self-stretch"
                             >
                               <div
-                                class="hidden sm:grid sm:grid-cols-2 sm:items-center sm:gap-4 self-stretch"
+                                class="hidden sm:grid sm:grid-cols-2 sm:items-center sm:gap-6 self-stretch"
                               >
                                 <label
                                   for="gp-pmc-check-attention"
-                                  class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                                  class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
                                   >Attention To</label
                                 >
                                 <input
                                   id="gp-pmc-check-attention"
                                   type="text"
-                                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                  class="block w-full rounded-md bg-white px-3 h-10 py-2 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
                                 />
                               </div>
                               <div class="sm:hidden self-stretch">
                                 <label
                                   for="gp-pmc-check-attention-mobile"
-                                  class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
+                                  class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200"
                                   >Attention To</label
                                 >
                                 <div class="mt-2">
                                   <input
                                     id="gp-pmc-check-attention-mobile"
                                     type="text"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                    class="block w-full rounded-md bg-white px-3 h-10 py-2 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
                                   />
                                 </div>
                               </div>
                               <div
-                                class="hidden sm:grid sm:grid-cols-2 sm:items-center sm:gap-4 self-stretch"
+                                class="hidden sm:grid sm:grid-cols-2 sm:items-center sm:gap-6 self-stretch"
                               >
                                 <label
                                   for="gp-pmc-check-amount"
-                                  class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                                  class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
                                   >Amount</label
                                 >
                                 <input
                                   id="gp-pmc-check-amount"
                                   type="text"
                                   disabled
-                                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:disabled:bg-white/5 dark:disabled:text-gray-400 dark:disabled:outline-white/10"
+                                  class="block w-full border-0 bg-transparent p-0 text-right text-base leading-6 font-medium text-gray-900 disabled:cursor-default dark:text-white"
                                 />
                               </div>
                               <div class="sm:hidden self-stretch">
                                 <label
                                   for="gp-pmc-check-amount-mobile"
-                                  class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
+                                  class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200"
                                   >Amount</label
                                 >
                                 <div class="mt-2">
@@ -2047,20 +2126,20 @@
                                     id="gp-pmc-check-amount-mobile"
                                     type="text"
                                     disabled
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:cursor-not-allowed disabled:bg-gray-50 disabled:text-gray-500 disabled:outline-gray-200 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:disabled:bg-white/5 dark:disabled:text-gray-400 dark:disabled:outline-white/10"
+                                    class="block w-full border-0 bg-transparent p-0 text-right text-base leading-6 font-medium text-gray-900 disabled:cursor-default dark:text-white"
                                   />
                                 </div>
                               </div>
                               <div
-                                class="hidden sm:grid sm:grid-cols-2 sm:items-center sm:gap-4 self-stretch"
+                                class="hidden sm:grid sm:grid-cols-2 sm:items-center sm:gap-6 self-stretch"
                               >
                                 <label
                                   for="gp-pmc-check-print-date"
-                                  class="inline-flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-gray-100"
+                                  class="inline-flex items-center gap-1.5 text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
                                   >Print Date
                                   <span class="group relative inline-flex">
                                     <span
-                                      class="inline-flex rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-500 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300"
+                                      class="inline-flex rounded-full text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-500 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300"
                                     >
                                       <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -2102,18 +2181,18 @@
                                   <input
                                     id="gp-pmc-check-print-date"
                                     type="text"
-                                    class="block w-full rounded-md bg-white py-1.5 pr-3 pl-11 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                    class="block w-full rounded-md bg-white h-10 py-2 pr-3 pl-11 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
                                   />
                                 </div>
                               </div>
                               <div class="sm:hidden self-stretch">
                                 <label
                                   for="gp-pmc-check-print-date-mobile"
-                                  class="inline-flex items-center gap-2 text-sm/6 font-medium text-gray-900 dark:text-gray-100"
+                                  class="inline-flex items-center gap-2 text-sm/6 font-medium text-gray-700 dark:text-gray-200"
                                   >Print Date
                                   <span class="group relative inline-flex">
                                     <span
-                                      class="inline-flex rounded-full p-0.5 text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-500 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300"
+                                      class="inline-flex rounded-full text-gray-400 transition-colors hover:bg-gray-200 hover:text-gray-500 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300"
                                     >
                                       <svg
                                         xmlns="http://www.w3.org/2000/svg"
@@ -2155,37 +2234,64 @@
                                   <input
                                     id="gp-pmc-check-print-date-mobile"
                                     type="text"
-                                    class="block w-full rounded-md bg-white py-1.5 pr-3 pl-11 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                    class="block w-full rounded-md bg-white h-10 py-2 pr-3 pl-11 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
                                   />
                                 </div>
                               </div>
                               <div
-                                class="hidden sm:grid sm:grid-cols-2 sm:items-center sm:gap-4 self-stretch"
+                                class="hidden sm:grid sm:grid-cols-2 sm:items-center sm:gap-6 self-stretch"
                               >
                                 <label
                                   for="gp-pmc-check-memo"
-                                  class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                                  class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
                                   >Memo</label
                                 >
                                 <input
                                   id="gp-pmc-check-memo"
                                   type="text"
-                                  class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                  class="block w-full rounded-md bg-white px-3 h-10 py-2 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
                                 />
                               </div>
                               <div class="sm:hidden self-stretch">
                                 <label
                                   for="gp-pmc-check-memo-mobile"
-                                  class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100"
+                                  class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200"
                                   >Memo</label
                                 >
                                 <div class="mt-2">
                                   <input
                                     id="gp-pmc-check-memo-mobile"
                                     type="text"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                    class="block w-full rounded-md bg-white px-3 h-10 py-2 text-base font-medium text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
                                   />
                                 </div>
+                              </div>
+                              <div
+                                class="flex items-start gap-3 self-stretch rounded-md bg-blue-50 p-4 dark:bg-blue-500/10"
+                              >
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                  aria-hidden="true"
+                                  class="size-5 shrink-0 text-blue-500"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z"
+                                    clip-rule="evenodd"
+                                  />
+                                </svg>
+                                <p
+                                  class="min-w-0 flex-1 text-sm leading-5 font-medium text-blue-800 dark:text-blue-300"
+                                >
+                                  If your Routing Number, Account Number or
+                                  Address records (as registered under the bank
+                                  account) are no longer accurate, please update
+                                  the details in your ERP. Once your details are
+                                  updated, please "Refresh" to reflect the
+                                  changes.
+                                </p>
                               </div>
                             </div>
                           </div>
@@ -2459,11 +2565,11 @@
                     id="gp-footer-pay-btn"
                     type="button"
                     disabled
-                    class="inline-flex cursor-pointer items-center justify-center bg-blue-600 px-2.5 py-1.5 text-sm leading-5 font-semibold whitespace-nowrap text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600"
+                    class="peer inline-flex cursor-pointer items-center justify-center bg-blue-600 px-2.5 py-1.5 text-sm leading-5 font-semibold whitespace-nowrap text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600"
                   >
                     Pay: <span id="gp-footer-pay-amount"></span>
                   </button>
-                  <span class="w-px self-stretch bg-blue-700"></span>
+                  <span class="w-px self-stretch bg-blue-700 peer-disabled:opacity-40"></span>
                   <button
                     id="gp-footer-pay-menu"
                     type="button"

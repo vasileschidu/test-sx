@@ -644,26 +644,52 @@
     );
   }
 
+  function getCardFlagMarkup(brand) {
+    if (String(brand || "").toLowerCase() === "mastercard") {
+      return (
+        '<span class="inline-flex h-4 w-6 shrink-0 items-center justify-center overflow-hidden rounded bg-[#01326f]">' +
+        '<img src="../../../src/assets/illustrations/ma_symbol.svg" alt="Mastercard" class="h-2.5 w-4" />' +
+        "</span>"
+      );
+    }
+    return (
+      '<span class="inline-flex h-4 w-6 shrink-0 items-center overflow-hidden rounded">' +
+      getCardBrandLogoMarkup(brand, "medium") +
+      "</span>"
+    );
+  }
+
+  function getCardUsageBadgeHtml(card) {
+    var usage = String((card && (card.usageType || card.cardType)) || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[\s-]+/g, "_");
+    if (usage === "single_use") {
+      return '<span class="inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs leading-4 font-medium text-gray-800 in-[el-selectedcontent]:hidden dark:border-white/10 dark:bg-white/10 dark:text-gray-200">Single use</span>';
+    }
+    if (usage === "reloadable") {
+      return (
+        '<span class="inline-flex shrink-0 items-center gap-0.5 rounded-full border border-gray-200 bg-gray-100 py-0.5 pr-1 pl-2 text-xs leading-4 font-medium text-gray-800 in-[el-selectedcontent]:hidden dark:border-white/10 dark:bg-white/10 dark:text-gray-200">Reloadable' +
+        '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3.5 text-gray-400"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" /></svg>' +
+        "</span>"
+      );
+    }
+    return "";
+  }
+
   function buildCardSelectContent(card) {
     if (!card) return "";
     return (
       "" +
-      '<span class="inline-flex min-w-0 items-center justify-between gap-4 w-full pr-6">' +
-      '<span class="inline-flex min-w-0 items-center gap-3">' +
-      '<span class="shrink-0">' +
-      getCardBrandIcon(card.brand) +
-      "</span>" +
-      '<span class="flex min-w-0 items-center gap-3">' +
-      '<span class="truncate font-medium">' +
+      '<span class="inline-flex min-w-0 items-center gap-2">' +
+      getCardFlagMarkup(card.brand) +
+      '<span class="truncate font-medium text-gray-900 dark:text-white">' +
       escapeHtml(getCardDisplayLabel(card)) +
-      "</span>" +
-      '<span class="shrink-0 text-sm font-medium text-gray-700 dark:text-gray-300">' +
-      escapeHtml(String(card.expDate || "").trim()) +
-      "</span>" +
-      "</span>" +
-      "</span>" +
-      '<span class="shrink-0 text-sm font-semibold text-gray-700 dark:text-gray-300">' +
-      escapeHtml(formatMoney(card.currentBalance, card.currency || "USD")) +
+      (String(card.expDate || "").trim()
+        ? ' <span class="text-gray-500 dark:text-gray-400">' +
+          escapeHtml(String(card.expDate || "").trim()) +
+          "</span>"
+        : "") +
       "</span>" +
       "</span>"
     );
@@ -696,32 +722,47 @@
   }
 
   function buildCardOptionHtml(card) {
+    var expDate = String(card.expDate || "").trim();
     return (
       '<el-option value="' +
       escapeHtml(String(card.id || "")) +
-      '" class="group/option relative block cursor-default select-none border-b border-gray-200 py-2.5 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
-      '<div class="flex items-center justify-between gap-4 pr-8">' +
-      '<span class="flex min-w-0 items-center gap-3">' +
-      '<span class="shrink-0 self-start">' +
-      getCardBrandIcon(card.brand) +
+      '" class="group/option flex cursor-pointer items-center justify-between gap-4 rounded-md px-4 py-3 select-none hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden aria-selected:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:aria-selected:bg-white/5">' +
+      '<span class="flex min-w-0 items-start gap-2">' +
+      '<span class="mt-0.5">' +
+      getCardFlagMarkup(card.brand) +
       "</span>" +
-      '<span class="min-w-0 flex items-center gap-3">' +
-      '<span class="truncate font-medium group-aria-selected/option:font-semibold">' +
+      '<span class="flex min-w-0 flex-col gap-0.5">' +
+      '<span class="flex min-w-0 items-center gap-2">' +
+      '<span class="truncate text-sm leading-5 font-semibold text-gray-900 dark:text-white">' +
       escapeHtml(getCardDisplayLabel(card)) +
       "</span>" +
-      '<span class="shrink-0 text-sm font-medium text-gray-700 dark:text-gray-300">' +
-      escapeHtml(String(card.expDate || "").trim()) +
+      getCardUsageBadgeHtml(card) +
+      "</span>" +
+      (expDate
+        ? '<span class="text-sm leading-5 font-normal text-gray-500 dark:text-gray-400">Expires ' +
+          escapeHtml(expDate) +
+          "</span>"
+        : "") +
       "</span>" +
       "</span>" +
-      "</span>" +
-      '<span class="shrink-0 text-sm font-semibold text-gray-700 dark:text-gray-300">' +
+      '<span class="flex shrink-0 flex-col items-end gap-0.5 text-right text-sm leading-5 whitespace-nowrap">' +
+      '<span class="font-normal text-gray-500 dark:text-gray-400">Balance</span>' +
+      '<span class="font-medium text-gray-900 dark:text-white">' +
       escapeHtml(formatMoney(card.currentBalance, card.currency || "USD")) +
       "</span>" +
-      "</div>" +
-      '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden">' +
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
       "</span>" +
       "</el-option>"
+    );
+  }
+
+  function buildCreateNewCardActionHtml() {
+    return (
+      '<div class="flex justify-center border-t border-gray-200 px-4 py-1.5 dark:border-white/10">' +
+      '<button type="button" data-card-create-new class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 py-1.5 text-sm leading-5 font-semibold whitespace-nowrap text-blue-600 hover:bg-blue-600/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:bg-blue-600/20">' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-[18px]"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>' +
+      "Create New Card" +
+      "</button>" +
+      "</div>"
     );
   }
 
@@ -749,11 +790,15 @@
     var filteredCards = (_cardFundingState.cards || []).filter(function (card) {
       return cardMatchesSearch(card, query);
     });
-    cardOpts.innerHTML = filteredCards
-      .map(function (card) {
-        return buildCardOptionHtml(card);
-      })
-      .join("");
+    cardOpts.innerHTML =
+      '<div class="p-1">' +
+      filteredCards
+        .map(function (card) {
+          return buildCardOptionHtml(card);
+        })
+        .join("") +
+      "</div>" +
+      buildCreateNewCardActionHtml();
     var selectedId = String(_cardFundingState.selectedCardId || "");
     if (selectedId) {
       cardOpts.querySelectorAll("el-option").forEach(function (el) {
@@ -920,14 +965,17 @@
       "pp-card-funding-amount-wrap",
     );
     var sendingWrap = document.getElementById("pp-card-sending-methods");
+    var paidRevealSection = document.getElementById(
+      "pp-card-paid-reveal-section",
+    );
     var hasCard = !!getActiveCard();
     var hasFundingMethod = !!String(_cardFundingState.fundingMethod || "");
+    // The card dropdown is the entry point (select a card or "Create New
+    // Card"), so it stays visible until the paid-card summary replaces it.
+    var paidRevealShown =
+      !!paidRevealSection && !paidRevealSection.classList.contains("hidden");
 
-    if (existingWrap)
-      existingWrap.classList.toggle(
-        "hidden",
-        _cardFundingState.cardSource !== "existing",
-      );
+    if (existingWrap) existingWrap.classList.toggle("hidden", paidRevealShown);
     if (createdWrap)
       createdWrap.classList.toggle(
         "hidden",
@@ -939,32 +987,64 @@
       fundingDetailsWrap.classList.toggle("hidden", !hasFundingMethod);
     if (fundingAmountWrap)
       fundingAmountWrap.classList.toggle("hidden", !hasFundingMethod);
-    if (sendingWrap) sendingWrap.classList.toggle("hidden", !hasFundingMethod);
+    if (sendingWrap) sendingWrap.classList.toggle("hidden", !hasCard);
   }
 
   function renderCardBalanceSummary() {
     var projectedEl = document.getElementById("pp-card-projected-balance");
+    var currentEl = document.getElementById("pp-card-current-balance");
     var warningEl = document.getElementById("pp-card-projected-warning");
+    var okEl = document.getElementById("pp-card-projected-ok");
     var panelEl = document.getElementById("pp-card-balance-panel");
     var card = getActiveCard();
-    var hasFundingMethod = !!String(_cardFundingState.fundingMethod || "");
     if (!projectedEl || !warningEl || !panelEl) return;
-    panelEl.classList.toggle("hidden", !(card && hasFundingMethod));
-    if (!card || !hasFundingMethod) {
+    panelEl.classList.toggle("hidden", !card);
+    if (!card) {
       projectedEl.textContent = "$0.00";
+      if (currentEl) currentEl.textContent = "$0.00";
       warningEl.classList.add("hidden");
+      if (okEl) okEl.classList.add("hidden");
+      renderCardFundingDeficit();
       return;
     }
+    var currency = card.currency || "USD";
+    if (currentEl)
+      currentEl.textContent = formatMoney(
+        Number(card.currentBalance || 0),
+        currency,
+      );
     projectedEl.textContent = formatMoney(
       getCardProjectedBalance(card),
-      card.currency || "USD",
+      currency,
     );
-    warningEl.classList.toggle(
-      "hidden",
-      getCardAvailableBalanceForPayment(card) >=
-        getCurrentPayableAmountNumber(),
-    );
+    var covered =
+      getCardAvailableBalanceForPayment(card) >= getCurrentPayableAmountNumber();
+    warningEl.classList.toggle("hidden", covered);
+    if (okEl) okEl.classList.toggle("hidden", !covered);
+    renderCardFundingDeficit();
     syncCardProgressiveReveal();
+  }
+
+  // Amount still missing for the card to cover this payable.
+  function getCardFundingDeficit(card) {
+    if (!card) return 0;
+    var deficit =
+      getCurrentPayableAmountNumber() - getCardAvailableBalanceForPayment(card);
+    return deficit > 0 ? Math.round(deficit * 100) / 100 : 0;
+  }
+
+  function renderCardFundingDeficit() {
+    var wrap = document.getElementById("pp-card-funding-deficit");
+    var btn = document.getElementById("pp-card-funding-deficit-btn");
+    if (!wrap || !btn) return;
+    var card = getActiveCard();
+    var deficit =
+      String(_cardFundingState.fundingMethod || "") === "add_funds" &&
+      !_cardFundingState.fundingMatch
+        ? getCardFundingDeficit(card)
+        : 0;
+    wrap.classList.toggle("hidden", !(deficit > 0));
+    btn.textContent = deficit > 0 ? formatMoney(deficit, card.currency || "USD") : "";
   }
 
   function syncFundingAmountInput() {
@@ -972,23 +1052,25 @@
     var info = document.getElementById("pp-card-funding-amount-info");
     if (!input) return;
     var disabled =
-      String(_cardFundingState.fundingMethod || "") === "spend_balance";
+      String(_cardFundingState.fundingMethod || "") === "spend_balance" ||
+      isCardFundingMatch();
     input.disabled = disabled;
     input.classList.toggle("cursor-not-allowed", disabled);
     input.classList.toggle("bg-gray-50", disabled);
     input.classList.toggle("text-gray-500", disabled);
     input.classList.toggle("outline-gray-200", disabled);
+    var isSpend =
+      String(_cardFundingState.fundingMethod || "") === "spend_balance";
     if (info) {
-      info.classList.toggle("invisible", !disabled);
-      info.classList.toggle("opacity-0", !disabled);
-      info.classList.toggle("pointer-events-none", !disabled);
+      info.classList.toggle("invisible", !isSpend);
+      info.classList.toggle("opacity-0", !isSpend);
+      info.classList.toggle("pointer-events-none", !isSpend);
     }
-    if (
-      _cardFundingState.fundingMethod === "add_funds" &&
-      !parseMoneyInput(_cardFundingState.fundingAmount)
-    ) {
+    if (isCardFundingMatch()) {
+      // Match Payment = Add Funds locked to the amount that makes the card
+      // cover this payable exactly.
       _cardFundingState.fundingAmount = formatMoneyInputValue(
-        getCurrentPayableAmountNumber(),
+        getCardMatchAmount(getActiveCard()),
       );
     } else if (_cardFundingState.fundingMethod === "spend_balance") {
       _cardFundingState.fundingAmount = "0.00";
@@ -997,7 +1079,168 @@
     syncCardProgressiveReveal();
   }
 
+  function isCardFundingMatch() {
+    return (
+      !!_cardFundingState.fundingMatch &&
+      String(_cardFundingState.fundingMethod || "") === "add_funds"
+    );
+  }
+
+  function getCardMatchAmount(card) {
+    if (!card) return 0;
+    var amount =
+      getCurrentPayableAmountNumber() - Number(card.currentBalance || 0);
+    return amount > 0 ? Math.round(amount * 100) / 100 : 0;
+  }
+
+  function getCardFundingSelectItems(card) {
+    var match = {
+      id: "match_payment",
+      label: "Match Payment",
+      subtitle: "Fund the virtual card with the exact payment amount.",
+      disabled: !card || getCardMatchAmount(card) <= 0,
+      badge: "",
+    };
+    return [match].concat(getCardFundingMethodMeta(card));
+  }
+
+  function getCardFundingSelectValue() {
+    if (isCardFundingMatch()) return "match_payment";
+    return String(_cardFundingState.fundingMethod || "");
+  }
+
+  function buildCardFundingOptionHtml(item) {
+    if (item.disabled) {
+      return (
+        '<el-option value="' +
+        escapeHtml(item.id) +
+        '" disabled aria-disabled="true" class="flex cursor-not-allowed flex-col gap-1 border-b border-gray-200 bg-gray-100 px-4 py-3 select-none last:border-b-0 dark:border-white/10 dark:bg-white/5">' +
+        '<span class="flex h-5 items-center gap-2 whitespace-nowrap">' +
+        '<span class="text-sm leading-5 font-medium text-gray-500 dark:text-gray-400">' +
+        escapeHtml(item.label) +
+        "</span>" +
+        (item.badge
+          ? '<span class="inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-500/20 dark:bg-yellow-500/10 dark:text-yellow-300">' +
+            escapeHtml(item.badge) +
+            "</span>"
+          : "") +
+        "</span>" +
+        '<span class="text-sm leading-5 font-normal text-gray-400 dark:text-gray-500">' +
+        escapeHtml(item.subtitle) +
+        "</span>" +
+        "</el-option>"
+      );
+    }
+    return (
+      '<el-option value="' +
+      escapeHtml(item.id) +
+      '" class="group/option flex cursor-pointer flex-col gap-1 border-b border-gray-200 px-4 py-3 select-none last:border-b-0 hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden aria-selected:bg-gray-50 dark:border-white/10 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:aria-selected:bg-white/5">' +
+      '<span class="text-sm leading-5 font-medium text-gray-900 group-aria-selected/option:font-semibold dark:text-white">' +
+      escapeHtml(item.label) +
+      "</span>" +
+      '<span class="text-sm leading-5 font-normal text-gray-500 in-[el-selectedcontent]:hidden dark:text-gray-400">' +
+      escapeHtml(item.subtitle) +
+      "</span>" +
+      "</el-option>"
+    );
+  }
+
+  function renderCardFundingSelect() {
+    var optionsEl = document.getElementById("pp-card-funding-options");
+    var selectedEl = document.getElementById("pp-card-funding-selected");
+    if (!optionsEl || !selectedEl) return;
+    if (String(_cardFundingState.fundingMethod || "") !== "add_funds")
+      _cardFundingState.fundingMatch = false;
+    var items = getCardFundingSelectItems(getActiveCard());
+    var value = getCardFundingSelectValue();
+    optionsEl.innerHTML = items.map(buildCardFundingOptionHtml).join("");
+    optionsEl.setAttribute("data-selected-value", value);
+    var selectedItem = null;
+    optionsEl.querySelectorAll("el-option").forEach(function (opt) {
+      var isSelected = String(opt.getAttribute("value") || "") === value;
+      if (isSelected) opt.setAttribute("aria-selected", "true");
+      else opt.removeAttribute("aria-selected");
+    });
+    items.forEach(function (item) {
+      if (item.id === value) selectedItem = item;
+    });
+    setSelectedContent(
+      selectedEl,
+      selectedItem ? selectedItem.label : "",
+      "Funding method",
+    );
+  }
+
+  // Mirrors the hidden radio handlers in renderCardFundingMethodRadios so the
+  // funding state transitions stay identical.
+  function selectCardFundingOption(value) {
+    var radiosEl = document.getElementById("pp-card-funding-method-radios");
+    var nextValue = String(value || "");
+    var wasMatch = isCardFundingMatch();
+    var prevMethod = String(_cardFundingState.fundingMethod || "");
+    var isMatch = nextValue === "match_payment";
+    var method = isMatch ? "add_funds" : nextValue;
+
+    _cardFundingState.fundingMatch = isMatch;
+    _cardFundingState.fundingMethod = method;
+    if (!method) {
+      _cardFundingState.fundingAmount = "";
+    } else if (method === "add_funds" && !isMatch) {
+      // Switching into plain Add Funds starts empty so the user enters it.
+      if (prevMethod !== "add_funds" || wasMatch)
+        _cardFundingState.fundingAmount = "";
+    }
+    if (radiosEl) {
+      radiosEl.setAttribute("data-selected-value", method);
+      radiosEl
+        .querySelectorAll('input[name="pp-card-funding-method"]')
+        .forEach(function (input) {
+          input.checked = !!method && String(input.value || "") === method;
+        });
+    }
+    syncFundingAmountInput();
+    renderCardBalanceSummary();
+    renderCardFundingSelect();
+    updatePayStepStates();
+  }
+
+  function initCardFundingSelect() {
+    var optionsEl = document.getElementById("pp-card-funding-options");
+    if (!optionsEl || optionsEl.__fundingBound) return;
+    optionsEl.__fundingBound = true;
+    optionsEl.addEventListener("click", function (event) {
+      var option = event.target.closest("el-option");
+      if (!option || option.hasAttribute("disabled")) return;
+      var optionValue = String(option.getAttribute("value") || "");
+      var currentValue = getCardFundingSelectValue();
+      selectCardFundingOption(
+        currentValue && optionValue === currentValue ? "" : optionValue,
+      );
+    });
+
+    var deficitBtn = document.getElementById("pp-card-funding-deficit-btn");
+    if (deficitBtn) {
+      deficitBtn.addEventListener("click", function () {
+        var card = getActiveCard();
+        var deficit = getCardFundingDeficit(card);
+        if (!(deficit > 0)) return;
+        _cardFundingState.fundingAmount = formatMoneyInputValue(
+          parseMoneyInput(_cardFundingState.fundingAmount) + deficit,
+        );
+        var input = document.getElementById("pp-card-funding-amount");
+        if (input) input.value = _cardFundingState.fundingAmount;
+        renderCardBalanceSummary();
+        updatePayStepStates();
+      });
+    }
+  }
+
   function renderCardFundingMethodOptions() {
+    renderCardFundingMethodRadios();
+    renderCardFundingSelect();
+  }
+
+  function renderCardFundingMethodRadios() {
     var optionsEl = document.getElementById("pp-card-funding-method-radios");
     if (!optionsEl) return;
     var items = getCardFundingMethodMeta(getActiveCard());
@@ -1954,7 +2197,9 @@
 
   function buildSelectFilledContent(item) {
     if (!item || !item.label) return "";
-    var iconSvg = item.selectedIcon || item.icon || "";
+    var iconSvg = item.hideSelectedIcon
+      ? ""
+      : item.selectedIcon || item.icon || "";
     if (!iconSvg) {
       return (
         '<span class="truncate font-medium">' +
@@ -2088,6 +2333,7 @@
     var sendingLabels = {
       on_file: "Card on file with vendor",
       delivery_website: "Delivery Website",
+      display_details: "Display card details",
     };
     var deliveryTokens = getSelectedDestinationTokens(
       "pp-card-delivery-contact-tokens",
@@ -2159,7 +2405,9 @@
       cardholderName: getMyCardholderName(),
       cardholderAddress: getMyCardholderAddress(),
       fundingMethod: fundingMethod,
-      fundingMethodLabel: fundingLabels[fundingMethod] || "Funding",
+      fundingMethodLabel:
+        fundingLabels[isCardFundingMatch() ? "match_payment" : fundingMethod] ||
+        "Funding",
       fundingAmount:
         fundingMethod === "spend_balance"
           ? 0
@@ -2282,7 +2530,13 @@
             "on_file",
         ) === "delivery_website"
           ? "Delivery Website"
-          : "Card on file with vendor",
+          : String(
+                savedState.cardSendingMethod ||
+                  _cardFundingState.sendingMethod ||
+                  "on_file",
+              ) === "display_details"
+            ? "Display card details"
+            : "Card on file with vendor",
       deliveryTokens: Array.isArray(savedState.cardDeliveryTokens)
         ? savedState.cardDeliveryTokens
         : [],
@@ -2413,11 +2667,16 @@
     setPaySelectDisabled(methodSelect, isConfirmed);
     setPaySelectDisabled(bankRecipientSelect, isConfirmed);
     setPaySelectDisabled(cardSelect, isConfirmed);
+    setPaySelectDisabled(
+      document.getElementById("pp-card-funding-select"),
+      isConfirmed,
+    );
     if (cardSearchInput) cardSearchInput.disabled = !!isConfirmed;
     if (cardFundingAmount) {
       cardFundingAmount.disabled =
         !!isConfirmed ||
-        String(_cardFundingState.fundingMethod || "") === "spend_balance";
+        String(_cardFundingState.fundingMethod || "") === "spend_balance" ||
+        isCardFundingMatch();
       cardFundingAmount.classList.toggle(
         "cursor-not-allowed",
         !!isConfirmed ||
@@ -2531,7 +2790,7 @@
     if (cardSectionDescription) {
       cardSectionDescription.textContent = isConfirmedCard
         ? "This payment was completed with the card below."
-        : "Choose whether to use an existing virtual card or create a new one for this payment.";
+        : "Simply load your card with the amount of the invoice, and send the card to your customer for a hassle-free checkout experience.";
     }
     if (cardSourceRadios)
       cardSourceRadios.classList.toggle("hidden", isConfirmedCard);
@@ -3730,6 +3989,8 @@
           "",
       );
       state.cardFundingMethod = String(_cardFundingState.fundingMethod || "");
+      // Extra flag only for the UI; cardFundingMethod stays "add_funds".
+      state.cardFundingMatch = isCardFundingMatch();
       state.cardFundingAmount = String(_cardFundingState.fundingAmount || "");
       state.cardSendingMethod = String(
         _cardFundingState.sendingMethod || "on_file",
@@ -4506,6 +4767,12 @@
         ? "Bill # " + String(_payContext.row.billNumber).trim()
         : "";
 
+    setText(
+      "gp-pmc-check-number",
+      _payContext.row && _payContext.row.billNumber
+        ? "#" + String(_payContext.row.billNumber).trim()
+        : "--",
+    );
     setInputValue("gp-pmc-check-attention", attentionTo);
     setInputValue("gp-pmc-check-attention-mobile", attentionTo);
     setInputValue("gp-pmc-check-amount", amount);
@@ -5196,6 +5463,17 @@
     );
   }
 
+  var BANK_LIBRARY_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="currentColor"/></svg>';
+
+  function isOriginationAccountInactive(account) {
+    return (
+      !!account &&
+      (account.inactive === true ||
+        String(account.status || "").toLowerCase() === "inactive")
+    );
+  }
+
   function buildBankOptionHtml(account) {
     var rawLabel = String(
       account.displayName || account.bankName || "My Bank Account",
@@ -5205,43 +5483,81 @@
       .trim();
     var label = escapeHtml(cleanLabel || rawLabel);
     var last4 = getAccountLast4(account);
-    var summary = escapeHtml(last4 ? "••••" + last4 : "Bank account");
+    var bankName = String(account.bankName || "").trim();
+    var summary = escapeHtml(
+      [bankName, last4 ? "••••" + last4 : ""].filter(Boolean).join(" ") ||
+        "Bank account",
+    );
     var amount = escapeHtml(formatOriginationAvailableAmount(account));
+    var inactive = isOriginationAccountInactive(account);
+    var primaryTone = inactive
+      ? "text-gray-500 dark:text-gray-400"
+      : "text-gray-900 dark:text-white";
     return (
       '<el-option value="' +
       escapeHtml(String(account.id || "")) +
-      '" class="group/option relative block cursor-default select-none border-b border-gray-200 py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
-      '<div class="flex items-center gap-3 pr-8">' +
-      '<div class="min-w-0 flex flex-1 items-center justify-between gap-4">' +
-      '<div class="flex min-w-0 items-center gap-3">' +
-      '<div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">' +
-      '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>' +
+      '"' +
+      (inactive ? ' disabled aria-disabled="true"' : "") +
+      ' class="group/option flex flex-col gap-3 border-b border-gray-200 p-4 select-none dark:border-white/10 ' +
+      (inactive
+        ? "cursor-not-allowed bg-gray-100 dark:bg-white/5"
+        : "cursor-pointer hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden aria-selected:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:aria-selected:bg-white/5") +
+      '">' +
+      '<div class="flex items-start gap-3">' +
+      '<div class="flex h-12 shrink-0 flex-col in-[el-selectedcontent]:h-auto ' +
+      (inactive
+        ? "text-gray-400 dark:text-gray-500"
+        : "text-gray-500 dark:text-gray-400") +
+      '">' +
+      BANK_LIBRARY_ICON +
       "</div>" +
-      '<div class="min-w-0 in-[el-selectedcontent]:hidden">' +
-      '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' +
+      '<div class="flex min-w-0 flex-1 gap-2 ' +
+      (inactive ? "items-center" : "items-start") +
+      '">' +
+      '<div class="flex min-w-0 flex-1 flex-col gap-1">' +
+      '<span class="truncate text-sm leading-5 font-medium group-aria-selected/option:font-semibold ' +
+      primaryTone +
+      '">' +
       label +
       "</span>" +
-      '<span class="block text-sm text-gray-500 dark:text-gray-400">' +
+      '<span class="truncate text-sm leading-5 font-normal text-gray-500 in-[el-selectedcontent]:hidden dark:text-gray-400">' +
       summary +
       "</span>" +
       "</div>" +
-      '<span class="hidden min-w-0 truncate font-medium in-[el-selectedcontent]:block">' +
-      label +
-      (last4 ? " ••••" + last4 : "") +
-      "</span>" +
-      "</div>" +
-      '<div class="shrink-0 flex flex-col gap-0.5 text-right in-[el-selectedcontent]:hidden">' +
-      '<span class="text-sm text-gray-500 dark:text-gray-400">Available Amount</span>' +
-      '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
+      '<div class="flex shrink-0 flex-col items-end gap-1 text-right text-sm leading-5 whitespace-nowrap in-[el-selectedcontent]:hidden">' +
+      '<span class="font-normal ' +
+      (inactive
+        ? "text-gray-400 dark:text-gray-500"
+        : "text-gray-500 dark:text-gray-400") +
+      '">Balance</span>' +
+      '<span class="font-medium ' +
+      primaryTone +
+      '">' +
       amount +
       "</span>" +
       "</div>" +
       "</div>" +
       "</div>" +
-      '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" /></svg>' +
-      "</span>" +
+      (inactive
+        ? '<div class="flex items-start gap-3 rounded-md border border-yellow-200 in-[el-selectedcontent]:hidden bg-yellow-50 p-4 dark:border-yellow-500/20 dark:bg-yellow-500/10">' +
+          '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-yellow-400"><path fill-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" /></svg>' +
+          '<p class="min-w-0 flex-1 text-sm leading-5 font-normal text-yellow-700 dark:text-yellow-300">This bank account is inactive. ' +
+          '<a href="./payment-preferences.html" class="font-semibold text-yellow-700 hover:text-yellow-600 dark:text-yellow-300">Click here</a>' +
+          " to resolve this issue.</p>" +
+          "</div>"
+        : "") +
       "</el-option>"
+    );
+  }
+
+  function buildOriginationAddBankActionHtml() {
+    return (
+      '<div class="flex justify-center px-4 py-1.5">' +
+      '<button type="button" id="pp-orig-add-bank" class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 py-1.5 text-sm leading-5 font-semibold whitespace-nowrap text-blue-600 hover:bg-blue-600/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:bg-blue-600/20">' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-[18px]"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z" /></svg>' +
+      "Add New Bank Account" +
+      "</button>" +
+      "</div>"
     );
   }
 
@@ -5257,7 +5573,9 @@
     var amount = escapeHtml(formatOriginationAvailableAmount(account));
     return (
       '<span class="inline-flex min-w-0 items-center justify-between gap-4 w-full pr-6">' +
-      '<span class="flex min-w-0 items-center gap-3">' +
+      '<span class="flex min-w-0 items-center ' +
+      (account.hideAmount ? "gap-2" : "gap-3") +
+      '">' +
       '<span class="shrink-0 text-gray-500 dark:text-gray-400">' +
       '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>' +
       "</span>" +
@@ -5266,9 +5584,11 @@
       (last4 ? " ••••" + escapeHtml(last4) : "") +
       "</span>" +
       "</span>" +
-      '<span class="shrink-0 text-sm font-semibold text-gray-700 dark:text-gray-300">' +
-      amount +
-      "</span>" +
+      (account.hideAmount
+        ? ""
+        : '<span class="shrink-0 text-sm font-semibold text-gray-700 dark:text-gray-300">' +
+          amount +
+          "</span>") +
       "</span>"
     );
   }
@@ -5400,6 +5720,73 @@
       '<span class="truncate font-medium">' + escapeHtml(text) + "</span>";
   }
 
+  var PAY_METHOD_ORDER = [
+    "ach",
+    "wire",
+    "card",
+    "smart_disburse",
+    "rtp",
+    "check",
+    "smart_exchange",
+  ];
+
+  function orderPayMethodItems(items) {
+    var rank = function (item) {
+      var idx = PAY_METHOD_ORDER.indexOf(String((item && item.id) || ""));
+      return (item && item.available === false ? 100 : 0) + (idx < 0 ? 50 : idx);
+    };
+    return items.slice().sort(function (a, b) {
+      return rank(a) - rank(b);
+    });
+  }
+
+  function buildPayMethodOptionHtml(item) {
+    var available = item.available !== false;
+    var label = escapeHtml(item.label || "");
+    if (!available) {
+      return (
+        '<el-option value="' +
+        escapeHtml(String(item.id)) +
+        '" disabled aria-disabled="true" class="flex cursor-not-allowed flex-col gap-1 border-b border-gray-200 bg-gray-100 px-4 py-2.5 select-none last:border-b-0 dark:border-white/10 dark:bg-white/5">' +
+        '<div class="flex items-center gap-2">' +
+        '<span class="text-sm leading-5 font-normal text-gray-500 dark:text-gray-400">' +
+        label +
+        "</span>" +
+        '<span class="inline-flex items-center rounded-md bg-gray-200 px-2 py-0.5 text-xs leading-4 font-medium text-gray-700 dark:bg-white/10 dark:text-gray-300">Not available</span>' +
+        "</div>" +
+        '<p class="text-sm leading-5 font-normal text-gray-400 dark:text-gray-500">Payment method is not available for this bank account. Please select another bank account or contact support for more information.</p>' +
+        "</el-option>"
+      );
+    }
+    var showIcon = item.id === "smart_disburse" || item.id === "smart_exchange";
+    return (
+      '<el-option value="' +
+      escapeHtml(String(item.id)) +
+      '" class="group/option flex cursor-pointer items-center gap-3 border-b border-gray-200 px-4 py-2.5 select-none last:border-b-0 hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden aria-selected:bg-gray-50 dark:border-white/10 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:aria-selected:bg-white/5">' +
+      (showIcon && item.icon
+        ? '<span class="flex size-5 shrink-0 items-center justify-center">' +
+          item.icon +
+          "</span>"
+        : "") +
+      '<span class="flex min-w-0 flex-1 items-baseline gap-2">' +
+      '<span class="truncate text-sm leading-5 font-medium text-gray-900 group-aria-selected/option:font-semibold dark:text-white">' +
+      label +
+      "</span>" +
+      (item.meta
+        ? '<span class="truncate text-sm leading-5 font-normal text-gray-500 dark:text-gray-400">' +
+          escapeHtml(item.meta) +
+          "</span>"
+        : "") +
+      "</span>" +
+      (item.badge
+        ? '<span class="inline-flex shrink-0 items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs leading-4 font-medium text-blue-700 inset-ring inset-ring-blue-700/10 in-[el-selectedcontent]:hidden dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30">' +
+          escapeHtml(item.badge) +
+          "</span>"
+        : "") +
+      "</el-option>"
+    );
+  }
+
   function initSelect(
     selectId,
     selectedId,
@@ -5415,6 +5802,7 @@
     var list = Array.isArray(items) ? items.slice() : [];
     optionsEl.innerHTML = list
       .map(function (item) {
+        if (item.optionHtml) return item.optionHtml;
         return buildSimpleOptionHtml(
           String(item.id),
           item.label,
@@ -5463,7 +5851,7 @@
 
     optionsEl.addEventListener("click", function (event) {
       var option = event.target.closest("el-option");
-      if (!option) return;
+      if (!option || option.hasAttribute("disabled")) return;
       var optionValue = String(option.getAttribute("value") || "");
       var currentValue = String(
         optionsEl.getAttribute("data-selected-value") || "",
@@ -6135,7 +6523,7 @@
         tokensId: "pp-card-delivery-contact-tokens",
         inputId: "pp-card-delivery-contact-input",
         listId: "pp-card-delivery-contact-list",
-        placeholder: "Choose destination",
+        placeholder: "Email address or phone number",
       },
       contacts,
     );
@@ -6148,7 +6536,7 @@
         tokensId: "pp-card-delivery-contact-tokens",
         inputId: "pp-card-delivery-contact-input",
         listId: "pp-card-delivery-contact-list",
-        placeholder: "Choose destination",
+        placeholder: "Email address or phone number",
       },
       contacts,
     );
@@ -6223,6 +6611,7 @@
         last4: getAccountLast4(selected),
         accountNumber: selected.accountNumber || "",
         maskedAccount: selected.maskedAccount || "",
+        hideAmount: true,
       });
       setText(
         "gp-pmc-bank-name-val",
@@ -6257,7 +6646,7 @@
         else el.removeAttribute("aria-selected");
       });
       if (!selected) {
-        setSelectedContent(cardContent, "", "Select card");
+        setSelectedContent(cardContent, "", "Select a card");
         _cardFundingState.cardSource = "";
         _cardFundingState.selectedCardId = "";
         _cardFundingState.pendingNewCard = null;
@@ -6299,6 +6688,13 @@
         deliveryDetails.classList.toggle(
           "hidden",
           String(_cardFundingState.sendingMethod || "") !== "delivery_website",
+        );
+      }
+      var displayDetails = document.getElementById("pp-card-display-details");
+      if (displayDetails) {
+        displayDetails.classList.toggle(
+          "hidden",
+          String(_cardFundingState.sendingMethod || "") !== "display_details",
         );
       }
     }
@@ -6366,22 +6762,23 @@
     }
 
     var methodItems = [];
-    if (normalized.smartDisburse.length)
-      methodItems.push({
+    methodItems.push({
         id: "smart_disburse",
+        available: normalized.smartDisburse.length > 0,
         label: "SMART Disburse",
         subtitle: "Send a disbursement choice to payee",
         icon: '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#406AFF"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#406AFF"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#406AFF"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#406AFF"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#406AFF"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>',
         selectedIcon:
           '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#374151"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#374151"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#374151"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#374151"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#374151"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>',
       });
-    if (
-      _payContext.payeeProfile &&
-      _payContext.payeeProfile.smartExchangeEnabled &&
-      normalized.smartExchange.length
-    ) {
+    {
       methodItems.push({
         id: "smart_exchange",
+        available: !!(
+          _payContext.payeeProfile &&
+          _payContext.payeeProfile.smartExchangeEnabled &&
+          normalized.smartExchange.length
+        ),
         label: "SMART Exchange",
         subtitle: "Pay inside SMART Exchange",
         icon: '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#F5B842"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#F5B842"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#F5B842"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#F5B842"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#F5B842"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>',
@@ -6389,35 +6786,66 @@
           '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#374151"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#374151"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#374151"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#374151"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#374151"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>',
       });
     }
-    if (normalized.ach.length)
-      methodItems.push({
+    methodItems.push({
         id: "ach",
-        label: "Send to a Bank Account",
+        available: normalized.ach.length > 0,
+        label: "ACH",
+        meta: "(1-3 business days)",
+        badge: "Recommended",
         subtitle: "Typically processed in 1-3 business days",
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21V12.75M15.75 21V12.75M8.25 21V12.75M3 9L12 3L21 9M19.5 21V10.3325C17.0563 9.94906 14.5514 9.75 12 9.75C9.44861 9.75 6.94372 9.94906 4.5 10.3325V21M3 21H21M12 6.75H12.0075V6.7575H12V6.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
       });
-    if (normalized.wire.length)
-      methodItems.push({
+    methodItems.push({
         id: "wire",
+        available: normalized.wire.length > 0,
         label: "Wire",
+        meta: "(Same business day)",
         subtitle: "Fast bank-to-bank transfer",
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 21V12.75M15.75 21V12.75M8.25 21V12.75M3 9L12 3L21 9M19.5 21V10.3325C17.0563 9.94906 14.5514 9.75 12 9.75C9.44861 9.75 6.94372 9.94906 4.5 10.3325V21M3 21H21M12 6.75H12.0075V6.7575H12V6.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
       });
-    if (_cardFundingState.cards.length)
-      methodItems.push({
+    methodItems.push({
         id: "card",
-        label: "Pay with a Card",
+        available: _cardFundingState.cards.length > 0,
+        label: "Pay with Card",
         subtitle: "No bank account details required",
         icon: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M2.25 8.25H21.75M2.25 9H21.75M5.25 14.25H11.25M5.25 16.5H8.25M21.75 11V6.75C21.75 5.50736 20.7426 4.5 19.5 4.5H4.5C3.25736 4.5 2.25 5.50736 2.25 6.75V17.25C2.25 18.4926 3.25736 19.5 4.5 19.5H14M19.5 19.75L19.8942 18.5673C20.1182 17.8954 20.6454 17.3682 21.3173 17.1442L22.5 16.75L21.3173 16.3558C20.6454 16.1318 20.1182 15.6046 19.8942 14.9327L19.5 13.75L19.1058 14.9327C18.8818 15.6046 18.3546 16.1318 17.6827 16.3558L16.5 16.75L17.6827 17.1442C18.3546 17.3682 18.8818 17.8954 19.1058 18.5673L19.5 19.75Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>',
       });
-    if (normalized.check.length)
-      methodItems.push({
+    methodItems.push({
         id: "check",
+        available: normalized.check.length > 0,
         label: "Check",
         subtitle: "Slowest form of payment (approximately 7-10 days)",
       });
+    methodItems.push({
+      id: "rtp",
+      available: false,
+      label: "RTP",
+    });
 
-    methodItems = ensureMethodItemPresent(methodItems, inferRowMethodType(row));
+    // Same rule as ensureMethodItemPresent: the row's own SMART method is
+    // always offered, even without payee data.
+    var rowMethodId = String(inferRowMethodType(row) || "").toLowerCase();
+    methodItems.forEach(function (item, idx) {
+      if (
+        item.id === rowMethodId &&
+        item.available === false &&
+        (rowMethodId === "smart_disburse" || rowMethodId === "smart_exchange")
+      ) {
+        item.available = true;
+        methodItems.unshift(methodItems.splice(idx, 1)[0]);
+      }
+    });
+    // Original (pre-sort) order of selectable methods; the auto-pick below
+    // relies on it.
+    var availableMethodItems = methodItems.filter(function (item) {
+      return item.available !== false;
+    });
+    methodItems = orderPayMethodItems(methodItems);
+    methodItems.forEach(function (item) {
+      item.optionHtml = buildPayMethodOptionHtml(item);
+      item.hideSelectedIcon =
+        item.id !== "smart_disburse" && item.id !== "smart_exchange";
+    });
 
     var applyMethod = initSelect(
       "pp-pay-method-select",
@@ -6543,9 +6971,7 @@
               savedState &&
               savedState.methodId === "card" &&
               savedState.cardSendingMethod
-                ? String(savedState.cardSendingMethod) === "display_details"
-                  ? "on_file"
-                  : String(savedState.cardSendingMethod)
+                ? String(savedState.cardSendingMethod)
                 : !isReadyToPay
                   ? "on_file"
                   : "on_file";
@@ -6560,6 +6986,11 @@
                 : !isReadyToPay
                   ? "add_funds"
                   : "";
+            _cardFundingState.fundingMatch =
+              !!savedState &&
+              savedState.methodId === "card" &&
+              (savedState.cardFundingMatch === true ||
+                String(savedState.cardFundingMethod || "") === "match_payment");
             _cardFundingState.fundingAmount =
               savedState &&
               savedState.methodId === "card" &&
@@ -6569,8 +7000,21 @@
                   ? formatMoneyInputValue(getCurrentPayableAmountNumber())
                   : "";
             renderCardOptionsList(cardOpts, "");
-            setSelectedContent(cardContent, "", "Select card");
+            setSelectedContent(cardContent, "", "Select a card");
             cardOpts.onclick = function (ev) {
+              if (ev.target.closest("[data-card-create-new]")) {
+                // Same path as the (hidden) "Create New Card" source radio.
+                hideCardOptionsPopover(cardOpts);
+                var newSourceInput = document.getElementById(
+                  "pp-card-source-new",
+                );
+                if (newSourceInput && !newSourceInput.disabled) {
+                  newSourceInput.checked = true;
+                  if (typeof newSourceInput.onchange === "function")
+                    newSourceInput.onchange();
+                }
+                return;
+              }
               var opt = ev.target.closest("el-option");
               if (!opt) return;
               var optionValue = String(opt.getAttribute("value") || "");
@@ -6594,7 +7038,11 @@
                 _cardFundingState.pendingNewCard = null;
                 _cardFundingState.fundingMethod = "";
                 _cardFundingState.fundingAmount = "";
-                setSelectedContent(cardContent, "", "Select card");
+                setSelectedContent(cardContent, "", "Select a card");
+                cardOpts.setAttribute("data-selected-value", "");
+                cardOpts.querySelectorAll("el-option").forEach(function (el) {
+                  el.removeAttribute("aria-selected");
+                });
                 if (_cardFundingState.cardSource === "new") {
                   var createdCard = createNewVirtualCard();
                   if (createdLabel)
@@ -6840,15 +7288,23 @@
           ? ""
           : String(inferRowMethodType(row) || "");
     var hasDesiredMethod = false;
-    for (var methodIdx = 0; methodIdx < methodItems.length; methodIdx += 1) {
-      if (String(methodItems[methodIdx].id) === desiredMethodId) {
+    for (
+      var methodIdx = 0;
+      methodIdx < availableMethodItems.length;
+      methodIdx += 1
+    ) {
+      if (String(availableMethodItems[methodIdx].id) === desiredMethodId) {
         hasDesiredMethod = true;
         break;
       }
     }
     if (!hasDesiredMethod && desiredMethodId) {
-      desiredMethodId = methodItems.length
-        ? String(methodItems[getRowSeed(row) % methodItems.length].id)
+      desiredMethodId = availableMethodItems.length
+        ? String(
+            availableMethodItems[
+              getRowSeed(row) % availableMethodItems.length
+            ].id,
+          )
         : "";
     }
 
@@ -7083,7 +7539,9 @@
       (!isReadyToPay ? buildFallbackOriginationState(row, list) : null);
     if (!selectEl || !optionsEl || !selectedEl) return;
 
-    optionsEl.innerHTML = list.map(buildBankOptionHtml).join("");
+    optionsEl.innerHTML =
+      list.map(buildBankOptionHtml).join("") +
+      buildOriginationAddBankActionHtml();
 
     function resetSelection() {
       selectedEl.innerHTML =
@@ -7121,7 +7579,7 @@
 
     optionsEl.addEventListener("click", function (event) {
       var option = event.target.closest("el-option");
-      if (!option) return;
+      if (!option || option.hasAttribute("disabled")) return;
       var optionValue = String(option.getAttribute("value") || "");
       var currentValue = String(
         optionsEl.getAttribute("data-selected-value") || "",
@@ -7704,8 +8162,123 @@
     });
   }
 
+  var _floatingUiPromise = null;
+
+  function loadFloatingUi() {
+    if (window.FloatingUIDOM && window.FloatingUIDOM.computePosition) {
+      return Promise.resolve(window.FloatingUIDOM);
+    }
+    if (!_floatingUiPromise) {
+      _floatingUiPromise = import(
+        "https://cdn.jsdelivr.net/npm/@floating-ui/dom@1.7.6/+esm"
+      ).then(function (mod) {
+        window.FloatingUIDOM = mod;
+        return mod;
+      });
+    }
+    return _floatingUiPromise;
+  }
+
+  // Positions an <el-select> popover with Floating UI instead of the
+  // element's built-in `anchor`. el-select still owns open/close/selection.
+  function initFloatingSelectOptions(optionsId) {
+    var optionsEl = document.getElementById(optionsId);
+    if (!optionsEl || optionsEl.__floatingBound) return;
+    var selectEl = optionsEl.closest("el-select");
+    var reference = selectEl ? selectEl.querySelector("button") : null;
+    if (!reference) return;
+    optionsEl.__floatingBound = true;
+    // Warm the module so the first open is positioned without a delay.
+    loadFloatingUi().catch(function () {});
+
+    var maxHeightCap = Number(optionsEl.getAttribute("data-max-height")) || 0;
+    var cleanup = null;
+    var gap = 4;
+    var padding = 8;
+
+    function applyBaseStyles() {
+      optionsEl.style.position = "fixed";
+      optionsEl.style.inset = "auto";
+      optionsEl.style.margin = "0";
+    }
+
+    function getMinWidth() {
+      return Number(optionsEl.getAttribute("data-min-width")) || 0;
+    }
+
+    function fallbackPosition() {
+      var rect = reference.getBoundingClientRect();
+      optionsEl.style.left = rect.left + "px";
+      optionsEl.style.top = rect.bottom + gap + "px";
+      optionsEl.style.width = Math.max(rect.width, getMinWidth()) + "px";
+    }
+
+    function start() {
+      // Never hide the popover while positioning: el-select closes an open
+      // popover that reports as invisible (ResizeObserver check). Place it
+      // synchronously below the trigger first, then refine with Floating UI.
+      applyBaseStyles();
+      fallbackPosition();
+      loadFloatingUi()
+        .then(function (floating) {
+          if (!optionsEl.matches(":popover-open")) return;
+          if (cleanup) cleanup();
+          cleanup = floating.autoUpdate(reference, optionsEl, function () {
+            floating
+              .computePosition(reference, optionsEl, {
+                placement: "bottom-start",
+                strategy: "fixed",
+                middleware: [
+                  floating.offset(gap),
+                  floating.flip({ padding: padding }),
+                  floating.size({
+                    padding: padding,
+                    apply: function (state) {
+                      var available = Math.max(
+                        120,
+                        Math.floor(state.availableHeight),
+                      );
+                      optionsEl.style.width =
+                        Math.max(state.rects.reference.width, getMinWidth()) +
+                        "px";
+                      optionsEl.style.maxHeight =
+                        (maxHeightCap
+                          ? Math.min(maxHeightCap, available)
+                          : available) + "px";
+                    },
+                  }),
+                  floating.shift({ padding: padding }),
+                ],
+              })
+              .then(function (position) {
+                optionsEl.style.left = position.x + "px";
+                optionsEl.style.top = position.y + "px";
+              });
+          });
+        })
+        .catch(fallbackPosition);
+    }
+
+    function stop() {
+      if (cleanup) cleanup();
+      cleanup = null;
+    }
+
+    optionsEl.addEventListener("beforetoggle", function (event) {
+      if (event.newState === "open") start();
+    });
+    optionsEl.addEventListener("toggle", function (event) {
+      if (event.newState === "closed") stop();
+    });
+  }
+
   function init() {
     initBackButton();
+    initFloatingSelectOptions("pp-orig-bank-options");
+    initFloatingSelectOptions("pp-pay-method-options");
+    initFloatingSelectOptions("pp-pay-card-options");
+    initFloatingSelectOptions("pp-card-funding-options");
+    initCardFundingSelect();
     reorderPaySteps();
     initOriginationDetailsInteractions();
     initPayStepStatusObserver();
