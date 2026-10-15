@@ -974,7 +974,7 @@
         next.bankLast4 = bankLast4;
         next.paymentMethod = (methodType === 'wire' ? 'Wire' : 'Bank') + ' •••• ' + bankLast4;
       } else if (methodType === 'smart_exchange') {
-        next.paymentMethod = 'SMART Disburse';
+        next.paymentMethod = 'SMART Exchange';
       } else if (methodType === 'smart_disburse') {
         next.paymentMethod = 'SMART Disburse';
       } else {
@@ -1330,7 +1330,7 @@
     }
     if (type === 'smart_exchange') {
       return '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb + '">' +
-        '<span class="inline-flex items-center gap-x-2">' + ICON_SMART_EXCHANGE + '<span class="text-sm font-medium text-gray-900 dark:text-white">SMART Disburse</span></span>' +
+        '<span class="inline-flex items-center gap-x-2">' + ICON_SMART_EXCHANGE + '<span class="text-sm font-medium text-gray-900 dark:text-white">SMART Exchange</span></span>' +
       '</td>';
     }
     return '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb + '">' +
@@ -1603,7 +1603,7 @@
       ach: 'ACH',
       wire: 'Wire',
       smart_disburse: 'SMART Disburse',
-      smart_exchange: 'SMART Disburse',
+      smart_exchange: 'SMART Exchange',
     };
     var order = ['card', 'ach', 'wire', 'smart_disburse', 'smart_exchange'];
     var rows = order
@@ -1698,7 +1698,7 @@
         ach: 'ACH',
         wire: 'Wire',
         smart_disburse: 'SMART Disburse',
-        smart_exchange: 'SMART Disburse',
+        smart_exchange: 'SMART Exchange',
       };
       var methodText = Array.from(state.appliedSelectedMethods)
         .sort(function (a, b) { return a.localeCompare(b); })

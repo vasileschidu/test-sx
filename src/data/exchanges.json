@@ -360,7 +360,7 @@
       "invoice": "GS-443",
       "customer": "GreenScape",
       "dateInitiated": "2024-07-05",
-      "paymentMethod": "SMART Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "pending",
       "details": {
@@ -531,11 +531,11 @@
       "invoice": "SC-5541",
       "customer": "SteelCore",
       "dateInitiated": "2024-06-20",
-      "paymentMethod": "SMART Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "pending",
       "details": {
-        "notes": "Steel beam delivery for the Harbor Bridge project. Settlement via SMART Disburse platform.",
+        "notes": "Steel beam delivery for the Harbor Bridge project. Settlement via SMART Exchange platform.",
         "paymentInfo": {
           "type": "smartExchange",
           "exchangeId": "SX-88310",
@@ -706,7 +706,7 @@
       "invoice": "QP-118",
       "customer": "QuickPrint",
       "dateInitiated": "2024-07-14",
-      "paymentMethod": "SMART Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "pending",
       "details": {
@@ -932,7 +932,7 @@
       "invoice": "IC-2205",
       "customer": "IronClad",
       "dateInitiated": "2024-06-18",
-      "paymentMethod": "SMART Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "pending",
       "details": {
@@ -979,7 +979,7 @@
           {
             "user": "Karen White",
             "action": "commented",
-            "comment": "Verified contract terms. Approved for SMART Disburse settlement.",
+            "comment": "Verified contract terms. Approved for SMART Exchange settlement.",
             "date": "2024-06-19T09:00",
             "timeAgo": "23d ago",
             "type": "comment"
@@ -1107,7 +1107,7 @@
       "invoice": "CN-391",
       "customer": "CoralNet",
       "dateInitiated": "2024-07-06",
-      "paymentMethod": "SMART Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "pending",
       "details": {
@@ -1340,7 +1340,7 @@
       "invoice": "KT-1187",
       "customer": "KazenTech",
       "dateInitiated": "2024-07-09",
-      "paymentMethod": "SMART Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "pending",
       "details": {
@@ -1532,7 +1532,7 @@
       "invoice": "ZR-0091",
       "customer": "ZeroCarbon",
       "dateInitiated": "2024-06-10",
-      "paymentMethod": "SMART Disburse",
+      "paymentMethod": "SMART Exchange",
       "paymentMethodEnding": "",
       "status": "paid",
       "details": {

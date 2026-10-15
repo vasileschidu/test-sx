@@ -65,6 +65,10 @@
 
   // Consumer Portal table follows its own Figma table (tabs, rows, separators).
   var IS_CONSUMER_TABLE = PAGE_CONFIG.dataset === 'consumer-payments';
+  // Consumer Portal says "SMART Disburse" / "Card Payment"; supplier-side pages keep "SMART Exchange" / "Payer's Card".
+  var SX_LABEL = IS_CONSUMER_TABLE ? 'SMART Disburse' : 'SMART Exchange';
+  var CARD_LABEL = IS_CONSUMER_TABLE ? 'Card Payment' : "Payer's Card";
+  var ACCEPT_CARD_LABEL = IS_CONSUMER_TABLE ? 'Accept Card Payment' : "Accept Payer's Card";
 
   var ACTIVE_TAB_LINK_CLASSES = IS_CONSUMER_TABLE
     ? ['bg-blue-50', 'text-blue-600', 'dark:bg-blue-500/20', 'dark:text-blue-300']
@@ -238,7 +242,7 @@
   STATUS_STYLES['action-required'] = STATUS_STYLES.pending;
 
   var METHOD_TYPE_LABELS = {
-    smart_exchange: 'SMART Disburse',
+    smart_exchange: SX_LABEL,
     card: 'Card',
     ach: 'ACH',
     check: 'Check',
@@ -920,7 +924,7 @@
   }
 
   function getMethodLabelFromType(methodType) {
-    return METHOD_TYPE_LABELS[methodType] || 'SMART Disburse';
+    return METHOD_TYPE_LABELS[methodType] || SX_LABEL;
   }
 
   function getStatusLabel(status) {
@@ -5773,7 +5777,7 @@
       }
       return '';
     }
-    if (paymentValue === 'payers-card') return "Card Payment";
+    if (paymentValue === 'payers-card') return CARD_LABEL;
     return '';
   }
 
@@ -5788,7 +5792,7 @@
 
     var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
     var paymentValue = getSelectedOptionValue(paymentSel);
-    var methodLabels = { 'payers-card': "Card Payment", 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
+    var methodLabels = { 'payers-card': CARD_LABEL, 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
     methodEl.textContent = methodLabels[paymentValue] || '—';
     destinationEl.textContent = getConfirmSummaryDestination(paymentValue) || '—';
   }
@@ -5892,7 +5896,7 @@
     });
     var selectedContent = sel.querySelector('el-selectedcontent');
     var labelMap = {
-      'payers-card': "Accept Card Payment",
+      'payers-card': ACCEPT_CARD_LABEL,
       'bank-account': IS_CONSUMER_TABLE ? 'Send to my Bank Account' : 'Send to Bank Account',
       'paper-check': IS_CONSUMER_TABLE ? 'I want a check' : 'Request a Paper Check'
     };
@@ -5941,11 +5945,11 @@
     var methodType = String(entry && entry.methodType || '').toLowerCase();
     var paymentMethod = String(entry && entry.paymentMethod || '');
     if (methodType === 'smart_exchange' || (paymentMethod.toLowerCase().indexOf('smart exchange') !== -1 || paymentMethod.toLowerCase().indexOf('smart disburse') !== -1)) {
-      return "Accept Card Payment";
+      return ACCEPT_CARD_LABEL;
     }
     if (paymentValue === 'bank-account') return 'Send to Bank Account';
     if (paymentValue === 'paper-check') return 'Request a Paper Check';
-    return "Accept Card Payment";
+    return ACCEPT_CARD_LABEL;
   }
 
   function getManualPendingGetPaidMethodLabel(paymentValue) {
@@ -7031,7 +7035,7 @@
         var validMethods = ['payers-card', 'bank-account', 'paper-check'];
         if (validMethods.indexOf(paymentValue) === -1) return;
 
-        var methodLabels = { 'payers-card': "Card Payment", 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
+        var methodLabels = { 'payers-card': CARD_LABEL, 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
 
         var txIdEl = document.getElementById('gp-submit-txid');
         var amountEl = document.getElementById('gp-submit-amount');

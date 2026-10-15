@@ -26,7 +26,7 @@
         { "name": "red_maple_bank_letter.pdf", "size": "830kb", "type": "Bank Verification" },
         { "name": "red_maple_msa.pdf", "size": "2.4mb", "type": "Contract" }
       ],
-      "notes": "Primary field contractor for Austin projects. Prefers ACH for standard releases and keeps SMART Disburse enabled for accelerated settlements.",
+      "notes": "Primary field contractor for Austin projects. Prefers ACH for standard releases and keeps SMART Exchange enabled for accelerated settlements.",
       "activityLog": [
         {
           "timestamp": "2026-03-20T14:15:00",
@@ -109,11 +109,11 @@
         { "name": "mosaic_w9.pdf", "size": "1.0mb", "type": "Tax Form" },
         { "name": "mosaic_exchange_enrollment.pdf", "size": "920kb", "type": "Enrollment" }
       ],
-      "notes": "Mosaic is enabled for SMART Disburse and uses it for rush settlement windows tied to campaign print runs.",
+      "notes": "Mosaic is enabled for SMART Exchange and uses it for rush settlement windows tied to campaign print runs.",
       "activityLog": [
         {
           "timestamp": "2026-03-21T08:55:00",
-          "title": "SMART Disburse confirmed",
+          "title": "SMART Exchange confirmed",
           "description": "Daniel Price confirmed the settlement destination"
         },
         {

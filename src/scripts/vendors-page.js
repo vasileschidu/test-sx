@@ -248,7 +248,7 @@
       card: 'Card',
       check: 'Check',
       smart_disburse: 'SMART Disburse',
-      smart_exchange: 'SMART Disburse',
+      smart_exchange: 'SMART Exchange',
       wire: 'Wire'
     };
     state.vendors.forEach(function (vendor) {
@@ -291,7 +291,7 @@
         card: 'Card',
         check: 'Check',
         smart_disburse: 'SMART Disburse',
-        smart_exchange: 'SMART Disburse',
+        smart_exchange: 'SMART Exchange',
         wire: 'Wire'
       };
       tags.push({ type: 'method', label: 'Payment method', value: Array.from(state.selectedMethods).sort().map(function (value) { return methodLabels[value] || value; }).join(', ') });

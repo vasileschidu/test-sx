@@ -1,5 +1,5 @@
 # PROJECT_RULES.md
-## SMART Disburse Dashboard — Architectural Rules
+## SMART Exchange Dashboard — Architectural Rules
 
 All contributors and AI agents MUST follow these rules. Every change must respect and reinforce them.
 If a rule conflicts with existing code, **refactor the code to match the rule**.

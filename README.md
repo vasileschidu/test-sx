@@ -1,6 +1,6 @@
-# SMART Disburse Prototype
+# SMART Exchange Prototype
 
-SMART Disburse is a static, multi-page dashboard/onboarding prototype built with HTML, Tailwind CSS (CDN mode), and vanilla JavaScript. Data is loaded from local JSON files in `src/data` and rendered client-side.
+SMART Exchange is a static, multi-page dashboard/onboarding prototype built with HTML, Tailwind CSS (CDN mode), and vanilla JavaScript. Data is loaded from local JSON files in `src/data` and rendered client-side.
 
 This repo is intentionally framework-free. The goal is predictable UI behavior and easy iteration on product flows (Payments, Preferences, Company Profile, onboarding).
 

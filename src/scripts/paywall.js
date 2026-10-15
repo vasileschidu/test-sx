@@ -1,8 +1,8 @@
 /**
  * paywall.js
- * SMART Disburse "Receive Payment" step.
+ * SMART Exchange "Receive Payment" step.
  *
- * Wires the payment-method options to their next screen. The SMART Disburse
+ * Wires the payment-method options to their next screen. The SMART Exchange
  * flow has no method-specific screens of its own, so the options fall through
  * to the equivalent SMART Disburse ones — which read the chosen method back out
  * of shared state to decide what to render. Recording the choice is therefore
