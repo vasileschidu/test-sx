@@ -26,7 +26,7 @@
   var initGeneration = 0;
 
   var list = { search: '', activeOnly: false, senders: new Set(), statuses: new Set(), expanded: false, filterOpen: false };
-  var detail = { cardId: null, revealed: false, search: '', statuses: new Set(), sort: 'desc', page: 1, pageSize: 10, open: new Set(), filterOpen: false };
+  var detail = { cardId: null, revealed: false, search: '', statuses: new Set(), sortKey: 'dateTime', sortDir: 'desc', page: 1, pageSize: 10, open: new Set(), filterOpen: false };
 
   function $(id) { return document.getElementById(id); }
 
@@ -40,8 +40,8 @@
     return '$' + Number(n || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
   }
 
-  function amountHtml(n, big) {
-    return '<span class="' + (big ? 'text-2xl font-semibold' : 'text-sm font-medium') + ' text-gray-950 tabular-nums dark:text-white">' + money(n) + '</span>' +
+  function amountHtml(n, big, muted) {
+    return '<span class="' + (big ? 'text-2xl/8 font-semibold' : 'text-sm font-medium') + ' tabular-nums ' + (muted ? 'text-gray-500 dark:text-gray-400' : 'text-gray-950 dark:text-white') + '">' + money(n) + '</span>' +
       '<span class="' + (big ? 'ml-1 text-base' : 'ml-1 text-sm') + ' font-normal text-gray-500 dark:text-gray-400">USD</span>';
   }
 
@@ -50,6 +50,11 @@
   function formatDate(iso) {
     var d = new Date(iso);
     return isNaN(d.getTime()) ? '' : pad(d.getMonth() + 1) + '/' + pad(d.getDate()) + '/' + d.getFullYear();
+  }
+
+  function formatTxDate(iso) {
+    var d = new Date(iso);
+    return isNaN(d.getTime()) ? '' : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   }
 
   function formatCreated(iso) {
@@ -78,8 +83,8 @@
 
   // ── Shared bits ──
 
-  var CHEVRON_RIGHT = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 transition-colors group-hover:text-gray-600 dark:group-hover:text-gray-300"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var CHEVRON_DOWN = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 transition-transform"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+  var CHEVRON_RIGHT = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-[18px] shrink-0 text-gray-400 transition-colors group-hover:text-gray-600 dark:group-hover:text-gray-300"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
+  var CHEVRON_DOWN = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-[18px] transition-transform"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
   var CHECKBOX = 'col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500';
 
   function checkbox(attrs, checked, label) {
@@ -181,28 +186,36 @@
     });
   }
 
+  // "Card Provider" from the Consumer Portal Figma list: the 24x16 brand flag.
+  function listFlag(network) {
+    if (String(network || '').toLowerCase() === 'mastercard') {
+      return MASTERCARD_FLAG.replace('h-5 w-[30px] rounded ', 'h-4 w-6 rounded-[2px] ').replace('h-[12.5px] w-[20.3px]', 'h-[9px] w-[16.3px]');
+    }
+    return '<span class="inline-flex h-4 min-w-6 items-center justify-center rounded-[2px] bg-gray-200 px-1 text-[8px] font-semibold text-gray-700 uppercase">' + escapeHtml(network || 'Card') + '</span>';
+  }
+
   function listRow(c) {
-    var dim = c.status === 'inactive' ? ' opacity-40' : '';
+    var dim = c.status === 'inactive' ? ' opacity-50' : '';
     return '<a href="?card=' + encodeURIComponent(c.id) + '" data-open-card="' + escapeHtml(c.id) + '"' +
-      ' class="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-4 gap-y-2 rounded-lg bg-gray-50 p-3 transition-colors hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:grid-cols-[auto_minmax(0,1.2fr)_minmax(0,1fr)_9rem_auto] dark:bg-white/5 dark:hover:bg-white/10">' +
-      '<span class="flex h-8 w-10 shrink-0 items-center justify-center' + dim + '">' + miniCard(c) + '</span>' +
+      ' class="group grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-x-3 gap-y-2 rounded-lg bg-gray-50 p-3 transition-colors hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:grid-cols-[40px_minmax(0,1fr)_minmax(0,1fr)_9rem_28px] sm:gap-x-6 dark:bg-white/5 dark:hover:bg-white/10">' +
+      '<span class="flex w-10 shrink-0 items-start justify-center rounded-full py-2' + dim + '">' + listFlag(c.network) + '</span>' +
       '<span class="flex min-w-0 flex-col gap-1' + dim + '">' +
-        '<span class="truncate text-sm font-semibold text-gray-900 dark:text-gray-100">' + escapeHtml(c.holderName) + ' <span class="tabular-nums">•••• ' + escapeHtml(c.last4) + '</span></span>' +
-        '<span class="text-sm text-gray-500 dark:text-gray-400">Expiration ' + escapeHtml(c.expiration) + '</span>' +
+        '<span class="truncate text-sm/5 font-semibold text-gray-900 dark:text-gray-100">' + escapeHtml(c.holderName) + ' <span class="tabular-nums">•••• ' + escapeHtml(c.last4) + '</span></span>' +
+        '<span class="text-sm/5 text-gray-500 dark:text-gray-400">Expiration ' + escapeHtml(c.expiration) + '</span>' +
       '</span>' +
-      '<span class="col-start-2 flex min-w-0 flex-col gap-1 sm:col-start-auto">' +
-        '<span class="text-sm text-gray-500 dark:text-gray-400">Sent by</span>' +
-        '<span data-sent-by="' + escapeHtml(c.sentBy) + '" class="w-fit truncate text-sm font-medium text-gray-900 underline decoration-gray-400 underline-offset-4 hover:decoration-gray-900 dark:text-white dark:decoration-white/30">' + escapeHtml(c.sentBy) + '</span>' +
+      '<span class="col-start-2 flex min-w-0 flex-col gap-1 sm:col-start-auto' + dim + '">' +
+        '<span class="text-sm/5 text-gray-500 dark:text-gray-400">Sent by</span>' +
+        '<span data-sent-by="' + escapeHtml(c.sentBy) + '" class="w-fit truncate text-sm/5 font-medium text-slate-950 underline hover:text-gray-600 dark:text-white dark:hover:text-gray-300">' + escapeHtml(c.sentBy) + '</span>' +
       '</span>' +
       '<span class="col-start-2 whitespace-nowrap sm:col-start-auto sm:text-right">' + amountHtml(c.availableBalance) + '</span>' +
-      '<span class="col-start-3 row-start-1 sm:col-start-auto sm:row-start-auto">' + CHEVRON_RIGHT + '</span>' +
+      '<span class="col-start-3 row-start-1 flex w-7 justify-center sm:col-start-auto sm:row-start-auto">' + CHEVRON_RIGHT + '</span>' +
     '</a>';
   }
 
   function listSkeleton() {
     var rows = '';
     for (var i = 0; i < INITIAL_VISIBLE; i += 1) {
-      rows += '<div class="grid grid-cols-[auto_minmax(0,1.2fr)_minmax(0,1fr)_9rem_auto] items-center gap-4 rounded-lg bg-gray-50 p-3 dark:bg-white/5" aria-hidden="true">' +
+      rows += '<div class="grid grid-cols-[40px_minmax(0,1fr)_minmax(0,1fr)_9rem_28px] items-center gap-6 rounded-lg bg-gray-50 p-3 dark:bg-white/5" aria-hidden="true">' +
         bar('2.5rem', '2rem', true) +
         '<span class="flex flex-col gap-1.5">' + bar('13rem', '0.9rem', true) + bar('8rem', '0.8rem', true) + '</span>' +
         '<span class="flex flex-col gap-1.5">' + bar('3.5rem', '0.8rem', true) + bar('7rem', '0.9rem', true) + '</span>' +
@@ -223,7 +236,7 @@
       var shown = list.expanded ? matches : matches.slice(0, INITIAL_VISIBLE);
       var html = shown.map(listRow).join('');
       if (matches.length > INITIAL_VISIBLE) {
-        html += '<button type="button" data-mc-toggle class="mt-2 inline-flex cursor-pointer items-center gap-2 self-start rounded-md px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap text-gray-700 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100" aria-expanded="' + list.expanded + '">' +
+        html += '<button type="button" data-mc-toggle class="mx-3 my-2 inline-flex cursor-pointer items-center gap-1 self-start rounded text-sm/5 font-semibold whitespace-nowrap text-gray-700 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300 dark:hover:text-gray-100" aria-expanded="' + list.expanded + '">' +
           '<span>' + (list.expanded ? 'Show less' : 'Show all (' + matches.length + ')') + '</span>' +
           CHEVRON_DOWN.replace('transition-transform', 'transition-transform' + (list.expanded ? ' rotate-180' : '')) + '</button>';
       }
@@ -259,12 +272,38 @@
 
   // ════════════════════════════ CARD PAGE ════════════════════════════
 
+  // Same badge palette and icons as the Payments Received table.
   var TX_STATUS = {
-    Settled: 'bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20',
-    Pending: 'bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20',
-    Declined: 'bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20',
-    Refunded: 'bg-gray-50 text-gray-600 inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20'
+    Settled: 'border-green-300 bg-green-100 text-green-800 dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-400',
+    Pending: 'border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300',
+    Declined: 'border-red-200 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400',
+    Refunded: 'border-gray-200 bg-gray-100 text-gray-800 dark:border-gray-400/20 dark:bg-gray-400/10 dark:text-gray-300'
   };
+  var TX_STATUS_ICON = {
+    Settled: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0 text-green-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"/></svg>',
+    Pending: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0 text-yellow-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd"/></svg>',
+    Declined: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0 text-red-500"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd"/></svg>',
+    Refunded: ''
+  };
+  var ICON_SORT_PATH_UP = 'M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z';
+  var ICON_SORT_PATH_DOWN = 'M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z';
+
+  function txStatusBadge(status, label) {
+    var icon = TX_STATUS_ICON[status] || '';
+    return '<span class="inline-flex items-center gap-0.5 rounded-[4px] border py-0.5 ' + (icon ? 'pr-2 pl-1' : 'px-2') + ' text-sm/5 font-medium whitespace-nowrap ' + (TX_STATUS[status] || TX_STATUS.Refunded) + '">' + icon + escapeHtml(label || status) + '</span>';
+  }
+
+  // Sort affordance from the Payments Received header: neutral up/down arrows,
+  // blue with the active direction emphasised.
+  function sortIcon(key) {
+    var dir = detail.sortKey === key ? detail.sortDir : '';
+    var up = dir === 'asc' ? 'translate(10 5.6) scale(1.2) translate(-10 -5.6)' : '';
+    var down = dir === 'desc' ? 'translate(10 14.4) scale(1.2) translate(-10 -14.4)' : '';
+    var upOp = dir === 'desc' ? 'opacity-40' : (dir ? '' : 'opacity-70');
+    var downOp = dir === 'asc' ? 'opacity-40' : (dir ? '' : 'opacity-70');
+    return '<span class="inline-flex size-5 items-center justify-center ' + (dir ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400 group-hover:text-gray-600 dark:text-gray-500') + '">' +
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path class="' + upOp + '"' + (up ? ' transform="' + up + '"' : '') + ' fill-rule="evenodd" d="' + ICON_SORT_PATH_UP + '" clip-rule="evenodd"/><path class="' + downOp + '"' + (down ? ' transform="' + down + '"' : '') + ' fill-rule="evenodd" d="' + ICON_SORT_PATH_DOWN + '" clip-rule="evenodd"/></svg></span>';
+  }
 
   function dots(n) {
     var out = '';
@@ -273,51 +312,59 @@
   }
 
   function cardVisual(c) {
-    var groups = String(c.fullNumber).split(' ');
-    var number = detail.revealed
-      ? '<span class="font-mono text-lg tracking-widest">' + escapeHtml(c.fullNumber) + '</span>'
-      : '<span class="flex items-center gap-4">' + dots(4) + dots(4) + dots(4) + '<span class="font-mono text-lg tracking-wider">' + escapeHtml(groups[groups.length - 1]) + '</span></span>';
-    return '<div class="relative flex aspect-[1.6/1] w-full flex-col justify-between overflow-hidden rounded-xl bg-[linear-gradient(160deg,#0B1220_0%,#111933_58%,#18224A_100%)] p-5 text-white shadow-lg">' +
-      '<div class="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,_rgba(96,165,250,0.18),_transparent_45%)]"></div>' +
-      '<div class="relative"><p class="text-3xl font-semibold tabular-nums">' + money(c.availableBalance) + '</p></div>' +
-      '<div class="relative flex flex-col gap-3">' + number +
-        '<div class="flex items-center gap-2"><span class="text-[7px] leading-[8px] font-semibold uppercase">Valid<br>Thru</span><span class="font-mono text-sm">' + escapeHtml(shortExpiry(c.expiration)) + '</span></div>' +
-        '<div class="flex items-end justify-between"><span class="font-mono text-sm tracking-wider uppercase">' + escapeHtml(c.holderName) + '</span>' +
-        '<span class="[&>img]:h-8 [&>img]:w-auto">' + brandLogo(c.network, 'large') + '</span></div>' +
+    // "Card_VC" from the Consumer Portal Figma: flat #142435, 20px padding,
+    // Roboto Mono details, square bottom so the details panel tucks under it.
+    var mono = "font-['Roboto_Mono',ui-monospace,monospace]";
+    var number = detail.revealed ? escapeHtml(c.fullNumber) : '•••• •••• •••• ' + escapeHtml(c.last4);
+    return '<div class="relative z-10 flex h-[200px] w-full flex-col justify-end overflow-hidden rounded-t-xl border-[0.94px] border-white/30 bg-[#142435] p-5 text-white shadow-lg ' + mono + '">' +
+      '<div class="flex h-[108px] flex-col justify-end">' +
+        '<p class="font-[Inter] text-[28px] leading-8 font-bold tabular-nums">' + money(c.availableBalance) + '</p>' +
+        '<div class="flex flex-col gap-2">' +
+          '<p class="text-lg/6 whitespace-nowrap">' + number + '</p>' +
+          '<div class="flex items-center gap-1 pl-14"><span class="text-[8px] leading-[normal] font-bold uppercase">Valid<br>Thru</span><span class="text-sm/6">' + escapeHtml(shortExpiry(c.expiration)) + '</span></div>' +
+        '</div>' +
       '</div>' +
+      '<div class="flex h-9 items-end gap-4"><span class="min-w-0 flex-1 truncate text-sm/5 font-medium uppercase">' + escapeHtml(c.holderName) + '</span>' +
+        (String(c.network || '').toLowerCase() === 'mastercard'
+          ? '<img src="../../../assets/icons/mastercard-card-logo.svg" alt="Mastercard" class="h-[22px] w-auto shrink-0" />'
+          : '<span class="[&>img]:h-[22px] [&>img]:w-auto">' + brandLogo(c.network, 'large') + '</span>') + '</div>' +
     '</div>';
   }
 
-  function maskedPill(w) { return '<span class="inline-block h-3 rounded-full bg-gray-200 dark:bg-white/15" style="width:' + w + '"></span>'; }
+  function maskedPill(w) { return '<span class="inline-block h-[13px] rounded-full bg-gray-200 dark:bg-white/15" style="width:' + w + '"></span>'; }
 
+  // Details panel from Figma: tucks 16px under the card (pt 28 = 12 + the overlap),
+  // 12px padding, 120px label column, divider, then the reveal link.
   function cardSecrets(c) {
     var row = function (label, value) {
-      return '<div class="flex items-center justify-between gap-4 py-1.5"><dt class="text-sm text-gray-500 dark:text-gray-400">' + label + '</dt><dd class="flex items-center gap-1.5 text-sm text-gray-900 tabular-nums dark:text-white">' + value + '</dd></div>';
+      return '<div class="flex items-center gap-4"><dt class="' + (detail.revealed ? '' : 'w-[120px] ') + 'shrink-0 text-sm/5 font-medium whitespace-nowrap text-gray-500 dark:text-gray-400">' + label + '</dt><dd class="flex min-w-0 flex-1 items-center justify-end gap-1 text-sm/5 whitespace-nowrap text-gray-900 tabular-nums dark:text-white">' + value + '</dd></div>';
     };
-    var number = detail.revealed ? escapeHtml(c.fullNumber) : maskedPill('2rem') + maskedPill('2rem') + maskedPill('2rem') + '<span>' + escapeHtml(c.last4) + '</span>';
-    return '<div class="rounded-b-xl border border-t-0 border-gray-200 px-3 pt-2 pb-3 dark:border-white/10">' +
-      '<dl class="divide-y divide-transparent">' +
+    var number = detail.revealed ? escapeHtml(c.fullNumber) : maskedPill('32px') + maskedPill('32px') + maskedPill('32px') + '<span class="ml-1">' + escapeHtml(c.last4) + '</span>';
+    var eye = detail.revealed
+      ? '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 0 0-1.06 1.06l14.5 14.5a.75.75 0 1 0 1.06-1.06l-1.745-1.745a10.029 10.029 0 0 0 3.3-4.38 1.651 1.651 0 0 0 0-1.185A10.004 10.004 0 0 0 9.999 3a9.956 9.956 0 0 0-4.744 1.194L3.28 2.22ZM7.752 6.69l1.092 1.092a2.5 2.5 0 0 1 3.374 3.373l1.091 1.092a4 4 0 0 0-5.557-5.557Z" clip-rule="evenodd" /><path d="m10.748 13.93 2.523 2.523a9.987 9.987 0 0 1-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 0 1 0-1.186A10.007 10.007 0 0 1 2.839 6.02L6.07 9.252a4 4 0 0 0 4.678 4.678Z" /></svg>'
+      : '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" /></svg>';
+    return '<div class="-mt-4 flex flex-col gap-3 rounded-lg border border-gray-200 px-3 pt-7 pb-3 dark:border-white/10">' +
+      '<dl class="flex flex-col gap-2">' +
         row('Card Number', number) +
         row('Expires', escapeHtml(c.expiration)) +
-        row('CVC', detail.revealed ? escapeHtml(c.cvc) : maskedPill('2rem')) +
+        row('CVC', detail.revealed ? escapeHtml(c.cvc) : maskedPill('32px')) +
       '</dl>' +
-      '<div class="mt-2 border-t border-gray-200 pt-3 dark:border-white/10">' +
-        '<button type="button" data-mc-reveal class="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-1.5 py-1 text-xs font-semibold text-blue-600 hover:bg-blue-600/10 dark:text-blue-400" aria-pressed="' + detail.revealed + '">' +
-          (detail.revealed
-            ? '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 0 0-1.06 1.06l14.5 14.5a.75.75 0 1 0 1.06-1.06l-1.745-1.745a10.029 10.029 0 0 0 3.3-4.38 1.651 1.651 0 0 0 0-1.185A10.004 10.004 0 0 0 9.999 3a9.956 9.956 0 0 0-4.744 1.194L3.28 2.22ZM7.752 6.69l1.092 1.092a2.5 2.5 0 0 1 3.374 3.373l1.091 1.092a4 4 0 0 0-5.557-5.557Z" clip-rule="evenodd" /><path d="m10.748 13.93 2.523 2.523a9.987 9.987 0 0 1-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 0 1 0-1.186A10.007 10.007 0 0 1 2.839 6.02L6.07 9.252a4 4 0 0 0 4.678 4.678Z" /></svg>Hide Details'
-            : '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" /><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd" /></svg>Reveal Details') +
+      '<div class="flex flex-col gap-3">' +
+        '<div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>' +
+        '<button type="button" data-mc-reveal class="inline-flex w-fit cursor-pointer items-center gap-1 rounded text-xs/4 font-semibold text-blue-600 hover:text-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400" aria-pressed="' + detail.revealed + '">' +
+          eye + (detail.revealed ? 'Hide Details' : 'Reveal Details') +
         '</button>' +
       '</div>' +
     '</div>';
   }
 
   function statTile(label, value, muted) {
-    return '<div class="flex flex-col gap-1 p-5"><span class="text-sm text-gray-500 dark:text-gray-400">' + label + '</span>' +
-      '<span class="' + (muted ? 'opacity-70' : '') + '">' + amountHtml(value, true) + '</span></div>';
+    return '<div class="flex flex-col gap-1 p-6"><span class="text-sm font-medium text-gray-500 dark:text-gray-400">' + label + '</span>' +
+      '<span class="flex items-baseline">' + amountHtml(value, true, muted) + '</span></div>';
   }
 
   function dlRow(label, valueHtml) {
-    return '<div class="grid grid-cols-1 gap-1 py-1.5 sm:grid-cols-[minmax(0,14rem)_minmax(0,1fr)] sm:gap-4">' +
+    return '<div class="grid grid-cols-1 gap-1 py-1 sm:grid-cols-[14rem_minmax(0,1fr)] sm:gap-0">' +
       '<dt class="text-sm font-medium text-gray-900 dark:text-gray-100">' + label + '</dt>' +
       '<dd class="text-sm text-gray-700 dark:text-gray-300">' + valueHtml + '</dd></div>';
   }
@@ -350,9 +397,7 @@
         dlRow('Sent by', escapeHtml(c.sentBy)) +
         dlRow('Payment Network', networkFlag(c.network)) +
         dlRow('Address', '<span class="whitespace-pre-line">' + escapeHtml(c.address) + '</span>') +
-        dlRow('Status', c.status === 'active'
-          ? '<span class="inline-flex items-center rounded-md bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400">Active</span>'
-          : '<span class="inline-flex items-center rounded-md bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/5 dark:text-gray-400">Inactive</span>') +
+        dlRow('Status', c.status === 'active' ? txStatusBadge('Settled', 'Active') : txStatusBadge('Refunded', 'Inactive')) +
       '</dl></div>';
   }
 
@@ -380,28 +425,40 @@
       if (!q) return true;
       return (t.id + ' ' + t.merchant + ' ' + t.status).toLowerCase().indexOf(q) !== -1;
     });
-    var dir = detail.sort === 'asc' ? 1 : -1;
-    return rows.slice().sort(function (a, b) { return (new Date(a.dateTime) - new Date(b.dateTime)) * dir; });
+    if (!detail.sortKey) return rows;
+    var dir = detail.sortDir === 'asc' ? 1 : -1;
+    var value = detail.sortKey === 'amount'
+      ? function (t) { return t.status === 'Refunded' ? -t.amount : t.amount; }
+      : function (t) { return new Date(t.dateTime).getTime(); };
+    return rows.slice().sort(function (a, b) { return (value(a) - value(b)) * dir; });
   }
 
-  var TH = 'h-11 px-3 text-left text-xs font-medium tracking-wide whitespace-nowrap text-gray-500 uppercase dark:text-gray-400';
+  var TH = 'h-[52px] px-3 py-2 text-left text-xs font-medium tracking-[0.6px] whitespace-nowrap text-gray-500 uppercase dark:text-gray-400';
+  var SEP = '<tr aria-hidden="true"><td colspan="6" class="bg-gray-200 p-0 dark:bg-white/10" style="height:1px;line-height:0;font-size:0"></td></tr>';
+
+  function txAmount(t) {
+    var neg = t.status === 'Refunded' || t.amount < 0;
+    var n = Math.abs(t.amount);
+    var text = neg ? '(' + money(n) + ')' : money(n);
+    return '<span class="text-sm font-medium text-gray-950 tabular-nums dark:text-white">' + text + '</span><span class="ml-1 text-sm font-normal text-gray-500 dark:text-gray-400">USD</span>';
+  }
 
   function txRow(t, last) {
     var open = detail.open.has(t.id);
-    var main = '<tr data-mc-tx="' + escapeHtml(t.id) + '" class="cursor-pointer ' + (last && !open ? 'border-b-0' : 'border-b border-gray-200 dark:border-white/10') + ' hover:bg-gray-50/60 dark:hover:bg-white/5' + (open ? ' bg-gray-50 dark:bg-white/5' : '') + '">' +
-      '<td class="h-13 w-10 pl-3"><button type="button" aria-expanded="' + open + '" aria-label="Transaction details" class="rounded-md p-1 text-gray-500 hover:bg-gray-200 dark:hover:bg-white/10">' +
+    var main = '<tr data-mc-tx="' + escapeHtml(t.id) + '" class="h-[52px] cursor-pointer hover:bg-gray-50/60 dark:hover:bg-white/5' + (open ? ' bg-gray-50 dark:bg-white/5' : '') + '">' +
+      '<td class="w-10 pl-3"><button type="button" aria-expanded="' + open + '" aria-label="Transaction details" class="rounded-md p-1 text-gray-500 hover:bg-gray-200 dark:hover:bg-white/10">' +
         '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 transition-transform' + (open ? ' rotate-90' : '') + '"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg></button></td>' +
-      '<td class="px-3 py-3 text-sm text-gray-500 tabular-nums dark:text-gray-400">' + escapeHtml(t.id) + '</td>' +
-      '<td class="px-3 py-3 text-sm text-gray-500 tabular-nums dark:text-gray-400">' + escapeHtml(formatDate(t.dateTime)) + '</td>' +
-      '<td class="px-3 py-3 text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(t.merchant) + '</td>' +
-      '<td class="px-3 py-3 text-right whitespace-nowrap">' + amountHtml(t.status === 'Refunded' ? -t.amount : t.amount).replace('$-', '−$') + '</td>' +
-      '<td class="px-3 py-3"><span class="inline-flex items-center rounded-md px-2 py-0.5 text-xs font-medium inset-ring ' + (TX_STATUS[t.status] || TX_STATUS.Refunded) + '">' + escapeHtml(t.status) + '</span></td>' +
-    '</tr>';
+      '<td class="px-3 py-2 text-sm text-gray-500 tabular-nums dark:text-gray-400">' + escapeHtml(t.id) + '</td>' +
+      '<td class="px-3 py-2 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400">' + escapeHtml(formatTxDate(t.dateTime)) + '</td>' +
+      '<td class="px-3 py-2 text-sm font-medium text-gray-900 dark:text-white">' + escapeHtml(t.merchant) + '</td>' +
+      '<td class="px-3 py-2 text-right whitespace-nowrap">' + txAmount(t) + '</td>' +
+      '<td class="px-3 py-2">' + txStatusBadge(t.status) + '</td>' +
+    '</tr>' + (last && !open ? '' : SEP);
     if (!open) return main;
     var d = function (label, value) {
       return '<div class="grid grid-cols-1 gap-1 py-1.5 sm:grid-cols-[14rem_minmax(0,1fr)] sm:gap-4"><dt class="text-sm text-gray-500 dark:text-gray-400">' + label + '</dt><dd class="text-sm text-gray-900 dark:text-white">' + value + '</dd></div>';
     };
-    return main + '<tr class="' + (last ? '' : 'border-b border-gray-200 dark:border-white/10') + '"><td colspan="6" class="px-4 pt-4 pb-5 sm:pl-14">' +
+    return main + '<tr><td colspan="6" class="px-4 pt-4 pb-5 sm:pl-14">' +
       '<h3 class="border-b border-gray-200 pb-3 text-sm font-semibold text-gray-900 dark:border-white/10 dark:text-white">Transaction Details</h3>' +
       '<dl class="pt-2">' +
         d('Transaction Code', escapeHtml(t.transactionCode)) +
@@ -411,12 +468,18 @@
         d('Transaction Type', escapeHtml(t.type)) +
         d('Merchant Location', '<span class="whitespace-pre-line">' + escapeHtml(t.merchantLocation) + '</span>') +
         d('Fee', amountHtml(t.fee)) +
-      '</dl></td></tr>';
+      '</dl></td></tr>' + (last ? '' : SEP);
   }
 
   var PAGE_BTN = 'flex size-8 cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white dark:border-white/10 dark:bg-white/5 dark:text-gray-400';
   function pageBtn(dir, label, path, disabled) {
     return '<button type="button" data-mc-page="' + dir + '" aria-label="' + label + '"' + (disabled ? ' disabled' : '') + ' class="' + PAGE_BTN + '"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" clip-rule="evenodd" d="' + path + '" /></svg></button>';
+  }
+
+  function sortTh(key, label, right) {
+    var active = detail.sortKey === key ? detail.sortDir : '';
+    return '<th class="' + TH.replace('text-left', right ? 'text-right' : 'text-left') + '" aria-sort="' + (active === 'asc' ? 'ascending' : active === 'desc' ? 'descending' : 'none') + '">' +
+      '<button type="button" data-mc-sort="' + key + '" class="group flex w-full cursor-pointer items-center gap-x-1 rounded-md ' + (right ? 'justify-end text-right' : 'text-left') + ' text-xs font-medium tracking-[0.6px] text-gray-500 uppercase focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400"><span>' + label + '</span>' + sortIcon(key) + '</button></th>';
   }
 
   function txSection(c) {
@@ -427,14 +490,14 @@
     var start = rows.length ? (detail.page - 1) * detail.pageSize + 1 : 0;
     var end = Math.min(detail.page * detail.pageSize, rows.length);
     var sizes = PAGE_SIZES.map(function (n) { return '<option value="' + n + '"' + (n === detail.pageSize ? ' selected' : '') + '>' + n + '</option>'; }).join('');
-    var sortIcon = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 ' + (detail.sort === 'asc' ? 'rotate-180' : '') + '"><path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z" clip-rule="evenodd" /></svg>';
     var body = slice.length ? slice.map(function (t, index) { return txRow(t, index === slice.length - 1); }).join('')
       : '<tr><td colspan="6" class="px-4 py-10 text-center"><p class="text-sm font-semibold text-gray-900 dark:text-white">No transactions match</p><p class="mt-1 text-sm text-gray-500 dark:text-gray-400">Try a different search or clear the filter.</p></td></tr>';
     return '<div class="overflow-x-auto"><table class="w-full min-w-[720px]">' +
-        '<thead><tr class="border-b border-gray-200 dark:border-white/10"><th class="w-10"></th>' +
+        '<thead><tr><th class="w-10"></th>' +
         '<th class="' + TH + '">Transaction ID</th>' +
-        '<th class="' + TH + '" aria-sort="' + (detail.sort === 'asc' ? 'ascending' : 'descending') + '"><button type="button" data-mc-sort class="inline-flex cursor-pointer items-center gap-1 uppercase hover:text-gray-700 dark:hover:text-gray-200">Date/Time' + sortIcon + '</button></th>' +
-        '<th class="' + TH + '">Merchant Name</th><th class="' + TH + ' text-right">Amount</th><th class="' + TH + '">Status</th></tr></thead>' +
+        sortTh('dateTime', 'Date') +
+        '<th class="' + TH + '">Merchant Details</th>' + sortTh('amount', 'Amount', true) +
+        '<th class="' + TH + '">Status</th></tr><tr aria-hidden="true"><td colspan="6" class="bg-gray-200 p-0 dark:bg-white/10" style="height:1px;line-height:0;font-size:0"></td></tr></thead>' +
         '<tbody>' + body + '</tbody></table></div>' +
       '<div class="flex flex-col items-end gap-3 border-t border-gray-200 pt-4 sm:flex-row sm:items-center sm:justify-end sm:gap-6 dark:border-white/10">' +
         '<div class="flex items-center gap-3 text-sm text-gray-700 dark:text-gray-300"><label for="mc-page-size">Rows per Page:</label><div class="grid grid-cols-1">' +
@@ -479,7 +542,7 @@
           '<h2 class="text-lg font-semibold text-gray-900 dark:text-white">Card Transaction History</h2>' +
           '<div class="flex gap-3 sm:ml-auto">' +
             '<div class="relative w-full sm:w-80"><div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 text-gray-400"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg></div>' +
-              '<input id="mc-tx-search" type="search" autocomplete="off" placeholder="Search Transaction" aria-label="Search transactions" value="' + escapeHtml(detail.search) + '" class="block h-8 w-full rounded-md border-0 bg-white py-0 pr-3 pl-9 text-sm font-medium text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10" /></div>' +
+              '<input id="mc-tx-search" type="search" autocomplete="off" placeholder="Search transactions" aria-label="Search transactions" value="' + escapeHtml(detail.search) + '" class="block h-8 w-full rounded-md border-0 bg-white py-0 pr-3 pl-9 text-sm font-medium text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10" /></div>' +
             '<div class="relative"><button type="button" data-mc-tx-filter aria-expanded="' + detail.filterOpen + '" class="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10">' +
               '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M10 4.75a.75.75 0 0 1 .75.75v3.75h3.75a.75.75 0 0 1 0 1.5h-3.75v3.75a.75.75 0 0 1-1.5 0v-3.75H5.5a.75.75 0 0 1 0-1.5h3.75V5.5a.75.75 0 0 1 .75-.75Z" /></svg>Filter' +
               (detail.statuses.size ? '<span class="inline-flex items-center rounded-full bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400">' + detail.statuses.size + '</span>' : '') +
@@ -541,7 +604,7 @@
     if (!c) { showList({ instant: true }); return; }
     if (detail.cardId !== id) {
       // A different card starts clean: details hidden, first page, no filters.
-      detail = { cardId: id, revealed: false, search: '', statuses: new Set(), sort: 'desc', page: 1, pageSize: detail.pageSize, open: new Set(), filterOpen: false };
+      detail = { cardId: id, revealed: false, search: '', statuses: new Set(), sortKey: 'dateTime', sortDir: 'desc', page: 1, pageSize: detail.pageSize, open: new Set(), filterOpen: false };
     }
     $('mc-list-view').classList.add('hidden');
     var view = $('mc-detail-view');
@@ -632,7 +695,15 @@
       if (t.closest('[data-mc-tx-filter]')) { detail.filterOpen = !detail.filterOpen; $('mc-detail-view').innerHTML = detailHtml(c); return; }
       if (t.closest('[data-mc-tx-filter-clear]')) { detail.statuses.clear(); detail.page = 1; $('mc-detail-view').innerHTML = detailHtml(c); return; }
       if (detail.filterOpen && !t.closest('#mc-tx-filter-panel')) { detail.filterOpen = false; $('mc-detail-view').innerHTML = detailHtml(c); return; }
-      if (t.closest('[data-mc-sort]')) { detail.sort = detail.sort === 'desc' ? 'asc' : 'desc'; detail.page = 1; renderTx(); return; }
+      var sortBtn = t.closest('[data-mc-sort]');
+      if (sortBtn) {
+        // Same cycle as Payments Received: ascending, descending, then unsorted.
+        var key = sortBtn.getAttribute('data-mc-sort');
+        if (detail.sortKey !== key) { detail.sortKey = key; detail.sortDir = 'asc'; }
+        else if (detail.sortDir === 'asc') detail.sortDir = 'desc';
+        else { detail.sortKey = ''; detail.sortDir = ''; }
+        detail.page = 1; renderTx(); return;
+      }
       var nav = t.closest('[data-mc-page]');
       if (nav && !nav.disabled) {
         var pages = Math.max(1, Math.ceil(txMatches(c).length / detail.pageSize));
