@@ -1870,14 +1870,14 @@
             '</div>' +
             '<div class="grid grid-cols-2 gap-4 self-stretch">' +
               '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span>' +
-              '<button type="button" data-copy-id="' + accountCopyId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+              '<button type="button" data-copy-id="' + accountCopyId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit shrink-0 whitespace-nowrap items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
                 '<span id="' + accountCopyId + '" data-ach-mask-field="true" data-masked="' + escapeHtml(achAccountMasked) + '" data-revealed="' + escapeHtml(achAccountRevealed) + '" class="text-sm font-normal">' + escapeHtml(achAccountMasked) + '</span>' +
                 '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
               '</button>' +
             '</div>' +
             '<div class="grid grid-cols-2 gap-4 self-stretch">' +
               '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span>' +
-              '<button type="button" data-copy-id="' + routingCopyId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+              '<button type="button" data-copy-id="' + routingCopyId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit shrink-0 whitespace-nowrap items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
                 '<span id="' + routingCopyId + '" data-ach-mask-field="true" data-masked="' + escapeHtml(achRoutingMasked) + '" data-revealed="' + escapeHtml(achRoutingRevealed) + '" class="text-sm font-normal">' + escapeHtml(achRoutingMasked) + '</span>' +
                 '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
               '</button>' +
@@ -1943,22 +1943,22 @@
             '</div>' +
             '<div class="grid grid-cols-2 gap-4 self-stretch">' +
               '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Number</span>' +
-              '<button type="button" data-copy-id="' + cardNumberCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
-                '<span id="' + cardNumberCopyId + '" data-mask-field="card-number" data-masked="' + escapeHtml(cardDetails.maskedCardNumber) + '" data-revealed="' + escapeHtml(cardDetails.fullCardNumber) + '" class="text-sm font-normal">' + escapeHtml(cardDetails.maskedCardNumber) + '</span>' +
+              '<button type="button" data-copy-id="' + cardNumberCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit shrink-0 whitespace-nowrap items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+                '<span id="' + cardNumberCopyId + '" data-mask-field="card-number" data-masked="' + escapeHtml(cardDetails.maskedCardNumber) + '" data-revealed="' + escapeHtml(cardDetails.fullCardNumber) + '" class="text-sm font-normal whitespace-nowrap tabular-nums">' + escapeHtml(cardDetails.maskedCardNumber) + '</span>' +
                 '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
               '</button>' +
             '</div>' +
             '<div class="grid grid-cols-2 gap-4 self-stretch">' +
               '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Expires</span>' +
-              '<button type="button" data-copy-id="' + expiryCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
-                '<span id="' + expiryCopyId + '" data-mask-field="card-expiry" data-masked="' + escapeHtml(cardDetails.expiryFull) + '" data-revealed="' + escapeHtml(cardDetails.expiryFull) + '" class="text-sm font-normal">' + escapeHtml(cardDetails.expiryFull) + '</span>' +
+              '<button type="button" data-copy-id="' + expiryCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit shrink-0 whitespace-nowrap items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+                '<span id="' + expiryCopyId + '" data-mask-field="card-expiry" data-masked="' + escapeHtml(cardDetails.expiryFull) + '" data-revealed="' + escapeHtml(cardDetails.expiryFull) + '" class="text-sm font-normal whitespace-nowrap tabular-nums">' + escapeHtml(cardDetails.expiryFull) + '</span>' +
                 '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
               '</button>' +
             '</div>' +
             '<div class="grid grid-cols-2 gap-4 self-stretch">' +
               '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">CVC2</span>' +
-              '<button type="button" data-copy-id="' + cvcCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
-                '<span id="' + cvcCopyId + '" data-mask-field="card-cvc" data-masked="' + escapeHtml(cardDetails.maskedCvc) + '" data-revealed="' + escapeHtml(cardDetails.cvcValue) + '" class="text-sm font-normal">' + escapeHtml(cardDetails.maskedCvc) + '</span>' +
+              '<button type="button" data-copy-id="' + cvcCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit shrink-0 whitespace-nowrap items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+                '<span id="' + cvcCopyId + '" data-mask-field="card-cvc" data-masked="' + escapeHtml(cardDetails.maskedCvc) + '" data-revealed="' + escapeHtml(cardDetails.cvcValue) + '" class="text-sm font-normal whitespace-nowrap tabular-nums">' + escapeHtml(cardDetails.maskedCvc) + '</span>' +
                 '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
               '</button>' +
             '</div>' +
@@ -2050,16 +2050,16 @@
     var copyIcon = '<span data-paid-copy-icon class="shrink-0 [&>svg]:size-[18px]">' + ICON_COPY + '</span>';
     function row(label, valueHtml, extraCls) {
       return '<div class="flex items-start gap-6">' +
-        '<div class="flex-1 ' + labelCls + '">' + label + '</div>' +
-        '<div class="flex-1 ' + (extraCls || valueCls) + '">' + valueHtml + '</div>' +
+        '<div class="w-[170px] shrink-0 ' + labelCls + '">' + label + '</div>' +
+        '<div class="min-w-0 flex-1 ' + (extraCls || valueCls) + '">' + valueHtml + '</div>' +
       '</div>';
     }
     function copyRow(label, id, masked, revealed, attrs, ctl) {
       return '<div class="flex items-start gap-6">' +
-        '<div class="flex-1 ' + labelCls + '">' + label + '</div>' +
+        '<div class="w-[170px] shrink-0 ' + labelCls + '">' + label + '</div>' +
         '<div class="flex-1 min-w-0">' +
-          '<button type="button" data-paid-copy="' + id + '" title="Copy" class="copy-btn flex w-full cursor-pointer items-center justify-between gap-6 text-left ' + valueCls + '">' +
-            '<span id="' + id + '" ' + attrs + ' data-masked="' + escapeHtml(masked) + '" data-revealed="' + escapeHtml(revealed || masked) + '">' + escapeHtml(masked) + '</span>' +
+          '<button type="button" data-paid-copy="' + id + '" title="Copy" class="copy-btn flex w-full cursor-pointer items-center justify-between gap-3 text-left ' + valueCls + '">' +
+            '<span id="' + id + '" class="whitespace-nowrap tabular-nums" ' + attrs + ' data-masked="' + escapeHtml(masked) + '" data-revealed="' + escapeHtml(revealed || masked) + '">' + escapeHtml(masked) + '</span>' +
             copyIcon +
           '</button>' +
         '</div>' +
@@ -2121,10 +2121,10 @@
           '<div class="flex shrink-0 items-center self-start">' + CONSUMER_CHEVRON_RIGHT + '</div>' +
           '<div class="flex min-w-[56px] shrink-0 items-start"><span class="text-sm/5 font-semibold text-gray-800 whitespace-nowrap dark:text-gray-200">' + methodName + '</span></div>' +
           '<div class="flex shrink-0 items-center self-start">' + CONSUMER_CHEVRON_RIGHT + '</div>' +
-          '<div' + wrapAttr + ' class="flex w-[380px] max-w-full flex-col gap-2">' +
+          '<div' + wrapAttr + ' class="flex w-[480px] max-w-full flex-col gap-2">' +
             '<div class="flex items-center gap-6">' +
-              '<div class="flex-1 text-sm/5 font-semibold text-gray-900 dark:text-white">' + title + '</div>' +
-              '<div class="flex flex-1 items-center">' + action + '</div>' +
+              '<div class="w-[170px] shrink-0 text-sm/5 font-semibold text-gray-900 dark:text-white">' + title + '</div>' +
+              '<div class="flex min-w-0 flex-1 items-center">' + action + '</div>' +
             '</div>' +
             '<div class="border-t border-gray-200 dark:border-white/10"></div>' +
             rows +
@@ -2139,16 +2139,16 @@
     if (entry && (entry.status === 'paid' || variant.consumerExceptionEntry) && variant.consumerFields) return buildConsumerPaidMethodDetails(variant);
     var payee = getResolvedPayee(entry);
     var payeeName = (payee && (payee.name || (payee.bankAccounts && payee.bankAccounts[0] && payee.bankAccounts[0].name))) || 'Johnny Anderson';
-    var logo = entry.methodType === 'card' ? ICON_VISA : (entry.methodType === 'ach' ? ICON_ACH : (entry.methodType === 'check' ? ICON_CHECK_RECEIPT : CONSUMER_SX_LOGO));
+    var logo = entry.methodType === 'card' ? ICON_VISA : (entry.methodType === 'ach' ? ICON_ACH : (entry.methodType === 'check' ? ICON_CHECK_RECEIPT : CONSUMER_SX_LOGO.replace(/sxg(\d)/g, 'sxg$1-pd' + (++paymentInfoCopyIdCounter))));
     var isUnselected = variant.titleLabel === 'No Payment Method Selected';
     var detailMethod = isUnselected
       ? '<span class="text-gray-900 dark:text-white">&mdash;</span>'
       : renderPaymentMethod(entry);
     var extraRows = isUnselected ? '' : variant.rawCardHtml
-      ? ('<div class="mt-3 w-[460px] max-w-full pl-4">' + variant.rawCardHtml + '</div>')
+      ? ('<div class="mt-3 w-[560px] max-w-full pl-4">' + variant.rawCardHtml + '</div>')
       : (variant.rowsHtml
         ? (
-          '<div' + revealAttr + ' class="mt-3 flex w-[460px] max-w-full flex-col gap-2 pl-4">' +
+          '<div' + revealAttr + ' class="mt-3 flex w-[560px] max-w-full flex-col gap-2 pl-4">' +
             '<div class="flex gap-6">' +
               '<div class="flex-1 text-sm font-medium text-gray-900 dark:text-white">' + variant.titleLabel + '</div>' +
               '<div class="flex-1 flex items-center">' + revealLink + '</div>' +
@@ -2225,7 +2225,7 @@
         '<div class="flex">' +
           '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
           '<div class="flex-1 p-4">' +
-            '<div class="w-[460px] max-w-full">' +
+            '<div class="w-[560px] max-w-full">' +
               variant.rawCardHtml +
             '</div>' +
           '</div>' +
@@ -2237,7 +2237,7 @@
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
         '<div class="flex-1 p-4">' +
-          '<div' + revealAttr + ' class="flex flex-col gap-2 w-[460px] max-w-full">' +
+          '<div' + revealAttr + ' class="flex flex-col gap-2 w-[560px] max-w-full">' +
             '<div class="flex gap-6">' +
               '<div class="flex-1 text-sm font-medium text-gray-900 dark:text-white">' + variant.titleLabel + '</div>' +
               '<div class="flex-1 flex items-center">' + revealLink + '</div>' +
