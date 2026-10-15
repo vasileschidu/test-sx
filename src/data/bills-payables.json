@@ -1270,7 +1270,7 @@
             "value": "$3775.00"
           }
         ],
-        "notes": "Current step: Bank verification via SMART Exchange.",
+        "notes": "Current step: Bank verification via SMART Disburse.",
         "attachments": [
           {
             "name": "invoice_AP-01075.pdf",
@@ -1290,12 +1290,12 @@
           {
             "timestamp": "2026-03-20T10:45:00",
             "title": "Payment sent",
-            "description": "Funds sent via SMART Exchange"
+            "description": "Funds sent via SMART Disburse"
           },
           {
             "timestamp": "2026-03-20T10:35:00",
             "title": "Payment method confirmed",
-            "description": "SMART Exchange selected"
+            "description": "SMART Disburse selected"
           },
           {
             "timestamp": "2026-03-20T10:25:00",
@@ -1742,7 +1742,7 @@
             "value": "$4722.75"
           }
         ],
-        "notes": "Current step: Release scheduled via SMART Exchange.",
+        "notes": "Current step: Release scheduled via SMART Disburse.",
         "attachments": [
           {
             "name": "invoice_BP-01093.pdf",
@@ -1762,12 +1762,12 @@
           {
             "timestamp": "2026-03-20T10:45:00",
             "title": "Payment sent",
-            "description": "Funds sent via SMART Exchange"
+            "description": "Funds sent via SMART Disburse"
           },
           {
             "timestamp": "2026-03-20T10:35:00",
             "title": "Payment method confirmed",
-            "description": "SMART Exchange selected"
+            "description": "SMART Disburse selected"
           },
           {
             "timestamp": "2026-03-20T10:25:00",
@@ -2213,7 +2213,7 @@
             "value": "$5670.50"
           }
         ],
-        "notes": "Current step: Bank verification via SMART Exchange.",
+        "notes": "Current step: Bank verification via SMART Disburse.",
         "attachments": [
           {
             "name": "invoice_GL-01111.pdf",
@@ -2233,12 +2233,12 @@
           {
             "timestamp": "2026-03-20T10:45:00",
             "title": "Payment sent",
-            "description": "Funds sent via SMART Exchange"
+            "description": "Funds sent via SMART Disburse"
           },
           {
             "timestamp": "2026-03-20T10:35:00",
             "title": "Payment method confirmed",
-            "description": "SMART Exchange selected"
+            "description": "SMART Disburse selected"
           },
           {
             "timestamp": "2026-03-20T10:25:00",
@@ -2999,7 +2999,7 @@
             "value": "$7292.00"
           }
         ],
-        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "notes": "Paid via SMART Disburse and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_GL-01141.pdf",
@@ -3019,12 +3019,12 @@
           {
             "timestamp": "2026-03-20T10:45:00",
             "title": "Payment sent",
-            "description": "Funds sent via SMART Exchange"
+            "description": "Funds sent via SMART Disburse"
           },
           {
             "timestamp": "2026-03-20T10:35:00",
             "title": "Payment method confirmed",
-            "description": "SMART Exchange selected"
+            "description": "SMART Disburse selected"
           },
           {
             "timestamp": "2026-03-20T10:25:00",
@@ -3475,7 +3475,7 @@
             "value": "$7611.00"
           }
         ],
-        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "notes": "Paid via SMART Disburse and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_VR-01159.pdf",
@@ -3495,12 +3495,12 @@
           {
             "timestamp": "2026-03-20T10:45:00",
             "title": "Payment sent",
-            "description": "Funds sent via SMART Exchange"
+            "description": "Funds sent via SMART Disburse"
           },
           {
             "timestamp": "2026-03-20T10:35:00",
             "title": "Payment method confirmed",
-            "description": "SMART Exchange selected"
+            "description": "SMART Disburse selected"
           },
           {
             "timestamp": "2026-03-20T10:25:00",
@@ -3948,7 +3948,7 @@
             "value": "$8558.75"
           }
         ],
-        "notes": "Paid via SMART Exchange and reconciled automatically.",
+        "notes": "Paid via SMART Disburse and reconciled automatically.",
         "attachments": [
           {
             "name": "invoice_PO-01177.pdf",
@@ -3968,12 +3968,12 @@
           {
             "timestamp": "2026-03-20T10:45:00",
             "title": "Payment sent",
-            "description": "Funds sent via SMART Exchange"
+            "description": "Funds sent via SMART Disburse"
           },
           {
             "timestamp": "2026-03-20T10:35:00",
             "title": "Payment method confirmed",
-            "description": "SMART Exchange selected"
+            "description": "SMART Disburse selected"
           },
           {
             "timestamp": "2026-03-20T10:25:00",

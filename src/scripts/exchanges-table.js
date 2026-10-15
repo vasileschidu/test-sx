@@ -238,7 +238,7 @@
   STATUS_STYLES['action-required'] = STATUS_STYLES.pending;
 
   var METHOD_TYPE_LABELS = {
-    smart_exchange: 'SMART Exchange',
+    smart_exchange: 'SMART Disburse',
     card: 'Card',
     ach: 'ACH',
     check: 'Check',
@@ -915,12 +915,12 @@
     if (method === 'card') return 'card';
     if (method === 'check' || method === 'paper check') return 'check';
     if (method === 'ach' || method === 'bank account') return 'ach';
-    if (method === 'smart exchange') return 'smart_exchange';
+    if (method === 'smart exchange' || method === 'smart disburse') return 'smart_exchange';
     return 'smart_exchange';
   }
 
   function getMethodLabelFromType(methodType) {
-    return METHOD_TYPE_LABELS[methodType] || 'SMART Exchange';
+    return METHOD_TYPE_LABELS[methodType] || 'SMART Disburse';
   }
 
   function getStatusLabel(status) {
@@ -1345,8 +1345,8 @@
       }
     }
 
-    // A SMART Exchange row that has not settled has no method yet — printing
-    // "SMART Exchange" here reads as a chosen method. An em dash says empty.
+    // A SMART Disburse row that has not settled has no method yet — printing
+    // "SMART Disburse" here reads as a chosen method. An em dash says empty.
     // Where the token itself is the rail (Consumer Portal: "Smart Disburse"),
     // it is the method — show it, as the design does.
     if (entry.methodType === 'smart_exchange' && entry.status !== 'paid' && PAGE_CONFIG.showTokenMethod) {
@@ -2033,7 +2033,7 @@
     };
   }
 
-  var CONSUMER_SX_LOGO = '<svg viewBox="0 0 18 18" width="18" height="18" fill="none" aria-hidden="true" class="size-[18px] shrink-0"><defs><linearGradient id="sxg1" x1="2" y1="11.37" x2="9.59" y2="1.09" gradientUnits="userSpaceOnUse"><stop stop-color="#FB9131"/><stop offset="1" stop-color="#FBC734"/></linearGradient><linearGradient id="sxg2" x1="15.63" y1="6.24" x2="8.04" y2="16.52" gradientUnits="userSpaceOnUse"><stop stop-color="#FB9131"/><stop offset="1" stop-color="#FBC734"/></linearGradient></defs><path d="M6.354 13.486c.333.196.753-.044.753-.431V7.708a.8.8 0 0 0-.368-.646L2.754 4.71c-.333-.197-.754.044-.754.431v5.786l4.354 2.559Z" fill="#FFCD49"/><path opacity=".8" d="M2 10.935V5.119c0-.267.142-.513.372-.648L8.84.69c.333-.195.752.045.752.431v4.531c0 .534-.284 1.028-.745 1.297L2 10.935Z" fill="url(#sxg1)"/><path d="M11.276 4.12c-.334-.196-.754.044-.754.431v5.347c0 .266.14.511.369.646l3.984 2.352c.333.197.754-.043.754-.43V6.678L11.276 4.12Z" fill="#FFCD49"/><path opacity=".8" d="M15.63 6.671v5.816c0 .267-.142.513-.372.648l-6.468 3.781c-.333.195-.752-.045-.752-.431v-4.531c0-.534.284-1.028.745-1.297l6.847-3.986Z" fill="url(#sxg2)"/></svg>';
+  var CONSUMER_SX_LOGO = '<svg viewBox="0 0 14.9612 17.3457" width="18" height="18" fill="none" aria-hidden="true" class="size-[18px] shrink-0"><path d="M7.48059 3.54123L11.9484 6.12074V11.2798L7.48059 13.8593L3.01274 11.2798V6.12074L7.48059 3.54123Z" fill="url(#sxg0)"/><path d="M7.48059 8.70029L11.9484 6.12178V11.2788L7.48059 13.8646V8.70029Z" fill="url(#sxg1)"/><path d="M7.4806 11.5378L9.93792 10.119L9.93791 7.28156L7.4806 5.86282L5.02328 7.28156L5.02328 10.119L7.4806 11.5378Z" fill="url(#sxg2)"/><path d="M14.8807 4.42803V12.9729L7.48125 17.2454L0.0808594 12.9729V4.42803L7.48125 0.155566L14.8807 4.42803ZM1.23125 5.09209V12.3089L7.48125 15.9173L13.7303 12.3089V5.09209L7.48125 1.48369L1.23125 5.09209Z" fill="#C4ECF5"/><g fill="#3290FF"><circle cx="7.48059" cy="0.773855" r="0.773855"/><circle cx="7.48059" cy="16.5718" r="0.773855"/><circle cx="0.773855" cy="4.77128" r="0.773855"/><circle cx="14.1873" cy="4.77128" r="0.773855"/><circle cx="0.773855" cy="12.5743" r="0.773855"/><circle cx="14.1873" cy="12.5743" r="0.773855"/></g><defs><linearGradient id="sxg0" x1="7.4714" y1="3.51642" x2="8.21703" y2="13.9493" gradientUnits="userSpaceOnUse"><stop stop-color="#3099FF"/><stop offset="1" stop-color="#3D5CFF"/></linearGradient><linearGradient id="sxg1" x1="7.97474" y1="9.99996" x2="9.7145" y2="13.8646" gradientUnits="userSpaceOnUse"><stop stop-color="#003FD0"/><stop offset="1" stop-color="#2A60DD" stop-opacity="0"/></linearGradient><linearGradient id="sxg2" x1="6.56035" y1="6.62498" x2="6.56035" y2="11.5378" gradientUnits="userSpaceOnUse"><stop stop-color="#2CB2FF" stop-opacity="0"/><stop offset="1" stop-color="#1FAEFF"/></linearGradient></defs></svg>';
   var CONSUMER_CHEVRON_RIGHT = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.293 14.707a1 1 0 0 1 0-1.414L10.586 10 7.293 6.707a1 1 0 0 1 1.414-1.414l4 4a1 1 0 0 1 0 1.414l-4 4a1 1 0 0 1-1.414 0Z"/></svg>';
   var CONSUMER_AVATAR = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="size-6 shrink-0"><rect width="24" height="24" rx="12" fill="#F3F4F6"/><path d="M2.078 18.752A11.96 11.96 0 0 1 12.004 15c3.803 0 7.276 1.416 9.92 3.749A11.99 11.99 0 0 1 12 24c-4.124 0-7.762-2.08-9.922-5.248Z" fill="#D1D5DB"/><circle cx="12" cy="9" r="4" fill="#D1D5DB"/></svg>';
   var CONSUMER_TH = 'px-4 py-2 text-xs/4 font-medium uppercase tracking-[0.6px] text-gray-500 dark:text-gray-400 whitespace-nowrap';
@@ -5572,10 +5572,6 @@
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-3.5" aria-hidden="true">' +
       '<path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" />' +
     '</svg>';
-  var _getPaidStpOptInRequested = false;
-  var _getPaidStpModalActive = false;
-  var _getPaidStpModalConfirmed = false;
-
   function setGetPaidStepBadge(stepNum, isComplete) {
     var badge = document.getElementById('gp-step-' + stepNum + '-badge');
     if (!badge) return;
@@ -5777,7 +5773,7 @@
       }
       return '';
     }
-    if (paymentValue === 'payers-card') return "Payer's Card";
+    if (paymentValue === 'payers-card') return "Card Payment";
     return '';
   }
 
@@ -5792,7 +5788,7 @@
 
     var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
     var paymentValue = getSelectedOptionValue(paymentSel);
-    var methodLabels = { 'payers-card': "Payer's Card", 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
+    var methodLabels = { 'payers-card': "Card Payment", 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
     methodEl.textContent = methodLabels[paymentValue] || '—';
     destinationEl.textContent = getConfirmSummaryDestination(paymentValue) || '—';
   }
@@ -5896,7 +5892,7 @@
     });
     var selectedContent = sel.querySelector('el-selectedcontent');
     var labelMap = {
-      'payers-card': IS_CONSUMER_TABLE ? 'Instant Virtual Card' : "Accept Payer's Card",
+      'payers-card': "Accept Card Payment",
       'bank-account': IS_CONSUMER_TABLE ? 'Send to my Bank Account' : 'Send to Bank Account',
       'paper-check': IS_CONSUMER_TABLE ? 'I want a check' : 'Request a Paper Check'
     };
@@ -5933,7 +5929,7 @@
     var methodType = String(entry && entry.methodType || '').toLowerCase();
     var paymentMethod = String(entry && entry.paymentMethod || '').toLowerCase();
     if (methodType === 'card') return 'payers-card';
-    if (methodType === 'smart_exchange' || paymentMethod.indexOf('smart exchange') !== -1) return 'payers-card';
+    if (methodType === 'smart_exchange' || (paymentMethod.indexOf('smart exchange') !== -1 || paymentMethod.indexOf('smart disburse') !== -1)) return 'payers-card';
     if (paymentMethod.indexOf('check') !== -1) return 'paper-check';
     if (methodType === 'ach' || paymentMethod.indexOf('bank') !== -1 || paymentMethod.indexOf('transfer') !== -1 || paymentMethod.indexOf('ach') !== -1) {
       return 'bank-account';
@@ -5944,12 +5940,12 @@
   function getPaidGetPaidMethodLabel(entry, paymentValue) {
     var methodType = String(entry && entry.methodType || '').toLowerCase();
     var paymentMethod = String(entry && entry.paymentMethod || '');
-    if (methodType === 'smart_exchange' || paymentMethod.toLowerCase().indexOf('smart exchange') !== -1) {
-      return "Accept Payer's Card";
+    if (methodType === 'smart_exchange' || (paymentMethod.toLowerCase().indexOf('smart exchange') !== -1 || paymentMethod.toLowerCase().indexOf('smart disburse') !== -1)) {
+      return "Accept Card Payment";
     }
     if (paymentValue === 'bank-account') return 'Send to Bank Account';
     if (paymentValue === 'paper-check') return 'Request a Paper Check';
-    return "Accept Payer's Card";
+    return "Accept Card Payment";
   }
 
   function getManualPendingGetPaidMethodLabel(paymentValue) {
@@ -6319,7 +6315,6 @@
 
   function openGetPaidPanel(entry) {
     _activeGetPaidEntry = entry;
-    _getPaidStpOptInRequested = false;
     var amountEl = document.getElementById('gp-amount');
     var currencyEl = document.getElementById('gp-currency');
     var dateEl = document.getElementById('gp-date');
@@ -6426,124 +6421,6 @@
     if (el) el.textContent = value || '';
   }
 
-  function getGetPaidStpState() {
-    if (window.STPState && typeof window.STPState.getStpState === 'function') {
-      return window.STPState.getStpState();
-    }
-    return { stpStatus: 'disabled', stpStep: 'opt_in_required' };
-  }
-
-  function updateGetPaidStpCardToggleState() {
-    var enableToggle = document.getElementById('gp-stp-enable-toggle');
-    if (!enableToggle) return;
-    enableToggle.disabled = false;
-  }
-
-  function syncGetPaidStpToggle() {
-    var enableToggle = document.getElementById('gp-stp-enable-toggle');
-    if (!enableToggle) return;
-    enableToggle.checked = !!_getPaidStpOptInRequested;
-  }
-
-  function openGetPaidStpModal() {
-    _getPaidStpModalActive = true;
-    _getPaidStpModalConfirmed = false;
-    _getPaidStpOptInRequested = true;
-    syncGetPaidStpToggle();
-    if (window.STPState && typeof window.STPState.openOptInModal === 'function') {
-      window.STPState.openOptInModal();
-    }
-    bindGetPaidStpModalBridge();
-  }
-
-  function bindGetPaidStpModalBridge() {
-    var ppDialog = document.getElementById('pp-enable-stp-dialog');
-    var ppConfirmBtn = document.getElementById('pp-enable-stp-confirm-btn');
-    var inlineDialog = document.getElementById('sx-inline-stp-dialog');
-    var inlineConfirmBtn = inlineDialog && inlineDialog.querySelector('[data-inline-stp-confirm]');
-
-    function handleConfirm(event, dialog) {
-      if (!_getPaidStpModalActive) return;
-      var target = event.currentTarget;
-      if (target && target.disabled) return;
-      event.preventDefault();
-      event.stopPropagation();
-      if (typeof event.stopImmediatePropagation === 'function') event.stopImmediatePropagation();
-      _getPaidStpModalConfirmed = true;
-      _getPaidStpOptInRequested = true;
-      syncGetPaidStpToggle();
-      if (dialog && dialog.open && typeof dialog.close === 'function') dialog.close();
-    }
-
-    function handleClose() {
-      if (!_getPaidStpModalActive) return;
-      if (!_getPaidStpModalConfirmed) {
-        _getPaidStpOptInRequested = false;
-        syncGetPaidStpToggle();
-      }
-      _getPaidStpModalActive = false;
-      _getPaidStpModalConfirmed = false;
-    }
-
-    if (ppConfirmBtn && ppDialog && ppConfirmBtn.getAttribute('data-gp-stp-bound') !== 'true') {
-      ppConfirmBtn.setAttribute('data-gp-stp-bound', 'true');
-      ppConfirmBtn.addEventListener('click', function (event) {
-        handleConfirm(event, ppDialog);
-      }, true);
-    }
-    if (ppDialog && ppDialog.getAttribute('data-gp-stp-close-bound') !== 'true') {
-      ppDialog.setAttribute('data-gp-stp-close-bound', 'true');
-      ppDialog.addEventListener('close', handleClose);
-    }
-    if (inlineConfirmBtn && inlineDialog && inlineConfirmBtn.getAttribute('data-gp-stp-bound') !== 'true') {
-      inlineConfirmBtn.setAttribute('data-gp-stp-bound', 'true');
-      inlineConfirmBtn.addEventListener('click', function (event) {
-        handleConfirm(event, inlineDialog);
-      }, true);
-    }
-    if (inlineDialog && inlineDialog.getAttribute('data-gp-stp-close-bound') !== 'true') {
-      inlineDialog.setAttribute('data-gp-stp-close-bound', 'true');
-      inlineDialog.addEventListener('close', handleClose);
-    }
-  }
-
-  function updateGetPaidStpInlineUi() {
-    var stpCardContainer = document.getElementById('gp-stp-card-container');
-    var stpStatusBadge = document.getElementById('gp-stp-status-badge');
-    var agreementCheckbox = document.getElementById('gp-stp-agreement-checkbox');
-    var enableToggle = document.getElementById('gp-stp-enable-toggle');
-    var paymentSel = document.querySelector('el-select[name="paymentMethod"]');
-    var paymentValue = getSelectedOptionValue(paymentSel);
-    var isPaidEntry = !!(_activeGetPaidEntry && _activeGetPaidEntry.status === 'paid');
-    var state = getGetPaidStpState();
-    var status = state && state.stpStatus ? String(state.stpStatus) : 'disabled';
-    var step = state && state.stpStep ? String(state.stpStep) : 'opt_in_required';
-    var showOptInCard = !isPaidEntry && !isPendingManualReviewEntry(_activeGetPaidEntry) && paymentValue === 'payers-card' && status === 'disabled' && step === 'opt_in_required';
-    var showStatusBadge = paymentValue === 'payers-card' && (status === 'in_progress' || status === 'enabled');
-
-    if (stpCardContainer) stpCardContainer.classList.toggle('hidden', !showOptInCard);
-
-    if (stpStatusBadge) {
-      stpStatusBadge.hidden = !showStatusBadge;
-      stpStatusBadge.classList.toggle('hidden', !showStatusBadge);
-      if (showStatusBadge && status === 'enabled') {
-        stpStatusBadge.textContent = 'Opted in';
-        stpStatusBadge.className = 'inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30';
-      } else if (showStatusBadge) {
-        stpStatusBadge.textContent = 'Enabling pending';
-        stpStatusBadge.className = 'inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-white/5 dark:text-gray-300 dark:ring-white/15';
-      }
-    }
-
-    if (enableToggle) {
-      if (!showOptInCard) {
-        _getPaidStpOptInRequested = false;
-      }
-      syncGetPaidStpToggle();
-      updateGetPaidStpCardToggleState();
-    }
-  }
-
   function updatePaymentMethodDetails(value, entry) {
     var wrapper = document.getElementById('gp-payment-method-details');
     var cardPanel = document.getElementById('gp-pmc-payers-card');
@@ -6555,11 +6432,15 @@
     var bankHeaderTitle = document.getElementById('gp-pmc-bank-header-title');
     var editBankBtn = document.getElementById('gp-edit-bank-btn');
     var bankDefaultWrap = document.getElementById('gp-pmc-bank-default-wrap');
+    var cardDefaultWrap = document.getElementById('gp-pmc-card-default-wrap');
+    var checkDefaultWrap = document.getElementById('gp-pmc-check-default-wrap');
 
     if (cardPanel) cardPanel.classList.add('hidden');
     if (bankPanel) bankPanel.classList.add('hidden');
     if (checkPanel) checkPanel.classList.add('hidden');
     if (bankDefaultWrap) bankDefaultWrap.classList.toggle('hidden', false);
+    if (cardDefaultWrap) cardDefaultWrap.classList.toggle('hidden', true);
+    if (checkDefaultWrap) checkDefaultWrap.classList.toggle('hidden', true);
 
     if (value === 'payers-card') {
       var paymentInfo = entry && entry.details ? (entry.details.paymentInfo || {}) : {};
@@ -6578,6 +6459,7 @@
         paidCardSection.classList.toggle('hidden', !useCompactCardView);
         paidCardSection.classList.toggle('inline-flex', useCompactCardView);
       }
+      if (cardDefaultWrap) cardDefaultWrap.classList.toggle('hidden', String(entry && entry.methodType || '').toLowerCase() !== 'smart_exchange');
       if (cardPanel) cardPanel.classList.remove('hidden');
     } else if (value === 'bank-account') {
       if (cardHeaderTitle) cardHeaderTitle.textContent = 'Cardholder Details';
@@ -6593,12 +6475,12 @@
     } else if (value === 'paper-check') {
       if (cardHeaderTitle) cardHeaderTitle.textContent = 'Cardholder Details';
       if (bankHeaderTitle) bankHeaderTitle.textContent = 'Account Details';
+      if (checkDefaultWrap) checkDefaultWrap.classList.toggle('hidden', String(entry && entry.methodType || '').toLowerCase() !== 'smart_exchange');
       if (checkPanel) checkPanel.classList.remove('hidden');
       initCheckAddressSelector();
     }
 
     if (wrapper) wrapper.classList.remove('hidden');
-    updateGetPaidStpInlineUi();
   }
 
   function updateBankDetails(bankId) {
@@ -7058,13 +6940,11 @@
     if (selContent) {
       selContent.innerHTML = '<span class="truncate text-gray-400 dark:text-gray-500">Select payment method</span>';
     }
-    updateGetPaidStpInlineUi();
 
     // Watch for aria-selected changes on options
     var observer = new MutationObserver(function () {
       var selected = sel.querySelector('el-option[aria-selected="true"]');
       if (selected) updatePaymentMethodDetails(selected.getAttribute('value'), entry);
-      else updateGetPaidStpInlineUi();
       updateGetPaidStepStates();
     });
     sel.querySelectorAll('el-option').forEach(function (opt) {
@@ -7138,24 +7018,6 @@
       confirmCheckboxToggle.addEventListener('change', updateGetPaidStepStates);
     }
 
-    var stpEnableToggle = document.getElementById('gp-stp-enable-toggle');
-    var stpInfoBtn = document.getElementById('gp-stp-info-btn');
-    bindGetPaidStpModalBridge();
-    if (stpEnableToggle) {
-      stpEnableToggle.checked = false;
-      stpEnableToggle.addEventListener('change', function () {
-        if (stpEnableToggle.checked) {
-          openGetPaidStpModal();
-          return;
-        }
-        _getPaidStpOptInRequested = false;
-        syncGetPaidStpToggle();
-      });
-      updateGetPaidStpCardToggleState();
-      syncGetPaidStpToggle();
-    }
-    if (stpInfoBtn) stpInfoBtn.addEventListener('click', openGetPaidStpModal);
-
     var submitBtn = document.getElementById('gp-submit-btn');
     if (submitBtn) {
       submitBtn.addEventListener('click', function () {
@@ -7169,7 +7031,7 @@
         var validMethods = ['payers-card', 'bank-account', 'paper-check'];
         if (validMethods.indexOf(paymentValue) === -1) return;
 
-        var methodLabels = { 'payers-card': "Payer's Card", 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
+        var methodLabels = { 'payers-card': "Card Payment", 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
 
         var txIdEl = document.getElementById('gp-submit-txid');
         var amountEl = document.getElementById('gp-submit-amount');
@@ -7187,7 +7049,6 @@
           _activeGetPaidEntry.details.paymentInfo &&
           _activeGetPaidEntry.details.paymentInfo.payerCard;
         var cardLast4 = _activeGetPaidEntry.paymentMethodEnding || '';
-        var shouldAdvanceStpAfterPayment = paymentValue === 'payers-card' && _getPaidStpOptInRequested;
         if (!cardLast4 && payerCard && payerCard.cardNumber) cardLast4 = String(payerCard.cardNumber).slice(-4);
 
         if (txIdEl) txIdEl.textContent = txId;
@@ -7293,11 +7154,6 @@
         });
 
         refreshTableForActiveTab();
-        if (shouldAdvanceStpAfterPayment && window.STPState && typeof window.STPState.setStpStep === 'function') {
-          window.STPState.setStpStep('bank_verification_required');
-          _getPaidStpOptInRequested = false;
-          updateGetPaidStpInlineUi();
-        }
         applyPaidGetPaidPanelState(_activeGetPaidEntry);
         var updatedActivityEl = document.getElementById('gp-activity-content');
         if (updatedActivityEl) updatedActivityEl.innerHTML = buildGetPaidActivityLog(_activeGetPaidEntry);
@@ -7980,7 +7836,6 @@
     if (window.STPState && typeof window.STPState.subscribe === 'function') {
       window.STPState.subscribe(function () {
         if (!paginationState.sourceEntries || !paginationState.sourceEntries.length) return;
-        updateGetPaidStpInlineUi();
         refreshTableForActiveTab();
       });
     }

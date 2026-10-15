@@ -146,7 +146,7 @@
   var ICON_SCHEDULED = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg>';
   var ICON_ACH = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400 shrink-0"><path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" /></svg>';
   var ICON_SMART_DISBURSE = '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#406AFF"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#406AFF"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#406AFF"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#406AFF"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#406AFF"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>';
-  var ICON_SMART_EXCHANGE = '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#F5B842"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#F5B842"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#F5B842"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#F5B842"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#F5B842"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>';
+  var ICON_SMART_EXCHANGE = '<svg width="20" height="20" viewBox="0 0 14.9612 17.3457" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M7.48059 3.54123L11.9484 6.12074V11.2798L7.48059 13.8593L3.01274 11.2798V6.12074L7.48059 3.54123Z" fill="url(#sdhex0)"/><path d="M7.48059 8.70029L11.9484 6.12178V11.2788L7.48059 13.8646V8.70029Z" fill="url(#sdhex1)"/><path d="M7.4806 11.5378L9.93792 10.119L9.93791 7.28156L7.4806 5.86282L5.02328 7.28156L5.02328 10.119L7.4806 11.5378Z" fill="url(#sdhex2)"/><path d="M14.8807 4.42803V12.9729L7.48125 17.2454L0.0808594 12.9729V4.42803L7.48125 0.155566L14.8807 4.42803ZM1.23125 5.09209V12.3089L7.48125 15.9173L13.7303 12.3089V5.09209L7.48125 1.48369L1.23125 5.09209Z" fill="#C4ECF5"/><g fill="#3290FF"><circle cx="7.48059" cy="0.773855" r="0.773855"/><circle cx="7.48059" cy="16.5718" r="0.773855"/><circle cx="0.773855" cy="4.77128" r="0.773855"/><circle cx="14.1873" cy="4.77128" r="0.773855"/><circle cx="0.773855" cy="12.5743" r="0.773855"/><circle cx="14.1873" cy="12.5743" r="0.773855"/></g><defs><linearGradient id="sdhex0" x1="7.4714" y1="3.51642" x2="8.21703" y2="13.9493" gradientUnits="userSpaceOnUse"><stop stop-color="#3099FF"/><stop offset="1" stop-color="#3D5CFF"/></linearGradient><linearGradient id="sdhex1" x1="7.97474" y1="9.99996" x2="9.7145" y2="13.8646" gradientUnits="userSpaceOnUse"><stop stop-color="#003FD0"/><stop offset="1" stop-color="#2A60DD" stop-opacity="0"/></linearGradient><linearGradient id="sdhex2" x1="6.56035" y1="6.62498" x2="6.56035" y2="11.5378" gradientUnits="userSpaceOnUse"><stop stop-color="#2CB2FF" stop-opacity="0"/><stop offset="1" stop-color="#1FAEFF"/></linearGradient></defs></svg>';
 
   function getTodayIsoDate() {
     var now = new Date();
@@ -974,7 +974,7 @@
         next.bankLast4 = bankLast4;
         next.paymentMethod = (methodType === 'wire' ? 'Wire' : 'Bank') + ' •••• ' + bankLast4;
       } else if (methodType === 'smart_exchange') {
-        next.paymentMethod = 'SMART Exchange';
+        next.paymentMethod = 'SMART Disburse';
       } else if (methodType === 'smart_disburse') {
         next.paymentMethod = 'SMART Disburse';
       } else {
@@ -1330,7 +1330,7 @@
     }
     if (type === 'smart_exchange') {
       return '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb + '">' +
-        '<span class="inline-flex items-center gap-x-2">' + ICON_SMART_EXCHANGE + '<span class="text-sm font-medium text-gray-900 dark:text-white">SMART Exchange</span></span>' +
+        '<span class="inline-flex items-center gap-x-2">' + ICON_SMART_EXCHANGE + '<span class="text-sm font-medium text-gray-900 dark:text-white">SMART Disburse</span></span>' +
       '</td>';
     }
     return '<td class="h-12 align-middle py-2 px-2 text-sm font-medium whitespace-nowrap text-gray-900 dark:text-white' + cb + '">' +
@@ -1603,7 +1603,7 @@
       ach: 'ACH',
       wire: 'Wire',
       smart_disburse: 'SMART Disburse',
-      smart_exchange: 'SMART Exchange',
+      smart_exchange: 'SMART Disburse',
     };
     var order = ['card', 'ach', 'wire', 'smart_disburse', 'smart_exchange'];
     var rows = order
@@ -1698,7 +1698,7 @@
         ach: 'ACH',
         wire: 'Wire',
         smart_disburse: 'SMART Disburse',
-        smart_exchange: 'SMART Exchange',
+        smart_exchange: 'SMART Disburse',
       };
       var methodText = Array.from(state.appliedSelectedMethods)
         .sort(function (a, b) { return a.localeCompare(b); })

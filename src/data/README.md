@@ -2,7 +2,7 @@
 
 ## Overview
 
-The SMART Exchange dashboard table is powered by a simple JSON file.
+The SMART Disburse dashboard table is powered by a simple JSON file.
 All table rows are generated automatically from that file — **you never
 need to touch the HTML**.
 

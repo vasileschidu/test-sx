@@ -74,9 +74,9 @@
       card: 'Card',
       check: 'Check',
       smartDisburse: 'SMART Disburse',
-      smartExchange: 'SMART Exchange',
+      smartExchange: 'SMART Disburse',
       smart_disburse: 'SMART Disburse',
-      smart_exchange: 'SMART Exchange'
+      smart_exchange: 'SMART Disburse'
     };
     return map[type] || type;
   }
@@ -210,9 +210,9 @@
         detail: vendor.remittanceEmails[0] || vendor.remittancePhones[0] || '--'
       });
     }
-    if (vendor.supportedPaymentMethods.indexOf('SMART Exchange') !== -1) {
+    if (vendor.supportedPaymentMethods.indexOf('SMART Disburse') !== -1) {
       methods.push({
-        type: 'SMART Exchange',
+        type: 'SMART Disburse',
         title: 'Profile enabled',
         detail: vendor.primaryContact.email || '--'
       });

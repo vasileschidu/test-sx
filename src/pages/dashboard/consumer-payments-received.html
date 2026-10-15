@@ -1,6 +1,6 @@
 <!--
   @file dashboard/consumer-payments-received.html
-  @description Consumer Portal — Payments Received. Every SMART Exchange token a
+  @description Consumer Portal — Payments Received. Every SMART Disburse token a
     person or business has been sent, in the same shell and table as the
     Supplier Portal: the table, Get Paid panel and dialogs are shared
     (exchanges-table.js), configured below to read the consumer's own data.
@@ -26,6 +26,7 @@
 
     <!-- Tailwind -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="../../../src/styles/cursor.css">
     <style type="text/tailwindcss">
         @custom-variant dark (&:where(.dark, .dark *));
     </style>
@@ -48,7 +49,7 @@
         window.EXCHANGES_TABLE_CONFIG = {
             dataset: 'consumer-payments',
             storageKey: 'cp_payment_overrides_v1',
-            methodLabels: { smart_exchange: 'SMART Exchange' },
+            methodLabels: { smart_exchange: 'SMART Disburse' },
             statusLabels: { pending: 'Pending Your Action', exception: 'Failed' },
             showTokenMethod: true
         };
@@ -411,7 +412,7 @@
                                                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.5 4C1.67157 4 1 4.67157 1 5.5V6H19V5.5C19 4.67157 18.3284 4 17.5 4H2.5ZM19 8.5H1V14.5C1 15.3284 1.67157 16 2.5 16H12.1C12.0344 15.6769 12 15.3425 12 15C12 12.2386 14.2386 10 17 10C17.7111 10 18.3875 10.1484 19 10.416V8.5ZM3.75 12.5C3.33579 12.5 3 12.8358 3 13.25C3 13.6642 3.33579 14 3.75 14H5.25C5.66421 14 6 13.6642 6 13.25C6 12.8358 5.66421 12.5 5.25 12.5H3.75ZM7 13.25C7 12.8358 7.33579 12.5 7.75 12.5H9.25C9.66421 12.5 10 12.8358 10 13.25C10 13.6642 9.66421 14 9.25 14H7.75C7.33579 14 7 13.6642 7 13.25ZM17 12C17.4304 12 17.8126 12.2754 17.9487 12.6838L18.1325 13.2351C18.232 13.5337 18.4663 13.768 18.7649 13.8675L19.3162 14.0513C19.7246 14.1874 20 14.5696 20 15C20 15.4304 19.7246 15.8126 19.3162 15.9487L18.7649 16.1325C18.4663 16.232 18.232 16.4663 18.1325 16.7649L17.9487 17.3162C17.8126 17.7246 17.4304 18 17 18C16.5696 18 16.1874 17.7246 16.0513 17.3162L15.8675 16.7649C15.768 16.4663 15.5337 16.232 15.2351 16.1325L14.6838 15.9487C14.2754 15.8126 14 15.4304 14 15C14 14.5696 14.2754 14.1874 14.6838 14.0513L15.2351 13.8675C15.5337 13.768 15.768 13.5337 15.8675 13.2351L16.0513 12.6838C16.1874 12.2754 16.5696 12 17 12Z"/></svg>
                                                             </div>
                                                             <div class="min-w-0 flex-1">
-                                                                <span class="block truncate text-sm/5 font-semibold text-gray-900 dark:text-white">Instant Virtual Card</span>
+                                                                <span class="block truncate text-sm/5 font-semibold text-gray-900 dark:text-white">Accept Card Payment</span>
                                                                 <span class="mt-1 block text-sm/5 font-normal text-gray-500 in-[el-selectedcontent]:hidden dark:text-gray-400">Funds expected instantly</span>
                                                             </div>
                                                         </div>
@@ -447,7 +448,7 @@
                                             <div id="gp-payment-method-details"
                                                 class="hidden mt-4 w-full max-w-[512px]">
 
-                                                <!-- Accept Payer's Card -->
+                                                <!-- Accept Card Payment -->
                                                 <div id="gp-pmc-payers-card" class="hidden">
                                                     <div id="gp-pmc-cardholder-details-wrap" class="flex flex-col items-start self-stretch">
                                                         <!-- header -->
@@ -506,38 +507,20 @@
                                                             </svg>
                                                         </button>
                                                     </div>
-                                                    <div id="gp-stp-card-container"
-                                                        class="hidden mt-4 w-full rounded-lg border border-gray-200 bg-white p-4 dark:border-white/10 dark:bg-white/5">
-                                                        <div class="flex items-center justify-between gap-4">
-                                                            <div class="flex min-w-0 items-center gap-2">
-                                                                <p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">
-                                                                    Automatic Card Processing (STP)
-                                                                </p>
-                                                                <div class="group relative flex shrink-0">
-                                                                    <button id="gp-stp-info-btn" type="button"
-                                                                        class="inline-flex size-7 items-center justify-center rounded-md text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-200 cursor-pointer">
-                                                                        <span class="sr-only">Automatic Card Processing information</span>
-                                                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-4">
-                                                                            <path fill-rule="evenodd" d="M15 8A7 7 0 1 1 1 8a7 7 0 0 1 14 0ZM9 5a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM6.75 8a.75.75 0 0 0 0 1.5h.75v1.75a.75.75 0 0 0 1.5 0v-2.5A.75.75 0 0 0 8.25 8h-1.5Z" clip-rule="evenodd" />
-                                                                        </svg>
-                                                                    </button>
-                                                                    <div
-                                                                        class="pointer-events-none absolute left-1/2 top-0 z-20 hidden w-72 -translate-x-1/2 -translate-y-[calc(100%+10px)] rounded-md bg-gray-900 px-3 py-2 text-sm leading-5 text-white shadow-lg group-hover:block group-focus-within:block dark:bg-gray-950">
-                                                                        Say goodbye to manual processing; we’ll securely send the details to the card network who will process the payment automatically. Funds will continue to settle through your current merchant processor.
-                                                                        <span class="absolute left-1/2 top-full h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rotate-45 bg-gray-900 dark:bg-gray-950"></span>
-                                                                    </div>
-                                                                </div>
-                                                                <span id="gp-stp-status-badge"
-                                                                    class="hidden inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-white/5 dark:text-gray-300 dark:ring-white/15">Enabling pending</span>
-                                                            </div>
-                                                            <label class="group relative inline-flex w-11 shrink-0 rounded-full bg-gray-200 p-0.5 ring-1 ring-inset ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/10 dark:ring-white/10 dark:has-checked:bg-blue-500">
-                                                                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5 dark:ring-white/10"></span>
-                                                                <input id="gp-stp-enable-toggle" type="checkbox" aria-labelledby="gp-stp-toggle-label"
-                                                                    class="absolute inset-0 size-full appearance-none focus:outline-hidden" />
-                                                                <span id="gp-stp-toggle-label" class="sr-only">Enable Automatic Card Processing</span>
-                                                            </label>
+                                                    <label id="gp-pmc-card-default-wrap" class="mt-4 flex items-center gap-3 cursor-pointer">
+                                                        <div class="group grid size-4 grid-cols-1">
+                                                            <input type="checkbox" checked
+                                                                class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
+                                                            <svg viewBox="0 0 14 14" fill="none"
+                                                                class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">
+                                                                <path d="M3 8L6 11L11 3.5" stroke-width="2"
+                                                                    stroke-linecap="round"
+                                                                    stroke-linejoin="round"
+                                                                    class="opacity-0 group-has-checked:opacity-100" />
+                                                            </svg>
                                                         </div>
-                                                    </div>
+                                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Set card as default for future payments</span>
+                                                    </label>
                                                 </div>
 
                                                 <!-- Send to Bank Account -->
@@ -681,9 +664,7 @@
                                                                             class="opacity-0 group-has-checked:opacity-100" />
                                                                     </svg>
                                                                 </div>
-                                                                <span
-                                                                    class="text-sm font-normal text-gray-700 dark:text-gray-300">Set
-                                                                    as default</span>
+                                                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Set bank account as default for future payments</span>
                                                             </label>
 
 
@@ -844,6 +825,20 @@
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        <label id="gp-pmc-check-default-wrap" class="mt-4 flex items-center gap-3 cursor-pointer">
+                                                            <div class="group grid size-4 grid-cols-1">
+                                                                <input type="checkbox" checked
+                                                                    class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
+                                                                <svg viewBox="0 0 14 14" fill="none"
+                                                                    class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">
+                                                                    <path d="M3 8L6 11L11 3.5" stroke-width="2"
+                                                                        stroke-linecap="round"
+                                                                        stroke-linejoin="round"
+                                                                        class="opacity-0 group-has-checked:opacity-100" />
+                                                                </svg>
+                                                            </div>
+                                                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Set paper check as default for future payments</span>
+                                                        </label>
                                                     </div>
                                                 </div>
 

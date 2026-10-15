@@ -1,5 +1,5 @@
 {
-  "flow": "SMART Exchange",
+  "flow": "SMART Disburse",
   "steps": [
     { "id": "confirm-identity",         "label": "Confirm Identity",         "href": "confirm-identity.html" },
     { "id": "confirm-business-details", "label": "Confirm Business Details", "href": "confirm-business-details.html" },
