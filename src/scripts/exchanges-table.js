@@ -1870,14 +1870,14 @@
             '</div>' +
             '<div class="grid grid-cols-2 gap-4 self-stretch">' +
               '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span>' +
-              '<button type="button" data-copy-id="' + accountCopyId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit shrink-0 whitespace-nowrap items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+              '<button type="button" data-copy-id="' + accountCopyId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
                 '<span id="' + accountCopyId + '" data-ach-mask-field="true" data-masked="' + escapeHtml(achAccountMasked) + '" data-revealed="' + escapeHtml(achAccountRevealed) + '" class="text-sm font-normal">' + escapeHtml(achAccountMasked) + '</span>' +
                 '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
               '</button>' +
             '</div>' +
             '<div class="grid grid-cols-2 gap-4 self-stretch">' +
               '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span>' +
-              '<button type="button" data-copy-id="' + routingCopyId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit shrink-0 whitespace-nowrap items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+              '<button type="button" data-copy-id="' + routingCopyId + '" data-copy-enabled="false" data-ach-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
                 '<span id="' + routingCopyId + '" data-ach-mask-field="true" data-masked="' + escapeHtml(achRoutingMasked) + '" data-revealed="' + escapeHtml(achRoutingRevealed) + '" class="text-sm font-normal">' + escapeHtml(achRoutingMasked) + '</span>' +
                 '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
               '</button>' +
@@ -1943,22 +1943,22 @@
             '</div>' +
             '<div class="grid grid-cols-2 gap-4 self-stretch">' +
               '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Card Number</span>' +
-              '<button type="button" data-copy-id="' + cardNumberCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit shrink-0 whitespace-nowrap items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
-                '<span id="' + cardNumberCopyId + '" data-mask-field="card-number" data-masked="' + escapeHtml(cardDetails.maskedCardNumber) + '" data-revealed="' + escapeHtml(cardDetails.fullCardNumber) + '" class="text-sm font-normal whitespace-nowrap tabular-nums">' + escapeHtml(cardDetails.maskedCardNumber) + '</span>' +
+              '<button type="button" data-copy-id="' + cardNumberCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+                '<span id="' + cardNumberCopyId + '" data-mask-field="card-number" data-masked="' + escapeHtml(cardDetails.maskedCardNumber) + '" data-revealed="' + escapeHtml(cardDetails.fullCardNumber) + '" class="text-sm font-normal">' + escapeHtml(cardDetails.maskedCardNumber) + '</span>' +
                 '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
               '</button>' +
             '</div>' +
             '<div class="grid grid-cols-2 gap-4 self-stretch">' +
               '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">Expires</span>' +
-              '<button type="button" data-copy-id="' + expiryCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit shrink-0 whitespace-nowrap items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
-                '<span id="' + expiryCopyId + '" data-mask-field="card-expiry" data-masked="' + escapeHtml(cardDetails.expiryFull) + '" data-revealed="' + escapeHtml(cardDetails.expiryFull) + '" class="text-sm font-normal whitespace-nowrap tabular-nums">' + escapeHtml(cardDetails.expiryFull) + '</span>' +
+              '<button type="button" data-copy-id="' + expiryCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+                '<span id="' + expiryCopyId + '" data-mask-field="card-expiry" data-masked="' + escapeHtml(cardDetails.expiryFull) + '" data-revealed="' + escapeHtml(cardDetails.expiryFull) + '" class="text-sm font-normal">' + escapeHtml(cardDetails.expiryFull) + '</span>' +
                 '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
               '</button>' +
             '</div>' +
             '<div class="grid grid-cols-2 gap-4 self-stretch">' +
               '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">CVC2</span>' +
-              '<button type="button" data-copy-id="' + cvcCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit shrink-0 whitespace-nowrap items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
-                '<span id="' + cvcCopyId + '" data-mask-field="card-cvc" data-masked="' + escapeHtml(cardDetails.maskedCvc) + '" data-revealed="' + escapeHtml(cardDetails.cvcValue) + '" class="text-sm font-normal whitespace-nowrap tabular-nums">' + escapeHtml(cardDetails.maskedCvc) + '</span>' +
+              '<button type="button" data-copy-id="' + cvcCopyId + '" data-copy-enabled="false" data-card-copy-control="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+                '<span id="' + cvcCopyId + '" data-mask-field="card-cvc" data-masked="' + escapeHtml(cardDetails.maskedCvc) + '" data-revealed="' + escapeHtml(cardDetails.cvcValue) + '" class="text-sm font-normal">' + escapeHtml(cardDetails.maskedCvc) + '</span>' +
                 '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
               '</button>' +
             '</div>' +
@@ -2225,7 +2225,7 @@
         '<div class="flex">' +
           '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
           '<div class="flex-1 p-4">' +
-            '<div class="w-[560px] max-w-full">' +
+            '<div class="w-[460px] max-w-full">' +
               variant.rawCardHtml +
             '</div>' +
           '</div>' +
@@ -2237,7 +2237,7 @@
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
         '<div class="flex-1 p-4">' +
-          '<div' + revealAttr + ' class="flex flex-col gap-2 w-[560px] max-w-full">' +
+          '<div' + revealAttr + ' class="flex flex-col gap-2 w-[460px] max-w-full">' +
             '<div class="flex gap-6">' +
               '<div class="flex-1 text-sm font-medium text-gray-900 dark:text-white">' + variant.titleLabel + '</div>' +
               '<div class="flex-1 flex items-center">' + revealLink + '</div>' +
