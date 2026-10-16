@@ -576,6 +576,23 @@
         '      <button type="button" data-stp-learn-more-trigger="topbar-yellow" class="inline-flex items-center justify-center rounded-md px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-900/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer">Learn more</button>' +
         "    </div>" +
         "  </div>" +
+        "</div>" +
+        '<div data-global-stp-alert-agreement class="hidden border-b border-gray-200 bg-blue-100 px-6 py-2 dark:border-white/10 dark:bg-blue-500/15">' +
+        '  <div class="flex items-center justify-between gap-4">' +
+        '    <div class="flex min-w-0 items-center gap-3">' +
+        '      <div class="shrink-0 text-blue-600 dark:text-blue-400">' +
+        cardIcon +
+        "</div>" +
+        '      <p class="min-w-0 truncate text-sm leading-5">' +
+        '        <span class="font-semibold text-gray-900 dark:text-gray-100">Visa Agreement Signature Pending</span>' +
+        '        <span class="mx-1.5 text-gray-400">·</span>' +
+        '        <span data-global-stp-agreement-text class="font-normal text-gray-600 dark:text-gray-300"></span>' +
+        "      </p>" +
+        "    </div>" +
+        '    <div class="shrink-0">' +
+        '      <button type="button" data-stp-agreement-review-trigger="topbar" class="inline-flex items-center justify-center rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-200 dark:ring-white/10 dark:hover:bg-white/20 cursor-pointer">Review</button>' +
+        "    </div>" +
+        "  </div>" +
         "</div>";
     }
 
@@ -593,7 +610,7 @@
         return;
       }
       var visible = host.querySelector(
-        "[data-global-stp-alert-blue]:not(.hidden), [data-global-stp-alert-yellow]:not(.hidden)",
+        "[data-global-stp-alert-blue]:not(.hidden), [data-global-stp-alert-yellow]:not(.hidden), [data-global-stp-alert-agreement]:not(.hidden)",
       );
       var height = visible ? Math.ceil(host.getBoundingClientRect().height) : 0;
       document.documentElement.style.setProperty(
@@ -733,7 +750,26 @@
       var yellowLearnMoreButtons = host
         ? host.querySelectorAll('[data-stp-learn-more-trigger="topbar-yellow"]')
         : [];
+      var agreementAlertEl =
+        host && host.querySelector("[data-global-stp-alert-agreement]");
+      var agreementTextEl =
+        host && host.querySelector("[data-global-stp-agreement-text]");
+      var agreementReviewButtons = host
+        ? host.querySelectorAll('[data-stp-agreement-review-trigger="topbar"]')
+        : [];
       if (!blueAlertEl && !yellowAlertEl) return;
+
+      agreementReviewButtons.forEach(function (button) {
+        button.addEventListener("click", function (event) {
+          event.preventDefault();
+          if (
+            window.STPState &&
+            typeof window.STPState.openAgreementReviewModal === "function"
+          ) {
+            window.STPState.openAgreementReviewModal();
+          }
+        });
+      });
 
       optInButtons.forEach(function (button) {
         button.addEventListener("click", function (event) {
@@ -776,10 +812,22 @@
         var stpStep = state && state.stpStep ? state.stpStep : "";
         var showYellow =
           status === "in_progress" && stpStep === "bank_verification_required";
-        var showBlue = status !== "enabled" && !showYellow;
+        var showAgreement =
+          status === "in_progress" &&
+          stpStep === "agreement_signature_pending";
+        var showBlue = status !== "enabled" && !showYellow && !showAgreement;
         if (blueAlertEl) blueAlertEl.classList.toggle("hidden", !showBlue);
         if (yellowAlertEl)
           yellowAlertEl.classList.toggle("hidden", !showYellow);
+        if (agreementAlertEl)
+          agreementAlertEl.classList.toggle("hidden", !showAgreement);
+        if (agreementTextEl && showAgreement) {
+          agreementTextEl.textContent =
+            window.STPState &&
+            typeof window.STPState.getAgreementSentText === "function"
+              ? window.STPState.getAgreementSentText()
+              : "";
+        }
         self._updateAlertSpacing();
       };
 

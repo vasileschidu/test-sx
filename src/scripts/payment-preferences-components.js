@@ -231,7 +231,7 @@
       expandable: false,
       mediaHtml: getCardBrandLogoMarkup(card.brand, "medium"),
       mediaClass:
-        "flex size-[34px] shrink-0 items-center justify-center rounded-full",
+        "flex size-[34px] shrink-0 items-center justify-center self-start rounded-full",
       title: card.last4 ? name + " •••• " + card.last4 : name,
       subtitle: card.expiration ? "Expiration " + card.expiration : "",
       actionsHtml: options.actionsHtml || "",

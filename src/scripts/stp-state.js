@@ -14,7 +14,16 @@
   var STEP_OPT_IN_REQUIRED = "opt_in_required";
   var STEP_TERMINAL_COMPLETED = "terminal_completed_tid_mid_received";
   var STEP_BANK_VERIFICATION_REQUIRED = "bank_verification_required";
+  var STEP_AGREEMENT_SIGNATURE_PENDING = "agreement_signature_pending";
   var STEP_COMPLETED = "completed";
+  // Who the Visa agreement email went to and when, for the pending banner.
+  var AGREEMENT_REQUEST_KEY = "sx_stp_agreement_request_v1";
+  var RUNTIME_CONFIG_PATHS = [
+    "../../../src/data/public-runtime-config.json",
+    "/src/data/public-runtime-config.json",
+    "./src/data/public-runtime-config.json",
+  ];
+  var runtimeConfigPromise = null;
   var listeners = [];
 
   function normalizeStatus(value) {
@@ -32,6 +41,7 @@
       value === STEP_OPT_IN_REQUIRED ||
       value === STEP_TERMINAL_COMPLETED ||
       value === STEP_BANK_VERIFICATION_REQUIRED ||
+      value === STEP_AGREEMENT_SIGNATURE_PENDING ||
       value === STEP_COMPLETED
     )
       return value;
@@ -139,6 +149,9 @@
     else if (normalizedStep === STEP_OPT_IN_REQUIRED)
       nextState = { stpStatus: STATUS_DISABLED, stpStep: STEP_OPT_IN_REQUIRED };
     else nextState = { stpStatus: STATUS_IN_PROGRESS, stpStep: normalizedStep };
+    if (nextState.stpStep !== STEP_AGREEMENT_SIGNATURE_PENDING) {
+      clearAgreementRequest();
+    }
     if (
       nextState.stpStatus === currentState.stpStatus &&
       nextState.stpStep === currentState.stpStep
@@ -149,6 +162,184 @@
     persistState(currentState);
     notify();
     return currentState.stpStep;
+  }
+
+  function getAgreementRequest() {
+    try {
+      var raw = localStorage.getItem(AGREEMENT_REQUEST_KEY);
+      var parsed = raw ? JSON.parse(raw) : null;
+      return parsed && parsed.email ? parsed : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function saveAgreementRequest(request) {
+    try {
+      localStorage.setItem(AGREEMENT_REQUEST_KEY, JSON.stringify(request));
+    } catch (error) {
+      console.error("Unable to persist STP agreement request:", error);
+    }
+  }
+
+  // "An email was sent to [email] on [date] at [time]" from the Figma banner.
+  function getAgreementSentText() {
+    var request = getAgreementRequest();
+    if (!request) return "An email was sent to sign the Visa agreement.";
+    var sentAt = new Date(request.sentAt);
+    // Non-allowlisted addresses never get the email (test mode).
+    var lead =
+      request.delivered === false
+        ? "Test mode, no email delivered to "
+        : "An email was sent to ";
+    if (isNaN(sentAt.getTime())) return lead + request.email + ".";
+    return (
+      lead +
+      request.email +
+      " on " +
+      sentAt.toLocaleDateString("en-US", {
+        month: "long",
+        day: "numeric",
+        year: "numeric",
+      }) +
+      " at " +
+      sentAt.toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+      })
+    );
+  }
+
+  function clearAgreementRequest() {
+    try {
+      localStorage.removeItem(AGREEMENT_REQUEST_KEY);
+    } catch (error) {}
+  }
+
+  function isValidEmail(value) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(value || "").trim());
+  }
+
+  function loadRuntimeConfig() {
+    if (runtimeConfigPromise) return runtimeConfigPromise;
+    var load =
+      window.DataSource && typeof window.DataSource.load === "function"
+        ? window.DataSource.load(RUNTIME_CONFIG_PATHS)
+        : fetch(RUNTIME_CONFIG_PATHS[0]).then(function (response) {
+            if (!response.ok) throw new Error("Config not found");
+            return response.json();
+          });
+    runtimeConfigPromise = Promise.resolve(load)
+      .catch(function () {
+        return {};
+      })
+      .then(function (config) {
+        return {
+          tokenServiceBaseUrl: String(
+            (config && config.tokenServiceBaseUrl) || "",
+          )
+            .trim()
+            .replace(/\/+$/, ""),
+          allowedTestEmails: (Array.isArray(config && config.allowedTestEmails)
+            ? config.allowedTestEmails
+            : []
+          )
+            .map(function (email) {
+              return String(email || "")
+                .trim()
+                .toLowerCase();
+            })
+            .filter(Boolean),
+        };
+      });
+    return runtimeConfigPromise;
+  }
+
+  function isAllowlistedEmail(email) {
+    var normalized = String(email || "")
+      .trim()
+      .toLowerCase();
+    return loadRuntimeConfig().then(function (config) {
+      return config.allowedTestEmails.indexOf(normalized) !== -1;
+    });
+  }
+
+  // Sends the Visa agreement email through the same token service as
+  // SMART Disburse. Like SMART Disburse test sends, only allowlisted
+  // addresses get a real email; any other address moves the setup to
+  // "Pending Agreement Signature" without sending anything.
+  function sendAgreementEmail(options) {
+    options = options || {};
+    var email = String(options.email || "").trim();
+    if (!isValidEmail(email)) {
+      return Promise.reject(new Error("Enter a valid email address."));
+    }
+    return loadRuntimeConfig().then(function (config) {
+      var normalized = email.toLowerCase();
+      var allowed = config.allowedTestEmails.indexOf(normalized) !== -1;
+      var finish = function (result) {
+        var wasPending =
+          currentState.stpStep === STEP_AGREEMENT_SIGNATURE_PENDING;
+        saveAgreementRequest({
+          email: email,
+          sentAt: new Date().toISOString(),
+          delivered: result.delivered,
+        });
+        setStpStep(STEP_AGREEMENT_SIGNATURE_PENDING);
+        // A resend keeps the same step, so listeners would not hear about
+        // the new address and time otherwise.
+        if (wasPending) notify();
+        return result;
+      };
+      if (!allowed) {
+        return finish({ email: email, delivered: false, allowed: false });
+      }
+      if (!config.tokenServiceBaseUrl) {
+        throw new Error("Email service is not configured for this environment.");
+      }
+      return fetch(config.tokenServiceBaseUrl + "/send-test-token", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          flow: "stp",
+          email: email,
+          recipientName: String(options.recipientName || "").trim(),
+          senderName: String(options.senderName || "SMART Hub").trim(),
+          sandbox: false,
+          verifyBaseUrl: window.location.origin + window.location.pathname,
+        }),
+      })
+        .then(function (response) {
+          return response
+            .json()
+            .catch(function () {
+              return {};
+            })
+            .then(function (payload) {
+              if (!response.ok || payload.ok === false) {
+                throw new Error(
+                  payload.error || "Request failed with " + response.status,
+                );
+              }
+              return payload;
+            });
+        })
+        .catch(function (error) {
+          if (error && error.message === "Failed to fetch") {
+            throw new Error(
+              "Could not reach the email service. Refresh the page and try again.",
+            );
+          }
+          throw error;
+        })
+        .then(function (payload) {
+          return finish({
+            email: email,
+            delivered: payload.delivery === "brevo",
+            allowed: true,
+          });
+        });
+    });
   }
 
   function subscribe(listener) {
@@ -641,6 +832,16 @@
   }
 
   function openOptInModal() {
+    // Pages with the agreement email step (Payment Preferences) start there;
+    // the agreement itself is reviewed from the email or the Review button.
+    var sendDialog = document.getElementById("pp-stp-send-agreement-dialog");
+    if (safelyShowDialog(sendDialog)) {
+      return true;
+    }
+    return openAgreementReviewModal();
+  }
+
+  function openAgreementReviewModal() {
     var dialog = document.getElementById("pp-enable-stp-dialog");
     if (safelyShowDialog(dialog)) {
       return true;
@@ -745,6 +946,11 @@
     setStpStep: setStpStep,
     subscribe: subscribe,
     openOptInModal: openOptInModal,
+    openAgreementReviewModal: openAgreementReviewModal,
+    getAgreementRequest: getAgreementRequest,
+    getAgreementSentText: getAgreementSentText,
+    sendAgreementEmail: sendAgreementEmail,
+    isAllowlistedEmail: isAllowlistedEmail,
     openSetupStepsModal: openSetupStepsModal,
     openVerifyModal: openVerifyModal,
     STATUS_ENABLED: STATUS_ENABLED,
@@ -753,6 +959,7 @@
     STEP_OPT_IN_REQUIRED: STEP_OPT_IN_REQUIRED,
     STEP_TERMINAL_COMPLETED: STEP_TERMINAL_COMPLETED,
     STEP_BANK_VERIFICATION_REQUIRED: STEP_BANK_VERIFICATION_REQUIRED,
+    STEP_AGREEMENT_SIGNATURE_PENDING: STEP_AGREEMENT_SIGNATURE_PENDING,
     STEP_COMPLETED: STEP_COMPLETED,
   };
 

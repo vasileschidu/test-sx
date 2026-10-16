@@ -1,6 +1,7 @@
 const FLOW_LABELS = {
   sd: "SMART Disburse",
   sx: "SMART Exchange",
+  stp: "Automatic Card Processing",
 };
 
 function json(data, status = 200, extraHeaders = {}) {
@@ -68,8 +69,10 @@ function getFlow(payload) {
   const flow = String((payload && payload.flow) || "")
     .trim()
     .toLowerCase();
-  return flow === "sd" || flow === "sx" ? flow : "";
+  return flow === "sd" || flow === "sx" || flow === "stp" ? flow : "";
 }
+
+const FLOW_ERROR = 'Flow must be "sd", "sx" or "stp".';
 
 function createToken() {
   const bytes = new Uint8Array(24);
@@ -165,6 +168,125 @@ function buildOnboardingUrl(baseUrl, flow, email, extraParams) {
   } catch (error) {
     return "";
   }
+}
+
+// The STP agreement link points back at the page that sent it (Payment
+// Preferences), which opens the agreement review dialog from the query.
+function buildAgreementUrl(baseUrl, email, token) {
+  const rawBaseUrl = String(baseUrl || "").trim();
+  if (!rawBaseUrl) return "";
+  try {
+    const url = new URL(rawBaseUrl);
+    url.search = "";
+    url.hash = "";
+    url.searchParams.set("stpAgreement", "review");
+    if (email) url.searchParams.set("email", email);
+    if (token) url.searchParams.set("token", token);
+    return url.toString();
+  } catch (error) {
+    return "";
+  }
+}
+
+function buildStpAgreementEmailHtml({
+  agreementUrl,
+  recipientName,
+  email,
+  senderName,
+  requestedAtFormatted,
+  tokenExpiresAtFormatted,
+}) {
+  const emailFontStack =
+    "Inter,-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif";
+  const safeGreeting = escapeHtml(getRecipientGreeting(recipientName, email));
+  const safeSenderName = escapeHtml(senderName || "SMART Hub");
+  const safeAgreementUrl = escapeHtml(agreementUrl);
+  const detailsRows = [
+    ["Business", safeSenderName],
+    ["Agreement", "Visa AR Manager Participation Agreement"],
+    requestedAtFormatted
+      ? ["Requested on", escapeHtml(requestedAtFormatted)]
+      : null,
+    tokenExpiresAtFormatted
+      ? ["Link expires", escapeHtml(tokenExpiresAtFormatted)]
+      : null,
+  ]
+    .filter(Boolean)
+    .map(
+      ([label, value]) => `
+                      <tr>
+                        <td style="padding:6px 20px;font-family:${emailFontStack};font-size:14px;line-height:20px;color:#6b7280;">${label}</td>
+                        <td style="padding:6px 20px;font-family:${emailFontStack};font-size:14px;line-height:20px;font-weight:600;color:#111827;" align="right">${value}</td>
+                      </tr>`,
+    )
+    .join("");
+  return `
+    <!doctype html>
+    <html lang="en">
+      <body style="margin:0;padding:0;background-color:#f3f6fb;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="background-color:#f3f6fb;">
+          <tr>
+            <td align="center" style="padding:24px 16px;">
+              <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="max-width:600px;">
+                <tr>
+                  <td align="center" style="padding:0 0 24px 0;">
+                    <img src="https://vasileschidu.github.io/test-sx/src/assets/illustrations/SMART%20Hub.svg" alt="SMART Hub" width="164" style="display:block;width:164px;max-width:100%;height:auto;border:0;margin:0 auto;" />
+                  </td>
+                </tr>
+                <tr>
+                  <td style="border-radius:12px;background:#ffffff;border:1px solid #dbe6f3;padding:32px 24px 24px 24px;">
+                    <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+                      <tr>
+                        <td style="padding:0 0 8px 0;font-family:${emailFontStack};font-size:11px;line-height:16px;font-weight:700;letter-spacing:0.08em;text-transform:uppercase;color:#2563eb;">
+                          Test mode
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 0 8px 0;font-family:${emailFontStack};font-size:24px;line-height:32px;font-weight:700;color:#111827;">
+                          Sign the Visa Participation Agreement
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 0 24px 0;font-family:${emailFontStack};font-size:14px;line-height:22px;color:#4b5563;">
+                          Hi ${safeGreeting},<br />
+                          ${safeSenderName} opted in to Automatic Card Processing. To complete enablement, please review and sign the Visa AR Manager Participation Agreement.
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 0 24px 0;">
+                          <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%" style="border-radius:10px;background-color:#f9fafb;border:1px solid #e5e7eb;">
+                            <tr><td colspan="2" style="padding:4px 0;font-size:0;line-height:0;">&nbsp;</td></tr>
+                            ${detailsRows}
+                            <tr><td colspan="2" style="padding:4px 0;font-size:0;line-height:0;">&nbsp;</td></tr>
+                          </table>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="padding:0 0 16px 0;">
+                          <a href="${safeAgreementUrl}" target="_blank" rel="noreferrer noopener" style="display:block;width:100%;box-sizing:border-box;padding:14px 20px;border-radius:10px;background:#2563eb;color:#ffffff;font-family:${emailFontStack};font-size:15px;font-weight:700;line-height:15px;text-align:center;text-decoration:none;">Review and sign</a>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td style="font-family:${emailFontStack};font-size:13px;line-height:20px;color:#6b7280;word-break:break-all;">
+                          If the button does not open, copy and paste this link into your browser:<br />
+                          <span style="color:#2563eb;">${safeAgreementUrl}</span>
+                        </td>
+                      </tr>
+                    </table>
+                  </td>
+                </tr>
+                <tr>
+                  <td align="center" style="padding:24px 0 0 0;font-family:${emailFontStack};font-size:12px;line-height:18px;color:#6b7280;">
+                    Powered by <span style="font-weight:700;color:#374151;">Transcard</span>
+                  </td>
+                </tr>
+              </table>
+            </td>
+          </tr>
+        </table>
+      </body>
+    </html>
+  `;
 }
 
 function buildEmailHtml({
@@ -491,8 +613,7 @@ async function handleSendToken(request, env) {
   const payeeId = String(payload.payeeId || "").trim();
   const payeeName = String(payload.payeeName || recipientName || "").trim();
 
-  if (!flow)
-    return json({ ok: false, error: 'Flow must be "sd" or "sx".' }, 400);
+  if (!flow) return json({ ok: false, error: FLOW_ERROR }, 400);
   if (!email) return json({ ok: false, error: "Email is required." }, 400);
   if (!verifyBaseUrl)
     return json(
@@ -524,12 +645,20 @@ async function handleSendToken(request, env) {
     hour: "numeric",
     minute: "2-digit",
   }).format(new Date(expiresAt));
-  const onboardingUrl = buildOnboardingUrl(verifyBaseUrl, flow, email, {
-    payableId,
-    payeeId,
-    bill: paymentReference,
-    sender: senderName,
-  });
+  const isAgreementFlow = flow === "stp";
+  const onboardingUrl = isAgreementFlow
+    ? buildAgreementUrl(verifyBaseUrl, email, token)
+    : buildOnboardingUrl(verifyBaseUrl, flow, email, {
+        payableId,
+        payeeId,
+        bill: paymentReference,
+        sender: senderName,
+      });
+  const requestedAtFormatted = new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(new Date(now));
 
   await env.TOKEN_STORE.put(
     "token:" + tokenHash,
@@ -546,8 +675,19 @@ async function handleSendToken(request, env) {
     },
   );
 
-  const subject = "SMART Hub: Your " + FLOW_LABELS[flow] + " payment link";
-  const htmlContent = buildEmailHtml({
+  const subject = isAgreementFlow
+    ? "SMART Hub: Sign the Visa Participation Agreement"
+    : "SMART Hub: Your " + FLOW_LABELS[flow] + " payment link";
+  const htmlContent = isAgreementFlow
+    ? buildStpAgreementEmailHtml({
+        agreementUrl: onboardingUrl,
+        recipientName,
+        email,
+        senderName,
+        requestedAtFormatted,
+        tokenExpiresAtFormatted,
+      })
+    : buildEmailHtml({
     flow,
     token,
     verifyUrl: "",
@@ -565,8 +705,22 @@ async function handleSendToken(request, env) {
     payableId,
     payeeName,
   });
-  const textContent =
+  const agreementTextContent =
     "Hi " +
+    getRecipientGreeting(recipientName, email) +
+    ",\n\n" +
+    senderName +
+    " opted in to Automatic Card Processing.\n" +
+    "To complete enablement, please review and sign the Visa AR Manager Participation Agreement.\n\n" +
+    "Review and sign: " +
+    onboardingUrl +
+    "\n" +
+    "Link expires: " +
+    tokenExpiresAtFormatted +
+    "\n\nPowered by Transcard\n";
+  const textContent = isAgreementFlow
+    ? agreementTextContent
+    : "Hi " +
     getRecipientGreeting(recipientName, email) +
     ",\n\n" +
     senderName +
@@ -634,8 +788,7 @@ async function handleVerifyToken(request, env) {
   const flow = getFlow(payload);
   const token = String(payload.token || "").trim();
 
-  if (!flow)
-    return json({ ok: false, error: 'Flow must be "sd" or "sx".' }, 400);
+  if (!flow) return json({ ok: false, error: FLOW_ERROR }, 400);
   if (!token) return json({ ok: false, error: "Token is required." }, 400);
   if (!env.TOKEN_STORE) {
     return json(
@@ -693,8 +846,23 @@ export default {
         request.method === "GET" &&
         url.pathname === "/preview-email"
       ) {
+        const previewRequest = buildPreviewEmailRequest(url, env);
         response = new Response(
-          buildEmailHtml(buildPreviewEmailRequest(url, env)),
+          previewRequest.flow === "stp"
+            ? buildStpAgreementEmailHtml({
+                agreementUrl: buildAgreementUrl(
+                  String(env.APP_BASE_URL || "").trim() ||
+                    "http://127.0.0.1:5500/src/pages/dashboard/payment-preferences.html",
+                  previewRequest.email,
+                  previewRequest.token,
+                ),
+                recipientName: previewRequest.recipientName,
+                email: previewRequest.email,
+                senderName: previewRequest.senderName,
+                requestedAtFormatted: previewRequest.paymentDateFormatted,
+                tokenExpiresAtFormatted: previewRequest.tokenExpiresAtFormatted,
+              })
+            : buildEmailHtml(previewRequest),
           {
             status: 200,
             headers: {

@@ -2000,29 +2000,28 @@ window.__ppStorageKey = function (name) {
     option.setAttribute("value", account.id);
     option.setAttribute("data-gp-bank-option", "true");
     option.className =
-      "group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10";
+      "group/option relative block cursor-default select-none px-4 py-3 text-gray-900 aria-selected:bg-gray-100 aria-selected:pr-11 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10";
     option.innerHTML =
-      '<div class="flex items-center gap-3">' +
-      '  <div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">' +
-      '    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>' +
+      '<div class="flex items-start gap-3 in-[el-selectedcontent]:items-center in-[el-selectedcontent]:gap-2">' +
+      '  <div class="shrink-0 py-0.5 text-gray-500 in-[el-selectedcontent]:py-0 in-[el-selectedcontent]:text-gray-400 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-500">' +
+      '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.67411 2.07459C9.88011 1.97514 10.1202 1.97514 10.3262 2.07459L17.5762 5.57459C17.9493 5.75467 18.1057 6.20304 17.9256 6.57606C17.7576 6.92403 17.3561 7.08351 17.0002 6.95718V16.5H17.2502C17.6644 16.5 18.0002 16.8358 18.0002 17.25C18.0002 17.6642 17.6644 18 17.2502 18H2.75017C2.33596 18 2.00017 17.6642 2.00017 17.25C2.00017 16.8358 2.33596 16.5 2.75017 16.5H3.00017V6.95718C2.6442 7.08351 2.24274 6.92403 2.07476 6.57606C1.89468 6.20304 2.05109 5.75467 2.42411 5.57459L9.67411 2.07459ZM11 6C11 6.55228 10.5523 7 10 7C9.44772 7 9 6.55228 9 6C9 5.44772 9.44772 5 10 5C10.5523 5 11 5.44772 11 6ZM7.5 9.75C7.5 9.33579 7.16421 9 6.75 9C6.33579 9 6 9.33579 6 9.75V15.25C6 15.6642 6.33579 16 6.75 16C7.16421 16 7.5 15.6642 7.5 15.25V9.75ZM10.75 9.75C10.75 9.33579 10.4142 9 10 9C9.58579 9 9.25 9.33579 9.25 9.75V15.25C9.25 15.6642 9.58579 16 10 16C10.4142 16 10.75 15.6642 10.75 15.25V9.75ZM14 9.75C14 9.33579 13.6642 9 13.25 9C12.8358 9 12.5 9.33579 12.5 9.75V15.25C12.5 15.6642 12.8358 16 13.25 16C13.6642 16 14 15.6642 14 15.25V9.75Z"/></svg>' +
       "  </div>" +
-      '  <div class="in-[el-selectedcontent]:hidden">' +
-      '    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Bank Account</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>' +
+      '  <div class="flex min-w-0 flex-1 flex-col gap-1 in-[el-selectedcontent]:hidden">' +
+      '    <span class="flex items-center gap-1.5 text-sm/5 font-semibold whitespace-nowrap text-gray-900 dark:text-white"><span>' +
       account.name +
       "</span></span>" +
-      '    <span class="block text-sm text-gray-500 dark:text-gray-400">' +
-      account.name +
-      " ••••" +
+      '    <span class="truncate text-sm/5 text-gray-500 dark:text-gray-400">' +
+      "••••" +
       account.last4 +
       "</span>" +
       "  </div>" +
-      '  <span class="hidden in-[el-selectedcontent]:block truncate font-medium">' +
+      '  <span class="hidden truncate font-medium in-[el-selectedcontent]:block">' +
       account.name +
       " ••••" +
       account.last4 +
       "</span>" +
       "</div>" +
-      '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
+      '<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
       '  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
       '    <path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
       "  </svg>" +
@@ -2035,25 +2034,25 @@ window.__ppStorageKey = function (name) {
     option.setAttribute("value", address.id);
     option.setAttribute("data-gp-address-option", "true");
     option.className =
-      "group/option relative block cursor-default select-none py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10";
+      "group/option relative block cursor-default select-none px-4 py-3 text-gray-900 aria-selected:bg-gray-100 aria-selected:pr-11 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10";
     option.innerHTML =
-      '<div class="flex items-center gap-3">' +
-      '  <div class="shrink-0 text-gray-500 in-[el-selectedcontent]:text-gray-600 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-400">' +
-      '    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z" fill="#6B7280"/></svg>' +
+      '<div class="flex items-start gap-3 in-[el-selectedcontent]:items-center in-[el-selectedcontent]:gap-2">' +
+      '  <div class="shrink-0 py-0.5 text-gray-500 in-[el-selectedcontent]:py-0 in-[el-selectedcontent]:text-gray-400 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-500">' +
+      '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z"/></svg>' +
       "  </div>" +
-      '  <div class="in-[el-selectedcontent]:hidden">' +
-      '    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Paper Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>' +
+      '  <div class="flex min-w-0 flex-1 flex-col gap-1 in-[el-selectedcontent]:hidden">' +
+      '    <span class="flex items-center gap-1.5 text-sm/5 font-semibold whitespace-nowrap text-gray-900 dark:text-white"><span>Check</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true" class="size-3 shrink-0 text-gray-500 dark:text-gray-400"><path d="M7.8 6C7.8 6.99411 6.99411 7.8 6 7.8C5.00589 7.8 4.2 6.99411 4.2 6C4.2 5.00589 5.00589 4.2 6 4.2C6.99411 4.2 7.8 5.00589 7.8 6Z"/></svg><span>' +
       address.displayName +
       "</span></span>" +
-      '    <span class="block text-sm text-gray-500 dark:text-gray-400">' +
+      '    <span class="truncate text-sm/5 text-gray-500 dark:text-gray-400">' +
       address.summary +
       "</span>" +
       "  </div>" +
-      '  <span class="hidden in-[el-selectedcontent]:block truncate font-medium">' +
+      '  <span class="hidden truncate font-medium in-[el-selectedcontent]:block">' +
       address.displayName +
       "</span>" +
       "</div>" +
-      '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
+      '<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
       '  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
       '    <path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
       "  </svg>" +
@@ -2724,6 +2723,28 @@ window.__ppStorageKey = function (name) {
   var verifySuccessDoneBtn = document.getElementById(
     "pp-verify-success-done-btn",
   );
+  var stpDescription = document.getElementById("pp-stp-description");
+  var stpDefaultDescription = stpDescription
+    ? stpDescription.textContent.replace(/\s+/g, " ").trim()
+    : "";
+  var stpAgreementReviewBtn = document.getElementById(
+    "pp-stp-agreement-review-btn",
+  );
+  var sendAgreementDialog = document.getElementById(
+    "pp-stp-send-agreement-dialog",
+  );
+  var sendAgreementForm = document.getElementById("pp-stp-send-agreement-form");
+  var sendAgreementEmailInput = document.getElementById(
+    "pp-stp-agreement-email",
+  );
+  var sendAgreementHelp = document.getElementById(
+    "pp-stp-agreement-email-help",
+  );
+  var sendAgreementError = document.getElementById(
+    "pp-stp-agreement-email-error",
+  );
+  var sendAgreementBtn = document.getElementById("pp-stp-send-agreement-btn");
+  var isSendingAgreement = false;
   var stpTerminalImages = Array.prototype.slice.call(
     document.querySelectorAll("[data-stp-terminal-image]"),
   );
@@ -3128,7 +3149,18 @@ window.__ppStorageKey = function (name) {
     var showOptIn = status === "disabled" && stpStep === "opt_in_required";
     var showInlineVerify =
       status === "in_progress" && stpStep === "bank_verification_required";
+    var isAgreementPending =
+      status === "in_progress" && stpStep === "agreement_signature_pending";
     var isEnabled = status === "enabled";
+    if (stpDescription) {
+      stpDescription.textContent = isAgreementPending
+        ? "To complete enablement of automatic card processing, signature for Visa agreement is required."
+        : stpDefaultDescription;
+    }
+    if (stpAgreementReviewBtn) {
+      stpAgreementReviewBtn.classList.toggle("hidden", !isAgreementPending);
+      stpAgreementReviewBtn.classList.toggle("inline-flex", isAgreementPending);
+    }
     if (stpLearnMoreMenuBtn) {
       stpLearnMoreMenuBtn.textContent = isEnabled
         ? "Changed payment processors"
@@ -3137,14 +3169,18 @@ window.__ppStorageKey = function (name) {
     if (stpStatusBadge) {
       var showStatusBadge = status === "in_progress" || status === "enabled";
       stpStatusBadge.hidden = !showStatusBadge;
-      if (showInlineVerify) {
+      if (isAgreementPending) {
+        stpStatusBadge.textContent = "Pending Agreement Signature";
+        stpStatusBadge.className =
+          "inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300";
+      } else if (showInlineVerify) {
         stpStatusBadge.textContent = "Action Required";
         stpStatusBadge.className =
           "inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300";
       } else if (status === "enabled") {
-        stpStatusBadge.textContent = "Opted in";
+        stpStatusBadge.textContent = "Enabled";
         stpStatusBadge.className =
-          "inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30";
+          "inline-flex items-center rounded-full border border-green-200 bg-green-100 px-2 py-0.5 text-xs leading-4 font-medium text-green-800 dark:border-green-400/30 dark:bg-green-400/10 dark:text-green-300";
       } else {
         stpStatusBadge.textContent = "Enabling pending";
         stpStatusBadge.className =
@@ -3153,7 +3189,10 @@ window.__ppStorageKey = function (name) {
       stpStatusBadge.classList.toggle("hidden", !showStatusBadge);
     }
     if (stpActionsWrap) {
-      stpActionsWrap.classList.toggle("hidden", showOptIn);
+      stpActionsWrap.classList.toggle(
+        "hidden",
+        showOptIn || isAgreementPending,
+      );
     }
     if (stpInlineVerifyAlert) {
       stpInlineVerifyAlert.classList.toggle("hidden", !showInlineVerify);
@@ -3209,6 +3248,172 @@ window.__ppStorageKey = function (name) {
 
   function syncStpStatus(status, state) {
     applyStpUi(status, state);
+  }
+
+  function setSendAgreementError(message) {
+    if (!sendAgreementError) return;
+    sendAgreementError.textContent = message || "";
+    sendAgreementError.classList.toggle("hidden", !message);
+  }
+
+  function setSendAgreementLoading(loading) {
+    isSendingAgreement = !!loading;
+    if (!sendAgreementBtn) return;
+    sendAgreementBtn.disabled = isSendingAgreement;
+    sendAgreementBtn.textContent = isSendingAgreement
+      ? "Sending..."
+      : "Send agreement";
+  }
+
+  // Same rule as SMART Disburse test emails: only allowlisted addresses
+  // receive a real email.
+  function updateSendAgreementHelp() {
+    if (!sendAgreementHelp || !sendAgreementEmailInput) return;
+    var email = sendAgreementEmailInput.value.trim();
+    if (
+      !email ||
+      !window.STPState ||
+      typeof window.STPState.isAllowlistedEmail !== "function"
+    ) {
+      sendAgreementHelp.textContent =
+        "Test mode: only allowlisted addresses receive the email.";
+      return;
+    }
+    window.STPState.isAllowlistedEmail(email).then(function (allowed) {
+      if (sendAgreementEmailInput.value.trim() !== email) return;
+      sendAgreementHelp.textContent = allowed
+        ? "Test mode: this address is allowlisted and will receive the email."
+        : "Test mode: this address is not allowlisted, so no email will be sent.";
+    });
+  }
+
+  function prefillSendAgreementEmail() {
+    if (!sendAgreementEmailInput || sendAgreementEmailInput.value.trim()) {
+      updateSendAgreementHelp();
+      return;
+    }
+    var request =
+      window.STPState &&
+      typeof window.STPState.getAgreementRequest === "function"
+        ? window.STPState.getAgreementRequest()
+        : null;
+    if (request && request.email) {
+      sendAgreementEmailInput.value = request.email;
+      updateSendAgreementHelp();
+      return;
+    }
+    if (typeof window.getMyCompanyProfile !== "function") {
+      updateSendAgreementHelp();
+      return;
+    }
+    window
+      .getMyCompanyProfile()
+      .then(function (profile) {
+        var email =
+          (profile && profile.contact && profile.contact.email) ||
+          (profile && profile.businessEmail) ||
+          "";
+        if (email && !sendAgreementEmailInput.value.trim()) {
+          sendAgreementEmailInput.value = email;
+        }
+      })
+      .catch(function () {})
+      .then(updateSendAgreementHelp);
+  }
+
+  if (sendAgreementDialog) {
+    var sendAgreementObserver = new MutationObserver(function () {
+      if (!sendAgreementDialog.open) return;
+      setSendAgreementError("");
+      setSendAgreementLoading(false);
+      prefillSendAgreementEmail();
+    });
+    sendAgreementObserver.observe(sendAgreementDialog, {
+      attributes: true,
+      attributeFilter: ["open"],
+    });
+    sendAgreementDialog.addEventListener("cancel", function (event) {
+      if (isSendingAgreement) event.preventDefault();
+    });
+  }
+  if (sendAgreementEmailInput) {
+    sendAgreementEmailInput.addEventListener("input", function () {
+      setSendAgreementError("");
+      updateSendAgreementHelp();
+    });
+  }
+  if (sendAgreementForm) {
+    sendAgreementForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (isSendingAgreement) return;
+      if (
+        !window.STPState ||
+        typeof window.STPState.sendAgreementEmail !== "function"
+      )
+        return;
+      var email = sendAgreementEmailInput
+        ? sendAgreementEmailInput.value.trim()
+        : "";
+      setSendAgreementError("");
+      setSendAgreementLoading(true);
+      Promise.resolve(
+        typeof window.getMyCompanyProfile === "function"
+          ? window.getMyCompanyProfile().catch(function () {
+              return null;
+            })
+          : null,
+      )
+        .then(function (profile) {
+          return window.STPState.sendAgreementEmail({
+            email: email,
+            recipientName:
+              (profile &&
+                profile.contact &&
+                profile.contact.email &&
+                profile.contact.email.toLowerCase() === email.toLowerCase() &&
+                profile.contact.name) ||
+              "",
+            senderName:
+              (profile && (profile.legalName || profile.dbaName)) ||
+              "SMART Hub",
+          });
+        })
+        .then(function (result) {
+          setSendAgreementLoading(false);
+          if (sendAgreementDialog && sendAgreementDialog.open)
+            sendAgreementDialog.close();
+          if (typeof window.showGlobalTopToast === "function") {
+            window.showGlobalTopToast(
+              result.delivered
+                ? "Visa agreement sent to " + result.email + "."
+                : result.allowed
+                  ? "Visa agreement request created for " +
+                      result.email +
+                      ". Live email sending is not enabled for this environment."
+                  : result.email +
+                      " is not allowlisted, so no email was sent.",
+            );
+          }
+        })
+        .catch(function (error) {
+          setSendAgreementLoading(false);
+          setSendAgreementError(
+            (error && error.message) || "Failed to send the Visa agreement.",
+          );
+        });
+    });
+  }
+  if (stpAgreementReviewBtn) {
+    stpAgreementReviewBtn.addEventListener("click", function () {
+      if (
+        window.STPState &&
+        typeof window.STPState.openAgreementReviewModal === "function"
+      ) {
+        window.STPState.openAgreementReviewModal();
+      } else {
+        openEnableStep();
+      }
+    });
   }
 
   agreementCheckbox.addEventListener("change", updateEnableState);
@@ -3478,7 +3683,15 @@ window.__ppStorageKey = function (name) {
   var openFullyAutomatedGuideFromQuery = false;
   try {
     var params = new URLSearchParams(window.location.search || "");
-    openStpFromQuery = params.get("openStpModal") === "1";
+    // "Review and sign" in the Visa agreement email lands here.
+    openStpFromQuery =
+      params.get("openStpModal") === "1" ||
+      params.get("stpAgreement") === "review";
+    if (params.get("stpAgreement") === "review") {
+      params.delete("stpAgreement");
+      params.delete("email");
+      params.delete("token");
+    }
     openFullyAutomatedGuideFromQuery =
       params.get("stpGuide") === "fully-automated";
     if (openStpFromQuery) {
