@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en-GB" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome · SMART Disburse UK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="../../styles/sd-uk.css">
+  <script src="../../data/sd-uk-claim.js"></script>
+  <script src="../../scripts/sd-uk-flow.js"></script>
+  <script src="../../scripts/onboarding-transitions.js"></script>
+  <script src="../../scripts/onboarding-stepper.js"></script>
+  <script src="../../scripts/onboarding-mobile-header.js"></script>
+</head>
+<!-- SMART Disburse UK · 1. Welcome — claim payout invite (Figma 1. Welcome Screen) -->
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white">
+    <div data-ob-content class="flex flex-1 flex-col items-center justify-center px-4 py-10 lg:px-10 lg:py-12">
+      <div class="flex w-full max-w-[480px] flex-col gap-6">
+      <div class="mb-2 flex h-[60px] w-[246px] items-center justify-center self-center rounded-[10px] border-[2.5px] border-dashed border-gray-300 bg-gray-50" title="Client logo">
+        <img alt="" src="../../assets/sd-uk/logo-placeholder.svg" class="size-[35px]">
+      </div>
+      <div class="flex flex-col gap-10">
+        <div data-ob-tone="dark" class="relative flex w-full flex-col justify-center gap-10 overflow-hidden rounded-[32px] py-4 bg-gradient-to-b from-[#1e326f] to-[#090c38]">
+          <div class="pointer-events-none absolute inset-x-0 bottom-0 h-[572px] overflow-hidden rounded-[32px]">
+            <img alt="" src="../../assets/sd-uk/wave-1.svg" class="absolute top-[calc(50%+218px)] left-[-20.8px] size-[151.6px] max-w-none -translate-y-1/2 opacity-60">
+            <img alt="" src="../../assets/sd-uk/wave-2.svg" class="absolute top-[calc(50%+218px)] left-[-124.2px] size-[358.4px] max-w-none -translate-y-1/2 opacity-60">
+            <img alt="" src="../../assets/sd-uk/wave-3.svg" class="absolute top-[calc(50%+218px)] left-[-227.6px] size-[565.2px] max-w-none -translate-y-1/2 opacity-60">
+            <img alt="" src="../../assets/sd-uk/wave-4.svg" class="absolute top-[calc(50%+218px)] left-[-331px] size-[772px] max-w-none -translate-y-1/2 opacity-60">
+          </div>
+          <div class="relative flex flex-col gap-6 px-6 pt-6">
+            <div class="flex flex-col gap-3 text-white">
+              <p class="text-base leading-6">Hi,</p>
+              <p class="text-3xl leading-9 font-extrabold" data-uk-text="fullName">Charles Calderon</p>
+            </div>
+            <div class="flex flex-col gap-2 rounded-[10px] border-8 border-white/5 bg-white/15 p-4">
+              <img alt="" src="../../assets/sd-uk/bell.svg" class="h-[22px] w-5">
+              <p class="text-sm leading-5 font-medium text-white">You’ve been sent a claim payment by <span data-uk-text="payer.name">AT Insurance Ltd.</span></p>
+            </div>
+          </div>
+          <div class="relative p-6">
+            <a href="verify.html" id="get-started" class="inline-flex w-full items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Get Started<img alt="" src="../../assets/sd-uk/icon-arrow-right.svg" class="size-5"></a>
+          </div>
+        </div>
+      </div>
+      </div>
+    </div>
+    <div data-uk-footer></div>
+  </div>
+  <script>
+    // A fresh visit to the link starts the claim over.
+    document.getElementById('get-started').addEventListener('click', function (e) {
+      e.preventDefault();
+      SDUK.resetState();
+      SDUK.go('verify.html');
+    });
+  </script>
+</body>
+</html>

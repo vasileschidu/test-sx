@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en-GB" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Choose payment method · SMART Disburse UK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="../../styles/sd-uk.css">
+  <script src="../../data/sd-uk-claim.js"></script>
+  <script src="../../scripts/sd-uk-flow.js"></script>
+  <script src="../../scripts/onboarding-transitions.js"></script>
+  <script src="../../scripts/onboarding-stepper.js"></script>
+  <script src="../../scripts/onboarding-mobile-header.js"></script>
+</head>
+<!-- SMART Disburse UK · 6. Choose payment method — virtual card or bank account -->
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+    <!-- LEFT SIDEBAR (same as the onboarding flow) -->
+    <div class="hidden lg:flex bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex-col px-10 py-[56px] gap-[35px]">
+      <div class="flex h-[60px] w-full max-w-[246px] shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white/5" title="Client logo">
+        <img alt="" src="../../assets/sd-uk/logo-placeholder.svg" class="size-[30px] opacity-60">
+      </div>
+      <nav aria-label="Progress" data-ob-stepper></nav>
+      <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
+        <a href="contact.html" class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+          <span class="flex-1 text-xs font-medium">Contact <span data-uk-text="payer.name"></span></span>
+        </a>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col lg:min-h-screen">
+        <div data-ob-content class="flex flex-1 flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
+          <div class="flex w-full max-w-[640px] flex-col gap-6">
+      <div data-ob-tone="dark" class="uk-amount relative flex w-full flex-col items-center overflow-hidden rounded-2xl">
+        <img alt="" src="../../assets/sd-uk/bubble-1.svg" class="pointer-events-none absolute top-[calc(50%-72px)] left-[calc(50%-113.5px)] size-[162px] max-w-none -translate-x-1/2 -translate-y-1/2 -rotate-[105deg]">
+        <img alt="" src="../../assets/sd-uk/bubble-2.svg" class="pointer-events-none absolute top-[calc(50%+95.81px)] left-[calc(50%-109.55px)] size-[117px] max-w-none -translate-x-1/2 -translate-y-1/2 -rotate-[105deg]">
+        <img alt="" src="../../assets/sd-uk/bubble-3.svg" class="pointer-events-none absolute top-[calc(50%+27.25px)] left-[calc(50%+161.16px)] size-[147px] max-w-none -translate-x-1/2 -translate-y-1/2 -rotate-[105deg]">
+        <div class="relative flex flex-col items-center gap-3 px-5 py-6">
+          <p class="text-xs leading-4 font-medium tracking-[0.6px] text-blue-200 uppercase">payment amount</p>
+          <p class="flex text-5xl leading-[48px]"><span class="text-white" data-uk-text="amountWhole">£475</span><span class="text-blue-500" data-uk-text="amountPence">.00</span></p>
+          <div class="flex items-center gap-1.5 rounded-full bg-blue-800 px-4 py-1"><span class="text-[10px] leading-4 font-medium tracking-[0.7px] text-blue-400 uppercase">From</span><span class="text-sm leading-5 text-white" data-uk-text="payer.name"></span></div>
+        </div>
+      </div>
+      <div class="flex gap-2">
+        <button type="button" data-info="message" class="flex min-w-px flex-1 cursor-pointer items-center justify-center gap-1 rounded-full bg-gray-50 px-2.5 py-[9px] text-sm leading-5 font-medium whitespace-nowrap text-gray-700 hover:bg-gray-100"><img alt="" src="../../assets/sd-uk/icon-mail.svg" class="size-[18px]">Message</button>
+        <button type="button" data-info="expiration" class="flex min-w-px flex-1 cursor-pointer items-center justify-center gap-1 rounded-full bg-gray-50 px-2.5 py-[9px] text-sm leading-5 font-medium whitespace-nowrap text-gray-700 hover:bg-gray-100"><img alt="" src="../../assets/sd-uk/icon-calendar.svg" class="size-[18px]">Expiration</button>
+        <button type="button" data-info="details" class="flex min-w-px flex-1 cursor-pointer items-center justify-center gap-1 rounded-full bg-gray-50 px-2.5 py-[9px] text-sm leading-5 font-medium whitespace-nowrap text-gray-700 hover:bg-gray-100"><img alt="" src="../../assets/sd-uk/icon-menu.svg" class="size-[18px]">Full details</button>
+      </div>
+      <div class="flex flex-col gap-4">
+        <p class="text-base leading-6 font-semibold text-gray-900">Choose your payment method:</p>
+        <div class="flex flex-col gap-2">
+          <a href="card.html" class="flex w-full cursor-pointer items-center gap-4 rounded-lg border border-gray-200 bg-white p-3 text-left hover:border-gray-300 hover:bg-gray-50">
+            <span class="flex min-w-px flex-1 items-center gap-3">
+              <span class="flex size-8 shrink-0 items-center justify-center rounded-md bg-gray-50 p-2"><img alt="" src="../../assets/sd-uk/icon-card-sparkle.svg" class="size-6 max-w-none"></span>
+              <span class="flex flex-col"><span class="text-sm leading-5 font-semibold text-gray-900">Instant Virtual Card</span><span class="text-xs leading-4 text-gray-500">Funds expected instantly</span></span>
+            </span>
+            <img alt="" src="../../assets/sd-uk/icon-chevron-right.svg" class="size-5">
+          </a>
+          <a href="bank.html" class="flex w-full cursor-pointer items-center gap-4 rounded-lg border border-gray-200 bg-white p-3 text-left hover:border-gray-300 hover:bg-gray-50">
+            <span class="flex min-w-px flex-1 items-center gap-3">
+              <span class="flex size-8 shrink-0 items-center justify-center rounded-md bg-gray-50 p-2"><img alt="" src="../../assets/sd-uk/icon-bank.svg" class="size-6 max-w-none"></span>
+              <span class="flex flex-col"><span class="text-sm leading-5 font-semibold text-gray-900">Send to my Bank Account</span><span class="text-xs leading-4 text-gray-500">Expected from instantly up to 3 days</span></span>
+            </span>
+            <img alt="" src="../../assets/sd-uk/icon-chevron-right.svg" class="size-5">
+          </a>
+        </div>
+      </div>
+          </div>
+          <div class="mt-auto flex w-full max-w-[640px] flex-col gap-4 pt-10">
+
+          </div>
+        </div>
+        <div data-uk-footer></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    SDUK.ready(function () {
+      var d = SDUK.data, m = SDUK.model();
+      var info = {
+        message: ['Message from ' + d.payer.name, '<p>' + d.claim.message + '</p>'],
+        expiration: ['Expiration', '<p>This payment offer is available until <span class="font-semibold text-gray-900">' + d.claim.expires + '</span>. After that, contact ' + d.payer.name + ' to receive it.</p>'],
+        details: ['Full details', '<dl class="flex flex-col gap-3">' +
+          [['Amount', m.amount], ['From', d.payer.name], ['To', m.fullName], ['Claim number', SDUK.getState().claimNumber || d.claim.number], ['Document', d.claim.document.title]]
+            .map(function (r) { return '<div class="flex justify-between gap-4"><dt class="text-gray-500">' + r[0] + '</dt><dd class="text-right font-medium text-gray-900">' + r[1] + '</dd></div>'; }).join('') + '</dl>']
+      };
+      document.querySelectorAll('[data-info]').forEach(function (b) {
+        b.addEventListener('click', function () { var i = info[b.getAttribute('data-info')]; SDUK.infoModal(i[0], i[1]); });
+      });
+      document.querySelectorAll('a[href="card.html"], a[href="bank.html"]').forEach(function (a) {
+        a.addEventListener('click', function (e) { e.preventDefault(); SDUK.saveState({ method: a.getAttribute('href') === 'card.html' ? 'card' : 'bank' }); SDUK.go(a.getAttribute('href')); });
+      });
+    });
+  </script>
+</body>
+</html>

@@ -397,7 +397,7 @@
   }
 
   function init() {
-    if (!$('mp-details')) return;
+    if (!$("mp-details")) return;
     var generation = ++initGeneration;
     bind();
     renderSkeleton();
@@ -406,7 +406,7 @@
     Promise.resolve(window.DataSource ? window.DataSource.load('consumer-profile') : null)
       .catch(function () { return null; })
       .then(function (seed) {
-        if (generation !== initGeneration || !$('mp-details')) return;
+        if (generation !== initGeneration || !$("mp-details")) return;
         var stored = null;
         try { stored = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); } catch (e) {}
         profile = Object.assign({ fullName: '', email: '', phone: '', alerts: {} }, seed || {}, stored || {});
@@ -418,6 +418,7 @@
   }
 
   window.initConsumerMyProfile = init;
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", init, { once: true });
   else init();
 })();

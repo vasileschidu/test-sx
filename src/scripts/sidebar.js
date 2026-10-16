@@ -85,6 +85,7 @@ function normalizeMainContentWrapperLayout(collapsed) {
     "lg:pl-[304px]",
     "lg:pl-[312px]",
     "lg:pl-[288px]",
+    "lg:pl-[312px]",
     "lg:pl-[68px]",
     "lg:pl-[80px]",
     "lg:pl-[81px]",
@@ -542,6 +543,10 @@ function setDesktopSidebarCollapsed(collapsed) {
     "lg:w-[288px]",
     "lg:w-[68px]",
     "lg:w-[81px]",
+    "lg:w-[304px]",
+    "lg:w-[80px]",
+    "lg:w-[312px]",
+    "lg:w-[88px]",
   );
   desktopSidebarShell.classList.toggle("lg:w-[304px]", !collapsed);
   desktopSidebarShell.classList.toggle("lg:w-[80px]", collapsed);
@@ -556,22 +561,68 @@ function setDesktopSidebarCollapsed(collapsed) {
       "py-2",
       "pt-2",
     );
-    desktopSidebarPanel.classList.add("pt-5", "pb-[60px]", "pl-5", "pr-[19px]");
+    desktopSidebarPanel.classList.toggle("px-6", true);
+    desktopSidebarPanel.classList.toggle("px-4", false);
+    if (desktopLogoRow) {
+      desktopLogoRow.classList.toggle("w-10", collapsed);
+      desktopLogoRow.classList.toggle("w-full", !collapsed);
+      desktopLogoRow.classList.toggle("h-8", true);
+      desktopLogoRow.classList.toggle("px-1", !collapsed);
+      desktopLogoRow.classList.toggle("justify-center", collapsed);
+      desktopLogoRow.classList.toggle("justify-start", !collapsed);
+    }
+    var expandedHelp =
+      desktopSidebarHelp &&
+      desktopSidebarHelp.querySelector("[data-sidebar-expanded-help]");
+    var collapsedHelp =
+      desktopSidebarHelp &&
+      desktopSidebarHelp.querySelector("[data-sidebar-collapsed-help]");
+    var expandedFooter =
+      desktopSidebarFooter &&
+      desktopSidebarFooter.querySelector("[data-sidebar-expanded-footer]");
+    var collapsedFooter =
+      desktopSidebarFooter &&
+      desktopSidebarFooter.querySelector("[data-sidebar-collapsed-footer]");
+    if (expandedHelp) expandedHelp.classList.toggle("hidden", collapsed);
+    if (collapsedHelp) collapsedHelp.classList.toggle("hidden", !collapsed);
+    if (expandedFooter) expandedFooter.classList.toggle("hidden", collapsed);
+    if (collapsedFooter) collapsedFooter.classList.toggle("hidden", !collapsed);
   } else {
-    desktopSidebarPanel.classList.remove(
-      "px-5",
-      "pl-5",
-      "pr-[19px]",
-      "px-4",
-      "px-3.5",
-      "px-3",
-      "py-2",
-      "pt-2",
-      "pt-5",
-      "pb-4",
-      "pb-[60px]",
+    desktopSidebarShell.classList.add(
+      collapsed ? "lg:w-[80px]" : "lg:w-[304px]",
     );
-    desktopSidebarPanel.classList.add("p-5");
+    if (collapsed) {
+      desktopSidebarPanel.classList.remove(
+        "p-5",
+        "px-5",
+        "px-4",
+        "px-3.5",
+        "px-3",
+        "py-2",
+        "pt-2",
+      );
+      desktopSidebarPanel.classList.add(
+        "pt-5",
+        "pb-[60px]",
+        "pl-5",
+        "pr-[19px]",
+      );
+    } else {
+      desktopSidebarPanel.classList.remove(
+        "px-5",
+        "pl-5",
+        "pr-[19px]",
+        "px-4",
+        "px-3.5",
+        "px-3",
+        "py-2",
+        "pt-2",
+        "pt-5",
+        "pb-4",
+        "pb-[60px]",
+      );
+      desktopSidebarPanel.classList.add("p-5");
+    }
   }
   }
 

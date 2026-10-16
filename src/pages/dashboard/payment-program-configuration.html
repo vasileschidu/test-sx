@@ -150,7 +150,7 @@
 
       <div
         id="main-content-wrapper"
-        class="min-w-0 min-h-screen flex flex-col lg:pl-[304px]"
+        class="min-w-0 min-h-screen flex flex-col lg:pl-[288px]"
       >
         <app-topbar></app-topbar>
 
@@ -278,7 +278,15 @@
                   />
                 </div>
 
-                <div class="flex flex-col gap-4">
+                <p
+                  id="pp-edit-note"
+                  class="hidden -mt-8 text-sm text-gray-500 dark:text-gray-400"
+                >
+                  The new name applies right away. Cohorts and payment methods
+                  are edited from the program itself.
+                </p>
+
+                <div id="pp-create-waterfall" class="flex flex-col gap-4">
                   <div>
                     <h3
                       class="text-base font-semibold text-gray-950 dark:text-white"
@@ -945,6 +953,194 @@
       </dialog>
     </el-dialog>
 
+    <!-- Bulk: assign selected suppliers to a program and cohort (right-hand drawer) -->
+    <el-dialog>
+      <dialog
+        id="pp-bulk-dialog"
+        aria-labelledby="pp-bulk-title"
+        class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent backdrop:bg-transparent"
+      >
+        <el-dialog-backdrop
+          class="fixed inset-0 bg-slate-950/70 transition-opacity duration-300 ease-in-out data-closed:opacity-0"
+        ></el-dialog-backdrop>
+        <div class="fixed inset-y-0 right-0 flex max-w-full">
+          <el-dialog-panel
+            class="flex h-full w-screen max-w-[576px] transform flex-col bg-white shadow-xl transition duration-300 ease-in-out data-closed:translate-x-full dark:bg-gray-900"
+          >
+            <form id="pp-bulk-form" class="flex h-full min-h-0 flex-col">
+              <div
+                class="flex items-center gap-6 border-b border-gray-200 py-3 pr-4 pl-6 dark:border-white/10"
+              >
+                <div class="min-w-0 flex-1">
+                  <h2
+                    id="pp-bulk-title"
+                    class="text-lg font-medium text-gray-900 dark:text-white"
+                  >
+                    Assign to program
+                  </h2>
+                  <p
+                    id="pp-bulk-subtitle"
+                    class="truncate text-sm text-gray-500 dark:text-gray-400"
+                  ></p>
+                </div>
+                <button
+                  type="button"
+                  command="close"
+                  commandfor="pp-bulk-dialog"
+                  class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-500 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10"
+                >
+                  <span class="sr-only">Close</span>
+                  <svg
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.5"
+                    aria-hidden="true"
+                    class="size-6"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="M6 18 18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
+              </div>
+
+              <div
+                class="flex min-h-0 flex-1 flex-col gap-8 overflow-y-auto p-6"
+              >
+                <div class="flex flex-col gap-4">
+                  <div class="flex flex-col gap-1">
+                    <label
+                      for="pp-bulk-program"
+                      class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                      >Payment program</label
+                    >
+                    <el-select
+                      id="pp-bulk-program"
+                      name="pp-bulk-program"
+                      class="block w-full"
+                    >
+                      <button
+                        type="button"
+                        class="grid h-10 w-full cursor-default grid-cols-1 rounded-md bg-white pr-3 pl-3 text-left text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                      >
+                        <el-selectedcontent
+                          class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-base font-medium text-gray-900 dark:text-white"
+                        ></el-selectedcontent>
+                        <svg
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                          aria-hidden="true"
+                          class="col-start-1 row-start-1 size-4 self-center justify-self-end text-gray-500 dark:text-gray-400"
+                        >
+                          <path
+                            d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
+                            clip-rule="evenodd"
+                            fill-rule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                      <el-options
+                        anchor="bottom start"
+                        popover
+                        class="max-h-72 w-(--button-width) overflow-auto rounded-md bg-white pt-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10"
+                      ></el-options>
+                    </el-select>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <label
+                      for="pp-bulk-cohort"
+                      class="text-sm font-medium text-gray-700 dark:text-gray-300"
+                      >Start suppliers in</label
+                    >
+                    <el-select
+                      id="pp-bulk-cohort"
+                      name="pp-bulk-cohort"
+                      class="block w-full"
+                    >
+                      <button
+                        type="button"
+                        class="grid h-10 w-full cursor-default grid-cols-1 rounded-md bg-white pr-3 pl-3 text-left text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                      >
+                        <el-selectedcontent
+                          class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-base font-medium text-gray-900 dark:text-white"
+                        ></el-selectedcontent>
+                        <svg
+                          viewBox="0 0 16 16"
+                          fill="currentColor"
+                          aria-hidden="true"
+                          class="col-start-1 row-start-1 size-4 self-center justify-self-end text-gray-500 dark:text-gray-400"
+                        >
+                          <path
+                            d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
+                            clip-rule="evenodd"
+                            fill-rule="evenodd"
+                          />
+                        </svg>
+                      </button>
+                      <el-options
+                        anchor="bottom start"
+                        popover
+                        class="max-h-72 w-(--button-width) overflow-auto rounded-md bg-white pt-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10"
+                      ></el-options>
+                    </el-select>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                      Suppliers start this stage fresh, and its timer begins
+                      today.
+                    </p>
+                  </div>
+                </div>
+
+                <div class="flex flex-col gap-4">
+                  <div>
+                    <h3
+                      class="text-base font-semibold text-gray-950 dark:text-white"
+                    >
+                      What will happen
+                    </h3>
+                    <p class="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                      A supplier is in one program and one cohort at a time.
+                      Untick a group to leave those suppliers where they are.
+                    </p>
+                  </div>
+                  <div id="pp-bulk-groups" class="flex flex-col gap-3"></div>
+                </div>
+              </div>
+
+              <div
+                class="flex items-center justify-between gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10"
+              >
+                <p
+                  id="pp-bulk-summary"
+                  class="min-w-0 text-sm text-gray-600 dark:text-gray-400"
+                ></p>
+                <div class="flex shrink-0 gap-3">
+                  <button
+                    type="button"
+                    command="close"
+                    commandfor="pp-bulk-dialog"
+                    class="cursor-pointer rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    id="pp-bulk-submit"
+                    type="submit"
+                    disabled
+                    class="cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600"
+                  >
+                    Review
+                  </button>
+                </div>
+              </div>
+            </form>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
+
     <!-- Move suppliers between programs: speedbump -->
     <el-dialog>
       <dialog
@@ -1037,6 +1233,98 @@
       </dialog>
     </el-dialog>
 
+    <!-- Delete program: speedbump -->
+    <el-dialog>
+      <dialog
+        id="pp-delete-dialog"
+        aria-labelledby="pp-delete-title"
+        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
+      >
+        <el-dialog-backdrop
+          class="fixed inset-0 bg-gray-900/60 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+        ></el-dialog-backdrop>
+        <div
+          tabindex="0"
+          class="flex min-h-full items-center justify-center p-4 focus:outline-none"
+        >
+          <el-dialog-panel
+            class="relative w-full max-w-lg transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-2 data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800"
+          >
+            <button
+              command="close"
+              commandfor="pp-delete-dialog"
+              type="button"
+              class="absolute right-4 top-4 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 dark:hover:bg-white/10"
+            >
+              <span class="sr-only">Close</span>
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.5"
+                aria-hidden="true"
+                class="size-6"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18 18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+            <div class="flex flex-col gap-6 px-6 pt-14 pb-6">
+              <div class="flex flex-col items-center gap-4 text-center">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  class="size-10 text-red-500"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+                <h3
+                  id="pp-delete-title"
+                  class="text-lg font-semibold text-gray-900 dark:text-white"
+                ></h3>
+                <p
+                  id="pp-delete-lede"
+                  class="text-sm text-gray-500 dark:text-gray-400"
+                ></p>
+              </div>
+              <ul
+                id="pp-delete-impacts"
+                role="list"
+                class="flex flex-col gap-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-medium text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-300"
+              ></ul>
+            </div>
+            <div
+              class="grid grid-cols-2 gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10"
+            >
+              <button
+                type="button"
+                command="close"
+                commandfor="pp-delete-dialog"
+                class="cursor-pointer rounded-md border border-gray-300 bg-white px-3 py-2.5 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10"
+              >
+                Cancel
+              </button>
+              <button
+                id="pp-delete-confirm"
+                type="button"
+                class="cursor-pointer rounded-md bg-red-600 px-3 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
+              >
+                Delete program
+              </button>
+            </div>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
+
     <!-- Toast -->
     <div
       id="pp-toast"
@@ -1045,7 +1333,8 @@
       class="pointer-events-none fixed inset-x-0 bottom-6 z-50 flex justify-center px-4 opacity-0 translate-y-2 transition duration-200 ease-out"
     >
       <div
-        class="pointer-events-auto flex items-center gap-3 rounded-lg bg-gray-900 py-3 pr-3 pl-4 text-sm text-white shadow-lg dark:bg-gray-700"
+        id="pp-toast-card"
+        class="flex items-center gap-3 rounded-lg bg-gray-900 py-3 pr-3 pl-4 text-sm text-white shadow-lg dark:bg-gray-700"
       >
         <svg
           viewBox="0 0 20 20"
@@ -1060,6 +1349,11 @@
           />
         </svg>
         <span id="pp-toast-text"></span>
+        <button
+          type="button"
+          id="pp-toast-action"
+          class="hidden cursor-pointer rounded-md px-2 py-1 text-sm font-semibold text-blue-300 hover:bg-white/10 hover:text-blue-200"
+        ></button>
         <button
           type="button"
           id="pp-toast-close"

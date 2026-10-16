@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en-GB" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instant with a Virtual Card · SMART Disburse UK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="../../styles/sd-uk.css">
+  <script src="../../data/sd-uk-claim.js"></script>
+  <script src="../../scripts/sd-uk-flow.js"></script>
+  <script src="../../scripts/onboarding-transitions.js"></script>
+  <script src="../../scripts/onboarding-stepper.js"></script>
+  <script src="../../scripts/onboarding-mobile-header.js"></script>
+</head>
+<!-- SMART Disburse UK · 7. Virtual card — cardholder details -->
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+    <!-- LEFT SIDEBAR (same as the onboarding flow) -->
+    <div class="hidden lg:flex bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex-col px-10 py-[56px] gap-[35px]">
+      <div class="flex h-[60px] w-full max-w-[246px] shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white/5" title="Client logo">
+        <img alt="" src="../../assets/sd-uk/logo-placeholder.svg" class="size-[30px] opacity-60">
+      </div>
+      <nav aria-label="Progress" data-ob-stepper></nav>
+      <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
+        <a href="contact.html" class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+          <span class="flex-1 text-xs font-medium">Contact <span data-uk-text="payer.name"></span></span>
+        </a>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col lg:min-h-screen">
+        <div data-ob-content class="flex flex-1 flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
+          <div class="flex w-full max-w-[640px] flex-col gap-6">
+      <div class="flex flex-col items-center gap-4">
+        <div class="flex w-full flex-col gap-4">
+          <h1 class="text-3xl font-semibold leading-9 text-gray-900">Instant with a Virtual Card</h1>
+          <p class="text-sm leading-5 text-gray-500"><span class="font-semibold text-gray-900" data-uk-text="amount"></span> will be deposited on an instantly issued Virtual Card</p>
+        </div>
+        <button type="button" id="how-it-works" class="cursor-pointer rounded-md bg-blue-50 px-2.5 py-1.5 text-sm font-semibold text-blue-700 hover:bg-blue-100">How this works</button>
+      </div>
+      <form id="card-form" class="flex flex-col gap-4" autocomplete="off">
+        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4">
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between"><label for="d-first" class="text-sm leading-5 text-gray-900">First Name</label></div>
+            <input id="d-first" name="d-first" type="text" placeholder="" data-uk-value="claimant.firstName" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between"><label for="d-last" class="text-sm leading-5 text-gray-900">Last Name</label></div>
+            <input id="d-last" name="d-last" type="text" placeholder="" data-uk-value="claimant.lastName" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+          </div>
+        </div>
+        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4">
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between"><label for="d-line1" class="text-sm leading-5 text-gray-900">Address Line 1</label></div>
+            <input id="d-line1" name="d-line1" type="text" placeholder="" data-uk-value="claimant.address.line1" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between"><label for="d-line2" class="text-sm leading-5 text-gray-900">Address Line 2</label><span class="text-sm text-gray-500">Optional</span></div>
+            <input id="d-line2" name="d-line2" type="text" placeholder="" data-uk-value="claimant.address.line2" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between"><label for="d-city" class="text-sm leading-5 text-gray-900">City</label></div>
+            <input id="d-city" name="d-city" type="text" placeholder="" data-uk-value="claimant.address.city" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+          </div>
+          <div class="flex flex-col gap-2">
+            <label for="d-region" class="text-sm leading-5 text-gray-900">Province/Territory</label>
+            <div class="grid grid-cols-1">
+              <select id="d-region" name="d-region" data-uk-select="regions" data-uk-select-value="claimant.address.region" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"><option value=""></option></select>
+              <img alt="" src="../../assets/sd-uk/icon-chevron-down.svg" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end">
+            </div>
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between"><label for="d-postcode" class="text-sm leading-5 text-gray-900">Postal Code</label></div>
+            <input id="d-postcode" name="d-postcode" type="text" placeholder="" data-uk-value="claimant.address.postcode" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+          </div>
+          <div class="flex flex-col gap-2">
+            <span class="text-sm leading-5 text-gray-900">Country</span>
+            <div class="flex h-10 items-center gap-2 rounded-md bg-gray-50 px-3 text-base text-gray-400 outline-1 -outline-offset-1 outline-gray-200 sm:text-sm/6">
+              <img alt="" src="../../assets/sd-uk/flag-gb.svg" class="h-[15px] w-5"><span class="min-w-0 flex-1 truncate" data-uk-text="claimant.address.country"></span>
+              <img alt="" src="../../assets/sd-uk/icon-chevron-down.svg" class="size-5 opacity-50">
+            </div>
+          </div>
+        </div>
+        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4">
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between"><label for="d-phone" class="text-sm leading-5 text-gray-900">Phone Number</label></div>
+            <input id="d-phone" name="d-phone" type="tel" placeholder="(000) 000-0000" data-uk-value="claimant.phone" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+          </div>
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between"><label for="d-email" class="text-sm leading-5 text-gray-900">Email</label></div>
+            <input id="d-email" name="d-email" type="email" placeholder="" data-uk-value="claimant.email" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+          </div>
+        </div>
+      </form>
+          </div>
+          <div class="mt-auto flex w-full max-w-[640px] flex-col gap-4 pt-10">
+        <button type="button" id="card-next" disabled class="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">Next<img alt="" src="../../assets/sd-uk/icon-arrow-right.svg" class="size-5"></button>
+          </div>
+        </div>
+        <div data-uk-footer></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    SDUK.ready(function () {
+      function readDetails() {
+        var v = function (id) { var el = document.getElementById(id); return el ? el.value.trim() : undefined; };
+        var out = {};
+        [['firstName', 'd-first'], ['lastName', 'd-last'], ['line1', 'd-line1'], ['line2', 'd-line2'], ['city', 'd-city'], ['region', 'd-region'], ['postcode', 'd-postcode'], ['phone', 'd-phone'], ['email', 'd-email']]
+          .forEach(function (p) { var x = v(p[1]); if (x !== undefined) out[p[0]] = x; });
+        return Object.assign({}, SDUK.getState().details || {}, out);
+      }
+      var form = document.getElementById('card-form');
+      var btn = document.getElementById('card-next');
+      var required = ['d-first', 'd-last', 'd-line1', 'd-city', 'd-region', 'd-postcode', 'd-phone', 'd-email'];
+      SDUK.watch(form, btn, function () { return required.every(function (id) { return document.getElementById(id).value.trim(); }); });
+      btn.addEventListener('click', function () {
+        if (btn.disabled) return;
+        SDUK.saveState({ details: readDetails() });
+        SDUK.go('card-summary.html');
+      });
+      document.getElementById('how-it-works').addEventListener('click', function () {
+        SDUK.confirmModal({
+          title: 'Here’s a Sample Virtual Card',
+          body: 'Your claim payment is loaded onto a Mastercard virtual card you can use straight away.',
+          extra: '<div class="flex flex-col items-center gap-4">' +
+'<div class="uk-mono relative h-[176px] w-full max-w-[280px] overflow-hidden rounded-[10px] bg-gradient-to-b from-[#1e326f] to-[#090c38] p-4 text-left text-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)]">' +
+              '<span class="absolute top-4 right-4 rounded-full bg-white/20 px-2 text-[11px]">CVC2: <span class="inline-block h-2 w-5 rounded bg-white/40 align-middle"></span></span>' +
+              '<p class="mt-6 flex items-center gap-2 text-xl font-semibold">£<span class="inline-block h-3 w-24 rounded-full bg-white/30"></span></p>' +
+              '<p class="mt-4 flex gap-2"><span class="h-3 w-10 rounded-full bg-white/30"></span><span class="h-3 w-10 rounded-full bg-white/30"></span><span class="h-3 w-10 rounded-full bg-white/30"></span><span class="h-3 w-10 rounded-full bg-white/30"></span></p>' +
+              '<p class="mt-3 ml-14 flex items-center gap-2 text-[8px] font-semibold leading-[9px]"><span>VALID<br>THRU</span><span class="h-2.5 w-8 rounded-full bg-white/30"></span></p>' +
+              '<p class="absolute bottom-4 left-4 text-[11px] font-semibold">CARD HOLDER</p>' +
+              '<img alt="" src="../../assets/sd-uk/mastercard.svg" class="absolute right-4 bottom-3 h-[26px] w-[42px]">' +
+            '</div>' +
+            '<p class="flex items-center gap-2 text-xs text-gray-500"><img alt="" src="../../assets/sd-uk/icon-trademark.svg" class="size-3">Trademark Disclaimer</p>' +
+            '<p class="text-base text-gray-900">Digital Wallet(s):</p>' +
+            '<img alt="Add to Apple Wallet" src="../../assets/sd-uk/apple-wallet.svg" class="h-11 w-[142px] rounded-md">' +
+          '</div>',
+          cancel: 'Terms & Conditions', confirm: 'Got it', tone: 'secondary'
+        });
+      });
+    });
+  </script>
+</body>
+</html>

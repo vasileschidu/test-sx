@@ -125,25 +125,66 @@
               <img src="../../../assets/icons/contact-annotation.svg" alt="" aria-hidden="true" />
               <h2 id="mc-dispute-title" class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">Contact Details</h2>
             </div>
-            <div class="flex w-full flex-col gap-3">
-              <div class="flex w-full flex-col gap-1 rounded-md bg-gray-50 px-5 py-4 dark:bg-white/5">
-                <p class="text-sm/5 font-medium text-gray-900 dark:text-gray-100">Payer Name</p>
-                <p id="mc-dispute-payer" class="text-sm/5 font-normal text-gray-700 dark:text-gray-300"></p>
+            <div class="flex w-full flex-col gap-[25px] px-6 pt-6 pb-6">
+              <div class="flex w-full flex-col items-center gap-4">
+                <img
+                  src="../../../assets/icons/contact-annotation.svg"
+                  alt=""
+                  aria-hidden="true"
+                />
+                <h2
+                  id="mc-dispute-title"
+                  class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white"
+                >
+                  Contact Details
+                </h2>
               </div>
-              <div class="flex w-full flex-col gap-1 rounded-md bg-gray-50 px-5 py-4 dark:bg-white/5">
-                <p class="text-sm/5 font-medium text-gray-900 dark:text-gray-100">Email Address</p>
-                <a id="mc-dispute-email" class="w-fit text-sm/5 font-normal text-gray-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300"></a>
-              </div>
-              <div class="flex w-full flex-col gap-1 rounded-md bg-gray-50 px-5 py-4 dark:bg-white/5">
-                <p class="text-sm/5 font-medium text-gray-900 dark:text-gray-100">Phone Number</p>
-                <a id="mc-dispute-phone" class="w-fit text-sm/5 font-normal text-gray-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300"></a>
+              <div class="flex w-full flex-col gap-3">
+                <div
+                  class="flex w-full flex-col gap-1 rounded-md bg-gray-50 px-5 py-4 dark:bg-white/5"
+                >
+                  <p
+                    class="text-sm/5 font-medium text-gray-900 dark:text-gray-100"
+                  >
+                    Payer Name
+                  </p>
+                  <p
+                    id="mc-dispute-payer"
+                    class="text-sm/5 font-normal text-gray-700 dark:text-gray-300"
+                  ></p>
+                </div>
+                <div
+                  class="flex w-full flex-col gap-1 rounded-md bg-gray-50 px-5 py-4 dark:bg-white/5"
+                >
+                  <p
+                    class="text-sm/5 font-medium text-gray-900 dark:text-gray-100"
+                  >
+                    Email Address
+                  </p>
+                  <a
+                    id="mc-dispute-email"
+                    class="w-fit text-sm/5 font-normal text-gray-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300"
+                  ></a>
+                </div>
+                <div
+                  class="flex w-full flex-col gap-1 rounded-md bg-gray-50 px-5 py-4 dark:bg-white/5"
+                >
+                  <p
+                    class="text-sm/5 font-medium text-gray-900 dark:text-gray-100"
+                  >
+                    Phone Number
+                  </p>
+                  <a
+                    id="mc-dispute-phone"
+                    class="w-fit text-sm/5 font-normal text-gray-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300"
+                  ></a>
+                </div>
               </div>
             </div>
-          </div>
-        </el-dialog-panel>
-      </div>
-    </dialog>
-  </el-dialog>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
 
   <!-- Toast -->
   <div id="mc-toast" role="status" aria-live="polite"

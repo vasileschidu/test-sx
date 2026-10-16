@@ -795,6 +795,14 @@ function buildHelpBlock(id, collapsed) {
   if (activeBrand() === "consumer-portal")
     return buildConsumerHelpBlock(id, collapsed);
   const wrap = id ? `id="${id}" ` : "";
+  if (activeBrand() === "consumer-portal" && id)
+    return `<div ${wrap}class="flex w-full flex-col">
+<div data-sidebar-expanded-help class="${collapsed ? "hidden " : ""}flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-white/10"><button class="self-start inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100 cursor-pointer"><img src="../../../assets/icons/consumer-portal/help.svg" alt="" class="size-[18px]" />Help from Transcard</button></div>
+<div data-sidebar-collapsed-help class="${collapsed ? "" : "hidden "}flex w-full flex-col gap-4"><div class="h-px w-full bg-gray-200 dark:bg-white/10"></div><button type="button" aria-label="Help from Transcard" data-sidebar-btn-tooltip="Help from Transcard" class="flex h-8 w-full items-center justify-center rounded-md cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10"><img src="../../../assets/icons/consumer-portal/help.svg" alt="" class="size-[18px]" /></button></div></div>`;
+  if (activeBrand() === "consumer-portal")
+    return `<div ${wrap}class="flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-white/10">
+<button class="self-start inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100 cursor-pointer">
+<img src="../../../assets/icons/consumer-portal/help.svg" alt="" class="size-[18px]" />Help from Transcard</button></div>`;
   const expandedBtn = `<button type="button" data-support-trigger data-help-variant="expanded" aria-haspopup="dialog" aria-expanded="false" aria-controls="dashboard-support-flyout" class="${collapsed ? "!hidden " : ""}self-start inline-flex h-10 items-center gap-1.5 rounded-md px-3 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 hover:text-gray-900 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100 cursor-pointer">
 ${HELP_ICON_SVG.replace("size-6", "size-5")}Help from Transcard</button>`;
   if (collapsed == null) {
@@ -845,13 +853,7 @@ function accountInfoCurrentRow() {
     '<div class="flex w-full items-center justify-between">' +
     '<div class="flex min-w-0 items-center gap-2">' +
     '<span class="inline-flex shrink-0 rounded-full bg-gradient-to-b from-[#27C9E3] to-[#026EBC] p-1 shadow-[0px_1px_1px_rgba(0,0,0,0.05)]">' +
-    accountInfoImg(
-      "payment-logomark.svg",
-      "size-5 shrink-0",
-      20,
-      20,
-      "",
-    ) +
+    accountInfoImg("payment-logomark.svg", "size-5 shrink-0", 20, 20, "") +
     "</span>" +
     '<span class="text-sm font-medium leading-5 whitespace-nowrap text-gray-800 dark:text-gray-100">AP/AR Payments</span>' +
     accountInfoImg(
@@ -937,6 +939,18 @@ function buildFooter(id, collapsed) {
   if (activeBrand() === "consumer-portal")
     return buildConsumerFooter(id, collapsed);
   const wrap = id ? `id="${id}" ` : "";
+  if (activeBrand() === "consumer-portal" && id)
+    return `<div ${wrap}class="h-[74px] w-full shrink-0">
+<div data-sidebar-expanded-footer class="${collapsed ? "hidden " : ""}flex h-full flex-col items-center gap-2 pt-4 pb-0"><div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /><span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span><img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16" /></div><div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400"><a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span><a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>
+<div data-sidebar-collapsed-footer class="${collapsed ? "" : "hidden "}flex h-full w-full flex-col gap-[10px]"><div class="flex w-full items-center justify-center gap-2 px-px py-4"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /></div></div></div>`;
+  if (activeBrand() === "consumer-portal")
+    return `<div ${wrap}class="flex flex-col items-center gap-2 pt-4 pb-0">
+<div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" />
+<span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span>
+<img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16" /></div>
+<div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400">
+<a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span>
+<a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>`;
   const shieldMark = TRANSCARD_SHIELD_SVG.replace(
     'width="18" height="18"',
     'width="24" height="24"',

@@ -228,7 +228,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
   nextButton.addEventListener("click", () => {
     if (!nextButton.disabled) {
-      window.location.href = "paywall.html";
+      // A flow can point the button elsewhere (the UK claim demo uses data-next).
+      window.location.href =
+        nextButton.getAttribute("data-next") || "paywall.html";
     }
   });
   updateNextButtonState();

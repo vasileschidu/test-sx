@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en-GB" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verification · SMART Disburse UK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <link rel="stylesheet" href="../../styles/sd-uk.css">
+  <script src="../../data/sd-uk-claim.js"></script>
+  <script src="../../scripts/sd-uk-flow.js"></script>
+  <script src="../../scripts/onboarding-transitions.js"></script>
+  <script src="../../scripts/onboarding-stepper.js"></script>
+  <script src="../../scripts/onboarding-mobile-header.js"></script>
+</head>
+<!-- SMART Disburse UK · 2. OTP verification (request → check your phone → filled) -->
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+    <!-- LEFT SIDEBAR (same as the onboarding flow) -->
+    <div class="hidden lg:flex bg-gradient-to-b from-[#1E326F] to-[#090C38] w-[325px] shrink-0 self-stretch flex-col px-10 py-[56px] gap-[35px]">
+      <div class="flex h-[60px] w-full max-w-[246px] shrink-0 items-center justify-center rounded-xl border-2 border-dashed border-white/20 bg-white/5" title="Client logo">
+        <img alt="" src="../../assets/sd-uk/logo-placeholder.svg" class="size-[30px] opacity-60">
+      </div>
+      <nav aria-label="Progress" data-ob-stepper></nav>
+      <div class="mt-auto flex flex-col items-start justify-center gap-3 self-stretch rounded-lg border border-white/10 p-3">
+        <a href="contact.html" class="flex w-full cursor-pointer items-center gap-3 text-left text-white transition-colors hover:text-white/70">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-4 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+          <span class="flex-1 text-xs font-medium">Contact <span data-uk-text="payer.name"></span></span>
+        </a>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col lg:min-h-screen">
+        <div data-ob-content class="flex flex-1 flex-col items-center px-4 pt-10 pb-8 lg:px-10 lg:pt-12">
+          <div class="flex w-full max-w-[640px] flex-col gap-6">
+      <div class="flex flex-col gap-4" data-otp-intro>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-6 text-blue-600"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 1.5H8.25A2.25 2.25 0 0 0 6 3.75v16.5a2.25 2.25 0 0 0 2.25 2.25h7.5A2.25 2.25 0 0 0 18 20.25V3.75a2.25 2.25 0 0 0-2.25-2.25H13.5m-3 0V3h3V1.5m-3 0h3m-3 18.75h3"/></svg>
+        <h1 class="text-3xl font-semibold leading-9 text-gray-900" data-otp-title>Check your phone</h1>
+        <p class="text-sm leading-5 text-gray-500" data-otp-copy>For your security we need to authenticate you. We have sent a verification code to the phone number <span class="font-semibold text-gray-900" data-uk-text="claimant.phoneMasked"></span>.</p>
+      </div>
+      <div class="flex flex-col gap-2" data-otp-entry>
+        <label for="otp-code" class="text-sm leading-5 text-gray-900">Please enter the code below.</label>
+        <input id="otp-code" inputmode="numeric" maxlength="6" autocomplete="one-time-code" placeholder="Enter the 6-digit code" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+        <p class="mt-2 text-sm leading-5 text-gray-500">Code is valid for <span class="font-semibold text-gray-900" data-otp-timer>01:59</span>.</p>
+      </div>
+          </div>
+          <div class="mt-auto flex w-full max-w-[640px] flex-col gap-4 pt-10">
+        <div class="flex flex-col gap-4">
+        <button type="button" id="otp-submit" disabled class="inline-flex h-11 w-full cursor-pointer items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">Submit Code</button>
+          <button type="button" id="otp-request" disabled class="inline-flex h-11 w-full cursor-not-allowed items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 opacity-40 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">Request New Code in 01:59</button>
+        </div>
+          </div>
+        </div>
+        <div data-uk-footer></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    SDUK.ready(function () {
+      // The code is sent as the step opens: the user lands ready to type it.
+      var request = document.getElementById('otp-request');
+      var submit = document.getElementById('otp-submit');
+      var code = document.getElementById('otp-code');
+      var timer = null;
+
+      function setRequest(on, label) {
+        request.disabled = !on;
+        request.classList.toggle('opacity-40', !on);
+        request.classList.toggle('cursor-not-allowed', !on);
+        request.classList.toggle('cursor-pointer', on);
+        request.textContent = label;
+      }
+
+      function startTimer() {
+        var left = 119;
+        clearInterval(timer);
+        var paint = function () {
+          var t = '0' + Math.floor(left / 60) + ':' + String(left % 60).padStart(2, '0');
+          document.querySelector('[data-otp-timer]').textContent = t;
+          setRequest(left <= 0, left > 0 ? 'Request New Code in ' + t : 'Request New Code');
+          left -= 1;
+          if (left < 0) clearInterval(timer);
+        };
+        paint();
+        timer = setInterval(paint, 1000);
+      }
+      startTimer();
+      if (window.OnboardingTransitions) window.OnboardingTransitions.whenReady(function () { code.focus(); });
+
+      request.addEventListener('click', function () {
+        if (request.disabled) return;
+        code.value = '';
+        SDUK.setEnabled(submit, false);
+        startTimer();
+        SDUK.infoModal('New code sent', '<p>We sent a new verification code to <span class="font-semibold text-gray-900">' + SDUK.data.claimant.phoneMasked + '</span>.</p>', 'check');
+      });
+
+      code.addEventListener('input', function () {
+        code.value = code.value.replace(/\D/g, '').slice(0, 6);
+        SDUK.setEnabled(submit, code.value.length === 6);
+      });
+      submit.addEventListener('click', function () {
+        if (submit.disabled) return;
+        SDUK.saveState({ verified: true });
+        SDUK.go('claim.html');
+      });
+    });
+  </script>
+</body>
+</html>

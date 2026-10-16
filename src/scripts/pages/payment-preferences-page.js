@@ -1211,45 +1211,6 @@ window.__ppStorageKey = function (name) {
     return html;
   }
 
-  function buildEntityOptionsHtml(vendorEntries) {
-    var html =
-      "" +
-      '<el-option value="all-entities" class="group/option relative block cursor-default py-2 pr-9 pl-3 text-gray-900 select-none aria-selected:bg-gray-100 group-aria-selected/option:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:group-aria-selected/option:bg-white/10 dark:focus:bg-white/10">' +
-      '<span class="block truncate font-medium group-aria-selected/option:font-semibold">All entities</span>' +
-      '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
-      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
-      '<path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
-      "</svg>" +
-      "</span>" +
-      "</el-option>";
-
-    vendorEntries.forEach(function (entry, index) {
-      var label = escapeHtml(entry);
-      var value = escapeHtml(
-        "entry-" +
-          index +
-          "-" +
-          entry.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
-      );
-      html +=
-        "" +
-        '<el-option value="' +
-        value +
-        '" class="group/option relative block cursor-default py-2 pr-9 pl-3 text-gray-900 select-none aria-selected:bg-gray-100 group-aria-selected/option:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:group-aria-selected/option:bg-white/10 dark:focus:bg-white/10">' +
-        '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' +
-        label +
-        "</span>" +
-        '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
-        '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
-        '<path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
-        "</svg>" +
-        "</span>" +
-        "</el-option>";
-    });
-
-    return html;
-  }
-
   function getSelectValue(selectEl) {
     if (!selectEl) return "";
     if (typeof selectEl.value === "string" && selectEl.value)
@@ -1268,29 +1229,6 @@ window.__ppStorageKey = function (name) {
     selectEl.dispatchEvent(new Event("change", { bubbles: true }));
   }
 
-  function getCustomerById(customerId) {
-    for (var i = 0; i < customersCache.length; i++) {
-      if (customersCache[i].id === customerId) return customersCache[i];
-    }
-    return null;
-  }
-
-  function hydrateEntityForRow(rowEl) {
-    var payerSelect = rowEl.querySelector("[data-adv-payer-select]");
-    var entitySelect = rowEl.querySelector("[data-adv-entity-select]");
-    var entityOptions = rowEl.querySelector("[data-adv-entity-options]");
-    if (!entitySelect || !entityOptions) return;
-
-    var payerId = getSelectValue(payerSelect);
-    var customer = getCustomerById(payerId);
-    var vendorEntries =
-      customer && Array.isArray(customer.vendorEntries)
-        ? customer.vendorEntries
-        : [];
-    entityOptions.innerHTML = buildEntityOptionsHtml(vendorEntries);
-    setSelectValue(entitySelect, "all-entities");
-  }
-
   function hydratePayerSelects() {
     var optionsHtml = buildPayerOptionsHtml(customersCache);
     rowsWrap
@@ -1298,9 +1236,6 @@ window.__ppStorageKey = function (name) {
       .forEach(function (optsEl) {
         optsEl.innerHTML = optionsHtml;
       });
-    rowsWrap.querySelectorAll(".pp-adv-row").forEach(function (rowEl) {
-      hydrateEntityForRow(rowEl);
-    });
   }
 
   // The Global Preferences "Method of Payment" dropdown is the one shared component:
@@ -1490,8 +1425,6 @@ window.__ppStorageKey = function (name) {
   rowsWrap.addEventListener("change", function (event) {
     var payerSelect = event.target.closest("[data-adv-payer-select]");
     if (payerSelect) {
-      var payerRow = payerSelect.closest(".pp-adv-row");
-      if (payerRow) hydrateEntityForRow(payerRow);
       setAdvancedDirty(true);
       return;
     }
@@ -1503,9 +1436,6 @@ window.__ppStorageKey = function (name) {
       setAdvancedDirty(true);
       return;
     }
-
-    var entitySelect = event.target.closest("[data-adv-entity-select]");
-    if (entitySelect) setAdvancedDirty(true);
   });
 
   fetchCustomers().then(function (customers) {

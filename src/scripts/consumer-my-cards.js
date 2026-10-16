@@ -117,21 +117,21 @@
   }
 
   function openDisputeDialog(card) {
-    var dialog = $('mc-dispute-dialog');
-    var contact = $('mc-dispute-contact');
-    if (!dialog || !contact || typeof dialog.showModal !== 'function') return;
+    var dialog = $("mc-dispute-dialog");
+    var contact = $("mc-dispute-contact");
+    if (!dialog || !contact || typeof dialog.showModal !== "function") return;
 
-    $('mc-dispute-payer').textContent = card.sentBy || '—';
+    $("mc-dispute-payer").textContent = card.sentBy || "—";
     var emailSource = contact.querySelector('a[href^="mailto:"]');
     var phoneSource = contact.querySelector('a[href^="tel:"]');
-    var email = $('mc-dispute-email');
-    var phone = $('mc-dispute-phone');
-    email.textContent = emailSource ? emailSource.textContent.trim() : '—';
-    phone.textContent = phoneSource ? phoneSource.textContent.trim() : '—';
+    var email = $("mc-dispute-email");
+    var phone = $("mc-dispute-phone");
+    email.textContent = emailSource ? emailSource.textContent.trim() : "—";
+    phone.textContent = phoneSource ? phoneSource.textContent.trim() : "—";
     if (emailSource) email.href = emailSource.href;
-    else email.removeAttribute('href');
+    else email.removeAttribute("href");
     if (phoneSource) phone.href = phoneSource.href;
-    else phone.removeAttribute('href');
+    else phone.removeAttribute("href");
 
     if (!dialog.open) dialog.showModal();
   }
@@ -654,8 +654,8 @@
     document.addEventListener('click', function (event) {
       var t = event.target;
 
-      if (t.closest('[data-mc-dispute-close]')) {
-        var disputeDialog = $('mc-dispute-dialog');
+      if (t.closest("[data-mc-dispute-close]")) {
+        var disputeDialog = $("mc-dispute-dialog");
         if (disputeDialog && disputeDialog.open) disputeDialog.close();
         return;
       }
@@ -764,7 +764,7 @@
   }
 
   function init() {
-    if (!$('mc-list-view')) return;
+    if (!$("mc-list-view")) return;
     clearTimeout(loadTimer);
     var generation = ++initGeneration;
     bind();
@@ -775,13 +775,14 @@
     Promise.resolve(window.DataSource ? window.DataSource.load('consumer-cards') : null)
       .catch(function () { return null; })
       .then(function (data) {
-        if (generation !== initGeneration || !$('mc-list-view')) return;
+        if (generation !== initGeneration || !$("mc-list-view")) return;
         cards = data && Array.isArray(data.cards) ? data.cards : [];
         if (id && findCard(id)) showCard(id); else showList();
       });
   }
 
   window.initConsumerMyCards = init;
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", init, { once: true });
   else init();
 })();
