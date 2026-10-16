@@ -9,20 +9,20 @@
  * clearing the signature, and enabling/disabling the "Next" button based on
  * whether a signature is present.
  */
-document.addEventListener('DOMContentLoaded', () => {
-  const canvas = document.getElementById('signature-canvas');
-  const clearButton = document.getElementById('clear-signature');
-  const nextButton = document.getElementById('next-button');
-  const context = canvas.getContext('2d');
+document.addEventListener("DOMContentLoaded", () => {
+  const canvas = document.getElementById("signature-canvas");
+  const clearButton = document.getElementById("clear-signature");
+  const nextButton = document.getElementById("next-button");
+  const context = canvas.getContext("2d");
 
-  const tabDraw = document.getElementById('tab-draw');
-  const tabType = document.getElementById('tab-type');
-  const typeWrap = document.getElementById('type-input-wrap');
-  const fullNameInput = document.getElementById('fullName');
+  const tabDraw = document.getElementById("tab-draw");
+  const tabType = document.getElementById("tab-type");
+  const typeWrap = document.getElementById("type-input-wrap");
+  const fullNameInput = document.getElementById("fullName");
 
   let isDrawing = false;
   let hasSignature = false;
-  let mode = 'draw'; // 'draw' | 'type'
+  let mode = "draw"; // 'draw' | 'type'
 
   /**
    * Sets the canvas dimensions to match its CSS layout size multiplied by the
@@ -36,13 +36,13 @@ document.addEventListener('DOMContentLoaded', () => {
     canvas.width = Math.floor(bounds.width * ratio);
     canvas.height = Math.floor(bounds.height * ratio);
     context.setTransform(ratio, 0, 0, ratio, 0, 0);
-    context.lineCap = 'round';
-    context.lineJoin = 'round';
+    context.lineCap = "round";
+    context.lineJoin = "round";
     context.lineWidth = 2.5;
-    context.strokeStyle = '#111827';
+    context.strokeStyle = "#111827";
 
     // redraw typed name if in type mode
-    if (mode === 'type') drawTypedSignature(fullNameInput.value || '');
+    if (mode === "type") drawTypedSignature(fullNameInput.value || "");
   }
 
   /**
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * @param {PointerEvent} event
    */
   function handlePointerDown(event) {
-    if (mode !== 'draw') return;
+    if (mode !== "draw") return;
     event.preventDefault();
     isDrawing = true;
     const point = getPoint(event);
@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * @param {PointerEvent} event
    */
   function handlePointerMove(event) {
-    if (mode !== 'draw' || !isDrawing) return;
+    if (mode !== "draw" || !isDrawing) return;
     event.preventDefault();
     const point = getPoint(event);
     context.lineTo(point.x, point.y);
@@ -99,7 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
    * canvas (draw mode only).
    */
   function handlePointerUp() {
-    if (mode !== 'draw') return;
+    if (mode !== "draw") return;
     isDrawing = false;
     context.closePath();
   }
@@ -119,7 +119,7 @@ document.addEventListener('DOMContentLoaded', () => {
   function drawTypedSignature(text) {
     clearCanvas();
 
-    const safe = (text || '').trim();
+    const safe = (text || "").trim();
     if (!safe) {
       hasSignature = false;
       updateNextButtonState();
@@ -128,9 +128,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // "script" vibe using common cursive stack
     context.save();
-    context.fillStyle = '#111827';
-    context.textAlign = 'center';
-    context.textBaseline = 'middle';
+    context.fillStyle = "#111827";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
 
     // pick a font size that fits width
     const maxWidth = canvas.getBoundingClientRect().width - 48; // padding-ish
@@ -163,68 +163,72 @@ document.addEventListener('DOMContentLoaded', () => {
     mode = nextMode;
 
     // Tabs styling
-    if (mode === 'draw') {
-      tabDraw.className = "rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900";
-      tabDraw.setAttribute('aria-current', 'page');
+    if (mode === "draw") {
+      tabDraw.className =
+        "rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900";
+      tabDraw.setAttribute("aria-current", "page");
 
-      tabType.className = "rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700";
-      tabType.removeAttribute('aria-current');
+      tabType.className =
+        "rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700";
+      tabType.removeAttribute("aria-current");
 
-      typeWrap.classList.add('hidden');
+      typeWrap.classList.add("hidden");
 
       // enable drawing behavior
-      canvas.style.pointerEvents = 'auto';
+      canvas.style.pointerEvents = "auto";
       // keep whatever was drawn before
     } else {
-      tabType.className = "rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900";
-      tabType.setAttribute('aria-current', 'page');
+      tabType.className =
+        "rounded-md bg-gray-100 px-3 py-2 text-sm font-medium text-gray-900";
+      tabType.setAttribute("aria-current", "page");
 
-      tabDraw.className = "rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700";
-      tabDraw.removeAttribute('aria-current');
+      tabDraw.className =
+        "rounded-md px-3 py-2 text-sm font-medium text-gray-500 hover:text-gray-700";
+      tabDraw.removeAttribute("aria-current");
 
-      typeWrap.classList.remove('hidden');
+      typeWrap.classList.remove("hidden");
 
       // disable drawing interaction
-      canvas.style.pointerEvents = 'none';
+      canvas.style.pointerEvents = "none";
 
-      drawTypedSignature(fullNameInput.value || '');
+      drawTypedSignature(fullNameInput.value || "");
     }
   }
 
   // Events
-  tabDraw.addEventListener('click', () => setMode('draw'));
-  tabType.addEventListener('click', () => setMode('type'));
+  tabDraw.addEventListener("click", () => setMode("draw"));
+  tabType.addEventListener("click", () => setMode("type"));
 
-  fullNameInput?.addEventListener('input', (e) => {
-    if (mode !== 'type') return;
+  fullNameInput?.addEventListener("input", (e) => {
+    if (mode !== "type") return;
     drawTypedSignature(e.target.value);
   });
 
-  clearButton.addEventListener('click', () => {
+  clearButton.addEventListener("click", () => {
     clearCanvas();
     hasSignature = false;
     updateNextButtonState();
-    if (mode === 'type') {
-      fullNameInput.value = '';
+    if (mode === "type") {
+      fullNameInput.value = "";
     }
   });
 
-  canvas.addEventListener('pointerdown', handlePointerDown);
-  canvas.addEventListener('pointermove', handlePointerMove);
-  canvas.addEventListener('pointerup', handlePointerUp);
-  canvas.addEventListener('pointerleave', handlePointerUp);
-  canvas.addEventListener('pointercancel', handlePointerUp);
+  canvas.addEventListener("pointerdown", handlePointerDown);
+  canvas.addEventListener("pointermove", handlePointerMove);
+  canvas.addEventListener("pointerup", handlePointerUp);
+  canvas.addEventListener("pointerleave", handlePointerUp);
+  canvas.addEventListener("pointercancel", handlePointerUp);
 
-  window.addEventListener('resize', setCanvasSize);
+  window.addEventListener("resize", setCanvasSize);
 
   // init
   setCanvasSize();
   updateNextButtonState();
-  setMode('draw');
+  setMode("draw");
 
-  nextButton.addEventListener('click', () => {
+  nextButton.addEventListener("click", () => {
     if (!nextButton.disabled) {
-      window.location.href = 'paywall.html';
+      window.location.href = "paywall.html";
     }
   });
   updateNextButtonState();

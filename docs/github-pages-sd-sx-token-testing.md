@@ -54,9 +54,9 @@ You do not need to manually create KV namespaces anymore.
 {
   "kv_namespaces": [
     {
-      "binding": "TOKEN_STORE"
-    }
-  ]
+      "binding": "TOKEN_STORE",
+    },
+  ],
 }
 ```
 
