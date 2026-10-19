@@ -256,7 +256,7 @@
         mediaHtml: config.mediaHtml || "",
         mediaClass: config.mediaClass || "",
         iconHtml: config.iconHtml || "",
-        title: escapeHtml(config.title || ""),
+        title: escapeHtml(config.title || "") + (config.titleSuffixHtml || ""),
         subtitle: escapeHtml(config.subtitle || ""),
         actionsHtml: config.actionsHtml || "",
       }) +
@@ -413,6 +413,63 @@
     });
   }
 
+  var BANK_VALIDATION_STATES = {
+    verified: {
+      label: "Verified account",
+      tipPosition: "top",
+      iconClass: "text-green-500",
+      path: "M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z",
+    },
+    locked: {
+      label:
+        "Payment method unavailable, exceeded maximum number of validation attempts.",
+      tipPosition: "top",
+      iconClass: "text-amber-500",
+      path: "M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z",
+    },
+    unverified: {
+      label: "This account has not been yet verified.",
+      tipPosition: "bottom",
+      iconClass: "text-gray-400",
+      path: "M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z",
+    },
+  };
+
+  // Validation-attempt indicator shown next to a bank account's name
+  // (Consumer Portal data only — accounts without validationStatus get none).
+  function buildBankValidationIcon(status) {
+    var state = BANK_VALIDATION_STATES[status];
+    if (!state) return "";
+    var below = state.tipPosition === "bottom";
+    return (
+      '<span data-bank-validation="' +
+      status +
+      '" tabindex="0" role="img" aria-label="' +
+      state.label +
+      '" class="group/vtip relative ml-1 inline-flex align-middle outline-none">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 ' +
+      state.iconClass +
+      '"><path fill-rule="evenodd" clip-rule="evenodd" d="' +
+      state.path +
+      '" /></svg>' +
+      '<span role="tooltip" class="pointer-events-none invisible absolute left-1/2 z-30 w-max max-w-[343px] -translate-x-1/2 rounded-lg bg-gray-900 p-3 text-left text-sm/5 font-normal whitespace-normal text-gray-100 opacity-0 drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] transition-opacity group-hover/vtip:visible group-hover/vtip:opacity-100 group-focus-visible/vtip:visible group-focus-visible/vtip:opacity-100 ' +
+      (below ? "top-full mt-2.5" : "bottom-full mb-2.5") +
+      '">' +
+      '<span aria-hidden="true" class="absolute left-1/2 size-2.5 -translate-x-1/2 rotate-45 bg-gray-900 ' +
+      (below ? "-top-1" : "-bottom-1") +
+      '"></span>' +
+      '<span class="relative flex items-start gap-2">' +
+      (status === "verified"
+        ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-green-500"><path fill-rule="evenodd" clip-rule="evenodd" d="' +
+          state.path +
+          '" /></svg>'
+        : "") +
+      '<span class="whitespace-normal">' +
+      state.label +
+      "</span></span></span></span>"
+    );
+  }
+
   function createBankAccountRow(account) {
     var accountCopyId = "pp-bank-detail-copy-account-" + escapeHtml(account.id);
     var routingCopyId = "pp-bank-detail-copy-routing-" + escapeHtml(account.id);
@@ -423,6 +480,7 @@
       mediaClass:
         "flex size-10 shrink-0 items-center justify-center rounded-lg bg-gray-200 dark:bg-white/10",
       title: account.displayName || account.name,
+      titleSuffixHtml: buildBankValidationIcon(account.validationStatus),
       subtitle: "••••" + escapeHtml(account.last4),
       actionsHtml: buildAccountActionMenu("bank", account.id),
       bodyHtml:

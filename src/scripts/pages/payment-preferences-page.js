@@ -2355,6 +2355,7 @@ window.__ppStorageKey = function (name) {
           maskedAccount: maskedAccount,
           maskedRouting: maskedRouting,
           address: address,
+          validationStatus: account && account.validationStatus ? String(account.validationStatus) : "",
         };
       })
       .filter(Boolean);
@@ -2760,6 +2761,7 @@ window.__ppStorageKey = function (name) {
       address: buildAddBankAddress(),
       isDefault: !!addBankDefaultInput.checked,
     };
+    if (PP_CONFIG.dataset) newAccount.validationStatus = "unverified";
     if (newAccount.isDefault)
       bankAccounts.forEach(function (item) {
         item.isDefault = false;
