@@ -1253,6 +1253,62 @@ window.__ppStorageKey = function (name) {
     return source ? source.innerHTML : "";
   }
 
+  // Consumer Portal: bank options show their validation status. Unverified
+  // accounts are disabled and explain why (Figma "Dropdown" frame).
+  var advBankStatusById = {};
+  var ADV_CHECK_ICON =
+    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 shrink-0 text-emerald-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.4C11.5346 14.4 14.4 11.5346 14.4 8C14.4 4.46538 11.5346 1.6 8 1.6C4.46538 1.6 1.6 4.46538 1.6 8C1.6 11.5346 4.46538 14.4 8 14.4ZM11.0852 6.5529C11.2801 6.28491 11.2209 5.90966 10.9529 5.71476C10.6849 5.51986 10.3097 5.57911 10.1148 5.8471L7.32776 9.67923L5.82426 8.17574C5.58995 7.94142 5.21005 7.94142 4.97574 8.17574C4.74142 8.41005 4.74142 8.78995 4.97574 9.02426L6.97574 11.0243C7.09982 11.1483 7.27199 11.2119 7.44693 11.1982C7.62187 11.1844 7.78203 11.0948 7.88524 10.9529L11.0852 6.5529Z" /></svg>';
+  var ADV_X_ICON =
+    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 shrink-0 text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.4C11.5346 14.4 14.4 11.5346 14.4 8C14.4 4.46538 11.5346 1.6 8 1.6C4.46538 1.6 1.6 4.46538 1.6 8C1.6 11.5346 4.46538 14.4 8 14.4ZM6.62426 5.77574C6.38995 5.54142 6.01005 5.54142 5.77574 5.77574C5.54142 6.01005 5.54142 6.38995 5.77574 6.62426L7.15147 8L5.77574 9.37574C5.54142 9.61005 5.54142 9.98995 5.77574 10.2243C6.01005 10.4586 6.38995 10.4586 6.62426 10.2243L8 8.84853L9.37574 10.2243C9.61005 10.4586 9.98995 10.4586 10.2243 10.2243C10.4586 9.98995 10.4586 9.61005 10.2243 9.37574L8.84853 8L10.2243 6.62426C10.4586 6.38995 10.4586 6.01005 10.2243 5.77574C9.98995 5.54142 9.61005 5.54142 9.37574 5.77574L8 7.15147L6.62426 5.77574Z" /></svg>';
+  var ADV_WARNING_ICON =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-amber-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.27598 3.0253C9.0322 1.65823 10.9678 1.65823 11.724 3.0253L17.2431 13.0025C17.9848 14.3433 17.0319 16 15.5191 16H4.48093C2.96807 16 2.01521 14.3433 2.75691 13.0025L8.27598 3.0253ZM10.9889 12.983C10.9889 13.5384 10.5461 13.9887 9.99992 13.9887C9.45369 13.9887 9.01089 13.5384 9.01089 12.983C9.01089 12.4276 9.45369 11.9773 9.99992 11.9773C10.5461 11.9773 10.9889 12.4276 10.9889 12.983ZM9.99991 4.93733C9.45369 4.93733 9.01089 5.3876 9.01089 5.94303V8.96016C9.01089 9.51559 9.45369 9.96587 9.99991 9.96587C10.5461 9.96587 10.9889 9.51559 10.9889 8.96016V5.94303C10.9889 5.3876 10.5461 4.93733 9.99991 4.93733Z" /></svg>';
+
+  function decorateBankOptions(optsEl) {
+    var unverifiedShown = false;
+    optsEl.querySelectorAll("el-option").forEach(function (optionEl) {
+      var checkEl = optionEl.querySelector(":scope > span.text-blue-600");
+      if (checkEl) checkEl.classList.replace("text-blue-600", "text-emerald-500");
+      var status = advBankStatusById[optionEl.getAttribute("value")];
+      if (!status) return;
+      var titleRow = optionEl.querySelector(
+        ".flex.items-center.gap-1\\.5.self-stretch",
+      );
+      if (!titleRow) return;
+      var title = titleRow.firstElementChild;
+      var secondary = titleRow.parentElement.querySelector(".block.text-sm");
+      if (status === "verified") {
+        title.insertAdjacentHTML(
+          "afterend",
+          window.PPComponents &&
+            typeof window.PPComponents.buildBankValidationIcon === "function"
+            ? window.PPComponents.buildBankValidationIcon("verified")
+            : ADV_CHECK_ICON,
+        );
+        return;
+      }
+      // Only one unverified account is listed, always last.
+      if (unverifiedShown || status !== "unverified") {
+        optionEl.remove();
+        return;
+      }
+      unverifiedShown = true;
+      optsEl.appendChild(optionEl);
+      title.insertAdjacentHTML("afterend", ADV_X_ICON);
+      titleRow.classList.replace("font-medium", "font-semibold");
+      titleRow.classList.add("text-gray-500");
+      if (secondary) secondary.classList.replace("text-gray-500", "text-gray-400");
+      optionEl.setAttribute("disabled", "");
+      optionEl.setAttribute("aria-disabled", "true");
+      optionEl.classList.add("pointer-events-none", "bg-gray-50", "flex", "flex-col", "gap-3");
+      optionEl.insertAdjacentHTML(
+        "beforeend",
+        '<div class="flex items-start gap-3 rounded-md border border-yellow-200 bg-yellow-50 p-2 in-[el-selectedcontent]:hidden">' +
+          ADV_WARNING_ICON +
+          '<p class="text-sm/5 font-normal whitespace-normal text-yellow-700">This bank account hasn\'t been verified yet. Please select a verified account or add a new one.</p></div>',
+      );
+    });
+  }
+
   function hydrateMethodSelects() {
     var optionsHtml = getMethodOptionsTemplateHtml();
     if (!optionsHtml) return;
@@ -1281,6 +1337,7 @@ window.__ppStorageKey = function (name) {
             "w-[416px] max-w-[calc(100vw-2rem)]",
           );
         optsEl.innerHTML = optionsHtml;
+        if (isConsumerPage) decorateBankOptions(optsEl);
       });
     rowsWrap.querySelectorAll(".pp-adv-row").forEach(function (rowEl) {
       applyRowMethodUniqueness(rowEl);
@@ -1438,8 +1495,19 @@ window.__ppStorageKey = function (name) {
     }
   });
 
-  fetchCustomers().then(function (customers) {
-    customersCache = customers;
+  Promise.all([
+    fetchCustomers(),
+    window
+      .__ppLoadSharedData()
+      .then(function (payload) {
+        ((payload && payload.bankAccounts) || []).forEach(function (bank) {
+          if (bank && bank.id && bank.validationStatus)
+            advBankStatusById[bank.id] = bank.validationStatus;
+        });
+      })
+      .catch(function () {}),
+  ]).then(function (results) {
+    customersCache = results[0];
     hydratePayerSelects();
     hydrateMethodSelects();
   });
@@ -2364,6 +2432,7 @@ window.__ppStorageKey = function (name) {
           maskedAccount: maskedAccount,
           maskedRouting: maskedRouting,
           address: address,
+          validationStatus: account && account.validationStatus ? String(account.validationStatus) : "",
         };
       })
       .filter(Boolean);
@@ -2748,6 +2817,162 @@ window.__ppStorageKey = function (name) {
     );
   });
 
+  // ---- Bank account validation (Consumer Portal) -------------------------
+  // Attempt 1 fails -> "one remaining attempt"; attempt 2 fails -> generic
+  // error; attempt 3 fails -> no attempts left (account is added as locked).
+  // The mock validator passes only a routing number with a valid ABA checksum.
+  var BANK_VALIDATION_MIN_MS = 3000;
+  var BANK_VALIDATION_MAX_MS = 7000;
+  // Placeholder for Figma's [Customer Name] / [buyerEmailAddress].
+  var BANK_VALIDATION_CONTACT = { name: "Optum Pay", email: "support@optumpay.com" };
+  var bankValidationAttempts = 0;
+  var bankValidationDialog = null;
+
+  function isValidRoutingNumber(routing) {
+    if (!/^\d{9}$/.test(routing)) return false;
+    var w = [3, 7, 1, 3, 7, 1, 3, 7, 1];
+    var sum = 0;
+    for (var i = 0; i < 9; i++) sum += Number(routing[i]) * w[i];
+    return sum % 10 === 0;
+  }
+
+  function getBankValidationDialog() {
+    if (bankValidationDialog) return bankValidationDialog;
+    var d = document.createElement("dialog");
+    d.id = "pp-bank-validation-dialog";
+    d.className =
+      "m-auto w-[450px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white p-0 text-left shadow-xl backdrop:bg-gray-900/75 dark:bg-gray-900";
+    d.addEventListener("cancel", function (event) {
+      if (d.getAttribute("data-state") === "loading") event.preventDefault();
+    });
+    document.body.appendChild(d);
+    bankValidationDialog = d;
+    return d;
+  }
+
+  var VALIDATION_X_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+  var VALIDATION_WARNING_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-11 text-amber-500" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" /></svg>';
+  var VALIDATION_ENVELOPE_ICON =
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-11 text-blue-500" aria-hidden="true"><path d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z" /><path d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" /></svg>';
+  var VALIDATION_SPINNER =
+    '<svg class="size-[34px] animate-spin" viewBox="0 0 34 34" fill="none" aria-hidden="true"><circle cx="17" cy="17" r="15" stroke="#E5E7EB" stroke-width="3" /><path d="M17 2a15 15 0 0 1 15 15" stroke="#2563EB" stroke-width="3" stroke-linecap="round" /></svg>';
+
+  function renderBankValidationState(state, config) {
+    var d = getBankValidationDialog();
+    d.setAttribute("data-state", state);
+    var btnBase =
+      "w-full cursor-pointer rounded-md px-3.5 py-2.5 text-base font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ";
+    var html;
+    if (state === "loading") {
+      html =
+        '<div class="flex flex-col items-center gap-6 px-6 py-9 text-center">' +
+        VALIDATION_SPINNER +
+        '<div class="flex w-full flex-col gap-2"><p class="text-lg/6 font-semibold text-gray-900 dark:text-white">Please Wait</p>' +
+        '<p class="text-sm/5 font-normal text-gray-500 dark:text-gray-400">The account is being verified. This may take a few moments.</p></div></div>';
+    } else {
+      html =
+        '<div class="flex h-14 items-end justify-end px-4 pt-4"><button type="button" data-validation-close aria-label="Close" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10">' +
+        VALIDATION_X_ICON +
+        "</button></div>" +
+        '<div class="flex flex-col items-center gap-6 px-6 pt-3 pb-6 text-center">' +
+        config.icon +
+        '<div class="flex w-full flex-col gap-2"><p class="text-lg/6 font-semibold text-gray-900 dark:text-white">' +
+        config.title +
+        '</p><p class="text-base/6 font-normal text-gray-700 dark:text-gray-300">' +
+        config.body +
+        "</p></div></div>" +
+        '<div class="' +
+        (config.primary ? "border-t border-gray-200 px-6 py-5 dark:border-white/10" : "px-6 pb-6") +
+        '"><button type="button" data-validation-action class="' +
+        btnBase +
+        (config.primary
+          ? "bg-blue-600 text-white hover:bg-blue-500"
+          : "bg-white text-gray-700 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10") +
+        '">' +
+        config.action +
+        "</button></div>";
+    }
+    d.innerHTML = html;
+    if (!d.open) d.showModal();
+    var closeBtn = d.querySelector("[data-validation-close]");
+    var actionBtn = d.querySelector("[data-validation-action]");
+    if (closeBtn) closeBtn.addEventListener("click", config.onClose);
+    if (actionBtn) actionBtn.addEventListener("click", config.onAction);
+  }
+
+  function runBankValidation(routingDigits, done) {
+    var attempt = ++bankValidationAttempts;
+    renderBankValidationState("loading", {});
+    var delay =
+      BANK_VALIDATION_MIN_MS +
+      Math.random() * (BANK_VALIDATION_MAX_MS - BANK_VALIDATION_MIN_MS);
+    setTimeout(function () {
+      var d = getBankValidationDialog();
+      if (isValidRoutingNumber(routingDigits)) {
+        d.close();
+        done("verified");
+        return;
+      }
+      function backToDetails() {
+        d.close();
+        done("retry");
+      }
+      if (attempt >= 3) {
+        var customer = BANK_VALIDATION_CONTACT.name;
+        function closeAll() {
+          d.close();
+          done("locked");
+        }
+        renderBankValidationState("locked", {
+          icon: VALIDATION_WARNING_ICON,
+          title: "Unable to Verify Account Details",
+          body:
+            "There is a problem with the account details you provided. Please contact <strong class=\"font-semibold\">" +
+            customer +
+            "</strong> for details.",
+          action: "Contact " + customer,
+          primary: false,
+          onClose: closeAll,
+          onAction: function () {
+            renderBankValidationState("notified", {
+              icon: VALIDATION_ENVELOPE_ICON,
+              title: "Thank you!",
+              body:
+                "We have notified your customer. If you have any questions, please contact <span class=\"font-medium\">" +
+                customer +
+                "</span> by emailing <span class=\"font-medium\">" +
+                BANK_VALIDATION_CONTACT.email +
+                "</span>, your reference code is <span class=\"font-medium\">" +
+                "BV-" +
+                Date.now().toString(36).toUpperCase() +
+                "</span>.",
+              action: "Close",
+              primary: false,
+              onClose: closeAll,
+              onAction: closeAll,
+            });
+          },
+        });
+        return;
+      }
+      renderBankValidationState("error", {
+        icon: VALIDATION_WARNING_ICON,
+        title: "Unable to Verify Method of Payment",
+        body:
+          "The account and/or routing number provided could not be verified. Please review and try again." +
+          (attempt === 1
+            ? " You have one remaining attempt to validate your account."
+            : ""),
+        action: "Update",
+        primary: true,
+        onClose: backToDetails,
+        onAction: backToDetails,
+      });
+    }, delay);
+  }
+
   saveBtn.addEventListener("click", function () {
     var accountName = (nameInput.value || "").trim();
     var routingDigits = sanitizeDigits(routingInput.value, 9);
@@ -2772,22 +2997,49 @@ window.__ppStorageKey = function (name) {
       address: buildAddBankAddress(),
       isDefault: !!(addBankDefaultInput && addBankDefaultInput.checked),
     };
-    if (newAccount.isDefault)
-      bankAccounts.forEach(function (item) {
-        item.isDefault = false;
-      });
-    bankAccounts.push(newAccount);
-    saveBankAccounts();
-    renderAllViews();
+    function commitNewAccount(validationStatus) {
+      if (validationStatus) newAccount.validationStatus = validationStatus;
+      if (newAccount.isDefault)
+        bankAccounts.forEach(function (item) {
+          item.isDefault = false;
+        });
+      bankAccounts.push(newAccount);
+      saveBankAccounts();
+      renderAllViews();
 
-    nameInput.value = "";
-    routingInput.value = "";
-    accountInput.value = "";
-    confirmAccountInput.value = "";
-    nicknameInput.value = "";
-    dialog.close();
+      nameInput.value = "";
+      routingInput.value = "";
+      accountInput.value = "";
+      confirmAccountInput.value = "";
+      nicknameInput.value = "";
+      bankValidationAttempts = 0;
+      dialog.close();
+    }
+
+    // Consumer Portal: the account is validated before it is added.
+    if (window.__ppConfig.dataset) {
+      runBankValidation(routingDigits, function (outcome) {
+        if (outcome === "verified") {
+          commitNewAccount("verified");
+          notifyCrud('Added bank account "' + newAccount.name + '".');
+        } else if (outcome === "locked") {
+          commitNewAccount("locked");
+        }
+      });
+      return;
+    }
+
+    commitNewAccount();
     notifyCrud('Added bank account "' + newAccount.name + '".');
   });
+
+  if (window.__ppConfig.dataset) {
+    dialog.addEventListener("close", function () {
+      // Closed while validation isn't mid-flight → the attempt session ends.
+      if (!bankValidationDialog || !bankValidationDialog.open)
+        bankValidationAttempts = 0;
+    });
+  }
 
   addCheckCountrySelect.addEventListener("change", updateAddCheckCountryFlag);
   if (addBankCountrySelect)

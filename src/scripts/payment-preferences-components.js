@@ -256,7 +256,7 @@
         mediaHtml: config.mediaHtml || "",
         mediaClass: config.mediaClass || "",
         iconHtml: config.iconHtml || "",
-        title: escapeHtml(config.title || ""),
+        title: escapeHtml(config.title || "") + (config.titleSuffixHtml || ""),
         subtitle: escapeHtml(config.subtitle || ""),
         actionsHtml: config.actionsHtml || "",
       }) +
@@ -413,6 +413,63 @@
     });
   }
 
+  var BANK_VALIDATION_STATES = {
+    verified: {
+      label: "Verified account",
+      tipPosition: "top",
+      iconClass: "text-emerald-500",
+      path: "M8 14.4C11.5346 14.4 14.4 11.5346 14.4 8C14.4 4.46538 11.5346 1.6 8 1.6C4.46538 1.6 1.6 4.46538 1.6 8C1.6 11.5346 4.46538 14.4 8 14.4ZM11.0852 6.5529C11.2801 6.28491 11.2209 5.90966 10.9529 5.71476C10.6849 5.51986 10.3097 5.57911 10.1148 5.8471L7.32776 9.67923L5.82426 8.17574C5.58995 7.94142 5.21005 7.94142 4.97574 8.17574C4.74142 8.41005 4.74142 8.78995 4.97574 9.02426L6.97574 11.0243C7.09982 11.1483 7.27199 11.2119 7.44693 11.1982C7.62187 11.1844 7.78203 11.0948 7.88524 10.9529L11.0852 6.5529Z",
+    },
+    locked: {
+      label:
+        "Payment method unavailable, exceeded maximum number of validation attempts.",
+      tipPosition: "top",
+      iconClass: "text-amber-500",
+      path: "M6.7876 1.996C7.32646 1.06266 8.67361 1.06266 9.21247 1.996L14.2354 10.696C14.7743 11.6293 14.1007 12.796 13.023 12.796H2.97709C1.89937 12.796 1.22579 11.6293 1.76465 10.696L6.7876 1.996ZM8 4C8.33137 4 8.6 4.26863 8.6 4.6V7.4C8.6 7.73137 8.33137 8 8 8C7.66863 8 7.4 7.73137 7.4 7.4L7.4 4.6C7.4 4.26863 7.66863 4 8 4ZM8 11.2C8.44183 11.2 8.8 10.8418 8.8 10.4C8.8 9.95817 8.44183 9.6 8 9.6C7.55817 9.6 7.2 9.95817 7.2 10.4C7.2 10.8418 7.55817 11.2 8 11.2Z",
+    },
+    unverified: {
+      label: "This account has not been yet verified.",
+      tipPosition: "bottom",
+      iconClass: "text-gray-400",
+      path: "M8 14.4C11.5346 14.4 14.4 11.5346 14.4 8C14.4 4.46538 11.5346 1.6 8 1.6C4.46538 1.6 1.6 4.46538 1.6 8C1.6 11.5346 4.46538 14.4 8 14.4ZM6.62426 5.77574C6.38995 5.54142 6.01005 5.54142 5.77574 5.77574C5.54142 6.01005 5.54142 6.38995 5.77574 6.62426L7.15147 8L5.77574 9.37574C5.54142 9.61005 5.54142 9.98995 5.77574 10.2243C6.01005 10.4586 6.38995 10.4586 6.62426 10.2243L8 8.84853L9.37574 10.2243C9.61005 10.4586 9.98995 10.4586 10.2243 10.2243C10.4586 9.98995 10.4586 9.61005 10.2243 9.37574L8.84853 8L10.2243 6.62426C10.4586 6.38995 10.4586 6.01005 10.2243 5.77574C9.98995 5.54142 9.61005 5.54142 9.37574 5.77574L8 7.15147L6.62426 5.77574Z",
+    },
+  };
+
+  // Validation-attempt indicator shown next to a bank account's name
+  // (Consumer Portal data only — accounts without validationStatus get none).
+  function buildBankValidationIcon(status) {
+    var state = BANK_VALIDATION_STATES[status];
+    if (!state) return "";
+    var below = state.tipPosition === "bottom";
+    return (
+      '<span data-bank-validation="' +
+      status +
+      '" tabindex="0" role="img" aria-label="' +
+      state.label +
+      '" class="group/vtip relative ml-1 inline-flex align-middle outline-none">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 ' +
+      state.iconClass +
+      '"><path fill-rule="evenodd" clip-rule="evenodd" d="' +
+      state.path +
+      '" /></svg>' +
+      '<span role="tooltip" class="pointer-events-none invisible absolute left-1/2 z-30 w-max max-w-[343px] -translate-x-1/2 rounded-lg bg-gray-900 p-3 text-left text-sm/5 font-normal whitespace-normal text-gray-100 opacity-0 drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] transition-opacity group-hover/vtip:visible group-hover/vtip:opacity-100 group-focus-visible/vtip:visible group-focus-visible/vtip:opacity-100 ' +
+      (below ? "top-full mt-2.5" : "bottom-full mb-2.5") +
+      '">' +
+      '<span aria-hidden="true" class="absolute left-1/2 size-2.5 -translate-x-1/2 rotate-45 bg-gray-900 ' +
+      (below ? "-top-1" : "-bottom-1") +
+      '"></span>' +
+      '<span class="relative flex items-start gap-2">' +
+      (status === "verified"
+        ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-emerald-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.8566 8.19113C14.1002 7.85614 14.0261 7.38708 13.6911 7.14345C13.3561 6.89982 12.8871 6.97388 12.6434 7.30887L9.15969 12.099L7.28033 10.2197C6.98744 9.92678 6.51256 9.92678 6.21967 10.2197C5.92678 10.5126 5.92678 10.9874 6.21967 11.2803L8.71967 13.7803C8.87477 13.9354 9.08999 14.0149 9.30867 13.9977C9.52734 13.9805 9.72754 13.8685 9.85655 13.6911L13.8566 8.19113Z' +
+          
+          '" /></svg>'
+        : "") +
+      '<span class="whitespace-normal">' +
+      state.label +
+      "</span></span></span></span>"
+    );
+  }
+
   function createBankAccountRow(account) {
     var accountCopyId = "pp-bank-detail-copy-account-" + escapeHtml(account.id);
     var routingCopyId = "pp-bank-detail-copy-routing-" + escapeHtml(account.id);
@@ -423,6 +480,7 @@
       mediaClass:
         "flex size-10 shrink-0 items-center justify-center rounded-lg bg-gray-200 dark:bg-white/10",
       title: account.displayName || account.name,
+      titleSuffixHtml: buildBankValidationIcon(account.validationStatus),
       subtitle: "••••" + escapeHtml(account.last4),
       actionsHtml: buildAccountActionMenu("bank", account.id),
       bodyHtml:
@@ -506,6 +564,7 @@
 
   window.PPComponents = Object.assign({}, window.PPComponents || {}, {
     buildAccountActionMenu: buildAccountActionMenu,
+    buildBankValidationIcon: buildBankValidationIcon,
     buildDescriptionListItem: buildDescriptionListItem,
     createMiniCardComponent: createMiniCardComponent,
     createAccountDetailsComponent: createAccountDetailsComponent,
