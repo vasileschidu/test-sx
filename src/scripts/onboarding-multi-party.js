@@ -518,7 +518,11 @@
     var share = F.myShare();
     var method = F.methodLabel();
     var parts = money(share).match(/^(.*?)(\.\d{2})$/) || [money(share), money(share), ''];
-    var processing = { 'Bank Transfer - ACH': 'Up to 3 Days', Check: '7–10 Days' }[method] || 'Instant';
+    // Same badges as the method summary pages: green Instant, amber ACH, red Check.
+    var processing = {
+      'Bank Transfer - ACH': { text: 'Up to 3 Days', bg: 'bg-[#f59e0b]', icon: 'icon-check-circle-badge.svg' },
+      Check: { text: '7–10 Days', bg: 'bg-[#ef4444]', icon: 'icon-exclamation-circle-badge.svg' }
+    }[method] || { text: 'Instant', bg: 'bg-[#10b981]', icon: 'icon-check-circle-badge.svg' };
     var finalPage = new URLSearchParams(window.location.search).get('final');
 
     var amountCard = share > 0
@@ -531,9 +535,11 @@
           '<div class="relative flex h-full flex-col items-center gap-3 pt-6 pb-[25px]">' +
             '<p class="text-xs leading-5 font-medium tracking-[0.3px] text-[#bfdbfe] uppercase">Payment Amount</p>' +
             '<p class="text-5xl leading-[48px] whitespace-nowrap text-white">' + parts[1] + parts[2] + '</p>' +
-            '<p class="flex items-center gap-1 rounded-[14px] bg-[#1e40af] py-1 pr-4 pl-4">' +
+            '<p class="flex items-center gap-1 rounded-[14px] bg-[#1e40af] py-1 pr-[5px] pl-4">' +
               '<span class="text-[10px] leading-5 font-medium tracking-[1px] whitespace-nowrap text-[#60a5fa] uppercase">Estimated Processing Time:</span>' +
-              '<span class="px-1.5 py-0.5 text-xs leading-3 whitespace-nowrap text-white">' + processing + '</span>' +
+              '<span class="flex items-center gap-0.5 rounded-full ' + processing.bg + ' py-0.5 pr-1.5 pl-1 text-xs leading-4 whitespace-nowrap text-white">' +
+                '<img src="' + ASSETS + '../' + processing.icon + '" alt="" width="14" height="14" class="size-3.5">' + processing.text +
+              '</span>' +
             '</p>' +
           '</div>' +
         '</section>'
