@@ -5,6 +5,7 @@ status: draft
 last_reviewed: 2026-10-17
 product: smart-exchange
 version: "R3"
+source: STP section drafted from code (stp-state.js, payment-preferences-page.js, topbar-component.js) and the Figma "[WIP] SH Sandbox" Payment Methods frames on 2026-10-19; needs human review
 ---
 
 # SMART Exchange — current standard (R3)
@@ -16,6 +17,66 @@ TODO: what users can do, grouped by area.
 
 ## Screens / steps
 TODO: main screens (portal) or steps (flow), each with one line on its purpose.
+
+## Automatic Card Processing (STP)
+
+Lets a supplier have eligible virtual card payments processed automatically through their own
+merchant processor, instead of keying each card in by hand from **Get paid**.
+
+**Where it shows:** a card in **Payment Preferences → Payment Methods → Payers' Cards**
+(`src/pages/dashboard/payment-preferences.html`) and a banner inside the Portal top bar on every
+page (`src/scripts/topbar-component.js`). Plans with `hideStp` (the Consumer Portal) never show it.
+
+**State:** one global value per browser, `localStorage` key `sx_global_stp_state_v3`, owned by
+`src/scripts/stp-state.js` (`window.STPState`). Prototype only, there is no backend.
+
+### Steps
+
+| `stpStatus` | `stpStep` | Card badge | Top bar banner | User action |
+|---|---|---|---|---|
+| `disabled` | `opt_in_required` | none | "Interested in Automated Card Processing?" | **Opt in** |
+| `in_progress` | `agreement_signature_pending` | Pending Agreement Signature | "Visa Agreement Signature Pending", with the email and send time | **Review** (sign the agreement) |
+| `in_progress` | `terminal_completed_tid_mid_received` | Pending | "Let's Confirm Eligibility for Automatic Card Processing" | Process a pending virtual card payment in Supplier Portal |
+| `in_progress` | `bank_verification_required` | Action Required | "Action Required" (yellow) | **Verify now**: confirm the small deposit amount |
+| `enabled` | `completed` | Enabled | none | "Changed payment processors, need to reverify…" link; **Opt out** in the card menu |
+
+### Flow
+
+```mermaid
+stateDiagram-v2
+  [*] --> OptInRequired
+  OptInRequired --> AgreementPending: Opt in, send Visa agreement email
+  AgreementPending --> AgreementPending: Resend
+  AgreementPending --> EligibilityPending: Review + agree + Confirm
+  EligibilityPending --> BankVerification: First virtual card payment processed (Get paid)
+  BankVerification --> Enabled: Correct deposit amount verified
+  Enabled --> OptInRequired: Opt out
+```
+
+### Business rules
+
+- **Visa agreement email.** Sent through the token service (`workers/sd-sx-token-service`). Only
+  addresses in `allowedTestEmails` (`src/data/public-runtime-config.json`) get a real email. Any other
+  address still moves STP to *Agreement pending*, sends nothing, and the banner says "Test mode, no
+  email delivered to …".
+- **Agreement link.** The email links back to Payment Preferences with `?stpAgreement=review`, which
+  opens the agreement dialog.
+- **Bank verification** is reached from Supplier Portal: processing a card payment from **Get paid**
+  (`src/scripts/exchanges-table.js`) sets `bank_verification_required`.
+- **Opt out** is in the card menu (⋮), which shows only at *Bank verification* and *Enabled*. It
+  returns STP to `opt_in_required`.
+
+### Known gaps
+
+- The Supplier Portal card guide (`?guide=card-rows`, opened by **Go to Payments**) targets the row
+  menu (⋮), which card rows no longer have. The guide darkens the screen and cannot be completed.
+  There is no Figma design for it. TODO: remove the guide or get a design.
+- What the **re-verify** link should do is not in the design; it opens the setup steps dialog.
+  TODO(confirm).
+- The Figma "6. Generic pending" state ("Please wait while we process this") has no matching step.
+  TODO(confirm) whether a step is missing.
+- The banner and card copy above match Figma from commit `e4abbc1` on `vlad-sandbox`.
+  TODO(confirm) once that is merged to `main`; until then `main` shows the older copy.
 
 ## Business rules
 TODO: rules that are easy to get wrong (limits, approvals, validation, statuses).
