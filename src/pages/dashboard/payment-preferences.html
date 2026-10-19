@@ -267,9 +267,28 @@
                       <div class="w-full flex flex-col gap-2">
                         <div
                           id="pp-stp-card-container"
-                          class="flex w-full flex-col gap-3 rounded-lg bg-gray-50 p-4 sm:flex-row sm:items-center sm:justify-between sm:gap-6 dark:bg-white/5"
+                          class="flex w-full flex-col gap-3 rounded-lg bg-gray-50 p-3 sm:flex-row sm:items-start sm:justify-between sm:gap-6 dark:bg-white/5"
                         >
-                          <div class="flex min-w-0 flex-1 items-start pt-0.5">
+                          <div class="flex min-w-0 flex-1 items-start gap-3">
+                            <!-- heroicons-outline/credit-card-sparkle -->
+                            <svg
+                              id="pp-stp-icon"
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="20"
+                              height="20"
+                              viewBox="0 0 20 20"
+                              fill="none"
+                              aria-hidden="true"
+                              class="size-5 shrink-0 text-blue-600 dark:text-blue-400"
+                            >
+                              <path
+                                d="M1.875 6.875H18.125M1.875 7.5H18.125M4.375 11.875H9.375M4.375 13.75H6.875M18.125 9.16667V5.625C18.125 4.58947 17.2855 3.75 16.25 3.75H3.75C2.71447 3.75 1.875 4.58947 1.875 5.625V14.375C1.875 15.4105 2.71447 16.25 3.75 16.25H11.6667M16.25 16.4583L16.5785 15.4727C16.7652 14.9128 17.2045 14.4735 17.7644 14.2869L18.75 13.9583L17.7644 13.6298C17.2045 13.4432 16.7652 13.0038 16.5785 12.4439L16.25 11.4583L15.9215 12.4439C15.7348 13.0038 15.2955 13.4432 14.7356 13.6298L13.75 13.9583L14.7356 14.2869C15.2955 14.4735 15.7348 14.9128 15.9215 15.4727L16.25 16.4583Z"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                stroke-linecap="round"
+                                stroke-linejoin="round"
+                              />
+                            </svg>
                             <div class="min-w-0 flex-1">
                               <div
                                 class="flex w-full items-center justify-between gap-3"
@@ -285,8 +304,9 @@
                                   <div class="shrink-0">
                                     <span
                                       id="pp-stp-status-badge"
-                                      class="hidden inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-white/5 dark:text-gray-300 dark:ring-white/15"
-                                      >Enabling pending</span
+                                      hidden
+                                      class="inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300"
+                                      >Pending</span
                                     >
                                   </div>
                                 </div>
@@ -345,49 +365,15 @@
                                 Card payments are automatically processed and
                                 settled to the business bank account.
                               </p>
-                              <div
-                                id="pp-stp-fully-automated-wrap"
-                                class="mt-5 w-full border-t border-gray-200 pt-3 hidden dark:border-white/10"
+                              <button
+                                id="pp-stp-reverify-link"
+                                type="button"
+                                data-stp-learn-more-trigger="pp-card-reverify"
+                                class="mt-4 hidden w-full cursor-pointer rounded py-1 text-left text-sm leading-5 font-semibold text-blue-600 hover:text-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
                               >
-                                <div
-                                  id="pp-stp-fully-automated-row"
-                                  class="flex items-start gap-3"
-                                >
-                                  <div
-                                    class="group relative inline-flex h-5 w-10 shrink-0 items-center justify-center rounded-full outline-offset-2 outline-blue-600 has-[:focus-visible]:outline has-[:focus-visible]:outline-2"
-                                  >
-                                    <span
-                                      class="absolute mx-auto h-4 w-9 rounded-full bg-gray-200 ring-1 ring-inset ring-gray-900/5 transition-colors duration-200 ease-in-out group-has-[:checked]:bg-blue-600 dark:bg-white/10 dark:ring-white/10 dark:group-has-[:checked]:bg-blue-500"
-                                    ></span>
-                                    <span
-                                      class="absolute left-0 size-5 rounded-full border border-gray-300 bg-white shadow-sm transition-transform duration-200 ease-in-out group-has-[:checked]:translate-x-5 dark:border-white/20"
-                                    ></span>
-                                    <input
-                                      id="pp-stp-fully-automated-toggle"
-                                      type="checkbox"
-                                      name="pp-stp-fully-automated-toggle"
-                                      aria-labelledby="pp-stp-fully-automated-label"
-                                      aria-describedby="pp-stp-fully-automated-description"
-                                      class="absolute inset-0 size-full appearance-none focus:outline-none"
-                                    />
-                                  </div>
-                                  <span class="flex grow flex-col">
-                                    <label
-                                      id="pp-stp-fully-automated-label"
-                                      class="text-sm/6 font-medium text-gray-900 dark:text-gray-100"
-                                      >Fully Automated</label
-                                    >
-                                    <span
-                                      id="pp-stp-fully-automated-description"
-                                      class="text-sm text-gray-500 dark:text-gray-400"
-                                      >Payment is automatically processed by
-                                      card. The "Get Paid" step is included only
-                                      when the transaction requires documents or
-                                      signatures.</span
-                                    >
-                                  </span>
-                                </div>
-                              </div>
+                                Changed payment processors, need to reverify
+                                automatic card processing?
+                              </button>
                             </div>
                           </div>
                           <div class="contents">
@@ -397,6 +383,14 @@
                               class="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer sm:w-auto"
                             >
                               Opt in
+                            </button>
+                            <button
+                              id="pp-stp-pending-learn-more-btn"
+                              type="button"
+                              data-stp-learn-more-trigger="pp-card"
+                              class="hidden w-full items-center justify-center rounded px-2 py-1 text-sm leading-5 font-semibold text-gray-800 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:w-auto dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer"
+                            >
+                              Learn more
                             </button>
                             <button
                               id="pp-stp-agreement-review-btn"
