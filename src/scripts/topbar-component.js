@@ -1190,7 +1190,7 @@
 
       return (
         "" +
-        '<div class="flex flex-col gap-4 bg-white px-6 pb-4 pt-6 dark:bg-gray-900">' +
+        '<div class="flex flex-col gap-4 bg-white px-6 pb-4 pt-6 shadow-[0px_1px_1.5px_rgba(0,0,0,0.1),0px_1px_1px_rgba(0,0,0,0.06)] dark:bg-gray-900">' +
         '  <div class="flex items-center gap-8">' +
         '    <div class="flex min-w-0 flex-1 items-center gap-3">' +
         '      <button type="button" command="show-modal" commandfor="sidebar" class="-m-2.5 shrink-0 rounded-lg p-2.5 text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:hidden dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white cursor-pointer">' +
