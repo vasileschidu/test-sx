@@ -1,8 +1,7 @@
 (function () {
   var root = document.documentElement;
-  var isConsumerPage = window.location.pathname.indexOf("consumer-") !== -1;
-  var collapsedSidebarWidth = isConsumerPage ? 68 : 80;
-  var expandedSidebarWidth = isConsumerPage ? 312 : 304;
+  var collapsedSidebarWidth = 88;
+  var expandedSidebarWidth = 312;
   var collapsed = false;
 
   try {

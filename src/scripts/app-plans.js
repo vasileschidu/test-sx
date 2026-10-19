@@ -210,6 +210,7 @@ window.AppPlans = (function () {
       id: "transcard-only",
       capability: "transcard-admin",
       order: 70,
+      dividerBefore: true,
       nav: {
         type: "expandable",
         label: "Transcard Only",

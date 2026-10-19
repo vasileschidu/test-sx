@@ -98,13 +98,7 @@ function normalizeMainContentWrapperLayout(collapsed) {
     "flex-col",
   );
   mainContentWrapper.classList.add(
-    isCollapsed
-      ? isConsumerPortalSidebar()
-        ? "lg:pl-[88px]"
-        : "lg:pl-[80px]"
-      : isConsumerPortalSidebar()
-        ? "lg:pl-[312px]"
-        : "lg:pl-[304px]",
+    isCollapsed ? "lg:pl-[88px]" : "lg:pl-[312px]",
   );
 }
 
@@ -114,9 +108,8 @@ function ensureNavTooltip() {
 
   var tooltip = document.createElement("div");
   tooltip.id = "dashboard-nav-tooltip";
-  tooltip.className = isConsumerPortalSidebar()
-    ? "pointer-events-none fixed z-[80] rounded-lg bg-gray-900 px-2.5 py-1 text-sm font-normal leading-5 text-gray-100 shadow-[0_10px_7.5px_rgba(0,0,0,0.1),0_4px_3px_rgba(0,0,0,0.05)]"
-    : "pointer-events-none fixed z-[80] rounded-md bg-gray-900 px-2.5 py-1.5 text-xs font-medium text-white shadow-lg";
+  tooltip.className =
+    "pointer-events-none fixed z-[80] rounded-lg bg-gray-900 px-2.5 py-1 text-sm font-normal leading-5 text-gray-100 shadow-[0_10px_7.5px_rgba(0,0,0,0.1),0_4px_3px_rgba(0,0,0,0.05)]";
   tooltip.style.opacity = "0";
   tooltip.style.transform = "translateX(-4px)";
   tooltip.style.transition = "opacity 150ms ease-out, transform 150ms ease-out";
@@ -132,48 +125,11 @@ function ensureDesktopNavCurrentIndicator() {
   return null;
 }
 
-function syncDesktopNavCurrentIndicator(immediate) {
-  var refs = getSidebarRefs();
-  var desktopNav = refs.desktopNav;
+function syncDesktopNavCurrentIndicator() {
+  var desktopNav = getSidebarRefs().desktopNav;
   if (!desktopNav) return;
-
-  if (isConsumerPortalSidebar()) {
-    var consumerIndicator = desktopNav.querySelector(
-      "#desktop-nav-current-indicator",
-    );
-    if (consumerIndicator) consumerIndicator.remove();
-    return;
-  }
-
-  var indicator = ensureDesktopNavCurrentIndicator();
-  if (!indicator) return;
-
-  var activeItem = desktopNav.querySelector(".nav-item.is-active");
-  if (!activeItem) {
-    indicator.style.opacity = "0";
-    return;
-  }
-
-  var navRect = desktopNav.getBoundingClientRect();
-  var itemRect = activeItem.getBoundingClientRect();
-  var left = -16;
-  var top = itemRect.top - navRect.top + 8;
-  var height = Math.max(itemRect.height - 16, 8);
-
-  if (immediate) {
-    indicator.style.transition = "none";
-  }
-
-  indicator.style.left = left + "px";
-  indicator.style.height = height + "px";
-  indicator.style.transform = "translateY(" + top + "px)";
-  indicator.style.opacity = "1";
-
-  if (immediate) {
-    requestAnimationFrame(function () {
-      indicator.style.transition = "";
-    });
-  }
+  var indicator = desktopNav.querySelector("#desktop-nav-current-indicator");
+  if (indicator) indicator.remove();
 }
 
 /* ===== Nav Label Preparation ===== */
@@ -422,7 +378,14 @@ function bindDashboardSidebarRuntime() {
             "!text-blue-600",
             "dark:!text-blue-400",
           );
-          icon.classList.add("text-gray-500", "dark:text-gray-400");
+          icon.classList.add(
+            "text-gray-500",
+            "dark:text-gray-400",
+            "group-hover:text-blue-600",
+            "group-focus-visible:text-blue-600",
+            "dark:group-hover:text-blue-400",
+            "dark:group-focus-visible:text-blue-400",
+          );
         });
       });
 
@@ -438,7 +401,7 @@ function bindDashboardSidebarRuntime() {
       }
       navItem.querySelectorAll("svg.nav-icon").forEach(function (icon) {
         icon.classList.remove("text-gray-500", "dark:text-gray-400");
-        icon.classList.add("text-gray-900", "dark:text-white");
+        icon.classList.add("text-blue-600", "dark:text-blue-400");
       });
       var href = navItem.getAttribute("href");
       var isNavigationLink = navItem.tagName === "A" && href && href !== "#";
@@ -495,136 +458,58 @@ function setDesktopSidebarCollapsed(collapsed) {
   );
 
   desktopSidebarShell.classList.toggle("is-collapsed", collapsed);
-  if (isConsumerPortalSidebar()) {
-  desktopSidebarShell.classList.toggle(
-    "lg:w-[288px]",
-    !collapsed && !isConsumerPortalSidebar(),
-  );
-  desktopSidebarShell.classList.toggle(
-    "lg:w-[312px]",
-    !collapsed && isConsumerPortalSidebar(),
-  );
-  desktopSidebarShell.classList.toggle(
-    "lg:w-[68px]",
-    collapsed && !isConsumerPortalSidebar(),
-  );
-  desktopSidebarShell.classList.toggle(
-    "lg:w-[88px]",
-    collapsed && isConsumerPortalSidebar(),
-  );
-    desktopSidebarPanel.classList.toggle("px-6", true);
-    desktopSidebarPanel.classList.toggle("px-4", false);
-    if (desktopLogoRow) {
-      desktopLogoRow.classList.toggle("w-10", collapsed);
-      desktopLogoRow.classList.toggle("w-full", !collapsed);
-      desktopLogoRow.classList.toggle("h-8", true);
-      desktopLogoRow.classList.toggle("px-1", !collapsed);
-      desktopLogoRow.classList.toggle("justify-center", collapsed);
-      desktopLogoRow.classList.toggle("justify-start", !collapsed);
-    }
-    var expandedHelp =
-      desktopSidebarHelp &&
-      desktopSidebarHelp.querySelector("[data-sidebar-expanded-help]");
-    var collapsedHelp =
-      desktopSidebarHelp &&
-      desktopSidebarHelp.querySelector("[data-sidebar-collapsed-help]");
-    var expandedFooter =
-      desktopSidebarFooter &&
-      desktopSidebarFooter.querySelector("[data-sidebar-expanded-footer]");
-    var collapsedFooter =
-      desktopSidebarFooter &&
-      desktopSidebarFooter.querySelector("[data-sidebar-collapsed-footer]");
-    if (expandedHelp) expandedHelp.classList.toggle("hidden", collapsed);
-    if (collapsedHelp) collapsedHelp.classList.toggle("hidden", !collapsed);
-    if (expandedFooter) expandedFooter.classList.toggle("hidden", collapsed);
-    if (collapsedFooter) collapsedFooter.classList.toggle("hidden", !collapsed);
-  } else {
   desktopSidebarShell.classList.remove(
     "lg:w-[288px]",
+    "lg:w-[304px]",
     "lg:w-[68px]",
+    "lg:w-[80px]",
     "lg:w-[81px]",
     "lg:w-[304px]",
     "lg:w-[80px]",
     "lg:w-[312px]",
     "lg:w-[88px]",
   );
-  desktopSidebarShell.classList.toggle("lg:w-[304px]", !collapsed);
-  desktopSidebarShell.classList.toggle("lg:w-[80px]", collapsed);
-
-  if (collapsed) {
-    desktopSidebarPanel.classList.remove(
-      "p-5",
-      "px-5",
-      "px-4",
-      "px-3.5",
-      "px-3",
-      "py-2",
-      "pt-2",
-    );
-    desktopSidebarPanel.classList.toggle("px-6", true);
-    desktopSidebarPanel.classList.toggle("px-4", false);
-    if (desktopLogoRow) {
-      desktopLogoRow.classList.toggle("w-10", collapsed);
-      desktopLogoRow.classList.toggle("w-full", !collapsed);
-      desktopLogoRow.classList.toggle("h-8", true);
-      desktopLogoRow.classList.toggle("px-1", !collapsed);
-      desktopLogoRow.classList.toggle("justify-center", collapsed);
-      desktopLogoRow.classList.toggle("justify-start", !collapsed);
-    }
-    var expandedHelp =
-      desktopSidebarHelp &&
-      desktopSidebarHelp.querySelector("[data-sidebar-expanded-help]");
-    var collapsedHelp =
-      desktopSidebarHelp &&
-      desktopSidebarHelp.querySelector("[data-sidebar-collapsed-help]");
-    var expandedFooter =
-      desktopSidebarFooter &&
-      desktopSidebarFooter.querySelector("[data-sidebar-expanded-footer]");
-    var collapsedFooter =
-      desktopSidebarFooter &&
-      desktopSidebarFooter.querySelector("[data-sidebar-collapsed-footer]");
-    if (expandedHelp) expandedHelp.classList.toggle("hidden", collapsed);
-    if (collapsedHelp) collapsedHelp.classList.toggle("hidden", !collapsed);
-    if (expandedFooter) expandedFooter.classList.toggle("hidden", collapsed);
-    if (collapsedFooter) collapsedFooter.classList.toggle("hidden", !collapsed);
-  } else {
-    desktopSidebarShell.classList.add(
-      collapsed ? "lg:w-[80px]" : "lg:w-[304px]",
-    );
-    if (collapsed) {
-      desktopSidebarPanel.classList.remove(
-        "p-5",
-        "px-5",
-        "px-4",
-        "px-3.5",
-        "px-3",
-        "py-2",
-        "pt-2",
-      );
-      desktopSidebarPanel.classList.add(
-        "pt-5",
-        "pb-[60px]",
-        "pl-5",
-        "pr-[19px]",
-      );
-    } else {
-      desktopSidebarPanel.classList.remove(
-        "px-5",
-        "pl-5",
-        "pr-[19px]",
-        "px-4",
-        "px-3.5",
-        "px-3",
-        "py-2",
-        "pt-2",
-        "pt-5",
-        "pb-4",
-        "pb-[60px]",
-      );
-      desktopSidebarPanel.classList.add("p-5");
-    }
+  desktopSidebarShell.classList.toggle("lg:w-[312px]", !collapsed);
+  desktopSidebarShell.classList.toggle("lg:w-[88px]", collapsed);
+  desktopSidebarPanel.classList.remove(
+    "p-5",
+    "px-5",
+    "px-3",
+    "px-3.5",
+    "py-2",
+    "pt-2",
+    "pt-5",
+    "pb-4",
+    "pb-[60px]",
+    "pl-5",
+    "pr-[19px]",
+  );
+  desktopSidebarPanel.classList.add("px-6", "pt-6", "pb-6");
+  desktopSidebarPanel.classList.remove("px-4");
+  if (desktopLogoRow) {
+    desktopLogoRow.classList.toggle("w-10", collapsed);
+    desktopLogoRow.classList.toggle("w-full", !collapsed);
+    desktopLogoRow.classList.toggle("h-8", true);
+    desktopLogoRow.classList.toggle("px-1", !collapsed);
+    desktopLogoRow.classList.toggle("justify-center", collapsed);
+    desktopLogoRow.classList.toggle("justify-start", !collapsed);
   }
-  }
+  var expandedHelp =
+    desktopSidebarHelp &&
+    desktopSidebarHelp.querySelector("[data-sidebar-expanded-help]");
+  var collapsedHelp =
+    desktopSidebarHelp &&
+    desktopSidebarHelp.querySelector("[data-sidebar-collapsed-help]");
+  var expandedFooter =
+    desktopSidebarFooter &&
+    desktopSidebarFooter.querySelector("[data-sidebar-expanded-footer]");
+  var collapsedFooter =
+    desktopSidebarFooter &&
+    desktopSidebarFooter.querySelector("[data-sidebar-collapsed-footer]");
+  if (expandedHelp) expandedHelp.classList.toggle("hidden", collapsed);
+  if (collapsedHelp) collapsedHelp.classList.toggle("hidden", !collapsed);
+  if (expandedFooter) expandedFooter.classList.toggle("hidden", collapsed);
+  if (collapsedFooter) collapsedFooter.classList.toggle("hidden", !collapsed);
 
   normalizeMainContentWrapperLayout(collapsed);
 
@@ -1510,10 +1395,7 @@ var NAV_ACTIVE_SURFACE_CLASSES = [
   "is-active",
   "bg-gray-100",
   "text-gray-900",
-  "bg-zinc-950/5",
-  "text-zinc-950",
   "dark:bg-white/10",
-  "dark:bg-white/5",
   "dark:text-white",
 ];
 
@@ -1562,7 +1444,7 @@ function syncActiveNavItemStyles() {
         "!text-blue-600",
         "dark:!text-blue-400",
       );
-      icon.classList.add("text-gray-900", "dark:text-white");
+      icon.classList.add("text-blue-600", "dark:text-blue-400");
     });
   });
   syncDesktopNavCurrentIndicator(
