@@ -1913,6 +1913,8 @@ window.__ppStorageKey = function (name) {
     accountInput.value = defaults.accountNumber;
     confirmAccountInput.value = defaults.accountNumber;
     nicknameInput.value = defaults.nickname;
+    // The bank address block exists only on the Consumer Portal page.
+    if (!addBankCountrySelect) return;
     addBankCountrySelect.value = "us";
     updateAddBankCountryFlag();
     addBankLine1Input.value = "1200 Market Street";
@@ -1925,6 +1927,7 @@ window.__ppStorageKey = function (name) {
   }
 
   function updateAddBankCountryFlag() {
+    if (!addBankCountrySelect) return;
     addBankCountryFlag.className =
       "fi fi-" +
       (addBankCountrySelect.value || "us") +
@@ -1932,6 +1935,7 @@ window.__ppStorageKey = function (name) {
   }
 
   function buildAddBankAddress() {
+    if (!addBankCountrySelect) return "";
     var countryText =
       addBankCountrySelect.value === "us"
         ? "US"
@@ -1968,6 +1972,11 @@ window.__ppStorageKey = function (name) {
       : Object.keys(codes).filter(function (k) {
           return codes[k].toLowerCase() === raw.toLowerCase();
         })[0] || raw;
+    // The supplier page uses a plain text input for the state.
+    if (!select.options) {
+      select.value = raw;
+      return;
+    }
     var has = Array.prototype.some.call(select.options, function (o) {
       return o.value === code;
     });
@@ -1998,7 +2007,7 @@ window.__ppStorageKey = function (name) {
     addCheckNicknameInput.value = defaults.nickname;
     addCheckLine1Input.value = defaults.line1;
     addCheckLine2Input.value = defaults.line2;
-    addCheckLine3Input.value = "";
+    if (addCheckLine3Input) addCheckLine3Input.value = "";
     addCheckCityInput.value = defaults.city;
     setCheckStateSelect(addCheckStateInput, defaults.state);
     addCheckZipInput.value = defaults.zip;
@@ -2563,6 +2572,7 @@ window.__ppStorageKey = function (name) {
   };
 
   function updateEditBankCountryFlag() {
+    if (!editBankCountrySelect) return;
     editBankCountryFlag.className =
       "fi fi-" +
       (editBankCountrySelect.value || "us") +
@@ -2587,6 +2597,7 @@ window.__ppStorageKey = function (name) {
   }
 
   function fillEditBankAddress(account) {
+    if (!editBankCountrySelect) return;
     var a = parseBankAddress(account.address);
     editBankCountrySelect.value = a.country;
     updateEditBankCountryFlag();
@@ -2646,7 +2657,8 @@ window.__ppStorageKey = function (name) {
       editBankConfirmInput.value = account.accountNumber || "";
       editBankNicknameInput.value = account.nickname || "";
       fillEditBankAddress(account);
-      editBankDefaultInput.checked = !!account.isDefault;
+      if (editBankDefaultInput)
+        editBankDefaultInput.checked = !!account.isDefault;
       if (typeof editBankDialog.showModal === "function")
         editBankDialog.showModal();
       return;
@@ -2695,7 +2707,7 @@ window.__ppStorageKey = function (name) {
       editCheckNicknameInput.value = address.displayName || "";
       editCheckLine1Input.value = parsed.line1;
       editCheckLine2Input.value = parsed.line2;
-      editCheckLine3Input.value = parsed.line3;
+      if (editCheckLine3Input) editCheckLine3Input.value = parsed.line3;
       editCheckCityInput.value = parsed.city;
       setCheckStateSelect(editCheckStateInput, parsed.state);
       editCheckZipInput.value = parsed.zip;
@@ -2758,7 +2770,7 @@ window.__ppStorageKey = function (name) {
       routing: routingDigits,
       accountNumber: formatAccountNumber(accountDigits),
       address: buildAddBankAddress(),
-      isDefault: !!addBankDefaultInput.checked,
+      isDefault: !!(addBankDefaultInput && addBankDefaultInput.checked),
     };
     if (newAccount.isDefault)
       bankAccounts.forEach(function (item) {
@@ -2778,10 +2790,12 @@ window.__ppStorageKey = function (name) {
   });
 
   addCheckCountrySelect.addEventListener("change", updateAddCheckCountryFlag);
-  addBankCountrySelect.addEventListener("change", updateAddBankCountryFlag);
+  if (addBankCountrySelect)
+    addBankCountrySelect.addEventListener("change", updateAddBankCountryFlag);
   editCheckCountrySelect.addEventListener("change", updateEditCheckCountryFlag);
 
-  editBankCountrySelect.addEventListener("change", updateEditBankCountryFlag);
+  if (editBankCountrySelect)
+    editBankCountrySelect.addEventListener("change", updateEditBankCountryFlag);
   editBankRoutingInput.addEventListener("input", function () {
     editBankRoutingInput.value = sanitizeDigits(editBankRoutingInput.value, 9);
   });
@@ -2817,12 +2831,14 @@ window.__ppStorageKey = function (name) {
     account.name = accountName;
     account.nickname = nickname;
     account.routing = routingDigits;
-    account.address = buildEditBankAddress();
-    if (editBankDefaultInput.checked)
-      bankAccounts.forEach(function (item) {
-        item.isDefault = item.id === account.id;
-      });
-    else account.isDefault = false;
+    if (editBankCountrySelect) account.address = buildEditBankAddress();
+    if (editBankDefaultInput) {
+      if (editBankDefaultInput.checked)
+        bankAccounts.forEach(function (item) {
+          item.isDefault = item.id === account.id;
+        });
+      else account.isDefault = false;
+    }
     if (accountDigits) {
       account.accountNumber = formatAccountNumber(accountDigits);
       account.last4 = accountDigits.slice(-4);
@@ -2844,7 +2860,7 @@ window.__ppStorageKey = function (name) {
     var nickname = (editCheckNicknameInput.value || "").trim();
     var line1 = (editCheckLine1Input.value || "").trim();
     var line2 = (editCheckLine2Input.value || "").trim();
-    var line3 = (editCheckLine3Input.value || "").trim();
+    var line3 = ((editCheckLine3Input && editCheckLine3Input.value) || "").trim();
     var city = (editCheckCityInput.value || "").trim();
     var state = (editCheckStateInput.value || "").trim();
     var zip = (editCheckZipInput.value || "").trim();
@@ -2881,7 +2897,7 @@ window.__ppStorageKey = function (name) {
     var nickname = (addCheckNicknameInput.value || "").trim();
     var line1 = (addCheckLine1Input.value || "").trim();
     var line2 = (addCheckLine2Input.value || "").trim();
-    var line3 = (addCheckLine3Input.value || "").trim();
+    var line3 = ((addCheckLine3Input && addCheckLine3Input.value) || "").trim();
     var city = (addCheckCityInput.value || "").trim();
     var state = (addCheckStateInput.value || "").trim();
     var zip = (addCheckZipInput.value || "").trim();
