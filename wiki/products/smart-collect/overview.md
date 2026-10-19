@@ -32,4 +32,5 @@ Full details: [suite/integrations.md](../../suite/integrations.md).
 ## Code
 - Path in repo:
   - None found in this repo yet. TODO(confirm): where does Collect live?
-- Figma: TODO
+- Figma: No dedicated file found (TODO). Related: AR Pay Page "Standard SMART Collect" workflow in [R1] SH - Accounts Receivable
+- Module-level source-of-truth files: [design-system/figma-files.md](../../design-system/figma-files.md)

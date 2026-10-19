@@ -21,7 +21,7 @@ Before working on any product:
 3. `products/<product>/standard.md`: the **current standard** behavior. This is the default truth.
 4. [suite/integrations.md](suite/integrations.md): if your change touches data or flows
    that cross into another product.
-5. [suite/layouts.md](suite/layouts.md) and [design-system/](design-system/README.md): if your change touches UI.
+5. [suite/layouts.md](suite/layouts.md), [design-system/](design-system/README.md) and [figma-files.md](design-system/figma-files.md): if your change touches UI. Figma has many conflicting copies, so use the source-of-truth file.
 
 ## 2. Standard vs client variants
 

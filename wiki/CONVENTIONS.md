@@ -28,6 +28,7 @@ Use these exact IDs in folder names, frontmatter and cross-references.
 - In frontmatter, always quote it: `version: "R3"`, `based_on: "R1.0"`.
 - Every new release gets an entry in `products/<product>/changelog.md`.
 - TODO(confirm): is `R1` the same as `R1.0`? Should we always write the minor number?
+- Figma files use the same `[R<n>]` tags. TODO(confirm): do Figma release tags match code releases? (Figma Hub AP is `[R2]`, code Hub is `R1.0`.)
 
 | Product | Latest standard |
 |---|---|

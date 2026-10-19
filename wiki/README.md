@@ -37,7 +37,8 @@ Used by both humans and coding agents. Agents: read [AGENTS.md](AGENTS.md) first
 | Know what a client has customized | [clients/](clients/README.md) and `products/<product>/variants/` |
 | Learn the rules (versions, client codes, branches, file format) | [CONVENTIONS.md](CONVENTIONS.md) |
 | Understand why something was decided | [decisions/](decisions/README.md) |
-| Design system | [design-system/](design-system/README.md) (source of truth: Figma) |
+| Design system | [design-system/](design-system/README.md) (library: SMART System in Figma) |
+| Find the right Figma file for a screen | [design-system/figma-files.md](design-system/figma-files.md) |
 
 ## How this wiki is maintained
 
