@@ -231,6 +231,7 @@ window.OBFlow = (function () {
     var mp = getMp();
     mp.log.push({ by: 'me', at: new Date().toISOString(), comment: comment, amounts: amounts, accepted: {} });
     mp.justChanged = true;
+    delete mp.othersProgress;   // a new split: everyone submits again
     saveMp(mp);
   }
 
@@ -262,6 +263,7 @@ window.OBFlow = (function () {
       amounts: amounts, accepted: accepted
     });
     mp.changedBy = from.id;
+    delete mp.othersProgress;   // a new split: everyone submits again
     saveMp(mp);
   }
 
@@ -323,7 +325,8 @@ window.OBFlow = (function () {
     // Only where the scenario plays out: Current Allocation, and the screen that
     // replaces it when the payment is expired, revoked or disputed.
     var here = page();
-    if (!isMultiParty() || (here !== 'allocation' && here !== 'payment-closed') || document.querySelector('[data-mp-demo]')) return;
+    var onStatus = here === 'payment-status';
+    if (!isMultiParty() || (here !== 'allocation' && here !== 'payment-closed' && !onStatus) || document.querySelector('[data-mp-demo]')) return;
     var mp = getMp();
     function option(name, value, label) {
       return '<label class="flex cursor-pointer items-center gap-2 py-1 text-sm text-[#374151]">' +
@@ -340,11 +343,16 @@ window.OBFlow = (function () {
     wrap.className = 'fixed right-4 bottom-4 z-40 flex flex-col items-end gap-2 font-[\'Inter\']';
     wrap.innerHTML =
       '<div data-mp-demo-panel hidden class="flex max-h-[calc(100vh-5rem)] w-64 flex-col gap-4 overflow-y-auto rounded-lg border border-[#e5e7eb] bg-white p-4 shadow-xl">' +
+        // Payment Status: what can still happen after the user has submitted.
+        (onStatus
+          ? group('Other parties', option('othersProgress', 'none', 'Still choosing') + option('othersProgress', 'some', 'Some submitted') + option('othersProgress', 'all', 'All submitted'))
+          : '') +
         group('Payment', option('payment', 'active', 'Active') + option('payment', 'expired', 'Expired') + option('payment', 'revoked', 'Revoked') + option('payment', 'disputed', 'Disputed by primary party')) +
         group('Fallback check to primary party', option('fallback', 'true', 'Yes') + option('fallback', 'false', 'No')) +
-        group('You are', option('role', 'primary', 'Primary party') + option('role', 'party', 'Other party')) +
-        group('Parties', option('parties', '2', '2 parties') + option('parties', '3', '3 parties') + option('parties', '5', '5 parties')) +
-        group('Allocation', option('scenario', 'first', 'Nobody accepted yet') + option('scenario', 'some', 'Others accepted') + option('scenario', 'zero', 'Your share is $0')) +
+        (onStatus ? '' :
+          group('You are', option('role', 'primary', 'Primary party') + option('role', 'party', 'Other party')) +
+          group('Parties', option('parties', '2', '2 parties') + option('parties', '3', '3 parties') + option('parties', '5', '5 parties')) +
+          group('Allocation', option('scenario', 'first', 'Nobody accepted yet') + option('scenario', 'some', 'Others accepted') + option('scenario', 'zero', 'Your share is $0'))) +
         group('Expires in', option('expiry', 'days', 'Days') + option('expiry', 'hours', 'Hours') + option('expiry', 'minutes', 'Minutes')) +
         '<button type="button" data-mp-demo-changed class="' + button + '">Someone changes the allocation</button>' +
         '<button type="button" data-mp-demo-reset class="' + button + '">Reset scenario</button>' +
@@ -363,14 +371,17 @@ window.OBFlow = (function () {
       panel.hidden = !panel.hidden;
       toggle.setAttribute('aria-expanded', String(!panel.hidden));
     });
-    // The pages pick the right screen for the new state on load.
+    // The pages pick the right screen for the new state on load. Payment
+    // Status stays put (keeping its ?final= link) unless the payment ended.
     function reopen() { window.location.href = 'allocation.html'; }
     panel.addEventListener('change', function (event) {
       var input = event.target;
       var patch = {};
       patch[input.name] = input.value === 'true' ? true : input.value === 'false' ? false : input.value;
       setDemo(patch);
-      reopen();
+      if (onStatus && getMp().payment === 'active') window.location.reload();
+      else if (onStatus) window.location.href = 'payment-closed.html';
+      else reopen();
     });
     wrap.querySelector('[data-mp-demo-changed]').addEventListener('click', function () {
       var mp = getMp();

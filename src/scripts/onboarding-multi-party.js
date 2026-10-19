@@ -143,9 +143,8 @@
     } else if (opts.showDate) {
       tone = 'border border-[#93c5fd] bg-[#f9fafb] font-medium text-[#374151] hover:bg-gray-100';
       icon = 'icon-calendar-exclamation.svg';
-      // Phones get the short date: the full one doesn't fit half the row.
-      text = '<span class="sm:hidden">' + expires.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'America/New_York' }) + '</span>' +
-        '<span class="hidden sm:inline">' + stamp(expires.toISOString()).replace(' (ET)', '') + '</span>';
+      // Phones have room for the full date: "How it works" shrinks to an (i) button there.
+      text = stamp(expires.toISOString()).replace(' (ET)', '');
     } else {
       tone = 'bg-[#f9fafb] font-semibold text-[#111827] hover:bg-gray-100';
       icon = 'icon-calendar-exclamation-dark.svg';
@@ -161,7 +160,11 @@
     var expires = F.expiresAt(mp);
     return '<div class="flex w-full gap-2.5">' +
       '<div data-mp-expiry data-show-date="' + (opts.showDate ? '1' : '') + '" class="flex min-w-0 flex-1">' + expiryBadge(expires, opts) + '</div>' +
-      '<button type="button" data-mp-how class="flex min-w-0 flex-1 cursor-pointer items-center justify-center rounded-full bg-[#f9fafb] px-2.5 py-[9px] text-sm leading-5 font-medium text-[#3671fb] hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">How it works</button>' +
+      // Phones (< 768px): an (i) button; tablet and desktop: the "How it works" chip.
+      '<button type="button" data-mp-how class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#f9fafb] text-sm leading-5 font-medium text-[#3671fb] hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 md:size-auto md:min-w-0 md:flex-1 md:px-2.5 md:py-[9px]">' +
+        '<img src="' + ASSETS + '../icon-info-circle-blue.svg" alt="" width="20" height="20" class="size-5 md:hidden">' +
+        '<span class="sr-only md:not-sr-only">How it works</span>' +
+      '</button>' +
     '</div>';
   }
 
@@ -509,6 +512,8 @@
 
   function statusPage(root) {
     var mp = F.getMp();
+    // Expired, revoked or disputed while waiting: that screen replaces this one.
+    if (mp.payment && mp.payment !== 'active') { window.location.replace('payment-closed.html'); return; }
     var entry = F.current(mp);
     var share = F.myShare();
     var method = F.methodLabel();
@@ -534,25 +539,44 @@
         '</section>'
       : '';
 
-    var allSubmitted = F.othersDone();
+    // Who has submitted a payment method. The Scenario switcher can set it;
+    // otherwise everyone who accepted the allocation counts as done.
+    var others = F.others(mp);
+    var progress = mp.othersProgress;
+    function submitted(p) {
+      if (p.you) return true;
+      if (progress === 'all') return true;
+      if (progress === 'none') return false;
+      if (progress === 'some') return p.id === others[0].id;
+      return !!entry.accepted[p.id];
+    }
+    var allSubmitted = others.every(submitted);
+
     root.innerHTML =
       '<div class="flex flex-col gap-2.5">' +
         '<h1 class="text-3xl leading-9 text-[#1f2937]"><span class="font-semibold">Payment</span> Status</h1>' +
         (share > 0 && method ? '<p class="text-sm leading-5 text-[#6b7280]">Selected payment method: ' + esc(method) + '</p>' : '') +
       '</div>' +
+      (allSubmitted
+        ? '<div role="status" class="flex w-full items-start gap-3 rounded-[10px] bg-[#ecfdf5] p-4">' +
+            '<img src="' + ASSETS + 'icon-check-circle-solid-green.svg" alt="" width="20" height="20" class="size-5 shrink-0">' +
+            '<p class="text-sm leading-5 font-medium text-[#065f46]">All parties have submitted their payment method. ' +
+              (share > 0 ? 'Your payment is being processed.' : 'The payment is being processed.') + '</p></div>'
+        : '') +
       amountCard +
       chips(mp, { showDate: false }) +
       '<section aria-label="Parties" class="w-full rounded-lg border border-[#d1d5db] bg-white p-4 shadow-xs">' +
         '<ul role="list" class="flex flex-col gap-4">' + F.parties(mp).map(function (p) {
-          var done = p.you || allSubmitted || !!entry.accepted[p.id];
-          return personRow(p, entry.amounts[p.id], done, '');
+          return personRow(p, entry.amounts[p.id], submitted(p), '');
         }).join('<li aria-hidden="true" class="h-px bg-[#e5e7eb]"></li>') + '</ul>' +
       '</section>' +
       logLink() +
-      infoBox(
-        '<p>When all parties submit their payment method preference, the payment will be processed, and a notification will be sent to your email address and / or phone number.</p>' +
-        '<p>By selecting the same link from your existing notification, you will be able to re-enter this site and track the progress of your multi-party payment.</p>' +
-        '<p>You may close your browser now.</p>') +
+      (allSubmitted
+        ? infoBox('<p>A notification will be sent to your email address and / or phone number when the payment has been issued.</p><p>You may close your browser now.</p>')
+        : infoBox(
+          '<p>When all parties submit their payment method preference, the payment will be processed, and a notification will be sent to your email address and / or phone number.</p>' +
+          '<p>By selecting the same link from your existing notification, you will be able to re-enter this site and track the progress of your multi-party payment.</p>' +
+          '<p>You may close your browser now.</p>')) +
       (allSubmitted && finalPage
         ? '<div class="mt-auto flex w-full pt-4"><a href="' + esc(finalPage) + '" class="' + PRIMARY_BTN + '">Continue</a></div>'
         : '');
