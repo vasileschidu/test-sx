@@ -782,7 +782,7 @@
       this.style.display = "block";
       this.style.width = "100%";
       this.style.position = "sticky";
-      this.style.top = "var(--stp-alert-height,0px)";
+      this.style.top = "0";
       this.style.zIndex = "40";
       var pagePath = pagePathFromContext.call(this);
       var title =
@@ -803,14 +803,10 @@
       this.bindProfileData();
     }
 
+    // The STP banner sits inside the top bar, between the greeting row and the
+    // breadcrumbs. The Consumer Portal top bar has no slot for it.
     _ensureAlertHost() {
-      var existing = document.getElementById("stp-alert-host");
-      if (existing) return existing;
-      var host = document.createElement("div");
-      host.id = "stp-alert-host";
-      host.className = "fixed inset-x-0 top-0 z-[60]";
-      document.body.insertBefore(host, document.body.firstChild);
-      return host;
+      return this.querySelector("#stp-alert-host");
     }
 
     _observeAlertHost() {
@@ -852,91 +848,138 @@
 
     _renderAlerts() {
       var host = this._ensureAlertHost();
-      if (host.dataset.rendered) return;
+      if (!host || host.dataset.rendered) return;
       host.dataset.rendered = "true";
+      // heroicons-outline/credit-card-sparkle and heroicons-mini/exclamation-triangle, as in the Figma Info Box.
       var cardIcon =
         "" +
-        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
         '<path d="M1.875 6.875H18.125M1.875 7.5H18.125M4.375 11.875H9.375M4.375 13.75H6.875M18.125 9.16667V5.625C18.125 4.58947 17.2855 3.75 16.25 3.75H3.75C2.71447 3.75 1.875 4.58947 1.875 5.625V14.375C1.875 15.4105 2.71447 16.25 3.75 16.25H11.6667M16.25 16.4583L16.5785 15.4727C16.7652 14.9128 17.2045 14.4735 17.7644 14.2869L18.75 13.9583L17.7644 13.6298C17.2045 13.4432 16.7652 13.0038 16.5785 12.4439L16.25 11.4583L15.9215 12.4439C15.7348 13.0038 15.2955 13.4432 14.7356 13.6298L13.75 13.9583L14.7356 14.2869C15.2955 14.4735 15.7348 14.9128 15.9215 15.4727L16.25 16.4583Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>' +
         "</svg>";
-      host.innerHTML =
+      var warningIcon =
         "" +
-        '<div data-global-stp-alert-blue class="hidden border-b border-gray-200 bg-blue-100 px-6 py-2 dark:border-white/10 dark:bg-blue-500/15">' +
-        '  <div class="flex items-center justify-between gap-4">' +
-        '    <div class="flex min-w-0 items-center gap-3">' +
-        '      <div class="shrink-0 text-blue-600 dark:text-blue-400">' +
-        cardIcon +
-        "</div>" +
-        '      <p class="min-w-0 truncate text-sm leading-5">' +
-        '        <span class="font-semibold text-gray-900 dark:text-gray-100">Automatic Card Processing (STP) is not enabled</span>' +
-        '        <span class="mx-1.5 text-gray-400">·</span>' +
-        '        <span class="font-normal text-gray-600 dark:text-gray-300">Enable STP to process eligible virtual card payments automatically.</span>' +
-        "      </p>" +
-        "    </div>" +
-        '    <div class="shrink-0">' +
-        '      <button type="button" data-stp-opt-in-trigger="topbar" class="inline-flex items-center justify-center rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-200 dark:ring-white/10 dark:hover:bg-white/20 cursor-pointer">Opt in</button>' +
-        "    </div>" +
-        "  </div>" +
-        "</div>" +
-        '<div data-global-stp-alert-yellow class="hidden border-b border-gray-200 bg-amber-50 px-6 py-2 dark:border-white/10 dark:bg-amber-500/10">' +
-        '  <div class="flex items-center justify-between gap-4">' +
-        '    <div class="flex min-w-0 items-center gap-3">' +
-        '      <div class="shrink-0 text-yellow-500">' +
-        cardIcon +
-        "</div>" +
-        '      <p class="min-w-0 truncate text-sm leading-5">' +
-        '        <span class="font-semibold text-gray-900 dark:text-gray-100">One more step till final setup</span>' +
-        '        <span class="mx-1.5 text-gray-400">·</span>' +
-        '        <span class="font-normal text-gray-600 dark:text-gray-300">To complete Automatic Card Processing set-up, please confirm the small deposit amount.</span>' +
-        "      </p>" +
-        "    </div>" +
-        '    <div class="shrink-0 flex items-center gap-2">' +
-        '      <button type="button" data-stp-verify-trigger="topbar" class="inline-flex items-center justify-center rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-200 dark:ring-white/10 dark:hover:bg-white/20 cursor-pointer">Verify now</button>' +
-        '      <button type="button" data-stp-learn-more-trigger="topbar-yellow" class="inline-flex items-center justify-center rounded-md px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-900/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer">Learn more</button>' +
-        "    </div>" +
-        "  </div>" +
-        "</div>" +
-        '<div data-global-stp-alert-agreement class="hidden border-b border-gray-200 bg-blue-100 px-6 py-2 dark:border-white/10 dark:bg-blue-500/15">' +
-        '  <div class="flex items-center justify-between gap-4">' +
-        '    <div class="flex min-w-0 items-center gap-3">' +
-        '      <div class="shrink-0 text-blue-600 dark:text-blue-400">' +
-        cardIcon +
-        "</div>" +
-        '      <p class="min-w-0 truncate text-sm leading-5">' +
-        '        <span class="font-semibold text-gray-900 dark:text-gray-100">Visa Agreement Signature Pending</span>' +
-        '        <span class="mx-1.5 text-gray-400">·</span>' +
-        '        <span data-global-stp-agreement-text class="font-normal text-gray-600 dark:text-gray-300"></span>' +
-        "      </p>" +
-        "    </div>" +
-        '    <div class="shrink-0">' +
-        '      <button type="button" data-stp-agreement-review-trigger="topbar" class="inline-flex items-center justify-center rounded-md bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-200 dark:ring-white/10 dark:hover:bg-white/20 cursor-pointer">Review</button>' +
-        "    </div>" +
-        "  </div>" +
-        "</div>";
+        '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">' +
+        '<path fill-rule="evenodd" clip-rule="evenodd" d="M8.27598 3.0253C9.0322 1.65823 10.9678 1.65823 11.724 3.0253L17.2431 13.0025C17.9848 14.3433 17.0319 16 15.5191 16H4.48093C2.96807 16 2.01521 14.3433 2.75691 13.0025L8.27598 3.0253ZM10.9889 12.983C10.9889 13.5384 10.5461 13.9887 9.99992 13.9887C9.45369 13.9887 9.01089 13.5384 9.01089 12.983C9.01089 12.4276 9.45369 11.9773 9.99992 11.9773C10.5461 11.9773 10.9889 12.4276 10.9889 12.983ZM9.99991 4.93733C9.45369 4.93733 9.01089 5.3876 9.01089 5.94303V8.96016C9.01089 9.51559 9.45369 9.96587 9.99991 9.96587C10.5461 9.96587 10.9889 9.51559 10.9889 8.96016V5.94303C10.9889 5.3876 10.5461 4.93733 9.99991 4.93733Z" fill="#FBBF24"/>' +
+        "</svg>";
+      var secondaryBtn =
+        "inline-flex items-center justify-center whitespace-nowrap rounded border border-gray-300 bg-white px-2 py-1 text-sm leading-5 font-semibold text-gray-800 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 cursor-pointer";
+      var linkBtn =
+        "inline-flex items-center justify-center whitespace-nowrap rounded px-2 py-1 text-sm leading-5 font-semibold text-gray-800 hover:bg-gray-900/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-200 dark:hover:bg-white/10 cursor-pointer";
+      var tones = {
+        blue: {
+          box: "border-blue-200 bg-blue-50 dark:border-blue-400/20 dark:bg-blue-500/10",
+          icon: '<div class="shrink-0 text-blue-600 dark:text-blue-400">' + cardIcon + "</div>",
+          title: "text-slate-950 dark:text-white",
+          text: "text-gray-700 dark:text-gray-300",
+        },
+        yellow: {
+          box: "border-yellow-200 bg-yellow-50 dark:border-yellow-400/20 dark:bg-yellow-400/10",
+          icon: '<div class="shrink-0">' + warningIcon + "</div>",
+          title: "text-gray-900 dark:text-white",
+          text: "text-gray-600 dark:text-gray-300",
+        },
+      };
+      function infoBox(attr, tone, title, textHtml, actionsHtml) {
+        var t = tones[tone];
+        return (
+          "<div " +
+          attr +
+          ' class="hidden">' +
+          '<div class="flex items-start gap-3 rounded-md border p-4 ' +
+          t.box +
+          '">' +
+          t.icon +
+          '  <div class="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-start">' +
+          '    <div class="flex min-w-0 flex-1 flex-col gap-2 text-sm leading-5">' +
+          '      <p class="font-medium ' +
+          t.title +
+          '">' +
+          title +
+          "</p>" +
+          '      <p class="font-normal ' +
+          t.text +
+          '">' +
+          textHtml +
+          "</p>" +
+          "    </div>" +
+          '    <div class="flex shrink-0 items-center gap-4">' +
+          actionsHtml +
+          "</div>" +
+          "  </div>" +
+          "</div>" +
+          "</div>"
+        );
+      }
+      var learnMore = function (trigger) {
+        return (
+          '<button type="button" data-stp-learn-more-trigger="' +
+          trigger +
+          '" class="' +
+          linkBtn +
+          '">Learn more</button>'
+        );
+      };
+      host.innerHTML =
+        infoBox(
+          "data-global-stp-alert-blue",
+          "blue",
+          "Interested in Automated Card Processing?",
+          "Your business may be eligible for Automated Card Processing. Select Opt in to get started.",
+          '<button type="button" data-stp-opt-in-trigger="topbar" class="' +
+            secondaryBtn +
+            '">Opt in</button>' +
+            learnMore("topbar-blue"),
+        ) +
+        infoBox(
+          "data-global-stp-alert-eligibility",
+          "blue",
+          "Let&rsquo;s Confirm Eligibility for Automatic Card Processing",
+          "Process your pending payment via virtual card, this will help us confirm eligibility.",
+          learnMore("topbar-eligibility"),
+        ) +
+        infoBox(
+          "data-global-stp-alert-agreement",
+          "blue",
+          "Visa Agreement Signature Pending",
+          "<span data-global-stp-agreement-text></span>",
+          '<button type="button" data-stp-agreement-review-trigger="topbar" class="' +
+            secondaryBtn +
+            '">Review</button>',
+        ) +
+        infoBox(
+          "data-global-stp-alert-yellow",
+          "yellow",
+          "Action Required",
+          "To complete Automatic Card Processing set-up, please confirm the small deposit amount.",
+          '<button type="button" data-stp-verify-trigger="topbar" class="' +
+            secondaryBtn +
+            '">Verify now &rarr;</button>' +
+            learnMore("topbar-yellow"),
+        );
     }
 
     _updateAlertSpacing() {
-      var host = document.getElementById("stp-alert-host");
+      var host = this._ensureAlertHost();
+      if (!host) return;
       // Plans that don't process cards (the Consumer Portal) never show the STP banner.
       var hidden = false;
       try {
         hidden = !!(window.AppPlans && window.AppPlans.getPlan().hideStp);
       } catch (error) {}
-      if (host) host.classList.toggle("hidden", hidden);
-      if (!host || hidden) {
-        document.documentElement.style.setProperty("--stp-alert-height", "0px");
-        document.body.style.paddingTop = "0px";
-        return;
-      }
       var visible = host.querySelector(
-        "[data-global-stp-alert-blue]:not(.hidden), [data-global-stp-alert-yellow]:not(.hidden), [data-global-stp-alert-agreement]:not(.hidden)",
+        "[data-global-stp-alert-blue]:not(.hidden), [data-global-stp-alert-eligibility]:not(.hidden), [data-global-stp-alert-yellow]:not(.hidden), [data-global-stp-alert-agreement]:not(.hidden)",
       );
-      var height = visible ? Math.ceil(host.getBoundingClientRect().height) : 0;
+      host.classList.toggle("hidden", hidden || !visible);
+      // Sticky content under the top bar that assumes its default height
+      // (e.g. the Pay page hero row) adds this, banner plus its 16px gap.
+      var extra =
+        hidden || !visible
+          ? 0
+          : Math.ceil(host.getBoundingClientRect().height) + 16;
       document.documentElement.style.setProperty(
-        "--stp-alert-height",
-        height + "px",
+        "--stp-banner-height",
+        extra + "px",
       );
-      document.body.style.paddingTop = height + "px";
     }
 
     disconnectedCallback() {
@@ -1066,9 +1109,11 @@
       var verifyButtons = host
         ? host.querySelectorAll('[data-stp-verify-trigger="topbar"]')
         : [];
-      var yellowLearnMoreButtons = host
-        ? host.querySelectorAll('[data-stp-learn-more-trigger="topbar-yellow"]')
+      var learnMoreButtons = host
+        ? host.querySelectorAll("[data-stp-learn-more-trigger]")
         : [];
+      var eligibilityAlertEl =
+        host && host.querySelector("[data-global-stp-alert-eligibility]");
       var agreementAlertEl =
         host && host.querySelector("[data-global-stp-alert-agreement]");
       var agreementTextEl =
@@ -1114,7 +1159,7 @@
         });
       });
 
-      yellowLearnMoreButtons.forEach(function (button) {
+      learnMoreButtons.forEach(function (button) {
         button.addEventListener("click", function (event) {
           event.preventDefault();
           if (
@@ -1132,10 +1177,15 @@
         var showYellow =
           status === "in_progress" && stpStep === "bank_verification_required";
         var showAgreement =
+          status === "in_progress" && stpStep === "agreement_signature_pending";
+        // Agreement signed, waiting for the first virtual card payment.
+        var showEligibility =
           status === "in_progress" &&
-          stpStep === "agreement_signature_pending";
-        var showBlue = status !== "enabled" && !showYellow && !showAgreement;
+          stpStep === "terminal_completed_tid_mid_received";
+        var showBlue = status === "disabled";
         if (blueAlertEl) blueAlertEl.classList.toggle("hidden", !showBlue);
+        if (eligibilityAlertEl)
+          eligibilityAlertEl.classList.toggle("hidden", !showEligibility);
         if (yellowAlertEl)
           yellowAlertEl.classList.toggle("hidden", !showYellow);
         if (agreementAlertEl)
@@ -1190,7 +1240,7 @@
 
       return (
         "" +
-        '<div class="flex flex-col gap-4 bg-white px-6 pb-4 pt-6 dark:bg-gray-900">' +
+        '<div class="flex flex-col gap-4 bg-white px-6 pb-4 pt-6 dark:bg-gray-900 border-b border-gray-200">' +
         '  <div class="flex items-center gap-8">' +
         '    <div class="flex min-w-0 flex-1 items-center gap-3">' +
         '      <button type="button" command="show-modal" commandfor="sidebar" class="-m-2.5 shrink-0 rounded-lg p-2.5 text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:hidden dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-white cursor-pointer">' +
@@ -1233,6 +1283,7 @@
         "      </el-dropdown>" +
         "    </div>" +
         "  </div>" +
+        '  <div id="stp-alert-host" class="hidden"></div>' +
         '  <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>' +
         '  <div class="hidden items-center gap-6 sm:flex">' +
         "    <p data-topbar-page-title class=\"shrink-0 whitespace-nowrap font-['Inter'] text-xl font-semibold leading-8 text-gray-900 dark:text-white\">" +

@@ -3004,18 +3004,7 @@ window.__ppStorageKey = function (name) {
   var stpInlineLearnMoreBtn = document.getElementById(
     "pp-stp-inline-learn-more-btn",
   );
-  var stpFullyAutomatedWrap = document.getElementById(
-    "pp-stp-fully-automated-wrap",
-  );
-  var stpFullyAutomatedRow = document.getElementById(
-    "pp-stp-fully-automated-row",
-  );
-  var stpFullyAutomatedToggle = document.getElementById(
-    "pp-stp-fully-automated-toggle",
-  );
-  var verifySuccessDoneBtn = document.getElementById(
-    "pp-verify-success-done-btn",
-  );
+  var stpReverifyLink = document.getElementById("pp-stp-reverify-link");
   var stpDescription = document.getElementById("pp-stp-description");
   var stpDefaultDescription = stpDescription
     ? stpDescription.textContent.replace(/\s+/g, " ").trim()
@@ -3023,6 +3012,10 @@ window.__ppStorageKey = function (name) {
   var stpAgreementReviewBtn = document.getElementById(
     "pp-stp-agreement-review-btn",
   );
+  var stpPendingLearnMoreBtn = document.getElementById(
+    "pp-stp-pending-learn-more-btn",
+  );
+  var stpIcon = document.getElementById("pp-stp-icon");
   var sendAgreementDialog = document.getElementById(
     "pp-stp-send-agreement-dialog",
   );
@@ -3054,10 +3047,6 @@ window.__ppStorageKey = function (name) {
   var isVerifyingDeposit = false;
   var stpAnimationCycleTimer = null;
   var stpDotTimers = [];
-  var stpFullyAutoGuideActive = false;
-  var stpFullyAutoGuideOverlay = null;
-  var stpFullyAutoGuideTooltip = null;
-  var stpFullyAutoGuideHighlight = null;
   var STP_ENABLED_CLASS =
     "inline-flex w-full items-center justify-center rounded-md bg-green-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs cursor-default sm:w-auto";
   var STP_DISABLED_CLASS =
@@ -3222,178 +3211,6 @@ window.__ppStorageKey = function (name) {
     );
   }
 
-  function closeFullyAutomatedGuide() {
-    if (stpFullyAutoGuideOverlay) stpFullyAutoGuideOverlay.style.opacity = "0";
-    if (stpFullyAutoGuideTooltip) {
-      stpFullyAutoGuideTooltip.style.opacity = "0";
-      stpFullyAutoGuideTooltip.style.transform = "translateX(-10px)";
-    }
-    if (stpFullyAutoGuideHighlight)
-      stpFullyAutoGuideHighlight.style.opacity = "0";
-    var overlayToRemove = stpFullyAutoGuideOverlay;
-    var tooltipToRemove = stpFullyAutoGuideTooltip;
-    var highlightToRemove = stpFullyAutoGuideHighlight;
-    window.setTimeout(function () {
-      if (overlayToRemove && overlayToRemove.parentNode)
-        overlayToRemove.parentNode.removeChild(overlayToRemove);
-      if (tooltipToRemove && tooltipToRemove.parentNode)
-        tooltipToRemove.parentNode.removeChild(tooltipToRemove);
-      if (highlightToRemove && highlightToRemove.parentNode)
-        highlightToRemove.parentNode.removeChild(highlightToRemove);
-    }, 220);
-    stpFullyAutoGuideOverlay = null;
-    stpFullyAutoGuideTooltip = null;
-    stpFullyAutoGuideHighlight = null;
-    stpFullyAutoGuideActive = false;
-    if (stpFullyAutomatedRow) {
-      stpFullyAutomatedRow.classList.remove(
-        "relative",
-        "z-[235]",
-        "bg-white",
-        "rounded-[8px]",
-        "px-2",
-        "py-2",
-      );
-    }
-    window.removeEventListener("resize", positionFullyAutomatedGuide);
-    window.removeEventListener("scroll", positionFullyAutomatedGuide, true);
-  }
-
-  function positionFullyAutomatedGuide() {
-    if (
-      !stpFullyAutoGuideActive ||
-      !stpFullyAutomatedRow ||
-      !stpFullyAutoGuideTooltip ||
-      !stpFullyAutoGuideHighlight
-    )
-      return;
-    var rect = stpFullyAutomatedRow.getBoundingClientRect();
-    if (rect.width <= 0 || rect.height <= 0) return;
-    var pad = 8;
-    stpFullyAutoGuideHighlight.style.left = Math.max(8, rect.left - pad) + "px";
-    stpFullyAutoGuideHighlight.style.top = Math.max(8, rect.top - pad) + "px";
-    stpFullyAutoGuideHighlight.style.width =
-      Math.min(window.innerWidth - 16, rect.width + pad * 2) + "px";
-    stpFullyAutoGuideHighlight.style.height = rect.height + pad * 2 + "px";
-
-    stpFullyAutoGuideTooltip.style.left = "-9999px";
-    stpFullyAutoGuideTooltip.style.top = "-9999px";
-    stpFullyAutoGuideTooltip.style.visibility = "hidden";
-    stpFullyAutoGuideTooltip.style.display = "block";
-    var tooltipRect = stpFullyAutoGuideTooltip.getBoundingClientRect();
-    var left = rect.left + rect.width / 2 - tooltipRect.width / 2;
-    left = Math.max(
-      16,
-      Math.min(left, window.innerWidth - tooltipRect.width - 16),
-    );
-    var top = rect.bottom + 18;
-    top = Math.min(top, window.innerHeight - tooltipRect.height - 16);
-    stpFullyAutoGuideTooltip.style.left = left + "px";
-    stpFullyAutoGuideTooltip.style.top = top + "px";
-    stpFullyAutoGuideTooltip.style.visibility = "visible";
-  }
-
-  function openFullyAutomatedGuide() {
-    if (!stpFullyAutomatedRow || stpFullyAutoGuideActive) return;
-    stpFullyAutoGuideActive = true;
-
-    var overlay = document.createElement("div");
-    overlay.className =
-      "fixed inset-0 z-[220] bg-gray-900/75 transition-opacity duration-300 ease-out motion-reduce:transition-none";
-    overlay.setAttribute("data-stp-fully-auto-guide-overlay", "true");
-    overlay.style.opacity = "0";
-
-    var highlight = document.createElement("div");
-    highlight.className =
-      "fixed z-[230] rounded-[8px] border-2 border-blue-600 bg-transparent pointer-events-none transition-opacity duration-300 ease-out motion-reduce:transition-none";
-    highlight.setAttribute("data-stp-fully-auto-guide-highlight", "true");
-    highlight.style.opacity = "0";
-
-    var tooltip = document.createElement("div");
-    tooltip.className =
-      "fixed z-[240] w-[413px] max-w-[calc(100vw-32px)] transition-[opacity,transform] duration-400 ease-out motion-reduce:transition-none";
-    tooltip.setAttribute("data-stp-fully-auto-guide-tooltip", "true");
-    tooltip.style.opacity = "0";
-    tooltip.style.transform = "translateX(-10px)";
-    tooltip.innerHTML =
-      '<div class="relative rounded-lg border border-gray-300 bg-gray-50 p-4 shadow-sm dark:border-white/10 dark:bg-gray-800">' +
-      '<span class="pointer-events-none absolute -top-1 left-1/2 h-2.5 w-2.5 -translate-x-1/2 rotate-45 border-t border-l border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-gray-800"></span>' +
-      '<div class="flex items-start justify-between gap-4">' +
-      '<div class="min-w-0">' +
-      '<p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Automatic Card Processing is Set Up</p>' +
-      '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Enable Fully Automated to let the system process payments automatically by card. The "Get Paid" step will only appear when documents or signatures are required</p>' +
-      "</div>" +
-      "</div>" +
-      '<div class="mt-4 flex items-center justify-end gap-2">' +
-      '<button type="button" data-stp-fully-auto-guide-skip class="inline-flex items-center rounded-md px-2 py-1 text-sm font-semibold text-gray-700 hover:bg-gray-900/10 dark:text-gray-300 dark:hover:bg-gray-900/10">Skip for now</button>' +
-      '<button type="button" data-stp-fully-auto-guide-enable class="rounded bg-blue-600 px-2 py-1 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Enable</button>' +
-      "</div>" +
-      "</div>";
-
-    document.body.appendChild(overlay);
-    document.body.appendChild(highlight);
-    document.body.appendChild(tooltip);
-
-    stpFullyAutoGuideOverlay = overlay;
-    stpFullyAutoGuideTooltip = tooltip;
-    stpFullyAutoGuideHighlight = highlight;
-    stpFullyAutomatedRow.classList.add(
-      "relative",
-      "z-[235]",
-      "bg-white",
-      "rounded-[8px]",
-      "px-2",
-      "py-2",
-    );
-
-    function enableFullyAutomated() {
-      if (!stpFullyAutomatedToggle) return;
-      if (!stpFullyAutomatedToggle.checked) {
-        stpFullyAutomatedToggle.checked = true;
-        stpFullyAutomatedToggle.dispatchEvent(
-          new Event("input", { bubbles: true }),
-        );
-        stpFullyAutomatedToggle.dispatchEvent(
-          new Event("change", { bubbles: true }),
-        );
-      }
-    }
-
-    var skipBtn = tooltip.querySelector("[data-stp-fully-auto-guide-skip]");
-    var enableBtn = tooltip.querySelector("[data-stp-fully-auto-guide-enable]");
-    if (skipBtn) skipBtn.addEventListener("click", closeFullyAutomatedGuide);
-    if (enableBtn) {
-      enableBtn.addEventListener("click", function () {
-        enableFullyAutomated();
-        closeFullyAutomatedGuide();
-      });
-    }
-
-    window.addEventListener("resize", positionFullyAutomatedGuide);
-    window.addEventListener("scroll", positionFullyAutomatedGuide, true);
-    positionFullyAutomatedGuide();
-    window.requestAnimationFrame(function () {
-      if (stpFullyAutoGuideOverlay)
-        stpFullyAutoGuideOverlay.style.opacity = "1";
-      if (stpFullyAutoGuideHighlight)
-        stpFullyAutoGuideHighlight.style.opacity = "1";
-      var reducedMotion =
-        window.matchMedia &&
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-      if (!stpFullyAutoGuideTooltip) return;
-      if (reducedMotion) {
-        stpFullyAutoGuideTooltip.style.opacity = "1";
-        stpFullyAutoGuideTooltip.style.transform = "translateX(0)";
-      } else {
-        window.setTimeout(function () {
-          if (!stpFullyAutoGuideTooltip || !stpFullyAutoGuideActive) return;
-          stpFullyAutoGuideTooltip.style.opacity = "1";
-          stpFullyAutoGuideTooltip.style.transform = "translateX(0)";
-        }, 500);
-      }
-    });
-  }
-
   function openNextStepsModal() {
     if (enableDialog && enableDialog.open) {
       try {
@@ -3444,20 +3261,46 @@ window.__ppStorageKey = function (name) {
       status === "in_progress" && stpStep === "bank_verification_required";
     var isAgreementPending =
       status === "in_progress" && stpStep === "agreement_signature_pending";
+    // Agreement signed, waiting for the first virtual card payment.
+    var isEligibilityPending =
+      status === "in_progress" &&
+      stpStep === "terminal_completed_tid_mid_received";
     var isEnabled = status === "enabled";
     if (stpDescription) {
-      stpDescription.textContent = isAgreementPending
-        ? "To complete enablement of automatic card processing, signature for Visa agreement is required."
-        : stpDefaultDescription;
+      stpDescription.textContent = showOptIn
+        ? "Automatically process card payments with no manual steps. You can opt out anytime."
+        : isAgreementPending
+          ? "To complete enablement of automatic card processing, signature for Visa agreement is required"
+          : isEligibilityPending
+            ? "Process a pending payment via virtual card to confirm eligibility."
+            : stpDefaultDescription;
     }
+    // The design shows the card icon only until the bank verification step.
+    if (stpIcon)
+      stpIcon.classList.toggle(
+        "hidden",
+        !(showOptIn || isAgreementPending || isEligibilityPending),
+      );
     if (stpAgreementReviewBtn) {
       stpAgreementReviewBtn.classList.toggle("hidden", !isAgreementPending);
       stpAgreementReviewBtn.classList.toggle("inline-flex", isAgreementPending);
     }
-    if (stpLearnMoreMenuBtn) {
-      stpLearnMoreMenuBtn.textContent = isEnabled
-        ? "Changed payment processors"
-        : "Learn more";
+    if (stpPendingLearnMoreBtn) {
+      stpPendingLearnMoreBtn.classList.toggle("hidden", !isEligibilityPending);
+      stpPendingLearnMoreBtn.classList.toggle(
+        "inline-flex",
+        isEligibilityPending,
+      );
+    }
+    // Once enabled, the card's re-verify link replaces the menu's Learn more.
+    if (stpLearnMoreMenuBtn)
+      stpLearnMoreMenuBtn.classList.toggle("hidden", isEnabled);
+    if (stpReverifyLink) stpReverifyLink.classList.toggle("hidden", !isEnabled);
+    // The design pads the card 12px while the icon shows, 16px after.
+    if (stpCardContainer) {
+      var compactCard = showOptIn || isAgreementPending || isEligibilityPending;
+      stpCardContainer.classList.toggle("p-3", compactCard);
+      stpCardContainer.classList.toggle("p-4", !compactCard);
     }
     if (stpStatusBadge) {
       var showStatusBadge = status === "in_progress" || status === "enabled";
@@ -3475,24 +3318,20 @@ window.__ppStorageKey = function (name) {
         stpStatusBadge.className =
           "inline-flex items-center rounded-full border border-green-200 bg-green-100 px-2 py-0.5 text-xs leading-4 font-medium text-green-800 dark:border-green-400/30 dark:bg-green-400/10 dark:text-green-300";
       } else {
-        stpStatusBadge.textContent = "Enabling pending";
+        stpStatusBadge.textContent = "Pending";
         stpStatusBadge.className =
-          "inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-white/5 dark:text-gray-300 dark:ring-white/15";
+          "inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300";
       }
-      stpStatusBadge.classList.toggle("hidden", !showStatusBadge);
     }
     if (stpActionsWrap) {
       stpActionsWrap.classList.toggle(
         "hidden",
-        showOptIn || isAgreementPending,
+        showOptIn || isAgreementPending || isEligibilityPending,
       );
     }
     if (stpInlineVerifyAlert) {
       stpInlineVerifyAlert.classList.toggle("hidden", !showInlineVerify);
       syncStpVerifyDate(showInlineVerify);
-    }
-    if (stpFullyAutomatedWrap) {
-      stpFullyAutomatedWrap.classList.toggle("hidden", !isEnabled);
     }
     if (!showOptIn) {
       stpOptInBtn.hidden = true;
@@ -3685,6 +3524,8 @@ window.__ppStorageKey = function (name) {
                       ". Live email sending is not enabled for this environment."
                   : result.email +
                       " is not allowlisted, so no email was sent.",
+              // Nothing was emailed unless it was delivered: not a success.
+              result.delivered ? undefined : { tone: "info" },
             );
           }
         })
@@ -3740,13 +3581,6 @@ window.__ppStorageKey = function (name) {
     stpLearnMoreMenuBtn.addEventListener("click", function () {
       if (
         window.STPState &&
-        typeof window.STPState.getStpStatus === "function" &&
-        window.STPState.getStpStatus() === "enabled"
-      ) {
-        return;
-      }
-      if (
-        window.STPState &&
         typeof window.STPState.openSetupStepsModal === "function"
       ) {
         window.STPState.openSetupStepsModal();
@@ -3797,33 +3631,8 @@ window.__ppStorageKey = function (name) {
       }
     });
   }
-  if (verifySuccessDoneBtn) {
-    verifySuccessDoneBtn.addEventListener("click", function () {
-      setTimeout(function () {
-        openFullyAutomatedGuide();
-      }, 0);
-    });
-  }
-  if (stpFullyAutomatedToggle) {
-    stpFullyAutomatedToggle.addEventListener("change", function () {
-      if (
-        window.showGlobalTopToast &&
-        typeof window.showGlobalTopToast === "function"
-      ) {
-        window.showGlobalTopToast(
-          stpFullyAutomatedToggle.checked
-            ? "Fully Automated has been enabled."
-            : "Fully Automated has been disabled.",
-        );
-      }
-      if (stpFullyAutoGuideActive) {
-        closeFullyAutomatedGuide();
-      }
-    });
-  }
   if (stpOptOutConfirmBtn) {
     stpOptOutConfirmBtn.addEventListener("click", function () {
-      closeFullyAutomatedGuide();
       if (stpStatusBadge) {
         stpStatusBadge.hidden = true;
         stpStatusBadge.classList.add("hidden");
@@ -3955,13 +3764,22 @@ window.__ppStorageKey = function (name) {
         applyStpUi("enabled");
       }
       setVerifyLoading(false);
-      if (verifyDialog && verifyDialog.open) verifyDialog.close();
-      if (
-        verifySuccessDialog &&
-        typeof verifySuccessDialog.showModal === "function" &&
-        !verifySuccessDialog.open
-      ) {
-        verifySuccessDialog.showModal();
+      var showSuccess = function () {
+        if (
+          verifySuccessDialog &&
+          typeof verifySuccessDialog.showModal === "function" &&
+          !verifySuccessDialog.open
+        ) {
+          verifySuccessDialog.showModal();
+        }
+      };
+      // The deposit dialog animates out before it fires "close"; opening the
+      // success dialog earlier stacks it on top of the closing one.
+      if (verifyDialog && verifyDialog.open) {
+        verifyDialog.addEventListener("close", showSuccess, { once: true });
+        verifyDialog.close();
+      } else {
+        showSuccess();
       }
     }, 3000);
   });
@@ -3973,7 +3791,6 @@ window.__ppStorageKey = function (name) {
   }
 
   var openStpFromQuery = false;
-  var openFullyAutomatedGuideFromQuery = false;
   try {
     var params = new URLSearchParams(window.location.search || "");
     // "Review and sign" in the Visa agreement email lands here.
@@ -3985,13 +3802,8 @@ window.__ppStorageKey = function (name) {
       params.delete("email");
       params.delete("token");
     }
-    openFullyAutomatedGuideFromQuery =
-      params.get("stpGuide") === "fully-automated";
     if (openStpFromQuery) {
       params.delete("openStpModal");
-    }
-    if (openFullyAutomatedGuideFromQuery) params.delete("stpGuide");
-    if (openStpFromQuery || openFullyAutomatedGuideFromQuery) {
       var newQuery = params.toString();
       var nextUrl =
         window.location.pathname +
@@ -4001,17 +3813,11 @@ window.__ppStorageKey = function (name) {
     }
   } catch (err) {
     openStpFromQuery = false;
-    openFullyAutomatedGuideFromQuery = false;
   }
   if (openStpFromQuery) {
     setTimeout(function () {
       openEnableStep();
     }, 0);
-  }
-  if (openFullyAutomatedGuideFromQuery) {
-    setTimeout(function () {
-      openFullyAutomatedGuide();
-    }, 200);
   }
 
   updateEnableState();
