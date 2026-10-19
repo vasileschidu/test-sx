@@ -564,6 +564,7 @@
 
   window.PPComponents = Object.assign({}, window.PPComponents || {}, {
     buildAccountActionMenu: buildAccountActionMenu,
+    buildBankValidationIcon: buildBankValidationIcon,
     buildDescriptionListItem: buildDescriptionListItem,
     createMiniCardComponent: createMiniCardComponent,
     createAccountDetailsComponent: createAccountDetailsComponent,

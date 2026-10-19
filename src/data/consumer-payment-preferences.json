@@ -99,7 +99,7 @@
       "maskedRouting": "•••••0021",
       "routingNumber": "021000021",
       "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
-      "validationStatus": "verified"
+      "validationStatus": "locked"
     },
     {
       "id": "wf-8419",
@@ -114,7 +114,7 @@
       "maskedRouting": "•••••5667",
       "routingNumber": "121005667",
       "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
-      "validationStatus": "locked"
+      "validationStatus": "verified"
     },
     {
       "id": "citi-3674",
