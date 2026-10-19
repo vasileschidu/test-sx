@@ -1,0 +1,36 @@
+{
+  "headerText": "documents",
+  "message": {
+    "title": "Documents",
+    "body": "These documents cover the {total} claim payment from {sender}, shared between you and the other co-payees. Open each one, read it through and select Next to mark it as Done."
+  },
+  "documents": [
+    {
+      "id": "mp-settlement-statement",
+      "name": "Multi-Party Settlement Statement",
+      "listName": "Multi-Party Settlement Statement",
+      "type": "PDF",
+      "size": "74.5 KB",
+      "file": "../../assets/onboarding/documents/mp-settlement-statement.pdf",
+      "description": "The settled claim amount, the co-payees entitled to share in it and the initial allocation between them."
+    },
+    {
+      "id": "mp-allocation-agreement",
+      "name": "Payment Allocation Agreement",
+      "listName": "Payment Allocation Agreement",
+      "type": "PDF",
+      "size": "77.2 KB",
+      "file": "../../assets/onboarding/documents/mp-allocation-agreement.pdf",
+      "description": "How the co-payees accept, change or dispute the allocation, and what happens if it isn’t accepted before the expiry date."
+    },
+    {
+      "id": "mp-co-payee-authorization",
+      "name": "Co-Payee Authorization",
+      "listName": "Co-Payee Authorization",
+      "type": "PDF",
+      "size": "75.1 KB",
+      "file": "../../assets/onboarding/documents/mp-co-payee-authorization.pdf",
+      "description": "Your authorization for the jointly payable claim to be paid as separate shares, one to each co-payee."
+    }
+  ]
+}

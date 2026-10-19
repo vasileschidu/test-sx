@@ -8,13 +8,13 @@
         "name": "Rachel Morris",
         "firstName": "Rachel",
         "lastName": "Morris",
-        "email": "ap@redmaple.example",
+        "email": "rachel.morris@mail.com",
         "phone": "+1 (512) 555-0182"
       },
       "accountInformation": {
         "firstName": "Rachel",
         "lastName": "Morris",
-        "email": "ap@redmaple.example",
+        "email": "rachel.morris@mail.com",
         "phoneNumber": "+1 (512) 555-0182",
         "addressLine1": "1845 Willow Creek Rd",
         "addressLine2": "",
@@ -76,14 +76,14 @@
             "id": "sd-rmc-1",
             "label": "Finance Team (Email)",
             "channel": "Email",
-            "destination": "ap@redmaple.example",
+            "destination": "rachel.morris@mail.com",
             "contactPerson": "Rachel Morris",
             "contacts": [
               {
                 "id": "sd-rmc-1-email",
                 "type": "email",
                 "label": "Rachel Morris",
-                "value": "ap@redmaple.example"
+                "value": "rachel.morris@mail.com"
               },
               {
                 "id": "sd-rmc-1-phone",
@@ -100,13 +100,13 @@
             "label": "Red Maple Construction Profile",
             "status": "Enabled",
             "contactPerson": "Rachel Morris",
-            "destination": "ap@redmaple.example",
+            "destination": "rachel.morris@mail.com",
             "contacts": [
               {
                 "id": "sx-rmc-1-email",
                 "type": "email",
                 "label": "Rachel Morris",
-                "value": "ap@redmaple.example"
+                "value": "rachel.morris@mail.com"
               },
               {
                 "id": "sx-rmc-1-phone",

@@ -1,0 +1,13 @@
+<svg preserveAspectRatio="none" overflow="visible" style="display: block;" width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="Icon24/Lined/Calendar Exclamation">
+<path id="Icon" d="M6 5.25V2.25M12 5.25V2.25M5.25 8.25H10.5M7.5 15.75H3.75C2.92157 15.75 2.25 15.0784 2.25 14.25V5.25C2.25 4.42157 2.92157 3.75 3.75 3.75H14.25C15.0784 3.75 15.75 4.42157 15.75 5.25V7.5" stroke="#2563EB" stroke-width="1.44" stroke-linecap="round" stroke-linejoin="round"/>
+<g id="Icon24/Lined/Exclamation circle" clip-path="url(#clip0_0_155)">
+<path id="Icon_2" d="M13.5 12V13.5M13.5 15H13.5038M16.875 13.5C16.875 15.364 15.364 16.875 13.5 16.875C11.636 16.875 10.125 15.364 10.125 13.5C10.125 11.636 11.636 10.125 13.5 10.125C15.364 10.125 16.875 11.636 16.875 13.5Z" stroke="#2563EB" stroke-width="1.44" stroke-linecap="round" stroke-linejoin="round"/>
+</g>
+</g>
+<defs>
+<clipPath id="clip0_0_155">
+<rect width="9" height="9" fill="white" transform="translate(9 9)"/>
+</clipPath>
+</defs>
+</svg>

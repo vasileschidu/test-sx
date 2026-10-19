@@ -1,0 +1,16 @@
+{
+  "reasons": [
+    "Zero balance acct (patient does not owe on the acct)",
+    "Unable to post",
+    "Invalid Provider",
+    "Unable to locate acct",
+    "Duplicate payment creates a credit balance.",
+    "Account charge off (sent to collections)",
+    "Could not allocate to guarantor",
+    "Remit Rejected",
+    "Other"
+  ],
+  "otherReason": "Other",
+  "noteMinLength": 10,
+  "noteMaxLength": 255
+}
