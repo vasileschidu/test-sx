@@ -7,8 +7,9 @@
  * 1000-1500ms and then crossfade to the real thing; nothing that was already on
  * screen animates a second time. Static chrome — headings, labels, body copy,
  * buttons — is never masked, so a step reads as itself while its data loads.
- * Navigating to the next step fades the current page out first, so the two
- * pages read as one continuous cross-fade.
+ * Navigating to the next step is instant on SMART Disburse pages
+ * (INSTANT_PAGE_CHANGES); elsewhere the current page fades out first, so the
+ * two pages read as one cross-fade.
  *
  * Markup hooks (all optional except the first):
  *   [data-ob-content]        the content area to skeleton + reveal (required)
@@ -32,11 +33,17 @@
   var MAX_DELAY_MS = 1500;
   var EXIT_DURATION_MS = 260;
 
+  // SMART Disburse US steps (src/pages/onboarding/: the Default Flow and
+  // Multi-Party) change instantly: no fade-out of the old page, no fade-in of
+  // the new one, no simulated loading. Other flows that load this script (the
+  // UK claim demo in src/pages/sd-uk/) keep the cross-fade and skeletons.
+  var INSTANT_PAGE_CHANGES = /\/pages\/onboarding\//.test(window.location.pathname);
+
   // Browsers with cross-document View Transitions cross-fade one page into the
   // next themselves; the menu and the phone top bar are named so they stay put
   // and only the content changes. Others get the manual fade-out / fade-in.
-  var NATIVE_PAGE_TRANSITIONS = !!(window.CSS && CSS.supports && CSS.supports('view-transition-name: ob') &&
-    'onpagereveal' in window);
+  var NATIVE_PAGE_TRANSITIONS = !INSTANT_PAGE_CHANGES && !!(window.CSS && CSS.supports &&
+    CSS.supports('view-transition-name: ob') && 'onpagereveal' in window);
 
   /**
    * Resolves once the page-enter transition is over. While a native view
@@ -127,7 +134,7 @@
       // so an animation starting at opacity 0 blinks the whole page out first.
       // No transform either — it would make <body> a containing block for
       // fixed-position dialogs while it runs.
-      NATIVE_PAGE_TRANSITIONS
+      INSTANT_PAGE_CHANGES ? '' : NATIVE_PAGE_TRANSITIONS
         ? '@view-transition{navigation:auto;}' +
           '[data-ob-sidebar]{view-transition-name:ob-sidebar;}' +
           '[data-ob-mobile-header]{view-transition-name:ob-mobile-header;}' +
@@ -373,8 +380,8 @@
     if (!href) return;
     // Multi-Party reroutes a few hops (onboarding-flow.js).
     if (window.OBFlow) href = window.OBFlow.route(href);
-    // Native cross-fade (or reduced motion): just go, the browser handles it.
-    if (prefersReducedMotion() || NATIVE_PAGE_TRANSITIONS) {
+    // Instant, native cross-fade or reduced motion: just go.
+    if (INSTANT_PAGE_CHANGES || prefersReducedMotion() || NATIVE_PAGE_TRANSITIONS) {
       window.location.href = href;
       return;
     }
@@ -421,7 +428,8 @@
     }
 
     // A flow can opt out of the simulated load and just keep the transitions.
-    var skipSkeleton = root.hasAttribute('data-ob-no-skeleton');
+    // SMART Disburse US (Default and Multi-Party) shows each step at once.
+    var skipSkeleton = INSTANT_PAGE_CHANGES || root.hasAttribute('data-ob-no-skeleton');
     var targets = [];
     if (!skipSkeleton) {
       try {
