@@ -1269,8 +1269,9 @@ window.__ppStorageKey = function (name) {
 
   function getSelectValue(selectEl) {
     if (!selectEl) return "";
-    if (typeof selectEl.value === "string" && selectEl.value)
-      return selectEl.value;
+    // An empty el-select still marks its first option aria-selected, so its
+    // own value is the answer whenever it has one, even when that is "".
+    if (typeof selectEl.value === "string") return selectEl.value;
     var selectedOption = selectEl.querySelector(
       'el-option[aria-selected="true"]',
     );
