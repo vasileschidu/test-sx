@@ -48,6 +48,10 @@
     <script src="../../../src/scripts/shared.js" defer></script>
     <script src="../../../src/scripts/shell-navigation.js" defer></script>
     <script src="../../../src/scripts/table-skeleton.js" defer></script>
+    <script>
+      // Show "SMART Exchange" (not a dash) before a payment method is chosen.
+      window.EXCHANGES_TABLE_CONFIG = { showTokenMethod: true };
+    </script>
     <style>
       #gp-signature-canvas {
         --gp-ink-color: #111827;

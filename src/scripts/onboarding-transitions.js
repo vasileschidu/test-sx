@@ -7,8 +7,9 @@
  * 1000-1500ms and then crossfade to the real thing; nothing that was already on
  * screen animates a second time. Static chrome — headings, labels, body copy,
  * buttons — is never masked, so a step reads as itself while its data loads.
- * Navigating to the next step fades the current page out first, so the two
- * pages read as one continuous cross-fade.
+ * Navigating to the next step is instant on SMART Disburse pages
+ * (INSTANT_PAGE_CHANGES); elsewhere the current page fades out first, so the
+ * two pages read as one cross-fade.
  *
  * Markup hooks (all optional except the first):
  *   [data-ob-content]        the content area to skeleton + reveal (required)
@@ -32,11 +33,18 @@
   var MAX_DELAY_MS = 1500;
   var EXIT_DURATION_MS = 260;
 
+  // SMART Disburse US steps (src/pages/onboarding/: the Default Flow and
+  // Multi-Party) change instantly: no fade-out of the old page, no fade-in of
+  // the new one. The simulated loading (skeletons) still runs inside the page.
+  // Other flows that load this script (the UK claim demo in src/pages/sd-uk/)
+  // keep the cross-fade.
+  var INSTANT_PAGE_CHANGES = /\/pages\/onboarding\//.test(window.location.pathname);
+
   // Browsers with cross-document View Transitions cross-fade one page into the
   // next themselves; the menu and the phone top bar are named so they stay put
   // and only the content changes. Others get the manual fade-out / fade-in.
-  var NATIVE_PAGE_TRANSITIONS = !!(window.CSS && CSS.supports && CSS.supports('view-transition-name: ob') &&
-    'onpagereveal' in window);
+  var NATIVE_PAGE_TRANSITIONS = !INSTANT_PAGE_CHANGES && !!(window.CSS && CSS.supports &&
+    CSS.supports('view-transition-name: ob') && 'onpagereveal' in window);
 
   /**
    * Resolves once the page-enter transition is over. While a native view
@@ -127,7 +135,7 @@
       // so an animation starting at opacity 0 blinks the whole page out first.
       // No transform either — it would make <body> a containing block for
       // fixed-position dialogs while it runs.
-      NATIVE_PAGE_TRANSITIONS
+      INSTANT_PAGE_CHANGES ? '' : NATIVE_PAGE_TRANSITIONS
         ? '@view-transition{navigation:auto;}' +
           '[data-ob-sidebar]{view-transition-name:ob-sidebar;}' +
           '[data-ob-mobile-header]{view-transition-name:ob-mobile-header;}' +
@@ -139,6 +147,19 @@
         : 'body{animation:obEnter .45s cubic-bezier(0,0,.2,1) both;}' +
           '@keyframes obEnter{from{opacity:0}to{opacity:1}}' +
           'html.ob-leaving body{opacity:0;transition:opacity ' + EXIT_DURATION_MS + 'ms cubic-bezier(.4,0,1,1);}',
+      // Instant steps have no fade to hide the first frames, so the menu and the
+      // phone top bar (both drawn by script, their classes styled a beat later)
+      // get their final size and colour from plain CSS: nothing jumps.
+      INSTANT_PAGE_CHANGES
+        ? '@media (min-width:1024px){[data-ob-sidebar]{display:flex;width:325px;flex-shrink:0;align-self:stretch;' +
+            'background-image:linear-gradient(to bottom,#1E326F,#090C38);}}' +
+          '@media (max-width:1023.98px){' +
+            'html:not(:has([data-ob-mobile-header])) [data-ob-sidebar]{display:block;height:104px;overflow:hidden;' +
+              'background-image:linear-gradient(to bottom,#1E326F,#090C38);}' +
+            'html:not(:has([data-ob-mobile-header])) [data-ob-sidebar]>*{visibility:hidden;}' +
+            '[data-ob-mobile-header]{position:sticky;top:0;z-index:30;display:flex;flex-direction:column;gap:1rem;' +
+              'padding:1rem;background-image:linear-gradient(to bottom,#1E326F,#090C38);}}'
+        : '',
       '@media (prefers-reduced-motion: reduce){',
       '.ob-skel,.ob-skel-field{animation:none;}',
       '::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important;}',
@@ -373,8 +394,8 @@
     if (!href) return;
     // Multi-Party reroutes a few hops (onboarding-flow.js).
     if (window.OBFlow) href = window.OBFlow.route(href);
-    // Native cross-fade (or reduced motion): just go, the browser handles it.
-    if (prefersReducedMotion() || NATIVE_PAGE_TRANSITIONS) {
+    // Instant, native cross-fade or reduced motion: just go.
+    if (INSTANT_PAGE_CHANGES || prefersReducedMotion() || NATIVE_PAGE_TRANSITIONS) {
       window.location.href = href;
       return;
     }

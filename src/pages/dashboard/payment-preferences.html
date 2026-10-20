@@ -2539,6 +2539,8 @@
                         <!-- Why link -->
                         <button
                           type="button"
+                          command="show-modal"
+                          commandfor="pp-why-multiple-dialog"
                           class="-mt-1 ml-10 inline-flex cursor-pointer items-center gap-1 rounded text-xs leading-4 font-semibold whitespace-nowrap text-blue-600 hover:text-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
                         >
                           <svg
@@ -2664,6 +2666,47 @@
                           Payer Name
                         </div>
                         <div
+                          class="flex min-w-0 flex-1 items-center gap-1 text-xs font-medium text-gray-500 dark:text-gray-400"
+                        >
+                          <span class="whitespace-nowrap"
+                            >Entity on File with Payer</span
+                          >
+                          <span
+                            tabindex="0"
+                            class="group/vtip relative inline-flex shrink-0 outline-none"
+                          >
+                            <span class="sr-only">About this column</span>
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              aria-hidden="true"
+                              class="size-3.5 text-gray-400 dark:text-gray-500"
+                            >
+                              <path
+                                fill-rule="evenodd"
+                                d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z"
+                                clip-rule="evenodd"
+                              />
+                            </svg>
+                            <span
+                              role="tooltip"
+                              class="pointer-events-none invisible absolute bottom-full left-1/2 z-30 mb-2.5 w-[343px] max-w-[calc(100vw-2rem)] -translate-x-1/2 rounded-lg bg-gray-900 p-3 text-left text-sm/5 font-normal whitespace-normal text-gray-100 opacity-0 drop-shadow-[0_10px_7.5px_rgba(0,0,0,0.1)] transition-opacity group-hover/vtip:visible group-hover/vtip:opacity-100 group-focus-visible/vtip:visible group-focus-visible/vtip:opacity-100"
+                            >
+                              <span
+                                aria-hidden="true"
+                                class="absolute -bottom-1 left-1/2 size-2.5 -translate-x-1/2 rotate-45 bg-gray-900"
+                              ></span>
+                              <span class="relative"
+                                >This information has been sourced from the
+                                customer's ERP system. It may be inaccurate or
+                                outdated. Leave the default setting if you're
+                                unsure</span
+                              >
+                            </span>
+                          </span>
+                        </div>
+                        <div
                           class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400"
                         >
                           Primary Method of Payment
@@ -2684,7 +2727,10 @@
                         class="h-px w-full bg-gray-200 dark:bg-white/10"
                       ></div>
 
-                      <div id="pp-adv-rows" class="w-full">
+                      <div
+                        id="pp-adv-rows"
+                        class="w-full divide-y divide-gray-200 dark:divide-white/10"
+                      >
                         <div
                           class="pp-adv-row flex w-full items-center gap-4 px-2 py-3"
                         >
@@ -2723,6 +2769,45 @@
                                 popover
                                 class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
                                 data-adv-payer-options
+                              >
+                              </el-options>
+                            </el-select>
+                          </div>
+                          <div class="min-w-0 flex-1">
+                            <el-select
+                              data-adv-entity-select
+                              class="block w-full"
+                            >
+                              <button
+                                type="button"
+                                class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-sm leading-5 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10"
+                              >
+                                <el-selectedcontent
+                                  class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-900 dark:text-white"
+                                >
+                                  <span
+                                    class="font-normal text-gray-400 dark:text-gray-500"
+                                    >Select entry</span
+                                  >
+                                </el-selectedcontent>
+                                <svg
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                  aria-hidden="true"
+                                  class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"
+                                >
+                                  <path
+                                    fill-rule="evenodd"
+                                    d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
+                                    clip-rule="evenodd"
+                                  />
+                                </svg>
+                              </button>
+                              <el-options
+                                anchor="bottom start"
+                                popover
+                                class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10"
+                                data-adv-entity-options
                               >
                               </el-options>
                             </el-select>
@@ -4244,6 +4329,244 @@
                 class="w-full rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600"
               >
                 Yes, opt out
+              </button>
+            </div>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
+
+    <!-- ===== WHY SET MULTIPLE PAYMENT METHODS MODAL ===== -->
+    <el-dialog>
+      <dialog
+        id="pp-why-multiple-dialog"
+        aria-labelledby="pp-why-multiple-title"
+        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
+      >
+        <el-dialog-backdrop
+          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+        ></el-dialog-backdrop>
+        <div
+          tabindex="0"
+          class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6"
+        >
+          <el-dialog-panel
+            class="relative w-full transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-[640px] data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10"
+          >
+            <div class="relative h-40 overflow-hidden sm:h-64">
+              <img
+                src="../../../src/assets/payment-preferences/why-multiple-hero.png"
+                alt=""
+                width="640"
+                height="256"
+                class="size-full object-cover object-left"
+              />
+              <button
+                type="button"
+                command="close"
+                commandfor="pp-why-multiple-dialog"
+                class="absolute top-5 right-5 inline-flex cursor-pointer items-center justify-center rounded-md bg-slate-950/5 p-2.5 text-gray-700 hover:bg-slate-950/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+              >
+                <span class="sr-only">Close</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                  fill="currentColor"
+                  aria-hidden="true"
+                  class="size-5"
+                >
+                  <path
+                    d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div class="flex flex-col gap-6 p-6 sm:p-12">
+              <h2
+                id="pp-why-multiple-title"
+                class="text-3xl/9 font-bold text-gray-800 dark:text-white"
+              >
+                Ensure You Get Paid
+              </h2>
+              <div class="flex items-start gap-4">
+                <div
+                  class="flex shrink-0 items-center rounded-lg bg-gray-100 p-1.5 dark:bg-white/10"
+                >
+                  <img
+                    src="../../../src/assets/payment-preferences/why-multiple-network.svg"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                </div>
+                <div class="flex min-w-0 flex-1 flex-col gap-1 pt-1">
+                  <h3
+                    class="text-lg/6 font-semibold text-gray-900 dark:text-white"
+                  >
+                    Our Network of Payers is Growing
+                  </h3>
+                  <p class="text-sm/5 text-gray-500 dark:text-gray-400">
+                    More companies and financial institutions are enhancing and
+                    automating their payment processes, which means more of your
+                    customers are likely to start making payments through the
+                    Transcard network. By setting your primary, secondary, and
+                    third preferred methods of payment, you can ensure seamless
+                    payments from all your payers.
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <div
+                  class="flex shrink-0 items-center rounded-lg bg-gray-100 p-1.5 dark:bg-white/10"
+                >
+                  <img
+                    src="../../../src/assets/payment-preferences/why-multiple-backup.svg"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                </div>
+                <div class="flex min-w-0 flex-1 flex-col gap-1 pt-1">
+                  <h3
+                    class="text-lg/6 font-semibold text-gray-900 dark:text-white"
+                  >
+                    Have a Backup Payment Option
+                  </h3>
+                  <p class="text-sm/5 text-gray-500 dark:text-gray-400">
+                    Sometimes, a second payment option is necessary. For
+                    example, if the person signing checks is unavailable, your
+                    customer might want to send an electronic payment instead.
+                    Life happens - let’s be prepared!
+                  </p>
+                </div>
+              </div>
+              <div class="flex items-start gap-4">
+                <div
+                  class="flex shrink-0 items-center rounded-lg bg-gray-100 p-1.5 dark:bg-white/10"
+                >
+                  <img
+                    src="../../../src/assets/payment-preferences/why-multiple-customer.svg"
+                    alt=""
+                    width="20"
+                    height="20"
+                  />
+                </div>
+                <div class="flex min-w-0 flex-1 flex-col gap-1 pt-1">
+                  <h3
+                    class="text-lg/6 font-semibold text-gray-900 dark:text-white"
+                  >
+                    Can I Customize the Payment Method for a Specific Customer?
+                  </h3>
+                  <p class="text-sm/5 text-gray-500 dark:text-gray-400">
+                    Absolutely. You can set customer-specific payment
+                    preferences that differ from your global default settings.
+                    These rules can be easily configured in the “Advanced
+                    Settings” tab.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
+
+    <!-- ===== REMOVE CUSTOM PAYMENT PREFERENCE CONFIRM MODAL ===== -->
+    <el-dialog>
+      <dialog
+        id="pp-adv-remove-confirm-dialog"
+        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
+      >
+        <el-dialog-backdrop
+          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+        ></el-dialog-backdrop>
+        <div
+          tabindex="0"
+          class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6"
+        >
+          <el-dialog-panel
+            class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10"
+          >
+            <div
+              class="flex self-stretch flex-col items-end justify-end px-4 pt-4"
+            >
+              <button
+                type="button"
+                command="close"
+                commandfor="pp-adv-remove-confirm-dialog"
+                class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer"
+              >
+                <span class="sr-only">Close</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  class="size-5"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+            <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+              <div class="flex flex-col items-center text-center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="44"
+                  height="44"
+                  viewBox="0 0 44 44"
+                  fill="none"
+                  aria-hidden="true"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    clip-rule="evenodd"
+                    d="M18.6667 5.48896C20.1486 2.92229 23.8532 2.9223 25.3351 5.48897L39.1482 29.414C40.6301 31.9806 38.7777 35.189 35.814 35.189H8.18777C5.22404 35.189 3.37171 31.9806 4.85358 29.414L18.6667 5.48896ZM22.0008 11C22.9121 11 23.6508 11.7387 23.6508 12.65V20.35C23.6508 21.2612 22.9121 22 22.0008 22C21.0895 22 20.3508 21.2612 20.3508 20.35L20.3508 12.65C20.3508 11.7387 21.0895 11 22.0008 11ZM22.0008 30.8C23.2158 30.8 24.2008 29.815 24.2008 28.6C24.2008 27.3849 23.2158 26.4 22.0008 26.4C20.7858 26.4 19.8008 27.3849 19.8008 28.6C19.8008 29.815 20.7858 30.8 22.0008 30.8Z"
+                    fill="#F59E0B"
+                  />
+                </svg>
+                <div class="mt-6 flex flex-col items-center gap-2">
+                  <h2
+                    class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white"
+                  >
+                    Remove Custom Payment Preference
+                  </h2>
+                  <p
+                    class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400"
+                  >
+                    Removing this custom payment preference will revert
+                    <span
+                      data-adv-remove-payer-name
+                      class="font-semibold text-gray-900 dark:text-white"
+                    ></span>
+                    to your Global Preference settings.
+                  </p>
+                </div>
+              </div>
+            </div>
+            <div
+              class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10"
+            >
+              <button
+                type="button"
+                command="close"
+                commandfor="pp-adv-remove-confirm-dialog"
+                class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                id="pp-adv-remove-confirm-btn"
+                type="button"
+                class="w-full rounded-md bg-amber-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-amber-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-500 cursor-pointer"
+              >
+                Yes, Remove
               </button>
             </div>
           </el-dialog-panel>

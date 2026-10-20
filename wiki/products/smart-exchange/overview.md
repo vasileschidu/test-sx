@@ -34,4 +34,5 @@ Full details: [suite/integrations.md](../../suite/integrations.md).
   - `src/pages/dashboard/supplier-portal.html`, `payment-preferences.html`, `my-company-profile.html`
   - Called **"Supplier Portal"** in the code and nav. TODO(confirm): same product as SMART Exchange?
   - Possibly also `src/pages/onboarding/` (see Enroll)
-- Figma: TODO
+- Figma: [R3] SMART Exchange [Figma](https://www.figma.com/design/9DRzbyv7FDCDYFYN5ZGuwZ)
+- Module-level source-of-truth files: [design-system/figma-files.md](../../design-system/figma-files.md)

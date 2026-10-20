@@ -1,4 +1,4 @@
- R1 | R3 | TODO | R3 | R1 | R1.0 |---
+---
 title: SMART Suite Wiki
 type: guide
 status: draft
@@ -12,7 +12,10 @@ interact, how they are laid out, what the current **standard** version is, and w
 **client-specific variants** differ from it.
 
 Lives in `/wiki` of the suite repo. Code paths are relative to the repo root.
-Used by both humans and coding agents. Agents: read [AGENTS.md](AGENTS.md) first.
+Used by both humans and coding agents.
+
+**Humans:** read it in the browser via the wiki viewer (`src/pages/wiki/index.html`, linked from the site entry page).
+**Agents:** read the Markdown files directly. Agents: read [AGENTS.md](AGENTS.md) first.
 
 ## Products
 
@@ -37,7 +40,8 @@ Used by both humans and coding agents. Agents: read [AGENTS.md](AGENTS.md) first
 | Know what a client has customized | [clients/](clients/README.md) and `products/<product>/variants/` |
 | Learn the rules (versions, client codes, branches, file format) | [CONVENTIONS.md](CONVENTIONS.md) |
 | Understand why something was decided | [decisions/](decisions/README.md) |
-| Design system | [design-system/](design-system/README.md) (source of truth: Figma) |
+| Design system | [design-system/](design-system/README.md) (library: SMART System in Figma) |
+| Find the right Figma file for a screen | [design-system/figma-files.md](design-system/figma-files.md) |
 
 ## How this wiki is maintained
 

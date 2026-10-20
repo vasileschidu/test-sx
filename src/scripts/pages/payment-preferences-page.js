@@ -1188,6 +1188,57 @@ window.__ppStorageKey = function (name) {
       });
   }
 
+  var CHECK_OPTION_ICON =
+    '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
+    '<path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
+    "</svg>" +
+    "</span>";
+
+  // The chosen payer shows a person icon before the name (Figma "Taable");
+  // the open list stays text only.
+  var PAYER_SELECTED_ICON =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="hidden size-5 shrink-0 text-gray-400 in-[el-selectedcontent]:block dark:text-gray-500"><path d="M10 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6ZM3.465 14.493a1.23 1.23 0 0 0 .41 1.412A9.957 9.957 0 0 0 10 18c2.31 0 4.438-.784 6.131-2.1.43-.333.604-.903.408-1.41a7.002 7.002 0 0 0-13.074.003Z" /></svg>';
+
+  function buildEntityOptionsHtml(customer) {
+    var entries = customer && customer.vendorEntries ? customer.vendorEntries : [];
+    return entries
+      .map(function (entry) {
+        var label = escapeHtml(entry);
+        return (
+          '<el-option value="' +
+          label +
+          '" class="group/option relative block cursor-default py-2 pr-9 pl-3 text-gray-900 select-none aria-selected:bg-gray-100 group-aria-selected/option:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:group-aria-selected/option:bg-white/10 dark:focus:bg-white/10">' +
+          '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' +
+          label +
+          "</span>" +
+          CHECK_OPTION_ICON +
+          "</el-option>"
+        );
+      })
+      .join("");
+  }
+
+  var ENTITY_PLACEHOLDER_HTML =
+    '<span class="font-normal text-gray-400 dark:text-gray-500">Select entry</span>';
+
+  // Entries come from the chosen payer's ERP records, so a new payer clears
+  // the previous pick.
+  function hydrateEntitySelect(rowEl) {
+    var entitySelect = rowEl.querySelector("[data-adv-entity-select]");
+    if (!entitySelect) return;
+    var payerId = getSelectValue(rowEl.querySelector("[data-adv-payer-select]"));
+    var customer = customersCache.find(function (item) {
+      return item.id === payerId;
+    });
+    var optsEl = entitySelect.querySelector("[data-adv-entity-options]");
+    if (optsEl) optsEl.innerHTML = buildEntityOptionsHtml(customer);
+    if (typeof entitySelect.value !== "undefined") entitySelect.value = "";
+    entitySelect.removeAttribute("value");
+    var content = entitySelect.querySelector("el-selectedcontent");
+    if (content) content.innerHTML = ENTITY_PLACEHOLDER_HTML;
+  }
+
   function buildPayerOptionsHtml(customers) {
     var html = "";
     customers.forEach(function (customer) {
@@ -1198,8 +1249,13 @@ window.__ppStorageKey = function (name) {
         '<el-option value="' +
         value +
         '" class="group/option relative block cursor-default py-2 pr-9 pl-3 text-gray-900 select-none aria-selected:bg-gray-100 group-aria-selected/option:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:group-aria-selected/option:bg-white/10 dark:focus:bg-white/10">' +
+        '<span class="flex min-w-0 items-center gap-2">' +
+        (window.location.pathname.indexOf("consumer-") !== -1
+          ? ""
+          : PAYER_SELECTED_ICON) +
         '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' +
         name +
+        "</span>" +
         "</span>" +
         '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
         '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
@@ -1213,8 +1269,9 @@ window.__ppStorageKey = function (name) {
 
   function getSelectValue(selectEl) {
     if (!selectEl) return "";
-    if (typeof selectEl.value === "string" && selectEl.value)
-      return selectEl.value;
+    // An empty el-select still marks its first option aria-selected, so its
+    // own value is the answer whenever it has one, even when that is "".
+    if (typeof selectEl.value === "string") return selectEl.value;
     var selectedOption = selectEl.querySelector(
       'el-option[aria-selected="true"]',
     );
@@ -1389,9 +1446,9 @@ window.__ppStorageKey = function (name) {
       '<div class="min-w-0 flex-1">' +
       (window.location.pathname.indexOf("consumer-") !== -1
         ? ""
-        : ('<el-select data-adv-entity-select value="all-entities" class="block w-full">' +
-      '<button type="button" class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-gray-50 px-3 text-left text-sm leading-5 font-medium text-gray-500 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-gray-400 dark:outline-white/10">' +
-      '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-500 dark:text-gray-400">All entities</el-selectedcontent>' +
+        : ('<el-select data-adv-entity-select class="block w-full">' +
+      '<button type="button" class="grid h-8 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-sm leading-5 font-medium text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
+      '<el-selectedcontent class="col-start-1 row-start-1 truncate pr-7 font-medium text-gray-900 dark:text-white"><span class="font-normal text-gray-400 dark:text-gray-500">Select entry</span></el-selectedcontent>' +
       '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>' +
       "</button>" +
       '<el-options anchor="bottom start" popover class="max-h-60 min-w-(--button-width) w-max max-w-[min(36rem,calc(100vw-2rem))] overflow-y-auto overflow-x-hidden rounded-md bg-white py-1 text-base shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 text-base sm:text-sm dark:bg-gray-800 dark:outline-white/10" data-adv-entity-options></el-options>' +
@@ -1464,11 +1521,7 @@ window.__ppStorageKey = function (name) {
     });
   }
 
-  rowsWrap.addEventListener("click", function (event) {
-    var removeBtn = event.target.closest("[data-adv-remove-row]");
-    if (!removeBtn) return;
-    var row = removeBtn.closest(".pp-adv-row");
-    if (!row) return;
+  function removeRow(row) {
     row.remove();
     setAdvancedDirty(true);
 
@@ -1477,11 +1530,66 @@ window.__ppStorageKey = function (name) {
       emptyState.classList.remove("hidden");
       syncAdvFooter();
     }
+  }
+
+  function getRowPayerName(row) {
+    var payerSelect = row.querySelector("[data-adv-payer-select]");
+    var payerId = getSelectValue(payerSelect);
+    if (!payerId) return "";
+    var customer = customersCache.find(function (item) {
+      return item.id === payerId;
+    });
+    return customer ? customer.name : "";
+  }
+
+  // A row with a payer picked asks first (Figma "Remove Custom Payment
+  // Preference"); an empty row has nothing to revert, so it goes at once.
+  var removeConfirmDialog = document.getElementById(
+    "pp-adv-remove-confirm-dialog",
+  );
+  var removeConfirmBtn = document.getElementById("pp-adv-remove-confirm-btn");
+  var removeConfirmName = removeConfirmDialog
+    ? removeConfirmDialog.querySelector("[data-adv-remove-payer-name]")
+    : null;
+  var pendingRemoveRow = null;
+
+  if (removeConfirmBtn) {
+    removeConfirmBtn.addEventListener("click", function () {
+      if (pendingRemoveRow) removeRow(pendingRemoveRow);
+      pendingRemoveRow = null;
+      if (removeConfirmDialog.open) removeConfirmDialog.close();
+    });
+  }
+
+  rowsWrap.addEventListener("click", function (event) {
+    var removeBtn = event.target.closest("[data-adv-remove-row]");
+    if (!removeBtn) return;
+    var row = removeBtn.closest(".pp-adv-row");
+    if (!row) return;
+    var payerName = getRowPayerName(row);
+    if (
+      !payerName ||
+      !removeConfirmDialog ||
+      typeof removeConfirmDialog.showModal !== "function"
+    ) {
+      removeRow(row);
+      return;
+    }
+    pendingRemoveRow = row;
+    if (removeConfirmName) removeConfirmName.textContent = payerName;
+    removeConfirmDialog.showModal();
   });
 
   rowsWrap.addEventListener("change", function (event) {
     var payerSelect = event.target.closest("[data-adv-payer-select]");
     if (payerSelect) {
+      var payerRow = payerSelect.closest(".pp-adv-row");
+      if (payerRow) hydrateEntitySelect(payerRow);
+      setAdvancedDirty(true);
+      return;
+    }
+
+    if (event.target.closest("[data-adv-entity-select]")) {
       setAdvancedDirty(true);
       return;
     }

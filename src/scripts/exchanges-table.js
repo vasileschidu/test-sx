@@ -13,7 +13,7 @@
    * Per-page configuration, set by the page before this script loads, so the
    * same table serves more than one product. The Consumer Portal uses it to
    * point at its own data and storage and to use its own wording; the Supplier
-   * Portal sets nothing and keeps every default below.
+   * Portal only sets showTokenMethod and keeps every other default below.
    *   dataset       data file name under src/data (default 'exchanges')
    *   storageKey    localStorage key for row overrides
    *   methodLabels  { methodType: label }  e.g. { smart_exchange: 'Smart Disburse' }
@@ -1607,7 +1607,7 @@
     if (!IS_SUPPLIER_PORTAL) return kind === "ach" ? ICON_ACH : ICON_VISA;
     if (kind === "ach") {
       return (
-        '<span class="inline-flex h-4 w-6 shrink-0 items-center justify-center overflow-hidden rounded-[1.2px] bg-[#1E326F] text-[8px] leading-none font-bold tracking-wide text-white">ACH</span>'
+        '<span class="truncate text-sm font-medium text-gray-900 dark:text-white">ACH</span>'
       );
     }
     return (
@@ -1637,6 +1637,7 @@
         ).slice(-4) ||
         getDigits(info && info.accountNumber).slice(-4) ||
         getDigits(ending).slice(-4);
+      if (IS_SUPPLIER_PORTAL) return paymentBrandMark("ach");
       return (
         '<span class="inline-flex items-center ' +
         (IS_SUPPLIER_PORTAL ? "gap-1.5" : "gap-x-2") +
@@ -1695,8 +1696,8 @@
 
     // A SMART Exchange row that has not settled has no method yet — printing
     // "SMART Exchange" here reads as a chosen method. An em dash says empty.
-    // Where the token itself is the rail (Consumer Portal: "Smart Disburse"),
-    // it is the method — show it, as the design does.
+    // Pages that set showTokenMethod (Supplier Portal: "SMART Exchange",
+    // Consumer Portal: "Smart Disburse") show the token label, as the design does.
     if (
       entry.methodType === "smart_exchange" &&
       entry.status !== "paid" &&
