@@ -5443,6 +5443,7 @@
       maskedRouting: maskedRouting,
       address: address,
       last4: last4,
+      validationStatus: typeof account.validationStatus === 'string' ? account.validationStatus.trim() : '',
     };
   }
 
@@ -5511,6 +5512,7 @@
         routingNumber: normalized.routingNumber || current.routingNumber || '',
         maskedRouting: normalized.maskedRouting || current.maskedRouting || '',
         address: normalized.address || current.address || '',
+        validationStatus: normalized.validationStatus || current.validationStatus || '',
       });
       if (orderedIds.indexOf(normalized.id) === -1) orderedIds.push(normalized.id);
     });
@@ -6500,6 +6502,8 @@
     }
     if (!account) return;
 
+    var headerStatus = document.getElementById('gp-pmc-bank-header-status');
+    if (headerStatus) headerStatus.innerHTML = buildBankValidationIcon(account.validationStatus, true);
     pmcSetText('gp-pmc-bank-name-val', account.name);
     pmcSetText('gp-pmc-bank-acct', account.maskedAccount);
     pmcSetText('gp-pmc-bank-routing', account.maskedRouting);
@@ -6662,10 +6666,62 @@
     return '';
   }
 
+  // Bank validation status (Figma "Account Validation"): shown next to the
+  // account name in the dropdown and in the account details header.
+  var BANK_VALIDATION_STATES = {
+    verified: {
+      label: 'Verified account',
+      tipPosition: 'top',
+      iconClass: 'text-emerald-500',
+      path: 'M8 14.4C11.5346 14.4 14.4 11.5346 14.4 8C14.4 4.46538 11.5346 1.6 8 1.6C4.46538 1.6 1.6 4.46538 1.6 8C1.6 11.5346 4.46538 14.4 8 14.4ZM11.0852 6.5529C11.2801 6.28491 11.2209 5.90966 10.9529 5.71476C10.6849 5.51986 10.3097 5.57911 10.1148 5.8471L7.32776 9.67923L5.82426 8.17574C5.58995 7.94142 5.21005 7.94142 4.97574 8.17574C4.74142 8.41005 4.74142 8.78995 4.97574 9.02426L6.97574 11.0243C7.09982 11.1483 7.27199 11.2119 7.44693 11.1982C7.62187 11.1844 7.78203 11.0948 7.88524 10.9529L11.0852 6.5529Z'
+    },
+    unverified: {
+      label: 'This account has not been yet verified.',
+      tipPosition: 'bottom',
+      iconClass: 'text-gray-400',
+      path: 'M8 14.4C11.5346 14.4 14.4 11.5346 14.4 8C14.4 4.46538 11.5346 1.6 8 1.6C4.46538 1.6 1.6 4.46538 1.6 8C1.6 11.5346 4.46538 14.4 8 14.4ZM6.62426 5.77574C6.38995 5.54142 6.01005 5.54142 5.77574 5.77574C5.54142 6.01005 5.54142 6.38995 5.77574 6.62426L7.15147 8L5.77574 9.37574C5.54142 9.61005 5.54142 9.98995 5.77574 10.2243C6.01005 10.4586 6.38995 10.4586 6.62426 10.2243L8 8.84853L9.37574 10.2243C9.61005 10.4586 9.98995 10.4586 10.2243 10.2243C10.4586 9.98995 10.4586 9.61005 10.2243 9.37574L8.84853 8L10.2243 6.62426C10.4586 6.38995 10.4586 6.01005 10.2243 5.77574C9.98995 5.54142 9.61005 5.54142 9.37574 5.77574L8 7.15147L6.62426 5.77574Z'
+    }
+  };
+
+  function buildBankValidationIcon(status, withTooltip) {
+    var state = BANK_VALIDATION_STATES[status];
+    if (!state) return '';
+    var below = state.tipPosition === 'bottom';
+    var tooltip = '';
+    if (withTooltip) {
+      tooltip =
+        '<span role="tooltip" class="pointer-events-none invisible absolute left-1/2 z-30 w-max max-w-[343px] -translate-x-1/2 rounded-lg bg-gray-900 p-3 text-left text-sm/5 font-normal whitespace-normal text-gray-100 opacity-0 drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] transition-opacity group-hover/vtip:visible group-hover/vtip:opacity-100 group-focus-visible/vtip:visible group-focus-visible/vtip:opacity-100 ' + (below ? 'top-full mt-2.5' : 'bottom-full mb-2.5') + '">' +
+          '<span aria-hidden="true" class="absolute left-1/2 size-2.5 -translate-x-1/2 rotate-45 bg-gray-900 ' + (below ? '-top-1' : '-bottom-1') + '"></span>' +
+          '<span class="relative">' + state.label + '</span></span>';
+    }
+    return (
+      '<span data-bank-validation="' + status + '" tabindex="0" role="img" aria-label="' + state.label + '"' +
+        (withTooltip ? '' : ' title="' + state.label + '"') +
+        ' class="group/vtip relative ml-1 inline-flex align-middle outline-none">' +
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 ' + state.iconClass + '"><path fill-rule="evenodd" clip-rule="evenodd" d="' + state.path + '" /></svg>' +
+        tooltip +
+      '</span>'
+    );
+  }
+
+  // Dropdown lists verified accounts plus one unverified account (last). It can
+  // be selected, but submitting the payment is blocked. Accounts locked after too many validation attempts are hidden.
+  function getSelectableBankAccounts(accounts) {
+    var list = accounts || [];
+    var hasStatus = list.some(function (a) { return a && a.validationStatus; });
+    if (!hasStatus) return list;
+    var verified = list.filter(function (a) { return a && a.validationStatus !== 'locked' && a.validationStatus !== 'unverified'; });
+    var unverified = list.filter(function (a) { return a && a.validationStatus === 'unverified'; })[0];
+    return unverified ? verified.concat([unverified]) : verified;
+  }
+
   function buildBankAccountOptionHtml(account) {
     var label = getBankAccountDisplayName(account);
     var last4 = getBankAccountLast4(account);
     var summary = last4 ? ('••••' + last4) : label;
+    var status = account.validationStatus;
+    var unverified = status === 'unverified';
+    var icon = buildBankValidationIcon(status, false);
     return (
       '<el-option value="' + escapeHtml(account.id) + '" class="group/option relative block cursor-default select-none border-b border-gray-200 py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
         '<div class="flex items-center gap-3">' +
@@ -6673,10 +6729,10 @@
             '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 18 18" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.7075 1.86718C8.8929 1.77767 9.10901 1.77767 9.29441 1.86718L15.8194 5.01718C16.1552 5.17925 16.2959 5.58279 16.1339 5.9185C15.9827 6.23168 15.6213 6.37521 15.301 6.26151V14.85H15.526C15.8988 14.85 16.201 15.1523 16.201 15.525C16.201 15.8978 15.8988 16.2 15.526 16.2H2.47594C2.10314 16.2 1.80094 15.8978 1.80094 15.525C1.80094 15.1523 2.10314 14.85 2.47594 14.85H2.70094V6.26151C2.38057 6.37521 2.01925 6.23168 1.86806 5.9185C1.70599 5.58279 1.84676 5.17925 2.18248 5.01718L8.7075 1.86718ZM9.90081 5.40005C9.90081 5.89711 9.49786 6.30005 9.0008 6.30005C8.50375 6.30005 8.1008 5.89711 8.1008 5.40005C8.1008 4.90299 8.50375 4.50005 9.0008 4.50005C9.49786 4.50005 9.90081 4.90299 9.90081 5.40005ZM6.7508 8.77505C6.7508 8.40226 6.44859 8.10005 6.07579 8.10005C5.703 8.10005 5.40079 8.40226 5.40079 8.77505V13.725C5.40079 14.0978 5.703 14.4 6.07579 14.4C6.44859 14.4 6.7508 14.0978 6.7508 13.725V8.77505ZM9.6758 8.77505C9.6758 8.40226 9.3736 8.10005 9.0008 8.10005C8.62801 8.10005 8.3258 8.40226 8.3258 8.77505V13.725C8.3258 14.0978 8.62801 14.4 9.0008 14.4C9.3736 14.4 9.6758 14.0978 9.6758 13.725V8.77505ZM12.6008 8.77505C12.6008 8.40226 12.2986 8.10005 11.9258 8.10005C11.553 8.10005 11.2508 8.40226 11.2508 8.77505V13.725C11.2508 14.0978 11.553 14.4 11.9258 14.4C12.2986 14.4 12.6008 14.0978 12.6008 13.725V8.77505Z" fill="#6B7280"/></svg>' +
           '</div>' +
           '<div class="in-[el-selectedcontent]:hidden">' +
-            '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' + escapeHtml(label) + '</span>' +
+            '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' + escapeHtml(label) + icon + '</span>' +
             '<span class="block text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(summary) + '</span>' +
           '</div>' +
-          '<span class="hidden in-[el-selectedcontent]:block truncate font-medium">' + escapeHtml(label + (last4 ? (' ••••' + last4) : '')) + '</span>' +
+          '<span class="hidden in-[el-selectedcontent]:block truncate font-medium">' + escapeHtml(label + (last4 ? (' ••••' + last4) : '')) + icon + '</span>' +
         '</div>' +
         '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
           '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
@@ -6712,7 +6768,7 @@
       opt.remove();
     });
 
-    (accounts || []).forEach(function (account) {
+    getSelectableBankAccounts(accounts).forEach(function (account) {
       if (!account || !account.id) return;
       if (addFooter) {
         addFooter.insertAdjacentHTML('beforebegin', buildBankAccountOptionHtml(account));
@@ -6843,34 +6899,437 @@
     updateGetPaidStepStates();
   }
 
+  // Freshly re-rendered options need a moment before they react to a click.
+  function selectBankAccountOption(id, attempt) {
+    var sel = document.getElementById('gp-bank-account-select');
+    var opt = sel && sel.querySelector('el-option[value="' + id + '"]');
+    if (opt) opt.click();
+    var selected = sel && sel.querySelector('el-option[aria-selected="true"]');
+    if ((!selected || selected.getAttribute('value') !== id) && (attempt || 0) < 10) {
+      setTimeout(function () { selectBankAccountOption(id, (attempt || 0) + 1); }, 100);
+    }
+  }
+
   function initEditBankModal() {
     var btn = document.getElementById('gp-edit-bank-btn');
-    if (!btn) return;
+    var dialog = document.getElementById('gp-edit-bank-dialog');
+    var saveBtn = document.getElementById('gp-edit-bank-save');
+    if (!btn || !dialog || !saveBtn) return;
+
+    var byId = function (id) { return document.getElementById(id); };
+    var fields = {
+      name: byId('gp-edit-bank-name'),
+      routing: byId('gp-edit-bank-routing'),
+      account: byId('gp-edit-bank-account'),
+      confirm: byId('gp-edit-bank-confirm'),
+      nickname: byId('gp-edit-bank-nickname')
+    };
+    var addr = {
+      country: byId('gp-edit-bank-country'),
+      flag: byId('gp-edit-bank-country-flag'),
+      line1: byId('gp-edit-bank-line1'),
+      line2: byId('gp-edit-bank-line2'),
+      line3: byId('gp-edit-bank-line3'),
+      city: byId('gp-edit-bank-city'),
+      state: byId('gp-edit-bank-state'),
+      zip: byId('gp-edit-bank-zip'),
+      isDefault: byId('gp-edit-bank-default')
+    };
+    var editingId = null;
+    var digits = function (v, max) { return String(v || '').replace(/\D/g, '').slice(0, max); };
+
+    function updateFlag() {
+      addr.flag.className = 'fi fi-' + (addr.country.value || 'us') + ' pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm';
+    }
+    addr.country.addEventListener('change', updateFlag);
+
+    // State is a dropdown of state names; stored codes (e.g. "NJ") are kept as an extra option.
+    function setState(value) {
+      var raw = String(value || '').trim();
+      var has = Array.prototype.some.call(addr.state.options, function (o) { return o.value === raw; });
+      if (raw && !has) {
+        var extra = document.createElement('option');
+        extra.value = raw;
+        extra.textContent = raw;
+        addr.state.appendChild(extra);
+      }
+      addr.state.value = raw;
+    }
+
+    // "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS" -> address lines, city, state, zip.
+    function fillAddress(text) {
+      var lines = String(text || '').split('\n').map(function (l) { return l.trim(); }).filter(Boolean);
+      if (lines.length > 2 && /^(US|United States)$/i.test(lines[lines.length - 1])) lines.pop();
+      var cityLine = lines.length > 1 ? lines.pop() : '';
+      var m = cityLine.match(/^(.+),\s*(.+?)\s+(\S+)$/);
+      addr.country.value = 'us';
+      updateFlag();
+      addr.line1.value = lines[0] || '';
+      addr.line2.value = lines[1] || '';
+      addr.line3.value = lines[2] || '';
+      addr.city.value = m ? m[1] : cityLine;
+      setState(m ? m[2] : '');
+      addr.zip.value = m ? m[3] : '';
+    }
+
+    function buildAddress() {
+      var countryText = addr.country.value === 'us' ? 'US' : ((addr.country.options[addr.country.selectedIndex] || {}).text || '');
+      var cityLine = [addr.city.value.trim(), [addr.state.value, addr.zip.value.trim()].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+      return [addr.line1.value, addr.line2.value, addr.line3.value]
+        .map(function (l) { return l.trim(); })
+        .filter(Boolean)
+        .concat(cityLine ? [cityLine] : [], countryText ? [countryText] : [])
+        .join('\n');
+    }
+
+    ['routing', 'account', 'confirm'].forEach(function (k) {
+      fields[k].addEventListener('input', function () {
+        var clean = digits(fields[k].value, k === 'routing' ? 9 : 17);
+        if (fields[k].value !== clean) fields[k].value = clean;
+      });
+    });
+
     btn.addEventListener('click', function () {
       var sel = document.getElementById('gp-bank-account-select');
       var selectedOpt = sel && sel.querySelector('el-option[aria-selected="true"]');
       var bankId = selectedOpt && selectedOpt.getAttribute('value');
-      var accounts = _myBusiness && _myBusiness.bankAccounts;
+      var accounts = (_myBusiness && _myBusiness.bankAccounts) || [];
       var account = null;
-      if (accounts && bankId) {
-        for (var i = 0; i < accounts.length; i++) {
-          if (accounts[i].id === bankId) { account = accounts[i]; break; }
-        }
+      for (var i = 0; i < accounts.length; i++) {
+        if (accounts[i].id === bankId) { account = accounts[i]; break; }
       }
       if (!account) return;
+      editingId = account.id;
+      _bankValidationAttempts = 0;
 
-      var setVal = function (id, val) {
-        var el = document.getElementById(id);
-        if (el) el.value = val || '';
+      fields.name.value = account.name || '';
+      fields.routing.value = account.routingNumber || '';
+      fields.account.value = account.accountNumber || '';
+      fields.confirm.value = account.accountNumber || '';
+      fields.nickname.value = account.displayName || '';
+      fillAddress(account.address);
+      addr.isDefault.checked = !!account.isDefault;
+
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+    });
+
+    // Closed while validation isn't mid-flight -> the attempt session ends.
+    dialog.addEventListener('close', function () {
+      if (!_bankValidationDialog || !_bankValidationDialog.open) _bankValidationAttempts = 0;
+    });
+
+    function commitEdit(status, values) {
+      var accounts = (_myBusiness && _myBusiness.bankAccounts) || [];
+      var account = null;
+      for (var i = 0; i < accounts.length; i++) {
+        if (accounts[i].id === editingId) { account = accounts[i]; break; }
+      }
+      if (!account) return;
+      var last4 = values.account.slice(-4);
+      account.name = values.name;
+      account.displayName = values.nickname || values.name;
+      account.last4 = last4;
+      account.accountNumber = values.account;
+      account.maskedAccount = '•••••••••••••' + last4;
+      account.routingNumber = values.routing;
+      account.maskedRouting = '•••••' + values.routing.slice(-4);
+      account.address = buildAddress();
+      account.isDefault = !!addr.isDefault.checked;
+      account.validationStatus = status;
+      dialog.close();
+      _bankValidationAttempts = 0;
+      // Re-render the list; a locked account drops out of it, a verified one stays selected.
+      initBankAccountSelector();
+      if (status !== 'verified') return;
+      selectBankAccountOption(account.id);
+    }
+
+    saveBtn.addEventListener('click', function () {
+      var name = (fields.name.value || '').trim();
+      var routing = digits(fields.routing.value, 9);
+      var account = digits(fields.account.value, 17);
+      var confirm = digits(fields.confirm.value, 17);
+      if (!name || routing.length !== 9 || account.length < 4 || account !== confirm) return;
+      var values = { name: name, routing: routing, account: account, nickname: (fields.nickname.value || '').trim() };
+      runBankValidation(routing, function (outcome) {
+        if (outcome === 'verified' || outcome === 'locked') commitEdit(outcome, values);
+        // 'retry' -> back to the still-open form so details can be updated
+      });
+    });
+  }
+
+  // ── Add bank account + validation (Figma "Account Validation") ──
+  // Attempt 1 fails -> "one remaining attempt"; attempt 2 fails -> generic
+  // error; attempt 3 fails -> no attempts left and the account is added as
+  // locked. The mock validator passes only a routing number with a valid ABA
+  // checksum (e.g. 021000021).
+  var BANK_VALIDATION_MIN_MS = 3000;
+  var BANK_VALIDATION_MAX_MS = 7000;
+  // Placeholder for Figma's [Customer Name] / [buyerEmailAddress].
+  var BANK_VALIDATION_CONTACT = { name: 'Optum Pay', email: 'support@optumpay.com' };
+  var _bankValidationAttempts = 0;
+  var _bankValidationDialog = null;
+
+  var VALIDATION_X_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+  var VALIDATION_WARNING_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-11 text-amber-500" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" /></svg>';
+  var VALIDATION_ENVELOPE_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-11 text-blue-500" aria-hidden="true"><path d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z" /><path d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" /></svg>';
+  var VALIDATION_SPINNER = '<svg class="size-[34px] animate-spin" viewBox="0 0 34 34" fill="none" aria-hidden="true"><circle cx="17" cy="17" r="15" stroke="#E5E7EB" stroke-width="3" /><path d="M17 2a15 15 0 0 1 15 15" stroke="#2563EB" stroke-width="3" stroke-linecap="round" /></svg>';
+
+  function isValidRoutingNumber(routing) {
+    if (!/^\d{9}$/.test(routing)) return false;
+    var w = [3, 7, 1, 3, 7, 1, 3, 7, 1];
+    var sum = 0;
+    for (var i = 0; i < 9; i++) sum += Number(routing[i]) * w[i];
+    return sum % 10 === 0;
+  }
+
+  function getBankValidationDialog() {
+    if (_bankValidationDialog) return _bankValidationDialog;
+    var d = document.createElement('dialog');
+    d.id = 'gp-bank-validation-dialog';
+    d.className = 'm-auto w-[450px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white p-0 text-left shadow-xl backdrop:bg-gray-900/75 dark:bg-gray-900';
+    d.addEventListener('cancel', function (event) {
+      if (d.getAttribute('data-state') === 'loading') event.preventDefault();
+    });
+    document.body.appendChild(d);
+    _bankValidationDialog = d;
+    return d;
+  }
+
+  function renderBankValidationState(state, config) {
+    var d = getBankValidationDialog();
+    d.setAttribute('data-state', state);
+    var btnBase = 'w-full cursor-pointer rounded-md px-3.5 py-2.5 text-base font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ';
+    var html;
+    if (state === 'loading') {
+      html =
+        '<div class="flex flex-col items-center gap-6 px-6 py-9 text-center">' + VALIDATION_SPINNER +
+        '<div class="flex w-full flex-col gap-2"><p class="text-lg/6 font-semibold text-gray-900 dark:text-white">Please Wait</p>' +
+        '<p class="text-sm/5 font-normal text-gray-500 dark:text-gray-400">The account is being verified. This may take a few moments.</p></div></div>';
+    } else {
+      html =
+        '<div class="flex h-14 items-end justify-end px-4 pt-4"><button type="button" data-validation-close aria-label="Close" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10">' + VALIDATION_X_ICON + '</button></div>' +
+        '<div class="flex flex-col items-center gap-6 px-6 pt-3 pb-6 text-center">' + config.icon +
+        '<div class="flex w-full flex-col gap-2"><p class="text-lg/6 font-semibold text-gray-900 dark:text-white">' + config.title +
+        '</p><p class="text-base/6 font-normal text-gray-700 dark:text-gray-300">' + config.body + '</p></div></div>' +
+        '<div class="' + (config.primary ? 'border-t border-gray-200 px-6 py-5 dark:border-white/10' : 'px-6 pb-6') + '">' +
+        '<button type="button" data-validation-action class="' + btnBase +
+        (config.primary ? 'bg-blue-600 text-white hover:bg-blue-500' : 'bg-white text-gray-700 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10') +
+        '">' + config.action + '</button></div>';
+    }
+    d.innerHTML = html;
+    if (!d.open) d.showModal();
+    var closeBtn = d.querySelector('[data-validation-close]');
+    var actionBtn = d.querySelector('[data-validation-action]');
+    if (closeBtn) closeBtn.addEventListener('click', config.onClose);
+    if (actionBtn) actionBtn.addEventListener('click', config.onAction);
+  }
+
+  function runBankValidation(routingDigits, done) {
+    var attempt = ++_bankValidationAttempts;
+    renderBankValidationState('loading', {});
+    var delay = BANK_VALIDATION_MIN_MS + Math.random() * (BANK_VALIDATION_MAX_MS - BANK_VALIDATION_MIN_MS);
+    setTimeout(function () {
+      var d = getBankValidationDialog();
+      if (isValidRoutingNumber(routingDigits)) {
+        d.close();
+        done('verified');
+        return;
+      }
+      function backToDetails() { d.close(); done('retry'); }
+      if (attempt >= 3) {
+        var customer = BANK_VALIDATION_CONTACT.name;
+        var closeAll = function () { d.close(); done('locked'); };
+        renderBankValidationState('locked', {
+          icon: VALIDATION_WARNING_ICON,
+          title: 'Unable to Verify Account Details',
+          body: 'There is a problem with the account details you provided. Please contact <strong class="font-semibold">' + customer + '</strong> for details.',
+          action: 'Contact ' + customer,
+          primary: false,
+          onClose: closeAll,
+          onAction: function () {
+            renderBankValidationState('notified', {
+              icon: VALIDATION_ENVELOPE_ICON,
+              title: 'Thank you!',
+              body: 'We have notified your customer. If you have any questions, please contact <span class="font-medium">' + customer +
+                '</span> by emailing <span class="font-medium">' + BANK_VALIDATION_CONTACT.email +
+                '</span>, your reference code is <span class="font-medium">BV-' + Date.now().toString(36).toUpperCase() + '</span>.',
+              action: 'Close',
+              primary: false,
+              onClose: closeAll,
+              onAction: closeAll
+            });
+          }
+        });
+        return;
+      }
+      renderBankValidationState('error', {
+        icon: VALIDATION_WARNING_ICON,
+        title: 'Unable to Verify Method of Payment',
+        body: 'The account and/or routing number provided could not be verified. Please review and try again.' +
+          (attempt === 1 ? ' You have one remaining attempt to validate your account.' : ''),
+        action: 'Update',
+        primary: true,
+        onClose: backToDetails,
+        onAction: backToDetails
+      });
+    }, delay);
+  }
+
+  // Submitting with an unverified account: Figma "Unable to Verify Account Details".
+  function showUnverifiedAccountDialog() {
+    var d = getBankValidationDialog();
+    d.setAttribute('data-state', 'unverified');
+    var btnBase = 'w-full cursor-pointer rounded-md px-3.5 py-2.5 text-base font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ';
+    d.innerHTML =
+      '<div class="flex h-14 items-end justify-end px-4 pt-4"><button type="button" data-validation-close aria-label="Close" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10">' + VALIDATION_X_ICON + '</button></div>' +
+      '<div class="flex flex-col items-center gap-6 px-6 pt-3 pb-6 text-center">' + VALIDATION_WARNING_ICON +
+      '<div class="flex w-full flex-col gap-2"><p class="text-lg/6 font-semibold text-gray-900 dark:text-white">Unable to Verify Account Details</p>' +
+      '<p class="text-base/6 font-normal text-gray-700 dark:text-gray-300">Please select a different verified Bank Account, or add a new one.</p></div>' +
+      '<div class="flex w-full flex-col gap-3">' +
+      '<button type="button" data-validation-add class="' + btnBase + 'bg-blue-600 text-white hover:bg-blue-500">Add New Bank Account</button>' +
+      '<button type="button" data-validation-action class="' + btnBase + 'bg-white text-gray-700 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10">Close</button>' +
+      '</div></div>';
+    if (!d.open) d.showModal();
+    var close = function () { d.close(); };
+    d.querySelector('[data-validation-close]').addEventListener('click', close);
+    d.querySelector('[data-validation-action]').addEventListener('click', close);
+    d.querySelector('[data-validation-add]').addEventListener('click', function () {
+      d.close();
+      var addBtn = document.querySelector('#gp-bank-account-select [data-gp-add-bank-account]');
+      if (addBtn) addBtn.click();
+    });
+  }
+
+  function isUnverifiedBankSelected() {
+    var sel = document.getElementById('gp-bank-account-select');
+    var opt = sel && sel.querySelector('el-option[aria-selected="true"]');
+    var id = opt && opt.getAttribute('value');
+    var accounts = (_myBusiness && _myBusiness.bankAccounts) || [];
+    for (var i = 0; i < accounts.length; i++) {
+      if (accounts[i].id === id) return accounts[i].validationStatus === 'unverified';
+    }
+    return false;
+  }
+
+  function initAddBankModal() {
+    var dialog = document.getElementById('gp-add-bank-dialog');
+    var saveBtn = document.getElementById('gp-add-bank-save');
+    var sel = document.getElementById('gp-bank-account-select');
+    var addBtn = sel && sel.querySelector('[data-gp-add-bank-account]');
+    if (!dialog || !saveBtn || !addBtn) return;
+
+    var byId = function (id) { return document.getElementById(id); };
+    var fields = {
+      name: byId('gp-add-bank-name'),
+      routing: byId('gp-add-bank-routing'),
+      account: byId('gp-add-bank-account'),
+      confirm: byId('gp-add-bank-confirm'),
+      nickname: byId('gp-add-bank-nickname')
+    };
+    var addr = {
+      country: byId('gp-add-bank-country'),
+      flag: byId('gp-add-bank-country-flag'),
+      line1: byId('gp-add-bank-line1'),
+      line2: byId('gp-add-bank-line2'),
+      line3: byId('gp-add-bank-line3'),
+      city: byId('gp-add-bank-city'),
+      state: byId('gp-add-bank-state'),
+      zip: byId('gp-add-bank-zip'),
+      isDefault: byId('gp-add-bank-default')
+    };
+    var digits = function (v, max) { return String(v || '').replace(/\D/g, '').slice(0, max); };
+
+    // Same form defaults as Payment Preferences (the routing number is a valid one).
+    function prefillForm() {
+      var index = ((_myBusiness && _myBusiness.bankAccounts) || []).length + 1;
+      fields.name.value = 'Johnny Anderson';
+      fields.routing.value = '021000021';
+      fields.account.value = String(400000000000 + index).slice(-12);
+      fields.confirm.value = fields.account.value;
+      fields.nickname.value = 'My Bank Account ' + index;
+      addr.country.value = 'us';
+      updateFlag();
+      addr.line1.value = '1200 Market Street';
+      addr.line2.value = '';
+      addr.line3.value = '';
+      addr.city.value = 'San Francisco';
+      addr.state.value = 'California';
+      addr.zip.value = '94102';
+      addr.isDefault.checked = false;
+    }
+
+    function updateFlag() {
+      addr.flag.className = 'fi fi-' + (addr.country.value || 'us') + ' pointer-events-none z-10 col-start-1 row-start-1 ml-3 self-center justify-self-start rounded-sm';
+    }
+    addr.country.addEventListener('change', updateFlag);
+
+    function buildAddress() {
+      var countryText = addr.country.value === 'us' ? 'US' : ((addr.country.options[addr.country.selectedIndex] || {}).text || '');
+      var cityLine = [addr.city.value.trim(), [addr.state.value, addr.zip.value.trim()].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+      return [addr.line1.value, addr.line2.value, addr.line3.value]
+        .map(function (l) { return l.trim(); })
+        .filter(Boolean)
+        .concat(cityLine ? [cityLine] : [], countryText ? [countryText] : [])
+        .join('\n');
+    }
+
+    ['routing', 'account', 'confirm'].forEach(function (k) {
+      fields[k].addEventListener('input', function () {
+        var clean = digits(fields[k].value, k === 'routing' ? 9 : 17);
+        if (fields[k].value !== clean) fields[k].value = clean;
+      });
+    });
+
+    addBtn.addEventListener('click', function () {
+      var optionsEl = sel.querySelector('el-options');
+      try { if (optionsEl && optionsEl.hidePopover) optionsEl.hidePopover(); } catch (e) { /* already closed */ }
+      _bankValidationAttempts = 0;
+      prefillForm();
+      if (typeof dialog.showModal === 'function') dialog.showModal();
+    });
+
+    // Closed while validation isn't mid-flight -> the attempt session ends.
+    dialog.addEventListener('close', function () {
+      if (!_bankValidationDialog || !_bankValidationDialog.open) _bankValidationAttempts = 0;
+    });
+
+    function commitNewAccount(status, values) {
+      var last4 = values.account.slice(-4);
+      var account = {
+        id: 'new-' + Date.now().toString(36),
+        displayName: values.nickname || values.name,
+        name: values.name,
+        bankName: '',
+        last4: last4,
+        maskedAccount: '•••••••••••••' + last4,
+        accountNumber: values.account,
+        maskedRouting: '•••••' + values.routing.slice(-4),
+        routingNumber: values.routing,
+        address: buildAddress(),
+        isDefault: !!addr.isDefault.checked,
+        validationStatus: status
       };
-      setVal('gp-edit-bank-name', account.name);
-      setVal('gp-edit-bank-routing', account.routingNumber);
-      setVal('gp-edit-bank-account', account.accountNumber);
-      setVal('gp-edit-bank-confirm', account.accountNumber);
-      setVal('gp-edit-bank-nickname', account.displayName);
+      if (!_myBusiness.bankAccounts) _myBusiness.bankAccounts = [];
+      _myBusiness.bankAccounts.push(account);
+      dialog.close();
+      _bankValidationAttempts = 0;
+      if (status !== 'verified') return; // locked accounts aren't selectable
+      initBankAccountSelector();
+      selectBankAccountOption(account.id);
+    }
 
-      var dialog = document.getElementById('gp-edit-bank-dialog');
-      if (dialog && typeof dialog.showModal === 'function') dialog.showModal();
+    saveBtn.addEventListener('click', function () {
+      var name = (fields.name.value || '').trim();
+      var routing = digits(fields.routing.value, 9);
+      var account = digits(fields.account.value, 17);
+      var confirm = digits(fields.confirm.value, 17);
+      if (!name || routing.length !== 9 || account.length < 4 || account !== confirm) return;
+      var values = { name: name, routing: routing, account: account, nickname: (fields.nickname.value || '').trim() };
+      runBankValidation(routing, function (outcome) {
+        if (outcome === 'verified' || outcome === 'locked') commitNewAccount(outcome, values);
+        // 'retry' -> back to the still-open form so details can be updated
+      });
     });
   }
 
@@ -6972,6 +7431,7 @@
   function initGetPaidPanel() {
     // Edit modals
     initEditBankModal();
+    initAddBankModal();
     initEditCheckModal();
 
     // Footer submit button mirrors the header one (state, label, click)
@@ -7034,6 +7494,10 @@
         var paymentValue = getSelectedOptionValue(paymentSel);
         var validMethods = ['payers-card', 'bank-account', 'paper-check'];
         if (validMethods.indexOf(paymentValue) === -1) return;
+        if (paymentValue === 'bank-account' && isUnverifiedBankSelected()) {
+          showUnverifiedAccountDialog();
+          return;
+        }
 
         var methodLabels = { 'payers-card': CARD_LABEL, 'bank-account': 'Bank Transfer', 'paper-check': 'Check' };
 

@@ -8697,7 +8697,8 @@
         "accountNumber": "000071209432956",
         "maskedRouting": "•••••0021",
         "routingNumber": "021000021",
-        "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS"
+        "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS",
+        "validationStatus": "locked"
       },
       {
         "id": "wf-8419",
@@ -8708,7 +8709,8 @@
         "accountNumber": "000048390108419",
         "maskedRouting": "•••••5667",
         "routingNumber": "121005667",
-        "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS"
+        "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS",
+        "validationStatus": "verified"
       },
       {
         "id": "citi-3674",
@@ -8719,7 +8721,8 @@
         "accountNumber": "000040198913674",
         "maskedRouting": "•••••0089",
         "routingNumber": "021000089",
-        "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS"
+        "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS",
+        "validationStatus": "unverified"
       },
       {
         "id": "boa-5281",
@@ -8730,7 +8733,8 @@
         "accountNumber": "000033887145281",
         "maskedRouting": "•••••9593",
         "routingNumber": "026009593",
-        "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS"
+        "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS",
+        "validationStatus": "verified"
       },
       {
         "id": "capone-1147",
@@ -8741,7 +8745,8 @@
         "accountNumber": "000052618341147",
         "maskedRouting": "•••••5515",
         "routingNumber": "051405515",
-        "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS"
+        "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUS",
+        "validationStatus": "verified"
       }
     ],
     "mailingAddress": {
