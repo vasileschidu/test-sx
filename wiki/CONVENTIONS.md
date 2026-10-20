@@ -113,6 +113,13 @@ last_reviewed: YYYY-MM-DD
 
 Extra fields per type are in each template under [templates/](templates/).
 
+## Wiki viewer
+
+- `src/pages/wiki/index.html` renders these Markdown files for humans. Navigation comes from `wiki/manifest.json`.
+- Links: use relative links to `.md` files (and `#heading-id` anchors). The viewer turns them into its own routes.
+- Diagrams: fenced ```mermaid blocks render as diagrams.
+- The Markdown files stay the source of truth. Do not put content in the viewer.
+
 ## Markers
 
 - `TODO:` content still missing or unconfirmed. Say what is needed.

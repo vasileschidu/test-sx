@@ -66,5 +66,6 @@ Rules for edits:
   must be visible from `main`, so anyone can see every variant without checking out client branches.
 - Keep the frontmatter valid (schemas in [CONVENTIONS.md](CONVENTIONS.md)).
 - Use templates in [templates/](templates/) for new pages.
+- **Add every new page to [manifest.json](manifest.json)**, otherwise it will not appear in the wiki viewer navigation or search.
 - Update `last_reviewed` only if a human reviewed the page; otherwise leave it.
 - Keep pages short and factual. Link instead of duplicating content.
