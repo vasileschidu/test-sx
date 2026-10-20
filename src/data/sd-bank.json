@@ -1,0 +1,41 @@
+{
+  "routingBanks": {
+    "123455667": "JP Morgan Chase & Co",
+    "021000021": "JP Morgan Chase & Co",
+    "026009593": "Bank of America",
+    "121000248": "Wells Fargo Bank",
+    "021000089": "Citibank",
+    "011401533": "Citizens Bank"
+  },
+  "defaultBank": "JP Morgan Chase & Co",
+  "hints": {
+    "routing": "A 9-digit number in the lower left corner of the check.",
+    "account": "A 3-17 digit number at the bottom of the check or on a bank statement."
+  },
+  "messages": {
+    "accountTypeRequired": "The Account Type field is required.",
+    "holderRequired": "Account Holder Name is required",
+    "routingRequired": "Routing Number is required",
+    "routingInvalid": "Routing Number is not valid",
+    "accountRequired": "Account Number is required",
+    "accountInvalid": "Account Number must be numeric digits between 1 and 17",
+    "accountMismatch": "Account numbers don't match",
+    "noMatch": "Doesn't match your bank's records."
+  },
+  "info": "It's important to verify your entries to ensure payment is received to your valid bank account.",
+  "unable": {
+    "title": "Unable to verify bank account",
+    "text": "We couldn't identify an account using the details you entered. Make sure all details match your bank's records and that your account is active."
+  },
+  "finalAttempt": "Final attempt, review your details carefully.",
+  "help": {
+    "title": "You will find routing and account number:",
+    "items": [
+      "on the bottom of the check as issued by your bank (<b>routing number</b> is located on the bottom-left corner and <b>account number</b> is located just to the right of your routing number);",
+      "on your bank statement;",
+      "on your banking application or your bank website."
+    ]
+  },
+  "maxAttempts": 2,
+  "unableDemoAccountNumber": "1111111111"
+}

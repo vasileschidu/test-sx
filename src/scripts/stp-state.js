@@ -727,14 +727,22 @@
         window.setTimeout(function () {
           setStpStep(STEP_COMPLETED);
           setVerifyLoading(false);
-          if (dialog.open) dialog.close();
-          var successDialog = ensureInlineVerifySuccessDialog();
-          if (
-            successDialog &&
-            typeof successDialog.showModal === "function" &&
-            !successDialog.open
-          ) {
-            successDialog.showModal();
+          var showSuccess = function () {
+            var successDialog = ensureInlineVerifySuccessDialog();
+            if (
+              successDialog &&
+              typeof successDialog.showModal === "function" &&
+              !successDialog.open
+            ) {
+              successDialog.showModal();
+            }
+          };
+          // Wait for the deposit dialog to finish closing so the two never stack.
+          if (dialog.open) {
+            dialog.addEventListener("close", showSuccess, { once: true });
+            dialog.close();
+          } else {
+            showSuccess();
           }
         }, 3000);
       });
@@ -813,7 +821,6 @@
           /[^/]*$/,
           "payment-preferences.html",
         );
-        url.searchParams.set("stpGuide", "fully-automated");
         window.location.href = url.toString();
       });
     }

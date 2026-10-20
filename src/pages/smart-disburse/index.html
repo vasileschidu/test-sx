@@ -1,7 +1,7 @@
 <!--
   @file src/pages/smart-disburse/index.html
   @description SMART Disburse folder, opened from the GitHub Pages entry point.
-    Groups the SMART Disburse onboarding flow and the UK claim demo.
+    Groups the SMART Disburse onboarding flows: US Default and US Multi-Party.
 -->
 <!doctype html>
 <html lang="en">
@@ -19,14 +19,14 @@
     <p class="mt-2 text-sm text-gray-600">Choose a flow</p>
 
     <div class="mt-8 grid w-full gap-4 sm:grid-cols-2">
-      <a href="../onboarding/index.html" class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
-        <h2 class="text-lg font-semibold">SMART Disburse Flow</h2>
-        <p class="mt-1 text-sm text-gray-600">Start SMART Disburse onboarding.</p>
+      <a href="../onboarding/index.html?flow=us" class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
+        <h2 class="text-lg font-semibold">SMART Disburse - US Default Flow</h2>
+        <p class="mt-1 text-sm text-gray-600">US payout with virtual card, debit card, bank account or check.</p>
       </a>
 
-      <a href="../sd-uk/index.html" class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
-        <h2 class="text-lg font-semibold">SMART Disburse · UK claim</h2>
-        <p class="mt-1 text-sm text-gray-600">UK insurance claim payout: verify, review, sign, then virtual card or bank transfer.</p>
+      <a href="../onboarding/index.html?flow=multi-party" class="rounded-lg bg-white p-5 shadow-sm ring-1 ring-gray-200 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-900">
+        <h2 class="text-lg font-semibold">SMART Disburse - US Multi-Party</h2>
+        <p class="mt-1 text-sm text-gray-600">The US flow for a payment split between several parties: accept, change or dispute the allocation, then receive your share.</p>
       </a>
     </div>
   </main>
