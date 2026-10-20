@@ -56,11 +56,11 @@
 
   function statusPill(amount, accepted) {
     return accepted
-      ? '<span class="flex shrink-0 items-center gap-1 rounded-[19px] bg-[#ecfdf5] py-1.5 pr-[11px] pl-[9px]">' +
+      ? '<span data-ob-skeleton class="flex shrink-0 items-center gap-1 rounded-[19px] bg-[#ecfdf5] py-1.5 pr-[11px] pl-[9px]">' +
           '<img src="' + ASSETS + 'icon-check-circle-green.svg" alt="" width="20" height="20" class="size-5">' +
           '<span class="text-sm leading-5 font-medium whitespace-nowrap text-[#047857]">' + money(amount) + '</span>' +
           '<span class="sr-only">accepted</span></span>'
-      : '<span class="flex shrink-0 items-center gap-1 rounded-[19px] bg-[#f9fafb] py-1.5 pr-[11px] pl-[9px]">' +
+      : '<span data-ob-skeleton class="flex shrink-0 items-center gap-1 rounded-[19px] bg-[#f9fafb] py-1.5 pr-[11px] pl-[9px]">' +
           '<img src="' + ASSETS + 'icon-clock.svg" alt="" width="20" height="20" class="size-5">' +
           '<span class="text-sm leading-5 font-medium whitespace-nowrap text-[#374151]">' + money(amount) + '</span>' +
           '<span class="sr-only">waiting</span></span>';
@@ -78,8 +78,8 @@
         '<div class="flex min-w-0 items-center gap-2.5">' +
           '<img src="' + ASSETS + 'avatar.svg" alt="" width="32" height="32" class="size-8 shrink-0">' +
           '<div class="flex min-w-0 flex-col text-sm leading-5 font-medium">' +
-            '<span class="truncate text-[#111827]">' + esc(p.name) + '</span>' +
-            (sub ? '<span class="text-[#6b7280]">' + sub + '</span>' : '') +
+            '<span data-ob-skeleton class="truncate text-[#111827]">' + esc(p.name) + '</span>' +
+            (sub ? '<span data-ob-skeleton class="text-[#6b7280]">' + sub + '</span>' : '') +
           '</div>' +
         '</div>' +
         statusPill(amount, accepted) +
@@ -107,9 +107,9 @@
     var isPerson = entry.by !== 'initial' && entry.by !== 'me';
     return '<div class="flex min-h-[68px] items-center gap-3 bg-[#f9fafb] px-4 py-3">' +
       '<div class="flex min-w-0 flex-1 flex-col gap-1">' +
-        '<p class="text-sm leading-5"><span class="font-medium ' + (isPerson ? 'text-[#2563eb]' : 'text-[#111827]') + '">' + esc(author) + '</span> <span class="text-[#6b7280]">created on</span></p>' +
+        '<p class="text-sm leading-5"><span data-ob-skeleton class="font-medium ' + (isPerson ? 'text-[#2563eb]' : 'text-[#111827]') + '">' + esc(author) + '</span> <span class="text-[#6b7280]">created on</span></p>' +
         '<div class="flex items-center justify-between gap-2">' +
-          '<p class="flex items-center gap-1.5 text-sm leading-5 text-[#6b7280]"><img src="' + ASSETS + 'icon-calendar.svg" alt="" width="20" height="20" class="size-5 shrink-0">' + stamp(entry.at) + '</p>' +
+          '<p class="flex items-center gap-1.5 text-sm leading-5 text-[#6b7280]"><img src="' + ASSETS + 'icon-calendar.svg" alt="" width="20" height="20" class="size-5 shrink-0"><span data-ob-skeleton>' + stamp(entry.at) + '</span></p>' +
           (extra && extra.badge ? extra.badge : '') +
         '</div>' +
       '</div>' +
@@ -146,13 +146,13 @@
       // Phones have room for the full date: "How it works" shrinks to an (i) button there.
       text = stamp(expires.toISOString()).replace(' (ET)', '');
     } else {
-      tone = 'bg-[#f9fafb] font-semibold text-[#111827] hover:bg-gray-100';
+      tone = 'bg-[#f9fafb] font-medium text-[#111827] hover:bg-gray-100';
       icon = 'icon-calendar-exclamation-dark.svg';
       text = countdown(expires);
     }
     return '<button type="button" data-mp-expiration class="flex w-full min-w-0 cursor-pointer items-center justify-center gap-1 rounded-full px-2.5 py-[9px] text-sm leading-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ' + tone + '">' +
       '<img src="' + ASSETS + icon + '" alt="" width="18" height="18" class="size-[18px] shrink-0">' +
-      '<span class="truncate">' + text + '</span>' +
+      '<span data-ob-skeleton class="truncate">' + text + '</span>' +
     '</button>';
   }
 
@@ -280,7 +280,7 @@
         '<div class="flex flex-col gap-4 p-4">' +
           '<div class="flex items-center justify-between gap-3">' +
             '<p class="text-sm leading-5 font-medium text-[#6b7280]">Amount to be allocated</p>' +
-            '<p class="rounded-[19px] bg-[#f9fafb] px-[11px] py-1.5 text-sm leading-5 font-medium text-[#111827]">' + money(total) + '</p>' +
+            '<p data-ob-skeleton class="rounded-[19px] bg-[#f9fafb] px-[11px] py-1.5 text-sm leading-5 font-medium text-[#111827]">' + money(total) + '</p>' +
           '</div>' +
           '<ul role="list" class="flex flex-col gap-2"><li aria-hidden="true" class="h-px bg-[#e5e7eb]"></li>' + partyList(mp, entry) + '</ul>' +
         '</div>' +
@@ -362,7 +362,7 @@
       return '<div class="flex items-center gap-4">' +
         '<label for="mp-amount-' + p.id + '" class="flex min-w-0 flex-1 flex-col text-sm leading-5 font-medium">' +
           '<span class="truncate text-[#111827]">' + esc(title) + '</span>' +
-          (sub ? '<span class="text-[#6b7280]">' + sub + '</span>' : '') +
+          (sub ? '<span data-ob-skeleton class="text-[#6b7280]">' + sub + '</span>' : '') +
         '</label>' +
         amountField(p.id, entry.amounts[p.id], { label: title }) +
       '</div>';
@@ -518,7 +518,11 @@
     var share = F.myShare();
     var method = F.methodLabel();
     var parts = money(share).match(/^(.*?)(\.\d{2})$/) || [money(share), money(share), ''];
-    var processing = { 'Bank Transfer - ACH': 'Up to 3 Days', Check: '7–10 Days' }[method] || 'Instant';
+    // Same badges as the method summary pages: green Instant, amber ACH, red Check.
+    var processing = {
+      'Bank Transfer - ACH': { text: 'Up to 3 Days', bg: 'bg-[#f59e0b]', icon: 'icon-check-circle-badge.svg' },
+      Check: { text: '7-10 Days', bg: 'bg-[#ef4444]', icon: 'icon-exclamation-circle-badge.svg' }
+    }[method] || { text: 'Instant', bg: 'bg-[#10b981]', icon: 'icon-check-circle-badge.svg' };
     var finalPage = new URLSearchParams(window.location.search).get('final');
 
     var amountCard = share > 0
@@ -531,9 +535,11 @@
           '<div class="relative flex h-full flex-col items-center gap-3 pt-6 pb-[25px]">' +
             '<p class="text-xs leading-5 font-medium tracking-[0.3px] text-[#bfdbfe] uppercase">Payment Amount</p>' +
             '<p class="text-5xl leading-[48px] whitespace-nowrap text-white">' + parts[1] + parts[2] + '</p>' +
-            '<p class="flex items-center gap-1 rounded-[14px] bg-[#1e40af] py-1 pr-4 pl-4">' +
+            '<p class="flex items-center gap-1 rounded-[14px] bg-[#1e40af] py-1 pr-[5px] pl-4">' +
               '<span class="text-[10px] leading-5 font-medium tracking-[1px] whitespace-nowrap text-[#60a5fa] uppercase">Estimated Processing Time:</span>' +
-              '<span class="px-1.5 py-0.5 text-xs leading-3 whitespace-nowrap text-white">' + processing + '</span>' +
+              '<span class="flex items-center gap-0.5 rounded-full ' + processing.bg + ' py-0.5 pr-1.5 pl-1 text-xs leading-4 whitespace-nowrap text-white">' +
+                '<img src="' + ASSETS + '../' + processing.icon + '" alt="" width="14" height="14" class="size-3.5">' + processing.text +
+              '</span>' +
             '</p>' +
           '</div>' +
         '</section>'

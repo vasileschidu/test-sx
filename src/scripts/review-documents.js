@@ -97,17 +97,16 @@
     return window.OBModal ? window.OBModal.escapeHtml(value) : String(value);
   }
 
-  /** Little document illustration from the design (30×42). */
-  function thumbnail(index) {
-    var line = index === 0 ? 'doc-thumb-line-1.svg' : 'doc-thumb-line-2.svg';
+  /**
+   * Little document illustration from the design (30×42). The design's sender
+   * footer (logo, social icons, contact line) is left out.
+   */
+  function thumbnail() {
     var part = function (file, cls) {
       return '<span class="absolute block ' + cls + '"><img src="' + ASSETS + file + '" alt="" class="absolute inset-0 block size-full max-w-none"></span>';
     };
     return '<span aria-hidden="true" data-ob-skeleton class="relative block h-[42px] w-[30px] shrink-0 overflow-hidden rounded-[1.24px] border border-[#d1d5db] bg-white">' +
       part('doc-thumb-body.svg', 'inset-[5.68%_4.07%_22.92%_4.95%]') +
-      part(line, 'top-[37.75px] left-[1.54px] h-[1.16px] w-[15.54px]') +
-      part('doc-thumb-logo.svg', 'inset-[80.46%_77.72%_15.66%_4.94%]') +
-      part('doc-thumb-socials.svg', 'inset-[81.3%_3.46%_16.49%_78.98%]') +
     '</span>';
   }
 
@@ -167,7 +166,7 @@
           '<button type="button" data-doc-open="' + i + '" ' +
             'class="group flex w-full cursor-pointer items-center gap-3 rounded-lg border bg-white p-4 text-left shadow-xs hover:bg-gray-50 ' +
             'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ' + (invalid ? 'border-[#ef4444]' : 'border-[#d1d5db]') + '">' +
-            thumbnail(i) +
+            thumbnail() +
             '<span class="flex min-w-0 flex-1 flex-col items-start gap-0.5 pb-0.5">' +
               '<span data-ob-skeleton class="max-w-full truncate text-base leading-6 text-[#111827]">' + esc(doc.name) + '</span>' +
               '<span data-ob-skeleton class="flex items-center gap-2 text-xs leading-4 text-[#6b7280]">' + esc(doc.type) +

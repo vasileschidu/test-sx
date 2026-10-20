@@ -40,7 +40,7 @@ window.OBFaster = (function () {
             '</div>' +
           '</fieldset>' +
           '<div class="flex flex-col gap-4">' +
-            '<button type="button" data-ob-faster-confirm disabled class="flex h-[55px] w-full cursor-pointer items-center justify-center rounded-[10px] bg-[#2f68ed] text-base leading-6 font-medium text-white shadow-xs hover:bg-[#3b82f6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] disabled:cursor-not-allowed disabled:bg-[#e5e7eb] disabled:text-[#9ca3af] disabled:shadow-none">Confirm</button>' +
+            '<button type="button" data-ob-faster-confirm disabled class="flex h-14 w-full cursor-pointer items-center justify-center rounded-[10px] bg-[#2f68ed] text-base leading-6 font-medium text-white shadow-xs hover:bg-[#3b82f6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] disabled:cursor-not-allowed disabled:bg-[#e5e7eb] disabled:text-[#9ca3af] disabled:shadow-none">Confirm</button>' +
             '<button type="button" data-ob-modal-close class="flex h-14 w-full cursor-pointer items-center justify-center rounded-[10px] border border-[#d1d5db] bg-white text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Cancel</button>' +
           '</div>' +
         '</div>' +
