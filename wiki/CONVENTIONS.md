@@ -28,6 +28,7 @@ Use these exact IDs in folder names, frontmatter and cross-references.
 - In frontmatter, always quote it: `version: "R3"`, `based_on: "R1.0"`.
 - Every new release gets an entry in `products/<product>/changelog.md`.
 - TODO(confirm): is `R1` the same as `R1.0`? Should we always write the minor number?
+- Figma files use the same `[R<n>]` tags. TODO(confirm): do Figma release tags match code releases? (Figma Hub AP is `[R2]`, code Hub is `R1.0`.)
 
 | Product | Latest standard |
 |---|---|
@@ -111,6 +112,13 @@ last_reviewed: YYYY-MM-DD
 ```
 
 Extra fields per type are in each template under [templates/](templates/).
+
+## Wiki viewer
+
+- `src/pages/wiki/index.html` renders these Markdown files for humans. Navigation comes from `wiki/manifest.json`.
+- Links: use relative links to `.md` files (and `#heading-id` anchors). The viewer turns them into its own routes.
+- Diagrams: fenced ```mermaid blocks render as diagrams.
+- The Markdown files stay the source of truth. Do not put content in the viewer.
 
 ## Markers
 

@@ -1,0 +1,115 @@
+{
+  "_comment": "Navigation for the wiki viewer (src/pages/wiki/index.html). Add every new wiki page here. Paths are relative to /wiki.",
+  "repoUrl": "https://github.com/vasileschidu/test-sx/blob/main/wiki/",
+  "home": "README.md",
+  "sections": [
+    {
+      "title": "Start here",
+      "pages": [
+        { "path": "README.md", "label": "Home" },
+        { "path": "AGENTS.md", "label": "Instructions for agents" },
+        { "path": "CONVENTIONS.md", "label": "Conventions" }
+      ]
+    },
+    {
+      "title": "Suite",
+      "pages": [
+        { "path": "suite/overview.md", "label": "Overview" },
+        { "path": "suite/integrations.md", "label": "Integrations" },
+        { "path": "suite/layouts.md", "label": "Layout families" },
+        { "path": "suite/glossary.md", "label": "Glossary" }
+      ]
+    },
+    {
+      "title": "Products",
+      "groups": [
+        {
+          "title": "SMART Hub",
+          "pages": [
+            { "path": "products/smart-hub/overview.md", "label": "Overview" },
+            { "path": "products/smart-hub/standard.md", "label": "Current standard" },
+            { "path": "products/smart-hub/changelog.md", "label": "Changelog" },
+            { "path": "products/smart-hub/variants/README.md", "label": "Client variants" }
+          ]
+        },
+        {
+          "title": "SMART Enroll",
+          "pages": [
+            { "path": "products/smart-enroll/overview.md", "label": "Overview" },
+            { "path": "products/smart-enroll/standard.md", "label": "Current standard" },
+            { "path": "products/smart-enroll/changelog.md", "label": "Changelog" },
+            { "path": "products/smart-enroll/variants/README.md", "label": "Client variants" }
+          ]
+        },
+        {
+          "title": "SMART Exchange",
+          "pages": [
+            { "path": "products/smart-exchange/overview.md", "label": "Overview" },
+            { "path": "products/smart-exchange/standard.md", "label": "Current standard" },
+            { "path": "products/smart-exchange/changelog.md", "label": "Changelog" },
+            { "path": "products/smart-exchange/variants/README.md", "label": "Client variants" },
+            { "path": "products/smart-exchange/variants/c000.md", "label": "c000 (example)" }
+          ]
+        },
+        {
+          "title": "Consumer Portal",
+          "pages": [
+            { "path": "products/consumer-portal/overview.md", "label": "Overview" },
+            { "path": "products/consumer-portal/standard.md", "label": "Current standard" },
+            { "path": "products/consumer-portal/changelog.md", "label": "Changelog" },
+            { "path": "products/consumer-portal/variants/README.md", "label": "Client variants" }
+          ]
+        },
+        {
+          "title": "SMART Disburse",
+          "pages": [
+            { "path": "products/smart-disburse/overview.md", "label": "Overview" },
+            { "path": "products/smart-disburse/standard.md", "label": "Current standard" },
+            { "path": "products/smart-disburse/changelog.md", "label": "Changelog" },
+            { "path": "products/smart-disburse/variants/README.md", "label": "Client variants" }
+          ]
+        },
+        {
+          "title": "SMART Collect",
+          "pages": [
+            { "path": "products/smart-collect/overview.md", "label": "Overview" },
+            { "path": "products/smart-collect/standard.md", "label": "Current standard" },
+            { "path": "products/smart-collect/changelog.md", "label": "Changelog" },
+            { "path": "products/smart-collect/variants/README.md", "label": "Client variants" }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "Clients",
+      "pages": [
+        { "path": "clients/README.md", "label": "Clients & variant matrix" },
+        { "path": "clients/c000.md", "label": "c000 (example)" }
+      ]
+    },
+    {
+      "title": "Design system",
+      "pages": [
+        { "path": "design-system/README.md", "label": "Overview" },
+        { "path": "design-system/figma-files.md", "label": "Figma files" }
+      ]
+    },
+    {
+      "title": "Decisions",
+      "pages": [
+        { "path": "decisions/README.md", "label": "All decisions" },
+        { "path": "decisions/0001-wiki-structure.md", "label": "0001 Wiki structure" }
+      ]
+    },
+    {
+      "title": "Templates",
+      "pages": [
+        { "path": "templates/README.md", "label": "All templates" },
+        { "path": "templates/variant.md", "label": "Variant" },
+        { "path": "templates/client.md", "label": "Client" },
+        { "path": "templates/decision.md", "label": "Decision" },
+        { "path": "templates/changelog-entry.md", "label": "Changelog entry" }
+      ]
+    }
+  ]
+}

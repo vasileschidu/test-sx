@@ -5,7 +5,7 @@ status: draft
 last_reviewed: 2026-10-17
 product: smart-exchange
 version: "R3"
-source: STP section drafted from code (stp-state.js, payment-preferences-page.js, topbar-component.js) and the Figma "[WIP] SH Sandbox" Payment Methods frames on 2026-10-19; needs human review
+source: STP section drafted from code (stp-state.js, payment-preferences-page.js, topbar-component.js) and the Figma "[WIP] SH Sandbox" Payment Methods frames on 2026-10-19; open questions reviewed with design on 2026-10-20
 ---
 
 # SMART Exchange — current standard (R3)
@@ -66,17 +66,20 @@ stateDiagram-v2
 - **Opt out** is in the card menu (⋮), which shows only at *Bank verification* and *Enabled*. It
   returns STP to `opt_in_required`.
 
-### Known gaps
+### Design decisions
 
-- The Supplier Portal card guide (`?guide=card-rows`, opened by **Go to Payments**) targets the row
-  menu (⋮), which card rows no longer have. The guide darkens the screen and cannot be completed.
-  There is no Figma design for it. TODO: remove the guide or get a design.
-- What the **re-verify** link should do is not in the design; it opens the setup steps dialog.
-  TODO(confirm).
-- The Figma "6. Generic pending" state ("Please wait while we process this") has no matching step.
-  TODO(confirm) whether a step is missing.
-- The banner and card copy above match Figma from commit `e4abbc1` on `vlad-sandbox`.
-  TODO(confirm) once that is merged to `main`; until then `main` shows the older copy.
+Confirmed with design on 2026-10-20.
+
+- **Go to Payments guide.** The Supplier Portal guide (`?guide=card-rows`) dims the screen and
+  highlights the card rows and their **Get paid** buttons. That is intended: it is the visual cue
+  that the supplier has to process a payment through **Get paid**.
+- There is no "Generic pending" step. An earlier draft listed one; design found no such frame.
+
+### Open questions
+
+- **Re-verify link.** What "Changed payment processors, need to reverify…" should do is not
+  defined, because design has not decided what changing processors means for the UI. Until then it
+  opens the setup steps dialog. TODO(design).
 
 ## Business rules
 TODO: rules that are easy to get wrong (limits, approvals, validation, statuses).

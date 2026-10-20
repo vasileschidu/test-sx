@@ -37,6 +37,7 @@ Shell parts:
   then tabs, then search / filter / export, then a data table with expandable rows and pagination.
   Reference implementation: Hub Bills & Payables ([standard](../products/smart-hub/standard.md#bills--payables)).
 - Light and dark mode are required on every page.
+- Figma: [R3] SMART Exchange [Figma](https://www.figma.com/design/9DRzbyv7FDCDYFYN5ZGuwZ) for the portal shell; Hub screens in [R2] SH - Accounts Payable [Figma](https://www.figma.com/design/DyBC356t1jIcoPrKjf9Ra8). Figma also shows two different sidebars (Hub vs Supplier Portal); the code unifies them via plans.
 
 > Note: `PROJECT_RULES.md` says the content offset is `lg:pl-[360px]` / `lg:pl-[88px]`, but
 > `bills-and-payables.html` uses `lg:pl-[304px]`. TODO(confirm) which is current; the rules file may be stale.
@@ -48,7 +49,7 @@ A portal, but with its own layout because its job is onboarding, not daily work.
 - Candidate code: `src/pages/onboarding/` (create account → confirm identity → business details →
   review documents → signature → summary → complete). It uses a **static stepper sidebar** instead of `<app-nav>`.
 - TODO(confirm): is this SMART Enroll, or Exchange supplier onboarding?
-- Figma: TODO (link)
+- Figma: see Enroll in [figma-files.md](../design-system/figma-files.md) (several candidate files)
 
 ## 3. Token flow: Disburse, Collect
 
@@ -57,10 +58,12 @@ Short, focused flow opened from a token (an emailed link) to finish one task: re
 - Example: `src/pages/sd-uk/` (Disburse): claim → verify → contact → payment (bank or card)
   → billing/summary → review → sign → done / thank you.
 - No portal navigation.
-- TODO: shell details (header, width, step indicator). Figma: TODO (link)
+- Figma ([LAUNCHED] Default Flow [Figma](https://www.figma.com/design/4WZgq8XswZFkHcI6bzOIiK)): dark navy left **step rail**, blue gradient **amount card** (message / expiration / details chips), then the step content. Stepper labels e.g. "Receive Payment / Complete Payment".
+- Steps (Disburse claimant): authentication (questionnaire; OTP in some flows), choose method, details, **Summary ("One Final Step", consent, Deposit button)**, final/receipt.
 
 ## Shared rules across families
 
 - Mobile-first; test at 320, 768, 1280, 1440 px (from `PROJECT_RULES.md`).
 - Accessibility baseline: keyboard focus, alt text, labeled icon buttons, 4.5:1 contrast in both themes.
+- Frame widths in Figma vary (1440 / 1728 / 1920). TODO(confirm) the reference desktop width.
 - TODO: anything else every family must follow (branding area, error and empty states).

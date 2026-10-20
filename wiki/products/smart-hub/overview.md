@@ -39,4 +39,5 @@ Full details: [suite/integrations.md](../../suite/integrations.md).
   - Scripts: `src/scripts/bills-payables-table.js`, `src/scripts/payables-pay.js`
   - Data: `src/data/bills-payables.json`, `src/data/payees.json`
   - Shared Portal shell: see [suite/layouts.md](../../suite/layouts.md)
-- Figma: TODO
+- Figma: [R2] SH - Accounts Payable [Figma](https://www.figma.com/design/DyBC356t1jIcoPrKjf9Ra8) (TODO(confirm): Figma R2 vs code R1.0) · AR: [R1] SH - Accounts Receivable [Figma](https://www.figma.com/design/XFMJMeQS3eUBB51yisl6AL)
+- Module-level source-of-truth files: [design-system/figma-files.md](../../design-system/figma-files.md)
