@@ -32,4 +32,5 @@ Full details: [suite/integrations.md](../../suite/integrations.md).
 ## Code
 - Path in repo:
   - TODO(confirm): is `src/pages/onboarding/` Enroll, or Exchange supplier onboarding?
-- Figma: TODO
+- Figma: [REVIEW] Concept Enroll in Hub [Figma](https://www.figma.com/design/NrJlWBQph0rLI4yKzgktK2) (TODO(confirm) which Enroll file is current; see [figma-files.md](../../design-system/figma-files.md))
+- Module-level source-of-truth files: [design-system/figma-files.md](../../design-system/figma-files.md)

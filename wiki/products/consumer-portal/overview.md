@@ -33,4 +33,5 @@ Full details: [suite/integrations.md](../../suite/integrations.md).
 - Path in repo:
   - `src/pages/dashboard/consumer-payments-received.html`, `consumer-my-cards.html`, `consumer-payment-preferences.html`, `consumer-my-profile.html`
   - Plan `consumer-portal` in `src/scripts/app-plans.js`
-- Figma: TODO
+- Figma: [R1] Consumer Portal (SD) [Figma](https://www.figma.com/design/tK3Ex3e3fDSOebc4I6onyM). TODO(confirm): is the current release R1?
+- Module-level source-of-truth files: [design-system/figma-files.md](../../design-system/figma-files.md)

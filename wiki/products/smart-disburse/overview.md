@@ -34,4 +34,5 @@ Full details: [suite/integrations.md](../../suite/integrations.md).
   - `src/pages/smart-disburse/index.html`
   - `src/pages/sd-uk/` (claim → verify → choose bank or card → review → sign → done). TODO(confirm): UK standard, or a client variant?
   - Token test tool: `src/pages/tools/sd-sx-token-test.html`, backend `workers/sd-sx-token-service`
-- Figma: TODO
+- Figma: [LAUNCHED] Default Flow [Figma](https://www.figma.com/design/4WZgq8XswZFkHcI6bzOIiK); regional and rail flows in [figma-files.md](../../design-system/figma-files.md#disburse-regional-and-rail-flows)
+- Module-level source-of-truth files: [design-system/figma-files.md](../../design-system/figma-files.md)

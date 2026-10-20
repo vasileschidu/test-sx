@@ -115,6 +115,15 @@ stateDiagram-v2
 TODO(confirm): the transitions from Pay into Scheduled, Processing or Pending Payee Action, and from
 Pending to Processing, are inferred and not yet read from `payables-pay.js`.
 
+## Design vs code gaps (Figma [R2] SH - Accounts Payable)
+
+Things the source-of-truth Figma file has that this code does not. Not standard until built. Listed so agents don’t assume them:
+
+- Payment methods in Figma: ACH, Cross-border Wire, Wire, **Check**, Pay with Card, SMART Disburse, SMART Exchange, **RTP**. Code has card, ACH, wire, SMART Exchange, SMART Disburse.
+- Pay modes in Figma: Pay now / Schedule a payment / Pay on Due Date.
+- Carry-over not yet in R2 Figma: **Pending Approval** tab with Approve/Decline (Dual Approval file), calendar filter, multi-select, empty state, "Payment re-submitted" modal.
+- Known Figma copy bug: the SMART Exchange confirmation modal says "SMART Disburse payment token". Don’t copy it.
+
 ## Pay flow
 
 `src/pages/dashboard/payables-pay.html` + `src/scripts/payables-pay.js`. Choose origination account
