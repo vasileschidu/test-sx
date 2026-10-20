@@ -35,8 +35,9 @@
 
   // SMART Disburse US steps (src/pages/onboarding/: the Default Flow and
   // Multi-Party) change instantly: no fade-out of the old page, no fade-in of
-  // the new one, no simulated loading. Other flows that load this script (the
-  // UK claim demo in src/pages/sd-uk/) keep the cross-fade and skeletons.
+  // the new one. The simulated loading (skeletons) still runs inside the page.
+  // Other flows that load this script (the UK claim demo in src/pages/sd-uk/)
+  // keep the cross-fade.
   var INSTANT_PAGE_CHANGES = /\/pages\/onboarding\//.test(window.location.pathname);
 
   // Browsers with cross-document View Transitions cross-fade one page into the
@@ -441,8 +442,7 @@
     }
 
     // A flow can opt out of the simulated load and just keep the transitions.
-    // SMART Disburse US (Default and Multi-Party) shows each step at once.
-    var skipSkeleton = INSTANT_PAGE_CHANGES || root.hasAttribute('data-ob-no-skeleton');
+    var skipSkeleton = root.hasAttribute('data-ob-no-skeleton');
     var targets = [];
     if (!skipSkeleton) {
       try {
