@@ -291,7 +291,7 @@
               statusLabels: { pending: "Pending Your Action" },
               showTokenMethod: true,
             }
-          : {};
+          : { showTokenMethod: true };
     }
     if (
       pageFile === "payment-preferences.html" ||
