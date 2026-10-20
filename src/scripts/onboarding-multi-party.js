@@ -521,7 +521,7 @@
     // Same badges as the method summary pages: green Instant, amber ACH, red Check.
     var processing = {
       'Bank Transfer - ACH': { text: 'Up to 3 Days', bg: 'bg-[#f59e0b]', icon: 'icon-check-circle-badge.svg' },
-      Check: { text: '7–10 Days', bg: 'bg-[#ef4444]', icon: 'icon-exclamation-circle-badge.svg' }
+      Check: { text: '7-10 Days', bg: 'bg-[#ef4444]', icon: 'icon-exclamation-circle-badge.svg' }
     }[method] || { text: 'Instant', bg: 'bg-[#10b981]', icon: 'icon-check-circle-badge.svg' };
     var finalPage = new URLSearchParams(window.location.search).get('final');
 
