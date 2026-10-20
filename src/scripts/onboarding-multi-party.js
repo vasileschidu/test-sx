@@ -146,7 +146,7 @@
       // Phones have room for the full date: "How it works" shrinks to an (i) button there.
       text = stamp(expires.toISOString()).replace(' (ET)', '');
     } else {
-      tone = 'bg-[#f9fafb] font-semibold text-[#111827] hover:bg-gray-100';
+      tone = 'bg-[#f9fafb] font-medium text-[#111827] hover:bg-gray-100';
       icon = 'icon-calendar-exclamation-dark.svg';
       text = countdown(expires);
     }
