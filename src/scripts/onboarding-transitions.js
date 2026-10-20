@@ -146,6 +146,19 @@
         : 'body{animation:obEnter .45s cubic-bezier(0,0,.2,1) both;}' +
           '@keyframes obEnter{from{opacity:0}to{opacity:1}}' +
           'html.ob-leaving body{opacity:0;transition:opacity ' + EXIT_DURATION_MS + 'ms cubic-bezier(.4,0,1,1);}',
+      // Instant steps have no fade to hide the first frames, so the menu and the
+      // phone top bar (both drawn by script, their classes styled a beat later)
+      // get their final size and colour from plain CSS: nothing jumps.
+      INSTANT_PAGE_CHANGES
+        ? '@media (min-width:1024px){[data-ob-sidebar]{display:flex;width:325px;flex-shrink:0;align-self:stretch;' +
+            'background-image:linear-gradient(to bottom,#1E326F,#090C38);}}' +
+          '@media (max-width:1023.98px){' +
+            'html:not(:has([data-ob-mobile-header])) [data-ob-sidebar]{display:block;height:104px;overflow:hidden;' +
+              'background-image:linear-gradient(to bottom,#1E326F,#090C38);}' +
+            'html:not(:has([data-ob-mobile-header])) [data-ob-sidebar]>*{visibility:hidden;}' +
+            '[data-ob-mobile-header]{position:sticky;top:0;z-index:30;display:flex;flex-direction:column;gap:1rem;' +
+              'padding:1rem;background-image:linear-gradient(to bottom,#1E326F,#090C38);}}'
+        : '',
       '@media (prefers-reduced-motion: reduce){',
       '.ob-skel,.ob-skel-field{animation:none;}',
       '::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important;}',
