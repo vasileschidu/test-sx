@@ -6677,7 +6677,7 @@
     },
     unverified: {
       label: 'This account has not been yet verified.',
-      tipPosition: 'bottom',
+      tipPosition: 'top',
       iconClass: 'text-gray-400',
       path: 'M8 14.4C11.5346 14.4 14.4 11.5346 14.4 8C14.4 4.46538 11.5346 1.6 8 1.6C4.46538 1.6 1.6 4.46538 1.6 8C1.6 11.5346 4.46538 14.4 8 14.4ZM6.62426 5.77574C6.38995 5.54142 6.01005 5.54142 5.77574 5.77574C5.54142 6.01005 5.54142 6.38995 5.77574 6.62426L7.15147 8L5.77574 9.37574C5.54142 9.61005 5.54142 9.98995 5.77574 10.2243C6.01005 10.4586 6.38995 10.4586 6.62426 10.2243L8 8.84853L9.37574 10.2243C9.61005 10.4586 9.98995 10.4586 10.2243 10.2243C10.4586 9.98995 10.4586 9.61005 10.2243 9.37574L8.84853 8L10.2243 6.62426C10.4586 6.38995 10.4586 6.01005 10.2243 5.77574C9.98995 5.54142 9.61005 5.54142 9.37574 5.77574L8 7.15147L6.62426 5.77574Z'
     }
@@ -6721,7 +6721,7 @@
     var summary = last4 ? ('••••' + last4) : label;
     var status = account.validationStatus;
     var unverified = status === 'unverified';
-    var icon = buildBankValidationIcon(status, false);
+    var icon = buildBankValidationIcon(status, true);
     return (
       '<el-option value="' + escapeHtml(account.id) + '" class="group/option relative block cursor-default select-none border-b border-gray-200 py-3 pr-4 pl-3 text-gray-900 aria-selected:bg-gray-100 focus:bg-gray-100 focus:outline-hidden dark:border-white/10 dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10">' +
         '<div class="flex items-center gap-3">' +
@@ -6732,7 +6732,7 @@
             '<span class="block truncate font-medium group-aria-selected/option:font-semibold">' + escapeHtml(label) + icon + '</span>' +
             '<span class="block text-sm text-gray-500 dark:text-gray-400">' + escapeHtml(summary) + '</span>' +
           '</div>' +
-          '<span class="hidden in-[el-selectedcontent]:block truncate font-medium">' + escapeHtml(label + (last4 ? (' ••••' + last4) : '')) + icon + '</span>' +
+          '<span class="hidden in-[el-selectedcontent]:block truncate font-medium">' + escapeHtml(label + (last4 ? (' ••••' + last4) : '')) + '</span>' +
         '</div>' +
         '<span class="absolute inset-y-0 right-0 flex items-center pr-3 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
           '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
@@ -6776,6 +6776,27 @@
         optionsEl.insertAdjacentHTML('beforeend', buildBankAccountOptionHtml(account));
       }
     });
+
+    // The options list scrolls (clips overflow), so pin the tooltip to the
+    // viewport above the icon instead of positioning it inside the list.
+    if (!optionsEl.hasAttribute('data-vtip-bound')) {
+      optionsEl.setAttribute('data-vtip-bound', '');
+      var placeTip = function (e) {
+        var host = e.target.closest && e.target.closest('[data-bank-validation]');
+        var tip = host && host.querySelector('[role="tooltip"]');
+        if (!tip) return;
+        var r = host.getBoundingClientRect();
+        tip.style.position = 'fixed';
+        tip.style.left = (r.left + r.width / 2) + 'px';
+        tip.style.top = (r.top - 10) + 'px';
+        tip.style.bottom = 'auto';
+        tip.style.margin = '0';
+        tip.style.translate = 'none';
+        tip.style.transform = 'translate(-50%, -100%)';
+      };
+      optionsEl.addEventListener('mouseover', placeTip);
+      optionsEl.addEventListener('focusin', placeTip);
+    }
 
     var bankOptions = optionsEl.querySelectorAll('el-option');
     if (bankOptions.length) {
@@ -8410,5 +8431,6 @@
   }
 
   window.initSmartExchangePage = init;
+  window.initConsumerExchangesPage = init;
   init();
 })();

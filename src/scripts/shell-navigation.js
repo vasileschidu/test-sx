@@ -44,9 +44,9 @@
     "consumer-payments-received.html": {
       scripts: [
         "/src/scripts/table-skeleton.js",
-        "/src/scripts/exchanges-table.js?v=20261001b",
+        "/src/scripts/consumer-exchanges-table.js?v=bank-tooltips-20261021b",
       ],
-      init: "initSmartExchangePage",
+      init: "initConsumerExchangesPage",
     },
     "consumer-my-cards.html": {
       scripts: [
@@ -287,8 +287,11 @@
           ? {
               dataset: "consumer-payments",
               storageKey: "cp_payment_overrides_v1",
-              methodLabels: { smart_exchange: "Smart Disburse" },
-              statusLabels: { pending: "Pending Your Action" },
+              methodLabels: { smart_exchange: "SMART Disburse" },
+              statusLabels: {
+                pending: "Pending Your Action",
+                exception: "Failed",
+              },
               showTokenMethod: true,
             }
           : { showTokenMethod: true };
