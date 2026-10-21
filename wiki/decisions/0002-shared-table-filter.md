@@ -1,0 +1,47 @@
+---
+title: 0002 — One table filter for all portals, content per portal
+type: decision
+status: draft
+last_reviewed: 2026-10-21
+decision_status: accepted
+date: 2026-10-21
+products: [smart-hub, smart-exchange, consumer-portal]
+superseded_by:
+---
+
+# 0002 — One table filter for all portals, content per portal
+
+## Context
+Each portal's table has its own filter implementation (`bills-payables-table.js`, `exchanges-table.js`,
+`consumer-exchanges-table.js`, `vendors-page.js`). They have drifted apart in layout, behavior and wording:
+- some have a calendar date picker and some don't
+- some say "Reset" and others "Clear"
+- some use "By status"-style labels and others plain nouns
+
+Worse, filter names often don't match the table's column headers (filter "Payment Type" vs column
+"Payment Method", "Payment Date" vs "Date Initiated"). One Hub filter even targets a column that its tab
+hides. Details: [portal consistency audit](../design-system/portal-consistency.md).
+
+## Decision
+1. **Layout and functionality are the same in every portal.** One shared filter component, specified in
+   [design-system/table-filter.md](../design-system/table-filter.md). No portal-specific variations of the panel,
+   controls, behavior or wording.
+2. **Content is specific to each portal.** The filter categories are driven by the data points the
+   table actually shows: its **column headers**. The four portals are SMART Hub AP, SMART Hub AR,
+   SMART Exchange and Consumer Portal.
+3. A filter category's **label is exactly the column header**. If a header changes, the filter label changes too.
+4. **The same categories on every tab.** The filter lists all of the portal's filterable column headers on every tab,
+   even where the current tab has no value for a column (e.g. Payment Date on Ready to Pay). Filtering on such a column simply
+   returns no rows there. (Revised 2026-10-21. It replaces an earlier rule that hid categories per tab.)
+
+## Consequences
+- Agents building or changing a table: define the columns first, then derive the filter categories from them using the
+  per-portal tables in [table-filter.md](../design-system/table-filter.md#filter-content-per-portal).
+  Never add a filter for a data point that has no column.
+- The four current implementations must be replaced by the shared component (tracked in the audit).
+- Date columns that mean different things get their own categories: Hub has Due Date, Date Initiated and Payment Date;
+  Exchange and Consumer have Date Initiated and Date Processed.
+- Amount is a filter category (min / max range) in every portal.
+- Manage columns lists every column on every tab; tabs only set which columns are on by default.
+- Client variants may add or remove **columns**, and the filter follows automatically. A variant must not
+  change the filter's layout or behavior.

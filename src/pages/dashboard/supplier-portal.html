@@ -1709,6 +1709,52 @@
                                   <div class="flex flex-col">
                                     <button
                                       type="button"
+                                      data-filter-open="amount"
+                                      data-filter-nav
+                                      class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10"
+                                    >
+                                      <span class="min-w-0 flex-1"
+                                        >Amount</span
+                                      >
+                                      <span
+                                        data-filter-count-badge="amount"
+                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        >0</span
+                                      >
+                                      <img
+                                        src="../../../src/assets/table/chevron-right.svg"
+                                        width="20"
+                                        height="20"
+                                        alt=""
+                                        data-nav-chevron
+                                        class="hidden shrink-0"
+                                      />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      data-filter-open="vendor_entry"
+                                      data-filter-nav
+                                      class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10"
+                                    >
+                                      <span class="min-w-0 flex-1"
+                                        >Vendor Entry</span
+                                      >
+                                      <span
+                                        data-filter-count-badge="vendor_entry"
+                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        >0</span
+                                      >
+                                      <img
+                                        src="../../../src/assets/table/chevron-right.svg"
+                                        width="20"
+                                        height="20"
+                                        alt=""
+                                        data-nav-chevron
+                                        class="hidden shrink-0"
+                                      />
+                                    </button>
+                                    <button
+                                      type="button"
                                       data-filter-open="customer"
                                       data-filter-nav
                                       class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10"
@@ -1757,8 +1803,8 @@
                                       data-filter-nav
                                       class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10"
                                     >
-                                      <span class="min-w-0 flex-1"
-                                        >Payment Type</span
+                                      <span class="min-w-0 flex-1" data-filter-label="method"
+                                        >Payment Method</span
                                       >
                                       <span
                                         data-filter-count-badge="method"
@@ -1780,8 +1826,8 @@
                                       data-filter-nav
                                       class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10"
                                     >
-                                      <span class="min-w-0 flex-1"
-                                        >Failure Reasons</span
+                                      <span class="min-w-0 flex-1" data-filter-label="failure_reason"
+                                        >Failure Reason</span
                                       >
                                       <span
                                         data-filter-count-badge="failure_reason"
@@ -1803,11 +1849,34 @@
                                       data-filter-nav
                                       class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10"
                                     >
-                                      <span class="min-w-0 flex-1"
-                                        >Payment Date</span
+                                      <span class="min-w-0 flex-1" data-filter-label="initiated_date"
+                                        >Date Initiated</span
                                       >
                                       <span
                                         data-filter-count-badge="initiated_date"
+                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        >0</span
+                                      >
+                                      <img
+                                        src="../../../src/assets/table/chevron-right.svg"
+                                        width="20"
+                                        height="20"
+                                        alt=""
+                                        data-nav-chevron
+                                        class="hidden shrink-0"
+                                      />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      data-filter-open="processed_date"
+                                      data-filter-nav
+                                      class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10"
+                                    >
+                                      <span class="min-w-0 flex-1" data-filter-label="processed_date"
+                                        >Date Processed</span
+                                      >
+                                      <span
+                                        data-filter-count-badge="processed_date"
                                         class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
                                         >0</span
                                       >
@@ -1825,6 +1894,49 @@
                                 <div
                                   class="min-h-0 min-w-0 flex-1 bg-white dark:bg-gray-800"
                                 >
+                                  <div
+                                    id="sx-table-filter-panel-vendor-entry"
+                                    class="hidden h-full min-h-0 flex-col p-3"
+                                  >
+                                    <div class="relative">
+                                      <img
+                                        src="../../../src/assets/table/search.svg"
+                                        width="20"
+                                        height="20"
+                                        alt=""
+                                        class="pointer-events-none absolute top-1/2 left-2 -translate-y-1/2"
+                                      />
+                                      <input
+                                        type="search"
+                                        data-filter-search="sx-table-filter-vendor-entries"
+                                        placeholder="Search vendor entry"
+                                        class="h-[33px] w-full rounded-md border border-gray-300 bg-white pr-2 pl-10 text-sm leading-5 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500"
+                                      />
+                                    </div>
+                                    <div
+                                      class="mt-3 flex items-center justify-between"
+                                    >
+                                      <p
+                                        class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
+                                      >
+                                        Vendor Entry
+                                      </p>
+                                      <button
+                                        type="button"
+                                        data-filter-select-all="sx-table-filter-vendor-entries"
+                                        class="cursor-pointer rounded px-1.5 py-0.5 text-xs leading-4 font-semibold text-blue-600 transition-colors hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                                      >
+                                        Select all
+                                      </button>
+                                    </div>
+                                    <div
+                                      class="my-2 h-px bg-gray-200 dark:bg-white/10"
+                                    ></div>
+                                    <div
+                                      id="sx-table-filter-vendor-entries"
+                                      class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto"
+                                    ></div>
+                                  </div>
                                   <div
                                     id="sx-table-filter-panel-customer"
                                     class="hidden h-full min-h-0 flex-col p-3"
@@ -1926,7 +2038,7 @@
                                       <input
                                         type="search"
                                         data-filter-search="sx-table-filter-methods"
-                                        placeholder="Search payment type"
+                                        placeholder="Search payment method"
                                         class="h-[33px] w-full rounded-md border border-gray-300 bg-white pr-2 pl-10 text-sm leading-5 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500"
                                       />
                                     </div>
@@ -1936,7 +2048,7 @@
                                       <p
                                         class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
                                       >
-                                        Payment Type
+                                        <span data-filter-label="method">Payment Method</span>
                                       </p>
                                       <button
                                         type="button"
@@ -1969,7 +2081,7 @@
                                       <input
                                         type="search"
                                         data-filter-search="sx-table-filter-failure-reasons"
-                                        placeholder="Search failure reasons"
+                                        placeholder="Search failure reason"
                                         class="h-[33px] w-full rounded-md border border-gray-300 bg-white pr-2 pl-10 text-sm leading-5 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500"
                                       />
                                     </div>
@@ -1979,7 +2091,7 @@
                                       <p
                                         class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
                                       >
-                                        Failure Reasons
+                                        <span data-filter-label="failure_reason">Failure Reason</span>
                                       </p>
                                       <button
                                         type="button"
@@ -1997,6 +2109,27 @@
                                       class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto"
                                     ></div>
                                   </div>
+                                  <div id="sx-table-filter-panel-amount" class="hidden h-full min-h-0 flex-col">
+                                    <div class="px-3 pt-3">
+                                      <p class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-200">
+                                        <span data-filter-label="amount">Amount</span>
+                                      </p>
+                                    </div>
+                                    <div class="space-y-3 px-3 py-3">
+                                      <div>
+                                        <label for="sx-table-filter-amount-min-input" class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">Min</label>
+                                        <div class="relative mt-2">
+                                          <input id="sx-table-filter-amount-min-input" type="text" inputmode="decimal" placeholder="0.00" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <label for="sx-table-filter-amount-max-input" class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">Max</label>
+                                        <div class="relative mt-2">
+                                          <input id="sx-table-filter-amount-max-input" type="text" inputmode="decimal" placeholder="0.00" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
                                   <div
                                     id="sx-table-filter-panel-initiated-date"
                                     class="hidden h-full min-h-0 flex-col"
@@ -2005,7 +2138,7 @@
                                       <p
                                         class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
                                       >
-                                        Payment Date
+                                        <span data-date-panel-label>Date Initiated</span>
                                       </p>
                                     </div>
                                     <div class="space-y-3 px-3 py-3">
@@ -3902,7 +4035,7 @@
 
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
     <script src="../../../src/scripts/table-ui.js?v=20261006f"></script>
-    <script src="../../../src/scripts/exchanges-table.js?v=20261006l"></script>
+    <script src="../../../src/scripts/exchanges-table.js?v=20261021-sticky"></script>
 
     <script src="../../../src/scripts/review-modal.js"></script>
   </body>

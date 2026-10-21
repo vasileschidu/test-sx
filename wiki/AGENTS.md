@@ -61,6 +61,15 @@ Propose a wiki update in the same PR (or a linked one) whenever you:
 | A layout pattern | [suite/layouts.md](suite/layouts.md) |
 | Something with a non-obvious "why" | A new record in [decisions/](decisions/README.md) |
 
+## 6. Building UI shared across portals
+
+- **Table filter:** use the shared filter. Do not build one inside a page script. Derive the categories from the table’s
+  columns, label each one **exactly** like its column header, and list every category on every tab, even where the tab has no values for that column.
+  When you add, remove or rename a column, update the filter **and** the per-portal table in
+  [design-system/table-filter.md](design-system/table-filter.md).
+- Before changing a top bar, filter, badge, activity log or Payment Preferences layout, check
+  [portal-consistency.md](design-system/portal-consistency.md). If your change fixes a row, set its status to `fixed`.
+
 Rules for edits:
 - **Wiki changes always go to `main`**, even when they describe a client branch. Do not edit `/wiki` on client branches. Variant docs
   must be visible from `main`, so anyone can see every variant without checking out client branches.

@@ -28,6 +28,11 @@ TODO: e.g. finance / AP-AR teams at the organization.
 
 Full details: [suite/integrations.md](../../suite/integrations.md).
 
+## Table filters
+
+Hub has two filter contexts: **AP** (Bills & Payables; Vendors is out of scope for now) and **AR** (not built yet). Both use the shared filter, with
+categories taken from each table’s columns. See [table-filter.md](../../design-system/table-filter.md#filter-content-per-portal).
+
 ## Pages in this folder
 - [standard.md](standard.md): what the current standard version does
 - [changelog.md](changelog.md): history of standard versions

@@ -55,14 +55,18 @@ Each tab shows a count. On mobile the tabs become a select.
 ### Columns
 
 Default columns from `tableConfig.columns`: expand, select, Amount, Bill Reference, Payee, Payment Method,
-Source, Due Date, Date Initiated, Status, Failure Reason, action. Some are hidden per tab:
+Source, Due Date, Date Initiated, Payment Date, Status, Failure Reason, action. Every column is available on every tab in
+**Manage columns**; each tab only decides which are on by default:
 
-| Tab | Hidden columns | Notes |
-|---|---|---|
-| Ready to Pay | Payment Method, Date Initiated, Failure Reason | Selectable rows |
-| In Progress | Due Date, select, Failure Reason | |
-| Paid | Due Date, select, action, Failure Reason | "Date Initiated" is relabeled **Payment Date** |
-| Exceptions | select | Only tab with Failure Reason |
+| Tab | Off by default | Date shown by default | Notes |
+|---|---|---|---|
+| Ready to Pay | Payment Method, Date Initiated, Payment Date, Failure Reason | Due Date | Selectable rows (only tab with select) |
+| In Progress | Payment Method, Due Date, Payment Date, Failure Reason | Date Initiated | Includes Scheduled payments |
+| Paid | Payment Method, Due Date, Date Initiated, Failure Reason | Payment Date (`processedDate`) | No row action |
+| Exceptions | Payment Method, Payment Date | Due Date, Date Initiated | Failure Reason on by default |
+
+Date rules for all portals: [table filter → Date columns per portal](../../design-system/table-filter.md#date-columns-per-portal).
+Once the user applies a Manage columns selection it stays the same on every tab; Reset default restores the per-tab defaults. Details: [table filter → Manage columns](../../design-system/table-filter.md#manage-columns).
 
 Users can show or hide columns via **Manage columns** (with "Reset default").
 Expanding a row shows details: summary, line items, notes, attachments, activity log.
@@ -70,8 +74,11 @@ Expanding a row shows details: summary, line items, notes, attachments, activity
 ### Search, filter, export
 
 - **Search** box.
-- **Filter** with panels: Payee, Payment Type, Status, Failure Reasons, Payment Date (from/to), Source.
-  Active filters show as tags; Reset / Apply.
+- **Filter**: target is the shared filter. Categories = this table’s column headers, the same on every tab.
+  See [table filter → Hub AP: Bills & Payables](../../design-system/table-filter.md#smart-hub-ap-bills--payables).
+  Categories: Amount (min / max), Payee, Payment Method, Status, Failure Reason, Due Date, Date Initiated, Payment Date, Source.
+  Active filters show as chips on every tab; Reset / Apply.
+  Remaining gap: the date ranges have no calendar picker yet ([D-09](../../design-system/portal-consistency.md#table-filter)).
 - **Export** downloads the current rows as `bills-payables-export.csv`.
 - Pagination: 10 / 25 / 50 / 100 per page.
 
@@ -123,6 +130,11 @@ Things the source-of-truth Figma file has that this code does not. Not standard 
 - Pay modes in Figma: Pay now / Schedule a payment / Pay on Due Date.
 - Carry-over not yet in R2 Figma: **Pending Approval** tab with Approve/Decline (Dual Approval file), calendar filter, multi-select, empty state, "Payment re-submitted" modal.
 - Known Figma copy bug: the SMART Exchange confirmation modal says "SMART Disburse payment token". Don’t copy it.
+
+## Expanded row: known deviations
+
+The Details section and Activity log differ from Figma and from Consumer Portal (activity icons, standard messages,
+empty sections, payment info layout, status badge). See [D-11–D-16](../../design-system/portal-consistency.md#bills--payables-expanded-row-hub-ap).
 
 ## Pay flow
 

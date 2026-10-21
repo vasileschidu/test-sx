@@ -63,6 +63,8 @@ Short, focused flow opened from a token (an emailed link) to finish one task: re
 
 ## Shared rules across families
 
+- **Table filter (Portal family):** identical layout and behavior in Hub AP, Hub AR, Exchange and Consumer Portal. Only the categories differ, and they come from each table’s column headers. See [table-filter.md](../design-system/table-filter.md).
+- Known gaps between portals: [portal-consistency.md](../design-system/portal-consistency.md).
 - Mobile-first; test at 320, 768, 1280, 1440 px (from `PROJECT_RULES.md`).
 - Accessibility baseline: keyboard focus, alt text, labeled icon buttons, 4.5:1 contrast in both themes.
 - Frame widths in Figma vary (1440 / 1728 / 1920). TODO(confirm) the reference desktop width.

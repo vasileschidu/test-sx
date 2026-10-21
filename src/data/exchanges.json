@@ -32,6 +32,11 @@
         "sortable": true
       },
       {
+        "key": "dateProcessed",
+        "label": "Date Processed",
+        "sortable": true
+      },
+      {
         "key": "paymentMethod",
         "label": "Payment Method",
         "sortable": true,
