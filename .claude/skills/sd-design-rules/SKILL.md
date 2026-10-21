@@ -53,7 +53,10 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
 - **Modals:** width = min(desktop modal width, 736), centred. Overlay and Top Bar stretched to 768.
 - "Expiration + How it works" cells are **equal width** from tablet up (user decision). Figma: both FILL, How it works padding 10/10. Code: `md:grid md:grid-cols-2`, with How it works text visible and the icon hidden.
 - **Footer gap on tablet:** keep the Figma content gap as the minimum (64 to the language pill) with the footer bottom-anchored. Do not copy the inflated gap that appears in (t) frames that kept the phone frame height (user decision, 2026-10-21).
-- The 2px width difference Figma shows on bordered Expiration cells (from the 1px INSIDE stroke) is accepted. The code uses an equal grid.
+- **Cell height is 40px everywhere**: phone, tablet and desktop, on Current Allocation and Payment Status alike (user decision, 2026-10-21).
+  - Figma: the Expiration cell has padding 10/10 (its INSIDE stroke does not count). How it works has 10/10, or 9/9 when it carries the transparent stroke, because that stroke counts (strokesIncludedInLayout). The phone (i) button is fixed at 40.
+  - Code: bordered badges `py-[9px]` + 1px border, the borderless badge `py-2.5`.
+- Bordered Expiration cells have a 1px INSIDE stroke, so the How it works frame next to them gets the same stroke, transparent (opacity 0). Without it Figma makes the row 2px unequal (user wants them exactly equal, 2026-10-21).
 - **Tooltips** (Copy/Copied): centred above the copy icon, top = icon.y − 36 (the desktop rule).
 - **Closed screens** (Page/Card style) are cloned from the **desktop** frame and resized.
 - **Mobile Menu:** dropdown panel x16 y56 736×108, close button at x720 y16.

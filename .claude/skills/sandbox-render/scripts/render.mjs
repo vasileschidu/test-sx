@@ -49,6 +49,11 @@ try {
   if (args.eval) { const v = await evaluate(args.eval); console.log(typeof v === 'string' ? v : JSON.stringify(v)); }
   if (args.out) {
     const params = { format: 'png' };
+    if (args.element) {
+      // Capture just one element (padded by 16px), at 2x for close-ups.
+      const r = await evaluate(`(()=>{const e=document.querySelector(${JSON.stringify(args.element)}); if(!e) return null; e.scrollIntoView({block:'center'}); const b=e.getBoundingClientRect(); return {x:b.x+scrollX-16,y:b.y+scrollY-16,width:b.width+32,height:b.height+32};})()`);
+      if (r) params.clip = { ...r, scale: 2 };
+    }
     if (args.full) {
       const h = await evaluate('document.documentElement.scrollHeight');
       await send('Emulation.setDeviceMetricsOverride', { width: W, height: h, deviceScaleFactor: 1, mobile: W < 1024 });

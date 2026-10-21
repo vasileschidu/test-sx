@@ -83,5 +83,5 @@ inside sections wrongly, so trust the audit.
 - `node.depth` does not exist.
 - Collect the node lists *after* removing nodes, or the loop hits deleted ids.
 - `findAll` on the whole page is slow but fine. Cache screen bounding boxes once per call.
-- **FILL children do not split equally like CSS `flex-1`/grid.** Figma shares the free space after each child's own content width, padding and stroke. For equal columns, give both children the same padding and stroke (an INSIDE stroke on one side makes it 2px wider).
+- **FILL children do not split equally like CSS `flex-1`/grid.** Figma shares the free space after each child's own content width, padding and stroke. For equal columns, give both children the same padding and stroke. An INSIDE stroke on one side makes it 2px wider; the fix is the same stroke, transparent, on the other side.
 - Button instances may come out 44px tall. Set `layoutSizingVertical='FIXED'`, resize to 56, and set the label to Medium.

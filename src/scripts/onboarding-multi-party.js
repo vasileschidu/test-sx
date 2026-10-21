@@ -126,31 +126,32 @@
    *   days    gray, blue border — the date (Current Allocation) or a day countdown
    *   < 24 h  amber — "Expires in 17 hours"
    *   < 1 h   red — "Expires in 57 min and 17 sec", ticking every second
+   * Every badge is 40px tall: 9px padding + 1px border, or 10px padding without one.
    */
   function expiryBadge(expires, opts) {
     var left = Math.max(0, expires - Date.now());
     var tone, icon, text;
     if (left < HOUR) {
       var secs = Math.floor(left / 1000);
-      tone = 'border border-[#fca5a5] bg-[#fef2f2] font-medium text-[#b91c1c] hover:bg-[#fee2e2]';
+      tone = 'border border-[#fca5a5] bg-[#fef2f2] py-[9px] font-medium text-[#b91c1c] hover:bg-[#fee2e2]';
       icon = 'icon-calendar-red.svg';
       text = 'Expires in ' + Math.floor(secs / 60) + ' min and ' + (secs % 60) + ' sec';
     } else if (left < DAY) {
       var hours = Math.floor(left / HOUR);
-      tone = 'border border-[#fcd34d] bg-[#fffbeb] font-medium text-[#b45309] hover:bg-[#fef3c7]';
+      tone = 'border border-[#fcd34d] bg-[#fffbeb] py-[9px] font-medium text-[#b45309] hover:bg-[#fef3c7]';
       icon = 'icon-calendar-amber.svg';
       text = 'Expires in ' + hours + (hours === 1 ? ' hour' : ' hours');
     } else if (opts.showDate) {
-      tone = 'border border-[#93c5fd] bg-[#f9fafb] font-medium text-[#374151] hover:bg-gray-100';
+      tone = 'border border-[#93c5fd] bg-[#f9fafb] py-[9px] font-medium text-[#374151] hover:bg-gray-100';
       icon = 'icon-calendar-exclamation.svg';
       // Phones have room for the full date: "How it works" shrinks to an (i) button there.
       text = stamp(expires.toISOString()).replace(' (ET)', '');
     } else {
-      tone = 'bg-[#f9fafb] font-medium text-[#111827] hover:bg-gray-100';
+      tone = 'bg-[#f9fafb] py-2.5 font-medium text-[#111827] hover:bg-gray-100';
       icon = 'icon-calendar-exclamation-dark.svg';
       text = countdown(expires);
     }
-    return '<button type="button" data-mp-expiration class="flex w-full min-w-0 cursor-pointer items-center justify-center gap-1 rounded-full px-2.5 py-[9px] text-sm leading-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ' + tone + '">' +
+    return '<button type="button" data-mp-expiration class="flex w-full min-w-0 cursor-pointer items-center justify-center gap-1 rounded-full px-2.5 text-sm leading-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ' + tone + '">' +
       '<img src="' + ASSETS + icon + '" alt="" width="18" height="18" class="size-[18px] shrink-0">' +
       '<span data-ob-skeleton class="truncate">' + text + '</span>' +
     '</button>';
