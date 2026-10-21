@@ -65,6 +65,7 @@ inside sections wrongly, so trust the audit.
    - absolute modals centred, with width from the desktop twin, at most 736;
    - Overlay and Top Bar stretched to 768;
    - cells, tooltips.
+   - **Centre only real modals.** Other absolute children (dropdown lists, menus, cursors) keep the desktop twin's offset from their anchor: the modal, or the element they point at. The Decline "Reason" list and a Revoked cursor were once wrongly centred or left outside the frame.
 4. Placement: x = mobile.x + 503, same y. Desktop frames move +896. Widen the subsection and the section.
 
 ## 4. Re-layout without breaking arrows
