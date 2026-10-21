@@ -795,15 +795,15 @@
 
   // Every column is available on every tab, so Manage columns always lists all of them.
   // Each tab only decides which columns start switched off (wiki/design-system/table-filter.md
-  // #date-columns-per-portal). A column whose default differs between tabs remembers the
-  // user's Manage columns choice per tab; every other column has one setting for all tabs.
+  // #manage-columns). Once the user applies a selection it stays as is on every tab;
+  // applying the defaults again (Reset default) hands control back to the per-tab defaults.
   var TAB_COLUMNS_OFF_BY_DEFAULT = {
     pending: ["dateInitiated", "dateProcessed", "failureReason"],
     "action-required": ["dateInitiated", "dateProcessed", "failureReason"],
     paid: ["dateInitiated", "failureReason"],
     exceptions: ["dateProcessed"],
   };
-  var tabColumnChoices = {};
+  var columnsCustomizedByUser = false;
   var tabColumnsSyncedFor = "";
 
   function getActiveColumnTab() {
@@ -824,15 +824,15 @@
     return keys;
   }
 
-  /** On a tab change, apply that tab's choices (or defaults) for the tab-dependent columns. */
+  /** On a tab change, apply that tab's defaults, unless the user has chosen columns themselves. */
   function syncTabColumns(columns) {
     var tab = getActiveColumnTab();
     if (tab === tabColumnsSyncedFor) return;
     tabColumnsSyncedFor = tab;
-    var choices = tabColumnChoices[tab] || {};
+    if (columnsCustomizedByUser) return;
     var defaults = getDefaultManageableColumnKeys(columns);
     getTabDependentColumnKeys().forEach(function (key) {
-      var show = key in choices ? choices[key] : defaults.indexOf(key) !== -1;
+      var show = defaults.indexOf(key) !== -1;
       [columnVisibilityState.visibleKeys, columnVisibilityState.draftVisibleKeys].forEach(
         function (keys) {
           if (show) keys.add(key);
@@ -884,10 +884,13 @@
     );
     columnVisibilityState.orderedKeys =
       columnVisibilityState.draftOrderedKeys.slice();
-    var tabChoices = (tabColumnChoices[getActiveColumnTab()] = {});
-    getTabDependentColumnKeys().forEach(function (key) {
-      tabChoices[key] = columnVisibilityState.visibleKeys.has(key);
-    });
+    var defaults = getDefaultManageableColumnKeys(paginationState.allColumns.length ? paginationState.allColumns : paginationState.columns);
+    columnsCustomizedByUser = !(
+      defaults.length === columnVisibilityState.visibleKeys.size &&
+      defaults.every(function (key) {
+        return columnVisibilityState.visibleKeys.has(key);
+      })
+    );
     // Filter categories depend on which columns are on, so refresh them.
     syncTableFilterUi();
   }

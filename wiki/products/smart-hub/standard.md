@@ -66,7 +66,7 @@ Source, Due Date, Date Initiated, Payment Date, Status, Failure Reason, action. 
 | Exceptions | Payment Method, Payment Date | Due Date, Date Initiated | Failure Reason on by default |
 
 Date rules for all portals: [table filter → Date columns per portal](../../design-system/table-filter.md#date-columns-per-portal).
-Columns whose default differs per tab remember the user's Manage columns choice per tab. Details: [table filter → Manage columns](../../design-system/table-filter.md#manage-columns).
+Once the user applies a Manage columns selection it stays the same on every tab; Reset default restores the per-tab defaults. Details: [table filter → Manage columns](../../design-system/table-filter.md#manage-columns).
 
 Users can show or hide columns via **Manage columns** (with "Reset default").
 Expanding a row shows details: summary, line items, notes, attachments, activity log.

@@ -61,10 +61,12 @@ Defined by product/design on 2026-10-21. Each date has a fixed meaning, and that
 
 ### Manage columns
 
-**Every column is available on every tab**, so Manage columns always lists all of the portal's columns. A tab only sets
-which columns start **on**; the user can switch any column on or off on any tab. A column whose default differs between
-tabs (the dates, Failure Reason, Payment Method in Hub, Payment Reference in Consumer) remembers the user's choice **per tab**.
-Every other column has one setting for all tabs. Row selection and row actions are the only per-tab structural columns.
+**Every column is available on every tab**, so Manage columns always lists all of the portal's columns. Each tab sets
+which columns start **on** (table below), but only until the user makes a choice:
+
+- **Once the user applies a selection in Manage columns, it stays exactly as is on every tab.** Switching tabs never resets it.
+- **Reset default** (then Apply) hands control back to the per-tab defaults.
+- Row selection (Hub Ready to Pay) and row actions (none on Hub Paid) are the only per-tab structural columns.
 
 Off by default (everything else is on, except columns that are off on every tab: Hub Payment Method; Exchange Vendor Entry
 and Failure Reason; Consumer Failure Reason):
