@@ -47,6 +47,11 @@
         "sortable": true
       },
       {
+        "key": "processedDate",
+        "label": "Payment Date",
+        "sortable": true
+      },
+      {
         "key": "status",
         "label": "Status",
         "sortable": false,

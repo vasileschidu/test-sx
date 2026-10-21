@@ -53,7 +53,12 @@ stateDiagram-v2
   Enabled --> OptInRequired: Opt out
 ```
 
-### Table filter
+### Date columns
+
+Pending, Action Required: no date · Paid: **Date Processed** · Exceptions: **Date Initiated**. Rules: [table filter → Date columns per portal](../../design-system/table-filter.md#date-columns-per-portal).
+Date Processed is the payment's "complete" activity event (`getDateProcessedIso`).
+
+## Table filter
 
 Uses the shared filter ([design-system/table-filter.md](../../design-system/table-filter.md), [decision 0002](../../decisions/0002-shared-table-filter.md)):
 same layout and behavior as every portal. Categories come from this table’s column headers.

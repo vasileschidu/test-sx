@@ -173,6 +173,8 @@
     appliedSelectedFailureReasons: new Set(),
     appliedInitiatedDateFrom: "",
     appliedInitiatedDateTo: "",
+    // Applied payment-date ranges per column (dateInitiated, dateProcessed).
+    appliedDateRanges: {},
   };
   var columnVisibilityState = {
     initialized: false,
@@ -488,6 +490,7 @@
 
   function applyTableFilters(entries) {
     var list = Array.isArray(entries) ? entries.slice() : [];
+    syncAppliedDateRangeForTab();
     var search = String(tableFilterState.search || "")
       .trim()
       .toLowerCase();
@@ -555,8 +558,9 @@
     ) {
       var from = tableFilterState.appliedInitiatedDateFrom || "";
       var to = tableFilterState.appliedInitiatedDateTo || "";
+      var dateColumnKey = getTabDateColumnKey();
       list = list.filter(function (entry) {
-        var dateKey = String((entry && entry.dateInitiated) || "").slice(0, 10);
+        var dateKey = getEntryDateIso(entry, dateColumnKey);
         if (!dateKey) return false;
         if (from && dateKey < from) return false;
         if (to && dateKey > to) return false;
@@ -575,22 +579,39 @@
     status: "status",
     method: "paymentMethod",
     failure_reason: "failureReason",
-    initiated_date: "dateInitiated",
+    // One category for the tab's payment date: Date Initiated, or Date Processed on Paid.
+    initiated_date: ["dateInitiated", "dateProcessed"],
   };
 
   function getVisibleFilterColumn(panel) {
-    var key = FILTER_CATEGORY_COLUMNS[panel];
-    if (!key) return null;
+    var keys = [].concat(FILTER_CATEGORY_COLUMNS[panel] || []);
+    if (!keys.length) return null;
+    var key = keys[0];
     var source = paginationState.allColumns.length
       ? paginationState.allColumns
       : paginationState.columns;
     // Before columns load, treat every category as available.
     if (!source || !source.length) return { key: key, label: "" };
     var cols = getTabColumns(source);
-    for (var i = 0; i < cols.length; i++) {
-      if (cols[i] && cols[i].key === key) return cols[i];
+    for (var k = 0; k < keys.length; k++) {
+      for (var i = 0; i < cols.length; i++) {
+        if (cols[i] && cols[i].key === keys[k]) return cols[i];
+      }
     }
     return null;
+  }
+
+  /** Column the payment-date range applies to in this tab, or "" when the tab has none. */
+  function getTabDateColumnKey() {
+    var col = getVisibleFilterColumn("initiated_date");
+    return col ? col.key : "";
+  }
+
+  /** Load the active tab's payment-date range, so each date column keeps its own range. */
+  function syncAppliedDateRangeForTab() {
+    var range = tableFilterState.appliedDateRanges[getTabDateColumnKey()] || {};
+    tableFilterState.appliedInitiatedDateFrom = range.from || "";
+    tableFilterState.appliedInitiatedDateTo = range.to || "";
   }
 
   function getFilterCategoryLabel(panel) {
@@ -820,18 +841,52 @@
   }
 
   function getRenderableColumns(columns) {
-    return getTabColumns(getVisibleColumns(columns));
+    // Always resolve visibility against the full column set: callers sometimes pass
+    // tab-filtered columns, and visibility state drops keys it does not see.
+    var full = paginationState.allColumns.length ? paginationState.allColumns : columns;
+    return getTabColumns(getVisibleColumns(full));
   }
 
   /** The columns the active tab offers, before Manage columns is applied. */
   function getTabColumns(visibleColumns) {
     visibleColumns = Array.isArray(visibleColumns) ? visibleColumns : [];
-    if (normalizeTabKey(_activeTableTabKey || "pending") !== "exceptions") {
+    var tab = normalizeTabKey(_activeTableTabKey || "pending");
+    if (tab !== "exceptions") {
       visibleColumns = visibleColumns.filter(function (col) {
         return col && col.key !== "failureReason";
       });
     }
+    // Dates per tab (wiki/design-system/table-filter.md): no date on Pending tabs,
+    // Date Processed on Paid, Date Initiated where the payment is in flight or failed.
+    if (tab === "pending" || tab === "action-required") {
+      visibleColumns = visibleColumns.filter(function (col) {
+        return col && col.key !== "dateInitiated";
+      });
+    } else if (tab === "paid") {
+      visibleColumns = visibleColumns.map(function (col) {
+        return col && col.key === "dateInitiated"
+          ? { key: "dateProcessed", label: "Date Processed", sortable: true }
+          : col;
+      });
+    }
     return visibleColumns;
+  }
+
+  // Date a paid entry settled: the "complete" activity event, else the last event.
+  function getDateProcessedIso(entry) {
+    if (!entry || entry.status !== "paid") return "";
+    var log = (entry.details && entry.details.activityLog) || [];
+    var done = null;
+    log.forEach(function (item) {
+      if (item && item.type === "complete") done = item;
+    });
+    var last = done || log[log.length - 1];
+    return last && last.date ? String(last.date).slice(0, 10) : "";
+  }
+
+  function getEntryDateIso(entry, key) {
+    if (key === "dateProcessed") return getDateProcessedIso(entry);
+    return String((entry && entry[key]) || "").slice(0, 10);
   }
 
   function ensureCompleteExchangeColumns(columns) {
@@ -1008,13 +1063,9 @@
         return (av > bv ? 1 : -1) * multiplier;
       }
 
-      if (key === "dateInitiated") {
-        av = new Date(
-          String((a && a.dateInitiated) || "") + "T00:00:00",
-        ).getTime();
-        bv = new Date(
-          String((b && b.dateInitiated) || "") + "T00:00:00",
-        ).getTime();
+      if (key === "dateInitiated" || key === "dateProcessed") {
+        av = new Date(getEntryDateIso(a, key) + "T00:00:00").getTime();
+        bv = new Date(getEntryDateIso(b, key) + "T00:00:00").getTime();
         av = Number.isFinite(av) ? av : 0;
         bv = Number.isFinite(bv) ? bv : 0;
         if (av === bv) return 0;
@@ -1656,6 +1707,10 @@
         );
       case "dateInitiated":
         return formatDate(entry.dateInitiated);
+      case "dateProcessed":
+        return getDateProcessedIso(entry)
+          ? formatDate(getDateProcessedIso(entry))
+          : "-";
       case "failureReason":
         return escapeHtml(getFailureReason(entry) || "--");
       default:
@@ -2019,7 +2074,11 @@
           cb;
       } else if (col.type === "status" || col.type === "paymentMethod") {
         cellClass = "h-[52px] align-middle px-4 whitespace-nowrap" + cb;
-      } else if (col.key === "invoice" || col.key === "dateInitiated") {
+      } else if (
+        col.key === "invoice" ||
+        col.key === "dateInitiated" ||
+        col.key === "dateProcessed"
+      ) {
         cellClass =
           "h-[52px] align-middle px-4 text-sm whitespace-nowrap text-gray-500 dark:text-gray-400" +
           cb;
@@ -4166,6 +4225,13 @@
         tableFilterState.initiatedDateFrom || "";
       tableFilterState.appliedInitiatedDateTo =
         tableFilterState.initiatedDateTo || "";
+      var dateColumnKey = getTabDateColumnKey();
+      if (dateColumnKey) {
+        tableFilterState.appliedDateRanges[dateColumnKey] = {
+          from: tableFilterState.appliedInitiatedDateFrom,
+          to: tableFilterState.appliedInitiatedDateTo,
+        };
+      }
     }
 
     function getBaseFilterEntries() {
@@ -5522,6 +5588,7 @@
           tableFilterState.initiatedDateActiveField = "from";
           tableFilterState.appliedInitiatedDateFrom = "";
           tableFilterState.appliedInitiatedDateTo = "";
+          delete tableFilterState.appliedDateRanges[getTabDateColumnKey()];
         }
         refreshTableForActiveTab();
       });
@@ -5534,6 +5601,7 @@
     });
 
     syncTableFilterUi = function () {
+      syncAppliedDateRangeForTab();
       syncSelectedFiltersToAvailable();
       renderVendorEntryFilters();
       renderCustomerFilters();

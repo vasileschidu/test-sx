@@ -55,14 +55,17 @@ Each tab shows a count. On mobile the tabs become a select.
 ### Columns
 
 Default columns from `tableConfig.columns`: expand, select, Amount, Bill Reference, Payee, Payment Method,
-Source, Due Date, Date Initiated, Status, Failure Reason, action. Some are hidden per tab:
+Source, Due Date, Date Initiated, Payment Date, Status, Failure Reason, action. Some are hidden per tab:
 
-| Tab | Hidden columns | Notes |
-|---|---|---|
-| Ready to Pay | Payment Method, Date Initiated, Failure Reason | Selectable rows |
-| In Progress | Due Date, select, Failure Reason | |
-| Paid | Due Date, select, action, Failure Reason | "Date Initiated" is relabeled **Payment Date** |
-| Exceptions | select | Only tab with Failure Reason |
+| Tab | Hidden columns | Date shown | Notes |
+|---|---|---|---|
+| Ready to Pay | Payment Method, Date Initiated, Payment Date, Failure Reason | Due Date | Selectable rows |
+| In Progress | Due Date, Payment Date, select, Failure Reason | Date Initiated | Includes Scheduled payments |
+| Paid | Due Date, Date Initiated, select, action, Failure Reason | Payment Date (`processedDate`) | |
+| Exceptions | Payment Date, select | Due Date, Date Initiated | Only tab with Failure Reason |
+
+Date rules for all portals: [table filter → Date columns per portal](../../design-system/table-filter.md#date-columns-per-portal).
+Manage columns hides Payment Method by default. Date Initiated is now shown by default (it was hidden before 2026-10-21).
 
 Users can show or hide columns via **Manage columns** (with "Reset default").
 Expanding a row shows details: summary, line items, notes, attachments, activity log.
@@ -72,7 +75,7 @@ Expanding a row shows details: summary, line items, notes, attachments, activity
 - **Search** box.
 - **Filter**: target is the shared filter. Categories = this table’s column headers, shown only for
   columns the current tab has. See [table filter → Hub AP: Bills & Payables](../../design-system/table-filter.md#smart-hub-ap-bills--payables).
-  Categories: Payee, Payment Method, Status, Failure Reason, Due Date, Date Initiated ("Payment Date" on Paid), Source, each
+  Categories: Payee, Payment Method, Status, Failure Reason, Due Date, Date Initiated / Payment Date (per tab), Source, each
   only on tabs that have the column. Active filters show as chips; Reset / Apply.
   Remaining gap: the date ranges have no calendar picker yet ([D-09](../../design-system/portal-consistency.md#table-filter)).
 - **Export** downloads the current rows as `bills-payables-export.csv`.

@@ -19,7 +19,7 @@ The filter on every portal data table. Decided in [0002](../decisions/0002-share
 2. **Categories come from columns.** Each filterable column becomes one category. No column means no filter.
    Free-text identifiers (amounts, reference numbers) are found through **Search**, not the filter.
 3. **Label = column header, exactly.** Same words, same capitalization, no prefix ("By …") and no plural.
-   If a tab renames a column (e.g. Hub's Paid tab shows "Payment Date"), the filter uses that tab's name.
+   When a tab shows a different date column (e.g. Payment Date on Hub's Paid tab), the filter uses that column's name.
 4. **Columns the tab has.** A category appears only when the current tab has its column, whether or not
    the user has switched that column on in **Manage columns**. Example: Hub’s Ready to Pay tab has no Date Initiated
    column, so there is no Date Initiated filter there. Failure Reason is off by default in Manage columns but still filterable on Exceptions.
@@ -48,13 +48,39 @@ current implementations. TODO(confirm): check against the Figma table filter in 
 | Tabs | Filters persist across tabs, but a category the new tab doesn’t have is ignored (not applied, counted or shown as a chip) |
 | Empty result | Table empty state. TODO: one shared "no results" message |
 
+## Date columns per portal
+
+Defined by product/design on 2026-10-21. Each date has a fixed meaning, and that meaning decides which tabs show it.
+
+| Date | Meaning | Portals | Shown on |
+|---|---|---|---|
+| **Due Date** | When the bill is due | SMART Hub AP only | Unpaid bills: Ready to Pay, Exceptions |
+| **Date Initiated** | When the payment was started | All portals | Payments in flight: In Progress / Processing, including Scheduled. **Not** on Pending tabs, **not** on Paid |
+| **Payment Date** (Hub AP) / **Date Processed** (Exchange, Consumer) | When the payment completed | All portals | Paid tab only |
+
+Per tab:
+
+| Portal | Pending tab(s) | In Progress | Paid | Exceptions |
+|---|---|---|---|---|
+| Hub AP: Bills & Payables | Ready to Pay: Due Date | Date Initiated | Payment Date | Due Date, Date Initiated |
+| SMART Exchange | Pending, Action Required: no date | (no such tab) | Date Processed | Date Initiated |
+| Consumer Portal | Pending: no date | (no such tab) | Date Processed | Date Initiated |
+
+TODO(confirm): the rule doesn't cover **Exceptions**. It keeps Date Initiated (and Due Date in Hub) because a failed
+payment was initiated. TODO(confirm): Exchange and Consumer have no In Progress tab. Processing payments sit in **Pending**,
+so they show no date there.
+
+**Filter:** the "initiated / processed" date is one filter category, and its label follows the tab's column
+(Date Initiated, Payment Date or Date Processed). A range applies only to the date column it was set on, so a range set on
+Paid doesn't carry over to Exceptions.
+
 ## Filter content per portal
 
 Derived from each table's columns on `main` (2026-10-21). When columns change, update this table and the filter together.
 
 ### SMART Hub AP: Bills & Payables
 
-Columns: Amount, Bill Reference, Payee, Payment Method, Source, Due Date, Date Initiated, Status, Failure Reason.
+Columns: Amount, Bill Reference, Payee, Payment Method, Source, Due Date, Date Initiated, Payment Date, Status, Failure Reason.
 
 | Category (= header) | Type | Tabs where shown | Today in code |
 |---|---|---|---|
@@ -63,7 +89,8 @@ Columns: Amount, Bill Reference, Payee, Payment Method, Source, Due Date, Date I
 | Source | Multi-select | all | ✓ |
 | Status | Multi-select | all | ✓ |
 | Due Date | Date range | Ready to Pay, Exceptions | ✓ (no calendar yet) |
-| Date Initiated (Paid tab: **Payment Date**) | Date range | In Progress, Paid, Exceptions | ✓ (no calendar yet) |
+| Date Initiated | Date range | In Progress, Exceptions | ✓ (no calendar yet) |
+| Payment Date | Date range | Paid | ✓ (no calendar yet) |
 | Failure Reason | Multi-select | Exceptions | ✓ |
 
 Searchable, not filterable: Amount, Bill Reference.
@@ -83,7 +110,7 @@ the categories from its columns using the rules above. TODO: add the table here 
 
 ### SMART Exchange: Payments (Supplier Portal)
 
-Columns: Amount, Vendor Entry, Invoice #, Customer, Date Initiated, Payment Method, Status, Failure Reason.
+Columns: Amount, Vendor Entry, Invoice #, Customer, Date Initiated / Date Processed (per tab), Payment Method, Status, Failure Reason.
 
 | Category (= header) | Type | Today in code |
 |---|---|---|
@@ -91,19 +118,21 @@ Columns: Amount, Vendor Entry, Invoice #, Customer, Date Initiated, Payment Meth
 | Customer | Multi-select + search | ✓ |
 | Payment Method | Multi-select | ✓ |
 | Status | Multi-select | ✓ |
-| Date Initiated | Date range | ✓ |
+| Date Initiated | Date range (Exceptions tab) | ✓ |
+| Date Processed | Date range (Paid tab) | ✓ |
 | Failure Reason | Multi-select (Exceptions tab) | ✓ |
 
 ### Consumer Portal: Payments Received
 
-Columns: Amount, Payer, Invoice #, Date Initiated, Payment Method, Status, Failure Reason.
+Columns: Amount, Payer, Invoice #, Date Initiated / Date Processed (per tab), Payment Method, Payment Reference (Paid, Exceptions), Status, Failure Reason.
 
 | Category (= header) | Type | Today in code |
 |---|---|---|
 | Payer | Multi-select + search | ✓ label; ✗ no search |
 | Payment Method | Multi-select | ✓ |
 | Status | Multi-select | ✓ |
-| Date Initiated | Date range | ✓ |
+| Date Initiated | Date range (Exceptions tab) | ✓ |
+| Date Processed | Date range (Paid tab) | ✓ |
 | Failure Reason | Multi-select (Exceptions tab) | ✓ |
 
 ## Current implementations (to be replaced)

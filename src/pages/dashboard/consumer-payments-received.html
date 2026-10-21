@@ -1087,7 +1087,7 @@
                                                         </button>
                                                         <button type="button" data-filter-open="initiated_date" data-filter-nav
                                                             class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
-                                                            <span class="min-w-0 flex-1">Date Initiated</span>
+                                                            <span class="min-w-0 flex-1" data-filter-label="initiated_date">Date Initiated</span>
                                                             <span data-filter-count-badge="initiated_date" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
                                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
                                                                 class="size-4 text-gray-500 dark:text-gray-400">
@@ -1125,7 +1125,7 @@
                                                     </div>
                                                     <div id="sx-table-filter-panel-initiated-date" class="hidden h-full min-h-0 flex-col">
                                                         <div class="border-b border-gray-200 px-3 py-3 dark:border-white/10">
-                                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">Date Initiated</p>
+                                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100" data-filter-label="initiated_date">Date Initiated</p>
                                                         </div>
                                                         <div class="space-y-3 px-3 py-3">
                                                             <div>
@@ -2384,7 +2384,7 @@
     </el-dialog>
 
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
-    <script src="../../../src/scripts/consumer-exchanges-table.js?v=bank-tooltips-20261021b-filter"></script>
+    <script src="../../../src/scripts/consumer-exchanges-table.js?v=20261021-dates"></script>
 
   <script src="../../../src/scripts/review-modal.js"></script>
 </body>

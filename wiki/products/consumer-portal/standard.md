@@ -17,6 +17,11 @@ TODO: what users can do, grouped by area.
 ## Screens / steps
 TODO: main screens (portal) or steps (flow), each with one line on its purpose.
 
+## Date columns
+
+Pending: no date · Paid: **Date Processed** · Exceptions: **Date Initiated**. Rules: [table filter → Date columns per portal](../../design-system/table-filter.md#date-columns-per-portal).
+Date Processed is the payment's "complete" activity event (`getDateProcessedIso`).
+
 ## Table filter
 
 Uses the shared filter ([design-system/table-filter.md](../../design-system/table-filter.md), [decision 0002](../../decisions/0002-shared-table-filter.md)):

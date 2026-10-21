@@ -155,6 +155,8 @@
     appliedInitiatedDateTo: "",
     appliedDueDateFrom: "",
     appliedDueDateTo: "",
+    // Applied payment-date ranges per column (adDate, processedDate); each tab shows its own.
+    appliedDateRanges: {},
     selectedRowIds: new Set(),
     expandedRows: new Set(),
     sortKey: "",
@@ -668,7 +670,7 @@
   function getDefaultManageableColumnKeys(columns) {
     return getManageableColumns(columns)
       .filter(function (col) {
-        return col.key !== "paymentMethod" && col.key !== "adDate";
+        return col.key !== "paymentMethod";
       })
       .map(function (col) {
         return col.key;
@@ -1386,21 +1388,45 @@
     method: "paymentMethod",
     source: "source",
     due_date: "dueDate",
-    initiated_date: "adDate",
+    // One category for the tab's payment date: Date Initiated, or Payment Date on Paid.
+    initiated_date: ["adDate", "processedDate"],
     status: "status",
     failure_reason: "failureReason",
   };
 
   function getVisibleFilterColumn(panel) {
-    var key = FILTER_CATEGORY_COLUMNS[panel];
-    if (!key) return null;
+    var keys = [].concat(FILTER_CATEGORY_COLUMNS[panel] || []);
+    if (!keys.length) return null;
     // Before columns load, treat every category as available.
-    if (!state.columns || !state.columns.length) return { key: key, label: "" };
+    if (!state.columns || !state.columns.length)
+      return { key: keys[0], label: "" };
     var cols = getTabColumns(state.columns.slice());
-    for (var i = 0; i < cols.length; i++) {
-      if (cols[i] && cols[i].key === key) return cols[i];
+    for (var k = 0; k < keys.length; k++) {
+      for (var i = 0; i < cols.length; i++) {
+        if (cols[i] && cols[i].key === keys[k]) return cols[i];
+      }
     }
     return null;
+  }
+
+  /** Column the payment-date range applies to in this tab, or "" when the tab has none. */
+  function getTabDateColumnKey() {
+    var col = getVisibleFilterColumn("initiated_date");
+    return col ? col.key : "";
+  }
+
+  /** Load the active tab's payment-date range into appliedInitiatedDate*, so each date column keeps its own range. */
+  function syncAppliedDateRangeForTab() {
+    var range = state.appliedDateRanges[getTabDateColumnKey()] || {};
+    state.appliedInitiatedDateFrom = range.from || "";
+    state.appliedInitiatedDateTo = range.to || "";
+  }
+
+  function isAppliedDateRangeActive() {
+    return !!(
+      getTabDateColumnKey() &&
+      (state.appliedInitiatedDateFrom || state.appliedInitiatedDateTo)
+    );
   }
 
   function isFilterCategoryVisible(panel) {
@@ -1462,9 +1488,9 @@
       return false;
     if (
       visible.initiated_date &&
-      (state.appliedInitiatedDateFrom || state.appliedInitiatedDateTo) &&
+      isAppliedDateRangeActive() &&
       !dateInRange(
-        row.adDate,
+        row[getTabDateColumnKey()],
         state.appliedInitiatedDateFrom,
         state.appliedInitiatedDateTo,
       )
@@ -1522,6 +1548,13 @@
 
   /** The columns the active tab offers (and their per-tab labels), before Manage columns is applied. */
   function getTabColumns(cols) {
+    // Dates per tab: Due Date while a bill is unpaid, Date Initiated once a payment
+    // is in progress or scheduled, Payment Date on Paid (wiki/design-system/table-filter.md).
+    if (state.activeTab !== "paid") {
+      cols = cols.filter(function (col) {
+        return col && col.key !== "processedDate";
+      });
+    }
     if (state.activeTab !== "exception") {
       cols = cols.filter(function (col) {
         return col && col.key !== "failureReason";
@@ -1538,21 +1571,15 @@
       });
     }
     if (state.activeTab === "paid") {
-      cols = cols
-        .filter(function (col) {
-          return (
-            col &&
-            col.key !== "dueDate" &&
-            col.type !== "action" &&
-            col.type !== "select"
-          );
-        })
-        .map(function (col) {
-          if (col && col.key === "adDate") {
-            return Object.assign({}, col, { label: "Payment Date" });
-          }
-          return col;
-        });
+      cols = cols.filter(function (col) {
+        return (
+          col &&
+          col.key !== "dueDate" &&
+          col.key !== "adDate" &&
+          col.type !== "action" &&
+          col.type !== "select"
+        );
+      });
     }
     if (state.activeTab === "exception") {
       cols = cols.filter(function (col) {
@@ -2297,6 +2324,13 @@
     );
     state.appliedInitiatedDateFrom = state.initiatedDateFrom || "";
     state.appliedInitiatedDateTo = state.initiatedDateTo || "";
+    var dateColumnKey = getTabDateColumnKey();
+    if (dateColumnKey) {
+      state.appliedDateRanges[dateColumnKey] = {
+        from: state.appliedInitiatedDateFrom,
+        to: state.appliedInitiatedDateTo,
+      };
+    }
     state.appliedDueDateFrom = state.dueDateFrom || "";
     state.appliedDueDateTo = state.dueDateTo || "";
   }
@@ -2550,10 +2584,7 @@
     if (visible.failure_reason)
       countedSets.push(state.appliedSelectedFailureReasons);
     var dateCount =
-      (visible.initiated_date &&
-      (state.appliedInitiatedDateFrom || state.appliedInitiatedDateTo)
-        ? 1
-        : 0) +
+      (visible.initiated_date && isAppliedDateRangeActive() ? 1 : 0) +
       (visible.due_date && (state.appliedDueDateFrom || state.appliedDueDateTo)
         ? 1
         : 0);
@@ -2648,10 +2679,7 @@
         value: dateRangeText(state.appliedDueDateFrom, state.appliedDueDateTo),
       });
     }
-    if (
-      visible.initiated_date &&
-      (state.appliedInitiatedDateFrom || state.appliedInitiatedDateTo)
-    ) {
+    if (visible.initiated_date && isAppliedDateRangeActive()) {
       tags.push({
         type: "initiated_date",
         label: getFilterCategoryLabel("initiated_date"),
@@ -3074,6 +3102,7 @@
       return;
 
     syncFilterUi = function () {
+      syncAppliedDateRangeForTab();
       syncSelectedFiltersToAvailable();
       renderPayeeFilters();
       renderSourceFilters();
@@ -3267,6 +3296,7 @@
         if (type === "initiated_date") {
           state.appliedInitiatedDateFrom = "";
           state.appliedInitiatedDateTo = "";
+          delete state.appliedDateRanges[getTabDateColumnKey()];
           state.initiatedDateFromDraft = "";
           state.initiatedDateToDraft = "";
           if (refs.filterDateFromInput) refs.filterDateFromInput.value = "";
@@ -3795,7 +3825,7 @@
                 "</td>"
               );
             }
-            if (col.key === "adDate") {
+            if (col.key === "adDate" || col.key === "processedDate") {
               return (
                 '<td class="h-[52px] align-middle text-sm font-normal whitespace-nowrap text-gray-500 dark:text-gray-400' +
                 columnWidthClass(col) +

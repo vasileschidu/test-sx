@@ -185,6 +185,8 @@
     appliedSelectedFailureReasons: new Set(),
     appliedInitiatedDateFrom: '',
     appliedInitiatedDateTo: '',
+    // Applied payment-date ranges per column (dateInitiated, dateProcessed).
+    appliedDateRanges: {},
   };
   var columnVisibilityState = {
     initialized: false,
@@ -478,8 +480,33 @@
     status: 'status',
     method: 'paymentMethod',
     failure_reason: 'failureReason',
-    initiated_date: 'dateInitiated'
+    // One category for the tab's payment date: Date Initiated, or Date Processed on Paid.
+    initiated_date: ['dateInitiated', 'dateProcessed']
   };
+
+  /** Column the payment-date range applies to in this tab, or '' when the tab has none. */
+  function getTabDateColumnKey() {
+    var source = paginationState.allColumns.length ? paginationState.allColumns : paginationState.columns;
+    if (!source || !source.length) return 'dateInitiated';
+    var keys = {};
+    getTabColumns(source).forEach(function (col) { if (col) keys[col.key] = true; });
+    var candidates = FILTER_CATEGORY_COLUMNS.initiated_date;
+    for (var i = 0; i < candidates.length; i++) if (keys[candidates[i]]) return candidates[i];
+    return '';
+  }
+
+  /** Header of the tab's payment-date column (Date Initiated or Date Processed). */
+  function getTabDateColumnLabel() {
+    var key = getTabDateColumnKey();
+    return key === 'dateProcessed' ? 'Date Processed' : 'Date Initiated';
+  }
+
+  /** Load the active tab's payment-date range, so each date column keeps its own range. */
+  function syncAppliedDateRangeForTab() {
+    var range = tableFilterState.appliedDateRanges[getTabDateColumnKey()] || {};
+    tableFilterState.appliedInitiatedDateFrom = range.from || '';
+    tableFilterState.appliedInitiatedDateTo = range.to || '';
+  }
 
   function getVisibleFilterCategories() {
     var source = paginationState.allColumns.length ? paginationState.allColumns : paginationState.columns;
@@ -492,14 +519,16 @@
     var keys = {};
     getTabColumns(source).forEach(function (col) { if (col) keys[col.key] = true; });
     Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
-      visible[panel] = !!keys[FILTER_CATEGORY_COLUMNS[panel]];
+      visible[panel] = [].concat(FILTER_CATEGORY_COLUMNS[panel]).some(function (key) { return !!keys[key]; });
     });
     return visible;
   }
 
   function applyTableFilters(entries) {
     var list = Array.isArray(entries) ? entries.slice() : [];
+    syncAppliedDateRangeForTab();
     var visible = getVisibleFilterCategories();
+    var dateColumnKey = getTabDateColumnKey();
     var search = String(tableFilterState.search || '').trim().toLowerCase();
     if (search) {
       list = list.filter(function (entry) {
@@ -538,7 +567,7 @@
       var from = tableFilterState.appliedInitiatedDateFrom || '';
       var to = tableFilterState.appliedInitiatedDateTo || '';
       list = list.filter(function (entry) {
-        var dateKey = String(entry && entry.dateInitiated || '').slice(0, 10);
+        var dateKey = getEntryDateIso(entry, dateColumnKey);
         if (!dateKey) return false;
         if (from && dateKey < from) return false;
         if (to && dateKey > to) return false;
@@ -701,7 +730,10 @@
   }
 
   function getRenderableColumns(columns) {
-    return getTabColumns(getVisibleColumns(columns));
+    // Always resolve visibility against the full column set: callers sometimes pass
+    // tab-filtered columns, and visibility state drops keys it does not see.
+    var full = paginationState.allColumns.length ? paginationState.allColumns : columns;
+    return getTabColumns(getVisibleColumns(full));
   }
 
   /** The columns the active tab offers, before Manage columns is applied. */
@@ -735,8 +767,21 @@
         });
         visibleColumns = withRef;
       }
+      // Dates per tab (wiki/design-system/table-filter.md): no date on Pending tabs,
+      // Date Processed (not Date Initiated) on Paid, Date Initiated on Exceptions.
+      var dateTab = normalizeTabKey(_activeTableTabKey || 'pending');
+      if (dateTab === 'pending' || dateTab === 'action-required' || dateTab === 'paid') {
+        visibleColumns = visibleColumns.filter(function (col) {
+          return col && col.key !== 'dateInitiated';
+        });
+      }
     }
     return visibleColumns;
+  }
+
+  function getEntryDateIso(entry, key) {
+    if (key === 'dateProcessed') return getDateProcessedIso(entry);
+    return String(entry && entry[key] || '').slice(0, 10);
   }
 
   // Date a paid entry settled: the "complete" activity event, else the last event.
@@ -3341,6 +3386,13 @@
       tableFilterState.appliedSelectedFailureReasons = cloneSet(tableFilterState.selectedFailureReasons);
       tableFilterState.appliedInitiatedDateFrom = tableFilterState.initiatedDateFrom || '';
       tableFilterState.appliedInitiatedDateTo = tableFilterState.initiatedDateTo || '';
+      var appliedDateColumnKey = getTabDateColumnKey();
+      if (appliedDateColumnKey) {
+        tableFilterState.appliedDateRanges[appliedDateColumnKey] = {
+          from: tableFilterState.appliedInitiatedDateFrom,
+          to: tableFilterState.appliedInitiatedDateTo
+        };
+      }
     }
 
     function getBaseFilterEntries() {
@@ -3813,7 +3865,7 @@
         var toLabel = tableFilterState.appliedInitiatedDateTo ? formatDate(tableFilterState.appliedInitiatedDateTo) : 'Any';
         tags.push({
           type: 'initiated_date',
-          label: 'Date Initiated',
+          label: getTabDateColumnLabel(),
           value: fromLabel + ' - ' + toLabel,
         });
       }
@@ -4220,6 +4272,7 @@
           tableFilterState.initiatedDateActiveField = 'from';
           tableFilterState.appliedInitiatedDateFrom = '';
           tableFilterState.appliedInitiatedDateTo = '';
+          delete tableFilterState.appliedDateRanges[getTabDateColumnKey()];
         }
         refreshTableForActiveTab();
       });
@@ -4232,6 +4285,7 @@
     });
 
     syncTableFilterUi = function () {
+      syncAppliedDateRangeForTab();
       syncSelectedFiltersToAvailable();
       renderCustomerFilters();
       renderStatusFilters();
@@ -4240,6 +4294,9 @@
       renderInitiatedDateInputs();
       renderInitiatedDateCalendar();
       var visibleCategories = getVisibleFilterCategories();
+      Array.prototype.forEach.call(filterMenu.querySelectorAll('[data-filter-label="initiated_date"]'), function (el) {
+        el.textContent = getTabDateColumnLabel();
+      });
       filterNavButtons.forEach(function (button) {
         var isVisible = !!visibleCategories[button.getAttribute('data-filter-open')];
         button.classList.toggle('hidden', !isVisible);
