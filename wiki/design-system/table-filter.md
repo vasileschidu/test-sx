@@ -17,7 +17,7 @@ The filter on every portal data table. Decided in [0002](../decisions/0002-share
 
 1. **One component.** Every portal table uses the same filter component. Do not build a filter inside a page script.
 2. **Categories come from columns.** Each filterable column becomes one category. No column means no filter.
-   Free-text identifiers (amounts, reference numbers) are found through **Search**, not the filter.
+   Reference numbers (Bill Reference, Invoice #, Payment Reference) are found through **Search**, not the filter.
 3. **Label = column header, exactly.** Same words, same capitalization, no prefix ("By …") and no plural.
 4. **Same list on every tab.** The filter shows every filterable column header of the portal on every tab, whether or not
    the current tab shows that column or has values in it. A filter on a column the tab has no values for returns no rows there
@@ -29,6 +29,7 @@ The filter on every portal data table. Decided in [0002](../decisions/0002-share
    | Fixed set of values (status, method, source) | Multi-select list |
    | Many values (payee, customer, payer) | Multi-select list **with search** |
    | Date | Date range (from / to) with calendar |
+   | Amount | Range (min / max) |
 
 ## Layout and functionality (shared)
 
@@ -42,6 +43,7 @@ current implementations. TODO(confirm): check against the Figma table filter in 
 | Multi-select | Checkbox list with **Select all** |
 | Search in category | For long lists (payee, customer, payer) |
 | Date range | From / To fields (MM / DD / YYYY) **with a calendar picker** |
+| Amount range | Min / Max fields; either can be left empty. Chip reads "Amount $min - $max" |
 | Footer | **Reset** + **Apply**. Filters apply only on Apply. Reset clears the selections in the panel ("Clear" is not used) |
 | Active filters | Shown as removable chips under the toolbar; removing a chip applies immediately |
 | Tabs | Same categories on every tab. Applied filters persist across tabs and always apply |
@@ -53,25 +55,32 @@ Defined by product/design on 2026-10-21. Each date has a fixed meaning, and that
 
 | Date | Meaning | Portals | Shown on |
 |---|---|---|---|
-| **Due Date** | When the bill is due | SMART Hub AP only | Unpaid bills: Ready to Pay, Exceptions |
-| **Date Initiated** | When the payment was started | All portals | Shown by default where a payment is in flight: In Progress / Processing (incl. Scheduled) and Exceptions. On **Pending** tabs and **Paid** it is **opt-in**: off by default, available in Manage columns |
-| **Payment Date** (Hub AP) / **Date Processed** (Exchange, Consumer) | When the payment completed | All portals | Paid tab only |
+| **Due Date** | When the bill is due | SMART Hub AP only | On by default for unpaid bills: Ready to Pay, Exceptions |
+| **Date Initiated** | When the payment was started | All portals | On by default where a payment is in flight: In Progress / Processing (incl. Scheduled) and Exceptions. Off by default on **Pending** tabs and **Paid** |
+| **Payment Date** (Hub AP) / **Date Processed** (Exchange, Consumer) | When the payment completed | All portals | On by default on Paid only |
 
-Per tab (*opt-in* = off by default, the user can switch it on in Manage columns):
+### Manage columns
+
+**Every column is available on every tab**, so Manage columns always lists all of the portal's columns. A tab only sets
+which columns start **on**; the user can switch any column on or off on any tab. A column whose default differs between
+tabs (the dates, Failure Reason, Payment Method in Hub, Payment Reference in Consumer) remembers the user's choice **per tab**.
+Every other column has one setting for all tabs. Row selection and row actions are the only per-tab structural columns.
+
+Off by default (everything else is on, except columns that are off on every tab: Hub Payment Method; Exchange Vendor Entry
+and Failure Reason; Consumer Failure Reason):
 
 | Portal | Pending tab(s) | In Progress | Paid | Exceptions |
 |---|---|---|---|---|
-| Hub AP: Bills & Payables | Ready to Pay: Due Date · *Date Initiated (opt-in)* | Date Initiated | Payment Date · *Date Initiated (opt-in)* | Due Date, Date Initiated |
-| SMART Exchange | Pending, Action Required: *Date Initiated (opt-in)* | (no such tab) | Date Processed · *Date Initiated (opt-in)* | Date Initiated |
-| Consumer Portal | Pending: *Date Initiated (opt-in)* | (no such tab) | Date Processed · *Date Initiated (opt-in)* | Date Initiated |
+| Hub AP: Bills & Payables | Ready to Pay: Date Initiated, Payment Date, Failure Reason | Due Date, Payment Date, Failure Reason | Due Date, Date Initiated, Failure Reason | Payment Date |
+| SMART Exchange | Pending, Action Required: Date Initiated, Date Processed | (no such tab) | Date Initiated | Date Processed |
+| Consumer Portal | Pending: Date Initiated, Date Processed, Payment Reference | (no such tab) | Date Initiated | Date Processed |
 
-**Manage columns:** the opt-in setting is shared by the Pending tabs and Paid. Switching Date Initiated on in Pending
-also shows it on Paid, and vice versa. In Progress / Exceptions keep their own setting (on by default). Every other column
-has one setting for all tabs.
+Code: `TAB_COLUMNS_OFF_BY_DEFAULT` in each table script; Date Processed and Payment Reference are real columns in
+`src/data/exchanges.json` / `consumer-payments.json`.
 
 TODO(confirm): the rule doesn't cover **Exceptions**. It keeps Date Initiated (and Due Date in Hub) because a failed
 payment was initiated. TODO(confirm): Exchange and Consumer have no In Progress tab. Processing payments sit in **Pending**,
-so Date Initiated is opt-in for them as well.
+so Date Initiated is off by default for them as well.
 
 **Filter:** each date is its own category, on every tab: Hub has Due Date, Date Initiated and Payment Date;
 Exchange and Consumer have Date Initiated and Date Processed. In Exchange and Consumer the two dates share one date panel
@@ -89,6 +98,7 @@ All categories show on every tab.
 
 | Category (= header) | Type | Has values on | Today in code |
 |---|---|---|---|
+| Amount | Range (min / max) | all tabs | ✓ |
 | Payee | Multi-select + search | all tabs | ✓ |
 | Payment Method | Multi-select | In Progress, Paid, Exceptions | ✓ |
 | Source | Multi-select | all tabs | ✓ |
@@ -98,7 +108,7 @@ All categories show on every tab.
 | Payment Date | Date range | Paid | ✓ (no calendar yet) |
 | Failure Reason | Multi-select | Exceptions | ✓ |
 
-Searchable, not filterable: Amount, Bill Reference.
+Searchable, not filterable: Bill Reference.
 
 ### SMART Hub AP: Vendors
 
@@ -119,6 +129,7 @@ Columns: Amount, Vendor Entry, Invoice #, Customer, Date Initiated / Date Proces
 
 | Category (= header) | Type | Today in code |
 |---|---|---|
+| Amount | Range (min / max) | ✓ |
 | Vendor Entry | Multi-select + search | ✓ |
 | Customer | Multi-select + search | ✓ |
 | Payment Method | Multi-select | ✓ |
@@ -133,6 +144,7 @@ Columns: Amount, Payer, Invoice #, Date Initiated / Date Processed (per tab), Pa
 
 | Category (= header) | Type | Today in code |
 |---|---|---|
+| Amount | Range (min / max) | ✓ |
 | Payer | Multi-select + search | ✓ label; ✗ no search |
 | Payment Method | Multi-select | ✓ |
 | Status | Multi-select | ✓ |

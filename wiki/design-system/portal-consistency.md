@@ -42,7 +42,9 @@ Target: [table-filter.md](table-filter.md), per [decision 0002](../decisions/000
 | D-09 | Date picker | Calendar in Exchange and Consumer; plain inputs in Bills and Vendors | decided: calendar. Exchange and Consumer have it; Hub still missing |
 | D-10 | Controls | "Reset" (Bills) vs "Clear" (Consumer); Select all and category search missing in Consumer | Reset + Apply: fixed (2026-10-21). Select all and category search in Consumer: open |
 | D-10a | Filters without columns | Hub Vendors filters on Source, Verification, Payment method, Last payment date; none is a column | deferred: Vendors page out of scope for now |
-| D-10c | Date columns per tab | Hub showed Date Initiated relabelled as "Payment Date" on Paid; Exchange and Consumer showed Date Initiated on Pending and Paid by default | fixed (2026-10-21): Date Initiated is opt-in there; see [date columns](table-filter.md#date-columns-per-portal) |
+| D-10c | Date columns per tab | Hub showed Date Initiated relabelled as "Payment Date" on Paid; Exchange and Consumer showed Date Initiated on Pending and Paid by default | fixed (2026-10-21): Date Initiated is off by default there; see [date columns](table-filter.md#date-columns-per-portal) |
+| D-10d | Manage columns completeness | Date Processed (Exchange, Consumer) and Payment Reference (Consumer) were added per tab in code, so Manage columns never listed them; several columns were removed per tab | fixed (2026-10-21): every column is listed on every tab; tabs set defaults ([Manage columns](table-filter.md#manage-columns)) |
+| D-10e | Amount filter | No portal could filter by Amount | fixed (2026-10-21): min / max range in all portals |
 | D-10b | Missing category | Exchange has no filter for its Vendor Entry column | fixed (2026-10-21) |
 
 ## Bills & Payables expanded row (Hub AP)

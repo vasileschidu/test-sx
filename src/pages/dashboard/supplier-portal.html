@@ -1709,6 +1709,29 @@
                                   <div class="flex flex-col">
                                     <button
                                       type="button"
+                                      data-filter-open="amount"
+                                      data-filter-nav
+                                      class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10"
+                                    >
+                                      <span class="min-w-0 flex-1"
+                                        >Amount</span
+                                      >
+                                      <span
+                                        data-filter-count-badge="amount"
+                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        >0</span
+                                      >
+                                      <img
+                                        src="../../../src/assets/table/chevron-right.svg"
+                                        width="20"
+                                        height="20"
+                                        alt=""
+                                        data-nav-chevron
+                                        class="hidden shrink-0"
+                                      />
+                                    </button>
+                                    <button
+                                      type="button"
                                       data-filter-open="vendor_entry"
                                       data-filter-nav
                                       class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10"
@@ -2085,6 +2108,27 @@
                                       id="sx-table-filter-failure-reasons"
                                       class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto"
                                     ></div>
+                                  </div>
+                                  <div id="sx-table-filter-panel-amount" class="hidden h-full min-h-0 flex-col">
+                                    <div class="px-3 pt-3">
+                                      <p class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-200">
+                                        <span data-filter-label="amount">Amount</span>
+                                      </p>
+                                    </div>
+                                    <div class="space-y-3 px-3 py-3">
+                                      <div>
+                                        <label for="sx-table-filter-amount-min-input" class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">Min</label>
+                                        <div class="relative mt-2">
+                                          <input id="sx-table-filter-amount-min-input" type="text" inputmode="decimal" placeholder="0.00" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        </div>
+                                      </div>
+                                      <div>
+                                        <label for="sx-table-filter-amount-max-input" class="block text-sm/6 font-medium text-gray-900 dark:text-gray-100">Max</label>
+                                        <div class="relative mt-2">
+                                          <input id="sx-table-filter-amount-max-input" type="text" inputmode="decimal" placeholder="0.00" class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                        </div>
+                                      </div>
+                                    </div>
                                   </div>
                                   <div
                                     id="sx-table-filter-panel-initiated-date"
@@ -3991,7 +4035,7 @@
 
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
     <script src="../../../src/scripts/table-ui.js?v=20261006f"></script>
-    <script src="../../../src/scripts/exchanges-table.js?v=20261021-allcats"></script>
+    <script src="../../../src/scripts/exchanges-table.js?v=20261021-amount"></script>
 
     <script src="../../../src/scripts/review-modal.js"></script>
   </body>

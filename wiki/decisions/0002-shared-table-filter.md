@@ -41,5 +41,7 @@ hides. Details: [portal consistency audit](../design-system/portal-consistency.m
 - The four current implementations must be replaced by the shared component (tracked in the audit).
 - Date columns that mean different things get their own categories: Hub has Due Date, Date Initiated and Payment Date;
   Exchange and Consumer have Date Initiated and Date Processed.
+- Amount is a filter category (min / max range) in every portal.
+- Manage columns lists every column on every tab; tabs only set which columns are on by default.
 - Client variants may add or remove **columns**, and the filter follows automatically. A variant must not
   change the filter's layout or behavior.

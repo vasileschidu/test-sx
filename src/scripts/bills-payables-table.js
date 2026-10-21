@@ -149,6 +149,8 @@
     paymentDateFromDraft: "",
     paymentDateToDraft: "",
     paymentDateActiveField: "from",
+    amountMin: "",
+    amountMax: "",
     filterMenuOpen: false,
     activeFilterPanel: "payee",
     appliedSelectedPayees: new Set(),
@@ -162,6 +164,8 @@
     appliedDueDateTo: "",
     appliedPaymentDateFrom: "",
     appliedPaymentDateTo: "",
+    appliedAmountMin: "",
+    appliedAmountMax: "",
     selectedRowIds: new Set(),
     expandedRows: new Set(),
     sortKey: "",
@@ -451,6 +455,15 @@
     refs.filterDueToInput = document.getElementById(
       "bp-table-filter-due-to-input",
     );
+    refs.filterAmountPanel = document.getElementById(
+      "bp-table-filter-panel-amount",
+    );
+    refs.filterAmountMinInput = document.getElementById(
+      "bp-table-filter-amount-min-input",
+    );
+    refs.filterAmountMaxInput = document.getElementById(
+      "bp-table-filter-amount-max-input",
+    );
     refs.filterPaymentDatePanel = document.getElementById(
       "bp-table-filter-panel-payment-date",
     );
@@ -682,41 +695,60 @@
   }
 
 
-  // Date Initiated is opt-in on Pending and Paid tabs: off by default there, on by default
-  // elsewhere (wiki/design-system/table-filter.md#date-columns-per-portal). Its Manage columns
-  // choice is remembered separately for those two tab groups; every other column is shared.
-  var OPTIONAL_DATE_KEY = "adDate";
-  var OPTIONAL_DATE_TABS = { ready_to_pay: true, paid: true };
-  var optionalDateVisibility = { optional: false, core: true };
-  var optionalDateGroup = "";
+  // Every column is available on every tab, so Manage columns always lists all of them.
+  // Each tab only decides which columns start switched off (wiki/design-system/table-filter.md
+  // #date-columns-per-portal). A column whose default differs between tabs remembers the
+  // user's Manage columns choice per tab; every other column has one setting for all tabs.
+  var TAB_COLUMNS_OFF_BY_DEFAULT = {
+    ready_to_pay: ["paymentMethod", "adDate", "processedDate", "failureReason"],
+    in_progress: ["dueDate", "processedDate", "failureReason"],
+    paid: ["dueDate", "adDate", "failureReason"],
+    exception: ["processedDate"],
+  };
+  var tabColumnChoices = {};
+  var tabColumnsSyncedFor = "";
 
-  function getOptionalDateGroup() {
-    return OPTIONAL_DATE_TABS[state.activeTab] ? "optional" : "core";
+  function getActiveColumnTab() {
+    return state.activeTab;
   }
 
-  /** True when the active tab offers Date Initiated only on request and the user has not asked for it. */
-  function isOptionalDateHidden() {
-    return getOptionalDateGroup() === "optional" && !optionalDateVisibility.optional;
+  function isOffByDefaultOnTab(key, tab) {
+    return (TAB_COLUMNS_OFF_BY_DEFAULT[tab] || []).indexOf(key) !== -1;
   }
 
-  function syncOptionalDateColumn() {
-    var group = getOptionalDateGroup();
-    if (group === optionalDateGroup) return;
-    optionalDateGroup = group;
-    var show = optionalDateVisibility[group];
-    [columnVisibilityState.visibleKeys, columnVisibilityState.draftVisibleKeys].forEach(
-      function (keys) {
-        if (show) keys.add(OPTIONAL_DATE_KEY);
-        else keys.delete(OPTIONAL_DATE_KEY);
-      },
-    );
+  function getTabDependentColumnKeys() {
+    var keys = [];
+    Object.keys(TAB_COLUMNS_OFF_BY_DEFAULT).forEach(function (tab) {
+      TAB_COLUMNS_OFF_BY_DEFAULT[tab].forEach(function (key) {
+        if (keys.indexOf(key) === -1) keys.push(key);
+      });
+    });
+    return keys;
+  }
+
+  /** On a tab change, apply that tab's choices (or defaults) for the tab-dependent columns. */
+  function syncTabColumns(columns) {
+    var tab = getActiveColumnTab();
+    if (tab === tabColumnsSyncedFor) return;
+    tabColumnsSyncedFor = tab;
+    var choices = tabColumnChoices[tab] || {};
+    var defaults = getDefaultManageableColumnKeys(columns);
+    getTabDependentColumnKeys().forEach(function (key) {
+      var show = key in choices ? choices[key] : defaults.indexOf(key) !== -1;
+      [columnVisibilityState.visibleKeys, columnVisibilityState.draftVisibleKeys].forEach(
+        function (keys) {
+          if (show) keys.add(key);
+          else keys.delete(key);
+        },
+      );
+    });
   }
 
   function getDefaultManageableColumnKeys(columns) {
-    var optionalDateOff = getOptionalDateGroup() === "optional";
+    var tab = getActiveColumnTab();
     return getManageableColumns(columns)
       .filter(function (col) {
-        return !(optionalDateOff && col.key === OPTIONAL_DATE_KEY);
+        return !isOffByDefaultOnTab(col.key, tab);
       })
       .filter(function (col) {
         return col.key !== "paymentMethod";
@@ -788,7 +820,7 @@
 
   function cloneColumnDraftFromApplied(columns) {
     ensureColumnVisibilityState(columns);
-    syncOptionalDateColumn();
+    syncTabColumns(columns);
     columnVisibilityState.draftVisibleKeys = new Set(
       Array.from(columnVisibilityState.visibleKeys),
     );
@@ -813,8 +845,10 @@
     );
     columnVisibilityState.orderedKeys =
       columnVisibilityState.draftOrderedKeys.slice();
-    optionalDateVisibility[getOptionalDateGroup()] =
-      columnVisibilityState.visibleKeys.has(OPTIONAL_DATE_KEY);
+    var tabChoices = (tabColumnChoices[getActiveColumnTab()] = {});
+    getTabDependentColumnKeys().forEach(function (key) {
+      tabChoices[key] = columnVisibilityState.visibleKeys.has(key);
+    });
     // Filter categories depend on which columns are on, so refresh them.
     syncFilterUi();
   }
@@ -862,7 +896,7 @@
 
   function getVisibleColumns(columns) {
     ensureColumnVisibilityState(columns);
-    syncOptionalDateColumn();
+    syncTabColumns(columns);
     var originalColumns = Array.isArray(columns) ? columns : [];
     var manageableColumns = getManageableColumns(originalColumns);
     var manageableByKey = new Map();
@@ -1439,7 +1473,30 @@
   // one category per filterable column header, the same on every tab, labelled like the
   // column. Rows with no value for a filtered column (e.g. Payment Date before payment)
   // simply don't match.
+  /** Amount filter input: keep digits and one decimal point. */
+  function cleanAmountInput(value) {
+    var cleaned = String(value || "").replace(/[^0-9.]/g, "");
+    var dot = cleaned.indexOf(".");
+    if (dot !== -1)
+      cleaned = cleaned.slice(0, dot + 1) + cleaned.slice(dot + 1).replace(/\./g, "");
+    return cleaned;
+  }
+
+  function amountInRange(amount, min, max) {
+    var value = Number(amount);
+    if (!isFinite(value)) return false;
+    if (min !== "" && value < Number(min)) return false;
+    if (max !== "" && value > Number(max)) return false;
+    return true;
+  }
+
+  function formatAmountBound(value) {
+    if (value === "") return "Any";
+    return "$" + Number(value).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
   var FILTER_CATEGORY_COLUMNS = {
+    amount: "amount",
     payee: "payeeName",
     method: "paymentMethod",
     source: "source",
@@ -1539,6 +1596,12 @@
     )
       return false;
     if (
+      visible.amount &&
+      (state.appliedAmountMin !== "" || state.appliedAmountMax !== "") &&
+      !amountInRange(row.amount, state.appliedAmountMin, state.appliedAmountMax)
+    )
+      return false;
+    if (
       visible.due_date &&
       (state.appliedDueDateFrom || state.appliedDueDateTo) &&
       !dateInRange(row.dueDate, state.appliedDueDateFrom, state.appliedDueDateTo)
@@ -1589,46 +1652,15 @@
   }
 
   /** The columns the active tab offers (and their per-tab labels), before Manage columns is applied. */
+  /** Structural columns per tab (row selection, row action). Data columns are never removed per tab. */
   function getTabColumns(cols) {
-    // Dates per tab: Due Date while a bill is unpaid, Date Initiated once a payment
-    // is in progress or scheduled (opt-in on Ready to Pay and Paid), Payment Date on Paid
-    // (wiki/design-system/table-filter.md).
-    if (state.activeTab !== "paid") {
-      cols = cols.filter(function (col) {
-        return col && col.key !== "processedDate";
-      });
-    }
-    if (state.activeTab !== "exception") {
-      cols = cols.filter(function (col) {
-        return col && col.key !== "failureReason";
-      });
-    }
-    if (state.activeTab === "ready_to_pay") {
-      cols = cols.filter(function (col) {
-        return col && col.key !== "paymentMethod";
-      });
-    }
-    if (state.activeTab === "in_progress") {
-      cols = cols.filter(function (col) {
-        return col && col.key !== "dueDate" && col.type !== "select";
-      });
-    }
-    if (state.activeTab === "paid") {
-      cols = cols.filter(function (col) {
-        return (
-          col &&
-          col.key !== "dueDate" &&
-          col.type !== "action" &&
-          col.type !== "select"
-        );
-      });
-    }
-    if (state.activeTab === "exception") {
-      cols = cols.filter(function (col) {
-        return col && col.type !== "select";
-      });
-    }
-    return cols;
+    var tab = state.activeTab;
+    return cols.filter(function (col) {
+      if (!col) return false;
+      if (col.type === "select") return tab === "ready_to_pay";
+      if (col.type === "action") return tab !== "paid";
+      return true;
+    });
   }
 
   function normalizeRows(rows) {
@@ -2331,7 +2363,8 @@
       panel === "failure_reason" ||
       panel === "initiated_date" ||
       panel === "due_date" ||
-      panel === "payment_date"
+      panel === "payment_date" ||
+      panel === "amount"
     )
       return panel;
     return "payee";
@@ -2360,6 +2393,8 @@
     state.paymentDateFromDraft = formatIsoAsUsInput(state.paymentDateFrom);
     state.paymentDateToDraft = formatIsoAsUsInput(state.paymentDateTo);
     state.paymentDateActiveField = "from";
+    state.amountMin = state.appliedAmountMin;
+    state.amountMax = state.appliedAmountMax;
   }
 
   function commitDraftFilters() {
@@ -2376,6 +2411,8 @@
     state.appliedDueDateTo = state.dueDateTo || "";
     state.appliedPaymentDateFrom = state.paymentDateFrom || "";
     state.appliedPaymentDateTo = state.paymentDateTo || "";
+    state.appliedAmountMin = state.amountMin;
+    state.appliedAmountMax = state.amountMax;
   }
 
   function syncSelectedFiltersToAvailable() {
@@ -2632,6 +2669,11 @@
     if (visible.method) countedSets.push(state.appliedSelectedMethods);
     if (visible.failure_reason)
       countedSets.push(state.appliedSelectedFailureReasons);
+    if (
+      visible.amount &&
+      (state.appliedAmountMin !== "" || state.appliedAmountMax !== "")
+    )
+      countedSets.push({ size: 1 });
     var dateCount =
       (visible.initiated_date &&
       (state.appliedInitiatedDateFrom || state.appliedInitiatedDateTo)
@@ -2648,6 +2690,19 @@
 
     if (!refs.activeFilters) return;
     var tags = [];
+    if (
+      visible.amount &&
+      (state.appliedAmountMin !== "" || state.appliedAmountMax !== "")
+    ) {
+      tags.push({
+        type: "amount",
+        label: getFilterCategoryLabel("amount"),
+        value:
+          formatAmountBound(state.appliedAmountMin) +
+          " - " +
+          formatAmountBound(state.appliedAmountMax),
+      });
+    }
     if (visible.payee && state.appliedSelectedPayees.size) {
       var payeeText = Array.from(state.appliedSelectedPayees)
         .sort(function (a, b) {
@@ -2869,6 +2924,9 @@
       state.dueDateFromDraft = "";
       state.dueDateToDraft = "";
       state.dueDateActiveField = "from";
+    } else if (panel === "amount") {
+      state.amountMin = "";
+      state.amountMax = "";
     } else if (panel === "payment_date") {
       state.paymentDateFrom = "";
       state.paymentDateTo = "";
@@ -2891,6 +2949,8 @@
       return state.dueDateFrom || state.dueDateTo ? 1 : 0;
     if (panel === "payment_date")
       return state.paymentDateFrom || state.paymentDateTo ? 1 : 0;
+    if (panel === "amount")
+      return state.amountMin !== "" || state.amountMax !== "" ? 1 : 0;
     return state.selectedSources.size;
   }
 
@@ -2928,6 +2988,12 @@
         state.paymentDateTo !== state.appliedPaymentDateTo
       );
     }
+    if (panel === "amount") {
+      return (
+        state.amountMin !== state.appliedAmountMin ||
+        state.amountMax !== state.appliedAmountMax
+      );
+    }
     return !setsEqual(state.selectedSources, state.appliedSelectedSources);
   }
 
@@ -2940,7 +3006,8 @@
       panelDraftChanged("failure_reason") ||
       panelDraftChanged("initiated_date") ||
       panelDraftChanged("due_date") ||
-      panelDraftChanged("payment_date")
+      panelDraftChanged("payment_date") ||
+      panelDraftChanged("amount")
     );
   }
 
@@ -2978,6 +3045,14 @@
     if (refs.filterDueDatePanel) {
       refs.filterDueDatePanel.classList.add("hidden");
       refs.filterDueDatePanel.classList.remove("flex");
+    }
+    if (refs.filterAmountPanel) {
+      refs.filterAmountPanel.classList.add("hidden");
+      refs.filterAmountPanel.classList.remove("flex");
+      if (panel === "amount") {
+        refs.filterAmountPanel.classList.remove("hidden");
+        refs.filterAmountPanel.classList.add("flex");
+      }
     }
     if (refs.filterPaymentDatePanel) {
       refs.filterPaymentDatePanel.classList.add("hidden");
@@ -3224,6 +3299,8 @@
       if (refs.filterPaymentToInput)
         refs.filterPaymentToInput.value =
           state.paymentDateToDraft || formatIsoAsUsInput(state.paymentDateTo);
+      if (refs.filterAmountMinInput) refs.filterAmountMinInput.value = state.amountMin;
+      if (refs.filterAmountMaxInput) refs.filterAmountMaxInput.value = state.amountMax;
       syncFilterCategoryVisibility();
       renderFilterNavBadges();
       applyOpenFilterSearches();
@@ -3348,6 +3425,17 @@
     bindDateInput(refs.filterPaymentFromInput, "from", "paymentDate");
     bindDateInput(refs.filterPaymentToInput, "to", "paymentDate");
 
+    function bindAmountInput(inputEl, field) {
+      if (!inputEl) return;
+      inputEl.addEventListener("input", function () {
+        inputEl.value = cleanAmountInput(inputEl.value);
+        state[field] = inputEl.value;
+        syncFilterApplyButtonState();
+      });
+    }
+    bindAmountInput(refs.filterAmountMinInput, "amountMin");
+    bindAmountInput(refs.filterAmountMaxInput, "amountMax");
+
     if (refs.filterClearBtn) {
       refs.filterClearBtn.addEventListener("click", function (event) {
         event.stopPropagation();
@@ -3410,6 +3498,14 @@
           state.dueDateToDraft = "";
           if (refs.filterDueFromInput) refs.filterDueFromInput.value = "";
           if (refs.filterDueToInput) refs.filterDueToInput.value = "";
+        }
+        if (type === "amount") {
+          state.appliedAmountMin = "";
+          state.appliedAmountMax = "";
+          state.amountMin = "";
+          state.amountMax = "";
+          if (refs.filterAmountMinInput) refs.filterAmountMinInput.value = "";
+          if (refs.filterAmountMaxInput) refs.filterAmountMaxInput.value = "";
         }
         if (type === "payment_date") {
           state.appliedPaymentDateFrom = "";

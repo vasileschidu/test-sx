@@ -55,17 +55,18 @@ Each tab shows a count. On mobile the tabs become a select.
 ### Columns
 
 Default columns from `tableConfig.columns`: expand, select, Amount, Bill Reference, Payee, Payment Method,
-Source, Due Date, Date Initiated, Payment Date, Status, Failure Reason, action. Some are hidden per tab:
+Source, Due Date, Date Initiated, Payment Date, Status, Failure Reason, action. Every column is available on every tab in
+**Manage columns**; each tab only decides which are on by default:
 
-| Tab | Hidden columns | Date shown | Notes |
+| Tab | Off by default | Date shown by default | Notes |
 |---|---|---|---|
-| Ready to Pay | Payment Method, Payment Date, Failure Reason | Due Date; Date Initiated opt-in | Selectable rows |
-| In Progress | Due Date, Payment Date, select, Failure Reason | Date Initiated | Includes Scheduled payments |
-| Paid | Due Date, select, action, Failure Reason | Payment Date (`processedDate`); Date Initiated opt-in | |
-| Exceptions | Payment Date, select | Due Date, Date Initiated | Only tab with Failure Reason |
+| Ready to Pay | Payment Method, Date Initiated, Payment Date, Failure Reason | Due Date | Selectable rows (only tab with select) |
+| In Progress | Payment Method, Due Date, Payment Date, Failure Reason | Date Initiated | Includes Scheduled payments |
+| Paid | Payment Method, Due Date, Date Initiated, Failure Reason | Payment Date (`processedDate`) | No row action |
+| Exceptions | Payment Method, Payment Date | Due Date, Date Initiated | Failure Reason on by default |
 
 Date rules for all portals: [table filter → Date columns per portal](../../design-system/table-filter.md#date-columns-per-portal).
-Manage columns hides Payment Method by default. Date Initiated is on by default on In Progress and Exceptions, and off by default (opt-in) on Ready to Pay and Paid. Those two settings are kept separately.
+Columns whose default differs per tab remember the user's Manage columns choice per tab. Details: [table filter → Manage columns](../../design-system/table-filter.md#manage-columns).
 
 Users can show or hide columns via **Manage columns** (with "Reset default").
 Expanding a row shows details: summary, line items, notes, attachments, activity log.
@@ -75,7 +76,7 @@ Expanding a row shows details: summary, line items, notes, attachments, activity
 - **Search** box.
 - **Filter**: target is the shared filter. Categories = this table’s column headers, the same on every tab.
   See [table filter → Hub AP: Bills & Payables](../../design-system/table-filter.md#smart-hub-ap-bills--payables).
-  Categories: Payee, Payment Method, Status, Failure Reason, Due Date, Date Initiated, Payment Date, Source.
+  Categories: Amount (min / max), Payee, Payment Method, Status, Failure Reason, Due Date, Date Initiated, Payment Date, Source.
   Active filters show as chips on every tab; Reset / Apply.
   Remaining gap: the date ranges have no calendar picker yet ([D-09](../../design-system/portal-consistency.md#table-filter)).
 - **Export** downloads the current rows as `bills-payables-export.csv`.

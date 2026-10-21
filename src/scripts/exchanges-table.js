@@ -176,6 +176,10 @@
     // Date Initiated and Date Processed share one date panel. The initiatedDate* fields
     // hold the active date category; the other one waits in dateStore.
     dateCategory: "initiated_date",
+    amountMin: "",
+    amountMax: "",
+    appliedAmountMin: "",
+    appliedAmountMax: "",
     dateStore: {},
   };
   var columnVisibilityState = {
@@ -552,6 +556,14 @@
         );
       });
     }
+    if (
+      visible.amount &&
+      (tableFilterState.appliedAmountMin !== "" || tableFilterState.appliedAmountMax !== "")
+    ) {
+      list = list.filter(function (entry) {
+        return amountInRange(entry && entry.amount, tableFilterState.appliedAmountMin, tableFilterState.appliedAmountMax);
+      });
+    }
     DATE_CATEGORIES.forEach(function (category) {
       var range = getDateFields(category);
       var from = range.appliedInitiatedDateFrom || "";
@@ -572,7 +584,30 @@
   // Filter categories follow the table's columns (wiki/design-system/table-filter.md):
   // one category per filterable column header, the same on every tab, labelled like the
   // column. Rows with no value for a filtered column simply don't match.
+  /** Amount filter input: keep digits and one decimal point. */
+  function cleanAmountInput(value) {
+    var cleaned = String(value || "").replace(/[^0-9.]/g, "");
+    var dot = cleaned.indexOf(".");
+    if (dot !== -1)
+      cleaned = cleaned.slice(0, dot + 1) + cleaned.slice(dot + 1).replace(/\./g, "");
+    return cleaned;
+  }
+
+  function amountInRange(amount, min, max) {
+    var value = Number(amount);
+    if (!isFinite(value)) return false;
+    if (min !== "" && value < Number(min)) return false;
+    if (max !== "" && value > Number(max)) return false;
+    return true;
+  }
+
+  function formatAmountBound(value) {
+    if (value === "") return "Any";
+    return "$" + Number(value).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
   var FILTER_CATEGORY_COLUMNS = {
+    amount: "amount",
     vendor_entry: "vendorEntry",
     customer: "customer",
     status: "status",
@@ -758,41 +793,60 @@
   }
 
 
-  // Date Initiated is opt-in on Pending and Paid tabs: off by default there, on by default
-  // elsewhere (wiki/design-system/table-filter.md#date-columns-per-portal). Its Manage columns
-  // choice is remembered separately for those two tab groups; every other column is shared.
-  var OPTIONAL_DATE_KEY = "dateInitiated";
-  var OPTIONAL_DATE_TABS = { pending: true, "action-required": true, paid: true };
-  var optionalDateVisibility = { optional: false, core: true };
-  var optionalDateGroup = "";
+  // Every column is available on every tab, so Manage columns always lists all of them.
+  // Each tab only decides which columns start switched off (wiki/design-system/table-filter.md
+  // #date-columns-per-portal). A column whose default differs between tabs remembers the
+  // user's Manage columns choice per tab; every other column has one setting for all tabs.
+  var TAB_COLUMNS_OFF_BY_DEFAULT = {
+    pending: ["dateInitiated", "dateProcessed", "failureReason"],
+    "action-required": ["dateInitiated", "dateProcessed", "failureReason"],
+    paid: ["dateInitiated", "failureReason"],
+    exceptions: ["dateProcessed"],
+  };
+  var tabColumnChoices = {};
+  var tabColumnsSyncedFor = "";
 
-  function getOptionalDateGroup() {
-    return OPTIONAL_DATE_TABS[normalizeTabKey(_activeTableTabKey || "pending")] ? "optional" : "core";
+  function getActiveColumnTab() {
+    return normalizeTabKey(_activeTableTabKey || "pending");
   }
 
-  /** True when the active tab offers Date Initiated only on request and the user has not asked for it. */
-  function isOptionalDateHidden() {
-    return getOptionalDateGroup() === "optional" && !optionalDateVisibility.optional;
+  function isOffByDefaultOnTab(key, tab) {
+    return (TAB_COLUMNS_OFF_BY_DEFAULT[tab] || []).indexOf(key) !== -1;
   }
 
-  function syncOptionalDateColumn() {
-    var group = getOptionalDateGroup();
-    if (group === optionalDateGroup) return;
-    optionalDateGroup = group;
-    var show = optionalDateVisibility[group];
-    [columnVisibilityState.visibleKeys, columnVisibilityState.draftVisibleKeys].forEach(
-      function (keys) {
-        if (show) keys.add(OPTIONAL_DATE_KEY);
-        else keys.delete(OPTIONAL_DATE_KEY);
-      },
-    );
+  function getTabDependentColumnKeys() {
+    var keys = [];
+    Object.keys(TAB_COLUMNS_OFF_BY_DEFAULT).forEach(function (tab) {
+      TAB_COLUMNS_OFF_BY_DEFAULT[tab].forEach(function (key) {
+        if (keys.indexOf(key) === -1) keys.push(key);
+      });
+    });
+    return keys;
+  }
+
+  /** On a tab change, apply that tab's choices (or defaults) for the tab-dependent columns. */
+  function syncTabColumns(columns) {
+    var tab = getActiveColumnTab();
+    if (tab === tabColumnsSyncedFor) return;
+    tabColumnsSyncedFor = tab;
+    var choices = tabColumnChoices[tab] || {};
+    var defaults = getDefaultManageableColumnKeys(columns);
+    getTabDependentColumnKeys().forEach(function (key) {
+      var show = key in choices ? choices[key] : defaults.indexOf(key) !== -1;
+      [columnVisibilityState.visibleKeys, columnVisibilityState.draftVisibleKeys].forEach(
+        function (keys) {
+          if (show) keys.add(key);
+          else keys.delete(key);
+        },
+      );
+    });
   }
 
   function getDefaultManageableColumnKeys(columns) {
-    var optionalDateOff = getOptionalDateGroup() === "optional";
+    var tab = getActiveColumnTab();
     return getManageableColumns(columns)
       .filter(function (col) {
-        return !(optionalDateOff && col.key === OPTIONAL_DATE_KEY);
+        return !isOffByDefaultOnTab(col.key, tab);
       })
       .filter(function (col) {
         if (col.key === "failureReason") return false;
@@ -806,7 +860,7 @@
 
   function cloneColumnDraftFromApplied(columns) {
     ensureColumnVisibilityState(columns);
-    syncOptionalDateColumn();
+    syncTabColumns(columns);
     columnVisibilityState.draftVisibleKeys = new Set(
       Array.from(columnVisibilityState.visibleKeys),
     );
@@ -830,8 +884,10 @@
     );
     columnVisibilityState.orderedKeys =
       columnVisibilityState.draftOrderedKeys.slice();
-    optionalDateVisibility[getOptionalDateGroup()] =
-      columnVisibilityState.visibleKeys.has(OPTIONAL_DATE_KEY);
+    var tabChoices = (tabColumnChoices[getActiveColumnTab()] = {});
+    getTabDependentColumnKeys().forEach(function (key) {
+      tabChoices[key] = columnVisibilityState.visibleKeys.has(key);
+    });
     // Filter categories depend on which columns are on, so refresh them.
     syncTableFilterUi();
   }
@@ -879,7 +935,7 @@
 
   function getVisibleColumns(columns) {
     ensureColumnVisibilityState(columns);
-    syncOptionalDateColumn();
+    syncTabColumns(columns);
     var originalColumns = Array.isArray(columns) ? columns : [];
     var manageableColumns = getManageableColumns(originalColumns);
     var manageableByKey = new Map();
@@ -929,33 +985,9 @@
   }
 
   /** The columns the active tab offers, before Manage columns is applied. */
+  /** Columns the active tab renders. Data columns are never removed per tab; Manage columns decides. */
   function getTabColumns(visibleColumns) {
-    visibleColumns = Array.isArray(visibleColumns) ? visibleColumns : [];
-    var tab = normalizeTabKey(_activeTableTabKey || "pending");
-    if (tab !== "exceptions") {
-      visibleColumns = visibleColumns.filter(function (col) {
-        return col && col.key !== "failureReason";
-      });
-    }
-    // Dates per tab (wiki/design-system/table-filter.md): Date Processed on Paid; Date Initiated
-    // where the payment is in flight or failed, and opt-in (Manage columns) on Pending tabs and Paid.
-    if (tab === "paid") {
-      // Date Processed sits after Date Initiated, or before Payment Method when Date Initiated is off.
-      var processedCol = { key: "dateProcessed", label: "Date Processed", sortable: true };
-      var hasInitiated = visibleColumns.some(function (col) {
-        return col && col.key === "dateInitiated";
-      });
-      var withProcessed = [];
-      visibleColumns.forEach(function (col) {
-        if (!hasInitiated && col && (col.key === "paymentMethod" || col.type === "paymentMethod"))
-          withProcessed.push(processedCol);
-        withProcessed.push(col);
-        if (col && col.key === "dateInitiated") withProcessed.push(processedCol);
-      });
-      if (withProcessed.indexOf(processedCol) === -1) withProcessed.push(processedCol);
-      visibleColumns = withProcessed;
-    }
-    return visibleColumns;
+    return Array.isArray(visibleColumns) ? visibleColumns.slice() : [];
   }
 
   // Date a paid entry settled: the "complete" activity event, else the last event.
@@ -4149,6 +4181,18 @@
     var filterFailureReasonPanel = document.getElementById(
       "sx-table-filter-panel-failure-reason",
     );
+    var filterAmountPanel = document.getElementById("sx-table-filter-panel-amount");
+    var filterAmountMinInput = document.getElementById("sx-table-filter-amount-min-input");
+    var filterAmountMaxInput = document.getElementById("sx-table-filter-amount-max-input");
+    [[filterAmountMinInput, "amountMin"], [filterAmountMaxInput, "amountMax"]].forEach(function (pair) {
+      if (!pair[0]) return;
+      pair[0].addEventListener("input", function () {
+        pair[0].value = cleanAmountInput(pair[0].value);
+        tableFilterState[pair[1]] = pair[0].value;
+        renderFilterNavBadges();
+        syncApplyButtonState();
+      });
+    });
     var filterInitiatedDatePanel = document.getElementById(
       "sx-table-filter-panel-initiated-date",
     );
@@ -4258,7 +4302,8 @@
         panel === "method" ||
         panel === "failure_reason" ||
         panel === "initiated_date" ||
-        panel === "processed_date"
+        panel === "processed_date" ||
+        panel === "amount"
         ? panel
         : "customer";
     }
@@ -4290,6 +4335,8 @@
         tableFilterState.initiatedDateTo,
       );
       tableFilterState.initiatedDateActiveField = "from";
+      tableFilterState.amountMin = tableFilterState.appliedAmountMin;
+      tableFilterState.amountMax = tableFilterState.appliedAmountMax;
       Object.keys(tableFilterState.dateStore).forEach(function (category) {
         var range = tableFilterState.dateStore[category];
         range.initiatedDateFrom = range.appliedInitiatedDateFrom || "";
@@ -4319,6 +4366,8 @@
         tableFilterState.initiatedDateFrom || "";
       tableFilterState.appliedInitiatedDateTo =
         tableFilterState.initiatedDateTo || "";
+      tableFilterState.appliedAmountMin = tableFilterState.amountMin;
+      tableFilterState.appliedAmountMax = tableFilterState.amountMax;
       Object.keys(tableFilterState.dateStore).forEach(function (category) {
         var range = tableFilterState.dateStore[category];
         range.appliedInitiatedDateFrom = range.initiatedDateFrom || "";
@@ -4589,6 +4638,9 @@
         tableFilterState.selectedMethods.clear();
       } else if (panel === "failure_reason") {
         tableFilterState.selectedFailureReasons.clear();
+      } else if (panel === "amount") {
+        tableFilterState.amountMin = "";
+        tableFilterState.amountMax = "";
       } else if (isDateCategory(panel)) {
         tableFilterState.initiatedDateFrom = "";
         tableFilterState.initiatedDateTo = "";
@@ -4609,6 +4661,8 @@
       if (panel === "method") return tableFilterState.selectedMethods.size;
       if (panel === "failure_reason")
         return tableFilterState.selectedFailureReasons.size;
+      if (panel === "amount")
+        return tableFilterState.amountMin !== "" || tableFilterState.amountMax !== "" ? 1 : 0;
       if (isDateCategory(panel)) {
         var dateDraft = getDateFields(panel);
         return dateDraft.initiatedDateFrom || dateDraft.initiatedDateTo ? 1 : 0;
@@ -4645,6 +4699,10 @@
           tableFilterState.appliedSelectedFailureReasons,
         );
       }
+      if (panel === "amount") {
+        return tableFilterState.amountMin !== tableFilterState.appliedAmountMin ||
+          tableFilterState.amountMax !== tableFilterState.appliedAmountMax;
+      }
       if (isDateCategory(panel)) {
         var dateRange = getDateFields(panel);
         return (
@@ -4666,7 +4724,8 @@
         panelDraftChanged("method") ||
         panelDraftChanged("failure_reason") ||
         panelDraftChanged("initiated_date") ||
-        panelDraftChanged("processed_date")
+        panelDraftChanged("processed_date") ||
+        panelDraftChanged("amount")
       );
     }
 
@@ -4999,6 +5058,11 @@
       if (visible.method) countedSets.push(tableFilterState.appliedSelectedMethods);
       if (visible.failure_reason)
         countedSets.push(tableFilterState.appliedSelectedFailureReasons);
+      if (
+        visible.amount &&
+        (tableFilterState.appliedAmountMin !== "" || tableFilterState.appliedAmountMax !== "")
+      )
+        countedSets.push({ size: 1 });
       renderFilterCountBadge(
         countAppliedFilters(
           countedSets,
@@ -5013,6 +5077,19 @@
       );
 
       var tags = [];
+      if (
+        visible.amount &&
+        (tableFilterState.appliedAmountMin !== "" || tableFilterState.appliedAmountMax !== "")
+      ) {
+        tags.push({
+          type: "amount",
+          label: getFilterCategoryLabel("amount"),
+          value:
+            formatAmountBound(tableFilterState.appliedAmountMin) +
+            " - " +
+            formatAmountBound(tableFilterState.appliedAmountMax),
+        });
+      }
       var selectedVendorEntries = Array.from(
         tableFilterState.appliedSelectedVendorEntries,
       )
@@ -5159,6 +5236,10 @@
       filterFailureReasonPanel.classList.remove("flex");
       filterInitiatedDatePanel.classList.add("hidden");
       filterInitiatedDatePanel.classList.remove("flex");
+      if (filterAmountPanel) {
+        filterAmountPanel.classList.add("hidden");
+        filterAmountPanel.classList.remove("flex");
+      }
       if (panel === "customer") {
         filterCustomerPanel.classList.remove("hidden");
         filterCustomerPanel.classList.add("flex");
@@ -5171,6 +5252,9 @@
       } else if (panel === "failure_reason") {
         filterFailureReasonPanel.classList.remove("hidden");
         filterFailureReasonPanel.classList.add("flex");
+      } else if (panel === "amount" && filterAmountPanel) {
+        filterAmountPanel.classList.remove("hidden");
+        filterAmountPanel.classList.add("flex");
       } else if (isDateCategory(panel)) {
         filterInitiatedDatePanel.classList.remove("hidden");
         filterInitiatedDatePanel.classList.add("flex");
@@ -5651,7 +5735,8 @@
             panelType === "method" ||
             panelType === "failure_reason" ||
             panelType === "initiated_date" ||
-            panelType === "processed_date"
+            panelType === "processed_date" ||
+            panelType === "amount"
           ) {
             syncTableFilterUi();
             setFilterMenuOpen(true);
@@ -5686,6 +5771,12 @@
           tableFilterState.selectedFailureReasons.clear();
           tableFilterState.appliedSelectedFailureReasons.clear();
         }
+        if (type === "amount") {
+          tableFilterState.amountMin = "";
+          tableFilterState.amountMax = "";
+          tableFilterState.appliedAmountMin = "";
+          tableFilterState.appliedAmountMax = "";
+        }
         if (isDateCategory(type)) {
           var removed = getDateFields(type);
           removed.initiatedDateFrom = "";
@@ -5707,6 +5798,8 @@
     });
 
     syncTableFilterUi = function () {
+      if (filterAmountMinInput) filterAmountMinInput.value = tableFilterState.amountMin;
+      if (filterAmountMaxInput) filterAmountMaxInput.value = tableFilterState.amountMax;
       syncSelectedFiltersToAvailable();
       renderVendorEntryFilters();
       renderCustomerFilters();
