@@ -55,24 +55,31 @@ Defined by product/design on 2026-10-21. Each date has a fixed meaning, and that
 | Date | Meaning | Portals | Shown on |
 |---|---|---|---|
 | **Due Date** | When the bill is due | SMART Hub AP only | Unpaid bills: Ready to Pay, Exceptions |
-| **Date Initiated** | When the payment was started | All portals | Payments in flight: In Progress / Processing, including Scheduled. **Not** on Pending tabs, **not** on Paid |
+| **Date Initiated** | When the payment was started | All portals | Shown by default where a payment is in flight: In Progress / Processing (incl. Scheduled) and Exceptions. On **Pending** tabs and **Paid** it is **opt-in**: off by default, available in Manage columns |
 | **Payment Date** (Hub AP) / **Date Processed** (Exchange, Consumer) | When the payment completed | All portals | Paid tab only |
 
-Per tab:
+Per tab (*opt-in* = off by default, the user can switch it on in Manage columns):
 
 | Portal | Pending tab(s) | In Progress | Paid | Exceptions |
 |---|---|---|---|---|
-| Hub AP: Bills & Payables | Ready to Pay: Due Date | Date Initiated | Payment Date | Due Date, Date Initiated |
-| SMART Exchange | Pending, Action Required: no date | (no such tab) | Date Processed | Date Initiated |
-| Consumer Portal | Pending: no date | (no such tab) | Date Processed | Date Initiated |
+| Hub AP: Bills & Payables | Ready to Pay: Due Date · *Date Initiated (opt-in)* | Date Initiated | Payment Date · *Date Initiated (opt-in)* | Due Date, Date Initiated |
+| SMART Exchange | Pending, Action Required: *Date Initiated (opt-in)* | (no such tab) | Date Processed · *Date Initiated (opt-in)* | Date Initiated |
+| Consumer Portal | Pending: *Date Initiated (opt-in)* | (no such tab) | Date Processed · *Date Initiated (opt-in)* | Date Initiated |
+
+**Manage columns:** the opt-in setting is shared by the Pending tabs and Paid. Switching Date Initiated on in Pending
+also shows it on Paid, and vice versa. In Progress / Exceptions keep their own setting (on by default). Every other column
+has one setting for all tabs.
 
 TODO(confirm): the rule doesn't cover **Exceptions**. It keeps Date Initiated (and Due Date in Hub) because a failed
 payment was initiated. TODO(confirm): Exchange and Consumer have no In Progress tab. Processing payments sit in **Pending**,
-so they show no date there.
+so Date Initiated is opt-in for them as well.
 
 **Filter:** the "initiated / processed" date is one filter category, and its label follows the tab's column
 (Date Initiated, Payment Date or Date Processed). A range applies only to the date column it was set on, so a range set on
 Paid doesn't carry over to Exceptions.
+- An opt-in Date Initiated is filterable only once the user has switched it on (otherwise its cells are empty and filtering would empty the table).
+- On Paid the category always targets Payment Date / Date Processed, even when Date Initiated is switched on. TODO: allow two date categories
+  on one tab in the shared component (option B).
 
 ## Filter content per portal
 
@@ -89,7 +96,7 @@ Columns: Amount, Bill Reference, Payee, Payment Method, Source, Due Date, Date I
 | Source | Multi-select | all | ✓ |
 | Status | Multi-select | all | ✓ |
 | Due Date | Date range | Ready to Pay, Exceptions | ✓ (no calendar yet) |
-| Date Initiated | Date range | In Progress, Exceptions | ✓ (no calendar yet) |
+| Date Initiated | Date range | In Progress, Exceptions; Ready to Pay when switched on | ✓ (no calendar yet) |
 | Payment Date | Date range | Paid | ✓ (no calendar yet) |
 | Failure Reason | Multi-select | Exceptions | ✓ |
 
@@ -118,7 +125,7 @@ Columns: Amount, Vendor Entry, Invoice #, Customer, Date Initiated / Date Proces
 | Customer | Multi-select + search | ✓ |
 | Payment Method | Multi-select | ✓ |
 | Status | Multi-select | ✓ |
-| Date Initiated | Date range (Exceptions tab) | ✓ |
+| Date Initiated | Date range (Exceptions; Pending tabs when switched on) | ✓ |
 | Date Processed | Date range (Paid tab) | ✓ |
 | Failure Reason | Multi-select (Exceptions tab) | ✓ |
 
@@ -131,7 +138,7 @@ Columns: Amount, Payer, Invoice #, Date Initiated / Date Processed (per tab), Pa
 | Payer | Multi-select + search | ✓ label; ✗ no search |
 | Payment Method | Multi-select | ✓ |
 | Status | Multi-select | ✓ |
-| Date Initiated | Date range (Exceptions tab) | ✓ |
+| Date Initiated | Date range (Exceptions; Pending when switched on) | ✓ |
 | Date Processed | Date range (Paid tab) | ✓ |
 | Failure Reason | Multi-select (Exceptions tab) | ✓ |
 

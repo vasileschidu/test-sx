@@ -586,6 +586,12 @@
   function getVisibleFilterColumn(panel) {
     var keys = [].concat(FILTER_CATEGORY_COLUMNS[panel] || []);
     if (!keys.length) return null;
+    if (panel === "initiated_date" && normalizeTabKey(_activeTableTabKey || "pending") === "paid") keys.reverse();
+    if (isOptionalDateHidden())
+      keys = keys.filter(function (key) {
+        return key !== OPTIONAL_DATE_KEY;
+      });
+    if (!keys.length) return null;
     var key = keys[0];
     var source = paginationState.allColumns.length
       ? paginationState.allColumns
@@ -717,8 +723,43 @@
     return "";
   }
 
+
+  // Date Initiated is opt-in on Pending and Paid tabs: off by default there, on by default
+  // elsewhere (wiki/design-system/table-filter.md#date-columns-per-portal). Its Manage columns
+  // choice is remembered separately for those two tab groups; every other column is shared.
+  var OPTIONAL_DATE_KEY = "dateInitiated";
+  var OPTIONAL_DATE_TABS = { pending: true, "action-required": true, paid: true };
+  var optionalDateVisibility = { optional: false, core: true };
+  var optionalDateGroup = "";
+
+  function getOptionalDateGroup() {
+    return OPTIONAL_DATE_TABS[normalizeTabKey(_activeTableTabKey || "pending")] ? "optional" : "core";
+  }
+
+  /** True when the active tab offers Date Initiated only on request and the user has not asked for it. */
+  function isOptionalDateHidden() {
+    return getOptionalDateGroup() === "optional" && !optionalDateVisibility.optional;
+  }
+
+  function syncOptionalDateColumn() {
+    var group = getOptionalDateGroup();
+    if (group === optionalDateGroup) return;
+    optionalDateGroup = group;
+    var show = optionalDateVisibility[group];
+    [columnVisibilityState.visibleKeys, columnVisibilityState.draftVisibleKeys].forEach(
+      function (keys) {
+        if (show) keys.add(OPTIONAL_DATE_KEY);
+        else keys.delete(OPTIONAL_DATE_KEY);
+      },
+    );
+  }
+
   function getDefaultManageableColumnKeys(columns) {
+    var optionalDateOff = getOptionalDateGroup() === "optional";
     return getManageableColumns(columns)
+      .filter(function (col) {
+        return !(optionalDateOff && col.key === OPTIONAL_DATE_KEY);
+      })
       .filter(function (col) {
         if (col.key === "failureReason") return false;
         if (IS_SUPPLIER_PORTAL && col.key === "vendorEntry") return false;
@@ -731,6 +772,7 @@
 
   function cloneColumnDraftFromApplied(columns) {
     ensureColumnVisibilityState(columns);
+    syncOptionalDateColumn();
     columnVisibilityState.draftVisibleKeys = new Set(
       Array.from(columnVisibilityState.visibleKeys),
     );
@@ -754,6 +796,10 @@
     );
     columnVisibilityState.orderedKeys =
       columnVisibilityState.draftOrderedKeys.slice();
+    optionalDateVisibility[getOptionalDateGroup()] =
+      columnVisibilityState.visibleKeys.has(OPTIONAL_DATE_KEY);
+    // Filter categories depend on which columns are on, so refresh them.
+    syncTableFilterUi();
   }
 
   function setsMatch(a, b) {
@@ -799,6 +845,7 @@
 
   function getVisibleColumns(columns) {
     ensureColumnVisibilityState(columns);
+    syncOptionalDateColumn();
     var originalColumns = Array.isArray(columns) ? columns : [];
     var manageableColumns = getManageableColumns(originalColumns);
     var manageableByKey = new Map();
@@ -856,18 +903,23 @@
         return col && col.key !== "failureReason";
       });
     }
-    // Dates per tab (wiki/design-system/table-filter.md): no date on Pending tabs,
-    // Date Processed on Paid, Date Initiated where the payment is in flight or failed.
-    if (tab === "pending" || tab === "action-required") {
-      visibleColumns = visibleColumns.filter(function (col) {
-        return col && col.key !== "dateInitiated";
+    // Dates per tab (wiki/design-system/table-filter.md): Date Processed on Paid; Date Initiated
+    // where the payment is in flight or failed, and opt-in (Manage columns) on Pending tabs and Paid.
+    if (tab === "paid") {
+      // Date Processed sits after Date Initiated, or before Payment Method when Date Initiated is off.
+      var processedCol = { key: "dateProcessed", label: "Date Processed", sortable: true };
+      var hasInitiated = visibleColumns.some(function (col) {
+        return col && col.key === "dateInitiated";
       });
-    } else if (tab === "paid") {
-      visibleColumns = visibleColumns.map(function (col) {
-        return col && col.key === "dateInitiated"
-          ? { key: "dateProcessed", label: "Date Processed", sortable: true }
-          : col;
+      var withProcessed = [];
+      visibleColumns.forEach(function (col) {
+        if (!hasInitiated && col && (col.key === "paymentMethod" || col.type === "paymentMethod"))
+          withProcessed.push(processedCol);
+        withProcessed.push(col);
+        if (col && col.key === "dateInitiated") withProcessed.push(processedCol);
       });
+      if (withProcessed.indexOf(processedCol) === -1) withProcessed.push(processedCol);
+      visibleColumns = withProcessed;
     }
     return visibleColumns;
   }

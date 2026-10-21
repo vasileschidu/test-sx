@@ -667,8 +667,43 @@
     });
   }
 
+
+  // Date Initiated is opt-in on Pending and Paid tabs: off by default there, on by default
+  // elsewhere (wiki/design-system/table-filter.md#date-columns-per-portal). Its Manage columns
+  // choice is remembered separately for those two tab groups; every other column is shared.
+  var OPTIONAL_DATE_KEY = "adDate";
+  var OPTIONAL_DATE_TABS = { ready_to_pay: true, paid: true };
+  var optionalDateVisibility = { optional: false, core: true };
+  var optionalDateGroup = "";
+
+  function getOptionalDateGroup() {
+    return OPTIONAL_DATE_TABS[state.activeTab] ? "optional" : "core";
+  }
+
+  /** True when the active tab offers Date Initiated only on request and the user has not asked for it. */
+  function isOptionalDateHidden() {
+    return getOptionalDateGroup() === "optional" && !optionalDateVisibility.optional;
+  }
+
+  function syncOptionalDateColumn() {
+    var group = getOptionalDateGroup();
+    if (group === optionalDateGroup) return;
+    optionalDateGroup = group;
+    var show = optionalDateVisibility[group];
+    [columnVisibilityState.visibleKeys, columnVisibilityState.draftVisibleKeys].forEach(
+      function (keys) {
+        if (show) keys.add(OPTIONAL_DATE_KEY);
+        else keys.delete(OPTIONAL_DATE_KEY);
+      },
+    );
+  }
+
   function getDefaultManageableColumnKeys(columns) {
+    var optionalDateOff = getOptionalDateGroup() === "optional";
     return getManageableColumns(columns)
+      .filter(function (col) {
+        return !(optionalDateOff && col.key === OPTIONAL_DATE_KEY);
+      })
       .filter(function (col) {
         return col.key !== "paymentMethod";
       })
@@ -739,6 +774,7 @@
 
   function cloneColumnDraftFromApplied(columns) {
     ensureColumnVisibilityState(columns);
+    syncOptionalDateColumn();
     columnVisibilityState.draftVisibleKeys = new Set(
       Array.from(columnVisibilityState.visibleKeys),
     );
@@ -763,6 +799,10 @@
     );
     columnVisibilityState.orderedKeys =
       columnVisibilityState.draftOrderedKeys.slice();
+    optionalDateVisibility[getOptionalDateGroup()] =
+      columnVisibilityState.visibleKeys.has(OPTIONAL_DATE_KEY);
+    // Filter categories depend on which columns are on, so refresh them.
+    syncFilterUi();
   }
 
   function setsMatch(a, b) {
@@ -808,6 +848,7 @@
 
   function getVisibleColumns(columns) {
     ensureColumnVisibilityState(columns);
+    syncOptionalDateColumn();
     var originalColumns = Array.isArray(columns) ? columns : [];
     var manageableColumns = getManageableColumns(originalColumns);
     var manageableByKey = new Map();
@@ -1397,6 +1438,12 @@
   function getVisibleFilterColumn(panel) {
     var keys = [].concat(FILTER_CATEGORY_COLUMNS[panel] || []);
     if (!keys.length) return null;
+    if (panel === "initiated_date" && state.activeTab === "paid") keys.reverse();
+    if (isOptionalDateHidden())
+      keys = keys.filter(function (key) {
+        return key !== OPTIONAL_DATE_KEY;
+      });
+    if (!keys.length) return null;
     // Before columns load, treat every category as available.
     if (!state.columns || !state.columns.length)
       return { key: keys[0], label: "" };
@@ -1549,7 +1596,8 @@
   /** The columns the active tab offers (and their per-tab labels), before Manage columns is applied. */
   function getTabColumns(cols) {
     // Dates per tab: Due Date while a bill is unpaid, Date Initiated once a payment
-    // is in progress or scheduled, Payment Date on Paid (wiki/design-system/table-filter.md).
+    // is in progress or scheduled (opt-in on Ready to Pay and Paid), Payment Date on Paid
+    // (wiki/design-system/table-filter.md).
     if (state.activeTab !== "paid") {
       cols = cols.filter(function (col) {
         return col && col.key !== "processedDate";
@@ -1562,7 +1610,7 @@
     }
     if (state.activeTab === "ready_to_pay") {
       cols = cols.filter(function (col) {
-        return col && col.key !== "paymentMethod" && col.key !== "adDate";
+        return col && col.key !== "paymentMethod";
       });
     }
     if (state.activeTab === "in_progress") {
@@ -1575,7 +1623,6 @@
         return (
           col &&
           col.key !== "dueDate" &&
-          col.key !== "adDate" &&
           col.type !== "action" &&
           col.type !== "select"
         );

@@ -59,13 +59,13 @@ Source, Due Date, Date Initiated, Payment Date, Status, Failure Reason, action. 
 
 | Tab | Hidden columns | Date shown | Notes |
 |---|---|---|---|
-| Ready to Pay | Payment Method, Date Initiated, Payment Date, Failure Reason | Due Date | Selectable rows |
+| Ready to Pay | Payment Method, Payment Date, Failure Reason | Due Date; Date Initiated opt-in | Selectable rows |
 | In Progress | Due Date, Payment Date, select, Failure Reason | Date Initiated | Includes Scheduled payments |
-| Paid | Due Date, Date Initiated, select, action, Failure Reason | Payment Date (`processedDate`) | |
+| Paid | Due Date, select, action, Failure Reason | Payment Date (`processedDate`); Date Initiated opt-in | |
 | Exceptions | Payment Date, select | Due Date, Date Initiated | Only tab with Failure Reason |
 
 Date rules for all portals: [table filter → Date columns per portal](../../design-system/table-filter.md#date-columns-per-portal).
-Manage columns hides Payment Method by default. Date Initiated is now shown by default (it was hidden before 2026-10-21).
+Manage columns hides Payment Method by default. Date Initiated is on by default on In Progress and Exceptions, and off by default (opt-in) on Ready to Pay and Paid. Those two settings are kept separately.
 
 Users can show or hide columns via **Manage columns** (with "Reset default").
 Expanding a row shows details: summary, line items, notes, attachments, activity log.

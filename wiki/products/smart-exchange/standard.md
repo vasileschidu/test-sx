@@ -55,7 +55,8 @@ stateDiagram-v2
 
 ### Date columns
 
-Pending, Action Required: no date · Paid: **Date Processed** · Exceptions: **Date Initiated**. Rules: [table filter → Date columns per portal](../../design-system/table-filter.md#date-columns-per-portal).
+Pending, Action Required: *Date Initiated (opt-in)* · Paid: **Date Processed** · *Date Initiated (opt-in)* · Exceptions: **Date Initiated**
+(opt-in = off by default, switch on in Manage columns). Rules: [table filter → Date columns per portal](../../design-system/table-filter.md#date-columns-per-portal).
 Date Processed is the payment's "complete" activity event (`getDateProcessedIso`).
 
 ## Table filter
