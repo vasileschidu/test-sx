@@ -216,7 +216,7 @@
 
   function footerMarkup() {
     var links = TERMS.map(function (label) {
-      return '<a href="#" class="rounded px-1.5 py-0.5 text-xs leading-4 font-semibold text-gray-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' + label + '</a>';
+      return '<a href="#" class="rounded text-xs leading-4 font-semibold text-gray-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' + label + '</a>';
     }).join('<span aria-hidden="true" class="text-xs leading-4 font-medium text-gray-500">&bull;</span>');
 
     return '<div class="flex flex-col items-center justify-end gap-6 px-4 py-6">' +

@@ -74,9 +74,9 @@
   function personRow(p, amount, accepted, comment) {
     var sub = subline(p);
     return '<li class="flex flex-col">' +
-      '<div class="flex items-center justify-between gap-3">' +
+      '<div class="flex min-h-10 items-center justify-between gap-3">' +
         '<div class="flex min-w-0 items-center gap-2.5">' +
-          '<img src="' + ASSETS + 'avatar.svg" alt="" width="32" height="32" class="size-8 shrink-0">' +
+          '<img src="' + ASSETS + 'avatar.svg" alt="" width="24" height="24" class="size-6 shrink-0">' +
           '<div class="flex min-w-0 flex-col text-sm leading-5 font-medium">' +
             '<span data-ob-skeleton class="truncate text-[#111827]">' + esc(p.name) + '</span>' +
             (sub ? '<span data-ob-skeleton class="text-[#6b7280]">' + sub + '</span>' : '') +
@@ -158,7 +158,8 @@
 
   function chips(mp, opts) {
     var expires = F.expiresAt(mp);
-    return '<div class="flex w-full gap-2.5">' +
+    // md+: two equal columns (flex-1 would give the padded chip 20px more).
+    return '<div class="flex w-full gap-2.5 md:grid md:grid-cols-2">' +
       '<div data-mp-expiry data-show-date="' + (opts.showDate ? '1' : '') + '" class="flex min-w-0 flex-1">' + expiryBadge(expires, opts) + '</div>' +
       // Phones (< 768px): an (i) button; tablet and desktop: the "How it works" chip.
       '<button type="button" data-mp-how class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#f9fafb] text-sm leading-5 font-medium text-[#3671fb] hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 md:size-auto md:min-w-0 md:flex-1 md:px-2.5 md:py-[9px]">' +
@@ -193,7 +194,7 @@
   function infoBox(html) {
     return '<div class="flex w-full items-start gap-3 rounded-[10px] bg-[#eff6ff] p-4">' +
       '<img src="' + ASSETS + 'icon-information-circle.svg" alt="" width="20" height="20" class="size-5 shrink-0">' +
-      '<div class="flex min-w-0 flex-1 flex-col gap-5 text-sm leading-5 text-[#1e40af]">' + html + '</div>' +
+      '<div class="flex min-w-0 flex-1 flex-col gap-5 text-sm leading-5 font-medium text-[#1e40af]">' + html + '</div>' +
     '</div>';
   }
 
