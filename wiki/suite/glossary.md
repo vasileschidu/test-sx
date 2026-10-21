@@ -22,6 +22,7 @@ Shared vocabulary. If a term is used differently in one product, say so in that 
 | **Balance Account** | Holding account that SMART Disburse funds move into until the recipient claims the token. |
 | **Origination account** | The payer bank account a Hub payment is sent from. |
 | **Supplier Portal** | Name used in the code and nav for SMART Exchange. TODO(confirm). |
+| **Filter category** | One group of options in the table filter (e.g. Status). Always named exactly like the column it filters. See [table filter](../design-system/table-filter.md). |
 | **Client code** | Anonymous identifier for a client (`c001`). Used instead of real names. |
 | **Token** | TODO: what a token is exactly (link? one-time code? how long it is valid?) |
 | **Supplier** | A business receiving payments, via Exchange. |

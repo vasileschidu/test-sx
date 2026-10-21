@@ -17,6 +17,12 @@ TODO: what users can do, grouped by area.
 ## Screens / steps
 TODO: main screens (portal) or steps (flow), each with one line on its purpose.
 
+## Table filter
+
+Uses the shared filter ([design-system/table-filter.md](../../design-system/table-filter.md), [decision 0002](../../decisions/0002-shared-table-filter.md)):
+same layout and behavior as every portal. Categories come from this table’s column headers.
+Current categories and gaps: [Consumer Portal: Payments Received](../../design-system/table-filter.md#consumer-portal-payments-received).
+
 ## Business rules
 TODO: rules that are easy to get wrong (limits, approvals, validation, statuses).
 

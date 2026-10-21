@@ -53,7 +53,13 @@ stateDiagram-v2
   Enabled --> OptInRequired: Opt out
 ```
 
-### Business rules
+### Table filter
+
+Uses the shared filter ([design-system/table-filter.md](../../design-system/table-filter.md), [decision 0002](../../decisions/0002-shared-table-filter.md)):
+same layout and behavior as every portal. Categories come from this table’s column headers.
+Current categories and gaps: [SMART Exchange: Payments](../../design-system/table-filter.md#smart-exchange-payments-supplier-portal).
+
+## Business rules
 
 - **Visa agreement email.** Sent through the token service (`workers/sd-sx-token-service`). Only
   addresses in `allowedTestEmails` (`src/data/public-runtime-config.json`) get a real email. Any other

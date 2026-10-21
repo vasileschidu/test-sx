@@ -70,7 +70,10 @@ Expanding a row shows details: summary, line items, notes, attachments, activity
 ### Search, filter, export
 
 - **Search** box.
-- **Filter** with panels: Payee, Payment Type, Status, Failure Reasons, Payment Date (from/to), Source.
+- **Filter**: target is the shared filter. Categories = this table’s column headers, shown only for
+  columns visible in the current tab. See [table filter → Hub AP: Bills & Payables](../../design-system/table-filter.md#smart-hub-ap-bills--payables).
+  Today the code deviates: "Payment Type", "Payment Date" and "Failure Reasons" don’t match their headers; there’s no Due Date filter
+  and no calendar; the date filter shows on Ready to Pay even though its column is hidden there ([D-06–D-09](../../design-system/portal-consistency.md#table-filter)).
   Active filters show as tags; Reset / Apply.
 - **Export** downloads the current rows as `bills-payables-export.csv`.
 - Pagination: 10 / 25 / 50 / 100 per page.
@@ -123,6 +126,11 @@ Things the source-of-truth Figma file has that this code does not. Not standard 
 - Pay modes in Figma: Pay now / Schedule a payment / Pay on Due Date.
 - Carry-over not yet in R2 Figma: **Pending Approval** tab with Approve/Decline (Dual Approval file), calendar filter, multi-select, empty state, "Payment re-submitted" modal.
 - Known Figma copy bug: the SMART Exchange confirmation modal says "SMART Disburse payment token". Don’t copy it.
+
+## Expanded row: known deviations
+
+The Details section and Activity log differ from Figma and from Consumer Portal (activity icons, standard messages,
+empty sections, payment info layout, status badge). See [D-11–D-16](../../design-system/portal-consistency.md#bills--payables-expanded-row-hub-ap).
 
 ## Pay flow
 

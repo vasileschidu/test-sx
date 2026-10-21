@@ -91,6 +91,12 @@ Each delta is one bullet with a category tag:
 | `[content]` | Copy, labels, branding-neutral text changes |
 | `[config]` | Same code, different settings |
 
+## Shared components in variants
+
+A client variant may add, remove or rename **columns** (record it as `[layout]`); the table filter follows automatically.
+A variant must **not** change the layout or behavior of shared components such as the table filter
+([decision 0002](decisions/0002-shared-table-filter.md)).
+
 ## Status values
 
 | Field | Values |
