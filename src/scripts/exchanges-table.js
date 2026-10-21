@@ -153,6 +153,7 @@
   };
   var tableFilterState = {
     search: "",
+    selectedVendorEntries: new Set(),
     selectedCustomers: new Set(),
     selectedStatuses: new Set(),
     selectedMethods: new Set(),
@@ -165,6 +166,7 @@
     initiatedDateMonth: null,
     menuOpen: false,
     activePanel: "root",
+    appliedSelectedVendorEntries: new Set(),
     appliedSelectedCustomers: new Set(),
     appliedSelectedStatuses: new Set(),
     appliedSelectedMethods: new Set(),
@@ -506,28 +508,40 @@
         );
       });
     }
-    if (tableFilterState.appliedSelectedCustomers.size) {
+    // Categories whose column the current tab hides are ignored (wiki/design-system/table-filter.md).
+    var visible = getVisibleFilterCategories();
+    if (visible.vendor_entry && tableFilterState.appliedSelectedVendorEntries.size) {
+      list = list.filter(function (entry) {
+        return tableFilterState.appliedSelectedVendorEntries.has(
+          String((entry && entry.vendorEntry) || ""),
+        );
+      });
+    }
+    if (visible.customer && tableFilterState.appliedSelectedCustomers.size) {
       list = list.filter(function (entry) {
         return tableFilterState.appliedSelectedCustomers.has(
           String((entry && entry.customer) || ""),
         );
       });
     }
-    if (tableFilterState.appliedSelectedStatuses.size) {
+    if (visible.status && tableFilterState.appliedSelectedStatuses.size) {
       list = list.filter(function (entry) {
         return tableFilterState.appliedSelectedStatuses.has(
           String((entry && entry.status) || ""),
         );
       });
     }
-    if (tableFilterState.appliedSelectedMethods.size) {
+    if (visible.method && tableFilterState.appliedSelectedMethods.size) {
       list = list.filter(function (entry) {
         return tableFilterState.appliedSelectedMethods.has(
           String((entry && entry.methodType) || ""),
         );
       });
     }
-    if (tableFilterState.appliedSelectedFailureReasons.size) {
+    if (
+      visible.failure_reason &&
+      tableFilterState.appliedSelectedFailureReasons.size
+    ) {
       list = list.filter(function (entry) {
         return tableFilterState.appliedSelectedFailureReasons.has(
           String(getFailureReason(entry) || ""),
@@ -535,8 +549,9 @@
       });
     }
     if (
-      tableFilterState.appliedInitiatedDateFrom ||
-      tableFilterState.appliedInitiatedDateTo
+      visible.initiated_date &&
+      (tableFilterState.appliedInitiatedDateFrom ||
+        tableFilterState.appliedInitiatedDateTo)
     ) {
       var from = tableFilterState.appliedInitiatedDateFrom || "";
       var to = tableFilterState.appliedInitiatedDateTo || "";
@@ -549,6 +564,46 @@
       });
     }
     return list;
+  }
+
+  // Filter categories follow the table's columns (wiki/design-system/table-filter.md):
+  // a category is offered only while the active tab has its column (shown or not in
+  // Manage columns), and carries the column's label.
+  var FILTER_CATEGORY_COLUMNS = {
+    vendor_entry: "vendorEntry",
+    customer: "customer",
+    status: "status",
+    method: "paymentMethod",
+    failure_reason: "failureReason",
+    initiated_date: "dateInitiated",
+  };
+
+  function getVisibleFilterColumn(panel) {
+    var key = FILTER_CATEGORY_COLUMNS[panel];
+    if (!key) return null;
+    var source = paginationState.allColumns.length
+      ? paginationState.allColumns
+      : paginationState.columns;
+    // Before columns load, treat every category as available.
+    if (!source || !source.length) return { key: key, label: "" };
+    var cols = getTabColumns(source);
+    for (var i = 0; i < cols.length; i++) {
+      if (cols[i] && cols[i].key === key) return cols[i];
+    }
+    return null;
+  }
+
+  function getFilterCategoryLabel(panel) {
+    var col = getVisibleFilterColumn(panel);
+    return col ? col.label : "";
+  }
+
+  function getVisibleFilterCategories() {
+    var visible = {};
+    Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
+      visible[panel] = !!getVisibleFilterColumn(panel);
+    });
+    return visible;
   }
 
   function getVisibleEntriesForActiveTab() {
@@ -765,7 +820,12 @@
   }
 
   function getRenderableColumns(columns) {
-    var visibleColumns = getVisibleColumns(columns);
+    return getTabColumns(getVisibleColumns(columns));
+  }
+
+  /** The columns the active tab offers, before Manage columns is applied. */
+  function getTabColumns(visibleColumns) {
+    visibleColumns = Array.isArray(visibleColumns) ? visibleColumns : [];
     if (normalizeTabKey(_activeTableTabKey || "pending") !== "exceptions") {
       visibleColumns = visibleColumns.filter(function (col) {
         return col && col.key !== "failureReason";
@@ -3926,6 +3986,12 @@
     var filterCountBadges = filterMenu
       ? Array.from(filterMenu.querySelectorAll("[data-filter-count-badge]"))
       : [];
+    var filterVendorEntryPanel = document.getElementById(
+      "sx-table-filter-panel-vendor-entry",
+    );
+    var filterVendorEntriesWrap = document.getElementById(
+      "sx-table-filter-vendor-entries",
+    );
     var filterCustomerPanel = document.getElementById(
       "sx-table-filter-panel-customer",
     );
@@ -4042,7 +4108,8 @@
     }
 
     function normalizeFilterPanel(panel) {
-      return panel === "status" ||
+      return panel === "vendor_entry" ||
+        panel === "status" ||
         panel === "method" ||
         panel === "failure_reason" ||
         panel === "initiated_date"
@@ -4051,6 +4118,9 @@
     }
 
     function copyAppliedFiltersToDraft() {
+      tableFilterState.selectedVendorEntries = cloneSet(
+        tableFilterState.appliedSelectedVendorEntries,
+      );
       tableFilterState.selectedCustomers = cloneSet(
         tableFilterState.appliedSelectedCustomers,
       );
@@ -4077,6 +4147,9 @@
     }
 
     function commitDraftFilters() {
+      tableFilterState.appliedSelectedVendorEntries = cloneSet(
+        tableFilterState.selectedVendorEntries,
+      );
       tableFilterState.appliedSelectedCustomers = cloneSet(
         tableFilterState.selectedCustomers,
       );
@@ -4364,12 +4437,16 @@
         tableFilterState.initiatedDateFromDraft = "";
         tableFilterState.initiatedDateToDraft = "";
         tableFilterState.initiatedDateActiveField = "from";
+      } else if (panel === "vendor_entry") {
+        tableFilterState.selectedVendorEntries.clear();
       } else {
         tableFilterState.selectedCustomers.clear();
       }
     }
 
     function getPanelDraftCount(panel) {
+      if (panel === "vendor_entry")
+        return tableFilterState.selectedVendorEntries.size;
       if (panel === "status") return tableFilterState.selectedStatuses.size;
       if (panel === "method") return tableFilterState.selectedMethods.size;
       if (panel === "failure_reason")
@@ -4387,6 +4464,12 @@
     }
 
     function panelDraftChanged(panel) {
+      if (panel === "vendor_entry") {
+        return !setsEqual(
+          tableFilterState.selectedVendorEntries,
+          tableFilterState.appliedSelectedVendorEntries,
+        );
+      }
       if (panel === "status") {
         return !setsEqual(
           tableFilterState.selectedStatuses,
@@ -4421,6 +4504,7 @@
 
     function hasAnyDraftChanges() {
       return (
+        panelDraftChanged("vendor_entry") ||
         panelDraftChanged("customer") ||
         panelDraftChanged("status") ||
         panelDraftChanged("method") ||
@@ -4431,11 +4515,13 @@
 
     function syncSelectedFiltersToAvailable() {
       var baseEntries = getBaseFilterEntries();
+      var vendorEntrySet = new Set();
       var customerSet = new Set();
       var statusSet = new Set();
       var methodSet = new Set();
       var failureReasonSet = new Set();
       baseEntries.forEach(function (entry) {
+        vendorEntrySet.add(String((entry && entry.vendorEntry) || ""));
         customerSet.add(String((entry && entry.customer) || ""));
         statusSet.add(String((entry && entry.status) || ""));
         methodSet.add(String((entry && entry.methodType) || ""));
@@ -4447,6 +4533,18 @@
         if (getFailureReason(entry))
           failureReasonSet.add(getFailureReason(entry));
       });
+      Array.from(tableFilterState.selectedVendorEntries).forEach(
+        function (vendorEntry) {
+          if (!vendorEntrySet.has(vendorEntry))
+            tableFilterState.selectedVendorEntries.delete(vendorEntry);
+        },
+      );
+      Array.from(tableFilterState.appliedSelectedVendorEntries).forEach(
+        function (vendorEntry) {
+          if (!vendorEntrySet.has(vendorEntry))
+            tableFilterState.appliedSelectedVendorEntries.delete(vendorEntry);
+        },
+      );
       Array.from(tableFilterState.selectedCustomers).forEach(
         function (customer) {
           if (!customerSet.has(customer))
@@ -4525,6 +4623,48 @@
         tableFilterState.appliedInitiatedDateTo =
           tableFilterState.appliedInitiatedDateFrom;
       }
+    }
+
+    function renderVendorEntryFilters() {
+      if (!filterVendorEntriesWrap) return;
+      var counts = new Map();
+      getBaseFilterEntries().forEach(function (entry) {
+        var name = String((entry && entry.vendorEntry) || "").trim();
+        if (!name) return;
+        counts.set(name, (counts.get(name) || 0) + 1);
+      });
+      filterVendorEntriesWrap.innerHTML = Array.from(counts.entries())
+        .sort(function (a, b) {
+          return a[0].localeCompare(b[0]);
+        })
+        .map(function (entry, idx) {
+          return buildFilterCheckbox(
+            "sx-table-filter-vendor-entry-" + idx,
+            entry[0],
+            String(entry[1]),
+            entry[0],
+            tableFilterState.selectedVendorEntries.has(entry[0]),
+          );
+        })
+        .join("");
+    }
+
+    /** Show only the categories whose column is visible in the current tab, labelled like the column. */
+    function syncFilterCategoryVisibility() {
+      if (!filterMenu) return;
+      var visible = getVisibleFilterCategories();
+      filterNavButtons.forEach(function (button) {
+        var isVisible = !!visible[button.getAttribute("data-filter-open")];
+        button.classList.toggle("hidden", !isVisible);
+        button.classList.toggle("flex", isVisible);
+      });
+      Array.prototype.forEach.call(
+        filterMenu.querySelectorAll("[data-filter-label]"),
+        function (el) {
+          var label = getFilterCategoryLabel(el.getAttribute("data-filter-label"));
+          if (label) el.textContent = label;
+        },
+      );
     }
 
     function renderCustomerFilters() {
@@ -4691,20 +4831,42 @@
 
     function renderActiveFilterTags() {
       if (!activeFiltersWrap) return;
+      // Categories whose column the current tab hides are ignored, so they are not counted or shown.
+      var visible = getVisibleFilterCategories();
+      var countedSets = [];
+      if (visible.vendor_entry)
+        countedSets.push(tableFilterState.appliedSelectedVendorEntries);
+      if (visible.customer)
+        countedSets.push(tableFilterState.appliedSelectedCustomers);
+      if (visible.status) countedSets.push(tableFilterState.appliedSelectedStatuses);
+      if (visible.method) countedSets.push(tableFilterState.appliedSelectedMethods);
+      if (visible.failure_reason)
+        countedSets.push(tableFilterState.appliedSelectedFailureReasons);
       renderFilterCountBadge(
         countAppliedFilters(
-          [
-            tableFilterState.appliedSelectedCustomers,
-            tableFilterState.appliedSelectedStatuses,
-            tableFilterState.appliedSelectedMethods,
-            tableFilterState.appliedSelectedFailureReasons,
-          ],
-          tableFilterState.appliedInitiatedDateFrom,
-          tableFilterState.appliedInitiatedDateTo,
+          countedSets,
+          visible.initiated_date && tableFilterState.appliedInitiatedDateFrom,
+          visible.initiated_date && tableFilterState.appliedInitiatedDateTo,
         ),
       );
 
       var tags = [];
+      var selectedVendorEntries = Array.from(
+        tableFilterState.appliedSelectedVendorEntries,
+      )
+        .filter(function (vendorEntry) {
+          return vendorEntry && vendorEntry.trim();
+        })
+        .sort(function (a, b) {
+          return a.localeCompare(b);
+        });
+      if (visible.vendor_entry && selectedVendorEntries.length) {
+        tags.push({
+          type: "vendor_entry",
+          label: getFilterCategoryLabel("vendor_entry"),
+          value: selectedVendorEntries.join(", "),
+        });
+      }
       var selectedCustomers = Array.from(
         tableFilterState.appliedSelectedCustomers,
       )
@@ -4724,14 +4886,14 @@
           return a.localeCompare(b);
         });
 
-      if (selectedCustomers.length) {
+      if (visible.customer && selectedCustomers.length) {
         tags.push({
           type: "customer",
-          label: "Customer",
+          label: getFilterCategoryLabel("customer"),
           value: selectedCustomers.join(", "),
         });
       }
-      if (selectedStatuses.length) {
+      if (visible.status && selectedStatuses.length) {
         var statusText = selectedStatuses
           .map(function (status) {
             return STATUS_LABELS[status] || status;
@@ -4739,7 +4901,7 @@
           .join(", ");
         tags.push({
           type: "status",
-          label: "Status",
+          label: getFilterCategoryLabel("status"),
           value: statusText,
         });
       }
@@ -4750,7 +4912,7 @@
         .sort(function (a, b) {
           return a.localeCompare(b);
         });
-      if (selectedMethods.length) {
+      if (visible.method && selectedMethods.length) {
         var methodText = selectedMethods
           .map(function (method) {
             return getMethodLabelFromType(method);
@@ -4758,7 +4920,7 @@
           .join(", ");
         tags.push({
           type: "method",
-          label: "Method of payment",
+          label: getFilterCategoryLabel("method"),
           value: methodText,
         });
       }
@@ -4771,16 +4933,17 @@
         .sort(function (a, b) {
           return a.localeCompare(b);
         });
-      if (selectedFailureReasons.length) {
+      if (visible.failure_reason && selectedFailureReasons.length) {
         tags.push({
           type: "failure_reason",
-          label: "Failure reason",
+          label: getFilterCategoryLabel("failure_reason"),
           value: selectedFailureReasons.join(", "),
         });
       }
       if (
-        tableFilterState.appliedInitiatedDateFrom ||
-        tableFilterState.appliedInitiatedDateTo
+        visible.initiated_date &&
+        (tableFilterState.appliedInitiatedDateFrom ||
+          tableFilterState.appliedInitiatedDateTo)
       ) {
         var fromLabel = tableFilterState.appliedInitiatedDateFrom
           ? formatDate(tableFilterState.appliedInitiatedDateFrom)
@@ -4790,7 +4953,7 @@
           : "Any";
         tags.push({
           type: "initiated_date",
-          label: "Initiated date",
+          label: getFilterCategoryLabel("initiated_date"),
           value: fromLabel + " - " + toLabel,
         });
       }
@@ -4814,6 +4977,14 @@
     }
 
     function setDetailPanelVisibility(panel) {
+      if (filterVendorEntryPanel) {
+        filterVendorEntryPanel.classList.add("hidden");
+        filterVendorEntryPanel.classList.remove("flex");
+        if (panel === "vendor_entry") {
+          filterVendorEntryPanel.classList.remove("hidden");
+          filterVendorEntryPanel.classList.add("flex");
+        }
+      }
       filterCustomerPanel.classList.add("hidden");
       filterCustomerPanel.classList.remove("flex");
       filterStatusPanel.classList.add("hidden");
@@ -4907,6 +5078,7 @@
 
     function setFilterPanel(panel) {
       var activePanel = normalizeFilterPanel(panel);
+      if (!getVisibleFilterCategories()[activePanel]) activePanel = "customer";
       tableFilterState.activePanel = activePanel;
       setDetailPanelVisibility(activePanel);
       syncFilterNavState(activePanel);
@@ -5053,7 +5225,7 @@
       );
       if (!checkbox) return;
       var panelEl = checkbox.closest(
-        "#sx-table-filter-customers, #sx-table-filter-statuses",
+        "#sx-table-filter-vendor-entries, #sx-table-filter-customers, #sx-table-filter-statuses",
       );
       if (!panelEl)
         panelEl = checkbox.closest(
@@ -5061,7 +5233,10 @@
         );
       var value = checkbox.getAttribute("data-filter-value");
       if (!panelEl || !value) return;
-      if (panelEl.id === "sx-table-filter-customers") {
+      if (panelEl.id === "sx-table-filter-vendor-entries") {
+        if (checkbox.checked) tableFilterState.selectedVendorEntries.add(value);
+        else tableFilterState.selectedVendorEntries.delete(value);
+      } else if (panelEl.id === "sx-table-filter-customers") {
         if (checkbox.checked) tableFilterState.selectedCustomers.add(value);
         else tableFilterState.selectedCustomers.delete(value);
       } else if (panelEl.id === "sx-table-filter-statuses") {
@@ -5299,6 +5474,7 @@
           event.stopPropagation();
           var panelType = openBtn.getAttribute("data-filter-tag-open");
           if (
+            panelType === "vendor_entry" ||
             panelType === "customer" ||
             panelType === "status" ||
             panelType === "method" ||
@@ -5318,6 +5494,10 @@
         event.stopPropagation();
         var type = removeBtn.getAttribute("data-filter-tag-remove");
         if (!type) return;
+        if (type === "vendor_entry") {
+          tableFilterState.selectedVendorEntries.clear();
+          tableFilterState.appliedSelectedVendorEntries.clear();
+        }
         if (type === "customer") {
           tableFilterState.selectedCustomers.clear();
           tableFilterState.appliedSelectedCustomers.clear();
@@ -5355,6 +5535,7 @@
 
     syncTableFilterUi = function () {
       syncSelectedFiltersToAvailable();
+      renderVendorEntryFilters();
       renderCustomerFilters();
       renderStatusFilters();
       renderMethodFilters();
@@ -5362,6 +5543,7 @@
       applyOpenFilterSearches();
       renderInitiatedDateInputs();
       renderInitiatedDateCalendar();
+      syncFilterCategoryVisibility();
       renderFilterNavBadges();
       renderActiveFilterTags();
       syncApplyButtonState();

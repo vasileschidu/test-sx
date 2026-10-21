@@ -471,8 +471,35 @@
     });
   }
 
+  // Filter categories follow the table's columns (wiki/design-system/table-filter.md):
+  // a category is offered only while the active tab has its column (shown or not in Manage columns).
+  var FILTER_CATEGORY_COLUMNS = {
+    customer: 'customer',
+    status: 'status',
+    method: 'paymentMethod',
+    failure_reason: 'failureReason',
+    initiated_date: 'dateInitiated'
+  };
+
+  function getVisibleFilterCategories() {
+    var source = paginationState.allColumns.length ? paginationState.allColumns : paginationState.columns;
+    var visible = {};
+    // Before columns load, treat every category as available.
+    if (!source || !source.length) {
+      Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) { visible[panel] = true; });
+      return visible;
+    }
+    var keys = {};
+    getTabColumns(source).forEach(function (col) { if (col) keys[col.key] = true; });
+    Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
+      visible[panel] = !!keys[FILTER_CATEGORY_COLUMNS[panel]];
+    });
+    return visible;
+  }
+
   function applyTableFilters(entries) {
     var list = Array.isArray(entries) ? entries.slice() : [];
+    var visible = getVisibleFilterCategories();
     var search = String(tableFilterState.search || '').trim().toLowerCase();
     if (search) {
       list = list.filter(function (entry) {
@@ -487,27 +514,27 @@
           failureReason.indexOf(search) !== -1;
       });
     }
-    if (tableFilterState.appliedSelectedCustomers.size) {
+    if (visible.customer && tableFilterState.appliedSelectedCustomers.size) {
       list = list.filter(function (entry) {
         return tableFilterState.appliedSelectedCustomers.has(String(entry && entry.customer || ''));
       });
     }
-    if (tableFilterState.appliedSelectedStatuses.size) {
+    if (visible.status && tableFilterState.appliedSelectedStatuses.size) {
       list = list.filter(function (entry) {
         return tableFilterState.appliedSelectedStatuses.has(String(entry && entry.status || ''));
       });
     }
-    if (tableFilterState.appliedSelectedMethods.size) {
+    if (visible.method && tableFilterState.appliedSelectedMethods.size) {
       list = list.filter(function (entry) {
         return tableFilterState.appliedSelectedMethods.has(String(entry && entry.methodType || ''));
       });
     }
-    if (tableFilterState.appliedSelectedFailureReasons.size) {
+    if (visible.failure_reason && tableFilterState.appliedSelectedFailureReasons.size) {
       list = list.filter(function (entry) {
         return tableFilterState.appliedSelectedFailureReasons.has(String(getFailureReason(entry) || ''));
       });
     }
-    if (tableFilterState.appliedInitiatedDateFrom || tableFilterState.appliedInitiatedDateTo) {
+    if (visible.initiated_date && (tableFilterState.appliedInitiatedDateFrom || tableFilterState.appliedInitiatedDateTo)) {
       var from = tableFilterState.appliedInitiatedDateFrom || '';
       var to = tableFilterState.appliedInitiatedDateTo || '';
       list = list.filter(function (entry) {
@@ -674,7 +701,12 @@
   }
 
   function getRenderableColumns(columns) {
-    var visibleColumns = getVisibleColumns(columns);
+    return getTabColumns(getVisibleColumns(columns));
+  }
+
+  /** The columns the active tab offers, before Manage columns is applied. */
+  function getTabColumns(visibleColumns) {
+    visibleColumns = Array.isArray(visibleColumns) ? visibleColumns : [];
     if (normalizeTabKey(_activeTableTabKey || 'pending') !== 'exceptions') {
       visibleColumns = visibleColumns.filter(function (col) {
         return col && col.key !== 'failureReason';
@@ -3719,12 +3751,14 @@
 
     function renderActiveFilterTags() {
       if (!activeFiltersWrap) return;
+      // Categories whose column the current tab hides are ignored, so they are not counted or shown.
+      var visible = getVisibleFilterCategories();
       renderFilterCountBadge(countAppliedFilters([
-        tableFilterState.appliedSelectedCustomers,
-        tableFilterState.appliedSelectedStatuses,
-        tableFilterState.appliedSelectedMethods,
-        tableFilterState.appliedSelectedFailureReasons
-      ], tableFilterState.appliedInitiatedDateFrom, tableFilterState.appliedInitiatedDateTo));
+        visible.customer ? tableFilterState.appliedSelectedCustomers : null,
+        visible.status ? tableFilterState.appliedSelectedStatuses : null,
+        visible.method ? tableFilterState.appliedSelectedMethods : null,
+        visible.failure_reason ? tableFilterState.appliedSelectedFailureReasons : null
+      ], visible.initiated_date && tableFilterState.appliedInitiatedDateFrom, visible.initiated_date && tableFilterState.appliedInitiatedDateTo));
 
       var tags = [];
       var selectedCustomers = Array.from(tableFilterState.appliedSelectedCustomers)
@@ -3734,14 +3768,14 @@
         .filter(function (status) { return status && status.trim(); })
         .sort(function (a, b) { return a.localeCompare(b); });
 
-      if (selectedCustomers.length) {
+      if (visible.customer && selectedCustomers.length) {
         tags.push({
           type: 'customer',
-          label: 'Customer',
+          label: 'Payer',
           value: selectedCustomers.join(', '),
         });
       }
-      if (selectedStatuses.length) {
+      if (visible.status && selectedStatuses.length) {
         var statusText = selectedStatuses
           .map(function (status) { return STATUS_LABELS[status] || status; })
           .join(', ');
@@ -3754,32 +3788,32 @@
       var selectedMethods = Array.from(tableFilterState.appliedSelectedMethods)
         .filter(function (method) { return method && method.trim(); })
         .sort(function (a, b) { return a.localeCompare(b); });
-      if (selectedMethods.length) {
+      if (visible.method && selectedMethods.length) {
         var methodText = selectedMethods
           .map(function (method) { return getMethodLabelFromType(method); })
           .join(', ');
         tags.push({
           type: 'method',
-          label: 'Method of payment',
+          label: 'Payment Method',
           value: methodText,
         });
       }
       var selectedFailureReasons = Array.from(tableFilterState.appliedSelectedFailureReasons)
         .filter(function (reason) { return reason && reason.trim(); })
         .sort(function (a, b) { return a.localeCompare(b); });
-      if (selectedFailureReasons.length) {
+      if (visible.failure_reason && selectedFailureReasons.length) {
         tags.push({
           type: 'failure_reason',
-          label: 'Failure reason',
+          label: 'Failure Reason',
           value: selectedFailureReasons.join(', '),
         });
       }
-      if (tableFilterState.appliedInitiatedDateFrom || tableFilterState.appliedInitiatedDateTo) {
+      if (visible.initiated_date && (tableFilterState.appliedInitiatedDateFrom || tableFilterState.appliedInitiatedDateTo)) {
         var fromLabel = tableFilterState.appliedInitiatedDateFrom ? formatDate(tableFilterState.appliedInitiatedDateFrom) : 'Any';
         var toLabel = tableFilterState.appliedInitiatedDateTo ? formatDate(tableFilterState.appliedInitiatedDateTo) : 'Any';
         tags.push({
           type: 'initiated_date',
-          label: 'Initiated date',
+          label: 'Date Initiated',
           value: fromLabel + ' - ' + toLabel,
         });
       }
@@ -3881,6 +3915,7 @@
 
     function setFilterPanel(panel) {
       var activePanel = normalizeFilterPanel(panel);
+      if (!getVisibleFilterCategories()[activePanel]) activePanel = 'customer';
       tableFilterState.activePanel = activePanel;
       setDetailPanelVisibility(activePanel);
       syncFilterNavState(activePanel);
@@ -4204,6 +4239,12 @@
       renderFailureReasonFilters();
       renderInitiatedDateInputs();
       renderInitiatedDateCalendar();
+      var visibleCategories = getVisibleFilterCategories();
+      filterNavButtons.forEach(function (button) {
+        var isVisible = !!visibleCategories[button.getAttribute('data-filter-open')];
+        button.classList.toggle('hidden', !isVisible);
+        button.classList.toggle('flex', isVisible);
+      });
       renderFilterNavBadges();
       renderActiveFilterTags();
       syncApplyButtonState();

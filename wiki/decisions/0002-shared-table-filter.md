@@ -30,7 +30,7 @@ hides. Details: [portal consistency audit](../design-system/portal-consistency.m
    table actually shows: its **column headers**. The four portals are SMART Hub AP, SMART Hub AR,
    SMART Exchange and Consumer Portal.
 3. A filter category's **label is exactly the column header**. If a header changes, the filter label changes too.
-4. A category is offered only if its column is **visible** in the current tab.
+4. A category is offered only if the current tab **has** its column, whether or not the user switched it on in Manage columns.
 
 ## Consequences
 - Agents building or changing a table: define the columns first, then derive the filter categories from them using the

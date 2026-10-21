@@ -3,7 +3,7 @@ title: Table filter
 type: guide
 status: draft
 last_reviewed: 2026-10-21
-source: decision 0002 (2026-10-21); follow-up decisions 2026-10-21 (Reset wording, Vendors out of scope, Vendor Entry filterable); current behavior read from code on main
+source: decision 0002 (2026-10-21); follow-up decisions 2026-10-21 (Reset wording, Vendors out of scope, Vendor Entry filterable); filter alignment on branch filter-alignment (2026-10-21)
 ---
 
 # Table filter
@@ -20,8 +20,9 @@ The filter on every portal data table. Decided in [0002](../decisions/0002-share
    Free-text identifiers (amounts, reference numbers) are found through **Search**, not the filter.
 3. **Label = column header, exactly.** Same words, same capitalization, no prefix ("By …") and no plural.
    If a tab renames a column (e.g. Hub's Paid tab shows "Payment Date"), the filter uses that tab's name.
-4. **Visible columns only.** A category appears only when its column is visible in the current tab
-   (including after the user changes **Manage columns**).
+4. **Columns the tab has.** A category appears only when the current tab has its column, whether or not
+   the user has switched that column on in **Manage columns**. Example: Hub’s Ready to Pay tab has no Date Initiated
+   column, so there is no Date Initiated filter there. Failure Reason is off by default in Manage columns but still filterable on Exceptions.
 5. **Category type follows the data:**
 
    | Column data | Category type |
@@ -44,7 +45,7 @@ current implementations. TODO(confirm): check against the Figma table filter in 
 | Date range | From / To fields (MM / DD / YYYY) **with a calendar picker** |
 | Footer | **Reset** + **Apply**. Filters apply only on Apply. Reset clears the selections in the panel ("Clear" is not used) |
 | Active filters | Shown as removable chips under the toolbar; removing a chip applies immediately |
-| Tabs | Filters persist across tabs, but a category whose column the new tab hides is ignored (not shown as a chip) |
+| Tabs | Filters persist across tabs, but a category the new tab doesn’t have is ignored (not applied, counted or shown as a chip) |
 | Empty result | Table empty state. TODO: one shared "no results" message |
 
 ## Filter content per portal
@@ -58,12 +59,12 @@ Columns: Amount, Bill Reference, Payee, Payment Method, Source, Due Date, Date I
 | Category (= header) | Type | Tabs where shown | Today in code |
 |---|---|---|---|
 | Payee | Multi-select + search | all | ✓ |
-| Payment Method | Multi-select | In Progress, Paid, Exceptions | ✗ labelled "Payment Type"; also shown on Ready to Pay, where the column is hidden |
+| Payment Method | Multi-select | In Progress, Paid, Exceptions | ✓ |
 | Source | Multi-select | all | ✓ |
 | Status | Multi-select | all | ✓ |
-| Due Date | Date range | Ready to Pay, Exceptions | ✗ missing |
-| Date Initiated (Paid tab: **Payment Date**) | Date range | In Progress, Paid, Exceptions | ✗ always labelled "Payment Date"; shown on Ready to Pay, where it empties the table |
-| Failure Reason | Multi-select | Exceptions | ✗ labelled "Failure Reasons" |
+| Due Date | Date range | Ready to Pay, Exceptions | ✓ (no calendar yet) |
+| Date Initiated (Paid tab: **Payment Date**) | Date range | In Progress, Paid, Exceptions | ✓ (no calendar yet) |
+| Failure Reason | Multi-select | Exceptions | ✓ |
 
 Searchable, not filterable: Amount, Bill Reference.
 
@@ -86,12 +87,12 @@ Columns: Amount, Vendor Entry, Invoice #, Customer, Date Initiated, Payment Meth
 
 | Category (= header) | Type | Today in code |
 |---|---|---|
-| Vendor Entry | Multi-select + search | ✗ missing |
+| Vendor Entry | Multi-select + search | ✓ |
 | Customer | Multi-select + search | ✓ |
-| Payment Method | Multi-select | ✗ labelled "Payment Type" |
+| Payment Method | Multi-select | ✓ |
 | Status | Multi-select | ✓ |
-| Date Initiated | Date range | ✗ labelled "Payment Date" |
-| Failure Reason | Multi-select (Exceptions tab) | ✗ labelled "Failure Reasons" |
+| Date Initiated | Date range | ✓ |
+| Failure Reason | Multi-select (Exceptions tab) | ✓ |
 
 ### Consumer Portal: Payments Received
 
@@ -99,19 +100,22 @@ Columns: Amount, Payer, Invoice #, Date Initiated, Payment Method, Status, Failu
 
 | Category (= header) | Type | Today in code |
 |---|---|---|
-| Payer | Multi-select + search | ✗ labelled "By customer", no search |
-| Payment Method | Multi-select | ✗ labelled "By method of payment" |
-| Status | Multi-select | ✗ labelled "By status" |
-| Date Initiated | Date range | ✗ labelled "By initiated date" |
-| Failure Reason | Multi-select (Exceptions tab) | ✗ labelled "Failure reason" (lowercase r) |
+| Payer | Multi-select + search | ✓ label; ✗ no search |
+| Payment Method | Multi-select | ✓ |
+| Status | Multi-select | ✓ |
+| Date Initiated | Date range | ✓ |
+| Failure Reason | Multi-select (Exceptions tab) | ✓ |
 
 ## Current implementations (to be replaced)
 
 | Table | Filter code | Missing vs shared spec |
 |---|---|---|
-| Hub Bills & Payables | `src/scripts/bills-payables-table.js` | calendar picker; tab-aware categories |
+| Hub Bills & Payables | `src/scripts/bills-payables-table.js` | calendar picker |
 | Hub Vendors | `src/scripts/vendors-page.js` | out of scope for now |
-| Exchange Payments | `src/scripts/exchanges-table.js` | labels; Vendor Entry category |
-| Consumer Payments Received | `src/scripts/consumer-exchanges-table.js` | Select all; category search; labels; "Clear" → "Reset"; does not use `TableUi` |
+| Exchange Payments | `src/scripts/exchanges-table.js` | nothing for content; still its own code |
+| Consumer Payments Received | `src/scripts/consumer-exchanges-table.js` | Select all; category search; does not use `TableUi` |
+
+Labels, Reset, tab-aware categories and Vendor Entry were aligned in all three tables on 2026-10-21 (option A).
+The single shared component (option B) is still to do: until then, the same rule is implemented three times.
 
 Shared helpers that exist today: `TableUi.filterChip` and `TableUi.filterCheckbox` in `src/scripts/table-ui.js`.

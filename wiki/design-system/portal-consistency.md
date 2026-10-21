@@ -36,13 +36,13 @@ Target: [table-filter.md](table-filter.md), per [decision 0002](../decisions/000
 
 | # | Element | Today | Status |
 |---|---|---|---|
-| D-06 | Filter label vs column header | "Payment Type" vs "Payment Method", "Payment Date" vs "Date Initiated", "Failure Reasons" vs "Failure Reason" (Hub, Exchange); "By customer" vs "Payer" (Consumer) | decided |
-| D-07 | Label style | Plain nouns (Bills, Exchange) vs "By …" (Consumer) | decided: plain, = header |
-| D-08 | Hidden-column filter | Hub Ready to Pay offers "Payment Date", whose column is hidden and empty, so applying it empties the table; Due Date can't be filtered | decided |
-| D-09 | Date picker | Calendar in Exchange and Consumer; plain inputs in Bills and Vendors | decided: calendar |
-| D-10 | Controls | "Reset" (Bills) vs "Clear" (Consumer); Select all and category search missing in Consumer | decided: **Reset** + Apply everywhere |
+| D-06 | Filter label vs column header | "Payment Type" vs "Payment Method", "Payment Date" vs "Date Initiated", "Failure Reasons" vs "Failure Reason" (Hub, Exchange); "By customer" vs "Payer" (Consumer) | fixed (2026-10-21) |
+| D-07 | Label style | Plain nouns (Bills, Exchange) vs "By …" (Consumer) | fixed (2026-10-21) |
+| D-08 | Hidden-column filter | Hub Ready to Pay offers "Payment Date", whose column is hidden and empty, so applying it empties the table; Due Date can't be filtered | fixed (2026-10-21) |
+| D-09 | Date picker | Calendar in Exchange and Consumer; plain inputs in Bills and Vendors | decided: calendar. Exchange and Consumer have it; Hub still missing |
+| D-10 | Controls | "Reset" (Bills) vs "Clear" (Consumer); Select all and category search missing in Consumer | Reset + Apply: fixed (2026-10-21). Select all and category search in Consumer: open |
 | D-10a | Filters without columns | Hub Vendors filters on Source, Verification, Payment method, Last payment date; none is a column | deferred: Vendors page out of scope for now |
-| D-10b | Missing category | Exchange has no filter for its Vendor Entry column | decided: add Vendor Entry (multi-select + search) |
+| D-10b | Missing category | Exchange has no filter for its Vendor Entry column | fixed (2026-10-21) |
 
 ## Bills & Payables expanded row (Hub AP)
 

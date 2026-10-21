@@ -64,7 +64,7 @@ Propose a wiki update in the same PR (or a linked one) whenever you:
 ## 6. Building UI shared across portals
 
 - **Table filter:** use the shared filter. Do not build one inside a page script. Derive the categories from the table’s
-  columns, label each one **exactly** like its column header, and show it only when the column is visible.
+  columns, label each one **exactly** like its column header, and show it only on tabs that have the column (whether or not it is switched on in Manage columns).
   When you add, remove or rename a column, update the filter **and** the per-portal table in
   [design-system/table-filter.md](design-system/table-filter.md).
 - Before changing a top bar, filter, badge, activity log or Payment Preferences layout, check
