@@ -144,6 +144,11 @@
     dueDateFromDraft: "",
     dueDateToDraft: "",
     dueDateActiveField: "from",
+    paymentDateFrom: "",
+    paymentDateTo: "",
+    paymentDateFromDraft: "",
+    paymentDateToDraft: "",
+    paymentDateActiveField: "from",
     filterMenuOpen: false,
     activeFilterPanel: "payee",
     appliedSelectedPayees: new Set(),
@@ -155,8 +160,8 @@
     appliedInitiatedDateTo: "",
     appliedDueDateFrom: "",
     appliedDueDateTo: "",
-    // Applied payment-date ranges per column (adDate, processedDate); each tab shows its own.
-    appliedDateRanges: {},
+    appliedPaymentDateFrom: "",
+    appliedPaymentDateTo: "",
     selectedRowIds: new Set(),
     expandedRows: new Set(),
     sortKey: "",
@@ -445,6 +450,15 @@
     );
     refs.filterDueToInput = document.getElementById(
       "bp-table-filter-due-to-input",
+    );
+    refs.filterPaymentDatePanel = document.getElementById(
+      "bp-table-filter-panel-payment-date",
+    );
+    refs.filterPaymentFromInput = document.getElementById(
+      "bp-table-filter-payment-from-input",
+    );
+    refs.filterPaymentToInput = document.getElementById(
+      "bp-table-filter-payment-to-input",
     );
     refs.filterPayeesWrap = document.getElementById("bp-table-filter-payees");
     refs.filterSourcesWrap = document.getElementById("bp-table-filter-sources");
@@ -1422,66 +1436,37 @@
   }
 
   // Filter categories follow the table's columns (wiki/design-system/table-filter.md):
-  // a category is offered only while the active tab has its column (shown or not in
-  // Manage columns), and carries the column's label.
+  // one category per filterable column header, the same on every tab, labelled like the
+  // column. Rows with no value for a filtered column (e.g. Payment Date before payment)
+  // simply don't match.
   var FILTER_CATEGORY_COLUMNS = {
     payee: "payeeName",
     method: "paymentMethod",
     source: "source",
     due_date: "dueDate",
-    // One category for the tab's payment date: Date Initiated, or Payment Date on Paid.
-    initiated_date: ["adDate", "processedDate"],
+    initiated_date: "adDate",
+    payment_date: "processedDate",
     status: "status",
     failure_reason: "failureReason",
   };
 
-  function getVisibleFilterColumn(panel) {
-    var keys = [].concat(FILTER_CATEGORY_COLUMNS[panel] || []);
-    if (!keys.length) return null;
-    if (panel === "initiated_date" && state.activeTab === "paid") keys.reverse();
-    if (isOptionalDateHidden())
-      keys = keys.filter(function (key) {
-        return key !== OPTIONAL_DATE_KEY;
-      });
-    if (!keys.length) return null;
+  function getFilterColumn(panel) {
+    var key = FILTER_CATEGORY_COLUMNS[panel];
+    if (!key) return null;
     // Before columns load, treat every category as available.
-    if (!state.columns || !state.columns.length)
-      return { key: keys[0], label: "" };
-    var cols = getTabColumns(state.columns.slice());
-    for (var k = 0; k < keys.length; k++) {
-      for (var i = 0; i < cols.length; i++) {
-        if (cols[i] && cols[i].key === keys[k]) return cols[i];
-      }
+    if (!state.columns || !state.columns.length) return { key: key, label: "" };
+    for (var i = 0; i < state.columns.length; i++) {
+      if (state.columns[i] && state.columns[i].key === key) return state.columns[i];
     }
     return null;
   }
 
-  /** Column the payment-date range applies to in this tab, or "" when the tab has none. */
-  function getTabDateColumnKey() {
-    var col = getVisibleFilterColumn("initiated_date");
-    return col ? col.key : "";
-  }
-
-  /** Load the active tab's payment-date range into appliedInitiatedDate*, so each date column keeps its own range. */
-  function syncAppliedDateRangeForTab() {
-    var range = state.appliedDateRanges[getTabDateColumnKey()] || {};
-    state.appliedInitiatedDateFrom = range.from || "";
-    state.appliedInitiatedDateTo = range.to || "";
-  }
-
-  function isAppliedDateRangeActive() {
-    return !!(
-      getTabDateColumnKey() &&
-      (state.appliedInitiatedDateFrom || state.appliedInitiatedDateTo)
-    );
-  }
-
   function isFilterCategoryVisible(panel) {
-    return !!getVisibleFilterColumn(panel);
+    return !!getFilterColumn(panel);
   }
 
   function getFilterCategoryLabel(panel) {
-    var col = getVisibleFilterColumn(panel);
+    var col = getFilterColumn(panel);
     return col ? col.label : "";
   }
 
@@ -1535,11 +1520,21 @@
       return false;
     if (
       visible.initiated_date &&
-      isAppliedDateRangeActive() &&
+      (state.appliedInitiatedDateFrom || state.appliedInitiatedDateTo) &&
       !dateInRange(
-        row[getTabDateColumnKey()],
+        row.adDate,
         state.appliedInitiatedDateFrom,
         state.appliedInitiatedDateTo,
+      )
+    )
+      return false;
+    if (
+      visible.payment_date &&
+      (state.appliedPaymentDateFrom || state.appliedPaymentDateTo) &&
+      !dateInRange(
+        row.processedDate,
+        state.appliedPaymentDateFrom,
+        state.appliedPaymentDateTo,
       )
     )
       return false;
@@ -2335,7 +2330,8 @@
       panel === "method" ||
       panel === "failure_reason" ||
       panel === "initiated_date" ||
-      panel === "due_date"
+      panel === "due_date" ||
+      panel === "payment_date"
     )
       return panel;
     return "payee";
@@ -2359,6 +2355,11 @@
     state.dueDateFromDraft = formatIsoAsUsInput(state.dueDateFrom);
     state.dueDateToDraft = formatIsoAsUsInput(state.dueDateTo);
     state.dueDateActiveField = "from";
+    state.paymentDateFrom = state.appliedPaymentDateFrom || "";
+    state.paymentDateTo = state.appliedPaymentDateTo || "";
+    state.paymentDateFromDraft = formatIsoAsUsInput(state.paymentDateFrom);
+    state.paymentDateToDraft = formatIsoAsUsInput(state.paymentDateTo);
+    state.paymentDateActiveField = "from";
   }
 
   function commitDraftFilters() {
@@ -2371,15 +2372,10 @@
     );
     state.appliedInitiatedDateFrom = state.initiatedDateFrom || "";
     state.appliedInitiatedDateTo = state.initiatedDateTo || "";
-    var dateColumnKey = getTabDateColumnKey();
-    if (dateColumnKey) {
-      state.appliedDateRanges[dateColumnKey] = {
-        from: state.appliedInitiatedDateFrom,
-        to: state.appliedInitiatedDateTo,
-      };
-    }
     state.appliedDueDateFrom = state.dueDateFrom || "";
     state.appliedDueDateTo = state.dueDateTo || "";
+    state.appliedPaymentDateFrom = state.paymentDateFrom || "";
+    state.appliedPaymentDateTo = state.paymentDateTo || "";
   }
 
   function syncSelectedFiltersToAvailable() {
@@ -2457,6 +2453,12 @@
     state.appliedDueDateTo = toIsoDate(state.appliedDueDateTo);
     state.dueDateFromDraft = formatUsInput(state.dueDateFromDraft);
     state.dueDateToDraft = formatUsInput(state.dueDateToDraft);
+    state.paymentDateFrom = toIsoDate(state.paymentDateFrom);
+    state.paymentDateTo = toIsoDate(state.paymentDateTo);
+    state.appliedPaymentDateFrom = toIsoDate(state.appliedPaymentDateFrom);
+    state.appliedPaymentDateTo = toIsoDate(state.appliedPaymentDateTo);
+    state.paymentDateFromDraft = formatUsInput(state.paymentDateFromDraft);
+    state.paymentDateToDraft = formatUsInput(state.paymentDateToDraft);
   }
 
   function renderPayeeFilters() {
@@ -2631,8 +2633,15 @@
     if (visible.failure_reason)
       countedSets.push(state.appliedSelectedFailureReasons);
     var dateCount =
-      (visible.initiated_date && isAppliedDateRangeActive() ? 1 : 0) +
+      (visible.initiated_date &&
+      (state.appliedInitiatedDateFrom || state.appliedInitiatedDateTo)
+        ? 1
+        : 0) +
       (visible.due_date && (state.appliedDueDateFrom || state.appliedDueDateTo)
+        ? 1
+        : 0) +
+      (visible.payment_date &&
+      (state.appliedPaymentDateFrom || state.appliedPaymentDateTo)
         ? 1
         : 0);
     renderFilterCountBadge(countAppliedFilters(countedSets) + dateCount);
@@ -2726,13 +2735,29 @@
         value: dateRangeText(state.appliedDueDateFrom, state.appliedDueDateTo),
       });
     }
-    if (visible.initiated_date && isAppliedDateRangeActive()) {
+    if (
+      visible.initiated_date &&
+      (state.appliedInitiatedDateFrom || state.appliedInitiatedDateTo)
+    ) {
       tags.push({
         type: "initiated_date",
         label: getFilterCategoryLabel("initiated_date"),
         value: dateRangeText(
           state.appliedInitiatedDateFrom,
           state.appliedInitiatedDateTo,
+        ),
+      });
+    }
+    if (
+      visible.payment_date &&
+      (state.appliedPaymentDateFrom || state.appliedPaymentDateTo)
+    ) {
+      tags.push({
+        type: "payment_date",
+        label: getFilterCategoryLabel("payment_date"),
+        value: dateRangeText(
+          state.appliedPaymentDateFrom,
+          state.appliedPaymentDateTo,
         ),
       });
     }
@@ -2844,6 +2869,12 @@
       state.dueDateFromDraft = "";
       state.dueDateToDraft = "";
       state.dueDateActiveField = "from";
+    } else if (panel === "payment_date") {
+      state.paymentDateFrom = "";
+      state.paymentDateTo = "";
+      state.paymentDateFromDraft = "";
+      state.paymentDateToDraft = "";
+      state.paymentDateActiveField = "from";
     } else {
       state.selectedSources.clear();
     }
@@ -2858,6 +2889,8 @@
       return state.initiatedDateFrom || state.initiatedDateTo ? 1 : 0;
     if (panel === "due_date")
       return state.dueDateFrom || state.dueDateTo ? 1 : 0;
+    if (panel === "payment_date")
+      return state.paymentDateFrom || state.paymentDateTo ? 1 : 0;
     return state.selectedSources.size;
   }
 
@@ -2889,6 +2922,12 @@
         state.dueDateTo !== state.appliedDueDateTo
       );
     }
+    if (panel === "payment_date") {
+      return (
+        state.paymentDateFrom !== state.appliedPaymentDateFrom ||
+        state.paymentDateTo !== state.appliedPaymentDateTo
+      );
+    }
     return !setsEqual(state.selectedSources, state.appliedSelectedSources);
   }
 
@@ -2900,7 +2939,8 @@
       panelDraftChanged("method") ||
       panelDraftChanged("failure_reason") ||
       panelDraftChanged("initiated_date") ||
-      panelDraftChanged("due_date")
+      panelDraftChanged("due_date") ||
+      panelDraftChanged("payment_date")
     );
   }
 
@@ -2938,6 +2978,14 @@
     if (refs.filterDueDatePanel) {
       refs.filterDueDatePanel.classList.add("hidden");
       refs.filterDueDatePanel.classList.remove("flex");
+    }
+    if (refs.filterPaymentDatePanel) {
+      refs.filterPaymentDatePanel.classList.add("hidden");
+      refs.filterPaymentDatePanel.classList.remove("flex");
+      if (panel === "payment_date") {
+        refs.filterPaymentDatePanel.classList.remove("hidden");
+        refs.filterPaymentDatePanel.classList.add("flex");
+      }
     }
     if (panel === "due_date" && refs.filterDueDatePanel) {
       refs.filterDueDatePanel.classList.remove("hidden");
@@ -3149,7 +3197,6 @@
       return;
 
     syncFilterUi = function () {
-      syncAppliedDateRangeForTab();
       syncSelectedFiltersToAvailable();
       renderPayeeFilters();
       renderSourceFilters();
@@ -3171,6 +3218,12 @@
       if (refs.filterDueToInput)
         refs.filterDueToInput.value =
           state.dueDateToDraft || formatIsoAsUsInput(state.dueDateTo);
+      if (refs.filterPaymentFromInput)
+        refs.filterPaymentFromInput.value =
+          state.paymentDateFromDraft || formatIsoAsUsInput(state.paymentDateFrom);
+      if (refs.filterPaymentToInput)
+        refs.filterPaymentToInput.value =
+          state.paymentDateToDraft || formatIsoAsUsInput(state.paymentDateTo);
       syncFilterCategoryVisibility();
       renderFilterNavBadges();
       applyOpenFilterSearches();
@@ -3261,7 +3314,7 @@
       syncFilterApplyButtonState();
     });
 
-    // prefix is the state key stem of the date range: "initiatedDate" or "dueDate".
+    // prefix is the state key stem of the date range: "initiatedDate", "dueDate" or "paymentDate".
     function bindDateInput(inputEl, field, prefix) {
       if (!inputEl) return;
       var fromKey = prefix + "From";
@@ -3292,6 +3345,8 @@
     bindDateInput(refs.filterDateToInput, "to", "initiatedDate");
     bindDateInput(refs.filterDueFromInput, "from", "dueDate");
     bindDateInput(refs.filterDueToInput, "to", "dueDate");
+    bindDateInput(refs.filterPaymentFromInput, "from", "paymentDate");
+    bindDateInput(refs.filterPaymentToInput, "to", "paymentDate");
 
     if (refs.filterClearBtn) {
       refs.filterClearBtn.addEventListener("click", function (event) {
@@ -3343,7 +3398,6 @@
         if (type === "initiated_date") {
           state.appliedInitiatedDateFrom = "";
           state.appliedInitiatedDateTo = "";
-          delete state.appliedDateRanges[getTabDateColumnKey()];
           state.initiatedDateFromDraft = "";
           state.initiatedDateToDraft = "";
           if (refs.filterDateFromInput) refs.filterDateFromInput.value = "";
@@ -3356,6 +3410,14 @@
           state.dueDateToDraft = "";
           if (refs.filterDueFromInput) refs.filterDueFromInput.value = "";
           if (refs.filterDueToInput) refs.filterDueToInput.value = "";
+        }
+        if (type === "payment_date") {
+          state.appliedPaymentDateFrom = "";
+          state.appliedPaymentDateTo = "";
+          state.paymentDateFromDraft = "";
+          state.paymentDateToDraft = "";
+          if (refs.filterPaymentFromInput) refs.filterPaymentFromInput.value = "";
+          if (refs.filterPaymentToInput) refs.filterPaymentToInput.value = "";
         }
         state.currentPage = 1;
         syncFilterUi();

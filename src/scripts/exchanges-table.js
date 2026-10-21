@@ -173,8 +173,10 @@
     appliedSelectedFailureReasons: new Set(),
     appliedInitiatedDateFrom: "",
     appliedInitiatedDateTo: "",
-    // Applied payment-date ranges per column (dateInitiated, dateProcessed).
-    appliedDateRanges: {},
+    // Date Initiated and Date Processed share one date panel. The initiatedDate* fields
+    // hold the active date category; the other one waits in dateStore.
+    dateCategory: "initiated_date",
+    dateStore: {},
   };
   var columnVisibilityState = {
     initialized: false,
@@ -490,7 +492,6 @@
 
   function applyTableFilters(entries) {
     var list = Array.isArray(entries) ? entries.slice() : [];
-    syncAppliedDateRangeForTab();
     var search = String(tableFilterState.search || "")
       .trim()
       .toLowerCase();
@@ -551,86 +552,119 @@
         );
       });
     }
-    if (
-      visible.initiated_date &&
-      (tableFilterState.appliedInitiatedDateFrom ||
-        tableFilterState.appliedInitiatedDateTo)
-    ) {
-      var from = tableFilterState.appliedInitiatedDateFrom || "";
-      var to = tableFilterState.appliedInitiatedDateTo || "";
-      var dateColumnKey = getTabDateColumnKey();
+    DATE_CATEGORIES.forEach(function (category) {
+      var range = getDateFields(category);
+      var from = range.appliedInitiatedDateFrom || "";
+      var to = range.appliedInitiatedDateTo || "";
+      if (!visible[category] || (!from && !to)) return;
+      var columnKey = FILTER_CATEGORY_COLUMNS[category];
       list = list.filter(function (entry) {
-        var dateKey = getEntryDateIso(entry, dateColumnKey);
+        var dateKey = getEntryDateIso(entry, columnKey);
         if (!dateKey) return false;
         if (from && dateKey < from) return false;
         if (to && dateKey > to) return false;
         return true;
       });
-    }
+    });
     return list;
   }
 
   // Filter categories follow the table's columns (wiki/design-system/table-filter.md):
-  // a category is offered only while the active tab has its column (shown or not in
-  // Manage columns), and carries the column's label.
+  // one category per filterable column header, the same on every tab, labelled like the
+  // column. Rows with no value for a filtered column simply don't match.
   var FILTER_CATEGORY_COLUMNS = {
     vendor_entry: "vendorEntry",
     customer: "customer",
     status: "status",
     method: "paymentMethod",
     failure_reason: "failureReason",
-    // One category for the tab's payment date: Date Initiated, or Date Processed on Paid.
-    initiated_date: ["dateInitiated", "dateProcessed"],
+    initiated_date: "dateInitiated",
+    processed_date: "dateProcessed",
+  };
+  // Date Processed is added per tab (Paid), so it is not in the column config.
+  var VIRTUAL_FILTER_COLUMNS = {
+    dateProcessed: { key: "dateProcessed", label: "Date Processed" },
   };
 
-  function getVisibleFilterColumn(panel) {
-    var keys = [].concat(FILTER_CATEGORY_COLUMNS[panel] || []);
-    if (!keys.length) return null;
-    if (panel === "initiated_date" && normalizeTabKey(_activeTableTabKey || "pending") === "paid") keys.reverse();
-    if (isOptionalDateHidden())
-      keys = keys.filter(function (key) {
-        return key !== OPTIONAL_DATE_KEY;
-      });
-    if (!keys.length) return null;
-    var key = keys[0];
+  function getFilterColumn(panel) {
+    var key = FILTER_CATEGORY_COLUMNS[panel];
+    if (!key) return null;
+    if (VIRTUAL_FILTER_COLUMNS[key]) return VIRTUAL_FILTER_COLUMNS[key];
     var source = paginationState.allColumns.length
       ? paginationState.allColumns
       : paginationState.columns;
     // Before columns load, treat every category as available.
     if (!source || !source.length) return { key: key, label: "" };
-    var cols = getTabColumns(source);
-    for (var k = 0; k < keys.length; k++) {
-      for (var i = 0; i < cols.length; i++) {
-        if (cols[i] && cols[i].key === keys[k]) return cols[i];
-      }
+    for (var i = 0; i < source.length; i++) {
+      if (source[i] && source[i].key === key) return source[i];
     }
     return null;
   }
 
-  /** Column the payment-date range applies to in this tab, or "" when the tab has none. */
-  function getTabDateColumnKey() {
-    var col = getVisibleFilterColumn("initiated_date");
-    return col ? col.key : "";
-  }
-
-  /** Load the active tab's payment-date range, so each date column keeps its own range. */
-  function syncAppliedDateRangeForTab() {
-    var range = tableFilterState.appliedDateRanges[getTabDateColumnKey()] || {};
-    tableFilterState.appliedInitiatedDateFrom = range.from || "";
-    tableFilterState.appliedInitiatedDateTo = range.to || "";
-  }
-
   function getFilterCategoryLabel(panel) {
-    var col = getVisibleFilterColumn(panel);
+    var col = getFilterColumn(panel);
     return col ? col.label : "";
   }
 
   function getVisibleFilterCategories() {
     var visible = {};
     Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
-      visible[panel] = !!getVisibleFilterColumn(panel);
+      visible[panel] = !!getFilterColumn(panel);
     });
     return visible;
+  }
+
+  var DATE_CATEGORIES = ["initiated_date", "processed_date"];
+  var DATE_FIELDS = [
+    "initiatedDateFrom",
+    "initiatedDateTo",
+    "initiatedDateFromDraft",
+    "initiatedDateToDraft",
+    "initiatedDateActiveField",
+    "initiatedDateMonth",
+    "appliedInitiatedDateFrom",
+    "appliedInitiatedDateTo",
+  ];
+
+  function isDateCategory(panel) {
+    return DATE_CATEGORIES.indexOf(panel) !== -1;
+  }
+
+  function emptyDateFields() {
+    return {
+      initiatedDateFrom: "",
+      initiatedDateTo: "",
+      initiatedDateFromDraft: "",
+      initiatedDateToDraft: "",
+      initiatedDateActiveField: "from",
+      initiatedDateMonth: null,
+      appliedInitiatedDateFrom: "",
+      appliedInitiatedDateTo: "",
+    };
+  }
+
+  /** The date fields of a category: the live panel fields when it is active, else its stored copy. */
+  function getDateFields(category) {
+    if (category === tableFilterState.dateCategory) return tableFilterState;
+    if (!tableFilterState.dateStore[category])
+      tableFilterState.dateStore[category] = emptyDateFields();
+    return tableFilterState.dateStore[category];
+  }
+
+  /** Point the shared date panel at another date category. */
+  function switchDateCategory(category) {
+    if (!isDateCategory(category) || category === tableFilterState.dateCategory)
+      return;
+    var saved = {};
+    DATE_FIELDS.forEach(function (field) {
+      saved[field] = tableFilterState[field];
+    });
+    tableFilterState.dateStore[tableFilterState.dateCategory] = saved;
+    var next = getDateFields(category);
+    DATE_FIELDS.forEach(function (field) {
+      tableFilterState[field] = next[field];
+    });
+    tableFilterState.dateCategory = category;
   }
 
   function getVisibleEntriesForActiveTab() {
@@ -4223,7 +4257,8 @@
         panel === "status" ||
         panel === "method" ||
         panel === "failure_reason" ||
-        panel === "initiated_date"
+        panel === "initiated_date" ||
+        panel === "processed_date"
         ? panel
         : "customer";
     }
@@ -4255,6 +4290,13 @@
         tableFilterState.initiatedDateTo,
       );
       tableFilterState.initiatedDateActiveField = "from";
+      Object.keys(tableFilterState.dateStore).forEach(function (category) {
+        var range = tableFilterState.dateStore[category];
+        range.initiatedDateFrom = range.appliedInitiatedDateFrom || "";
+        range.initiatedDateTo = range.appliedInitiatedDateTo || "";
+        range.initiatedDateFromDraft = formatIsoAsUsInput(range.initiatedDateFrom);
+        range.initiatedDateToDraft = formatIsoAsUsInput(range.initiatedDateTo);
+      });
     }
 
     function commitDraftFilters() {
@@ -4277,13 +4319,11 @@
         tableFilterState.initiatedDateFrom || "";
       tableFilterState.appliedInitiatedDateTo =
         tableFilterState.initiatedDateTo || "";
-      var dateColumnKey = getTabDateColumnKey();
-      if (dateColumnKey) {
-        tableFilterState.appliedDateRanges[dateColumnKey] = {
-          from: tableFilterState.appliedInitiatedDateFrom,
-          to: tableFilterState.appliedInitiatedDateTo,
-        };
-      }
+      Object.keys(tableFilterState.dateStore).forEach(function (category) {
+        var range = tableFilterState.dateStore[category];
+        range.appliedInitiatedDateFrom = range.initiatedDateFrom || "";
+        range.appliedInitiatedDateTo = range.initiatedDateTo || "";
+      });
     }
 
     function getBaseFilterEntries() {
@@ -4549,7 +4589,7 @@
         tableFilterState.selectedMethods.clear();
       } else if (panel === "failure_reason") {
         tableFilterState.selectedFailureReasons.clear();
-      } else if (panel === "initiated_date") {
+      } else if (isDateCategory(panel)) {
         tableFilterState.initiatedDateFrom = "";
         tableFilterState.initiatedDateTo = "";
         tableFilterState.initiatedDateFromDraft = "";
@@ -4569,11 +4609,10 @@
       if (panel === "method") return tableFilterState.selectedMethods.size;
       if (panel === "failure_reason")
         return tableFilterState.selectedFailureReasons.size;
-      if (panel === "initiated_date")
-        return tableFilterState.initiatedDateFrom ||
-          tableFilterState.initiatedDateTo
-          ? 1
-          : 0;
+      if (isDateCategory(panel)) {
+        var dateDraft = getDateFields(panel);
+        return dateDraft.initiatedDateFrom || dateDraft.initiatedDateTo ? 1 : 0;
+      }
       return tableFilterState.selectedCustomers.size;
     }
 
@@ -4606,12 +4645,11 @@
           tableFilterState.appliedSelectedFailureReasons,
         );
       }
-      if (panel === "initiated_date") {
+      if (isDateCategory(panel)) {
+        var dateRange = getDateFields(panel);
         return (
-          tableFilterState.initiatedDateFrom !==
-            tableFilterState.appliedInitiatedDateFrom ||
-          tableFilterState.initiatedDateTo !==
-            tableFilterState.appliedInitiatedDateTo
+          dateRange.initiatedDateFrom !== dateRange.appliedInitiatedDateFrom ||
+          dateRange.initiatedDateTo !== dateRange.appliedInitiatedDateTo
         );
       }
       return !setsEqual(
@@ -4627,7 +4665,8 @@
         panelDraftChanged("status") ||
         panelDraftChanged("method") ||
         panelDraftChanged("failure_reason") ||
-        panelDraftChanged("initiated_date")
+        panelDraftChanged("initiated_date") ||
+        panelDraftChanged("processed_date")
       );
     }
 
@@ -4963,9 +5002,14 @@
       renderFilterCountBadge(
         countAppliedFilters(
           countedSets,
-          visible.initiated_date && tableFilterState.appliedInitiatedDateFrom,
-          visible.initiated_date && tableFilterState.appliedInitiatedDateTo,
-        ),
+        ) +
+          DATE_CATEGORIES.filter(function (category) {
+            var range = getDateFields(category);
+            return (
+              visible[category] &&
+              (range.appliedInitiatedDateFrom || range.appliedInitiatedDateTo)
+            );
+          }).length,
       );
 
       var tags = [];
@@ -5058,23 +5102,25 @@
           value: selectedFailureReasons.join(", "),
         });
       }
-      if (
-        visible.initiated_date &&
-        (tableFilterState.appliedInitiatedDateFrom ||
-          tableFilterState.appliedInitiatedDateTo)
-      ) {
-        var fromLabel = tableFilterState.appliedInitiatedDateFrom
-          ? formatDate(tableFilterState.appliedInitiatedDateFrom)
+      DATE_CATEGORIES.forEach(function (category) {
+        var range = getDateFields(category);
+        if (
+          !visible[category] ||
+          (!range.appliedInitiatedDateFrom && !range.appliedInitiatedDateTo)
+        )
+          return;
+        var fromLabel = range.appliedInitiatedDateFrom
+          ? formatDate(range.appliedInitiatedDateFrom)
           : "Any";
-        var toLabel = tableFilterState.appliedInitiatedDateTo
-          ? formatDate(tableFilterState.appliedInitiatedDateTo)
+        var toLabel = range.appliedInitiatedDateTo
+          ? formatDate(range.appliedInitiatedDateTo)
           : "Any";
         tags.push({
-          type: "initiated_date",
-          label: getFilterCategoryLabel("initiated_date"),
+          type: category,
+          label: getFilterCategoryLabel(category),
           value: fromLabel + " - " + toLabel,
         });
-      }
+      });
 
       if (!tags.length) {
         activeFiltersWrap.innerHTML = "";
@@ -5125,7 +5171,7 @@
       } else if (panel === "failure_reason") {
         filterFailureReasonPanel.classList.remove("hidden");
         filterFailureReasonPanel.classList.add("flex");
-      } else if (panel === "initiated_date") {
+      } else if (isDateCategory(panel)) {
         filterInitiatedDatePanel.classList.remove("hidden");
         filterInitiatedDatePanel.classList.add("flex");
       }
@@ -5198,9 +5244,16 @@
       var activePanel = normalizeFilterPanel(panel);
       if (!getVisibleFilterCategories()[activePanel]) activePanel = "customer";
       tableFilterState.activePanel = activePanel;
+      switchDateCategory(activePanel);
       setDetailPanelVisibility(activePanel);
       syncFilterNavState(activePanel);
-      if (activePanel === "initiated_date") {
+      if (isDateCategory(activePanel)) {
+        Array.prototype.forEach.call(
+          filterMenu.querySelectorAll("[data-date-panel-label]"),
+          function (el) {
+            el.textContent = getFilterCategoryLabel(activePanel);
+          },
+        );
         setInitiatedDateMonthFromIso(
           getSelectedDateForActiveField() ||
             tableFilterState.initiatedDateFrom ||
@@ -5381,7 +5434,7 @@
           tableFilterState.initiatedDateTo,
       );
       renderInitiatedDateInputs();
-      setDateCalendarVisible(tableFilterState.activePanel === "initiated_date");
+      setDateCalendarVisible(isDateCategory(tableFilterState.activePanel));
     }
 
     function setDateFieldFromInput(field, rawInput) {
@@ -5597,7 +5650,8 @@
             panelType === "status" ||
             panelType === "method" ||
             panelType === "failure_reason" ||
-            panelType === "initiated_date"
+            panelType === "initiated_date" ||
+            panelType === "processed_date"
           ) {
             syncTableFilterUi();
             setFilterMenuOpen(true);
@@ -5632,15 +5686,15 @@
           tableFilterState.selectedFailureReasons.clear();
           tableFilterState.appliedSelectedFailureReasons.clear();
         }
-        if (type === "initiated_date") {
-          tableFilterState.initiatedDateFrom = "";
-          tableFilterState.initiatedDateTo = "";
-          tableFilterState.initiatedDateFromDraft = "";
-          tableFilterState.initiatedDateToDraft = "";
-          tableFilterState.initiatedDateActiveField = "from";
-          tableFilterState.appliedInitiatedDateFrom = "";
-          tableFilterState.appliedInitiatedDateTo = "";
-          delete tableFilterState.appliedDateRanges[getTabDateColumnKey()];
+        if (isDateCategory(type)) {
+          var removed = getDateFields(type);
+          removed.initiatedDateFrom = "";
+          removed.initiatedDateTo = "";
+          removed.initiatedDateFromDraft = "";
+          removed.initiatedDateToDraft = "";
+          removed.initiatedDateActiveField = "from";
+          removed.appliedInitiatedDateFrom = "";
+          removed.appliedInitiatedDateTo = "";
         }
         refreshTableForActiveTab();
       });
@@ -5653,7 +5707,6 @@
     });
 
     syncTableFilterUi = function () {
-      syncAppliedDateRangeForTab();
       syncSelectedFiltersToAvailable();
       renderVendorEntryFilters();
       renderCustomerFilters();

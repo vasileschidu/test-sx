@@ -30,12 +30,16 @@ hides. Details: [portal consistency audit](../design-system/portal-consistency.m
    table actually shows: its **column headers**. The four portals are SMART Hub AP, SMART Hub AR,
    SMART Exchange and Consumer Portal.
 3. A filter category's **label is exactly the column header**. If a header changes, the filter label changes too.
-4. A category is offered only if the current tab **has** its column, whether or not the user switched it on in Manage columns.
+4. **The same categories on every tab.** The filter lists all of the portal's filterable column headers on every tab,
+   even where the current tab has no value for a column (e.g. Payment Date on Ready to Pay). Filtering on such a column simply
+   returns no rows there. (Revised 2026-10-21. It replaces an earlier rule that hid categories per tab.)
 
 ## Consequences
 - Agents building or changing a table: define the columns first, then derive the filter categories from them using the
   per-portal tables in [table-filter.md](../design-system/table-filter.md#filter-content-per-portal).
   Never add a filter for a data point that has no column.
 - The four current implementations must be replaced by the shared component (tracked in the audit).
+- Date columns that mean different things get their own categories: Hub has Due Date, Date Initiated and Payment Date;
+  Exchange and Consumer have Date Initiated and Date Processed.
 - Client variants may add or remove **columns**, and the filter follows automatically. A variant must not
   change the filter's layout or behavior.

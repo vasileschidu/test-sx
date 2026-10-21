@@ -1096,6 +1096,17 @@
                                                                     clip-rule="evenodd" />
                                                             </svg>
                                                         </button>
+                                                        <button type="button" data-filter-open="processed_date" data-filter-nav
+                                                            class="flex w-full items-center justify-between gap-3 rounded-md px-3 py-2 text-left text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5">
+                                                            <span class="min-w-0 flex-1" data-filter-label="processed_date">Date Processed</span>
+                                                            <span data-filter-count-badge="processed_date" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
+                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor"
+                                                                class="size-4 text-gray-500 dark:text-gray-400">
+                                                                <path fill-rule="evenodd"
+                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
+                                                                    clip-rule="evenodd" />
+                                                            </svg>
+                                                        </button>
                                                     </div>
                                                 </div>
                                                 <div class="min-h-0 min-w-0 flex-1 bg-white dark:bg-gray-800">
@@ -1125,7 +1136,7 @@
                                                     </div>
                                                     <div id="sx-table-filter-panel-initiated-date" class="hidden h-full min-h-0 flex-col">
                                                         <div class="border-b border-gray-200 px-3 py-3 dark:border-white/10">
-                                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100" data-filter-label="initiated_date">Date Initiated</p>
+                                                            <p class="text-sm font-semibold text-gray-900 dark:text-gray-100" data-date-panel-label>Date Initiated</p>
                                                         </div>
                                                         <div class="space-y-3 px-3 py-3">
                                                             <div>
@@ -2384,7 +2395,7 @@
     </el-dialog>
 
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
-    <script src="../../../src/scripts/consumer-exchanges-table.js?v=20261021-optdate"></script>
+    <script src="../../../src/scripts/consumer-exchanges-table.js?v=20261021-allcats2"></script>
 
   <script src="../../../src/scripts/review-modal.js"></script>
 </body>

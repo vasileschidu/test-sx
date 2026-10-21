@@ -19,10 +19,9 @@ The filter on every portal data table. Decided in [0002](../decisions/0002-share
 2. **Categories come from columns.** Each filterable column becomes one category. No column means no filter.
    Free-text identifiers (amounts, reference numbers) are found through **Search**, not the filter.
 3. **Label = column header, exactly.** Same words, same capitalization, no prefix ("By …") and no plural.
-   When a tab shows a different date column (e.g. Payment Date on Hub's Paid tab), the filter uses that column's name.
-4. **Columns the tab has.** A category appears only when the current tab has its column, whether or not
-   the user has switched that column on in **Manage columns**. Example: Hub’s Ready to Pay tab has no Date Initiated
-   column, so there is no Date Initiated filter there. Failure Reason is off by default in Manage columns but still filterable on Exceptions.
+4. **Same list on every tab.** The filter shows every filterable column header of the portal on every tab, whether or not
+   the current tab shows that column or has values in it. A filter on a column the tab has no values for returns no rows there
+   (e.g. Payment Date on Hub's Ready to Pay). Applied filters stay applied, and visible as chips, on every tab.
 5. **Category type follows the data:**
 
    | Column data | Category type |
@@ -45,7 +44,7 @@ current implementations. TODO(confirm): check against the Figma table filter in 
 | Date range | From / To fields (MM / DD / YYYY) **with a calendar picker** |
 | Footer | **Reset** + **Apply**. Filters apply only on Apply. Reset clears the selections in the panel ("Clear" is not used) |
 | Active filters | Shown as removable chips under the toolbar; removing a chip applies immediately |
-| Tabs | Filters persist across tabs, but a category the new tab doesn’t have is ignored (not applied, counted or shown as a chip) |
+| Tabs | Same categories on every tab. Applied filters persist across tabs and always apply |
 | Empty result | Table empty state. TODO: one shared "no results" message |
 
 ## Date columns per portal
@@ -74,12 +73,9 @@ TODO(confirm): the rule doesn't cover **Exceptions**. It keeps Date Initiated (a
 payment was initiated. TODO(confirm): Exchange and Consumer have no In Progress tab. Processing payments sit in **Pending**,
 so Date Initiated is opt-in for them as well.
 
-**Filter:** the "initiated / processed" date is one filter category, and its label follows the tab's column
-(Date Initiated, Payment Date or Date Processed). A range applies only to the date column it was set on, so a range set on
-Paid doesn't carry over to Exceptions.
-- An opt-in Date Initiated is filterable only once the user has switched it on (otherwise its cells are empty and filtering would empty the table).
-- On Paid the category always targets Payment Date / Date Processed, even when Date Initiated is switched on. TODO: allow two date categories
-  on one tab in the shared component (option B).
+**Filter:** each date is its own category, on every tab: Hub has Due Date, Date Initiated and Payment Date;
+Exchange and Consumer have Date Initiated and Date Processed. In Exchange and Consumer the two dates share one date panel
+(with calendar), and each keeps its own range. Opening the other date in the filter switches the panel between them.
 
 ## Filter content per portal
 
@@ -89,14 +85,16 @@ Derived from each table's columns on `main` (2026-10-21). When columns change, u
 
 Columns: Amount, Bill Reference, Payee, Payment Method, Source, Due Date, Date Initiated, Payment Date, Status, Failure Reason.
 
-| Category (= header) | Type | Tabs where shown | Today in code |
+All categories show on every tab.
+
+| Category (= header) | Type | Has values on | Today in code |
 |---|---|---|---|
-| Payee | Multi-select + search | all | ✓ |
+| Payee | Multi-select + search | all tabs | ✓ |
 | Payment Method | Multi-select | In Progress, Paid, Exceptions | ✓ |
-| Source | Multi-select | all | ✓ |
-| Status | Multi-select | all | ✓ |
-| Due Date | Date range | Ready to Pay, Exceptions | ✓ (no calendar yet) |
-| Date Initiated | Date range | In Progress, Exceptions; Ready to Pay when switched on | ✓ (no calendar yet) |
+| Source | Multi-select | all tabs | ✓ |
+| Status | Multi-select | all tabs | ✓ |
+| Due Date | Date range | all tabs (column shown on Ready to Pay, Exceptions) | ✓ (no calendar yet) |
+| Date Initiated | Date range | In Progress, Paid, Exceptions | ✓ (no calendar yet) |
 | Payment Date | Date range | Paid | ✓ (no calendar yet) |
 | Failure Reason | Multi-select | Exceptions | ✓ |
 
@@ -125,8 +123,8 @@ Columns: Amount, Vendor Entry, Invoice #, Customer, Date Initiated / Date Proces
 | Customer | Multi-select + search | ✓ |
 | Payment Method | Multi-select | ✓ |
 | Status | Multi-select | ✓ |
-| Date Initiated | Date range (Exceptions; Pending tabs when switched on) | ✓ |
-| Date Processed | Date range (Paid tab) | ✓ |
+| Date Initiated | Date range | ✓ |
+| Date Processed | Date range (values on Paid only) | ✓ |
 | Failure Reason | Multi-select (Exceptions tab) | ✓ |
 
 ### Consumer Portal: Payments Received
@@ -138,8 +136,8 @@ Columns: Amount, Payer, Invoice #, Date Initiated / Date Processed (per tab), Pa
 | Payer | Multi-select + search | ✓ label; ✗ no search |
 | Payment Method | Multi-select | ✓ |
 | Status | Multi-select | ✓ |
-| Date Initiated | Date range (Exceptions; Pending when switched on) | ✓ |
-| Date Processed | Date range (Paid tab) | ✓ |
+| Date Initiated | Date range | ✓ |
+| Date Processed | Date range (values on Paid only) | ✓ |
 | Failure Reason | Multi-select (Exceptions tab) | ✓ |
 
 ## Current implementations (to be replaced)
@@ -151,7 +149,7 @@ Columns: Amount, Payer, Invoice #, Date Initiated / Date Processed (per tab), Pa
 | Exchange Payments | `src/scripts/exchanges-table.js` | nothing for content; still its own code |
 | Consumer Payments Received | `src/scripts/consumer-exchanges-table.js` | Select all; category search; does not use `TableUi` |
 
-Labels, Reset, tab-aware categories and Vendor Entry were aligned in all three tables on 2026-10-21 (option A).
+Labels, Reset, one category list for all tabs, separate date categories and Vendor Entry were aligned in all three tables on 2026-10-21 (option A).
 The single shared component (option B) is still to do: until then, the same rule is implemented three times.
 
 Shared helpers that exist today: `TableUi.filterChip` and `TableUi.filterCheckbox` in `src/scripts/table-ui.js`.

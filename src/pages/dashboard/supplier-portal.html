@@ -1843,6 +1843,29 @@
                                         class="hidden shrink-0"
                                       />
                                     </button>
+                                    <button
+                                      type="button"
+                                      data-filter-open="processed_date"
+                                      data-filter-nav
+                                      class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10"
+                                    >
+                                      <span class="min-w-0 flex-1" data-filter-label="processed_date"
+                                        >Date Processed</span
+                                      >
+                                      <span
+                                        data-filter-count-badge="processed_date"
+                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        >0</span
+                                      >
+                                      <img
+                                        src="../../../src/assets/table/chevron-right.svg"
+                                        width="20"
+                                        height="20"
+                                        alt=""
+                                        data-nav-chevron
+                                        class="hidden shrink-0"
+                                      />
+                                    </button>
                                   </div>
                                 </div>
                                 <div
@@ -2071,7 +2094,7 @@
                                       <p
                                         class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-200"
                                       >
-                                        <span data-filter-label="initiated_date">Date Initiated</span>
+                                        <span data-date-panel-label>Date Initiated</span>
                                       </p>
                                     </div>
                                     <div class="space-y-3 px-3 py-3">
@@ -3968,7 +3991,7 @@
 
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
     <script src="../../../src/scripts/table-ui.js?v=20261006f"></script>
-    <script src="../../../src/scripts/exchanges-table.js?v=20261021-optdate"></script>
+    <script src="../../../src/scripts/exchanges-table.js?v=20261021-allcats"></script>
 
     <script src="../../../src/scripts/review-modal.js"></script>
   </body>

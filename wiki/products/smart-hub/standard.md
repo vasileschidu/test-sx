@@ -73,10 +73,10 @@ Expanding a row shows details: summary, line items, notes, attachments, activity
 ### Search, filter, export
 
 - **Search** box.
-- **Filter**: target is the shared filter. Categories = this table’s column headers, shown only for
-  columns the current tab has. See [table filter → Hub AP: Bills & Payables](../../design-system/table-filter.md#smart-hub-ap-bills--payables).
-  Categories: Payee, Payment Method, Status, Failure Reason, Due Date, Date Initiated / Payment Date (per tab), Source, each
-  only on tabs that have the column. Active filters show as chips; Reset / Apply.
+- **Filter**: target is the shared filter. Categories = this table’s column headers, the same on every tab.
+  See [table filter → Hub AP: Bills & Payables](../../design-system/table-filter.md#smart-hub-ap-bills--payables).
+  Categories: Payee, Payment Method, Status, Failure Reason, Due Date, Date Initiated, Payment Date, Source.
+  Active filters show as chips on every tab; Reset / Apply.
   Remaining gap: the date ranges have no calendar picker yet ([D-09](../../design-system/portal-consistency.md#table-filter)).
 - **Export** downloads the current rows as `bills-payables-export.csv`.
 - Pagination: 10 / 25 / 50 / 100 per page.
