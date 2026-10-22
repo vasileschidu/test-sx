@@ -27,9 +27,19 @@
         "sortable": true
       },
       {
+        "key": "dateProcessed",
+        "label": "Date Processed",
+        "sortable": true
+      },
+      {
         "key": "paymentMethod",
         "label": "Payment Method",
         "type": "paymentMethod"
+      },
+      {
+        "key": "paymentReference",
+        "label": "Payment Reference",
+        "type": "paymentReference"
       },
       {
         "key": "status",

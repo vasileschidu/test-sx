@@ -22,6 +22,11 @@ Shared vocabulary. If a term is used differently in one product, say so in that 
 | **Balance Account** | Holding account that SMART Disburse funds move into until the recipient claims the token. |
 | **Origination account** | The payer bank account a Hub payment is sent from. |
 | **Supplier Portal** | Name used in the code and nav for SMART Exchange. TODO(confirm). |
+| **Due Date** | When a bill is due. SMART Hub AP only. |
+| **Date Initiated** | When a payment was started. On by default while a payment is in flight (In Progress / Processing, Scheduled) and on Exceptions; off by default on Pending and Paid tabs (switch on in Manage columns). |
+| **Payment Date** | When a Hub AP payment completed. Paid tab. SMART Exchange and Consumer Portal call the same thing **Date Processed**. |
+| **Date Processed** | When a payment completed, in SMART Exchange and Consumer Portal. Paid tab. See Payment Date. |
+| **Filter category** | One group of options in the table filter (e.g. Status). Always named exactly like the column it filters. See [table filter](../design-system/table-filter.md). |
 | **Client code** | Anonymous identifier for a client (`c001`). Used instead of real names. |
 | **Token** | TODO: what a token is exactly (link? one-time code? how long it is valid?) |
 | **Supplier** | A business receiving payments, via Exchange. |

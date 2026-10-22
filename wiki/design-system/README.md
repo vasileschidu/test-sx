@@ -13,6 +13,8 @@ It does not replace Figma.
 
 - **Library:** 🛠 **SMART System**, `figma.com/design/PdvEp0MAIlof6O8MYaXCcy`
 - **Which Figma file to use for which screen:** [figma-files.md](figma-files.md)
+- **Shared component specs:** [table-filter.md](table-filter.md)
+- **Where portals differ today:** [portal-consistency.md](portal-consistency.md)
 - **Code implementation:** Tailwind (CDN) + vanilla JS web components in `src/scripts/`. There is no
   separate component package; shared UI lives in files like `nav-component.js`, `topbar-component.js`,
   `table-ui.js`.
@@ -51,6 +53,7 @@ The audit recommends moving these into SMART System. Until that happens, expect 
 - Payment methods list + add bank account modal
 - Profile layout shared by vendor, customer and company
 - Data table with status badges
+- **Table filter**: decided ([table-filter.md](table-filter.md), [decision 0002](../decisions/0002-shared-table-filter.md)): one layout and behavior everywhere, content per portal from column headers
 - OTP and verification screen
 
 TODO: owner and timeline for the consolidation.

@@ -13,3 +13,4 @@ One file per decision: `NNNN-short-title.md`. Template: [templates/decision.md](
 | # | Title | Status | Products |
 |---|---|---|---|
 | [0001](0001-wiki-structure.md) | Wiki structure, standard vs variants | proposed | suite |
+| [0002](0002-shared-table-filter.md) | One table filter for all portals, content per portal | accepted | smart-hub, smart-exchange, consumer-portal |

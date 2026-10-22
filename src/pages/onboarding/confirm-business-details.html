@@ -70,8 +70,9 @@
 
           <!-- Actions: Next sits on the right half on desktop, full width on phones -->
           <div class="mt-auto flex px-4 pb-6 lg:px-14 lg:pb-14">
-            <div class="flex w-full gap-8">
-              <span class="hidden flex-1 lg:block" aria-hidden="true"></span>
+            <!-- Two equal columns: with flex-1 the button's padding made it wider than half. -->
+            <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
+              <span class="hidden lg:block" aria-hidden="true"></span>
               <button type="submit" data-identity-next disabled
                 class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white shadow-xs hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
                 Next

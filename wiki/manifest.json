@@ -91,14 +91,17 @@
       "title": "Design system",
       "pages": [
         { "path": "design-system/README.md", "label": "Overview" },
-        { "path": "design-system/figma-files.md", "label": "Figma files" }
+        { "path": "design-system/figma-files.md", "label": "Figma files" },
+        { "path": "design-system/table-filter.md", "label": "Table filter" },
+        { "path": "design-system/portal-consistency.md", "label": "Portal consistency audit" }
       ]
     },
     {
       "title": "Decisions",
       "pages": [
         { "path": "decisions/README.md", "label": "All decisions" },
-        { "path": "decisions/0001-wiki-structure.md", "label": "0001 Wiki structure" }
+        { "path": "decisions/0001-wiki-structure.md", "label": "0001 Wiki structure" },
+        { "path": "decisions/0002-shared-table-filter.md", "label": "0002 Shared table filter" }
       ]
     },
     {
