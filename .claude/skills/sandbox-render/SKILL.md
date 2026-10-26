@@ -68,3 +68,5 @@ Footer gaps in Figma tablet frames: many `(t)` frames keep the phone frame's hei
 - Quick 404 check inside a render: `--eval "performance.getEntriesByType('resource').filter(e=>e.responseStatus>=400).map(e=>e.name)"`.
 - payment-closed in the MP flow needs `--pre "SDOnboardingContext.saveState({revokedReason:'…'})"` on the MP seed; without it the page redirects to allocation.
 - The Figma MCP has a per-seat call limit. In QA runs, do the Figma checks first so they aren't lost.
+- render.mjs cannot hover. For hover checks, send CDP `Input.dispatchMouseEvent` (mouseMoved) to the button's centre and diff its computed styles before and after.
+- On bank-summary, `window.OBDecline` only exists after you open the modal through the sidebar "Decline Payment" button. The faster-money modal needs about 2.5s after the click before its buttons exist.

@@ -221,7 +221,7 @@
     );
   }
 
-  var PRIMARY_BTN = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-md bg-[linear-gradient(156deg,#3773ff_3.3%,#2254ca_99.2%)] px-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
+  var PRIMARY_BTN = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
   var SECONDARY_BTN = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-md border border-[#d1d5db] bg-white px-[17px] text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
 
   function howItWorks() {
