@@ -19,13 +19,13 @@
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
   <script src="../../../src/scripts/onboarding-transitions.js?v=20261021a"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261021a"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261026a"></script>
   <script src="../../../src/scripts/onboarding-field.js?v=20261013a"></script>
-  <script src="../../../src/scripts/onboarding-modal.js?v=20261013b"></script>
+  <script src="../../../src/scripts/onboarding-modal.js?v=20261026e"></script>
   <script src="../../../src/scripts/onboarding-flow.js?v=20261013k"></script>
   <script src="../../../src/scripts/onboarding-stepper.js?v=20261013a"></script>
     <script src="../../../src/scripts/onboarding-debit.js"></script>
-  <script src="../../../src/scripts/card-created.js"></script>
+  <script src="../../../src/scripts/card-created.js?v=20261026b"></script>
   <link rel="stylesheet" href="../../../src/styles/cursor.css" />
 </head>
 
@@ -55,7 +55,7 @@
             <div data-cc-receipt class="flex w-full flex-col items-center">
               <!-- Payment amount -->
               <section aria-label="Payment amount" data-ob-tone="dark"
-                class="relative z-[2] h-[173px] w-full overflow-hidden rounded-2xl bg-[linear-gradient(137deg,#3773ff_3.3%,#2254ca_99.2%)] shadow-[0px_20px_50px_-12px_rgba(0,0,0,0.25)]">
+                class="relative z-[2] h-[173px] w-full overflow-hidden rounded-2xl bg-[linear-gradient(137deg,#3773ff_3.3%,#2254ca_99.2%)]">
                 <div aria-hidden="true" class="pointer-events-none absolute inset-0">
                   <span class="absolute top-[-85.37px] left-[-41.37px] flex size-[198.7px] items-center justify-center"><img src="../../assets/onboarding/bubble-1.svg" alt="" width="162.266" height="162.266" class="block max-w-none -rotate-[105deg]"></span>
                   <span class="absolute top-[110.25px] left-[-9.61px] flex size-[143.1px] items-center justify-center"><img src="../../assets/onboarding/bubble-2.svg" alt="" width="116.858" height="116.858" class="block max-w-none -rotate-[105deg]"></span>
@@ -89,15 +89,15 @@
           </div>
 
           <!-- Actions -->
-          <div class="flex flex-1 flex-col items-center justify-end lg:min-h-[184px] lg:px-14 lg:pb-14">
-            <div class="flex w-full max-w-[588px] flex-col gap-4">
+          <div class="flex flex-1 flex-col items-center justify-end pb-6 lg:min-h-[184px] lg:px-14 lg:pb-14">
+            <div class="flex w-full max-w-[608px] flex-col gap-4 lg:max-w-[588px]">
               <button type="button" data-cc-download
-                class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-[10px] bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[25px] pl-[23px] text-base leading-6 font-medium text-white shadow-xs hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:bg-[linear-gradient(163deg,#3773ff_3.3%,#2254ca_99.2%)]">
+                class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[25px] pl-[23px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:bg-[linear-gradient(163deg,#3773ff_3.3%,#2254ca_99.2%)]">
                 <img src="../../assets/onboarding/icon-download-solid.svg" alt="" width="20" height="20" class="size-5">
                 Download Receipt
               </button>
               <button type="button" data-cc-finish
-                class="flex w-full cursor-pointer items-center justify-center rounded-[10px] border border-[#d1d5db] bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                class="flex w-full cursor-pointer items-center justify-center rounded-md border border-[#d1d5db] bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                 Finish and Close
               </button>
             </div>

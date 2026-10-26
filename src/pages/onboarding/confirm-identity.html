@@ -4,7 +4,7 @@
     node 19447:65397). The payee agrees to receive a one-time code by email (or
     phone with ?channel=phone), requests it, and submits it within its validity
     window. Logic: src/scripts/confirm-identity.js; settings:
-    src/data/sd-verification.json. Too many failed attempts lead to revoked.html.
+    src/data/sd-verification.json. Too many failed attempts lead to payment-closed.html (revoked).
 -->
 <!doctype html>
 <html lang="en" class="h-full">
@@ -19,14 +19,14 @@
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
   <script src="../../../src/scripts/onboarding-transitions.js?v=20261021a"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261021a"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261026a"></script>
   <script src="../../../src/scripts/onboarding-field.js?v=20261013a"></script>
-  <script src="../../../src/scripts/onboarding-modal.js?v=20261013b"></script>
-  <script src="../../../src/scripts/onboarding-decline.js"></script>
+  <script src="../../../src/scripts/onboarding-modal.js?v=20261026e"></script>
+  <script src="../../../src/scripts/onboarding-decline.js?v=20261026d"></script>
   <script src="../../../src/scripts/onboarding-flow.js?v=20261013k"></script>
   <script src="../../../src/scripts/onboarding-stepper.js?v=20261013a"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
-  <script src="../../../src/scripts/confirm-identity.js"></script>
+  <script src="../../../src/scripts/confirm-identity.js?v=20261026a"></script>
   <link rel="stylesheet" href="../../../src/styles/cursor.css" />
 </head>
 
@@ -46,19 +46,17 @@
 
           <div class="flex flex-col gap-6 px-4 pt-10 lg:gap-9 lg:px-14 lg:pt-14">
             <!-- Title + intro -->
-            <div class="flex w-full max-w-[460px] flex-col gap-4">
-              <div class="flex flex-col gap-2.5">
-                <img data-verify-icon src="../../assets/onboarding/icon-envelope-solid.svg" alt="" width="24" height="24" class="size-6">
+            <div class="flex w-full max-w-[460px] flex-col gap-6">
+              <img data-verify-icon src="../../assets/onboarding/icon-envelope-solid.svg" alt="" width="24" height="24" class="size-6">
+              <div class="flex flex-col gap-4">
                 <h1 data-verify-title class="text-3xl leading-9 font-semibold text-[#1f2937]">Verification Step</h1>
-              </div>
-              <div class="flex flex-col gap-2.5 text-sm leading-5 text-gray-500">
-                <p data-verify-intro>
+                <p data-verify-intro class="text-sm leading-5 text-gray-500">
                   For your security we need to authenticate you. We'll send a verification code to the
                   <span data-verify-channel-label>email address</span>
                   <span data-ob-skeleton data-verify-contact class="font-semibold text-gray-900">rach****@mail.com</span><span class="text-gray-900">.</span>
                 </p>
-                <p data-verify-ready>Select <span class="font-semibold text-gray-900">Request Code</span> when ready.</p>
               </div>
+              <p data-verify-ready class="text-sm leading-5 text-gray-500">Select <span class="font-semibold text-gray-900">Request Code</span> when ready.</p>
             </div>
 
             <!-- Code entry (after a code has been requested) -->
@@ -83,7 +81,7 @@
           </div>
 
           <!-- Consent + actions -->
-          <div class="mt-auto flex flex-col gap-8 px-4 pb-6 lg:px-14 lg:pb-14">
+          <div class="mt-auto flex flex-col gap-6 px-4 pb-6 lg:px-14 lg:pb-14">
             <label data-verify-consent class="flex cursor-pointer items-start gap-3">
               <!-- SMART System "Checkbox + Text": 16px box, #2563EB with a white check when ticked -->
               <span class="relative mt-0.5 flex size-4 shrink-0">
@@ -92,13 +90,13 @@
                 <img src="../../assets/onboarding/icon-checkbox-check.svg" alt="" width="12" height="12"
                   class="pointer-events-none absolute top-1/2 left-1/2 hidden size-3 -translate-x-1/2 -translate-y-1/2 peer-checked:block">
               </span>
-              <span class="text-sm leading-5 text-gray-500">I agree to receive verification codes from Transcard.</span>
+              <span class="text-sm leading-5 font-medium text-gray-500">I agree to receive verification codes from Transcard.</span>
             </label>
-            <div class="flex flex-col-reverse gap-4 lg:grid lg:grid-cols-2 lg:gap-8">
+            <div class="flex flex-col-reverse gap-6 lg:grid lg:grid-cols-2 lg:gap-8">
               <button type="button" data-verify-request disabled
-                class="flex flex-1 cursor-pointer items-center justify-center rounded-[10px] border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-[#ebebeb] disabled:text-gray-500 disabled:opacity-40 disabled:hover:bg-[#ebebeb]">Request Code</button>
+                class="flex flex-1 cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-[#ebebeb] disabled:text-gray-500 disabled:opacity-40 disabled:hover:bg-[#ebebeb]">Request Code</button>
               <button type="submit" data-verify-submit disabled
-                class="flex flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-[25px] py-4 text-base leading-6 font-medium text-white shadow-xs hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">Submit Code</button>
+                class="flex flex-1 cursor-pointer items-center justify-center rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-[25px] py-4 text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">Submit Code</button>
             </div>
           </div>
         </form>

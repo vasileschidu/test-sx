@@ -63,7 +63,7 @@ window.OBSign = (function () {
         '</div>' +
       '</div>' +
       '<div class="flex shrink-0 border-t border-[#e5e7eb] px-6 py-5">' +
-        '<button type="button" data-sign-submit class="flex flex-1 cursor-pointer items-center justify-center rounded-md bg-[#2563eb] px-3.5 py-2.5 text-base leading-6 font-semibold text-white shadow-xs hover:bg-[#3b82f6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb]">Submit</button>' +
+        '<button type="button" data-sign-submit class="' + window.OBModal.PRIMARY_BUTTON + '">Submit</button>' +
       '</div>';
   }
 

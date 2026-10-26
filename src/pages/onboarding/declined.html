@@ -15,15 +15,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261021a"></script>
-  <script src="../../../src/scripts/onboarding-modal.js?v=20261013b"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261026a"></script>
+  <script src="../../../src/scripts/onboarding-modal.js?v=20261026e"></script>
   <script src="../../../src/scripts/onboarding-declined.js"></script>
   <link rel="stylesheet" href="../../../src/styles/cursor.css" />
 </head>
 
-<body class="min-h-full bg-white font-['Inter'] antialiased lg:bg-gray-100">
-  <main class="flex min-h-screen w-full justify-center px-4 pt-16 pb-8 lg:items-center lg:py-12">
-    <div class="flex w-full max-w-[512px] flex-col gap-8 bg-white lg:rounded-lg lg:p-8">
+<body class="min-h-full bg-white font-['Inter'] antialiased md:bg-[#f9fafb]">
+  <main class="flex min-h-screen w-full justify-center px-4 pt-16 pb-8 md:items-center md:py-12">
+    <div class="flex w-full max-w-[512px] flex-col gap-8 bg-white md:rounded-lg md:p-8">
 
       <div class="flex w-full flex-col gap-4">
         <div class="flex size-12 items-center justify-center rounded-full bg-[#fef2f2]">
@@ -31,7 +31,7 @@
         </div>
         <h1 class="text-2xl leading-8 font-semibold text-gray-900">Your SMART Disburse access has been revoked</h1>
 
-        <dl class="flex w-full flex-col gap-2 rounded-lg border border-gray-200 bg-gray-50 p-4">
+        <dl class="flex w-full flex-col gap-4 rounded-lg border border-gray-200 bg-gray-50 p-4">
           <div class="flex flex-col gap-0.5">
             <dt class="text-sm leading-5 text-gray-600">Reason</dt>
             <dd class="text-sm leading-5 font-medium text-gray-900">Payment Declined by <span data-declined-by>you</span></dd>
@@ -40,7 +40,7 @@
             <dt class="text-sm leading-5 text-gray-600">Details</dt>
             <dd class="text-sm leading-5 font-medium text-gray-900">
               <span data-declined-reason>—</span>
-              <span data-declined-note class="block font-normal text-gray-500"></span>
+              <span data-declined-note class="mt-0.5 block font-normal text-gray-500 empty:hidden"></span>
             </dd>
           </div>
         </dl>

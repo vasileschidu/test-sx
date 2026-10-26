@@ -32,9 +32,39 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
 
 - **Buttons (General/Button):** 56px tall in SD, even though the design system's largest is 44. Labels are `text-base/font-medium` (Medium, not Semi Bold).
 - **Disabled General/Button:** opacity 40%. Secondary: border gray-300, text gray-500, fill `#ebebeb` (renders `#f7f7f7`). Primary: blue gradient at 40%.
+- **Bordered secondary buttons stay 56:** a 1px border on top of `py-4` makes 58. Use `py-[15px]` or `h-14` (`OBModal` buttons carry `h-14`). Pages that read `payableContext` must render after `SDOnboardingContext.bootstrap()` resolves, or they race (payment-closed showed $0.00).
 - **Inputs:** SMART System "Text Field [New]" with all states. In code use `window.OBField` (`onboarding-field.js`), never hand-written input classes.
 - **Closed screens** (revoked, expired, declined, disputed, no longer available) use the **Tokens** card style: left-aligned card, Reason/Details box, "Need assistance?" contact card with copy icons, language selector.
 - **Modals:** dialog modals (illustration + title + buttons) have the X on the LEFT. Modals with a title bar (Review and agree, document viewer) have it on the RIGHT.
+
+## Decisions from the full QA sweep (user, 2026-10-26)
+
+- **Gap above the primary CTA is 56 at every breakpoint.** Done in Figma (2026-10-26): forms use Content `itemSpacing 56`; summary screens (Title/Groups/Consents/Footer) keep 40 between blocks and use Footer `paddingTop 16`. Fixed-height mobile frames grew by 16.
+- The receipt date may wrap to two lines on Submitted screens ("… AM (ET)"). Leave it as is.
+- On tablet, the Submitted / Card Created **action buttons are 608** wide (the full tablet content width). The receipt paper itself stays 302, as in Figma (t).
+- Verification-failure revoke uses the Tokens "Request no longer available – Revoked" screen (`payment-closed.html`). The old centred `revoked.html` is retired.
+- "See allocations log" on Change Allocation shows **only after a change exists** (code: `mp.log.length > 1`). Figma states before any change hide it.
+- Choose Payment Method chips (Message / Expiration / Full details): **phone hugs** (103/110/114, centred); **tablet and desktop are FILL, equal** (197 / 180 each). Code: `md:flex-1`. (Corrected 2026-10-26 after the Figma (t) frame was re-checked.)
+- The Dispute Message textarea is **88** tall.
+- **Titles are Regular + Semi Bold** (e.g. "Let's make sure **it's you!**"), consistent across steps.
+- The Payment Amount card has **no shadow**.
+- Disabled secondary button: keep the gray rule above (#ebebeb at 40%). Figma frames showing white are wrong.
+- Title block gaps: forms (General/Title) title → subtitle **16**; summary screens ("One Final Step") **10**. Summaries on phone/tablet: 40 between amount block, groups and consents (desktop 36). "I want my money faster!" sits 24 below the amount card.
+- Client contact card (closed screens, Contact Us modal): value rows are 20 tall (text-sm/leading-5).
+- Modal primary buttons (Submit, OK, Send and Continue…) use the **gradient** primary style, as in Figma. They do not use flat blue. Code: `OBModal.PRIMARY_BUTTON` (`onboarding-modal.js`): gradient 153°, no glow, disabled 40%. The document viewer Next/Done stays a small flat button (Figma 3.3).
+- A bank-verification failure goes to the Tokens revoked screen. The reason reads "Exhausted attempts to verify bank account by Rachel Morris", with a matching Figma screen in section 8.
+- Figma row gaps of 240 (where mobile frames grew by 16) are accepted; don't re-layout just for that.
+- **Button corner radius is 6** for every SD General/Button (primary, secondary, page, modal, md size), in Figma and code (`rounded-md`). The user changed this from 8 to 6 on 2026-10-26 (6 = design-system default). The "Change" pill keeps its pill radius.
+- **No glow on buttons anywhere.** Remove the 0 16 24 rgba(55,115,255,.16) shadow from primary buttons in code and Figma (Figma: override effects locally on instances, don't change the library) (user, 2026-10-26).
+- "Review and agree" dialog: **Cancel and Accept are General/Button size md** (secondary + primary), in Figma and code (user, 2026-10-26).
+  Spec (Figma, 2026-10-26): h32, padding 6/10, gap 4, radius 6, label Inter Medium 14/20, hug width. Primary: gradient #3773FF→#2254CA, white text, no shadow; disabled = 40% opacity. Secondary: white fill, 1px inside stroke #D1D5DB, text #374151, shadow 0 1 2 rgba(0,0,0,.05). No icons. Footer gap 10 between them.
+- **Primary buttons have no shadow at all** (gradient, flat blue, red; page, modal and pill). Only bordered secondaries keep shadow-xs (user, 2026-10-26).
+  Code: `OBModal.BUTTON` = secondary base (with shadow-xs), `OBModal.BUTTON_BASE` = filled primaries (no shadow), `OBModal.PRIMARY_BUTTON_MD` / `SECONDARY_BUTTON_MD` = size md (Review and agree).
+- The **56 gap above the CTA also applies to Change Allocation and Dispute** (multi-party), at every breakpoint (user, 2026-10-26). Figma: Spacer fixed 24 (16+24+16). Phone frames hug so the gap is exactly 56. Tablet/desktop 4.1 frames keep the CTA bottom-anchored, so the gap is at least 56 (user, 2026-10-26).
+- 8.13 Bank Summary title stays all Semi Bold, as in Figma (user, 2026-10-26).
+- Secondary buttons keep the design-system 0 1 2 rgba(0,0,0,.05) shadow (it is not the glow). The "Change" pill in the Current Allocation card keeps its pill radius (user, 2026-10-26).
+- Change Allocation (m) frames: the gap above the CTA is exactly 56, matching code (user, 2026-10-26).
+- Don't change library components (SMART System) for SD-only fixes. Override locally in the SD file.
 
 ## Figma page organisation
 

@@ -4,25 +4,29 @@
 // Usage:
 //   node render.mjs --url <url> [--w 375] [--h 812] [--out shot.png]
 //                   [--click "<css selector>"] [--eval "<js expression returning JSON-able>"]
-//                   [--wait 3500] [--full]
+//                   [--wait 6000] [--full] [--element "<selector>"]
+//                   [--seed <entry url>] [--pre "<js run on the seed page>"]
 //
 // `--window-size` in headless Chrome cannot go below ~500px, so this uses the DevTools
-// protocol (Emulation.setDeviceMetricsOverride). Each run gets its own port and profile,
-// so several runs can go in parallel.
+// protocol (Emulation.setDeviceMetricsOverride). Each run gets its own free port and
+// profile, so several runs can go in parallel (keep it to about 3 at a time on a busy machine).
+// The final path is checked: a redirect away from --url is reported on stderr.
 import { spawn } from 'node:child_process';
 import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
+import { createServer } from 'node:net';
 
 const args = Object.fromEntries(process.argv.slice(2).reduce((acc, a, i, all) => {
   if (a.startsWith('--')) acc.push([a.slice(2), all[i + 1] && !all[i + 1].startsWith('--') ? all[i + 1] : true]);
   return acc;
 }, []));
 if (!args.url) { console.error('missing --url'); process.exit(2); }
-const W = +(args.w || 375), H = +(args.h || 812), WAIT = +(args.wait || 3500);
+const W = +(args.w || 375), H = +(args.h || 812), WAIT = +(args.wait || 6000);
 
 const CHROME = process.env.CHROME || '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
-const port = 9400 + Math.floor(Math.random() * 500);
+// Ask the OS for a free port so parallel runs never attach to each other's Chrome.
+const port = await new Promise(r => { const s = createServer(); s.listen(0, '127.0.0.1', () => { const p = s.address().port; s.close(() => r(p)); }); });
 const profile = mkdtempSync(join(tmpdir(), 'sd-render-'));
 const chrome = spawn(CHROME, ['--headless=new', '--disable-gpu', '--hide-scrollbars',
   `--remote-debugging-port=${port}`, `--user-data-dir=${profile}`, 'about:blank'], { stdio: 'ignore' });
@@ -43,8 +47,17 @@ try {
 
   await send('Emulation.setDeviceMetricsOverride', { width: W, height: H, deviceScaleFactor: 1, mobile: W < 1024 });
   await send('Page.enable');
+  // --seed <url>: open this page first (e.g. index.html?flow=multi-party) so the demo
+  // state is stored in this run's profile before the target page loads.
+  if (args.seed) { await send('Page.navigate', { url: args.seed }); await sleep(3500); }
+  // --pre <js>: runs on the seed page, e.g. SDOnboardingContext.saveState({...}) so summary
+  // and submitted pages have the data they need instead of redirecting.
+  if (args.pre) { await evaluate(args.pre); await sleep(300); }
   await send('Page.navigate', { url: args.url });
   await sleep(WAIT);
+  const landed = await evaluate('location.pathname');
+  const wanted = new URL(args.url).pathname;
+  if (landed !== wanted) console.error(`REDIRECTED: asked for ${wanted}, landed on ${landed}`);
   if (args.click) { await evaluate(`(document.querySelector(${JSON.stringify(args.click)})||{click(){}}).click()`); await sleep(800); }
   if (args.eval) { const v = await evaluate(args.eval); console.log(typeof v === 'string' ? v : JSON.stringify(v)); }
   if (args.out) {

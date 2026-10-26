@@ -8,7 +8,7 @@
  *   2. code     – "Check your email/phone"; enter the code before it expires.
  *                 Request New Code unlocks when the timer runs out.
  *   3. errors   – incorrect code, or code expired; each uses one attempt.
- *   4. revoked  – no attempts left: the user is sent to revoked.html.
+ *   4. revoked  – no attempts left: the user is sent to payment-closed.html (revoked).
  *
  * Prototype rules (src/data/sd-verification.json): any 6-digit code passes
  * except `incorrectDemoCode`, so the error state can be shown on demand.
@@ -22,7 +22,7 @@
   var REQUIRED = ['channel', 'codeLength', 'validitySeconds', 'maxAttempts', 'incorrectDemoCode'];
   var ASSETS = '../../assets/onboarding/';
   var NEXT_URL = 'confirm-business-details.html';
-  var REVOKED_URL = 'revoked.html';
+  var REVOKED_URL = 'payment-closed.html';
 
   var CHANNELS = {
     email: { icon: 'icon-envelope-solid.svg', label: 'email address', check: 'Check your email' },

@@ -19,17 +19,17 @@
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
   <script src="../../../src/scripts/onboarding-transitions.js?v=20261021a"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261021a"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261026a"></script>
   <script src="../../../src/scripts/onboarding-field.js?v=20261013a"></script>
-  <script src="../../../src/scripts/onboarding-modal.js?v=20261013b"></script>
-  <script src="../../../src/scripts/onboarding-decline.js"></script>
+  <script src="../../../src/scripts/onboarding-modal.js?v=20261026e"></script>
+  <script src="../../../src/scripts/onboarding-decline.js?v=20261026d"></script>
   <script src="../../../src/scripts/onboarding-flow.js?v=20261013k"></script>
   <script src="../../../src/scripts/onboarding-stepper.js?v=20261013a"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
   <script src="../../../src/scripts/onboarding-substeps.js"></script>
-  <script src="../../../src/scripts/onboarding-consents.js"></script>
-  <script src="../../../src/scripts/onboarding-sign.js"></script>
-  <script src="../../../src/scripts/onboarding-faster.js"></script>
+  <script src="../../../src/scripts/onboarding-consents.js?v=20261026d"></script>
+  <script src="../../../src/scripts/onboarding-sign.js?v=20261026b"></script>
+  <script src="../../../src/scripts/onboarding-faster.js?v=20261026e"></script>
   <script src="../../../src/scripts/virtual-card-summary.js"></script>
   <link rel="stylesheet" href="../../../src/styles/cursor.css" />
 </head>
@@ -47,10 +47,10 @@
       <div class="flex flex-1 flex-col lg:min-h-screen">
 
         <div data-ob-content data-vcs-variant="check" class="flex flex-1 flex-col gap-14">
-          <div class="flex flex-col gap-9 px-4 pt-10 lg:px-14 lg:pt-14">
+          <div class="flex flex-col gap-10 px-4 pt-10 lg:gap-9 lg:px-14 lg:pt-14">
             <div data-ob-substeps="Check Request|Summary" data-ob-substep="1"></div>
 
-            <div class="flex w-full flex-col gap-9">
+            <div class="flex w-full flex-col gap-10 lg:gap-9">
               <div class="flex w-full flex-col gap-6">
                 <div class="flex flex-col gap-2.5">
                   <h1 class="text-3xl leading-9 text-[#1f2937]">One <span class="font-semibold">Final Step</span></h1>
@@ -59,7 +59,7 @@
 
                 <!-- Payment amount -->
                 <section aria-label="Payment amount" data-ob-tone="dark"
-                  class="relative h-[173px] w-full overflow-hidden rounded-2xl bg-[linear-gradient(149deg,#3773ff_3.3%,#2254ca_99.2%)] shadow-[0px_20px_50px_-12px_rgba(0,0,0,0.25)]">
+                  class="relative h-[173px] w-full overflow-hidden rounded-2xl bg-[linear-gradient(149deg,#3773ff_3.3%,#2254ca_99.2%)]">
                   <div aria-hidden="true" class="pointer-events-none absolute inset-0">
                     <span class="absolute top-[-85.37px] left-[-41.37px] flex size-[198.7px] items-center justify-center"><img src="../../assets/onboarding/bubble-1.svg" alt="" width="162.266" height="162.266" class="block max-w-none -rotate-[105deg]"></span>
                     <span class="absolute top-[110.25px] left-[-9.61px] flex size-[143.1px] items-center justify-center"><img src="../../assets/onboarding/bubble-2.svg" alt="" width="116.858" height="116.858" class="block max-w-none -rotate-[105deg]"></span>
@@ -76,10 +76,10 @@
                     </p>
                   </div>
                 </section>
-              </div>
 
-              <button type="button" data-vcs-faster
-                class="cursor-pointer self-center rounded-md px-2.5 py-1.5 text-sm leading-5 font-semibold text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">I want my money faster!</button>
+                <button type="button" data-vcs-faster
+                  class="cursor-pointer self-center rounded-md px-2.5 py-1.5 text-sm leading-5 font-semibold text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">I want my money faster!</button>
+              </div>
 
               <!-- Entered details, rendered by virtual-card-summary.js -->
               <div data-vcs-groups class="flex w-full flex-col gap-3"></div>
@@ -93,9 +93,9 @@
           <div class="mt-auto flex px-4 pb-6 lg:px-14 lg:pb-14">
             <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
               <a href="check-request.html"
-                class="hidden flex-1 items-center justify-center rounded-[10px] border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
               <button type="button" data-vcs-submit disabled
-                class="flex flex-1 cursor-pointer items-center justify-center rounded-[10px] bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-[25px] py-4 text-base leading-6 font-medium text-white shadow-xs hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
+                class="flex flex-1 cursor-pointer items-center justify-center rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-[25px] py-4 text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
                 Deposit <span data-vcs-deposit-amount class="ml-1">$487.00</span>
               </button>
             </div>
