@@ -29,13 +29,20 @@ Where a shipped screen and these docs disagree, the screen is ground truth: fix 
 3. Figma connections: `figma-b` = Agile Partners files (SMART System, product files);
    `figma-a` = eGov files. SMART System (`PdvEp0MAIlof6O8MYaXCcy`) holds the tokens.
 
-## Definition of done
-- Load every changed page at desktop (1440) and phone (390) width: no console errors, no 404s,
-  no horizontal scroll. Check dark mode on dashboard pages (`localStorage.theme = 'dark'`).
-- Click through the changed flow once. Report what you checked and what you could not.
-- New pattern → components skill. New token or role → Figma first, then
-  `src/scripts/design-tokens.js` + `wiki/design-system/tokens.md`.
-- Bump the `?v=` tag on a changed script that pages load with one.
+## Agents (same pattern as GEAP)
+- **`proto-engineer`** builds UI in code; **`figma-designer`** draws it in Figma with the SMART System
+  library. Order: code first, then Figma. Each reads its playbook core (`.claude/playbooks/<agent>.md`),
+  greps — never reads whole — its lessons file, and appends lessons after every job.
+- **`ui-qa-code`** and **`ui-qa-figma`** are the definition of done for UI work (`model: sonnet`).
+
+## Definition of done (UI)
+1. Serve with `python3 tools/serve.py` (no cache).
+2. `npm run qa:code -- --pages <changed pages> --files <changed files> [--dark]` and
+   `npm run qa:hover -- --pages <changed pages>` → zero major findings (or run the `ui-qa-code` agent).
+3. Refactors / token swaps: `tools/ui-qa/pixel-compare.mjs` before/after → identical, or every diff explained.
+4. Figma: `ui-qa-figma` → PASS. Code first, then Figma.
+5. New pattern → components skill; new token or role → Figma first, then `design-tokens.js` + `wiki/design-system/tokens.md`.
+6. Bump the `?v=` tag on a changed script that pages load with one. Report what you checked.
 
 ## Usage budget
 Read `.claude/skills/usage-budget/SKILL.md` before launching agents or long Figma work:

@@ -17,6 +17,10 @@ Goal: agents build with **our** components and tokens, and use as little of ever
 | `.claude/skills/design-system/SKILL.md` | Tokens: text roles (`type-*`), semantic colours (`text-secondary`, `bg-brand`…), spacing, radius, dark mode. |
 | `.claude/skills/usage-budget/SKILL.md` | Model per job, tight briefs, few Figma calls, hand-offs. |
 | `.claude/handoff/` | One note per milestone so a fresh session doesn't re-read old conversations. |
+| `.claude/agents/` | `proto-engineer` (code), `figma-designer` (Figma), `ui-qa-code`, `ui-qa-figma` (definition of done). |
+| `.claude/playbooks/` | Each builder's short core + a lessons archive it searches and appends to after every job. |
+| `tools/ui-qa/` | `code-audit`, `hover-audit`, `pixel-compare` (Chrome), `figma-audit.js` (read-only, inside Figma). |
+| `tools/serve.py` | Local server without caching (`npm run serve`). |
 | [Design tokens](design-system/tokens.md) | Full Figma ↔ code token table. |
 
 ## Source of truth, in order
@@ -25,6 +29,14 @@ Goal: agents build with **our** components and tokens, and use as little of ever
 3. Figma — layout and composition only.
 
 If a shipped screen and the docs disagree, the screen wins and the doc gets fixed.
+
+## Checking UI yourself
+```
+npm install            # once: playwright-core (uses your installed Chrome), pngjs, pixelmatch
+npm run serve          # http://localhost:8899
+npm run qa:code -- --pages src/pages/dashboard/vendors.html --dark
+npm run qa:hover -- --pages src/pages/dashboard/vendors.html
+```
 
 ## For people
 - Found a component that isn't in the inventory? Add it (or ask the agent to) in the same pull request.

@@ -4,12 +4,20 @@
   "description": "Static HTML prototype for the SMART Exchange payment platform, including a multi-step vendor onboarding flow and a dashboard with sidebar navigation and payments table.",
   "main": "tailwind.config.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "python3 tools/serve.py",
+    "qa:code": "node tools/ui-qa/code-audit.mjs",
+    "qa:hover": "node tools/ui-qa/hover-audit.mjs",
+    "qa:pixel": "node tools/ui-qa/pixel-compare.mjs"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "flag-icons": "^7.5.0"
+  },
+  "devDependencies": {
+    "pixelmatch": "^5.3.0",
+    "playwright-core": "^1.64.1",
+    "pngjs": "^7.0.0"
   }
 }
