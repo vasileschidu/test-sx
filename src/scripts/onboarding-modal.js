@@ -31,7 +31,7 @@ window.OBModal = (function () {
   // gap 4, radius 6, Inter Medium 14/20, hugs the label. The secondary's 1px border sits inside the 32.
   var BUTTON_MD_BASE = 'inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 text-sm leading-5 font-medium focus-visible:outline-2 focus-visible:outline-offset-2';
   var PRIMARY_BUTTON_MD = BUTTON_MD_BASE + ' py-1.5 bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] text-white hover:brightness-110 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100';
-  var SECONDARY_BUTTON_MD = BUTTON_MD_BASE + ' border border-[#d1d5db] bg-white py-[5px] text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-blue-600';
+  var SECONDARY_BUTTON_MD = BUTTON_MD_BASE + ' border border-[#d1d5db] bg-white py-[5px] text-[#374151] hover:bg-gray-50 focus-visible:outline-blue-600';
 
   function validateData(data, requiredFields) {
     if (!data) return false;

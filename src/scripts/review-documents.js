@@ -250,7 +250,7 @@
             '</a>' +
           '</div>' +
           '<button type="button" data-doc-prev ' + (index === 0 ? 'disabled ' : '') +
-            'class="' + SMALL_BTN + ' border border-[#d1d5db] bg-white text-[#374151] shadow-xs hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white">Previous</button>' +
+            'class="' + SMALL_BTN + ' border border-[#d1d5db] bg-white text-[#374151] shadow-xs disabled:shadow-none hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white">Previous</button>' +
           '<button type="button" data-doc-next class="' + SMALL_BTN + ' bg-[#2563eb] text-white hover:bg-[#3b82f6]">' + (last ? 'Done' : 'Next') + '</button>' +
         '</div>';
     }

@@ -64,6 +64,7 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
 - 8.13 Bank Summary title stays all Semi Bold, as in Figma (user, 2026-10-26).
 - Secondary buttons keep the design-system 0 1 2 rgba(0,0,0,.05) shadow (it is not the glow). The "Change" pill in the Current Allocation card keeps its pill radius (user, 2026-10-26).
 - Change Allocation (m) frames: the gap above the CTA is exactly 56, matching code (user, 2026-10-26).
+- **Disabled secondary buttons have no shadow**, and the Review and agree md Cancel has no shadow, as in Figma/library (user, 2026-10-26). Enabled 56px secondaries keep the 0 1 2 shadow. Code: `disabled:shadow-none`; `SECONDARY_BUTTON_MD` has no shadow.
 - Don't change library components (SMART System) for SD-only fixes. Override locally in the SD file.
 
 ## Figma page organisation
