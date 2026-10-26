@@ -5,7 +5,7 @@ description: Shared design and workflow rules for the SMART Disburse (SD) onboar
 
 # SMART Disburse: shared rules
 
-These rules are shared by the `figma`, `sandbox` and `qa` agents. If you learn a new rule or the
+These rules are shared by the `sd-figma`, `sd-sandbox`, `sd-qa` and `sd-flow-mapper` agents. **On SMART Disburse they override** the suite skills `components` and `design-system` and `CLAUDE.md` where those disagree; elsewhere in the suite they don't apply. If you learn a new rule or the
 user changes one, update **this file** (not the agent files) and say so in your report.
 
 Repo-wide rules still apply: `PROJECT_RULES.md` (code) and `wiki/AGENTS.md` (wiki, confidentiality,
@@ -66,6 +66,18 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
 - Change Allocation (m) frames: the gap above the CTA is exactly 56, matching code (user, 2026-10-26).
 - **Disabled secondary buttons have no shadow**, and the Review and agree md Cancel has no shadow, as in Figma/library (user, 2026-10-26). Enabled 56px secondaries keep the 0 1 2 shadow. Code: `disabled:shadow-none`; `SECONDARY_BUTTON_MD` has no shadow.
 - Don't change library components (SMART System) for SD-only fixes. Override locally in the SD file.
+
+## Usage budget (all agents and the coordinator)
+
+Adapted from the suite `usage-budget` skill. Quality comes first: if a cheaper setup misses things, go back.
+
+- **Models:** `sd-qa` and `sd-flow-mapper` run on `sonnet` (set in their files). `sd-figma` and `sd-sandbox` stay on the default model. Trial started 2026-10-26: if QA on sonnet misses discrepancies, move it back.
+- **Figma MCP has a per-seat call limit.** Batch reads and writes into few `use_figma` scripts (one page-wide scan beats many small calls). In QA, do the Figma checks first. Screenshots only of what is being checked, ≤ 1000 px.
+- **No Figma calls** while the work is code-only.
+- **Briefs:** exact files, node ids, target values and an expected report length (≤ 40 lines). Reports: tables and numbers, no file dumps.
+- **Reuse agents:** a follow-up on the same area goes to the agent that just did it (SendMessage); a new topic gets a new agent. One agent per Figma page or file at a time.
+- **≤ 3 tool calls?** The coordinator does it inline, no agent.
+- **Hand-off notes:** after a milestone (pushed batch, finished section), write `.claude/handoff/sd-<YYYY-MM-DD>.md` with: done, open jobs (files / node ids), decisions waiting, next step. A new session starts from the latest note instead of a long conversation.
 
 ## Figma page organisation
 
