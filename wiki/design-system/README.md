@@ -19,6 +19,7 @@ It does not replace Figma.
   separate component package; shared UI lives in files like `nav-component.js`, `topbar-component.js`,
   `table-ui.js`.
 - Layout rules per family: [suite/layouts.md](../suite/layouts.md).
+- **Design tokens (Tailwind v4.3, Figma ↔ code names):** [tokens.md](tokens.md), code in `src/scripts/design-tokens.js`
 
 ## State of the design files (audit, 16 Oct 2026)
 

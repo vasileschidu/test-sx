@@ -8,7 +8,8 @@
       "pages": [
         { "path": "README.md", "label": "Home" },
         { "path": "AGENTS.md", "label": "Instructions for agents" },
-        { "path": "CONVENTIONS.md", "label": "Conventions" }
+        { "path": "CONVENTIONS.md", "label": "Conventions" },
+        { "path": "ai-setup.md", "label": "AI setup (Claude Code)" }
       ]
     },
     {
@@ -93,7 +94,8 @@
         { "path": "design-system/README.md", "label": "Overview" },
         { "path": "design-system/figma-files.md", "label": "Figma files" },
         { "path": "design-system/table-filter.md", "label": "Table filter" },
-        { "path": "design-system/portal-consistency.md", "label": "Portal consistency audit" }
+        { "path": "design-system/portal-consistency.md", "label": "Portal consistency audit" },
+        { "path": "design-system/tokens.md", "label": "Design tokens" }
       ]
     },
     {
