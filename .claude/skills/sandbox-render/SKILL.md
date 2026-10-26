@@ -70,3 +70,4 @@ Footer gaps in Figma tablet frames: many `(t)` frames keep the phone frame's hei
 - The Figma MCP has a per-seat call limit. In QA runs, do the Figma checks first so they aren't lost.
 - render.mjs cannot hover. For hover checks, send CDP `Input.dispatchMouseEvent` (mouseMoved) to the button's centre and diff its computed styles before and after.
 - On bank-summary, `window.OBDecline` only exists after you open the modal through the sidebar "Decline Payment" button. The faster-money modal needs about 2.5s after the click before its buttons exist.
+- `box-shadow` on Tailwind v4 buttons is a list of 5 layers, and the first four are transparent (`rgba(0,0,0,0) 0 0 0 0`). Check the **last** layer: `0 1px 2px rgba(0,0,0,.05)` is the secondary shadow. Only `none` means no shadow. (On 2026-10-26 sd-qa on sonnet misread this as "no shadow".)

@@ -71,7 +71,7 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
 
 Adapted from the suite `usage-budget` skill. Quality comes first: if a cheaper setup misses things, go back.
 
-- **Models:** `sd-qa` and `sd-flow-mapper` run on `sonnet` (set in their files). `sd-figma` and `sd-sandbox` stay on the default model. Trial started 2026-10-26: if QA on sonnet misses discrepancies, move it back.
+- **Models:** `sd-qa` and `sd-flow-mapper` run on `sonnet` (set in their files). `sd-figma` and `sd-sandbox` stay on the default model. Trial started 2026-10-26: if QA on sonnet misses discrepancies, move it back. First run (post-merge check): correct overall, but it misread the layered `box-shadow` as no shadow on secondaries. The coordinator caught it by re-measuring. Spot-check sonnet QA claims that contradict known rules.
 - **Figma MCP has a per-seat call limit.** Batch reads and writes into few `use_figma` scripts (one page-wide scan beats many small calls). In QA, do the Figma checks first. Screenshots only of what is being checked, ≤ 1000 px.
 - **No Figma calls** while the work is code-only.
 - **Briefs:** exact files, node ids, target values and an expected report length (≤ 40 lines). Reports: tables and numbers, no file dumps.
