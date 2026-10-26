@@ -68,6 +68,7 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
 - Enter the target screen through its TOP (Content/Container/Overlay). A side entry is allowed when
   stacked targets leave no room.
 - One lane per arrow. Lines may cross, but never overlap and never pass over a screen.
+- **6.1 Payment Status is the only status section with internal arrows** (user decision, 2026-10-26). 7.1, 8.1 and 9.1 have the same structure and do not repeat them. 6.1 is the reference.
 - **Skip by default:** Validations/error states, pure state variants (e.g. "long name"), and exits out of the flow (Finish and Close).
 - A label in a 128px gap may touch frame edges; the user fixes labels by hand. List them in your report.
 

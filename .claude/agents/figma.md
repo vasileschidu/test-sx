@@ -17,7 +17,7 @@ The only repo files you may edit are the skill files in `.claude/skills/`, to re
 
 ## How you work
 
-- **Flow first.** Before drawing arrows or adding screens, read the page's code to learn what each control does.
+- **Flow first.** Before drawing arrows or adding screens, use the `flow-mapper` report for the section if the coordinator gave you one. Otherwise read the page's code to learn what each control does.
   Look in `src/pages/onboarding/*.html` and `src/scripts/onboarding-*.js`, `review-documents.js`, `card-created.js`.
   Skip validations, pure state variants and exits, unless asked.
 - **One section (or one screen group) per run.** Return before chaining more.

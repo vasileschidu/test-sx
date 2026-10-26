@@ -1,6 +1,6 @@
 # Claude Code setup for SMART Disburse
 
-Three agents share one rule set. Ask Claude Code in plain words ("ask the qa agent to compare
+Four agents share one rule set. Ask Claude Code in plain words ("ask the qa agent to compare
 Welcome with Figma", "have the figma agent draw the 7.1 arrows"), or call them by name.
 
 | Agent | Writes to | Job |
@@ -8,8 +8,11 @@ Welcome with Figma", "have the figma agent draw the 7.1 arrows"), or call them b
 | `figma` | Figma only | Screens, tablet/mobile/desktop frames, section layout, flow arrows on the Multi-Party Flow page |
 | `sandbox` | Repo code only | Onboarding pages and scripts, matched to Figma at 375 / 768 / 1280 |
 | `qa` | Nothing (read-only) | Discrepancies between sandbox, Figma and the flow in code, with numbers and severity |
+| `flow-mapper` | Nothing (read-only) | Map of every control in code → what it does → target, matched to Figma frames and existing arrows |
 
-Typical loop: **qa** finds discrepancies → you decide → **figma** or **sandbox** fixes → **qa** re-checks.
+Typical loops:
+- Fixing differences: **qa** finds discrepancies → you decide → **figma** or **sandbox** fixes → **qa** re-checks.
+- New arrows or screens: **flow-mapper** maps the flow → you confirm which branches to show → **figma** draws → **qa** checks.
 
 ## Where things live
 
