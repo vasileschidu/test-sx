@@ -201,10 +201,10 @@
 
         '<div class="flex flex-col items-center gap-4">' +
           language('dark') +
-          '<div class="flex w-full flex-wrap items-center justify-center gap-2 opacity-80">' + terms() + '</div>' +
+          '<div class="flex w-full flex-wrap items-center justify-center gap-x-2 gap-y-1 opacity-80">' + terms() + '</div>' +
         '</div>' +
 
-        '<div class="flex h-5 items-center justify-center">' +
+        '<div class="flex h-[18px] items-center justify-center">' +
           '<span class="relative block h-[18px] w-[154.123px]" role="img" aria-label="Powered by Transcard">' +
             '<img src="' + ASSETS + 'powered-by.svg" alt="" width="86.2589" height="18" class="absolute left-0 top-0 block">' +
             '<img src="' + ASSETS + 'transcard-wordmark.svg" alt="" width="63.1235" height="11.8737" class="absolute inset-[11.46%_0_22.58%_59.04%] block">' +
@@ -216,7 +216,7 @@
 
   function footerMarkup() {
     var links = TERMS.map(function (label) {
-      return '<a href="#" class="rounded px-1.5 py-0.5 text-xs leading-4 font-semibold text-gray-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' + label + '</a>';
+      return '<a href="#" class="rounded text-xs leading-4 font-semibold text-gray-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' + label + '</a>';
     }).join('<span aria-hidden="true" class="text-xs leading-4 font-medium text-gray-500">&bull;</span>');
 
     return '<div class="flex flex-col items-center justify-end gap-6 px-4 py-6">' +

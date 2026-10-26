@@ -197,7 +197,7 @@
 
     // ---- Document viewer ---------------------------------------------------
 
-    var SMALL_BTN = 'inline-flex cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 py-1.5 text-sm leading-5 font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
+    var SMALL_BTN = 'inline-flex cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 py-1.5 text-base leading-5 font-semibold lg:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
 
     function dots(index) {
       return docs.map(function (doc, i) {
@@ -213,25 +213,23 @@
       var doc = docs[index];
       var last = index === docs.length - 1;
       return '' +
-        '<div class="flex shrink-0 items-start gap-2 border-b border-[#e5e7eb] p-6">' +
-          '<div class="flex min-w-0 flex-1 flex-col gap-4">' +
-            '<div class="flex items-center gap-5">' +
-              '<div class="flex items-center gap-2.5" aria-hidden="true">' + dots(index) + '</div>' +
-              '<p class="text-sm leading-5 text-[#6b7280]">' + (index + 1) + ' of ' + docs.length + '</p>' +
-            '</div>' +
-            '<div class="flex flex-col gap-2.5">' +
-              '<h2 id="doc-viewer-title" class="text-2xl leading-8 font-semibold text-[#1f2937]">' + esc(doc.name) + '</h2>' +
-              // On mobile a long description is cut to two lines ending "… Show more".
-              '<p id="doc-viewer-desc" data-doc-desc class="text-sm leading-5 text-[#6b7280]">' +
-                '<span data-doc-desc-text>' + esc(doc.description) + '</span>' +
-                '<button type="button" data-doc-more hidden aria-expanded="false" aria-controls="doc-viewer-desc" class="ml-0.5 cursor-pointer rounded px-1.5 font-semibold whitespace-nowrap text-[#374151] hover:text-[#111827] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Show more</button>' +
-              '</p>' +
-            '</div>' +
+        // Figma Header: Steps row (dots, "n of N", X) then the full-width title and description.
+        '<div class="flex shrink-0 flex-col gap-3 border-b border-[#e5e7eb] p-6 lg:gap-2.5">' +
+          '<div class="flex items-center gap-2.5">' +
+            '<div class="flex items-center gap-2.5" aria-hidden="true">' + dots(index) + '</div>' +
+            '<p class="flex-1 text-sm leading-5 text-[#6b7280]">' + (index + 1) + ' of ' + docs.length + '</p>' +
+            // -m-1.5 keeps the 32px hit area while the row stays 20 tall, as in Figma.
+            '<button type="button" data-ob-modal-close class="-m-1.5 inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+              '<span class="sr-only">Close</span>' +
+              '<img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5">' +
+            '</button>' +
           '</div>' +
-          '<button type="button" data-ob-modal-close class="inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
-            '<span class="sr-only">Close</span>' +
-            '<img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5">' +
-          '</button>' +
+          '<h2 id="doc-viewer-title" class="text-2xl leading-8 font-semibold text-[#1f2937]">' + esc(doc.name) + '</h2>' +
+          // On mobile a long description is cut to two lines ending "… Show more".
+          '<p id="doc-viewer-desc" data-doc-desc class="text-sm leading-5 text-[#6b7280]">' +
+            '<span data-doc-desc-text>' + esc(doc.description) + '</span>' +
+            '<button type="button" data-doc-more hidden aria-expanded="false" aria-controls="doc-viewer-desc" class="ml-0.5 cursor-pointer rounded px-1.5 font-semibold whitespace-nowrap text-[#374151] hover:text-[#111827] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Show more</button>' +
+          '</p>' +
         '</div>' +
 
         '<div class="relative flex min-h-0 flex-1 flex-col p-6">' +
@@ -247,12 +245,12 @@
 
         '<div class="flex shrink-0 items-center gap-2.5 border-t border-[#e5e7eb] px-6 py-5">' +
           '<div class="flex flex-1">' +
-            '<a href="' + esc(doc.file) + '" download="' + esc(doc.name) + '.pdf" class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 py-1.5 text-sm leading-5 font-semibold text-[#374151] hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
+            '<a href="' + esc(doc.file) + '" download="' + esc(doc.name) + '.pdf" class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 py-1.5 text-base leading-5 font-semibold text-[#374151] hover:bg-gray-50 lg:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
               '<img src="' + ASSETS + 'icon-download.svg" alt="" width="18" height="18" class="size-[18px]">Download' +
             '</a>' +
           '</div>' +
           '<button type="button" data-doc-prev ' + (index === 0 ? 'disabled ' : '') +
-            'class="' + SMALL_BTN + ' border border-[#d1d5db] bg-white text-[#374151] hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white">Previous</button>' +
+            'class="' + SMALL_BTN + ' border border-[#d1d5db] bg-white text-[#374151] shadow-xs disabled:shadow-none hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white">Previous</button>' +
           '<button type="button" data-doc-next class="' + SMALL_BTN + ' bg-[#2563eb] text-white hover:bg-[#3b82f6]">' + (last ? 'Done' : 'Next') + '</button>' +
         '</div>';
     }

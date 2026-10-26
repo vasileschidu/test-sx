@@ -149,14 +149,16 @@
           'html.ob-leaving body{opacity:0;transition:opacity ' + EXIT_DURATION_MS + 'ms cubic-bezier(.4,0,1,1);}',
       // Instant steps have no fade to hide the first frames, so the menu and the
       // phone top bar (both drawn by script, their classes styled a beat later)
-      // get their final size and colour from plain CSS: nothing jumps.
+      // get their final size and colour from plain CSS: nothing jumps. The phone
+      // bar's placeholder only applies on pages that load the mobile header
+      // (it tags <html> with .ob-mobile-header), so Welcome shows none.
       INSTANT_PAGE_CHANGES
         ? '@media (min-width:1024px){[data-ob-sidebar]{display:flex;width:325px;flex-shrink:0;align-self:stretch;' +
             'background-image:linear-gradient(to bottom,#1E326F,#090C38);}}' +
           '@media (max-width:1023.98px){' +
-            'html:not(:has([data-ob-mobile-header])) [data-ob-sidebar]{display:block;height:104px;overflow:hidden;' +
+            'html.ob-mobile-header:not(:has([data-ob-mobile-header])) [data-ob-sidebar]{display:block;width:100%;height:104px;overflow:hidden;' +
               'background-image:linear-gradient(to bottom,#1E326F,#090C38);}' +
-            'html:not(:has([data-ob-mobile-header])) [data-ob-sidebar]>*{visibility:hidden;}' +
+            'html.ob-mobile-header:not(:has([data-ob-mobile-header])) [data-ob-sidebar]>*{visibility:hidden;}' +
             '[data-ob-mobile-header]{position:sticky;top:0;z-index:30;display:flex;flex-direction:column;gap:1rem;' +
               'padding:1rem;background-image:linear-gradient(to bottom,#1E326F,#090C38);}}'
         : '',

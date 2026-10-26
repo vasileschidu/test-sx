@@ -20,7 +20,18 @@ window.OBModal = (function () {
   var cache = {};
   var current = null;
 
-  var BUTTON = 'flex w-full cursor-pointer items-center justify-center rounded-[10px] px-[25px] py-4 text-base leading-6 font-medium shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2';
+  // Primary (filled) buttons have no shadow at all; only bordered secondaries keep shadow-xs.
+  var BUTTON_BASE = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-md px-[25px] py-4 text-base leading-6 font-medium focus-visible:outline-2 focus-visible:outline-offset-2';
+  var BUTTON = BUTTON_BASE + ' shadow-xs';
+  // Modal primary button (Figma "Button/Primary": blue gradient, no glow, radius 6, 56 tall).
+  // Disabled: 40% opacity, no hover change.
+  var PRIMARY_BUTTON = BUTTON_BASE + ' bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] text-white hover:brightness-110 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100';
+
+  // General/Button size md (Figma, e.g. "Review and agree" Cancel/Accept): 32 tall, padding 6/10,
+  // gap 4, radius 6, Inter Medium 14/20, hugs the label. The secondary's 1px border sits inside the 32.
+  var BUTTON_MD_BASE = 'inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 text-sm leading-5 font-medium focus-visible:outline-2 focus-visible:outline-offset-2';
+  var PRIMARY_BUTTON_MD = BUTTON_MD_BASE + ' py-1.5 bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] text-white hover:brightness-110 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100';
+  var SECONDARY_BUTTON_MD = BUTTON_MD_BASE + ' border border-[#d1d5db] bg-white py-[5px] text-[#374151] hover:bg-gray-50 focus-visible:outline-blue-600';
 
   function validateData(data, requiredFields) {
     if (!data) return false;
@@ -96,7 +107,7 @@ window.OBModal = (function () {
     return '<div class="flex flex-col gap-0.5">' +
       '<dt class="text-sm leading-5 text-gray-600">' + label + '</dt>' +
       '<dd class="flex items-center gap-3.5">' +
-        '<span class="min-w-0 flex-1 truncate">' + valueHtml + '</span>' +
+        '<span class="min-w-0 flex-1 truncate text-sm leading-5">' + valueHtml + '</span>' +
         '<button type="button" data-ob-copy="' + escapeHtml(copyValue) + '" ' +
           'class="group relative flex size-[18px] shrink-0 cursor-pointer items-center justify-center rounded-[4px] ' +
           '[&:hover:not([data-copied])]:bg-[#f3f4f6] [&:hover:not([data-copied])]:shadow-[0_0_0_4px_#f3f4f6] ' +
@@ -227,7 +238,11 @@ window.OBModal = (function () {
   }
 
   return {
+    BUTTON_BASE: BUTTON_BASE,
     BUTTON: BUTTON,
+    PRIMARY_BUTTON: PRIMARY_BUTTON,
+    PRIMARY_BUTTON_MD: PRIMARY_BUTTON_MD,
+    SECONDARY_BUTTON_MD: SECONDARY_BUTTON_MD,
     validateData: validateData,
     loadJson: loadJson,
     escapeHtml: escapeHtml,
@@ -257,7 +272,7 @@ window.OBContact = (function () {
           M.contactCard(contact) +
         '</div>' +
         '<div class="flex flex-col px-6 pb-6">' +
-          '<button type="button" data-ob-modal-close class="' + M.BUTTON + ' bg-[#2563eb] text-white hover:bg-[#3b82f6] focus-visible:outline-[#2563eb]">OK</button>' +
+          '<button type="button" data-ob-modal-close class="' + M.PRIMARY_BUTTON + '">OK</button>' +
         '</div>',
         'ob-contact-title'
       );

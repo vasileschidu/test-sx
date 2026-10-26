@@ -50,8 +50,6 @@ window.OBConsents = (function () {
 
   // ---- "Review and agree" dialog -------------------------------------
 
-  var SMALL = 'inline-flex cursor-pointer items-center justify-center rounded-md px-2.5 py-1.5 text-sm leading-5 font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
-
   function dots(index) {
     return agreements.map(function (a, i) {
       if (i === index) return '<span class="relative block size-2.5 shrink-0"><img src="' + ASSETS + 'step-current.svg" alt="" class="absolute -inset-[40%] block size-[180%] max-w-none"></span>';
@@ -77,8 +75,8 @@ window.OBConsents = (function () {
       '</div>' +
       '<div class="flex shrink-0 items-center gap-2.5 border-t border-[#e5e7eb] px-6 py-5">' +
         '<div class="flex flex-1 items-center gap-2.5" aria-label="' + (index + 1) + ' of ' + agreements.length + '">' + dots(index) + '</div>' +
-        '<button type="button" data-ob-modal-close class="' + SMALL + ' border border-[#d1d5db] bg-white text-[#374151] hover:bg-gray-50">Cancel</button>' +
-        '<button type="button" data-vcs-accept disabled class="' + SMALL + ' bg-[#2563eb] text-white hover:bg-[#3b82f6] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-[#2563eb]">Accept</button>' +
+        '<button type="button" data-ob-modal-close class="' + window.OBModal.SECONDARY_BUTTON_MD + '">Cancel</button>' +
+        '<button type="button" data-vcs-accept disabled class="' + window.OBModal.PRIMARY_BUTTON_MD + '">Accept</button>' +
       '</div>',
       'vcs-review-title',
       { bare: true, panelClass: 'relative flex max-h-[min(752px,calc(100dvh-2rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5' }

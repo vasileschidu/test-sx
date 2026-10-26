@@ -269,7 +269,7 @@
         '</div>' +
       '</div>' +
       '<div class="flex flex-col gap-4 px-6 pb-6">' +
-        '<button type="button" data-cc-send class="' + M.BUTTON + ' bg-[#2563eb] text-white hover:bg-[#3b82f6] focus-visible:outline-[#2563eb]">Send and Continue</button>' +
+        '<button type="button" data-cc-send class="' + M.PRIMARY_BUTTON + '">Send and Continue</button>' +
         '<button type="button" data-cc-skip class="' + M.BUTTON + ' border border-[#d1d5db] bg-white text-[#374151] hover:bg-gray-50 focus-visible:outline-blue-600">Skip</button>' +
       '</div>',
       'cc-receipt-title'
@@ -318,7 +318,7 @@
           '<div class="max-h-[50vh] space-y-3 overflow-y-auto text-sm leading-5 text-[#374151]">' +
             M.agreementHtml(terms.body) +
           '</div>' +
-          '<button type="button" data-cc-terms-back class="' + M.BUTTON + ' bg-[#2563eb] text-white hover:bg-[#3b82f6] focus-visible:outline-[#2563eb]">OK</button>' +
+          '<button type="button" data-cc-terms-back class="' + M.PRIMARY_BUTTON + '">OK</button>' +
         '</div>',
         'cc-terms-title'
       );
@@ -341,7 +341,7 @@
         '<ul class="w-full list-disc space-y-2 rounded-md bg-[#f9fafb] py-4 pr-4 pl-9 text-sm leading-5 text-[#374151]">' +
           how.items.map(function (item) { return '<li>' + esc(item) + '</li>'; }).join('') +
         '</ul>' +
-        '<button type="button" data-ob-modal-close class="' + M.BUTTON + ' bg-[#2563eb] text-white hover:bg-[#3b82f6] focus-visible:outline-[#2563eb]">OK</button>' +
+        '<button type="button" data-ob-modal-close class="' + M.PRIMARY_BUTTON + '">OK</button>' +
       '</div>',
       'cc-check-how-title'
     );

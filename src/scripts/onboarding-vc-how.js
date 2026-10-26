@@ -90,7 +90,7 @@ window.OBVirtualCardHow = (function () {
           '<div class="max-h-[50vh] space-y-3 overflow-y-auto text-sm leading-5 text-[#374151]">' +
             M.agreementHtml(terms.body) +
           '</div>' +
-          '<button type="button" data-ob-modal-close class="' + M.BUTTON + ' bg-[#2563eb] text-white hover:bg-[#3b82f6] focus-visible:outline-[#2563eb]">OK</button>' +
+          '<button type="button" data-ob-modal-close class="' + M.PRIMARY_BUTTON + '">OK</button>' +
         '</div>',
         'vc-terms-title'
       );

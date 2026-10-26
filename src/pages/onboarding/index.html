@@ -19,11 +19,11 @@
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
-  <script src="../../../src/scripts/onboarding-transitions.js?v=20261013b"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js?v=20261021a"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261026a"></script>
   <script src="../../../src/scripts/onboarding-field.js?v=20261013a"></script>
-  <script src="../../../src/scripts/onboarding-modal.js?v=20261013b"></script>
-  <script src="../../../src/scripts/onboarding-decline.js"></script>
+  <script src="../../../src/scripts/onboarding-modal.js?v=20261026f"></script>
+  <script src="../../../src/scripts/onboarding-decline.js?v=20261026d"></script>
   <script src="../../../src/scripts/onboarding-flow.js?v=20261013k"></script>
   <script src="../../../src/scripts/onboarding-stepper.js?v=20261013a"></script>
   <script src="../../../src/scripts/onboarding-welcome.js"></script>
@@ -39,7 +39,7 @@
 
     <!-- RIGHT COLUMN -->
     <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
-      <div data-ob-content class="flex flex-1 flex-col items-center gap-10 px-4 pt-10 pb-4 lg:justify-center lg:gap-6 lg:px-10 lg:py-12">
+      <div data-ob-content class="flex flex-1 flex-col items-center gap-10 px-4 pt-10 pb-10 md:pb-4 lg:gap-9 lg:px-10 lg:py-14">
 
         <!-- Client logo slot (placeholder until the client's logo is set) -->
         <div data-ob-no-skeleton class="flex h-[60px] w-[246px] shrink-0 items-center justify-center rounded-lg border-[2.5px] border-dashed border-gray-300 bg-gray-50">
@@ -48,10 +48,10 @@
 
         <!-- Welcome card -->
         <section data-ob-tone="dark" aria-labelledby="welcome-name"
-          class="relative flex min-h-[444px] w-full max-w-[548px] flex-1 flex-col overflow-hidden rounded-[32px] bg-gradient-to-b from-[#1E326F] to-[#090C38] shadow-[-3px_20px_25px_-5px_rgba(0,0,0,0.1),0px_10px_10px_-5px_rgba(0,0,0,0.04)] lg:h-[624px] lg:w-[505px] lg:flex-none lg:rounded-3xl">
+          class="relative flex min-h-[444px] w-full max-w-[548px] flex-1 flex-col overflow-hidden rounded-[32px] bg-gradient-to-b from-[#1E326F] to-[#090C38] shadow-[-3px_20px_25px_-5px_rgba(0,0,0,0.1),0px_10px_10px_-5px_rgba(0,0,0,0.04)] md:h-[624px] md:w-[505px] md:flex-none md:rounded-3xl">
 
-          <!-- Waves (mobile): concentric circles low on the left -->
-          <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-[572px] overflow-hidden lg:hidden">
+          <!-- Waves (phone): concentric circles low on the left -->
+          <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-[572px] overflow-hidden md:hidden">
             <img src="../../assets/onboarding/wave-m-1.svg" alt="" width="151.643" height="151.643" class="absolute top-[calc(50%+218px)] left-[-20.82px] max-w-none -translate-y-1/2 opacity-60">
             <img src="../../assets/onboarding/wave-m-1.svg" alt="" width="151.643" height="151.643" class="absolute top-[calc(50%+218px)] left-[-20.82px] max-w-none -translate-y-1/2 opacity-60">
             <img src="../../assets/onboarding/wave-m-2.svg" alt="" width="358.429" height="358.429" class="absolute top-[calc(50%+218px)] left-[-124.21px] max-w-none -translate-y-1/2 opacity-60">
@@ -59,8 +59,8 @@
             <img src="../../assets/onboarding/wave-m-4.svg" alt="" width="772" height="772" class="absolute top-[calc(50%+218px)] left-[-331px] max-w-none -translate-y-1/2 opacity-60">
           </div>
 
-          <!-- Waves (desktop): concentric circles high on the right -->
-          <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-[-2px] hidden h-[627px] overflow-hidden lg:block">
+          <!-- Waves (tablet and desktop): concentric circles high on the right -->
+          <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-[-2px] hidden h-[627px] overflow-hidden md:block">
             <img src="../../assets/onboarding/wave-d-1.svg" alt="" width="331.571" height="331.571" class="absolute bottom-[431.71px] left-[294.21px] max-w-none opacity-60">
             <img src="../../assets/onboarding/wave-d-1.svg" alt="" width="331.571" height="331.571" class="absolute bottom-[431.71px] left-[294.21px] max-w-none opacity-60">
             <img src="../../assets/onboarding/wave-d-2.svg" alt="" width="783.714" height="783.714" class="absolute bottom-[205.64px] left-[68.14px] max-w-none opacity-60">
@@ -68,17 +68,17 @@
             <img src="../../assets/onboarding/wave-d-4.svg" alt="" width="1688" height="1688" class="absolute bottom-[-246.5px] left-[-384px] max-w-none opacity-60">
           </div>
 
-          <!-- Greeting, message, learn more -->
-          <div class="relative flex flex-1 flex-col justify-center px-6 pt-6 lg:px-14 lg:pt-24 lg:pb-12">
+          <!-- Greeting, message, learn more: top-aligned on phones (CTA right below), centred from md -->
+          <div class="relative flex flex-col px-6 pt-12 md:flex-1 md:justify-center md:px-14 md:pt-24 md:pb-12">
             <div class="flex flex-col gap-6">
               <div class="flex flex-col gap-3 text-white">
-                <p class="text-base leading-6 lg:text-xl lg:leading-8 lg:text-gray-300">Hi,</p>
+                <p class="text-base leading-6 md:text-xl md:leading-8 md:text-gray-300">Hi,</p>
                 <h1 id="welcome-name" data-ob-skeleton data-welcome-name
-                  class="text-2xl leading-8 font-bold break-words lg:text-3xl lg:leading-9 lg:font-extrabold">Rachel Morris</h1>
+                  class="text-2xl leading-8 font-bold break-words md:text-3xl md:leading-9 md:font-extrabold">Rachel Morris</h1>
               </div>
 
               <div class="flex flex-col gap-3">
-                <div class="flex min-h-20 items-center gap-2 rounded-[18px] border-8 border-white/5 bg-white/15 bg-clip-padding p-4">
+                <div class="flex min-h-20 items-center gap-2 rounded-[10px] bg-white/15 p-4 ring-8 ring-white/5">
                   <div class="flex min-w-0 flex-1 flex-col gap-2">
                     <img src="../../assets/onboarding/icon-bell-dot.svg" alt="" width="20" height="22" class="-mt-0.5 h-[22px] w-5">
                     <p data-ob-skeleton data-welcome-message class="text-sm leading-5 font-medium text-white">
@@ -89,7 +89,7 @@
                 </div>
 
                 <button type="button" command="show-modal" commandfor="learn-more-dialog"
-                  class="flex w-fit cursor-pointer items-center gap-3 rounded-md py-3 pr-6 text-base leading-6 font-medium text-white underline underline-offset-2 hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                  class="flex w-fit cursor-pointer items-center gap-2 rounded-md px-3.5 py-2.5 text-base md:gap-3 md:py-3 md:pr-6 md:pl-0 leading-6 font-medium text-white underline underline-offset-2 hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
                   <img src="../../assets/onboarding/icon-question-circle.svg" alt="" width="20" height="20" class="size-5">
                   Learn more
                 </button>
@@ -98,9 +98,9 @@
           </div>
 
           <!-- Main CTA -->
-          <div class="relative p-6 lg:p-14">
+          <div class="relative p-6 md:p-14">
             <a href="confirm-identity.html"
-              class="flex w-full items-center justify-center gap-2 rounded-[10px] bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-6 py-4 text-base leading-6 font-medium text-white shadow-[0px_16px_24px_0px_rgba(55,115,255,0.16)] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:w-64">
+              class="flex w-full items-center justify-center gap-2 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-6 py-4 text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:w-64">
               Get Started
               <img src="../../assets/onboarding/icon-arrow-right.svg" alt="" width="20" height="20" class="size-5 brightness-0 invert">
             </a>

@@ -74,9 +74,9 @@
   function personRow(p, amount, accepted, comment) {
     var sub = subline(p);
     return '<li class="flex flex-col">' +
-      '<div class="flex items-center justify-between gap-3">' +
+      '<div class="flex min-h-10 items-center justify-between gap-3">' +
         '<div class="flex min-w-0 items-center gap-2.5">' +
-          '<img src="' + ASSETS + 'avatar.svg" alt="" width="32" height="32" class="size-8 shrink-0">' +
+          '<img src="' + ASSETS + 'avatar.svg" alt="" width="24" height="24" class="size-6 shrink-0">' +
           '<div class="flex min-w-0 flex-col text-sm leading-5 font-medium">' +
             '<span data-ob-skeleton class="truncate text-[#111827]">' + esc(p.name) + '</span>' +
             (sub ? '<span data-ob-skeleton class="text-[#6b7280]">' + sub + '</span>' : '') +
@@ -126,31 +126,32 @@
    *   days    gray, blue border — the date (Current Allocation) or a day countdown
    *   < 24 h  amber — "Expires in 17 hours"
    *   < 1 h   red — "Expires in 57 min and 17 sec", ticking every second
+   * Every badge is 40px tall: 9px padding + 1px border, or 10px padding without one.
    */
   function expiryBadge(expires, opts) {
     var left = Math.max(0, expires - Date.now());
     var tone, icon, text;
     if (left < HOUR) {
       var secs = Math.floor(left / 1000);
-      tone = 'border border-[#fca5a5] bg-[#fef2f2] font-medium text-[#b91c1c] hover:bg-[#fee2e2]';
+      tone = 'border border-[#fca5a5] bg-[#fef2f2] py-[9px] font-medium text-[#b91c1c] hover:bg-[#fee2e2]';
       icon = 'icon-calendar-red.svg';
       text = 'Expires in ' + Math.floor(secs / 60) + ' min and ' + (secs % 60) + ' sec';
     } else if (left < DAY) {
       var hours = Math.floor(left / HOUR);
-      tone = 'border border-[#fcd34d] bg-[#fffbeb] font-medium text-[#b45309] hover:bg-[#fef3c7]';
+      tone = 'border border-[#fcd34d] bg-[#fffbeb] py-[9px] font-medium text-[#b45309] hover:bg-[#fef3c7]';
       icon = 'icon-calendar-amber.svg';
       text = 'Expires in ' + hours + (hours === 1 ? ' hour' : ' hours');
     } else if (opts.showDate) {
-      tone = 'border border-[#93c5fd] bg-[#f9fafb] font-medium text-[#374151] hover:bg-gray-100';
+      tone = 'border border-[#93c5fd] bg-[#f9fafb] py-[9px] font-medium text-[#374151] hover:bg-gray-100';
       icon = 'icon-calendar-exclamation.svg';
       // Phones have room for the full date: "How it works" shrinks to an (i) button there.
       text = stamp(expires.toISOString()).replace(' (ET)', '');
     } else {
-      tone = 'bg-[#f9fafb] font-medium text-[#111827] hover:bg-gray-100';
+      tone = 'bg-[#f9fafb] py-2.5 font-medium text-[#111827] hover:bg-gray-100';
       icon = 'icon-calendar-exclamation-dark.svg';
       text = countdown(expires);
     }
-    return '<button type="button" data-mp-expiration class="flex w-full min-w-0 cursor-pointer items-center justify-center gap-1 rounded-full px-2.5 py-[9px] text-sm leading-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ' + tone + '">' +
+    return '<button type="button" data-mp-expiration class="flex w-full min-w-0 cursor-pointer items-center justify-center gap-1 rounded-full px-2.5 text-sm leading-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ' + tone + '">' +
       '<img src="' + ASSETS + icon + '" alt="" width="18" height="18" class="size-[18px] shrink-0">' +
       '<span data-ob-skeleton class="truncate">' + text + '</span>' +
     '</button>';
@@ -158,7 +159,8 @@
 
   function chips(mp, opts) {
     var expires = F.expiresAt(mp);
-    return '<div class="flex w-full gap-2.5">' +
+    // md+: two equal columns (flex-1 would give the padded chip 20px more).
+    return '<div class="flex w-full gap-2.5 md:grid md:grid-cols-2">' +
       '<div data-mp-expiry data-show-date="' + (opts.showDate ? '1' : '') + '" class="flex min-w-0 flex-1">' + expiryBadge(expires, opts) + '</div>' +
       // Phones (< 768px): an (i) button; tablet and desktop: the "How it works" chip.
       '<button type="button" data-mp-how class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#f9fafb] text-sm leading-5 font-medium text-[#3671fb] hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 md:size-auto md:min-w-0 md:flex-1 md:px-2.5 md:py-[9px]">' +
@@ -193,7 +195,7 @@
   function infoBox(html) {
     return '<div class="flex w-full items-start gap-3 rounded-[10px] bg-[#eff6ff] p-4">' +
       '<img src="' + ASSETS + 'icon-information-circle.svg" alt="" width="20" height="20" class="size-5 shrink-0">' +
-      '<div class="flex min-w-0 flex-1 flex-col gap-5 text-sm leading-5 text-[#1e40af]">' + html + '</div>' +
+      '<div class="flex min-w-0 flex-1 flex-col gap-5 text-sm leading-5 font-medium text-[#1e40af]">' + html + '</div>' +
     '</div>';
   }
 
@@ -219,8 +221,8 @@
     );
   }
 
-  var PRIMARY_BTN = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-[10px] bg-[linear-gradient(156deg,#3773ff_3.3%,#2254ca_99.2%)] px-[25px] text-base leading-6 font-medium text-white shadow-[0_16px_24px_0_rgba(55,115,255,0.16)] hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
-  var SECONDARY_BTN = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-[10px] border border-[#d1d5db] bg-white px-[17px] text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
+  var PRIMARY_BTN = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
+  var SECONDARY_BTN = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-md border border-[#d1d5db] bg-white px-[17px] text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
 
   function howItWorks() {
     messageDialog('icon-chart-pie.svg', 'bg-[#2b61df]/10', 'How does allocating the amount work?',
@@ -231,7 +233,7 @@
       '</div>' +
       '<a href="#" class="mt-2 inline-flex items-center gap-3 self-center rounded-md px-6 py-3 text-base leading-6 font-medium text-[#2563eb] underline focus-visible:outline-2 focus-visible:outline-blue-600">' +
         '<img src="' + ASSETS + 'icon-question-circle.svg" alt="" width="20" height="20" class="size-5">Learn more</a>',
-      '<button type="button" data-ob-modal-close class="' + PRIMARY_BTN + '">Close</button>');
+      '<button type="button" data-ob-modal-close class="' + window.OBModal.PRIMARY_BUTTON + '">Close</button>');
   }
 
   function expirationDialog(mp) {
@@ -239,7 +241,7 @@
     messageDialog('icon-calendar-exclamation.svg', 'bg-[#eff6ff]', 'Expiration',
       '<p class="text-sm leading-5 text-[#6b7280]">All parties have to accept the allocation and choose how to receive their share before this date. After it, the payment request expires.</p>' +
       '<p class="text-sm leading-5 font-medium text-[#111827]">' + stamp(expires.toISOString()) + '</p>',
-      '<button type="button" data-ob-modal-close class="' + PRIMARY_BTN + '">OK</button>');
+      '<button type="button" data-ob-modal-close class="' + window.OBModal.PRIMARY_BUTTON + '">OK</button>');
   }
 
   function wireChips(mp) {
@@ -285,7 +287,7 @@
           '<ul role="list" class="flex flex-col gap-2"><li aria-hidden="true" class="h-px bg-[#e5e7eb]"></li>' + partyList(mp, entry) + '</ul>' +
         '</div>' +
         createdFooter(mp, entry, {
-          action: '<a href="change-allocation.html" class="flex shrink-0 items-center gap-[3px] rounded-[32px] bg-[#2563eb] px-[11px] py-[9px] text-base leading-6 font-medium text-white shadow-xs hover:bg-[#1d4ed8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
+          action: '<a href="change-allocation.html" class="flex shrink-0 items-center gap-[3px] rounded-[32px] bg-[#2563eb] px-[11px] py-[9px] text-base leading-6 font-medium text-white hover:bg-[#1d4ed8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
             '<img src="' + ASSETS + 'icon-pencil-alt.svg" alt="" width="20" height="20" class="size-5">Change</a>'
         }) +
       '</section>' +
@@ -310,7 +312,7 @@
       messageDialog('icon-exclamation-red.svg', 'bg-[#fee2e2]', 'Dispute Total Allocation Amount',
         '<p class="text-sm leading-5 text-[#6b7280]">Are you sure you want to dispute the total allocation amount?</p>' +
         '<p class="text-sm leading-5 text-[#6b7280]">The payment request will be cancelled and you\'ll need to contact ' + client + ' to receive the payment.</p>',
-        '<button type="button" data-mp-dispute-confirm class="flex h-14 w-full cursor-pointer items-center justify-center rounded-[10px] bg-[#dc2626] px-[17px] text-base leading-6 font-medium text-white shadow-xs hover:bg-[#b91c1c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dc2626]">Dispute</button>' +
+        '<button type="button" data-mp-dispute-confirm class="flex h-14 w-full cursor-pointer items-center justify-center rounded-md bg-[#dc2626] px-[17px] text-base leading-6 font-medium text-white hover:bg-[#b91c1c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dc2626]">Dispute</button>' +
         '<button type="button" data-ob-modal-close class="' + SECONDARY_BTN + '">Cancel</button>');
       document.querySelector('[data-mp-dispute-confirm]').addEventListener('click', function () {
         window.OBModal.close();
@@ -329,7 +331,7 @@
       var show = function () {
         messageDialog('icon-chart-pie.svg', 'bg-[#2b61df]/10', 'New Allocation',
           '<p class="text-sm leading-5 text-[#6b7280]">The latest allocation has been changed by another party. You need to review it to continue.</p>',
-          '<button type="button" data-ob-modal-close class="' + PRIMARY_BTN + '">View Current Allocation</button>',
+          '<button type="button" data-ob-modal-close class="' + window.OBModal.PRIMARY_BUTTON + '">View Current Allocation</button>',
           { bare: true });
       };
       if (T && T.afterReveal) T.afterReveal(show);
@@ -375,7 +377,7 @@
         '<h1 class="text-3xl leading-9 text-[#1f2937]">Change <span class="font-semibold">Allocation</span></h1>' +
       '</div>' +
       chips(mp, { showDate: true }) +
-      '<div class="flex flex-col gap-3">' +
+      '<div class="flex flex-col gap-4">' +
         '<div aria-hidden="true" class="h-px bg-[#d1d5db]"></div>' +
         '<div class="flex items-center gap-4">' +
           '<label for="mp-amount-total" class="flex-1 text-sm leading-5 font-medium text-[#111827]">Amount to be allocated</label>' +
@@ -391,8 +393,10 @@
         '<p id="mp-reason-error" data-mp-reason-error class="hidden text-sm leading-5 text-[#dc2626]"></p>' +
       '</div>' +
       (mp.log.length > 1 ? logLink() : '') +
-      '<div class="mt-auto flex w-full flex-col gap-4 pt-4">' +
-        '<button type="button" data-mp-save class="flex h-14 w-full cursor-pointer items-center justify-center rounded-[10px] bg-[#2f68ed] px-[17px] text-base leading-6 font-medium text-white shadow-xs hover:bg-[#2563eb] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Change Allocation</button>' +
+      // At least 56 above the CTA: root gap-4 (16) + pt-10 (40). Bottom-anchored where
+      // there is room (tablet/desktop, Figma 4.1.x); exactly 56 on phone.
+      '<div class="mt-auto flex w-full flex-col gap-4 pt-10">' +
+        '<button type="button" data-mp-save class="' + PRIMARY_BTN + '">Change Allocation</button>' +
         '<a href="allocation.html" class="' + SECONDARY_BTN + '">Cancel</a>' +
       '</div>';
 
@@ -526,7 +530,7 @@
     var finalPage = new URLSearchParams(window.location.search).get('final');
 
     var amountCard = share > 0
-      ? '<section aria-label="Payment amount" data-ob-tone="dark" class="relative h-[173px] w-full overflow-hidden rounded-2xl bg-[linear-gradient(141deg,#3773ff_3.3%,#2254ca_99.2%)] shadow-[0px_20px_50px_-12px_rgba(0,0,0,0.25)]">' +
+      ? '<section aria-label="Payment amount" data-ob-tone="dark" class="relative h-[173px] w-full overflow-hidden rounded-2xl bg-[linear-gradient(141deg,#3773ff_3.3%,#2254ca_99.2%)]">' +
           '<div aria-hidden="true" class="pointer-events-none absolute inset-0">' +
             '<span class="absolute top-[-85.37px] left-[-41.37px] flex size-[198.7px] items-center justify-center"><img src="../../assets/onboarding/bubble-1.svg" alt="" width="162.266" height="162.266" class="block max-w-none -rotate-[105deg]"></span>' +
             '<span class="absolute top-[110.25px] left-[-9.61px] flex size-[143.1px] items-center justify-center"><img src="../../assets/onboarding/bubble-2.svg" alt="" width="116.858" height="116.858" class="block max-w-none -rotate-[105deg]"></span>' +
@@ -604,7 +608,7 @@
         '<label for="mp-d-' + id + '" class="text-sm leading-5 font-medium text-[#374151]">' + label +
           (opts.optional ? ' <span class="font-normal text-[#9ca3af]">(optional)</span>' : '') + '</label>' +
         (opts.textarea
-          ? '<textarea id="mp-d-' + id + '" data-mp-d="' + id + '" rows="4" maxlength="255" class="' + window.OBField.TEXTAREA + ' h-[98px] resize-y"></textarea>'
+          ? '<textarea id="mp-d-' + id + '" data-mp-d="' + id + '" rows="4" maxlength="255" class="' + window.OBField.TEXTAREA + ' h-[88px] resize-y"></textarea>'
           : '<input id="mp-d-' + id + '" data-mp-d="' + id + '" type="' + (opts.type || 'text') + '" autocomplete="' + (opts.autocomplete || 'off') + '" value="' + esc(opts.value || '') + '" class="' + INPUT + '">') +
         '<p data-mp-d-error="' + id + '" class="hidden text-sm leading-5 text-[#dc2626]"></p>' +
       '</div>';
@@ -622,7 +626,9 @@
         field('email', 'Email', { type: 'email', autocomplete: 'email', value: info.email }) +
         field('phone', 'Phone Number', { type: 'tel', autocomplete: 'tel', value: info.phoneNumber }) +
         field('message', 'Message <span class="font-normal text-[#9ca3af]">(maximum of 255 characters)</span>', { textarea: true }) +
-        '<div class="mt-auto flex flex-col gap-4 pt-6">' +
+        // Exactly 56 above the CTA at every breakpoint: form gap-4 (16) + pt-10 (40).
+        // Not bottom-anchored: Figma 4.2.0 puts the CTA right under the form.
+        '<div class="flex flex-col gap-4 pt-10">' +
           '<button type="submit" class="' + PRIMARY_BTN + '">Let\'s talk</button>' +
           '<a href="allocation.html" class="' + SECONDARY_BTN + '">Cancel</a>' +
         '</div>' +
@@ -682,16 +688,24 @@
    * 20024:45679): icon, title, a gray box with Reason and Details, then the
    * client's contact card. With a fallback, the whole claim goes to the
    * primary party.
+   * Also the verification-failure revoke (Figma 1.7 / 2.7): the payee ran out
+   * of attempts (code, identity or bank account), saved as `revokedReason`.
    */
   function closedPage() {
     var mp = F.getMp();
-    if (!mp.payment || mp.payment === 'active') { window.location.replace('allocation.html'); return; }
+    var state = (window.SDOnboardingContext && window.SDOnboardingContext.getState()) || {};
+    var ctx = state.payableContext || {};
+    var verification = (!mp.payment || mp.payment === 'active') && state.revokedReason;
+    if ((!mp.payment || mp.payment === 'active') && !verification) { window.location.replace('allocation.html'); return; }
+    if (verification) mp = Object.assign({}, mp, { payment: 'revoked', fallback: false });
     var M = window.OBModal;
     var people = F.parties(mp);
     var primary = people.filter(function (p) { return p.primary; })[0];
     var client = M.clientName();
     var fallback = mp.fallback !== false && mp.payment !== 'disputed';
     var revokedBy = people[people.length - 1];
+    var info = ctx.accountInformation || {};
+    var payee = (ctx.contact && ctx.contact.name) || [info.firstName, info.lastName].filter(Boolean).join(' ') || ctx.payeeName;
 
     var expired = mp.payment === 'expired';
     var icon = document.querySelector('[data-mp-closed-icon]');
@@ -711,10 +725,12 @@
         '<dd class="flex min-w-[180px] flex-1 flex-col items-start gap-0.5 text-sm leading-5 text-gray-700">' + valueHtml + '</dd></div>';
     }
 
-    var reason = {
-      revoked: 'Too many failed attempts to provide answer to security question(s) by ' + esc(revokedBy.name),
-      disputed: 'Total amount disputed by ' + esc(primary.name)
-    }[mp.payment];
+    var reason = verification
+      ? esc(state.revokedReason) + (payee ? ' by ' + esc(payee) : '')
+      : {
+        revoked: 'Too many failed attempts to provide answer to security question(s) by ' + esc(revokedBy.name),
+        disputed: 'Total amount disputed by ' + esc(primary.name)
+      }[mp.payment];
 
     var details = [];
     if (expired) details.push(row('Expired On', tokenDate(new Date(Date.now() - 24 * 3600000))));
@@ -731,7 +747,7 @@
         '<span class="block font-normal text-gray-500">' + esc(mp.disputeMessage || 'The total is $3,000 short of the repair invoice, so the claim needs to be reassessed.') + '</span></dd>') + '</dl>';
     } else {
       details.push(row('Issued By', esc(client)));
-      details.push(row('Payment Amount', money(F.TOTAL)));
+      details.push(row('Payment Amount', verification ? esc(ctx.amountFormatted || money(ctx.amount)) : money(F.TOTAL)));
       html += '<dl class="flex flex-col gap-2"><dt class="text-sm leading-5 text-gray-600">Details</dt>' + details.join('') + '</dl>';
       // Someone else received the money: say where the user's share went.
       if (fallback && !primary.you) {
@@ -749,7 +765,13 @@
 
   document.addEventListener('DOMContentLoaded', function () {
     if (!F) return;
-    if (document.body.getAttribute('data-mp-page') === 'closed') { closedPage(); return; }
+    if (document.body.getAttribute('data-mp-page') === 'closed') {
+      // Render once the payable context (amount, payee name) has loaded, or the
+      // verification revoke shows $0.00 and a reason without "by <payee>".
+      var ctx = window.SDOnboardingContext;
+      Promise.resolve(ctx && ctx.bootstrap ? ctx.bootstrap() : null).then(closedPage, closedPage);
+      return;
+    }
     var root = document.querySelector('[data-mp-root]');
     if (!root) return;
     var pages = {

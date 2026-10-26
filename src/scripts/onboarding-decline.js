@@ -79,7 +79,7 @@ window.OBDecline = (function () {
             '</div>' +
 
             '<div class="flex flex-col gap-4 px-6 pb-6">' +
-              '<button type="submit" class="' + M.BUTTON + ' bg-[#dc2626] text-white hover:bg-[#ef4444] focus-visible:outline-[#dc2626]">Decline Payment</button>' +
+              '<button type="submit" class="' + M.BUTTON_BASE + ' bg-[#dc2626] text-white hover:bg-[#ef4444] focus-visible:outline-[#dc2626]">Decline Payment</button>' +
               '<button type="button" data-ob-modal-close class="' + M.BUTTON + ' border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus-visible:outline-blue-600">Cancel</button>' +
             '</div>' +
           '</form>';
