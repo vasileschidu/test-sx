@@ -125,8 +125,7 @@
         },
         "lastValidation": "Aug 04, 2024",
         "fraudScore": 10,
-        "lastFraudScore": "Aug 04, 2024",
-        "expanded": true
+        "lastFraudScore": "Aug 04, 2024"
       },
       {
         "id": "bank-wells",
@@ -144,8 +143,7 @@
         },
         "lastValidation": "Aug 04, 2024",
         "fraudScore": 2,
-        "lastFraudScore": "Aug 04, 2024",
-        "expanded": true
+        "lastFraudScore": "Aug 04, 2024"
       },
       {
         "id": "bank-citi",

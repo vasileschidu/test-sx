@@ -158,7 +158,7 @@
         tab.id +
         '" aria-selected="' +
         active +
-        '" class="-mb-px h-[42px] cursor-pointer border-b-2 py-2.5 text-sm/5 whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ' +
+        '" class="h-[42px] cursor-pointer border-b-2 py-2.5 text-sm/5 whitespace-nowrap focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ' +
         (active
           ? "border-blue-500 font-semibold text-blue-600 dark:text-blue-400"
           : "border-transparent font-medium text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200") +
@@ -188,7 +188,7 @@
       escapeHtml(v.companyId) +
       "</button>" +
       "</div></div>" +
-      '<div role="tablist" aria-label="Vendor profile" class="flex gap-6 overflow-x-auto">' +
+      '<div role="tablist" aria-label="Vendor profile" class="relative -mb-px flex gap-6 overflow-x-auto overflow-y-hidden">' +
       tabs +
       "</div></div>" +
       '<div class="h-px bg-gray-200 dark:bg-white/10"></div>'
@@ -721,11 +721,6 @@
         }
         state.vendor = vendor || null;
         state.profile = (payload && payload.profileDefaults) || null;
-        if (state.profile) {
-          state.profile.paymentMethods.forEach(function (m) {
-            if (m.expanded) state.expanded[m.id] = true;
-          });
-        }
         render();
       })
       .catch(function () {
