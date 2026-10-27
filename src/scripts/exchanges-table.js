@@ -1812,11 +1812,9 @@
       case "invoice":
         if (IS_SUPPLIER_PORTAL) {
           return (
-            '<button type="button" data-get-paid-invoice="' +
+            '<span class="text-sm font-normal text-gray-500 dark:text-gray-400">' +
             escapeHtml(entry.invoice) +
-            '" class="cursor-pointer p-0 text-sm font-normal text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">' +
-            escapeHtml(entry.invoice) +
-            "</button>"
+            "</span>"
           );
         }
         return (

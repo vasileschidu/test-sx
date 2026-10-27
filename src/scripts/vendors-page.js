@@ -431,12 +431,12 @@
     return vendors
       .map(function (vendor) {
         return (
-          '<tr data-vendor-row class="cursor-pointer bg-white hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-white/5">' +
+          '<tr data-vendor-row class="cursor-pointer bg-white dark:bg-gray-900">' +
           '<td class="' +
           cell +
           '"><a href="vendor-profile.html?id=' +
           encodeURIComponent(vendor.id) +
-          '" class="block truncate rounded-sm font-medium text-gray-900 hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white dark:hover:text-blue-400" title="' +
+          '" class="block truncate rounded-sm font-medium text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white" title="' +
           escapeHtml(vendor.name) +
           '">' +
           escapeHtml(vendor.name) +

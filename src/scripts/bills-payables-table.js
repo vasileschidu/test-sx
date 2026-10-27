@@ -4076,20 +4076,6 @@
               var billValue = escapeHtml(
                 row[col.key] == null ? "--" : row[col.key],
               );
-              if (row.status === "in_progress" || row.status === "paid") {
-                return (
-                  '<td class="h-[52px] align-middle text-sm font-normal whitespace-nowrap text-gray-500 dark:text-gray-400' +
-                  columnWidthClass(col) +
-                  cb +
-                  '">' +
-                  '<button type="button" data-pay-id="' +
-                  row.id +
-                  '" class="cursor-pointer p-0 font-normal text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">' +
-                  billValue +
-                  "</button>" +
-                  "</td>"
-                );
-              }
               return (
                 '<td class="h-[52px] align-middle text-sm font-normal whitespace-nowrap text-gray-500 dark:text-gray-400' +
                 columnWidthClass(col) +
