@@ -263,7 +263,9 @@
       "</div>" +
       "</div>" +
       (expandable
-        ? '<div data-method-body class="hidden px-3 pb-3">' +
+        ? '<div data-method-body class="hidden ' +
+          (config.bodyClass != null ? config.bodyClass : "px-3 pb-3") +
+          '">' +
           '<div class="min-w-0">' +
           (config.bodyHtml || "") +
           "</div>" +
@@ -470,7 +472,108 @@
     );
   }
 
+  var BANK_VALIDATION_ASSETS = "../../../src/assets/bank-validation/";
+
+  // Detail-level validation UI (ticks, warnings, last validation, fraud score)
+  // only applies to Consumer Portal accounts that carry a validationStatus.
+  function bankValidationIcon(file) {
+    return (
+      '<img data-bank-validation-icon src="' +
+      BANK_VALIDATION_ASSETS +
+      file +
+      '" alt="" aria-hidden="true" class="size-5 shrink-0" />'
+    );
+  }
+
+  function buildBankFraudSection(account) {
+    var score = account.fraudScore;
+    if (score == null || isNaN(score)) return "";
+    // 7-10 green, 4-6 yellow, 0-3 red.
+    var tier = score >= 7 ? "good" : score >= 4 ? "medium" : "bad";
+    var badgeClass = {
+      good: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300",
+      medium:
+        "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300",
+      bad: "border-red-200 bg-red-100 text-red-800 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300",
+    }[tier];
+    var shield = {
+      good: "shield-check.svg",
+      medium: "shield-exclamation-yellow.svg",
+      bad: "shield-exclamation.svg",
+    }[tier];
+    return (
+      '<div data-bank-fraud class="flex flex-col items-start gap-2 self-stretch pt-4">' +
+      '<div class="grid grid-cols-2 gap-4 self-stretch items-center"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Fraud Score</span>' +
+      '<span data-bank-fraud-score class="inline-flex w-fit items-center gap-0.5 rounded border py-0.5 pr-1 pl-2 text-xs font-medium ' +
+      badgeClass +
+      '">' +
+      escapeHtml(score) +
+      "/10" +
+      '<img src="' +
+      BANK_VALIDATION_ASSETS +
+      shield +
+      '" alt="" aria-hidden="true" class="size-3.5 shrink-0" /></span></div>' +
+      '<div class="h-px self-stretch bg-gray-200 dark:bg-white/10"></div>' +
+      (account.lastFraudScoreDate
+        ? '<p class="text-xs text-gray-500 dark:text-gray-400">Last fraud score: <span class="font-semibold">' +
+          escapeHtml(account.lastFraudScoreDate) +
+          "</span></p>"
+        : "") +
+      "</div>"
+    );
+  }
+
+  function buildBankRevealButton(inline) {
+    return (
+      '<button type="button" data-bank-reveal-btn data-revealed="false" class="inline-flex w-fit items-center gap-' +
+      (inline ? "1" : "2") +
+      " rounded-md " +
+      (inline
+        ? "p-1 text-xs"
+        : "self-start px-2.5 py-1.5 text-sm") +
+      ' font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
+      createRevealIcons() +
+      "<span data-reveal-text>Reveal Details</span>" +
+      "</button>"
+    );
+  }
+
+  // "Last account validation" with Reveal Details in line, in the same
+  // two-column grid as the rows above it.
+  function buildBankValidationFooter(account) {
+    return (
+      '<div data-bank-last-validation class="flex flex-col gap-2 self-stretch pt-1">' +
+      '<div class="h-px self-stretch bg-gray-200 dark:bg-white/10"></div>' +
+      '<div class="grid grid-cols-2 items-center gap-4 self-stretch">' +
+      '<p class="text-xs text-gray-500 dark:text-gray-400"><span class="font-medium">Last account validation: </span><span class="font-semibold">' +
+      escapeHtml(account.lastValidationDate) +
+      "</span></p>" +
+      buildBankRevealButton(true) +
+      "</div></div>"
+    );
+  }
+
   function createBankAccountRow(account) {
+    var detailed =
+      account.validationStatus === "verified" ||
+      account.validationStatus === "locked";
+    var locked = account.validationStatus === "locked";
+    // Reveal Details sits beside the validation date when there is one.
+    var inlineReveal = detailed && !!account.lastValidationDate;
+    if (locked) {
+      // A locked account can't be validated: its numbers show as "---" with a warning.
+      account = Object.assign({}, account, {
+        maskedAccount: "---",
+        maskedRouting: "---",
+      });
+    }
+    var tick = detailed ? bankValidationIcon("check.svg") : "";
+    var numberTick = detailed
+      ? bankValidationIcon(locked ? "exclamation-triangle.svg" : "check.svg")
+      : "";
+    var numberLabelClass = locked
+      ? "text-amber-600 dark:text-amber-400"
+      : "text-gray-900 dark:text-gray-100";
     var accountCopyId = "pp-bank-detail-copy-account-" + escapeHtml(account.id);
     var routingCopyId = "pp-bank-detail-copy-routing-" + escapeHtml(account.id);
     return createAccountDetailsComponent({
@@ -483,35 +586,48 @@
       titleSuffixHtml: buildBankValidationIcon(account.validationStatus),
       subtitle: "••••" + escapeHtml(account.last4),
       actionsHtml: buildAccountActionMenu("bank", account.id),
+      // No wrapper padding: the body's own px-4 puts its content 16px from the row edge.
+      bodyClass: "",
       bodyHtml:
-        '<div class="flex flex-col items-start gap-2 self-stretch rounded-md bg-gray-50 px-4 py-3 dark:bg-white/5">' +
-        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' +
-        escapeHtml(account.accountHolderName || account.name) +
-        "</span></div>" +
+        '<div class="flex flex-col items-start gap-2 self-stretch rounded-md bg-gray-50 p-4 dark:bg-white/5">' +
         '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Bank</span><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' +
         escapeHtml(account.bankName || account.displayName || "--") +
         "</span></div>" +
-        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Account Number</span><button type="button" data-bank-account-copy data-copy-id="' +
+        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Name on Account</span><div class="flex items-center gap-2.5"><span class="text-sm font-normal text-gray-700 dark:text-gray-300">' +
+        escapeHtml(account.accountHolderName || account.name) +
+        "</span>" +
+        tick +
+        "</div></div>" +
+        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium ' +
+        numberLabelClass +
+        '">Account Number</span><div class="flex items-center gap-2"><button type="button" data-bank-account-copy data-copy-id="' +
         accountCopyId +
         '" data-copy-enabled="false" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' +
         accountCopyId +
-        '" data-bank-account-value class="text-sm font-normal text-gray-700 dark:text-gray-300"></span><span data-copy-icon class="hidden"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg></span></button></div>' +
-        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Routing Number</span><button type="button" data-bank-routing-copy data-copy-id="' +
+        '" data-bank-account-value class="text-sm font-normal text-gray-700 dark:text-gray-300"></span><span data-copy-icon class="hidden"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg></span></button>' +
+        numberTick +
+        '</div></div>' +
+        '<div class="grid grid-cols-2 gap-4 self-stretch"><span class="text-sm font-medium ' +
+        numberLabelClass +
+        '">Routing Number</span><div class="flex items-center gap-2"><button type="button" data-bank-routing-copy data-copy-id="' +
         routingCopyId +
         '" data-copy-enabled="false" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none"><span id="' +
         routingCopyId +
-        '" data-bank-routing-value class="text-sm font-normal text-gray-700 dark:text-gray-300"></span><span data-copy-icon class="hidden"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg></span></button></div>' +
+        '" data-bank-routing-value class="text-sm font-normal text-gray-700 dark:text-gray-300"></span><span data-copy-icon class="hidden"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg></span></button>' +
+        numberTick +
+        '</div></div>' +
         '<div class="grid grid-cols-2 gap-4 self-stretch items-start"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Address</span><div class="flex flex-col items-start gap-1.5">' +
         (account.address
           ? '<span class="whitespace-pre-line text-sm font-normal text-gray-700 dark:text-gray-300">' +
             escapeHtml(account.address) +
             "</span>"
           : '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">--</span>') +
-        '<button type="button" data-bank-reveal-btn data-revealed="false" class="inline-flex w-fit self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
-        createRevealIcons() +
-        "<span data-reveal-text>Reveal Details</span>" +
-        "</button>" +
+        (inlineReveal ? "" : buildBankRevealButton(false)) +
         "</div></div>" +
+        (detailed
+          ? (inlineReveal ? buildBankValidationFooter(account) : "") +
+            buildBankFraudSection(account)
+          : "") +
         "</div>",
       afterRender: function (row) {
         row.setAttribute("data-bank-account-id", account.id);
