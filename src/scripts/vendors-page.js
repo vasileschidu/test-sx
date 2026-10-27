@@ -431,14 +431,16 @@
     return vendors
       .map(function (vendor) {
         return (
-          '<tr class="bg-white hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-white/5">' +
+          '<tr data-vendor-row class="cursor-pointer bg-white hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-white/5">' +
           '<td class="' +
           cell +
-          '"><span class="block truncate font-medium text-gray-900 dark:text-white" title="' +
+          '"><a href="vendor-profile.html?id=' +
+          encodeURIComponent(vendor.id) +
+          '" class="block truncate rounded-sm font-medium text-gray-900 hover:text-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white dark:hover:text-blue-400" title="' +
           escapeHtml(vendor.name) +
           '">' +
           escapeHtml(vendor.name) +
-          "</span></td>" +
+          "</a></td>" +
           '<td class="' +
           cell +
           ' whitespace-nowrap">' +
@@ -1437,6 +1439,18 @@
         state.sortDirection = state.sortDirection === "asc" ? "desc" : "asc";
         state.currentPage = 1;
         render();
+        return;
+      }
+      // A click anywhere else on a row opens the vendor profile through the
+      // row's name link, so shell navigation handles it like any link.
+      var vendorRow = target.closest("[data-vendor-row]");
+      if (
+        vendorRow &&
+        !target.closest("a, button, [data-method-tip], [data-early-tip]") &&
+        !(window.getSelection && String(window.getSelection()).trim())
+      ) {
+        var link = vendorRow.querySelector('a[href*="vendor-profile.html"]');
+        if (link) link.click();
         return;
       }
       var pageBtn = target.closest("[data-page-nav]");
