@@ -1,25 +1,242 @@
 {
   "data": [
-    { "id": "hubert-blaine", "name": "Hubert Blaine Wolfeschlegelsteinhausenbergerdorff Sr.", "companyId": "A0B1C0868", "openPayables": 1, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "not_in_network", "earlyPaymentAvailable": false, "email": "ap@hubertblaine.example" },
-    { "id": "likangs-bakery", "name": "Likang's Bakery", "companyId": "A0B1C0566", "openPayables": 4, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "invitation_sent", "earlyPaymentAvailable": false, "email": "billing@likangsbakery.example", "phone": "+1-503-555-0123" },
-    { "id": "tres-comas-tequila", "name": "Tres Comas Tequila", "companyId": "A0B1C0869", "openPayables": 6, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "invitation_sent", "earlyPaymentAvailable": false, "email": "finance@trescomas.example", "phone": "+1-512-555-0148" },
-    { "id": "richards-rock-and-roll-rentals", "name": "Richard's Rock and Roll Rentals", "companyId": "A0B1C0268", "openPayables": 9, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "not_in_network", "earlyPaymentAvailable": false, "email": "ap@rockandrollrentals.example" },
-    { "id": "shunn-shudders", "name": "Shunn Shudders", "companyId": "A0B1C0878", "openPayables": 3, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "link_request_pending", "earlyPaymentAvailable": false, "email": "payments@shunnshudders.example" },
-    { "id": "kunzify", "name": "Kunzify", "companyId": "A0B1C0868", "openPayables": 6, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "not_in_network", "earlyPaymentAvailable": false, "email": "ap@kunzify.example" },
-    { "id": "nichol-nickel-mining", "name": "Nichol Nickel Mining", "companyId": "A0B1C0753", "openPayables": 4, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "in_network", "earlyPaymentAvailable": true, "email": "treasury@nicholnickel.example" },
-    { "id": "asheville-brazilian-jiu-jitsu", "name": "Asheville Brazilian Jiu Jitsu", "companyId": "A0B1C0466", "openPayables": 5, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "not_in_network", "earlyPaymentAvailable": false, "email": "office@ashevillebjj.example" },
-    { "id": "hes-organic-foods", "name": "He's Organic Foods", "companyId": "A0B1C0236", "openPayables": 8, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "request_received", "earlyPaymentAvailable": false, "email": "ar@hesorganic.example" },
-    { "id": "sneaker-lab", "name": "Sneaker Lab", "companyId": "A0B1C0254", "openPayables": 3, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "link_request_pending", "earlyPaymentAvailable": false, "email": "ap@sneakerlab.example" },
-    { "id": "lilys-flower-shop", "name": "Lily's Flower Shop", "companyId": "A0B1C0386", "openPayables": 8, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "rejected", "earlyPaymentAvailable": false, "email": "hello@lilysflowers.example" },
-    { "id": "rad-roofing", "name": "Rad Roofing", "companyId": "A0B1C0793", "openPayables": 3, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "linked", "earlyPaymentAvailable": true, "email": "ap@radroofing.example" },
-    { "id": "sams-imaginary-pet-farm", "name": "Sam's Imaginary Pet Farm, LLC.", "companyId": "A0B1C0467", "openPayables": 9, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "linked", "earlyPaymentAvailable": true, "email": "billing@samspetfarm.example" }
+    { "id": "hubert-blaine", "name": "Hubert Blaine Wolfeschlegelsteinhausenbergerdorff Sr.", "companyId": "A0B1C0868", "openPayables": 1, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "not_in_network", "earlyPaymentAvailable": false, "email": "ap@hubertblaine.example", "contactName": "Hubert Blaine", "phone": "+1 (212) 555-0199" },
+    { "id": "likangs-bakery", "name": "Likang's Bakery", "companyId": "A0B1C0566", "openPayables": 4, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "invitation_sent", "earlyPaymentAvailable": false, "email": "billing@likangsbakery.example", "phone": "+1-503-555-0123", "contactName": "Michelle Anderson" },
+    { "id": "tres-comas-tequila", "name": "Tres Comas Tequila", "companyId": "A0B1C0869", "openPayables": 6, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "invitation_sent", "earlyPaymentAvailable": false, "email": "finance@trescomas.example", "phone": "+1-512-555-0148", "contactName": "Russ Hanneman" },
+    { "id": "richards-rock-and-roll-rentals", "name": "Richard's Rock and Roll Rentals", "companyId": "A0B1C0268", "openPayables": 9, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "not_in_network", "earlyPaymentAvailable": false, "email": "ap@rockandrollrentals.example", "contactName": "Richard Hendricks", "phone": "+1 (615) 555-0177" },
+    { "id": "shunn-shudders", "name": "Shunn Shudders", "companyId": "A0B1C0878", "openPayables": 3, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "link_request_pending", "earlyPaymentAvailable": false, "email": "payments@shunnshudders.example", "contactName": "Diane Shunn", "phone": "+1 (303) 555-0164" },
+    { "id": "kunzify", "name": "Kunzify", "companyId": "A0B1C0868", "openPayables": 6, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "not_in_network", "earlyPaymentAvailable": false, "email": "ap@kunzify.example", "contactName": "Lena Kunz", "phone": "+1 (415) 555-0142" },
+    { "id": "nichol-nickel-mining", "name": "Nichol Nickel Mining", "companyId": "A0B1C0753", "openPayables": 4, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "in_network", "earlyPaymentAvailable": true, "email": "treasury@nicholnickel.example", "contactName": "Carl Nichol", "phone": "+1 (775) 555-0131" },
+    { "id": "asheville-brazilian-jiu-jitsu", "name": "Asheville Brazilian Jiu Jitsu", "companyId": "A0B1C0466", "openPayables": 5, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "not_in_network", "earlyPaymentAvailable": false, "email": "office@ashevillebjj.example", "contactName": "Marcos Silva", "phone": "+1 (828) 555-0110" },
+    { "id": "hes-organic-foods", "name": "He's Organic Foods", "companyId": "A0B1C0236", "openPayables": 8, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "request_received", "earlyPaymentAvailable": false, "email": "ar@hesorganic.example", "contactName": "He Wei", "phone": "+1 (206) 555-0186" },
+    { "id": "sneaker-lab", "name": "Sneaker Lab", "companyId": "A0B1C0254", "openPayables": 3, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "link_request_pending", "earlyPaymentAvailable": false, "email": "ap@sneakerlab.example", "contactName": "Jordan Price", "phone": "+1 (323) 555-0122" },
+    { "id": "lilys-flower-shop", "name": "Lily's Flower Shop", "companyId": "A0B1C0386", "openPayables": 8, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "rejected", "earlyPaymentAvailable": false, "email": "hello@lilysflowers.example", "contactName": "Lily Moreno", "phone": "+1 (305) 555-0157" },
+    { "id": "rad-roofing", "name": "Rad Roofing", "companyId": "A0B1C0793", "openPayables": 3, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "linked", "earlyPaymentAvailable": true, "email": "ap@radroofing.example", "contactName": "Rachel Morris", "phone": "+1 (512) 555-0182" },
+    { "id": "sams-imaginary-pet-farm", "name": "Sam's Imaginary Pet Farm, LLC.", "companyId": "A0B1C0467", "openPayables": 9, "paymentTerms": "Net30", "methods": ["SMART Disburse", "ACH", "SMART Exchange"], "networkStatus": "linked", "earlyPaymentAvailable": true, "email": "billing@samspetfarm.example", "contactName": "Sam Porter", "phone": "+1 (802) 555-0139" }
   ],
   "directory": [
-    { "id": "great-kahuna-burger", "name": "Great Kahuna Burger Ltd.", "taxId": "A3RDASF-345GRTE", "email": "hobby@mymail.com", "phone": "+300-56-432-50392", "address": "2972 Westheimer Rd.", "city": "Santa Ana", "state": "Illinois", "zip": "85486", "country": "United States" },
-    { "id": "big-kahuna-burger", "name": "Big Kahuna Burger Ltd.", "taxId": "A3RDASF-345GRTE", "email": "hobby@mymail.com", "phone": "+300-56-432-50392", "address": "2972 Westheimer Rd.", "city": "Santa Ana", "state": "Illinois", "zip": "85486", "country": "United States" },
-    { "id": "kunzify-network", "name": "Kunzify Inc.", "taxId": "K7UNZ1F-118QWER", "email": "ap@kunzify.example", "phone": "+1-415-555-0142", "address": "48 Market St.", "city": "San Francisco", "state": "California", "zip": "94105", "country": "United States" },
-    { "id": "hubert-blaine-network", "name": "Hubert Blaine Holdings", "taxId": "HB55120-002LKJH", "email": "ap@hubertblaine.example", "phone": "+1-212-555-0199", "address": "10 Hudson Yards", "city": "New York", "state": "New York", "zip": "10001", "country": "United States" },
-    { "id": "asheville-bjj-network", "name": "Asheville Brazilian Jiu Jitsu LLC", "taxId": "ABJJ442-781MNBV", "email": "office@ashevillebjj.example", "phone": "+1-828-555-0110", "address": "75 Haywood St.", "city": "Asheville", "state": "North Carolina", "zip": "28801", "country": "United States" },
-    { "id": "richards-rentals-network", "name": "Richard's Rock and Roll Rentals", "taxId": "RRR9081-334POIU", "email": "ap@rockandrollrentals.example", "phone": "+1-615-555-0177", "address": "120 Broadway", "city": "Nashville", "state": "Tennessee", "zip": "37201", "country": "United States" }
-  ]
+    {
+      "id": "great-kahuna-burger",
+      "name": "Great Kahuna Burger Ltd.",
+      "taxId": "A3RDASF-345GRTE",
+      "email": "hobby@mymail.com",
+      "phone": "+300-56-432-50392",
+      "address": "2972 Westheimer Rd.",
+      "city": "Santa Ana",
+      "state": "Illinois",
+      "zip": "85486",
+      "country": "United States"
+    },
+    {
+      "id": "big-kahuna-burger",
+      "name": "Big Kahuna Burger Ltd.",
+      "taxId": "A3RDASF-345GRTE",
+      "email": "hobby@mymail.com",
+      "phone": "+300-56-432-50392",
+      "address": "2972 Westheimer Rd.",
+      "city": "Santa Ana",
+      "state": "Illinois",
+      "zip": "85486",
+      "country": "United States"
+    },
+    {
+      "id": "kunzify-network",
+      "name": "Kunzify Inc.",
+      "taxId": "K7UNZ1F-118QWER",
+      "email": "ap@kunzify.example",
+      "phone": "+1-415-555-0142",
+      "address": "48 Market St.",
+      "city": "San Francisco",
+      "state": "California",
+      "zip": "94105",
+      "country": "United States"
+    },
+    {
+      "id": "hubert-blaine-network",
+      "name": "Hubert Blaine Holdings",
+      "taxId": "HB55120-002LKJH",
+      "email": "ap@hubertblaine.example",
+      "phone": "+1-212-555-0199",
+      "address": "10 Hudson Yards",
+      "city": "New York",
+      "state": "New York",
+      "zip": "10001",
+      "country": "United States"
+    },
+    {
+      "id": "asheville-bjj-network",
+      "name": "Asheville Brazilian Jiu Jitsu LLC",
+      "taxId": "ABJJ442-781MNBV",
+      "email": "office@ashevillebjj.example",
+      "phone": "+1-828-555-0110",
+      "address": "75 Haywood St.",
+      "city": "Asheville",
+      "state": "North Carolina",
+      "zip": "28801",
+      "country": "United States"
+    },
+    {
+      "id": "richards-rentals-network",
+      "name": "Richard's Rock and Roll Rentals",
+      "taxId": "RRR9081-334POIU",
+      "email": "ap@rockandrollrentals.example",
+      "phone": "+1-615-555-0177",
+      "address": "120 Broadway",
+      "city": "Nashville",
+      "state": "Tennessee",
+      "zip": "37201",
+      "country": "United States"
+    }
+  ],
+  "profileDefaults": {
+    "entityType": "Business",
+    "onboardedSince": "September 23, 2021",
+    "billingAddress": [
+      "1 Chapel Hill Rd",
+      "Short Hills, NJ 07078",
+      "US"
+    ],
+    "paymentTerms": "180 days credit",
+    "tin": "present",
+    "w9": "present",
+    "paymentMethods": [
+      {
+        "id": "card-2956",
+        "type": "card",
+        "title": "Michelle Anderson",
+        "last4": "2956",
+        "status": "unverified",
+        "cardNumber": "5425233430102956",
+        "expiry": "09/27"
+      },
+      {
+        "id": "bank-chase",
+        "type": "bank",
+        "title": "Chase Bank Account",
+        "last4": "8419",
+        "status": "verified",
+        "accountName": "Big Kahuna Burger Ltd",
+        "accountNumber": "0012245685615",
+        "routingNumber": "021005667",
+        "validated": {
+          "accountName": true,
+          "accountNumber": true,
+          "routingNumber": true
+        },
+        "lastValidation": "Aug 04, 2024",
+        "fraudScore": 10,
+        "lastFraudScore": "Aug 04, 2024",
+        "expanded": true
+      },
+      {
+        "id": "bank-wells",
+        "type": "bank",
+        "title": "Wells Fargo Account",
+        "last4": "8419",
+        "status": "warning",
+        "accountName": "Big Kahuna Burger Ltd",
+        "accountNumber": "",
+        "routingNumber": "",
+        "validated": {
+          "accountName": true,
+          "accountNumber": false,
+          "routingNumber": false
+        },
+        "lastValidation": "Aug 04, 2024",
+        "fraudScore": 2,
+        "lastFraudScore": "Aug 04, 2024",
+        "expanded": true
+      },
+      {
+        "id": "bank-citi",
+        "type": "bank",
+        "title": "Citibank Account",
+        "last4": "3674",
+        "status": "warning",
+        "accountName": "Big Kahuna Burger Ltd",
+        "accountNumber": "",
+        "routingNumber": "021000089",
+        "validated": {
+          "accountName": true,
+          "accountNumber": false,
+          "routingNumber": true
+        },
+        "lastValidation": "Aug 04, 2024",
+        "fraudScore": 5,
+        "lastFraudScore": "Aug 04, 2024"
+      },
+      {
+        "id": "bank-boa",
+        "type": "bank",
+        "title": "Bank of America Account",
+        "last4": "5281",
+        "status": "verified",
+        "accountName": "Big Kahuna Burger Ltd",
+        "accountNumber": "0045671235281",
+        "routingNumber": "026009593",
+        "validated": {
+          "accountName": true,
+          "accountNumber": true,
+          "routingNumber": true
+        },
+        "lastValidation": "Aug 04, 2024",
+        "fraudScore": 9,
+        "lastFraudScore": "Aug 04, 2024"
+      },
+      {
+        "id": "bank-capone",
+        "type": "bank",
+        "title": "Capital One Account",
+        "last4": "1147",
+        "status": "verified",
+        "accountName": "Big Kahuna Burger Ltd",
+        "accountNumber": "0078901231147",
+        "routingNumber": "051405515",
+        "validated": {
+          "accountName": true,
+          "accountNumber": true,
+          "routingNumber": true
+        },
+        "lastValidation": "Aug 04, 2024",
+        "fraudScore": 9,
+        "lastFraudScore": "Aug 04, 2024"
+      }
+    ],
+    "activity": [
+      {
+        "title": "Active",
+        "date": "Aug 12, 2024, 12:43 AM",
+        "text": "The supplier's credentials and information have been reviewed and approved.",
+        "current": true
+      },
+      {
+        "title": "Address Updated",
+        "date": "Aug 04, 2024, 09:43 PM",
+        "text": "The supplier has updated their address details."
+      },
+      {
+        "title": "Processing",
+        "date": "Aug 04, 2024, 09:43 PM",
+        "text": "The supplier’s application or registration is currently being processed."
+      },
+      {
+        "title": "Pending Approval",
+        "date": "Aug 04, 2024, 09:43 PM",
+        "text": "The supplier has submitted their details and is waiting for review and verification."
+      },
+      {
+        "title": "Invitation Sent",
+        "date": "Aug 04, 2024, 09:43 PM",
+        "text": "An invitation has been sent to the supplier, but they have not responded yet."
+      },
+      {
+        "title": "Not Invited",
+        "date": "",
+        "text": "No invitation sent yet."
+      }
+    ],
+    "preferences": {
+      "bulkPayments": true
+    }
+  }
 }
