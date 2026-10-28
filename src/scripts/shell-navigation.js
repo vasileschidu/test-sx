@@ -12,7 +12,7 @@
       init: "initBillsPayablesTable",
     },
     "payment-preferences.html": {
-      scripts: ["/src/scripts/payment-preferences-components.js"],
+      scripts: ["/src/scripts/payment-preferences-components.js?v=bank-tooltips-20261021j"],
       reloadScripts: [
         "/src/scripts/payment-preferences-tabs.js",
         "/src/scripts/pages/payment-preferences-page.js",
@@ -50,13 +50,13 @@
     },
     "consumer-my-cards.html": {
       scripts: [
-        "/src/scripts/payment-preferences-components.js",
+        "/src/scripts/payment-preferences-components.js?v=bank-tooltips-20261021j",
         "/src/scripts/consumer-my-cards.js",
       ],
       init: "initConsumerMyCards",
     },
     "consumer-payment-preferences.html": {
-      scripts: ["/src/scripts/payment-preferences-components.js"],
+      scripts: ["/src/scripts/payment-preferences-components.js?v=bank-tooltips-20261021j"],
       reloadScripts: [
         "/src/scripts/payment-preferences-tabs.js",
         "/src/scripts/pages/payment-preferences-page.js",
