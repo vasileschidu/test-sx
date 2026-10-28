@@ -260,7 +260,7 @@
 
   var CLASS_NAMES = {
     tbody: 'bg-white dark:bg-gray-900',
-    row: 'transition-colors duration-300 motion-reduce:transition-none',
+    row: 'cursor-pointer transition-colors duration-300 motion-reduce:transition-none',
     cellBorder: ' border-b border-gray-200 dark:border-white/10',
     actionCell:
       'bg-white h-12 align-middle py-2 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2',
@@ -1654,7 +1654,7 @@
       if (col.type === 'expand') {
         html +=
           '<td class="' + (IS_CONSUMER_TABLE ? 'h-[52px]' : 'h-12') + ' w-10 min-w-10 align-middle py-2 px-0 text-center whitespace-nowrap' + cb + '">' +
-            '<button data-row-toggle class="inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20">' +
+            '<button type="button" data-row-toggle aria-label="Expand row" class="inline-flex cursor-pointer items-center justify-center p-1">' +
               '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">' +
                 '<path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" />' +
               '</svg>' +
@@ -2190,43 +2190,39 @@
   var CONSUMER_AVATAR = '<svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true" class="size-6 shrink-0"><rect width="24" height="24" rx="12" fill="#F3F4F6"/><path d="M2.078 18.752A11.96 11.96 0 0 1 12.004 15c3.803 0 7.276 1.416 9.92 3.749A11.99 11.99 0 0 1 12 24c-4.124 0-7.762-2.08-9.922-5.248Z" fill="#D1D5DB"/><circle cx="12" cy="9" r="4" fill="#D1D5DB"/></svg>';
   var CONSUMER_TH = 'px-4 py-2 text-xs/4 font-medium uppercase tracking-[0.6px] text-gray-500 dark:text-gray-400 whitespace-nowrap';
 
-  var CONSUMER_MASTERCARD_BADGE = CONSUMER_MASTERCARD_FLAG.replace('width="24" height="16"', 'width="30" height="20"');
 
-  // Paid rows: Figma "AP/Payable Table/MoP Details" — SMART path, method, then a 380px details column.
+  // Paid / exception rows: same "Payment Method Details" card as Bills and Payables.
   function buildConsumerPaidMethodDetails(variant) {
     var f = variant.consumerFields;
     if (!f) return '';
-    var entry = variant.consumerEntry;
-    var labelCls = 'text-sm/5 font-medium text-gray-900 dark:text-white';
-    var valueCls = 'text-sm/5 font-normal text-gray-700 dark:text-gray-300';
-    var copyIcon = '<span data-paid-copy-icon class="shrink-0 [&>svg]:size-[18px]">' + ICON_COPY + '</span>';
-    function row(label, valueHtml, extraCls) {
-      return '<div class="flex items-start gap-6">' +
-        '<div class="w-[170px] shrink-0 ' + labelCls + '">' + label + '</div>' +
-        '<div class="min-w-0 flex-1 ' + (extraCls || valueCls) + '">' + valueHtml + '</div>' +
+    var labelCls = 'text-sm font-medium text-gray-900 dark:text-gray-100';
+    var valueCls = 'text-sm font-normal text-gray-700 dark:text-gray-300';
+    function row(label, valueHtml) {
+      return '<div class="grid grid-cols-2 items-start gap-4 self-stretch">' +
+        '<span class="' + labelCls + '">' + label + '</span>' +
+        '<span class="' + valueCls + '">' + valueHtml + '</span>' +
       '</div>';
     }
-    function copyRow(label, id, masked, revealed, attrs, ctl) {
-      return '<div class="flex items-start gap-6">' +
-        '<div class="w-[170px] shrink-0 ' + labelCls + '">' + label + '</div>' +
-        '<div class="flex-1 min-w-0">' +
-          '<button type="button" data-paid-copy="' + id + '" title="Copy" class="copy-btn flex w-full cursor-pointer items-center justify-between gap-3 text-left ' + valueCls + '">' +
-            '<span id="' + id + '" class="whitespace-nowrap tabular-nums" ' + attrs + ' data-masked="' + escapeHtml(masked) + '" data-revealed="' + escapeHtml(revealed || masked) + '">' + escapeHtml(masked) + '</span>' +
-            copyIcon +
-          '</button>' +
-        '</div>' +
+    function copyRow(label, id, masked, revealed, maskAttr, ctlAttr) {
+      return '<div class="grid grid-cols-2 gap-4 self-stretch">' +
+        '<span class="' + labelCls + '">' + label + '</span>' +
+        '<button type="button" data-copy-id="' + id + '" data-copy-enabled="false" ' + ctlAttr + '="true" class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 dark:text-gray-300 pointer-events-none">' +
+          '<span id="' + id + '" ' + maskAttr + ' data-masked="' + escapeHtml(masked) + '" data-revealed="' + escapeHtml(revealed || masked) + '" class="text-sm font-normal">' + escapeHtml(masked) + '</span>' +
+          '<span data-copy-icon="true" class="hidden">' + ICON_COPY + '</span>' +
+        '</button>' +
       '</div>';
     }
-    function revealBtn(attr, textAttr) {
-      return '<button type="button" ' + attr + ' data-revealed="false" class="inline-flex cursor-pointer items-center gap-1 rounded-[4px] py-0.5 text-xs/4 font-semibold text-blue-600 hover:text-blue-500 dark:text-blue-400">' +
-        '<span data-icon="reveal">' + ICON_EYE + '</span>' +
-        '<span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span>' +
-        '<span ' + textAttr + '>Reveal Details</span>' +
-      '</button>';
+    function revealRow(attr, textAttr) {
+      return '<div class="grid grid-cols-2 items-start gap-4 self-stretch"><span></span>' +
+        '<button type="button" ' + attr + ' data-revealed="false" class="inline-flex w-fit shrink-0 self-start items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">' +
+          '<span data-icon="reveal">' + ICON_EYE + '</span>' +
+          '<span data-icon="hide" class="hidden">' + ICON_EYE_SLASH + '</span>' +
+          '<span ' + textAttr + '>Reveal Details</span>' +
+        '</button>' +
+      '</div>';
     }
     var wrapAttr = '';
     var title = 'Details';
-    var action = '';
     var rows = '';
     if (f.kind === 'card') {
       var c = f.details;
@@ -2235,51 +2231,44 @@
       var id3 = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
       wrapAttr = ' data-payment-info-card';
       title = 'Card Details';
-      action = revealBtn('data-card-reveal-toggle', 'data-card-reveal-text');
       rows =
         row('Cardholder Name', getSafeTextValue(c.cardHolderName)) +
-        row('Cardholder Address', getSafeMultilineValue(c.cardHolderAddress), 'text-sm/5 font-normal text-gray-600 dark:text-gray-400') +
-        row('Type', CONSUMER_MASTERCARD_BADGE) +
+        row('Cardholder Address', getSafeMultilineValue(c.cardHolderAddress)) +
+        row('Type', CONSUMER_MASTERCARD_FLAG) +
         copyRow('Card Number', id1, c.maskedCardNumber, c.fullCardNumber, 'data-mask-field="card-number"', 'data-card-copy-control') +
         copyRow('Expires', id2, c.expiryFull, c.expiryFull, 'data-mask-field="card-expiry"', 'data-card-copy-control') +
-        copyRow('CVC2', id3, c.maskedCvc, c.cvcValue, 'data-mask-field="card-cvc"', 'data-card-copy-control');
+        copyRow('CVC2', id3, c.maskedCvc, c.cvcValue, 'data-mask-field="card-cvc"', 'data-card-copy-control') +
+        revealRow('data-card-reveal-toggle', 'data-card-reveal-text');
     } else if (f.kind === 'ach') {
       var a1 = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
       var a2 = 'sx-payment-copy-' + (++paymentInfoCopyIdCounter);
       wrapAttr = ' data-ach-info-card';
       title = 'Account Details';
-      action = revealBtn('data-ach-reveal-toggle', 'data-ach-reveal-text');
       rows =
         row('Name', f.name) +
         copyRow('Account Number', a1, f.accountMasked, f.accountRevealed, 'data-ach-mask-field="true"', 'data-ach-copy-control') +
         copyRow('Routing Number', a2, f.routingMasked, f.routingRevealed, 'data-ach-mask-field="true"', 'data-ach-copy-control') +
-        row('Address', f.address, 'text-sm/5 font-normal text-gray-600 dark:text-gray-400');
+        row('Address', f.address) +
+        revealRow('data-ach-reveal-toggle', 'data-ach-reveal-text');
     } else if (f.kind === 'check') {
       title = 'Check Details';
       rows =
         row('Payee', f.payee) +
-        row('Mailing Address', f.address, 'text-sm/5 font-normal text-gray-600 dark:text-gray-400') +
+        row('Mailing Address', f.address) +
         row('Check Number', f.checkNumber) +
         row('Mailed Date', f.mailedDate);
     }
-    var methodName = f.kind === 'card' ? 'Card' : (f.kind === 'ach' ? 'Bank Account' : 'Check');
     return (
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Payment Method<br>Details</div>' +
-        '<div class="flex min-w-0 flex-1 items-start gap-9 p-4">' +
-          '<div class="flex w-[152px] shrink-0 items-center gap-1">' + CONSUMER_SX_LOGO.replace(/sxg(\d)/g, 'sxg$1-pd' + (++paymentInfoCopyIdCounter)) +
-            '<span class="text-sm/5 font-semibold text-gray-800 whitespace-nowrap dark:text-gray-200">' + escapeHtml(METHOD_TYPE_LABELS.smart_exchange) + '</span>' +
-          '</div>' +
-          '<div class="flex shrink-0 items-center self-start">' + CONSUMER_CHEVRON_RIGHT + '</div>' +
-          '<div class="flex min-w-[56px] shrink-0 items-start"><span class="text-sm/5 font-semibold text-gray-800 whitespace-nowrap dark:text-gray-200">' + methodName + '</span></div>' +
-          '<div class="flex shrink-0 items-center self-start">' + CONSUMER_CHEVRON_RIGHT + '</div>' +
-          '<div' + wrapAttr + ' class="flex w-[480px] max-w-full flex-col gap-2">' +
-            '<div class="flex items-center gap-6">' +
-              '<div class="w-[170px] shrink-0 text-sm/5 font-semibold text-gray-900 dark:text-white">' + title + '</div>' +
-              '<div class="flex min-w-0 flex-1 items-center">' + action + '</div>' +
+        '<div class="flex-1 p-4">' +
+          '<div class="w-[460px] max-w-full">' +
+            '<div' + wrapAttr + ' class="flex flex-col items-start self-stretch">' +
+              '<div class="flex items-center justify-between self-stretch rounded-t-md border border-gray-200 bg-gray-100 px-4 py-2 dark:border-white/10 dark:bg-white/10"><span class="text-sm font-semibold text-gray-900 dark:text-gray-100">' + title + '</span><span></span></div>' +
+              '<div class="flex flex-col items-start gap-2 self-stretch rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">' +
+                rows +
+              '</div>' +
             '</div>' +
-            '<div class="border-t border-gray-200 dark:border-white/10"></div>' +
-            rows +
           '</div>' +
         '</div>' +
       '</div>'
@@ -2472,8 +2461,9 @@
     return CONSUMER_ACTIVITY_ICONS[key];
   }
 
-  function buildActivityLogItem(dotClasses, title, description, timestampLabel, showLine) {
-    if (IS_CONSUMER_TABLE) {
+  // tableStyle: the expanded table row uses the Bills and Payables log (small dots); the Get Paid panel keeps the Figma icons.
+  function buildActivityLogItem(dotClasses, title, description, timestampLabel, showLine, tableStyle) {
+    if (IS_CONSUMER_TABLE && !tableStyle) {
       return (
         '<div class="flex gap-4">' +
           '<div class="flex w-3.5 flex-none self-stretch flex-col items-center gap-1.5 pt-1.5">' +
@@ -2505,7 +2495,7 @@
   }
 
   function buildActivityLogSection(entry) {
-    var items = buildEntryActivityLogItems(entry);
+    var items = buildEntryActivityLogItems(entry, true);
 
     return (
       '<div class="flex">' +
@@ -2517,7 +2507,11 @@
     );
   }
 
-  function buildEntryActivityLogItems(entry) {
+  function buildEntryActivityLogItems(entry, tableStyle) {
+    var inlineDates = IS_CONSUMER_TABLE && !tableStyle;
+    function item(dotClasses, title, description, timestampLabel, showLine) {
+      return buildActivityLogItem(dotClasses, title, description, timestampLabel, showLine, tableStyle);
+    }
     var invoice = escapeHtml(entry.invoice || '');
     var log = entry.details.activityLog;
     var items = '';
@@ -2531,18 +2525,18 @@
       var processedDate = completedEntry ? formatActivityDate(completedEntry.date) : '';
       var initiatedDate = log[0] ? formatActivityDate(log[0].date) : formatDate(entry.dateInitiated);
 
-      items += buildActivityLogItem(
+      items += item(
         'bg-green-100 ring-1 ring-green-700/60 dark:bg-green-400/10 dark:ring-green-400/20',
         'Paid',
-        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been processed' + (IS_CONSUMER_TABLE && processedDate ? ' on ' + processedDate : ''),
-        IS_CONSUMER_TABLE ? '' : processedDate,
+        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been processed' + (inlineDates && processedDate ? ' on ' + processedDate : ''),
+        inlineDates ? '' : processedDate,
         true
       );
-      items += buildActivityLogItem(
+      items += item(
         'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
         'Initiated',
-        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated' + (IS_CONSUMER_TABLE && initiatedDate ? ' on ' + initiatedDate : ''),
-        IS_CONSUMER_TABLE ? '' : initiatedDate,
+        'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated' + (inlineDates && initiatedDate ? ' on ' + initiatedDate : ''),
+        inlineDates ? '' : initiatedDate,
         false
       );
 
@@ -2559,14 +2553,14 @@
         exceptionDescription += '<span class="mt-1 block text-gray-700 dark:text-gray-300">Reason: ' + escapeHtml(reason) + '</span>';
       }
 
-      items += buildActivityLogItem(
+      items += item(
         'bg-red-100 ring-1 ring-red-700/60 dark:bg-red-400/10 dark:ring-red-400/20',
         declined ? 'Declined' : 'Payment Failed',
         exceptionDescription,
         failedDate,
         true
       );
-      items += buildActivityLogItem(
+      items += item(
         'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
         'Initiated',
         'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated',
@@ -2590,14 +2584,14 @@
         pendingTitle = 'Pending Manual Confirmation';
         pendingDescription = 'Card details have been provided. Mark this payment as paid once funds are confirmed.';
       }
-      items += buildActivityLogItem(
+      items += item(
         'bg-yellow-100 ring-1 ring-yellow-700/60 dark:bg-yellow-400/10 dark:ring-yellow-400/20',
         pendingTitle,
         pendingDescription,
         pendingDate,
         true
       );
-      items += buildActivityLogItem(
+      items += item(
         'bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20',
         'Initiated',
         'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' + invoice + '</span> has been initiated',
@@ -2884,6 +2878,12 @@
       }
 
       var button = event.target.closest('[data-row-toggle]');
+      if (!button) {
+        // Clicking anywhere on the row expands it, as on Bills and Payables; controls keep their own clicks.
+        var clickedRow = event.target.closest('tr[data-row]');
+        if (!clickedRow || event.target.closest('button, a, input, label, select, textarea, el-dropdown, el-menu')) return;
+        button = clickedRow.querySelector('[data-row-toggle]');
+      }
       if (!button || !table.contains(button)) return;
       toggleRow(button);
     });
@@ -2941,6 +2941,8 @@
     if (!container) return;
 
     var total = paginationState.totalItems;
+    var countEl = document.querySelector('[data-payments-count]');
+    if (countEl) countEl.textContent = total + (total === 1 ? ' Payment' : ' Payments');
     var page = paginationState.currentPage;
     var size = paginationState.pageSize;
     var totalPages = getTotalPages();
