@@ -232,11 +232,6 @@
 
   // ---- "Get your receipt" dialog ---------------------------------------------
 
-  var CHECKBOX = '<span class="relative mt-0.5 flex size-4 shrink-0">' +
-      '<input type="checkbox" id="cc-receipt-consent" data-cc-consent class="peer size-4 cursor-pointer appearance-none rounded border border-gray-300 bg-white not-checked:hover:border-gray-400 checked:border-[#2563eb] checked:bg-[#2563eb] checked:hover:border-[#1d4ed8] checked:hover:bg-[#1d4ed8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb]">' +
-      '<img src="' + ASSETS + 'icon-checkbox-check.svg" alt="" width="12" height="12" class="pointer-events-none absolute top-1/2 left-1/2 hidden size-3 -translate-x-1/2 -translate-y-1/2 peer-checked:block">' +
-    '</span>';
-
   /** `after` runs once the dialog is done (Send or Skip); by default the download. */
   function openReceipt(data, vcData, draft, after) {
     after = after || download;
@@ -262,11 +257,9 @@
           '</div>' +
           '<p id="cc-receipt-email-error" data-cc-email-error class="hidden ' + F.ERROR_TEXT + '"></p>' +
         '</div>' +
-        '<div class="flex w-full items-start gap-3">' +
-          CHECKBOX +
-          '<p class="text-xs leading-4 text-[#374151]"><label for="cc-receipt-consent" class="cursor-pointer">' + esc(r.consent) + '</label> ' +
-            '<button type="button" data-cc-terms class="cursor-pointer rounded text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-blue-600">' + esc(r.consentLink) + '</button>.</p>' +
-        '</div>' +
+        '<app-checkbox class="w-full" input-id="cc-receipt-consent" data-cc-consent>' + esc(r.consent) + ' ' +
+          '<button type="button" data-cc-terms class="cursor-pointer rounded text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-blue-600">' + esc(r.consentLink) + '</button>.' +
+        '</app-checkbox>' +
       '</div>' +
       '<div class="flex flex-col gap-4 px-6 pb-6">' +
         '<button type="button" data-cc-send class="' + M.BUTTON + ' bg-[#2563eb] text-white hover:bg-[#3b82f6] focus-visible:outline-[#2563eb]">Send and Continue</button>' +

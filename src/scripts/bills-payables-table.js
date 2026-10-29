@@ -1016,28 +1016,14 @@
       '      <path d="M2.40039 10.8001C2.40039 10.1374 2.93765 9.6001 3.60039 9.6001C4.26313 9.6001 4.80039 10.1374 4.80039 10.8001C4.80039 11.4628 4.26313 12.0001 3.60039 12.0001C2.93765 12.0001 2.40039 11.4628 2.40039 10.8001Z" /><path d="M6.80039 10.8001C6.80039 10.1374 7.33765 9.6001 8.00039 9.6001C8.66313 9.6001 9.20039 10.1374 9.20039 10.8001C9.20039 11.4628 8.66313 12.0001 8.00039 12.0001C7.33765 12.0001 6.80039 11.4628 6.80039 10.8001Z" /><path d="M12.4004 9.6001C11.7376 9.6001 11.2004 10.1374 11.2004 10.8001C11.2004 11.4628 11.7376 12.0001 12.4004 12.0001C13.0631 12.0001 13.6004 11.4628 13.6004 10.8001C13.6004 10.1374 13.0631 9.6001 12.4004 9.6001Z" /><path d="M2.40039 6.00005C2.40039 5.33731 2.93765 4.80005 3.60039 4.80005C4.26313 4.80005 4.80039 5.33731 4.80039 6.00005C4.80039 6.66279 4.26313 7.20005 3.60039 7.20005C2.93765 7.20005 2.40039 6.66279 2.40039 6.00005Z" /><path d="M6.80039 6.00005C6.80039 5.33731 7.33765 4.80005 8.00039 4.80005C8.66313 4.80005 9.20039 5.33731 9.20039 6.00005C9.20039 6.66279 8.66313 7.20005 8.00039 7.20005C7.33765 7.20005 6.80039 6.66279 6.80039 6.00005Z" /><path d="M12.4004 4.80005C11.7376 4.80005 11.2004 5.33731 11.2004 6.00005C11.2004 6.66279 11.7376 7.20005 12.4004 7.20005C13.0631 7.20005 13.6004 6.66279 13.6004 6.00005C13.6004 5.33731 13.0631 4.80005 12.4004 4.80005Z" />' +
       "    </svg>" +
       "  </button>" +
-      '  <label class="flex cursor-pointer items-center gap-3">' +
-      '    <span class="inline-flex items-start py-0.5">' +
-      '      <span class="grid size-4">' +
-      '        <input type="checkbox" data-column-visibility-toggle="' +
+      '  <app-checkbox class="min-w-0 flex-1" data-column-visibility-toggle="' +
       escapeHtml(col.key) +
       '"' +
       (checked ? " checked" : "") +
       (disabled ? " disabled" : "") +
-      '          class="col-start-1 row-start-1 size-4 appearance-none rounded border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500 dark:disabled:bg-white/10" />' +
-      "        " +
-      tableIcon(
-        "check-12.svg",
-        12,
-        12,
-        "pointer-events-none col-start-1 row-start-1 self-center justify-self-center opacity-0 group-has-checked:opacity-100",
-      ) +
-      "      </span>" +
-      "    </span>" +
-      '    <span class="text-sm leading-5 font-medium whitespace-nowrap text-gray-900 dark:text-white">' +
+      ">" +
       escapeHtml(col.label || col.key) +
-      "</span>" +
-      "  </label>" +
+      "</app-checkbox>" +
       scopeBadge +
       "</div>"
     );
@@ -3282,7 +3268,7 @@
         if (!list) return;
         var query = input.value.trim().toLowerCase();
         Array.prototype.forEach.call(
-          list.querySelectorAll("label"),
+          list.querySelectorAll("label, app-checkbox"),
           function (label) {
             var text = (label.textContent || "").toLowerCase();
             label.classList.toggle("hidden", !!query && text.indexOf(query) === -1);
@@ -3369,7 +3355,7 @@
         if (!list) return;
         Array.prototype.forEach.call(
           list.querySelectorAll(
-            "label:not(.hidden) input[type='checkbox'][data-filter-value]",
+            "app-checkbox:not(.hidden) input[type='checkbox'][data-filter-value]",
           ),
           function (input) {
             if (input.checked) return;
@@ -3852,17 +3838,9 @@
               columnWidthClass(col) +
               ' h-[52px] text-center">' +
               '<div class="flex items-center justify-center">' +
-              '<label class="inline-flex cursor-pointer items-center justify-center select-none">' +
-              '<span class="group grid size-4 grid-cols-1">' +
-              '<input id="bp-select-all" type="checkbox" class="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" ' +
-              (allVisibleSelected ? "checked" : "") +
-              " />" +
-              '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
-              '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
-              '<path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100" />' +
-              "</svg>" +
-              "</span>" +
-              "</label>" +
+              '<app-checkbox bare input-id="bp-select-all"' +
+              (allVisibleSelected ? " checked" : "") +
+              "></app-checkbox>" +
               "</div>" +
               "</th>"
             );
@@ -3974,17 +3952,11 @@
                 cb +
                 '">' +
                 '<div class="flex items-center justify-center">' +
-                '<span class="group inline-grid size-4 grid-cols-1">' +
-                '<input type="checkbox" data-row-select-id="' +
+                '<app-checkbox bare data-row-select-id="' +
                 row.id +
-                '" class="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" ' +
-                (state.selectedRowIds.has(row.id) ? "checked" : "") +
-                " />" +
-                '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
-                '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
-                '<path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100" />' +
-                "</svg>" +
-                "</span>" +
+                '"' +
+                (state.selectedRowIds.has(row.id) ? " checked" : "") +
+                "></app-checkbox>" +
                 "</div>" +
                 "</td>"
               );

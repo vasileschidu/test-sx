@@ -436,15 +436,7 @@
       '          <div class="flex items-start gap-1.5 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="mt-0.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/></svg><p>Funds settle as usual.</p></div>' +
       '          <div class="flex items-start gap-1.5 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="mt-0.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/></svg><p>You can turn this off anytime.</p></div>' +
       "        </div>" +
-      '        <label class="mt-4 flex cursor-pointer items-center gap-3 text-sm leading-6 text-gray-700 dark:text-gray-300">' +
-      '          <span class="flex h-6 shrink-0 items-center">' +
-      '            <span class="group grid size-4 grid-cols-1">' +
-      '              <input data-inline-stp-agree type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
-      '              <svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100"/></svg>' +
-      "            </span>" +
-      "          </span>" +
-      '          <span>I agree to the Visa AR Manager <a href="#" class="text-blue-600 underline dark:text-blue-400">Participation Agreement</a>.</span>' +
-      "        </label>" +
+      '        <app-checkbox class="mt-4" data-inline-stp-agree>I agree to the Visa AR Manager <a href="#" class="text-blue-600 underline dark:text-blue-400">Participation Agreement</a>.</app-checkbox>' +
       "      </div>" +
       '      <div class="mt-6 flex w-full flex-col items-stretch gap-3 md:mt-8 md:flex-row md:items-center md:justify-between">' +
       '        <button type="button" data-inline-stp-confirm disabled class="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-6 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300 md:w-auto">Confirm</button>' +

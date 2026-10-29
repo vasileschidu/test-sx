@@ -85,13 +85,8 @@
 
   var CHEVRON_RIGHT = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-[18px] shrink-0 text-gray-400 transition-colors group-hover:text-gray-600 dark:group-hover:text-gray-300"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
   var CHEVRON_DOWN = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-[18px] transition-transform"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var CHECKBOX = 'col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500';
-
   function checkbox(attrs, checked, label) {
-    return '<label class="flex cursor-pointer items-center gap-3 text-sm text-gray-900 dark:text-gray-100"><span class="group grid size-4 grid-cols-1">' +
-      '<input type="checkbox" ' + attrs + (checked ? ' checked' : '') + ' class="' + CHECKBOX + '" />' +
-      '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>' +
-      '</span>' + escapeHtml(label) + '</label>';
+    return '<app-checkbox ' + attrs + (checked ? ' checked' : '') + '>' + escapeHtml(label) + '</app-checkbox>';
   }
 
   function miniCard(card) {

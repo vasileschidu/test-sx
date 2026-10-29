@@ -1,0 +1,32 @@
+<!doctype html>
+<html class="h-full bg-gray-100 dark:bg-gray-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Checkbox States</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="../../scripts/tailwind-theme.js"></script>
+    <link rel="stylesheet" href="../../styles/checkbox.css" />
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+
+    <script src="../../scripts/theme-init.js"></script>
+    <script src="../../scripts/checkbox-component.js"></script>
+    <script src="../../scripts/pages/checkbox-states-page.js" defer></script>
+  </head>
+  <body
+    class="min-h-full font-['Inter'] antialiased text-gray-900 dark:bg-gray-950 dark:text-gray-100"
+  >
+    <main class="mx-auto flex w-full max-w-6xl flex-col gap-6 px-4 py-8">
+      <h1 class="text-3xl font-semibold text-gray-600 dark:text-gray-300">
+        Checkbox + Text
+      </h1>
+      <p class="text-sm text-gray-500">
+        Hover and focus (Tab) are live. Every other state is rendered below.
+      </p>
+      <div id="checkbox-states" class="flex flex-col gap-8"></div>
+    </main>
+  </body>
+</html>

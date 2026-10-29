@@ -1,0 +1,109 @@
+/* Portal-wide checkbox styling (Figma SMART System, node 16:895).
+   Applies to every native checkbox, so pages and JS-rendered markup don't each
+   re-declare it. Switches (role="switch") and visually-hidden / overlay inputs
+   (.sr-only, .hidden, .absolute) are left alone.
+   Unlayered on purpose: it must win over Tailwind's layered utilities that the
+   existing markup still carries. Error state: aria-invalid="true". */
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute) {
+  appearance: none;
+  box-sizing: border-box;
+  width: 1rem;
+  height: 1rem;
+  flex-shrink: 0;
+  border: 1px solid #d1d5dc; /* gray-300 */
+  border-radius: 4px;
+  background-color: #fff;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 12px 12px;
+  cursor: pointer;
+}
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):hover {
+  border-color: #99a1af; /* gray-400 */
+}
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):checked,
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):indeterminate {
+  border-color: #155dfb; /* blue-600 */
+  background-color: #155dfb;
+}
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):checked {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12' fill='none'%3E%3Cpath d='M2.25 6.375L5.25 9.375L9.75 2.625' stroke='white' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):indeterminate {
+  background-size: 14px 14px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 14 14' fill='none'%3E%3Cpath d='M3.5 7H10.5' stroke='white' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):checked:hover,
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):indeterminate:hover {
+  border-color: #1447e6; /* blue-700 */
+  background-color: #1447e6;
+}
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):focus-visible {
+  outline: none;
+  box-shadow:
+    0 1px 2px 0 #155dfb,
+    0 0 0 2px #155dfb,
+    0 0 0 4px #155dfb;
+}
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute)[aria-invalid="true"] {
+  border-color: #fb2c36; /* red-500 */
+}
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute)[aria-invalid="true"]:hover {
+  border-color: #e7000b; /* red-600 */
+}
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):disabled {
+  cursor: not-allowed;
+  border-color: #e5e7eb; /* gray-200 */
+  background-color: #f3f4f6; /* gray-100 */
+}
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):disabled:checked,
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):disabled:indeterminate {
+  border-color: #8ec5ff; /* blue-300 */
+  background-color: #8ec5ff;
+}
+
+/* Dark mode: only the unchecked surface differs from the Figma light spec. */
+.dark input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):not(:checked):not(:indeterminate) {
+  border-color: rgb(255 255 255 / 0.2);
+  background-color: rgb(255 255 255 / 0.05);
+}
+
+.dark input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):not(:checked):not(:indeterminate):hover {
+  border-color: rgb(255 255 255 / 0.4);
+}
+
+.dark input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):not(:checked):not(:indeterminate):disabled {
+  border-color: rgb(255 255 255 / 0.1);
+  background-color: rgb(255 255 255 / 0.1);
+}
+
+/* The check / minus is now drawn by the input itself, so the per-markup overlay
+   icon that used to follow the input is hidden to avoid a double mark. */
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute) ~ :is(svg, img) {
+  display: none;
+}
+
+/* <app-checkbox> host display; `.hidden` must keep working for show/hide toggles. */
+app-checkbox {
+  display: block;
+}
+
+app-checkbox[bare] {
+  display: inline-block;
+  flex-shrink: 0;
+}
+
+app-checkbox.hidden {
+  display: none;
+}

@@ -44,6 +44,7 @@
     <script src="../../../src/scripts/stp-state.js"></script>
     <script src="../../../src/scripts/app-switch.js"></script>
     <script src="../../../src/scripts/topbar-component.js"></script>
+    <script src="../../scripts/checkbox-component.js"></script>
     <script src="../../../src/scripts/sidebar.js" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
     <script src="../../../src/scripts/shared.js" defer></script>
@@ -58,6 +59,7 @@
         --gp-ink-color: #ffffff;
       }
     </style>
+      <link rel="stylesheet" href="../../styles/checkbox.css" />
   </head>
 
   <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
@@ -4096,59 +4098,7 @@
               <fieldset class="mt-6">
                 <legend class="sr-only">Payment preferences</legend>
                 <div class="space-y-5">
-                  <div class="flex gap-3">
-                    <div class="flex h-6 shrink-0 items-center">
-                      <div class="group grid size-4 grid-cols-1">
-                        <input
-                          id="pp-confirm-default-method"
-                          type="checkbox"
-                          name="defaultPaymentMethod"
-                          aria-describedby="pp-confirm-default-method-description"
-                          class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto dark:border-white/10 dark:bg-white/5"
-                        />
-                        <svg
-                          viewBox="0 0 14 14"
-                          fill="none"
-                          class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                        >
-                          <path
-                            d="M3 8L6 11L11 3.5"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="opacity-0 group-has-checked:opacity-100"
-                          />
-                          <path
-                            d="M3 7H11"
-                            stroke-width="2"
-                            stroke-linecap="round"
-                            stroke-linejoin="round"
-                            class="opacity-0 group-has-indeterminate:opacity-100"
-                          />
-                        </svg>
-                      </div>
-                    </div>
-                    <div class="text-sm">
-                      <label
-                        for="pp-confirm-default-method"
-                        id="pp-confirm-default-method-label"
-                        class="font-medium text-gray-900 dark:text-white"
-                        >Make this my default payment method</label
-                      >
-                      <p
-                        id="pp-confirm-default-method-description"
-                        class="mt-0.5 text-gray-500 dark:text-gray-400"
-                      >
-                        Checking this means next time you make a payment it will
-                        be pre-selected. You can change it anytime in
-                        <a
-                          href="payment-preferences.html"
-                          class="font-medium text-blue-600 underline decoration-blue-600 underline-offset-2 hover:text-blue-500 dark:text-blue-400 dark:decoration-blue-400"
-                          >vendor profile</a
-                        >.
-                      </p>
-                    </div>
-                  </div>
+                  <app-checkbox input-id="pp-confirm-default-method" name="defaultPaymentMethod" aria-describedby="pp-confirm-default-method-description"><span id="pp-confirm-default-method-label">Make this my default payment method</span><span slot="description" id="pp-confirm-default-method-description">Checking this means next time you make a payment it will be pre-selected. You can change it anytime in <a href="payment-preferences.html" class="font-medium text-blue-600 underline decoration-blue-600 underline-offset-2 hover:text-blue-500 dark:text-blue-400 dark:decoration-blue-400" >vendor profile</a >.</span></app-checkbox>
                 </div>
               </fieldset>
             </div>

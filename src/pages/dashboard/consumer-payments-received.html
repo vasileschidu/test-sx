@@ -42,6 +42,7 @@
     <script src="../../../src/scripts/stp-state.js"></script>
     <script src="../../../src/scripts/app-switch.js"></script>
     <script src="../../../src/scripts/topbar-component.js?v=consumer-notifications-20261008b"></script>
+    <script src="../../scripts/checkbox-component.js"></script>
     <script src="../../../src/scripts/sidebar.js?v=consumer-help-20261008b" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
     <script src="../../../src/scripts/shared.js" defer></script>
@@ -124,7 +125,8 @@
         }
     </style>
 
-</head>
+    <link rel="stylesheet" href="../../styles/checkbox.css" />
+  </head>
 
 <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
 
@@ -513,20 +515,7 @@
                                                             </svg>
                                                         </button>
                                                     </div>
-                                                    <label id="gp-pmc-card-default-wrap" class="mt-4 flex items-center gap-3 cursor-pointer">
-                                                        <div class="group grid size-4 grid-cols-1">
-                                                            <input type="checkbox" checked
-                                                                class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
-                                                            <svg viewBox="0 0 14 14" fill="none"
-                                                                class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">
-                                                                <path d="M3 8L6 11L11 3.5" stroke-width="2"
-                                                                    stroke-linecap="round"
-                                                                    stroke-linejoin="round"
-                                                                    class="opacity-0 group-has-checked:opacity-100" />
-                                                            </svg>
-                                                        </div>
-                                                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Set card as default for future payments</span>
-                                                    </label>
+                                                    <app-checkbox id="gp-pmc-card-default-wrap" class="mt-4" checked>Set card as default for future payments</app-checkbox>
                                                 </div>
 
                                                 <!-- Send to Bank Account -->
@@ -661,20 +650,7 @@
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                            <label id="gp-pmc-bank-default-wrap" class="mt-4 flex items-center gap-3 cursor-pointer">
-                                                                <div class="group grid size-4 grid-cols-1">
-                                                                    <input type="checkbox" checked
-                                                                        class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
-                                                                    <svg viewBox="0 0 14 14" fill="none"
-                                                                        class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">
-                                                                        <path d="M3 8L6 11L11 3.5" stroke-width="2"
-                                                                            stroke-linecap="round"
-                                                                            stroke-linejoin="round"
-                                                                            class="opacity-0 group-has-checked:opacity-100" />
-                                                                    </svg>
-                                                                </div>
-                                                                <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Set bank account as default for future payments</span>
-                                                            </label>
+                                                            <app-checkbox id="gp-pmc-bank-default-wrap" class="mt-4" checked>Set bank account as default for future payments</app-checkbox>
 
 
                                                         </div>
@@ -834,20 +810,7 @@
                                                                 </div>
                                                             </div>
                                                         </div>
-                                                        <label id="gp-pmc-check-default-wrap" class="mt-4 flex items-center gap-3 cursor-pointer">
-                                                            <div class="group grid size-4 grid-cols-1">
-                                                                <input type="checkbox" checked
-                                                                    class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
-                                                                <svg viewBox="0 0 14 14" fill="none"
-                                                                    class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">
-                                                                    <path d="M3 8L6 11L11 3.5" stroke-width="2"
-                                                                        stroke-linecap="round"
-                                                                        stroke-linejoin="round"
-                                                                        class="opacity-0 group-has-checked:opacity-100" />
-                                                                </svg>
-                                                            </div>
-                                                            <span class="text-sm font-medium text-gray-700 dark:text-gray-300">Set paper check as default for future payments</span>
-                                                        </label>
+                                                        <app-checkbox id="gp-pmc-check-default-wrap" class="mt-4" checked>Set paper check as default for future payments</app-checkbox>
                                                     </div>
                                                 </div>
 
@@ -903,23 +866,7 @@
                                                 </div>
                                             </div>
 
-                                            <label id="gp-confirm-checkbox-wrap"
-                                                class="mt-4 flex items-center gap-3 cursor-pointer">
-                                                <div class="group grid size-4 grid-cols-1">
-                                                    <input id="gp-confirm-checkbox" type="checkbox"
-                                                        class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />
-                                                    <svg viewBox="0 0 14 14" fill="none"
-                                                        class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">
-                                                        <path d="M3 8L6 11L11 3.5" stroke-width="2"
-                                                            stroke-linecap="round" stroke-linejoin="round"
-                                                            class="opacity-0 group-has-checked:opacity-100" />
-                                                    </svg>
-                                                </div>
-                                                <span
-                                                    class="text-sm font-normal text-gray-700 dark:text-gray-300">I
-                                                    confirm the details above are correct and understand this payment
-                                                    is final.</span>
-                                            </label>
+                                            <app-checkbox id="gp-confirm-checkbox-wrap" class="mt-4" input-id="gp-confirm-checkbox">I confirm the details above are correct and understand this payment is final.</app-checkbox>
                                         </dd>
                                     </div>
 
@@ -2074,17 +2021,7 @@
                         </div>
 
                         <!-- Default -->
-                        <label class="flex cursor-pointer items-start gap-3 rounded-md bg-gray-50 p-3 dark:bg-white/5">
-                            <span class="group mt-0.5 grid size-4 shrink-0 grid-cols-1">
-                                <input id="gp-edit-bank-default" type="checkbox"
-                                    class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5" />
-                                <svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                            </span>
-                            <span class="flex items-center gap-1 text-sm/5 font-medium text-gray-700 dark:text-gray-300">
-                                Set as default for future payments
-                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-400"><title>The default account is preselected for future payments.</title><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </label>
+                        <app-checkbox class="rounded-md bg-gray-50 p-3 dark:bg-white/5" input-id="gp-edit-bank-default">Set as default for future payments <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-400"><title>The default account is preselected for future payments.</title><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg></app-checkbox>
                     </div>
                     <div class="flex items-start justify-end gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
                         <button type="button" command="close" commandfor="gp-edit-bank-dialog"
@@ -2255,17 +2192,7 @@
                         </div>
 
                         <!-- Default -->
-                        <label class="flex cursor-pointer items-start gap-3 rounded-md bg-gray-50 p-3 dark:bg-white/5">
-                            <span class="group mt-0.5 grid size-4 shrink-0 grid-cols-1">
-                                <input id="gp-add-bank-default" type="checkbox"
-                                    class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5" />
-                                <svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                            </span>
-                            <span class="flex items-center gap-1 text-sm/5 font-medium text-gray-700 dark:text-gray-300">
-                                Set as default for future payments
-                                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-400"><title>The default account is preselected for future payments.</title><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg>
-                            </span>
-                        </label>
+                        <app-checkbox class="rounded-md bg-gray-50 p-3 dark:bg-white/5" input-id="gp-add-bank-default">Set as default for future payments <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-gray-400"><title>The default account is preselected for future payments.</title><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg></app-checkbox>
                     </div>
                     <div class="flex items-start justify-end gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">
                         <button type="button" command="close" commandfor="gp-add-bank-dialog"

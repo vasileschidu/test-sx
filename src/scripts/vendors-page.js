@@ -647,14 +647,13 @@
       .map(function (key) {
         var status = NETWORK_STATUSES[key];
         return (
-          '<label class="flex cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 text-sm/5 text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">' +
-          '<input type="checkbox" data-network-filter-value="' +
+          '<app-checkbox class="rounded-md px-2 py-1.5 hover:bg-gray-50 dark:hover:bg-white/5" data-network-filter-value="' +
           key +
-          '" class="size-4 rounded border-gray-300 accent-blue-600"' +
+          '"' +
           (state.networkFilter.has(key) ? " checked" : "") +
-          " />" +
+          ">" +
           escapeHtml(status.label === "Track" ? "Track (linked)" : status.label) +
-          "</label>"
+          "</app-checkbox>"
         );
       })
       .join("");

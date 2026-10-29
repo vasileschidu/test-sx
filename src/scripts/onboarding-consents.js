@@ -16,10 +16,6 @@ window.OBConsents = (function () {
   var ASSETS = '../../assets/onboarding/';
   function esc(v) { return window.OBModal.escapeHtml(v); }
 
-  var CHECKBOX = '<span class="relative flex size-4 shrink-0">' +
-      '<input type="checkbox" data-vcs-check class="peer size-4 cursor-pointer appearance-none rounded border border-gray-300 bg-white not-checked:hover:border-gray-400 checked:border-[#2563eb] checked:bg-[#2563eb] checked:hover:border-[#1d4ed8] checked:hover:bg-[#1d4ed8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb]" checked>' +
-      '<img src="' + ASSETS + 'icon-checkbox-check.svg" alt="" width="12" height="12" class="pointer-events-none absolute top-1/2 left-1/2 hidden size-3 -translate-x-1/2 -translate-y-1/2 peer-checked:block">' +
-    '</span>';
 
   function mount(consentsEl, agreements, opts) {
     opts = opts || {};
@@ -33,7 +29,7 @@ window.OBConsents = (function () {
         '<p class="min-w-0 flex-1 text-xs leading-4 font-medium text-[#374151]">I’ve read and consent to the ' +
           '<button type="button" data-vcs-review="' + i + '" class="cursor-pointer rounded text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-blue-600">' + esc(a.name) + '</button>.</p>' +
         (done
-          ? CHECKBOX.replace('data-vcs-check', 'data-vcs-check="' + i + '" aria-label="Consent to the ' + esc(a.name) + '"')
+          ? '<app-checkbox bare checked data-vcs-check="' + i + '" aria-label="Consent to the ' + esc(a.name) + '"></app-checkbox>'
           : '<button type="button" data-vcs-review="' + i + '" class="shrink-0 cursor-pointer rounded text-xs leading-4 font-semibold text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Review</button>') +
       '</li>';
     }).join('');

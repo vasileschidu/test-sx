@@ -15,7 +15,9 @@
   <script src="../../scripts/onboarding-transitions.js"></script>
   <script src="../../scripts/onboarding-stepper.js"></script>
   <script src="../../scripts/onboarding-mobile-header.js"></script>
-</head>
+    <link rel="stylesheet" href="../../styles/checkbox.css" />
+      <script src="../../scripts/checkbox-component.js"></script>
+  </head>
 <!-- SMART Disburse UK · 4. Document review — open the claim form, accept or dispute -->
 <body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
   <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
@@ -56,7 +58,7 @@
             </div>
             <div class="ml-4 shrink-0">
               <button type="button" id="doc-open" class="cursor-pointer rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 transition-colors hover:bg-blue-50 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Review</button>
-              <div id="doc-1-status" class="hidden h-6 shrink-0 items-center"><div class="group grid size-4 grid-cols-1"><input id="doc-1-checkbox" type="checkbox" class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto" /><svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /><path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100" /></svg></div></div>
+              <div id="doc-1-status" class="hidden h-6 shrink-0 items-center"><app-checkbox bare input-id="doc-1-checkbox"></app-checkbox></div>
             </div>
           </li>
         </ul>

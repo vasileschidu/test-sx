@@ -67,34 +67,23 @@
 
   function filterCheckbox(opts) {
     opts = opts || {};
-    var idAttr = opts.id ? ' id="' + escapeHtml(opts.id) + '"' : "";
+    var idAttr = opts.id ? ' input-id="' + escapeHtml(opts.id) + '"' : "";
     var panelAttr = opts.panelKey
       ? ' data-filter-panel-key="' + escapeHtml(opts.panelKey) + '"'
       : "";
     return (
-      '<label class="group flex w-full cursor-pointer items-center gap-3">' +
-      '<div class="grid size-4 shrink-0 grid-cols-1 py-0.5">' +
-      '<input type="checkbox" data-filter-value="' +
+      '<app-checkbox class="w-full" data-filter-value="' +
       escapeHtml(opts.value) +
       '"' +
       idAttr +
       panelAttr +
       (opts.checked ? " checked" : "") +
-      ' class="col-start-1 row-start-1 size-4 appearance-none rounded border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
-      icon(
-        "check-12.svg",
-        12,
-        12,
-        "pointer-events-none col-start-1 row-start-1 self-center justify-self-center opacity-0 group-has-checked:opacity-100",
-      ) +
-      "</div>" +
-      '<span class="min-w-0 text-sm leading-5 font-medium text-gray-700 dark:text-gray-200">' +
+      ">" +
       escapeHtml(opts.label) +
-      "</span>" +
       (opts.countText
         ? '<span class="sr-only">' + escapeHtml(opts.countText) + "</span>"
         : "") +
-      "</label>"
+      "</app-checkbox>"
     );
   }
 

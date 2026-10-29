@@ -29,7 +29,9 @@
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
   <script src="../../../src/scripts/confirm-identity.js"></script>
   <link rel="stylesheet" href="../../../src/styles/cursor.css" />
-</head>
+    <link rel="stylesheet" href="../../styles/checkbox.css" />
+      <script src="../../scripts/checkbox-component.js"></script>
+  </head>
 
 <body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
 
@@ -85,16 +87,7 @@
 
           <!-- Consent + actions -->
           <div class="mt-auto flex flex-col gap-8 px-4 pb-6 lg:px-14 lg:pb-14">
-            <label data-verify-consent class="flex cursor-pointer items-start gap-3">
-              <!-- SMART System "Checkbox + Text": 16px box, #2563EB with a white check when ticked -->
-              <span class="relative mt-0.5 flex size-4 shrink-0">
-                <input type="checkbox" data-verify-consent-input
-                  class="peer size-4 cursor-pointer appearance-none rounded border border-gray-300 bg-white not-checked:hover:border-gray-400 checked:border-[#2563eb] checked:bg-[#2563eb] checked:hover:border-[#1d4ed8] checked:hover:bg-[#1d4ed8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb] disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100">
-                <img src="../../assets/onboarding/icon-checkbox-check.svg" alt="" width="12" height="12"
-                  class="pointer-events-none absolute top-1/2 left-1/2 hidden size-3 -translate-x-1/2 -translate-y-1/2 peer-checked:block">
-              </span>
-              <span class="text-sm leading-5 text-gray-500">I agree to receive verification codes from Transcard.</span>
-            </label>
+            <div data-verify-consent><app-checkbox data-verify-consent-input>I agree to receive verification codes from Transcard.</app-checkbox></div>
             <div class="flex flex-col-reverse gap-4 lg:grid lg:grid-cols-2 lg:gap-8">
               <button type="button" data-verify-request disabled
                 class="flex flex-1 cursor-pointer items-center justify-center rounded-[10px] border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-[#ebebeb] disabled:text-gray-500 disabled:opacity-40 disabled:hover:bg-[#ebebeb]">Request Code</button>

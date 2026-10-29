@@ -130,6 +130,7 @@
     <script src="../../../src/scripts/stp-state.js"></script>
     <script src="../../../src/scripts/app-switch.js"></script>
     <script src="../../../src/scripts/topbar-component.js"></script>
+    <script src="../../scripts/checkbox-component.js"></script>
     <script src="../../../src/scripts/sidebar.js" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
     <script src="../../../src/scripts/shared.js" defer></script>
@@ -139,6 +140,7 @@
       src="../../../src/scripts/payment-preferences-tabs.js"
       defer
     ></script>
+      <link rel="stylesheet" href="../../styles/checkbox.css" />
   </head>
 
   <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
@@ -508,35 +510,7 @@
                             </div>
                             <div class="ml-auto flex items-center gap-4">
                               <!-- Active only checkbox -->
-                              <label
-                                class="whitespace-nowrap flex items-center gap-3 cursor-pointer rounded-lg bg-gray-50 px-2 py-1.5 dark:bg-white/5"
-                              >
-                                <div class="group grid size-4 grid-cols-1">
-                                  <input
-                                    id="pp-cards-active-only"
-                                    type="checkbox"
-                                    name="active-only"
-                                    class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500"
-                                  />
-                                  <svg
-                                    class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"
-                                    viewBox="0 0 14 14"
-                                    fill="none"
-                                  >
-                                    <path
-                                      class="opacity-0 group-has-checked:opacity-100"
-                                      d="M3 8L6 11L11 3.5"
-                                      stroke-width="2"
-                                      stroke-linecap="round"
-                                      stroke-linejoin="round"
-                                    />
-                                  </svg>
-                                </div>
-                                <span
-                                  class="text-sm font-medium text-gray-700 dark:text-gray-300"
-                                  >Active only</span
-                                >
-                              </label>
+                              <app-checkbox class="whitespace-nowrap rounded-lg bg-gray-50 px-2 py-1.5 dark:bg-white/5" input-id="pp-cards-active-only" name="active-only">Active only</app-checkbox>
                               <!-- Filter button -->
                               <div
                                 id="pp-cards-filter-dropdown"
@@ -4997,49 +4971,7 @@
                       </div>
                     </div>
 
-                    <label
-                      for="pp-stp-agreement-checkbox"
-                      class="mt-4 flex cursor-pointer items-center gap-3 text-sm leading-6 text-gray-700 dark:text-gray-300"
-                    >
-                      <div class="flex h-6 shrink-0 items-center">
-                        <div class="group grid size-4 grid-cols-1">
-                          <input
-                            id="pp-stp-agreement-checkbox"
-                            type="checkbox"
-                            class="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto dark:border-white/20 dark:bg-white/5 dark:disabled:border-white/20 dark:disabled:bg-white/10"
-                          />
-                          <svg
-                            class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-[:disabled]:stroke-gray-950/25"
-                            viewBox="0 0 14 14"
-                            fill="none"
-                            aria-hidden="true"
-                          >
-                            <path
-                              class="opacity-0 group-has-[:checked]:opacity-100"
-                              d="M3 8L6 11L11 3.5"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                            <path
-                              class="opacity-0 group-has-[:indeterminate]:opacity-100"
-                              d="M3 7H11"
-                              stroke-width="2"
-                              stroke-linecap="round"
-                              stroke-linejoin="round"
-                            />
-                          </svg>
-                        </div>
-                      </div>
-                      <span
-                        >I agree to the Visa AR Manager
-                        <a
-                          href="#"
-                          class="text-blue-600 underline decoration-solid dark:text-blue-400"
-                          >Participation Agreement</a
-                        >.</span
-                      >
-                    </label>
+                    <app-checkbox class="mt-4" input-id="pp-stp-agreement-checkbox">I agree to the Visa AR Manager <a href="#" class="text-blue-600 underline decoration-solid dark:text-blue-400" >Participation Agreement</a >.</app-checkbox>
                   </div>
 
                   <div

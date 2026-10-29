@@ -243,10 +243,7 @@ window.SDUK = (function () {
 
   /** The project's checkbox component, as used across the onboarding flow. */
   function checkboxHtml(attrs, checked) {
-    return '<div class="group grid size-4 shrink-0 grid-cols-1">' +
-      '<input type="checkbox" ' + attrs + (checked ? ' checked' : '') + ' class="col-start-1 row-start-1 cursor-pointer appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 forced-colors:appearance-auto" />' +
-      '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
-      '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg></div>';
+    return '<app-checkbox bare ' + attrs + (checked ? ' checked' : '') + '></app-checkbox>';
   }
 
   /**

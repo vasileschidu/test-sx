@@ -44,10 +44,12 @@
     <script src="../../../src/scripts/stp-state.js"></script>
     <script src="../../../src/scripts/app-switch.js"></script>
     <script src="../../../src/scripts/topbar-component.js"></script>
+    <script src="../../scripts/checkbox-component.js"></script>
     <script src="../../../src/scripts/sidebar.js" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
     <script src="../../../src/scripts/shared.js" defer></script>
     <script src="../../../src/scripts/shell-navigation.js" defer></script>
+      <link rel="stylesheet" href="../../styles/checkbox.css" />
   </head>
 
   <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
@@ -602,45 +604,7 @@
                               <div
                                 class="flex self-start gap-3 rounded-md bg-gray-100 px-4 py-3 dark:bg-white/10"
                               >
-                                <div class="flex h-6 shrink-0 items-center">
-                                  <div class="group grid size-4 grid-cols-1">
-                                    <input
-                                      id="business-dba-toggle"
-                                      type="checkbox"
-                                      name="business-dba-toggle"
-                                      checked
-                                      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:border-gray-300 disabled:bg-gray-100 disabled:checked:bg-gray-100 forced-colors:appearance-auto dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500"
-                                    />
-                                    <svg
-                                      viewBox="0 0 14 14"
-                                      fill="none"
-                                      class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white group-has-disabled:stroke-gray-950/25"
-                                    >
-                                      <path
-                                        d="M3 8L6 11L11 3.5"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="opacity-0 group-has-checked:opacity-100"
-                                      />
-                                      <path
-                                        d="M3 7H11"
-                                        stroke-width="2"
-                                        stroke-linecap="round"
-                                        stroke-linejoin="round"
-                                        class="opacity-0 group-has-indeterminate:opacity-100"
-                                      />
-                                    </svg>
-                                  </div>
-                                </div>
-                                <div class="text-sm/6">
-                                  <label
-                                    for="business-dba-toggle"
-                                    class="font-medium text-gray-900 dark:text-white"
-                                    >I operate under a fictitious name
-                                    (DBA)</label
-                                  >
-                                </div>
+                                <app-checkbox input-id="business-dba-toggle" name="business-dba-toggle" checked>I operate under a fictitious name (DBA)</app-checkbox>
                               </div>
                               <div>
                                 <label

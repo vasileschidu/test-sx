@@ -559,9 +559,6 @@
     "shrink-0 cursor-pointer rounded-sm border border-gray-300 bg-white px-2 py-1 text-sm font-semibold text-gray-700 shadow-xs hover:bg-gray-50 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10";
   var BTN_LINK =
     "inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300";
-  var CHECKBOX =
-    "col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-600 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500";
-
   var BADGE = {
     active:
       "border-green-200 bg-green-100 text-green-800 dark:border-green-400/20 dark:bg-green-500/10 dark:text-green-300",
@@ -1631,20 +1628,13 @@
 
   function conditionRow(c, on) {
     return (
-      '<label class="flex cursor-pointer items-center gap-3">' +
-      '<span class="group grid size-4 shrink-0 grid-cols-1">' +
-      '<input type="checkbox" data-cohort-condition="' +
+      '<app-checkbox data-cohort-condition="' +
       escapeHtml(c.id) +
       '"' +
       (on ? " checked" : "") +
-      ' class="' +
-      CHECKBOX +
-      '" />' +
-      '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg>' +
-      "</span>" +
-      '<span class="text-sm text-gray-900 dark:text-gray-100">' +
+      ">" +
       escapeHtml(c.label) +
-      "</span></label>"
+      "</app-checkbox>"
     );
   }
 
@@ -1987,31 +1977,24 @@
         "</span>";
     }
     return (
-      '<label class="flex items-center gap-3 px-4 py-3 ' +
+      '<div data-assign-row class="flex items-center gap-3 px-4 py-3 ' +
       (here
         ? "cursor-not-allowed opacity-60"
-        : "cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5") +
+        : "hover:bg-gray-50 dark:hover:bg-white/5") +
       (on ? " bg-blue-50/50 dark:bg-blue-500/5" : "") +
       '">' +
-      '<span class="group grid size-4 shrink-0 grid-cols-1">' +
-      '<input type="checkbox" data-assign-pick="' +
+      '<app-checkbox class="min-w-0 flex-1" data-assign-pick="' +
       escapeHtml(s.id) +
       '"' +
       (on ? " checked" : "") +
       (here ? " disabled" : "") +
-      ' class="' +
-      CHECKBOX +
-      ' disabled:border-gray-200 disabled:bg-gray-100" />' +
-      '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg>' +
-      "</span>" +
-      '<span class="min-w-0 flex-1"><span class="block truncate text-sm font-medium text-gray-900 dark:text-white">' +
+      ">" +
       escapeHtml(s.name) +
-      "</span>" +
-      '<span class="block text-xs text-gray-500 dark:text-gray-400">' +
+      '<span slot="description">' +
       escapeHtml(s.code) +
-      "</span></span>" +
+      "</span></app-checkbox>" +
       where +
-      "</label>"
+      "</div>"
     );
   }
 
@@ -2286,7 +2269,7 @@
       var id = box.getAttribute("data-assign-pick");
       if (box.checked) assign.selected.add(id);
       else assign.selected.delete(id);
-      box.closest("label").classList.toggle("bg-blue-50/50", box.checked);
+      box.closest("[data-assign-row]").classList.toggle("bg-blue-50/50", box.checked);
       renderAssignList();
     });
     $("pp-assign-search").addEventListener("input", function (event) {
@@ -2512,16 +2495,13 @@
     var open = !!bulk.open[key];
     var box = locked
       ? '<span class="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-gray-200 text-gray-500 dark:bg-white/10 dark:text-gray-400"><svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-3"><path d="M3.75 7.25a.75.75 0 0 0 0 1.5h8.5a.75.75 0 0 0 0-1.5h-8.5Z" /></svg></span>'
-      : '<span class="group mt-0.5 grid size-4 shrink-0 grid-cols-1"><input type="checkbox" data-bulk-include="' +
+      : '<app-checkbox bare class="mt-0.5" data-bulk-include="' +
         key +
         '"' +
         (on ? " checked" : "") +
         ' aria-label="Include ' +
         escapeHtml(title) +
-        '" class="' +
-        CHECKBOX +
-        '" />' +
-        '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg></span>';
+        '"></app-checkbox>';
     var tone =
       locked || !on
         ? "border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"
