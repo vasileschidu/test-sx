@@ -405,50 +405,9 @@
       });
   }
 
+  /** Supplier user menu: same content as the Consumer Portal (name, role, Profile, Sign out). */
   function accountMenuHtml() {
-    return (
-      "" +
-      '<div class="px-3 py-2">' +
-      '  <p data-topbar-profile-name class="text-sm/5 font-medium text-zinc-950 dark:text-white">Johnny Anderson</p>' +
-      '  <p data-topbar-profile-email class="mt-0.5 text-xs/5 text-zinc-500 dark:text-zinc-400">j.anderson@mail.com</p>' +
-      "</div>" +
-      catalystDivider() +
-      accountLink(
-        "profile",
-        iconUser(
-          "size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400",
-        ),
-      ) +
-      accountLink(
-        "preferences",
-        iconCog(
-          "size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400",
-        ),
-      ) +
-      catalystDivider() +
-      catalystMenuLink(
-        "#",
-        iconShield(
-          "size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400",
-        ),
-        "Privacy Policy",
-      ) +
-      catalystMenuLink(
-        "#",
-        iconLightBulb(
-          "size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400",
-        ),
-        "Share Feedback",
-      ) +
-      catalystDivider() +
-      catalystMenuLink(
-        "#",
-        iconArrowRightOnRectangle(
-          "size-4 shrink-0 text-zinc-500 group-focus:text-white dark:text-zinc-400",
-        ),
-        "Sign out",
-      )
-    );
+    return consumerAccountMenuHtml();
   }
 
   function organizationMenuHtml() {
@@ -612,6 +571,78 @@
     return current + others;
   }
 
+  /** Supplier business switcher (Figma "Business Change"): current business card with Business Details, the other businesses, Onboard, Sign Out. */
+  function supplierBusinessMenuHtml() {
+    var plans = window.AppPlans;
+    if (!plans) return "";
+    var active = plans.getActiveBusiness();
+    var idBadge = function (business) {
+      return (
+        '<span class="inline-flex w-fit items-center rounded-sm border border-gray-200 bg-gray-100 px-2 pt-px text-xs leading-4 text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-200">ID : ' +
+        (business.accountId || "593596832") +
+        "</span>"
+      );
+    };
+    var secondaryBtn =
+      "flex w-full cursor-pointer items-center justify-center gap-1 rounded-md border border-gray-300 bg-white px-2.5 py-1.5 text-sm leading-5 font-semibold text-gray-700 shadow-xs transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10";
+    var plusIcon =
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0"><path d="M10.75 4.75a.75.75 0 0 0-1.5 0v4.5h-4.5a.75.75 0 0 0 0 1.5h4.5v4.5a.75.75 0 0 0 1.5 0v-4.5h4.5a.75.75 0 0 0 0-1.5h-4.5v-4.5Z"/></svg>';
+    var current =
+      '<div class="border-b border-gray-200 p-3 dark:border-white/10">' +
+      '  <div class="flex flex-col gap-3 rounded-lg bg-gray-50 p-4 dark:bg-white/5">' +
+      '    <div class="flex items-start gap-3">' +
+      '      <span class="flex size-12 shrink-0 items-center justify-center rounded-full border-2 border-white bg-blue-600 text-lg leading-6 text-white dark:border-gray-800">' +
+      businessInitials(active.name) +
+      "</span>" +
+      '      <span class="flex min-w-0 flex-1 flex-col gap-1">' +
+      '        <span class="truncate text-base font-semibold leading-6 text-gray-900 dark:text-white">' +
+      active.name +
+      "</span>" +
+      idBadge(active) +
+      "      </span>" +
+      "    </div>" +
+      '    <a href="' +
+      currentAccountLinks().profile.href +
+      '" class="' +
+      secondaryBtn +
+      '">Business Details</a>' +
+      "  </div>" +
+      "</div>";
+    var others = plans
+      .getBusinesses()
+      .filter(function (business) {
+        return business.id !== active.id;
+      })
+      .map(function (business) {
+        return (
+          '<button type="button" data-topbar-business="' +
+          business.id +
+          '" class="flex w-full cursor-pointer items-center gap-3 border-b border-gray-200 p-4 text-left transition-colors hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:border-white/10 dark:hover:bg-white/5 dark:focus:bg-white/5">' +
+          '<span class="flex size-10 shrink-0 items-center justify-center rounded-full border-2 border-white bg-indigo-500 text-base leading-6 text-white dark:border-gray-800">' +
+          businessInitials(business.name) +
+          "</span>" +
+          '<span class="flex min-w-0 flex-1 flex-col items-start">' +
+          '<span class="w-full truncate text-sm font-medium leading-5 text-gray-700 dark:text-gray-200">' +
+          business.name +
+          "</span>" +
+          idBadge(business) +
+          "</span></button>"
+        );
+      })
+      .join("");
+    var onboard =
+      '<div class="border-b border-gray-200 p-4 dark:border-white/10">' +
+      '  <a href="#" class="flex w-full items-center justify-center gap-2 rounded-md px-3.5 py-2.5 text-base leading-6 font-semibold text-blue-600 transition-colors hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:bg-white/5">' +
+      plusIcon +
+      "<span>Onboard for a Different Business</span></a>" +
+      "</div>";
+    var signOut =
+      '<div class="p-4"><a href="#" class="' +
+      secondaryBtn +
+      '">Sign Out</a></div>';
+    return current + others + onboard + signOut;
+  }
+
   function consumerBusinessMenuClass() {
     return "w-[361px] origin-top-right overflow-hidden rounded-lg bg-white shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline outline-transparent transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800";
   }
@@ -758,7 +789,10 @@
           bar
             .querySelectorAll("[data-topbar-business-menu]")
             .forEach(function (menu) {
-              menu.innerHTML = consumerBusinessMenuHtml();
+              menu.innerHTML =
+                menu.getAttribute("data-topbar-business-menu") === "supplier"
+                  ? supplierBusinessMenuHtml()
+                  : consumerBusinessMenuHtml();
             });
           syncAccountLinks(bar);
         });
@@ -1257,28 +1291,27 @@
         '" alt="" class="transition-[filter] group-hover:brightness-[.7] dark:group-hover:brightness-125" />' +
         "      </button>" +
         '      <el-dropdown class="relative hidden sm:block">' +
-        '        <button type="button" class="flex w-[238px] items-center gap-1.5 overflow-hidden rounded-md border border-gray-300 bg-white px-3 py-2 text-left shadow-xs transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 cursor-pointer">' +
+        '        <button type="button" aria-label="Select business" class="flex h-10 w-[238px] min-w-0 items-center justify-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 py-2 text-left shadow-sm transition-colors hover:bg-gray-50 focus-visible:outline-none focus-visible:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] aria-expanded:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] cursor-pointer dark:border-white/20 dark:bg-white/5 dark:hover:bg-white/10 dark:focus-visible:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6] dark:aria-expanded:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6]">' +
         topbarIcon("briefcase.svg", 20, 20) +
-        "          <span data-topbar-org-name class=\"h-6 min-w-0 flex-1 truncate font-['Inter'] text-base font-semibold leading-6 text-gray-800 dark:text-gray-100\">" +
+        "          <span data-topbar-org-name class=\"min-w-0 flex-1 truncate text-base font-semibold leading-6 text-gray-800 dark:text-gray-100\">" +
         activeBusinessName() +
         "</span>" +
         topbarIcon("selector.svg", 20, 20) +
         "        </button>" +
-        '        <el-menu anchor="bottom end" popover class="' +
-        headerMenuClass("min-w-72") +
+        '        <el-menu data-topbar-business-menu="supplier" anchor="bottom end" popover class="' +
+        consumerBusinessMenuClass() +
         '">' +
-        organizationMenuHtml() +
+        supplierBusinessMenuHtml() +
         "        </el-menu>" +
         "      </el-dropdown>" +
         '      <el-dropdown class="relative">' +
-        '        <button type="button" class="flex size-10 items-center justify-center overflow-hidden rounded-full border-2 border-white transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-gray-900 cursor-pointer">' +
-        '          <span class="sr-only">Open user menu</span>' +
+        '        <button type="button" aria-label="Open user menu" class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full shadow-[0px_1px_2px_rgba(0,0,0,0.05)] transition-shadow hover:ring-2 hover:ring-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-expanded:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] aria-expanded:hover:ring-0 dark:hover:ring-white/20 dark:aria-expanded:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6]">' +
         '          <img src="' +
         topbarAsset("avatar.png") +
-        '" width="40" height="40" alt="" class="size-10 rounded-full object-cover">' +
+        '" width="40" height="40" alt="" class="size-10 rounded-full border-2 border-white object-cover dark:border-gray-800">' +
         "        </button>" +
         '        <el-menu anchor="bottom end" popover class="' +
-        headerMenuClass("min-w-64") +
+        consumerUserMenuClass() +
         '">' +
         accountMenuHtml() +
         "        </el-menu>" +
