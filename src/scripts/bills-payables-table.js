@@ -3188,6 +3188,11 @@
     state.activeFilterPanel = normalizedPanel;
     setFilterDetailPanelVisibility(normalizedPanel);
     syncFilterNavState(normalizedPanel);
+    if (refs.filterTrack) {
+      var tall = normalizedPanel === "payee";
+      refs.filterTrack.classList.toggle("sm:h-[470px]", tall);
+      refs.filterTrack.classList.toggle("sm:h-[364px]", !tall);
+    }
     syncFilterApplyButtonState();
   }
 
