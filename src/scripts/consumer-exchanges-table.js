@@ -3409,16 +3409,11 @@
     var filterDateFromMaskEmpty = document.getElementById('sx-table-filter-date-from-mask-empty');
     var filterDateToMaskFilled = document.getElementById('sx-table-filter-date-to-mask-filled');
     var filterDateToMaskEmpty = document.getElementById('sx-table-filter-date-to-mask-empty');
-    var filterDateMonthLabel = document.getElementById('sx-table-filter-date-month-label');
-    var filterDatePrevBtn = document.getElementById('sx-table-filter-date-prev');
-    var filterDateNextBtn = document.getElementById('sx-table-filter-date-next');
-    var filterDateGrid = document.getElementById('sx-table-filter-date-grid');
-    var filterDateCalendarWrap = document.getElementById('sx-table-filter-date-calendar');
     var filterClearBtn = document.getElementById('sx-table-filter-clear-btn');
     var filterApplyActiveBtn = document.getElementById('sx-table-filter-apply-active-btn');
     var filterBackdrop = document.getElementById('sx-table-filter-backdrop');
     var activeFiltersWrap = document.getElementById('sx-table-active-filters');
-    if (!filterBtn || !filterMenu || !filterRootPanel || !filterNavButtons.length || !filterCustomerPanel || !filterStatusPanel || !filterMethodPanel || !filterFailureReasonPanel || !filterInitiatedDatePanel || !filterCustomersWrap || !filterStatusesWrap || !filterMethodsWrap || !filterFailureReasonsWrap || !filterDateFromInput || !filterDateToInput || !filterDateFromMaskFilled || !filterDateFromMaskEmpty || !filterDateToMaskFilled || !filterDateToMaskEmpty || !filterDateMonthLabel || !filterDatePrevBtn || !filterDateNextBtn || !filterDateGrid || !filterDateCalendarWrap || !filterClearBtn || !filterApplyActiveBtn) return;
+    if (!filterBtn || !filterMenu || !filterRootPanel || !filterNavButtons.length || !filterCustomerPanel || !filterStatusPanel || !filterMethodPanel || !filterFailureReasonPanel || !filterInitiatedDatePanel || !filterCustomersWrap || !filterStatusesWrap || !filterMethodsWrap || !filterFailureReasonsWrap || !filterDateFromInput || !filterDateToInput || !filterDateFromMaskFilled || !filterDateFromMaskEmpty || !filterDateToMaskFilled || !filterDateToMaskEmpty || !filterClearBtn || !filterApplyActiveBtn) return;
 
     function cloneSet(source) {
       return new Set(Array.from(source || []));
@@ -3434,18 +3429,13 @@
     }
 
     function buildFilterCheckbox(id, label, countText, value, checked) {
-      return '' +
-        '<label class="group flex w-full cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-white/5">' +
-        '  <div class="grid size-4 grid-cols-1">' +
-        '    <input type="checkbox" data-filter-value="' + escapeHtml(value) + '" id="' + escapeHtml(id) + '"' + (checked ? ' checked' : '') +
-        '      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" />' +
-        '    <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
-        '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
-        '    </svg>' +
-        '  </div>' +
-        '  <span class="min-w-0 flex-1 text-sm font-medium text-gray-700 dark:text-gray-200">' + escapeHtml(label) + '</span>' +
-        (countText ? ('<span class="shrink-0 text-sm font-normal text-gray-500 dark:text-gray-400">' + escapeHtml(countText) + '</span>') : '') +
-        '</label>';
+      return window.TableUi.filterCheckbox({
+        id: id,
+        label: label,
+        countText: countText,
+        value: value,
+        checked: checked,
+      });
     }
 
     function normalizeFilterPanel(panel) {
@@ -3619,52 +3609,6 @@
       renderInputMaskDisplay(toDisplay, filterDateToMaskFilled, filterDateToMaskEmpty);
     }
 
-    function renderInitiatedDateCalendar() {
-      if (!tableFilterState.initiatedDateMonth) setInitiatedDateMonthFromIso(getSelectedDateForActiveField());
-      var monthStart = tableFilterState.initiatedDateMonth;
-      filterDateMonthLabel.textContent = monthStart.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
-
-      var firstOfMonth = new Date(monthStart.getFullYear(), monthStart.getMonth(), 1);
-      var startOffset = (firstOfMonth.getDay() + 6) % 7; // Monday-first
-      var gridStart = new Date(firstOfMonth);
-      gridStart.setDate(firstOfMonth.getDate() - startOffset);
-      var todayIso = toLocalIsoDate(new Date());
-      var selectedFrom = tableFilterState.initiatedDateFrom;
-      var selectedTo = tableFilterState.initiatedDateTo;
-      var activeIso = getSelectedDateForActiveField();
-      var cells = '';
-
-      for (var i = 0; i < 42; i++) {
-        var current = new Date(gridStart.getFullYear(), gridStart.getMonth(), gridStart.getDate() + i);
-        var iso = toLocalIsoDate(current);
-        var isCurrentMonth = current.getMonth() === monthStart.getMonth() && current.getFullYear() === monthStart.getFullYear();
-        var isSelected = iso && (iso === selectedFrom || iso === selectedTo);
-        var isInRange = selectedFrom && selectedTo && iso >= selectedFrom && iso <= selectedTo;
-        var isToday = iso === todayIso;
-        var isActive = iso && iso === activeIso;
-        var classes = 'mx-auto flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-200';
-        if (!isCurrentMonth) classes += ' text-gray-400 dark:text-gray-500';
-        else classes += ' text-gray-900 dark:text-gray-100';
-        if (isInRange && !isSelected) classes += ' bg-blue-50 dark:bg-blue-500/20';
-        if (isSelected) classes += ' bg-blue-600 font-semibold text-white';
-        else if (isToday) classes += ' font-semibold text-blue-600 dark:text-blue-400';
-        if (isActive && !isSelected) classes += ' ring-2 ring-blue-500';
-
-        cells += '' +
-          '<div class="py-1">' +
-          '  <button type="button" data-date-cell="' + escapeHtml(iso) + '" class="' + classes + '">' +
-          '    <time datetime="' + escapeHtml(iso) + '">' + current.getDate() + '</time>' +
-          '  </button>' +
-          '</div>';
-      }
-      filterDateGrid.innerHTML = cells;
-    }
-
-    function setDateCalendarVisible(visible) {
-      filterDateCalendarWrap.classList.toggle('hidden', !visible);
-      if (visible) renderInitiatedDateCalendar();
-    }
-
     function clearPanelSelection(panel) {
       if (panel === 'status') {
         tableFilterState.selectedStatuses.clear();
@@ -3805,6 +3749,7 @@
           );
         });
       filterCustomersWrap.innerHTML = rows.join('');
+      applyPayerSearch();
     }
 
     function renderStatusFilters() {
@@ -4063,6 +4008,8 @@
         button.classList.toggle('text-gray-900', isActive);
         button.classList.toggle('dark:bg-white/10', isActive);
         button.classList.toggle('dark:text-white', isActive);
+        var chevron = button.querySelector('[data-nav-chevron]');
+        if (chevron) chevron.classList.toggle('hidden', !isActive);
       });
     }
 
@@ -4102,16 +4049,18 @@
       switchDateCategory(activePanel);
       setDetailPanelVisibility(activePanel);
       syncFilterNavState(activePanel);
+      var filterLayout = document.getElementById('sx-table-filter-layout');
+      if (filterLayout) {
+        var tall = activePanel === 'customer';
+        filterLayout.classList.toggle('sm:h-[470px]', tall);
+        filterLayout.classList.toggle('sm:h-[364px]', !tall);
+      }
       if (isDateCategory(activePanel)) {
         Array.prototype.forEach.call(filterMenu.querySelectorAll('[data-date-panel-label]'), function (el) {
           el.textContent = FILTER_CATEGORY_LABELS[activePanel];
         });
         setInitiatedDateMonthFromIso(getSelectedDateForActiveField() || tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo);
         renderInitiatedDateInputs();
-        renderInitiatedDateCalendar();
-        setDateCalendarVisible(true);
-      } else {
-        setDateCalendarVisible(false);
       }
       syncApplyButtonState();
     }
@@ -4175,6 +4124,34 @@
       }
     });
 
+    function applyPayerSearch() {
+      var input = filterMenu.querySelector('[data-filter-search]');
+      if (!input) return;
+      var query = input.value.trim().toLowerCase();
+      Array.prototype.forEach.call(filterCustomersWrap.querySelectorAll('label'), function (label) {
+        label.classList.toggle('hidden', !!query && (label.textContent || '').toLowerCase().indexOf(query) === -1);
+      });
+    }
+
+    filterMenu.addEventListener('input', function (event) {
+      if (event.target.closest('[data-filter-search]')) applyPayerSearch();
+    });
+
+    filterMenu.addEventListener('click', function (event) {
+      if (!event.target.closest('[data-filter-select-all]')) return;
+      event.preventDefault();
+      event.stopPropagation();
+      Array.prototype.forEach.call(filterCustomersWrap.querySelectorAll('label'), function (label) {
+        if (label.classList.contains('hidden')) return;
+        var box = label.querySelector('input[data-filter-value]');
+        if (!box) return;
+        box.checked = true;
+        tableFilterState.selectedCustomers.add(box.getAttribute('data-filter-value'));
+      });
+      renderFilterNavBadges();
+      syncApplyButtonState();
+    });
+
     filterMenu.addEventListener('change', function (event) {
       var checkbox = event.target.closest('input[type="checkbox"][data-filter-value]');
       if (!checkbox) return;
@@ -4203,7 +4180,6 @@
       tableFilterState.initiatedDateActiveField = field === 'to' ? 'to' : 'from';
       setInitiatedDateMonthFromIso(getSelectedDateForActiveField() || tableFilterState.initiatedDateFrom || tableFilterState.initiatedDateTo);
       renderInitiatedDateInputs();
-      setDateCalendarVisible(isDateCategory(tableFilterState.activePanel));
     }
 
     function setDateFieldFromInput(field, rawInput) {
@@ -4292,48 +4268,6 @@
 
     bindDateInput(filterDateFromInput, 'from');
     bindDateInput(filterDateToInput, 'to');
-
-    filterDatePrevBtn.addEventListener('click', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      shiftInitiatedDateMonth(-1);
-      renderInitiatedDateCalendar();
-    });
-
-    filterDateNextBtn.addEventListener('click', function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      shiftInitiatedDateMonth(1);
-      renderInitiatedDateCalendar();
-    });
-
-    filterDateGrid.addEventListener('click', function (event) {
-      var dayBtn = event.target.closest('button[data-date-cell]');
-      if (!dayBtn) return;
-      event.preventDefault();
-      event.stopPropagation();
-      var iso = toIsoDate(dayBtn.getAttribute('data-date-cell'));
-      if (!iso) return;
-      if (tableFilterState.initiatedDateActiveField === 'to') {
-        tableFilterState.initiatedDateTo = iso;
-        tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(iso);
-        if (tableFilterState.initiatedDateFrom && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
-          tableFilterState.initiatedDateFrom = tableFilterState.initiatedDateTo;
-          tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(tableFilterState.initiatedDateFrom);
-        }
-      } else {
-        tableFilterState.initiatedDateFrom = iso;
-        tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(iso);
-        if (tableFilterState.initiatedDateTo && tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo) {
-          tableFilterState.initiatedDateTo = tableFilterState.initiatedDateFrom;
-          tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(tableFilterState.initiatedDateTo);
-        }
-      }
-      syncApplyButtonState();
-      renderInitiatedDateInputs();
-      renderInitiatedDateCalendar();
-      renderFilterNavBadges();
-    });
 
     filterClearBtn.addEventListener('click', function (event) {
       event.stopPropagation();
@@ -4433,7 +4367,6 @@
       renderMethodFilters();
       renderFailureReasonFilters();
       renderInitiatedDateInputs();
-      renderInitiatedDateCalendar();
       var visibleCategories = getVisibleFilterCategories();
       filterNavButtons.forEach(function (button) {
         var isVisible = !!visibleCategories[button.getAttribute('data-filter-open')];

@@ -4218,19 +4218,6 @@
     var filterDateToMaskEmpty = document.getElementById(
       "sx-table-filter-date-to-mask-empty",
     );
-    var filterDateMonthLabel = document.getElementById(
-      "sx-table-filter-date-month-label",
-    );
-    var filterDatePrevBtn = document.getElementById(
-      "sx-table-filter-date-prev",
-    );
-    var filterDateNextBtn = document.getElementById(
-      "sx-table-filter-date-next",
-    );
-    var filterDateGrid = document.getElementById("sx-table-filter-date-grid");
-    var filterDateCalendarWrap = document.getElementById(
-      "sx-table-filter-date-calendar",
-    );
     var filterClearBtn = document.getElementById("sx-table-filter-clear-btn");
     var filterApplyActiveBtn = document.getElementById(
       "sx-table-filter-apply-active-btn",
@@ -4257,11 +4244,6 @@
       !filterDateFromMaskEmpty ||
       !filterDateToMaskFilled ||
       !filterDateToMaskEmpty ||
-      !filterDateMonthLabel ||
-      !filterDatePrevBtn ||
-      !filterDateNextBtn ||
-      !filterDateGrid ||
-      !filterDateCalendarWrap ||
       !filterClearBtn ||
       !filterApplyActiveBtn
     )
@@ -4547,82 +4529,6 @@
         filterDateToMaskFilled,
         filterDateToMaskEmpty,
       );
-    }
-
-    function renderInitiatedDateCalendar() {
-      if (!tableFilterState.initiatedDateMonth)
-        setInitiatedDateMonthFromIso(getSelectedDateForActiveField());
-      var monthStart = tableFilterState.initiatedDateMonth;
-      filterDateMonthLabel.textContent = monthStart.toLocaleDateString(
-        "en-US",
-        { month: "long", year: "numeric" },
-      );
-
-      var firstOfMonth = new Date(
-        monthStart.getFullYear(),
-        monthStart.getMonth(),
-        1,
-      );
-      var startOffset = (firstOfMonth.getDay() + 6) % 7; // Monday-first
-      var gridStart = new Date(firstOfMonth);
-      gridStart.setDate(firstOfMonth.getDate() - startOffset);
-      var todayIso = toLocalIsoDate(new Date());
-      var selectedFrom = tableFilterState.initiatedDateFrom;
-      var selectedTo = tableFilterState.initiatedDateTo;
-      var activeIso = getSelectedDateForActiveField();
-      var cells = "";
-
-      for (var i = 0; i < 42; i++) {
-        var current = new Date(
-          gridStart.getFullYear(),
-          gridStart.getMonth(),
-          gridStart.getDate() + i,
-        );
-        var iso = toLocalIsoDate(current);
-        var isCurrentMonth =
-          current.getMonth() === monthStart.getMonth() &&
-          current.getFullYear() === monthStart.getFullYear();
-        var isSelected = iso && (iso === selectedFrom || iso === selectedTo);
-        var isInRange =
-          selectedFrom &&
-          selectedTo &&
-          iso >= selectedFrom &&
-          iso <= selectedTo;
-        var isToday = iso === todayIso;
-        var isActive = iso && iso === activeIso;
-        var classes =
-          "mx-auto flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-200";
-        if (!isCurrentMonth) classes += " text-gray-400 dark:text-gray-500";
-        else classes += " text-gray-900 dark:text-gray-100";
-        if (isInRange && !isSelected)
-          classes += " bg-blue-50 dark:bg-blue-500/20";
-        if (isSelected) classes += " bg-blue-600 font-semibold text-white";
-        else if (isToday)
-          classes += " font-semibold text-blue-600 dark:text-blue-400";
-        if (isActive && !isSelected) classes += " ring-2 ring-blue-500";
-
-        cells +=
-          "" +
-          '<div class="py-1">' +
-          '  <button type="button" data-date-cell="' +
-          escapeHtml(iso) +
-          '" class="' +
-          classes +
-          '">' +
-          '    <time datetime="' +
-          escapeHtml(iso) +
-          '">' +
-          current.getDate() +
-          "</time>" +
-          "  </button>" +
-          "</div>";
-      }
-      filterDateGrid.innerHTML = cells;
-    }
-
-    function setDateCalendarVisible(visible) {
-      filterDateCalendarWrap.classList.toggle("hidden", !visible);
-      if (visible) renderInitiatedDateCalendar();
     }
 
     function clearPanelSelection(panel) {
@@ -5325,6 +5231,14 @@
       switchDateCategory(activePanel);
       setDetailPanelVisibility(activePanel);
       syncFilterNavState(activePanel);
+      var filterLayout = document.getElementById("sx-table-filter-layout");
+      if (filterLayout) {
+        var tall =
+          activePanel === "vendor_entry" ||
+          activePanel === "customer";
+        filterLayout.classList.toggle("sm:h-[470px]", tall);
+        filterLayout.classList.toggle("sm:h-[364px]", !tall);
+      }
       if (isDateCategory(activePanel)) {
         Array.prototype.forEach.call(
           filterMenu.querySelectorAll("[data-date-panel-label]"),
@@ -5338,10 +5252,6 @@
             tableFilterState.initiatedDateTo,
         );
         renderInitiatedDateInputs();
-        renderInitiatedDateCalendar();
-        setDateCalendarVisible(true);
-      } else {
-        setDateCalendarVisible(false);
       }
       syncApplyButtonState();
     }
@@ -5512,7 +5422,6 @@
           tableFilterState.initiatedDateTo,
       );
       renderInitiatedDateInputs();
-      setDateCalendarVisible(isDateCategory(tableFilterState.activePanel));
     }
 
     function setDateFieldFromInput(field, rawInput) {
@@ -5636,58 +5545,6 @@
     bindDateInput(filterDateFromInput, "from");
     bindDateInput(filterDateToInput, "to");
 
-    filterDatePrevBtn.addEventListener("click", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      shiftInitiatedDateMonth(-1);
-      renderInitiatedDateCalendar();
-    });
-
-    filterDateNextBtn.addEventListener("click", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      shiftInitiatedDateMonth(1);
-      renderInitiatedDateCalendar();
-    });
-
-    filterDateGrid.addEventListener("click", function (event) {
-      var dayBtn = event.target.closest("button[data-date-cell]");
-      if (!dayBtn) return;
-      event.preventDefault();
-      event.stopPropagation();
-      var iso = toIsoDate(dayBtn.getAttribute("data-date-cell"));
-      if (!iso) return;
-      if (tableFilterState.initiatedDateActiveField === "to") {
-        tableFilterState.initiatedDateTo = iso;
-        tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(iso);
-        if (
-          tableFilterState.initiatedDateFrom &&
-          tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo
-        ) {
-          tableFilterState.initiatedDateFrom = tableFilterState.initiatedDateTo;
-          tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(
-            tableFilterState.initiatedDateFrom,
-          );
-        }
-      } else {
-        tableFilterState.initiatedDateFrom = iso;
-        tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(iso);
-        if (
-          tableFilterState.initiatedDateTo &&
-          tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo
-        ) {
-          tableFilterState.initiatedDateTo = tableFilterState.initiatedDateFrom;
-          tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(
-            tableFilterState.initiatedDateTo,
-          );
-        }
-      }
-      syncApplyButtonState();
-      renderInitiatedDateInputs();
-      renderInitiatedDateCalendar();
-      renderFilterNavBadges();
-    });
-
     filterClearBtn.addEventListener("click", function (event) {
       event.stopPropagation();
       if (filterClearBtn.disabled) return;
@@ -5802,7 +5659,6 @@
       renderFailureReasonFilters();
       applyOpenFilterSearches();
       renderInitiatedDateInputs();
-      renderInitiatedDateCalendar();
       syncFilterCategoryVisibility();
       renderFilterNavBadges();
       renderActiveFilterTags();
