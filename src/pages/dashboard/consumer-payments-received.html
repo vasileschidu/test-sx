@@ -2,7 +2,7 @@
   @file dashboard/consumer-payments-received.html
   @description Consumer Portal — Payments Received. Every SMART Disburse token a
     person or business has been sent, in the same shell and table as the
-    Supplier Portal: the table, Get Paid panel and dialogs are shared
+    SMART Exchange: the table, Get Paid panel and dialogs are shared
     (exchanges-table.js), configured below to read the consumer's own data.
 -->
 <!doctype html>
@@ -51,7 +51,7 @@
     ></script>
     <script src="../../../src/scripts/table-skeleton.js" defer></script>
     <script>
-        // Same table as the Supplier Portal, pointed at the consumer's tokens.
+        // Same table as the SMART Exchange, pointed at the consumer's tokens.
         window.EXCHANGES_TABLE_CONFIG = {
             dataset: 'consumer-payments',
             storageKey: 'cp_payment_overrides_v1',
@@ -1924,7 +1924,7 @@
                                 <p>The payer has provided their card to cover a specific amount. You are only authorized to charge the amount indicated. To process the payment, enter the card details into your card terminal.</p>
                                 <ul class="list-disc pl-5">
                                     <li>The card may also be used for future authorized payments.</li>
-                                    <li>It can be securely stored under the <span class="font-semibold text-gray-900 dark:text-gray-100">Payment Preference</span> tab in the <span class="font-semibold text-gray-900 dark:text-gray-100">Supplier Portal</span>.</li>
+                                    <li>It can be securely stored under the <span class="font-semibold text-gray-900 dark:text-gray-100">Payment Preference</span> tab in the <span class="font-semibold text-gray-900 dark:text-gray-100">SMART Exchange</span>.</li>
                                 </ul>
                             </div>
                         </div>

@@ -67,29 +67,25 @@
   var TAB_NAV_SELECTOR = 'nav[aria-label="Tabs"]';
   var TAB_SELECT_SELECTOR = "[data-sx-tab-select]";
 
-  var ACTIVE_TAB_LINK_CLASSES = [
-    "bg-blue-100",
-    "text-blue-700",
-    "dark:bg-blue-500/20",
-    "dark:text-blue-300",
+  // Supplier Portal tabs match Bills and Payables; the Consumer Portal keeps its own.
+  var ACTIVE_TAB_LINK_CLASSES = IS_SUPPLIER_PORTAL
+    ? ["bg-blue-50", "text-blue-600", "dark:bg-blue-500/15", "dark:text-blue-300"]
+    : ["bg-blue-100", "text-blue-700", "dark:bg-blue-500/20", "dark:text-blue-300"];
+  var INACTIVE_TAB_LINK_CLASSES = IS_SUPPLIER_PORTAL
+    ? ["text-gray-500", "hover:text-gray-700", "dark:text-gray-400", "dark:hover:text-gray-200"]
+    : ["text-gray-500", "dark:text-gray-400"];
+  var EXCEPTION_TAB_LINK_CLASSES = [
+    "bg-red-50",
+    "text-red-600",
+    "dark:bg-red-500/15",
+    "dark:text-red-300",
   ];
-  var INACTIVE_TAB_LINK_CLASSES = ["text-gray-500", "dark:text-gray-400"];
-  var ACTIVE_BADGE_CLASSES = [
-    "bg-blue-50",
-    "text-blue-700",
-    "inset-ring-blue-700/10",
-    "dark:bg-blue-400/10",
-    "dark:text-blue-400",
-    "dark:inset-ring-blue-400/30",
-  ];
-  var INACTIVE_BADGE_CLASSES = [
-    "bg-gray-50",
-    "text-gray-600",
-    "inset-ring-gray-500/10",
-    "dark:bg-gray-400/10",
-    "dark:text-gray-400",
-    "dark:inset-ring-gray-400/20",
-  ];
+  var ACTIVE_BADGE_CLASSES = IS_SUPPLIER_PORTAL
+    ? ["bg-blue-100", "text-blue-800", "border-blue-200", "dark:bg-blue-400/15", "dark:text-blue-200", "dark:border-blue-400/30"]
+    : ["bg-blue-50", "text-blue-700", "inset-ring-blue-700/10", "dark:bg-blue-400/10", "dark:text-blue-400", "dark:inset-ring-blue-400/30"];
+  var INACTIVE_BADGE_CLASSES = IS_SUPPLIER_PORTAL
+    ? ["bg-gray-100", "text-gray-800", "border-gray-200", "dark:bg-white/10", "dark:text-gray-200", "dark:border-white/15"]
+    : ["bg-gray-50", "text-gray-600", "inset-ring-gray-500/10", "dark:bg-gray-400/10", "dark:text-gray-400", "dark:inset-ring-gray-400/20"];
 
   var DEFAULT_PAGE_SIZE = IS_SUPPLIER_PORTAL ? 10 : 16;
   var PAGE_SIZE_OPTIONS = IS_SUPPLIER_PORTAL
@@ -1738,16 +1734,13 @@
   }
 
   function buildSortBadgeHTML(sortDirection) {
-    if (IS_SUPPLIER_PORTAL && !sortDirection) {
-      return (
-        '<span data-sort-badge="true" class="inline-flex size-5 shrink-0 items-center justify-center">' +
-        tableIcon("sort.svg", 20, 20) +
-        "</span>"
-      );
-    }
-    var sortBtnClass = sortDirection
-      ? "inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
-      : "inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400";
+    var sortBtnClass = IS_SUPPLIER_PORTAL
+      ? sortDirection
+        ? "inline-flex size-5 shrink-0 items-center justify-center text-blue-600 dark:text-blue-400"
+        : "inline-flex size-5 shrink-0 items-center justify-center text-gray-400 group-hover:text-gray-600 dark:text-gray-500"
+      : sortDirection
+        ? "inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
+        : "inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400";
     var sortIcon =
       sortDirection === "asc"
         ? ICON_SORT_ASC
@@ -2154,14 +2147,7 @@
             ? "inline-flex h-[52px] w-full cursor-default items-center justify-center"
             : "inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20") +
           '">' +
-          (IS_SUPPLIER_PORTAL
-            ? tableIcon(
-                "chevron-right.svg",
-                20,
-                20,
-                "transition-transform duration-200",
-              )
-            : '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>') +
+          '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>' +
           "</button>" +
           "</td>";
         return;
@@ -3544,7 +3530,11 @@
       }
 
       if (IS_SUPPLIER_PORTAL) {
-        if (event.target.closest("[data-row-toggle]")) return;
+        var chevronToggle = event.target.closest("[data-row-toggle]");
+        if (chevronToggle && table.contains(chevronToggle)) {
+          toggleRow(chevronToggle);
+          return;
+        }
         var clickedRow = event.target.closest("tbody tr[data-row]");
         if (
           clickedRow &&
@@ -3986,21 +3976,23 @@
 
   function setTabVisualState(tab, isActive) {
     var badge = tab.querySelector(TAB_COUNT_SELECTOR);
+    // Like Bills and Payables, the Exceptions tab is red when active and its badge is always red.
+    var isException = IS_SUPPLIER_PORTAL && tab.getAttribute("data-tab") === "exceptions";
+    var activeLink = isException ? EXCEPTION_TAB_LINK_CLASSES : ACTIVE_TAB_LINK_CLASSES;
 
-    if (isActive) {
-      tab.classList.add.apply(tab.classList, ACTIVE_TAB_LINK_CLASSES);
-      tab.classList.remove.apply(tab.classList, INACTIVE_TAB_LINK_CLASSES);
-      if (badge) {
-        badge.classList.add.apply(badge.classList, ACTIVE_BADGE_CLASSES);
-        badge.classList.remove.apply(badge.classList, INACTIVE_BADGE_CLASSES);
-      }
-    } else {
-      tab.classList.remove.apply(tab.classList, ACTIVE_TAB_LINK_CLASSES);
-      tab.classList.add.apply(tab.classList, INACTIVE_TAB_LINK_CLASSES);
-      if (badge) {
-        badge.classList.remove.apply(badge.classList, ACTIVE_BADGE_CLASSES);
-        badge.classList.add.apply(badge.classList, INACTIVE_BADGE_CLASSES);
-      }
+    tab.classList.remove.apply(tab.classList, ACTIVE_TAB_LINK_CLASSES);
+    tab.classList.remove.apply(tab.classList, EXCEPTION_TAB_LINK_CLASSES);
+    tab.classList.remove.apply(tab.classList, INACTIVE_TAB_LINK_CLASSES);
+    if (isActive) tab.classList.add.apply(tab.classList, activeLink);
+    else tab.classList.add.apply(tab.classList, INACTIVE_TAB_LINK_CLASSES);
+
+    if (badge && !isException) {
+      badge.classList.remove.apply(badge.classList, ACTIVE_BADGE_CLASSES);
+      badge.classList.remove.apply(badge.classList, INACTIVE_BADGE_CLASSES);
+      badge.classList.add.apply(
+        badge.classList,
+        isActive ? ACTIVE_BADGE_CLASSES : INACTIVE_BADGE_CLASSES,
+      );
     }
   }
 

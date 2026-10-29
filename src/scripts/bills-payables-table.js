@@ -1627,6 +1627,19 @@
     });
   }
 
+  function buildSortBadge(direction) {
+    var cls = direction
+      ? "inline-flex size-5 shrink-0 items-center justify-center text-blue-600 dark:text-blue-400"
+      : "inline-flex size-5 shrink-0 items-center justify-center text-gray-400 group-hover:text-gray-600 dark:text-gray-500";
+    var icon =
+      direction === "asc"
+        ? ICON_SORT_ASC
+        : direction === "desc"
+          ? ICON_SORT_DESC
+          : ICON_SORT;
+    return '<span class="' + cls + '">' + icon + "</span>";
+  }
+
   function sortRows(rows) {
     if (!state.sortKey || !state.sortDirection) return rows.slice();
     var dir = state.sortDirection === "asc" ? 1 : -1;
@@ -3860,13 +3873,10 @@
           var sortButton = col.sortable
             ? '<button type="button" data-sort-key="' +
               col.key +
-              '" class="inline-flex cursor-pointer items-center gap-1 rounded-sm ' +
+              '" class="group inline-flex cursor-pointer items-center gap-1 rounded-sm ' +
               (alignEnd ? "justify-end " : "") +
               headerTextClass +
               " focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" +
-              (state.sortKey === col.key && state.sortDirection
-                ? " text-blue-600 dark:text-blue-300"
-                : "") +
               '"><span class="' +
               (col.key === "billNumber"
                 ? "text-left leading-4"
@@ -3874,7 +3884,9 @@
               '">' +
               buildHeaderLabel(col) +
               "</span>" +
-              tableIcon("sort.svg", 20, 20) +
+              buildSortBadge(
+                state.sortKey === col.key ? state.sortDirection : "",
+              ) +
               "</button>"
             : '<span class="' +
               headerTextClass +
@@ -3932,13 +3944,9 @@
                 '" aria-expanded="' +
                 (expanded ? "true" : "false") +
                 '" class="inline-flex h-[52px] w-full cursor-default items-center justify-center">' +
-                tableIcon(
-                  "chevron-right.svg",
-                  20,
-                  20,
-                  "transition-transform duration-200" +
-                    (expanded ? " rotate-90" : ""),
-                ) +
+                '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200' +
+                (expanded ? " rotate-90" : "") +
+                '" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>' +
                 "</button>" +
                 "</td>"
               );
@@ -4670,10 +4678,10 @@
           return;
         }
 
-        if (e.target.closest("[data-expand-id]")) return;
-        var expandBtn = null;
+        var expandBtn = e.target.closest("[data-expand-id]");
         var clickedRow = e.target.closest("tbody tr");
         if (
+          !expandBtn &&
           clickedRow &&
           !e.target.closest("button, a, input, label, select, textarea")
         ) {

@@ -1,6 +1,6 @@
 /**
  * @file sidebar.js
- * @description Handles the Supplier Portal dashboard sidebar behavior including:
+ * @description Handles the SMART Exchange dashboard sidebar behavior including:
  *   - Desktop sidebar collapse/expand with smooth transitions
  *   - Submenu expand/collapse animations
  *   - Nav tooltip display on collapsed sidebar hover
@@ -653,7 +653,7 @@ function toggleExpandableItem(trigger) {
 }
 
 /**
- * Toggles the Supplier Portal submenu via the dedicated chevron button.
+ * Toggles the SMART Exchange submenu via the dedicated chevron button.
  * Called from HTML onclick attributes on the chevron toggle button.
  * @param {HTMLElement} chevronBtn - The chevron button element that was clicked.
  */
@@ -903,7 +903,7 @@ function submenuFlyoutEntries(trigger) {
 function supplierPortalFlyoutTitle(trigger) {
   var label = trigger && trigger.querySelector(".nav-label");
   var text = label ? label.textContent : "";
-  return (text || "Supplier Portal").replace(/\s+/g, " ").trim();
+  return (text || "SMART Exchange").replace(/\s+/g, " ").trim();
 }
 
 function accountInfoAsset(file) {

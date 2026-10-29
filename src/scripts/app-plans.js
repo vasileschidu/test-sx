@@ -104,7 +104,7 @@ window.AppPlans = (function () {
       dividerBefore: true,
       nav: {
         type: "smart-exchange",
-        label: "Supplier Portal",
+        label: "SMART Exchange",
         href: "supplier-portal.html",
         icon: "smart-exchange",
       },
@@ -219,7 +219,7 @@ window.AppPlans = (function () {
           { id: "businesses", label: "Businesses", href: "#" },
           {
             id: "se-recipients",
-            label: "Supplier Portal Recipients",
+            label: "SMART Exchange Recipients",
             href: "#",
           },
           { id: "tenants", label: "Tenants", href: "#" },
@@ -245,7 +245,7 @@ window.AppPlans = (function () {
 
   var PLANS = {
     "supplier-portal": {
-      label: "Supplier Portal",
+      label: "SMART Exchange",
       home: "supplier-portal.html",
       capabilities: ["core", "insights", "supplier-portal"],
       // Offered but not owned: shown with an Upgrade badge.

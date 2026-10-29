@@ -1,6 +1,6 @@
 <!--
   @file dashboard/consumer-payment-preferences.html
-  @description Consumer Portal — Payment Preferences. The Supplier Portal page
+  @description Consumer Portal — Payment Preferences. The SMART Exchange page
     (same markup, tabs, modals and payment-preferences-page.js logic) without the
     Payers' Cards section, configured below to use the consumer's own banks,
     addresses and payers and its own saved state.
@@ -1026,7 +1026,7 @@
                             class="flex flex-col gap-2 self-stretch rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">
                             <p class="text-sm font-semibold text-gray-900 dark:text-gray-100">How can you use the payer's card?</p>
                             <p class="text-xs font-normal text-gray-500 dark:text-gray-400">The payer has provided their card to cover a specific amount. You are only authorized to charge the amount indicated. To process the payment, enter the card details into your card terminal.</p>
-                            <p class="text-xs font-normal text-gray-500 dark:text-gray-400">The card may also be used for future authorized payments. It can be securely stored under the Payment Preference tab in the Supplier Portal.</p>
+                            <p class="text-xs font-normal text-gray-500 dark:text-gray-400">The card may also be used for future authorized payments. It can be securely stored under the Payment Preference tab in the SMART Exchange.</p>
                         </div>
 
                     </div>
@@ -2202,7 +2202,7 @@
     </el-dialog>
 
     <script>
-        // Same page as the Supplier Portal, pointed at the consumer's own data.
+        // Same page as the SMART Exchange, pointed at the consumer's own data.
         window.PAYMENT_PREFERENCES_CONFIG = { dataset: 'consumer-payment-preferences', storagePrefix: 'cp_pp_' };
     </script>
     <script src="../../../src/scripts/pages/payment-preferences-page.js?v=adv-footer-20261008l" defer></script>

@@ -395,7 +395,7 @@ function initThemeToggle() {
 /* ===== Breadcrumbs ===== */
 
 var BREADCRUMB_CONFIGS = {
-  "supplier-portal.html": [{ label: "Supplier Portal", href: null }],
+  "supplier-portal.html": [{ label: "SMART Exchange", href: null }],
   "bills-and-payables.html": [{ label: "Bills and Payables", href: null }],
   "vendors.html": [{ label: "Vendors", href: null }],
   "vendor-profile.html": [
@@ -407,7 +407,7 @@ var BREADCRUMB_CONFIGS = {
     { label: "Pay Page", href: null },
   ],
   "payment-preferences.html": [
-    { label: "Supplier Portal", href: "supplier-portal.html" },
+    { label: "SMART Exchange", href: "supplier-portal.html" },
     { label: "Payment Preferences", href: null },
   ],
   "payment-program-configuration.html": [
@@ -1192,7 +1192,7 @@ function initMaskedCopySync() {
   });
 }
 
-/* ===== Country Flag (Supplier Portal — guard prevents activation on other pages) ===== */
+/* ===== Country Flag (SMART Exchange — guard prevents activation on other pages) ===== */
 
 function initCountryFlag() {
   var sel = document.getElementById("gp-edit-check-country");

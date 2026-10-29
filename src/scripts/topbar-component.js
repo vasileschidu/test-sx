@@ -6,7 +6,7 @@
 
 (function () {
   var TOPBAR_BREADCRUMB_CONFIGS = {
-    "supplier-portal.html": [{ label: "Supplier Portal", href: null }],
+    "supplier-portal.html": [{ label: "SMART Exchange", href: null }],
     "bills-and-payables.html": [{ label: "Bills and Payables", href: null }],
     "vendors.html": [{ label: "Vendors", href: null }],
     "vendor-profile.html": [
@@ -18,7 +18,7 @@
       { label: "Pay Page", href: null },
     ],
     "payment-preferences.html": [
-      { label: "Supplier Portal", href: "supplier-portal.html" },
+      { label: "SMART Exchange", href: "supplier-portal.html" },
       { label: "Payment Preferences", href: null },
     ],
     "payment-program-configuration.html": [
@@ -48,7 +48,7 @@
       overridePath || (window.location.pathname || "").split("/").pop() || "",
     );
     var map = {
-      "supplier-portal.html": "Supplier Portal",
+      "supplier-portal.html": "SMART Exchange",
       "bills-and-payables.html": "Bills and Payables",
       "payables-pay.html": "Pay Page",
       "vendors.html": "Vendors",
@@ -1250,9 +1250,11 @@
         "      <p class=\"min-w-0 truncate font-['Inter'] text-2xl font-bold leading-8 text-gray-900 dark:text-white\">Hello, <span data-topbar-greeting-name>Johnny Anderson</span></p>" +
         "    </div>" +
         '    <div class="flex shrink-0 items-center gap-6">' +
-        '      <button type="button" data-topbar-notification-trigger aria-label="Notifications, 6 unread" class="relative flex items-center justify-center rounded-2xl bg-white p-1 transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-transparent dark:hover:bg-white/10 cursor-pointer">' +
-        '        <span class="absolute left-[18px] top-[-2px] z-[2] flex w-4 items-center justify-center rounded-[512px] border border-red-200 bg-red-500 px-2 text-xs font-medium leading-4 text-white">6</span>' +
-        topbarIcon("bell.svg", 24, 24) +
+        '      <button type="button" data-topbar-notification-trigger data-consumer-notification-trigger aria-haspopup="dialog" aria-label="Notifications, 6 unread" class="group relative flex size-9 shrink-0 items-center justify-center rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-600 active:bg-gray-200 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:active:bg-white/10 cursor-pointer">' +
+        '        <span aria-hidden="true" class="absolute top-[-2px] left-[18px] z-[2] flex h-4 min-w-4 items-center justify-center rounded-full border border-red-200 bg-red-500 px-1 text-center text-xs font-medium leading-4 text-white">6</span>' +
+        '        <img src="' +
+        topbarAsset("bell.svg") +
+        '" alt="" class="transition-[filter] group-hover:brightness-[.7] dark:group-hover:brightness-125" />' +
         "      </button>" +
         '      <el-dropdown class="relative hidden sm:block">' +
         '        <button type="button" class="flex w-[238px] items-center gap-1.5 overflow-hidden rounded-md border border-gray-300 bg-white px-3 py-2 text-left shadow-xs transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 cursor-pointer">' +
