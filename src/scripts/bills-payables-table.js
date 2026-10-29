@@ -251,6 +251,16 @@
     var total = Number(count) || 0;
     el.textContent = total + (total === 1 ? " Payment" : " Payments");
   }
+  function updateSelectionActions() {
+    var panel = document.getElementById("bp-selection-actions");
+    if (!panel) return;
+    var count = state.selectedRowIds.size;
+    var refresh = document.getElementById("bp-refresh-btn");
+    panel.style.display = count > 0 ? "flex" : "none";
+    if (refresh) refresh.style.display = count > 0 ? "none" : "";
+    var label = panel.querySelector("[data-selected-count]");
+    if (label) label.textContent = count + " selected";
+  }
   var ICON_SCHEDULED =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg>';
   var ICON_ACH =
@@ -4173,6 +4183,7 @@
       selectAll.indeterminate = hasSomeVisibleSelected;
     }
 
+    updateSelectionActions();
     renderPagination(filteredRows.length, visibleRows.length);
     refreshStickyAction();
   }
@@ -4714,6 +4725,14 @@
           });
           renderTable();
         }
+      });
+    }
+
+    var deselectBtn = document.querySelector("[data-deselect-all]");
+    if (deselectBtn) {
+      deselectBtn.addEventListener("click", function () {
+        state.selectedRowIds.clear();
+        renderTable();
       });
     }
 
