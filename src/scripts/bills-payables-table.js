@@ -4634,9 +4634,10 @@
             filterPanel === "method" ||
             filterPanel === "failure_reason" ||
             filterPanel === "initiated_date"
-          )
+          ) {
+            if (!state.filterMenuOpen) setFilterMenuOpen(true);
             setFilterPanel(filterPanel);
-          if (!state.filterMenuOpen) setFilterMenuOpen(true);
+          } else if (!state.filterMenuOpen) setFilterMenuOpen(true);
           return;
         }
 

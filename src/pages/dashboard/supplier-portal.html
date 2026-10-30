@@ -1586,7 +1586,7 @@
                           >
                             <div
                               id="sx-table-filter-layout"
-                              class="flex max-h-[470px] min-h-0 flex-col sm:h-[364px]"
+                              class="flex max-h-[470px] min-h-0 flex-col sm:max-h-none"
                             >
                               <div
                                 class="flex min-h-0 flex-1 flex-col sm:flex-row"
@@ -1781,11 +1781,11 @@
                                   </div>
                                 </div>
                                 <div
-                                  class="min-h-0 min-w-0 flex-1 bg-white dark:bg-gray-800"
+                                  class="relative min-h-0 min-w-0 flex-1 bg-white dark:bg-gray-800"
                                 >
                                   <div
                                     id="sx-table-filter-panel-vendor-entry"
-                                    class="hidden h-full min-h-0 flex-col p-4"
+                                    class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0"
                                   >
                                     <div class="relative">
                                       <img
@@ -1828,7 +1828,7 @@
                                   </div>
                                   <div
                                     id="sx-table-filter-panel-customer"
-                                    class="hidden h-full min-h-0 flex-col p-4"
+                                    class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0"
                                   >
                                     <div class="relative">
                                       <img
@@ -1871,7 +1871,7 @@
                                   </div>
                                   <div
                                     id="sx-table-filter-panel-status"
-                                    class="hidden h-full min-h-0 flex-col p-4"
+                                    class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0"
                                   >
                                     <div
                                       id="sx-table-filter-statuses"
@@ -1880,7 +1880,7 @@
                                   </div>
                                   <div
                                     id="sx-table-filter-panel-method"
-                                    class="hidden h-full min-h-0 flex-col p-4"
+                                    class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0"
                                   >
                                     <div
                                       id="sx-table-filter-methods"
@@ -1889,14 +1889,14 @@
                                   </div>
                                   <div
                                     id="sx-table-filter-panel-failure-reason"
-                                    class="hidden h-full min-h-0 flex-col p-4"
+                                    class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0"
                                   >
                                     <div
                                       id="sx-table-filter-failure-reasons"
                                       class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto"
                                     ></div>
                                   </div>
-                                  <div id="sx-table-filter-panel-amount" class="hidden h-full min-h-0 flex-col">
+                                  <div id="sx-table-filter-panel-amount" class="hidden h-full min-h-0 flex-col sm:absolute sm:inset-0">
                                     <div class="space-y-4 p-4">
                                       <div>
                                         <label for="sx-table-filter-amount-min-input" class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200">From</label>
@@ -1916,7 +1916,7 @@
                                   </div>
                                   <div
                                     id="sx-table-filter-panel-initiated-date"
-                                    class="hidden h-full min-h-0 flex-col"
+                                    class="hidden h-full min-h-0 flex-col sm:absolute sm:inset-0"
                                   >
                                     <div class="space-y-4 p-4">
                                       <div>

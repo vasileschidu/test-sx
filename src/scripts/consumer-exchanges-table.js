@@ -178,7 +178,7 @@
     initiatedDateActiveField: 'from',
     initiatedDateMonth: null,
     menuOpen: false,
-    activePanel: 'root',
+    activePanel: 'amount',
     appliedSelectedCustomers: new Set(),
     appliedSelectedStatuses: new Set(),
     appliedSelectedMethods: new Set(),
@@ -3431,7 +3431,7 @@
     }
 
     function normalizeFilterPanel(panel) {
-      return panel === 'status' || panel === 'method' || panel === 'failure_reason' || panel === 'amount' || isDateCategory(panel) ? panel : 'customer';
+      return panel === 'customer' || panel === 'status' || panel === 'method' || panel === 'failure_reason' || panel === 'amount' || isDateCategory(panel) ? panel : 'amount';
     }
 
     function copyAppliedFiltersToDraft() {
@@ -4036,17 +4036,11 @@
 
     function setFilterPanel(panel) {
       var activePanel = normalizeFilterPanel(panel);
-      if (!getVisibleFilterCategories()[activePanel]) activePanel = 'customer';
+      if (!getVisibleFilterCategories()[activePanel]) activePanel = 'amount';
       tableFilterState.activePanel = activePanel;
       switchDateCategory(activePanel);
       setDetailPanelVisibility(activePanel);
       syncFilterNavState(activePanel);
-      var filterLayout = document.getElementById('sx-table-filter-layout');
-      if (filterLayout) {
-        var tall = activePanel === 'customer';
-        filterLayout.classList.toggle('sm:h-[470px]', tall);
-        filterLayout.classList.toggle('sm:h-[364px]', !tall);
-      }
       if (isDateCategory(activePanel)) {
         Array.prototype.forEach.call(filterMenu.querySelectorAll('[data-date-panel-label]'), function (el) {
           el.textContent = FILTER_CATEGORY_LABELS[activePanel];
@@ -4063,14 +4057,17 @@
     var chevrons = document.querySelectorAll('[data-filter-chevron]');
     Array.prototype.forEach.call(chevrons, function (c) { c.classList.toggle('rotate-180', !!open); });
   }
-    function setFilterMenuOpen(nextOpen) {
+    function setFilterMenuOpen(nextOpen, openPanel) {
       tableFilterState.menuOpen = !!nextOpen;
       setFilterChevron(tableFilterState.menuOpen);
       applyFilterMenuLayout();
+      ['outline-2', 'outline-offset-2', 'outline-blue-600'].forEach(function (c) {
+        filterBtn.classList.toggle(c, tableFilterState.menuOpen);
+      });
       if (tableFilterState.menuOpen) {
         copyAppliedFiltersToDraft();
         syncTableFilterUi();
-        setFilterPanel(tableFilterState.activePanel || 'customer');
+        setFilterPanel(openPanel || 'amount');
         filterMenu.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
         if (filterBackdrop && window.matchMedia('(max-width: 639px)').matches) {
           filterBackdrop.classList.remove('invisible', 'opacity-0', 'pointer-events-none');
@@ -4102,8 +4099,8 @@
     filterBtn.addEventListener('click', function (event) {
       event.stopPropagation();
       var nextOpen = !tableFilterState.menuOpen;
-      if (nextOpen) tableFilterState.activePanel = normalizeFilterPanel(tableFilterState.activePanel);
       setFilterMenuOpen(nextOpen);
+      if (nextOpen) filterBtn.focus();
       syncApplyButtonState();
     });
 
@@ -4347,7 +4344,7 @@
     window.addEventListener('resize', function () {
       if (!tableFilterState.menuOpen) return;
       applyFilterMenuLayout();
-      setFilterPanel(tableFilterState.activePanel || 'customer');
+      setFilterPanel(tableFilterState.activePanel || 'amount');
     });
 
     syncTableFilterUi = function () {
@@ -4370,7 +4367,7 @@
       syncApplyButtonState();
       if (tableFilterState.menuOpen) {
         applyFilterMenuLayout();
-        setFilterPanel(tableFilterState.activePanel || 'customer');
+        setFilterPanel(tableFilterState.activePanel || 'amount');
       }
     };
 

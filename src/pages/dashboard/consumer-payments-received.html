@@ -975,7 +975,7 @@
                                           </button>
                                     <div id="sx-table-filter-menu"
                                         class="pointer-events-none invisible absolute right-0 z-[60] mt-2 w-[628px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white opacity-0 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:ring-1 dark:ring-white/10">
-                                        <div id="sx-table-filter-layout" class="flex max-h-[470px] min-h-0 flex-col sm:h-[364px]">
+                                        <div id="sx-table-filter-layout" class="flex max-h-[470px] min-h-0 flex-col sm:max-h-none">
                                             <div class="flex min-h-0 flex-1 flex-col sm:flex-row">
                                                 <div id="sx-table-filter-panel-root" class="shrink-0 border-b border-gray-200 bg-gray-50 p-3 dark:border-white/10 dark:bg-gray-900/40 sm:w-64 sm:max-w-[256px] sm:border-r sm:border-b-0">
                                                     <div class="flex flex-col">
@@ -1058,8 +1058,8 @@
                                                         </button>
                                                     </div>
                                                 </div>
-                                                <div class="min-h-0 min-w-0 flex-1 bg-white dark:bg-gray-800">
-                                                    <div id="sx-table-filter-panel-customer" class="hidden h-full min-h-0 flex-col p-4">
+                                                <div class="relative min-h-0 min-w-0 flex-1 bg-white dark:bg-gray-800">
+                                                    <div id="sx-table-filter-panel-customer" class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0">
                                                         <div class="relative">
                                                             <img src="../../../src/assets/table/search.svg" width="20" height="20" alt="" class="pointer-events-none absolute top-1/2 left-2 -translate-y-1/2" />
                                                             <input type="search" data-filter-search="sx-table-filter-customers" placeholder="Search payer"
@@ -1073,16 +1073,16 @@
                                                         <div class="mt-2 mb-3 h-px bg-gray-200 dark:bg-white/10"></div>
                                                         <div id="sx-table-filter-customers" class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto"></div>
                                                     </div>
-                                                    <div id="sx-table-filter-panel-status" class="hidden h-full min-h-0 flex-col p-4">
+                                                    <div id="sx-table-filter-panel-status" class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0">
                                                         <div id="sx-table-filter-statuses" class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto"></div>
                                                     </div>
-                                                    <div id="sx-table-filter-panel-method" class="hidden h-full min-h-0 flex-col p-4">
+                                                    <div id="sx-table-filter-panel-method" class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0">
                                                         <div id="sx-table-filter-methods" class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto"></div>
                                                     </div>
-                                                    <div id="sx-table-filter-panel-failure-reason" class="hidden h-full min-h-0 flex-col p-4">
+                                                    <div id="sx-table-filter-panel-failure-reason" class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0">
                                                         <div id="sx-table-filter-failure-reasons" class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto"></div>
                                                     </div>
-                                                    <div id="sx-table-filter-panel-amount" class="hidden h-full min-h-0 flex-col">
+                                                    <div id="sx-table-filter-panel-amount" class="hidden h-full min-h-0 flex-col sm:absolute sm:inset-0">
                                                         <div class="space-y-4 p-4">
                                                             <div>
                                                                 <label for="sx-table-filter-amount-min-input" class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200">From</label>
@@ -1100,7 +1100,7 @@
                                                             </div>
                                                         </div>
                                                     </div>
-                                                    <div id="sx-table-filter-panel-initiated-date" class="hidden h-full min-h-0 flex-col">
+                                                    <div id="sx-table-filter-panel-initiated-date" class="hidden h-full min-h-0 flex-col sm:absolute sm:inset-0">
                                                         <div class="space-y-4 p-4">
                                                             <div>
                                                                 <label class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200">From</label>

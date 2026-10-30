@@ -161,7 +161,7 @@
     initiatedDateActiveField: "from",
     initiatedDateMonth: null,
     menuOpen: false,
-    activePanel: "root",
+    activePanel: "amount",
     appliedSelectedVendorEntries: new Set(),
     appliedSelectedCustomers: new Set(),
     appliedSelectedStatuses: new Set(),
@@ -634,13 +634,14 @@
 
   function getFilterCategoryLabel(panel) {
     var col = getFilterColumn(panel);
-    return col ? col.label : "";
+    if (col && col.label) return col.label;
+    return panel === "vendor_entry" ? "Vendor Entry" : "";
   }
 
   function getVisibleFilterCategories() {
     var visible = {};
     Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
-      visible[panel] = !!getFilterColumn(panel);
+      visible[panel] = panel === "vendor_entry" || !!getFilterColumn(panel);
     });
     return visible;
   }
@@ -4267,6 +4268,7 @@
 
     function normalizeFilterPanel(panel) {
       return panel === "vendor_entry" ||
+        panel === "customer" ||
         panel === "status" ||
         panel === "method" ||
         panel === "failure_reason" ||
@@ -4274,7 +4276,7 @@
         panel === "processed_date" ||
         panel === "amount"
         ? panel
-        : "customer";
+        : "amount";
     }
 
     function copyAppliedFiltersToDraft() {
@@ -5219,19 +5221,11 @@
 
     function setFilterPanel(panel) {
       var activePanel = normalizeFilterPanel(panel);
-      if (!getVisibleFilterCategories()[activePanel]) activePanel = "customer";
+      if (!getVisibleFilterCategories()[activePanel]) activePanel = "amount";
       tableFilterState.activePanel = activePanel;
       switchDateCategory(activePanel);
       setDetailPanelVisibility(activePanel);
       syncFilterNavState(activePanel);
-      var filterLayout = document.getElementById("sx-table-filter-layout");
-      if (filterLayout) {
-        var tall =
-          activePanel === "vendor_entry" ||
-          activePanel === "customer";
-        filterLayout.classList.toggle("sm:h-[470px]", tall);
-        filterLayout.classList.toggle("sm:h-[364px]", !tall);
-      }
       if (isDateCategory(activePanel)) {
         Array.prototype.forEach.call(
           filterMenu.querySelectorAll("[data-date-panel-label]"),
@@ -5263,20 +5257,21 @@
         if (!hit) return;
         event.preventDefault();
         event.stopPropagation();
-        tableFilterState.activePanel =
-          hit.getAttribute("data-header-filter") || "status";
-        setFilterMenuOpen(true);
+        setFilterMenuOpen(true, hit.getAttribute("data-header-filter") || "status");
       });
     }
 
-    function setFilterMenuOpen(nextOpen) {
+    function setFilterMenuOpen(nextOpen, openPanel) {
       tableFilterState.menuOpen = !!nextOpen;
       setFilterChevron(tableFilterState.menuOpen);
       applyFilterMenuLayout();
+      ["outline-2", "outline-offset-2", "outline-blue-600"].forEach(function (c) {
+        filterBtn.classList.toggle(c, tableFilterState.menuOpen);
+      });
       if (tableFilterState.menuOpen) {
         copyAppliedFiltersToDraft();
         syncTableFilterUi();
-        setFilterPanel(tableFilterState.activePanel || "customer");
+        setFilterPanel(openPanel || "amount");
         filterMenu.classList.remove(
           "invisible",
           "opacity-0",
@@ -5330,11 +5325,8 @@
     filterBtn.addEventListener("click", function (event) {
       event.stopPropagation();
       var nextOpen = !tableFilterState.menuOpen;
-      if (nextOpen)
-        tableFilterState.activePanel = normalizeFilterPanel(
-          tableFilterState.activePanel,
-        );
       setFilterMenuOpen(nextOpen);
+      if (nextOpen) filterBtn.focus();
       syncApplyButtonState();
     });
 
@@ -5638,7 +5630,7 @@
     window.addEventListener("resize", function () {
       if (!tableFilterState.menuOpen) return;
       applyFilterMenuLayout();
-      setFilterPanel(tableFilterState.activePanel || "customer");
+      setFilterPanel(tableFilterState.activePanel || "amount");
     });
 
     syncTableFilterUi = function () {
@@ -5658,7 +5650,7 @@
       syncApplyButtonState();
       if (tableFilterState.menuOpen) {
         applyFilterMenuLayout();
-        setFilterPanel(tableFilterState.activePanel || "customer");
+        setFilterPanel(tableFilterState.activePanel || "amount");
       }
     };
 
