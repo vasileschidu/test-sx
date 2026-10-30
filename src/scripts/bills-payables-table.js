@@ -152,7 +152,7 @@
     amountMin: "",
     amountMax: "",
     filterMenuOpen: false,
-    activeFilterPanel: "payee",
+    activeFilterPanel: "amount",
     appliedSelectedPayees: new Set(),
     appliedSelectedSources: new Set(),
     appliedSelectedStatuses: new Set(),
@@ -1518,12 +1518,14 @@
   }
 
   function isFilterCategoryVisible(panel) {
-    return !!getFilterColumn(panel);
+    // Source is always offered, even on tabs where its column is switched off.
+    return panel === "source" || !!getFilterColumn(panel);
   }
 
   function getFilterCategoryLabel(panel) {
     var col = getFilterColumn(panel);
-    return col ? col.label : "";
+    if (col && col.label) return col.label;
+    return panel === "source" ? "Source" : "";
   }
 
   function getVisibleFilterCategories() {
@@ -2379,7 +2381,7 @@
       panel === "amount"
     )
       return panel;
-    return "payee";
+    return "amount";
   }
 
   function copyAppliedFiltersToDraft() {
@@ -3170,15 +3172,10 @@
   function setFilterPanel(panel) {
     if (!refs.filterMenu) return;
     var normalizedPanel = normalizeFilterPanel(panel);
-    if (!isFilterCategoryVisible(normalizedPanel)) normalizedPanel = "payee";
+    if (!isFilterCategoryVisible(normalizedPanel)) normalizedPanel = "amount";
     state.activeFilterPanel = normalizedPanel;
     setFilterDetailPanelVisibility(normalizedPanel);
     syncFilterNavState(normalizedPanel);
-    if (refs.filterTrack) {
-      var tall = normalizedPanel === "payee";
-      refs.filterTrack.classList.toggle("sm:h-[470px]", tall);
-      refs.filterTrack.classList.toggle("sm:h-[364px]", !tall);
-    }
     syncFilterApplyButtonState();
   }
 
@@ -3189,19 +3186,19 @@
       c.classList.toggle("rotate-180", !!open);
     });
   }
-  function setFilterMenuOpen(nextOpen) {
+  function setFilterMenuOpen(nextOpen, openPanel) {
     if (!refs.filterMenu) return;
     state.filterMenuOpen = !!nextOpen;
     setFilterChevron(state.filterMenuOpen);
     applyFilterMenuLayout();
+    if (refs.filterBtn)
+      ["outline-2", "outline-offset-2", "outline-blue-600"].forEach(function (c) {
+        refs.filterBtn.classList.toggle(c, state.filterMenuOpen);
+      });
     if (state.filterMenuOpen) {
       copyAppliedFiltersToDraft();
       syncFilterUi();
-      setFilterPanel(
-        state.activeFilterPanel && state.activeFilterPanel !== "root"
-          ? state.activeFilterPanel
-          : "payee",
-      );
+      setFilterPanel(openPanel || "amount");
       refs.filterMenu.classList.remove(
         "invisible",
         "opacity-0",
@@ -3327,7 +3324,7 @@
         setFilterPanel(
           state.activeFilterPanel && state.activeFilterPanel !== "root"
             ? state.activeFilterPanel
-            : "payee",
+            : "amount",
         );
       }
     };
@@ -3335,12 +3332,8 @@
     refs.filterBtn.addEventListener("click", function (event) {
       event.stopPropagation();
       var nextOpen = !state.filterMenuOpen;
-      if (
-        nextOpen &&
-        (!state.activeFilterPanel || state.activeFilterPanel === "root")
-      )
-        state.activeFilterPanel = "payee";
       setFilterMenuOpen(nextOpen);
+      if (nextOpen) refs.filterBtn.focus();
       syncFilterApplyButtonState();
     });
 
@@ -3554,7 +3547,7 @@
         setFilterPanel(
           state.activeFilterPanel && state.activeFilterPanel !== "root"
             ? state.activeFilterPanel
-            : "payee",
+            : "amount",
         );
       };
       window.addEventListener("resize", filterResizeHandler);

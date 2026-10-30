@@ -170,7 +170,7 @@
                           >
                             <div
                               id="bp-table-filter-track"
-                              class="flex max-h-[470px] min-h-0 flex-col sm:h-[364px]"
+                              class="flex max-h-[470px] min-h-0 flex-col sm:max-h-none"
                             >
                               <div
                                 class="flex min-h-0 flex-1 flex-col sm:flex-row"
@@ -383,11 +383,11 @@
                                 </div>
                                 <div
                                   id="bp-table-filter-detail-slot"
-                                  class="min-h-0 min-w-0 flex-1 bg-white dark:bg-gray-800"
+                                  class="relative min-h-0 min-w-0 flex-1 bg-white dark:bg-gray-800"
                                 >
                                   <div
                                     id="bp-table-filter-panel-payee"
-                                    class="hidden h-full min-h-0 flex-col p-4"
+                                    class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0"
                                   >
                                     <div class="relative">
                                       <img
@@ -430,7 +430,7 @@
                                   </div>
                                   <div
                                     id="bp-table-filter-panel-source"
-                                    class="hidden h-full min-h-0 flex-col p-4"
+                                    class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0"
                                   >
                                     <div
                                       id="bp-table-filter-sources"
@@ -439,7 +439,7 @@
                                   </div>
                                   <div
                                     id="bp-table-filter-panel-status"
-                                    class="hidden h-full min-h-0 flex-col p-4"
+                                    class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0"
                                   >
                                     <div
                                       id="bp-table-filter-statuses"
@@ -448,7 +448,7 @@
                                   </div>
                                   <div
                                     id="bp-table-filter-panel-method"
-                                    class="hidden h-full min-h-0 flex-col p-4"
+                                    class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0"
                                   >
                                     <div
                                       id="bp-table-filter-methods"
@@ -457,14 +457,14 @@
                                   </div>
                                   <div
                                     id="bp-table-filter-panel-failure-reason"
-                                    class="hidden h-full min-h-0 flex-col p-4"
+                                    class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0"
                                   >
                                     <div
                                       id="bp-table-filter-failure-reasons"
                                       class="flex min-h-0 flex-1 flex-col gap-2 overflow-auto"
                                     ></div>
                                   </div>
-                                  <div id="bp-table-filter-panel-amount" class="hidden h-full min-h-0 flex-col">
+                                  <div id="bp-table-filter-panel-amount" class="hidden h-full min-h-0 flex-col sm:absolute sm:inset-0">
                                     <div class="space-y-4 p-4">
                                       <div>
                                         <label for="bp-table-filter-amount-min-input" class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200">From</label>
@@ -484,7 +484,7 @@
                                   </div>
                                   <div
                                     id="bp-table-filter-panel-due-date"
-                                    class="hidden h-full min-h-0 flex-col"
+                                    class="hidden h-full min-h-0 flex-col sm:absolute sm:inset-0"
                                   >
                                     <div class="space-y-4 p-4">
                                       <div>
@@ -521,7 +521,7 @@
                                   </div>
                                   <div
                                     id="bp-table-filter-panel-payment-date"
-                                    class="hidden h-full min-h-0 flex-col"
+                                    class="hidden h-full min-h-0 flex-col sm:absolute sm:inset-0"
                                   >
                                     <div class="space-y-4 p-4">
                                       <div>
@@ -558,7 +558,7 @@
                                   </div>
                                   <div
                                     id="bp-table-filter-panel-initiated-date"
-                                    class="hidden h-full min-h-0 flex-col"
+                                    class="hidden h-full min-h-0 flex-col sm:absolute sm:inset-0"
                                   >
                                     <div class="space-y-4 p-4">
                                       <div>
