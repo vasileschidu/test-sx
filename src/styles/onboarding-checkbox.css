@@ -1,0 +1,39 @@
+/* SMART Disburse onboarding: the SD Figma look over the shared <app-checkbox>
+   (src/styles/checkbox.css is the SMART System look: #155DFB box, 14px
+   gray-700 Medium label). Link it after checkbox.css. Unlayered, so it also
+   wins over the component's dark: classes, which would otherwise follow the
+   OS dark mode on these always-light pages. */
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):checked {
+  border-color: #2563eb;
+  background-color: #2563eb;
+}
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):checked:hover {
+  border-color: #1d4ed8;
+  background-color: #1d4ed8;
+}
+
+input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):focus-visible {
+  box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
+}
+
+/* Label (the component's first text span). Default: SD "Checkbox + Text". */
+app-checkbox label > span:last-child > span:first-child {
+  color: #374151;
+}
+
+/* Verification Step consent: gray-500 Medium. */
+[data-verify-consent] app-checkbox label > span:last-child > span:first-child {
+  color: #6b7280;
+}
+
+/* "Get your receipt" consent: 12px Regular, as before the shared component. */
+app-checkbox[input-id="cc-receipt-consent"] label > span:last-child {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+app-checkbox[input-id="cc-receipt-consent"] label > span:last-child > span:first-child {
+  font-weight: 400;
+}
