@@ -37,3 +37,8 @@ app-checkbox[input-id="cc-receipt-consent"] label > span:last-child {
 app-checkbox[input-id="cc-receipt-consent"] label > span:last-child > span:first-child {
   font-weight: 400;
 }
+
+/* The box is 16px like the 16px line, so it needs no top offset to sit centred. */
+app-checkbox[input-id="cc-receipt-consent"] label > span:first-child {
+  margin-top: 0;
+}
