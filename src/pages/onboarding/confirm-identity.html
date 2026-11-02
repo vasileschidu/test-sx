@@ -33,6 +33,13 @@
   <script src="../../scripts/checkbox-component.js"></script>
   <!-- Onboarding has no dark theme: dark: classes (e.g. in <app-checkbox>) apply only under .dark, not the OS setting -->
   <style type="text/tailwindcss">@custom-variant dark (&:where(.dark, .dark *));</style>
+  <!-- SD Figma "Checkbox + Text": gray-500 label, #2563EB box (the shared checkbox.css uses gray-700 / #155DFB) -->
+  <style>
+    [data-verify-consent] app-checkbox label > span:last-child > span:first-child { color: #6b7280; }
+    [data-verify-consent] input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):checked { border-color: #2563eb; background-color: #2563eb; }
+    [data-verify-consent] input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):checked:hover { border-color: #1d4ed8; background-color: #1d4ed8; }
+    [data-verify-consent] input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):focus-visible { box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb; }
+  </style>
 </head>
 
 <body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
