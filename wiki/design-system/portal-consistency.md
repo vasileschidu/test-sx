@@ -70,6 +70,15 @@ Same scripts, but separate drifted HTML: `payment-preferences.html` and `consume
 | D-18 | Global Preferences spacing and heading | `sm:py-9`, gap 56px, heading `text-xl` | `p-6`, gap 40px, heading `text-base` | open |
 | D-19 | Copy | "Select primary method", "Accept Payer's Card · Immediate payment", explanation paragraph | "Select payment method", "Accept Card Payment · No bank account details required, immediate", no paragraph | open: see [glossary](../suite/glossary.md#terminology-not-yet-agreed) |
 
+## SMART Disburse (found 2026-11-02)
+
+| # | Element | Today | Status |
+|---|---|---|---|
+| D-30 | Emailed link vs flow | The token email link carries `flow=sd`; the flow only knows `us` / `multi-party`, so the link opens whichever flow the tab used last | open |
+| D-31 | Legacy screens | `signature.html`, `summary.html`, `create-account.html`, `complete.html` are off the main path, but the stepper's Complete Payment step still links to `create-account.html` | open: remove or relink |
+| D-32 | Declined copy | `declined.html` heading reads "Your SMART Disburse access has been revoked" although the payee declined | open: confirm wording with Figma |
+| D-33 | Hub status after payee action | Nothing the payee does (submit, decline, revoked) updates Hub; the payable stays "Pending Payee Action" | open: prototype limitation |
+
 ## Other
 
 | # | Element | Today | Status |

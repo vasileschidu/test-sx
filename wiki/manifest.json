@@ -66,6 +66,9 @@
             { "path": "products/smart-disburse/overview.md", "label": "Overview" },
             { "path": "products/smart-disburse/standard.md", "label": "Current standard" },
             { "path": "products/smart-disburse/changelog.md", "label": "Changelog" },
+            { "path": "products/smart-disburse/flows/us-default.md", "label": "US Default flow" },
+            { "path": "products/smart-disburse/flows/multi-party.md", "label": "Multi-Party flow" },
+            { "path": "products/smart-disburse/flows/uk-claim-demo.md", "label": "UK claim demo" },
             { "path": "products/smart-disburse/variants/README.md", "label": "Client variants" }
           ]
         },

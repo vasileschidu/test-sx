@@ -56,6 +56,7 @@ or **client variants**? This decides whether they go in Disburse `standard.md` o
 | Interac e-Transfer rail | `13BB577QY5aeG4oOvhyarj` | DEV |
 | Zelle rail | `8CBfYNoooz1kgmHVhZ8iKH` | DEV |
 | Multi Party Payments | `i6zeMN5gTivOw5aCO29nrO` | LAUNCHED |
+| ⌛️ SD (Versioning), page "Multi-Party 1.07" | TODO: key | Source the prototype's Multi-Party screens cite (`onboarding-multi-party.js`). TODO(confirm) vs Multi Party Payments |
 | Multi Party Endorsers | `Wwjci03SjRzSa3TZaDqq33` | LAUNCHED |
 | Lienholder Flows | `luAimFZTK0kAV3pS91b3gJ` | — |
 
