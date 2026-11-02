@@ -99,7 +99,28 @@
       "maskedRouting": "•••••0021",
       "routingNumber": "021000021",
       "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
-      "validationStatus": "locked"
+      "validationStatus": "locked",
+      "lastValidationDate": "Aug 04, 2024",
+      "fraudScore": 2,
+      "lastFraudScoreDate": "Aug 04, 2024"
+    },
+    {
+      "id": "td-6032",
+      "displayName": "TD Bank Account",
+      "name": "Johnny Anderson",
+      "bankName": "TD Bank",
+      "availableAmount": 2210,
+      "currency": "USD",
+      "last4": "6032",
+      "maskedAccount": "•••••••••••••6032",
+      "accountNumber": "000061774526032",
+      "maskedRouting": "•••••2218",
+      "routingNumber": "031101266",
+      "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
+      "validationStatus": "locked",
+      "lastValidationDate": "Aug 04, 2024",
+      "fraudScore": 5,
+      "lastFraudScoreDate": "Aug 04, 2024"
     },
     {
       "id": "wf-8419",
@@ -114,7 +135,10 @@
       "maskedRouting": "•••••5667",
       "routingNumber": "121005667",
       "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
-      "validationStatus": "verified"
+      "validationStatus": "verified",
+      "lastValidationDate": "Aug 04, 2024",
+      "fraudScore": 10,
+      "lastFraudScoreDate": "Aug 04, 2024"
     },
     {
       "id": "citi-3674",
@@ -144,7 +168,10 @@
       "maskedRouting": "•••••9593",
       "routingNumber": "026009593",
       "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
-      "validationStatus": "verified"
+      "validationStatus": "verified",
+      "lastValidationDate": "Aug 04, 2024",
+      "fraudScore": 10,
+      "lastFraudScoreDate": "Aug 04, 2024"
     },
     {
       "id": "capone-1147",
@@ -159,7 +186,10 @@
       "maskedRouting": "•••••5515",
       "routingNumber": "051405515",
       "address": "1 Chapel Hill Rd\nShort Hills, NJ 07078\nUnited States",
-      "validationStatus": "verified"
+      "validationStatus": "verified",
+      "lastValidationDate": "Aug 04, 2024",
+      "fraudScore": 10,
+      "lastFraudScoreDate": "Aug 04, 2024"
     }
   ],
   "checkAddresses": [

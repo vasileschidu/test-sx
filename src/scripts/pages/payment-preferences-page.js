@@ -2541,6 +2541,9 @@ window.__ppStorageKey = function (name) {
           maskedRouting: maskedRouting,
           address: address,
           validationStatus: account && account.validationStatus ? String(account.validationStatus) : "",
+          lastValidationDate: account && account.lastValidationDate ? String(account.lastValidationDate) : "",
+          fraudScore: account && account.fraudScore != null && account.fraudScore !== "" ? Number(account.fraudScore) : null,
+          lastFraudScoreDate: account && account.lastFraudScoreDate ? String(account.lastFraudScoreDate) : "",
         };
       })
       .filter(Boolean);

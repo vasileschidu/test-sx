@@ -431,14 +431,16 @@
     return vendors
       .map(function (vendor) {
         return (
-          '<tr class="bg-white hover:bg-gray-50 dark:bg-gray-900 dark:hover:bg-white/5">' +
+          '<tr data-vendor-row class="cursor-pointer bg-white dark:bg-gray-900">' +
           '<td class="' +
           cell +
-          '"><span class="block truncate font-medium text-gray-900 dark:text-white" title="' +
+          '"><a href="vendor-profile.html?id=' +
+          encodeURIComponent(vendor.id) +
+          '" class="block truncate rounded-sm font-medium text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white" title="' +
           escapeHtml(vendor.name) +
           '">' +
           escapeHtml(vendor.name) +
-          "</span></td>" +
+          "</a></td>" +
           '<td class="' +
           cell +
           ' whitespace-nowrap">' +
@@ -645,14 +647,13 @@
       .map(function (key) {
         var status = NETWORK_STATUSES[key];
         return (
-          '<label class="flex cursor-pointer items-center gap-3 rounded-md px-2 py-1.5 text-sm/5 text-gray-900 hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">' +
-          '<input type="checkbox" data-network-filter-value="' +
+          '<app-checkbox class="rounded-md px-2 py-1.5 hover:bg-gray-50 dark:hover:bg-white/5" data-network-filter-value="' +
           key +
-          '" class="size-4 rounded border-gray-300 accent-blue-600"' +
+          '"' +
           (state.networkFilter.has(key) ? " checked" : "") +
-          " />" +
+          ">" +
           escapeHtml(status.label === "Track" ? "Track (linked)" : status.label) +
-          "</label>"
+          "</app-checkbox>"
         );
       })
       .join("");
@@ -1437,6 +1438,18 @@
         state.sortDirection = state.sortDirection === "asc" ? "desc" : "asc";
         state.currentPage = 1;
         render();
+        return;
+      }
+      // A click anywhere else on a row opens the vendor profile through the
+      // row's name link, so shell navigation handles it like any link.
+      var vendorRow = target.closest("[data-vendor-row]");
+      if (
+        vendorRow &&
+        !target.closest("a, button, [data-method-tip], [data-early-tip]") &&
+        !(window.getSelection && String(window.getSelection()).trim())
+      ) {
+        var link = vendorRow.querySelector('a[href*="vendor-profile.html"]');
+        if (link) link.click();
         return;
       }
       var pageBtn = target.closest("[data-page-nav]");
