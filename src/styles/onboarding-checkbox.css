@@ -18,6 +18,12 @@ input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.abso
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
 }
 
+/* A bare box is inline-block in checkbox.css, so the line height made it 24px
+   tall and the Summary consent row 9px taller than the Review rows. */
+app-checkbox[bare]:not(.hidden) {
+  display: flex;
+}
+
 /* Label (the component's first text span). Default: SD "Checkbox + Text". */
 app-checkbox label > span:last-child > span:first-child {
   color: #374151;
