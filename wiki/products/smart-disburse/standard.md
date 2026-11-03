@@ -12,7 +12,8 @@ source: studied from the prototype on main @ c4ff8d3 (2026-11-02), code and runn
 
 The latest standard on `main`. Client differences are **not** here; see [variants/](variants/README.md).
 
-SMART Disburse is the **payee's** side of a payment sent from SMART Hub AP. The payee (the **claimant**) opens a
+SMART Disburse is the **payee's** side of a payment sent from SMART Hub AP. The payee, a **claimant** or a **supplier**
+(both use the same flow), opens a
 secure link, proves who they are, reviews the claim documents, and chooses how to receive the money. There's no
 account and no portal: it's a single guided flow in the [Token flow layout](../../suite/layouts.md#3-token-flow-disburse-collect).
 
@@ -22,8 +23,6 @@ There are two flows:
 |---|---|---|
 | **US Default** (single payee) | One payee receives the whole payment | [flows/us-default.md](flows/us-default.md) |
 | **US Multi-Party** | A payment shared between co-payees; each accepts the split, then picks their own method | [flows/multi-party.md](flows/multi-party.md) |
-
-A UK claim demo also exists but is hidden: see [flows/uk-claim-demo.md](flows/uk-claim-demo.md). TODO(confirm): is it standard (regional) or a client variant?
 
 ## How a payee gets here
 

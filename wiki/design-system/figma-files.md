@@ -50,7 +50,7 @@ or **client variants**? This decides whether they go in Disburse `standard.md` o
 
 | Flow | Key | Tag |
 |---|---|---|
-| 🇬🇧 UK Expansion | `HHw1hEtPqLR8ashOaxBts5` | (matches `src/pages/sd-uk/` in code) |
+| 🇬🇧 UK Expansion | `HHw1hEtPqLR8ashOaxBts5` | — |
 | Canada Expansion | `XDcelCnq5XK0o88q9PILKc` | DEV |
 | Cross-Border (SWIFT/IBAN) | `7K2fcxPx56S6q1aReCuI8V` | LAUNCHED |
 | Interac e-Transfer rail | `13BB577QY5aeG4oOvhyarj` | DEV |

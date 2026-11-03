@@ -16,14 +16,13 @@ the claim documents, and chooses how to receive the money: an instant virtual ca
 account (ACH) or a check. No account or portal is needed.
 
 ## Primary users
-- **The claimant / payee:** the person or business being paid, for example an insurance claimant.
+- **The payee:** whoever is being paid. **Claimants** (for example an insurance claimant) and **suppliers** (businesses)
+  use the same flow.
 - **In Multi-Party:** several **co-payees** who share one payment, one of them the **primary party**.
-- TODO(confirm): whether suppliers (businesses) use the same flow, or only claimants (individuals).
 
 ## Flows
 - [US Default](flows/us-default.md): one payee.
 - [US Multi-Party](flows/multi-party.md): a shared payment with an allocation step.
-- [UK claim demo](flows/uk-claim-demo.md): hidden; status TODO(confirm).
 
 ## Layout family
 **Token flow**: dark navy step rail on the left, content on the right, blue amount card. See
@@ -52,9 +51,8 @@ Full details: [suite/integrations.md](../../suite/integrations.md).
     `paywall.js`, `virtual-card*.js`, `bank-*.js`, `debit-card.js`, `card-created.js`
 - Content and rules: `src/data/sd-*.json`
 - Token email (test): `src/pages/tools/sd-sx-token-test.html`, `workers/sd-sx-token-service/`, `docs/github-pages-sd-sx-token-testing.md`
-- UK demo (hidden): `src/pages/sd-uk/`
 
 ## Figma
-- [LAUNCHED] Default Flow ([Figma](https://www.figma.com/design/4WZgq8XswZFkHcI6bzOIiK)): the claimant flow's source of truth.
+- [LAUNCHED] Default Flow ([Figma](https://www.figma.com/design/4WZgq8XswZFkHcI6bzOIiK)): the payee flow's source of truth (claimants and suppliers).
 - Multi-Party: per code comments, Figma "⌛️ SD (Versioning)", page "Multi-Party 1.07". TODO: add its file key.
 - Regional and rail flows: [figma-files.md](../../design-system/figma-files.md#disburse-regional-and-rail-flows).
