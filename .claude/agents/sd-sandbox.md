@@ -20,6 +20,8 @@ you never write to Figma, and you only read it for reference.
 3. Read `.claude/skills/sandbox-render/SKILL.md` and start the no-cache server.
 4. Run `git status` and read the files you will touch. Others commit to this repo too. Never touch files
    outside your task, and never revert changes you didn't make.
+5. Before reporting done, run `.claude/skills/sd-regression` (`changes.mjs --local --visual`) and explain every
+   changed shot. Don't push; pushing is `sd-ship`, run by the coordinator after the user's OK.
 
 ## How you work
 

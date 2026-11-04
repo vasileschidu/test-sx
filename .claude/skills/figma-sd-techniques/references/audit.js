@@ -12,7 +12,13 @@ async function auditArrows(page, onlyIds /* optional Set of connector ids */) {
   for (const c of page.findAllWithCriteria({ types: ['CONNECTOR'] })) {
     if (onlyIds && !onlyIds.has(c.id)) continue;
     n++;
-    const sa = await screenOf(c.connectorStart.endpointNodeId), sb = await screenOf(c.connectorEnd.endpointNodeId);
+    // Detached endpoint (free end or deleted node): report it instead of crashing in connectorSegments.
+    // prototype-audit.js lists these with more detail (missing / free / hidden / other page).
+    const ids = [c.connectorStart.endpointNodeId, c.connectorEnd.endpointNodeId];
+    if (ids.some(id => !id) || (await Promise.all(ids.map(id => figma.getNodeByIdAsync(id)))).some(x => !x)) {
+      issues.push(c.id + ' ' + c.name + ' -> DETACHED endpoint'); continue;
+    }
+    const sa = await screenOf(ids[0]), sb = await screenOf(ids[1]);
     const segs = await connectorSegments(c);
     const hits = new Set();
     for (const s of segs) for (const f of screens) {

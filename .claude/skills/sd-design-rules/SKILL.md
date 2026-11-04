@@ -39,7 +39,7 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
 - **Modal structure (user, 2026-11-03, final): Tailwind Plus pattern — the WHOLE modal scrolls.** Nothing inside the
   modal is pinned: X, content and buttons scroll together. Replaces the earlier "fixed header/footer, Content scrolls"
   version (rejected the same day).
-  - **Figma (FINAL, user-built reference 2026-11-03: `EXAMPLE – Modal scroll reference (Catalyst-style)` `1545:94795`):**
+  - **Figma (FINAL, user-built reference 2026-11-03: `EXAMPLE – Modal scroll reference (Catalyst-style)` `1545:94795`, since deleted; live reference with the identical structure: 4.12 desktop `959:25701`):**
     ```
     Modal & Background  absolute, STRETCH/STRETCH, VERTICAL, CENTER/CENTER, padding 0 top/bottom, 16 sides,
                         fill #000 @75% + background blur 5, clipsContent, overflowDirection VERTICAL  ← the only scroll
@@ -149,6 +149,10 @@ Adapted from the suite `usage-budget` skill. Quality comes first: if a cheaper s
 2. **Small, reviewable steps:** one section, or one screen group, per run. No page-wide re-layout unless asked.
 3. **Done means evidence:** IDs/files changed, screenshots or measurements, the overlap audit for arrows,
    and other breakpoints checked for regressions. No evidence means not done.
+   - Sandbox: `sd-regression` (`changes.mjs --local --visual`) shows every SD screen your change touched, at all
+     three widths. Each changed shot must be intended.
+   - Figma: the prototype audit (`figma-sd-techniques` §4c) after any modal or prototype work.
+   - Pushing goes through `sd-ship` (cache-buster, regression, commit, push to `andrian-sandbox`, hand-over).
 4. **No commit, push or merge** without the user's explicit OK.
 5. **Two agents never write to the same Figma page at the same time.**
 6. End every run with the report format below.

@@ -20,6 +20,7 @@ The only repo files you may edit are the skill files in `.claude/skills/`, to re
    `skillNames: "resource:figma-use"` on every `use_figma` call.
 4. **Inspect the current state** of the frames, sections and connectors you will touch. The user edits the page
    in parallel; base your work on what is there now, not on what the task description assumes.
+5. After modal or prototype work, run the read-only prototype audit (`figma-sd-techniques` §4c) and include it in the report.
 
 ## How you work
 

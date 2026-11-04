@@ -1,6 +1,6 @@
 ---
 name: figma-sd-techniques
-description: Proven Figma Plugin API techniques for the SMART Disburse Multi-Party Flow page. Covers making attached elbow flow arrows (clone model), the reliable arrow/screen overlap audit, building tablet frames, and re-layout without breaking arrows. Load before writing flow arrows, tablet frames or moving sections in Figma.
+description: Proven Figma Plugin API techniques for the SMART Disburse Multi-Party Flow page. Covers making attached elbow flow arrows (clone model), the reliable arrow/screen overlap audit, the read-only prototype audit (modal structure, fixed children, broken interactions, detached arrows), building tablet frames, and re-layout without breaking arrows. Load before writing flow arrows, tablet frames, modals or moving sections in Figma.
 ---
 
 # Figma techniques for SD
@@ -11,7 +11,8 @@ pass `skillNames: "resource:figma-use"` on every `use_figma` call. Rules about *
 
 Ready-to-paste helpers:
 - `references/arrows.js`: `deriveW()`, `cloneArrow()`.
-- `references/audit.js`: the overlap audit.
+- `references/audit.js`: the overlap audit (reports a DETACHED line instead of crashing on a connector with a lost end).
+- `references/prototype-audit.js`: the read-only prototype audit (§4c).
 
 ## 1. Flow arrows: the clone model
 
@@ -78,7 +79,7 @@ inside sections wrongly, so trust the audit.
   3. Move, then rebuild with the shifted W, then audit.
 - Check for section overlaps after every move, using all four edges of each pair.
 
-## 4b. Modal structure recipe (FINAL 2026-11-03; reference `1545:94795`, built by the user)
+## 4b. Modal structure recipe (FINAL 2026-11-03; built by the user on `1545:94795`, since deleted; live reference: 4.12 desktop `959:25701`)
 
 Target: `Modal & Background` (the scroll layer) > `Modal Wrapper` (24 top/bottom) > `Modal` (white card). In one script per frame:
 1. Check that no connector endpoint is on the Overlay / old backdrop, the Modal or anything inside it, and no reactions.
@@ -135,6 +136,37 @@ Rollout notes (0.2 Decline, 2026-11-03):
   and throw if it moved (rolls the whole call back), THEN `ov.remove()`. 32 endpoints: all bboxes unchanged, exported
   SVG byte-identical for 31 (one differed with the same bbox and a clean audit). Endpoints on the card / inside it keep
   their ids through the reparent. Audit 82 connectors, 0 issues before and after.
+
+## 4c. Prototype audit (READ-ONLY; run after any modal / prototype work, before telling the user it's done)
+
+`references/prototype-audit.js` → `prototypeAudit(page, { limit })`. Paste the function, then:
+`const page = await figma.getNodeByIdAsync('867:9754'); await figma.setCurrentPageAsync(page); return await prototypeAudit(page, { limit: 25 });`
+One call covers the whole page (624 screens, 82 connectors, 2026-11-04). If it ever times out, batch with
+`{ section: /^6\./ }` (RegExp on the top-level section name). It only reads; it never changes the file.
+
+What it returns (counts + the first `limit` items each):
+- `fixedChildren`: modal screens with `numberOfFixedChildren > 0`, with the fixed layers (the LAST n children) and the
+  modal kind. A backdrop among them broke the backdrop scroll on 6.2.2 (m).
+- `legacyModal`: screens with an `Overlay`/`Modal` child but no `Modal & Background` (not converted, or not a modal, e.g. the side-menu "Menu open" frames).
+- `modal`: per frame, every deviation as `Layer.prop exp X got Y`, plus `byCheck` (deviation → frame count; read this
+  first). Kind = `exception` when `Modal & Background` contains `Agreement (scroll)` or `Viewer`, else `standard` (§4b).
+  Also checks the backdrop box = frame, STRETCH/STRETCH, fill #000@75 %, background blur 5, no stray scrollers.
+- `selfTest`: the two reference frames (4.12 desktop `959:25701` standard, 6.6 desktop `1170:9894` exception) must be
+  `clean`. If not, the expectations are stale: re-read the references before trusting anything else.
+- `reactions`: `broken` (destination missing, on another page, not a top-level frame, scroll-end trigger to another
+  device), `empty` (a reaction with no action), `scrollEndTriggersOK` (the intended MOUSE_ENTER hotspots, count only).
+- `connectors`: `detached` (free end, deleted node, other page, hidden layer) and `endpointNotInScreen`. Overlaps are
+  still `auditArrows()` (§2); run it after `detached` is 0.
+
+How to read it: 0 in `modal.framesWithIssues`, `reactions.broken`, `connectors.detached` and the expected
+`fixedChildren` list is the bar. Report every finding to the user with frame name + node id + what's wrong; **fix
+nothing from the audit on your own**: fixes go through the user first.
+What it cannot see: real prototype behaviour (whether a scroll actually works when played), hotspot geometry of the
+scroll-end triggers, whether an arrow/reaction points at the *right* screen, card widths, flow starting points.
+Known state 2026-11-04: 180 standard + 35 exception modals all clean; 24 exception (m)/(t) frames (3.3/3.7/3.8/3.9,
+6.6/6.7, 7.12/7.13, 8.14/8.15, 9.5/9.6) have the backdrop fixed (fixed=2: Top Bar + Modal & Background), untested
+whether that blocks the inner scroller; 1 empty ON_CLICK on 0.0 (m) Welcome "Ellipse 38" `1084:35152`. The original
+reference frame `1545:94795` (and wrapper `1537:101776`) no longer exists; 4.12 `959:25701` has the identical structure.
 
 ## 5. Pitfalls already paid for
 

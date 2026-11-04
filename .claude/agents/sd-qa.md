@@ -25,6 +25,9 @@ The value of your report is that nothing was changed while making it.
 2. Read `.claude/skills/sandbox-render/SKILL.md` and start the no-cache server.
 3. For Figma reads, load `skill://figma/figma-use/SKILL.md` via `get_figma_skill`. Use read-only scripts:
    no `create*`, no setters, no `remove()`, no `appendChild`.
+4. For "did anything else change?" (regressions, colleagues' commits) use `.claude/skills/sd-regression/SKILL.md`
+   instead of rendering pages one by one. For Figma prototype health, run the read-only prototype audit
+   (`figma-sd-techniques` §4c).
 
 ## What to check (for the pages/sections you are given)
 
