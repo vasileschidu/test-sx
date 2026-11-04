@@ -36,12 +36,7 @@ window.OBVirtualCardHow = (function () {
   function open(data) {
     var M = window.OBModal;
     var backdrop = M.open(
-      '<div class="flex shrink-0 items-center border-b border-[#d1d5db] px-3 py-1.5">' +
-        '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
-          '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-lined-gray.svg" alt="" width="24" height="24" class="size-6">' +
-        '</button>' +
-      '</div>' +
-      '<div class="flex min-h-0 flex-1 flex-col items-center gap-4 overflow-y-auto px-6 pt-6 pb-4">' +
+      '<div class="flex flex-col items-center gap-4 px-6 pt-6 pb-4">' +
         '<div class="flex flex-col items-center gap-2 text-center">' +
           '<p class="text-sm leading-5 text-[#6b7280]">Here’s a Sample</p>' +
           '<h2 id="vc-how-title" class="text-3xl leading-9 text-[#111827]">Virtual Card</h2>' +
@@ -68,12 +63,20 @@ window.OBVirtualCardHow = (function () {
           '<p class="text-xs leading-[18px] text-[#6b7280]">Your funds are immediately available for your online money management and can be used in mediums where non-tangible payments are accepted.</p>' +
           '<p class="text-xs leading-[18px] text-[#6b7280]"><span class="font-semibold text-[#111827]">Please note:</span> you will not be able to withdraw cash from your Virtual Card or transfer money to bank accounts.</p>' +
         '</div>' +
-      '</div>' +
-      '<div class="flex shrink-0 justify-center border-t border-[#d1d5db] p-4">' +
-        '<button type="button" data-vc-terms class="cursor-pointer rounded px-1.5 py-0.5 text-xs leading-4 font-semibold text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-blue-600">Terms &amp; Conditions</button>' +
       '</div>',
       'vc-how-title',
-      { bare: true, panelClass: 'relative flex max-h-[calc(100dvh-2rem)] w-full max-w-[512px] flex-col overflow-hidden rounded-lg bg-white shadow-xl' }
+      {
+        bare: true,
+        header: '<div class="flex shrink-0 items-center border-b border-[#d1d5db] px-3 py-1.5">' +
+          '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+            '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-lined-gray.svg" alt="" width="24" height="24" class="size-6">' +
+          '</button>' +
+        '</div>',
+        footer: '<div class="flex justify-center border-t border-[#d1d5db] p-4">' +
+          '<button type="button" data-vc-terms class="cursor-pointer rounded px-1.5 py-0.5 text-xs leading-4 font-semibold text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-blue-600">Terms &amp; Conditions</button>' +
+        '</div>',
+        panelClass: 'relative flex w-full max-w-[512px] flex-col overflow-hidden rounded-lg bg-white shadow-xl'
+      }
     );
 
     var tmBtn = backdrop.querySelector('[data-vc-trademark]');
@@ -84,15 +87,16 @@ window.OBVirtualCardHow = (function () {
     });
     backdrop.querySelector('[data-vc-terms]').addEventListener('click', function () {
       var terms = data.agreements[0];
+      // min-h-0: on a short screen the text box shrinks and scrolls; the title stays.
       M.open(
-        '<div class="flex flex-col gap-4 px-6 pb-6">' +
+        '<div class="flex min-h-0 flex-col gap-4 px-6 pb-4">' +
           '<h2 id="vc-terms-title" class="text-lg leading-6 font-medium text-[#111827]">' + esc(terms.title) + '</h2>' +
-          '<div class="max-h-[50vh] space-y-3 overflow-y-auto text-sm leading-5 text-[#374151]">' +
+          '<div class="max-h-[50vh] min-h-0 space-y-3 overflow-y-auto text-sm leading-5 text-[#374151]">' +
             M.agreementHtml(terms.body) +
           '</div>' +
-          '<button type="button" data-ob-modal-close class="' + M.PRIMARY_BUTTON + '">OK</button>' +
         '</div>',
-        'vc-terms-title'
+        'vc-terms-title',
+        { footer: '<div class="flex flex-col px-6 pb-6"><button type="button" data-ob-modal-close class="' + M.PRIMARY_BUTTON + '">OK</button></div>' }
       );
     });
   }

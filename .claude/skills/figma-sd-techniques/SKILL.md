@@ -78,6 +78,64 @@ inside sections wrongly, so trust the audit.
   3. Move, then rebuild with the shifted W, then audit.
 - Check for section overlaps after every move, using all four edges of each pair.
 
+## 4b. Modal structure recipe (FINAL 2026-11-03; reference `1545:94795`, built by the user)
+
+Target: `Modal & Background` (the scroll layer) > `Modal Wrapper` (24 top/bottom) > `Modal` (white card). In one script per frame:
+1. Check that no connector endpoint is on the Overlay / old backdrop, the Modal or anything inside it, and no reactions.
+2. Backdrop: reuse an existing "Modal & Background" or create one at the Overlay's index (then remove the Overlay):
+   absolute, x/y 0, resized to the frame, STRETCH/STRETCH, VERTICAL, both axes FIXED, align CENTER/CENTER,
+   padding 0/16/0/16, gap 0, fill #000 @0.75, BACKGROUND_BLUR 5, `clipsContent=true`, `overflowDirection='VERTICAL'`.
+3. `Modal Wrapper` (exactly as the reference 1537:101776, user 2026-11-03): `figma.createAutoLayout('HORIZONTAL')`,
+   no fills, padding 24/0/24/0, gap 8, counter axis CENTER, width **HUG**, height **HUG**, `clipsContent=false`;
+   append it to the backdrop.
+4. Card "Modal": append to the wrapper, `layoutPositioning='AUTO'`, width **FIXED = its current width** (512 desktop /
+   tablet, 343 phone, or the modal's own width, e.g. 1048 Review/viewer), height **HUG**, `maxHeight=null`,
+   `clipsContent=true`, `overflowDirection='NONE'`. Children Header / "Content" / Footer: HUG, no own scroll, original
+   look. Exception: Review and agree and the Document viewer use `Modal & Background` (padding 24, no scroll) > `Modal`
+   (height FILL + maxHeight 752) with the inner scroller FILL — no wrapper (user's 6.6 desktop, 2026-11-03). Instance children: don't set `overflowDirection` (throws "cannot be overridden").
+5. Verify: the card box at normal size is unchanged (x, y, w, h); a tall card shows y < 0 in the editor — expected.
+Node ids of the card and its children survive the reparent.
+**Screen frame: `numberOfFixedChildren = 0`.** Phone/tablet screens had 2–3 "Fixed" children; with the backdrop among
+them the modal did NOT scroll in the prototype (6.2.2 (m), user-confirmed fix 2026-11-03). Always clear it when converting.
+Review and agree "Accept after scroll": an invisible absolute "Scroll end trigger" (48 tall, no fill) at the bottom of
+"Agreement (scroll)" with MOUSE_ENTER → NAVIGATE to the 'scrolled to end' frame (6.6→6.7, 7.12→7.13, 8.14→8.15, 9.5→9.6).
+Rollout notes (0.2 Decline, 2026-11-03):
+- Popups drawn at frame level (e.g. 0.2.2 "Dropdown Menu" above the backdrop) stay where they are; don't move them in.
+- Layout reads of nested HUG children in a freshly resized clone can be stale; check the card box or a screenshot.
+- Annotations: `node.annotations = [{ label: '…' }]` works (categories exist: Development, Interaction, Accessibility,
+  Content). The 0.2.1 Modal nodes carry the short-screen note; keep it on the card when restructuring.
+- (FINAL rollout, 0.2 all 27 frames, 2026-11-03) Setting `overflowDirection` on an **instance** child (Modal/Header,
+  Modal/Footer) throws "cannot be overridden in an instance", even to 'NONE'. Only touch `type==='FRAME'` children whose
+  value differs. A failed `use_figma` call is rolled back as a whole, so a batch either fully applies or not at all.
+- With a FILL-height card capped by maxHeight, the old card box can include dead white space below the footer
+  (0.2.2.2 (t), 0.2.6 (t): Text Area 64 instead of 88 → card 542 vs 566). HUG shrinks it; the box check flags it. Report it.
+- The reference wrapper `1537:101776` is HORIZONTAL + HUG with a FIXED card. The first 0.2 rollout used a VERTICAL +
+  FILL wrapper and a FILL card + maxWidth; all 27 0.2 frames were switched to the reference form the same day (card
+  boxes unchanged). Convert order: card `layoutSizingHorizontal='FIXED'` + `resize(w, h)` + `layoutSizingVertical='HUG'`
+  FIRST, then the wrapper `layoutMode='HORIZONTAL'` + HUG/HUG (a FILL child in a HUG wrapper conflicts).
+- (Contact Us / MP info modals rollout, 2026-11-03) Many **desktop** frames have a flow arrow attached to the
+  **Overlay** RECTANGLE (5.3, 4.12, 4.5, 4.7 — also on its "Dispute" button —, 5.1, 8.4). Removing the Overlay would
+  detach the arrow, so those frames are skipped until the user re-targets the arrow (e.g. to the backdrop or frame).
+  Always run the endpoint check before removing the Overlay; (m)/(t) frames had no endpoints.
+- Some (t) cards were FIXED height (5.1, 5.2, 8.4 (t)). HUG can shrink them: 8.4 (t) 447 → 421.5 (dead space under
+  the Body), re-centred y +12. Old absolute cards were already centred, so the boxes otherwise stayed identical.
+- (Sections 6–9 small modals, 2026-11-03: Expiration, How it works, Get your money faster, Get your receipt, How this
+  works; 79 frames) Same Overlay-arrow pattern on desktop 6.1.5, 6.1.6, 6.2.3 (also on its Text Field), 6.2.6, 8.17
+  (also on a Radio), 8.18, 9.8 (also on a Radio), 9.9: skipped. Odd card heights (455, 479) in a 1024 frame centre
+  at y 284.5 / 272.5 instead of the old rounded 285 / 273 (0.5 px, expected). FIXED (t) cards kept their height under HUG.
+- (How to use / Sign / Review and agree / Document viewer, 2026-11-03; 50 frames) **Inner-scroller modals** (Review and
+  agree "Agreement (scroll)", viewer "Viewer"): wrap only — card `layoutSizingVertical='FIXED'` at its height (maxHeight
+  kept) inside the HUG wrapper; boxes stay identical and the inner scroller keeps working. How this works "Body" was a
+  FILL + VERTICAL-scroll FRAME: set it HUG + overflow NONE; phone card 780 → 993 (y −90), tablet 780 → 881. The Overlay-
+  arrow pattern held again: 18 desktop frames skipped (all 3.x, 6.x, 7–9 Review desktops except 6.11/6.13/6.14/6.12.2).
+- (Overlay-arrow desktops, 32 frames, 2026-11-03, user-approved) **Re-attaching an Overlay endpoint to the backdrop
+  works without re-routing**: create the backdrop at the Overlay's index (layoutMode + both sizing modes FIXED BEFORE
+  `resize(frame)`, then x/y 0), check its box equals the Overlay's, set `c.connectorStart/End = { endpointNodeId: bd.id,
+  magnet }` or `{ endpointNodeId: bd.id, position }` copied from the old endpoint, compare `absoluteBoundingBox` (±1)
+  and throw if it moved (rolls the whole call back), THEN `ov.remove()`. 32 endpoints: all bboxes unchanged, exported
+  SVG byte-identical for 31 (one differed with the same bbox and a clean audit). Endpoints on the card / inside it keep
+  their ids through the reparent. Audit 82 connectors, 0 issues before and after.
+
 ## 5. Pitfalls already paid for
 
 - `figma.currentPage = …` throws. Use `await figma.setCurrentPageAsync(page)` once per call.

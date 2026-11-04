@@ -205,8 +205,9 @@
   function messageDialog(icon, tint, title, bodyHtml, actionsHtml, opts) {
     var M = window.OBModal;
     var bare = !!(opts && opts.bare);
+    // The buttons are the shell's footer: they stay put while the text scrolls.
     return M.open(
-      '<div class="flex flex-col items-center gap-6 px-9 pb-9' + (bare ? ' pt-12' : '') + '">' +
+      '<div class="flex flex-col items-center px-9 pb-6' + (bare ? ' pt-12' : '') + '">' +
         '<div class="flex w-full flex-col items-center gap-3">' +
           M.illustration('mp/' + icon, tint) +
           '<div class="flex w-full flex-col items-center gap-2 text-center">' +
@@ -214,10 +215,9 @@
             bodyHtml +
           '</div>' +
         '</div>' +
-        '<div class="flex w-full flex-col gap-4">' + actionsHtml + '</div>' +
       '</div>',
       'mp-dialog-title',
-      bare ? { bare: true } : undefined
+      { bare: bare, footer: '<div class="flex flex-col gap-4 px-9 pb-9">' + actionsHtml + '</div>' }
     );
   }
 

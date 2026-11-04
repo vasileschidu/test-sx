@@ -38,7 +38,7 @@ window.OBDecline = (function () {
     }).join('');
 
     return '' +
-          '<form novalidate data-ob-decline-form class="flex flex-col">' +
+          '<form novalidate id="ob-decline-form" data-ob-decline-form class="flex flex-col">' +
             '<div class="flex flex-col items-center gap-6 px-6 pb-6">' +
               '<div class="flex w-full flex-col items-center gap-4">' +
                 M.illustration('icon-exclamation-triangle.svg', 'bg-[#fef2f2]') +
@@ -61,7 +61,7 @@ window.OBDecline = (function () {
                   '</span>' +
                 '</button>' +
                 '<ul role="listbox" tabindex="-1" data-ob-decline-list aria-labelledby="ob-decline-reason-label" ' +
-                  'class="absolute inset-x-0 top-full z-10 mt-1 hidden overflow-y-auto rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">' +
+                  'class="fixed z-10 hidden overflow-y-auto rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">' +
                   options +
                 '</ul>' +
                 '<p data-ob-decline-reason-error class="hidden text-sm leading-5 text-[#dc2626]">Reason is required.</p>' +
@@ -77,12 +77,15 @@ window.OBDecline = (function () {
                 '<p data-ob-decline-note-error class="hidden text-sm leading-5 text-[#dc2626]"></p>' +
               '</div>' +
             '</div>' +
-
-            '<div class="flex flex-col gap-4 px-6 pb-6">' +
-              '<button type="submit" class="' + M.BUTTON_BASE + ' bg-[#dc2626] text-white hover:bg-[#ef4444] focus-visible:outline-[#dc2626]">Decline Payment</button>' +
-              '<button type="button" data-ob-modal-close class="' + M.BUTTON + ' border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus-visible:outline-blue-600">Cancel</button>' +
-            '</div>' +
           '</form>';
+  }
+
+  // Rendered below the form by the dialog shell; `form` ties Submit to the form.
+  function footer() {
+    return '<div class="flex flex-col gap-4 px-6 pb-6">' +
+      '<button type="submit" form="ob-decline-form" class="' + M.BUTTON_BASE + ' bg-[#dc2626] text-white hover:bg-[#ef4444] focus-visible:outline-[#dc2626]">Decline Payment</button>' +
+      '<button type="button" data-ob-modal-close class="' + M.BUTTON + ' border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus-visible:outline-blue-600">Cancel</button>' +
+    '</div>';
   }
 
   function setFieldState(el, invalid) {
@@ -92,7 +95,7 @@ window.OBDecline = (function () {
   }
 
   function build(data) {
-    var backdrop = M.open(markup(data), 'ob-decline-title');
+    var backdrop = M.open(markup(data), 'ob-decline-title', { footer: footer() });
 
     var form = backdrop.querySelector('[data-ob-decline-form]');
     var reasonBtn = backdrop.querySelector('[data-ob-decline-reason]');
@@ -160,20 +163,22 @@ window.OBDecline = (function () {
     var GAP = 16;
 
     /**
-     * Keeps the open list inside the viewport: it gets the room below the
-     * field, or opens upwards when there is more room above. A list running
-     * past the screen edge would make the backdrop scroll and the dialog jump.
+     * The list is fixed (not absolute) so the dialog panel can't clip it; it
+     * sits 4px under the field, or above it when there is more room there, and
+     * stays inside the viewport. (The backdrop's blur makes it the containing
+     * block: it covers the viewport but scrolls, so add its scrollTop.)
      */
     function placeList() {
       var rect = reasonBtn.getBoundingClientRect();
       var below = window.innerHeight - rect.bottom - GAP;
       var above = rect.top - GAP;
       var up = below < list.scrollHeight && above > below;
-      list.classList.toggle('top-full', !up);
-      list.classList.toggle('mt-1', !up);
-      list.classList.toggle('bottom-full', up);
-      list.classList.toggle('mb-1', up);
-      list.style.maxHeight = Math.max(120, up ? above : below) + 'px';
+      var maxHeight = Math.max(120, (up ? above : below) - 4);
+      var height = Math.min(list.scrollHeight, maxHeight);
+      list.style.left = rect.left + 'px';
+      list.style.width = rect.width + 'px';
+      list.style.top = (up ? rect.top - 4 - height : rect.bottom + 4) + backdrop.scrollTop + 'px';
+      list.style.maxHeight = maxHeight + 'px';
     }
 
     function openList(open, fromKeyboard) {
@@ -225,13 +230,22 @@ window.OBDecline = (function () {
     backdrop.addEventListener('click', function (event) {
       if (!list.classList.contains('hidden') && !event.target.closest('[data-ob-decline-list], [data-ob-decline-reason]')) openList(false);
     });
+    // Scrolling the dialog or resizing would leave the fixed list behind: close it.
+    backdrop.addEventListener('scroll', function (event) {
+      if (event.target !== list && !list.classList.contains('hidden')) openList(false);
+    }, true);
+    window.addEventListener('resize', function onResize() {
+      if (!backdrop.isConnected) window.removeEventListener('resize', onResize);
+      else if (!list.classList.contains('hidden')) openList(false);
+    });
     note.addEventListener('input', function () { if (submitted) validate(); });
 
     form.addEventListener('submit', function (event) {
       event.preventDefault();
       submitted = true;
       if (!validate()) {
-        (selected ? note : reasonBtn).focus();
+        if (selected) M.revealField(note, noteError);
+        else M.revealField(reasonBtn, reasonError);
         return;
       }
       if (window.SDOnboardingContext) {

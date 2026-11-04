@@ -260,12 +260,14 @@
         '<app-checkbox class="w-full" input-id="cc-receipt-consent" data-cc-consent>' + esc(r.consent) + ' ' +
           '<button type="button" data-cc-terms class="cursor-pointer rounded text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-blue-600">' + esc(r.consentLink) + '</button>.' +
         '</app-checkbox>' +
-      '</div>' +
-      '<div class="flex flex-col gap-4 px-6 pb-6">' +
-        '<button type="button" data-cc-send class="' + M.PRIMARY_BUTTON + '">Send and Continue</button>' +
-        '<button type="button" data-cc-skip class="' + M.BUTTON + ' border border-[#d1d5db] bg-white text-[#374151] hover:bg-gray-50 focus-visible:outline-blue-600">Skip</button>' +
       '</div>',
-      'cc-receipt-title'
+      'cc-receipt-title',
+      {
+        footer: '<div class="flex flex-col gap-4 px-6 pb-6">' +
+          '<button type="button" data-cc-send class="' + M.PRIMARY_BUTTON + '">Send and Continue</button>' +
+          '<button type="button" data-cc-skip class="' + M.BUTTON + ' border border-[#d1d5db] bg-white text-[#374151] hover:bg-gray-50 focus-visible:outline-blue-600">Skip</button>' +
+        '</div>'
+      }
     );
 
     var input = backdrop.querySelector('[data-cc-email]');
@@ -291,7 +293,7 @@
 
     backdrop.querySelector('[data-cc-send]').addEventListener('click', function () {
       draft.checked = true;
-      if (!check()) { input.focus(); return; }
+      if (!check()) { M.revealField(input, error); return; }
       saveState({ receiptEmail: input.value.trim(), receiptEmailConsent: consent.checked });
       M.close();
       after();
@@ -305,15 +307,16 @@
     backdrop.querySelector('[data-cc-terms]').addEventListener('click', function () {
       var terms = vcData.agreements[0];
       var keep = { email: input.value, consent: consent.checked, checked: draft.checked };
+      // min-h-0: on a short screen the text box shrinks and scrolls; the title stays.
       var termsBackdrop = M.open(
-        '<div class="flex flex-col gap-4 px-6 pb-6">' +
+        '<div class="flex min-h-0 flex-col gap-4 px-6 pb-4">' +
           '<h2 id="cc-terms-title" class="text-lg leading-6 font-medium text-[#111827]">' + esc(terms.title) + '</h2>' +
-          '<div class="max-h-[50vh] space-y-3 overflow-y-auto text-sm leading-5 text-[#374151]">' +
+          '<div class="max-h-[50vh] min-h-0 space-y-3 overflow-y-auto text-sm leading-5 text-[#374151]">' +
             M.agreementHtml(terms.body) +
           '</div>' +
-          '<button type="button" data-cc-terms-back class="' + M.PRIMARY_BUTTON + '">OK</button>' +
         '</div>',
-        'cc-terms-title'
+        'cc-terms-title',
+        { footer: '<div class="flex flex-col px-6 pb-6"><button type="button" data-cc-terms-back class="' + M.PRIMARY_BUTTON + '">OK</button></div>' }
       );
       termsBackdrop.querySelector('[data-cc-terms-back]').addEventListener('click', function () {
         openReceipt(data, vcData, keep, after);
@@ -334,9 +337,9 @@
         '<ul class="w-full list-disc space-y-2 rounded-md bg-[#f9fafb] py-4 pr-4 pl-9 text-sm leading-5 text-[#374151]">' +
           how.items.map(function (item) { return '<li>' + esc(item) + '</li>'; }).join('') +
         '</ul>' +
-        '<button type="button" data-ob-modal-close class="' + M.PRIMARY_BUTTON + '">OK</button>' +
       '</div>',
-      'cc-check-how-title'
+      'cc-check-how-title',
+      { footer: '<div class="flex flex-col px-6 pb-6"><button type="button" data-ob-modal-close class="' + M.PRIMARY_BUTTON + '">OK</button></div>' }
     );
   }
 
