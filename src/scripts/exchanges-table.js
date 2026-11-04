@@ -67,29 +67,25 @@
   var TAB_NAV_SELECTOR = 'nav[aria-label="Tabs"]';
   var TAB_SELECT_SELECTOR = "[data-sx-tab-select]";
 
-  var ACTIVE_TAB_LINK_CLASSES = [
-    "bg-blue-100",
-    "text-blue-700",
-    "dark:bg-blue-500/20",
-    "dark:text-blue-300",
+  // Supplier Portal tabs match Bills and Payables; the Consumer Portal keeps its own.
+  var ACTIVE_TAB_LINK_CLASSES = IS_SUPPLIER_PORTAL
+    ? ["bg-blue-50", "text-blue-600", "dark:bg-blue-500/15", "dark:text-blue-300"]
+    : ["bg-blue-100", "text-blue-700", "dark:bg-blue-500/20", "dark:text-blue-300"];
+  var INACTIVE_TAB_LINK_CLASSES = IS_SUPPLIER_PORTAL
+    ? ["text-gray-500", "hover:text-gray-700", "dark:text-gray-400", "dark:hover:text-gray-200"]
+    : ["text-gray-500", "dark:text-gray-400"];
+  var EXCEPTION_TAB_LINK_CLASSES = [
+    "bg-red-50",
+    "text-red-600",
+    "dark:bg-red-500/15",
+    "dark:text-red-300",
   ];
-  var INACTIVE_TAB_LINK_CLASSES = ["text-gray-500", "dark:text-gray-400"];
-  var ACTIVE_BADGE_CLASSES = [
-    "bg-blue-50",
-    "text-blue-700",
-    "inset-ring-blue-700/10",
-    "dark:bg-blue-400/10",
-    "dark:text-blue-400",
-    "dark:inset-ring-blue-400/30",
-  ];
-  var INACTIVE_BADGE_CLASSES = [
-    "bg-gray-50",
-    "text-gray-600",
-    "inset-ring-gray-500/10",
-    "dark:bg-gray-400/10",
-    "dark:text-gray-400",
-    "dark:inset-ring-gray-400/20",
-  ];
+  var ACTIVE_BADGE_CLASSES = IS_SUPPLIER_PORTAL
+    ? ["bg-blue-100", "text-blue-800", "border-blue-200", "dark:bg-blue-400/15", "dark:text-blue-200", "dark:border-blue-400/30"]
+    : ["bg-blue-50", "text-blue-700", "inset-ring-blue-700/10", "dark:bg-blue-400/10", "dark:text-blue-400", "dark:inset-ring-blue-400/30"];
+  var INACTIVE_BADGE_CLASSES = IS_SUPPLIER_PORTAL
+    ? ["bg-gray-100", "text-gray-800", "border-gray-200", "dark:bg-white/10", "dark:text-gray-200", "dark:border-white/15"]
+    : ["bg-gray-50", "text-gray-600", "inset-ring-gray-500/10", "dark:bg-gray-400/10", "dark:text-gray-400", "dark:inset-ring-gray-400/20"];
 
   var DEFAULT_PAGE_SIZE = IS_SUPPLIER_PORTAL ? 10 : 16;
   var PAGE_SIZE_OPTIONS = IS_SUPPLIER_PORTAL
@@ -165,7 +161,7 @@
     initiatedDateActiveField: "from",
     initiatedDateMonth: null,
     menuOpen: false,
-    activePanel: "root",
+    activePanel: "amount",
     appliedSelectedVendorEntries: new Set(),
     appliedSelectedCustomers: new Set(),
     appliedSelectedStatuses: new Set(),
@@ -638,13 +634,14 @@
 
   function getFilterCategoryLabel(panel) {
     var col = getFilterColumn(panel);
-    return col ? col.label : "";
+    if (col && col.label) return col.label;
+    return panel === "vendor_entry" ? "Vendor Entry" : "";
   }
 
   function getVisibleFilterCategories() {
     var visible = {};
     Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
-      visible[panel] = !!getFilterColumn(panel);
+      visible[panel] = panel === "vendor_entry" || !!getFilterColumn(panel);
     });
     return visible;
   }
@@ -1099,25 +1096,18 @@
       '      <path d="M2.40039 10.8001C2.40039 10.1374 2.93765 9.6001 3.60039 9.6001C4.26313 9.6001 4.80039 10.1374 4.80039 10.8001C4.80039 11.4628 4.26313 12.0001 3.60039 12.0001C2.93765 12.0001 2.40039 11.4628 2.40039 10.8001Z" /><path d="M6.80039 10.8001C6.80039 10.1374 7.33765 9.6001 8.00039 9.6001C8.66313 9.6001 9.20039 10.1374 9.20039 10.8001C9.20039 11.4628 8.66313 12.0001 8.00039 12.0001C7.33765 12.0001 6.80039 11.4628 6.80039 10.8001Z" /><path d="M12.4004 9.6001C11.7376 9.6001 11.2004 10.1374 11.2004 10.8001C11.2004 11.4628 11.7376 12.0001 12.4004 12.0001C13.0631 12.0001 13.6004 11.4628 13.6004 10.8001C13.6004 10.1374 13.0631 9.6001 12.4004 9.6001Z" /><path d="M2.40039 6.00005C2.40039 5.33731 2.93765 4.80005 3.60039 4.80005C4.26313 4.80005 4.80039 5.33731 4.80039 6.00005C4.80039 6.66279 4.26313 7.20005 3.60039 7.20005C2.93765 7.20005 2.40039 6.66279 2.40039 6.00005Z" /><path d="M6.80039 6.00005C6.80039 5.33731 7.33765 4.80005 8.00039 4.80005C8.66313 4.80005 9.20039 5.33731 9.20039 6.00005C9.20039 6.66279 8.66313 7.20005 8.00039 7.20005C7.33765 7.20005 6.80039 6.66279 6.80039 6.00005Z" /><path d="M12.4004 4.80005C11.7376 4.80005 11.2004 5.33731 11.2004 6.00005C11.2004 6.66279 11.7376 7.20005 12.4004 7.20005C13.0631 7.20005 13.6004 6.66279 13.6004 6.00005C13.6004 5.33731 13.0631 4.80005 12.4004 4.80005Z" />' +
       "    </svg>" +
       "  </button>" +
-      '  <label class="flex min-w-0 flex-1 cursor-pointer items-center gap-3">' +
-      '  <div class="grid size-4 grid-cols-1">' +
-      '    <input type="checkbox" data-column-visibility-toggle="' +
+      '  <app-checkbox class="min-w-0 flex-1" data-column-visibility-toggle="' +
       escapeHtml(col.key) +
       '"' +
       (checked ? " checked" : "") +
       (disabled ? " disabled" : "") +
-      '      class="col-start-1 row-start-1 appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 disabled:cursor-not-allowed disabled:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500 dark:disabled:bg-white/10" />' +
-      '    <svg class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white" viewBox="0 0 14 14" fill="none">' +
-      '      <path class="opacity-0 group-has-checked:opacity-100" d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />' +
-      "    </svg>" +
-      "  </div>" +
-      '  <span class="flex min-w-0 flex-1 items-center gap-2">' +
-      '    <span class="truncate text-sm font-medium text-gray-900 dark:text-white">' +
+      ">" +
+      '<span class="flex min-w-0 flex-1 items-center gap-2">' +
+      '<span class="truncate">' +
       escapeHtml(col.label || col.key) +
       "</span>" +
       scopeBadge +
-      "  </span>" +
-      "  </label>" +
+      "</span></app-checkbox>" +
       "</div>"
     );
   }
@@ -1738,16 +1728,13 @@
   }
 
   function buildSortBadgeHTML(sortDirection) {
-    if (IS_SUPPLIER_PORTAL && !sortDirection) {
-      return (
-        '<span data-sort-badge="true" class="inline-flex size-5 shrink-0 items-center justify-center">' +
-        tableIcon("sort.svg", 20, 20) +
-        "</span>"
-      );
-    }
-    var sortBtnClass = sortDirection
-      ? "inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
-      : "inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400";
+    var sortBtnClass = IS_SUPPLIER_PORTAL
+      ? sortDirection
+        ? "inline-flex size-5 shrink-0 items-center justify-center text-blue-600 dark:text-blue-400"
+        : "inline-flex size-5 shrink-0 items-center justify-center text-gray-400 group-hover:text-gray-600 dark:text-gray-500"
+      : sortDirection
+        ? "inline-flex size-6 items-center justify-center rounded-md bg-blue-100 text-blue-700 dark:bg-blue-500/20 dark:text-blue-300"
+        : "inline-flex size-6 items-center justify-center rounded-md bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-400";
     var sortIcon =
       sortDirection === "asc"
         ? ICON_SORT_ASC
@@ -1812,11 +1799,9 @@
       case "invoice":
         if (IS_SUPPLIER_PORTAL) {
           return (
-            '<button type="button" data-get-paid-invoice="' +
+            '<span class="text-sm font-normal text-gray-500 dark:text-gray-400">' +
             escapeHtml(entry.invoice) +
-            '" class="cursor-pointer p-0 text-sm font-normal text-gray-500 transition-colors hover:text-gray-900 dark:text-gray-400 dark:hover:text-white">' +
-            escapeHtml(entry.invoice) +
-            "</button>"
+            "</span>"
           );
         }
         return (
@@ -1967,13 +1952,14 @@
         pending: "border-yellow-300 bg-yellow-100 text-yellow-800",
         "action-required": "border-yellow-300 bg-yellow-100 text-yellow-800",
         processing: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-300",
-        paid: "border-green-200 bg-green-50 text-green-700 dark:border-green-400/30 dark:bg-green-500/10 dark:text-green-400",
-        exception: "border-red-200 bg-red-50 text-red-700 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-300",
-        declined: "border-red-200 bg-red-50 text-red-700 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-300",
+        paid: "border-green-200 bg-green-100 text-green-800 dark:border-green-400/30 dark:bg-green-500/15 dark:text-green-200",
+        exception: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-500/15 dark:text-red-200",
+        declined: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-500/15 dark:text-red-200",
       };
       var withClock = status === "pending" || status === "action-required";
       return (
-        '<span class="inline-flex items-center gap-0.5 rounded border py-0.5 pr-2 pl-1 text-sm leading-5 font-medium ' +
+        '<span class="inline-flex items-center justify-center whitespace-nowrap rounded border text-sm leading-5 font-medium ' +
+        (withClock ? "gap-0.5 py-0.5 pr-2 pl-1 " : "px-2 py-0.5 ") +
         (supplierBadge[status] || supplierBadge.pending) +
         '">' +
         (withClock ? tableIcon("clock-14.svg", 14, 14) : "") +
@@ -2156,14 +2142,7 @@
             ? "inline-flex h-[52px] w-full cursor-default items-center justify-center"
             : "inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20") +
           '">' +
-          (IS_SUPPLIER_PORTAL
-            ? tableIcon(
-                "chevron-right.svg",
-                20,
-                20,
-                "transition-transform duration-200",
-              )
-            : '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>') +
+          '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>' +
           "</button>" +
           "</td>";
         return;
@@ -3546,7 +3525,11 @@
       }
 
       if (IS_SUPPLIER_PORTAL) {
-        if (event.target.closest("[data-row-toggle]")) return;
+        var chevronToggle = event.target.closest("[data-row-toggle]");
+        if (chevronToggle && table.contains(chevronToggle)) {
+          toggleRow(chevronToggle);
+          return;
+        }
         var clickedRow = event.target.closest("tbody tr[data-row]");
         if (
           clickedRow &&
@@ -3988,21 +3971,23 @@
 
   function setTabVisualState(tab, isActive) {
     var badge = tab.querySelector(TAB_COUNT_SELECTOR);
+    // Like Bills and Payables, the Exceptions tab is red when active and its badge is always red.
+    var isException = IS_SUPPLIER_PORTAL && tab.getAttribute("data-tab") === "exceptions";
+    var activeLink = isException ? EXCEPTION_TAB_LINK_CLASSES : ACTIVE_TAB_LINK_CLASSES;
 
-    if (isActive) {
-      tab.classList.add.apply(tab.classList, ACTIVE_TAB_LINK_CLASSES);
-      tab.classList.remove.apply(tab.classList, INACTIVE_TAB_LINK_CLASSES);
-      if (badge) {
-        badge.classList.add.apply(badge.classList, ACTIVE_BADGE_CLASSES);
-        badge.classList.remove.apply(badge.classList, INACTIVE_BADGE_CLASSES);
-      }
-    } else {
-      tab.classList.remove.apply(tab.classList, ACTIVE_TAB_LINK_CLASSES);
-      tab.classList.add.apply(tab.classList, INACTIVE_TAB_LINK_CLASSES);
-      if (badge) {
-        badge.classList.remove.apply(badge.classList, ACTIVE_BADGE_CLASSES);
-        badge.classList.add.apply(badge.classList, INACTIVE_BADGE_CLASSES);
-      }
+    tab.classList.remove.apply(tab.classList, ACTIVE_TAB_LINK_CLASSES);
+    tab.classList.remove.apply(tab.classList, EXCEPTION_TAB_LINK_CLASSES);
+    tab.classList.remove.apply(tab.classList, INACTIVE_TAB_LINK_CLASSES);
+    if (isActive) tab.classList.add.apply(tab.classList, activeLink);
+    else tab.classList.add.apply(tab.classList, INACTIVE_TAB_LINK_CLASSES);
+
+    if (badge && !isException) {
+      badge.classList.remove.apply(badge.classList, ACTIVE_BADGE_CLASSES);
+      badge.classList.remove.apply(badge.classList, INACTIVE_BADGE_CLASSES);
+      badge.classList.add.apply(
+        badge.classList,
+        isActive ? ACTIVE_BADGE_CLASSES : INACTIVE_BADGE_CLASSES,
+      );
     }
   }
 
@@ -4227,19 +4212,6 @@
     var filterDateToMaskEmpty = document.getElementById(
       "sx-table-filter-date-to-mask-empty",
     );
-    var filterDateMonthLabel = document.getElementById(
-      "sx-table-filter-date-month-label",
-    );
-    var filterDatePrevBtn = document.getElementById(
-      "sx-table-filter-date-prev",
-    );
-    var filterDateNextBtn = document.getElementById(
-      "sx-table-filter-date-next",
-    );
-    var filterDateGrid = document.getElementById("sx-table-filter-date-grid");
-    var filterDateCalendarWrap = document.getElementById(
-      "sx-table-filter-date-calendar",
-    );
     var filterClearBtn = document.getElementById("sx-table-filter-clear-btn");
     var filterApplyActiveBtn = document.getElementById(
       "sx-table-filter-apply-active-btn",
@@ -4266,11 +4238,6 @@
       !filterDateFromMaskEmpty ||
       !filterDateToMaskFilled ||
       !filterDateToMaskEmpty ||
-      !filterDateMonthLabel ||
-      !filterDatePrevBtn ||
-      !filterDateNextBtn ||
-      !filterDateGrid ||
-      !filterDateCalendarWrap ||
       !filterClearBtn ||
       !filterApplyActiveBtn
     )
@@ -4301,6 +4268,7 @@
 
     function normalizeFilterPanel(panel) {
       return panel === "vendor_entry" ||
+        panel === "customer" ||
         panel === "status" ||
         panel === "method" ||
         panel === "failure_reason" ||
@@ -4308,7 +4276,7 @@
         panel === "processed_date" ||
         panel === "amount"
         ? panel
-        : "customer";
+        : "amount";
     }
 
     function copyAppliedFiltersToDraft() {
@@ -4556,82 +4524,6 @@
         filterDateToMaskFilled,
         filterDateToMaskEmpty,
       );
-    }
-
-    function renderInitiatedDateCalendar() {
-      if (!tableFilterState.initiatedDateMonth)
-        setInitiatedDateMonthFromIso(getSelectedDateForActiveField());
-      var monthStart = tableFilterState.initiatedDateMonth;
-      filterDateMonthLabel.textContent = monthStart.toLocaleDateString(
-        "en-US",
-        { month: "long", year: "numeric" },
-      );
-
-      var firstOfMonth = new Date(
-        monthStart.getFullYear(),
-        monthStart.getMonth(),
-        1,
-      );
-      var startOffset = (firstOfMonth.getDay() + 6) % 7; // Monday-first
-      var gridStart = new Date(firstOfMonth);
-      gridStart.setDate(firstOfMonth.getDate() - startOffset);
-      var todayIso = toLocalIsoDate(new Date());
-      var selectedFrom = tableFilterState.initiatedDateFrom;
-      var selectedTo = tableFilterState.initiatedDateTo;
-      var activeIso = getSelectedDateForActiveField();
-      var cells = "";
-
-      for (var i = 0; i < 42; i++) {
-        var current = new Date(
-          gridStart.getFullYear(),
-          gridStart.getMonth(),
-          gridStart.getDate() + i,
-        );
-        var iso = toLocalIsoDate(current);
-        var isCurrentMonth =
-          current.getMonth() === monthStart.getMonth() &&
-          current.getFullYear() === monthStart.getFullYear();
-        var isSelected = iso && (iso === selectedFrom || iso === selectedTo);
-        var isInRange =
-          selectedFrom &&
-          selectedTo &&
-          iso >= selectedFrom &&
-          iso <= selectedTo;
-        var isToday = iso === todayIso;
-        var isActive = iso && iso === activeIso;
-        var classes =
-          "mx-auto flex h-8 w-8 items-center justify-center rounded-full hover:bg-gray-200";
-        if (!isCurrentMonth) classes += " text-gray-400 dark:text-gray-500";
-        else classes += " text-gray-900 dark:text-gray-100";
-        if (isInRange && !isSelected)
-          classes += " bg-blue-50 dark:bg-blue-500/20";
-        if (isSelected) classes += " bg-blue-600 font-semibold text-white";
-        else if (isToday)
-          classes += " font-semibold text-blue-600 dark:text-blue-400";
-        if (isActive && !isSelected) classes += " ring-2 ring-blue-500";
-
-        cells +=
-          "" +
-          '<div class="py-1">' +
-          '  <button type="button" data-date-cell="' +
-          escapeHtml(iso) +
-          '" class="' +
-          classes +
-          '">' +
-          '    <time datetime="' +
-          escapeHtml(iso) +
-          '">' +
-          current.getDate() +
-          "</time>" +
-          "  </button>" +
-          "</div>";
-      }
-      filterDateGrid.innerHTML = cells;
-    }
-
-    function setDateCalendarVisible(visible) {
-      filterDateCalendarWrap.classList.toggle("hidden", !visible);
-      if (visible) renderInitiatedDateCalendar();
     }
 
     function clearPanelSelection(panel) {
@@ -5285,7 +5177,7 @@
           if (!list) return;
           var query = input.value.trim().toLowerCase();
           Array.prototype.forEach.call(
-            list.querySelectorAll("label"),
+            list.querySelectorAll("label, app-checkbox"),
             function (label) {
               var text = (label.textContent || "").toLowerCase();
               label.classList.toggle(
@@ -5329,7 +5221,7 @@
 
     function setFilterPanel(panel) {
       var activePanel = normalizeFilterPanel(panel);
-      if (!getVisibleFilterCategories()[activePanel]) activePanel = "customer";
+      if (!getVisibleFilterCategories()[activePanel]) activePanel = "amount";
       tableFilterState.activePanel = activePanel;
       switchDateCategory(activePanel);
       setDetailPanelVisibility(activePanel);
@@ -5347,10 +5239,6 @@
             tableFilterState.initiatedDateTo,
         );
         renderInitiatedDateInputs();
-        renderInitiatedDateCalendar();
-        setDateCalendarVisible(true);
-      } else {
-        setDateCalendarVisible(false);
       }
       syncApplyButtonState();
     }
@@ -5369,20 +5257,21 @@
         if (!hit) return;
         event.preventDefault();
         event.stopPropagation();
-        tableFilterState.activePanel =
-          hit.getAttribute("data-header-filter") || "status";
-        setFilterMenuOpen(true);
+        setFilterMenuOpen(true, hit.getAttribute("data-header-filter") || "status");
       });
     }
 
-    function setFilterMenuOpen(nextOpen) {
+    function setFilterMenuOpen(nextOpen, openPanel) {
       tableFilterState.menuOpen = !!nextOpen;
       setFilterChevron(tableFilterState.menuOpen);
       applyFilterMenuLayout();
+      ["outline-2", "outline-offset-2", "outline-blue-600"].forEach(function (c) {
+        filterBtn.classList.toggle(c, tableFilterState.menuOpen);
+      });
       if (tableFilterState.menuOpen) {
         copyAppliedFiltersToDraft();
         syncTableFilterUi();
-        setFilterPanel(tableFilterState.activePanel || "customer");
+        setFilterPanel(openPanel || "amount");
         filterMenu.classList.remove(
           "invisible",
           "opacity-0",
@@ -5436,11 +5325,8 @@
     filterBtn.addEventListener("click", function (event) {
       event.stopPropagation();
       var nextOpen = !tableFilterState.menuOpen;
-      if (nextOpen)
-        tableFilterState.activePanel = normalizeFilterPanel(
-          tableFilterState.activePanel,
-        );
       setFilterMenuOpen(nextOpen);
+      if (nextOpen) filterBtn.focus();
       syncApplyButtonState();
     });
 
@@ -5455,7 +5341,7 @@
         if (!list) return;
         Array.prototype.forEach.call(
           list.querySelectorAll(
-            "label:not(.hidden) input[type='checkbox'][data-filter-value]",
+            "app-checkbox:not(.hidden) input[type='checkbox'][data-filter-value]",
           ),
           function (input) {
             if (input.checked) return;
@@ -5521,7 +5407,6 @@
           tableFilterState.initiatedDateTo,
       );
       renderInitiatedDateInputs();
-      setDateCalendarVisible(isDateCategory(tableFilterState.activePanel));
     }
 
     function setDateFieldFromInput(field, rawInput) {
@@ -5645,58 +5530,6 @@
     bindDateInput(filterDateFromInput, "from");
     bindDateInput(filterDateToInput, "to");
 
-    filterDatePrevBtn.addEventListener("click", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      shiftInitiatedDateMonth(-1);
-      renderInitiatedDateCalendar();
-    });
-
-    filterDateNextBtn.addEventListener("click", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      shiftInitiatedDateMonth(1);
-      renderInitiatedDateCalendar();
-    });
-
-    filterDateGrid.addEventListener("click", function (event) {
-      var dayBtn = event.target.closest("button[data-date-cell]");
-      if (!dayBtn) return;
-      event.preventDefault();
-      event.stopPropagation();
-      var iso = toIsoDate(dayBtn.getAttribute("data-date-cell"));
-      if (!iso) return;
-      if (tableFilterState.initiatedDateActiveField === "to") {
-        tableFilterState.initiatedDateTo = iso;
-        tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(iso);
-        if (
-          tableFilterState.initiatedDateFrom &&
-          tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo
-        ) {
-          tableFilterState.initiatedDateFrom = tableFilterState.initiatedDateTo;
-          tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(
-            tableFilterState.initiatedDateFrom,
-          );
-        }
-      } else {
-        tableFilterState.initiatedDateFrom = iso;
-        tableFilterState.initiatedDateFromDraft = formatIsoAsUsInput(iso);
-        if (
-          tableFilterState.initiatedDateTo &&
-          tableFilterState.initiatedDateFrom > tableFilterState.initiatedDateTo
-        ) {
-          tableFilterState.initiatedDateTo = tableFilterState.initiatedDateFrom;
-          tableFilterState.initiatedDateToDraft = formatIsoAsUsInput(
-            tableFilterState.initiatedDateTo,
-          );
-        }
-      }
-      syncApplyButtonState();
-      renderInitiatedDateInputs();
-      renderInitiatedDateCalendar();
-      renderFilterNavBadges();
-    });
-
     filterClearBtn.addEventListener("click", function (event) {
       event.stopPropagation();
       if (filterClearBtn.disabled) return;
@@ -5797,7 +5630,7 @@
     window.addEventListener("resize", function () {
       if (!tableFilterState.menuOpen) return;
       applyFilterMenuLayout();
-      setFilterPanel(tableFilterState.activePanel || "customer");
+      setFilterPanel(tableFilterState.activePanel || "amount");
     });
 
     syncTableFilterUi = function () {
@@ -5811,14 +5644,13 @@
       renderFailureReasonFilters();
       applyOpenFilterSearches();
       renderInitiatedDateInputs();
-      renderInitiatedDateCalendar();
       syncFilterCategoryVisibility();
       renderFilterNavBadges();
       renderActiveFilterTags();
       syncApplyButtonState();
       if (tableFilterState.menuOpen) {
         applyFilterMenuLayout();
-        setFilterPanel(tableFilterState.activePanel || "customer");
+        setFilterPanel(tableFilterState.activePanel || "amount");
       }
     };
 

@@ -20,6 +20,13 @@ Shared vocabulary. If a term is used differently in one product, say so in that 
 | **Upstream / upstreamed** | Taking a client delta into standard. Decided by humans. |
 | **Plan** | Portal-shell setting that decides which modules a business sees (`src/scripts/app-plans.js`). |
 | **Balance Account** | Holding account that SMART Disburse funds move into until the recipient claims the token. |
+| **Claimant** | A person receiving a SMART Disburse payment (for example an insurance claimant). Suppliers go through the same flow. Both are the "payee" in Hub. |
+| **Co-payee / party** | One of several people sharing a SMART Disburse Multi-Party payment. |
+| **Primary party** | The co-payee who can dispute the total, and who receives the whole payment as a fallback if it expires or is revoked. |
+| **Allocation** | How a Multi-Party payment is split between the parties. Every change is logged, and everyone must accept the current one. |
+| **One Final Step** | The summary at the end of each SMART Disburse payment method: details, consents, then sign and submit. |
+| **Revoked (Disburse)** | The payment is cancelled because the payee ran out of attempts (verification code, identity questions or bank verification). |
+| **Declined (Disburse)** | The payee chose not to accept the payment, giving a reason. |
 | **Origination account** | The payer bank account a Hub payment is sent from. |
 | **Supplier Portal** | Name used in the code and nav for SMART Exchange. TODO(confirm). |
 | **Due Date** | When a bill is due. SMART Hub AP only. |

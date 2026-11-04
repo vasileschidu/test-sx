@@ -50,12 +50,13 @@ or **client variants**? This decides whether they go in Disburse `standard.md` o
 
 | Flow | Key | Tag |
 |---|---|---|
-| 🇬🇧 UK Expansion | `HHw1hEtPqLR8ashOaxBts5` | (matches `src/pages/sd-uk/` in code) |
+| 🇬🇧 UK Expansion | `HHw1hEtPqLR8ashOaxBts5` | — |
 | Canada Expansion | `XDcelCnq5XK0o88q9PILKc` | DEV |
 | Cross-Border (SWIFT/IBAN) | `7K2fcxPx56S6q1aReCuI8V` | LAUNCHED |
 | Interac e-Transfer rail | `13BB577QY5aeG4oOvhyarj` | DEV |
 | Zelle rail | `8CBfYNoooz1kgmHVhZ8iKH` | DEV |
 | Multi Party Payments | `i6zeMN5gTivOw5aCO29nrO` | LAUNCHED |
+| ⌛️ SD (Versioning), page "Multi-Party 1.07" | TODO: key | Source the prototype's Multi-Party screens cite (`onboarding-multi-party.js`). TODO(confirm) vs Multi Party Payments |
 | Multi Party Endorsers | `Wwjci03SjRzSa3TZaDqq33` | LAUNCHED |
 | Lienholder Flows | `luAimFZTK0kAV3pS91b3gJ` | — |
 

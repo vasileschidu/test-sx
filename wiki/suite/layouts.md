@@ -53,13 +53,25 @@ A portal, but with its own layout because its job is onboarding, not daily work.
 
 ## 3. Token flow: Disburse, Collect
 
-Short, focused flow opened from a token (an emailed link) to finish one task: receive or pay.
+Short, focused flow opened from a token (an emailed link) to finish one task: receive or pay. Reference implementation:
+SMART Disburse ([standard](../products/smart-disburse/standard.md), [US flow](../products/smart-disburse/flows/us-default.md)).
 
-- Example: `src/pages/sd-uk/` (Disburse): claim → verify → contact → payment (bank or card)
-  → billing/summary → review → sign → done / thank you.
+As built (`src/pages/onboarding/`, `src/scripts/onboarding-sidebar.js`, `onboarding-stepper.js`, `onboarding-mobile-header.js`):
+
+- **Desktop:**
+  - **Step rail:** a dark navy rail on the left with the logo and the stepper (done steps checked, current step ringed).
+  - **Rail footer:** a card with **Contact Us** and **Decline Payment**, a language picker, Terms of Use / Privacy Policy /
+    E-Sign Consent links, and "Powered by Transcard".
+  - **Content:** white, on the right. Payment steps lead with a blue gradient **amount card** ("PAYMENT AMOUNT", amount,
+    "FROM [sender]"), then chips (**Message**, **Expiration**, **Contact Us**).
+- **Inside a payment method:** a substeps header ("Account Information → Summary", `onboarding-substeps.js`, desktop only).
+  Every method ends in **One Final Step** (summary, consents, sign dialog) and a confirmation with a receipt.
+- **Below 1024px:** the rail is replaced by a sticky top bar with the current step, position and progress. Its menu holds
+  Contact / Decline. Content is capped at 640px, centred.
+- **Dialogs:** one shared dialog shell (`onboarding-modal.js`): blurred backdrop, close (X), Escape, focus trap.
+- **Loading:** each step fades in once, and its data shows skeletons for 1.0–1.5 s (`onboarding-transitions.js`).
 - No portal navigation.
-- Figma ([LAUNCHED] Default Flow [Figma](https://www.figma.com/design/4WZgq8XswZFkHcI6bzOIiK)): dark navy left **step rail**, blue gradient **amount card** (message / expiration / details chips), then the step content. Stepper labels e.g. "Receive Payment / Complete Payment".
-- Steps (Disburse claimant): authentication (questionnaire; OTP in some flows), choose method, details, **Summary ("One Final Step", consent, Deposit button)**, final/receipt.
+- Figma ([LAUNCHED] Default Flow [Figma](https://www.figma.com/design/4WZgq8XswZFkHcI6bzOIiK)); sidebar "SD Menu" node 19427:30373.
 
 ## Shared rules across families
 

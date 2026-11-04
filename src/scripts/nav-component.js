@@ -76,7 +76,7 @@ const APP_NAV_DATA = [
   {
     type: "smart-exchange",
     id: "smart-exchange",
-    label: "Supplier Portal",
+    label: "SMART Exchange",
     href: "supplier-portal.html",
     icon: "smart-exchange",
     children: [
@@ -109,7 +109,7 @@ const APP_NAV_DATA = [
     icon: "transcard-only",
     children: [
       { id: "businesses", label: "Businesses", href: "#" },
-      { id: "se-recipients", label: "Supplier Portal Recipients", href: "#" },
+      { id: "se-recipients", label: "SMART Exchange Recipients", href: "#" },
       { id: "tenants", label: "Tenants", href: "#" },
       { id: "connections", label: "Connections", href: "#" },
       { id: "connectors", label: "Connectors", href: "#" },
@@ -618,7 +618,7 @@ function buildSmartExchangeItem(
     (isDesktopCollapsed ? " hidden" : "");
   return `<div class="${rowCls}" data-smart-exchange-trigger>
 <a href="${resolveNavHref(item.href, routerMode)}" class="${linkCls}"${ariaCurrent}><span class="${contentCls}">${renderIcon(item.icon, iconCls)}<span class="${labelCls}">${item.label}</span></span></a>
-<button type="button" data-chevron-toggle aria-label="Toggle Supplier Portal submenu"
+<button type="button" data-chevron-toggle aria-label="Toggle SMART Exchange submenu"
   class="${chevronButtonCls}">
 ${chevron}
 </button>
@@ -1191,7 +1191,7 @@ ${buildFooter("desktop-sidebar-footer", collapsed)}
       });
     });
 
-    /* Supplier Portal chevron */
+    /* SMART Exchange chevron */
     this.querySelectorAll("[data-chevron-toggle]").forEach((btn) => {
       btn.addEventListener("click", () => {
         if (typeof toggleSmartExchangeSubmenu === "function")

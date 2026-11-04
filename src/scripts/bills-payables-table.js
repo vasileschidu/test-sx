@@ -152,7 +152,7 @@
     amountMin: "",
     amountMax: "",
     filterMenuOpen: false,
-    activeFilterPanel: "payee",
+    activeFilterPanel: "amount",
     appliedSelectedPayees: new Set(),
     appliedSelectedSources: new Set(),
     appliedSelectedStatuses: new Set(),
@@ -250,6 +250,16 @@
     if (!el) return;
     var total = Number(count) || 0;
     el.textContent = total + (total === 1 ? " Payment" : " Payments");
+  }
+  function updateSelectionActions() {
+    var panel = document.getElementById("bp-selection-actions");
+    if (!panel) return;
+    var count = state.selectedRowIds.size;
+    var refresh = document.getElementById("bp-refresh-btn");
+    panel.style.display = count > 0 ? "flex" : "none";
+    if (refresh) refresh.style.display = count > 0 ? "none" : "";
+    var label = panel.querySelector("[data-selected-count]");
+    if (label) label.textContent = count + " selected";
   }
   var ICON_SCHEDULED =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg>';
@@ -1006,28 +1016,14 @@
       '      <path d="M2.40039 10.8001C2.40039 10.1374 2.93765 9.6001 3.60039 9.6001C4.26313 9.6001 4.80039 10.1374 4.80039 10.8001C4.80039 11.4628 4.26313 12.0001 3.60039 12.0001C2.93765 12.0001 2.40039 11.4628 2.40039 10.8001Z" /><path d="M6.80039 10.8001C6.80039 10.1374 7.33765 9.6001 8.00039 9.6001C8.66313 9.6001 9.20039 10.1374 9.20039 10.8001C9.20039 11.4628 8.66313 12.0001 8.00039 12.0001C7.33765 12.0001 6.80039 11.4628 6.80039 10.8001Z" /><path d="M12.4004 9.6001C11.7376 9.6001 11.2004 10.1374 11.2004 10.8001C11.2004 11.4628 11.7376 12.0001 12.4004 12.0001C13.0631 12.0001 13.6004 11.4628 13.6004 10.8001C13.6004 10.1374 13.0631 9.6001 12.4004 9.6001Z" /><path d="M2.40039 6.00005C2.40039 5.33731 2.93765 4.80005 3.60039 4.80005C4.26313 4.80005 4.80039 5.33731 4.80039 6.00005C4.80039 6.66279 4.26313 7.20005 3.60039 7.20005C2.93765 7.20005 2.40039 6.66279 2.40039 6.00005Z" /><path d="M6.80039 6.00005C6.80039 5.33731 7.33765 4.80005 8.00039 4.80005C8.66313 4.80005 9.20039 5.33731 9.20039 6.00005C9.20039 6.66279 8.66313 7.20005 8.00039 7.20005C7.33765 7.20005 6.80039 6.66279 6.80039 6.00005Z" /><path d="M12.4004 4.80005C11.7376 4.80005 11.2004 5.33731 11.2004 6.00005C11.2004 6.66279 11.7376 7.20005 12.4004 7.20005C13.0631 7.20005 13.6004 6.66279 13.6004 6.00005C13.6004 5.33731 13.0631 4.80005 12.4004 4.80005Z" />' +
       "    </svg>" +
       "  </button>" +
-      '  <label class="flex cursor-pointer items-center gap-3">' +
-      '    <span class="inline-flex items-start py-0.5">' +
-      '      <span class="grid size-4">' +
-      '        <input type="checkbox" data-column-visibility-toggle="' +
+      '  <app-checkbox class="min-w-0 flex-1" data-column-visibility-toggle="' +
       escapeHtml(col.key) +
       '"' +
       (checked ? " checked" : "") +
       (disabled ? " disabled" : "") +
-      '          class="col-start-1 row-start-1 size-4 appearance-none rounded border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 disabled:cursor-not-allowed disabled:border-gray-200 disabled:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500 dark:disabled:bg-white/10" />' +
-      "        " +
-      tableIcon(
-        "check-12.svg",
-        12,
-        12,
-        "pointer-events-none col-start-1 row-start-1 self-center justify-self-center opacity-0 group-has-checked:opacity-100",
-      ) +
-      "      </span>" +
-      "    </span>" +
-      '    <span class="text-sm leading-5 font-medium whitespace-nowrap text-gray-900 dark:text-white">' +
+      ">" +
       escapeHtml(col.label || col.key) +
-      "</span>" +
-      "  </label>" +
+      "</app-checkbox>" +
       scopeBadge +
       "</div>"
     );
@@ -1522,12 +1518,14 @@
   }
 
   function isFilterCategoryVisible(panel) {
-    return !!getFilterColumn(panel);
+    // Source is always offered, even on tabs where its column is switched off.
+    return panel === "source" || !!getFilterColumn(panel);
   }
 
   function getFilterCategoryLabel(panel) {
     var col = getFilterColumn(panel);
-    return col ? col.label : "";
+    if (col && col.label) return col.label;
+    return panel === "source" ? "Source" : "";
   }
 
   function getVisibleFilterCategories() {
@@ -1625,6 +1623,19 @@
       numeric: true,
       sensitivity: "base",
     });
+  }
+
+  function buildSortBadge(direction) {
+    var cls = direction
+      ? "inline-flex size-5 shrink-0 items-center justify-center text-blue-600 dark:text-blue-400"
+      : "inline-flex size-5 shrink-0 items-center justify-center text-gray-400 group-hover:text-gray-600 dark:text-gray-500";
+    var icon =
+      direction === "asc"
+        ? ICON_SORT_ASC
+        : direction === "desc"
+          ? ICON_SORT_DESC
+          : ICON_SORT;
+    return '<span class="' + cls + '">' + icon + "</span>";
   }
 
   function sortRows(rows) {
@@ -2370,7 +2381,7 @@
       panel === "amount"
     )
       return panel;
-    return "payee";
+    return "amount";
   }
 
   function copyAppliedFiltersToDraft() {
@@ -3161,7 +3172,7 @@
   function setFilterPanel(panel) {
     if (!refs.filterMenu) return;
     var normalizedPanel = normalizeFilterPanel(panel);
-    if (!isFilterCategoryVisible(normalizedPanel)) normalizedPanel = "payee";
+    if (!isFilterCategoryVisible(normalizedPanel)) normalizedPanel = "amount";
     state.activeFilterPanel = normalizedPanel;
     setFilterDetailPanelVisibility(normalizedPanel);
     syncFilterNavState(normalizedPanel);
@@ -3175,19 +3186,19 @@
       c.classList.toggle("rotate-180", !!open);
     });
   }
-  function setFilterMenuOpen(nextOpen) {
+  function setFilterMenuOpen(nextOpen, openPanel) {
     if (!refs.filterMenu) return;
     state.filterMenuOpen = !!nextOpen;
     setFilterChevron(state.filterMenuOpen);
     applyFilterMenuLayout();
+    if (refs.filterBtn)
+      ["outline-2", "outline-offset-2", "outline-blue-600"].forEach(function (c) {
+        refs.filterBtn.classList.toggle(c, state.filterMenuOpen);
+      });
     if (state.filterMenuOpen) {
       copyAppliedFiltersToDraft();
       syncFilterUi();
-      setFilterPanel(
-        state.activeFilterPanel && state.activeFilterPanel !== "root"
-          ? state.activeFilterPanel
-          : "payee",
-      );
+      setFilterPanel(openPanel || "amount");
       refs.filterMenu.classList.remove(
         "invisible",
         "opacity-0",
@@ -3254,7 +3265,7 @@
         if (!list) return;
         var query = input.value.trim().toLowerCase();
         Array.prototype.forEach.call(
-          list.querySelectorAll("label"),
+          list.querySelectorAll("label, app-checkbox"),
           function (label) {
             var text = (label.textContent || "").toLowerCase();
             label.classList.toggle("hidden", !!query && text.indexOf(query) === -1);
@@ -3313,7 +3324,7 @@
         setFilterPanel(
           state.activeFilterPanel && state.activeFilterPanel !== "root"
             ? state.activeFilterPanel
-            : "payee",
+            : "amount",
         );
       }
     };
@@ -3321,12 +3332,8 @@
     refs.filterBtn.addEventListener("click", function (event) {
       event.stopPropagation();
       var nextOpen = !state.filterMenuOpen;
-      if (
-        nextOpen &&
-        (!state.activeFilterPanel || state.activeFilterPanel === "root")
-      )
-        state.activeFilterPanel = "payee";
       setFilterMenuOpen(nextOpen);
+      if (nextOpen) refs.filterBtn.focus();
       syncFilterApplyButtonState();
     });
 
@@ -3341,7 +3348,7 @@
         if (!list) return;
         Array.prototype.forEach.call(
           list.querySelectorAll(
-            "label:not(.hidden) input[type='checkbox'][data-filter-value]",
+            "app-checkbox:not(.hidden) input[type='checkbox'][data-filter-value]",
           ),
           function (input) {
             if (input.checked) return;
@@ -3540,7 +3547,7 @@
         setFilterPanel(
           state.activeFilterPanel && state.activeFilterPanel !== "root"
             ? state.activeFilterPanel
-            : "payee",
+            : "amount",
         );
       };
       window.addEventListener("resize", filterResizeHandler);
@@ -3824,17 +3831,9 @@
               columnWidthClass(col) +
               ' h-[52px] text-center">' +
               '<div class="flex items-center justify-center">' +
-              '<label class="inline-flex cursor-pointer items-center justify-center select-none">' +
-              '<span class="group grid size-4 grid-cols-1">' +
-              '<input id="bp-select-all" type="checkbox" class="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" ' +
-              (allVisibleSelected ? "checked" : "") +
-              " />" +
-              '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
-              '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
-              '<path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100" />' +
-              "</svg>" +
-              "</span>" +
-              "</label>" +
+              '<app-checkbox bare input-id="bp-select-all"' +
+              (allVisibleSelected ? " checked" : "") +
+              "></app-checkbox>" +
               "</div>" +
               "</th>"
             );
@@ -3860,13 +3859,10 @@
           var sortButton = col.sortable
             ? '<button type="button" data-sort-key="' +
               col.key +
-              '" class="inline-flex cursor-pointer items-center gap-1 rounded-sm ' +
+              '" class="group inline-flex cursor-pointer items-center gap-1 rounded-sm ' +
               (alignEnd ? "justify-end " : "") +
               headerTextClass +
               " focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" +
-              (state.sortKey === col.key && state.sortDirection
-                ? " text-blue-600 dark:text-blue-300"
-                : "") +
               '"><span class="' +
               (col.key === "billNumber"
                 ? "text-left leading-4"
@@ -3874,7 +3870,9 @@
               '">' +
               buildHeaderLabel(col) +
               "</span>" +
-              tableIcon("sort.svg", 20, 20) +
+              buildSortBadge(
+                state.sortKey === col.key ? state.sortDirection : "",
+              ) +
               "</button>"
             : '<span class="' +
               headerTextClass +
@@ -3932,13 +3930,9 @@
                 '" aria-expanded="' +
                 (expanded ? "true" : "false") +
                 '" class="inline-flex h-[52px] w-full cursor-default items-center justify-center">' +
-                tableIcon(
-                  "chevron-right.svg",
-                  20,
-                  20,
-                  "transition-transform duration-200" +
-                    (expanded ? " rotate-90" : ""),
-                ) +
+                '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200' +
+                (expanded ? " rotate-90" : "") +
+                '" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>' +
                 "</button>" +
                 "</td>"
               );
@@ -3951,17 +3945,11 @@
                 cb +
                 '">' +
                 '<div class="flex items-center justify-center">' +
-                '<span class="group inline-grid size-4 grid-cols-1">' +
-                '<input type="checkbox" data-row-select-id="' +
+                '<app-checkbox bare data-row-select-id="' +
                 row.id +
-                '" class="col-start-1 row-start-1 appearance-none rounded border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 indeterminate:border-blue-600 indeterminate:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/20 dark:bg-white/5 dark:checked:border-blue-500 dark:checked:bg-blue-500" ' +
-                (state.selectedRowIds.has(row.id) ? "checked" : "") +
-                " />" +
-                '<svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white">' +
-                '<path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" />' +
-                '<path d="M3 7H11" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-indeterminate:opacity-100" />' +
-                "</svg>" +
-                "</span>" +
+                '"' +
+                (state.selectedRowIds.has(row.id) ? " checked" : "") +
+                "></app-checkbox>" +
                 "</div>" +
                 "</td>"
               );
@@ -4076,20 +4064,6 @@
               var billValue = escapeHtml(
                 row[col.key] == null ? "--" : row[col.key],
               );
-              if (row.status === "in_progress" || row.status === "paid") {
-                return (
-                  '<td class="h-[52px] align-middle text-sm font-normal whitespace-nowrap text-gray-500 dark:text-gray-400' +
-                  columnWidthClass(col) +
-                  cb +
-                  '">' +
-                  '<button type="button" data-pay-id="' +
-                  row.id +
-                  '" class="cursor-pointer p-0 font-normal text-gray-500 underline decoration-gray-300 underline-offset-2 transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:decoration-white/20 dark:hover:text-white">' +
-                  billValue +
-                  "</button>" +
-                  "</td>"
-                );
-              }
               return (
                 '<td class="h-[52px] align-middle text-sm font-normal whitespace-nowrap text-gray-500 dark:text-gray-400' +
                 columnWidthClass(col) +
@@ -4179,6 +4153,7 @@
       selectAll.indeterminate = hasSomeVisibleSelected;
     }
 
+    updateSelectionActions();
     renderPagination(filteredRows.length, visibleRows.length);
     refreshStickyAction();
   }
@@ -4659,9 +4634,10 @@
             filterPanel === "method" ||
             filterPanel === "failure_reason" ||
             filterPanel === "initiated_date"
-          )
+          ) {
+            if (!state.filterMenuOpen) setFilterMenuOpen(true);
             setFilterPanel(filterPanel);
-          if (!state.filterMenuOpen) setFilterMenuOpen(true);
+          } else if (!state.filterMenuOpen) setFilterMenuOpen(true);
           return;
         }
 
@@ -4684,10 +4660,10 @@
           return;
         }
 
-        if (e.target.closest("[data-expand-id]")) return;
-        var expandBtn = null;
+        var expandBtn = e.target.closest("[data-expand-id]");
         var clickedRow = e.target.closest("tbody tr");
         if (
+          !expandBtn &&
           clickedRow &&
           !e.target.closest("button, a, input, label, select, textarea")
         ) {
@@ -4720,6 +4696,14 @@
           });
           renderTable();
         }
+      });
+    }
+
+    var deselectBtn = document.querySelector("[data-deselect-all]");
+    if (deselectBtn) {
+      deselectBtn.addEventListener("click", function () {
+        state.selectedRowIds.clear();
+        renderTable();
       });
     }
 
