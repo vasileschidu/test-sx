@@ -2053,7 +2053,7 @@
       '<el-dropdown class="inline-block">' +
       '<button data-action-menu-trigger="true" class="' +
       (IS_SUPPLIER_PORTAL
-        ? "inline-flex size-7 cursor-pointer items-center justify-center rounded border border-gray-300 bg-white p-1 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:shadow-none dark:hover:bg-white/10"
+        ? "inline-flex size-7 cursor-pointer items-center justify-center rounded border border-gray-300 bg-white p-1 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:shadow-none dark:hover:bg-white/10"
         : "flex cursor-pointer items-center justify-center rounded-md bg-white p-1 text-gray-700 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-white/20 dark:hover:text-white") +
       '">' +
       '<span class="sr-only">Open options</span>' +
@@ -2139,7 +2139,7 @@
           '">' +
           '<button type="button" data-row-toggle aria-expanded="false" class="' +
           (IS_SUPPLIER_PORTAL
-            ? "inline-flex h-[52px] w-full cursor-default items-center justify-center"
+            ? "inline-flex h-[52px] w-full cursor-pointer items-center justify-center"
             : "inline-flex items-center justify-center rounded-md p-1 hover:bg-gray-200 dark:bg-white/10 dark:hover:bg-white/20") +
           '">' +
           '<svg class="size-4 text-gray-600 dark:text-gray-300 transition-transform duration-200" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7" /></svg>' +
@@ -3753,10 +3753,10 @@
         attr +
         ' aria-label="' +
         label +
-        '" class="inline-flex size-[30px] items-center justify-center rounded-md border border-gray-300 bg-white p-1.5 dark:border-white/15 dark:bg-white/5 ' +
+        '" class="inline-flex size-8 items-center justify-center rounded-md border border-gray-300 bg-white p-1.5 dark:border-white/15 dark:bg-white/5 ' +
         (disabled
           ? "cursor-not-allowed opacity-40"
-          : "cursor-pointer shadow-sm hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10") +
+          : "cursor-pointer shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10") +
         '"' +
         (disabled ? " disabled" : "") +
         ">" +
