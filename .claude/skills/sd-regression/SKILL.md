@@ -61,6 +61,9 @@ node .claude/skills/sd-regression/scripts/compare.mjs --a <tmp>/before --b <tmp>
 - The diff ignores 1-px anti-aliasing (neighbour match plus 2×2 block average) and changes under 150 px.
   A one-word text change is about 300 px, so it still shows.
 - A leftover tiny flag (e.g. welcome@1280 at 0.01 %, a late icon) re-run with `--only <id>` before you report it.
+- **Never run two visual runs (or a baseline) at the same time.** Under load, slow loads look like changes: 13 false flags
+  on 2026-11-04 dropped to 0 when the run was repeated alone. Welcome also shows a thin line in the card background
+  now and then (≤0.3 %), which is noise.
 
 ## Adding states
 
