@@ -95,44 +95,26 @@
       </section>
 
       <form id="case-form" class="flex flex-col gap-4" novalidate>
-        <div class="flex w-full flex-col overflow-hidden rounded-md">
-          <div class="flex items-center justify-between px-5 py-2.5 bg-gray-100">
-            <span class="text-sm font-semibold text-gray-900">Supplier &amp; contact</span>
-            <button type="button" data-edit="supplier" command="show-modal" commandfor="edit-dialog" class="inline-flex cursor-pointer items-center gap-1 rounded-sm text-xs font-semibold text-gray-600 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-300">
-              Edit
-              <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
-              <span class="sr-only">Supplier &amp; contact</span>
-            </button>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Supplier &amp; contact</span>
+            <button type="button" data-edit="supplier" command="show-modal" commandfor="edit-dialog" aria-label="Edit Supplier &amp; contact" class="cursor-pointer rounded-sm p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg></button>
           </div>
-          <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
-            <dl id="card-supplier" class="w-full"></dl>
-          </div>
+          <div id="card-supplier" class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5"></div>
         </div>
-        <div class="flex w-full flex-col overflow-hidden rounded-md">
-          <div class="flex items-center justify-between px-5 py-2.5 bg-gray-100">
-            <span class="text-sm font-semibold text-gray-900">Payer &amp; payment</span>
-            <button type="button" data-edit="payer" command="show-modal" commandfor="edit-dialog" class="inline-flex cursor-pointer items-center gap-1 rounded-sm text-xs font-semibold text-gray-600 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-300">
-              Edit
-              <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
-              <span class="sr-only">Payer &amp; payment</span>
-            </button>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Payer &amp; payment</span>
+            <button type="button" data-edit="payer" command="show-modal" commandfor="edit-dialog" aria-label="Edit Payer &amp; payment" class="cursor-pointer rounded-sm p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg></button>
           </div>
-          <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
-            <dl id="card-payer" class="w-full"></dl>
-          </div>
+          <div id="card-payer" class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5"></div>
         </div>
-        <div class="flex w-full flex-col overflow-hidden rounded-md">
-          <div class="flex items-center justify-between px-5 py-2.5 bg-gray-100">
-            <span class="text-sm font-semibold text-gray-900">Authorized signer</span>
-            <button type="button" data-edit="signer" command="show-modal" commandfor="edit-dialog" class="inline-flex cursor-pointer items-center gap-1 rounded-sm text-xs font-semibold text-gray-600 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-300">
-              Edit
-              <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
-              <span class="sr-only">Authorized signer</span>
-            </button>
+        <div class="flex flex-col gap-2">
+          <div class="flex items-center justify-between">
+            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Authorized signer</span>
+            <button type="button" data-edit="signer" command="show-modal" commandfor="edit-dialog" aria-label="Edit Authorized signer" class="cursor-pointer rounded-sm p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg></button>
           </div>
-          <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
-            <dl id="card-signer" class="w-full"></dl>
-          </div>
+          <div id="card-signer" class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5"></div>
         </div>
 
         <!-- Starting scenario -->
@@ -402,23 +384,28 @@
           return wrap;
         }
 
-        function dlRow(label, value, hint) {
-          var wrap = document.createElement("div");
-          wrap.className = "py-2 sm:grid sm:grid-cols-3 sm:gap-4";
-          var dt = document.createElement("dt");
-          dt.className = "text-sm/6 font-medium text-gray-900";
-          dt.textContent = label;
-          var dd = document.createElement("dd");
-          dd.className = "mt-0.5 text-sm/6 text-gray-700 break-words whitespace-pre-line sm:col-span-2 sm:mt-0";
-          dd.textContent = value;
-          if (hint) {
-            var h = document.createElement("span");
-            h.className = "mt-1 block type-description-small text-tertiary";
-            h.textContent = hint;
-            dd.appendChild(h);
-          }
-          wrap.appendChild(dt);
-          wrap.appendChild(dd);
+        var tinShown = false;
+        function tinRow(tin) {
+          var wrap = row("Taxpayer Identification Number (TIN)", "");
+          var v = wrap.lastChild;
+          var text = document.createElement("span");
+          var digits = String(tin || "");
+          text.textContent = tinShown ? digits : "\u2022\u2022\u2022\u2022\u2022" + digits.slice(-4);
+          var btn = document.createElement("button");
+          btn.type = "button";
+          btn.setAttribute("aria-pressed", String(tinShown));
+          btn.setAttribute("aria-label", tinShown ? "Hide TIN" : "Show TIN");
+          btn.className =
+            "ml-2 inline-flex cursor-pointer rounded-sm align-middle text-gray-500 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-200";
+          btn.innerHTML = tinShown
+            ? '<svg class="size-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M3.28 2.22a.75.75 0 0 0-1.06 1.06l14.5 14.5a.75.75 0 1 0 1.06-1.06l-1.745-1.745a10.03 10.03 0 0 0 3.3-4.38 1.651 1.651 0 0 0 0-1.185A10.004 10.004 0 0 0 9.999 3a9.956 9.956 0 0 0-4.744 1.194L3.28 2.22ZM7.752 6.69l1.092 1.092a2.5 2.5 0 0 1 3.374 3.373l1.091 1.092a4 4 0 0 0-5.557-5.557Z" clip-rule="evenodd"/><path d="m10.748 13.93 2.523 2.523a9.987 9.987 0 0 1-3.27.547c-4.258 0-7.894-2.66-9.337-6.41a1.651 1.651 0 0 1 0-1.186A10.007 10.007 0 0 1 2.839 6.02L6.07 9.252a4 4 0 0 0 4.678 4.678Z"/></svg>'
+            : '<svg class="size-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"/><path fill-rule="evenodd" d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z" clip-rule="evenodd"/></svg>';
+          btn.addEventListener("click", function () {
+            tinShown = !tinShown;
+            renderCards();
+          });
+          v.appendChild(text);
+          v.appendChild(btn);
           return wrap;
         }
 
@@ -436,34 +423,34 @@
         function renderCards() {
           var d = data;
           document.getElementById("card-supplier").replaceChildren(
-            dlRow("Business name", d.supplier.name),
-            dlRow("Business address", d.supplier.address),
-            dlRow("TIN", d.supplier.tin),
-            dlRow("Phone", d.supplier.phone),
-            dlRow("Contact", [d.supplier.contactFirst, d.supplier.contactLast].join(" ")),
-            dlRow("Contact email", d.supplier.email),
+            row("Business Legal Name", d.supplier.name),
+            row("Business Address", d.supplier.address),
+            tinRow(d.supplier.tin),
+            row("Primary Contact Name", [d.supplier.contactFirst, d.supplier.contactLast].join(" ")),
+            row("Primary Contact Email Address", d.supplier.email),
+            row("Primary Contact Phone Number", d.supplier.phone),
           );
           document.getElementById("card-payer").replaceChildren(
-            dlRow("Payer name", d.payer.name),
-            dlRow("Payer address", d.payer.address),
-            dlRow("Amount", money(d.payment.amount)),
-            dlRow("Invoice #", d.payment.invoice),
-            dlRow(
+            row("Payer name", d.payer.name),
+            row("Payer address", d.payer.address),
+            row("Amount", money(d.payment.amount)),
+            row("Invoice #", d.payment.invoice),
+            row(
               "Card",
               "•••• " + String(d.payment.cardNumber).slice(-4) + " · exp " + d.payment.expires,
             ),
           );
           var signerCard = document.getElementById("card-signer");
           signerCard.replaceChildren(
-            dlRow("Name", [d.signer.firstName, d.signer.lastName].join(" ")),
-            dlRow("Email", d.signer.email),
+            row("Name", [d.signer.firstName, d.signer.lastName].join(" ")),
+            row("Email", d.signer.email),
           );
           var request = ++signerHintRequest;
           signerHint(d.signer.email).then(function (text) {
             if (request !== signerHintRequest || !text) return;
             signerCard.replaceChildren(
-              dlRow("Name", [d.signer.firstName, d.signer.lastName].join(" ")),
-              dlRow("Email", d.signer.email, text),
+              row("Name", [d.signer.firstName, d.signer.lastName].join(" ")),
+              row("Email", d.signer.email, text),
             );
           });
         }
