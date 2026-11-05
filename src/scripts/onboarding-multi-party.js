@@ -262,7 +262,6 @@
     // An expired, revoked or disputed payment has nothing left to allocate.
     if (mp.payment && mp.payment !== 'active') { window.location.replace('payment-closed.html'); return; }
     var entry = F.current(mp);
-    var me = F.parties(mp)[0];
     var total = Object.keys(entry.amounts).reduce(function (s, k) { return s + Number(entry.amounts[k] || 0); }, 0);
 
     var banner = mp.justChanged
@@ -295,7 +294,6 @@
       infoBox('<p>You can <span class="font-semibold">Change</span> current allocation and allocate amount(s) in a different way. Select <span class="font-semibold">Change</span> to proceed.</p>') +
       '<div class="mt-auto flex w-full flex-col gap-4 pt-4">' +
         '<button type="button" data-mp-accept class="' + PRIMARY_BTN + '">Accept and Continue</button>' +
-        (me.primary ? '<button type="button" data-mp-dispute class="' + SECONDARY_BTN + '">Dispute Total Amount</button>' : '') +
       '</div>';
 
     if (mp.justChanged) { delete mp.justChanged; F.saveMp(mp); }
@@ -304,20 +302,6 @@
     root.querySelector('[data-mp-accept]').addEventListener('click', function () {
       F.accept();
       window.OBGo(F.myShare() > 0 ? 'paywall.html' : 'payment-status.html');
-    });
-
-    var dispute = root.querySelector('[data-mp-dispute]');
-    if (dispute) dispute.addEventListener('click', function () {
-      var client = esc(window.OBModal.clientName());
-      messageDialog('icon-exclamation-red.svg', 'bg-[#fee2e2]', 'Dispute Total Allocation Amount',
-        '<p class="text-sm leading-5 text-[#6b7280]">Are you sure you want to dispute the total allocation amount?</p>' +
-        '<p class="text-sm leading-5 text-[#6b7280]">The payment request will be cancelled and you\'ll need to contact ' + client + ' to receive the payment.</p>',
-        '<button type="button" data-mp-dispute-confirm class="flex h-14 w-full cursor-pointer items-center justify-center rounded-md bg-[#dc2626] px-[17px] text-base leading-6 font-medium text-white hover:bg-[#b91c1c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dc2626]">Dispute</button>' +
-        '<button type="button" data-ob-modal-close class="' + SECONDARY_BTN + '">Cancel</button>');
-      document.querySelector('[data-mp-dispute-confirm]').addEventListener('click', function () {
-        window.OBModal.close();
-        window.OBGo('dispute.html');
-      });
     });
 
     // Someone else changed the split since the user last looked
