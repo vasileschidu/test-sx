@@ -329,7 +329,7 @@ function buildConsumerMarkHtml(sizeCls, containerSizeCls) {
   return (
     '<span class="flex ' +
     (containerSizeCls || "size-8") +
-    ' shrink-0 items-center justify-center overflow-hidden rounded-lg bg-white p-1 shadow-lg ring-1 ring-black/5 dark:bg-gray-900"><img src="../../../assets/icons/consumer-portal/brand-mark.svg" alt="" class="' +
+    ' shrink-0 transition-opacity duration-100 ease-out group-hover/logomark:opacity-0 items-center justify-center overflow-hidden rounded-lg bg-white p-1 shadow-lg ring-1 ring-black/5 dark:bg-gray-900"><img src="../../../assets/icons/consumer-portal/brand-mark.svg" alt="" class="' +
     (sizeCls || "size-6") +
     '" /></span>'
   );
@@ -347,13 +347,13 @@ function smartHubLogoImg(alt) {
   var light =
     '<img src="' +
     illustrationAsset("SMART Hub.svg") +
-    '" width="140" height="35" alt="' +
+    '" width="131" height="33" alt="' +
     (alt || "") +
-    '" class="h-[35px] w-[140px] max-w-none shrink-0 dark:hidden">';
+    '" class="h-[32.75px] w-[131px] max-w-none shrink-0 dark:hidden">';
   var dark =
     '<img src="' +
     illustrationAsset("SMART Hub Dark.svg") +
-    '" width="140" height="35" alt="" class="hidden h-[35px] w-[140px] max-w-none shrink-0 dark:block">';
+    '" width="131" height="33" alt="" class="hidden h-[32.75px] w-[131px] max-w-none shrink-0 dark:block">';
   return light + dark;
 }
 
@@ -372,7 +372,7 @@ function buildSmartHubMarkHtml() {
     },
   );
   return (
-    '<span class="relative block size-8 shrink-0 overflow-hidden rounded-lg">' +
+    '<span class="relative block size-8 shrink-0 overflow-hidden transition-opacity duration-100 ease-out group-hover/logomark:opacity-0">' +
     tile +
     "</span>"
   );
@@ -400,7 +400,7 @@ function buildLogoHtml(justifyClass) {
   return (
     (activeBrand() === "consumer-portal"
       ? '<div class="flex h-8 w-full items-center '
-      : '<div class="flex h-[35px] items-center ') +
+      : '<div class="flex h-8 items-start overflow-hidden ') +
     (justifyClass || "justify-center") +
     '" data-smart-hub-logo>' +
     buildFullLogoSvgHtml() +
@@ -1164,9 +1164,9 @@ ${buildFooter("")}
 <button type="button" id="desktop-sidebar-collapse-btn" data-sidebar-toggle data-sidebar-btn-tooltip="Collapse" aria-label="Collapse sidebar" class="${collapsed ? "hidden " : ""}absolute right-1 w-10 h-8 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5 dark:hover:text-gray-300 transition-colors cursor-pointer">
 ${collapseControl}
 </button>
-<div id="desktop-logo-mark" class="${collapsed ? "flex" : "hidden"} group/logomark relative size-10 shrink-0 items-center justify-center overflow-visible">
+<div id="desktop-logo-mark" class="${collapsed ? "flex" : "hidden"} group/logomark relative h-8 w-10 shrink-0 items-center justify-center overflow-visible">
 ${logoMark}
-<button type="button" data-sidebar-toggle data-sidebar-btn-tooltip="Expand" aria-label="Expand sidebar" class="absolute inset-0 flex items-center justify-center rounded-lg text-gray-500 bg-white dark:bg-gray-900 opacity-0 group-hover/logomark:opacity-100 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-opacity cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></button>
+<button type="button" data-sidebar-toggle data-sidebar-btn-tooltip="Expand" aria-label="Expand sidebar" class="absolute left-1 top-0 flex size-8 items-center justify-center rounded-lg text-gray-500 bg-white dark:bg-gray-900 opacity-0 group-hover/logomark:opacity-100 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-opacity duration-100 ease-out cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></button>
 </div>
 </div>
 <nav class="relative flex w-full flex-col ${menuGap}" data-nav="desktop">
