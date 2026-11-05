@@ -65,7 +65,29 @@ Portal outcomes:
      reload via sidebar) drop it. Batch 4 must carry `?case=` (or make the instance sticky per tab) and
      load `sx-demo-case.js` (before `app-plans.js`) on payment-preferences.html too.
    - Launcher: `src/pages/demo/stp-case.html` (linked from root `index.html`).
-2. Enrolment pages `src/pages/sx-enroll/` (steps above, branches A/B/C, final screen + card).
+2. Enrolment pages `src/pages/sx-enroll/` **(done 2026-11-05)**
+   - Pages: `index` → `confirm-identity` → `confirm-business-details` → `review-documents` → `signature` → `payment` →
+     `card-processing` → `create-account` → `summary` → `complete` (all `?case=<id>`; missing/unknown case → notice + launcher link).
+   - Scripts: `sx-enroll.js` (`window.SXEnroll`, steps, SD adapters: `OB_FLOW_STEPS`, `OB_MOBILE_MENU`, `SDOnboardingContext`
+     shim on sessionStorage `sx-enroll-state`, `OBGo` wrapper), `sx-enroll-acp.js` (step 6), `sx-enroll-complete.js`. SD files untouched.
+   - Case fields written: `supplier.*` (Confirm details Edit; contactFirst/Last from Create account), `signer.*` (B form),
+     `enrol.stp` `'on'|'skipped'`, `enrol.signer` `'self'|'other'|null`, `enrol.agreementSigned` (bool),
+     `enrol.agreement` = A `{ signedBy, confirmedAt }` / B `{ delegatedTo, email, note, sentAt, delivered }` / C `null`,
+     `enrol.account = { username, firstName, lastName, createdAt }`, `enrol.completedAt`, `enrol.cardProcessed`,
+     `stp = { mid, tid, processedAt }`.
+   - STP per branch: A → `in_progress / terminal_completed_tid_mid_received` (wiki: "Review + agree + Confirm → EligibilityPending");
+     B → `sendAgreementEmail` → `agreement_signature_pending` (+ `sx_stp_agreement_request_v1`; non-allowlisted = test mode, no fetch);
+     C → `opt_in_required` (disabled; nothing stored if it already was).
+   - `SXDemoCase.markCardProcessed()` (new): override `{status:'paid', …, activityLog + complete event}` in
+     `sx_exchange_entry_overrides_v1[invoice]`, fake MID (15 digits) / TID (8 chars), `enrol.cardProcessed = true`; if
+     `enrol.stp==='on'` and the agreement is signed (`signer==='self'` or `agreementSigned===true`) and STP is at
+     `terminal_completed_tid_mid_received` → `bank_verification_required` (same as Get paid). `urls().portal` now opens
+     `&tab=paid` once `enrol.cardProcessed`, else `&tab=action-required`.
+   - **Batch 3 must know:** the B email's `verifyBaseUrl` is the page that sent it (`/src/pages/sx-enroll/card-processing.html`),
+     so the token link lands there — route it to the signer page (wrap, don't change the worker). When the signer signs, set
+     `enrol.agreementSigned = true`, `enrol.agreement.signedBy/confirmedAt` and STP → `terminal_completed_tid_mid_received`;
+     the enrolment tab re-renders on `sx-demo-case:change` only on the final page (ACP page reads the case on load).
+   - QA: `--init tools/ui-qa/init/sx-demo-case.js` seeds case `SX-QA` for code/hover audits.
 3. Signer side — email link → Review & Sign page (+ expired) → advances STP state.
 4. Portal Scenarios 1, 2, 4 — banners, process payment → MID/TID, micro deposit → Opted in,
    Payment Preferences shows MID/TID.

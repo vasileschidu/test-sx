@@ -1,0 +1,89 @@
+<!--
+  @file sx-enroll/review-documents.html
+  @description Step 3 "Review Documents" (Figma "4. Review Documents"
+    33456:52405). Same markup hooks as the SMART Disburse page, driven by the
+    unchanged src/scripts/review-documents.js (its "paywall.html" hop is routed
+    to signature.html by sx-enroll.js).
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Review Documents · SMART Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../scripts/tailwind-theme.js"></script>
+  <script src="../../scripts/design-tokens.js"></script>
+  <script src="../../scripts/data-source.js"></script>
+  <script src="../../scripts/sx-demo-case.js?v=20261105b"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261021a"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261105a"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261026a"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261013a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261103f"></script>
+  <script src="../../scripts/review-documents.js"></script>
+  <script src="../../scripts/onboarding-stepper.js?v=20261104a"></script>
+  <script src="../../scripts/onboarding-mobile-header.js"></script>
+  <link rel="stylesheet" href="../../styles/cursor.css" />
+</head>
+<body data-sx-step="review-documents" class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+
+    <div data-ob-sidebar data-ob-no-decline></div>
+
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col lg:min-h-screen">
+
+        <div data-ob-content class="flex flex-1 flex-col gap-14">
+          <div class="flex flex-col gap-6 px-4 pt-10 lg:px-14 lg:pt-14">
+            <div class="flex w-full flex-col gap-4">
+              <h1 class="type-title-page text-default">Review Documents<span data-docs-header hidden></span></h1>
+              <p class="type-description text-tertiary">Please review the document(s) below before proceeding with your payment.</p>
+            </div>
+
+            <!-- review-documents.js also fills the client message; this flow doesn't show it. -->
+            <div hidden>
+              <button type="button" data-docs-message-toggle aria-expanded="true" aria-controls="docs-message"><span data-docs-message-title></span><span data-docs-message-chevron></span></button>
+              <p id="docs-message" data-docs-message></p>
+            </div>
+
+            <div class="flex w-full flex-col gap-6">
+              <div class="flex w-full flex-col gap-2.5">
+                <p class="type-overline text-gray-600">Attachments</p>
+                <ul data-docs-list role="list" class="flex w-full flex-col gap-2.5"></ul>
+              </div>
+
+              <div data-docs-alert role="alert" class="hidden w-full items-start gap-3 rounded-md bg-red-50 p-4">
+                <img src="../../assets/onboarding/icon-exclamation-circle-red.svg" alt="" width="20" height="20" class="size-5 shrink-0">
+                <div class="flex flex-1 flex-col gap-2 text-sm leading-5">
+                  <p class="font-medium text-red-800">Open and mark the following attachments as Done to continue:</p>
+                  <ul data-docs-missing class="text-red-700"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions: Back (desktop) + Next -->
+          <div class="mt-auto flex px-4 pb-6 lg:px-14 lg:pb-14">
+            <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
+              <a href="confirm-business-details.html"
+                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+              <button type="button" data-docs-next
+                class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
+                Next
+                <img src="../../assets/onboarding/icon-arrow-narrow-right.svg" alt="" width="20" height="20" class="size-5">
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div data-ob-footer class="lg:hidden"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

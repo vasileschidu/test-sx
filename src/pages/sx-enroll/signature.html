@@ -1,0 +1,80 @@
+<!--
+  @file sx-enroll/signature.html
+  @description Step 4 "Provide Signature" (Figma "5. Sign" 33456:52442). Sign
+    opens the shared "Sign to authorize payment" dialog (OBSign, Draw / Type);
+    once signed the flow goes on to Confirm Payment. Logic: sx-enroll.js.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Provide Signature · SMART Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Meow+Script&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../scripts/tailwind-theme.js"></script>
+  <script src="../../scripts/design-tokens.js"></script>
+  <script src="../../scripts/data-source.js"></script>
+  <script src="../../scripts/sx-demo-case.js?v=20261105b"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261021a"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261105a"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261026a"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261013a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261103f"></script>
+  <script src="../../scripts/onboarding-sign.js?v=20261103b"></script>
+  <script src="../../scripts/onboarding-stepper.js?v=20261104a"></script>
+  <script src="../../scripts/onboarding-mobile-header.js"></script>
+  <link rel="stylesheet" href="../../styles/cursor.css" />
+</head>
+<body data-sx-step="signature" class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+
+    <div data-ob-sidebar data-ob-no-decline></div>
+
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col lg:min-h-screen">
+
+        <div data-ob-content class="flex flex-1 flex-col gap-14">
+          <div class="flex flex-col gap-6 px-4 pt-10 lg:px-14 lg:pt-14">
+            <div class="flex w-full flex-col gap-4">
+              <h1 class="type-title-page text-default">Sign for Payment</h1>
+              <p class="type-description text-tertiary">Sign to accept the payment of <span data-ob-skeleton data-sx-amount class="font-medium text-default">$3,526.00</span> from <span data-ob-skeleton data-sx-payer class="font-medium text-default">Horizon Inc</span>. You can draw your signature or type your name.</p>
+            </div>
+
+            <!-- Shown once signed -->
+            <div data-sx-signed hidden class="flex w-full items-start gap-3 rounded-lg border border-default bg-tertiary p-4">
+              <img src="../../assets/onboarding/icon-check-circle-green.svg" alt="" width="20" height="20" class="size-5 shrink-0">
+              <dl class="flex min-w-0 flex-1 flex-col gap-1">
+                <dt class="type-title-small text-default">Signed</dt>
+                <dd class="type-description text-tertiary"><span data-sx-signed-method>Drawn</span> signature by <span data-sx-signed-by class="font-medium text-default"></span> · <span data-sx-signed-at></span></dd>
+              </dl>
+            </div>
+          </div>
+
+          <div class="mt-auto flex px-4 pb-6 lg:px-14 lg:pb-14">
+            <div class="grid w-full grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-8">
+              <a href="review-documents.html"
+                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+              <div class="flex flex-col gap-4">
+                <button type="button" data-sx-sign
+                  data-secondary-class="flex h-14 w-full cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white px-4 text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+                  class="flex h-14 w-full cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-4 text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40">Sign</button>
+                <button type="button" data-sx-next hidden
+                  class="flex h-14 w-full cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-4 text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40">
+                  Next
+                  <img src="../../assets/onboarding/icon-arrow-narrow-right.svg" alt="" width="20" height="20" class="size-5">
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div data-ob-footer class="lg:hidden"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

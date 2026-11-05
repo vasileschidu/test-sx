@@ -48,6 +48,8 @@ state and add a row here in the same change. Tokens: see the `design-system` ski
 | Decline, faster payout, VC how-to | `OBDecline`, `OBFaster`, `OBVirtualCardHow` |
 | Multi-Party | `OBFlow` (`onboarding-flow.js`), `onboarding-multi-party.js` |
 | Review documents | `review-modal.js` — any `[data-review-modal]` dialog, triggers `.review-trigger` / `.gp-review-trigger` |
+| Reuse in another flow | set `window.OB_FLOW_STEPS` / `OB_MOBILE_MENU` before the sidebar/stepper load; wrap `OBGo` instead of editing SD scripts — see `sx-enroll.js` (SMART Exchange enrolment, `src/pages/sx-enroll/`) |
+| SX enrolment helpers | `SXEnroll.textField(id, label, value, opts)` (OBField + error line), `.row(label, html)`, `.fieldError(input, msg)`, `.setLoading(btn, label)` → restore fn |
 
 ## Markup patterns (copy exactly)
 
@@ -100,6 +102,24 @@ one-line selected value: two-line block `in-[el-selectedcontent]:hidden` + a
   <input type="checkbox" name="…" aria-label="…" class="absolute inset-0 size-full appearance-none cursor-pointer focus:outline-hidden" />
 </div>
 ```
+
+### Read-only details box (no header; Figma SX enrolment / Get paid)
+`<div class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5">` + description list rows.
+Use when Figma shows a plain gray box; an Edit action goes above the box (right-aligned xs link), not in a header bar.
+
+### Radio card with expanding form (`sx-enroll-acp.js`)
+`fieldset` (disable it while loading) → per option `div.overflow-hidden.rounded-lg.border.border-gray-200.bg-white` >
+`label.flex.cursor-pointer.items-center.gap-3.px-4.py-3.hover:bg-gray-50.has-checked:bg-gray-50.has-disabled:cursor-not-allowed`
+with the launcher's native radio (`appearance-none … checked:bg-blue-600 … disabled:bg-gray-100`); the checked option
+renders its form below in `div.flex.flex-col.gap-4.border-t.border-gray-200.p-4` (OBField inputs + primary md button).
+
+### Status card (acknowledgement / waiting)
+`section.overflow-hidden.rounded-lg.border.border-gray-200` > `h2` title row `border-b px-4 py-3 text-sm font-semibold` >
+rows `p-4 gap-2` (description list) > optional footer `border-t px-4 py-3`. Status badges: `rounded-md bg-green-50 px-2 py-0.5
+text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20` (Completed) / blue-50·blue-700·blue-700/10 (In Process).
+
+Toggle switch disabled: add `has-disabled:cursor-not-allowed has-disabled:opacity-50` on the track, `disabled:cursor-not-allowed` on the input.
+Password reveal: eye button `absolute top-1/2 right-2 size-7 -translate-y-1/2 rounded-md text-gray-400 hover:bg-gray-100` in the input's `relative` wrapper, `aria-pressed`.
 
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).

@@ -1,0 +1,104 @@
+<!--
+  @file sx-enroll/summary.html
+  @description Step 8 "Complete" · Summary (Figma "10. Summary" 33456:52896):
+    amount hero, business and cardholder details, the three consents
+    (OBConsents, text from src/data/sd-virtual-card.json) and Submit, which
+    sets enrol.completedAt and opens complete.html. Logic: sx-enroll.js.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Almost Done · SMART Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../scripts/tailwind-theme.js"></script>
+  <script src="../../scripts/design-tokens.js"></script>
+  <script src="../../scripts/data-source.js"></script>
+  <script src="../../scripts/sx-demo-case.js?v=20261105b"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261021a"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261105a"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261026a"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261013a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261103f"></script>
+  <script src="../../scripts/checkbox-component.js"></script>
+  <script src="../../scripts/onboarding-consents.js?v=20261103e"></script>
+  <script src="../../scripts/onboarding-stepper.js?v=20261104a"></script>
+  <script src="../../scripts/onboarding-mobile-header.js"></script>
+  <link rel="stylesheet" href="../../styles/cursor.css" />
+  <link rel="stylesheet" href="../../styles/checkbox.css" />
+  <link rel="stylesheet" href="../../styles/onboarding-checkbox.css" />
+</head>
+<body data-sx-step="summary" class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+
+    <div data-ob-sidebar data-ob-no-decline></div>
+
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col lg:min-h-screen">
+
+        <div data-ob-content class="flex flex-1 flex-col gap-14">
+          <div class="flex flex-col gap-6 px-4 pt-10 lg:px-14 lg:pt-14">
+            <div class="flex w-full flex-col gap-4">
+              <h1 class="type-title-page text-default">Almost Done</h1>
+              <p class="type-description text-tertiary">Please review before accepting your payment.</p>
+            </div>
+
+          <section aria-label="Payment amount" data-ob-tone="dark"
+            class="relative w-full overflow-hidden rounded-2xl bg-[linear-gradient(149deg,#3773ff_3.3%,#2254ca_99.2%)] shadow-xl">
+            <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 top-0 h-[172px] overflow-hidden rounded-2xl">
+              <span class="absolute top-[calc(50%-72px)] left-[calc(50%-113.5px)] flex size-[198.7px] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+                <img src="../../assets/onboarding/bubble-1.svg" alt="" width="162.266" height="162.266" class="block max-w-none -rotate-[105deg]">
+              </span>
+              <span class="absolute top-[calc(50%+95.81px)] left-[calc(50%-109.55px)] flex size-[143.1px] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+                <img src="../../assets/onboarding/bubble-2.svg" alt="" width="116.858" height="116.858" class="block max-w-none -rotate-[105deg]">
+              </span>
+              <span class="absolute top-[calc(50%+27.25px)] left-[calc(50%+161.16px)] flex size-[180.2px] -translate-x-1/2 -translate-y-1/2 items-center justify-center">
+                <img src="../../assets/onboarding/bubble-3.svg" alt="" width="147.167" height="147.167" class="block max-w-none -rotate-[105deg]">
+              </span>
+            </div>
+            <div class="relative flex flex-col items-center gap-3 px-5 pt-6 pb-6">
+              <p class="type-overline text-blue-200">Payment amount</p>
+              <p class="text-5xl leading-12 whitespace-nowrap"><span data-pay-integer data-ob-skeleton="text" class="inline-block align-top text-white">$3,526</span><span data-pay-decimal data-ob-skeleton="decimal" class="inline-block align-top text-blue-300">.00</span></p>
+              <p class="flex items-center gap-1 rounded-full bg-blue-800 py-1 pr-1 pl-4">
+                <span class="text-[10px] leading-5 font-medium tracking-wider whitespace-nowrap text-blue-400 uppercase">Estimated Processing Time:</span>
+                <span class="flex items-center gap-0.5 rounded-full bg-emerald-500 px-1.5 py-0.5 text-xs leading-3 text-white">
+                  <img src="../../assets/onboarding/icon-check-circle-badge.svg" alt="" width="14" height="14" class="size-3.5">Instant
+                </span>
+              </p>
+            </div>
+          </section>
+
+            <div data-sx-business class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5"></div>
+            <div data-sx-cardholder class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5"></div>
+
+            <template id="sx-visa-badge"><svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Visa" role="img" > <rect width="24" height="16" rx="1.2" fill="url(#visa-grad-sx-summary)" /> <path d="M12.309 7.05313C12.2987 7.85651 13.0305 8.30487 13.5818 8.57141C14.1483 8.84493 14.3385 9.0203 14.3364 9.26485C14.3321 9.6392 13.8845 9.80438 13.4656 9.81081C12.7349 9.82208 12.3101 9.61506 11.9722 9.45846L11.709 10.6807C12.0479 10.8357 12.6754 10.9708 13.3262 10.9767C14.8536 10.9767 15.853 10.2286 15.8584 9.06857C15.8644 7.5964 13.8061 7.51489 13.8202 6.85684C13.8251 6.65733 14.0169 6.44442 14.4374 6.39025C14.6455 6.3629 15.2201 6.34198 15.8714 6.63963L16.127 5.45708C15.7768 5.33051 15.3266 5.2093 14.7661 5.2093C13.3283 5.2093 12.3171 5.96764 12.309 7.05313ZM18.5836 5.3112C18.3047 5.3112 18.0696 5.47263 17.9647 5.7204L15.7827 10.8899H17.3091L17.6129 10.057H19.4781L19.6543 10.8899H20.9996L19.8257 5.3112H18.5836ZM18.7971 6.81822L19.2376 8.91304H18.0312L18.7971 6.81822ZM10.4583 5.3112L9.25517 10.8899H10.7096L11.9122 5.3112H10.4583ZM8.3066 5.3112L6.79266 9.10825L6.18028 5.87969C6.1084 5.51929 5.82464 5.3112 5.50953 5.3112H3.03459L3 5.47317C3.50807 5.58257 4.08532 5.75902 4.43502 5.9478C4.64906 6.0631 4.71013 6.16393 4.7804 6.43798L5.9403 10.8899H7.47747L9.83404 5.3112H8.3066Z" fill="white" /> <defs> <linearGradient id="visa-grad-sx-summary" x1="10.7812" y1="16" x2="15.6708" y2="0.32624" gradientUnits="userSpaceOnUse" > <stop stop-color="#222357" /> <stop offset="1" stop-color="#254AA5" /> </linearGradient> </defs> </svg></template>
+
+            <!-- Consents (OBConsents) -->
+            <ul data-sx-consents role="list" class="flex w-full flex-col divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200"></ul>
+          </div>
+
+          <!-- Actions: Back (desktop) + Next -->
+          <div class="mt-auto flex px-4 pb-6 lg:px-14 lg:pb-14">
+            <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
+              <a href="create-account.html"
+                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+              <button type="button" data-sx-submit disabled
+                class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
+                Submit
+                
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div data-ob-footer class="lg:hidden"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

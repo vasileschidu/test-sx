@@ -287,15 +287,107 @@
   function urls(source) {
     var c = source || read();
     var query = c && c.id ? "?case=" + encodeURIComponent(c.id) : "";
+    // A pending card payment (STP off) lives on the Action Required tab;
+    // once processed during enrolment (markCardProcessed) it is on Paid.
+    var tab = c && c.enrol && c.enrol.cardProcessed ? "paid" : "action-required";
     return {
       enrol: resolve("../pages/sx-enroll/index.html" + query),
-      // A pending card payment (STP off) lives on the Action Required tab.
       portal: resolve(
         "../pages/dashboard/supplier-portal.html" +
-          (query ? query + "&tab=action-required" : ""),
+          (query ? query + "&tab=" + tab : ""),
       ),
       launcher: resolve("../pages/demo/stp-case.html"),
     };
+  }
+
+  var OVERRIDES_KEY = "sx_exchange_entry_overrides_v1";
+  var STP_KEY = "sx_global_stp_state_v3";
+
+  function randomDigits(count) {
+    var out = String(1 + Math.floor(Math.random() * 9));
+    while (out.length < count) out += Math.floor(Math.random() * 10);
+    return out;
+  }
+
+  function randomCode(count) {
+    var chars = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789";
+    var out = "";
+    while (out.length < count)
+      out += chars.charAt(Math.floor(Math.random() * chars.length));
+    return out;
+  }
+
+  /**
+   * Demo control "I've processed this card in my terminal": the case payment
+   * becomes Paid in the portal (same override shape exchanges-table.js writes
+   * from Get paid), MID/TID are simulated, and when STP is on with the Visa
+   * agreement already signed (stpStep terminal_completed_tid_mid_received)
+   * STP moves on to bank_verification_required, as processing a card from
+   * Get paid does. Returns the updated case (or null without one).
+   */
+  function markCardProcessed() {
+    var current = read();
+    if (!current) return null;
+    var row = toPaymentRow(current);
+    var now = new Date().toISOString();
+    try {
+      var raw = localStorage.getItem(OVERRIDES_KEY);
+      var overrides = raw ? JSON.parse(raw) : {};
+      if (!isPlainObject(overrides)) overrides = {};
+      overrides[row.invoice] = Object.assign({}, overrides[row.invoice], {
+        status: "paid",
+        methodType: "card",
+        paymentMethod: "Card",
+        paymentMethodEnding: row.paymentMethodEnding,
+        details: {
+          activityLog: row.details.activityLog.concat([
+            {
+              user:
+                [current.supplier.contactFirst, current.supplier.contactLast]
+                  .filter(Boolean)
+                  .join(" ") || "Supplier",
+              action: "processed the card in their terminal",
+              date: now,
+              type: "complete",
+            },
+          ]),
+        },
+      });
+      localStorage.setItem(OVERRIDES_KEY, JSON.stringify(overrides));
+    } catch (error) {}
+
+    var stp = current.stp || {};
+    var next = update({
+      enrol: { cardProcessed: true },
+      stp: {
+        mid: stp.mid || randomDigits(15),
+        tid: stp.tid || randomCode(8),
+        processedAt: now,
+      },
+    });
+
+    var enrol = current.enrol || {};
+    var agreementSigned =
+      enrol.stp === "on" &&
+      (enrol.signer === "self" || enrol.agreementSigned === true);
+    if (agreementSigned) {
+      var target = "bank_verification_required";
+      if (window.STPState && typeof window.STPState.setStpStep === "function") {
+        var state = window.STPState.getStpState();
+        if (state.stpStep === "terminal_completed_tid_mid_received")
+          window.STPState.setStpStep(target);
+      } else {
+        try {
+          var stored = JSON.parse(localStorage.getItem(STP_KEY) || "{}");
+          if (stored.stpStep === "terminal_completed_tid_mid_received")
+            localStorage.setItem(
+              STP_KEY,
+              JSON.stringify({ stpStatus: "in_progress", stpStep: target }),
+            );
+        } catch (error) {}
+      }
+    }
+    return next;
   }
 
   // Other tabs (the signer's tab, the portal) hear about changes too.
@@ -318,5 +410,6 @@
     isPortalInstance: isPortalInstance,
     toPaymentRow: toPaymentRow,
     urls: urls,
+    markCardProcessed: markCardProcessed,
   };
 })();

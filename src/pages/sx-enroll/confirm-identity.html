@@ -1,0 +1,71 @@
+<!--
+  @file sx-enroll/confirm-identity.html
+  @description Step 1 "Confirm Identity" (Figma "2. Identity Verification"
+    33456:52333): invoice number + vendor ID, OBField inputs prefilled from the
+    demo case. The invoice number must match the case payment. Logic:
+    src/scripts/sx-enroll.js (page "confirm-identity").
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Confirm Identity · SMART Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../scripts/tailwind-theme.js"></script>
+  <script src="../../scripts/design-tokens.js"></script>
+  <script src="../../scripts/data-source.js"></script>
+  <script src="../../scripts/sx-demo-case.js?v=20261105b"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261021a"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261105a"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261026a"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261013a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261103f"></script>
+  <script src="../../scripts/onboarding-stepper.js?v=20261104a"></script>
+  <script src="../../scripts/onboarding-mobile-header.js"></script>
+  <link rel="stylesheet" href="../../styles/cursor.css" />
+</head>
+<body data-sx-step="confirm-identity" class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+
+    <div data-ob-sidebar data-ob-no-decline></div>
+
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div class="flex flex-1 flex-col lg:min-h-screen">
+
+        <form data-sx-form novalidate data-ob-content class="flex flex-1 flex-col gap-14">
+
+          <div class="flex flex-col gap-6 px-4 pt-10 lg:px-14 lg:pt-14">
+            <div class="flex w-full flex-col gap-4">
+              <h1 class="type-title-page text-default">Let’s make sure it’s you!</h1>
+              <p class="type-description text-tertiary">To collect your <span class="font-medium text-default">payment</span>, please confirm the following.</p>
+            </div>
+
+            <!-- Fields: rendered by sx-enroll.js -->
+            <div data-sx-identity class="flex w-full flex-col gap-4 rounded-lg border border-default p-4"></div>
+          </div>
+
+          <!-- Actions -->
+          <div class="mt-auto flex px-4 pb-6 lg:px-14 lg:pb-14">
+            <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
+              <a href="index.html"
+                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+              <button type="submit" data-sx-next disabled
+                class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
+                Next
+                <img src="../../assets/onboarding/icon-arrow-narrow-right.svg" alt="" width="20" height="20" class="size-5">
+              </button>
+            </div>
+          </div>
+        </form>
+
+        <div data-ob-footer class="lg:hidden"></div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

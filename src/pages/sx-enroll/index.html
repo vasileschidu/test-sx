@@ -1,0 +1,113 @@
+<!--
+  @file sx-enroll/index.html
+  @description SMART Exchange enrolment, welcome (Figma "1. Default" 33456:52280,
+    file 9DRzbyv7FDCDYFYN5ZGuwZ). Opened from the STP case launcher
+    (SXDemoCase.urls().enrol, ?case=<id>). Same shell as the SMART Disburse
+    welcome (src/pages/onboarding/index.html); values come from the demo case
+    via src/scripts/sx-enroll.js.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome · SMART Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../scripts/tailwind-theme.js"></script>
+  <script src="../../scripts/design-tokens.js"></script>
+  <script src="../../scripts/data-source.js"></script>
+  <script src="../../scripts/sx-demo-case.js?v=20261105b"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261021a"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261105a"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261026a"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261013a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261103f"></script>
+  <script src="../../scripts/onboarding-stepper.js?v=20261104a"></script>
+  <link rel="stylesheet" href="../../styles/cursor.css" />
+</head>
+<body data-sx-step="welcome" class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+
+  <!-- CONTAINER -->
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+
+    <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js; nothing started yet -->
+    <div data-ob-sidebar data-ob-step="none" data-ob-no-decline></div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
+      <div data-ob-content class="flex flex-1 flex-col items-center gap-10 px-4 pt-10 pb-10 md:pb-4 lg:gap-9 lg:px-10 lg:py-14">
+
+        <!-- Product mark -->
+        <p data-ob-no-skeleton class="flex h-9 items-center gap-2 text-xl text-default">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-6 text-amber-400"><path fill-rule="evenodd" d="M14.615 1.595a.75.75 0 0 1 .359.852L12.982 9.75h7.268a.75.75 0 0 1 .548 1.262l-10.5 11.25a.75.75 0 0 1-1.272-.71l1.992-7.302H3.75a.75.75 0 0 1-.548-1.262l10.5-11.25a.75.75 0 0 1 .913-.143Z" clip-rule="evenodd" /></svg>
+          <span><span class="font-bold">SMART</span> Exchange</span>
+        </p>
+
+        <!-- Welcome card (SD welcome card) -->
+        <section data-ob-tone="dark" aria-labelledby="welcome-name"
+          class="relative flex min-h-[444px] w-full max-w-[548px] flex-1 flex-col overflow-hidden rounded-[32px] bg-[linear-gradient(180deg,#1e326f_0%,#090c38_100%)] shadow-xl md:h-[624px] md:w-[505px] md:flex-none md:rounded-3xl">
+
+          <!-- Waves (phone) -->
+          <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-[572px] overflow-hidden md:hidden">
+            <img src="../../assets/onboarding/wave-m-1.svg" alt="" width="151.643" height="151.643" class="absolute top-[calc(50%+218px)] left-[-20.82px] max-w-none -translate-y-1/2 opacity-60">
+            <img src="../../assets/onboarding/wave-m-2.svg" alt="" width="358.429" height="358.429" class="absolute top-[calc(50%+218px)] left-[-124.21px] max-w-none -translate-y-1/2 opacity-60">
+            <img src="../../assets/onboarding/wave-m-3.svg" alt="" width="565.214" height="565.214" class="absolute top-[calc(50%+218px)] left-[-227.61px] max-w-none -translate-y-1/2 opacity-60">
+            <img src="../../assets/onboarding/wave-m-4.svg" alt="" width="772" height="772" class="absolute top-[calc(50%+218px)] left-[-331px] max-w-none -translate-y-1/2 opacity-60">
+          </div>
+
+          <!-- Waves (tablet and desktop) -->
+          <div aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-[-2px] hidden h-[627px] overflow-hidden md:block">
+            <img src="../../assets/onboarding/wave-d-1.svg" alt="" width="331.571" height="331.571" class="absolute bottom-[431.71px] left-[294.21px] max-w-none opacity-60">
+            <img src="../../assets/onboarding/wave-d-2.svg" alt="" width="783.714" height="783.714" class="absolute bottom-[205.64px] left-[68.14px] max-w-none opacity-60">
+            <img src="../../assets/onboarding/wave-d-3.svg" alt="" width="1235.86" height="1235.86" class="absolute bottom-[-20.43px] left-[-157.93px] max-w-none opacity-60">
+            <img src="../../assets/onboarding/wave-d-4.svg" alt="" width="1688" height="1688" class="absolute bottom-[-246.5px] left-[-384px] max-w-none opacity-60">
+          </div>
+
+          <div class="relative flex flex-col px-6 pt-12 md:flex-1 md:justify-center md:px-14 md:pt-24 md:pb-12">
+            <div class="flex flex-col gap-6">
+              <div class="flex flex-col gap-3 text-white">
+                <p class="text-base leading-6 md:text-xl md:leading-8 md:text-gray-300">Hi,</p>
+                <h1 id="welcome-name" data-ob-skeleton data-sx-supplier
+                  class="text-2xl leading-8 font-bold break-words md:text-3xl md:leading-9 md:font-extrabold">Pinnacle Group</h1>
+              </div>
+
+              <div class="flex flex-col gap-3">
+                <div class="flex min-h-20 items-center gap-2 rounded-[10px] bg-white/15 p-4 ring-8 ring-white/5">
+                  <div class="flex min-w-0 flex-1 flex-col gap-2">
+                    <img src="../../assets/onboarding/icon-bell-dot.svg" alt="" width="20" height="22" class="-mt-0.5 h-[22px] w-5">
+                    <p data-ob-skeleton class="text-sm leading-5 font-medium text-white">
+                      You have a payment of <span data-sx-amount class="font-semibold">$3,526.00</span> from <span data-sx-payer class="font-semibold">Horizon Inc</span>.
+                    </p>
+                  </div>
+                </div>
+
+                <button type="button" data-sx-learn
+                  class="flex w-fit cursor-pointer items-center gap-2 rounded-md px-3.5 py-2.5 text-base md:gap-3 md:py-3 md:pr-6 md:pl-0 leading-6 font-medium text-white underline underline-offset-2 hover:text-white/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">
+                  <img src="../../assets/onboarding/icon-question-circle.svg" alt="" width="20" height="20" class="size-5">
+                  Learn more
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main CTA -->
+          <div class="relative p-6 md:p-14">
+            <a href="confirm-identity.html"
+              class="flex w-full items-center justify-center gap-2 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-6 py-4 text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white md:w-64">
+              Get Started
+              <img src="../../assets/onboarding/icon-arrow-right.svg" alt="" width="20" height="20" class="size-5 brightness-0 invert">
+            </a>
+          </div>
+        </section>
+      </div>
+
+      <!-- Footer: on desktop the sidebar carries it -->
+      <footer data-ob-footer class="w-full lg:hidden"></footer>
+    </div>
+  </div>
+
+</body>
+</html>
