@@ -79,6 +79,22 @@ Same scripts, but separate drifted HTML: `payment-preferences.html` and `consume
 | D-32 | Declined copy | `declined.html` heading reads "Your SMART Disburse access has been revoked" although the payee declined | open: confirm wording with Figma |
 | D-33 | Hub status after payee action | Nothing the payee does (submit, decline, revoked) updates Hub; the payable stays "Pending Payee Action" | open: prototype limitation |
 
+## STP (found 2026-11-05)
+
+See [STP](../products/smart-exchange/stp.md). Code: `src/scripts/stp-state.js`, `src/scripts/pages/payment-preferences-page.js`,
+`src/scripts/topbar-component.js`, `src/scripts/exchanges-table.js`.
+
+| # | Element | Today | Status |
+|---|---|---|---|
+| D-34 | Opt-in flow vs product owner | Product owner: opt in from the SX token flow (Card), answer "Authorized Signer?" (Yes: accept, No: send to a signer with name + email), then the penny test. Code: portal only, no signer question, email only, and an extra Process Any Payment / Terminal Verification step before the penny test | open: confirm with the product owner and Figma [R3] SMART Exchange, page STP |
+| D-35 | Opt in / Review outside Payment Preferences | On other Portal pages the banner's **Opt in** and **Review** open the store's own agreement dialog: no email step, and **Confirm** doesn't change the state | open |
+| D-36 | Setup steps dialog | Every **Learn more**, **Don't see a small deposit?** and the re-verify link open one dialog that always shows steps 1–2 done and a **Verify now** button, so any state, even before opting in, can jump to *Enabled* | open |
+| D-37 | Banner audience | The STP banner checks only `hideStp`, so it also shows in the Buyer view (Hub pages) and the Transcard view; only Consumer Portal hides it | open: confirm who should see it |
+| D-38 | Naming | "Interested in **Automated** Card Processing?" (blue banner) vs "**Automatic** Card Processing" everywhere else; button "Confirm" vs "Confirm Acceptance" (product owner) | open |
+| D-39 | Consumer Payment Preferences | Carries unused copies of the STP dialogs (enable, setup steps, verify, opt-out) but no STP card | open: remove |
+| D-40 | Get paid STP toggle | `exchanges-table.js` advances STP when Get paid is submitted with an "enable STP" toggle on (`#gp-stp-*`), but no page renders it; the guide's **Done** is the only path to bank verification | open: remove or rebuild |
+| D-41 | Agreement link and state | The link's token is stripped and never checked (expiry not enforced); state is per browser, so a signer on another device doesn't move the requester's state; penny test accepts any amount | open: prototype limitation |
+
 ## Other
 
 | # | Element | Today | Status |

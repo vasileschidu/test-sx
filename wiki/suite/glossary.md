@@ -37,6 +37,10 @@ Shared vocabulary. If a term is used differently in one product, say so in that 
 | **Client code** | Anonymous identifier for a client (`c001`). Used instead of real names. |
 | **Token** | TODO: what a token is exactly (link? one-time code? how long it is valid?) |
 | **Supplier** | A business receiving payments, via Exchange. |
+| **STP / Straight Through Processing** | A SMART Exchange card option: a supplier with its own card processor opts in, and card payments on that rail are processed automatically to its merchant account instead of being keyed in by hand. Called **Automatic Card Processing** in the UI (the opt-in banner says "Automated"). See [STP](../products/smart-exchange/stp.md). |
+| **Authorized Signer** | A person allowed to sign the card network agreement (in the code, the Visa AR Manager Participation Agreement) for the supplier, needed to turn STP on. TODO(confirm): who qualifies and whether it is checked; the prototype doesn't ask. |
+| **Penny test** | Micro-deposit verification: a small amount is deposited in the supplier's bank account, and the supplier confirms the exact amount (**Verify now**). Last step of the STP opt-in. |
+| **Merchant account / processor** | The supplier's own card acceptance setup: the **processor** runs card payments (for example through the supplier's terminal) and settles them to the **merchant account**. STP sends card payments there automatically. Identified by a Merchant ID (MID) and Terminal ID (TID). |
 | **Consumer** | An individual receiving payments, via Consumer Portal. |
 | **Enrollment** | TODO: what enrolling means (who, what is verified, what access results) |
 
