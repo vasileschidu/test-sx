@@ -32,3 +32,8 @@ exactly like the design system with the least new code.
    `.claude/playbooks/proto-engineer-lessons.md`; a lasting rule goes into the core instead.
 4. Commit only if asked, on a branch, never to `main`. Report (≤ 15 lines): files, pages to check
    (local links), QA result, lessons added.
+
+## On SMART Disburse (`src/pages/onboarding/`, `onboarding-*.js`, Figma Multi-Party Flow `867:9754`)
+SD has its own agents: hand the job to **`sd-sandbox`** (the coordinator picks it via `sd-brief`). If you are still asked
+to do it yourself, first read `.claude/skills/sd-design-rules/SKILL.md`, which on SD overrides `CLAUDE.md`,
+`components`, `design-system` and your playbook, then use `sandbox-render` at 375 / 768 / 1280 and `sd-regression` before you report done.

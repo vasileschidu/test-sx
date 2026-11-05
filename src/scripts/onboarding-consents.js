@@ -78,10 +78,13 @@ window.OBConsents = (function () {
           '<button type="button" data-ob-modal-close class="' + window.OBModal.SECONDARY_BUTTON_MD + '">Cancel</button>' +
           '<button type="button" data-vcs-accept disabled class="' + window.OBModal.PRIMARY_BUTTON_MD + '">Accept</button>' +
         '</div>',
-        // 752 at most (Figma); min() keeps it inside the shell's viewport cap.
-        panelClass: 'relative flex max-h-[min(752px,calc(100dvh-3rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5'
+        // Full height with a 16px gap on every side (same as the document viewer).
+        panelClass: 'relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5'
       }
     );
+    var frame = backdrop.querySelector('[data-ob-modal-frame]');
+    frame.classList.remove('px-4', 'py-6');
+    frame.classList.add('p-4');
 
     var scroller = backdrop.querySelector('[data-vcs-scroll]');
     var accept = backdrop.querySelector('[data-vcs-accept]');

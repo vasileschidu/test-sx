@@ -25,8 +25,8 @@ window.OBSign = (function () {
   function header() {
     return '<div class="flex shrink-0 items-center gap-2 border-b border-[#e5e7eb] py-2 pr-3 pl-6">' +
         '<h2 id="ob-sign-title" class="flex-1 text-base leading-6 font-medium text-[#111827]">Sign to authorize payment</h2>' +
-        '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
-          '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-lined-gray.svg" alt="" width="24" height="24" class="size-6"></button>' +
+        '<button type="button" data-ob-modal-close class="m-1 inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+          '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5"></button>' +
       '</div>';
   }
 
