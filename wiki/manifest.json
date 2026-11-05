@@ -47,6 +47,7 @@
           "pages": [
             { "path": "products/smart-exchange/overview.md", "label": "Overview" },
             { "path": "products/smart-exchange/standard.md", "label": "Current standard" },
+            { "path": "products/smart-exchange/stp.md", "label": "STP" },
             { "path": "products/smart-exchange/changelog.md", "label": "Changelog" },
             { "path": "products/smart-exchange/variants/README.md", "label": "Client variants" },
             { "path": "products/smart-exchange/variants/c000.md", "label": "c000 (example)" }
