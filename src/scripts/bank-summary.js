@@ -12,7 +12,7 @@
  *     then runs the prototype verification (onboarding-bank.js):
  *       ok        → bank-submitted.html
  *       failed    → back to bank-details.html with the result, until the
- *                   attempts run out → revoked.html
+ *                   attempts run out → payment-closed.html (revoked)
  */
 (function () {
   'use strict';
@@ -20,7 +20,7 @@
   var DETAILS_URL = 'bank-details.html';
   var INFO_URL = 'bank-account-info.html';
   var DONE_URL = 'bank-submitted.html';
-  var REVOKED_URL = 'revoked.html';
+  var REVOKED_URL = 'payment-closed.html';
 
   function getState() {
     return window.SDOnboardingContext ? window.SDOnboardingContext.getState() : {};
@@ -45,16 +45,16 @@
   }
 
   function edit(href, what) {
-    return '<a href="' + href + '" class="shrink-0 rounded-md px-2.5 py-1.5 text-sm leading-5 font-semibold text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Edit<span class="sr-only"> ' + what + '</span></a>';
+    return '<a href="' + href + '" class="shrink-0 rounded text-sm leading-5 font-medium text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Edit<span class="sr-only"> ' + what + '</span></a>';
   }
 
   function group(items, href, what, extra) {
-    return '<div class="flex flex-col gap-4 rounded-lg bg-[#f9fafb] py-6 pr-2 pl-6">' +
+    return '<div class="flex flex-col gap-4 rounded-lg bg-[#f9fafb] p-6">' +
       '<div class="flex items-center gap-4">' +
         '<div class="flex min-w-0 flex-1 flex-col gap-4">' + items + '</div>' +
         edit(href, what) +
       '</div>' +
-      (extra ? '<div class="pr-4">' + extra + '</div>' : '') +
+      (extra ? '<div>' + extra + '</div>' : '') +
     '</div>';
   }
 
@@ -122,7 +122,7 @@
       }
       var attempts = (verification.attempts || 0) + 1;
       if (attempts >= data.maxAttempts) {
-        saveState({ bankVerification: { attempts: attempts, status: result }, revokedReason: 'Exhausted attempts to verify your bank account' });
+        saveState({ bankVerification: { attempts: attempts, status: result }, revokedReason: 'Exhausted attempts to verify bank account' });
         window.OBGo(REVOKED_URL);
         return;
       }

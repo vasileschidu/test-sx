@@ -1,0 +1,57 @@
+{
+  "_doc": "Every SD onboarding state snapshot.mjs captures. flow: us | mp (seed page). pre: a preset name or JS run on the seed page. steps: clicks/evals that open a dialog (shot at viewport height). Add a state here when a page or dialog is added.",
+  "presets": {
+    "seed": {
+      "us": "/src/pages/onboarding/index.html?flow=us",
+      "mp": "/src/pages/onboarding/index.html?flow=multi-party"
+    },
+    "pre": {
+      "all": "(()=>{const P={firstName:'Rachel',lastName:'Morris',dob:'01/15/1985',ssn:'123-45-6789',address1:'123 Main St',city:'Austin',state:'Texas',zip:'73301',phone:'(555) 123-4567',email:'rachel.morris@example.com'};SDOnboardingContext.saveState({virtualCard:P,checkRequest:P,debitAccountInfo:P,bankAccountInfo:P,debitCard:{brand:'Mastercard',number:'5555555555554444',month:'12',year:'28',name:'Rachel Morris'},bankAccount:{accountType:'checking',holder:'Rachel Morris',routing:'021000021',account:'000123456789'}})})()",
+      "revoked": "SDOnboardingContext.saveState({revokedReason:'Exhausted attempts to verify bank account'})",
+      "declined": "SDOnboardingContext.saveState({declined:{reason:'Incorrect amount',note:'The amount does not match the invoice.'}})"
+    }
+  },
+  "states": [
+    { "id": "welcome", "path": "/src/pages/onboarding/index.html" },
+    { "id": "welcome-learn-more", "path": "/src/pages/onboarding/index.html", "steps": [{ "eval": "document.getElementById('learn-more-dialog').showModal()" }] },
+    { "id": "confirm-business-details", "path": "/src/pages/onboarding/confirm-business-details.html" },
+    { "id": "confirm-identity", "path": "/src/pages/onboarding/confirm-identity.html?channel=email" },
+    { "id": "create-account", "path": "/src/pages/onboarding/create-account.html" },
+    { "id": "review-documents", "path": "/src/pages/onboarding/review-documents.html" },
+    { "id": "review-documents-viewer", "path": "/src/pages/onboarding/review-documents.html", "steps": [{ "click": "[data-doc-open]" }] },
+    { "id": "signature", "path": "/src/pages/onboarding/signature.html" },
+    { "id": "paywall", "path": "/src/pages/onboarding/paywall.html" },
+    { "id": "instant-virtual-card", "path": "/src/pages/onboarding/instant-virtual-card.html", "pre": "all" },
+    { "id": "instant-virtual-card-how", "path": "/src/pages/onboarding/instant-virtual-card.html", "pre": "all", "steps": [{ "click": "[data-vc-how]" }] },
+    { "id": "virtual-card-summary", "path": "/src/pages/onboarding/virtual-card-summary.html", "pre": "all" },
+    { "id": "virtual-card-summary-review", "path": "/src/pages/onboarding/virtual-card-summary.html", "pre": "all", "steps": [{ "click": "[data-vcs-review]" }] },
+    { "id": "virtual-card-summary-faster", "path": "/src/pages/onboarding/virtual-card-summary.html", "pre": "all", "steps": [{ "eval": "OBFaster.open()", "wait": 2500 }] },
+    { "id": "virtual-card-summary-sign", "path": "/src/pages/onboarding/virtual-card-summary.html", "pre": "all", "steps": [{ "eval": "OBSign.open({name:'Rachel Morris',onSigned(){}})" }] },
+    { "id": "card-created", "path": "/src/pages/onboarding/card-created.html", "pre": "all" },
+    { "id": "card-created-how", "path": "/src/pages/onboarding/card-created.html", "pre": "all", "steps": [{ "click": "[data-cc-how]" }] },
+    { "id": "card-created-receipt", "path": "/src/pages/onboarding/card-created.html", "pre": "all", "steps": [{ "click": "[data-cc-download]" }] },
+    { "id": "debit-account-info", "path": "/src/pages/onboarding/debit-account-info.html", "pre": "all", "wait": 8000 },
+    { "id": "debit-card-details", "path": "/src/pages/onboarding/debit-card-details.html", "pre": "all", "wait": 8000 },
+    { "id": "debit-summary", "path": "/src/pages/onboarding/debit-summary.html", "pre": "all", "wait": 8000 },
+    { "id": "debit-submitted", "path": "/src/pages/onboarding/debit-submitted.html", "pre": "all" },
+    { "id": "bank-account-info", "path": "/src/pages/onboarding/bank-account-info.html", "pre": "all", "wait": 8000 },
+    { "id": "bank-details", "path": "/src/pages/onboarding/bank-details.html", "pre": "all", "wait": 8000 },
+    { "id": "bank-summary", "path": "/src/pages/onboarding/bank-summary.html", "pre": "all", "wait": 8000 },
+    { "id": "bank-summary-decline", "path": "/src/pages/onboarding/bank-summary.html", "pre": "all", "wait": 8000, "steps": [{ "click": "[data-ob-decline]" }] },
+    { "id": "bank-submitted", "path": "/src/pages/onboarding/bank-submitted.html", "pre": "all" },
+    { "id": "check-request", "path": "/src/pages/onboarding/check-request.html", "pre": "all" },
+    { "id": "check-summary", "path": "/src/pages/onboarding/check-summary.html", "pre": "all" },
+    { "id": "check-submitted", "path": "/src/pages/onboarding/check-submitted.html", "pre": "all" },
+    { "id": "summary", "path": "/src/pages/onboarding/summary.html", "pre": "all" },
+    { "id": "complete", "path": "/src/pages/onboarding/complete.html", "pre": "all" },
+    { "id": "payment-closed", "path": "/src/pages/onboarding/payment-closed.html", "pre": "revoked" },
+    { "id": "declined", "path": "/src/pages/onboarding/declined.html", "pre": "declined" },
+    { "id": "dispute", "path": "/src/pages/onboarding/dispute.html" },
+    { "id": "mp-allocation", "path": "/src/pages/onboarding/allocation.html", "flow": "mp" },
+    { "id": "mp-allocation-how", "path": "/src/pages/onboarding/allocation.html", "flow": "mp", "steps": [{ "click": "[data-mp-how]" }] },
+    { "id": "mp-change-allocation", "path": "/src/pages/onboarding/change-allocation.html", "flow": "mp" },
+    { "id": "mp-allocation-log", "path": "/src/pages/onboarding/allocation-log.html", "flow": "mp" },
+    { "id": "mp-payment-status", "path": "/src/pages/onboarding/payment-status.html", "flow": "mp", "pre": "all" },
+    { "id": "mp-payment-closed", "path": "/src/pages/onboarding/payment-closed.html", "flow": "mp", "pre": "revoked" }
+  ]
+}

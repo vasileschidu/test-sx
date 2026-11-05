@@ -20,7 +20,18 @@ window.OBModal = (function () {
   var cache = {};
   var current = null;
 
-  var BUTTON = 'flex w-full cursor-pointer items-center justify-center rounded-[10px] px-[25px] py-4 text-base leading-6 font-medium shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2';
+  // Primary (filled) buttons have no shadow at all; only bordered secondaries keep shadow-xs.
+  var BUTTON_BASE = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-md px-[25px] py-4 text-base leading-6 font-medium focus-visible:outline-2 focus-visible:outline-offset-2';
+  var BUTTON = BUTTON_BASE + ' shadow-xs';
+  // Modal primary button (Figma "Button/Primary": blue gradient, no glow, radius 6, 56 tall).
+  // Disabled: 40% opacity, no hover change.
+  var PRIMARY_BUTTON = BUTTON_BASE + ' bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] text-white hover:brightness-110 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100';
+
+  // General/Button size md (Figma, e.g. "Review and agree" Cancel/Accept): 32 tall, padding 6/10,
+  // gap 4, radius 6, Inter Medium 14/20, hugs the label. The secondary's 1px border sits inside the 32.
+  var BUTTON_MD_BASE = 'inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 text-sm leading-5 font-medium focus-visible:outline-2 focus-visible:outline-offset-2';
+  var PRIMARY_BUTTON_MD = BUTTON_MD_BASE + ' py-1.5 bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] text-white hover:brightness-110 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100';
+  var SECONDARY_BUTTON_MD = BUTTON_MD_BASE + ' border border-[#d1d5db] bg-white py-[5px] text-[#374151] hover:bg-gray-50 focus-visible:outline-blue-600';
 
   function validateData(data, requiredFields) {
     if (!data) return false;
@@ -96,7 +107,7 @@ window.OBModal = (function () {
     return '<div class="flex flex-col gap-0.5">' +
       '<dt class="text-sm leading-5 text-gray-600">' + label + '</dt>' +
       '<dd class="flex items-center gap-3.5">' +
-        '<span class="min-w-0 flex-1 truncate">' + valueHtml + '</span>' +
+        '<span class="min-w-0 flex-1 truncate text-sm leading-5">' + valueHtml + '</span>' +
         '<button type="button" data-ob-copy="' + escapeHtml(copyValue) + '" ' +
           'class="group relative flex size-[18px] shrink-0 cursor-pointer items-center justify-center rounded-[4px] ' +
           '[&:hover:not([data-copied])]:bg-[#f3f4f6] [&:hover:not([data-copied])]:shadow-[0_0_0_4px_#f3f4f6] ' +
@@ -159,20 +170,32 @@ window.OBModal = (function () {
   /**
    * Opens a dialog. `body` is the HTML below the close button; `labelledBy`
    * names the heading id. Returns the backdrop element.
-   */
-  /**
-   * opts.panelClass replaces the default 512px panel classes; opts.bare skips
-   * the built-in close (X) row for dialogs that bring their own header.
+   *
+   * Tailwind Plus modal pattern: the backdrop is fixed and scrolls; the panel
+   * keeps its natural height, centred with 24px above and below. A panel taller
+   * than the screen scrolls as a whole (X, content and buttons together); the
+   * page behind stays put.
+   *
+   * opts.header    HTML above `body` (dialogs with a title bar); usually with
+   *                opts.bare.
+   * opts.footer    HTML below `body`: the dialog's buttons.
+   * opts.bare      no built-in close (X) row.
+   * opts.panelClass replaces the default 512px panel classes. A panel with its
+   *                own inner scroller (Review and agree, the document viewer)
+   *                caps itself with max-h-[min(752px,calc(100dvh-3rem))] and a
+   *                body root with min-h-0.
    */
   function open(body, labelledBy, opts) {
     opts = opts || {};
     if (current) close();
     var lastFocus = document.activeElement;
+    var panelClass = opts.panelClass || 'relative flex w-full max-w-[512px] flex-col rounded-lg bg-white shadow-xl';
     var wrap = document.createElement('div');
     wrap.innerHTML =
-      '<div data-ob-modal class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/75 p-4 backdrop-blur-[5px] lg:py-12">' +
+      '<div data-ob-modal class="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-[5px]">' +
+        '<div data-ob-modal-frame class="flex min-h-full items-center justify-center px-4 py-6">' +
         '<div role="dialog" aria-modal="true" tabindex="-1" data-ob-modal-dialog aria-labelledby="' + labelledBy + '" ' +
-          'class="' + (opts.panelClass || 'relative flex w-full max-w-[512px] flex-col rounded-lg bg-white shadow-xl') + ' focus:outline-none">' +
+          'class="' + panelClass + ' focus:outline-none">' +
           (opts.bare ? '' :
           '<div class="flex h-14 shrink-0 items-end px-4 pt-4">' +
             '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
@@ -180,7 +203,10 @@ window.OBModal = (function () {
               '<img src="' + ASSETS + 'icon-x-lined.svg" alt="" width="24" height="24" class="size-6">' +
             '</button>' +
           '</div>') +
-          body +
+          (opts.header || '') +
+          '<div data-ob-modal-body class="flex min-h-0 flex-auto flex-col">' + body + '</div>' +
+          (opts.footer ? '<div data-ob-modal-footer class="flex shrink-0 flex-col">' + opts.footer + '</div>' : '') +
+        '</div>' +
         '</div>' +
       '</div>';
     var backdrop = wrap.firstElementChild;
@@ -204,7 +230,8 @@ window.OBModal = (function () {
 
     backdrop.addEventListener('click', function (event) {
       if (backdrop.hasAttribute('data-busy')) return;
-      if (event.target === backdrop || event.target.closest('[data-ob-modal-close]')) close();
+      if (event.target === backdrop || event.target.hasAttribute('data-ob-modal-frame') ||
+        event.target.closest('[data-ob-modal-close]')) close();
     });
 
     current = { backdrop: backdrop, onKeydown: onKeydown, lastFocus: lastFocus };
@@ -212,7 +239,7 @@ window.OBModal = (function () {
     document.documentElement.style.overflow = 'hidden';
     document.addEventListener('keydown', onKeydown);
     // Focus the dialog itself so no field looks active until the user picks one.
-    dialog.focus();
+    dialog.focus({ preventScroll: true });
     return backdrop;
   }
 
@@ -226,8 +253,29 @@ window.OBModal = (function () {
     if (closing.lastFocus && closing.lastFocus.focus) closing.lastFocus.focus();
   }
 
+  /**
+   * Focuses an invalid field and scrolls the dialog so the field and its error
+   * message both show. Plain focus() brings only the field into view and can
+   * leave the message below the screen edge.
+   */
+  function revealField(field, errorEl) {
+    field.focus({ preventScroll: true });
+    var scroller = field.closest('[data-ob-modal]');
+    if (!scroller) return;
+    var view = scroller.getBoundingClientRect();
+    var top = field.getBoundingClientRect().top;
+    var bottom = (errorEl && !errorEl.classList.contains('hidden') ? errorEl : field).getBoundingClientRect().bottom;
+    var GAP = 24;
+    if (bottom + GAP > view.bottom) scroller.scrollTop += Math.min(bottom + GAP - view.bottom, top - GAP - view.top);
+    else if (top - GAP < view.top) scroller.scrollTop -= view.top - (top - GAP);
+  }
+
   return {
+    BUTTON_BASE: BUTTON_BASE,
     BUTTON: BUTTON,
+    PRIMARY_BUTTON: PRIMARY_BUTTON,
+    PRIMARY_BUTTON_MD: PRIMARY_BUTTON_MD,
+    SECONDARY_BUTTON_MD: SECONDARY_BUTTON_MD,
     validateData: validateData,
     loadJson: loadJson,
     escapeHtml: escapeHtml,
@@ -237,7 +285,8 @@ window.OBModal = (function () {
     illustration: illustration,
     contactCard: contactCard,
     open: open,
-    close: close
+    close: close,
+    revealField: revealField
   };
 })();
 
@@ -255,11 +304,9 @@ window.OBContact = (function () {
             '<h2 id="ob-contact-title" class="w-full text-center text-lg leading-6 font-medium text-gray-900">Contact Us</h2>' +
           '</div>' +
           M.contactCard(contact) +
-        '</div>' +
-        '<div class="flex flex-col px-6 pb-6">' +
-          '<button type="button" data-ob-modal-close class="' + M.BUTTON + ' bg-[#2563eb] text-white hover:bg-[#3b82f6] focus-visible:outline-[#2563eb]">OK</button>' +
         '</div>',
-        'ob-contact-title'
+        'ob-contact-title',
+        { footer: '<div class="flex flex-col px-6 pb-6"><button type="button" data-ob-modal-close class="' + M.PRIMARY_BUTTON + '">OK</button></div>' }
       );
     });
   }

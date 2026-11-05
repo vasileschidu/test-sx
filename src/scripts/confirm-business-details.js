@@ -6,7 +6,7 @@
  *   - Next enabled only once every answer is complete;
  *   - "… is required" under a field left empty after the user touched it;
  *   - a wrong submission: red card + fields and a red info box with the
- *     attempts left; out of attempts → revoked.html.
+ *     attempts left; out of attempts → payment-closed.html (revoked).
  *
  * Prototype rule: any complete answers pass, except an answer made only of
  * zeros, which counts as incorrect so the error state can be shown on demand.
@@ -17,7 +17,7 @@
   var DATA_PATH = '../../data/sd-identity.json';
   var ASSETS = '../../assets/onboarding/';
   var NEXT_URL = 'review-documents.html';
-  var REVOKED_URL = 'revoked.html';
+  var REVOKED_URL = 'payment-closed.html';
 
   // Inputs are the SMART System "Text Field [New]" (see onboarding-field.js).
   var F = window.OBField;

@@ -21,16 +21,26 @@ window.OBSign = (function () {
   var TAB = 'cursor-pointer rounded-md px-3 py-2 text-sm leading-5 font-medium text-[#111827] hover:bg-[#f3f4f6] aria-selected:bg-[#f3f4f6] focus-visible:outline-2 focus-visible:outline-blue-600';
   var PAD = 'relative flex h-[296px] w-full items-center justify-center overflow-hidden rounded-2xl border bg-[#f9fafb]';
 
+  // Title bar and Submit bar stay put; the shell scrolls the part between them.
+  function header() {
+    return '<div class="flex shrink-0 items-center gap-2 border-b border-[#e5e7eb] py-2 pr-3 pl-6">' +
+        '<h2 id="ob-sign-title" class="flex-1 text-base leading-6 font-medium text-[#111827]">Sign to authorize payment</h2>' +
+        '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+          '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-lined-gray.svg" alt="" width="24" height="24" class="size-6"></button>' +
+      '</div>';
+  }
+
+  function footer() {
+    return '<div class="flex border-t border-[#e5e7eb] px-6 py-5">' +
+        '<button type="button" data-sign-submit class="' + window.OBModal.PRIMARY_BUTTON + '">Submit</button>' +
+      '</div>';
+  }
+
   function markup(name) {
     var F = window.OBField;
     var esc = window.OBModal.escapeHtml;
     return '' +
-      '<div class="flex shrink-0 items-center gap-2 border-b border-[#e5e7eb] py-2 pr-3 pl-6">' +
-        '<h2 id="ob-sign-title" class="flex-1 text-base leading-6 font-medium text-[#111827]">Sign to authorize payment</h2>' +
-        '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
-          '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-lined-gray.svg" alt="" width="24" height="24" class="size-6"></button>' +
-      '</div>' +
-      '<div class="flex min-h-0 flex-col gap-6 overflow-y-auto p-6">' +
+      '<div class="flex flex-col gap-6 p-6">' +
         '<div role="tablist" aria-label="How to sign" class="flex gap-4">' +
           '<button type="button" role="tab" id="ob-sign-tab-draw" aria-controls="ob-sign-draw" aria-selected="true" data-sign-tab="draw" class="' + TAB + '">Draw</button>' +
           '<button type="button" role="tab" id="ob-sign-tab-type" aria-controls="ob-sign-type" aria-selected="false" data-sign-tab="type" class="' + TAB + '">Type</button>' +
@@ -61,9 +71,6 @@ window.OBSign = (function () {
             '<p data-sign-preview aria-hidden="true" class="line-clamp-3 w-full text-center font-[\'Meow_Script\',cursive] text-[56px] leading-[64px] wrap-anywhere text-black"></p>' +
           '</div>' +
         '</div>' +
-      '</div>' +
-      '<div class="flex shrink-0 border-t border-[#e5e7eb] px-6 py-5">' +
-        '<button type="button" data-sign-submit class="flex flex-1 cursor-pointer items-center justify-center rounded-md bg-[#2563eb] px-3.5 py-2.5 text-base leading-6 font-semibold text-white shadow-xs hover:bg-[#3b82f6] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2563eb]">Submit</button>' +
       '</div>';
   }
 
@@ -83,7 +90,9 @@ window.OBSign = (function () {
     var M = window.OBModal;
     var backdrop = M.open(markup(opts.name), 'ob-sign-title', {
       bare: true,
-      panelClass: 'relative flex max-h-[calc(100dvh-2rem)] w-full max-w-[512px] flex-col overflow-hidden rounded-lg bg-white shadow-xl'
+      header: header(),
+      footer: footer(),
+      panelClass: 'relative flex w-full max-w-[512px] flex-col overflow-hidden rounded-lg bg-white shadow-xl'
     });
     var $ = function (sel) { return backdrop.querySelector(sel); };
     var mode = 'draw';

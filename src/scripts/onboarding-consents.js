@@ -46,8 +46,6 @@ window.OBConsents = (function () {
 
   // ---- "Review and agree" dialog -------------------------------------
 
-  var SMALL = 'inline-flex cursor-pointer items-center justify-center rounded-md px-2.5 py-1.5 text-sm leading-5 font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
-
   function dots(index) {
     return agreements.map(function (a, i) {
       if (i === index) return '<span class="relative block size-2.5 shrink-0"><img src="' + ASSETS + 'step-current.svg" alt="" class="absolute -inset-[40%] block size-[180%] max-w-none"></span>';
@@ -57,12 +55,8 @@ window.OBConsents = (function () {
 
   function openReview(index) {
     var a = agreements[index];
+    // Title bar and button bar stay put; the text box between them scrolls.
     var backdrop = window.OBModal.open(
-      '<div class="flex shrink-0 items-center justify-between gap-2 border-b border-[#e5e7eb] px-6 py-4">' +
-        '<h2 id="vcs-review-title" class="text-base leading-6 text-[#111827]">Review and agree</h2>' +
-        '<button type="button" data-ob-modal-close class="inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
-          '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5"></button>' +
-      '</div>' +
       '<div class="flex min-h-0 flex-1 flex-col p-6">' +
         '<div data-vcs-scroll tabindex="0" aria-label="' + esc(a.title) + '" class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] bg-[#f9fafb] p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600">' +
           '<div class="flex flex-col gap-4 text-sm leading-5 text-[#374151]">' +
@@ -70,14 +64,23 @@ window.OBConsents = (function () {
             window.OBModal.agreementHtml(a.body) +
           '</div>' +
         '</div>' +
-      '</div>' +
-      '<div class="flex shrink-0 items-center gap-2.5 border-t border-[#e5e7eb] px-6 py-5">' +
-        '<div class="flex flex-1 items-center gap-2.5" aria-label="' + (index + 1) + ' of ' + agreements.length + '">' + dots(index) + '</div>' +
-        '<button type="button" data-ob-modal-close class="' + SMALL + ' border border-[#d1d5db] bg-white text-[#374151] hover:bg-gray-50">Cancel</button>' +
-        '<button type="button" data-vcs-accept disabled class="' + SMALL + ' bg-[#2563eb] text-white hover:bg-[#3b82f6] disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-[#2563eb]">Accept</button>' +
       '</div>',
       'vcs-review-title',
-      { bare: true, panelClass: 'relative flex max-h-[min(752px,calc(100dvh-2rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5' }
+      {
+        bare: true,
+        header: '<div class="flex shrink-0 items-center justify-between gap-2 border-b border-[#e5e7eb] px-6 py-4">' +
+          '<h2 id="vcs-review-title" class="text-base leading-6 text-[#111827]">Review and agree</h2>' +
+          '<button type="button" data-ob-modal-close class="inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+            '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5"></button>' +
+        '</div>',
+        footer: '<div class="flex items-center gap-2.5 border-t border-[#e5e7eb] px-6 py-5">' +
+          '<div class="flex flex-1 items-center gap-2.5" aria-label="' + (index + 1) + ' of ' + agreements.length + '">' + dots(index) + '</div>' +
+          '<button type="button" data-ob-modal-close class="' + window.OBModal.SECONDARY_BUTTON_MD + '">Cancel</button>' +
+          '<button type="button" data-vcs-accept disabled class="' + window.OBModal.PRIMARY_BUTTON_MD + '">Accept</button>' +
+        '</div>',
+        // 752 at most (Figma); min() keeps it inside the shell's viewport cap.
+        panelClass: 'relative flex max-h-[min(752px,calc(100dvh-3rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5'
+      }
     );
 
     var scroller = backdrop.querySelector('[data-vcs-scroll]');

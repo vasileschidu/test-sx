@@ -9,7 +9,7 @@
       "alsoMatches": ["review-documents", "signature"] },
     { "id": "payment",      "label": "Receive Payment",   "href": "paywall.html",
       "alsoMatches": ["paywall", "instant-virtual-card", "virtual-card-summary", "bank-details", "bank-account-info", "bank-summary", "check-request", "check-summary", "debit-summary", "debit-card-details", "debit-account-info", "summary"] },
-    { "id": "complete",     "label": "Complete Payment",  "href": "create-account.html",
+    { "id": "complete",     "label": "Complete Payment",  "href": null,
       "alsoMatches": ["create-account", "complete", "card-created", "bank-submitted", "check-submitted", "debit-submitted"] }
   ]
 }

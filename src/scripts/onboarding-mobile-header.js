@@ -18,6 +18,10 @@
 (function () {
   'use strict';
 
+  // Tells onboarding-transitions.js that this page gets a top bar, so it can
+  // hold its place below lg until the bar is drawn.
+  document.documentElement.classList.add('ob-mobile-header');
+
   var NAV_SELECTOR = 'nav[aria-label="Progress"]';
   var GRADIENT = 'bg-gradient-to-b from-[#1E326F] to-[#090C38]';
 

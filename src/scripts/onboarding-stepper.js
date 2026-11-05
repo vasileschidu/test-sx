@@ -32,7 +32,7 @@
       alsoMatches: ['review-documents', 'signature'] },
     { id: 'payment', label: 'Receive Payment', href: 'paywall.html',
       alsoMatches: ['paywall', 'instant-virtual-card', 'virtual-card-summary', 'bank-details', 'bank-account-info', 'bank-summary', 'check-request', 'check-summary', 'debit-summary', 'debit-card-details', 'debit-account-info', 'summary'] },
-    { id: 'complete', label: 'Complete Payment', href: 'create-account.html',
+    { id: 'complete', label: 'Complete Payment', href: null,
       alsoMatches: ['create-account', 'complete', 'card-created', 'bank-submitted', 'check-submitted', 'debit-submitted'] }
   ];
   // Multi-Party adds its Current Allocation step (onboarding-flow.js).
@@ -66,13 +66,15 @@
       '</span>' + shut;
   }
 
+  // Complete Payment has no page of its own (each method has its done screen), so it is not a link.
   function current(step) {
-    return '<li><a href="' + step.href + '" aria-current="step" class="flex items-start">' +
+    var tag = step.href ? 'a href="' + step.href + '"' : 'div';
+    return '<li><' + tag + ' aria-current="step" class="flex items-start">' +
       '<span aria-hidden="true" class="relative flex size-5 shrink-0 items-center justify-center">' +
         '<span class="absolute size-4 rounded-full bg-white/20"></span>' +
         '<span class="relative block size-2 rounded-full bg-white"></span>' +
       '</span>' +
-      '<span class="ml-3 text-sm font-medium text-white">' + step.label + '</span></a></li>';
+      '<span class="ml-3 text-sm font-medium text-white">' + step.label + '</span></' + (step.href ? 'a' : 'div') + '></li>';
   }
 
   /**
