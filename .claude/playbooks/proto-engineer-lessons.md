@@ -27,3 +27,7 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-05 [qa] code-audit skips untracked files' lines (git diff is empty): run new files with `--all-lines`. Pages that need
   localStorage state: `--init tools/ui-qa/init/<seed>.js` (added to code-audit and hover-audit).
 - 2026-11-05 [qa] hover-audit flags the SD stepper's completed steps (no hover by design in onboarding-stepper.js) — not a defect.
+- 2026-11-05 [stp][worker] The token worker's `buildAgreementUrl` wipes `search`/`hash` of `verifyBaseUrl`: route links by
+  page path (`sendAgreementEmail({ linkUrl })`) and resolve state on the landing page (same-browser localStorage), not by query.
+- 2026-11-05 [stp] `STPState.setStpStep(non-pending)` clears the agreement request unless it is `status: "signed"`
+  (`markAgreementSigned` before the step change). Cross-tab tests: one Playwright context = shared storage + storage events.

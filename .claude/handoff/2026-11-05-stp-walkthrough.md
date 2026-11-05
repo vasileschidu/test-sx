@@ -88,7 +88,31 @@ Portal outcomes:
      `enrol.agreementSigned = true`, `enrol.agreement.signedBy/confirmedAt` and STP → `terminal_completed_tid_mid_received`;
      the enrolment tab re-renders on `sx-demo-case:change` only on the final page (ACP page reads the case on load).
    - QA: `--init tools/ui-qa/init/sx-demo-case.js` seeds case `SX-QA` for code/hover audits.
-3. Signer side — email link → Review & Sign page (+ expired) → advances STP state.
+3. Signer side — email link → Review & Sign page (+ expired) → advances STP state. **(done 2026-11-05)**
+   - Page `src/pages/sx-enroll/sign-agreement.html` + `src/scripts/sx-sign-agreement.js` (no step menu; loads sx-enroll.js +
+     sx-enroll-acp.js only for helpers / `SXEnroll.agreementArticle()`): document → Confirm → loading → "Agreement was confirmed"
+     + First/Last (prefilled from `case.signer`) → Confirm Acceptance → loading → Acknowledgement Complete. Invalid link = "This link
+     has expired" (no case / reset, `?case=` or `?email=` mismatch, not B, `agreement.sentAt` null after Change signer, already
+     signed, STP not at `agreement_signature_pending`); also flips live while open.
+   - Link routing is client-side: `STPState.sendAgreementEmail({ linkUrl })` (default still = sending page, so Payment Preferences is
+     unchanged). The worker strips the query, so the email opens `sign-agreement.html?stpAgreement=review&email=&token=` and the page uses
+     the stored case (same browser). Token is not verified (demo). `SXDemoCase.urls().sign` = `sign-agreement.html?case=<id>`.
+   - Waiting card (ACP) shows "Open signer's link" (new tab, `?case=&email=`) when the email was not delivered (test mode).
+   - On sign: `SXDemoCase.signAgreement(signedBy)` → `STPState.markAgreementSigned` (request kept with `status:'signed'`,
+     `signedBy`, `signedAt`), STP → `terminal_completed_tid_mid_received`, or `bank_verification_required` if `enrol.cardProcessed`
+     (MID/TID kept); case `enrol.agreementSigned = true`, `enrol.agreement.{signedBy, confirmedAt, via:'email'}`.
+   - Live: ACP "Waiting" → "Acknowledgement Complete" on `sx-demo-case:change` (acknowledged() = `agreementSigned && confirmedAt`, A and B);
+     portal banner already followed via `STPState` storage listener (agreement → eligibility banner, no change needed).
+   - Presenter real-email opt-in: launcher checkbox "Send real emails to this address" → localStorage `sx_extra_allowed_emails_v1`
+     (kept on case reset); `STPState.isAllowlistedEmail` / `sendAgreementEmail` accept it; `isConfigAllowlistedEmail` = config only.
+   - QA seed for the pending B state: `--init tools/ui-qa/init/sx-demo-case-b.js` (case `SX-QA-B`).
+   - Open: the deployed worker is older than `workers/sd-sx-token-service/src` (`/preview-email?flow=stp` returns the SD email) — redeploy
+     with `cd workers/sd-sx-token-service && npx wrangler deploy` before a real-email demo; worker email copy differs from Figma 36525:46232
+     (subject "Action Required: …", delegator name, note, "Review and Acknowledge" CTA) — needs a worker change + deploy.
+   - **Batch 4 must know:** a B case may reach the portal with STP still `agreement_signature_pending` (signer hasn't signed) — the
+     agreement banner shows; once signed in another tab the portal flips to the eligibility (or bank verification) banner live.
+     Portal Scenario 4 "Step 1 agreement other" (36800:73897) can reuse `sendAgreementEmail({ linkUrl: SXDemoCase.urls().sign path })`
+     and `SXDemoCase.signAgreement`.
 4. Portal Scenarios 1, 2, 4 — banners, process payment → MID/TID, micro deposit → Opted in,
    Payment Preferences shows MID/TID.
 5. Polish — scenario picker, QA (qa:code / qa:hover), wiki, PR.

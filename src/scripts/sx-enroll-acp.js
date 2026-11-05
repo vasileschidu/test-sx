@@ -75,16 +75,24 @@
     }).join("");
   }
 
+  /** The agreement "page" (also used by the signer page, sign-agreement.html). */
+  function agreementArticle() {
+    return (
+      '<article class="mx-auto flex max-w-3xl flex-col gap-3 rounded-sm bg-white p-6 shadow-sm ring-1 ring-black/5 sm:p-10">' +
+      '<p class="self-end text-4xl font-extrabold tracking-tight text-blue-900 italic">VISA</p>' +
+      '<h3 class="text-center text-lg font-semibold text-gray-900">Visa AR Manager – Online Participation Agreement</h3>' +
+      agreementBody() +
+      "</article>"
+    );
+  }
+  X.agreementArticle = agreementArticle;
+
   function openAgreement() {
     var M = window.OBModal;
     M.open(
       '<div class="flex min-h-0 flex-1 flex-col p-6">' +
         '<div tabindex="0" aria-label="Agreement text" class="min-h-0 flex-1 overflow-y-auto rounded border border-gray-200 bg-gray-50 p-4 focus-visible:outline-2 focus-visible:outline-blue-600">' +
-        '<article class="mx-auto flex max-w-3xl flex-col gap-3 rounded-sm bg-white p-6 shadow-sm ring-1 ring-black/5 sm:p-10">' +
-        '<p class="self-end text-4xl font-extrabold tracking-tight text-blue-900 italic">VISA</p>' +
-        '<h3 class="text-center text-lg font-semibold text-gray-900">Visa AR Manager – Online Participation Agreement</h3>' +
-        agreementBody() +
-        "</article>" +
+        agreementArticle() +
         "</div>" +
         "</div>",
       "sx-agreement-title",
@@ -176,9 +184,10 @@
     function latest() {
       return X.currentCase() || c;
     }
+    // A: confirmed here. B: the other signer signed on sign-agreement.html.
     function acknowledged() {
       var e = latest().enrol || {};
-      return e.stp === "on" && e.signer === "self" && e.agreement && e.agreement.confirmedAt;
+      return e.stp === "on" && e.agreementSigned === true && e.agreement && e.agreement.confirmedAt;
     }
     function sent() {
       var e = latest().enrol || {};
@@ -289,13 +298,30 @@
           X.row("Sent at", esc(X.stamp(a.sentAt))),
         '<p class="text-sm text-gray-500"><span class="font-medium text-gray-900">' + esc(a.delegatedTo) + "</span> will receive an email with a secure link to review and acknowledge the Visa AR Manager Participation Agreement.</p>" +
           (delivery ? '<p data-acp-delivery class="mt-2 text-xs text-gray-500">' + esc(delivery) + ".</p>" : "") +
-          '<button type="button" data-acp-change class="mt-3 inline-flex cursor-pointer items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Change signer</button>',
+          '<div class="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2">' +
+          '<button type="button" data-acp-change class="inline-flex cursor-pointer items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Change signer</button>' +
+          // Test mode (no email delivered): the presenter opens the signer's link here.
+          (a.delivered === false
+            ? '<a data-acp-signer-link href="' + esc(signerLink(a.email)) + '" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Open signer’s link' +
+              '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 0 0 1.06.053L16.5 4.44v2.81a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-.75-.75h-4.5a.75.75 0 0 0 0 1.5h2.553l-9.056 8.194a.75.75 0 0 0-.053 1.06Z" clip-rule="evenodd" /></svg>' +
+              '<span class="sr-only">(opens in a new tab)</span></a>'
+            : "") +
+          "</div>",
       );
+    }
+
+    // Same link the email button opens (sign-agreement.html?case=…&email=…).
+    function signerLink(email) {
+      var href = window.SXDemoCase.urls(latest()).sign;
+      return href + (href.indexOf("?") === -1 ? "?" : "&") + "email=" + encodeURIComponent(email || "");
     }
 
     // -- Render
 
+    var mode = "";
+
     function render() {
+      mode = !on ? "off" : acknowledged() ? "ack" : sent() ? "waiting" : !opened ? "review" : "form";
       if (!on) {
         panel.innerHTML = "";
         panel.hidden = true;
@@ -415,6 +441,8 @@
                 email: email,
                 recipientName: recipient,
                 senderName: X.contactName(current) || current.supplier.name,
+                // The email button opens the signer page, not this one.
+                linkUrl: window.location.origin + window.SXDemoCase.urls(current).sign.split("?")[0],
               })
             : Promise.reject(new Error("STP service is not loaded."));
           // Keep the loading state on screen for a moment even when it's instant.
@@ -547,6 +575,11 @@
         if (window.STPState) window.STPState.setStpStep(window.STPState.STEP_OPT_IN_REQUIRED);
         X.go("create-account.html");
       });
+    });
+
+    // The signer signs in another tab → "Waiting" turns into "Acknowledgement Complete".
+    window.addEventListener(window.SXDemoCase.CHANGE_EVENT, function () {
+      if (mode === "waiting" && X.currentCase() && acknowledged()) render();
     });
 
     render();

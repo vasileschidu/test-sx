@@ -149,8 +149,11 @@
     else if (normalizedStep === STEP_OPT_IN_REQUIRED)
       nextState = { stpStatus: STATUS_DISABLED, stpStep: STEP_OPT_IN_REQUIRED };
     else nextState = { stpStatus: STATUS_IN_PROGRESS, stpStep: normalizedStep };
+    // A signed request is kept as a record (the signer link then shows
+    // "expired"); any other request ends with the pending step.
     if (nextState.stpStep !== STEP_AGREEMENT_SIGNATURE_PENDING) {
-      clearAgreementRequest();
+      var request = getAgreementRequest();
+      if (!request || request.status !== "signed") clearAgreementRequest();
     }
     if (
       nextState.stpStatus === currentState.stpStatus &&
@@ -210,6 +213,20 @@
     );
   }
 
+  // The other signer acknowledged the agreement from the email link
+  // (src/pages/sx-enroll/sign-agreement.html). Call before setStpStep.
+  function markAgreementSigned(info) {
+    var request = getAgreementRequest();
+    if (!request) return null;
+    var signed = Object.assign({}, request, {
+      status: "signed",
+      signedBy: String((info && info.signedBy) || "").trim(),
+      signedAt: (info && info.signedAt) || new Date().toISOString(),
+    });
+    saveAgreementRequest(signed);
+    return signed;
+  }
+
   function clearAgreementRequest() {
     try {
       localStorage.removeItem(AGREEMENT_REQUEST_KEY);
@@ -255,12 +272,51 @@
     return runtimeConfigPromise;
   }
 
-  function isAllowlistedEmail(email) {
+  // Presenter setting from the STP case launcher: extra addresses that may
+  // get real emails in this browser (on top of the config allowlist).
+  var EXTRA_ALLOWED_KEY = "sx_extra_allowed_emails_v1";
+
+  function getExtraAllowedEmails() {
+    try {
+      var parsed = JSON.parse(localStorage.getItem(EXTRA_ALLOWED_KEY) || "[]");
+      return Array.isArray(parsed)
+        ? parsed
+            .map(function (email) {
+              return String(email || "")
+                .trim()
+                .toLowerCase();
+            })
+            .filter(Boolean)
+        : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function isAllowedIn(config, normalized) {
+    return (
+      config.allowedTestEmails.indexOf(normalized) !== -1 ||
+      getExtraAllowedEmails().indexOf(normalized) !== -1
+    );
+  }
+
+  // Only the runtime config's allowlist (the launcher offers the per-browser
+  // opt-in for every other address).
+  function isConfigAllowlistedEmail(email) {
     var normalized = String(email || "")
       .trim()
       .toLowerCase();
     return loadRuntimeConfig().then(function (config) {
       return config.allowedTestEmails.indexOf(normalized) !== -1;
+    });
+  }
+
+  function isAllowlistedEmail(email) {
+    var normalized = String(email || "")
+      .trim()
+      .toLowerCase();
+    return loadRuntimeConfig().then(function (config) {
+      return isAllowedIn(config, normalized);
     });
   }
 
@@ -276,7 +332,7 @@
     }
     return loadRuntimeConfig().then(function (config) {
       var normalized = email.toLowerCase();
-      var allowed = config.allowedTestEmails.indexOf(normalized) !== -1;
+      var allowed = isAllowedIn(config, normalized);
       var finish = function (result) {
         var wasPending =
           currentState.stpStep === STEP_AGREEMENT_SIGNATURE_PENDING;
@@ -306,7 +362,11 @@
           recipientName: String(options.recipientName || "").trim(),
           senderName: String(options.senderName || "SMART Hub").trim(),
           sandbox: false,
-          verifyBaseUrl: window.location.origin + window.location.pathname,
+          // options.linkUrl: the page the email button opens (the worker
+          // drops its query); default = the page that sends the email.
+          verifyBaseUrl:
+            String(options.linkUrl || "").trim() ||
+            window.location.origin + window.location.pathname,
         }),
       })
         .then(function (response) {
@@ -948,8 +1008,12 @@
     openAgreementReviewModal: openAgreementReviewModal,
     getAgreementRequest: getAgreementRequest,
     getAgreementSentText: getAgreementSentText,
+    markAgreementSigned: markAgreementSigned,
     sendAgreementEmail: sendAgreementEmail,
     isAllowlistedEmail: isAllowlistedEmail,
+    isConfigAllowlistedEmail: isConfigAllowlistedEmail,
+    getExtraAllowedEmails: getExtraAllowedEmails,
+    EXTRA_ALLOWED_KEY: EXTRA_ALLOWED_KEY,
     openSetupStepsModal: openSetupStepsModal,
     openVerifyModal: openVerifyModal,
     STATUS_ENABLED: STATUS_ENABLED,

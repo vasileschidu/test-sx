@@ -297,6 +297,9 @@
           (query ? query + "&tab=" + tab : ""),
       ),
       launcher: resolve("../pages/demo/stp-case.html"),
+      // The other signer's page (Batch 3). The email link has no ?case=
+      // (the worker drops the query); the page then uses the stored case.
+      sign: resolve("../pages/sx-enroll/sign-agreement.html" + query),
     };
   }
 
@@ -390,6 +393,42 @@
     return next;
   }
 
+  /**
+   * The other signer (branch B) acknowledged the Visa agreement on
+   * sign-agreement.html. Same result as branch A's Confirm Acceptance:
+   * STP → terminal_completed_tid_mid_received, or bank_verification_required
+   * when the card was already processed (MID/TID kept). The stored agreement
+   * request is marked signed. Returns the updated case (or null).
+   */
+  function signAgreement(signedBy) {
+    var current = read();
+    if (!current) return null;
+    var now = new Date().toISOString();
+    var enrol = current.enrol || {};
+    var target = enrol.cardProcessed
+      ? "bank_verification_required"
+      : "terminal_completed_tid_mid_received";
+    var S = window.STPState;
+    if (S && typeof S.setStpStep === "function") {
+      if (typeof S.markAgreementSigned === "function")
+        S.markAgreementSigned({ signedBy: signedBy, signedAt: now });
+      S.setStpStep(target);
+    } else {
+      try {
+        localStorage.setItem(
+          STP_KEY,
+          JSON.stringify({ stpStatus: "in_progress", stpStep: target }),
+        );
+      } catch (error) {}
+    }
+    return update({
+      enrol: {
+        agreementSigned: true,
+        agreement: { signedBy: signedBy, confirmedAt: now, via: "email" },
+      },
+    });
+  }
+
   // Other tabs (the signer's tab, the portal) hear about changes too.
   window.addEventListener("storage", function (event) {
     if (event.key !== STORAGE_KEY && event.key !== null) return;
@@ -411,5 +450,6 @@
     toPaymentRow: toPaymentRow,
     urls: urls,
     markCardProcessed: markCardProcessed,
+    signAgreement: signAgreement,
   };
 })();

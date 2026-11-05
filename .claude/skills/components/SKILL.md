@@ -49,6 +49,8 @@ state and add a row here in the same change. Tokens: see the `design-system` ski
 | Multi-Party | `OBFlow` (`onboarding-flow.js`), `onboarding-multi-party.js` |
 | Review documents | `review-modal.js` — any `[data-review-modal]` dialog, triggers `.review-trigger` / `.gp-review-trigger` |
 | Reuse in another flow | set `window.OB_FLOW_STEPS` / `OB_MOBILE_MENU` before the sidebar/stepper load; wrap `OBGo` instead of editing SD scripts — see `sx-enroll.js` (SMART Exchange enrolment, `src/pages/sx-enroll/`) |
+| Demo "open the email link" | waiting card in `sx-enroll-acp.js`: link button `<a target="_blank" rel="noopener">` + external-link icon + sr-only "(opens in a new tab)", only when the email was not delivered (test mode) |
+| Presenter email opt-in | launcher (`demo/stp-case.html`): `<app-checkbox label description>` under the email hint, shown only for addresses off the config allowlist; list in localStorage `sx_extra_allowed_emails_v1` (read by `STPState`) |
 | SX enrolment helpers | `SXEnroll.textField(id, label, value, opts)` (OBField + error line), `.row(label, html)`, `.fieldError(input, msg)`, `.setLoading(btn, label)` → restore fn |
 
 ## Markup patterns (copy exactly)
@@ -117,6 +119,14 @@ renders its form below in `div.flex.flex-col.gap-4.border-t.border-gray-200.p-4`
 `section.overflow-hidden.rounded-lg.border.border-gray-200` > `h2` title row `border-b px-4 py-3 text-sm font-semibold` >
 rows `p-4 gap-2` (description list) > optional footer `border-t px-4 py-3`. Status badges: `rounded-md bg-green-50 px-2 py-0.5
 text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20` (Completed) / blue-50·blue-700·blue-700/10 (In Process).
+
+### Static link page + "link expired" (`sx-enroll/sign-agreement.html`)
+Email-link pages without the step menu: `body.bg-white.lg:bg-gray-100` > white column `mx-auto max-w-5xl` > `main.max-w-148`
+(hero from card-processing.html, `type-title-page` + `type-description`) + `<div data-ob-footer>` (SD footer, Powered by Transcard).
+Document preview: scroll box `h-96 lg:h-150 overflow-y-auto rounded-lg border bg-gray-50 p-4` + `SXEnroll.agreementArticle()`
+(Visa agreement, from `sx-enroll-acp.js`). Loading over a box/card: `relative` parent + `absolute inset-0 bg-white/70` with
+`onboarding/loader.svg` `size-11 animate-spin` (`role="status"`), controls disabled. Invalid / used link: full-page `bg-gray-100`
+centred `max-w-sm rounded-lg bg-white p-6 text-center` card, `size-12 rounded-full bg-red-50` + `icon-x-circle-red.svg`, `type-title-small`.
 
 Toggle switch disabled: add `has-disabled:cursor-not-allowed has-disabled:opacity-50` on the track, `disabled:cursor-not-allowed` on the input.
 Password reveal: eye button `absolute top-1/2 right-2 size-7 -translate-y-1/2 rounded-md text-gray-400 hover:bg-gray-100` in the input's `relative` wrapper, `aria-pressed`.
