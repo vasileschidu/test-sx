@@ -950,6 +950,30 @@
     return loaded;
   });
 
+  /**
+   * SX look for the shared SD sidebar (onboarding-sidebar.js renders it on
+   * DOMContentLoaded, after this script's listener, hence the timeout): the
+   * SMART Exchange logo from Figma (36525:48449) and a 48px side padding so
+   * "Automatic Card Processing" stays on one line.
+   */
+  function applySidebarLook() {
+    var slots = document.querySelectorAll("[data-ob-sidebar]");
+    for (var i = 0; i < slots.length; i += 1) {
+      slots[i].classList.replace("px-14", "px-12");
+      var logo = slots[i].querySelector('img[src$="menu-logo.svg"]');
+      if (!logo) continue;
+      var mark = logo.parentNode;
+      mark.classList.remove("rotate-180");
+      logo.src = "../../assets/sx-enroll/sx-menu-logo.svg";
+      logo.width = 26;
+      logo.height = 26;
+      logo.className = "absolute inset-0 block size-full";
+    }
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    setTimeout(applySidebarLook, 0);
+  });
+
   window.SXEnroll = {
     CASE_ID: CASE_ID,
     page: page,

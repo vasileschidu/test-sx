@@ -23,76 +23,26 @@
     <script src="../../scripts/tailwind-theme.js"></script>
     <script src="../../scripts/design-tokens.js"></script>
     <link rel="stylesheet" href="../../styles/cursor.css" />
+    <link rel="stylesheet" href="../../styles/checkbox.css" />
     <style type="text/tailwindcss">
       @custom-variant dark (&:where(.dark, .dark *));
     </style>
 
     <script src="../../scripts/data-source.js"></script>
-    <script src="../../scripts/stp-state.js"></script>
-    <script src="../../scripts/sx-demo-case.js?v=20261105b"></script>
+    <script src="../../scripts/stp-state.js?v=20261105a"></script>
+    <script src="../../scripts/sx-demo-case.js?v=20261105c"></script>
+    <script src="../../scripts/checkbox-component.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   </head>
   <body class="min-h-full bg-white font-['Inter'] text-default antialiased">
     <main class="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-10 lg:px-10">
       <header class="flex flex-col gap-2">
-        <a
-          href="../../../index.html"
-          class="type-link inline-flex items-center gap-1.5 self-start text-brand hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-        >
-          <svg class="size-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-            <path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" />
-          </svg>
-          All prototypes
-        </a>
         <h1 class="type-title-page text-default">STP walkthrough</h1>
         <p class="type-description text-tertiary">
           Create a demo case: one card payment from a payer to a supplier. The supplier enrols with it and
           lands in a Supplier Portal that holds only this payment.
         </p>
       </header>
-
-      <!-- Current case (shown once a case exists) -->
-      <section
-        id="case-result"
-        class="hidden flex-col gap-4 rounded-lg bg-default p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10"
-        aria-labelledby="case-result-title"
-      >
-        <div class="flex flex-col gap-1">
-          <h2 id="case-result-title" class="type-title-section text-default">Case ready</h2>
-          <p class="type-description text-tertiary">
-            Start the enrolment, or open the Supplier Portal instance for this case.
-          </p>
-        </div>
-
-        <div class="flex flex-col items-start self-stretch">
-          <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
-            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Case details</span>
-          </div>
-          <div id="case-result-list" class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"></div>
-        </div>
-
-        <div class="flex flex-wrap items-center gap-3">
-          <a
-            id="case-start-enrol"
-            href="#"
-            class="cursor-pointer rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-            >Start enrolment</a
-          >
-          <a
-            id="case-open-portal"
-            href="#"
-            class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20"
-            >Open Supplier Portal</a
-          >
-          <button
-            id="case-reset"
-            type="button"
-            class="cursor-pointer rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20"
-          >
-            Reset demo
-          </button>
-        </div>
-      </section>
 
       <form id="case-form" class="flex flex-col gap-4" novalidate>
         <!-- Case information summary -->
@@ -277,6 +227,10 @@
               <input id="f-signer-email" data-field="signer.email" type="email" autocomplete="off" aria-describedby="f-signer-email-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
               <p id="f-signer-email-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
               <p id="f-signer-email-hint" class="mt-2 type-description-small text-tertiary" aria-live="polite"></p>
+              <!-- Presenter opt-in for an address outside the config allowlist (localStorage sx_extra_allowed_emails_v1) -->
+              <div id="f-signer-real-wrap" class="mt-3 hidden">
+                <app-checkbox id="f-signer-real" input-id="f-signer-real-input" label="Send real emails to this address" description="Only in this browser. Use the client’s own address to show the real agreement email."></app-checkbox>
+              </div>
             </div>
           </div>
           </section>
@@ -299,8 +253,8 @@
         "use strict";
         var Case = window.SXDemoCase;
         var form = document.getElementById("case-form");
-        var result = document.getElementById("case-result");
-        var resultList = document.getElementById("case-result-list");
+
+
         var dialog = document.getElementById("edit-dialog");
         var editForm = document.getElementById("edit-form");
         var emailInput = document.getElementById("f-signer-email");
@@ -335,34 +289,48 @@
           );
         }
 
-        function row(label, value, hint) {
-          var wrap = document.createElement("div");
-          wrap.className = "grid grid-cols-2 gap-4 self-stretch";
-          var l = document.createElement("span");
-          l.className = "text-sm font-medium text-gray-900 dark:text-gray-100";
-          l.textContent = label;
-          var v = document.createElement("span");
-          v.className = "text-sm font-normal text-gray-700 dark:text-gray-300 break-words whitespace-pre-line";
-          v.textContent = value;
-          if (hint) {
-            var h = document.createElement("span");
-            h.className = "mt-1 block type-description-small text-tertiary";
-            h.textContent = hint;
-            v.appendChild(h);
+
+        // Per-browser extra allowlist (presenter setting; kept on case reset).
+        var EXTRA_KEY = "sx_extra_allowed_emails_v1";
+        var realWrap = document.getElementById("f-signer-real-wrap");
+        var realBox = document.getElementById("f-signer-real");
+
+        function readExtra() {
+          try {
+            var list = JSON.parse(localStorage.getItem(EXTRA_KEY) || "[]");
+            return Array.isArray(list) ? list.map(function (e) { return String(e || "").trim().toLowerCase(); }).filter(Boolean) : [];
+          } catch (error) {
+            return [];
           }
-          wrap.appendChild(l);
-          wrap.appendChild(v);
-          return wrap;
         }
 
-        var signerHintRequest = 0;
+        function writeExtra(email, allow) {
+          var normalized = String(email || "").trim().toLowerCase();
+          if (!normalized) return;
+          var list = readExtra().filter(function (e) {
+            return e !== normalized;
+          });
+          if (allow) list.push(normalized);
+          try {
+            localStorage.setItem(EXTRA_KEY, JSON.stringify(list));
+          } catch (error) {}
+        }
+
+        // → { text, allowed, offerOptIn }
         function signerHint(email) {
-          if (!email) return Promise.resolve("Add an email to send the agreement to.");
-          if (!window.STPState || !window.STPState.isAllowlistedEmail) return Promise.resolve("");
-          return window.STPState.isAllowlistedEmail(email).then(function (allowed) {
-            return allowed
-              ? "On the test allowlist: a real agreement email is sent."
-              : "Not on the test allowlist: no email is sent, the flow continues as if it was.";
+          if (!email) return Promise.resolve({ text: "Add an email to send the agreement to.", allowed: false, offerOptIn: false });
+          if (!window.STPState || !window.STPState.isConfigAllowlistedEmail)
+            return Promise.resolve({ text: "", allowed: false, offerOptIn: false });
+          return window.STPState.isConfigAllowlistedEmail(email).then(function (onConfig) {
+            if (onConfig) return { text: "On the test allowlist: a real agreement email is sent.", allowed: true, offerOptIn: false };
+            var valid = EMAIL_RE.test(email);
+            return realBox.checked && valid
+              ? { text: "Real agreement email will be sent (allowed in this browser).", allowed: true, offerOptIn: true }
+              : {
+                  text: "Not on the test allowlist: no email is sent, the flow continues as if it was.",
+                  allowed: false,
+                  offerOptIn: valid,
+                };
           });
         }
 
@@ -377,32 +345,6 @@
           ].join(" \u00b7 ");
         }
 
-        function renderResult(c) {
-          if (!c) {
-            result.classList.add("hidden");
-            result.classList.remove("flex");
-            return;
-          }
-          var urls = Case.urls(c);
-          resultList.replaceChildren(
-            row("Case ID", c.id),
-            row("Supplier", c.supplier.name),
-            row(
-              "Payment",
-              money(c.payment.amount) + " from " + c.payer.name + " (" + c.payment.invoice + ")",
-            ),
-            row("Card", c.payment.cardBrand + " ending " + String(c.payment.cardNumber).slice(-4)),
-            row("Signer", [c.signer.firstName, c.signer.lastName].join(" ") + " (" + c.signer.email + ")"),
-            row(
-              "Scenario",
-              SCENARIOS[c.scenario] + (c.cardProcessed ? ", card processed" : ", card not processed"),
-            ),
-          );
-          document.getElementById("case-start-enrol").href = urls.enrol;
-          document.getElementById("case-open-portal").href = urls.portal;
-          result.classList.remove("hidden");
-          result.classList.add("flex");
-        }
 
         /* ---------- modal ---------- */
         function groupEl(key) {
@@ -476,15 +418,17 @@
         }
 
         var hintRequest = 0;
-        function updateEmailHint() {
+        // syncBox: set the checkbox from the stored list (on open / while typing).
+        function updateEmailHint(syncBox) {
           var email = emailInput.value.trim();
           var request = ++hintRequest;
+          if (syncBox !== false) realBox.checked = readExtra().indexOf(email.toLowerCase()) !== -1;
           emailHint.className = "mt-2 type-description-small text-tertiary";
-          signerHint(email).then(function (text) {
+          signerHint(email).then(function (hint) {
             if (request !== hintRequest) return;
-            var allowed = /^On the test/.test(text);
-            emailHint.className = "mt-2 type-description-small " + (allowed ? "text-success" : "text-tertiary");
-            emailHint.textContent = text;
+            emailHint.className = "mt-2 type-description-small " + (hint.allowed ? "text-success" : "text-tertiary");
+            emailHint.textContent = hint.text;
+            realWrap.classList.toggle("hidden", !hint.offerOptIn);
           });
         }
 
@@ -546,7 +490,12 @@
 
         document.getElementById("edit-open").addEventListener("click", openDialog);
 
-        emailInput.addEventListener("input", updateEmailHint);
+        emailInput.addEventListener("input", function () {
+          updateEmailHint(true);
+        });
+        realBox.addEventListener("change", function () {
+          updateEmailHint(false);
+        });
         editForm.addEventListener("input", function (event) {
           if (event.target.getAttribute && event.target.getAttribute("aria-invalid")) setError(event.target, "");
         });
@@ -563,6 +512,8 @@
           GROUPS.forEach(function (k) {
             mergePatch(patch, readGroup(k));
           });
+          // Opt-in shown (address not on the config allowlist): store the choice.
+          if (!realWrap.classList.contains("hidden")) writeExtra(emailInput.value, realBox.checked);
           if (Case.get()) {
             setData(Case.update(patch) || mergePatch(data, patch));
           } else {
@@ -573,32 +524,25 @@
 
         form.addEventListener("submit", function (event) {
           event.preventDefault();
-          var created = Case.create(mergePatch(data, readScenario()));
-          renderResult(created);
-          result.scrollIntoView({ behavior: "smooth", block: "start" });
-          document.getElementById("case-start-enrol").focus({ preventScroll: true });
+          if (Case.get()) Case.update(readScenario());
+          else Case.create(mergePatch(data, readScenario()));
+          window.location.href = "stp-case-ready.html";
         });
 
         document.getElementById("case-defaults").addEventListener("click", function () {
           fillAll(Case.defaults());
         });
 
-        document.getElementById("case-reset").addEventListener("click", function () {
-          Case.reset();
-          renderResult(null);
-          setData(Case.defaults());
-        });
 
         window.addEventListener(Case.CHANGE_EVENT, function (event) {
           var c = event.detail && event.detail.case;
-          renderResult(c);
           if (c) setData(c);
         });
 
         Case.ready().then(function () {
           var existing = Case.get();
           setData(existing || Case.defaults());
-          renderResult(existing);
+          document.getElementById("case-create").textContent = existing ? "Save and continue" : "Create case";
         });
       })();
     </script>
