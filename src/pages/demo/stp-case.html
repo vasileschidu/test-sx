@@ -5,7 +5,7 @@
     Supplier Portal instance (supplier-portal.html?case=<id>) are built on.
 -->
 <!doctype html>
-<html class="h-full bg-gray-100 dark:bg-gray-950">
+<html class="h-full bg-white dark:bg-gray-950">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,7 +32,7 @@
     <script src="../../scripts/sx-demo-case.js?v=20261105b"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   </head>
-  <body class="min-h-full font-['Inter'] text-default antialiased">
+  <body class="min-h-full bg-white font-['Inter'] text-default antialiased">
     <main class="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-10 lg:px-10">
       <header class="flex flex-col gap-2">
         <a
@@ -95,50 +95,95 @@
       </section>
 
       <form id="case-form" class="flex flex-col gap-4" novalidate>
-        <div class="flex flex-col items-start self-stretch">
-          <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
-            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Supplier &amp; contact</span>
+        <div class="flex w-full flex-col overflow-hidden rounded-md">
+          <div class="flex items-center justify-between px-5 py-2.5 bg-gray-100">
+            <span class="text-sm font-semibold text-gray-900">Supplier &amp; contact</span>
             <button type="button" data-edit="supplier" command="show-modal" commandfor="edit-dialog" class="inline-flex cursor-pointer items-center gap-1 rounded-sm text-xs font-semibold text-gray-600 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-300">
               Edit
               <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
               <span class="sr-only">Supplier &amp; contact</span>
             </button>
           </div>
-          <div id="card-supplier" class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"></div>
+          <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
+            <dl id="card-supplier" class="w-full"></dl>
+          </div>
         </div>
-        <div class="flex flex-col items-start self-stretch">
-          <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
-            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Payer &amp; payment</span>
+        <div class="flex w-full flex-col overflow-hidden rounded-md">
+          <div class="flex items-center justify-between px-5 py-2.5 bg-gray-100">
+            <span class="text-sm font-semibold text-gray-900">Payer &amp; payment</span>
             <button type="button" data-edit="payer" command="show-modal" commandfor="edit-dialog" class="inline-flex cursor-pointer items-center gap-1 rounded-sm text-xs font-semibold text-gray-600 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-300">
               Edit
               <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
               <span class="sr-only">Payer &amp; payment</span>
             </button>
           </div>
-          <div id="card-payer" class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"></div>
+          <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
+            <dl id="card-payer" class="w-full"></dl>
+          </div>
         </div>
-        <div class="flex flex-col items-start self-stretch">
-          <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
-            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Authorized signer</span>
+        <div class="flex w-full flex-col overflow-hidden rounded-md">
+          <div class="flex items-center justify-between px-5 py-2.5 bg-gray-100">
+            <span class="text-sm font-semibold text-gray-900">Authorized signer</span>
             <button type="button" data-edit="signer" command="show-modal" commandfor="edit-dialog" class="inline-flex cursor-pointer items-center gap-1 rounded-sm text-xs font-semibold text-gray-600 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-300">
               Edit
               <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
               <span class="sr-only">Authorized signer</span>
             </button>
           </div>
-          <div id="card-signer" class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"></div>
-        </div>
-        <div class="flex flex-col items-start self-stretch">
-          <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
-            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Starting scenario</span>
-            <button type="button" data-edit="scenario" command="show-modal" commandfor="edit-dialog" class="inline-flex cursor-pointer items-center gap-1 rounded-sm text-xs font-semibold text-gray-600 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-300">
-              Edit
-              <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
-              <span class="sr-only">Starting scenario</span>
-            </button>
+          <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
+            <dl id="card-signer" class="w-full"></dl>
           </div>
-          <div id="card-scenario" class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"></div>
         </div>
+
+        <!-- Starting scenario -->
+        <section class="flex flex-col gap-4 rounded-lg bg-default p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10">
+          <fieldset class="flex flex-col gap-4">
+            <legend class="flex flex-col gap-1">
+              <span class="type-title-card text-default">Starting scenario</span>
+              <span class="type-description text-tertiary">How the supplier answers Automatic Card Processing during enrolment.</span>
+            </legend>
+            <div class="mt-4 flex flex-col gap-3">
+              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
+                <span class="flex h-5 shrink-0 items-center">
+                  <input type="radio" name="scenario" value="A" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
+                </span>
+                <span class="flex flex-col text-sm">
+                  <span class="font-semibold text-gray-950 dark:text-white">A. I'm the signatory</span>
+                  <span class="text-gray-500 dark:text-gray-400">The contact signs the Visa agreement during enrolment.</span>
+                </span>
+              </label>
+              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
+                <span class="flex h-5 shrink-0 items-center">
+                  <input type="radio" name="scenario" value="B" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
+                </span>
+                <span class="flex flex-col text-sm">
+                  <span class="font-semibold text-gray-950 dark:text-white">B. Send to another signer</span>
+                  <span class="text-gray-500 dark:text-gray-400">The agreement is emailed to the authorized signer above.</span>
+                </span>
+              </label>
+              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
+                <span class="flex h-5 shrink-0 items-center">
+                  <input type="radio" name="scenario" value="C" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
+                </span>
+                <span class="flex flex-col text-sm">
+                  <span class="font-semibold text-gray-950 dark:text-white">C. Skip STP</span>
+                  <span class="text-gray-500 dark:text-gray-400">The supplier opts out and can opt in later from the portal.</span>
+                </span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="flex items-center justify-between gap-4">
+            <span class="flex flex-col">
+              <span id="f-card-processed-label" class="type-label text-default">Card processed during enrolment</span>
+              <span class="type-description-small text-tertiary">Off: the payment stays pending and is processed in the portal.</span>
+            </span>
+            <div class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2">
+              <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
+              <input id="f-card-processed" type="checkbox" name="cardProcessed" aria-labelledby="f-card-processed-label" class="absolute inset-0 size-full appearance-none cursor-pointer focus:outline-hidden" />
+            </div>
+          </div>
+        </section>
 
         <div class="flex flex-wrap items-center justify-end gap-3">
           <button
@@ -269,49 +314,6 @@
               <p id="f-signer-email-hint" class="mt-2 type-description-small text-tertiary" aria-live="polite"></p>
             </div>
           </div>
-          <div data-group="scenario" class="hidden grid-cols-1 gap-4 sm:grid-cols-2">
-            <div class="sm:col-span-2 flex flex-col">
-<div class="flex flex-col gap-3">
-              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-                <span class="flex h-5 shrink-0 items-center">
-                  <input type="radio" name="scenario" value="A" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
-                </span>
-                <span class="flex flex-col text-sm">
-                  <span class="font-semibold text-gray-950 dark:text-white">A. I'm the signatory</span>
-                  <span class="text-gray-500 dark:text-gray-400">The contact signs the Visa agreement during enrolment.</span>
-                </span>
-              </label>
-              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-                <span class="flex h-5 shrink-0 items-center">
-                  <input type="radio" name="scenario" value="B" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
-                </span>
-                <span class="flex flex-col text-sm">
-                  <span class="font-semibold text-gray-950 dark:text-white">B. Send to another signer</span>
-                  <span class="text-gray-500 dark:text-gray-400">The agreement is emailed to the authorized signer above.</span>
-                </span>
-              </label>
-              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-                <span class="flex h-5 shrink-0 items-center">
-                  <input type="radio" name="scenario" value="C" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
-                </span>
-                <span class="flex flex-col text-sm">
-                  <span class="font-semibold text-gray-950 dark:text-white">C. Skip STP</span>
-                  <span class="text-gray-500 dark:text-gray-400">The supplier opts out and can opt in later from the portal.</span>
-                </span>
-              </label>
-            </div>
-<div class="mt-4 flex items-center justify-between gap-4">
-            <span class="flex flex-col">
-              <span id="f-card-processed-label" class="type-label text-default">Card processed during enrolment</span>
-              <span class="type-description-small text-tertiary">Off: the payment stays pending and is processed in the portal.</span>
-            </span>
-            <div class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2">
-              <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
-              <input id="f-card-processed" type="checkbox" name="cardProcessed" aria-labelledby="f-card-processed-label" class="absolute inset-0 size-full appearance-none cursor-pointer focus:outline-hidden" />
-            </div>
-          </div>
-            </div>
-          </div>
               </div>
               <div class="flex flex-wrap items-center justify-end gap-3 border-t border-gray-200 px-6 py-4 dark:border-white/10">
                 <p id="edit-dialog-note" class="hidden flex-1 type-description-small text-tertiary">Changes apply to the current case.</p>
@@ -352,10 +354,6 @@
           signer: {
             title: "Authorized signer",
             desc: "Who signs the Visa agreement when the supplier sends it to another signer.",
-          },
-          scenario: {
-            title: "Starting scenario",
-            desc: "How the supplier answers Automatic Card Processing during enrolment.",
           },
         };
         var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -404,6 +402,26 @@
           return wrap;
         }
 
+        function dlRow(label, value, hint) {
+          var wrap = document.createElement("div");
+          wrap.className = "py-2 sm:grid sm:grid-cols-3 sm:gap-4";
+          var dt = document.createElement("dt");
+          dt.className = "text-sm/6 font-medium text-gray-900";
+          dt.textContent = label;
+          var dd = document.createElement("dd");
+          dd.className = "mt-0.5 text-sm/6 text-gray-700 break-words whitespace-pre-line sm:col-span-2 sm:mt-0";
+          dd.textContent = value;
+          if (hint) {
+            var h = document.createElement("span");
+            h.className = "mt-1 block type-description-small text-tertiary";
+            h.textContent = hint;
+            dd.appendChild(h);
+          }
+          wrap.appendChild(dt);
+          wrap.appendChild(dd);
+          return wrap;
+        }
+
         var signerHintRequest = 0;
         function signerHint(email) {
           if (!email) return Promise.resolve("Add an email to send the agreement to.");
@@ -418,44 +436,36 @@
         function renderCards() {
           var d = data;
           document.getElementById("card-supplier").replaceChildren(
-            row("Business name", d.supplier.name),
-            row("Business address", d.supplier.address),
-            row("TIN", d.supplier.tin),
-            row("Phone", d.supplier.phone),
-            row("Contact", [d.supplier.contactFirst, d.supplier.contactLast].join(" ")),
-            row("Contact email", d.supplier.email),
+            dlRow("Business name", d.supplier.name),
+            dlRow("Business address", d.supplier.address),
+            dlRow("TIN", d.supplier.tin),
+            dlRow("Phone", d.supplier.phone),
+            dlRow("Contact", [d.supplier.contactFirst, d.supplier.contactLast].join(" ")),
+            dlRow("Contact email", d.supplier.email),
           );
           document.getElementById("card-payer").replaceChildren(
-            row("Payer name", d.payer.name),
-            row("Payer address", d.payer.address),
-            row("Amount", money(d.payment.amount)),
-            row("Invoice #", d.payment.invoice),
-            row(
+            dlRow("Payer name", d.payer.name),
+            dlRow("Payer address", d.payer.address),
+            dlRow("Amount", money(d.payment.amount)),
+            dlRow("Invoice #", d.payment.invoice),
+            dlRow(
               "Card",
               "•••• " + String(d.payment.cardNumber).slice(-4) + " · exp " + d.payment.expires,
             ),
           );
           var signerCard = document.getElementById("card-signer");
           signerCard.replaceChildren(
-            row("Name", [d.signer.firstName, d.signer.lastName].join(" ")),
-            row("Email", d.signer.email),
+            dlRow("Name", [d.signer.firstName, d.signer.lastName].join(" ")),
+            dlRow("Email", d.signer.email),
           );
           var request = ++signerHintRequest;
           signerHint(d.signer.email).then(function (text) {
             if (request !== signerHintRequest || !text) return;
             signerCard.replaceChildren(
-              row("Name", [d.signer.firstName, d.signer.lastName].join(" ")),
-              row("Email", d.signer.email, text),
+              dlRow("Name", [d.signer.firstName, d.signer.lastName].join(" ")),
+              dlRow("Email", d.signer.email, text),
             );
           });
-          document.getElementById("card-scenario").replaceChildren(
-            row(
-              "Scenario",
-              SCENARIOS[d.scenario] +
-                " · Card processed during enrolment: " +
-                (d.cardProcessed ? "Yes" : "No"),
-            ),
-          );
         }
 
         function renderResult(c) {
@@ -514,12 +524,6 @@
             input.value = value == null ? "" : String(value);
             setError(input, "");
           });
-          if (key === "scenario") {
-            editForm.querySelectorAll('input[name="scenario"]').forEach(function (radio) {
-              radio.checked = radio.value === (data.scenario || "A");
-            });
-            document.getElementById("f-card-processed").checked = data.cardProcessed !== false;
-          }
           if (key === "signer") updateEmailHint();
         }
 
@@ -533,11 +537,6 @@
               if (input.dataset.type === "number") value = Number(value) || 0;
               setPath(patch, input.dataset.field, value);
             });
-          if (key === "scenario") {
-            var checked = editForm.querySelector('input[name="scenario"]:checked');
-            patch.scenario = checked ? checked.value : "A";
-            patch.cardProcessed = document.getElementById("f-card-processed").checked;
-          }
           return patch;
         }
 
@@ -608,10 +607,33 @@
           return target;
         }
 
+        function fillScenario(d) {
+          form.querySelectorAll('input[name="scenario"]').forEach(function (radio) {
+            radio.checked = radio.value === (d.scenario || "A");
+          });
+          document.getElementById("f-card-processed").checked = d.cardProcessed !== false;
+        }
+
+        function readScenario() {
+          var checked = form.querySelector('input[name="scenario"]:checked');
+          return {
+            scenario: checked ? checked.value : "A",
+            cardProcessed: document.getElementById("f-card-processed").checked,
+          };
+        }
+
         function setData(next) {
           data = next;
           renderCards();
+          fillScenario(next);
         }
+
+        form.addEventListener("change", function (event) {
+          if (!event.target.matches('input[name="scenario"], #f-card-processed')) return;
+          var patch = readScenario();
+          if (Case.get()) setData(Case.update(patch) || mergePatch(data, patch));
+          else mergePatch(data, patch);
+        });
 
         form.querySelectorAll("[data-edit]").forEach(function (button) {
           button.addEventListener("click", function () {
@@ -638,7 +660,7 @@
 
         form.addEventListener("submit", function (event) {
           event.preventDefault();
-          var created = Case.create(data);
+          var created = Case.create(mergePatch(data, readScenario()));
           renderResult(created);
           result.scrollIntoView({ behavior: "smooth", block: "start" });
           document.getElementById("case-start-enrol").focus({ preventScroll: true });
