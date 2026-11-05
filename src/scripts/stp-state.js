@@ -338,6 +338,7 @@
           currentState.stpStep === STEP_AGREEMENT_SIGNATURE_PENDING;
         saveAgreementRequest({
           email: email,
+          recipientName: String(options.recipientName || "").trim(),
           sentAt: new Date().toISOString(),
           delivered: result.delivered,
         });
@@ -627,6 +628,209 @@
     return dialog;
   }
 
+  // ---- Agreement pending dialog (layout of Figma 36762:106435) -------------
+  // While the agreement waits for the signer: who it was sent to, when, and
+  // Resend / Send to another person in case the signer doesn't respond.
+
+  var PENDING_BADGE =
+    "inline-flex w-fit items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10";
+
+  function pendingRow(label, valueHtml) {
+    return (
+      '<div class="grid grid-cols-2 gap-4">' +
+      '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">' + label + "</span>" +
+      '<span class="min-w-0 text-sm text-gray-700 dark:text-gray-300">' + valueHtml + "</span>" +
+      "</div>"
+    );
+  }
+
+  function renderPendingDialog(dialog) {
+    var body = dialog.querySelector("[data-stp-pending-body]");
+    if (!body) return;
+    var request = getAgreementRequest() || {};
+    var C = demoCase();
+    var who = request.recipientName || request.email || "The authorized signer";
+    var signerLink =
+      C && request.delivered === false
+        ? '<a href="' + escapeText(C.urls().sign + "&email=" + encodeURIComponent(request.email)) + '" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300">Open signer&rsquo;s link<span class="sr-only"> (opens in a new tab)</span></a>'
+        : "";
+    body.innerHTML =
+      '<section aria-label="Waiting for acknowledgement" class="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-white/10 dark:bg-white/5">' +
+      '<h2 class="border-b border-gray-200 px-4 py-3 text-sm font-semibold text-gray-900 dark:border-white/10 dark:text-white">Waiting for Acknowledgement</h2>' +
+      '<div class="flex flex-col gap-2 p-4">' +
+      pendingRow("Status", '<span class="' + PENDING_BADGE + '">Pending Signature</span>') +
+      (request.recipientName ? pendingRow("Sent to", escapeText(request.recipientName)) : "") +
+      pendingRow("Email", '<span class="break-all">' + escapeText(request.email || "") + "</span>") +
+      (request.sentAt ? pendingRow("Sent at", escapeText(formatStepDate(request.sentAt))) : "") +
+      "</div>" +
+      // Test mode only: no email went out, the presenter opens the link here.
+      (request.delivered === false
+        ? '<div class="flex flex-col gap-2 border-t border-gray-200 px-4 py-3 dark:border-white/10">' +
+          '<p class="text-xs text-gray-500 dark:text-gray-400">Test mode, no email delivered to ' + escapeText(request.email) + ".</p>" +
+          signerLink +
+          "</div>"
+        : "") +
+      "</section>" +
+      '<p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-medium text-gray-900 dark:text-white">' + escapeText(who) +
+      "</span> will receive an email with a secure link to review and acknowledge the Visa AR Manager Participation Agreement. No response yet? Resend it, or send it to another authorized signer.</p>" +
+      '<div class="flex flex-wrap items-center gap-3">' +
+      '<button type="button" data-stp-resend class="' + SETUP_CTA_CLASS + ' disabled:cursor-not-allowed disabled:bg-blue-300">Resend</button>' +
+      '<button type="button" data-stp-send-other class="' + SETUP_SECONDARY_CLASS + '">Send to another person</button>' +
+      "</div>" +
+      '<p data-stp-send-status role="status" class="text-sm/5 text-gray-500 dark:text-gray-400"></p>' +
+      sendOtherForm();
+  }
+
+  function ensurePendingDialog() {
+    var existing = document.getElementById("sx-inline-stp-pending-dialog");
+    if (existing) return existing;
+    var dialog = document.createElement("dialog");
+    dialog.id = "sx-inline-stp-pending-dialog";
+    dialog.setAttribute("aria-labelledby", "sx-stp-pending-title");
+    dialog.className =
+      "fixed inset-0 m-0 size-auto max-h-none max-w-none border-0 p-0 bg-transparent backdrop:bg-transparent";
+    dialog.innerHTML =
+      '<div class="fixed inset-0 z-[100] bg-gray-900/75 transition-opacity duration-300 ease-out motion-reduce:transition-none"></div>' +
+      '<div class="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6">' +
+      '  <div class="relative flex h-auto max-h-[calc(100vh-2rem)] w-full max-w-[800px] flex-col overflow-y-auto rounded-3xl bg-white shadow-xl md:overflow-hidden dark:bg-gray-900 dark:ring-1 dark:ring-white/10 md:flex-row">' +
+      '    <button type="button" data-stp-pending-close class="absolute top-4 right-4 z-20 rounded-md bg-gray-900/8 p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200">' +
+      '      <span class="sr-only">Close</span>' +
+      '      <svg viewBox="0 0 20 20" fill="currentColor" class="size-5"><path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>' +
+      "    </button>" +
+      // Hugs the content. Card + terminal keep the opt-in dialog's sizes and
+      // horizontal offsets, as one group centred vertically in the panel.
+      '    <div class="relative flex p-2 md:w-64 md:shrink-0">' +
+      '      <div class="relative flex h-[220px] flex-1 items-start overflow-hidden rounded-2xl md:h-auto md:items-center" style="background-image: linear-gradient(180deg, #ECF2FF 0%, #F8F4FF 100%);">' +
+      '        <div class="relative mt-6 h-[309px] w-full shrink-0 md:mt-0">' +
+      '          <img src="../../../src/assets/illustrations/terminal.svg" alt="" class="absolute top-[117px] left-1/2 h-[192px] w-[332px] max-w-none -translate-x-[56%]" />' +
+      '          <div class="absolute inset-x-0 top-0 flex -translate-x-3 justify-center">' +
+      '            <img src="../../../src/assets/illustrations/card.svg" alt="" class="h-[169px] w-[292px] max-w-none" />' +
+      "          </div>" +
+      "        </div>" +
+      "      </div>" +
+      "    </div>" +
+      '    <div class="flex flex-1 flex-col p-4 md:p-9">' +
+      '      <div class="flex flex-col gap-6">' +
+      '        <div class="flex flex-col gap-2 md:pr-8">' +
+      '          <h3 id="sx-stp-pending-title" class="text-xl font-semibold leading-8 text-slate-950 md:text-[30px] md:leading-[36px] dark:text-white">Waiting for the agreement signature.</h3>' +
+      '          <p class="text-sm leading-6 text-gray-600 dark:text-gray-300">Signing the attached agreement allows your company to participate in automated card processing through the Visa network.</p>' +
+      "        </div>" +
+      '        <div data-stp-pending-body class="flex flex-col gap-4"></div>' +
+      "      </div>" +
+      "    </div>" +
+      "  </div>" +
+      "</div>";
+    document.body.appendChild(dialog);
+
+    dialog.addEventListener("click", function (event) {
+      var target = event.target;
+      if (!target || typeof target.closest !== "function") return;
+      if (target.closest("[data-stp-pending-close]")) {
+        if (dialog.open) dialog.close();
+      } else if (target.closest("[data-stp-resend]")) {
+        var request = getAgreementRequest();
+        if (request)
+          sendFromPending(dialog, target.closest("[data-stp-resend]"), {
+            email: request.email,
+            recipientName: request.recipientName,
+          });
+      } else if (target.closest("[data-stp-send-other]")) {
+        var form = dialog.querySelector("[data-stp-send-other-form]");
+        if (form) {
+          form.hidden = false;
+          form.querySelector("input").focus();
+        }
+      } else if (target.closest("[data-stp-send-other-cancel]")) {
+        var openForm = dialog.querySelector("[data-stp-send-other-form]");
+        if (openForm) openForm.hidden = true;
+        dialog.querySelector("[data-stp-send-other]").focus();
+      }
+    });
+    dialog.addEventListener("input", function (event) {
+      var input = event.target;
+      if (input.getAttribute("aria-invalid") !== "true") return;
+      input.setAttribute("aria-invalid", "false");
+      var error = dialog.querySelector("#" + input.id + "-error");
+      if (error) error.classList.add("hidden");
+    });
+    dialog.addEventListener("submit", function (event) {
+      var form = event.target.closest("[data-stp-send-other-form]");
+      if (!form) return;
+      event.preventDefault();
+      var first = form.querySelector("#stp-other-first");
+      var last = form.querySelector("#stp-other-last");
+      var email = form.querySelector("#stp-other-email");
+      var bad = [
+        [first, first.value.trim() ? "" : "Enter a first name"],
+        [last, last.value.trim() ? "" : "Enter a last name"],
+        [email, isValidEmail(email.value.trim()) ? "" : "Enter a valid email address"],
+      ].filter(function (pair) {
+        var error = form.querySelector("#" + pair[0].id + "-error");
+        pair[0].setAttribute("aria-invalid", pair[1] ? "true" : "false");
+        if (error) {
+          error.textContent = pair[1];
+          error.classList.toggle("hidden", !pair[1]);
+        }
+        return pair[1];
+      });
+      if (bad.length) {
+        bad[0][0].focus();
+        return;
+      }
+      sendFromPending(dialog, form.querySelector('[type="submit"]'), {
+        email: email.value.trim(),
+        recipientName: (first.value.trim() + " " + last.value.trim()).trim(),
+        firstName: first.value.trim(),
+        lastName: last.value.trim(),
+      });
+    });
+    // Signed in another tab while open: show the next steps instead.
+    subscribe(function (status, state) {
+      if (!dialog.open) return;
+      if (state && state.stpStep !== STEP_AGREEMENT_SIGNATURE_PENDING) {
+        dialog.close();
+        openSetupStepsModal();
+      }
+    });
+    return dialog;
+  }
+
+  // On the case instance the case's signer changes too, so the signer page
+  // accepts the new link.
+  function sendFromPending(dialog, button, to) {
+    var label = button.textContent;
+    button.disabled = true;
+    button.textContent = "Sending…";
+    var C = demoCase();
+    var send;
+    if (C) {
+      if (to.firstName)
+        C.update({ signer: { firstName: to.firstName, lastName: to.lastName, email: to.email } });
+      send = C.optIn({ self: false });
+    } else {
+      send = sendAgreementEmail({ email: to.email, recipientName: to.recipientName });
+    }
+    send
+      .then(function () {
+        renderPendingDialog(dialog);
+        dialog.querySelector("[data-stp-send-status]").textContent = "Sent to " + to.email + ".";
+      })
+      .catch(function (error) {
+        var status = dialog.querySelector("[data-stp-send-status]");
+        if (status) status.textContent = (error && error.message) || "Could not send the email.";
+      })
+      .then(function () {
+        button.disabled = false;
+        button.textContent = label;
+      });
+  }
+
+  function openPendingDialog() {
+    var dialog = ensurePendingDialog();
+    renderPendingDialog(dialog);
+    return safelyShowDialog(dialog);
+  }
+
   function ensureInlineNextStepsDialog() {
     var existing = document.getElementById("sx-inline-stp-next-steps-dialog");
     if (existing) return existing;
@@ -719,8 +923,12 @@
   function getSetupSteps(state) {
     var step = (state && state.stpStep) || currentState.stpStep;
     var processed = demoCardProcessed();
+    // Demo instance: the case payment waits on Action Required, so open that tab.
+    var demoQuery = demoCaseQuery("&");
     var paymentsHref =
-      "supplier-portal.html?guide=card-rows" + demoCaseQuery("&");
+      "supplier-portal.html?guide=card-rows" +
+      demoQuery +
+      (demoQuery && !processed ? "&tab=action-required" : "");
     var steps = [];
     if (step === STEP_OPT_IN_REQUIRED) {
       steps.push({
@@ -729,33 +937,34 @@
         cta: '<button type="button" data-stp-opt-in-trigger="setup-steps" class="' + SETUP_CTA_CLASS + '">Opt in</button>',
       });
     } else if (step === STEP_AGREEMENT_SIGNATURE_PENDING) {
-      // Test mode on the case instance (no email delivered): the presenter
-      // opens the signer's page in a new tab instead.
-      var request = getAgreementRequest();
-      var C = demoCase();
-      var signerLink =
-        C && request && request.delivered === false
-          ? '<a href="' + escapeText(C.urls().sign + "&email=" + encodeURIComponent(request.email)) + '" target="_blank" rel="noopener" class="type-link text-brand self-start rounded-sm underline underline-offset-2 hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Open signer&rsquo;s link</a>'
-          : "";
+      // openSetupStepsModal shows the pending dialog for this state instead.
+      var pendingRequest = getAgreementRequest();
       steps.push({
-        title: "Sign the Visa Agreement",
-        text: escapeText(getAgreementSentText()),
-        cta:
-          '<div class="flex flex-wrap items-center gap-4"><button type="button" data-inline-next-review class="' +
-          SETUP_CTA_CLASS +
-          '">Review</button>' +
-          signerLink +
-          "</div>",
+        key: "agreement",
+        title: "Pending Agreement Signature",
+        meta: pendingRequest && pendingRequest.sentAt ? "Sent - " + formatStepDate(pendingRequest.sentAt) : "",
+      });
+    } else {
+      var signed = getAgreementRequest();
+      var C2 = demoCase();
+      var c2 = C2 && C2.get();
+      var signedAt =
+        (signed && signed.signedAt) ||
+        (c2 && c2.enrol && c2.enrol.agreement && c2.enrol.agreement.confirmedAt) ||
+        "";
+      steps.push({
+        key: "agreement",
+        title: "Agreement Signature (Acknowledged)",
+        meta: signedAt ? "Confirmed at - " + formatStepDate(signedAt) : "",
       });
     }
     steps.push(
       {
         key: "process",
-        title: "Process Any Payment",
+        title: "Process Any Card Payment",
         text: "Go to Payments and process any available virtual card using your terminal. This links your Merchant and Terminal IDs.",
         cta: '<a href="' + paymentsHref + '" data-stp-go-to-payments class="' + SETUP_CTA_CLASS + '">Go to Payments</a>',
       },
-      { key: "terminal", title: "Terminal Verification" },
       {
         key: "verify",
         title: "Verify Your Bank Account (Penny Test)",
@@ -765,16 +974,18 @@
       { key: "active", title: "Automatic Card Processing Activated" },
     );
     // Index of the current step; everything before it is done.
+    // Steps: 0 agreement · 1 process · 2 verify · 3 active.
     var current = 0;
-    if (step === STEP_TERMINAL_COMPLETED) current = processed ? 2 : 0;
+    if (step === STEP_TERMINAL_COMPLETED) current = processed ? 2 : 1;
     else if (step === STEP_BANK_VERIFICATION_REQUIRED) current = 2;
     else if (step === STEP_COMPLETED) current = steps.length;
-    // Prepended opt-in / agreement steps stay first and current.
-    if (step === STEP_OPT_IN_REQUIRED || step === STEP_AGREEMENT_SIGNATURE_PENDING)
-      current = 0;
     return steps.map(function (item, index) {
+      var status = index < current ? "done" : index === current ? "current" : "upcoming";
+      // A card processed before the agreement was signed already gave the
+      // MID / TID: step 2 shows done while step 1 is still pending.
+      if (item.key === "process" && processed && status === "upcoming") status = "done";
       return Object.assign({}, item, {
-        status: index < current ? "done" : index === current ? "current" : "upcoming",
+        status: status,
         number: index + 1,
         last: index === steps.length - 1,
       });
@@ -783,6 +994,51 @@
 
   var SETUP_CTA_CLASS =
     "inline-flex w-fit shrink-0 cursor-pointer items-center justify-center self-start rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600";
+  var SETUP_SECONDARY_CLASS =
+    "inline-flex w-fit shrink-0 cursor-pointer items-center justify-center self-start rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20";
+  var SETUP_INPUT_CLASS =
+    "mt-1 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20";
+
+  // "04/06/2026, 11:53:17 AM" (Figma set-up steps).
+  function formatStepDate(iso) {
+    var date = new Date(iso);
+    if (isNaN(date.getTime())) return "";
+    return date.toLocaleString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  }
+
+  // "Send to another person": first / last name + email, hidden until asked.
+  function sendOtherForm() {
+    function field(id, label, type, autocomplete) {
+      return (
+        "<div>" +
+        '<label for="' + id + '" class="block text-sm/6 font-medium text-gray-900 dark:text-white">' + label + "</label>" +
+        '<input id="' + id + '" type="' + type + '" autocomplete="' + autocomplete + '" aria-describedby="' + id + '-error" class="' + SETUP_INPUT_CLASS + '" />' +
+        '<p id="' + id + '-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400"></p>' +
+        "</div>"
+      );
+    }
+    return (
+      '<form data-stp-send-other-form hidden novalidate class="flex flex-col gap-3 rounded-lg border border-gray-200 p-4 dark:border-white/10">' +
+      '<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">' +
+      field("stp-other-first", "First name", "text", "off") +
+      field("stp-other-last", "Last name", "text", "off") +
+      "</div>" +
+      field("stp-other-email", "Email", "email", "off") +
+      '<div class="flex items-center justify-end gap-3">' +
+      '<button type="button" data-stp-send-other-cancel class="' + SETUP_SECONDARY_CLASS + '">Cancel</button>' +
+      '<button type="submit" class="' + SETUP_CTA_CLASS + ' disabled:cursor-not-allowed disabled:bg-blue-300">Send</button>' +
+      "</div>" +
+      "</form>"
+    );
+  }
+
   var SETUP_CHECK_ICON =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3 text-white"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z"/></svg>';
 
@@ -816,6 +1072,9 @@
             : "font-medium text-gray-500 dark:text-gray-400";
         var body =
           '<p class="text-sm/5 ' + titleClass + '">' + escapeText(item.title) + "</p>" +
+          ((done || isCurrent) && item.meta
+            ? '<p class="-mt-1 text-sm/5 font-normal text-gray-500 dark:text-gray-400">' + escapeText(item.meta) + "</p>"
+            : "") +
           (isCurrent && item.text
             ? '<p class="text-sm/5 font-normal text-gray-700 dark:text-gray-300">' + item.text + "</p>"
             : "") +
@@ -1107,6 +1366,8 @@
   }
 
   function openSetupStepsModal() {
+    if (currentState.stpStep === STEP_AGREEMENT_SIGNATURE_PENDING)
+      return openPendingDialog();
     var dialog = ensureInlineNextStepsDialog();
     renderSetupSteps(dialog, currentState);
     return safelyShowDialog(dialog);
@@ -1180,6 +1441,7 @@
       "sx-inline-stp-next-steps-dialog",
       "sx-inline-stp-verify-dialog",
       "sx-inline-stp-verify-success-dialog",
+      "sx-inline-stp-pending-dialog",
     ].forEach(function (id) {
       var dialog = document.getElementById(id);
       if (dialog && dialog.open && typeof dialog.close === "function") {

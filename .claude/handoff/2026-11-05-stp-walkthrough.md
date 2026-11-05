@@ -30,6 +30,21 @@ Branch: `stp-walkthrough`. Figma: `9DRzbyv7FDCDYFYN5ZGuwZ` ([R3] SMART Exchange)
     per Figma 34510:42009; switcher = case business only.
   - Never push to `main` directly (one-time exception was the branch merge). No real client names. Don't hand-edit design-tokens.js.
 
+## Session 2 (2026-11-05, afternoon) — done, committed on `stp-walkthrough`
+- Launcher: **Create case** always starts a fresh run (new id, keeps case info); "card processed" toggle removed —
+  the final enrolment screen's Card details test button decides it. Enrolment session state is per case.
+- Enrolment: "Provide Signature" step removed; Submit on Almost Done opens the OBSign dialog. Welcome logo = Figma
+  33456:52299 (`src/assets/sx-enroll/sx-logomark.svg`). Agreement dialog full height (16px gap). B form prefilled from case signer.
+- Portal: instance is sticky per browser (`sx_demo_instance_v1`, cleared by Create case / Reset demo); sx-demo-case.js loads
+  on every dashboard page. Shell navigation AP/AR → Payments crash fixed (table-ui.js + current exchanges-table version).
+  Go to Payments guide opens Action Required; its Done no longer jumps to the deposit on the instance.
+- STP steps per Figma (Agreement · Process Any Card Payment · Penny Test · Activated); a card processed before signing shows
+  step 2 done. Agreement pending → "Waiting for the agreement signature." dialog (layout Figma 36762:106435) with Resend /
+  Send to another person. Banner **Review** opens it.
+- Email worker redeployed (repo version with `flow: "stp"`), ALLOWED_ORIGINS now also localhost/127.0.0.1:8899.
+  Worker email copy still the repo one, not Figma 36525:46232.
+- Open: empty state design (link never arrived), "catch up" removal (unclear), Batch 5 QA (qa:code / qa:hover), wiki entry.
+
 ## Goal
 A demo walkthrough of SX + STP (Automatic Card Processing), like the Consumer Portal walkthrough:
 create a **case** (one payment) → supplier **enrols** with that payment → lands in a **Supplier Portal

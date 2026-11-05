@@ -28,8 +28,8 @@
     </style>
 
     <script src="../../scripts/data-source.js"></script>
-    <script src="../../scripts/stp-state.js"></script>
-    <script src="../../scripts/sx-demo-case.js?v=20261105c"></script>
+    <script src="../../scripts/stp-state.js?v=20261105p"></script>
+    <script src="../../scripts/sx-demo-case.js?v=20261105e"></script>
   </head>
   <body class="min-h-full bg-white font-['Inter'] text-default antialiased">
     <main class="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-10 lg:px-10">
@@ -121,7 +121,7 @@
             row("Payment", money(c.payment.amount) + " from " + c.payer.name + " (" + c.payment.invoice + ")"),
             row("Card", c.payment.cardBrand + " ending " + String(c.payment.cardNumber).slice(-4)),
             row("Signer", [c.signer.firstName, c.signer.lastName].join(" ") + " (" + c.signer.email + ")"),
-            row("Scenario", SCENARIOS[c.scenario] + (c.cardProcessed ? ", card processed" : ", card not processed")),
+            row("Scenario", SCENARIOS[c.scenario]),
           );
           document.getElementById("case-start-enrol").href = urls.enrol;
           document.getElementById("case-open-portal").href = urls.portal;

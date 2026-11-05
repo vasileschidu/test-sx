@@ -1178,11 +1178,13 @@
       agreementReviewButtons.forEach(function (button) {
         button.addEventListener("click", function (event) {
           event.preventDefault();
+          // Figma 36684:121796: Review shows the set-up steps (pending
+          // signature, Resend / Send to another person), not the sign dialog.
           if (
             window.STPState &&
-            typeof window.STPState.openAgreementReviewModal === "function"
+            typeof window.STPState.openSetupStepsModal === "function"
           ) {
-            window.STPState.openAgreementReviewModal();
+            window.STPState.openSetupStepsModal();
           }
         });
       });

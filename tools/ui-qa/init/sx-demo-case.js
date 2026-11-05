@@ -13,11 +13,10 @@
         payment: { amount: 3526, currency: "USD", invoice: "PG-3526", dateInitiated: "2026-11-05", cardBrand: "Visa", cardNumber: "5444123400005612", expires: "12/2026", cvc: "999" },
         signer: { firstName: "Michelle", lastName: "Jackson", email: "demo.signer@example.com" },
         scenario: "A",
-        cardProcessed: true,
         enrol: { stp: "on", signer: "self", agreementSigned: true, agreement: { signedBy: "Johnny Anderson", confirmedAt: "2026-11-05T09:10:00.000Z" }, cardProcessed: null, account: { username: "johnny@hotmail.com" }, completedAt: null },
         stp: { mid: null, tid: null },
       }),
     );
-    sessionStorage.setItem("sx-enroll-state", JSON.stringify({ signature: { method: "type", name: "Johnny Anderson", signedAt: "2026-11-05T09:05:00.000Z" } }));
+    sessionStorage.setItem("sx-enroll-state:SX-QA", JSON.stringify({ signature: { method: "type", name: "Johnny Anderson", signedAt: "2026-11-05T09:05:00.000Z" } }));
   } catch (e) {}
 })();

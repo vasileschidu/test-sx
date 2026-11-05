@@ -6,7 +6,7 @@
  * The pages reuse the SMART Disburse onboarding shell and scripts without
  * changing them (onboarding-sidebar / -stepper / -mobile-header / -modal /
  * -field / -sign / -consents, review-documents.js). This file adapts them:
- *   - window.OB_FLOW_STEPS: the 8 enrolment steps (links keep ?case=).
+ *   - window.OB_FLOW_STEPS: the 7 enrolment steps (links keep ?case=; signing is on Submit of the summary).
  *   - window.OB_MOBILE_MENU: Contact Us only (no Decline in this flow).
  *   - window.SDOnboardingContext: a small adapter (getState / saveState) on
  *     sessionStorage `sx-enroll-state`, so OBConsents, OBModal's Contact Us
@@ -26,7 +26,6 @@
 (function () {
   "use strict";
 
-  var STATE_KEY = "sx-enroll-state";
   var ASSETS = "../../assets/onboarding/";
 
   var CASE_ID = (function () {
@@ -36,6 +35,9 @@
       return "";
     }
   })();
+
+  // Per case, so a tab reused for a new case never shows the previous case's answers.
+  var STATE_KEY = "sx-enroll-state:" + CASE_ID;
 
   /** "payment.html" → "payment.html?case=SX-…" (keeps any hash). */
   function withCase(href) {
@@ -62,7 +64,6 @@
     { id: "confirm-identity", label: "Confirm Identity" },
     { id: "confirm-business-details", label: "Confirm Business Details" },
     { id: "review-documents", label: "Review Documents" },
-    { id: "signature", label: "Provide Signature" },
     { id: "payment", label: "Confirm Payment" },
     { id: "card-processing", label: "Automatic Card Processing" },
     { id: "create-account", label: "Create SMART Exchange" },
@@ -138,7 +139,7 @@
   // ---- Navigation ----------------------------------------------------------
 
   // SD hops used inside the shared scripts → this flow's pages.
-  var ROUTES = { "paywall.html": "signature.html" };
+  var ROUTES = { "paywall.html": "payment.html" };
 
   function route(href) {
     var file = String(href || "");
@@ -629,53 +630,6 @@
     renderView();
   });
 
-  // ---- 4. Provide Signature ------------------------------------------------
-
-  page("signature", function (c) {
-    var signBtn = document.querySelector("[data-sx-sign]");
-    var signed = document.querySelector("[data-sx-signed]");
-    var nextBtn = document.querySelector("[data-sx-next]");
-    document.querySelector("[data-sx-amount]").textContent = money(c.payment.amount, c.payment.currency);
-    document.querySelector("[data-sx-payer]").textContent = c.payer.name;
-
-    function paint() {
-      var s = getState().signature;
-      signed.hidden = !s;
-      nextBtn.hidden = !s;
-      signBtn.textContent = s ? "Sign again" : "Sign";
-      signBtn.className = s
-        ? signBtn.getAttribute("data-secondary-class")
-        : signBtn.getAttribute("data-primary-class");
-      if (s) {
-        signed.querySelector("[data-sx-signed-by]").textContent = s.name || contactName(c);
-        signed.querySelector("[data-sx-signed-at]").textContent = stamp(s.signedAt);
-        signed.querySelector("[data-sx-signed-method]").textContent = s.method === "type" ? "Typed" : "Drawn";
-      }
-    }
-
-    signBtn.setAttribute("data-primary-class", signBtn.className);
-    signBtn.addEventListener("click", function () {
-      window.OBSign.open({
-        name: contactName(c),
-        onSigned: function (signature) {
-          saveState({
-            signature: {
-              method: signature.method,
-              name: signature.name || contactName(c),
-              signedAt: new Date().toISOString(),
-            },
-          });
-          window.OBModal.close();
-          go("payment.html");
-        },
-      });
-    });
-    nextBtn.addEventListener("click", function () {
-      go("payment.html");
-    });
-    paint();
-  });
-
   // ---- 5. Confirm Payment --------------------------------------------------
 
   page("payment", function (c) {
@@ -939,13 +893,24 @@
         },
       });
     });
+    // Submit = sign: the shared "Sign to authorize payment" dialog (OBSign), then complete.
     submit.addEventListener("click", function () {
       if (submit.disabled) return;
-      setLoading(submit, "Submitting…");
-      window.SXDemoCase.update({ enrol: { completedAt: new Date().toISOString() } });
-      window.setTimeout(function () {
-        go("complete.html");
-      }, 1200);
+      window.OBSign.open({
+        name: contactName(c),
+        onSigned: function (signature) {
+          saveState({
+            signature: {
+              method: signature.method,
+              name: signature.name || contactName(c),
+              signedAt: new Date().toISOString(),
+            },
+          });
+          window.SXDemoCase.update({ enrol: { completedAt: new Date().toISOString() } });
+          window.OBModal.close();
+          go("complete.html");
+        },
+      });
     });
     return loaded;
   });
@@ -975,8 +940,9 @@
   });
 
   /**
-   * Review Documents (SX only): the shared document viewer (review-documents.js
-   * → OBModal, max 752px tall with a 24px top/bottom gap) fills the screen
+   * Document dialogs (SX only): the Review Documents viewer (review-documents.js
+   * → OBModal, max 752px tall with a 24px top/bottom gap) and the Visa agreement
+   * on Automatic Card Processing (sx-enroll-acp.js) fill the screen
    * instead, with the same 16px gap on every side. The document area scrolls
    * inside; header and footer stay visible. OBModal itself is unchanged: the
    * call is wrapped and the frame padding swapped after it opens.
@@ -984,13 +950,16 @@
   var VIEWER_PANEL =
     "relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5";
 
+  var FULL_HEIGHT_DIALOGS = ["doc-viewer-title", "sx-agreement-title"];
+
   function fullHeightViewer() {
     var M = window.OBModal;
     if (!M || M.sxViewerWrapped) return;
     M.sxViewerWrapped = true;
     var open = M.open;
     M.open = function (body, labelledBy, opts) {
-      if (labelledBy !== "doc-viewer-title") return open.apply(M, arguments);
+      if (FULL_HEIGHT_DIALOGS.indexOf(labelledBy) === -1)
+        return open.apply(M, arguments);
       var backdrop = open.call(
         M,
         body,
@@ -1005,10 +974,7 @@
       return backdrop;
     };
   }
-  document.addEventListener("DOMContentLoaded", function () {
-    if (document.body.getAttribute("data-sx-step") === "review-documents")
-      fullHeightViewer();
-  });
+  document.addEventListener("DOMContentLoaded", fullHeightViewer);
 
   window.SXEnroll = {
     CASE_ID: CASE_ID,

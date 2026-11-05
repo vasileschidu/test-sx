@@ -2,8 +2,9 @@
   var PAGE_CONFIGS = {
     "supplier-portal.html": {
       scripts: [
+        "/src/scripts/table-ui.js?v=20261006f",
         "/src/scripts/table-skeleton.js",
-        "/src/scripts/exchanges-table.js?v=20260309d",
+        "/src/scripts/exchanges-table.js?v=20261105g",
       ],
       init: "initSmartExchangePage",
     },

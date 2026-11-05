@@ -29,8 +29,8 @@
     </style>
 
     <script src="../../scripts/data-source.js"></script>
-    <script src="../../scripts/stp-state.js?v=20261105a"></script>
-    <script src="../../scripts/sx-demo-case.js?v=20261105c"></script>
+    <script src="../../scripts/stp-state.js?v=20261105p"></script>
+    <script src="../../scripts/sx-demo-case.js?v=20261105e"></script>
     <script src="../../scripts/checkbox-component.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   </head>
@@ -89,16 +89,6 @@
             </div>
           </fieldset>
 
-          <div class="flex items-center justify-between gap-4">
-            <span class="flex flex-col">
-              <span id="f-card-processed-label" class="type-label text-default">Card processed during enrolment</span>
-              <span class="type-description-small text-tertiary">Off: the payment stays pending and is processed in the portal.</span>
-            </span>
-            <div class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2">
-              <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
-              <input id="f-card-processed" type="checkbox" name="cardProcessed" aria-labelledby="f-card-processed-label" class="absolute inset-0 size-full appearance-none cursor-pointer focus:outline-hidden" />
-            </div>
-          </div>
         </section>
 
         <div class="flex flex-wrap items-center justify-end gap-3">
@@ -464,14 +454,12 @@
           form.querySelectorAll('input[name="scenario"]').forEach(function (radio) {
             radio.checked = radio.value === (d.scenario || "A");
           });
-          document.getElementById("f-card-processed").checked = d.cardProcessed !== false;
         }
 
         function readScenario() {
           var checked = form.querySelector('input[name="scenario"]:checked');
           return {
             scenario: checked ? checked.value : "A",
-            cardProcessed: document.getElementById("f-card-processed").checked,
           };
         }
 
@@ -482,7 +470,7 @@
         }
 
         form.addEventListener("change", function (event) {
-          if (!event.target.matches('input[name="scenario"], #f-card-processed')) return;
+          if (!event.target.matches('input[name="scenario"]')) return;
           var patch = readScenario();
           if (Case.get()) setData(Case.update(patch) || mergePatch(data, patch));
           else mergePatch(data, patch);
@@ -524,8 +512,13 @@
 
         form.addEventListener("submit", function (event) {
           event.preventDefault();
-          if (Case.get()) Case.update(readScenario());
-          else Case.create(mergePatch(data, readScenario()));
+          // Always a fresh run: keep the case information, drop the previous run's enrolment,
+          // signature, STP and paid state (create() clears them and gives a new case id).
+          var info = {};
+          ["supplier", "payer", "payment", "signer"].forEach(function (k) {
+            info[k] = data[k];
+          });
+          Case.create(mergePatch(info, readScenario()));
           window.location.href = "stp-case-ready.html";
         });
 
@@ -542,7 +535,6 @@
         Case.ready().then(function () {
           var existing = Case.get();
           setData(existing || Case.defaults());
-          document.getElementById("case-create").textContent = existing ? "Save and continue" : "Create case";
         });
       })();
     </script>

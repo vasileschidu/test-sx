@@ -8,7 +8,8 @@
  *   - Reveal Card Details → el-dialog with the card, copy buttons and a demo
  *     control "I've processed this card in my terminal" →
  *     SXDemoCase.markCardProcessed() (row Paid, MID/TID, STP step).
- *     With case.cardProcessed the control is the suggested next step.
+ *     Used or not, it decides whether the card was processed during enrolment
+ *     (otherwise the payment stays pending and is processed in the portal).
  *   - "Go to SMART Exchange" → SXDemoCase.urls().portal.
  *   - Sets enrol.completedAt if Submit didn't (direct visit).
  */
@@ -124,7 +125,6 @@
     });
 
     // Processed state
-    var suggest = $("[data-sx-suggest]");
     var processBtn = $("[data-sx-process-btn]");
     var hint = $("[data-sx-process-hint]");
     var processed = $("[data-sx-processed]");
@@ -134,16 +134,8 @@
     function paint() {
       var cur = X.currentCase() || c;
       var done = !!(cur.enrol && cur.enrol.cardProcessed);
-      var suggested = cur.cardProcessed === true && !done;
-      suggest.hidden = !suggested;
       processBtn.hidden = done;
       hint.hidden = done;
-      processBtn.className = processBtn.getAttribute(
-        suggested ? "data-primary-class" : "data-secondary-class",
-      );
-      hint.textContent = suggested
-        ? "Suggested next step for this demo: confirms you ran the card in your terminal."
-        : "Demo control, optional: simulates running this card through your terminal.";
       processed.hidden = !done;
       paidBanner.hidden = !done;
       $("[data-sx-stp-banner]").hidden = !stpOn || done;

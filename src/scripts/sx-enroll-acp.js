@@ -110,8 +110,7 @@
           M.SECONDARY_BUTTON_MD +
           '">Close Agreement</button>' +
           "</div>",
-        panelClass:
-          "relative flex h-[min(752px,calc(100dvh-3rem))] w-full max-w-5xl flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5",
+        // Full height with a 16px gap: sx-enroll.js (fullHeightViewer).
       },
     );
   }
@@ -171,11 +170,15 @@
       (c.scenario === "A" ? "self" : c.scenario === "B" ? "other" : null);
     var opened = !!saved.opened || !!enrol.agreement;
     var formA = saved.formA || { first: c.supplier.contactFirst, last: c.supplier.contactLast };
-    var formB = saved.formB || {
+    // The signer always starts as the case's authorized signer (launcher "Edit
+    // case information"); only the note is remembered from an earlier visit.
+    var formB = {
       first: (c.signer && c.signer.firstName) || "",
       last: (c.signer && c.signer.lastName) || "",
       email: (c.signer && c.signer.email) || "",
-      note: "Please sign this agreement, it will allow us to have card payments automatically processed.",
+      note:
+        (saved.formB && typeof saved.formB.note === "string" && saved.formB.note) ||
+        "Please sign this agreement, it will allow us to have card payments automatically processed.",
     };
     var sendError = "";
 

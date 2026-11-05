@@ -18,11 +18,15 @@
   var STORAGE_KEY = "sx_demo_case_v1";
   var CHANGE_EVENT = "sx-demo-case:change";
   // Demo state that belongs to one walkthrough; cleared on create/reset.
+  // The case's portal instance stays on in this browser once opened (any
+  // dashboard page, with or without ?case=) until a new case or Reset demo.
+  var INSTANCE_KEY = "sx_demo_instance_v1";
   var DEMO_LOCAL_KEYS = [
     "sx_global_stp_state_v3",
     "sx_global_stp_status_v2",
     "sx_stp_agreement_request_v1",
     "sx_exchange_entry_overrides_v1",
+    INSTANCE_KEY,
   ];
   var DEMO_SESSION_PREFIX = "sx-enroll";
 
@@ -101,7 +105,6 @@
         email: defaultRecipient,
       },
       scenario: "A",
-      cardProcessed: true,
       enrol: {
         stp: null,
         signer: null,
@@ -226,8 +229,18 @@
 
   function isPortalInstance() {
     var current = read();
-    var fromUrl = caseIdFromUrl();
-    return Boolean(current && fromUrl && fromUrl === current.id);
+    if (!current) return false;
+    if (caseIdFromUrl() === current.id) {
+      try {
+        localStorage.setItem(INSTANCE_KEY, current.id);
+      } catch (error) {}
+      return true;
+    }
+    try {
+      return localStorage.getItem(INSTANCE_KEY) === current.id;
+    } catch (error) {
+      return false;
+    }
   }
 
   function last4(cardNumber) {

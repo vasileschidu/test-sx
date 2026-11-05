@@ -138,6 +138,14 @@ Rendered by `renderSetupSteps` in `stp-state.js` from the STP step (+ `SXDemoCas
 (blue below done steps). Only the current step shows its description + one primary md CTA (`Go to Payments` / `Verify now` /
 `Review` / `Opt in`); done = check + title, future = muted title. opt-in / agreement-pending prepend their own first step.
 
+### STP agreement pending dialog — `STPState.openSetupStepsModal()` while `agreement_signature_pending`
+Layout of Figma 36762:106435 (`ensurePendingDialog` in `stp-state.js`): same frame + card/terminal illustration as the opt-in
+dialog, title "Waiting for the agreement signature." + description, a status card ("Waiting for Acknowledgement": Status `Pending
+Signature` blue badge, Sent to, Email, Sent at; card footer only in test mode: note + "Open signer's link"), then the
+"<signer> will receive an email…" text and small md buttons side by side: **Resend** (primary) + **Send to another person**
+(secondary → inline first / last name + email form). No dialog footer. Steps 2–4 are not shown
+until the agreement is signed; then the set-up steps list opens instead.
+
 ### Input with leading add-on (`$ 0.00`, Bank Account Verification)
 `div.flex.items-center.rounded-md.bg-white.pl-3.outline-1.-outline-offset-1.outline-gray-300.has-[input:focus]:outline-2
 has-[input:focus]:outline-blue-600 has-[input[aria-invalid=true]]:outline-red-500` > `span` add-on `text-sm text-gray-500` + bare
