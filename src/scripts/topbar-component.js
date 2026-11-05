@@ -1198,9 +1198,11 @@
           event.preventDefault();
           if (
             window.STPState &&
-            typeof window.STPState.openSetupStepsModal === "function"
+            typeof window.STPState.openLearnMoreModal === "function"
           ) {
-            window.STPState.openSetupStepsModal();
+            window.STPState.openLearnMoreModal(
+              button.getAttribute("data-stp-learn-more-trigger"),
+            );
           }
         });
       });
