@@ -974,6 +974,42 @@
     setTimeout(applySidebarLook, 0);
   });
 
+  /**
+   * Review Documents (SX only): the shared document viewer (review-documents.js
+   * → OBModal, max 752px tall with a 24px top/bottom gap) fills the screen
+   * instead, with the same 16px gap on every side. The document area scrolls
+   * inside; header and footer stay visible. OBModal itself is unchanged: the
+   * call is wrapped and the frame padding swapped after it opens.
+   */
+  var VIEWER_PANEL =
+    "relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5";
+
+  function fullHeightViewer() {
+    var M = window.OBModal;
+    if (!M || M.sxViewerWrapped) return;
+    M.sxViewerWrapped = true;
+    var open = M.open;
+    M.open = function (body, labelledBy, opts) {
+      if (labelledBy !== "doc-viewer-title") return open.apply(M, arguments);
+      var backdrop = open.call(
+        M,
+        body,
+        labelledBy,
+        Object.assign({}, opts, { panelClass: VIEWER_PANEL }),
+      );
+      var frame = backdrop.querySelector("[data-ob-modal-frame]");
+      if (frame) {
+        frame.classList.remove("px-4", "py-6");
+        frame.classList.add("p-4");
+      }
+      return backdrop;
+    };
+  }
+  document.addEventListener("DOMContentLoaded", function () {
+    if (document.body.getAttribute("data-sx-step") === "review-documents")
+      fullHeightViewer();
+  });
+
   window.SXEnroll = {
     CASE_ID: CASE_ID,
     page: page,
