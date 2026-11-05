@@ -5,7 +5,7 @@ status: draft
 last_reviewed: 2026-10-17
 product: smart-exchange
 version: "R3"
-source: studied from the prototype on main @ 2026-11-05 (stp-state.js, payment-preferences-page.js, payment-preferences.html, topbar-component.js, exchanges-table.js, app-plans.js, workers/sd-sx-token-service) and the product owner's description; Figma [R3] SMART Exchange page STP not checked
+source: studied from the prototype on main @ 2026-11-05 (stp-state.js, payment-preferences-page.js, payment-preferences.html, topbar-component.js, exchanges-table.js, app-plans.js, workers/sd-sx-token-service), the product owner's description and answers (2026-11-05); Figma [R3] SMART Exchange page STP not checked
 ---
 
 # STP (Automatic Card Processing)
@@ -20,15 +20,15 @@ STP is a **card** option for **suppliers** (businesses) that have their own
 [merchant account](../../suite/glossary.md). With STP on, card payments sent to the supplier on that rail are processed
 automatically to their merchant account, so nobody has to key the card in by hand from **Get paid**.
 
-- The agreement in the code is the **Visa AR Manager Participation Agreement**. Figma also has a
-  "[WIP] STP - Mastercard" file. TODO(confirm): is STP Visa-only, or one rail per card network?
+- **Visa only, for now** (product owner, 2026-11-05). The agreement in the code is the **Visa AR Manager Participation
+  Agreement**. The "[WIP] STP - Mastercard" Figma file is not part of the current scope.
 - Payers (SMART Hub) and consumers (Consumer Portal) don't opt in to STP. See [where it appears](#where-it-appears).
 
 ## Where it appears
 
 | Place | What the supplier sees | Code |
 |---|---|---|
-| **SMART Exchange token flow**, Card option | Per the product owner: an **enable STP** option under **Card**, then the Authorized Signer question. **Not built**, see [below](#the-token-flow-is-not-built). TODO(confirm) | — |
+| **SMART Exchange token flow**, Card option | An **enable STP** option under **Card**, then the Authorized Signer question. When the flow is complete, the supplier **lands in the SMART Exchange portal**. Designed in Figma [R3] SMART Exchange, page STP; **not built** in the prototype, see [below](#the-token-flow-is-not-built) | — (Figma only) |
 | **SX portal: Payment Preferences → Payment Methods → Payers' Cards** | The **Automatic Card Processing** card: status badge, description, **Opt in** / **Review** / **Learn more** button, ⋮ menu (Learn more, Opt out), the yellow "confirm the small deposit amount" alert, and the re-verify link | `src/pages/dashboard/payment-preferences.html` (`#pp-stp-card-container`), `src/scripts/pages/payment-preferences-page.js` |
 | **SX portal: top bar banner**, on every Portal page | One banner per state, between the greeting row and the breadcrumbs | `src/scripts/topbar-component.js` (`_renderAlerts`, `bindStp`) |
 | **SX portal: Payments** (`supplier-portal.html?guide=card-rows`) | A guide that highlights the card rows and **Get paid**, used for the "Process Any Payment" step | `src/scripts/exchanges-table.js` (action column guide) |
@@ -48,14 +48,16 @@ There are no STP screens in the token-flow shell (`src/pages/onboarding/`). Hub 
 email (`src/scripts/payables-pay.js`, `flow: "sx"`), and the token service links it to
 `src/pages/onboarding/index.html?flow=sx`. But `onboarding-flow.js` only knows `us` and `multi-party`, so the link opens
 the SMART Disburse screens. There is no SX-specific screen, no Card option with STP, and no Authorized Signer step.
-The token-flow part of this page comes from the product owner's description only. TODO(confirm) with Figma
-[R3] SMART Exchange, page STP.
+The token-flow screens are designed in Figma **[R3] SMART Exchange, page STP**
+([Figma](https://www.figma.com/design/9DRzbyv7FDCDYFYN5ZGuwZ)). That is their source of truth (product owner,
+2026-11-05). This page describes them from the product owner's description, because the Figma page hasn't been read
+here yet. TODO: add screen-level detail from Figma.
 
 ## Opt-in flow
 
 ### As described by the product owner (token flow)
 
-TODO(confirm): not built and not checked in Figma.
+Designed in Figma [R3] SMART Exchange, page STP; not built in the prototype.
 
 ```mermaid
 flowchart TD
@@ -68,7 +70,11 @@ flowchart TD
   E --> H["Penny test: Verify Now, enter the deposit amount"]
   G --> H
   H --> I["STP active"]
+  I --> J["Supplier lands in the SMART Exchange portal"]
 ```
+
+The terminal step (TID/MID) also happens after signing, but it runs outside the UI and adds no screen. See
+[Eligibility (terminal) step](#eligibility-terminal-step).
 
 ### As built in the SX portal
 
@@ -85,7 +91,8 @@ flowchart TD
 ```
 
 The portal has **no Authorized Signer question**. Whoever opts in always sends the agreement by email, and anyone who
-can open the portal can then press **Review** and accept it. The portal also adds a **Process Any Payment** (terminal)
+can open the portal can then press **Review** and accept it. **This stays as is** (product owner, 2026-11-05): the
+Authorized Signer question belongs to the token flow only. The portal also shows a **Process Any Payment** (terminal)
 step between the agreement and the penny test. See [Code vs product owner](#code-vs-product-owner).
 
 ### Steps
@@ -94,9 +101,9 @@ Steps 1 to 3 come from the product owner only. Steps 4 to 10 are what Payment Pr
 
 | # | Screen or dialog | What the user does | Fields and validation | What happens next |
 |---|---|---|---|---|
-| 1 | Token flow: payment method, **Card** | Turns on **enable STP** | TODO(confirm) | Authorized Signer question. *Not built* |
-| 2 | Token flow: **Authorized Signer?** | Answers Yes or No | Yes / No. TODO(confirm) | Yes → agreement (step 3). No → send to a signer (name + email, like step 5). *Not built* |
-| 3 | Token flow: **agreement** | Views the agreement, **Confirm Acceptance** | TODO(confirm) | Penny test (step 9). *Not built* |
+| 1 | Token flow: payment method, **Card** | Turns on **enable STP** | See Figma [R3] SMART Exchange, page STP | Authorized Signer question. *Not built* |
+| 2 | Token flow: **Authorized Signer?** | Answers Yes or No | Yes / No. Detail in Figma | Yes → agreement (step 3). No → send to a signer (name + email). *Not built* |
+| 3 | Token flow: **agreement** | Views the agreement, **Confirm Acceptance** | Detail in Figma | Penny test, then the supplier lands in the SX portal. *Not built* |
 | 4 | Payment Preferences, **Automatic Card Processing** card, or the blue banner | **Opt in** | — | Step 5 |
 | 5 | **Send Visa agreement for signature** (`#pp-stp-send-agreement-dialog`) | Enters the signer's email, **Send agreement** (or **Cancel**) | **Signer email** only, no name field. Pre-filled with the last request's email, else the company profile contact email. Must match `x@y.z`, else "Enter a valid email address." A help line says whether the address is on the test allowlist | Email sent through the token service (`flow: "stp"`), toast, state → **Pending Agreement Signature** |
 | 6 | Card **Review**, banner **Review**, or the email's **Review and sign** link (`payment-preferences.html?stpAgreement=review`) | Opens the agreement | — | Step 7 |
@@ -151,8 +158,10 @@ The same **Verify now** shortcut works from every state.
   `recipientName`).
 - Anyone who can open Payment Preferences while the state is *Agreement pending* can press **Review** and accept. The
   portal doesn't check who accepts.
-- **Product owner:** an [Authorized Signer](../../suite/glossary.md) signs. If the user is one, they accept themselves.
-  If not, they send it to one (name + email). TODO(confirm) who counts as an Authorized Signer and whether it's verified.
+- **Token flow (product owner):** an [Authorized Signer](../../suite/glossary.md) signs. If the user is one, they accept
+  themselves. If not, they send it to one (name + email).
+- **Portal: stays as is** (product owner, 2026-11-05). No Authorized Signer question and no name field; the signer email
+  step remains.
 
 ### Agreement email
 
@@ -175,7 +184,10 @@ The same **Verify now** shortcut works from every state.
 
 ### Eligibility (terminal) step
 
-- Not in the product owner's flow. The setup steps dialog lists 1 **Process Any Payment** ("This links your Merchant
+- **Product owner (2026-11-05):** the terminal step (TID/MID) **is** part of the process, but it **doesn't affect the
+  UI** at all. TODO(confirm): the prototype does show it to the supplier (the *Eligibility pending* state, its banner and
+  the Payments guide below); check whether that UI should stay.
+- The setup steps dialog lists 1 **Process Any Payment** ("This links your Merchant
   and Terminal IDs"), 2 **Terminal Verification**, 3 **Verify Your Bank Account (Penny Test)**,
   4 **Automatic Card Processing Activated**.
 - **Go to Payments** opens `supplier-portal.html?guide=card-rows`. The guide dims the screen and highlights the card
@@ -190,12 +202,22 @@ The same **Verify now** shortcut works from every state.
 ### Penny test
 
 See [penny test](../../suite/glossary.md).
-- The deposit itself isn't modelled. Nothing says who sends it, how much, or when. TODO(confirm).
+
+**Rules (product owner, 2026-11-05):**
+- **External:** the penny test runs on **external systems**, for example Visa's. The small deposit is sent and checked
+  there, not by SMART.
+- **3 attempts:** the supplier gets 3 attempts to enter the right amount.
+- **After 3 wrong attempts:** they must **re-initiate** the penny test, and a **new penny amount** is charged. The old
+  amount no longer works.
+
+**Prototype:**
+- The deposit itself isn't modelled.
 - **Amount format:** digits and at most one decimal point. Letters and a second `.` are blocked, and the field shows
   "Only numbers and one decimal point are allowed." The number of decimals isn't limited.
-- **Attempts and failure:** there are none in the prototype. Any amount with a digit verifies after a 3-second
-  "Verifying…" state. Compare SMART Disburse, where bank verification allows 2 attempts
-  ([Disburse business rules](../smart-disburse/standard.md#business-rules)). TODO(confirm) the real rules for STP.
+- **Attempts and failure:** none. Any amount with a digit verifies after a 3-second "Verifying…" state. There is no
+  wrong-amount error, no attempt counter, and no way to re-initiate
+  ([D-42](../../design-system/portal-consistency.md#stp-found-2026-11-05)).
+- TODO(confirm) with Figma: the wrong-amount, attempts-left and re-initiate screens.
 - **Date initiated:** the alert shows the date *Bank verification* was first seen on this device
   (`pp-stp-verify-initiated-at`). It's cleared when the alert hides.
 - **"Don't see a small deposit?"** opens the setup steps dialog. It doesn't resend the deposit. TODO(confirm).
@@ -215,9 +237,9 @@ See [penny test](../../suite/glossary.md).
 
 - **Intended:** card payments to the supplier on the STP rail are processed to their merchant account automatically.
 - **Prototype:** nothing changes. Supplier Portal rows still show **Get paid** for card payments, and no Hub screen
-  reads STP state. The only effect is the badge, the card text and the banner going away. TODO(confirm) what the supplier
-  and the payer should see on an STP-processed payment (status, activity log, notification: the success dialog says
-  "you'll receive a notification").
+  reads STP state. The only effect is the badge, the card text and the banner going away.
+- **To be decided** (product owner, 2026-11-05): what the supplier and the payer see on an STP-processed payment (status,
+  activity log, notification). The success dialog already says "you'll receive a notification".
 
 ### Off Payment Preferences
 
@@ -233,13 +255,15 @@ its own copies:
 
 | Topic | Product owner | Code | Status |
 |---|---|---|---|
-| Where you opt in | SMART Exchange **token flow**, Card option, and the SX portal | SX portal only (Payment Preferences card, banner). No STP in the token flow | TODO(confirm) |
-| Authorized Signer question | Yes / No | Not asked. Always "Send Visa agreement for signature" | TODO(confirm) |
-| Yes path | View the agreement, **Confirm Acceptance** | **Review**, tick "I agree…", **Confirm**. The agreement can't be opened (link `#`) | TODO(confirm) |
-| No path | Send to an Authorized Signer: **name + email** | **Signer email** only. No name field | TODO(confirm) |
-| After signing | Penny test | **Process Any Payment** / Terminal Verification first (eligibility, TID/MID), then the penny test | TODO(confirm) |
-| Penny test | **Verify Now**, enter the amount | Same. Any amount is accepted, with no attempts or failure | TODO(confirm) |
-| Result | Card payments on the STP rail processed automatically | Status shows **Enabled**. Payments unchanged | prototype limitation |
+| Where you opt in | SMART Exchange **token flow**, Card option, and the SX portal | SX portal only (Payment Preferences card, banner). No STP in the token flow | Token flow designed in Figma, not built yet |
+| After the token flow | Supplier lands in the SX portal | — (not built) | decided 2026-11-05 |
+| Authorized Signer question | Yes / No, in the token flow | Portal: not asked. Always "Send Visa agreement for signature" | decided 2026-11-05: portal stays as is |
+| Yes path | View the agreement, **Confirm Acceptance** | **Review**, tick "I agree…", **Confirm**. The agreement can't be opened (link `#`) | TODO(confirm) the agreement link |
+| No path | Send to an Authorized Signer: **name + email** | Portal: **signer email** only, no name field | decided 2026-11-05: portal stays as is |
+| After signing | Penny test; the terminal step (TID/MID) happens with no UI | **Process Any Payment** / Terminal Verification shown to the supplier first, then the penny test | TODO(confirm) whether the prototype's terminal UI should stay |
+| Penny test | **Verify Now**, enter the amount; external (e.g. Visa); 3 attempts, then re-initiate with a new amount | **Verify now**, enter the amount. Any amount is accepted, with no attempts or failure | prototype gap ([D-42](../../design-system/portal-consistency.md#stp-found-2026-11-05)) |
+| Card networks | Visa only, for now | Visa agreement only | matches |
+| Result | Card payments on the STP rail processed automatically | Status shows **Enabled**. Payments unchanged | prototype limitation; what users see is to be decided |
 
 ## Prototype notes
 
@@ -274,20 +298,27 @@ Confirmed with design on 2026-10-20 (moved here from [standard.md](standard.md#a
   through **Get paid**.
 - There is no "Generic pending" step. An earlier draft listed one; design found no such frame.
 
+## Answered (product owner, 2026-11-05)
+
+| Question | Answer |
+|---|---|
+| Token-flow screens, and where the supplier lands | In Figma [R3] SMART Exchange, page STP. After completing the flow, the supplier lands in the **SMART Exchange portal** |
+| Should the Authorized Signer Yes / No replace the portal's email step? Ask for the signer's name too? | **No, leave the portal as is** |
+| Is the terminal step (TID/MID) still in the flow? | **Yes**, but it doesn't affect the UI |
+| Penny test rules | Runs on **external systems** (e.g. Visa's). **3 attempts**, then the supplier re-initiates and a **new penny amount** is charged |
+| Card networks | **Visa only**, for now |
+| What supplier and payer see on an STP-processed payment | **To be decided** |
+
 ## Open questions
 
-1. Token flow: what are the screens for **enable STP** under Card, and where does the supplier land afterwards (back in
-   the token flow, or in the portal)? TODO(confirm) with Figma [R3] SMART Exchange, page STP.
-2. Authorized Signer: is the Yes / No question meant to replace the portal's always-email step? Who counts as an
-   Authorized Signer, and is it checked?
-3. Is the **Process Any Payment / Terminal Verification** step (TID/MID) still part of the flow? The product owner
-   goes straight from the agreement to the penny test.
-4. Signer details: should the portal ask for the signer's **name** as well as the email?
-5. Penny test: who sends the deposit and when, how many attempts, and what happens on a wrong amount?
-6. Should the supplier be able to cancel while the agreement or the eligibility step is pending? Should the agreement
+1. Token flow: screen-level detail of the STP page in Figma (to be read into this wiki).
+2. The prototype shows the terminal step to the supplier (*Eligibility pending*, its banner, the Payments guide). Since
+   the step has no UI impact, should that UI be removed?
+3. Penny test screens: wrong amount, attempts left, re-initiate. Where are they in Figma?
+4. What do the supplier and the payer see on a payment that STP processed (status, activity log, notification)? To be decided.
+5. Should the supplier be able to cancel while the agreement or the eligibility step is pending? Should the agreement
    email be resendable, and from where?
-7. Re-verify after changing processors: what should it do? TODO(design), open since 2026-10-20.
-8. Card networks: Visa only, or Mastercard too ("[WIP] STP - Mastercard" in Figma)?
-9. What do the supplier and the payer see on a payment that STP processed (status, activity log, notification)?
-10. Should the banner show in the Buyer and Transcard views, or only for suppliers?
-11. Is STP state per business (in production, presumably yes)? The prototype has one global value.
+6. Re-verify after changing processors: what should it do? TODO(design), open since 2026-10-20.
+7. Should the banner show in the Buyer and Transcard views, or only for suppliers?
+8. Is STP state per business (in production, presumably yes)? The prototype has one global value.
+9. Who counts as an Authorized Signer in the token flow, and is it checked?
