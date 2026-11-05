@@ -269,6 +269,16 @@ window.__ppStorageKey = function (name) {
             };
           });
         });
+      // A page can replace the data (STP walkthrough: only the demo case's
+      // card, business and no bank account). Gets the payload plus the
+      // helpers to build cards the same way: { extractCardsFromExchanges }.
+      if (typeof PP_CONFIG.transformSharedData === "function") {
+        sharedDataPromise = sharedDataPromise.then(function (payload) {
+          return PP_CONFIG.transformSharedData(payload || {}, {
+            extractCardsFromExchanges: extractCardsFromExchanges,
+          });
+        });
+      }
     }
     return sharedDataPromise;
   };
@@ -1076,6 +1086,20 @@ window.__ppStorageKey = function (name) {
   window
     .__ppLoadSharedData()
     .then(function (payload) {
+      // A page that supplies its own data (STP walkthrough instance) hands
+      // over cards already in this list's shape: show exactly those.
+      // (normalizeCards throws here — deriveCardBrand lives in another IIFE —
+      // so the default page lands on the fallback cards in .catch.)
+      if (typeof (window.__ppConfig || {}).transformSharedData === "function") {
+        allCards = Array.isArray(payload && payload.cards)
+          ? payload.cards.slice()
+          : [];
+        renderCustomerFilters();
+        renderStatusFilters();
+        syncApplyButtonState();
+        renderCards();
+        return;
+      }
       allCards = normalizeCards(payload);
       if (!allCards.length) {
         allCards = generateFallbackCards(
@@ -3334,8 +3358,12 @@ window.__ppStorageKey = function (name) {
 })();
 
 (function () {
+  var enableDialog = document.getElementById("pp-enable-stp-dialog");
+  var nextStepsDialog = document.getElementById("pp-stp-next-steps-dialog");
   var verifyDialog = document.getElementById("pp-verify-deposit-dialog");
   var verifySuccessDialog = document.getElementById("pp-verify-success-dialog");
+  var agreementCheckbox = document.getElementById("pp-stp-agreement-checkbox");
+  var enableConfirmBtn = document.getElementById("pp-enable-stp-confirm-btn");
   var input = document.getElementById("pp-deposit-amount");
   var verifyBtn = document.getElementById("pp-verify-deposit-btn");
   var verifyCancelBtn = document.getElementById("pp-verify-deposit-cancel-btn");
@@ -3375,13 +3403,142 @@ window.__ppStorageKey = function (name) {
     "pp-stp-pending-learn-more-btn",
   );
   var stpIcon = document.getElementById("pp-stp-icon");
-  if (!input || !verifyBtn || !errorMsg || !errorIcon) return;
+  var sendAgreementDialog = document.getElementById(
+    "pp-stp-send-agreement-dialog",
+  );
+  var sendAgreementForm = document.getElementById("pp-stp-send-agreement-form");
+  var sendAgreementEmailInput = document.getElementById(
+    "pp-stp-agreement-email",
+  );
+  var sendAgreementHelp = document.getElementById(
+    "pp-stp-agreement-email-help",
+  );
+  var sendAgreementError = document.getElementById(
+    "pp-stp-agreement-email-error",
+  );
+  var sendAgreementBtn = document.getElementById("pp-stp-send-agreement-btn");
+  var isSendingAgreement = false;
+  var stpTerminalImages = Array.prototype.slice.call(
+    document.querySelectorAll("[data-stp-terminal-image]"),
+  );
+  if (
+    !agreementCheckbox ||
+    !enableConfirmBtn ||
+    !input ||
+    !verifyBtn ||
+    !errorMsg ||
+    !errorIcon
+  )
+    return;
   var hasError = false;
   var isVerifyingDeposit = false;
+  var stpAnimationCycleTimer = null;
+  var stpDotTimers = [];
   var STP_ENABLED_CLASS =
     "inline-flex w-full items-center justify-center rounded-md bg-green-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs cursor-default sm:w-auto";
   var STP_DISABLED_CLASS =
     "inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-2 py-1 text-sm font-semibold leading-5 text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer sm:w-auto";
+
+  var TERMINAL_BASE_SRC = "../../../src/assets/illustrations/terminal.svg";
+  var TERMINAL_PROGRESS_SRCS = [
+    "../../../src/assets/illustrations/terminal-dot1.svg",
+    "../../../src/assets/illustrations/terminal-dot2.svg",
+    "../../../src/assets/illustrations/terminal-dot3.svg",
+    "../../../src/assets/illustrations/terminal-dot4.svg",
+  ];
+  function readDialogMs(varName, fallback) {
+    if (!enableDialog) return fallback;
+    var raw = getComputedStyle(enableDialog).getPropertyValue(varName).trim();
+    var parsed = parseInt(raw, 10);
+    return Number.isFinite(parsed) ? parsed : fallback;
+  }
+
+  function getAnimationConfig() {
+    return {
+      loopMs: readDialogMs("--pp-stp-loop-ms", 8000),
+      dotSequenceMs: [
+        readDialogMs("--pp-stp-dot-1-ms", 2700),
+        readDialogMs("--pp-stp-dot-2-ms", 2820),
+        readDialogMs("--pp-stp-dot-3-ms", 2940),
+        readDialogMs("--pp-stp-dot-4-ms", 3060),
+      ],
+      dotResetMs: readDialogMs("--pp-stp-dot-reset-ms", 7000),
+    };
+  }
+
+  function clearTerminalDotTimers() {
+    stpDotTimers.forEach(function (timer) {
+      clearTimeout(timer);
+    });
+    stpDotTimers = [];
+  }
+
+  function stopStpCardAnimationLoop() {
+    clearTerminalDotTimers();
+    if (stpAnimationCycleTimer) {
+      clearTimeout(stpAnimationCycleTimer);
+      stpAnimationCycleTimer = null;
+    }
+    if (enableDialog) enableDialog.removeAttribute("data-card-animating");
+    setTerminalStep(0);
+  }
+
+  function setTerminalStep(step) {
+    if (!stpTerminalImages.length) return;
+    stpTerminalImages.forEach(function (img) {
+      if (step <= 0) {
+        img.src = TERMINAL_BASE_SRC;
+        return;
+      }
+      img.src =
+        TERMINAL_PROGRESS_SRCS[
+          Math.min(step, TERMINAL_PROGRESS_SRCS.length) - 1
+        ];
+    });
+  }
+
+  function runTerminalDotCycle(config) {
+    clearTerminalDotTimers();
+    setTerminalStep(0);
+
+    config.dotSequenceMs.forEach(function (ms, index) {
+      stpDotTimers.push(
+        setTimeout(function () {
+          if (!enableDialog.open) return;
+          setTerminalStep(index + 1);
+        }, ms),
+      );
+    });
+
+    stpDotTimers.push(
+      setTimeout(function () {
+        if (!enableDialog.open) return;
+        setTerminalStep(0);
+      }, config.dotResetMs),
+    );
+  }
+
+  function runStpCardAnimationCycle(activeDialog) {
+    if (!activeDialog || !activeDialog.open) return;
+    var config = getAnimationConfig();
+    runTerminalDotCycle(config);
+    stpAnimationCycleTimer = setTimeout(function () {
+      runStpCardAnimationCycle(activeDialog);
+    }, config.loopMs);
+  }
+
+  function startStpCardAnimationLoop(activeDialog) {
+    if (!activeDialog) return;
+    stopStpCardAnimationLoop();
+    activeDialog.removeAttribute("data-card-animating");
+    void activeDialog.offsetWidth;
+    activeDialog.setAttribute("data-card-animating", "true");
+    runStpCardAnimationCycle(activeDialog);
+  }
+
+  function updateEnableState() {
+    enableConfirmBtn.disabled = !agreementCheckbox.checked;
+  }
 
   function setError(show) {
     hasError = show;
@@ -3439,6 +3596,56 @@ window.__ppStorageKey = function (name) {
       cleaned.slice(0, firstDot + 1) +
       cleaned.slice(firstDot + 1).replace(/\./g, "")
     );
+  }
+
+  function openNextStepsModal() {
+    if (enableDialog && enableDialog.open) {
+      try {
+        enableDialog.close();
+      } catch (err) {
+        /* noop */
+      }
+    }
+    setTimeout(function () {
+      if (window.STPState && typeof window.STPState.setStpStep === "function") {
+        window.STPState.setStpStep("terminal_completed_tid_mid_received");
+      } else if (
+        window.STPState &&
+        typeof window.STPState.setStpStatus === "function"
+      ) {
+        window.STPState.setStpStatus("in_progress");
+      }
+      // One step at a time, derived from the STP step (stp-state.js).
+      if (
+        window.STPState &&
+        typeof window.STPState.openSetupStepsModal === "function"
+      ) {
+        window.STPState.openSetupStepsModal();
+        return;
+      }
+      if (
+        nextStepsDialog &&
+        typeof nextStepsDialog.showModal === "function" &&
+        !nextStepsDialog.open
+      ) {
+        nextStepsDialog.showModal();
+      }
+    }, 0);
+  }
+
+  function openEnableStep() {
+    if (!enableDialog || typeof enableDialog.showModal !== "function") return;
+    if (!enableDialog.open) {
+      try {
+        enableDialog.showModal();
+      } catch (err) {
+        /* noop */
+      }
+    } else {
+      requestAnimationFrame(function () {
+        startStpCardAnimationLoop(enableDialog);
+      });
+    }
   }
 
   function applyStpUi(status, state) {
@@ -3511,6 +3718,24 @@ window.__ppStorageKey = function (name) {
           "inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300";
       }
     }
+    // MID / TID (a page that knows them: the STP walkthrough instance),
+    // shown once the first card was processed (terminal verified).
+    var stpIdsEl = document.getElementById("pp-stp-ids");
+    if (stpIdsEl) {
+      var getIds = (window.__ppConfig || {}).getStpIds;
+      var ids =
+        typeof getIds === "function" &&
+        (showInlineVerify || isEnabled)
+          ? getIds()
+          : null;
+      stpIdsEl.hidden = !ids;
+      if (ids) {
+        stpIdsEl.querySelector("[data-pp-stp-mid]").textContent =
+          ids.mid || "—";
+        stpIdsEl.querySelector("[data-pp-stp-tid]").textContent =
+          ids.tid || "—";
+      }
+    }
     if (stpActionsWrap) {
       stpActionsWrap.classList.toggle(
         "hidden",
@@ -3570,6 +3795,161 @@ window.__ppStorageKey = function (name) {
     applyStpUi(status, state);
   }
 
+  function setSendAgreementError(message) {
+    if (!sendAgreementError) return;
+    sendAgreementError.textContent = message || "";
+    sendAgreementError.classList.toggle("hidden", !message);
+  }
+
+  function setSendAgreementLoading(loading) {
+    isSendingAgreement = !!loading;
+    if (!sendAgreementBtn) return;
+    sendAgreementBtn.disabled = isSendingAgreement;
+    sendAgreementBtn.textContent = isSendingAgreement
+      ? "Sending..."
+      : "Send agreement";
+  }
+
+  // Same rule as SMART Disburse test emails: only allowlisted addresses
+  // receive a real email.
+  function updateSendAgreementHelp() {
+    if (!sendAgreementHelp || !sendAgreementEmailInput) return;
+    var email = sendAgreementEmailInput.value.trim();
+    if (
+      !email ||
+      !window.STPState ||
+      typeof window.STPState.isAllowlistedEmail !== "function"
+    ) {
+      sendAgreementHelp.textContent =
+        "Test mode: only allowlisted addresses receive the email.";
+      return;
+    }
+    window.STPState.isAllowlistedEmail(email).then(function (allowed) {
+      if (sendAgreementEmailInput.value.trim() !== email) return;
+      sendAgreementHelp.textContent = allowed
+        ? "Test mode: this address is allowlisted and will receive the email."
+        : "Test mode: this address is not allowlisted, so no email will be sent.";
+    });
+  }
+
+  function prefillSendAgreementEmail() {
+    if (!sendAgreementEmailInput || sendAgreementEmailInput.value.trim()) {
+      updateSendAgreementHelp();
+      return;
+    }
+    var request =
+      window.STPState &&
+      typeof window.STPState.getAgreementRequest === "function"
+        ? window.STPState.getAgreementRequest()
+        : null;
+    if (request && request.email) {
+      sendAgreementEmailInput.value = request.email;
+      updateSendAgreementHelp();
+      return;
+    }
+    if (typeof window.getMyCompanyProfile !== "function") {
+      updateSendAgreementHelp();
+      return;
+    }
+    window
+      .getMyCompanyProfile()
+      .then(function (profile) {
+        var email =
+          (profile && profile.contact && profile.contact.email) ||
+          (profile && profile.businessEmail) ||
+          "";
+        if (email && !sendAgreementEmailInput.value.trim()) {
+          sendAgreementEmailInput.value = email;
+        }
+      })
+      .catch(function () {})
+      .then(updateSendAgreementHelp);
+  }
+
+  if (sendAgreementDialog) {
+    var sendAgreementObserver = new MutationObserver(function () {
+      if (!sendAgreementDialog.open) return;
+      setSendAgreementError("");
+      setSendAgreementLoading(false);
+      prefillSendAgreementEmail();
+    });
+    sendAgreementObserver.observe(sendAgreementDialog, {
+      attributes: true,
+      attributeFilter: ["open"],
+    });
+    sendAgreementDialog.addEventListener("cancel", function (event) {
+      if (isSendingAgreement) event.preventDefault();
+    });
+  }
+  if (sendAgreementEmailInput) {
+    sendAgreementEmailInput.addEventListener("input", function () {
+      setSendAgreementError("");
+      updateSendAgreementHelp();
+    });
+  }
+  if (sendAgreementForm) {
+    sendAgreementForm.addEventListener("submit", function (event) {
+      event.preventDefault();
+      if (isSendingAgreement) return;
+      if (
+        !window.STPState ||
+        typeof window.STPState.sendAgreementEmail !== "function"
+      )
+        return;
+      var email = sendAgreementEmailInput
+        ? sendAgreementEmailInput.value.trim()
+        : "";
+      setSendAgreementError("");
+      setSendAgreementLoading(true);
+      Promise.resolve(
+        typeof window.getMyCompanyProfile === "function"
+          ? window.getMyCompanyProfile().catch(function () {
+              return null;
+            })
+          : null,
+      )
+        .then(function (profile) {
+          return window.STPState.sendAgreementEmail({
+            email: email,
+            recipientName:
+              (profile &&
+                profile.contact &&
+                profile.contact.email &&
+                profile.contact.email.toLowerCase() === email.toLowerCase() &&
+                profile.contact.name) ||
+              "",
+            senderName:
+              (profile && (profile.legalName || profile.dbaName)) ||
+              "SMART Hub",
+          });
+        })
+        .then(function (result) {
+          setSendAgreementLoading(false);
+          if (sendAgreementDialog && sendAgreementDialog.open)
+            sendAgreementDialog.close();
+          if (typeof window.showGlobalTopToast === "function") {
+            window.showGlobalTopToast(
+              result.delivered
+                ? "Visa agreement sent to " + result.email + "."
+                : result.allowed
+                  ? "Visa agreement request created for " +
+                      result.email +
+                      ". Live email sending is not enabled for this environment."
+                  : result.email +
+                      " is not allowlisted, so no email was sent.",
+              // Nothing was emailed unless it was delivered: not a success.
+              result.delivered ? undefined : { tone: "info" },
+            );
+          }
+        })
+        .catch(function (error) {
+          setSendAgreementLoading(false);
+          setSendAgreementError(
+            (error && error.message) || "Failed to send the Visa agreement.",
+          );
+        });
+    });
+  }
   if (stpAgreementReviewBtn) {
     stpAgreementReviewBtn.addEventListener("click", function () {
       if (
@@ -3577,10 +3957,17 @@ window.__ppStorageKey = function (name) {
         typeof window.STPState.openAgreementReviewModal === "function"
       ) {
         window.STPState.openAgreementReviewModal();
+      } else {
+        openEnableStep();
       }
     });
   }
 
+  agreementCheckbox.addEventListener("change", updateEnableState);
+  enableConfirmBtn.addEventListener("click", function () {
+    if (enableConfirmBtn.disabled) return;
+    openNextStepsModal();
+  });
   if (stpOptInBtn) {
     stpOptInBtn.addEventListener("click", function () {
       if (stpOptInBtn.disabled) return;
@@ -3589,6 +3976,8 @@ window.__ppStorageKey = function (name) {
         typeof window.STPState.openOptInModal === "function"
       ) {
         window.STPState.openOptInModal();
+      } else {
+        openEnableStep();
       }
     });
   }
@@ -3608,6 +3997,14 @@ window.__ppStorageKey = function (name) {
         typeof window.STPState.openSetupStepsModal === "function"
       ) {
         window.STPState.openSetupStepsModal();
+        return;
+      }
+      if (
+        nextStepsDialog &&
+        typeof nextStepsDialog.showModal === "function" &&
+        !nextStepsDialog.open
+      ) {
+        nextStepsDialog.showModal();
       }
     });
   }
@@ -3636,6 +4033,14 @@ window.__ppStorageKey = function (name) {
         typeof window.STPState.openSetupStepsModal === "function"
       ) {
         window.STPState.openSetupStepsModal();
+        return;
+      }
+      if (
+        nextStepsDialog &&
+        typeof nextStepsDialog.showModal === "function" &&
+        !nextStepsDialog.open
+      ) {
+        nextStepsDialog.showModal();
       }
     });
   }
@@ -3656,6 +4061,8 @@ window.__ppStorageKey = function (name) {
         applyStpUi("disabled", { stpStep: "opt_in_required" });
       }
       applyStpUi("disabled", { stpStep: "opt_in_required" });
+      if (enableDialog && enableDialog.open) enableDialog.close();
+      if (nextStepsDialog && nextStepsDialog.open) nextStepsDialog.close();
       if (verifyDialog && verifyDialog.open) verifyDialog.close();
       if (stpOptOutConfirmDialog && stpOptOutConfirmDialog.open)
         stpOptOutConfirmDialog.close();
@@ -3669,6 +4076,29 @@ window.__ppStorageKey = function (name) {
       }
     });
   }
+  if (enableDialog) {
+    var enableDialogObserver = new MutationObserver(function () {
+      if (enableDialog.open) {
+        requestAnimationFrame(function () {
+          startStpCardAnimationLoop(enableDialog);
+        });
+      } else {
+        stopStpCardAnimationLoop();
+      }
+    });
+
+    enableDialogObserver.observe(enableDialog, {
+      attributes: true,
+      attributeFilter: ["open"],
+    });
+
+    enableDialog.addEventListener("close", function () {
+      agreementCheckbox.checked = false;
+      updateEnableState();
+      stopStpCardAnimationLoop();
+    });
+  }
+
   input.addEventListener("focus", function () {
     setTimeout(function () {
       var len = input.value.length;
@@ -3797,16 +4227,13 @@ window.__ppStorageKey = function (name) {
   } catch (err) {
     openStpFromQuery = false;
   }
-  if (
-    openStpFromQuery &&
-    window.STPState &&
-    typeof window.STPState.openAgreementReviewModal === "function"
-  ) {
+  if (openStpFromQuery) {
     setTimeout(function () {
-      window.STPState.openAgreementReviewModal();
+      openEnableStep();
     }, 0);
   }
 
+  updateEnableState();
   setVerifyLoading(false);
   updateVerifyState();
 })();

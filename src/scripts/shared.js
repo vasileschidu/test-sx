@@ -623,6 +623,18 @@ function getMyCompanyAddressText(profile) {
 }
 
 function getMyCompanyProfile() {
+  // STP walkthrough instance (?case=<id>): the demo case's business.
+  if (
+    !_myCompanyProfilePromise &&
+    window.SXDemoCase &&
+    window.SXDemoCase.isPortalInstance()
+  ) {
+    var caseProfile = normalizeMyCompanyProfile(
+      window.SXDemoCase.toCompanyProfile(),
+    );
+    window.__myCompanyProfileCache = caseProfile;
+    _myCompanyProfilePromise = Promise.resolve(caseProfile);
+  }
   if (!_myCompanyProfilePromise) {
     _myCompanyProfilePromise = loadSharedJsonWithFallbacks(
       MY_COMPANY_PROFILE_PATHS,

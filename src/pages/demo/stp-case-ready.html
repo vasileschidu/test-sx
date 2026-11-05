@@ -1,0 +1,146 @@
+<!--
+  @file demo/stp-case-ready.html
+  @description STP walkthrough: the "Case ready" page shown after the launcher
+    (stp-case.html) creates the demo case. Links into the enrolment and the
+    Supplier Portal instance; "Change case" goes back to the launcher.
+-->
+<!doctype html>
+<html class="h-full bg-white dark:bg-gray-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STP walkthrough - Case ready</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="../../scripts/theme-init.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="../../scripts/tailwind-theme.js"></script>
+    <script src="../../scripts/design-tokens.js"></script>
+    <link rel="stylesheet" href="../../styles/cursor.css" />
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+
+    <script src="../../scripts/data-source.js"></script>
+    <script src="../../scripts/stp-state.js?v=20261105p"></script>
+    <script src="../../scripts/sx-demo-case.js?v=20261105e"></script>
+  </head>
+  <body class="min-h-full bg-white font-['Inter'] text-default antialiased">
+    <main class="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-10 lg:px-10">
+      <header class="flex flex-col gap-2">
+        <a
+          href="stp-case.html"
+          class="type-link inline-flex items-center gap-1.5 self-start text-brand hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        >
+          <svg class="size-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" />
+          </svg>
+          Change case
+        </a>
+        <h1 class="type-title-page text-default">Case ready</h1>
+        <p class="type-description text-tertiary">
+          Start the enrolment, or open the Supplier Portal instance for this case.
+        </p>
+      </header>
+
+      <div id="case-ready-list" class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5"></div>
+
+      <div class="flex flex-wrap items-center gap-3">
+        <a
+          id="case-start-enrol"
+          target="_blank"
+          rel="noopener"
+          href="#"
+          class="cursor-pointer rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+          >Start enrolment</a
+        >
+        <a
+          id="case-open-portal"
+          target="_blank"
+          rel="noopener"
+          href="#"
+          class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20"
+          >Open Supplier Portal</a
+        >
+        <button
+          id="case-reset"
+          type="button"
+          class="cursor-pointer rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20"
+        >
+          Reset demo
+        </button>
+      </div>
+    </main>
+
+    <script>
+      (function () {
+        "use strict";
+        var Case = window.SXDemoCase;
+        var list = document.getElementById("case-ready-list");
+        var SCENARIOS = {
+          A: "A. I'm the signatory",
+          B: "B. Send to another signer",
+          C: "C. Skip STP",
+        };
+
+        function money(amount) {
+          return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
+            Number(amount) || 0,
+          );
+        }
+
+        function row(label, value) {
+          var wrap = document.createElement("div");
+          wrap.className = "grid grid-cols-2 gap-4 self-stretch";
+          var l = document.createElement("span");
+          l.className = "text-sm font-medium text-gray-900 dark:text-gray-100";
+          l.textContent = label;
+          var v = document.createElement("span");
+          v.className = "text-sm font-normal text-gray-700 dark:text-gray-300 break-words whitespace-pre-line";
+          v.textContent = value;
+          wrap.appendChild(l);
+          wrap.appendChild(v);
+          return wrap;
+        }
+
+        function render(c) {
+          if (!c) {
+            window.location.replace("stp-case.html");
+            return;
+          }
+          var urls = Case.urls(c);
+          list.replaceChildren(
+            row("Case ID", c.id),
+            row("Supplier", c.supplier.name),
+            row("Payment", money(c.payment.amount) + " from " + c.payer.name + " (" + c.payment.invoice + ")"),
+            row("Card", c.payment.cardBrand + " ending " + String(c.payment.cardNumber).slice(-4)),
+            row("Signer", [c.signer.firstName, c.signer.lastName].join(" ") + " (" + c.signer.email + ")"),
+            row("Scenario", SCENARIOS[c.scenario]),
+          );
+          document.getElementById("case-start-enrol").href = urls.enrol;
+          document.getElementById("case-open-portal").href = urls.portal;
+        }
+
+        document.getElementById("case-reset").addEventListener("click", function () {
+          Case.reset();
+          window.location.href = "stp-case.html";
+        });
+
+        window.addEventListener(Case.CHANGE_EVENT, function (event) {
+          render(event.detail && event.detail.case);
+        });
+
+        Case.ready().then(function () {
+          render(Case.get());
+          document.getElementById("case-start-enrol").focus({ preventScroll: true });
+        });
+      })();
+    </script>
+  </body>
+</html>

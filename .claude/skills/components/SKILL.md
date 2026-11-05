@@ -48,6 +48,10 @@ state and add a row here in the same change. Tokens: see the `design-system` ski
 | Decline, faster payout, VC how-to | `OBDecline`, `OBFaster`, `OBVirtualCardHow` |
 | Multi-Party | `OBFlow` (`onboarding-flow.js`), `onboarding-multi-party.js` |
 | Review documents | `review-modal.js` — any `[data-review-modal]` dialog, triggers `.review-trigger` / `.gp-review-trigger` |
+| Reuse in another flow | set `window.OB_FLOW_STEPS` / `OB_MOBILE_MENU` before the sidebar/stepper load; wrap `OBGo` instead of editing SD scripts — see `sx-enroll.js` (SMART Exchange enrolment, `src/pages/sx-enroll/`) |
+| Demo "open the email link" | waiting card in `sx-enroll-acp.js`: link button `<a target="_blank" rel="noopener">` + external-link icon + sr-only "(opens in a new tab)", only when the email was not delivered (test mode) |
+| Presenter email opt-in | launcher (`demo/stp-case.html`): `<app-checkbox label description>` under the email hint, shown only for addresses off the config allowlist; list in localStorage `sx_extra_allowed_emails_v1` (read by `STPState`) |
+| SX enrolment helpers | `SXEnroll.textField(id, label, value, opts)` (OBField + error line), `.row(label, html)`, `.fieldError(input, msg)`, `.setLoading(btn, label)` → restore fn |
 
 ## Markup patterns (copy exactly)
 
@@ -100,6 +104,65 @@ one-line selected value: two-line block `in-[el-selectedcontent]:hidden` + a
   <input type="checkbox" name="…" aria-label="…" class="absolute inset-0 size-full appearance-none cursor-pointer focus:outline-hidden" />
 </div>
 ```
+
+### Read-only details box (no header; Figma SX enrolment / Get paid)
+`<div class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5">` + description list rows.
+Use when Figma shows a plain gray box; an Edit action goes above the box (right-aligned xs link), not in a header bar.
+
+### Radio card with expanding form (`sx-enroll-acp.js`)
+`fieldset` (disable it while loading) → per option `div.overflow-hidden.rounded-lg.border.border-gray-200.bg-white` >
+`label.flex.cursor-pointer.items-center.gap-3.px-4.py-3.hover:bg-gray-50.has-checked:bg-gray-50.has-disabled:cursor-not-allowed`
+with the launcher's native radio (`appearance-none … checked:bg-blue-600 … disabled:bg-gray-100`); the checked option
+renders its form below in `div.flex.flex-col.gap-4.border-t.border-gray-200.p-4` (OBField inputs + primary md button).
+
+### Status card (acknowledgement / waiting)
+`section.overflow-hidden.rounded-lg.border.border-gray-200` > `h2` title row `border-b px-4 py-3 text-sm font-semibold` >
+rows `p-4 gap-2` (description list) > optional footer `border-t px-4 py-3`. Status badges: `rounded-md bg-green-50 px-2 py-0.5
+text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20` (Completed) / blue-50·blue-700·blue-700/10 (In Process).
+
+### Static link page + "link expired" (`sx-enroll/sign-agreement.html`)
+Email-link pages without the step menu: `body.bg-white.lg:bg-gray-100` > white column `mx-auto max-w-5xl` > `main.max-w-148`
+(hero from card-processing.html, `type-title-page` + `type-description`) + `<div data-ob-footer>` (SD footer, Powered by Transcard).
+Document preview: scroll box `h-96 lg:h-150 overflow-y-auto rounded-lg border bg-gray-50 p-4` + `SXEnroll.agreementArticle()`
+(Visa agreement, from `sx-enroll-acp.js`). Loading over a box/card: `relative` parent + `absolute inset-0 bg-white/70` with
+`onboarding/loader.svg` `size-11 animate-spin` (`role="status"`), controls disabled. Invalid / used link: full-page `bg-gray-100`
+centred `max-w-sm rounded-lg bg-white p-6 text-center` card, `size-12 rounded-full bg-red-50` + `icon-x-circle-red.svg`, `type-title-small`.
+
+Toggle switch disabled: add `has-disabled:cursor-not-allowed has-disabled:opacity-50` on the track, `disabled:cursor-not-allowed` on the input.
+Password reveal: eye button `absolute top-1/2 right-2 size-7 -translate-y-1/2 rounded-md text-gray-400 hover:bg-gray-100` in the input's `relative` wrapper, `aria-pressed`.
+
+### STP set-up steps list (one step at a time) — `STPState.openSetupStepsModal()`
+Rendered by `renderSetupSteps` in `stp-state.js` from the STP step (+ `SXDemoCase.enrol.cardProcessed` on the case instance):
+`ol` > `li.flex.gap-3` with a `w-5` marker column (done: `size-5 rounded-full bg-blue-600` + white check; current: number in
+`border-blue-400 bg-blue-100 text-blue-700`; future: number in `border-gray-200 bg-gray-100 text-gray-500`) and a `w-px` connector
+(blue below done steps). Only the current step shows its description + one primary md CTA (`Go to Payments` / `Verify now` /
+`Review` / `Opt in`); done = check + title, future = muted title. opt-in / agreement-pending prepend their own first step.
+
+### STP agreement pending dialog — `STPState.openSetupStepsModal()` while `agreement_signature_pending`
+Layout of Figma 36762:106435 (`ensurePendingDialog` in `stp-state.js`): same frame + card/terminal illustration as the opt-in
+dialog, title "Waiting for the agreement signature." + description, a status card ("Waiting for Acknowledgement": Status `Pending
+Signature` blue badge, Sent to, Email, Sent at; card footer only in test mode: note + "Open signer's link"), then the
+"<signer> will receive an email…" text and small md buttons side by side: **Resend** (primary) + **Send to another person**
+(secondary → inline first / last name + email form). No dialog footer. Steps 2–4 are not shown
+until the agreement is signed; then the set-up steps list opens instead.
+
+### Input with leading add-on (`$ 0.00`, Bank Account Verification)
+`div.flex.items-center.rounded-md.bg-white.pl-3.outline-1.-outline-offset-1.outline-gray-300.has-[input:focus]:outline-2
+has-[input:focus]:outline-blue-600 has-[input[aria-invalid=true]]:outline-red-500` > `span` add-on `text-sm text-gray-500` + bare
+`input.min-w-0.grow.bg-transparent.py-2.pl-1.focus:outline-none` + optional error icon. Help text `text-sm text-gray-500` below;
+info box `rounded-md bg-gray-50 p-3` with `type-title-small` + `list-disc type-description` bullets.
+
+### MID / TID rows (Payment Preferences STP card)
+`#pp-stp-ids` inside the Automatic Card Processing card: description-list rows (`type-label text-default` /
+`type-body text-secondary tabular-nums`), shown when `PAYMENT_PREFERENCES_CONFIG.getStpIds()` returns ids and STP is at the
+deposit step or enabled.
+
+### STP walkthrough case instance (`?case=<id>`) — shell + data hooks
+`SXDemoCase.applyPageConfig()` (inline on supplier-portal / payment-preferences, and from `shell-navigation.js` after a swap):
+table `transformData` + `onMarkedPaid` (→ `markCardProcessed`), PP `transformSharedData` / `storagePrefix` / `getStpIds`.
+Plan `sx-instance` (app-plans.js): Insights, AP/AR (Upgrade), SMART Exchange, Settings (open) › My Company Profile, Payment
+Preferences, User Management; `hideShellExtras` drops Help + Account Information; the case business is the only switcher entry.
+Links to dashboard pages keep `?case=` (click capture in sx-demo-case.js). `SXDemoCase.syncStp()` derives STP from the case.
 
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).

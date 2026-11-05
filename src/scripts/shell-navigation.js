@@ -2,8 +2,9 @@
   var PAGE_CONFIGS = {
     "supplier-portal.html": {
       scripts: [
+        "/src/scripts/table-ui.js?v=20261006f",
         "/src/scripts/table-skeleton.js",
-        "/src/scripts/exchanges-table.js?v=20260309d",
+        "/src/scripts/exchanges-table.js?v=20261105g",
       ],
       init: "initSmartExchangePage",
     },
@@ -309,6 +310,9 @@
         return (window.__ppConfig.storagePrefix || "pp_") + name;
       };
     }
+    // STP walkthrough case instance: its data hooks (no-op without ?case=).
+    if (window.SXDemoCase && typeof window.SXDemoCase.applyPageConfig === "function")
+      window.SXDemoCase.applyPageConfig(pageFile);
   }
 
   function finalizePageSwap(url, targetDoc) {

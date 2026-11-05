@@ -3,6 +3,7 @@
 // and that nothing invisible sits on top of it. Static screenshots never catch broken hover.
 //
 // Usage: node tools/ui-qa/hover-audit.mjs --pages src/pages/dashboard/vendors.html[,…] [--scope "main"] [--max 150]
+//        [--init <js file>]  (runs before every page, e.g. to seed localStorage for a demo case)
 import fs from "node:fs";
 import { launch, settle, arg, list, BASE } from "./browser.mjs";
 
@@ -10,6 +11,7 @@ const PAGES = list("pages");
 const SCOPE = arg("scope", "");
 const MAX = Number(arg("max", "150"));
 const OUT = arg("out", "tools/ui-qa/out/hover");
+const INIT = arg("init", "") ? fs.readFileSync(arg("init", ""), "utf8") : "";
 fs.mkdirSync(OUT, { recursive: true });
 
 const SNAP = (i) => {
@@ -24,6 +26,7 @@ const findings = [];
 let checked = 0;
 for (const p of PAGES) {
   const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  if (INIT) await page.addInitScript(INIT);
   await page.goto(`${BASE}/${p}`);
   await settle(page, 1200);
   const n = await page.evaluate(({ scope, max }) => {
