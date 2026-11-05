@@ -86,7 +86,7 @@ See [STP](../products/smart-exchange/stp.md). Code: `src/scripts/stp-state.js`, 
 
 | # | Element | Today | Status |
 |---|---|---|---|
-| D-34 | Opt-in flow vs product owner | Product owner: opt in from the SX token flow (Card), answer "Authorized Signer?" (Yes: accept, No: send to a signer with name + email), then the penny test. Code: portal only, no signer question, email only, and an extra Process Any Payment / Terminal Verification step before the penny test | partly decided 2026-11-05: portal stays as is (email only, no signer question); token-flow screens are in Figma [R3] SMART Exchange, page STP, not built yet; terminal step has no UI impact, so the prototype's terminal UI is open |
+| D-34 | Opt-in flow vs product owner | Product owner: opt in from the SX token flow (Card), answer "Authorized Signer?" (Yes: accept, No: send to a signer with name + email), then the penny test. Code: portal only, no signer question, email only, and an extra Process Any Payment / Terminal Verification step before the penny test | partly decided 2026-11-05: the portal must also ask the Authorized Signer question (see D-43); token-flow screens are in Figma [R3] SMART Exchange, page STP, not built yet; terminal step has no UI impact, so the prototype's terminal UI is open |
 | D-35 | Opt in / Review outside Payment Preferences | On other Portal pages the banner's **Opt in** and **Review** open the store's own agreement dialog: no email step, and **Confirm** doesn't change the state | open |
 | D-36 | Setup steps dialog | Every **Learn more**, **Don't see a small deposit?** and the re-verify link open one dialog that always shows steps 1–2 done and a **Verify now** button, so any state, even before opting in, can jump to *Enabled* | open |
 | D-37 | Banner audience | The STP banner checks only `hideStp`, so it also shows in the Buyer view (Hub pages) and the Transcard view; only Consumer Portal hides it | open: confirm who should see it |
@@ -95,6 +95,7 @@ See [STP](../products/smart-exchange/stp.md). Code: `src/scripts/stp-state.js`, 
 | D-40 | Get paid STP toggle | `exchanges-table.js` advances STP when Get paid is submitted with an "enable STP" toggle on (`#gp-stp-*`), but no page renders it; the guide's **Done** is the only path to bank verification | open: remove or rebuild |
 | D-41 | Agreement link and state | The link's token is stripped and never checked (expiry not enforced); state is per browser, so a signer on another device doesn't move the requester's state; penny test accepts any amount | open: prototype limitation |
 | D-42 | Penny test attempts | The verify dialog accepts any amount: no wrong-amount error, no 3-attempt limit, no re-initiate (product owner rules, 2026-11-05) | open: prototype gap |
+| D-43 | Authorized Signer in the portal | The portal opt-in always sends the agreement by email (signer email only). It should ask "Are you an Authorized Signer?": Yes → view agreement, Confirm Acceptance; No → send to a signer with name + email (product owner, 2026-11-05) | open: prototype gap |
 
 ## Other
 

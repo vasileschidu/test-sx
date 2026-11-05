@@ -90,10 +90,14 @@ flowchart TD
   H --> I["Bank Account Verified Successfully: STP enabled"]
 ```
 
-The portal has **no Authorized Signer question**. Whoever opts in always sends the agreement by email, and anyone who
-can open the portal can then press **Review** and accept it. **This stays as is** (product owner, 2026-11-05): the
-Authorized Signer question belongs to the token flow only. The portal also shows a **Process Any Payment** (terminal)
-step between the agreement and the penny test. See [Code vs product owner](#code-vs-product-owner).
+**Target (product owner, 2026-11-05): the portal asks the Authorized Signer question too**, with the same two options as
+the token flow. **Yes** → view the agreement and **Confirm Acceptance**. **No** → send it to an Authorized Signer (name +
+email).
+
+**Prototype today:** the portal has **no Authorized Signer question**. Whoever opts in always sends the agreement by
+email, and anyone who can open the portal can then press **Review** and accept it
+([D-43](../../design-system/portal-consistency.md#stp-found-2026-11-05)). The portal also shows a **Process Any Payment**
+(terminal) step between the agreement and the penny test. See [Code vs product owner](#code-vs-product-owner).
 
 ### Steps
 
@@ -158,10 +162,12 @@ The same **Verify now** shortcut works from every state.
   `recipientName`).
 - Anyone who can open Payment Preferences while the state is *Agreement pending* can press **Review** and accept. The
   portal doesn't check who accepts.
-- **Token flow (product owner):** an [Authorized Signer](../../suite/glossary.md) signs. If the user is one, they accept
-  themselves. If not, they send it to one (name + email).
-- **Portal: stays as is** (product owner, 2026-11-05). No Authorized Signer question and no name field; the signer email
-  step remains.
+- **Target, token flow and portal alike (product owner, 2026-11-05):** the user is asked "Are you an
+  [Authorized Signer](../../suite/glossary.md)?" with **Yes** / **No**.
+  - **Yes:** view the agreement, **Confirm Acceptance**.
+  - **No:** send it to an Authorized Signer, entering their **name and email**.
+- **Gap:** the portal prototype has neither the question nor a name field
+  ([D-43](../../design-system/portal-consistency.md#stp-found-2026-11-05)).
 
 ### Agreement email
 
@@ -257,9 +263,9 @@ its own copies:
 |---|---|---|---|
 | Where you opt in | SMART Exchange **token flow**, Card option, and the SX portal | SX portal only (Payment Preferences card, banner). No STP in the token flow | Token flow designed in Figma, not built yet |
 | After the token flow | Supplier lands in the SX portal | — (not built) | decided 2026-11-05 |
-| Authorized Signer question | Yes / No, in the token flow | Portal: not asked. Always "Send Visa agreement for signature" | decided 2026-11-05: portal stays as is |
+| Authorized Signer question | Yes / No, in the token flow **and the portal** | Portal: not asked. Always "Send Visa agreement for signature" | decided 2026-11-05: portal must ask it; prototype gap ([D-43](../../design-system/portal-consistency.md#stp-found-2026-11-05)) |
 | Yes path | View the agreement, **Confirm Acceptance** | **Review**, tick "I agree…", **Confirm**. The agreement can't be opened (link `#`) | TODO(confirm) the agreement link |
-| No path | Send to an Authorized Signer: **name + email** | Portal: **signer email** only, no name field | decided 2026-11-05: portal stays as is |
+| No path | Send to an Authorized Signer: **name + email** | Portal: **signer email** only, no name field | prototype gap ([D-43](../../design-system/portal-consistency.md#stp-found-2026-11-05)) |
 | After signing | Penny test; the terminal step (TID/MID) happens with no UI | **Process Any Payment** / Terminal Verification shown to the supplier first, then the penny test | TODO(confirm) whether the prototype's terminal UI should stay |
 | Penny test | **Verify Now**, enter the amount; external (e.g. Visa); 3 attempts, then re-initiate with a new amount | **Verify now**, enter the amount. Any amount is accepted, with no attempts or failure | prototype gap ([D-42](../../design-system/portal-consistency.md#stp-found-2026-11-05)) |
 | Card networks | Visa only, for now | Visa agreement only | matches |
@@ -303,7 +309,7 @@ Confirmed with design on 2026-10-20 (moved here from [standard.md](standard.md#a
 | Question | Answer |
 |---|---|
 | Token-flow screens, and where the supplier lands | In Figma [R3] SMART Exchange, page STP. After completing the flow, the supplier lands in the **SMART Exchange portal** |
-| Should the Authorized Signer Yes / No replace the portal's email step? Ask for the signer's name too? | **No, leave the portal as is** |
+| Does the portal ask the Authorized Signer question? | **Yes.** The portal asks "Are you an Authorized Signer?" with Yes / No, like the token flow |
 | Is the terminal step (TID/MID) still in the flow? | **Yes**, but it doesn't affect the UI |
 | Penny test rules | Runs on **external systems** (e.g. Visa's). **3 attempts**, then the supplier re-initiates and a **new penny amount** is charged |
 | Card networks | **Visa only**, for now |
@@ -321,4 +327,4 @@ Confirmed with design on 2026-10-20 (moved here from [standard.md](standard.md#a
 6. Re-verify after changing processors: what should it do? TODO(design), open since 2026-10-20.
 7. Should the banner show in the Buyer and Transcard views, or only for suppliers?
 8. Is STP state per business (in production, presumably yes)? The prototype has one global value.
-9. Who counts as an Authorized Signer in the token flow, and is it checked?
+9. Who counts as an Authorized Signer, and is it checked?
