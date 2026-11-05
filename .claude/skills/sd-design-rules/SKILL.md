@@ -5,7 +5,7 @@ description: Shared design and workflow rules for the SMART Disburse (SD) onboar
 
 # SMART Disburse: shared rules
 
-These rules are shared by the `sd-figma`, `sd-sandbox`, `sd-qa` and `sd-flow-mapper` agents. **On SMART Disburse they override** the suite skills `components` and `design-system` and `CLAUDE.md` where those disagree; elsewhere in the suite they don't apply. If you learn a new rule or the
+These rules are shared by the `sd-figma`, `sd-sandbox`, `sd-qa` and `sd-flow-mapper` agents, and by the suite agents (`proto-engineer`, `figma-designer`, `ui-qa-code`, `ui-qa-figma`) whenever they work on SD. **On SMART Disburse they override** the suite skills `components` and `design-system` and `CLAUDE.md` where those disagree; elsewhere in the suite they don't apply. If you learn a new rule or the
 user changes one, update **this file** (not the agent files) and say so in your report.
 
 Repo-wide rules still apply: `PROJECT_RULES.md` (code) and `wiki/AGENTS.md` (wiki, confidentiality,
