@@ -7,6 +7,7 @@
 // Usage (prototype served on :8899 — `python3 tools/serve.py`):
 //   node tools/ui-qa/code-audit.mjs --pages src/pages/dashboard/vendors.html[,…]
 //        [--scope "main"] [--viewports 1440,390] [--dark] [--files <changed files>] [--out dir]
+//        [--init <js file>]  (runs before every page, e.g. to seed localStorage for a demo case)
 import fs from "node:fs";
 import path from "node:path";
 import { execSync } from "node:child_process";
@@ -17,6 +18,7 @@ const FILES = list("files");
 const SCOPE = arg("scope", "");
 const VIEWPORTS = (list("viewports").length ? list("viewports") : ["1440", "390"]).map(Number);
 const OUT = arg("out", "tools/ui-qa/out/code");
+const INIT = arg("init", "") ? fs.readFileSync(arg("init", ""), "utf8") : "";
 fs.mkdirSync(OUT, { recursive: true });
 
 // Tailwind scales (px). Spacing = 0.5 steps (2px) up to 14, then 4px steps; plus common layout sizes.
@@ -93,6 +95,8 @@ const MEASURE = ({ scope, SPACING, RADIUS, FONT, PALETTE }) => {
   for (let i = 0; i < ctrls.length; i++) for (let j = i + 1; j < ctrls.length; j++) {
     const [a, ra] = ctrls[i], [b, rb] = ctrls[j];
     if (a.contains(b) || b.contains(a) || a.closest("label") === b.closest("label") && a.closest("label")) continue;
+    // A field adornment (eye / clear button in the same wrapper as its input) overlaps by design.
+    if (a.parentElement === b.parentElement && [a, b].some((e) => e.tagName === "INPUT") && [a, b].some((e) => e.tagName === "BUTTON")) continue;
     const ox = Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left), oy = Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top);
     if (ox > 2 && oy > 2) add("controls-overlap", `${sel(b)}`, a);
   }
@@ -106,6 +110,7 @@ const findings = [...staticFindings];
 for (const p of PAGES) {
   for (const w of VIEWPORTS) for (const dark of flag("dark") ? [false, true] : [false]) {
     const ctx = await browser.newContext({ viewport: { width: w, height: w > 800 ? 1000 : 844 } });
+    if (INIT) await ctx.addInitScript(INIT);
     if (dark) await ctx.addInitScript(() => { try { localStorage.setItem("theme", "dark"); } catch (e) {} });
     const page = await ctx.newPage();
     const errors = []; const failed = [];

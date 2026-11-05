@@ -9,4 +9,6 @@ Run with the prototype served (`npm run serve`). All use your installed Google C
 | Pixel compare | `npm run qa:pixel -- --capture before --pages <a,b> [--dark]` … `--capture after` … `--compare before,after` | proves a refactor is visually neutral |
 | Figma audit | paste `figma-audit.js` (set `ROOTS`) as the code of a read-only `use_figma` call | raw controls, unbound colours, missing text styles, off-scale / unbound spacing, no auto-layout, clipping, fractional px, image icons |
 
+Both audits take `--init <js file>`: a script run before every page (e.g. `tools/ui-qa/init/sx-demo-case.js` seeds a demo case for `src/pages/sx-enroll/*?case=SX-QA`).
+
 Reports go to `tools/ui-qa/out/` (git-ignored). Agents: `.claude/agents/ui-qa-code.md`, `ui-qa-figma.md`.

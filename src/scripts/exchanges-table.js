@@ -6332,13 +6332,24 @@
     actionGuideState.step = step;
     ensureGuideTooltipHostForCurrentStep();
     if (step === 3) {
+      // Demo instance: the payment is processed by Mark as paid (MID / TID),
+      // so Done only closes the guide instead of jumping to the deposit.
+      var demoInstance = Boolean(
+        window.SXDemoCase &&
+          typeof window.SXDemoCase.isPortalInstance === "function" &&
+          window.SXDemoCase.isPortalInstance(),
+      );
       actionGuideState.tooltipEl.innerHTML =
         '<div class="relative rounded-lg border border-gray-300 bg-gray-50 p-4 shadow-sm dark:border-white/10 dark:bg-gray-800">' +
         '<span class="pointer-events-none absolute top-1/2 -right-1 h-2.5 w-2.5 -translate-y-1/2 rotate-45 border-t border-r border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-gray-800"></span>' +
         '<div class="flex items-start justify-between gap-4">' +
         '<div class="min-w-0">' +
         '<p class="text-sm font-semibold leading-5 text-gray-900 dark:text-gray-100">Use This Card in Your Terminal</p>' +
-        '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Take these card details and run the payment through your terminal like a regular card charge.</p>' +
+        '<p class="mt-1 text-sm font-normal leading-5 text-gray-600 dark:text-gray-300">Take these card details and run the payment through your terminal like a regular card charge.' +
+        (demoInstance
+          ? ' Then use <span class="font-medium text-gray-900 dark:text-gray-100">Mark as paid</span> on this payment.'
+          : "") +
+        "</p>" +
         "</div>" +
         "</div>" +
         '<div class="mt-4 flex items-center justify-end gap-2">' +
@@ -6365,6 +6376,7 @@
           if (typeof event.stopImmediatePropagation === "function")
             event.stopImmediatePropagation();
           if (
+            !demoInstance &&
             window.STPState &&
             typeof window.STPState.setStpStep === "function"
           ) {
@@ -7261,6 +7273,12 @@
     return tryNextPath().then(function (payload) {
       var columns;
       var rawData;
+
+      // Optional page hook: reshape the dataset before rows are built (the
+      // STP walkthrough swaps in its one demo payment). Return a new object.
+      if (typeof PAGE_CONFIG.transformData === "function") {
+        payload = PAGE_CONFIG.transformData(payload) || payload;
+      }
 
       if (payload && payload.tableConfig && Array.isArray(payload.data)) {
         columns = ensureCompleteExchangeColumns(payload.tableConfig.columns);
@@ -9478,6 +9496,10 @@
           populateGetPaidCardModal(targetEntry);
         }
         showTopActionToast("Payment marked as paid.");
+        // Page hook (STP walkthrough: the case card was processed).
+        var markedPaidHook = (window.EXCHANGES_TABLE_CONFIG || {})
+          .onMarkedPaid;
+        if (typeof markedPaidHook === "function") markedPaidHook(targetEntry);
       }
       if (pendingMarkPaidCloseCardDialog) {
         var cardDialog = document.getElementById("gp-card-details-dialog");

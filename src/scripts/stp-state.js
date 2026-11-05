@@ -149,8 +149,11 @@
     else if (normalizedStep === STEP_OPT_IN_REQUIRED)
       nextState = { stpStatus: STATUS_DISABLED, stpStep: STEP_OPT_IN_REQUIRED };
     else nextState = { stpStatus: STATUS_IN_PROGRESS, stpStep: normalizedStep };
+    // A signed request is kept as a record (the signer link then shows
+    // "expired"); any other request ends with the pending step.
     if (nextState.stpStep !== STEP_AGREEMENT_SIGNATURE_PENDING) {
-      clearAgreementRequest();
+      var request = getAgreementRequest();
+      if (!request || request.status !== "signed") clearAgreementRequest();
     }
     if (
       nextState.stpStatus === currentState.stpStatus &&
@@ -210,6 +213,20 @@
     );
   }
 
+  // The other signer acknowledged the agreement from the email link
+  // (src/pages/sx-enroll/sign-agreement.html). Call before setStpStep.
+  function markAgreementSigned(info) {
+    var request = getAgreementRequest();
+    if (!request) return null;
+    var signed = Object.assign({}, request, {
+      status: "signed",
+      signedBy: String((info && info.signedBy) || "").trim(),
+      signedAt: (info && info.signedAt) || new Date().toISOString(),
+    });
+    saveAgreementRequest(signed);
+    return signed;
+  }
+
   function clearAgreementRequest() {
     try {
       localStorage.removeItem(AGREEMENT_REQUEST_KEY);
@@ -255,12 +272,51 @@
     return runtimeConfigPromise;
   }
 
-  function isAllowlistedEmail(email) {
+  // Presenter setting from the STP case launcher: extra addresses that may
+  // get real emails in this browser (on top of the config allowlist).
+  var EXTRA_ALLOWED_KEY = "sx_extra_allowed_emails_v1";
+
+  function getExtraAllowedEmails() {
+    try {
+      var parsed = JSON.parse(localStorage.getItem(EXTRA_ALLOWED_KEY) || "[]");
+      return Array.isArray(parsed)
+        ? parsed
+            .map(function (email) {
+              return String(email || "")
+                .trim()
+                .toLowerCase();
+            })
+            .filter(Boolean)
+        : [];
+    } catch (error) {
+      return [];
+    }
+  }
+
+  function isAllowedIn(config, normalized) {
+    return (
+      config.allowedTestEmails.indexOf(normalized) !== -1 ||
+      getExtraAllowedEmails().indexOf(normalized) !== -1
+    );
+  }
+
+  // Only the runtime config's allowlist (the launcher offers the per-browser
+  // opt-in for every other address).
+  function isConfigAllowlistedEmail(email) {
     var normalized = String(email || "")
       .trim()
       .toLowerCase();
     return loadRuntimeConfig().then(function (config) {
       return config.allowedTestEmails.indexOf(normalized) !== -1;
+    });
+  }
+
+  function isAllowlistedEmail(email) {
+    var normalized = String(email || "")
+      .trim()
+      .toLowerCase();
+    return loadRuntimeConfig().then(function (config) {
+      return isAllowedIn(config, normalized);
     });
   }
 
@@ -276,12 +332,13 @@
     }
     return loadRuntimeConfig().then(function (config) {
       var normalized = email.toLowerCase();
-      var allowed = config.allowedTestEmails.indexOf(normalized) !== -1;
+      var allowed = isAllowedIn(config, normalized);
       var finish = function (result) {
         var wasPending =
           currentState.stpStep === STEP_AGREEMENT_SIGNATURE_PENDING;
         saveAgreementRequest({
           email: email,
+          recipientName: String(options.recipientName || "").trim(),
           sentAt: new Date().toISOString(),
           delivered: result.delivered,
         });
@@ -306,7 +363,11 @@
           recipientName: String(options.recipientName || "").trim(),
           senderName: String(options.senderName || "SMART Hub").trim(),
           sandbox: false,
-          verifyBaseUrl: window.location.origin + window.location.pathname,
+          // options.linkUrl: the page the email button opens (the worker
+          // drops its query); default = the page that sends the email.
+          verifyBaseUrl:
+            String(options.linkUrl || "").trim() ||
+            window.location.origin + window.location.pathname,
         }),
       })
         .then(function (response) {
@@ -437,6 +498,7 @@
       '          <div class="flex items-start gap-1.5 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="mt-0.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/></svg><p>You can turn this off anytime.</p></div>' +
       "        </div>" +
       '        <app-checkbox class="mt-4" data-inline-stp-agree>I agree to the Visa AR Manager <a href="#" class="text-blue-600 underline dark:text-blue-400">Participation Agreement</a>.</app-checkbox>' +
+      '        <p data-inline-stp-delegate-row hidden class="type-description text-tertiary">Not the authorized signer? <button type="button" data-inline-stp-delegate class="cursor-pointer rounded-sm type-link text-brand underline underline-offset-2 hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50"></button></p>' +
       "      </div>" +
       '      <div class="mt-6 flex w-full flex-col items-stretch gap-3 md:mt-8 md:flex-row md:items-center md:justify-between">' +
       '        <button type="button" data-inline-stp-confirm disabled class="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-6 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300 md:w-auto">Confirm</button>' +
@@ -503,16 +565,49 @@
       confirmEl.addEventListener("click", function () {
         if (confirmEl.disabled) return;
         if (dialog.open) dialog.close();
-        var nextSteps = ensureInlineNextStepsDialog();
-        if (
-          nextSteps &&
-          typeof nextSteps.showModal === "function" &&
-          !nextSteps.open
-        ) {
-          nextSteps.showModal();
+        // Agreement accepted here (self-sign): STP waits for a card payment.
+        var C = demoCase();
+        if (C) C.optIn({ self: true }).then(openSetupStepsModal);
+        else {
+          setStpStep(STEP_TERMINAL_COMPLETED);
+          openSetupStepsModal();
         }
       });
     }
+
+    // STP walkthrough instance: "Send to <signer> instead" (Batch 3 email +
+    // sign-agreement.html flow) for a contact who can't sign.
+    var delegateEl = dialog.querySelector("[data-inline-stp-delegate]");
+    if (delegateEl) {
+      delegateEl.addEventListener("click", function () {
+        var C = demoCase();
+        if (!C || delegateEl.disabled) return;
+        delegateEl.disabled = true;
+        delegateEl.textContent = "Sending…";
+        C.optIn({ self: false })
+          .then(function () {
+            if (dialog.open) dialog.close();
+            openSetupStepsModal();
+          })
+          .catch(function () {})
+          .then(function () {
+            delegateEl.disabled = false;
+            syncDelegate();
+          });
+      });
+    }
+    function syncDelegate() {
+      if (!delegateEl) return;
+      var C = demoCase();
+      var c = C && C.get();
+      var signer = (c && c.signer) || {};
+      var name = [signer.firstName, signer.lastName].filter(Boolean).join(" ");
+      var show = Boolean(C && signer.email);
+      var row = dialog.querySelector("[data-inline-stp-delegate-row]");
+      if (row) row.hidden = !show;
+      if (show) delegateEl.textContent = "Send it to " + (name || signer.email);
+    }
+    syncDelegate();
 
     dialog.addEventListener("close", function () {
       clearDotTimers();
@@ -524,11 +619,216 @@
     });
 
     new MutationObserver(function () {
-      if (dialog.open) startInlineAnimation();
-      else clearDotTimers();
+      if (dialog.open) {
+        startInlineAnimation();
+        syncDelegate();
+      } else clearDotTimers();
     }).observe(dialog, { attributes: true, attributeFilter: ["open"] });
 
     return dialog;
+  }
+
+  // ---- Agreement pending dialog (layout of Figma 36762:106435) -------------
+  // While the agreement waits for the signer: who it was sent to, when, and
+  // Resend / Send to another person in case the signer doesn't respond.
+
+  var PENDING_BADGE =
+    "inline-flex w-fit items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10";
+
+  function pendingRow(label, valueHtml) {
+    return (
+      '<div class="grid grid-cols-2 gap-4">' +
+      '<span class="text-sm font-medium text-gray-900 dark:text-gray-100">' + label + "</span>" +
+      '<span class="min-w-0 text-sm text-gray-700 dark:text-gray-300">' + valueHtml + "</span>" +
+      "</div>"
+    );
+  }
+
+  function renderPendingDialog(dialog) {
+    var body = dialog.querySelector("[data-stp-pending-body]");
+    if (!body) return;
+    var request = getAgreementRequest() || {};
+    var C = demoCase();
+    var who = request.recipientName || request.email || "The authorized signer";
+    var signerLink =
+      C && request.delivered === false
+        ? '<a href="' + escapeText(C.urls().sign + "&email=" + encodeURIComponent(request.email)) + '" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300">Open signer&rsquo;s link<span class="sr-only"> (opens in a new tab)</span></a>'
+        : "";
+    body.innerHTML =
+      '<section aria-label="Waiting for acknowledgement" class="overflow-hidden rounded-lg border border-gray-200 bg-white dark:border-white/10 dark:bg-white/5">' +
+      '<h2 class="border-b border-gray-200 px-4 py-3 text-sm font-semibold text-gray-900 dark:border-white/10 dark:text-white">Waiting for Acknowledgement</h2>' +
+      '<div class="flex flex-col gap-2 p-4">' +
+      pendingRow("Status", '<span class="' + PENDING_BADGE + '">Pending Signature</span>') +
+      (request.recipientName ? pendingRow("Sent to", escapeText(request.recipientName)) : "") +
+      pendingRow("Email", '<span class="break-all">' + escapeText(request.email || "") + "</span>") +
+      (request.sentAt ? pendingRow("Sent at", escapeText(formatStepDate(request.sentAt))) : "") +
+      "</div>" +
+      // Test mode only: no email went out, the presenter opens the link here.
+      (request.delivered === false
+        ? '<div class="flex flex-col gap-2 border-t border-gray-200 px-4 py-3 dark:border-white/10">' +
+          '<p class="text-xs text-gray-500 dark:text-gray-400">Test mode, no email delivered to ' + escapeText(request.email) + ".</p>" +
+          signerLink +
+          "</div>"
+        : "") +
+      "</section>" +
+      '<p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-medium text-gray-900 dark:text-white">' + escapeText(who) +
+      "</span> will receive an email with a secure link to review and acknowledge the Visa AR Manager Participation Agreement. No response yet? Resend it, or send it to another authorized signer.</p>" +
+      '<div class="flex flex-wrap items-center gap-3">' +
+      '<button type="button" data-stp-resend class="' + SETUP_CTA_CLASS + ' disabled:cursor-not-allowed disabled:bg-blue-300">Resend</button>' +
+      '<button type="button" data-stp-send-other class="' + SETUP_SECONDARY_CLASS + '">Send to another person</button>' +
+      "</div>" +
+      '<p data-stp-send-status role="status" class="text-sm/5 text-gray-500 dark:text-gray-400"></p>' +
+      sendOtherForm();
+  }
+
+  function ensurePendingDialog() {
+    var existing = document.getElementById("sx-inline-stp-pending-dialog");
+    if (existing) return existing;
+    var dialog = document.createElement("dialog");
+    dialog.id = "sx-inline-stp-pending-dialog";
+    dialog.setAttribute("aria-labelledby", "sx-stp-pending-title");
+    dialog.className =
+      "fixed inset-0 m-0 size-auto max-h-none max-w-none border-0 p-0 bg-transparent backdrop:bg-transparent";
+    dialog.innerHTML =
+      '<div class="fixed inset-0 z-[100] bg-gray-900/75 transition-opacity duration-300 ease-out motion-reduce:transition-none"></div>' +
+      '<div class="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-6">' +
+      '  <div class="relative flex h-auto max-h-[calc(100vh-2rem)] w-full max-w-[800px] flex-col overflow-y-auto rounded-3xl bg-white shadow-xl md:overflow-hidden dark:bg-gray-900 dark:ring-1 dark:ring-white/10 md:flex-row">' +
+      '    <button type="button" data-stp-pending-close class="absolute top-4 right-4 z-20 rounded-md bg-gray-900/8 p-1.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:bg-white/10 dark:text-gray-400 dark:hover:bg-white/20 dark:hover:text-gray-200">' +
+      '      <span class="sr-only">Close</span>' +
+      '      <svg viewBox="0 0 20 20" fill="currentColor" class="size-5"><path fill-rule="evenodd" d="M4.22 4.22a.75.75 0 0 1 1.06 0L10 8.94l4.72-4.72a.75.75 0 1 1 1.06 1.06L11.06 10l4.72 4.72a.75.75 0 1 1-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 1 1-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>' +
+      "    </button>" +
+      // Hugs the content. Card + terminal keep the opt-in dialog's sizes and
+      // horizontal offsets, as one group centred vertically in the panel.
+      '    <div class="relative flex p-2 md:w-64 md:shrink-0">' +
+      '      <div class="relative flex h-[220px] flex-1 items-start overflow-hidden rounded-2xl md:h-auto md:items-center" style="background-image: linear-gradient(180deg, #ECF2FF 0%, #F8F4FF 100%);">' +
+      '        <div class="relative mt-6 h-[309px] w-full shrink-0 md:mt-0">' +
+      '          <img src="../../../src/assets/illustrations/terminal.svg" alt="" class="absolute top-[117px] left-1/2 h-[192px] w-[332px] max-w-none -translate-x-[56%]" />' +
+      '          <div class="absolute inset-x-0 top-0 flex -translate-x-3 justify-center">' +
+      '            <img src="../../../src/assets/illustrations/card.svg" alt="" class="h-[169px] w-[292px] max-w-none" />' +
+      "          </div>" +
+      "        </div>" +
+      "      </div>" +
+      "    </div>" +
+      '    <div class="flex flex-1 flex-col p-4 md:p-9">' +
+      '      <div class="flex flex-col gap-6">' +
+      '        <div class="flex flex-col gap-2 md:pr-8">' +
+      '          <h3 id="sx-stp-pending-title" class="text-xl font-semibold leading-8 text-slate-950 md:text-[30px] md:leading-[36px] dark:text-white">Waiting for the agreement signature.</h3>' +
+      '          <p class="text-sm leading-6 text-gray-600 dark:text-gray-300">Signing the attached agreement allows your company to participate in automated card processing through the Visa network.</p>' +
+      "        </div>" +
+      '        <div data-stp-pending-body class="flex flex-col gap-4"></div>' +
+      "      </div>" +
+      "    </div>" +
+      "  </div>" +
+      "</div>";
+    document.body.appendChild(dialog);
+
+    dialog.addEventListener("click", function (event) {
+      var target = event.target;
+      if (!target || typeof target.closest !== "function") return;
+      if (target.closest("[data-stp-pending-close]")) {
+        if (dialog.open) dialog.close();
+      } else if (target.closest("[data-stp-resend]")) {
+        var request = getAgreementRequest();
+        if (request)
+          sendFromPending(dialog, target.closest("[data-stp-resend]"), {
+            email: request.email,
+            recipientName: request.recipientName,
+          });
+      } else if (target.closest("[data-stp-send-other]")) {
+        var form = dialog.querySelector("[data-stp-send-other-form]");
+        if (form) {
+          form.hidden = false;
+          form.querySelector("input").focus();
+        }
+      } else if (target.closest("[data-stp-send-other-cancel]")) {
+        var openForm = dialog.querySelector("[data-stp-send-other-form]");
+        if (openForm) openForm.hidden = true;
+        dialog.querySelector("[data-stp-send-other]").focus();
+      }
+    });
+    dialog.addEventListener("input", function (event) {
+      var input = event.target;
+      if (input.getAttribute("aria-invalid") !== "true") return;
+      input.setAttribute("aria-invalid", "false");
+      var error = dialog.querySelector("#" + input.id + "-error");
+      if (error) error.classList.add("hidden");
+    });
+    dialog.addEventListener("submit", function (event) {
+      var form = event.target.closest("[data-stp-send-other-form]");
+      if (!form) return;
+      event.preventDefault();
+      var first = form.querySelector("#stp-other-first");
+      var last = form.querySelector("#stp-other-last");
+      var email = form.querySelector("#stp-other-email");
+      var bad = [
+        [first, first.value.trim() ? "" : "Enter a first name"],
+        [last, last.value.trim() ? "" : "Enter a last name"],
+        [email, isValidEmail(email.value.trim()) ? "" : "Enter a valid email address"],
+      ].filter(function (pair) {
+        var error = form.querySelector("#" + pair[0].id + "-error");
+        pair[0].setAttribute("aria-invalid", pair[1] ? "true" : "false");
+        if (error) {
+          error.textContent = pair[1];
+          error.classList.toggle("hidden", !pair[1]);
+        }
+        return pair[1];
+      });
+      if (bad.length) {
+        bad[0][0].focus();
+        return;
+      }
+      sendFromPending(dialog, form.querySelector('[type="submit"]'), {
+        email: email.value.trim(),
+        recipientName: (first.value.trim() + " " + last.value.trim()).trim(),
+        firstName: first.value.trim(),
+        lastName: last.value.trim(),
+      });
+    });
+    // Signed in another tab while open: show the next steps instead.
+    subscribe(function (status, state) {
+      if (!dialog.open) return;
+      if (state && state.stpStep !== STEP_AGREEMENT_SIGNATURE_PENDING) {
+        dialog.close();
+        openSetupStepsModal();
+      }
+    });
+    return dialog;
+  }
+
+  // On the case instance the case's signer changes too, so the signer page
+  // accepts the new link.
+  function sendFromPending(dialog, button, to) {
+    var label = button.textContent;
+    button.disabled = true;
+    button.textContent = "Sending…";
+    var C = demoCase();
+    var send;
+    if (C) {
+      if (to.firstName)
+        C.update({ signer: { firstName: to.firstName, lastName: to.lastName, email: to.email } });
+      send = C.optIn({ self: false });
+    } else {
+      send = sendAgreementEmail({ email: to.email, recipientName: to.recipientName });
+    }
+    send
+      .then(function () {
+        renderPendingDialog(dialog);
+        dialog.querySelector("[data-stp-send-status]").textContent = "Sent to " + to.email + ".";
+      })
+      .catch(function (error) {
+        var status = dialog.querySelector("[data-stp-send-status]");
+        if (status) status.textContent = (error && error.message) || "Could not send the email.";
+      })
+      .then(function () {
+        button.disabled = false;
+        button.textContent = label;
+      });
+  }
+
+  function openPendingDialog() {
+    var dialog = ensurePendingDialog();
+    renderPendingDialog(dialog);
+    return safelyShowDialog(dialog);
   }
 
   function ensureInlineNextStepsDialog() {
@@ -556,24 +856,7 @@
       '      <div class="col-span-2 flex min-h-0 w-full flex-col p-4 md:px-9 md:py-20">' +
       '        <div class="my-auto flex flex-col gap-6">' +
       '          <h2 class="text-3xl font-semibold leading-9 text-slate-950 dark:text-white">To enable automatic card processing, complete the steps below.</h2>' +
-      '          <div class="flex flex-col gap-0">' +
-      '            <div class="flex gap-3">' +
-      '              <div class="flex w-5 shrink-0 flex-col items-center"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#ffffff"/></svg></span><span class="w-[1.5px] flex-1 bg-blue-600"></span></div>' +
-      '              <div class="flex flex-col gap-2 pb-6"><p class="text-sm font-semibold leading-5 text-slate-950 dark:text-white">Process Any Payment</p><p class="text-sm font-normal leading-5 text-gray-700 dark:text-gray-300">Go to Payments and process any available virtual card using your terminal.</p><a href="supplier-portal.html?guide=card-rows" data-stp-go-to-payments class="inline-flex w-fit max-w-fit shrink-0 items-center justify-center self-start rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Go to Payments</a></div>' +
-      "            </div>" +
-      '            <div class="flex gap-3">' +
-      '              <div class="flex w-5 shrink-0 flex-col items-center"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#ffffff"/></svg></span><span class="w-[1.5px] flex-1 bg-blue-600"></span></div>' +
-      '              <div class="flex flex-col gap-2 pb-6"><p class="text-sm font-semibold leading-5 text-slate-950 dark:text-white">Terminal Verification</p></div>' +
-      "            </div>" +
-      '            <div class="flex gap-3">' +
-      '              <div class="flex w-5 shrink-0 flex-col items-center"><span class="flex h-5 w-5 items-center justify-center rounded-full border border-blue-400 bg-blue-100 text-xs font-semibold leading-4 text-blue-700">3</span><span class="w-[1.5px] flex-1 bg-gray-200"></span></div>' +
-      '              <div class="flex flex-col gap-2 pb-6"><p class="text-sm font-semibold leading-5 text-slate-950 dark:text-white">Verify Your Bank Account (Penny Test)</p><p class="text-sm font-normal leading-5 text-gray-700 dark:text-gray-300">We will send a small test deposit to your bank account.<br />You will need to confirm the exact amount to complete setup.</p><button type="button" data-inline-next-verify class="inline-flex w-fit items-center justify-center rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Verify now</button></div>' +
-      "            </div>" +
-      '            <div class="flex gap-3">' +
-      '              <div class="flex w-5 shrink-0 flex-col items-center"><span class="flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium leading-4 text-gray-800">4</span></div>' +
-      '              <div class="flex flex-col gap-2 pb-6"><p class="text-sm font-medium leading-5 text-slate-950 dark:text-white">Automatic Card Processing Activated</p></div>' +
-      "            </div>" +
-      "          </div>" +
+      '          <ol data-inline-next-steps class="flex flex-col gap-0"></ol>' +
       "        </div>" +
       "      </div>" +
       "    </div>" +
@@ -586,14 +869,224 @@
         if (dialog.open) dialog.close();
       });
     });
-    var verifyBtn = dialog.querySelector("[data-inline-next-verify]");
-    if (verifyBtn) {
-      verifyBtn.addEventListener("click", function () {
+    // The step list is re-rendered on every open (renderSetupSteps); its
+    // Verify now / Review CTAs are delegated here.
+    dialog.addEventListener("click", function (event) {
+      var target = event.target;
+      if (!target || typeof target.closest !== "function") return;
+      if (target.closest("[data-inline-next-verify]")) {
         if (dialog.open) dialog.close();
         openVerifyModal();
+      } else if (target.closest("[data-inline-next-review]")) {
+        if (dialog.open) dialog.close();
+        openAgreementReviewModal();
+      } else if (target.closest("[data-stp-opt-in-trigger]")) {
+        if (dialog.open) dialog.close();
+      }
+    });
+    // Live: another tab signs / verifies while the list is open.
+    subscribe(function (status, state) {
+      if (dialog.open) renderSetupSteps(dialog, state);
+    });
+    return dialog;
+  }
+
+  // Query that keeps a Supplier Portal demo instance (?case=<id>) on links.
+  function demoCaseQuery(prefix) {
+    var C = window.SXDemoCase;
+    if (!C || typeof C.isPortalInstance !== "function" || !C.isPortalInstance())
+      return "";
+    var current = C.get();
+    return current && current.id
+      ? prefix + "case=" + encodeURIComponent(current.id)
+      : "";
+  }
+
+  function demoCardProcessed() {
+    var C = window.SXDemoCase;
+    if (!C || typeof C.isPortalInstance !== "function" || !C.isPortalInstance())
+      return false;
+    var current = C.get();
+    return Boolean(current && current.enrol && current.enrol.cardProcessed);
+  }
+
+  /**
+   * The set-up steps, one at a time: done steps show a check + title, only the
+   * current step shows its description and single CTA, future steps are muted.
+   * Derived from the STP step (+ the demo case's cardProcessed on an instance):
+   *   opt_in_required             → "Opt in" step current (prepended)
+   *   agreement_signature_pending → "Sign the Visa agreement" current (prepended)
+   *   terminal_completed_…        → Process Any Payment current
+   *   bank_verification_required  → 1–2 done, Verify Your Bank Account current
+   *   completed                   → all done
+   */
+  function getSetupSteps(state) {
+    var step = (state && state.stpStep) || currentState.stpStep;
+    var processed = demoCardProcessed();
+    // Demo instance: the case payment waits on Action Required, so open that tab.
+    var demoQuery = demoCaseQuery("&");
+    var paymentsHref =
+      "supplier-portal.html?guide=card-rows" +
+      demoQuery +
+      (demoQuery && !processed ? "&tab=action-required" : "");
+    var steps = [];
+    if (step === STEP_OPT_IN_REQUIRED) {
+      steps.push({
+        title: "Opt in and Sign the Visa Agreement",
+        text: "Review and sign the Visa AR Manager Participation Agreement.",
+        cta: '<button type="button" data-stp-opt-in-trigger="setup-steps" class="' + SETUP_CTA_CLASS + '">Opt in</button>',
+      });
+    } else if (step === STEP_AGREEMENT_SIGNATURE_PENDING) {
+      // openSetupStepsModal shows the pending dialog for this state instead.
+      var pendingRequest = getAgreementRequest();
+      steps.push({
+        key: "agreement",
+        title: "Pending Agreement Signature",
+        meta: pendingRequest && pendingRequest.sentAt ? "Sent - " + formatStepDate(pendingRequest.sentAt) : "",
+      });
+    } else {
+      var signed = getAgreementRequest();
+      var C2 = demoCase();
+      var c2 = C2 && C2.get();
+      var signedAt =
+        (signed && signed.signedAt) ||
+        (c2 && c2.enrol && c2.enrol.agreement && c2.enrol.agreement.confirmedAt) ||
+        "";
+      steps.push({
+        key: "agreement",
+        title: "Agreement Signature (Acknowledged)",
+        meta: signedAt ? "Confirmed at - " + formatStepDate(signedAt) : "",
       });
     }
-    return dialog;
+    steps.push(
+      {
+        key: "process",
+        title: "Process Any Card Payment",
+        text: "Go to Payments and process any available virtual card using your terminal. This links your Merchant and Terminal IDs.",
+        cta: '<a href="' + paymentsHref + '" data-stp-go-to-payments class="' + SETUP_CTA_CLASS + '">Go to Payments</a>',
+      },
+      {
+        key: "verify",
+        title: "Verify Your Bank Account (Penny Test)",
+        text: "We sent a small test deposit to your bank account. Confirm the exact amount to complete setup.",
+        cta: '<button type="button" data-inline-next-verify class="' + SETUP_CTA_CLASS + '">Verify now</button>',
+      },
+      { key: "active", title: "Automatic Card Processing Activated" },
+    );
+    // Index of the current step; everything before it is done.
+    // Steps: 0 agreement · 1 process · 2 verify · 3 active.
+    var current = 0;
+    if (step === STEP_TERMINAL_COMPLETED) current = processed ? 2 : 1;
+    else if (step === STEP_BANK_VERIFICATION_REQUIRED) current = 2;
+    else if (step === STEP_COMPLETED) current = steps.length;
+    return steps.map(function (item, index) {
+      var status = index < current ? "done" : index === current ? "current" : "upcoming";
+      // A card processed before the agreement was signed already gave the
+      // MID / TID: step 2 shows done while step 1 is still pending.
+      if (item.key === "process" && processed && status === "upcoming") status = "done";
+      return Object.assign({}, item, {
+        status: status,
+        number: index + 1,
+        last: index === steps.length - 1,
+      });
+    });
+  }
+
+  var SETUP_CTA_CLASS =
+    "inline-flex w-fit shrink-0 cursor-pointer items-center justify-center self-start rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600";
+  var SETUP_SECONDARY_CLASS =
+    "inline-flex w-fit shrink-0 cursor-pointer items-center justify-center self-start rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20";
+  var SETUP_INPUT_CLASS =
+    "mt-1 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20";
+
+  // "04/06/2026, 11:53:17 AM" (Figma set-up steps).
+  function formatStepDate(iso) {
+    var date = new Date(iso);
+    if (isNaN(date.getTime())) return "";
+    return date.toLocaleString("en-US", {
+      month: "2-digit",
+      day: "2-digit",
+      year: "numeric",
+      hour: "numeric",
+      minute: "2-digit",
+      second: "2-digit",
+    });
+  }
+
+  // "Send to another person": first / last name + email, hidden until asked.
+  function sendOtherForm() {
+    function field(id, label, type, autocomplete) {
+      return (
+        "<div>" +
+        '<label for="' + id + '" class="block text-sm/6 font-medium text-gray-900 dark:text-white">' + label + "</label>" +
+        '<input id="' + id + '" type="' + type + '" autocomplete="' + autocomplete + '" aria-describedby="' + id + '-error" class="' + SETUP_INPUT_CLASS + '" />' +
+        '<p id="' + id + '-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400"></p>' +
+        "</div>"
+      );
+    }
+    return (
+      '<form data-stp-send-other-form hidden novalidate class="flex flex-col gap-3 rounded-lg border border-gray-200 p-4 dark:border-white/10">' +
+      '<div class="grid grid-cols-1 gap-3 sm:grid-cols-2">' +
+      field("stp-other-first", "First name", "text", "off") +
+      field("stp-other-last", "Last name", "text", "off") +
+      "</div>" +
+      field("stp-other-email", "Email", "email", "off") +
+      '<div class="flex items-center justify-end gap-3">' +
+      '<button type="button" data-stp-send-other-cancel class="' + SETUP_SECONDARY_CLASS + '">Cancel</button>' +
+      '<button type="submit" class="' + SETUP_CTA_CLASS + ' disabled:cursor-not-allowed disabled:bg-blue-300">Send</button>' +
+      "</div>" +
+      "</form>"
+    );
+  }
+
+  var SETUP_CHECK_ICON =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3 text-white"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z"/></svg>';
+
+  function escapeText(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function renderSetupSteps(dialog, state) {
+    var list = dialog && dialog.querySelector("[data-inline-next-steps]");
+    if (!list) return;
+    list.innerHTML = getSetupSteps(state)
+      .map(function (item) {
+        var done = item.status === "done";
+        var isCurrent = item.status === "current";
+        var marker = done
+          ? '<span class="flex size-5 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500">' + SETUP_CHECK_ICON + "</span>"
+          : isCurrent
+            ? '<span class="flex size-5 items-center justify-center rounded-full border border-blue-400 bg-blue-100 text-xs font-semibold text-blue-700 dark:border-blue-400/50 dark:bg-blue-500/20 dark:text-blue-300">' + item.number + "</span>"
+            : '<span class="flex size-5 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-500 dark:border-white/10 dark:bg-white/5 dark:text-gray-400">' + item.number + "</span>";
+        var line = item.last
+          ? ""
+          : '<span class="w-px flex-1 ' + (done ? "bg-blue-600 dark:bg-blue-500" : "bg-gray-200 dark:bg-white/10") + '"></span>';
+        var titleClass = isCurrent
+          ? "font-semibold text-gray-900 dark:text-white"
+          : done
+            ? "font-medium text-gray-900 dark:text-white"
+            : "font-medium text-gray-500 dark:text-gray-400";
+        var body =
+          '<p class="text-sm/5 ' + titleClass + '">' + escapeText(item.title) + "</p>" +
+          ((done || isCurrent) && item.meta
+            ? '<p class="-mt-1 text-sm/5 font-normal text-gray-500 dark:text-gray-400">' + escapeText(item.meta) + "</p>"
+            : "") +
+          (isCurrent && item.text
+            ? '<p class="text-sm/5 font-normal text-gray-700 dark:text-gray-300">' + item.text + "</p>"
+            : "") +
+          (isCurrent && item.cta ? item.cta : "");
+        return (
+          '<li class="flex gap-3" data-setup-step="' + (item.key || "agreement") + '" data-setup-status="' + item.status + '"' + (isCurrent ? ' aria-current="step"' : "") + ">" +
+          '<div class="flex w-5 shrink-0 flex-col items-center gap-1">' + marker + line + "</div>" +
+          '<div class="flex min-w-0 flex-col gap-2 ' + (item.last ? "" : "pb-6") + '">' + body + "</div>" +
+          "</li>"
+        );
+      })
+      .join("");
   }
 
   function ensureInlineVerifyDialog() {
@@ -622,16 +1115,23 @@
       "        </svg>" +
       '        <div class="mt-6 flex flex-col items-center gap-2">' +
       '          <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">Bank Account Verification</h2>' +
-      '          <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">This step ensures funds are settling to your account. Once the deposit amount is confirmed, set up for automatic card processing will be complete.</p>' +
+      '          <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">A small test deposit was sent to the business card settlement account, this may take 2-3 days to appear depending on the card processor.</p>' +
       "        </div>" +
       "      </div>" +
       '      <div class="flex flex-col gap-2">' +
-      '        <label for="sx-inline-deposit-amount" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Enter exact deposit amount</label>' +
-      '        <div class="grid grid-cols-1">' +
-      '          <input id="sx-inline-deposit-amount" type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*" placeholder="0.00" aria-invalid="false" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-2 pr-10 pl-3 text-sm font-normal text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />' +
-      '          <svg id="sx-inline-deposit-amount-error-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-3 hidden size-5 self-center justify-self-end text-red-500 sm:size-4"><path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" fill-rule="evenodd"/></svg>' +
+      '        <label for="sx-inline-deposit-amount" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Amount received</label>' +
+      '        <div class="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 has-[input:focus]:outline-2 has-[input:focus]:-outline-offset-2 has-[input:focus]:outline-blue-600 has-[input[aria-invalid=true]]:outline-red-500 dark:bg-white/5 dark:outline-white/10">' +
+      '          <span aria-hidden="true" class="shrink-0 text-sm text-gray-500 select-none dark:text-gray-400">$</span>' +
+      '          <input id="sx-inline-deposit-amount" type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*" placeholder="0.00" aria-invalid="false" aria-describedby="sx-inline-deposit-amount-help sx-inline-deposit-amount-error" class="block min-w-0 grow bg-transparent py-2 pr-3 pl-1 text-sm font-normal text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-white dark:placeholder:text-gray-500" />' +
+      '          <svg id="sx-inline-deposit-amount-error-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="pointer-events-none mr-3 hidden size-5 shrink-0 text-red-500 sm:size-4"><path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" fill-rule="evenodd"/></svg>' +
       "        </div>" +
+      '        <p id="sx-inline-deposit-amount-help" class="text-sm text-gray-500 dark:text-gray-400">Enter the exact amount you received.</p>' +
       '        <p id="sx-inline-deposit-amount-error" class="hidden text-sm text-red-600 dark:text-red-400">Only numbers and one decimal point are allowed.</p>' +
+      '        <p data-stp-demo-deposit-note hidden class="type-caption text-tertiary">Demo: any amount verifies, e.g. $0.12.</p>' +
+      "      </div>" +
+      '      <div class="flex flex-col gap-2 rounded-md bg-gray-50 p-3 dark:bg-white/5">' +
+      '        <p class="type-title-small text-default">Not seeing it yet? This may take 2-3 days.</p>' +
+      '        <ul class="list-disc space-y-1 pl-5 type-description text-secondary"><li>Banks may take a little time to post the micro-deposit.</li><li>The deposit will appear in your card settlement account.</li><li>Card processors have varying settlement times.</li></ul>' +
       "      </div>" +
       "    </div>" +
       '    <div class="flex justify-end gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">' +
@@ -787,7 +1287,8 @@
       "        </svg>" +
       '        <div class="mt-6 flex flex-col items-center gap-2">' +
       '          <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">Bank Account Verified Successfully!</h2>' +
-      '          <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">Automatic card processing is set up, card payments will be processed automatically and you&#39;ll receive a notification.</p>' +
+      '          <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">Automatic card processing is set up, all future card payments will be processed automatically with notifications sent.</p>' +
+      '          <p class="mt-2 text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">Manually processing on any previous card payments that are Pending Your Action.</p>' +
       "        </div>" +
       "      </div>" +
       "    </div>" +
@@ -819,6 +1320,14 @@
     return dialog;
   }
 
+  // The STP walkthrough case instance (SXDemoCase on a ?case= page), or null.
+  function demoCase() {
+    var C = window.SXDemoCase;
+    return C && typeof C.isPortalInstance === "function" && C.isPortalInstance()
+      ? C
+      : null;
+  }
+
   function safelyShowDialog(dialog) {
     if (!dialog || typeof dialog.showModal !== "function") return false;
     if (dialog.open) return true;
@@ -831,6 +1340,9 @@
   }
 
   function openOptInModal() {
+    // The case instance opts in the same way on every page: the agreement
+    // dialog with "sign myself" or "send to the signer" (Figma Scenario 4).
+    if (demoCase()) return safelyShowDialog(ensureInlineOptInDialog());
     // Pages with the agreement email step (Payment Preferences) start there;
     // the agreement itself is reviewed from the email or the Review button.
     var sendDialog = document.getElementById("pp-stp-send-agreement-dialog");
@@ -841,6 +1353,7 @@
   }
 
   function openAgreementReviewModal() {
+    if (demoCase()) return safelyShowDialog(ensureInlineOptInDialog());
     var dialog = document.getElementById("pp-enable-stp-dialog");
     if (safelyShowDialog(dialog)) {
       return true;
@@ -853,16 +1366,28 @@
   }
 
   function openSetupStepsModal() {
+    if (currentState.stpStep === STEP_AGREEMENT_SIGNATURE_PENDING)
+      return openPendingDialog();
     var dialog = ensureInlineNextStepsDialog();
+    renderSetupSteps(dialog, currentState);
     return safelyShowDialog(dialog);
+  }
+
+  // Demo note under the deposit field, only on the case instance.
+  function syncDemoDepositNote(dialog) {
+    if (!dialog) return;
+    var note = dialog.querySelector("[data-stp-demo-deposit-note]");
+    if (note) note.hidden = !demoCase();
   }
 
   function openVerifyModal() {
     var existing = document.getElementById("pp-verify-deposit-dialog");
+    syncDemoDepositNote(existing);
     if (safelyShowDialog(existing)) {
       return true;
     }
     var dialog = ensureInlineVerifyDialog();
+    syncDemoDepositNote(dialog);
     return safelyShowDialog(dialog);
   }
 
@@ -916,6 +1441,7 @@
       "sx-inline-stp-next-steps-dialog",
       "sx-inline-stp-verify-dialog",
       "sx-inline-stp-verify-success-dialog",
+      "sx-inline-stp-pending-dialog",
     ].forEach(function (id) {
       var dialog = document.getElementById(id);
       if (dialog && dialog.open && typeof dialog.close === "function") {
@@ -948,8 +1474,12 @@
     openAgreementReviewModal: openAgreementReviewModal,
     getAgreementRequest: getAgreementRequest,
     getAgreementSentText: getAgreementSentText,
+    markAgreementSigned: markAgreementSigned,
     sendAgreementEmail: sendAgreementEmail,
     isAllowlistedEmail: isAllowlistedEmail,
+    isConfigAllowlistedEmail: isConfigAllowlistedEmail,
+    getExtraAllowedEmails: getExtraAllowedEmails,
+    EXTRA_ALLOWED_KEY: EXTRA_ALLOWED_KEY,
     openSetupStepsModal: openSetupStepsModal,
     openVerifyModal: openVerifyModal,
     STATUS_ENABLED: STATUS_ENABLED,

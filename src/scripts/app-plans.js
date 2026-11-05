@@ -110,6 +110,7 @@ window.AppPlans = (function () {
       },
       byPlan: {
         "supplier-portal": { nav: { type: "link", label: "Payments" } },
+        "sx-instance": { dividerBefore: false, nav: { type: "link" } },
       },
     },
 
@@ -123,7 +124,10 @@ window.AppPlans = (function () {
         href: "payment-preferences.html",
         icon: "payment-preferences",
       },
-      byPlan: { "supplier-portal": { parent: null, nav: { type: "link" } } },
+      byPlan: {
+        "supplier-portal": { parent: null, nav: { type: "link" } },
+        "sx-instance": { parent: "settings", order: 63 },
+      },
     },
 
     {
@@ -137,6 +141,7 @@ window.AppPlans = (function () {
         href: "my-company-profile.html",
         icon: "my-company-profile",
       },
+      byPlan: { "sx-instance": { parent: "settings", order: 62 } },
     },
 
     {
@@ -150,6 +155,11 @@ window.AppPlans = (function () {
         children: [
           { id: "user-management", label: "User Management", href: "#" },
         ],
+      },
+      // The SX instance (Figma 34510:42009): Settings is open and holds My
+      // Company Profile + Payment Preferences ahead of User Management.
+      byPlan: {
+        "sx-instance": { dividerBefore: false, nav: { expanded: true } },
       },
     },
 
@@ -254,6 +264,18 @@ window.AppPlans = (function () {
       // upgrades gains AP/AR, it does not become an internal Transcard user.
       upgradeGrants: ["ap-ar", "payables", "receivables"],
     },
+    // STP walkthrough case instance (supplier-portal.html?case=<id>): the SX
+    // supplier menu of Figma 34510:42009 — Insights, AP/AR (Upgrade), SMART
+    // Exchange, Settings › My Company Profile / Payment Preferences / User
+    // Management — and no Help / Account Information blocks.
+    "sx-instance": {
+      label: "SMART Exchange",
+      home: "supplier-portal.html",
+      capabilities: ["core", "insights", "supplier-portal"],
+      locked: ["ap-ar"],
+      upgradeGrants: ["ap-ar", "payables", "receivables"],
+      hideShellExtras: true,
+    },
     "bills-payables": {
       label: "Bills & Payables",
       home: "bills-and-payables.html",
@@ -327,10 +349,36 @@ window.AppPlans = (function () {
     },
   ];
 
+  // STP walkthrough: on the case's portal instance (?case=<id>, sx-demo-case.js
+  // loaded before this script) the demo case's supplier is the only business,
+  // on its own SX plan. Without ?case= nothing changes.
+  var DEMO_BUSINESS_ID = "sx-demo";
+  var demoCase =
+    window.SXDemoCase && window.SXDemoCase.isPortalInstance()
+      ? window.SXDemoCase.get()
+      : null;
+  if (demoCase) {
+    var demoBusiness = {
+      id: DEMO_BUSINESS_ID,
+      name: (demoCase.supplier && demoCase.supplier.name) || "Demo Supplier",
+      view: "Supplier view",
+      plan: "sx-instance",
+    };
+    BUSINESSES.length = 0;
+    BUSINESSES.push(demoBusiness);
+    window.addEventListener("sx-demo-case:change", function (event) {
+      var next = event.detail && event.detail.case;
+      if (next && next.supplier && next.supplier.name)
+        demoBusiness.name = next.supplier.name;
+    });
+  }
+
   // Persistence is deliberately behind this pair so it can become a URL
   // parameter, or the Worker, without touching a single caller.
   var SESSION_KEY = "app-active-business";
   var activeBusinessId = (function () {
+    // The instance never touches the tab's saved view.
+    if (demoCase) return DEMO_BUSINESS_ID;
     try {
       var saved = sessionStorage.getItem(SESSION_KEY);
       for (var i = 0; i < BUSINESSES.length; i += 1)
@@ -341,6 +389,7 @@ window.AppPlans = (function () {
   var listeners = [];
 
   function rememberActive() {
+    if (demoCase) return;
     try {
       sessionStorage.setItem(SESSION_KEY, activeBusinessId);
     } catch (error) {}

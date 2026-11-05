@@ -28,6 +28,7 @@ Use the source-of-truth file. "Carry over" files hold newer states that the sour
 | Company Profile | [R3] SMART Exchange | `9DRzbyv7FDCDYFYN5ZGuwZ` | [WIP] Multiple Businesses/Organization `B3Ey6QqkxSDTixWSbQsYM7` |
 | Vendor Profile | [REVIEW] Vendor Profile | `uL1CzwiGZr4w89LQ8TPwCt` | [REVIEW] SX Configurable Items `oLZRTLd2UkmROpy7BtA4W8` (shell, payment methods); [R1] AP (network invite/link flow) |
 | User Management | [REVIEW] User Management | `qiy6GvUHQMhdbC7hkXCCyb` | |
+| STP (Automatic Card Processing) | [R3] SMART Exchange, page **STP** | `9DRzbyv7FDCDYFYN5ZGuwZ` | [WIP] STP - Mastercard `oGZg8QBcOAhTNbORhQ6ZWP` (Enable STP toggle on a payment screen, per the audit). TODO(confirm): page STP not opened yet; code was built from the Payment Methods frames. See [STP](../products/smart-exchange/stp.md) |
 | Card Manager | [REVIEW] VC \| ICCP / Line of Credit Cards | `9we1YVhB41SNAHXULwJJUZ` | [REVIEW] VC \| Reconciliation Process `iesYL2M85wJyb6OLveVgmW`; [REVIEW] Cardholder Site `AcZDWKoZKuqGY1LBLqqqlN` |
 
 ## Main files per product

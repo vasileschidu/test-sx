@@ -269,6 +269,16 @@ window.__ppStorageKey = function (name) {
             };
           });
         });
+      // A page can replace the data (STP walkthrough: only the demo case's
+      // card, business and no bank account). Gets the payload plus the
+      // helpers to build cards the same way: { extractCardsFromExchanges }.
+      if (typeof PP_CONFIG.transformSharedData === "function") {
+        sharedDataPromise = sharedDataPromise.then(function (payload) {
+          return PP_CONFIG.transformSharedData(payload || {}, {
+            extractCardsFromExchanges: extractCardsFromExchanges,
+          });
+        });
+      }
     }
     return sharedDataPromise;
   };
@@ -1076,6 +1086,20 @@ window.__ppStorageKey = function (name) {
   window
     .__ppLoadSharedData()
     .then(function (payload) {
+      // A page that supplies its own data (STP walkthrough instance) hands
+      // over cards already in this list's shape: show exactly those.
+      // (normalizeCards throws here — deriveCardBrand lives in another IIFE —
+      // so the default page lands on the fallback cards in .catch.)
+      if (typeof (window.__ppConfig || {}).transformSharedData === "function") {
+        allCards = Array.isArray(payload && payload.cards)
+          ? payload.cards.slice()
+          : [];
+        renderCustomerFilters();
+        renderStatusFilters();
+        syncApplyButtonState();
+        renderCards();
+        return;
+      }
       allCards = normalizeCards(payload);
       if (!allCards.length) {
         allCards = generateFallbackCards(
@@ -3591,6 +3615,14 @@ window.__ppStorageKey = function (name) {
       ) {
         window.STPState.setStpStatus("in_progress");
       }
+      // One step at a time, derived from the STP step (stp-state.js).
+      if (
+        window.STPState &&
+        typeof window.STPState.openSetupStepsModal === "function"
+      ) {
+        window.STPState.openSetupStepsModal();
+        return;
+      }
       if (
         nextStepsDialog &&
         typeof nextStepsDialog.showModal === "function" &&
@@ -3684,6 +3716,24 @@ window.__ppStorageKey = function (name) {
         stpStatusBadge.textContent = "Pending";
         stpStatusBadge.className =
           "inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300";
+      }
+    }
+    // MID / TID (a page that knows them: the STP walkthrough instance),
+    // shown once the first card was processed (terminal verified).
+    var stpIdsEl = document.getElementById("pp-stp-ids");
+    if (stpIdsEl) {
+      var getIds = (window.__ppConfig || {}).getStpIds;
+      var ids =
+        typeof getIds === "function" &&
+        (showInlineVerify || isEnabled)
+          ? getIds()
+          : null;
+      stpIdsEl.hidden = !ids;
+      if (ids) {
+        stpIdsEl.querySelector("[data-pp-stp-mid]").textContent =
+          ids.mid || "—";
+        stpIdsEl.querySelector("[data-pp-stp-tid]").textContent =
+          ids.tid || "—";
       }
     }
     if (stpActionsWrap) {
