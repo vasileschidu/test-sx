@@ -19,3 +19,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-10-20 [sd] Andrian owns the SD step transitions (instant step changes + loading skeletons on token values).
   Don't reintroduce page fades; coordinate before touching `onboarding-transitions.js`.
 - 2026-10-26 [merge] Vlad's `tailwind-theme.js` and `design-tokens.js` both insert after the Tailwind CDN tag: order is theme → tokens.
+- 2026-11-05 [exchanges-table] A pending **Card** row with no review/signature is "Pending Your Action" and lives on the
+  Action Required tab, not Pending — deep-link with `&tab=action-required` or the table looks empty.
+- 2026-11-05 [app-plans] Extra tenants (e.g. `sx-demo`) can only read globals loaded before `app-plans.js`; load `sx-demo-case.js` first.

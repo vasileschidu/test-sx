@@ -7262,6 +7262,12 @@
       var columns;
       var rawData;
 
+      // Optional page hook: reshape the dataset before rows are built (the
+      // STP walkthrough swaps in its one demo payment). Return a new object.
+      if (typeof PAGE_CONFIG.transformData === "function") {
+        payload = PAGE_CONFIG.transformData(payload) || payload;
+      }
+
       if (payload && payload.tableConfig && Array.isArray(payload.data)) {
         columns = ensureCompleteExchangeColumns(payload.tableConfig.columns);
         rawData = payload.data;

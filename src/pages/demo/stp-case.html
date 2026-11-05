@@ -1,0 +1,421 @@
+<!--
+  @file demo/stp-case.html
+  @description STP walkthrough launcher. Creates the demo "case" (one payment
+    + supplier details, SXDemoCase) that the enrolment (sx-enroll/) and the
+    Supplier Portal instance (supplier-portal.html?case=<id>) are built on.
+-->
+<!doctype html>
+<html class="h-full bg-gray-100 dark:bg-gray-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>STP walkthrough - Demo case</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="../../scripts/theme-init.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="../../scripts/tailwind-theme.js"></script>
+    <script src="../../scripts/design-tokens.js"></script>
+    <link rel="stylesheet" href="../../styles/cursor.css" />
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+
+    <script src="../../scripts/data-source.js"></script>
+    <script src="../../scripts/stp-state.js"></script>
+    <script src="../../scripts/sx-demo-case.js?v=20261105a"></script>
+  </head>
+  <body class="min-h-full font-['Inter'] text-default antialiased">
+    <main class="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-10 lg:px-10">
+      <header class="flex flex-col gap-2">
+        <a
+          href="../../../index.html"
+          class="type-link inline-flex items-center gap-1.5 self-start text-brand hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+        >
+          <svg class="size-4" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+            <path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" />
+          </svg>
+          All prototypes
+        </a>
+        <h1 class="type-title-page text-default">STP walkthrough</h1>
+        <p class="type-description text-tertiary">
+          Create a demo case: one card payment from a payer to a supplier. The supplier enrols with it and
+          lands in a Supplier Portal that holds only this payment.
+        </p>
+      </header>
+
+      <!-- Current case (shown once a case exists) -->
+      <section
+        id="case-result"
+        class="hidden flex-col gap-4 rounded-lg bg-default p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10"
+        aria-labelledby="case-result-title"
+      >
+        <div class="flex flex-col gap-1">
+          <h2 id="case-result-title" class="type-title-section text-default">Case ready</h2>
+          <p class="type-description text-tertiary">
+            Start the enrolment, or open the Supplier Portal instance for this case.
+          </p>
+        </div>
+
+        <div class="flex flex-col items-start self-stretch">
+          <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
+            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Case details</span>
+          </div>
+          <div id="case-result-list" class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"></div>
+        </div>
+
+        <div class="flex flex-wrap items-center gap-3">
+          <a
+            id="case-start-enrol"
+            href="#"
+            class="cursor-pointer rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
+            >Start enrolment</a
+          >
+          <a
+            id="case-open-portal"
+            href="#"
+            class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20"
+            >Open Supplier Portal</a
+          >
+          <button
+            id="case-reset"
+            type="button"
+            class="cursor-pointer rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20"
+          >
+            Reset demo
+          </button>
+        </div>
+      </section>
+
+      <form id="case-form" class="flex flex-col gap-6" novalidate>
+        <!-- Supplier & contact -->
+        <section class="flex flex-col gap-4 rounded-lg bg-default p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10">
+          <div class="flex flex-col gap-1">
+            <h2 class="type-title-card text-default">Supplier &amp; contact</h2>
+            <p class="type-description text-tertiary">The business that receives the payment and enrols.</p>
+          </div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label for="f-supplier-name" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Business name</label>
+              <input id="f-supplier-name" data-field="supplier.name" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="f-supplier-address" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Business address</label>
+              <textarea id="f-supplier-address" data-field="supplier.address" rows="4" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20"></textarea>
+            </div>
+            <div>
+              <label for="f-supplier-tin" class="block text-sm/6 font-medium text-gray-900 dark:text-white">TIN</label>
+              <input id="f-supplier-tin" data-field="supplier.tin" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+            <div>
+              <label for="f-supplier-phone" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Phone</label>
+              <input id="f-supplier-phone" data-field="supplier.phone" type="tel" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+            <div>
+              <label for="f-contact-first" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Contact first name</label>
+              <input id="f-contact-first" data-field="supplier.contactFirst" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+            <div>
+              <label for="f-contact-last" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Contact last name</label>
+              <input id="f-contact-last" data-field="supplier.contactLast" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="f-contact-email" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Contact email</label>
+              <input id="f-contact-email" data-field="supplier.email" type="email" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Payer & payment -->
+        <section class="flex flex-col gap-4 rounded-lg bg-default p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10">
+          <div class="flex flex-col gap-1">
+            <h2 class="type-title-card text-default">Payer &amp; payment</h2>
+            <p class="type-description text-tertiary">The pending virtual card payment the payer sends.</p>
+          </div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="sm:col-span-2">
+              <label for="f-payer-name" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Payer name</label>
+              <input id="f-payer-name" data-field="payer.name" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="f-payer-address" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Payer address</label>
+              <textarea id="f-payer-address" data-field="payer.address" rows="4" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20"></textarea>
+            </div>
+            <div>
+              <label for="f-amount" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Amount (USD)</label>
+              <input id="f-amount" data-field="payment.amount" data-type="number" type="number" min="0" step="0.01" inputmode="decimal" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+            <div>
+              <label for="f-invoice" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Invoice #</label>
+              <input id="f-invoice" data-field="payment.invoice" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="f-card-number" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Card number (Visa)</label>
+              <input id="f-card-number" data-field="payment.cardNumber" type="text" inputmode="numeric" maxlength="19" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+            <div>
+              <label for="f-expires" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Expires (MM/YYYY)</label>
+              <input id="f-expires" data-field="payment.expires" type="text" maxlength="7" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+            <div>
+              <label for="f-cvc" class="block text-sm/6 font-medium text-gray-900 dark:text-white">CVC</label>
+              <input id="f-cvc" data-field="payment.cvc" type="text" inputmode="numeric" maxlength="4" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+          </div>
+        </section>
+
+        <!-- Authorized signer -->
+        <section class="flex flex-col gap-4 rounded-lg bg-default p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10">
+          <div class="flex flex-col gap-1">
+            <h2 class="type-title-card text-default">Authorized signer</h2>
+            <p class="type-description text-tertiary">Who signs the Visa agreement when the supplier sends it to another signer.</p>
+          </div>
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label for="f-signer-first" class="block text-sm/6 font-medium text-gray-900 dark:text-white">First name</label>
+              <input id="f-signer-first" data-field="signer.firstName" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+            <div>
+              <label for="f-signer-last" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Last name</label>
+              <input id="f-signer-last" data-field="signer.lastName" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+            </div>
+            <div class="sm:col-span-2">
+              <label for="f-signer-email" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Email</label>
+              <input id="f-signer-email" data-field="signer.email" type="email" autocomplete="off" aria-describedby="f-signer-email-hint" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-signer-email-hint" class="mt-2 type-description-small text-tertiary" aria-live="polite"></p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Starting scenario -->
+        <section class="flex flex-col gap-4 rounded-lg bg-default p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10">
+          <fieldset class="flex flex-col gap-4">
+            <legend class="flex flex-col gap-1">
+              <span class="type-title-card text-default">Starting scenario</span>
+              <span class="type-description text-tertiary">How the supplier answers Automatic Card Processing during enrolment.</span>
+            </legend>
+            <div class="mt-4 flex flex-col gap-3">
+              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
+                <span class="flex h-5 shrink-0 items-center">
+                  <input type="radio" name="scenario" value="A" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
+                </span>
+                <span class="flex flex-col text-sm">
+                  <span class="font-semibold text-gray-950 dark:text-white">A. I'm the signatory</span>
+                  <span class="text-gray-500 dark:text-gray-400">The contact signs the Visa agreement during enrolment.</span>
+                </span>
+              </label>
+              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
+                <span class="flex h-5 shrink-0 items-center">
+                  <input type="radio" name="scenario" value="B" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
+                </span>
+                <span class="flex flex-col text-sm">
+                  <span class="font-semibold text-gray-950 dark:text-white">B. Send to another signer</span>
+                  <span class="text-gray-500 dark:text-gray-400">The agreement is emailed to the authorized signer above.</span>
+                </span>
+              </label>
+              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
+                <span class="flex h-5 shrink-0 items-center">
+                  <input type="radio" name="scenario" value="C" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
+                </span>
+                <span class="flex flex-col text-sm">
+                  <span class="font-semibold text-gray-950 dark:text-white">C. Skip STP</span>
+                  <span class="text-gray-500 dark:text-gray-400">The supplier opts out and can opt in later from the portal.</span>
+                </span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="flex items-center justify-between gap-4">
+            <span class="flex flex-col">
+              <span id="f-card-processed-label" class="type-label text-default">Card processed during enrolment</span>
+              <span class="type-description-small text-tertiary">Off: the payment stays pending and is processed in the portal.</span>
+            </span>
+            <div class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2">
+              <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
+              <input id="f-card-processed" type="checkbox" name="cardProcessed" aria-labelledby="f-card-processed-label" class="absolute inset-0 size-full appearance-none cursor-pointer focus:outline-hidden" />
+            </div>
+          </div>
+        </section>
+
+        <div class="flex flex-wrap items-center justify-end gap-3">
+          <button
+            id="case-defaults"
+            type="button"
+            class="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            Restore defaults
+          </button>
+          <button
+            id="case-create"
+            type="submit"
+            class="cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300"
+          >
+            Create case
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <script>
+      (function () {
+        "use strict";
+        var Case = window.SXDemoCase;
+        var form = document.getElementById("case-form");
+        var result = document.getElementById("case-result");
+        var resultList = document.getElementById("case-result-list");
+        var emailInput = document.getElementById("f-signer-email");
+        var emailHint = document.getElementById("f-signer-email-hint");
+        var SCENARIOS = {
+          A: "A. I'm the signatory",
+          B: "B. Send to another signer",
+          C: "C. Skip STP",
+        };
+
+        function getPath(obj, path) {
+          return path.split(".").reduce(function (acc, key) {
+            return acc == null ? acc : acc[key];
+          }, obj);
+        }
+
+        function setPath(obj, path, value) {
+          var keys = path.split(".");
+          var last = keys.pop();
+          var target = keys.reduce(function (acc, key) {
+            if (!acc[key] || typeof acc[key] !== "object") acc[key] = {};
+            return acc[key];
+          }, obj);
+          target[last] = value;
+        }
+
+        function fillForm(data) {
+          form.querySelectorAll("[data-field]").forEach(function (input) {
+            var value = getPath(data, input.dataset.field);
+            input.value = value == null ? "" : String(value);
+          });
+          form.querySelectorAll('input[name="scenario"]').forEach(function (radio) {
+            radio.checked = radio.value === (data.scenario || "A");
+          });
+          document.getElementById("f-card-processed").checked = data.cardProcessed !== false;
+          updateEmailHint();
+        }
+
+        function readForm() {
+          var data = {};
+          form.querySelectorAll("[data-field]").forEach(function (input) {
+            var value = input.value.trim();
+            if (input.dataset.field === "payment.cardNumber") value = value.replace(/\D/g, "");
+            if (input.dataset.type === "number") value = Number(value) || 0;
+            setPath(data, input.dataset.field, value);
+          });
+          var scenario = form.querySelector('input[name="scenario"]:checked');
+          data.scenario = scenario ? scenario.value : "A";
+          data.cardProcessed = document.getElementById("f-card-processed").checked;
+          return data;
+        }
+
+        var hintRequest = 0;
+        function updateEmailHint() {
+          var email = emailInput.value.trim();
+          var request = ++hintRequest;
+          if (!email) {
+            emailHint.className = "mt-2 type-description-small text-tertiary";
+            emailHint.textContent = "Add an email to send the agreement to.";
+            return;
+          }
+          if (!window.STPState || !window.STPState.isAllowlistedEmail) return;
+          window.STPState.isAllowlistedEmail(email).then(function (allowed) {
+            if (request !== hintRequest) return;
+            emailHint.className =
+              "mt-2 type-description-small " + (allowed ? "text-success" : "text-tertiary");
+            emailHint.textContent = allowed
+              ? "On the test allowlist: a real agreement email is sent."
+              : "Not on the test allowlist: no email is sent, the flow continues as if it was.";
+          });
+        }
+
+        function money(amount) {
+          return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
+            Number(amount) || 0,
+          );
+        }
+
+        function row(label, value) {
+          var wrap = document.createElement("div");
+          wrap.className = "grid grid-cols-2 gap-4 self-stretch";
+          var l = document.createElement("span");
+          l.className = "text-sm font-medium text-gray-900 dark:text-gray-100";
+          l.textContent = label;
+          var v = document.createElement("span");
+          v.className = "text-sm font-normal text-gray-700 dark:text-gray-300 break-words";
+          v.textContent = value;
+          wrap.appendChild(l);
+          wrap.appendChild(v);
+          return wrap;
+        }
+
+        function renderResult(data) {
+          if (!data) {
+            result.classList.add("hidden");
+            result.classList.remove("flex");
+            return;
+          }
+          var urls = Case.urls(data);
+          resultList.replaceChildren(
+            row("Case ID", data.id),
+            row("Supplier", data.supplier.name),
+            row(
+              "Payment",
+              money(data.payment.amount) + " from " + data.payer.name + " (" + data.payment.invoice + ")",
+            ),
+            row("Card", data.payment.cardBrand + " ending " + String(data.payment.cardNumber).slice(-4)),
+            row("Signer", [data.signer.firstName, data.signer.lastName].join(" ") + " (" + data.signer.email + ")"),
+            row(
+              "Scenario",
+              SCENARIOS[data.scenario] + (data.cardProcessed ? ", card processed" : ", card not processed"),
+            ),
+          );
+          document.getElementById("case-start-enrol").href = urls.enrol;
+          document.getElementById("case-open-portal").href = urls.portal;
+          result.classList.remove("hidden");
+          result.classList.add("flex");
+        }
+
+        emailInput.addEventListener("input", updateEmailHint);
+
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          var created = Case.create(readForm());
+          renderResult(created);
+          result.scrollIntoView({ behavior: "smooth", block: "start" });
+          document.getElementById("case-start-enrol").focus({ preventScroll: true });
+        });
+
+        document.getElementById("case-defaults").addEventListener("click", function () {
+          fillForm(Case.defaults());
+        });
+
+        document.getElementById("case-reset").addEventListener("click", function () {
+          Case.reset();
+          renderResult(null);
+          fillForm(Case.defaults());
+        });
+
+        window.addEventListener(Case.CHANGE_EVENT, function (event) {
+          renderResult(event.detail && event.detail.case);
+        });
+
+        Case.ready().then(function () {
+          var existing = Case.get();
+          fillForm(existing || Case.defaults());
+          renderResult(existing);
+        });
+      })();
+    </script>
+  </body>
+</html>

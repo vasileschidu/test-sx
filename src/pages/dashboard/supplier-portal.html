@@ -40,11 +40,13 @@
       type="module"
     ></script>
     <script src="../../../src/scripts/sidebar-boot.js"></script>
-    <script src="../../../src/scripts/app-plans.js"></script>
+    <!-- STP walkthrough: ?case=<id> turns this page into the demo case's portal. -->
+    <script src="../../../src/scripts/sx-demo-case.js?v=20261105a"></script>
+    <script src="../../../src/scripts/app-plans.js?v=20261105-sxdemo"></script>
     <script src="../../../src/scripts/nav-component.js"></script>
     <script src="../../../src/scripts/stp-state.js"></script>
     <script src="../../../src/scripts/app-switch.js"></script>
-    <script src="../../../src/scripts/topbar-component.js"></script>
+    <script src="../../../src/scripts/topbar-component.js?v=20261105-sxdemo"></script>
     <script src="../../scripts/checkbox-component.js"></script>
     <script src="../../../src/scripts/sidebar.js" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
@@ -54,6 +56,14 @@
     <script>
       // Show "SMART Exchange" (not a dash) before a payment method is chosen.
       window.EXCHANGES_TABLE_CONFIG = { showTokenMethod: true };
+      // Demo case instance: the table holds only the case payment.
+      if (window.SXDemoCase && window.SXDemoCase.isPortalInstance()) {
+        window.EXCHANGES_TABLE_CONFIG.transformData = function (json) {
+          return Object.assign({}, json, {
+            data: [window.SXDemoCase.toPaymentRow()],
+          });
+        };
+      }
     </script>
     <style>
       #gp-signature-canvas {
@@ -3743,7 +3753,7 @@
 
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
     <script src="../../../src/scripts/table-ui.js?v=20261006f"></script>
-    <script src="../../../src/scripts/exchanges-table.js?v=20261104-rowtoggle"></script>
+    <script src="../../../src/scripts/exchanges-table.js?v=20261105-transform"></script>
 
     <script src="../../../src/scripts/review-modal.js"></script>
   </body>

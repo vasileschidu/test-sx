@@ -327,10 +327,36 @@ window.AppPlans = (function () {
     },
   ];
 
+  // STP walkthrough: the demo case's supplier is a tenant of its own, on the
+  // same plan as ABM Corp. It exists only while a case does (sx-demo-case.js
+  // must load before this script) and is active on the case's portal instance.
+  var DEMO_BUSINESS_ID = "sx-demo";
+  var demoCase = window.SXDemoCase && window.SXDemoCase.get();
+  if (demoCase) {
+    var demoBusiness = {
+      id: DEMO_BUSINESS_ID,
+      name: (demoCase.supplier && demoCase.supplier.name) || "Demo Supplier",
+      view: "Supplier view",
+      plan: "supplier-portal",
+    };
+    BUSINESSES.push(demoBusiness);
+    window.addEventListener("sx-demo-case:change", function (event) {
+      var next = event.detail && event.detail.case;
+      if (next && next.supplier && next.supplier.name)
+        demoBusiness.name = next.supplier.name;
+    });
+  }
+
   // Persistence is deliberately behind this pair so it can become a URL
   // parameter, or the Worker, without touching a single caller.
   var SESSION_KEY = "app-active-business";
   var activeBusinessId = (function () {
+    if (demoCase && window.SXDemoCase.isPortalInstance()) {
+      try {
+        sessionStorage.setItem(SESSION_KEY, DEMO_BUSINESS_ID);
+      } catch (error) {}
+      return DEMO_BUSINESS_ID;
+    }
     try {
       var saved = sessionStorage.getItem(SESSION_KEY);
       for (var i = 0; i < BUSINESSES.length; i += 1)

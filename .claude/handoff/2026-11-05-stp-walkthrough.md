@@ -1,0 +1,72 @@
+# STP walkthrough (client demo) — plan and status
+
+Branch: `stp-walkthrough`. Figma: `9DRzbyv7FDCDYFYN5ZGuwZ` ([R3] SMART Exchange), page `↳ STP`.
+
+## Goal
+A demo walkthrough of SX + STP (Automatic Card Processing), like the Consumer Portal walkthrough:
+create a **case** (one payment) → supplier **enrols** with that payment → lands in a **Supplier Portal
+instance with only that payment** and the details entered during enrolment.
+
+## Decisions (2026-11-05, Vasile)
+- Enrolment = **new flow `src/pages/sx-enroll/`**, reusing SD scripts (OBSign, OBConsents, OBModal,
+  stepper, context). Do NOT edit Andrian's `src/pages/onboarding/` pages.
+- Other signer: **same browser** is enough (real email via `STPState.sendAgreementEmail` → worker →
+  Brevo, allowlist in `src/data/public-runtime-config.json`; signing syncs via storage events).
+- Case launcher fields: supplier & contact, payer & amount, signer email, starting scenario.
+- MID/TID are simulated (generated when the card is processed).
+
+## Flow
+Enrolment steps: Confirm Identity → Confirm Business Details → Review Documents → Provide Signature →
+Confirm Payment → **Automatic Card Processing** → Create SMART Exchange → Summary → Final screen.
+
+Automatic Card Processing (Figma 36525:48445 / 8.1 36525:50666 / 8.2 36525:48634):
+- A. self-sign: 36861:55811 (8.3 yes 36525:49670, filled 49888, loading 50103, ack complete 50319)
+- B. other signer: 36861:55808 (8.3 no 36525:48843, filled 49057, loading 49271, waiting 49486)
+  → signer static page "Review & sign agreement" section 36525:45392 (email 36525:46232 + 6 states),
+  Link expired 37764:150589
+- C. skip: 33456:53115 (opt-out 33456:53560, are-you-sure 33456:53422)
+Create SX / Summary / Final: section 36861:55810 (9. 33456:52815, 10. 33456:52896, 11. 33456:52931,
+final big screen with card details 33456:52985).
+
+Portal outcomes:
+- Scenario 1 (STP on + card processed in enrolment, MID/TID known): section 33456:53696
+- Scenario 2 (STP on, user skipped processing → process in portal, mark paid → MID/TID): 34510:34059
+- Scenario 4 (STP skipped → opt in later from portal, pending payment used): 33456:60434
+  (Step 1 agreement self 36800:73898 / other 36800:73897, Step 2 process 36800:73907,
+  Step 3 micro deposit 36800:73908, Opted in 36800:73913, Payment Preferences 36800:73914)
+- Out of scope for now: Scenario 3 (36554:210506), 5 ($0 card, 33650:60214), 6 (Get paid, 33456:57524).
+
+## Reuse map
+- STP state machine: `src/scripts/stp-state.js` (`STPState`, keys `sx_global_stp_state_v3`,
+  `sx_stp_agreement_request_v1`), banners in `topbar-component.js`, dialogs in
+  `payment-preferences-page.js`, wiki spec `wiki/products/smart-exchange/standard.md`.
+- Portal: `exchanges-table.js` (`EXCHANGES_TABLE_CONFIG`, `gp-*` dialogs, overrides key
+  `sx_exchange_entry_overrides_v1`), tenants `app-plans.js`.
+- Enrolment building blocks: `src/pages/onboarding/*`, `sd-onboarding-context.js`, `onboarding-*.js`.
+
+## Batches
+1. Foundation — case model `SXDemoCase`, launcher page, demo tenant, portal loads only the case
+   payment, reset. **(done 2026-11-05)**
+   - `src/scripts/sx-demo-case.js` → `window.SXDemoCase`: `ready()` (promise; loads
+     `defaultTestRecipient` for the signer email — await before `defaults()`/`create()`), `defaults()`,
+     `get()`, `create(fields)`, `update(patch)` (deep merge), `reset()`, `isPortalInstance()`,
+     `toPaymentRow([case])`, `urls([case])` → `{ enrol, portal, launcher }` (root-relative, resolved from
+     the script src). Constants `STORAGE_KEY` (`sx_demo_case_v1`), `CHANGE_EVENT` (`sx-demo-case:change`,
+     detail `{ case }`, also fired from `storage` events in other tabs; `case` is null after reset).
+   - `create()`/`reset()` clear the STP keys, `sx_exchange_entry_overrides_v1` and sessionStorage `sx-enroll*`.
+   - `urls().portal` = `supplier-portal.html?case=<id>&tab=action-required` (a pending card row is
+     "Pending Your Action" on that tab; once marked paid it moves to Paid).
+   - Portal hook: `EXCHANGES_TABLE_CONFIG.transformData(json) → json` (exchanges-table.js,
+     `fetchExchangesData`). supplier-portal.html sets it only when `isPortalInstance()`.
+   - Tenant `sx-demo` (app-plans.js, plan `supplier-portal`) exists only when a case exists AND
+     `sx-demo-case.js` loaded before `app-plans.js`; active on `?case=` pages. Topbar
+     `applyProfileData` uses the case supplier name + contact name/email on the instance.
+   - Open: the instance is only recognised with `?case=` in the URL — nav links (Payment Preferences,
+     reload via sidebar) drop it. Batch 4 must carry `?case=` (or make the instance sticky per tab) and
+     load `sx-demo-case.js` (before `app-plans.js`) on payment-preferences.html too.
+   - Launcher: `src/pages/demo/stp-case.html` (linked from root `index.html`).
+2. Enrolment pages `src/pages/sx-enroll/` (steps above, branches A/B/C, final screen + card).
+3. Signer side — email link → Review & Sign page (+ expired) → advances STP state.
+4. Portal Scenarios 1, 2, 4 — banners, process payment → MID/TID, micro deposit → Opted in,
+   Payment Preferences shows MID/TID.
+5. Polish — scenario picker, QA (qa:code / qa:hover), wiki, PR.

@@ -1086,6 +1086,24 @@
         profile.contact && profile.contact.email
           ? String(profile.contact.email || "").trim()
           : String(profile.businessEmail || "").trim() || "j.anderson@mail.com";
+      // STP walkthrough instance: the demo case's supplier and contact.
+      var demoCase =
+        window.SXDemoCase && window.SXDemoCase.isPortalInstance()
+          ? window.SXDemoCase.get()
+          : null;
+      if (demoCase && demoCase.supplier) {
+        var demoContact = [
+          demoCase.supplier.contactFirst,
+          demoCase.supplier.contactLast,
+        ]
+          .filter(Boolean)
+          .join(" ")
+          .trim();
+        organizationName = demoCase.supplier.name || organizationName;
+        secondaryName = "";
+        personName = demoContact || personName;
+        personEmail = demoCase.supplier.email || personEmail;
+      }
       var initials = buildInitials(personName);
 
       // The switcher label names the active business/view; the company
