@@ -22,7 +22,7 @@ window.OBFaster = (function () {
     var OPTION = 'flex cursor-pointer items-center gap-2.5 rounded-lg border-2 border-transparent bg-[#f9fafb] px-4 py-5 text-sm leading-5 font-medium text-[#111827] hover:bg-[#f3f4f6] ' +
       'has-checked:border-[#2563eb] has-checked:bg-[#eff6ff] has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-[#2563eb]';
     var backdrop = M.open(
-      '<div class="flex flex-col px-4 pb-9 sm:px-14">' +
+      '<div class="flex flex-col px-6 pb-6">' +
           '<fieldset class="flex flex-col">' +
             '<legend id="ob-faster-title" class="mb-6 w-full pt-6 text-center text-lg leading-6 font-medium text-[#111827]">' + esc(faster.title) + '</legend>' +
             '<div class="flex flex-col gap-3">' +
@@ -39,13 +39,8 @@ window.OBFaster = (function () {
       '</div>',
       'ob-faster-title',
       {
-        bare: true,
-        // The X row and the buttons stay put; the options scroll on a short screen.
-        header: '<div class="flex shrink-0 px-4 pt-4 sm:px-14">' +
-          '<button type="button" data-ob-modal-close class="flex size-12 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
-            '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-dark.svg" alt="" width="24" height="24" class="size-6"></button>' +
-        '</div>',
-        footer: '<div class="flex flex-col gap-4 px-4 pb-9 sm:px-14">' +
+        // Standard OBModal X row (same as the other dialogs); the options scroll on a short screen.
+        footer: '<div class="flex flex-col gap-4 px-6 pb-6">' +
           '<button type="button" data-ob-faster-confirm disabled class="' + M.PRIMARY_BUTTON + '">Confirm</button>' +
           '<button type="button" data-ob-modal-close class="flex h-14 w-full cursor-pointer items-center justify-center rounded-md border border-[#d1d5db] bg-white text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Cancel</button>' +
         '</div>',
