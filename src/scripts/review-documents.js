@@ -322,13 +322,16 @@
     }
 
     function openViewer(index) {
-      // 752 tall (Figma), capped by the shell to the viewport minus its padding.
+      // Full height with a 16px gap on every side (same as the SX viewer and the terms dialogs).
       var backdrop = window.OBModal.open(viewerMarkup(index), 'doc-viewer-title', {
         bare: true,
         header: viewerHeader(index),
         footer: viewerFooter(index),
-        panelClass: 'relative flex h-[min(752px,calc(100dvh-3rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5'
+        panelClass: 'relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5'
       });
+      var frame = backdrop.querySelector('[data-ob-modal-frame]');
+      frame.classList.remove('px-4', 'py-6');
+      frame.classList.add('p-4');
       backdrop.querySelector('[data-doc-next]').addEventListener('click', function () {
         markReviewed(docs[index]);
         if (index < docs.length - 1) openViewer(index + 1);

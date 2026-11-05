@@ -198,9 +198,9 @@ window.OBModal = (function () {
           'class="' + panelClass + ' focus:outline-none">' +
           (opts.bare ? '' :
           '<div class="flex h-14 shrink-0 items-end px-4 pt-4">' +
-            '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+            '<button type="button" data-ob-modal-close class="m-1 inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
               '<span class="sr-only">Close</span>' +
-              '<img src="' + ASSETS + 'icon-x-lined.svg" alt="" width="24" height="24" class="size-6">' +
+              '<img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5">' +
             '</button>' +
           '</div>') +
           (opts.header || '') +

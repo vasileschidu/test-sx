@@ -307,17 +307,33 @@
     backdrop.querySelector('[data-cc-terms]').addEventListener('click', function () {
       var terms = vcData.agreements[0];
       var keep = { email: input.value, consent: consent.checked, checked: draft.checked };
-      // min-h-0: on a short screen the text box shrinks and scrolls; the title stays.
+      // Same layout as the consents' "Review and agree" (onboarding-consents.js openReview):
+      // the title bar stays put and the text box below it scrolls. Read-only, so no buttons.
       var termsBackdrop = M.open(
-        '<div class="flex min-h-0 flex-col gap-4 px-6 pb-4">' +
-          '<h2 id="cc-terms-title" class="text-lg leading-6 font-medium text-[#111827]">' + esc(terms.title) + '</h2>' +
-          '<div class="max-h-[50vh] min-h-0 space-y-3 overflow-y-auto text-sm leading-5 text-[#374151]">' +
-            M.agreementHtml(terms.body) +
+        '<div class="flex min-h-0 flex-1 flex-col p-6">' +
+          '<div data-cc-terms-scroll tabindex="0" aria-label="' + esc(terms.title) + '" class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] bg-[#f9fafb] p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600">' +
+            '<div class="flex flex-col gap-4 text-sm leading-5 text-[#374151]">' +
+              '<p class="text-base leading-6 font-semibold text-[#111827]">' + esc(terms.title) + '</p>' +
+              M.agreementHtml(terms.body) +
+            '</div>' +
           '</div>' +
         '</div>',
         'cc-terms-title',
-        { footer: '<div class="flex flex-col px-6 pb-6"><button type="button" data-cc-terms-back class="' + M.PRIMARY_BUTTON + '">OK</button></div>' }
+        {
+          bare: true,
+          header: '<div class="flex shrink-0 items-center justify-between gap-2 border-b border-[#e5e7eb] px-6 py-4">' +
+            '<h2 id="cc-terms-title" class="text-base leading-6 text-[#111827]">' + esc(terms.name) + '</h2>' +
+            '<button type="button" data-cc-terms-back class="inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+              '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5"></button>' +
+          '</div>',
+          // Full height with a 16px gap on every side, like the SX document viewer (sx-enroll.js).
+          panelClass: 'relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5'
+        }
       );
+      var frame = termsBackdrop.querySelector('[data-ob-modal-frame]');
+      frame.classList.remove('px-4', 'py-6');
+      frame.classList.add('p-4');
+      // Read-only: X goes back to the receipt as it was.
       termsBackdrop.querySelector('[data-cc-terms-back]').addEventListener('click', function () {
         openReceipt(data, vcData, keep, after);
       });
