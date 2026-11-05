@@ -9484,6 +9484,10 @@
           populateGetPaidCardModal(targetEntry);
         }
         showTopActionToast("Payment marked as paid.");
+        // Page hook (STP walkthrough: the case card was processed).
+        var markedPaidHook = (window.EXCHANGES_TABLE_CONFIG || {})
+          .onMarkedPaid;
+        if (typeof markedPaidHook === "function") markedPaidHook(targetEntry);
       }
       if (pendingMarkPaidCloseCardDialog) {
         var cardDialog = document.getElementById("gp-card-details-dialog");

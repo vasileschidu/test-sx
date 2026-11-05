@@ -131,6 +131,31 @@ centred `max-w-sm rounded-lg bg-white p-6 text-center` card, `size-12 rounded-fu
 Toggle switch disabled: add `has-disabled:cursor-not-allowed has-disabled:opacity-50` on the track, `disabled:cursor-not-allowed` on the input.
 Password reveal: eye button `absolute top-1/2 right-2 size-7 -translate-y-1/2 rounded-md text-gray-400 hover:bg-gray-100` in the input's `relative` wrapper, `aria-pressed`.
 
+### STP set-up steps list (one step at a time) — `STPState.openSetupStepsModal()`
+Rendered by `renderSetupSteps` in `stp-state.js` from the STP step (+ `SXDemoCase.enrol.cardProcessed` on the case instance):
+`ol` > `li.flex.gap-3` with a `w-5` marker column (done: `size-5 rounded-full bg-blue-600` + white check; current: number in
+`border-blue-400 bg-blue-100 text-blue-700`; future: number in `border-gray-200 bg-gray-100 text-gray-500`) and a `w-px` connector
+(blue below done steps). Only the current step shows its description + one primary md CTA (`Go to Payments` / `Verify now` /
+`Review` / `Opt in`); done = check + title, future = muted title. opt-in / agreement-pending prepend their own first step.
+
+### Input with leading add-on (`$ 0.00`, Bank Account Verification)
+`div.flex.items-center.rounded-md.bg-white.pl-3.outline-1.-outline-offset-1.outline-gray-300.has-[input:focus]:outline-2
+has-[input:focus]:outline-blue-600 has-[input[aria-invalid=true]]:outline-red-500` > `span` add-on `text-sm text-gray-500` + bare
+`input.min-w-0.grow.bg-transparent.py-2.pl-1.focus:outline-none` + optional error icon. Help text `text-sm text-gray-500` below;
+info box `rounded-md bg-gray-50 p-3` with `type-title-small` + `list-disc type-description` bullets.
+
+### MID / TID rows (Payment Preferences STP card)
+`#pp-stp-ids` inside the Automatic Card Processing card: description-list rows (`type-label text-default` /
+`type-body text-secondary tabular-nums`), shown when `PAYMENT_PREFERENCES_CONFIG.getStpIds()` returns ids and STP is at the
+deposit step or enabled.
+
+### STP walkthrough case instance (`?case=<id>`) — shell + data hooks
+`SXDemoCase.applyPageConfig()` (inline on supplier-portal / payment-preferences, and from `shell-navigation.js` after a swap):
+table `transformData` + `onMarkedPaid` (→ `markCardProcessed`), PP `transformSharedData` / `storagePrefix` / `getStpIds`.
+Plan `sx-instance` (app-plans.js): Insights, AP/AR (Upgrade), SMART Exchange, Settings (open) › My Company Profile, Payment
+Preferences, User Management; `hideShellExtras` drops Help + Account Information; the case business is the only switcher entry.
+Links to dashboard pages keep `?case=` (click capture in sx-demo-case.js). `SXDemoCase.syncStp()` derives STP from the case.
+
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).
 2. Add a row/snippet here, and a note to `wiki/design-system/` when it is a product pattern.

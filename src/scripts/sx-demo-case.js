@@ -284,6 +284,14 @@
     };
   }
 
+  function toPaymentRowWithStatus(source) {
+    var c = source || read();
+    var row = toPaymentRow(c);
+    // Processed in the terminal (enrolment or portal): Paid on every load.
+    if (c && c.enrol && c.enrol.cardProcessed) row.status = "paid";
+    return row;
+  }
+
   function urls(source) {
     var c = source || read();
     var query = c && c.id ? "?case=" + encodeURIComponent(c.id) : "";
@@ -328,12 +336,13 @@
    * STP moves on to bank_verification_required, as processing a card from
    * Get paid does. Returns the updated case (or null without one).
    */
-  function markCardProcessed() {
+  function markCardProcessed(options) {
     var current = read();
     if (!current) return null;
     var row = toPaymentRow(current);
     var now = new Date().toISOString();
-    try {
+    // The portal's own Mark as paid already wrote the row override.
+    if (!(options && options.skipOverride)) try {
       var raw = localStorage.getItem(OVERRIDES_KEY);
       var overrides = raw ? JSON.parse(raw) : {};
       if (!isPlainObject(overrides)) overrides = {};
@@ -369,11 +378,10 @@
       },
     });
 
-    var enrol = current.enrol || {};
-    var agreementSigned =
-      enrol.stp === "on" &&
-      (enrol.signer === "self" || enrol.agreementSigned === true);
-    if (agreementSigned) {
+    // Processing a card with the agreement signed (STP waiting for the first
+    // virtual card payment, whichever way it got there: enrolment A/B or an
+    // opt-in from the portal) moves STP on to the micro deposit.
+    {
       var target = "bank_verification_required";
       if (window.STPState && typeof window.STPState.setStpStep === "function") {
         var state = window.STPState.getStpState();
@@ -429,6 +437,294 @@
     });
   }
 
+
+  // ── Portal instance (Batch 4) ──────────────────────────────────────────
+
+  var STP_ORDER = [
+    "opt_in_required",
+    "agreement_signature_pending",
+    "terminal_completed_tid_mid_received",
+    "bank_verification_required",
+    "completed",
+  ];
+
+  /** The STP step the case implies (enrolment answers + card processed). */
+  function expectedStpStep(c) {
+    var enrol = (c && c.enrol) || {};
+    if (enrol.stp !== "on") return "opt_in_required";
+    var signed = enrol.signer === "self" || enrol.agreementSigned === true;
+    if (!signed) return "agreement_signature_pending";
+    return enrol.cardProcessed
+      ? "bank_verification_required"
+      : "terminal_completed_tid_mid_received";
+  }
+
+  /**
+   * Bring STPState in line with the case, forward only (never undoes a step
+   * the presenter took in the portal, e.g. a verified deposit or a later
+   * opt-in). A: processed → deposit to verify (Scenario 1), not processed →
+   * eligibility (Scenario 2); B unsigned → agreement pending; C → opt-in
+   * banner (Scenario 4). Runs on every instance page load and STP change.
+   */
+  function syncStp() {
+    var c = read();
+    var S = window.STPState;
+    if (!c || !S || typeof S.getStpState !== "function") return null;
+    var current = S.getStpState().stpStep;
+    var target = expectedStpStep(c);
+    // Signed and waiting for a card payment, but the card is already
+    // processed (MID/TID known): straight to the micro deposit.
+    if (
+      current === "terminal_completed_tid_mid_received" &&
+      c.enrol &&
+      c.enrol.cardProcessed
+    )
+      target = "bank_verification_required";
+    if (STP_ORDER.indexOf(target) > STP_ORDER.indexOf(current))
+      S.setStpStep(target);
+    return S.getStpState();
+  }
+
+  function contactName(c) {
+    var s = (c && c.supplier) || {};
+    return [s.contactFirst, s.contactLast].filter(Boolean).join(" ").trim();
+  }
+
+  /**
+   * Opt in from the portal (Scenario 4, or B choosing to sign themselves).
+   * self: the contact signs here → STP waits for a card payment (or goes to
+   * the deposit when the card was already processed).
+   * other: the Batch 3 email + sign-agreement.html flow to case.signer.
+   * Returns a promise of the updated case.
+   */
+  function optIn(options) {
+    var c = read();
+    var S = window.STPState;
+    if (!c || !S) return Promise.resolve(null);
+    var now = new Date().toISOString();
+    if (!options || options.self !== false) {
+      if (typeof S.markAgreementSigned === "function")
+        S.markAgreementSigned({ signedBy: contactName(c), signedAt: now });
+      var next = update({
+        enrol: {
+          stp: "on",
+          signer: "self",
+          agreementSigned: true,
+          agreement: { signedBy: contactName(c), confirmedAt: now, via: "portal" },
+        },
+      });
+      S.setStpStep(
+        next.enrol.cardProcessed
+          ? "bank_verification_required"
+          : "terminal_completed_tid_mid_received",
+      );
+      return Promise.resolve(next);
+    }
+    var signer = c.signer || {};
+    var recipient = [signer.firstName, signer.lastName].filter(Boolean).join(" ");
+    return S.sendAgreementEmail({
+      email: signer.email,
+      recipientName: recipient,
+      senderName: contactName(c) || (c.supplier && c.supplier.name) || "",
+      linkUrl: window.location.origin + urls(c).sign.split("?")[0],
+    }).then(function (result) {
+      return update({
+        enrol: {
+          stp: "on",
+          signer: "other",
+          agreementSigned: false,
+          agreement: {
+            delegatedTo: recipient,
+            email: signer.email,
+            note: "",
+            sentAt: new Date().toISOString(),
+            delivered: !!(result && result.delivered),
+            signedBy: null,
+            confirmedAt: null,
+          },
+        },
+      });
+    });
+  }
+
+  /** "?case=<id>" (or "&case=") for links that must stay in the instance. */
+  function instanceQuery(prefix) {
+    if (!isPortalInstance()) return "";
+    return (prefix || "?") + "case=" + encodeURIComponent(read().id);
+  }
+
+  /** "line1\n[line2\n]City, State 12345\nCountry" → legalAddress fields. */
+  function parseAddress(text) {
+    var lines = String(text || "")
+      .split("\n")
+      .map(function (line) {
+        return line.trim();
+      })
+      .filter(Boolean);
+    var out = { line1: "", line2: "", city: "", state: "", postalCode: "", country: "" };
+    if (lines.length > 1 && !/\d/.test(lines[lines.length - 1]))
+      out.country = lines.pop();
+    var cityLine = lines.length > 1 ? lines.pop() : "";
+    var match = cityLine.match(/^(.*?),\s*(.*?)\s+(\S*\d\S*)$/);
+    if (match) {
+      out.city = match[1];
+      out.state = match[2];
+      out.postalCode = match[3];
+    } else out.city = cityLine;
+    out.line1 = lines[0] || "";
+    out.line2 = lines.slice(1).join(", ");
+    if (/^united states/i.test(out.country)) out.countryCode = "us";
+    return out;
+  }
+
+  /** The case business as a my-company-profile.json-shaped profile. */
+  function toCompanyProfile(source) {
+    var c = source || read();
+    if (!c) return null;
+    var s = c.supplier || {};
+    return {
+      id: "my-business",
+      legalName: s.name || "",
+      businessPhone: s.phone || "",
+      businessEmail: s.email || "",
+      organizationIdType: "EIN",
+      organizationIdLabel: "EIN",
+      organizationIdValue: s.tin || "",
+      dbaEnabled: false,
+      contact: { name: contactName(c), email: s.email || "", phone: s.phone || "" },
+      legalAddress: parseAddress(s.address),
+      mailingAddress: { name: s.name || "", address: s.address || "" },
+    };
+  }
+
+  /**
+   * Payment Preferences data on the instance (PAYMENT_PREFERENCES_CONFIG.
+   * transformSharedData): only the case — its virtual card (cardholder =
+   * payer), its business as profile and check address, its payer as the
+   * only customer, and no bank account (the page shows its empty state).
+   */
+  function toPaymentPreferencesData(payload, helpers) {
+    var c = read();
+    if (!c) return payload;
+    var row = toPaymentRow(c);
+    var payment = c.payment || {};
+    row.details.paymentInfo.fullCardNumber = String(payment.cardNumber || "");
+    row.details.paymentInfo.cvcFull = String(payment.cvc || "");
+    row.details.paymentInfo.brand = String(payment.cardBrand || "Visa");
+    var profile = toCompanyProfile(c);
+    var cards =
+      helpers && typeof helpers.extractCardsFromExchanges === "function"
+        ? helpers.extractCardsFromExchanges({ entries: [row] }, null)
+        : [];
+    var payer = c.payer || {};
+    cards = cards.map(function (card) {
+      // Not "my-business": the cardholder is the payer, not the supplier.
+      return Object.assign({}, card, {
+        ownerId: "sx-demo-payer",
+        holderName: payer.name || card.holderName,
+        billingAddress: payer.address || card.billingAddress,
+      });
+    });
+    var s = c.supplier || {};
+    var lines = String(s.address || "").split("\n");
+    return Object.assign({}, payload, {
+      customers: [{ id: "sx-demo-payer", name: payer.name || "", vendorEntries: [] }],
+      bankAccounts: [],
+      checkAddresses: s.address
+        ? [
+            {
+              id: "sx-demo-address",
+              displayName: "Business Address",
+              name: s.name || "",
+              cityState: lines[2] || lines[1] || "",
+              summary: lines.slice(0, -1).join(", "),
+              address: s.address,
+            },
+          ]
+        : [],
+      myCompanyProfile: window.normalizeMyCompanyProfile
+        ? window.normalizeMyCompanyProfile(profile)
+        : profile,
+      cards: cards,
+    });
+  }
+
+  /**
+   * Page config for the instance; the pages call it inline and the SPA shell
+   * (shell-navigation.js configurePage) after a swap. No-op off the instance.
+   */
+  function applyPageConfig(pageFile) {
+    if (!isPortalInstance()) return;
+    var file =
+      pageFile || (window.location.pathname || "").split("/").pop() || "";
+    var c = read();
+    if (file === "supplier-portal.html") {
+      var table = (window.EXCHANGES_TABLE_CONFIG =
+        window.EXCHANGES_TABLE_CONFIG || {});
+      table.transformData = function (json) {
+        return Object.assign({}, json, { data: [toPaymentRowWithStatus()] });
+      };
+      // Mark as paid on the case row = the card was processed in the
+      // terminal: MID/TID, STP to the micro deposit (exchanges-table.js).
+      table.onMarkedPaid = function (entry) {
+        var current = read();
+        if (current && entry && entry.invoice === current.payment.invoice)
+          markCardProcessed({ skipOverride: true });
+      };
+    }
+    if (file === "payment-preferences.html") {
+      var pp = (window.PAYMENT_PREFERENCES_CONFIG =
+        window.PAYMENT_PREFERENCES_CONFIG || {});
+      pp.storagePrefix = "sxdemo_" + c.id + "_pp_";
+      pp.transformSharedData = toPaymentPreferencesData;
+      pp.getStpIds = function () {
+        var stp = (read() || {}).stp || {};
+        return stp.mid || stp.tid ? { mid: stp.mid, tid: stp.tid } : null;
+      };
+      window.__ppConfig = pp;
+    }
+  }
+
+  // Links keep the instance: any dashboard page opened from it gets ?case=
+  // (runs before shell-navigation.js's capture listener, which then reads
+  // the decorated href).
+  document.addEventListener(
+    "click",
+    function (event) {
+      if (!isPortalInstance()) return;
+      var link = event.target && event.target.closest && event.target.closest("a[href]");
+      if (!link) return;
+      var url;
+      try {
+        url = new URL(link.getAttribute("href"), window.location.href);
+      } catch (error) {
+        return;
+      }
+      if (url.origin !== window.location.origin) return;
+      if (!/\/pages\/dashboard\/[^/]+\.html$/.test(url.pathname)) return;
+      if (url.searchParams.get("case")) return;
+      url.searchParams.set("case", read().id);
+      link.setAttribute("href", url.pathname + url.search + url.hash);
+    },
+    true,
+  );
+
+  // Initial STP state on every instance page, then keep it consistent.
+  function bootInstance() {
+    if (!isPortalInstance() || !window.STPState) return;
+    syncStp();
+    if (typeof window.STPState.subscribe === "function")
+      window.STPState.subscribe(function () {
+        syncStp();
+      });
+    window.addEventListener(CHANGE_EVENT, function () {
+      syncStp();
+    });
+  }
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", bootInstance);
+  else bootInstance();
+
   // Other tabs (the signer's tab, the portal) hear about changes too.
   window.addEventListener("storage", function (event) {
     if (event.key !== STORAGE_KEY && event.key !== null) return;
@@ -451,5 +747,12 @@
     urls: urls,
     markCardProcessed: markCardProcessed,
     signAgreement: signAgreement,
+    expectedStpStep: expectedStpStep,
+    syncStp: syncStp,
+    optIn: optIn,
+    instanceQuery: instanceQuery,
+    toCompanyProfile: toCompanyProfile,
+    toPaymentPreferencesData: toPaymentPreferencesData,
+    applyPageConfig: applyPageConfig,
   };
 })();

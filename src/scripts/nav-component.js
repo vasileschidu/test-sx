@@ -637,7 +637,12 @@ function buildExpandableItem(item, activeId, routerMode, isDesktopCollapsed) {
   const contentCls = "flex min-w-0 items-center gap-3";
   const labelCls =
     "nav-label truncate" + (isDesktopCollapsed ? " hidden sr-only" : "");
-  const chevronHiddenCls = isDesktopCollapsed ? " hidden" : "";
+  const chevronHiddenCls =
+    (isDesktopCollapsed ? " hidden" : "") +
+    (item.expanded ||
+    (item.children || []).some((child) => child.id === activeId)
+      ? " rotate-180"
+      : "");
   return `<button type="button" class="${rowCls}" data-expandable-trigger data-item-id="${item.id}">
 <span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId, isDesktopCollapsed))}<span class="${labelCls}">${item.label}</span></span>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="${chevronCls}${chevronHiddenCls}"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
@@ -645,7 +650,7 @@ function buildExpandableItem(item, activeId, routerMode, isDesktopCollapsed) {
 ${buildSubmenu(
   item.children,
   activeId,
-  item.children.some((child) => child.id === activeId),
+  !!item.expanded || item.children.some((child) => child.id === activeId),
   routerMode,
 )}`;
 }
@@ -669,7 +674,10 @@ function composeNavItems() {
     const item = byId[m.id];
     if (m.parent && byId[m.parent]) {
       const parent = byId[m.parent];
-      parent.children = (parent.children || []).concat([
+      // Module children come before the parent's own static children
+      // (sx-instance: Settings › My Company Profile, Payment Preferences,
+      // then User Management).
+      parent.moduleChildren = (parent.moduleChildren || []).concat([
         { id: item.id, label: item.label, href: item.href },
       ]);
       return;
@@ -677,7 +685,21 @@ function composeNavItems() {
     if (m.dividerBefore && items.length) items.push({ type: "divider" });
     items.push(item);
   });
+  items.forEach((item) => {
+    if (!item.moduleChildren) return;
+    item.children = item.moduleChildren.concat(item.children || []);
+    delete item.moduleChildren;
+  });
   return items;
+}
+
+/** Plans for a single tenant (the STP case instance) drop Help + Account Information. */
+function hideShellExtras() {
+  try {
+    return !!(window.AppPlans && window.AppPlans.getPlan().hideShellExtras);
+  } catch (error) {
+    return false;
+  }
 }
 
 function renderNavItem(
@@ -808,6 +830,7 @@ function buildConsumerFooter(id, isDesktopCollapsed) {
 }
 
 function buildHelpBlock(id, collapsed) {
+  if (hideShellExtras()) return id ? `<div id="${id}" class="hidden"></div>` : "";
   if (activeBrand() === "consumer-portal")
     return buildConsumerHelpBlock(id, collapsed);
   const wrap = id ? `id="${id}" ` : "";
@@ -1122,11 +1145,13 @@ class AppNav extends HTMLElement {
     const logoMark = consumerPortal
       ? buildConsumerMarkHtml("size-6", "size-8")
       : buildSmartHubMarkHtml();
-    const accountInfoDesktop = consumerPortal
+    const accountInfoDesktop =
+      consumerPortal || hideShellExtras()
       ? ""
       : buildAccountInfoButton(!!collapsed, "desktop-account-info-panel") +
         accountInfoCollapsedButton(!!collapsed);
-    const accountInfoMobile = consumerPortal
+    const accountInfoMobile =
+      consumerPortal || hideShellExtras()
       ? ""
       : buildAccountInfoButton(false, "mobile-account-info-panel");
 

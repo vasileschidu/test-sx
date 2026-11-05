@@ -114,5 +114,25 @@ Portal outcomes:
      Portal Scenario 4 "Step 1 agreement other" (36800:73897) can reuse `sendAgreementEmail({ linkUrl: SXDemoCase.urls().sign path })`
      and `SXDemoCase.signAgreement`.
 4. Portal Scenarios 1, 2, 4 — banners, process payment → MID/TID, micro deposit → Opted in,
-   Payment Preferences shows MID/TID.
+   Payment Preferences shows MID/TID. **(done 2026-11-05)**
+   - Instance kept across pages: links to `/pages/dashboard/*.html` get `?case=` (click capture in sx-demo-case.js);
+     payment-preferences + my-company-profile load sx-demo-case.js before app-plans.js. `SXDemoCase.applyPageConfig(file)`
+     (inline + shell-navigation `configurePage`) sets the table `transformData` / `onMarkedPaid` and PP
+     `transformSharedData` (only the case card, case business as profile + check address, payer as only customer, no bank
+     → empty state) / `storagePrefix sxdemo_<id>_pp_` / `getStpIds`. `getMyCompanyProfile` (shared.js) returns the case business.
+   - Shell: plan `sx-instance` (Figma 34510:42009) — Insights, AP/AR (Upgrade), SMART Exchange, Settings (open) › My Company
+     Profile / Payment Preferences / User Management, no Help / Account Information; switcher = case business only. The
+     `sx-demo` tenant now exists only on the instance (plain pages: unchanged, pixel-compare identical).
+   - State: `SXDemoCase.syncStp()` (instance load + every STP/case change, forward only): C → opt_in_required; B unsigned →
+     agreement_signature_pending; A/B signed → terminal_completed (Scenario 2) or bank_verification_required if
+     `enrol.cardProcessed` (Scenario 1); signed + processed → deposit. Mark as paid on the case row → `markCardProcessed`
+     (MID/TID; STP terminal → bank verification regardless of branch). Deposit: any amount (demo note) → completed.
+   - Scenario 4: Opt in (topbar / PP) on the instance always opens the inline agreement dialog: Confirm = self-sign
+     (`SXDemoCase.optIn({self:true})`), "Send it to <signer>" = Batch 3 email + sign-agreement.html (`optIn({self:false})`).
+   - Set-up steps modal (`openSetupStepsModal`) is state-driven, one step at a time (also PP's opt-in "next steps").
+   - Verify / success dialogs (inline + PP) use Figma 35801:48256 / 33600:39743 copy ($ add-on, "Not seeing it yet?" box).
+   - Batch 5 notes: no "Auto" badge on the Paid row (Figma 36867:140075 shows it for later auto-processed payments; the case
+     payment is processed manually); Figma's 2-step Enable modal ("How it works → Next → Review & Sign Agreement" with
+     self/other radios, 36752:79631 / 80444) is approximated by the existing inline dialog + "Send it to" link; default PP
+     shows fallback "Customer" cards because `normalizeCards` throws (pre-existing, left as is).
 5. Polish — scenario picker, QA (qa:code / qa:hover), wiki, PR.

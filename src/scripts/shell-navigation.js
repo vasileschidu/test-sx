@@ -309,6 +309,9 @@
         return (window.__ppConfig.storagePrefix || "pp_") + name;
       };
     }
+    // STP walkthrough case instance: its data hooks (no-op without ?case=).
+    if (window.SXDemoCase && typeof window.SXDemoCase.applyPageConfig === "function")
+      window.SXDemoCase.applyPageConfig(pageFile);
   }
 
   function finalizePageSwap(url, targetDoc) {

@@ -497,6 +497,7 @@
       '          <div class="flex items-start gap-1.5 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none" class="mt-0.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#2563EB"/></svg><p>You can turn this off anytime.</p></div>' +
       "        </div>" +
       '        <app-checkbox class="mt-4" data-inline-stp-agree>I agree to the Visa AR Manager <a href="#" class="text-blue-600 underline dark:text-blue-400">Participation Agreement</a>.</app-checkbox>' +
+      '        <p data-inline-stp-delegate-row hidden class="type-description text-tertiary">Not the authorized signer? <button type="button" data-inline-stp-delegate class="cursor-pointer rounded-sm type-link text-brand underline underline-offset-2 hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50"></button></p>' +
       "      </div>" +
       '      <div class="mt-6 flex w-full flex-col items-stretch gap-3 md:mt-8 md:flex-row md:items-center md:justify-between">' +
       '        <button type="button" data-inline-stp-confirm disabled class="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-6 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300 md:w-auto">Confirm</button>' +
@@ -563,16 +564,49 @@
       confirmEl.addEventListener("click", function () {
         if (confirmEl.disabled) return;
         if (dialog.open) dialog.close();
-        var nextSteps = ensureInlineNextStepsDialog();
-        if (
-          nextSteps &&
-          typeof nextSteps.showModal === "function" &&
-          !nextSteps.open
-        ) {
-          nextSteps.showModal();
+        // Agreement accepted here (self-sign): STP waits for a card payment.
+        var C = demoCase();
+        if (C) C.optIn({ self: true }).then(openSetupStepsModal);
+        else {
+          setStpStep(STEP_TERMINAL_COMPLETED);
+          openSetupStepsModal();
         }
       });
     }
+
+    // STP walkthrough instance: "Send to <signer> instead" (Batch 3 email +
+    // sign-agreement.html flow) for a contact who can't sign.
+    var delegateEl = dialog.querySelector("[data-inline-stp-delegate]");
+    if (delegateEl) {
+      delegateEl.addEventListener("click", function () {
+        var C = demoCase();
+        if (!C || delegateEl.disabled) return;
+        delegateEl.disabled = true;
+        delegateEl.textContent = "Sending…";
+        C.optIn({ self: false })
+          .then(function () {
+            if (dialog.open) dialog.close();
+            openSetupStepsModal();
+          })
+          .catch(function () {})
+          .then(function () {
+            delegateEl.disabled = false;
+            syncDelegate();
+          });
+      });
+    }
+    function syncDelegate() {
+      if (!delegateEl) return;
+      var C = demoCase();
+      var c = C && C.get();
+      var signer = (c && c.signer) || {};
+      var name = [signer.firstName, signer.lastName].filter(Boolean).join(" ");
+      var show = Boolean(C && signer.email);
+      var row = dialog.querySelector("[data-inline-stp-delegate-row]");
+      if (row) row.hidden = !show;
+      if (show) delegateEl.textContent = "Send it to " + (name || signer.email);
+    }
+    syncDelegate();
 
     dialog.addEventListener("close", function () {
       clearDotTimers();
@@ -584,8 +618,10 @@
     });
 
     new MutationObserver(function () {
-      if (dialog.open) startInlineAnimation();
-      else clearDotTimers();
+      if (dialog.open) {
+        startInlineAnimation();
+        syncDelegate();
+      } else clearDotTimers();
     }).observe(dialog, { attributes: true, attributeFilter: ["open"] });
 
     return dialog;
@@ -616,24 +652,7 @@
       '      <div class="col-span-2 flex min-h-0 w-full flex-col p-4 md:px-9 md:py-20">' +
       '        <div class="my-auto flex flex-col gap-6">' +
       '          <h2 class="text-3xl font-semibold leading-9 text-slate-950 dark:text-white">To enable automatic card processing, complete the steps below.</h2>' +
-      '          <div class="flex flex-col gap-0">' +
-      '            <div class="flex gap-3">' +
-      '              <div class="flex w-5 shrink-0 flex-col items-center"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#ffffff"/></svg></span><span class="w-[1.5px] flex-1 bg-blue-600"></span></div>' +
-      '              <div class="flex flex-col gap-2 pb-6"><p class="text-sm font-semibold leading-5 text-slate-950 dark:text-white">Process Any Payment</p><p class="text-sm font-normal leading-5 text-gray-700 dark:text-gray-300">Go to Payments and process any available virtual card using your terminal.</p><a href="supplier-portal.html?guide=card-rows" data-stp-go-to-payments class="inline-flex w-fit max-w-fit shrink-0 items-center justify-center self-start rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Go to Payments</a></div>' +
-      "            </div>" +
-      '            <div class="flex gap-3">' +
-      '              <div class="flex w-5 shrink-0 flex-col items-center"><span class="flex h-5 w-5 items-center justify-center rounded-full bg-blue-600"><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 20 20" fill="none"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z" fill="#ffffff"/></svg></span><span class="w-[1.5px] flex-1 bg-blue-600"></span></div>' +
-      '              <div class="flex flex-col gap-2 pb-6"><p class="text-sm font-semibold leading-5 text-slate-950 dark:text-white">Terminal Verification</p></div>' +
-      "            </div>" +
-      '            <div class="flex gap-3">' +
-      '              <div class="flex w-5 shrink-0 flex-col items-center"><span class="flex h-5 w-5 items-center justify-center rounded-full border border-blue-400 bg-blue-100 text-xs font-semibold leading-4 text-blue-700">3</span><span class="w-[1.5px] flex-1 bg-gray-200"></span></div>' +
-      '              <div class="flex flex-col gap-2 pb-6"><p class="text-sm font-semibold leading-5 text-slate-950 dark:text-white">Verify Your Bank Account (Penny Test)</p><p class="text-sm font-normal leading-5 text-gray-700 dark:text-gray-300">We will send a small test deposit to your bank account.<br />You will need to confirm the exact amount to complete setup.</p><button type="button" data-inline-next-verify class="inline-flex w-fit items-center justify-center rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Verify now</button></div>' +
-      "            </div>" +
-      '            <div class="flex gap-3">' +
-      '              <div class="flex w-5 shrink-0 flex-col items-center"><span class="flex h-5 w-5 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium leading-4 text-gray-800">4</span></div>' +
-      '              <div class="flex flex-col gap-2 pb-6"><p class="text-sm font-medium leading-5 text-slate-950 dark:text-white">Automatic Card Processing Activated</p></div>' +
-      "            </div>" +
-      "          </div>" +
+      '          <ol data-inline-next-steps class="flex flex-col gap-0"></ol>' +
       "        </div>" +
       "      </div>" +
       "    </div>" +
@@ -646,14 +665,169 @@
         if (dialog.open) dialog.close();
       });
     });
-    var verifyBtn = dialog.querySelector("[data-inline-next-verify]");
-    if (verifyBtn) {
-      verifyBtn.addEventListener("click", function () {
+    // The step list is re-rendered on every open (renderSetupSteps); its
+    // Verify now / Review CTAs are delegated here.
+    dialog.addEventListener("click", function (event) {
+      var target = event.target;
+      if (!target || typeof target.closest !== "function") return;
+      if (target.closest("[data-inline-next-verify]")) {
         if (dialog.open) dialog.close();
         openVerifyModal();
+      } else if (target.closest("[data-inline-next-review]")) {
+        if (dialog.open) dialog.close();
+        openAgreementReviewModal();
+      } else if (target.closest("[data-stp-opt-in-trigger]")) {
+        if (dialog.open) dialog.close();
+      }
+    });
+    // Live: another tab signs / verifies while the list is open.
+    subscribe(function (status, state) {
+      if (dialog.open) renderSetupSteps(dialog, state);
+    });
+    return dialog;
+  }
+
+  // Query that keeps a Supplier Portal demo instance (?case=<id>) on links.
+  function demoCaseQuery(prefix) {
+    var C = window.SXDemoCase;
+    if (!C || typeof C.isPortalInstance !== "function" || !C.isPortalInstance())
+      return "";
+    var current = C.get();
+    return current && current.id
+      ? prefix + "case=" + encodeURIComponent(current.id)
+      : "";
+  }
+
+  function demoCardProcessed() {
+    var C = window.SXDemoCase;
+    if (!C || typeof C.isPortalInstance !== "function" || !C.isPortalInstance())
+      return false;
+    var current = C.get();
+    return Boolean(current && current.enrol && current.enrol.cardProcessed);
+  }
+
+  /**
+   * The set-up steps, one at a time: done steps show a check + title, only the
+   * current step shows its description and single CTA, future steps are muted.
+   * Derived from the STP step (+ the demo case's cardProcessed on an instance):
+   *   opt_in_required             → "Opt in" step current (prepended)
+   *   agreement_signature_pending → "Sign the Visa agreement" current (prepended)
+   *   terminal_completed_…        → Process Any Payment current
+   *   bank_verification_required  → 1–2 done, Verify Your Bank Account current
+   *   completed                   → all done
+   */
+  function getSetupSteps(state) {
+    var step = (state && state.stpStep) || currentState.stpStep;
+    var processed = demoCardProcessed();
+    var paymentsHref =
+      "supplier-portal.html?guide=card-rows" + demoCaseQuery("&");
+    var steps = [];
+    if (step === STEP_OPT_IN_REQUIRED) {
+      steps.push({
+        title: "Opt in and Sign the Visa Agreement",
+        text: "Review and sign the Visa AR Manager Participation Agreement.",
+        cta: '<button type="button" data-stp-opt-in-trigger="setup-steps" class="' + SETUP_CTA_CLASS + '">Opt in</button>',
+      });
+    } else if (step === STEP_AGREEMENT_SIGNATURE_PENDING) {
+      // Test mode on the case instance (no email delivered): the presenter
+      // opens the signer's page in a new tab instead.
+      var request = getAgreementRequest();
+      var C = demoCase();
+      var signerLink =
+        C && request && request.delivered === false
+          ? '<a href="' + escapeText(C.urls().sign + "&email=" + encodeURIComponent(request.email)) + '" target="_blank" rel="noopener" class="type-link text-brand self-start rounded-sm underline underline-offset-2 hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Open signer&rsquo;s link</a>'
+          : "";
+      steps.push({
+        title: "Sign the Visa Agreement",
+        text: escapeText(getAgreementSentText()),
+        cta:
+          '<div class="flex flex-wrap items-center gap-4"><button type="button" data-inline-next-review class="' +
+          SETUP_CTA_CLASS +
+          '">Review</button>' +
+          signerLink +
+          "</div>",
       });
     }
-    return dialog;
+    steps.push(
+      {
+        key: "process",
+        title: "Process Any Payment",
+        text: "Go to Payments and process any available virtual card using your terminal. This links your Merchant and Terminal IDs.",
+        cta: '<a href="' + paymentsHref + '" data-stp-go-to-payments class="' + SETUP_CTA_CLASS + '">Go to Payments</a>',
+      },
+      { key: "terminal", title: "Terminal Verification" },
+      {
+        key: "verify",
+        title: "Verify Your Bank Account (Penny Test)",
+        text: "We sent a small test deposit to your bank account. Confirm the exact amount to complete setup.",
+        cta: '<button type="button" data-inline-next-verify class="' + SETUP_CTA_CLASS + '">Verify now</button>',
+      },
+      { key: "active", title: "Automatic Card Processing Activated" },
+    );
+    // Index of the current step; everything before it is done.
+    var current = 0;
+    if (step === STEP_TERMINAL_COMPLETED) current = processed ? 2 : 0;
+    else if (step === STEP_BANK_VERIFICATION_REQUIRED) current = 2;
+    else if (step === STEP_COMPLETED) current = steps.length;
+    // Prepended opt-in / agreement steps stay first and current.
+    if (step === STEP_OPT_IN_REQUIRED || step === STEP_AGREEMENT_SIGNATURE_PENDING)
+      current = 0;
+    return steps.map(function (item, index) {
+      return Object.assign({}, item, {
+        status: index < current ? "done" : index === current ? "current" : "upcoming",
+        number: index + 1,
+        last: index === steps.length - 1,
+      });
+    });
+  }
+
+  var SETUP_CTA_CLASS =
+    "inline-flex w-fit shrink-0 cursor-pointer items-center justify-center self-start rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600";
+  var SETUP_CHECK_ICON =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3 text-white"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.7045 4.15347C17.034 4.4045 17.0976 4.87509 16.8466 5.20457L8.84657 15.7046C8.71541 15.8767 8.51627 15.9838 8.30033 15.9983C8.08439 16.0129 7.87271 15.9334 7.71967 15.7804L3.21967 11.2804C2.92678 10.9875 2.92678 10.5126 3.21967 10.2197C3.51256 9.92682 3.98744 9.92682 4.28033 10.2197L8.17351 14.1129L15.6534 4.29551C15.9045 3.96603 16.3751 3.90243 16.7045 4.15347Z"/></svg>';
+
+  function escapeText(value) {
+    return String(value == null ? "" : value)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function renderSetupSteps(dialog, state) {
+    var list = dialog && dialog.querySelector("[data-inline-next-steps]");
+    if (!list) return;
+    list.innerHTML = getSetupSteps(state)
+      .map(function (item) {
+        var done = item.status === "done";
+        var isCurrent = item.status === "current";
+        var marker = done
+          ? '<span class="flex size-5 items-center justify-center rounded-full bg-blue-600 dark:bg-blue-500">' + SETUP_CHECK_ICON + "</span>"
+          : isCurrent
+            ? '<span class="flex size-5 items-center justify-center rounded-full border border-blue-400 bg-blue-100 text-xs font-semibold text-blue-700 dark:border-blue-400/50 dark:bg-blue-500/20 dark:text-blue-300">' + item.number + "</span>"
+            : '<span class="flex size-5 items-center justify-center rounded-full border border-gray-200 bg-gray-100 text-xs font-medium text-gray-500 dark:border-white/10 dark:bg-white/5 dark:text-gray-400">' + item.number + "</span>";
+        var line = item.last
+          ? ""
+          : '<span class="w-px flex-1 ' + (done ? "bg-blue-600 dark:bg-blue-500" : "bg-gray-200 dark:bg-white/10") + '"></span>';
+        var titleClass = isCurrent
+          ? "font-semibold text-gray-900 dark:text-white"
+          : done
+            ? "font-medium text-gray-900 dark:text-white"
+            : "font-medium text-gray-500 dark:text-gray-400";
+        var body =
+          '<p class="text-sm/5 ' + titleClass + '">' + escapeText(item.title) + "</p>" +
+          (isCurrent && item.text
+            ? '<p class="text-sm/5 font-normal text-gray-700 dark:text-gray-300">' + item.text + "</p>"
+            : "") +
+          (isCurrent && item.cta ? item.cta : "");
+        return (
+          '<li class="flex gap-3" data-setup-step="' + (item.key || "agreement") + '" data-setup-status="' + item.status + '"' + (isCurrent ? ' aria-current="step"' : "") + ">" +
+          '<div class="flex w-5 shrink-0 flex-col items-center gap-1">' + marker + line + "</div>" +
+          '<div class="flex min-w-0 flex-col gap-2 ' + (item.last ? "" : "pb-6") + '">' + body + "</div>" +
+          "</li>"
+        );
+      })
+      .join("");
   }
 
   function ensureInlineVerifyDialog() {
@@ -682,16 +856,23 @@
       "        </svg>" +
       '        <div class="mt-6 flex flex-col items-center gap-2">' +
       '          <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">Bank Account Verification</h2>' +
-      '          <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">This step ensures funds are settling to your account. Once the deposit amount is confirmed, set up for automatic card processing will be complete.</p>' +
+      '          <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">A small test deposit was sent to the business card settlement account, this may take 2-3 days to appear depending on the card processor.</p>' +
       "        </div>" +
       "      </div>" +
       '      <div class="flex flex-col gap-2">' +
-      '        <label for="sx-inline-deposit-amount" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Enter exact deposit amount</label>' +
-      '        <div class="grid grid-cols-1">' +
-      '          <input id="sx-inline-deposit-amount" type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*" placeholder="0.00" aria-invalid="false" class="col-start-1 row-start-1 block w-full rounded-md bg-white py-2 pr-10 pl-3 text-sm font-normal text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />' +
-      '          <svg id="sx-inline-deposit-amount-error-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 mr-3 hidden size-5 self-center justify-self-end text-red-500 sm:size-4"><path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" fill-rule="evenodd"/></svg>' +
+      '        <label for="sx-inline-deposit-amount" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Amount received</label>' +
+      '        <div class="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 has-[input:focus]:outline-2 has-[input:focus]:-outline-offset-2 has-[input:focus]:outline-blue-600 has-[input[aria-invalid=true]]:outline-red-500 dark:bg-white/5 dark:outline-white/10">' +
+      '          <span aria-hidden="true" class="shrink-0 text-sm text-gray-500 select-none dark:text-gray-400">$</span>' +
+      '          <input id="sx-inline-deposit-amount" type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*" placeholder="0.00" aria-invalid="false" aria-describedby="sx-inline-deposit-amount-help sx-inline-deposit-amount-error" class="block min-w-0 grow bg-transparent py-2 pr-3 pl-1 text-sm font-normal text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-white dark:placeholder:text-gray-500" />' +
+      '          <svg id="sx-inline-deposit-amount-error-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="pointer-events-none mr-3 hidden size-5 shrink-0 text-red-500 sm:size-4"><path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" fill-rule="evenodd"/></svg>' +
       "        </div>" +
+      '        <p id="sx-inline-deposit-amount-help" class="text-sm text-gray-500 dark:text-gray-400">Enter the exact amount you received.</p>' +
       '        <p id="sx-inline-deposit-amount-error" class="hidden text-sm text-red-600 dark:text-red-400">Only numbers and one decimal point are allowed.</p>' +
+      '        <p data-stp-demo-deposit-note hidden class="type-caption text-tertiary">Demo: any amount verifies, e.g. $0.12.</p>' +
+      "      </div>" +
+      '      <div class="flex flex-col gap-2 rounded-md bg-gray-50 p-3 dark:bg-white/5">' +
+      '        <p class="type-title-small text-default">Not seeing it yet? This may take 2-3 days.</p>' +
+      '        <ul class="list-disc space-y-1 pl-5 type-description text-secondary"><li>Banks may take a little time to post the micro-deposit.</li><li>The deposit will appear in your card settlement account.</li><li>Card processors have varying settlement times.</li></ul>' +
       "      </div>" +
       "    </div>" +
       '    <div class="flex justify-end gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">' +
@@ -847,7 +1028,8 @@
       "        </svg>" +
       '        <div class="mt-6 flex flex-col items-center gap-2">' +
       '          <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">Bank Account Verified Successfully!</h2>' +
-      '          <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">Automatic card processing is set up, card payments will be processed automatically and you&#39;ll receive a notification.</p>' +
+      '          <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">Automatic card processing is set up, all future card payments will be processed automatically with notifications sent.</p>' +
+      '          <p class="mt-2 text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">Manually processing on any previous card payments that are Pending Your Action.</p>' +
       "        </div>" +
       "      </div>" +
       "    </div>" +
@@ -879,6 +1061,14 @@
     return dialog;
   }
 
+  // The STP walkthrough case instance (SXDemoCase on a ?case= page), or null.
+  function demoCase() {
+    var C = window.SXDemoCase;
+    return C && typeof C.isPortalInstance === "function" && C.isPortalInstance()
+      ? C
+      : null;
+  }
+
   function safelyShowDialog(dialog) {
     if (!dialog || typeof dialog.showModal !== "function") return false;
     if (dialog.open) return true;
@@ -891,6 +1081,9 @@
   }
 
   function openOptInModal() {
+    // The case instance opts in the same way on every page: the agreement
+    // dialog with "sign myself" or "send to the signer" (Figma Scenario 4).
+    if (demoCase()) return safelyShowDialog(ensureInlineOptInDialog());
     // Pages with the agreement email step (Payment Preferences) start there;
     // the agreement itself is reviewed from the email or the Review button.
     var sendDialog = document.getElementById("pp-stp-send-agreement-dialog");
@@ -901,6 +1094,7 @@
   }
 
   function openAgreementReviewModal() {
+    if (demoCase()) return safelyShowDialog(ensureInlineOptInDialog());
     var dialog = document.getElementById("pp-enable-stp-dialog");
     if (safelyShowDialog(dialog)) {
       return true;
@@ -914,15 +1108,25 @@
 
   function openSetupStepsModal() {
     var dialog = ensureInlineNextStepsDialog();
+    renderSetupSteps(dialog, currentState);
     return safelyShowDialog(dialog);
+  }
+
+  // Demo note under the deposit field, only on the case instance.
+  function syncDemoDepositNote(dialog) {
+    if (!dialog) return;
+    var note = dialog.querySelector("[data-stp-demo-deposit-note]");
+    if (note) note.hidden = !demoCase();
   }
 
   function openVerifyModal() {
     var existing = document.getElementById("pp-verify-deposit-dialog");
+    syncDemoDepositNote(existing);
     if (safelyShowDialog(existing)) {
       return true;
     }
     var dialog = ensureInlineVerifyDialog();
+    syncDemoDepositNote(dialog);
     return safelyShowDialog(dialog);
   }
 
