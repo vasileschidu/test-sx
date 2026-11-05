@@ -29,7 +29,8 @@
 
     <script src="../../scripts/data-source.js"></script>
     <script src="../../scripts/stp-state.js"></script>
-    <script src="../../scripts/sx-demo-case.js?v=20261105a"></script>
+    <script src="../../scripts/sx-demo-case.js?v=20261105b"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   </head>
   <body class="min-h-full font-['Inter'] text-default antialiased">
     <main class="mx-auto flex w-full max-w-2xl flex-col gap-6 px-4 py-10 lg:px-10">
@@ -93,114 +94,184 @@
         </div>
       </section>
 
-      <form id="case-form" class="flex flex-col gap-6" novalidate>
-        <!-- Supplier & contact -->
-        <section class="flex flex-col gap-4 rounded-lg bg-default p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10">
-          <div class="flex flex-col gap-1">
-            <h2 class="type-title-card text-default">Supplier &amp; contact</h2>
-            <p class="type-description text-tertiary">The business that receives the payment and enrols.</p>
+      <form id="case-form" class="flex flex-col gap-4" novalidate>
+        <div class="flex flex-col items-start self-stretch">
+          <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
+            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Supplier &amp; contact</span>
+            <button type="button" data-edit="supplier" command="show-modal" commandfor="edit-dialog" class="inline-flex cursor-pointer items-center gap-1 rounded-sm text-xs font-semibold text-gray-600 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-300">
+              Edit
+              <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
+              <span class="sr-only">Supplier &amp; contact</span>
+            </button>
           </div>
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div id="card-supplier" class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"></div>
+        </div>
+        <div class="flex flex-col items-start self-stretch">
+          <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
+            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Payer &amp; payment</span>
+            <button type="button" data-edit="payer" command="show-modal" commandfor="edit-dialog" class="inline-flex cursor-pointer items-center gap-1 rounded-sm text-xs font-semibold text-gray-600 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-300">
+              Edit
+              <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
+              <span class="sr-only">Payer &amp; payment</span>
+            </button>
+          </div>
+          <div id="card-payer" class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"></div>
+        </div>
+        <div class="flex flex-col items-start self-stretch">
+          <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
+            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Authorized signer</span>
+            <button type="button" data-edit="signer" command="show-modal" commandfor="edit-dialog" class="inline-flex cursor-pointer items-center gap-1 rounded-sm text-xs font-semibold text-gray-600 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-300">
+              Edit
+              <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
+              <span class="sr-only">Authorized signer</span>
+            </button>
+          </div>
+          <div id="card-signer" class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"></div>
+        </div>
+        <div class="flex flex-col items-start self-stretch">
+          <div class="flex items-center justify-between self-stretch px-4 py-2 rounded-t-md border border-gray-200 bg-gray-100 dark:border-white/10 dark:bg-white/10">
+            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Starting scenario</span>
+            <button type="button" data-edit="scenario" command="show-modal" commandfor="edit-dialog" class="inline-flex cursor-pointer items-center gap-1 rounded-sm text-xs font-semibold text-gray-600 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-300">
+              Edit
+              <svg class="size-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z"/><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z"/></svg>
+              <span class="sr-only">Starting scenario</span>
+            </button>
+          </div>
+          <div id="card-scenario" class="flex flex-col items-start gap-2 self-stretch p-4 rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"></div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-end gap-3">
+          <button
+            id="case-defaults"
+            type="button"
+            class="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
+          >
+            Restore defaults
+          </button>
+          <button
+            id="case-create"
+            type="submit"
+            class="cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300"
+          >
+            Create case
+          </button>
+        </div>
+      </form>
+    </main>
+
+    <!-- ===== EDIT SECTION MODAL ===== -->
+    <el-dialog>
+      <dialog id="edit-dialog" aria-labelledby="edit-dialog-title" class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+        <el-dialog-backdrop class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+        <div tabindex="0" class="flex min-h-full items-end justify-center px-0 py-4 text-center focus:outline-none sm:items-center md:px-6 md:py-6">
+          <el-dialog-panel class="relative w-full max-w-lg transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+            <form id="edit-form" novalidate>
+              <div class="flex items-start justify-between gap-4 px-6 pt-6">
+                <div class="flex flex-col gap-1">
+                  <h2 id="edit-dialog-title" class="type-title-card text-default"></h2>
+                  <p id="edit-dialog-desc" class="type-description text-tertiary"></p>
+                </div>
+                <button type="button" command="close" commandfor="edit-dialog" class="cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300">
+                  <span class="sr-only">Close</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+              </div>
+              <div class="max-h-[70vh] overflow-y-auto px-6 py-4">
+          <div data-group="supplier" class="hidden grid-cols-1 gap-4 sm:grid-cols-2">
             <div class="sm:col-span-2">
               <label for="f-supplier-name" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Business name</label>
-              <input id="f-supplier-name" data-field="supplier.name" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-supplier-name" data-field="supplier.name" type="text" autocomplete="off" aria-describedby="f-supplier-name-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-supplier-name-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div class="sm:col-span-2">
               <label for="f-supplier-address" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Business address</label>
-              <textarea id="f-supplier-address" data-field="supplier.address" rows="4" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20"></textarea>
+              <textarea id="f-supplier-address" data-field="supplier.address" rows="3" aria-describedby="f-supplier-address-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20"></textarea>
+              <p id="f-supplier-address-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div>
               <label for="f-supplier-tin" class="block text-sm/6 font-medium text-gray-900 dark:text-white">TIN</label>
-              <input id="f-supplier-tin" data-field="supplier.tin" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-supplier-tin" data-field="supplier.tin" type="text" autocomplete="off" aria-describedby="f-supplier-tin-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-supplier-tin-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div>
               <label for="f-supplier-phone" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Phone</label>
-              <input id="f-supplier-phone" data-field="supplier.phone" type="tel" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-supplier-phone" data-field="supplier.phone" type="tel" autocomplete="off" aria-describedby="f-supplier-phone-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-supplier-phone-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div>
               <label for="f-contact-first" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Contact first name</label>
-              <input id="f-contact-first" data-field="supplier.contactFirst" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-contact-first" data-field="supplier.contactFirst" type="text" autocomplete="off" aria-describedby="f-contact-first-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-contact-first-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div>
               <label for="f-contact-last" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Contact last name</label>
-              <input id="f-contact-last" data-field="supplier.contactLast" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-contact-last" data-field="supplier.contactLast" type="text" autocomplete="off" aria-describedby="f-contact-last-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-contact-last-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div class="sm:col-span-2">
               <label for="f-contact-email" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Contact email</label>
-              <input id="f-contact-email" data-field="supplier.email" type="email" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-contact-email" data-field="supplier.email" type="email" autocomplete="off" aria-describedby="f-contact-email-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-contact-email-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
           </div>
-        </section>
-
-        <!-- Payer & payment -->
-        <section class="flex flex-col gap-4 rounded-lg bg-default p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10">
-          <div class="flex flex-col gap-1">
-            <h2 class="type-title-card text-default">Payer &amp; payment</h2>
-            <p class="type-description text-tertiary">The pending virtual card payment the payer sends.</p>
-          </div>
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div data-group="payer" class="hidden grid-cols-1 gap-4 sm:grid-cols-2">
             <div class="sm:col-span-2">
               <label for="f-payer-name" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Payer name</label>
-              <input id="f-payer-name" data-field="payer.name" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-payer-name" data-field="payer.name" type="text" autocomplete="off" aria-describedby="f-payer-name-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-payer-name-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div class="sm:col-span-2">
               <label for="f-payer-address" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Payer address</label>
-              <textarea id="f-payer-address" data-field="payer.address" rows="4" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20"></textarea>
+              <textarea id="f-payer-address" data-field="payer.address" rows="3" aria-describedby="f-payer-address-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20"></textarea>
+              <p id="f-payer-address-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div>
               <label for="f-amount" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Amount (USD)</label>
-              <input id="f-amount" data-field="payment.amount" data-type="number" type="number" min="0" step="0.01" inputmode="decimal" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-amount" data-field="payment.amount" data-type="number" type="number" min="0" step="0.01" inputmode="decimal" aria-describedby="f-amount-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-amount-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div>
               <label for="f-invoice" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Invoice #</label>
-              <input id="f-invoice" data-field="payment.invoice" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-invoice" data-field="payment.invoice" type="text" autocomplete="off" aria-describedby="f-invoice-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-invoice-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div class="sm:col-span-2">
               <label for="f-card-number" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Card number (Visa)</label>
-              <input id="f-card-number" data-field="payment.cardNumber" type="text" inputmode="numeric" maxlength="19" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-card-number" data-field="payment.cardNumber" type="text" inputmode="numeric" maxlength="19" autocomplete="off" aria-describedby="f-card-number-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-card-number-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div>
               <label for="f-expires" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Expires (MM/YYYY)</label>
-              <input id="f-expires" data-field="payment.expires" type="text" maxlength="7" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-expires" data-field="payment.expires" type="text" maxlength="7" placeholder="MM/YYYY" autocomplete="off" aria-describedby="f-expires-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-expires-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div>
               <label for="f-cvc" class="block text-sm/6 font-medium text-gray-900 dark:text-white">CVC</label>
-              <input id="f-cvc" data-field="payment.cvc" type="text" inputmode="numeric" maxlength="4" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-cvc" data-field="payment.cvc" type="text" inputmode="numeric" maxlength="4" autocomplete="off" aria-describedby="f-cvc-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-cvc-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
           </div>
-        </section>
-
-        <!-- Authorized signer -->
-        <section class="flex flex-col gap-4 rounded-lg bg-default p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10">
-          <div class="flex flex-col gap-1">
-            <h2 class="type-title-card text-default">Authorized signer</h2>
-            <p class="type-description text-tertiary">Who signs the Visa agreement when the supplier sends it to another signer.</p>
-          </div>
-          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div data-group="signer" class="hidden grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
               <label for="f-signer-first" class="block text-sm/6 font-medium text-gray-900 dark:text-white">First name</label>
-              <input id="f-signer-first" data-field="signer.firstName" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-signer-first" data-field="signer.firstName" type="text" autocomplete="off" aria-describedby="f-signer-first-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-signer-first-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div>
               <label for="f-signer-last" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Last name</label>
-              <input id="f-signer-last" data-field="signer.lastName" type="text" autocomplete="off" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-signer-last" data-field="signer.lastName" type="text" autocomplete="off" aria-describedby="f-signer-last-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-signer-last-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
             </div>
             <div class="sm:col-span-2">
               <label for="f-signer-email" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Email</label>
-              <input id="f-signer-email" data-field="signer.email" type="email" autocomplete="off" aria-describedby="f-signer-email-hint" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <input id="f-signer-email" data-field="signer.email" type="email" autocomplete="off" aria-describedby="f-signer-email-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20" />
+              <p id="f-signer-email-error" class="mt-1 hidden text-sm text-red-600 dark:text-red-400" role="alert"></p>
               <p id="f-signer-email-hint" class="mt-2 type-description-small text-tertiary" aria-live="polite"></p>
             </div>
           </div>
-        </section>
-
-        <!-- Starting scenario -->
-        <section class="flex flex-col gap-4 rounded-lg bg-default p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10">
-          <fieldset class="flex flex-col gap-4">
-            <legend class="flex flex-col gap-1">
-              <span class="type-title-card text-default">Starting scenario</span>
-              <span class="type-description text-tertiary">How the supplier answers Automatic Card Processing during enrolment.</span>
-            </legend>
-            <div class="mt-4 flex flex-col gap-3">
+          <div data-group="scenario" class="hidden grid-cols-1 gap-4 sm:grid-cols-2">
+            <div class="sm:col-span-2 flex flex-col">
+<div class="flex flex-col gap-3">
               <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
                 <span class="flex h-5 shrink-0 items-center">
                   <input type="radio" name="scenario" value="A" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
@@ -229,9 +300,7 @@
                 </span>
               </label>
             </div>
-          </fieldset>
-
-          <div class="flex items-center justify-between gap-4">
+<div class="mt-4 flex items-center justify-between gap-4">
             <span class="flex flex-col">
               <span id="f-card-processed-label" class="type-label text-default">Card processed during enrolment</span>
               <span class="type-description-small text-tertiary">Off: the payment stays pending and is processed in the portal.</span>
@@ -241,26 +310,19 @@
               <input id="f-card-processed" type="checkbox" name="cardProcessed" aria-labelledby="f-card-processed-label" class="absolute inset-0 size-full appearance-none cursor-pointer focus:outline-hidden" />
             </div>
           </div>
-        </section>
-
-        <div class="flex flex-wrap items-center justify-end gap-3">
-          <button
-            id="case-defaults"
-            type="button"
-            class="inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300"
-          >
-            Restore defaults
-          </button>
-          <button
-            id="case-create"
-            type="submit"
-            class="cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300"
-          >
-            Create case
-          </button>
+            </div>
+          </div>
+              </div>
+              <div class="flex flex-wrap items-center justify-end gap-3 border-t border-gray-200 px-6 py-4 dark:border-white/10">
+                <p id="edit-dialog-note" class="hidden flex-1 type-description-small text-tertiary">Changes apply to the current case.</p>
+                <button type="button" command="close" commandfor="edit-dialog" class="cursor-pointer rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20">Cancel</button>
+                <button type="submit" class="cursor-pointer rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300">Save</button>
+              </div>
+            </form>
+          </el-dialog-panel>
         </div>
-      </form>
-    </main>
+      </dialog>
+    </el-dialog>
 
     <script>
       (function () {
@@ -269,6 +331,8 @@
         var form = document.getElementById("case-form");
         var result = document.getElementById("case-result");
         var resultList = document.getElementById("case-result-list");
+        var dialog = document.getElementById("edit-dialog");
+        var editForm = document.getElementById("edit-form");
         var emailInput = document.getElementById("f-signer-email");
         var emailHint = document.getElementById("f-signer-email-hint");
         var SCENARIOS = {
@@ -276,6 +340,27 @@
           B: "B. Send to another signer",
           C: "C. Skip STP",
         };
+        var SECTIONS = {
+          supplier: {
+            title: "Supplier & contact",
+            desc: "The business that receives the payment and enrols.",
+          },
+          payer: {
+            title: "Payer & payment",
+            desc: "The pending virtual card payment the payer sends.",
+          },
+          signer: {
+            title: "Authorized signer",
+            desc: "Who signs the Visa agreement when the supplier sends it to another signer.",
+          },
+          scenario: {
+            title: "Starting scenario",
+            desc: "How the supplier answers Automatic Card Processing during enrolment.",
+          },
+        };
+        var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        var data = null;
+        var activeKey = "supplier";
 
         function getPath(obj, path) {
           return path.split(".").reduce(function (acc, key) {
@@ -293,91 +378,105 @@
           target[last] = value;
         }
 
-        function fillForm(data) {
-          form.querySelectorAll("[data-field]").forEach(function (input) {
-            var value = getPath(data, input.dataset.field);
-            input.value = value == null ? "" : String(value);
-          });
-          form.querySelectorAll('input[name="scenario"]').forEach(function (radio) {
-            radio.checked = radio.value === (data.scenario || "A");
-          });
-          document.getElementById("f-card-processed").checked = data.cardProcessed !== false;
-          updateEmailHint();
-        }
-
-        function readForm() {
-          var data = {};
-          form.querySelectorAll("[data-field]").forEach(function (input) {
-            var value = input.value.trim();
-            if (input.dataset.field === "payment.cardNumber") value = value.replace(/\D/g, "");
-            if (input.dataset.type === "number") value = Number(value) || 0;
-            setPath(data, input.dataset.field, value);
-          });
-          var scenario = form.querySelector('input[name="scenario"]:checked');
-          data.scenario = scenario ? scenario.value : "A";
-          data.cardProcessed = document.getElementById("f-card-processed").checked;
-          return data;
-        }
-
-        var hintRequest = 0;
-        function updateEmailHint() {
-          var email = emailInput.value.trim();
-          var request = ++hintRequest;
-          if (!email) {
-            emailHint.className = "mt-2 type-description-small text-tertiary";
-            emailHint.textContent = "Add an email to send the agreement to.";
-            return;
-          }
-          if (!window.STPState || !window.STPState.isAllowlistedEmail) return;
-          window.STPState.isAllowlistedEmail(email).then(function (allowed) {
-            if (request !== hintRequest) return;
-            emailHint.className =
-              "mt-2 type-description-small " + (allowed ? "text-success" : "text-tertiary");
-            emailHint.textContent = allowed
-              ? "On the test allowlist: a real agreement email is sent."
-              : "Not on the test allowlist: no email is sent, the flow continues as if it was.";
-          });
-        }
-
         function money(amount) {
           return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(
             Number(amount) || 0,
           );
         }
 
-        function row(label, value) {
+        function row(label, value, hint) {
           var wrap = document.createElement("div");
           wrap.className = "grid grid-cols-2 gap-4 self-stretch";
           var l = document.createElement("span");
           l.className = "text-sm font-medium text-gray-900 dark:text-gray-100";
           l.textContent = label;
           var v = document.createElement("span");
-          v.className = "text-sm font-normal text-gray-700 dark:text-gray-300 break-words";
+          v.className = "text-sm font-normal text-gray-700 dark:text-gray-300 break-words whitespace-pre-line";
           v.textContent = value;
+          if (hint) {
+            var h = document.createElement("span");
+            h.className = "mt-1 block type-description-small text-tertiary";
+            h.textContent = hint;
+            v.appendChild(h);
+          }
           wrap.appendChild(l);
           wrap.appendChild(v);
           return wrap;
         }
 
-        function renderResult(data) {
-          if (!data) {
+        var signerHintRequest = 0;
+        function signerHint(email) {
+          if (!email) return Promise.resolve("Add an email to send the agreement to.");
+          if (!window.STPState || !window.STPState.isAllowlistedEmail) return Promise.resolve("");
+          return window.STPState.isAllowlistedEmail(email).then(function (allowed) {
+            return allowed
+              ? "On the test allowlist: a real agreement email is sent."
+              : "Not on the test allowlist: no email is sent, the flow continues as if it was.";
+          });
+        }
+
+        function renderCards() {
+          var d = data;
+          document.getElementById("card-supplier").replaceChildren(
+            row("Business name", d.supplier.name),
+            row("Business address", d.supplier.address),
+            row("TIN", d.supplier.tin),
+            row("Phone", d.supplier.phone),
+            row("Contact", [d.supplier.contactFirst, d.supplier.contactLast].join(" ")),
+            row("Contact email", d.supplier.email),
+          );
+          document.getElementById("card-payer").replaceChildren(
+            row("Payer name", d.payer.name),
+            row("Payer address", d.payer.address),
+            row("Amount", money(d.payment.amount)),
+            row("Invoice #", d.payment.invoice),
+            row(
+              "Card",
+              "•••• " + String(d.payment.cardNumber).slice(-4) + " · exp " + d.payment.expires,
+            ),
+          );
+          var signerCard = document.getElementById("card-signer");
+          signerCard.replaceChildren(
+            row("Name", [d.signer.firstName, d.signer.lastName].join(" ")),
+            row("Email", d.signer.email),
+          );
+          var request = ++signerHintRequest;
+          signerHint(d.signer.email).then(function (text) {
+            if (request !== signerHintRequest || !text) return;
+            signerCard.replaceChildren(
+              row("Name", [d.signer.firstName, d.signer.lastName].join(" ")),
+              row("Email", d.signer.email, text),
+            );
+          });
+          document.getElementById("card-scenario").replaceChildren(
+            row(
+              "Scenario",
+              SCENARIOS[d.scenario] +
+                " · Card processed during enrolment: " +
+                (d.cardProcessed ? "Yes" : "No"),
+            ),
+          );
+        }
+
+        function renderResult(c) {
+          if (!c) {
             result.classList.add("hidden");
             result.classList.remove("flex");
             return;
           }
-          var urls = Case.urls(data);
+          var urls = Case.urls(c);
           resultList.replaceChildren(
-            row("Case ID", data.id),
-            row("Supplier", data.supplier.name),
+            row("Case ID", c.id),
+            row("Supplier", c.supplier.name),
             row(
               "Payment",
-              money(data.payment.amount) + " from " + data.payer.name + " (" + data.payment.invoice + ")",
+              money(c.payment.amount) + " from " + c.payer.name + " (" + c.payment.invoice + ")",
             ),
-            row("Card", data.payment.cardBrand + " ending " + String(data.payment.cardNumber).slice(-4)),
-            row("Signer", [data.signer.firstName, data.signer.lastName].join(" ") + " (" + data.signer.email + ")"),
+            row("Card", c.payment.cardBrand + " ending " + String(c.payment.cardNumber).slice(-4)),
+            row("Signer", [c.signer.firstName, c.signer.lastName].join(" ") + " (" + c.signer.email + ")"),
             row(
               "Scenario",
-              SCENARIOS[data.scenario] + (data.cardProcessed ? ", card processed" : ", card not processed"),
+              SCENARIOS[c.scenario] + (c.cardProcessed ? ", card processed" : ", card not processed"),
             ),
           );
           document.getElementById("case-start-enrol").href = urls.enrol;
@@ -386,33 +485,184 @@
           result.classList.add("flex");
         }
 
+        /* ---------- modal ---------- */
+        function groupEl(key) {
+          return editForm.querySelector('[data-group="' + key + '"]');
+        }
+
+        function setError(input, message) {
+          var err = document.getElementById(input.id + "-error");
+          if (!err) return;
+          if (message) {
+            input.setAttribute("aria-invalid", "true");
+            err.textContent = message;
+            err.classList.remove("hidden");
+          } else {
+            input.removeAttribute("aria-invalid");
+            err.textContent = "";
+            err.classList.add("hidden");
+          }
+        }
+
+        function fillGroup(key) {
+          var group = groupEl(key);
+          group.querySelectorAll("[data-field]").forEach(function (input) {
+            var value = getPath(data, input.dataset.field);
+            if (input.dataset.field === "payment.cardNumber") {
+              value = String(value || "").replace(/(\d{4})(?=\d)/g, "$1 ");
+            }
+            input.value = value == null ? "" : String(value);
+            setError(input, "");
+          });
+          if (key === "scenario") {
+            editForm.querySelectorAll('input[name="scenario"]').forEach(function (radio) {
+              radio.checked = radio.value === (data.scenario || "A");
+            });
+            document.getElementById("f-card-processed").checked = data.cardProcessed !== false;
+          }
+          if (key === "signer") updateEmailHint();
+        }
+
+        function readGroup(key) {
+          var patch = {};
+          groupEl(key)
+            .querySelectorAll("[data-field]")
+            .forEach(function (input) {
+              var value = input.value.trim();
+              if (input.dataset.field === "payment.cardNumber") value = value.replace(/\D/g, "");
+              if (input.dataset.type === "number") value = Number(value) || 0;
+              setPath(patch, input.dataset.field, value);
+            });
+          if (key === "scenario") {
+            var checked = editForm.querySelector('input[name="scenario"]:checked');
+            patch.scenario = checked ? checked.value : "A";
+            patch.cardProcessed = document.getElementById("f-card-processed").checked;
+          }
+          return patch;
+        }
+
+        function validateGroup(key) {
+          var ok = true;
+          var firstBad = null;
+          groupEl(key)
+            .querySelectorAll("[data-field]")
+            .forEach(function (input) {
+              var field = input.dataset.field;
+              var value = input.value.trim();
+              var message = "";
+              if (!value && field !== "supplier.phone") message = "This field is required.";
+              else if (/email$/i.test(field) && !EMAIL_RE.test(value)) message = "Enter a valid email address.";
+              else if (field === "payment.amount" && !(Number(value) > 0)) message = "Enter an amount greater than 0.";
+              else if (field === "payment.cardNumber" && value.replace(/\D/g, "").length !== 16)
+                message = "Enter a 16-digit card number.";
+              else if (field === "payment.expires" && !/^(0[1-9]|1[0-2])\/\d{4}$/.test(value))
+                message = "Use MM/YYYY.";
+              else if (field === "payment.cvc" && !/^\d{3,4}$/.test(value)) message = "Enter 3 or 4 digits.";
+              setError(input, message);
+              if (message) {
+                ok = false;
+                if (!firstBad) firstBad = input;
+              }
+            });
+          if (firstBad) firstBad.focus();
+          return ok;
+        }
+
+        var hintRequest = 0;
+        function updateEmailHint() {
+          var email = emailInput.value.trim();
+          var request = ++hintRequest;
+          emailHint.className = "mt-2 type-description-small text-tertiary";
+          signerHint(email).then(function (text) {
+            if (request !== hintRequest) return;
+            var allowed = /^On the test/.test(text);
+            emailHint.className = "mt-2 type-description-small " + (allowed ? "text-success" : "text-tertiary");
+            emailHint.textContent = text;
+          });
+        }
+
+        function openSection(key) {
+          activeKey = key;
+          Object.keys(SECTIONS).forEach(function (k) {
+            var el = groupEl(k);
+            el.classList.toggle("hidden", k !== key);
+            el.classList.toggle("grid", k === key);
+          });
+          document.getElementById("edit-dialog-title").textContent = SECTIONS[key].title;
+          document.getElementById("edit-dialog-desc").textContent = SECTIONS[key].desc;
+          var live = Boolean(Case.get());
+          document.getElementById("edit-dialog-note").classList.toggle("hidden", !live);
+          document.getElementById("edit-dialog-note").classList.toggle("block", live);
+          fillGroup(key);
+        }
+
+        function mergePatch(target, patch) {
+          Object.keys(patch).forEach(function (k) {
+            if (patch[k] && typeof patch[k] === "object") {
+              if (!target[k] || typeof target[k] !== "object") target[k] = {};
+              mergePatch(target[k], patch[k]);
+            } else {
+              target[k] = patch[k];
+            }
+          });
+          return target;
+        }
+
+        function setData(next) {
+          data = next;
+          renderCards();
+        }
+
+        form.querySelectorAll("[data-edit]").forEach(function (button) {
+          button.addEventListener("click", function () {
+            openSection(button.dataset.edit);
+          });
+        });
+
         emailInput.addEventListener("input", updateEmailHint);
+        editForm.addEventListener("input", function (event) {
+          if (event.target.getAttribute && event.target.getAttribute("aria-invalid")) setError(event.target, "");
+        });
+
+        editForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+          if (!validateGroup(activeKey)) return;
+          var patch = readGroup(activeKey);
+          if (Case.get()) {
+            setData(Case.update(patch) || mergePatch(data, patch));
+          } else {
+            setData(mergePatch(data, patch));
+          }
+          dialog.close();
+        });
 
         form.addEventListener("submit", function (event) {
           event.preventDefault();
-          var created = Case.create(readForm());
+          var created = Case.create(data);
           renderResult(created);
           result.scrollIntoView({ behavior: "smooth", block: "start" });
           document.getElementById("case-start-enrol").focus({ preventScroll: true });
         });
 
         document.getElementById("case-defaults").addEventListener("click", function () {
-          fillForm(Case.defaults());
+          setData(Case.defaults());
         });
 
         document.getElementById("case-reset").addEventListener("click", function () {
           Case.reset();
           renderResult(null);
-          fillForm(Case.defaults());
+          setData(Case.defaults());
         });
 
         window.addEventListener(Case.CHANGE_EVENT, function (event) {
-          renderResult(event.detail && event.detail.case);
+          var c = event.detail && event.detail.case;
+          renderResult(c);
+          if (c) setData(c);
         });
 
         Case.ready().then(function () {
           var existing = Case.get();
-          fillForm(existing || Case.defaults());
+          setData(existing || Case.defaults());
           renderResult(existing);
         });
       })();
