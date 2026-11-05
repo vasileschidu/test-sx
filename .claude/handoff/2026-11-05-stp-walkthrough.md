@@ -2,6 +2,34 @@
 
 Branch: `stp-walkthrough`. Figma: `9DRzbyv7FDCDYFYN5ZGuwZ` ([R3] SMART Exchange), page `↳ STP`.
 
+## Resume here (state at 2026-11-05, end of session)
+- **Batches 1–4 done and committed** on `stp-walkthrough` (last commit `e6e8db7`). Branch is **not pushed**, no PR yet.
+  `main` = `74f732d` (all other branches — ai-setup, andrian-sandbox, figma-match — already merged and pushed earlier).
+- **Test links** (serve with `python3 tools/serve.py` → port **8899**; port 8935 belongs to another project):
+  - Launcher: http://localhost:8899/src/pages/demo/stp-case.html → Create case →
+  - Case ready: http://localhost:8899/src/pages/demo/stp-case-ready.html (Start enrolment / Open Supplier Portal open in new tabs,
+    Change case → launcher, Reset demo).
+  - Enrolment: `src/pages/sx-enroll/index.html?case=<id>`; final "Go to SMART Exchange" opens the portal instance in a new tab.
+- **Waiting on Vasile (ask before acting):**
+  1. Redeploy the Cloudflare worker (`cd workers/sd-sx-token-service && npx wrangler deploy`) so real B emails use STP copy —
+     outward-facing, needs explicit OK.
+  2. Update worker email template to Figma 36525:46232 (with the redeploy).
+  3. Case has no bank account, yet STP ends via micro-deposit verification — add a bank account to the case, or keep "No Bank Accounts"?
+  4. Review-documents modal width: capped 1048px vs full width.
+  5. "New flow with scenarios in new tab" — implemented as Start enrolment in a new tab; per-scenario picker offered as alternative.
+- **Batch 5 (next):** hand click-through of every scenario at desktop + phone width (incl. B signer page and portal
+  "Send it to <signer>", both untested by click), `qa:code` / `qa:hover` (use `--init tools/ui-qa/init/sx-demo-case.js`),
+  wiki entry, PR from `stp-walkthrough`. `gh` is installed but not logged in — Vasile must run `! gh auth login --web --git-protocol https`.
+- **Vasile's feedback / rules from this session (keep applying):**
+  - Scenario selection is the main launcher use case; case details stay in one "Edit case information" modal
+    (Catalyst-style page scroll, hugging textareas, section separators, title `type-title-section`, sections `type-title-card`, no description).
+  - No "All prototypes" link. Case ready is its own page.
+  - Enrolment: stepper labels one line (sidebar `px-12`, done in sx-enroll.js — don't edit Andrian's shared SD sidebar script);
+    SX logo from Figma (`src/assets/sx-enroll/sx-menu-logo.svg`); Confirm Business Details has no Edit; signature step "leave as is".
+  - Portal: steps modal one step at a time (done steps checked, no CTA); Payment Preferences shows only case data; SX side menu
+    per Figma 34510:42009; switcher = case business only.
+  - Never push to `main` directly (one-time exception was the branch merge). No real client names. Don't hand-edit design-tokens.js.
+
 ## Goal
 A demo walkthrough of SX + STP (Automatic Card Processing), like the Consumer Portal walkthrough:
 create a **case** (one payment) → supplier **enrols** with that payment → lands in a **Supplier Portal
