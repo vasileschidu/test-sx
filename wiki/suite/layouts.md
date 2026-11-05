@@ -71,6 +71,10 @@ As built (`src/pages/onboarding/`, `src/scripts/onboarding-sidebar.js`, `onboard
 - **Dialogs:** one shared dialog shell (`onboarding-modal.js`): blurred backdrop, close (X), Escape, focus trap.
 - **Loading:** each step fades in once, and its data shows skeletons for 1.0–1.5 s (`onboarding-transitions.js`).
 - No portal navigation.
+- **SMART Exchange** also has a token flow, next to its portal. In the code it uses this same shell: Hub Pay's SMART
+  Exchange test email (`payables-pay.js`, `flow: "sx"`) links to `src/pages/onboarding/index.html?flow=sx`. But the shell doesn't
+  branch on `sx` (`onboarding-flow.js` knows `us` and `multi-party`), so it shows the SMART Disburse screens. There are no
+  SX-specific screens yet, including the [STP](../products/smart-exchange/stp.md) opt-in under Card. TODO(confirm).
 - Figma ([LAUNCHED] Default Flow [Figma](https://www.figma.com/design/4WZgq8XswZFkHcI6bzOIiK)); sidebar "SD Menu" node 19427:30373.
 
 ## Shared rules across families

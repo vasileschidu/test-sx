@@ -1,0 +1,592 @@
+<!--
+  @file sx-enroll/complete.html
+  @description Final screen of the SMART Exchange enrolment (Figma "11. Final"
+    33456:52931, card details 33456:52985). The Supplier Portal's "Successfully
+    Submitted!" card and card-details dialog (supplier-portal.html, gp-*),
+    with the STP info banner, the "SMART Exchange Account Created" card and a
+    demo control "I've processed this card in my terminal"
+    (SXDemoCase.markCardProcessed). Logic: src/scripts/sx-enroll-complete.js.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Successfully Submitted · SMART Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../scripts/tailwind-theme.js"></script>
+  <script src="../../scripts/design-tokens.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
+  <script src="../../scripts/data-source.js"></script>
+  <script src="../../scripts/stp-state.js?v=20261105p"></script>
+  <script src="../../scripts/sx-demo-case.js?v=20261105e"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261021a"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261105f"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261026a"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261013a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261103f"></script>
+  <script src="../../scripts/sx-enroll-complete.js?v=20261105c"></script>
+  <link rel="stylesheet" href="../../styles/cursor.css" />
+</head>
+<body data-sx-step="complete" class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white">
+
+    <main data-ob-content class="flex flex-1 flex-col items-center gap-6 px-4 py-10 lg:py-14">
+
+      <!-- Success header -->
+      <div class="flex flex-col items-center gap-3 text-center">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-11 text-green-500" aria-hidden="true">
+          <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
+        </svg>
+        <h1 class="type-title-modal text-default">Successfully Submitted!</h1>
+      </div>
+
+      <div class="flex w-full max-w-[400px] flex-col gap-6">
+
+              <div
+                class="overflow-hidden rounded-xl border border-gray-200 dark:border-white/10"
+              >
+                <div class="px-4 py-4 sm:px-6 sm:py-5">
+                  <p
+                    class="text-sm font-semibold text-gray-600 dark:text-gray-400"
+                  >
+                    Amount
+                  </p>
+                  <p
+                    data-ob-skeleton data-sx-amount
+                    class="mt-1 text-[30px] leading-9 font-bold tracking-tight text-gray-900 dark:text-white"
+                  ></p>
+                  <div
+                    data-sx-card-section
+                    class="mt-5 flex w-fit items-center gap-3 rounded-lg bg-gray-100 pr-2 dark:bg-white/5"
+                  >
+                    <div
+                      class="flex h-[46px] w-[71px] flex-col items-end gap-0.5 rounded-md bg-gray-950 p-2 text-gray-200 font-['Roboto_Mono'] text-[10px] leading-3"
+                    >
+                      <svg
+                        class="h-4 w-8"
+                        viewBox="0 0 32 32"
+                        xmlns="http://www.w3.org/2000/svg"
+                        aria-hidden="true"
+                      >
+                        <path d="M0 0h32v32H0z" fill="#00579f"></path>
+                        <g fill="#fff" fill-rule="nonzero">
+                          <path
+                            d="M13.823 19.876H11.8l1.265-7.736h2.023zm7.334-7.546a5.036 5.036 0 0 0-1.814-.33c-1.998 0-3.405 1.053-3.414 2.56-.016 1.11 1.007 1.728 1.773 2.098.783.379 1.05.626 1.05.963-.009.518-.633.757-1.216.757-.808 0-1.24-.123-1.898-.411l-.267-.124-.283 1.737c.475.213 1.349.403 2.257.411 2.123 0 3.505-1.037 3.521-2.641.008-.881-.532-1.556-1.698-2.107-.708-.354-1.141-.593-1.141-.955.008-.33.366-.667 1.165-.667a3.471 3.471 0 0 1 1.507.297l.183.082zm2.69 4.806.807-2.165c-.008.017.167-.452.266-.74l.142.666s.383 1.852.466 2.239h-1.682zm2.497-4.996h-1.565c-.483 0-.85.14-1.058.642l-3.005 7.094h2.123l.425-1.16h2.597c.059.271.242 1.16.242 1.16h1.873zm-16.234 0-1.982 5.275-.216-1.07c-.366-1.234-1.515-2.575-2.797-3.242l1.815 6.765h2.14l3.18-7.728z"
+                          ></path>
+                          <path
+                            d="M6.289 12.14H3.033L3 12.297c2.54.641 4.221 2.189 4.912 4.049l-.708-3.556c-.116-.494-.474-.633-.915-.65z"
+                          ></path>
+                        </g>
+                      </svg>
+                      <div>•••• <span data-sx-last4>5612</span></div>
+                    </div>
+                    <button
+                      type="button"
+                      command="show-modal"
+                      commandfor="sx-card-details-dialog" data-sx-reveal
+                      class="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-200 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300 dark:hover:bg-white/20 dark:hover:text-white"
+                    >
+                      Reveal Card Details
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                        class="size-4"
+                      >
+                        <path
+                          d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"
+                        />
+                        <path
+                          fill-rule="evenodd"
+                          d="M.664 10.59a1.651 1.651 0 0 1 0-1.186A10.004 10.004 0 0 1 10 3c4.257 0 7.893 2.66 9.336 6.41.147.381.146.804 0 1.186A10.004 10.004 0 0 1 10 17c-4.257 0-7.893-2.66-9.336-6.41ZM14 10a4 4 0 1 1-8 0 4 4 0 0 1 8 0Z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                  </div>
+                  <div data-sx-stp-banner hidden class="mt-4 flex items-start gap-2 rounded-md bg-blue-50 p-3">
+                    <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-blue-400"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" /></svg>
+                    <p class="text-sm text-blue-700">Continue processing payments manually until automatic card processing set up is complete.</p>
+                  </div>
+                  <div data-sx-paid-banner hidden role="status" class="mt-4 flex items-start gap-2 rounded-md bg-green-50 p-3">
+                    <img src="../../assets/onboarding/icon-check-circle-green.svg" alt="" width="20" height="20" class="size-5 shrink-0">
+                    <p class="text-sm text-green-800">Card processed. The payment shows as <span class="font-medium">Paid</span> in SMART Exchange.</p>
+                  </div>
+                </div>
+
+                <div
+                  class="border-t border-gray-200 dark:border-white/10 px-4 py-4 sm:px-6"
+                >
+                  <dl class="space-y-3">
+                    <div class="grid grid-cols-2 gap-4">
+                      <dt
+                        class="text-sm/6 font-medium text-gray-700 dark:text-gray-300"
+                      >
+                        Transaction ID
+                      </dt>
+                      <dd
+                        data-ob-skeleton data-sx-txid
+                        class="truncate text-right text-sm/6 font-normal text-gray-900 dark:text-white"
+                      ></dd>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                      <dt
+                        class="text-sm/6 font-medium text-gray-700 dark:text-gray-300"
+                      >
+                        Payment date
+                      </dt>
+                      <dd
+                        data-ob-skeleton data-sx-date
+                        class="text-right text-sm/6 font-normal text-gray-900 dark:text-white"
+                      ></dd>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                      <dt
+                        class="text-sm/6 font-medium text-gray-700 dark:text-gray-300"
+                      >
+                        Payment method
+                      </dt>
+                      <dd
+                        data-ob-skeleton data-sx-method
+                        class="text-right text-sm/6 font-normal text-gray-900 dark:text-white"
+                      ></dd>
+                    </div>
+                  </dl>
+                </div>
+
+                <div
+                  class="border-t border-gray-200 dark:border-white/10 px-4 py-4 sm:px-6"
+                >
+                  <button
+                    type="button"
+                    data-sx-download
+                    class="inline-flex cursor-pointer items-center gap-2 -ml-2.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 dark:text-blue-400 dark:hover:bg-white/10 dark:hover:text-blue-300"
+                  >
+                    Download Details
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      class="size-5"
+                    >
+                      <path
+                        d="M10.75 2.75a.75.75 0 0 0-1.5 0v8.19L6.28 7.97a.75.75 0 1 0-1.06 1.06l4.25 4.25a.75.75 0 0 0 1.06 0l4.25-4.25a.75.75 0 0 0-1.06-1.06l-2.97 2.97V2.75Z"
+                      />
+                      <path
+                        d="M3.5 13.75a.75.75 0 0 0-1.5 0v1.75A1.75 1.75 0 0 0 3.75 17.25h12.5A1.75 1.75 0 0 0 18 15.5v-1.75a.75.75 0 0 0-1.5 0v1.75a.25.25 0 0 1-.25.25H3.75a.25.25 0 0 1-.25-.25v-1.75Z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+
+        <!-- SMART Exchange account -->
+        <section aria-labelledby="sx-account-title" class="overflow-hidden rounded-xl border border-gray-200">
+          <div class="flex flex-col gap-1 px-4 py-4 sm:px-6 sm:py-5">
+            <h2 id="sx-account-title" class="type-title-card text-default">SMART Exchange Account Created</h2>
+            <p class="type-description text-tertiary">Access the account to view payment details.</p>
+          </div>
+          <dl class="border-t border-gray-200 px-4 py-4 sm:px-6">
+            <div class="grid grid-cols-2 gap-4">
+              <dt class="text-sm/6 font-medium text-gray-700">Username</dt>
+              <dd data-ob-skeleton data-sx-username class="truncate text-right text-sm/6 font-normal text-gray-900">johnny@hotmail.com</dd>
+            </div>
+          </dl>
+          <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
+            <a data-sx-portal href="../dashboard/supplier-portal.html" target="_blank" rel="noopener" class="-ml-2.5 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+              Go to SMART Exchange
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
+            </a>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <footer data-ob-footer></footer>
+  </div>
+
+    <!-- Card details (Supplier Portal sx-card-details-dialog, Figma 33456:52985) -->
+    <el-dialog>
+      <dialog
+        id="sx-card-details-dialog"
+        class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
+      >
+        <el-dialog-backdrop
+          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+        ></el-dialog-backdrop>
+        <div
+          tabindex="0"
+          class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6"
+        >
+          <el-dialog-panel
+            class="relative w-full max-w-[512px] transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10"
+          >
+            <!-- Close button -->
+            <div class="flex items-center justify-end px-4 pt-4">
+              <button
+                type="button"
+                command="close"
+                commandfor="sx-card-details-dialog"
+                class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-600"
+              >
+                <span class="sr-only">Close</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  class="size-5"
+                  aria-hidden="true"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
+
+            <!-- Content -->
+            <div class="flex flex-col items-center gap-4 px-6 pb-6">
+              <!-- SMART Card -->
+              <div
+                class="relative h-[200px] w-[320px] flex-shrink-0 overflow-hidden rounded-xl bg-slate-900 p-5 shadow-lg ring-[0.94px] ring-inset ring-white/20"
+              >
+                <div class="flex h-full flex-col gap-2">
+                  <!-- Top: CVV pill -->
+                  <div class="flex items-center justify-end">
+                    <div
+                      class="flex items-center rounded-full bg-white/20 px-2.5 py-0.5"
+                    >
+                      <span
+                        data-sx-vc="cvv-pill"
+                        class="font-['Inter'] text-[11px] text-white"
+                        >CVV : •••</span
+                      >
+                    </div>
+                  </div>
+                  <!-- Middle: fixed 108px, content pushed to bottom -->
+                  <div class="flex h-[108px] flex-col justify-end gap-2">
+                    <!-- Wireless row: amount + icon -->
+                    <div class="flex items-end gap-2 self-stretch">
+                      <p
+                        data-sx-vc="amount"
+                        class="flex-1 text-2xl font-bold text-white"
+                      ></p>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="19"
+                        height="28"
+                        viewBox="0 0 19 28"
+                        fill="none"
+                        class="shrink-0"
+                        aria-hidden="true"
+                      >
+                        <path
+                          d="M1.63451 14.0121C1.63451 16.3874 0 16.4362 0 17.3061C0 17.7886 0.415193 18.1801 0.926639 18.1801C1.17182 18.1801 1.60287 17.9797 1.60287 17.9797C2.76417 17.003 3.51553 15.5899 3.51553 14.0121C3.51553 12.4514 2.78131 11.0119 1.60683 10.0167C1.60683 10.0167 0.805383 9.3695 0.216164 10.1419C-0.228056 10.7246 0.266249 11.2756 0.540427 11.5497C1.18896 12.1983 1.63451 13.059 1.63451 14.0121ZM6.37329 14.0121C6.37329 16.2925 5.37282 18.3304 3.77784 19.7843L3.79103 19.7948C3.67372 19.9412 3.60515 20.1217 3.60515 20.3195C3.60515 20.8032 4.02038 21.1947 4.53182 21.1947C4.78359 21.1947 5.01162 21.0998 5.17903 20.9456L5.18959 20.9548C7.07851 19.1779 8.25431 16.7196 8.25431 13.9883C8.25431 11.269 7.07851 8.81719 5.18959 7.04294L5.17771 7.05348C5.01162 6.90058 4.78359 6.80567 4.53182 6.80567C4.02038 6.80567 3.60515 7.19716 3.60515 7.68093C3.60515 7.87733 3.67372 8.05924 3.78971 8.20555L3.7818 8.21215C5.38732 9.68454 6.37329 11.7461 6.37329 14.0121ZM7.8681 5.0591C11.8964 9.08741 11.6275 13.9501 11.6275 13.9501C11.6275 18.2025 9.67792 21.0998 7.85359 22.9531C7.64927 23.1126 7.52009 23.3552 7.52009 23.6254C7.52009 24.1079 7.93531 24.4994 8.44676 24.4994C8.71566 24.4994 8.95691 24.3926 9.12563 24.2212C9.12563 24.2212 13.5085 20.4131 13.5085 14.0239C13.5085 7.48848 9.12563 3.77917 9.12563 3.77917C8.95559 3.60781 8.71434 3.49973 8.44676 3.49973C7.93531 3.49973 7.52009 3.89254 7.52009 4.37499C7.52009 4.6518 7.65588 4.89829 7.8681 5.0591ZM11.8384 1.52644C17.1071 6.68968 17.0623 13.1737 17.0623 14.0002C17.0623 14.0002 17.5803 20.6002 11.8437 26.4758C11.671 26.6524 11.5378 26.8672 11.5378 27.1246C11.5378 27.6081 11.9531 28 12.4645 28C12.7809 28 13.2396 27.6343 13.2396 27.6343C19.4745 21.3107 18.942 14.0002 18.942 14.0002C18.942 5.62065 13.2857 0.375671 13.2857 0.375671C13.1183 0.148949 12.7809 -1.90735e-06 12.4645 -1.90735e-06C11.9531 -1.90735e-06 11.5378 0.392813 11.5378 0.875259C11.5378 1.1323 11.6552 1.3643 11.8423 1.5238L11.8384 1.52644Z"
+                          fill="white"
+                        />
+                      </svg>
+                    </div>
+                    <!-- Card details: flex-col, justify-end, items-start, gap-2 -->
+                    <div
+                      class="flex flex-col items-start justify-end gap-2 self-stretch"
+                    >
+                      <p
+                        data-sx-vc="card-number"
+                        class="font-['Inter'] text-lg font-normal leading-6 text-white"
+                      >
+                        •••• 0000
+                      </p>
+                      <div class="flex items-center gap-1 pl-14">
+                        <p
+                          class="font-['Roboto_Mono'] text-[7px] font-bold uppercase leading-normal text-white"
+                        >
+                          EXPIRATION<br />DATE
+                        </p>
+                        <p
+                          data-sx-vc="expiry"
+                          class="ml-1 font-['Inter'] text-sm font-normal leading-5 text-white"
+                        >
+                          12/26
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Bottom: name + Visa -->
+                  <div class="flex h-9 items-end gap-4 self-stretch">
+                    <p
+                      data-sx-vc="name"
+                      class="flex-1 font-['Inter'] text-sm font-normal leading-5 uppercase text-white"
+                    ></p>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="59"
+                      height="18"
+                      viewBox="0 0 59 18"
+                      fill="none"
+                      class="shrink-0"
+                      aria-label="Visa"
+                      role="img"
+                    >
+                      <path
+                        d="M49.0149 11.5661L50.911 6.68624C50.8879 6.73859 51.3015 5.67937 51.5423 5.02376L51.8689 6.53035L52.9693 11.5632H49.0117V11.5661H49.0149ZM11.5564 9.78621L12.0496 12.209L16.7013 0.317736H21.7424L14.2524 17.7318H9.22275L5.1113 2.98625C5.04534 2.74336 4.8883 2.53396 4.67367 2.40225C3.19221 1.6366 1.6228 1.05585 0 0.672661L0.0638636 0.305067H7.72453C8.76417 0.347157 9.60175 0.672659 9.88025 1.78224L11.5543 9.79564V9.78621H11.5564ZM23.6395 0.170012H28.399L25.4215 17.6176H20.6682L23.6395 0.164774V0.170012ZM54.8874 0.317736H51.2167C50.0744 0.317736 49.2138 0.631828 48.7155 1.76465L41.6568 17.7558H46.6509L47.6496 15.1331L53.7451 15.1397C53.8885 15.7531 54.3293 17.7558 54.3293 17.7558H58.7339L54.8874 0.317736ZM42.6954 0.737259C41.3312 0.239948 39.8885 -0.00985909 38.4353 0.000297546C33.7375 0.000297546 30.4197 2.36666 30.3956 5.76397C30.3663 8.25994 32.7534 9.66602 34.5594 10.5002C36.4125 11.3579 37.0313 11.8982 37.0261 12.6645C37.0145 13.8297 35.5456 14.3585 34.1804 14.3585C32.3042 14.3585 31.2792 14.0968 29.7025 13.4424L29.1183 13.1693L28.4524 17.0807C29.5947 17.5559 31.653 17.9644 33.7784 18C38.7734 18 42.0379 15.6473 42.0766 12.0331C42.1175 10.0385 40.8255 8.53309 38.1065 7.28825C36.4534 6.48009 35.4284 5.93986 35.4284 5.12113C35.4284 4.39558 36.3068 3.62093 38.1421 3.62093C39.3629 3.59151 40.5763 3.81975 41.7029 4.29287L42.1437 4.4896L42.8106 0.71035L42.6954 0.737259Z"
+                        fill="white"
+                      />
+                    </svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Details section -->
+              <div
+                id="sx-card-copy-details-section"
+                class="flex flex-col gap-2 self-stretch rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5"
+              >
+                <div class="grid grid-cols-2 gap-4 self-stretch">
+                  <span
+                    class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                    >Pending Payment</span
+                  >
+                  <span
+                    data-sx-vc="pending-amount"
+                    class="text-sm font-normal text-gray-700 dark:text-gray-300"
+                  ></span>
+                </div>
+                <div class="grid grid-cols-2 gap-4 self-stretch">
+                  <span
+                    class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                    >Cardholder Name</span
+                  >
+                  <span
+                    data-sx-vc="holder-name"
+                    class="text-sm font-normal text-gray-700 dark:text-gray-300"
+                  ></span>
+                </div>
+                <div class="grid grid-cols-2 gap-4 self-stretch">
+                  <span
+                    class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                    >Cardholder Address</span
+                  >
+                  <span
+                    data-sx-vc="card-address"
+                    class="text-sm font-normal text-gray-700 whitespace-pre-line dark:text-gray-300"
+                    >3476 Orphan Road Suite 1010 Hayward, Wisconsin 54843 United
+                    States</span
+                  >
+                </div>
+                <div class="grid grid-cols-2 gap-4 self-stretch items-center">
+                  <span
+                    class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                    >Type</span
+                  >
+                  <span class="inline-flex w-fit items-center">
+                    <svg
+                      width="24"
+                      height="16"
+                      viewBox="0 0 24 16"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                      aria-label="Visa"
+                      role="img"
+                    >
+                      <rect
+                        width="24"
+                        height="16"
+                        rx="1.2"
+                        fill="url(#visa-grad-sx-modal)"
+                      />
+                      <path
+                        d="M12.309 7.05313C12.2987 7.85651 13.0305 8.30487 13.5818 8.57141C14.1483 8.84493 14.3385 9.0203 14.3364 9.26485C14.3321 9.6392 13.8845 9.80438 13.4656 9.81081C12.7349 9.82208 12.3101 9.61506 11.9722 9.45846L11.709 10.6807C12.0479 10.8357 12.6754 10.9708 13.3262 10.9767C14.8536 10.9767 15.853 10.2286 15.8584 9.06857C15.8644 7.5964 13.8061 7.51489 13.8202 6.85684C13.8251 6.65733 14.0169 6.44442 14.4374 6.39025C14.6455 6.3629 15.2201 6.34198 15.8714 6.63963L16.127 5.45708C15.7768 5.33051 15.3266 5.2093 14.7661 5.2093C13.3283 5.2093 12.3171 5.96764 12.309 7.05313ZM18.5836 5.3112C18.3047 5.3112 18.0696 5.47263 17.9647 5.7204L15.7827 10.8899H17.3091L17.6129 10.057H19.4781L19.6543 10.8899H20.9996L19.8257 5.3112H18.5836ZM18.7971 6.81822L19.2376 8.91304H18.0312L18.7971 6.81822ZM10.4583 5.3112L9.25517 10.8899H10.7096L11.9122 5.3112H10.4583ZM8.3066 5.3112L6.79266 9.10825L6.18028 5.87969C6.1084 5.51929 5.82464 5.3112 5.50953 5.3112H3.03459L3 5.47317C3.50807 5.58257 4.08532 5.75902 4.43502 5.9478C4.64906 6.0631 4.71013 6.16393 4.7804 6.43798L5.9403 10.8899H7.47747L9.83404 5.3112H8.3066Z"
+                        fill="white"
+                      />
+                      <defs>
+                        <linearGradient
+                          id="visa-grad-sx-modal"
+                          x1="10.7812"
+                          y1="16"
+                          x2="15.6708"
+                          y2="0.32624"
+                          gradientUnits="userSpaceOnUse"
+                        >
+                          <stop stop-color="#222357" />
+                          <stop offset="1" stop-color="#254AA5" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </span>
+                </div>
+                <div class="grid grid-cols-2 gap-4 self-stretch">
+                  <span
+                    class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                    >Card Number</span
+                  >
+                  <button
+                    type="button"
+                    data-sx-copy="full-number"
+                    class="copy-btn -ml-1 inline-flex focus-visible:outline-2 focus-visible:outline-blue-600 w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer"
+                  >
+                    <span data-sx-vc="full-number" class="text-sm font-normal"
+                      >5444 1234 0000 5612</span
+                    >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      class="size-4 shrink-0 text-gray-400 dark:text-gray-500"
+                    >
+                      <path
+                        d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z"
+                      />
+                      <path
+                        d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div class="grid grid-cols-2 gap-4 self-stretch">
+                  <span
+                    class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                    >Expires</span
+                  >
+                  <button
+                    type="button"
+                    data-sx-copy="full-expiry"
+                    class="copy-btn -ml-1 inline-flex focus-visible:outline-2 focus-visible:outline-blue-600 w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer"
+                  >
+                    <span data-sx-vc="full-expiry" class="text-sm font-normal"
+                      >12/2026</span
+                    >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      class="size-4 shrink-0 text-gray-400 dark:text-gray-500"
+                    >
+                      <path
+                        d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z"
+                      />
+                      <path
+                        d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div class="grid grid-cols-2 gap-4 self-stretch">
+                  <span
+                    class="text-sm font-medium text-gray-900 dark:text-gray-100"
+                    >CVC2</span
+                  >
+                  <button
+                    type="button"
+                    data-sx-copy="cvc2"
+                    class="copy-btn -ml-1 inline-flex focus-visible:outline-2 focus-visible:outline-blue-600 w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer"
+                  >
+                    <span data-sx-vc="cvc2" class="text-sm font-normal">999</span>
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 20 20"
+                      fill="currentColor"
+                      class="size-4 shrink-0 text-gray-400 dark:text-gray-500"
+                    >
+                      <path
+                        d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z"
+                      />
+                      <path
+                        d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Info block -->
+              <div
+                class="w-full rounded-md bg-gray-100 p-3 hover:bg-gray-200/80 dark:bg-white/10 dark:hover:bg-white/10"
+              >
+                <button
+                  type="button"
+                  data-sx-how-toggle aria-expanded="true" aria-controls="sx-card-how-content"
+                  class="flex w-full cursor-pointer list-none items-center justify-between rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 text-sm font-medium leading-6 text-slate-950 dark:text-white"
+                >
+                  <span>How can you use the payer’s card?</span>
+                  <svg
+                    data-collapse-icon aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 20 20"
+                    fill="currentColor"
+                    class="size-4 rotate-180 text-gray-500 transition-transform dark:text-gray-400"
+                  >
+                    <path
+                      fill-rule="evenodd"
+                      d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+                <div
+                  id="sx-card-how-content"
+                  class="mt-2 flex flex-col gap-1.5 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300"
+                >
+                  <p>
+                    The payer has provided their card to cover a specific
+                    amount. You are only authorized to charge the amount
+                    indicated. To process the payment, enter the card details
+                    into your card terminal.
+                  </p>
+                  <ul class="list-disc pl-5">
+                    <li>
+                      The card may also be used for future authorized payments.
+                    </li>
+                    <li>
+                      It can be securely stored under the
+                      <span
+                        class="font-semibold text-gray-900 dark:text-gray-100"
+                        >Payment Preference</span
+                      >
+                      tab in the
+                      <span
+                        class="font-semibold text-gray-900 dark:text-gray-100"
+                        >SMART Exchange</span
+                      >.
+                    </li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="w-full rounded-md bg-gray-100 p-3 dark:bg-white/10">
+                <p class="text-sm font-medium leading-6 text-slate-950 dark:text-white">How much should I charge?</p>
+                <p class="mt-1 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300">Please charge the full card balance for the invoice total.</p>
+              </div>
+
+              <!-- Demo control: simulate processing the card in a terminal -->
+              <div data-sx-process class="flex w-full flex-col gap-3 border-t border-gray-200 pt-4 dark:border-white/10">
+                <p data-sx-process-hint class="type-caption text-tertiary">Demo test: simulates running this card through your terminal. The payment turns Paid and the MID / TID are captured. Skip it to process the payment in the portal instead.</p>
+                <button type="button" data-sx-process-btn
+                  class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50">I’ve processed this card in my terminal</button>
+                <div data-sx-processed hidden role="status" class="flex items-start gap-2 rounded-md bg-green-50 p-3">
+                  <img src="../../assets/onboarding/icon-check-circle-green.svg" alt="" width="20" height="20" class="size-5 shrink-0">
+                  <div class="flex min-w-0 flex-col gap-1 text-sm text-green-800">
+                    <p class="font-medium">Card processed, payment marked as Paid.</p>
+                    <p data-sx-mid-tid></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
+
+
+</body>
+</html>
