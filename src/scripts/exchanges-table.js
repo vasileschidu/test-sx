@@ -250,7 +250,7 @@
     row: "",
     cellBorder: " border-b border-gray-200 dark:border-white/10",
     actionCell:
-      "bg-white h-[52px] align-middle py-0 pr-4 pl-3 whitespace-nowrap w-32 min-w-32 text-right text-sm font-medium dark:bg-gray-900 sm:pr-2",
+      "bg-white h-[52px] align-middle py-0 pr-4 pl-3 whitespace-nowrap w-px text-right text-sm font-medium dark:bg-gray-900 sm:pr-2",
     detailCell:
       "bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-white/10",
   };
@@ -795,8 +795,8 @@
   // #manage-columns). Once the user applies a selection it stays as is on every tab;
   // applying the defaults again (Reset default) hands control back to the per-tab defaults.
   var TAB_COLUMNS_OFF_BY_DEFAULT = {
-    pending: ["dateInitiated", "dateProcessed", "failureReason"],
-    "action-required": ["dateInitiated", "dateProcessed", "failureReason"],
+    pending: ["dateProcessed", "failureReason"],
+    "action-required": ["dateProcessed", "failureReason"],
     paid: ["dateInitiated", "failureReason"],
     exceptions: ["dateProcessed"],
   };
@@ -847,7 +847,6 @@
       })
       .filter(function (col) {
         if (col.key === "failureReason") return false;
-        if (IS_SUPPLIER_PORTAL && col.key === "vendorEntry") return false;
         return true;
       })
       .map(function (col) {
@@ -1660,9 +1659,8 @@
           '<th data-action-column scope="col" class="' +
           base +
           " h-[52px] bg-white py-0 align-middle whitespace-nowrap dark:bg-gray-900 " +
-          (IS_SUPPLIER_PORTAL
-            ? "w-[140px] min-w-[140px] pr-0"
-            : "w-32 min-w-32 pr-4 pl-3 sm:pr-2") +
+          // w-px: the column hugs its widest button (Get paid / Mark as paid + menu).
+          (IS_SUPPLIER_PORTAL ? "w-px px-4" : "w-px pr-4 pl-3 sm:pr-2") +
           '"><span class="sr-only">Action</span></th>';
         return;
       }
@@ -2152,8 +2150,8 @@
         var actionClass = CLASS_NAMES.actionCell;
         if (IS_SUPPLIER_PORTAL) {
           actionClass = actionClass
-            .replace("w-32 min-w-32", "w-[140px] min-w-[140px]")
-            .replace("sm:pr-2", "pr-0");
+            .replace("pr-4 pl-3", "px-4")
+            .replace(" sm:pr-2", "");
           actionClass +=
             " group-hover:bg-gray-50 dark:group-hover:bg-white/5";
         }
@@ -8273,7 +8271,8 @@
         "",
         location.pathname +
           "?view=get-paid&id=" +
-          encodeURIComponent(entry.invoice),
+          encodeURIComponent(entry.invoice) +
+          caseQuery("&"),
       );
     }
 
@@ -9129,10 +9128,17 @@
     updateGetPaidStepStates();
   }
 
+  // The STP walkthrough instance (?case=, sx-demo-case.js) keeps its case
+  // when the Get paid panel rewrites the URL.
+  function caseQuery(prefix) {
+    var id = new URLSearchParams(location.search).get("case");
+    return id ? prefix + "case=" + encodeURIComponent(id) : "";
+  }
+
   function closeGetPaidPanel() {
     _activeGetPaidEntry = null;
     if (!_suppressUrlUpdate) {
-      history.pushState({}, "", location.pathname);
+      history.pushState({}, "", location.pathname + caseQuery("?"));
     }
     var panel = document.getElementById("get-paid-panel");
     var tableSection = document.getElementById("table-section");

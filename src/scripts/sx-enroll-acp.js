@@ -17,7 +17,8 @@
  *   Toggle off → Next asks "opt out?" → enrol { stp: 'skipped' },
  *        STPState back to disabled / opt_in_required.
  * Next is enabled with the toggle off, after A is acknowledged or B is sent.
- * Starting answers come from case.scenario (A / B / C) or an earlier visit.
+ * Starting answers come from an earlier visit or the case enrolment (older
+ * cases may still carry a scenario A / B / C).
  */
 (function () {
   "use strict";

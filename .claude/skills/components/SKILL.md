@@ -44,7 +44,7 @@ state and add a row here in the same change. Tokens: see the `design-system` ski
 | Dialog shell | `OBModal` (blur, Esc, focus trap); `OBContact` = Contact Us |
 | Text field | `OBField` — SMART System „Text Field [New]" with default/hover/focus/disabled/error |
 | Sign to authorize | `OBSign.open({ name, allowedPattern, allowedMessage, onSigned })` |
-| Consents | `OBConsents.mount(listEl, agreements, { stateKey, onChange })` |
+| Consents | `OBConsents.mount(listEl, agreements, { stateKey, onChange, documentScroll })` — `documentScroll` (SX only): the grey box hugs the text, the dialog body scrolls it, white bottom fade + centred round gray (bg-gray-100, 2px white inset-ring) "scroll down" button until the end (both hide there) (Accept unlocks there) |
 | Decline, faster payout, VC how-to | `OBDecline`, `OBFaster`, `OBVirtualCardHow` |
 | Multi-Party | `OBFlow` (`onboarding-flow.js`), `onboarding-multi-party.js` |
 | Review documents | `review-modal.js` — any `[data-review-modal]` dialog, triggers `.review-trigger` / `.gp-review-trigger` |
@@ -96,6 +96,8 @@ one-line selected value: two-line block `in-[el-selectedcontent]:hidden` + a
 - Link button (Add card / Add bank account / Filter / Download): `inline-flex items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300` + size-4 icon, no background.
 - Primary: `cursor-pointer rounded-md bg-blue-600 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300`
   + size from the secondary list (most used: xl `px-3.5 py-2.5`, md `px-2.5 py-1.5`; full-width CTA adds `w-full`).
+- Gray (Figma "Button/Gray", e.g. Reveal Card Details on `sx-enroll/complete.html`): `inline-flex items-center gap-1 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-600 hover:bg-gray-200 hover:text-gray-700 active:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:hover:text-white`
+  + trailing `size-4.5 text-gray-500 dark:text-gray-400` icon.
 
 ### Toggle switch (checkbox-based)
 ```html
@@ -152,17 +154,23 @@ has-[input:focus]:outline-blue-600 has-[input[aria-invalid=true]]:outline-red-50
 `input.min-w-0.grow.bg-transparent.py-2.pl-1.focus:outline-none` + optional error icon. Help text `text-sm text-gray-500` below;
 info box `rounded-md bg-gray-50 p-3` with `type-title-small` + `list-disc type-description` bullets.
 
-### MID / TID rows (Payment Preferences STP card)
-`#pp-stp-ids` inside the Automatic Card Processing card: description-list rows (`type-label text-default` /
-`type-body text-secondary tabular-nums`), shown when `PAYMENT_PREFERENCES_CONFIG.getStpIds()` returns ids and STP is at the
-deposit step or enabled.
-
 ### STP walkthrough case instance (`?case=<id>`) — shell + data hooks
 `SXDemoCase.applyPageConfig()` (inline on supplier-portal / payment-preferences, and from `shell-navigation.js` after a swap):
-table `transformData` + `onMarkedPaid` (→ `markCardProcessed`), PP `transformSharedData` / `storagePrefix` / `getStpIds`.
+table `transformData` + `onMarkedPaid` (→ `markCardProcessed`), PP `transformSharedData` / `storagePrefix`.
 Plan `sx-instance` (app-plans.js): Insights, AP/AR (Upgrade), SMART Exchange, Settings (open) › My Company Profile, Payment
 Preferences, User Management; `hideShellExtras` drops Help + Account Information; the case business is the only switcher entry.
 Links to dashboard pages keep `?case=` (click capture in sx-demo-case.js). `SXDemoCase.syncStp()` derives STP from the case.
+Isolation: only a URL with this case's `?case=` is the instance (no sticky key); the plain portal is the general one.
+The demo's STP state / agreement request (`stp-state.js` SCOPE) and table overrides (`EXCHANGES_TABLE_CONFIG.storageKey`)
+live under `<key>:<case id>`, PP under `sxdemo_<id>_pp_`; Start enrolment clears only the previous case's keys.
+Demo bar `#sx-demo-bar` (sx-demo-case.js, every page where `isPortalInstance()`): fixed bottom-right pill "Demo case <id>" +
+xs secondary "New demo" (launcher: case information card + Start enrolment / Open Supplier Portal). Table defaults show Vendor Entry (= the case
+business) and Date Initiated, as in the Figma STP table.
+
+### SX enrolment Decline (`sx-enroll/*.html` before Submit)
+Reuses SD's `OBDecline` (`onboarding-decline.js`, reasons `sd-decline.json`): sidebar card + `OB_MOBILE_MENU` item (not on
+complete / declined / sign-agreement). Confirm → `declined.html` (Figma 38146:80118): red document-cross icon, "Payment was
+Declined", Reason row in a bordered box; the reason is saved to the case as `enrol.declined`.
 
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).

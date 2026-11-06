@@ -127,17 +127,17 @@
     ></script>
     <script src="../../../src/scripts/sidebar-boot.js"></script>
     <!-- STP walkthrough: ?case=<id> shows only the demo case's data. -->
-    <script src="../../../src/scripts/sx-demo-case.js?v=20261105e"></script>
+    <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
     <script src="../../../src/scripts/app-plans.js?v=20261105-b4"></script>
     <script src="../../../src/scripts/nav-component.js?v=20261105-b4"></script>
-    <script src="../../../src/scripts/stp-state.js?v=20261105p"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261106a"></script>
     <script src="../../../src/scripts/app-switch.js"></script>
     <script src="../../../src/scripts/topbar-component.js?v=20261105h"></script>
     <script src="../../scripts/checkbox-component.js"></script>
     <script src="../../../src/scripts/sidebar.js" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
     <script src="../../../src/scripts/shared.js?v=20261105-b4" defer></script>
-    <script src="../../../src/scripts/shell-navigation.js?v=20261105g" defer></script>
+    <script src="../../../src/scripts/shell-navigation.js?v=20261106c" defer></script>
     <script>
       if (window.SXDemoCase) window.SXDemoCase.applyPageConfig();
     </script>
@@ -374,21 +374,6 @@
                                 Card payments are automatically processed and
                                 settled to the business bank account.
                               </p>
-                              <!-- MID / TID once the first card is processed (STP walkthrough instance) -->
-                              <div
-                                id="pp-stp-ids"
-                                hidden
-                                class="mt-3 flex flex-col gap-2"
-                              >
-                                <div class="grid grid-cols-2 gap-4 self-stretch">
-                                  <span class="type-label text-default">Merchant ID (MID)</span>
-                                  <span data-pp-stp-mid class="type-body text-secondary tabular-nums"></span>
-                                </div>
-                                <div class="grid grid-cols-2 gap-4 self-stretch">
-                                  <span class="type-label text-default">Terminal ID (TID)</span>
-                                  <span data-pp-stp-tid class="type-body text-secondary tabular-nums"></span>
-                                </div>
-                              </div>
                               <button
                                 id="pp-stp-reverify-link"
                                 type="button"
@@ -5473,7 +5458,7 @@
 
     <script src="../../../src/scripts/table-ui.js?v=20261006f" defer></script>
     <script
-      src="../../../src/scripts/pages/payment-preferences-page.js?v=20261105-b4"
+      src="../../../src/scripts/pages/payment-preferences-page.js?v=20261106a"
       defer
     ></script>
   </body>

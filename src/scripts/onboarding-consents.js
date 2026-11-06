@@ -6,7 +6,11 @@
  * scrolled to the end, ticks that consent and moves on to the next one.
  * Unticking a consent withdraws it.
  *
- *   OBConsents.mount(listEl, agreements, { stateKey, onChange(allAccepted) })
+ *   OBConsents.mount(listEl, agreements, { stateKey, onChange(allAccepted), documentScroll })
+ *
+ * documentScroll (SMART Exchange): the grey box hugs the whole text and the
+ * dialog body scrolls it like a page, with a white fade and a centred round
+ * "scroll down" button until the end is reached. Off by default (SMART Disburse keeps the inner scroller).
  *
  * Acceptance is kept in the onboarding session under `stateKey`.
  */
@@ -56,15 +60,31 @@ window.OBConsents = (function () {
   function openReview(index) {
     var a = agreements[index];
     // Title bar and button bar stay put; the text box between them scrolls.
-    var backdrop = window.OBModal.open(
-      '<div class="flex min-h-0 flex-1 flex-col p-6">' +
-        '<div data-vcs-scroll tabindex="0" aria-label="' + esc(a.title) + '" class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] bg-[#f9fafb] p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600">' +
-          '<div class="flex flex-col gap-4 text-sm leading-5 text-[#374151]">' +
-            '<p class="text-base leading-6 font-semibold text-[#111827]">' + esc(a.title) + '</p>' +
-            window.OBModal.agreementHtml(a.body) +
+    var text =
+      '<div class="flex flex-col gap-4 text-sm leading-5 text-[#374151]">' +
+        '<p class="text-base leading-6 font-semibold text-[#111827]">' + esc(a.title) + '</p>' +
+        window.OBModal.agreementHtml(a.body) +
+      '</div>';
+    var SCROLL_ATTRS = 'data-vcs-scroll tabindex="0" aria-label="' + esc(a.title) + '"';
+    var body = opts.documentScroll
+      // The body scrolls; the grey box is the document, so its end shows up as you scroll.
+      ? '<div class="relative flex min-h-0 flex-1 flex-col">' +
+          '<div ' + SCROLL_ATTRS + ' class="min-h-0 flex-1 overflow-y-auto p-6 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600">' +
+            '<div class="rounded border border-[#e5e7eb] bg-[#f9fafb] p-4">' + text + '</div>' +
           '</div>' +
-        '</div>' +
-      '</div>',
+          // White fade over the last lines: there is more below. Goes with the button at the end.
+          '<div data-vcs-fade aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-white/0 to-white"></div>' +
+          '<button type="button" data-vcs-more aria-label="Scroll down" class="absolute bottom-6 left-1/2 flex size-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-gray-700 shadow-md inset-ring-2 inset-ring-white transition hover:bg-gray-200 hover:text-gray-900 active:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
+            '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-6"><path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z" clip-rule="evenodd" /></svg>' +
+          '</button>' +
+        '</div>'
+      : '<div class="flex min-h-0 flex-1 flex-col p-6">' +
+          '<div ' + SCROLL_ATTRS + ' class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] bg-[#f9fafb] p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600">' +
+            text +
+          '</div>' +
+        '</div>';
+    var backdrop = window.OBModal.open(
+      body,
       'vcs-review-title',
       {
         bare: true,
@@ -88,12 +108,20 @@ window.OBConsents = (function () {
 
     var scroller = backdrop.querySelector('[data-vcs-scroll]');
     var accept = backdrop.querySelector('[data-vcs-accept]');
+    var more = backdrop.querySelector('[data-vcs-more]');
+    var fade = backdrop.querySelector('[data-vcs-fade]');
     function checkEnd() {
       // Accept unlocks once the reader reaches the end (or nothing to scroll).
       if (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 8) {
         accept.disabled = false;
+        if (more) more.hidden = true;
+        if (fade) fade.hidden = true;
       }
     }
+    if (more) more.addEventListener('click', function () {
+      // A page at a time, like the scroll cue on Google's terms.
+      scroller.scrollBy({ top: scroller.clientHeight * 0.8, behavior: 'smooth' });
+    });
     scroller.addEventListener('scroll', checkEnd);
     // The dialog shrinks to a short text (it has a max height, not a fixed one).
     requestAnimationFrame(checkEnd);
