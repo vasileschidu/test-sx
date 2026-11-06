@@ -160,6 +160,9 @@ table `transformData` + `onMarkedPaid` (→ `markCardProcessed`), PP `transformS
 Plan `sx-instance` (app-plans.js): Insights, AP/AR (Upgrade), SMART Exchange, Settings (open) › My Company Profile, Payment
 Preferences, User Management; `hideShellExtras` drops Help + Account Information; the case business is the only switcher entry.
 Links to dashboard pages keep `?case=` (click capture in sx-demo-case.js). `SXDemoCase.syncStp()` derives STP from the case.
+Isolation: only a URL with this case's `?case=` is the instance (no sticky key); the plain portal is the general one.
+The demo's STP state / agreement request (`stp-state.js` SCOPE) and table overrides (`EXCHANGES_TABLE_CONFIG.storageKey`)
+live under `<key>:<case id>`, PP under `sxdemo_<id>_pp_`; Start enrolment clears only the previous case's keys.
 Demo bar `#sx-demo-bar` (sx-demo-case.js, every page where `isPortalInstance()`): fixed bottom-right pill "Demo case <id>" +
 xs secondary "New demo" (launcher: case information card + Start enrolment / Open Supplier Portal). Table defaults show Vendor Entry (= the case
 business) and Date Initiated, as in the Figma STP table.

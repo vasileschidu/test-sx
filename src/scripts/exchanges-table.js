@@ -8272,7 +8272,8 @@
         "",
         location.pathname +
           "?view=get-paid&id=" +
-          encodeURIComponent(entry.invoice),
+          encodeURIComponent(entry.invoice) +
+          caseQuery("&"),
       );
     }
 
@@ -9128,10 +9129,17 @@
     updateGetPaidStepStates();
   }
 
+  // The STP walkthrough instance (?case=, sx-demo-case.js) keeps its case
+  // when the Get paid panel rewrites the URL.
+  function caseQuery(prefix) {
+    var id = new URLSearchParams(location.search).get("case");
+    return id ? prefix + "case=" + encodeURIComponent(id) : "";
+  }
+
   function closeGetPaidPanel() {
     _activeGetPaidEntry = null;
     if (!_suppressUrlUpdate) {
-      history.pushState({}, "", location.pathname);
+      history.pushState({}, "", location.pathname + caseQuery("?"));
     }
     var panel = document.getElementById("get-paid-panel");
     var tableSection = document.getElementById("table-section");

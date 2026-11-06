@@ -20,14 +20,27 @@
   // Demo state that belongs to one walkthrough; cleared on create/reset.
   // The case's portal instance stays on in this browser once opened (any
   // dashboard page, with or without ?case=) until a new case or Reset demo.
-  var INSTANCE_KEY = "sx_demo_instance_v1";
-  var DEMO_LOCAL_KEYS = [
+  // The demo's STP state and payment overrides live under keys scoped to the
+  // case ("<key>:<id>", see stp-state.js), so the general portal keeps its own.
+  var OVERRIDES_BASE = "sx_exchange_entry_overrides_v1";
+  var STP_BASE = "sx_global_stp_state_v3";
+  // Before the demo was scoped it wrote the general keys: clear them once.
+  var ISOLATED_FLAG = "sx_demo_isolated_v1";
+  var LEGACY_SHARED_KEYS = [
     "sx_global_stp_state_v3",
     "sx_global_stp_status_v2",
     "sx_stp_agreement_request_v1",
     "sx_exchange_entry_overrides_v1",
-    INSTANCE_KEY,
+    "sx_demo_instance_v1",
   ];
+  try {
+    if (!localStorage.getItem(ISOLATED_FLAG)) {
+      LEGACY_SHARED_KEYS.forEach(function (key) {
+        localStorage.removeItem(key);
+      });
+      localStorage.setItem(ISOLATED_FLAG, "1");
+    }
+  } catch (error) {}
   var DEMO_SESSION_PREFIX = "sx-enroll";
 
   // Paths resolve against this script, so they work from any page depth
@@ -177,12 +190,19 @@
     return read();
   }
 
+  // The previous case's own keys only ("…:<id>", "sxdemo_<id>_…"); the
+  // general portal's keys are left alone.
   function clearDemoState() {
     try {
+      var old = read();
       localStorage.removeItem(STORAGE_KEY);
-      DEMO_LOCAL_KEYS.forEach(function (key) {
-        localStorage.removeItem(key);
-      });
+      if (old && old.id) {
+        for (var j = localStorage.length - 1; j >= 0; j -= 1) {
+          var k = localStorage.key(j) || "";
+          if (k.slice(-(old.id.length + 1)) === ":" + old.id || k.indexOf("sxdemo_" + old.id + "_") === 0)
+            localStorage.removeItem(k);
+        }
+      }
     } catch (error) {}
     try {
       for (var i = sessionStorage.length - 1; i >= 0; i -= 1) {
@@ -226,20 +246,11 @@
     }
   }
 
+  // Only pages opened with this case's ?case= are the instance; the plain
+  // portal URL always shows the general portal.
   function isPortalInstance() {
     var current = read();
-    if (!current) return false;
-    if (caseIdFromUrl() === current.id) {
-      try {
-        localStorage.setItem(INSTANCE_KEY, current.id);
-      } catch (error) {}
-      return true;
-    }
-    try {
-      return localStorage.getItem(INSTANCE_KEY) === current.id;
-    } catch (error) {
-      return false;
-    }
+    return !!current && caseIdFromUrl() === current.id;
   }
 
   function last4(cardNumber) {
@@ -324,8 +335,9 @@
     };
   }
 
-  var OVERRIDES_KEY = "sx_exchange_entry_overrides_v1";
-  var STP_KEY = "sx_global_stp_state_v3";
+  function overridesKey(c) {
+    return OVERRIDES_BASE + ":" + c.id;
+  }
 
   function randomDigits(count) {
     var out = String(1 + Math.floor(Math.random() * 9));
@@ -356,7 +368,7 @@
     var now = new Date().toISOString();
     // The portal's own Mark as paid already wrote the row override.
     if (!(options && options.skipOverride)) try {
-      var raw = localStorage.getItem(OVERRIDES_KEY);
+      var raw = localStorage.getItem(overridesKey(current));
       var overrides = raw ? JSON.parse(raw) : {};
       if (!isPlainObject(overrides)) overrides = {};
       overrides[row.invoice] = Object.assign({}, overrides[row.invoice], {
@@ -378,7 +390,7 @@
           ]),
         },
       });
-      localStorage.setItem(OVERRIDES_KEY, JSON.stringify(overrides));
+      localStorage.setItem(overridesKey(current), JSON.stringify(overrides));
     } catch (error) {}
 
     var stp = current.stp || {};
@@ -402,10 +414,10 @@
           window.STPState.setStpStep(target);
       } else {
         try {
-          var stored = JSON.parse(localStorage.getItem(STP_KEY) || "{}");
+          var stored = JSON.parse(localStorage.getItem(STP_BASE + ":" + current.id) || "{}");
           if (stored.stpStep === "terminal_completed_tid_mid_received")
             localStorage.setItem(
-              STP_KEY,
+              STP_BASE + ":" + current.id,
               JSON.stringify({ stpStatus: "in_progress", stpStep: target }),
             );
         } catch (error) {}
@@ -437,7 +449,7 @@
     } else {
       try {
         localStorage.setItem(
-          STP_KEY,
+          STP_BASE + ":" + current.id,
           JSON.stringify({ stpStatus: "in_progress", stpStep: target }),
         );
       } catch (error) {}
@@ -674,6 +686,7 @@
     if (file === "supplier-portal.html") {
       var table = (window.EXCHANGES_TABLE_CONFIG =
         window.EXCHANGES_TABLE_CONFIG || {});
+      table.storageKey = overridesKey(c);
       table.transformData = function (json) {
         return Object.assign({}, json, { data: [toPaymentRowWithStatus()] });
       };

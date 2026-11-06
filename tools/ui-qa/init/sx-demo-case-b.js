@@ -18,7 +18,7 @@
         stp: { mid: null, tid: null },
       }),
     );
-    localStorage.setItem("sx_global_stp_state_v3", JSON.stringify({ stpStatus: "in_progress", stpStep: "agreement_signature_pending" }));
-    localStorage.setItem("sx_stp_agreement_request_v1", JSON.stringify({ email: "demo.signer@example.com", sentAt: "2026-11-05T09:10:00.000Z", delivered: false }));
+    localStorage.setItem("sx_global_stp_state_v3:SX-QA-B", JSON.stringify({ stpStatus: "in_progress", stpStep: "agreement_signature_pending" }));
+    localStorage.setItem("sx_stp_agreement_request_v1:SX-QA-B", JSON.stringify({ email: "demo.signer@example.com", sentAt: "2026-11-05T09:10:00.000Z", delivered: false }));
   } catch (e) {}
 })();
