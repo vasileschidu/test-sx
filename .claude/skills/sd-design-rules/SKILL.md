@@ -73,6 +73,7 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
 - "See allocations log" on Change Allocation shows **only after a change exists** (code: `mp.log.length > 1`). Figma states before any change hide it.
 - Choose Payment Method chips (Message / Expiration / Full details): **phone hugs** (103/110/114, centred); **tablet and desktop are FILL, equal** (197 / 180 each). Code: `md:flex-1`. (Corrected 2026-10-26 after the Figma (t) frame was re-checked.)
 - The Dispute Message textarea is **88** tall.
+- **Dispute Total Amount path removed (user, 2026-11-05).** Current Allocation has ONE CTA, "Accept and Continue", for every party. Figma: the Dispute button, the 4.7 confirmation modal and the whole "Dispute" subsection of section 4 (4.2.0 form, 4.2.1 thank you, 4.2.2 errors) were deleted; one-button layout = "4.2 Other party view" (phone/tablet frames 80 shorter than the old two-button ones, desktop CTA bottom-anchored). Don't re-add a Dispute button.
 - **Titles are Regular + Semi Bold** (e.g. "Let's make sure **it's you!**"), consistent across steps.
 - The Payment Amount card has **no shadow**.
 - Disabled secondary button: keep the gray rule above (#ebebeb at 40%). Figma frames showing white are wrong.
