@@ -63,6 +63,36 @@ for (const root of CONFIG.staticRoots) {
   }
 }
 
+// ---------- 1b. runtime path literals in the copied scripts / data ----------
+// The scripts build URLs like "../../../src/data/payees.json", "/src/scripts/x.js" or
+// "../../assets/onboarding/…". On HubSpot those files live under /hubfs/<folder>/, so the
+// copies (never the source) get those literals rewritten. Every page lives in
+// src/pages/<dir>/, so relative literals resolve the way the browser resolves them there.
+// Page paths (/src/pages/…) are left alone: pages keep their repo paths on HubSpot.
+const staticPrefixes = [...staticFiles];
+const hasStatic = (p) => staticFiles.has(p) || staticPrefixes.some((f) => f.startsWith(p.endsWith("/") ? p : p + "/"));
+const LITERAL = /(["'`])((?:\.\.\/)+|\/(?=(?:src|wiki|assets)\/))([A-Za-z0-9_-][^"'`\s?#]*)/g;
+const GH_PAGES_BASE = /(["'`])\/test-sx\/src\/pages\//g; // GitHub Pages project path baked into one script
+
+function rewriteLiterals(text, counter) {
+  text = text.replace(GH_PAGES_BASE, (all, q) => { counter.n++; return `${q}/src/pages/`; });
+  return text.replace(LITERAL, (all, q, prefix, rest) => {
+    const target = prefix === "/" ? rest : path.posix.resolve("/src/pages/_page/", prefix + rest).slice(1);
+    if (target.startsWith("src/pages/") || !hasStatic(target.replace(/\/$/, "") || target)) return all;
+    counter.n++;
+    return `${q}${HUBFS}/${target}${rest.endsWith("/") && !target.endsWith("/") ? "/" : ""}`;
+  });
+}
+
+const literalCount = { n: 0 };
+for (const r of staticFiles) {
+  if (!/\.(js|mjs|json)$/i.test(r) || !r.startsWith("src/")) continue;
+  const file = path.join(FILES_OUT, r);
+  const before = fs.readFileSync(file, "utf8");
+  const after = rewriteLiterals(before, literalCount);
+  if (after !== before) fs.writeFileSync(file, after);
+}
+
 // ---------- 2. page templates ----------
 const SKIP_REF = /^(?:[a-z][a-z0-9+.-]*:|\/\/|#|\{)/i; // http:, data:, mailto:, //cdn, #anchor, {{…}}
 
@@ -115,6 +145,7 @@ for (const file of [path.join(ROOT, "index.html"), ...walk(path.join(ROOT, "src/
       .join(", ")}${q}`
   );
   for (const m of missing) warnings.push(`${r}: file not found for "${m}"`);
+  html = rewriteLiterals(html, literalCount); // paths inside inline <script> blocks
 
   const headIdx = html.search(/<\/head>/i);
   const bodyIdx = html.search(/<\/body>/i);
@@ -151,6 +182,7 @@ fs.writeFileSync(path.join(OUT, "pages.json"), JSON.stringify({ config: CONFIG, 
 
 console.log(`Static files: ${staticFiles.size} → hubspot-dist/files`);
 console.log(`Page templates: ${pages.length} → hubspot-dist/design/templates`);
+console.log(`Runtime paths pointed at ${HUBFS}: ${literalCount.n}`);
 if (warnings.length) {
   console.log(`\nWarnings (${warnings.length}):`);
   for (const w of warnings) console.log("  - " + w);

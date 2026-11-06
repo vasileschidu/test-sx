@@ -5,6 +5,7 @@
  *   /hubfs/<folder>/<path> → File Manager files
  *   /src/*, /wiki/*, /assets/* with no page → 302 to /hubfs/<folder>/… (same as the HubSpot redirects)
  * Usage: npm run hubspot:build && npm run hubspot:preview  → http://localhost:8090/
+ * NO_REDIRECTS=1 disables the /src/* → /hubfs/ redirects, to prove the build works without them.
  */
 import http from "node:http";
 import fs from "node:fs";
@@ -55,7 +56,7 @@ http
         });
         return fs.createReadStream(file).pipe(res);
       }
-    } else {
+    } else if (!process.env.NO_REDIRECTS) {
       const root = slug.split("/")[0];
       if (config.staticRoots.includes(root) && slug.includes("/")) {
         res.writeHead(302, { Location: HUBFS.slice(0, -1) + url.pathname + url.search });
