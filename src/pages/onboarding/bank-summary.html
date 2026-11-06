@@ -15,23 +15,27 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Meow+Script&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../../src/scripts/design-tokens.js"></script>
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
-  <script src="../../../src/scripts/onboarding-transitions.js?v=20261021a"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261026a"></script>
-  <script src="../../../src/scripts/onboarding-field.js?v=20261013a"></script>
-  <script src="../../../src/scripts/onboarding-modal.js?v=20261103f"></script>
-  <script src="../../../src/scripts/onboarding-decline.js?v=20261103e"></script>
-  <script src="../../../src/scripts/onboarding-flow.js?v=20261013k"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261106b"></script>
+  <script src="../../../src/scripts/onboarding-field.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-modal.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-decline.js?v=20261106b"></script>
+  <script src="../../../src/scripts/onboarding-flow.js?v=20261106a"></script>
   <script src="../../../src/scripts/onboarding-stepper.js?v=20261104a"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
   <script src="../../../src/scripts/onboarding-substeps.js"></script>
-  <script src="../../../src/scripts/onboarding-consents.js?v=20261103e"></script>
-  <script src="../../../src/scripts/onboarding-sign.js?v=20261103b"></script>
-  <script src="../../../src/scripts/onboarding-faster.js?v=20261103b"></script>
+  <script src="../../../src/scripts/onboarding-consents.js?v=20261106b"></script>
+  <script src="../../../src/scripts/onboarding-sign.js?v=20261106b"></script>
+  <script src="../../../src/scripts/onboarding-faster.js?v=20261106a"></script>
   <script src="../../../src/scripts/onboarding-bank.js"></script>
   <script src="../../../src/scripts/bank-summary.js?v=20261026b"></script>
   <link rel="stylesheet" href="../../../src/styles/cursor.css" />
@@ -40,10 +44,10 @@
       <script src="../../scripts/checkbox-component.js"></script>
   </head>
 
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6 dark:bg-gray-900 dark:lg:bg-gray-950">
 
   <!-- CONTAINER -->
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden dark:bg-gray-900">
 
     <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js -->
     <div data-ob-sidebar></div>
@@ -59,8 +63,8 @@
             <div class="flex w-full flex-col gap-10 lg:gap-9">
               <div class="flex w-full flex-col gap-6">
                 <div class="flex flex-col gap-2.5">
-                  <h1 class="text-3xl leading-9 font-semibold text-[#1f2937]">One Final Step</h1>
-                  <p class="text-sm leading-5 text-[#6b7280]">Make sure all the details are accurate</p>
+                  <h1 class="text-3xl leading-9 font-semibold text-gray-800 dark:text-white">One Final Step</h1>
+                  <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Make sure all the details are accurate</p>
                 </div>
 
                 <!-- Payment amount -->
@@ -84,7 +88,7 @@
                 </section>
 
                 <button type="button" data-bks-faster
-                  class="cursor-pointer self-center rounded-md px-2.5 py-1.5 text-sm leading-5 font-semibold text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">I want my money faster!</button>
+                  class="cursor-pointer self-center rounded-md px-2.5 py-1.5 text-sm leading-5 font-semibold text-blue-600 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400">I want my money faster!</button>
               </div>
 
               <!-- Entered details, rendered by bank-summary.js -->
@@ -92,14 +96,14 @@
             </div>
 
             <!-- Consents -->
-            <ul data-bks-consents role="list" class="flex w-full flex-col divide-y divide-[#e5e7eb] overflow-hidden rounded-lg border border-[#e5e7eb]"></ul>
+            <ul data-bks-consents role="list" class="flex w-full flex-col divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200 dark:divide-white/10 dark:border-white/10"></ul>
           </div>
 
           <!-- Actions -->
           <div class="mt-auto flex px-4 pb-6 lg:px-14 lg:pb-14">
             <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
               <a href="bank-account-info.html"
-                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">Back</a>
               <button type="button" data-bks-submit disabled
                 class="flex flex-1 cursor-pointer items-center justify-center rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-[25px] py-4 text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
                 Deposit <span data-bks-deposit-amount class="ml-1">$487.00</span>

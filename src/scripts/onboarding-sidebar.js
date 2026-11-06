@@ -111,7 +111,7 @@
       chevron: 'icon-chevron-down.svg'
     },
     light: {
-      button: 'bg-gray-100 font-semibold text-gray-600 hover:bg-gray-200 rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600',
+      button: 'bg-gray-100 dark:bg-white/10 font-semibold text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/15 rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400',
       chevron: 'icon-chevron-down-gray.svg'
     }
   };
@@ -132,13 +132,13 @@
         flag('flag-us.svg') + 'English' +
         '<img src="' + ASSETS + look.chevron + '" alt="" width="16" height="16" data-ob-lang-chevron class="size-4 shrink-0 transition-transform duration-150">' +
       '</button>' +
-      '<div id="' + id + '" data-ob-lang-menu class="absolute bottom-full left-1/2 z-10 mb-2 hidden w-max -translate-x-1/2 flex-col gap-1 rounded-md bg-white p-[5px] shadow-lg ring-1 ring-black/5">' +
-        '<div class="flex items-start gap-3 rounded-md bg-gray-100 px-4 py-3">' +
+      '<div id="' + id + '" data-ob-lang-menu class="absolute bottom-full left-1/2 z-10 mb-2 hidden w-max -translate-x-1/2 flex-col gap-1 rounded-md bg-white dark:bg-gray-900 p-[5px] shadow-lg ring-1 ring-black/5 dark:ring-white/10">' +
+        '<div class="flex items-start gap-3 rounded-md bg-gray-100 dark:bg-white/10 px-4 py-3">' +
           flag('flag-us.svg', 'size-5') +
           '<div class="flex flex-col items-start gap-1">' +
-            '<p class="text-sm leading-5 font-medium text-gray-900">United States</p>' +
+            '<p class="text-sm leading-5 font-medium text-gray-900 dark:text-white">United States</p>' +
             '<button type="button" data-ob-lang-option aria-pressed="true" ' +
-              'class="flex cursor-pointer items-center gap-1 rounded-md bg-gray-200 px-2.5 py-1.5 text-sm leading-5 font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
+              'class="flex cursor-pointer items-center gap-1 rounded-md bg-gray-200 dark:bg-white/10 px-2.5 py-1.5 text-sm leading-5 font-semibold text-gray-900 dark:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
               'English<img src="' + ASSETS + 'icon-check.svg" alt="" width="18" height="18" class="size-[18px] shrink-0">' +
             '</button>' +
           '</div>' +
@@ -216,8 +216,8 @@
 
   function footerMarkup() {
     var links = TERMS.map(function (label) {
-      return '<a href="#" class="rounded text-xs leading-4 font-semibold text-gray-700 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' + label + '</a>';
-    }).join('<span aria-hidden="true" class="text-xs leading-4 font-medium text-gray-500">&bull;</span>');
+      return '<a href="#" class="rounded text-xs leading-4 font-semibold text-gray-700 dark:text-gray-300 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' + label + '</a>';
+    }).join('<span aria-hidden="true" class="text-xs leading-4 font-medium text-gray-500 dark:text-gray-400">&bull;</span>');
 
     return '<div class="flex flex-col items-center justify-end gap-6 px-4 py-6">' +
       '<div class="flex w-full flex-col items-center gap-4">' +
@@ -226,8 +226,11 @@
       '</div>' +
       '<div class="flex h-5 items-center justify-center">' +
         '<span class="relative block h-[18px] w-[154.123px]" role="img" aria-label="Powered by Transcard">' +
-          '<img src="' + ASSETS + 'powered-by-dark.svg" alt="" width="86.2589" height="18" class="absolute left-0 top-0 block">' +
-          '<img src="' + ASSETS + 'transcard-wordmark-dark.svg" alt="" width="63.1235" height="11.8737" class="absolute inset-[11.46%_0_22.58%_59.04%] block">' +
+          '<img src="' + ASSETS + 'powered-by-dark.svg" alt="" width="86.2589" height="18" class="absolute left-0 top-0 block dark:hidden">' +
+          '<img src="' + ASSETS + 'transcard-wordmark-dark.svg" alt="" width="63.1235" height="11.8737" class="absolute inset-[11.46%_0_22.58%_59.04%] block dark:hidden">' +
+          // Dark mode: the light logo the navy sidebar uses.
+          '<img src="' + ASSETS + 'powered-by.svg" alt="" width="86.2589" height="18" class="absolute left-0 top-0 hidden dark:block">' +
+          '<img src="' + ASSETS + 'transcard-wordmark.svg" alt="" width="63.1235" height="11.8737" class="absolute inset-[11.46%_0_22.58%_59.04%] hidden dark:block">' +
         '</span>' +
       '</div>' +
     '</div>';

@@ -65,4 +65,6 @@ rewrite; use semantic classes in new or touched UI.
 ## Dark mode
 Dashboard pages only: class-based (`@custom-variant dark (&:where(.dark, .dark *))`, `theme-init.js`,
 `localStorage.theme`). Every new colour needs its `dark:` pair — semantic classes do it for you.
-The SD / onboarding flows are light-only.
+SX enrolment, SD US and SD UK pages carry the same custom variant + `theme-init.js`; testers switch with
+`?theme=dark|light` (saved to `localStorage.theme`). Shared SD scripts use Tailwind classes with `dark:` pairs
+(no raw hex); documents/PDF canvases stay white on purpose.

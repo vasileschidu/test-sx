@@ -10,14 +10,18 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../../src/scripts/design-tokens.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
-  <script src="../../../src/scripts/onboarding-transitions.js?v=20261021a"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261026a"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261106b"></script>
   <style>
     /* One crossfade for the whole result, matching the rest of the flow.
        A per-item slide-up reads as the screen loading a second time. */
@@ -432,18 +436,18 @@
       <script src="../../scripts/checkbox-component.js"></script>
   </head>
 
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6 dark:bg-gray-900 dark:lg:bg-gray-950">
 
-  <div class="mx-auto max-w-[1024px] w-full min-h-screen bg-white flex flex-col">
+  <div class="mx-auto max-w-[1024px] w-full min-h-screen bg-white flex flex-col dark:bg-gray-900">
 
     <main data-ob-content class="flex-1 flex flex-col items-center justify-center py-12">
 
       <!-- ── Loading state ─────────────────────────────────────────────── -->
       <div id="sd-loading" class="flex flex-col items-center text-center gap-3">
-        <div class="h-11 w-11 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500"></div>
+        <div class="h-11 w-11 animate-spin rounded-full border-4 border-gray-200 border-t-blue-500 dark:border-white/10"></div>
         <div class="flex flex-col items-center gap-1">
-          <h1 id="sd-loading-title" class="text-2xl font-semibold text-gray-900">Your card is almost ready…</h1>
-          <p id="sd-loading-description" class="text-sm text-gray-500">Setting up your virtual card.</p>
+          <h1 id="sd-loading-title" class="text-2xl font-semibold text-gray-900 dark:text-white">Your card is almost ready…</h1>
+          <p id="sd-loading-description" class="text-sm text-gray-500 dark:text-gray-400">Setting up your virtual card.</p>
         </div>
       </div>
 
@@ -456,13 +460,13 @@
             <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" />
           </svg>
           <div class="flex flex-col items-center gap-1">
-            <h1 id="sd-success-title" class="text-2xl font-semibold text-gray-900">Card Created!</h1>
-            <p id="sd-success-description" class="text-sm text-gray-500">Your virtual card was issued and funded.</p>
+            <h1 id="sd-success-title" class="text-2xl font-semibold text-gray-900 dark:text-white">Card Created!</h1>
+            <p id="sd-success-description" class="text-sm text-gray-500 dark:text-gray-400">Your virtual card was issued and funded.</p>
           </div>
         </div>
 
         <!-- Card + wallet buttons container -->
-        <div id="sd-virtual-card-stack" class="stagger-item flex w-[320px] flex-col overflow-hidden rounded-xl bg-gray-100">
+        <div id="sd-virtual-card-stack" class="stagger-item flex w-[320px] flex-col overflow-hidden rounded-xl bg-gray-100 dark:bg-white/10">
 
           <!-- Virtual card (masked) -->
           <div class="relative h-[200px] w-full flex-shrink-0 overflow-hidden rounded-xl bg-[#151A32] p-5 shadow-lg ring-[0.94px] ring-inset ring-white/20">
@@ -517,13 +521,13 @@
           Reveal Card Details
         </button>
 
-        <div id="sd-debit-complete-card" class="stagger-item hidden w-full max-w-[400px] rounded-lg bg-gray-50 p-4">
+        <div id="sd-debit-complete-card" class="stagger-item hidden w-full max-w-[400px] rounded-lg bg-gray-50 p-4 dark:bg-white/5">
           <div class="flex flex-col gap-0.5">
-            <p class="text-sm text-gray-500">Amount deposited</p>
-            <h2 id="sd-debit-amount-value" class="text-2xl font-semibold text-gray-900">$3,526.00</h2>
+            <p class="text-sm text-gray-500 dark:text-gray-400">Amount deposited</p>
+            <h2 id="sd-debit-amount-value" class="text-2xl font-semibold text-gray-900 dark:text-white">$3,526.00</h2>
           </div>
           <div class="mt-4">
-            <p class="text-sm/6 font-medium text-gray-900">Method of Payment</p>
+            <p class="text-sm/6 font-medium text-gray-900 dark:text-white">Method of Payment</p>
             <div class="mt-2 flex items-center gap-3">
               <div id="sd-debit-mini-card" class="relative h-[56px] w-[88px] shrink-0 overflow-hidden rounded-lg bg-[#030712] px-2.5 py-2">
                 <div class="flex h-full flex-col justify-between">
@@ -534,14 +538,14 @@
                   <p class="whitespace-nowrap font-['Roboto_Mono'] text-[10px] leading-none tracking-[0.08em] text-white">••••&nbsp;<span data-ob-skeleton id="sd-debit-mini-last4">0000</span></p>
                 </div>
               </div>
-              <div id="sd-bank-mini-icon" class="hidden shrink-0 rounded-lg bg-gray-100 p-3 text-gray-700">
+              <div id="sd-bank-mini-icon" class="hidden shrink-0 rounded-lg bg-gray-100 p-3 text-gray-700 dark:bg-white/10 dark:text-gray-300">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-8">
                   <path stroke-linecap="round" stroke-linejoin="round" d="M12 21v-8.25M15.75 21v-8.25M8.25 21v-8.25M3 9l9-6 9 6m-1.5 12V10.332A48.36 48.36 0 0 0 12 9.75c-2.551 0-5.056.2-7.5.582V21M3 21h18M12 6.75h.008v.008H12V6.75Z" />
                 </svg>
               </div>
               <div class="flex min-w-0 flex-1 flex-col justify-center gap-1">
-                <p data-ob-skeleton id="sd-debit-recipient-name" class="block overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-gray-900">— ••••</p>
-                <p data-ob-skeleton id="sd-debit-recipient-expiry" class="truncate text-sm text-gray-500">Expires —</p>
+                <p data-ob-skeleton id="sd-debit-recipient-name" class="block overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">— ••••</p>
+                <p data-ob-skeleton id="sd-debit-recipient-expiry" class="truncate text-sm text-gray-500 dark:text-gray-400">Expires —</p>
               </div>
             </div>
           </div>
@@ -550,23 +554,23 @@
         <!-- Receipt details card -->
         <div class="stagger-item flex w-full max-w-[400px] flex-col overflow-hidden rounded-md">
 
-          <div class="flex items-center px-4 py-2 bg-gray-100">
-            <span class="text-sm font-semibold text-gray-900">Receipt Details</span>
+          <div class="flex items-center px-4 py-2 bg-gray-100 dark:bg-white/10">
+            <span class="text-sm font-semibold text-gray-900 dark:text-white">Receipt Details</span>
           </div>
 
-          <div class="flex flex-col items-start self-stretch bg-gray-50">
+          <div class="flex flex-col items-start self-stretch bg-gray-50 dark:bg-white/5">
 
             <div class="px-4 pt-3 pb-2 self-stretch">
-              <dt class="text-sm/6 font-medium text-gray-900">Date Issued</dt>
-              <dd data-ob-skeleton id="rcpt-date" class="mt-0.5 text-sm/6 text-gray-700">—</dd>
+              <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Date Issued</dt>
+              <dd data-ob-skeleton id="rcpt-date" class="mt-0.5 text-sm/6 text-gray-700 dark:text-gray-300">—</dd>
             </div>
 
             <div class="px-4 py-2 self-stretch">
-              <dt class="text-sm/6 font-medium text-gray-900">Transaction ID</dt>
-              <dd class="mt-0.5 text-sm/6 text-gray-700">
-                <button type="button" data-copy-id="rcpt-txid" class="copy-btn -ml-1.5 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer">
+              <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Transaction ID</dt>
+              <dd class="mt-0.5 text-sm/6 text-gray-700 dark:text-gray-300">
+                <button type="button" data-copy-id="rcpt-txid" class="copy-btn -ml-1.5 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer dark:text-gray-300 dark:hover:bg-white/10">
                   <span data-ob-skeleton id="rcpt-txid">—</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400" aria-hidden="true">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500" aria-hidden="true">
                     <path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" />
                     <path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" />
                   </svg>
@@ -575,14 +579,14 @@
             </div>
 
             <div class="px-4 py-2 self-stretch">
-              <dt class="text-sm/6 font-medium text-gray-900">Client Payment Reference ID</dt>
-              <dd data-ob-skeleton id="rcpt-client-ref-id" class="mt-0.5 text-sm/6 text-gray-500">—</dd>
+              <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Client Payment Reference ID</dt>
+              <dd data-ob-skeleton id="rcpt-client-ref-id" class="mt-0.5 text-sm/6 text-gray-500 dark:text-gray-400">—</dd>
             </div>
 
-            <div class="w-full border-t border-gray-200"></div>
+            <div class="w-full border-t border-gray-200 dark:border-white/10"></div>
 
             <div class="px-4 py-3 self-stretch">
-              <button type="button" class="inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5 -ml-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-colors">
+              <button type="button" class="inline-flex items-center gap-1.5 rounded-md px-1.5 py-0.5 -ml-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-50 hover:text-blue-700 transition-colors dark:text-blue-400 dark:hover:bg-white/10">
                 Download
               </button>
             </div>
@@ -611,12 +615,12 @@
       <div tabindex="0"
         class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
         <el-dialog-panel
-          class="relative w-full max-w-[512px] transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+          class="relative w-full max-w-[512px] transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900">
 
           <!-- Close button -->
           <div class="flex items-center justify-end px-4 pt-4">
             <button type="button" command="close" commandfor="sd-card-details-dialog"
-              class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 cursor-pointer">
+              class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 cursor-pointer dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-400">
               <span class="sr-only">Close</span>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
@@ -657,82 +661,82 @@
 
             <!-- Trademark Disclaimer under modal card -->
             <div class="flex items-center justify-center">
-              <button type="button" class="rounded-sm px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-100">
+              <button type="button" class="rounded-sm px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-100 dark:text-gray-400 dark:hover:bg-white/10">
                 Trademark Disclaimer
               </button>
             </div>
 
             <!-- Details section — same fields/order as Portal modal -->
-            <div class="flex flex-col gap-2 self-stretch rounded-lg border border-gray-200 bg-gray-50 p-4">
+            <div class="flex flex-col gap-2 self-stretch rounded-lg border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">
 
               <div class="grid grid-cols-2 gap-4 self-stretch">
-                <span class="text-sm font-medium text-gray-900">Amount</span>
-                <span id="sd-modal-details-amount" class="text-sm font-normal text-gray-700">$3,526.00</span>
+                <span class="text-sm font-medium text-gray-900 dark:text-white">Amount</span>
+                <span id="sd-modal-details-amount" class="text-sm font-normal text-gray-700 dark:text-gray-300">$3,526.00</span>
               </div>
 
               <div class="grid grid-cols-2 gap-4 self-stretch">
-                <span class="text-sm font-medium text-gray-900">Cardholder Name</span>
+                <span class="text-sm font-medium text-gray-900 dark:text-white">Cardholder Name</span>
                 <button type="button" data-copy-id="sd-modal-full-name"
-                  class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer">
+                  class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer dark:text-gray-300 dark:hover:bg-white/10">
                   <span id="sd-modal-full-name" class="text-sm font-normal"></span>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>
                 </button>
               </div>
 
               <div class="grid grid-cols-2 gap-4 self-stretch">
-                <span class="text-sm font-medium text-gray-900">Cardholder Address</span>
-                <span class="text-sm font-normal text-gray-700 whitespace-pre-line">3476 Orphan Road
+                <span class="text-sm font-medium text-gray-900 dark:text-white">Cardholder Address</span>
+                <span class="text-sm font-normal text-gray-700 whitespace-pre-line dark:text-gray-300">3476 Orphan Road
 Suite 1010
 Hayward, WI 54843
 United States</span>
               </div>
 
               <div class="grid grid-cols-2 gap-4 self-stretch items-center">
-                <span class="text-sm font-medium text-gray-900">Type</span>
+                <span class="text-sm font-medium text-gray-900 dark:text-white">Type</span>
                 <span class="inline-flex w-fit items-center">
                   <img src="../../assets/illustrations/ma_symbol.svg" alt="Mastercard" class="h-[18px] w-[28px]" />
                 </span>
               </div>
 
               <div class="grid grid-cols-2 gap-4 self-stretch">
-                <span class="text-sm font-medium text-gray-900">Card Number</span>
+                <span class="text-sm font-medium text-gray-900 dark:text-white">Card Number</span>
                 <button type="button" data-copy-id="sd-modal-full-number"
-                  class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer">
+                  class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer dark:text-gray-300 dark:hover:bg-white/10">
                   <span id="sd-modal-full-number" class="text-sm font-normal">5444 0001 0002 0003</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>
                 </button>
               </div>
 
               <div class="grid grid-cols-2 gap-4 self-stretch">
-                <span class="text-sm font-medium text-gray-900">Expires</span>
+                <span class="text-sm font-medium text-gray-900 dark:text-white">Expires</span>
                 <button type="button" data-copy-id="sd-modal-full-expiry"
-                  class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer">
+                  class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer dark:text-gray-300 dark:hover:bg-white/10">
                   <span id="sd-modal-full-expiry" class="text-sm font-normal">03/2027</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>
                 </button>
               </div>
 
               <div class="grid grid-cols-2 gap-4 self-stretch">
-                <span class="text-sm font-medium text-gray-900">CVC2</span>
+                <span class="text-sm font-medium text-gray-900 dark:text-white">CVC2</span>
                 <button type="button" data-copy-id="sd-modal-full-cvv"
-                  class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer">
+                  class="copy-btn -ml-1 inline-flex w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 cursor-pointer dark:text-gray-300 dark:hover:bg-white/10">
                   <span id="sd-modal-full-cvv" class="text-sm font-normal">452</span>
-                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>
                 </button>
               </div>
 
             </div>
 
             <!-- How to Use collapsible -->
-            <div class="w-full rounded-md bg-gray-100 p-3 hover:bg-gray-200/80">
+            <div class="w-full rounded-md bg-gray-100 p-3 hover:bg-gray-200/80 dark:bg-white/10">
               <button type="button" id="sd-card-how-toggle"
-                class="flex w-full cursor-pointer items-center justify-between text-sm font-medium leading-6 text-slate-950">
+                class="flex w-full cursor-pointer items-center justify-between text-sm font-medium leading-6 text-slate-950 dark:text-white">
                 <span>How to Use</span>
-                <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 transition-transform">
+                <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4 text-gray-500 transition-transform dark:text-gray-400">
                   <path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z" clip-rule="evenodd" />
                 </svg>
               </button>
-              <div id="sd-card-how-content" class="mt-2 hidden flex-col gap-1.5 text-sm font-normal leading-6 text-gray-700">
+              <div id="sd-card-how-content" class="mt-2 hidden flex-col gap-1.5 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300">
                 <p>Your virtual card has been issued and loaded. Enter the card details into your card terminal or payment portal to complete the transaction.</p>
                 <ul class="list-disc pl-5">
                   <li>Only charge the amount shown on this card.</li>
@@ -744,7 +748,7 @@ United States</span>
           </div>
 
           <!-- Modal footer: download + amber notice -->
-          <div class="flex flex-col gap-3 px-6 py-4 mt-2 border-t border-gray-100">
+          <div class="flex flex-col gap-3 px-6 py-4 mt-2 border-t border-gray-100 dark:border-white/10">
             <button type="button"
               class="inline-flex w-full items-center justify-center gap-x-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5 shrink-0" aria-hidden="true">
@@ -753,7 +757,7 @@ United States</span>
               </svg>
               Download Card Details
             </button>
-            <p class="text-xs text-amber-700 bg-amber-50 ring-1 ring-inset ring-amber-600/20 rounded-md px-3 py-2">
+            <p class="text-xs text-amber-700 bg-amber-50 ring-1 ring-inset ring-amber-600/20 rounded-md px-3 py-2 dark:text-amber-400 dark:bg-amber-500/10">
               Download card details now — this token may expire and card information will not be accessible again from this screen.
             </p>
           </div>

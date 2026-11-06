@@ -56,13 +56,13 @@
 
   function statusPill(amount, accepted) {
     return accepted
-      ? '<span data-ob-skeleton class="flex shrink-0 items-center gap-1 rounded-[19px] bg-[#ecfdf5] py-1.5 pr-[11px] pl-[9px]">' +
+      ? '<span data-ob-skeleton class="flex shrink-0 items-center gap-1 rounded-[19px] bg-emerald-50 dark:bg-emerald-500/10 py-1.5 pr-[11px] pl-[9px]">' +
           '<img src="' + ASSETS + 'icon-check-circle-green.svg" alt="" width="20" height="20" class="size-5">' +
-          '<span class="text-sm leading-5 font-medium whitespace-nowrap text-[#047857]">' + money(amount) + '</span>' +
+          '<span class="text-sm leading-5 font-medium whitespace-nowrap text-emerald-700 dark:text-emerald-400">' + money(amount) + '</span>' +
           '<span class="sr-only">accepted</span></span>'
-      : '<span data-ob-skeleton class="flex shrink-0 items-center gap-1 rounded-[19px] bg-[#f9fafb] py-1.5 pr-[11px] pl-[9px]">' +
+      : '<span data-ob-skeleton class="flex shrink-0 items-center gap-1 rounded-[19px] bg-gray-50 dark:bg-white/5 py-1.5 pr-[11px] pl-[9px]">' +
           '<img src="' + ASSETS + 'icon-clock.svg" alt="" width="20" height="20" class="size-5">' +
-          '<span class="text-sm leading-5 font-medium whitespace-nowrap text-[#374151]">' + money(amount) + '</span>' +
+          '<span class="text-sm leading-5 font-medium whitespace-nowrap text-gray-700 dark:text-gray-300">' + money(amount) + '</span>' +
           '<span class="sr-only">waiting</span></span>';
   }
 
@@ -78,17 +78,17 @@
         '<div class="flex min-w-0 items-center gap-2.5">' +
           '<img src="' + ASSETS + 'avatar.svg" alt="" width="24" height="24" class="size-6 shrink-0">' +
           '<div class="flex min-w-0 flex-col text-sm leading-5 font-medium">' +
-            '<span data-ob-skeleton class="truncate text-[#111827]">' + esc(p.name) + '</span>' +
-            (sub ? '<span data-ob-skeleton class="text-[#6b7280]">' + sub + '</span>' : '') +
+            '<span data-ob-skeleton class="truncate text-gray-900 dark:text-white">' + esc(p.name) + '</span>' +
+            (sub ? '<span data-ob-skeleton class="text-gray-500 dark:text-gray-400">' + sub + '</span>' : '') +
           '</div>' +
         '</div>' +
         statusPill(amount, accepted) +
       '</div>' +
       (comment
-        ? '<div aria-hidden="true" class="flex h-5 w-8 items-center justify-center py-1"><span class="h-full w-px bg-[#d1d5db]"></span></div>' +
+        ? '<div aria-hidden="true" class="flex h-5 w-8 items-center justify-center py-1"><span class="h-full w-px bg-gray-300 dark:bg-white/20"></span></div>' +
           '<div class="flex items-start gap-2 pl-0.5">' +
-            '<span class="flex shrink-0 items-center justify-center rounded-2xl bg-[#f3f4f6] p-[5px]"><img src="' + ASSETS + 'icon-chat-alt.svg" alt="" width="18" height="18" class="size-[18px]"></span>' +
-            '<p class="min-w-0 flex-1 pt-1 text-sm leading-5 text-[#374151]"><span class="sr-only">Comment: </span>' + esc(comment) + '</p>' +
+            '<span class="flex shrink-0 items-center justify-center rounded-2xl bg-gray-100 dark:bg-white/10 p-[5px]"><img src="' + ASSETS + 'icon-chat-alt.svg" alt="" width="18" height="18" class="size-[18px]"></span>' +
+            '<p class="min-w-0 flex-1 pt-1 text-sm leading-5 text-gray-700 dark:text-gray-300"><span class="sr-only">Comment: </span>' + esc(comment) + '</p>' +
           '</div>'
         : '') +
     '</li>';
@@ -99,17 +99,17 @@
     return F.parties(mp).map(function (p) {
       var comment = entry.comment && entry.by === p.id ? entry.comment : '';
       return personRow(p, entry.amounts[p.id], !!entry.accepted[p.id], comment);
-    }).join('<li aria-hidden="true" class="h-px bg-[#e5e7eb]"></li>');
+    }).join('<li aria-hidden="true" class="h-px bg-gray-200 dark:bg-white/10"></li>');
   }
 
   function createdFooter(mp, entry, extra) {
     var author = F.authorName(mp, entry.by);
     var isPerson = entry.by !== 'initial' && entry.by !== 'me';
-    return '<div class="flex min-h-[68px] items-center gap-3 bg-[#f9fafb] px-4 py-3">' +
+    return '<div class="flex min-h-[68px] items-center gap-3 bg-gray-50 dark:bg-white/5 px-4 py-3">' +
       '<div class="flex min-w-0 flex-1 flex-col gap-1">' +
-        '<p class="text-sm leading-5"><span data-ob-skeleton class="font-medium ' + (isPerson ? 'text-[#2563eb]' : 'text-[#111827]') + '">' + esc(author) + '</span> <span class="text-[#6b7280]">created on</span></p>' +
+        '<p class="text-sm leading-5"><span data-ob-skeleton class="font-medium ' + (isPerson ? 'text-blue-600 dark:text-blue-400' : 'text-gray-900 dark:text-white') + '">' + esc(author) + '</span> <span class="text-gray-500 dark:text-gray-400">created on</span></p>' +
         '<div class="flex items-center justify-between gap-2">' +
-          '<p class="flex items-center gap-1.5 text-sm leading-5 text-[#6b7280]"><img src="' + ASSETS + 'icon-calendar.svg" alt="" width="20" height="20" class="size-5 shrink-0"><span data-ob-skeleton>' + stamp(entry.at) + '</span></p>' +
+          '<p class="flex items-center gap-1.5 text-sm leading-5 text-gray-500 dark:text-gray-400"><img src="' + ASSETS + 'icon-calendar.svg" alt="" width="20" height="20" class="size-5 shrink-0"><span data-ob-skeleton>' + stamp(entry.at) + '</span></p>' +
           (extra && extra.badge ? extra.badge : '') +
         '</div>' +
       '</div>' +
@@ -133,25 +133,25 @@
     var tone, icon, text;
     if (left < HOUR) {
       var secs = Math.floor(left / 1000);
-      tone = 'border border-[#fca5a5] bg-[#fef2f2] py-[9px] font-medium text-[#b91c1c] hover:bg-[#fee2e2]';
+      tone = 'border border-red-300 bg-red-50 dark:bg-red-500/10 py-[9px] font-medium text-red-700 dark:text-red-400 hover:bg-red-100';
       icon = 'icon-calendar-red.svg';
       text = 'Expires in ' + Math.floor(secs / 60) + ' min and ' + (secs % 60) + ' sec';
     } else if (left < DAY) {
       var hours = Math.floor(left / HOUR);
-      tone = 'border border-[#fcd34d] bg-[#fffbeb] py-[9px] font-medium text-[#b45309] hover:bg-[#fef3c7]';
+      tone = 'border border-amber-300 bg-amber-50 dark:bg-amber-500/10 py-[9px] font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-100';
       icon = 'icon-calendar-amber.svg';
       text = 'Expires in ' + hours + (hours === 1 ? ' hour' : ' hours');
     } else if (opts.showDate) {
-      tone = 'border border-[#93c5fd] bg-[#f9fafb] py-[9px] font-medium text-[#374151] hover:bg-gray-100';
+      tone = 'border border-blue-300 bg-gray-50 dark:bg-white/5 py-[9px] font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10';
       icon = 'icon-calendar-exclamation.svg';
       // Phones have room for the full date: "How it works" shrinks to an (i) button there.
       text = stamp(expires.toISOString()).replace(' (ET)', '');
     } else {
-      tone = 'bg-[#f9fafb] py-2.5 font-medium text-[#111827] hover:bg-gray-100';
+      tone = 'bg-gray-50 dark:bg-white/5 py-2.5 font-medium text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10';
       icon = 'icon-calendar-exclamation-dark.svg';
       text = countdown(expires);
     }
-    return '<button type="button" data-mp-expiration class="flex w-full min-w-0 cursor-pointer items-center justify-center gap-1 rounded-full px-2.5 text-sm leading-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ' + tone + '">' +
+    return '<button type="button" data-mp-expiration class="flex w-full min-w-0 cursor-pointer items-center justify-center gap-1 rounded-full px-2.5 text-sm leading-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 ' + tone + '">' +
       '<img src="' + ASSETS + icon + '" alt="" width="18" height="18" class="size-[18px] shrink-0">' +
       '<span data-ob-skeleton class="truncate">' + text + '</span>' +
     '</button>';
@@ -163,7 +163,7 @@
     return '<div class="flex w-full gap-2.5 md:grid md:grid-cols-2">' +
       '<div data-mp-expiry data-show-date="' + (opts.showDate ? '1' : '') + '" class="flex min-w-0 flex-1">' + expiryBadge(expires, opts) + '</div>' +
       // Phones (< 768px): an (i) button; tablet and desktop: the "How it works" chip.
-      '<button type="button" data-mp-how class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-[#f9fafb] text-sm leading-5 font-medium text-[#3671fb] hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 md:size-auto md:min-w-0 md:flex-1 md:px-2.5 md:py-[9px]">' +
+      '<button type="button" data-mp-how class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full bg-gray-50 dark:bg-white/5 text-sm leading-5 font-medium text-[#3671fb] dark:text-blue-400 hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 md:size-auto md:min-w-0 md:flex-1 md:px-2.5 md:py-[9px]">' +
         '<img src="' + ASSETS + '../icon-info-circle-blue.svg" alt="" width="20" height="20" class="size-5 md:hidden">' +
         '<span class="sr-only md:not-sr-only">How it works</span>' +
       '</button>' +
@@ -188,14 +188,14 @@
   }
 
   function logLink() {
-    return '<a href="allocation-log.html" class="group flex items-center justify-center gap-2 rounded py-2.5 text-sm leading-5 font-semibold text-[#4b5563] hover:text-[#111827] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">See allocations log' +
+    return '<a href="allocation-log.html" class="group flex items-center justify-center gap-2 rounded py-2.5 text-sm leading-5 font-semibold text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">See allocations log' +
       '<img src="' + ASSETS + 'icon-chevron-right.svg" alt="" width="16" height="16" class="size-4 transition duration-200 ease-out group-hover:translate-x-1 motion-reduce:transition-none"></a>';
   }
 
   function infoBox(html) {
-    return '<div class="flex w-full items-start gap-3 rounded-[10px] bg-[#eff6ff] p-4">' +
+    return '<div class="flex w-full items-start gap-3 rounded-[10px] bg-blue-50 dark:bg-blue-500/10 p-4">' +
       '<img src="' + ASSETS + 'icon-information-circle.svg" alt="" width="20" height="20" class="size-5 shrink-0">' +
-      '<div class="flex min-w-0 flex-1 flex-col gap-5 text-sm leading-5 font-medium text-[#1e40af]">' + html + '</div>' +
+      '<div class="flex min-w-0 flex-1 flex-col gap-5 text-sm leading-5 font-medium text-blue-800 dark:text-blue-300">' + html + '</div>' +
     '</div>';
   }
 
@@ -211,7 +211,7 @@
         '<div class="flex w-full flex-col items-center gap-3">' +
           M.illustration('mp/' + icon, tint) +
           '<div class="flex w-full flex-col items-center gap-2 text-center">' +
-            '<h2 id="mp-dialog-title" class="text-lg leading-6 font-medium text-[#111827]">' + title + '</h2>' +
+            '<h2 id="mp-dialog-title" class="text-lg leading-6 font-medium text-gray-900 dark:text-white">' + title + '</h2>' +
             bodyHtml +
           '</div>' +
         '</div>' +
@@ -221,26 +221,26 @@
     );
   }
 
-  var PRIMARY_BTN = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
-  var SECONDARY_BTN = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-md border border-[#d1d5db] bg-white px-[17px] text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
+  var PRIMARY_BTN = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] px-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400';
+  var SECONDARY_BTN = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-md border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 px-[17px] text-base leading-6 font-medium text-gray-700 dark:text-gray-300 shadow-xs hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400';
 
   function howItWorks() {
     messageDialog('icon-chart-pie.svg', 'bg-[#2b61df]/10', 'How does allocating the amount work?',
-      '<div class="flex flex-col gap-3 text-sm leading-5 text-[#6b7280]">' +
+      '<div class="flex flex-col gap-3 text-sm leading-5 text-gray-500 dark:text-gray-400">' +
         '<p>The payment is split between every party listed. Each party reviews the allocation and accepts it, or changes it and gives a reason.</p>' +
         '<p>When the allocation changes, every party is notified and has to accept the new one.</p>' +
         '<p>Once all parties have accepted and chosen how to receive their share, the payment is processed.</p>' +
       '</div>' +
-      '<a href="#" class="mt-2 inline-flex items-center gap-3 self-center rounded-md px-6 py-3 text-base leading-6 font-medium text-[#2563eb] underline focus-visible:outline-2 focus-visible:outline-blue-600">' +
+      '<a href="#" class="mt-2 inline-flex items-center gap-3 self-center rounded-md px-6 py-3 text-base leading-6 font-medium text-blue-600 dark:text-blue-400 underline focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
         '<img src="' + ASSETS + 'icon-question-circle.svg" alt="" width="20" height="20" class="size-5">Learn more</a>',
       '<button type="button" data-ob-modal-close class="' + window.OBModal.PRIMARY_BUTTON + '">Close</button>');
   }
 
   function expirationDialog(mp) {
     var expires = F.expiresAt(mp);
-    messageDialog('icon-calendar-exclamation.svg', 'bg-[#eff6ff]', 'Expiration',
-      '<p class="text-sm leading-5 text-[#6b7280]">All parties have to accept the allocation and choose how to receive their share before this date. After it, the payment request expires.</p>' +
-      '<p class="text-sm leading-5 font-medium text-[#111827]">' + stamp(expires.toISOString()) + '</p>',
+    messageDialog('icon-calendar-exclamation.svg', 'bg-blue-50 dark:bg-blue-500/10', 'Expiration',
+      '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">All parties have to accept the allocation and choose how to receive their share before this date. After it, the payment request expires.</p>' +
+      '<p class="text-sm leading-5 font-medium text-gray-900 dark:text-white">' + stamp(expires.toISOString()) + '</p>',
       '<button type="button" data-ob-modal-close class="' + window.OBModal.PRIMARY_BUTTON + '">OK</button>');
   }
 
@@ -266,28 +266,28 @@
     var total = Object.keys(entry.amounts).reduce(function (s, k) { return s + Number(entry.amounts[k] || 0); }, 0);
 
     var banner = mp.justChanged
-      ? '<div role="status" class="flex w-full items-start gap-3 rounded-[10px] bg-[#ecfdf5] p-4">' +
+      ? '<div role="status" class="flex w-full items-start gap-3 rounded-[10px] bg-emerald-50 dark:bg-emerald-500/10 p-4">' +
           '<img src="' + ASSETS + 'icon-check-circle-solid-green.svg" alt="" width="20" height="20" class="size-5 shrink-0">' +
-          '<p class="text-sm leading-5 font-medium text-[#065f46]">Allocation changed. The other parties have been notified to review and accept it.</p></div>'
+          '<p class="text-sm leading-5 font-medium text-emerald-800 dark:text-emerald-300">Allocation changed. The other parties have been notified to review and accept it.</p></div>'
       : '';
 
     root.innerHTML =
       '<div class="flex flex-col gap-1">' +
-        '<h1 class="text-3xl leading-9 text-[#1f2937]">Current <span class="font-semibold">Payment Allocation</span></h1>' +
-        '<p class="text-sm leading-5 text-[#6b7280]">Below is the payment allocation to each party for this insurance claim. Accept it if no changes are necessary.</p>' +
+        '<h1 class="text-3xl leading-9 text-gray-800 dark:text-gray-100">Current <span class="font-semibold">Payment Allocation</span></h1>' +
+        '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Below is the payment allocation to each party for this insurance claim. Accept it if no changes are necessary.</p>' +
       '</div>' +
       banner +
       chips(mp, { showDate: true }) +
-      '<section aria-label="Allocation" class="w-full overflow-hidden rounded-lg border border-[#d1d5db] bg-white shadow-xs">' +
+      '<section aria-label="Allocation" class="w-full overflow-hidden rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 shadow-xs">' +
         '<div class="flex flex-col gap-4 p-4">' +
           '<div class="flex items-center justify-between gap-3">' +
-            '<p class="text-sm leading-5 font-medium text-[#6b7280]">Amount to be allocated</p>' +
-            '<p data-ob-skeleton class="rounded-[19px] bg-[#f9fafb] px-[11px] py-1.5 text-sm leading-5 font-medium text-[#111827]">' + money(total) + '</p>' +
+            '<p class="text-sm leading-5 font-medium text-gray-500 dark:text-gray-400">Amount to be allocated</p>' +
+            '<p data-ob-skeleton class="rounded-[19px] bg-gray-50 dark:bg-white/5 px-[11px] py-1.5 text-sm leading-5 font-medium text-gray-900 dark:text-white">' + money(total) + '</p>' +
           '</div>' +
-          '<ul role="list" class="flex flex-col gap-2"><li aria-hidden="true" class="h-px bg-[#e5e7eb]"></li>' + partyList(mp, entry) + '</ul>' +
+          '<ul role="list" class="flex flex-col gap-2"><li aria-hidden="true" class="h-px bg-gray-200 dark:bg-white/10"></li>' + partyList(mp, entry) + '</ul>' +
         '</div>' +
         createdFooter(mp, entry, {
-          action: '<a href="change-allocation.html" class="flex shrink-0 items-center gap-[3px] rounded-[32px] bg-[#2563eb] px-[11px] py-[9px] text-base leading-6 font-medium text-white hover:bg-[#1d4ed8] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
+          action: '<a href="change-allocation.html" class="flex shrink-0 items-center gap-[3px] rounded-[32px] bg-blue-600 px-[11px] py-[9px] text-base leading-6 font-medium text-white hover:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
             '<img src="' + ASSETS + 'icon-pencil-alt.svg" alt="" width="20" height="20" class="size-5">Change</a>'
         }) +
       '</section>' +
@@ -309,10 +309,10 @@
     var dispute = root.querySelector('[data-mp-dispute]');
     if (dispute) dispute.addEventListener('click', function () {
       var client = esc(window.OBModal.clientName());
-      messageDialog('icon-exclamation-red.svg', 'bg-[#fee2e2]', 'Dispute Total Allocation Amount',
-        '<p class="text-sm leading-5 text-[#6b7280]">Are you sure you want to dispute the total allocation amount?</p>' +
-        '<p class="text-sm leading-5 text-[#6b7280]">The payment request will be cancelled and you\'ll need to contact ' + client + ' to receive the payment.</p>',
-        '<button type="button" data-mp-dispute-confirm class="flex h-14 w-full cursor-pointer items-center justify-center rounded-md bg-[#dc2626] px-[17px] text-base leading-6 font-medium text-white hover:bg-[#b91c1c] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#dc2626]">Dispute</button>' +
+      messageDialog('icon-exclamation-red.svg', 'bg-red-100 dark:bg-red-500/20', 'Dispute Total Allocation Amount',
+        '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Are you sure you want to dispute the total allocation amount?</p>' +
+        '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">The payment request will be cancelled and you\'ll need to contact ' + client + ' to receive the payment.</p>',
+        '<button type="button" data-mp-dispute-confirm class="flex h-14 w-full cursor-pointer items-center justify-center rounded-md bg-red-600 px-[17px] text-base leading-6 font-medium text-white hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">Dispute</button>' +
         '<button type="button" data-ob-modal-close class="' + SECONDARY_BTN + '">Cancel</button>');
       document.querySelector('[data-mp-dispute-confirm]').addEventListener('click', function () {
         window.OBModal.close();
@@ -330,7 +330,7 @@
       var T = window.OnboardingTransitions;
       var show = function () {
         messageDialog('icon-chart-pie.svg', 'bg-[#2b61df]/10', 'New Allocation',
-          '<p class="text-sm leading-5 text-[#6b7280]">The latest allocation has been changed by another party. You need to review it to continue.</p>',
+          '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">The latest allocation has been changed by another party. You need to review it to continue.</p>',
           '<button type="button" data-ob-modal-close class="' + window.OBModal.PRIMARY_BUTTON + '">View Current Allocation</button>',
           { bare: true });
       };
@@ -350,10 +350,10 @@
 
     function amountField(id, value, opts) {
       return '<div class="relative w-40 shrink-0">' +
-        '<span aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-base leading-6 text-[#6b7280]">$</span>' +
+        '<span aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 -translate-y-1/2 text-base leading-6 text-gray-500 dark:text-gray-400">$</span>' +
         '<input ' + (opts.disabled ? 'disabled ' : 'data-mp-amount="' + id + '" ') + 'id="mp-amount-' + id + '" type="text" inputmode="decimal" autocomplete="off" ' +
           'aria-label="' + esc(opts.label) + '" value="' + Number(value || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + '" ' +
-          'class="' + INPUT + ' pl-7 ' + (opts.disabled ? 'disabled:bg-[#f3f4f6] disabled:text-[#4b5563]' : '') + '">' +
+          'class="' + INPUT + ' pl-7 ' + (opts.disabled ? 'disabled:bg-gray-100 dark:disabled:bg-white/10 disabled:text-gray-600 dark:disabled:text-gray-400' : '') + '">' +
       '</div>';
     }
 
@@ -363,8 +363,8 @@
       var sub = p.primary ? 'Primary Party' : '';
       return '<div class="flex items-center gap-4">' +
         '<label for="mp-amount-' + p.id + '" class="flex min-w-0 flex-1 flex-col text-sm leading-5 font-medium">' +
-          '<span class="truncate text-[#111827]">' + esc(title) + '</span>' +
-          (sub ? '<span data-ob-skeleton class="text-[#6b7280]">' + sub + '</span>' : '') +
+          '<span class="truncate text-gray-900 dark:text-white">' + esc(title) + '</span>' +
+          (sub ? '<span data-ob-skeleton class="text-gray-500 dark:text-gray-400">' + sub + '</span>' : '') +
         '</label>' +
         amountField(p.id, entry.amounts[p.id], { label: title }) +
       '</div>';
@@ -372,25 +372,25 @@
 
     root.innerHTML =
       '<div class="flex flex-col gap-6">' +
-        '<a href="allocation.html" class="flex size-6 items-center justify-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"><span class="sr-only">Back to Current Allocation</span>' +
+        '<a href="allocation.html" class="flex size-6 items-center justify-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400"><span class="sr-only">Back to Current Allocation</span>' +
           '<img src="' + ASSETS + 'icon-arrow-right.svg" alt="" width="24" height="24" class="size-6 rotate-180"></a>' +
-        '<h1 class="text-3xl leading-9 text-[#1f2937]">Change <span class="font-semibold">Allocation</span></h1>' +
+        '<h1 class="text-3xl leading-9 text-gray-800 dark:text-gray-100">Change <span class="font-semibold">Allocation</span></h1>' +
       '</div>' +
       chips(mp, { showDate: true }) +
       '<div class="flex flex-col gap-4">' +
-        '<div aria-hidden="true" class="h-px bg-[#d1d5db]"></div>' +
+        '<div aria-hidden="true" class="h-px bg-gray-300 dark:bg-white/20"></div>' +
         '<div class="flex items-center gap-4">' +
-          '<label for="mp-amount-total" class="flex-1 text-sm leading-5 font-medium text-[#111827]">Amount to be allocated</label>' +
+          '<label for="mp-amount-total" class="flex-1 text-sm leading-5 font-medium text-gray-900 dark:text-white">Amount to be allocated</label>' +
           amountField('total', total, { disabled: true, label: 'Amount to be allocated' }) +
         '</div>' +
-        '<div aria-hidden="true" class="h-px border-t border-dashed border-[#d1d5db]"></div>' +
+        '<div aria-hidden="true" class="h-px border-t border-dashed border-gray-300 dark:border-white/10"></div>' +
         rows +
       '</div>' +
       '<div data-mp-total-state role="status" class="flex justify-center"></div>' +
       '<div class="flex flex-col gap-1">' +
-        '<label for="mp-reason" class="text-sm leading-5 font-medium text-[#374151]">Reason for change <span class="text-[#9ca3af]">(minimum of 10 and maximum of 1000 characters)</span></label>' +
+        '<label for="mp-reason" class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-300">Reason for change <span class="text-gray-400 dark:text-gray-500">(minimum of 10 and maximum of 1000 characters)</span></label>' +
         '<textarea id="mp-reason" data-mp-reason rows="4" maxlength="1000" placeholder="Write reason here." aria-describedby="mp-reason-error" class="' + window.OBField.TEXTAREA + ' h-[114px] resize-y"></textarea>' +
-        '<p id="mp-reason-error" data-mp-reason-error class="hidden text-sm leading-5 text-[#dc2626]"></p>' +
+        '<p id="mp-reason-error" data-mp-reason-error class="hidden text-sm leading-5 text-red-600 dark:text-red-400"></p>' +
       '</div>' +
       (mp.log.length > 1 ? logLink() : '') +
       // At least 56 above the CTA: root gap-4 (16) + pt-10 (40). Bottom-anchored where
@@ -420,9 +420,9 @@
 
     function pill(tone, icon, text) {
       var tones = {
-        ok: 'bg-[#ecfdf5] text-[#065f46]',
-        warn: 'bg-[#fffbeb] font-normal text-[#92400e]',
-        error: 'bg-[#fef2f2] text-[#991b1b]'
+        ok: 'bg-emerald-50 dark:bg-emerald-500/10 text-emerald-800 dark:text-emerald-300',
+        warn: 'bg-amber-50 dark:bg-amber-500/10 font-normal text-amber-800 dark:text-amber-300',
+        error: 'bg-red-50 dark:bg-red-500/10 text-red-800 dark:text-red-300'
       };
       return '<p class="flex items-center gap-2 rounded-md p-2 text-sm leading-5 font-medium ' + tones[tone] + '">' +
         '<img src="' + icon + '" alt="" width="20" height="20" class="size-5">' + text + '</p>';
@@ -465,7 +465,7 @@
 
     function markSame(on) {
       Array.prototype.forEach.call(inputs, function (input) {
-        input.classList.toggle('outline-[#fbbf24]!', on);
+        input.classList.toggle('outline-amber-400!', on);
       });
     }
 
@@ -494,20 +494,20 @@
     var mp = F.getMp();
     var cards = mp.log.slice().reverse().map(function (entry, i) {
       var latest = i === 0;
-      return '<section aria-label="' + (latest ? 'Current allocation' : 'Earlier allocation') + '" class="w-full overflow-hidden rounded-lg bg-white shadow-xs ' +
-          (latest ? 'border-2 border-[#2563eb]' : 'border border-[#d1d5db]') + '">' +
+      return '<section aria-label="' + (latest ? 'Current allocation' : 'Earlier allocation') + '" class="w-full overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-xs ' +
+          (latest ? 'border-2 border-blue-600 dark:border-blue-400' : 'border border-gray-300 dark:border-white/10') + '">' +
         '<ul role="list" class="flex flex-col gap-2 p-4">' + partyList(mp, entry) + '</ul>' +
         createdFooter(mp, entry, latest ? {
-          badge: '<span class="shrink-0 rounded-[10px] bg-[#dbeafe] px-2.5 py-0.5 text-xs leading-4 font-medium text-[#1e40af]">Current</span>'
+          badge: '<span class="shrink-0 rounded-[10px] bg-blue-100 dark:bg-blue-500/20 px-2.5 py-0.5 text-xs leading-4 font-medium text-blue-800 dark:text-blue-300">Current</span>'
         } : null) +
       '</section>';
     }).join('');
 
     root.innerHTML =
       '<div class="flex flex-col gap-6">' +
-        '<a href="javascript:history.back()" class="flex size-6 items-center justify-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"><span class="sr-only">Back</span>' +
+        '<a href="javascript:history.back()" class="flex size-6 items-center justify-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400"><span class="sr-only">Back</span>' +
           '<img src="' + ASSETS + 'icon-arrow-right.svg" alt="" width="24" height="24" class="size-6 rotate-180"></a>' +
-        '<h1 class="text-3xl leading-9 text-[#1f2937]"><span class="font-semibold">Allocation</span> Log</h1>' +
+        '<h1 class="text-3xl leading-9 text-gray-800 dark:text-gray-100"><span class="font-semibold">Allocation</span> Log</h1>' +
       '</div>' +
       '<div class="flex flex-col gap-4 pb-4">' + cards + '</div>';
   }
@@ -524,9 +524,9 @@
     var parts = money(share).match(/^(.*?)(\.\d{2})$/) || [money(share), money(share), ''];
     // Same badges as the method summary pages: green Instant, amber ACH, red Check.
     var processing = {
-      'Bank Transfer - ACH': { text: 'Up to 3 Days', bg: 'bg-[#f59e0b]', icon: 'icon-check-circle-badge.svg' },
-      Check: { text: '7-10 Days', bg: 'bg-[#ef4444]', icon: 'icon-exclamation-circle-badge.svg' }
-    }[method] || { text: 'Instant', bg: 'bg-[#10b981]', icon: 'icon-check-circle-badge.svg' };
+      'Bank Transfer - ACH': { text: 'Up to 3 Days', bg: 'bg-amber-500', icon: 'icon-check-circle-badge.svg' },
+      Check: { text: '7-10 Days', bg: 'bg-red-500', icon: 'icon-exclamation-circle-badge.svg' }
+    }[method] || { text: 'Instant', bg: 'bg-emerald-500', icon: 'icon-check-circle-badge.svg' };
     var finalPage = new URLSearchParams(window.location.search).get('final');
 
     var amountCard = share > 0
@@ -537,10 +537,10 @@
             '<span class="absolute top-[23.12px] left-[242.54px] flex size-[180.2px] items-center justify-center"><img src="../../assets/onboarding/bubble-3.svg" alt="" width="147.167" height="147.167" class="block max-w-none -rotate-[105deg]"></span>' +
           '</div>' +
           '<div class="relative flex h-full flex-col items-center gap-3 pt-6 pb-[25px]">' +
-            '<p class="text-xs leading-5 font-medium tracking-[0.3px] text-[#bfdbfe] uppercase">Payment Amount</p>' +
+            '<p class="text-xs leading-5 font-medium tracking-[0.3px] text-blue-200 uppercase">Payment Amount</p>' +
             '<p class="text-5xl leading-[48px] whitespace-nowrap text-white">' + parts[1] + parts[2] + '</p>' +
-            '<p class="flex items-center gap-1 rounded-[14px] bg-[#1e40af] py-1 pr-[5px] pl-4">' +
-              '<span class="text-[10px] leading-5 font-medium tracking-[1px] whitespace-nowrap text-[#60a5fa] uppercase">Estimated Processing Time:</span>' +
+            '<p class="flex items-center gap-1 rounded-[14px] bg-blue-800 py-1 pr-[5px] pl-4">' +
+              '<span class="text-[10px] leading-5 font-medium tracking-[1px] whitespace-nowrap text-blue-400 uppercase">Estimated Processing Time:</span>' +
               '<span class="flex items-center gap-0.5 rounded-full ' + processing.bg + ' py-0.5 pr-1.5 pl-1 text-xs leading-4 whitespace-nowrap text-white">' +
                 '<img src="' + ASSETS + '../' + processing.icon + '" alt="" width="14" height="14" class="size-3.5">' + processing.text +
               '</span>' +
@@ -564,21 +564,21 @@
 
     root.innerHTML =
       '<div class="flex flex-col gap-2.5">' +
-        '<h1 class="text-3xl leading-9 text-[#1f2937]"><span class="font-semibold">Payment</span> Status</h1>' +
-        (share > 0 && method ? '<p class="text-sm leading-5 text-[#6b7280]">Selected payment method: ' + esc(method) + '</p>' : '') +
+        '<h1 class="text-3xl leading-9 text-gray-800 dark:text-gray-100"><span class="font-semibold">Payment</span> Status</h1>' +
+        (share > 0 && method ? '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Selected payment method: ' + esc(method) + '</p>' : '') +
       '</div>' +
       (allSubmitted
-        ? '<div role="status" class="flex w-full items-start gap-3 rounded-[10px] bg-[#ecfdf5] p-4">' +
+        ? '<div role="status" class="flex w-full items-start gap-3 rounded-[10px] bg-emerald-50 dark:bg-emerald-500/10 p-4">' +
             '<img src="' + ASSETS + 'icon-check-circle-solid-green.svg" alt="" width="20" height="20" class="size-5 shrink-0">' +
-            '<p class="text-sm leading-5 font-medium text-[#065f46]">All parties have submitted their payment method. ' +
+            '<p class="text-sm leading-5 font-medium text-emerald-800 dark:text-emerald-300">All parties have submitted their payment method. ' +
               (share > 0 ? 'Your payment is being processed.' : 'The payment is being processed.') + '</p></div>'
         : '') +
       amountCard +
       chips(mp, { showDate: false }) +
-      '<section aria-label="Parties" class="w-full rounded-lg border border-[#d1d5db] bg-white p-4 shadow-xs">' +
+      '<section aria-label="Parties" class="w-full rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 p-4 shadow-xs">' +
         '<ul role="list" class="flex flex-col gap-4">' + F.parties(mp).map(function (p) {
           return personRow(p, entry.amounts[p.id], submitted(p), '');
-        }).join('<li aria-hidden="true" class="h-px bg-[#e5e7eb]"></li>') + '</ul>' +
+        }).join('<li aria-hidden="true" class="h-px bg-gray-200 dark:bg-white/10"></li>') + '</ul>' +
       '</section>' +
       logLink() +
       (allSubmitted
@@ -605,19 +605,19 @@
     function field(id, label, opts) {
       opts = opts || {};
       return '<div class="flex flex-col gap-1">' +
-        '<label for="mp-d-' + id + '" class="text-sm leading-5 font-medium text-[#374151]">' + label +
-          (opts.optional ? ' <span class="font-normal text-[#9ca3af]">(optional)</span>' : '') + '</label>' +
+        '<label for="mp-d-' + id + '" class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-300">' + label +
+          (opts.optional ? ' <span class="font-normal text-gray-400 dark:text-gray-500">(optional)</span>' : '') + '</label>' +
         (opts.textarea
           ? '<textarea id="mp-d-' + id + '" data-mp-d="' + id + '" rows="4" maxlength="255" class="' + window.OBField.TEXTAREA + ' h-[88px] resize-y"></textarea>'
           : '<input id="mp-d-' + id + '" data-mp-d="' + id + '" type="' + (opts.type || 'text') + '" autocomplete="' + (opts.autocomplete || 'off') + '" value="' + esc(opts.value || '') + '" class="' + INPUT + '">') +
-        '<p data-mp-d-error="' + id + '" class="hidden text-sm leading-5 text-[#dc2626]"></p>' +
+        '<p data-mp-d-error="' + id + '" class="hidden text-sm leading-5 text-red-600 dark:text-red-400"></p>' +
       '</div>';
     }
 
     root.innerHTML =
       '<div class="flex flex-col gap-2">' +
-        '<h1 class="text-3xl leading-9 text-[#1f2937]">Contact <span class="font-semibold">' + esc(M.clientName()) + '</span></h1>' +
-        '<p class="text-sm leading-5 text-[#6b7280]">Please enter your information and tell us why you dispute the total amount.</p>' +
+        '<h1 class="text-3xl leading-9 text-gray-800 dark:text-gray-100">Contact <span class="font-semibold">' + esc(M.clientName()) + '</span></h1>' +
+        '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Please enter your information and tell us why you dispute the total amount.</p>' +
       '</div>' +
       '<form data-mp-dispute-form novalidate class="flex flex-1 flex-col gap-4">' +
         field('first', 'First Name', { autocomplete: 'given-name', value: info.firstName }) +
@@ -625,7 +625,7 @@
         field('company', 'Company', { optional: true, autocomplete: 'organization' }) +
         field('email', 'Email', { type: 'email', autocomplete: 'email', value: info.email }) +
         field('phone', 'Phone Number', { type: 'tel', autocomplete: 'tel', value: info.phoneNumber }) +
-        field('message', 'Message <span class="font-normal text-[#9ca3af]">(maximum of 255 characters)</span>', { textarea: true }) +
+        field('message', 'Message <span class="font-normal text-gray-400 dark:text-gray-500">(maximum of 255 characters)</span>', { textarea: true }) +
         // Exactly 56 above the CTA at every breakpoint: form gap-4 (16) + pt-10 (40).
         // Not bottom-anchored: Figma 4.2.0 puts the CTA right under the form.
         '<div class="flex flex-col gap-4 pt-10">' +
@@ -664,8 +664,8 @@
       root.innerHTML =
         '<div role="status" class="flex flex-1 flex-col items-center justify-center gap-2 py-16 text-center">' +
           '<img src="../../assets/onboarding/icon-mail-notification.svg" alt="" width="64" height="64" class="mb-2 size-16">' +
-          '<h1 class="text-xl leading-7 font-semibold text-[#1e40af]">Thank you for your inquiry!</h1>' +
-          '<p class="max-w-[260px] text-sm leading-5 text-[#374151]">We have forwarded your request to the relevant team who will respond as soon as possible.</p>' +
+          '<h1 class="text-xl leading-7 font-semibold text-blue-800 dark:text-blue-300">Thank you for your inquiry!</h1>' +
+          '<p class="max-w-[260px] text-sm leading-5 text-gray-700 dark:text-gray-300">We have forwarded your request to the relevant team who will respond as soon as possible.</p>' +
         '</div>';
     });
   }
@@ -709,7 +709,7 @@
 
     var expired = mp.payment === 'expired';
     var icon = document.querySelector('[data-mp-closed-icon]');
-    icon.classList.add(expired ? 'bg-[#f9fafb]' : 'bg-[#fef2f2]');
+    icon.classList.add.apply(icon.classList, (expired ? 'bg-gray-50 dark:bg-white/5' : 'bg-red-50 dark:bg-red-500/10').split(' '));
     icon.innerHTML = expired
       ? '<img src="' + ASSETS + 'icon-calendar-gray.svg" alt="" width="24" height="24" class="size-6">'
       : '<img src="../../assets/onboarding/icon-x-circle-red.svg" alt="" width="24" height="24" class="size-6">';
@@ -718,11 +718,11 @@
       : 'Your SMART Disburse request is no longer available';
 
     function block(label, html) {
-      return '<div class="flex flex-col gap-0.5"><dt class="text-sm leading-5 text-gray-600">' + label + '</dt>' + html + '</div>';
+      return '<div class="flex flex-col gap-0.5"><dt class="text-sm leading-5 text-gray-600 dark:text-gray-400">' + label + '</dt>' + html + '</div>';
     }
     function row(key, valueHtml) {
-      return '<div class="flex flex-wrap gap-y-1"><dt class="min-w-[180px] text-sm leading-5 font-medium text-gray-900">' + key + '</dt>' +
-        '<dd class="flex min-w-[180px] flex-1 flex-col items-start gap-0.5 text-sm leading-5 text-gray-700">' + valueHtml + '</dd></div>';
+      return '<div class="flex flex-wrap gap-y-1"><dt class="min-w-[180px] text-sm leading-5 font-medium text-gray-900 dark:text-white">' + key + '</dt>' +
+        '<dd class="flex min-w-[180px] flex-1 flex-col items-start gap-0.5 text-sm leading-5 text-gray-700 dark:text-gray-300">' + valueHtml + '</dd></div>';
     }
 
     var reason = verification
@@ -741,17 +741,17 @@
       details.push(row('Issued To', primary.you ? 'You (Primary Party)' : esc(primary.name) + ' (Primary Party)'));
     }
     var html = '';
-    if (reason) html += '<dl>' + block('Reason', '<dd class="text-sm leading-5 font-medium text-gray-900">' + reason + '</dd>') + '</dl>';
+    if (reason) html += '<dl>' + block('Reason', '<dd class="text-sm leading-5 font-medium text-gray-900 dark:text-white">' + reason + '</dd>') + '</dl>';
     if (mp.payment === 'disputed') {
-      html += '<dl>' + block('Details', '<dd class="text-sm leading-5 font-medium text-gray-900">Incorrect total amount' +
-        '<span class="block font-normal text-gray-500">' + esc(mp.disputeMessage || 'The total is $3,000 short of the repair invoice, so the claim needs to be reassessed.') + '</span></dd>') + '</dl>';
+      html += '<dl>' + block('Details', '<dd class="text-sm leading-5 font-medium text-gray-900 dark:text-white">Incorrect total amount' +
+        '<span class="block font-normal text-gray-500 dark:text-gray-400">' + esc(mp.disputeMessage || 'The total is $3,000 short of the repair invoice, so the claim needs to be reassessed.') + '</span></dd>') + '</dl>';
     } else {
       details.push(row('Issued By', esc(client)));
       details.push(row('Payment Amount', verification ? esc(ctx.amountFormatted || money(ctx.amount)) : money(F.TOTAL)));
-      html += '<dl class="flex flex-col gap-2"><dt class="text-sm leading-5 text-gray-600">Details</dt>' + details.join('') + '</dl>';
+      html += '<dl class="flex flex-col gap-2"><dt class="text-sm leading-5 text-gray-600 dark:text-gray-400">Details</dt>' + details.join('') + '</dl>';
       // Someone else received the money: say where the user's share went.
       if (fallback && !primary.you) {
-        html += '<p class="text-sm leading-5 text-gray-500">The full payment was issued to the primary party. Please contact ' + esc(client) + ' about your share.</p>';
+        html += '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">The full payment was issued to the primary party. Please contact ' + esc(client) + ' about your share.</p>';
       }
     }
     document.querySelector('[data-mp-closed-info]').innerHTML = html;

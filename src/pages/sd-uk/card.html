@@ -7,7 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../../src/scripts/design-tokens.js"></script>
   <link rel="stylesheet" href="../../styles/sd-uk.css">
@@ -20,66 +24,66 @@
 <body data-uk-step="4" data-uk-back="payment.html" class="min-h-screen bg-[#1e326f] font-['Inter'] antialiased">
   <div class="flex min-h-screen w-full flex-col bg-[#1e326f]">
     <div data-uk-header></div>
-    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
+    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white dark:bg-gray-900 px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
       <div class="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-6">
       <div class="flex flex-col items-center gap-4">
         <div class="flex w-full flex-col gap-4">
-          <h1 class="text-3xl font-semibold leading-9 text-gray-900">Instant with a Virtual Card</h1>
-          <p class="text-sm leading-5 text-gray-500"><span class="font-semibold text-gray-900" data-uk-text="amount"></span> will be deposited on an instantly issued Virtual Card</p>
+          <h1 class="text-3xl font-semibold leading-9 text-gray-900 dark:text-white">Instant with a Virtual Card</h1>
+          <p class="text-sm leading-5 text-gray-500 dark:text-gray-400"><span class="font-semibold text-gray-900 dark:text-white" data-uk-text="amount"></span> will be deposited on an instantly issued Virtual Card</p>
         </div>
-        <button type="button" id="how-it-works" class="cursor-pointer rounded-md bg-blue-50 px-2.5 py-1.5 text-sm font-semibold text-blue-700 hover:bg-blue-100">How this works</button>
+        <button type="button" id="how-it-works" class="cursor-pointer rounded-md bg-blue-50 dark:bg-blue-500/10 px-2.5 py-1.5 text-sm font-semibold text-blue-700 dark:text-blue-300 hover:bg-blue-100 dark:hover:bg-blue-500/20">How this works</button>
       </div>
       <form id="card-form" class="flex flex-col gap-4" autocomplete="off">
-        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4">
+        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 dark:border-white/10 p-4">
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-first" class="text-sm leading-5 text-gray-900">First Name</label></div>
-            <input id="d-first" name="d-first" type="text" placeholder="" data-uk-value="claimant.firstName" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="d-first" class="text-sm leading-5 text-gray-900 dark:text-white">First Name</label></div>
+            <input id="d-first" name="d-first" type="text" placeholder="" data-uk-value="claimant.firstName" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-last" class="text-sm leading-5 text-gray-900">Last Name</label></div>
-            <input id="d-last" name="d-last" type="text" placeholder="" data-uk-value="claimant.lastName" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="d-last" class="text-sm leading-5 text-gray-900 dark:text-white">Last Name</label></div>
+            <input id="d-last" name="d-last" type="text" placeholder="" data-uk-value="claimant.lastName" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
         </div>
-        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4">
+        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 dark:border-white/10 p-4">
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-line1" class="text-sm leading-5 text-gray-900">Address Line 1</label></div>
-            <input id="d-line1" name="d-line1" type="text" placeholder="" data-uk-value="claimant.address.line1" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="d-line1" class="text-sm leading-5 text-gray-900 dark:text-white">Address Line 1</label></div>
+            <input id="d-line1" name="d-line1" type="text" placeholder="" data-uk-value="claimant.address.line1" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-line2" class="text-sm leading-5 text-gray-900">Address Line 2</label><span class="text-sm text-gray-500">Optional</span></div>
-            <input id="d-line2" name="d-line2" type="text" placeholder="" data-uk-value="claimant.address.line2" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="d-line2" class="text-sm leading-5 text-gray-900 dark:text-white">Address Line 2</label><span class="text-sm text-gray-500 dark:text-gray-400">Optional</span></div>
+            <input id="d-line2" name="d-line2" type="text" placeholder="" data-uk-value="claimant.address.line2" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-city" class="text-sm leading-5 text-gray-900">City</label></div>
-            <input id="d-city" name="d-city" type="text" placeholder="" data-uk-value="claimant.address.city" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="d-city" class="text-sm leading-5 text-gray-900 dark:text-white">City</label></div>
+            <input id="d-city" name="d-city" type="text" placeholder="" data-uk-value="claimant.address.city" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <label for="d-region" class="text-sm leading-5 text-gray-900">Province/Territory</label>
+            <label for="d-region" class="text-sm leading-5 text-gray-900 dark:text-white">Province/Territory</label>
             <div class="grid grid-cols-1">
-              <select id="d-region" name="d-region" data-uk-select="regions" data-uk-select-value="claimant.address.region" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"><option value=""></option></select>
+              <select id="d-region" name="d-region" data-uk-select="regions" data-uk-select-value="claimant.address.region" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white dark:bg-gray-900 pr-8 pl-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"><option value=""></option></select>
               <img alt="" src="../../assets/sd-uk/icon-chevron-down.svg" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end">
             </div>
           </div>
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-postcode" class="text-sm leading-5 text-gray-900">Postal Code</label></div>
-            <input id="d-postcode" name="d-postcode" type="text" placeholder="" data-uk-value="claimant.address.postcode" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="d-postcode" class="text-sm leading-5 text-gray-900 dark:text-white">Postal Code</label></div>
+            <input id="d-postcode" name="d-postcode" type="text" placeholder="" data-uk-value="claimant.address.postcode" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <span class="text-sm leading-5 text-gray-900">Country</span>
-            <div class="flex h-10 items-center gap-2 rounded-md bg-gray-50 px-3 text-base text-gray-400 outline-1 -outline-offset-1 outline-gray-200 sm:text-sm/6">
+            <span class="text-sm leading-5 text-gray-900 dark:text-white">Country</span>
+            <div class="flex h-10 items-center gap-2 rounded-md bg-gray-50 dark:bg-white/5 px-3 text-base text-gray-400 dark:text-gray-500 outline-1 -outline-offset-1 outline-gray-200 dark:outline-white/10 sm:text-sm/6">
               <img alt="" src="../../assets/sd-uk/flag-gb.svg" class="h-[15px] w-5"><span class="min-w-0 flex-1 truncate" data-uk-text="claimant.address.country"></span>
               <img alt="" src="../../assets/sd-uk/icon-chevron-down.svg" class="size-5 opacity-50">
             </div>
           </div>
         </div>
-        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4">
+        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 dark:border-white/10 p-4">
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-phone" class="text-sm leading-5 text-gray-900">Phone Number</label></div>
-            <input id="d-phone" name="d-phone" type="tel" placeholder="(000) 000-0000" data-uk-value="claimant.phone" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="d-phone" class="text-sm leading-5 text-gray-900 dark:text-white">Phone Number</label></div>
+            <input id="d-phone" name="d-phone" type="tel" placeholder="(000) 000-0000" data-uk-value="claimant.phone" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-email" class="text-sm leading-5 text-gray-900">Email</label></div>
-            <input id="d-email" name="d-email" type="email" placeholder="" data-uk-value="claimant.email" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="d-email" class="text-sm leading-5 text-gray-900 dark:text-white">Email</label></div>
+            <input id="d-email" name="d-email" type="email" placeholder="" data-uk-value="claimant.email" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
         </div>
       </form>
@@ -111,7 +115,7 @@
       document.getElementById('how-it-works').addEventListener('click', function () {
         SDUK.modal({ html:
           '<div class="flex flex-col items-center gap-4 px-6 pt-0 pb-6 text-center">' +
-            '<p class="text-sm text-gray-500">Here’s a Sample</p><p class="text-3xl leading-9 text-gray-900">Virtual Card</p>' +
+            '<p class="text-sm text-gray-500 dark:text-gray-400">Here’s a Sample</p><p class="text-3xl leading-9 text-gray-900 dark:text-white">Virtual Card</p>' +
             '<div class="uk-mono relative h-[176px] w-full max-w-[280px] overflow-hidden rounded-[10px] bg-gradient-to-b from-[#1e326f] to-[#090c38] p-4 text-left text-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)]">' +
               '<span class="absolute top-4 right-4 rounded-full bg-white/20 px-2 text-[11px]">CVC2: <span class="inline-block h-2 w-5 rounded bg-white/40 align-middle"></span></span>' +
               '<p class="mt-6 flex items-center gap-2 text-xl font-semibold">£<span class="inline-block h-3 w-24 rounded-full bg-white/30"></span></p>' +
@@ -120,11 +124,11 @@
               '<p class="absolute bottom-4 left-4 text-[11px] font-semibold">CARD HOLDER</p>' +
               '<img alt="" src="../../assets/sd-uk/mastercard.svg" class="absolute right-4 bottom-3 h-[26px] w-[42px]">' +
             '</div>' +
-            '<p class="flex items-center gap-2 text-xs text-gray-500"><img alt="" src="../../assets/sd-uk/icon-trademark.svg" class="size-3">Trademark Disclaimer</p>' +
-            '<p class="text-base text-gray-900">Digital Wallet(s):</p>' +
+            '<p class="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400"><img alt="" src="../../assets/sd-uk/icon-trademark.svg" class="size-3">Trademark Disclaimer</p>' +
+            '<p class="text-base text-gray-900 dark:text-white">Digital Wallet(s):</p>' +
             '<img alt="Add to Apple Wallet" src="../../assets/sd-uk/apple-wallet.svg" class="h-11 w-[142px] rounded-md">' +
           '</div>' +
-          '<div class="border-t border-gray-200 p-4 text-center"><button type="button" class="cursor-pointer text-base font-semibold text-blue-600 hover:text-blue-700">Terms &amp; Conditions</button></div>' });
+          '<div class="border-t border-gray-200 dark:border-white/10 p-4 text-center"><button type="button" class="cursor-pointer text-base font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">Terms &amp; Conditions</button></div>' });
       });
     });
   </script>

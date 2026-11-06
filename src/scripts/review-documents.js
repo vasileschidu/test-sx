@@ -66,7 +66,7 @@
                 canvas.height = viewport.height;
                 canvas.style.width = '100%';
                 canvas.setAttribute('aria-label', 'Page ' + pageNo + ' of ' + pdf.numPages);
-                canvas.className = 'block rounded-sm bg-white shadow-sm ring-1 ring-black/5';
+                canvas.className = 'block rounded-sm bg-white shadow-sm ring-1 ring-black/5 dark:ring-white/10';
                 container.appendChild(canvas);
                 return page.render({ canvasContext: canvas.getContext('2d'), viewport: viewport }).promise;
               });
@@ -105,7 +105,7 @@
     var part = function (file, cls) {
       return '<span class="absolute block ' + cls + '"><img src="' + ASSETS + file + '" alt="" class="absolute inset-0 block size-full max-w-none"></span>';
     };
-    return '<span aria-hidden="true" data-ob-skeleton class="relative block h-[42px] w-[30px] shrink-0 overflow-hidden rounded-[1.24px] border border-[#d1d5db] bg-white">' +
+    return '<span aria-hidden="true" data-ob-skeleton class="relative block h-[42px] w-[30px] shrink-0 overflow-hidden rounded-[1.24px] border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900">' +
       part('doc-thumb-body.svg', 'inset-[5.68%_4.07%_22.92%_4.95%]') +
     '</span>';
   }
@@ -164,12 +164,12 @@
         var invalid = showErrors && !done;
         return '<li>' +
           '<button type="button" data-doc-open="' + i + '" ' +
-            'class="group flex w-full cursor-pointer items-center gap-3 rounded-lg border bg-white p-4 text-left shadow-xs hover:bg-gray-50 ' +
-            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ' + (invalid ? 'border-[#ef4444]' : 'border-[#d1d5db]') + '">' +
+            'class="group flex w-full cursor-pointer items-center gap-3 rounded-lg border bg-white dark:bg-gray-900 p-4 text-left shadow-xs hover:bg-gray-50 dark:hover:bg-white/5 ' +
+            'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 ' + (invalid ? 'border-red-500' : 'border-gray-300 dark:border-white/10') + '">' +
             thumbnail() +
             '<span class="flex min-w-0 flex-1 flex-col items-start gap-0.5 pb-0.5">' +
-              '<span data-ob-skeleton class="max-w-full truncate text-base leading-6 text-[#111827]">' + esc(doc.name) + '</span>' +
-              '<span data-ob-skeleton class="flex items-center gap-2 text-xs leading-4 text-[#6b7280]">' + esc(doc.type) +
+              '<span data-ob-skeleton class="max-w-full truncate text-base leading-6 text-gray-900 dark:text-white">' + esc(doc.name) + '</span>' +
+              '<span data-ob-skeleton class="flex items-center gap-2 text-xs leading-4 text-gray-500 dark:text-gray-400">' + esc(doc.type) +
                 '<img src="' + ASSETS + 'dot-gray.svg" alt="" width="2" height="2" class="size-0.5">' + esc(doc.size) + '</span>' +
             '</span>' +
             (done
@@ -197,7 +197,7 @@
 
     // ---- Document viewer ---------------------------------------------------
 
-    var SMALL_BTN = 'inline-flex cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 py-1.5 text-base leading-5 font-semibold lg:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
+    var SMALL_BTN = 'inline-flex cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 py-1.5 text-base leading-5 font-semibold lg:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400';
 
     function dots(index) {
       return docs.map(function (doc, i) {
@@ -215,21 +215,21 @@
       var doc = docs[index];
       return '' +
         // Figma Header: Steps row (dots, "n of N", X) then the full-width title and description.
-        '<div class="flex shrink-0 flex-col gap-3 border-b border-[#e5e7eb] p-6 lg:gap-2.5">' +
+        '<div class="flex shrink-0 flex-col gap-3 border-b border-gray-200 dark:border-white/10 p-6 lg:gap-2.5">' +
           '<div class="flex items-center gap-2.5">' +
             '<div class="flex items-center gap-2.5" aria-hidden="true">' + dots(index) + '</div>' +
-            '<p class="flex-1 text-sm leading-5 text-[#6b7280]">' + (index + 1) + ' of ' + docs.length + '</p>' +
+            '<p class="flex-1 text-sm leading-5 text-gray-500 dark:text-gray-400">' + (index + 1) + ' of ' + docs.length + '</p>' +
             // -m-1.5 keeps the 32px hit area while the row stays 20 tall, as in Figma.
-            '<button type="button" data-ob-modal-close class="-m-1.5 inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+            '<button type="button" data-ob-modal-close class="-m-1.5 inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
               '<span class="sr-only">Close</span>' +
               '<img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5">' +
             '</button>' +
           '</div>' +
-          '<h2 id="doc-viewer-title" class="text-2xl leading-8 font-semibold text-[#1f2937]">' + esc(doc.name) + '</h2>' +
+          '<h2 id="doc-viewer-title" class="text-2xl leading-8 font-semibold text-gray-800 dark:text-gray-100">' + esc(doc.name) + '</h2>' +
           // On mobile a long description is cut to two lines ending "… Show more".
-          '<p id="doc-viewer-desc" data-doc-desc class="text-sm leading-5 text-[#6b7280]">' +
+          '<p id="doc-viewer-desc" data-doc-desc class="text-sm leading-5 text-gray-500 dark:text-gray-400">' +
             '<span data-doc-desc-text>' + esc(doc.description) + '</span>' +
-            '<button type="button" data-doc-more hidden aria-expanded="false" aria-controls="doc-viewer-desc" class="ml-0.5 cursor-pointer rounded px-1.5 font-semibold whitespace-nowrap text-[#374151] hover:text-[#111827] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Show more</button>' +
+            '<button type="button" data-doc-more hidden aria-expanded="false" aria-controls="doc-viewer-desc" class="ml-0.5 cursor-pointer rounded px-1.5 font-semibold whitespace-nowrap text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Show more</button>' +
           '</p>' +
         '</div>';
     }
@@ -238,13 +238,13 @@
       var doc = docs[index];
       return '' +
         '<div class="relative flex min-h-0 flex-1 flex-col p-6">' +
-          '<div data-doc-preview tabindex="0" aria-label="' + esc(doc.name) + ' document" class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] bg-[#f9fafb] p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600 max-md:cursor-pointer">' +
+          '<div data-doc-preview tabindex="0" aria-label="' + esc(doc.name) + ' document" class="min-h-0 flex-1 overflow-y-auto rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 max-md:cursor-pointer">' +
             '<div data-doc-pages class="flex flex-col gap-4">' +
-              '<p class="py-10 text-center text-sm leading-5 text-[#6b7280]">Loading document…</p>' +
+              '<p class="py-10 text-center text-sm leading-5 text-gray-500 dark:text-gray-400">Loading document…</p>' +
             '</div>' +
           '</div>' +
           // Phones: the preview is small, so a tap opens the PDF full screen.
-          '<span aria-hidden="true" class="pointer-events-none absolute bottom-9 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-[#111827]/80 px-3 py-1.5 text-xs leading-4 font-medium whitespace-nowrap text-white shadow-lg md:hidden">' +
+          '<span aria-hidden="true" class="pointer-events-none absolute bottom-9 left-1/2 flex -translate-x-1/2 items-center gap-1.5 rounded-full bg-gray-900/80 px-3 py-1.5 text-xs leading-4 font-medium whitespace-nowrap text-white shadow-lg md:hidden">' +
             '<img src="' + ASSETS + 'icon-expand.svg" alt="" width="16" height="16" class="size-4">Tap to open full screen</span>' +
         '</div>';
     }
@@ -253,15 +253,15 @@
       var doc = docs[index];
       var last = index === docs.length - 1;
       return '' +
-        '<div class="flex items-center gap-2.5 border-t border-[#e5e7eb] px-6 py-5">' +
+        '<div class="flex items-center gap-2.5 border-t border-gray-200 dark:border-white/10 px-6 py-5">' +
           '<div class="flex flex-1">' +
-            '<a href="' + esc(doc.file) + '" download="' + esc(doc.name) + '.pdf" class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 py-1.5 text-base leading-5 font-semibold text-[#374151] hover:bg-gray-50 lg:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
+            '<a href="' + esc(doc.file) + '" download="' + esc(doc.name) + '.pdf" class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 py-1.5 text-base leading-5 font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 lg:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
               '<img src="' + ASSETS + 'icon-download.svg" alt="" width="18" height="18" class="size-[18px]">Download' +
             '</a>' +
           '</div>' +
           '<button type="button" data-doc-prev ' + (index === 0 ? 'disabled ' : '') +
-            'class="' + SMALL_BTN + ' border border-[#d1d5db] bg-white text-[#374151] shadow-xs disabled:shadow-none hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white">Previous</button>' +
-          '<button type="button" data-doc-next class="' + SMALL_BTN + ' bg-[#2563eb] text-white hover:bg-[#3b82f6]">' + (last ? 'Done' : 'Next') + '</button>' +
+            'class="' + SMALL_BTN + ' border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 shadow-xs disabled:shadow-none hover:bg-gray-50 dark:hover:bg-white/5 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white dark:disabled:hover:bg-gray-900">Previous</button>' +
+          '<button type="button" data-doc-next class="' + SMALL_BTN + ' bg-blue-600 text-white hover:bg-blue-500">' + (last ? 'Done' : 'Next') + '</button>' +
         '</div>';
     }
 
@@ -327,7 +327,7 @@
         bare: true,
         header: viewerHeader(index),
         footer: viewerFooter(index),
-        panelClass: 'relative flex h-[min(752px,calc(100dvh-3rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5'
+        panelClass: 'relative flex h-[min(752px,calc(100dvh-3rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black/5 dark:ring-white/10'
       });
       backdrop.querySelector('[data-doc-next]').addEventListener('click', function () {
         markReviewed(docs[index]);
@@ -372,7 +372,7 @@
       .catch(function (error) {
         console.error('[documents]', error);
         var list = document.querySelector('[data-docs-list]');
-        if (list) list.innerHTML = '<li class="text-sm text-[#6b7280]">Documents are unavailable right now. Please try again later.</li>';
+        if (list) list.innerHTML = '<li class="text-sm text-gray-500 dark:text-gray-400">Documents are unavailable right now. Please try again later.</li>';
       });
     if (window.OnboardingTransitions && window.OnboardingTransitions.waitFor) window.OnboardingTransitions.waitFor(ready);
   });
