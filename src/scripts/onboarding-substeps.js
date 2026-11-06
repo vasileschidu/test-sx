@@ -20,7 +20,7 @@
     if (state === 'current') {
       return '<img src="' + ASSETS + 'substep-current.svg" alt="" width="20" height="20" class="size-5 shrink-0">';
     }
-    return '<span class="flex size-5 shrink-0 items-center justify-center"><span class="block size-2.5 rounded-full bg-[#e5e7eb]"></span></span>';
+    return '<span class="flex size-5 shrink-0 items-center justify-center"><span class="block size-2.5 rounded-full bg-gray-200 dark:bg-white/10"></span></span>';
   }
 
   function render(el) {
@@ -32,9 +32,9 @@
     el.innerHTML = labels.map(function (label, i) {
       var state = i < current ? 'done' : (i === current ? 'current' : 'next');
       return '<div role="listitem" class="flex min-w-0 flex-1 flex-col gap-4"' + (state === 'current' ? ' aria-current="step"' : '') + '>' +
-        '<span class="block h-0.5 w-full ' + (state === 'next' ? 'bg-[#e5e7eb]' : 'bg-[#2563eb]') + '"></span>' +
+        '<span class="block h-0.5 w-full ' + (state === 'next' ? 'bg-gray-200 dark:bg-white/10' : 'bg-blue-600') + '"></span>' +
         '<span class="flex items-center gap-3">' + bullet(state) +
-          '<span class="truncate text-sm leading-5 font-medium text-[#1f2937]">' + label + '</span>' +
+          '<span class="truncate text-sm leading-5 font-medium text-gray-800 dark:text-gray-100">' + label + '</span>' +
         '</span>' +
       '</div>';
     }).join('');

@@ -1,8 +1,7 @@
 /* SMART Disburse onboarding: the SD Figma look over the shared <app-checkbox>
    (src/styles/checkbox.css is the SMART System look: #155DFB box, 14px
    gray-700 Medium label). Link it after checkbox.css. Unlayered, so it also
-   wins over the component's dark: classes, which would otherwise follow the
-   OS dark mode on these always-light pages. */
+   wins over the component's dark: classes. Dark-mode label colours are below. */
 
 input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):checked {
   border-color: #2563eb;
@@ -18,6 +17,10 @@ input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.abso
   box-shadow: 0 0 0 2px #fff, 0 0 0 4px #2563eb;
 }
 
+.dark input[type="checkbox"]:not([role="switch"]):not(.sr-only):not(.hidden):not(.absolute):focus-visible {
+  box-shadow: 0 0 0 2px #111827, 0 0 0 4px #2563eb; /* gray-900 gap */
+}
+
 /* A bare box is inline-block in checkbox.css, so the line height made it 24px
    tall and the Summary consent row 9px taller than the Review rows. */
 app-checkbox[bare]:not(.hidden) {
@@ -29,9 +32,17 @@ app-checkbox label > span:last-child > span:first-child {
   color: #374151;
 }
 
+.dark app-checkbox label > span:last-child > span:first-child {
+  color: #d1d5db; /* gray-300 */
+}
+
 /* Verification Step consent: gray-500 Medium. */
 [data-verify-consent] app-checkbox label > span:last-child > span:first-child {
   color: #6b7280;
+}
+
+.dark [data-verify-consent] app-checkbox label > span:last-child > span:first-child {
+  color: #9ca3af; /* gray-400 */
 }
 
 /* "Get your receipt" consent: 12px Regular, as before the shared component. */

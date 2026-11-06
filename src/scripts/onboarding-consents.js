@@ -30,11 +30,11 @@ window.OBConsents = (function () {
     consentsEl.innerHTML = agreements.map(function (a, i) {
       var done = !!accepted[a.id];
       return '<li class="flex items-center gap-6 p-3.5">' +
-        '<p class="min-w-0 flex-1 text-xs leading-4 font-medium text-[#374151]">I’ve read and consent to the ' +
-          '<button type="button" data-vcs-review="' + i + '" class="cursor-pointer rounded text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-blue-600">' + esc(a.name) + '</button>.</p>' +
+        '<p class="min-w-0 flex-1 text-xs leading-4 font-medium text-gray-700 dark:text-gray-300">I’ve read and consent to the ' +
+          '<button type="button" data-vcs-review="' + i + '" class="cursor-pointer rounded text-blue-600 dark:text-blue-400 hover:underline focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' + esc(a.name) + '</button>.</p>' +
         (done
           ? '<app-checkbox bare checked data-vcs-check="' + i + '" aria-label="Consent to the ' + esc(a.name) + '"></app-checkbox>'
-          : '<button type="button" data-vcs-review="' + i + '" class="shrink-0 cursor-pointer rounded text-xs leading-4 font-semibold text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Review</button>') +
+          : '<button type="button" data-vcs-review="' + i + '" class="shrink-0 cursor-pointer rounded text-xs leading-4 font-semibold text-blue-600 dark:text-blue-400 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Review</button>') +
       '</li>';
     }).join('');
     if (opts.onChange) opts.onChange(agreements.every(function (a) { return accepted[a.id]; }));
@@ -61,25 +61,25 @@ window.OBConsents = (function () {
     var a = agreements[index];
     // Title bar and button bar stay put; the text box between them scrolls.
     var text =
-      '<div class="flex flex-col gap-4 text-sm leading-5 text-[#374151]">' +
-        '<p class="text-base leading-6 font-semibold text-[#111827]">' + esc(a.title) + '</p>' +
+      '<div class="flex flex-col gap-4 text-sm leading-5 text-gray-700 dark:text-gray-300">' +
+        '<p class="text-base leading-6 font-semibold text-gray-900 dark:text-white">' + esc(a.title) + '</p>' +
         window.OBModal.agreementHtml(a.body) +
       '</div>';
     var SCROLL_ATTRS = 'data-vcs-scroll tabindex="0" aria-label="' + esc(a.title) + '"';
     var body = opts.documentScroll
       // The body scrolls; the grey box is the document, so its end shows up as you scroll.
       ? '<div class="relative flex min-h-0 flex-1 flex-col">' +
-          '<div ' + SCROLL_ATTRS + ' class="min-h-0 flex-1 overflow-y-auto p-6 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600">' +
-            '<div class="rounded border border-[#e5e7eb] bg-[#f9fafb] p-4">' + text + '</div>' +
+          '<div ' + SCROLL_ATTRS + ' class="min-h-0 flex-1 overflow-y-auto p-6 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+            '<div class="rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-4">' + text + '</div>' +
           '</div>' +
           // White fade over the last lines: there is more below. Goes with the button at the end.
           '<div data-vcs-fade aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-white/0 to-white"></div>' +
-          '<button type="button" data-vcs-more aria-label="Scroll down" class="absolute bottom-6 left-1/2 flex size-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 text-gray-700 shadow-md inset-ring-2 inset-ring-white transition hover:bg-gray-200 hover:text-gray-900 active:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
+          '<button type="button" data-vcs-more aria-label="Scroll down" class="absolute bottom-6 left-1/2 flex size-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 shadow-md inset-ring-2 inset-ring-white transition hover:bg-gray-200 dark:hover:bg-white/15 hover:text-gray-900 dark:hover:text-white active:bg-gray-300 dark:active:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
             '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-6"><path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z" clip-rule="evenodd" /></svg>' +
           '</button>' +
         '</div>'
       : '<div class="flex min-h-0 flex-1 flex-col p-6">' +
-          '<div ' + SCROLL_ATTRS + ' class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] bg-[#f9fafb] p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600">' +
+          '<div ' + SCROLL_ATTRS + ' class="min-h-0 flex-1 overflow-y-auto rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
             text +
           '</div>' +
         '</div>';
@@ -88,18 +88,18 @@ window.OBConsents = (function () {
       'vcs-review-title',
       {
         bare: true,
-        header: '<div class="flex shrink-0 items-center justify-between gap-2 border-b border-[#e5e7eb] px-6 py-4">' +
-          '<h2 id="vcs-review-title" class="text-base leading-6 text-[#111827]">Review and agree</h2>' +
-          '<button type="button" data-ob-modal-close class="inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+        header: '<div class="flex shrink-0 items-center justify-between gap-2 border-b border-gray-200 dark:border-white/10 px-6 py-4">' +
+          '<h2 id="vcs-review-title" class="text-base leading-6 text-gray-900 dark:text-white">Review and agree</h2>' +
+          '<button type="button" data-ob-modal-close class="inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
             '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5"></button>' +
         '</div>',
-        footer: '<div class="flex items-center gap-2.5 border-t border-[#e5e7eb] px-6 py-5">' +
+        footer: '<div class="flex items-center gap-2.5 border-t border-gray-200 dark:border-white/10 px-6 py-5">' +
           '<div class="flex flex-1 items-center gap-2.5" aria-label="' + (index + 1) + ' of ' + agreements.length + '">' + dots(index) + '</div>' +
           '<button type="button" data-ob-modal-close class="' + window.OBModal.SECONDARY_BUTTON_MD + '">Cancel</button>' +
           '<button type="button" data-vcs-accept disabled class="' + window.OBModal.PRIMARY_BUTTON_MD + '">Accept</button>' +
         '</div>',
         // 752 at most (Figma); min() keeps it inside the shell's viewport cap.
-        panelClass: 'relative flex max-h-[min(752px,calc(100dvh-3rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5'
+        panelClass: 'relative flex max-h-[min(752px,calc(100dvh-3rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black/5 dark:ring-white/10'
       }
     );
 

@@ -47,7 +47,7 @@ window.OBDebit = (function () {
     var inner = name === 'Mastercard'
       ? '<img src="' + ASSETS + 'cc-mastercard.svg" alt="" width="52.0005" height="31.7201" class="block ' + (large ? 'h-5 w-[33px]' : 'h-[11.8px] w-[19.5px]') + '">'
       : '<span class="block ' + (large ? 'h-5 px-0.5 text-sm leading-5' : 'h-[11.8px] text-[10px] leading-[11.8px]') + ' font-extrabold tracking-wide text-white italic">VISA</span>';
-    return '<span role="img" aria-label="' + name + '" class="inline-flex shrink-0 items-center bg-[#111827] ' + box + '">' + inner + '</span>';
+    return '<span role="img" aria-label="' + name + '" class="inline-flex shrink-0 items-center bg-gray-900 ' + box + '">' + inner + '</span>';
   }
 
   function cardLines(card) {

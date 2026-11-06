@@ -126,11 +126,11 @@
       '<div data-ob-menu-close data-ob-menu-fade class="absolute inset-0 bg-black/75 opacity-0 backdrop-blur-[5px] transition-opacity duration-200 ease-out"></div>' +
       // Sits exactly over the hamburger, so the button reads as turning into a close.
       '<button type="button" data-ob-menu-close data-ob-menu-focus ' +
-        'class="absolute top-4 right-4 inline-flex cursor-pointer items-center justify-center rounded-md bg-white p-1.5 text-gray-500 shadow-xs transition-colors hover:text-gray-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white">' +
+        'class="absolute top-4 right-4 inline-flex cursor-pointer items-center justify-center rounded-md bg-white dark:bg-gray-900 p-1.5 text-gray-500 dark:text-gray-400 shadow-xs transition-colors hover:text-gray-700 dark:hover:text-gray-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 focus-visible:ring-offset-white">' +
         '<span class="sr-only">Close menu</span>' + ICON_CLOSE +
       '</button>' +
       '<div role="menu" data-ob-menu-fade data-ob-menu-panel ' +
-        'class="absolute inset-x-4 top-14 origin-top scale-95 overflow-hidden rounded-md bg-white pt-1 opacity-0 shadow-lg ring-1 ring-black/5 transition duration-150 ease-out"></div>';
+        'class="absolute inset-x-4 top-14 origin-top scale-95 overflow-hidden rounded-md bg-white dark:bg-gray-900 pt-1 opacity-0 shadow-lg ring-1 ring-black/5 dark:ring-white/10 transition duration-150 ease-out"></div>';
 
     var panel = menu.querySelector('[data-ob-menu-panel]');
     items.forEach(function (item, i) {
@@ -138,8 +138,8 @@
       btn.type = 'button';
       btn.setAttribute('role', 'menuitem');
       btn.setAttribute('data-ob-menu-item', String(i));
-      btn.className = 'flex w-full cursor-pointer items-start gap-3 p-4 text-left text-sm leading-5 font-medium text-gray-900 hover:bg-gray-50 focus-visible:bg-gray-50 focus-visible:outline-none';
-      btn.innerHTML = '<span class="shrink-0 text-gray-500">' + (item.icon || '') + '</span><span>' + item.label + '</span>';
+      btn.className = 'flex w-full cursor-pointer items-start gap-3 p-4 text-left text-sm leading-5 font-medium text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:bg-gray-50 dark:focus-visible:bg-white/5 focus-visible:outline-none';
+      btn.innerHTML = '<span class="shrink-0 text-gray-500 dark:text-gray-400">' + (item.icon || '') + '</span><span>' + item.label + '</span>';
       panel.appendChild(btn);
     });
     return menu;

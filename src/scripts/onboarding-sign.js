@@ -18,20 +18,20 @@ window.OBSign = (function () {
   var ASSETS = '../../assets/onboarding/';
   var PROCESSING_MS = 1800;
 
-  var TAB = 'cursor-pointer rounded-md px-3 py-2 text-sm leading-5 font-medium text-[#111827] hover:bg-[#f3f4f6] aria-selected:bg-[#f3f4f6] focus-visible:outline-2 focus-visible:outline-blue-600';
-  var PAD = 'relative flex h-[296px] w-full items-center justify-center overflow-hidden rounded-2xl border bg-[#f9fafb]';
+  var TAB = 'cursor-pointer rounded-md px-3 py-2 text-sm leading-5 font-medium text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-white/10 aria-selected:bg-gray-100 dark:aria-selected:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400';
+  var PAD = 'relative flex h-[296px] w-full items-center justify-center overflow-hidden rounded-2xl border bg-gray-50 dark:bg-white/5';
 
   // Title bar and Submit bar stay put; the shell scrolls the part between them.
   function header() {
-    return '<div class="flex shrink-0 items-center gap-2 border-b border-[#e5e7eb] py-2 pr-3 pl-6">' +
-        '<h2 id="ob-sign-title" class="flex-1 text-base leading-6 font-medium text-[#111827]">Sign to authorize payment</h2>' +
-        '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+    return '<div class="flex shrink-0 items-center gap-2 border-b border-gray-200 dark:border-white/10 py-2 pr-3 pl-6">' +
+        '<h2 id="ob-sign-title" class="flex-1 text-base leading-6 font-medium text-gray-900 dark:text-white">Sign to authorize payment</h2>' +
+        '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
           '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-lined-gray.svg" alt="" width="24" height="24" class="size-6"></button>' +
       '</div>';
   }
 
   function footer() {
-    return '<div class="flex border-t border-[#e5e7eb] px-6 py-5">' +
+    return '<div class="flex border-t border-gray-200 dark:border-white/10 px-6 py-5">' +
         '<button type="button" data-sign-submit class="' + window.OBModal.PRIMARY_BUTTON + '">Submit</button>' +
       '</div>';
   }
@@ -48,10 +48,10 @@ window.OBSign = (function () {
 
         // Draw
         '<div id="ob-sign-draw" role="tabpanel" aria-labelledby="ob-sign-tab-draw" data-sign-panel="draw" class="flex w-full flex-col gap-4">' +
-          '<div data-sign-pad class="' + PAD + ' border-[#e5e7eb] touch-none">' +
+          '<div data-sign-pad class="' + PAD + ' border-gray-200 dark:border-white/10 touch-none">' +
             '<canvas data-sign-canvas aria-label="Signature pad" class="absolute inset-0 size-full cursor-crosshair"></canvas>' +
-            '<p data-sign-hint class="pointer-events-none w-[200px] text-center text-base leading-6 text-[#6b7280]">Sign with your finger, stylus, or mouse.</p>' +
-            '<button type="button" data-sign-clear class="absolute top-3 right-3 hidden cursor-pointer rounded-md px-2 py-1 text-xs leading-4 font-semibold text-[#6b7280] hover:bg-gray-100 hover:text-[#374151] focus-visible:outline-2 focus-visible:outline-blue-600">Clear</button>' +
+            '<p data-sign-hint class="pointer-events-none w-[200px] text-center text-base leading-6 text-gray-500 dark:text-gray-400">Sign with your finger, stylus, or mouse.</p>' +
+            '<button type="button" data-sign-clear class="absolute top-3 right-3 hidden cursor-pointer rounded-md px-2 py-1 text-xs leading-4 font-semibold text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-700 dark:hover:text-gray-200 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Clear</button>' +
           '</div>' +
         '</div>' +
 
@@ -61,13 +61,13 @@ window.OBSign = (function () {
             '<label for="ob-sign-name" class="' + F.LABEL + '">Your Full Name</label>' +
             '<div class="relative">' +
               '<input id="ob-sign-name" data-sign-name type="text" autocomplete="name" placeholder="Type here" value="' + esc(name || '') + '" aria-invalid="false" aria-describedby="ob-sign-name-error" class="' + F.INPUT + ' pr-10 text-ellipsis">' +
-              '<button type="button" data-sign-name-clear class="absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-blue-600">' +
+              '<button type="button" data-sign-name-clear class="absolute top-1/2 right-3 flex size-5 -translate-y-1/2 cursor-pointer items-center justify-center rounded-full focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
                 '<span class="sr-only">Clear name</span><img src="' + ASSETS + 'icon-x-circle-clear.svg" alt="" width="20" height="20" class="size-5"></button>' +
               F.errorIcon() +
             '</div>' +
             '<p id="ob-sign-name-error" data-sign-name-error class="hidden ' + F.ERROR_TEXT + '"></p>' +
           '</div>' +
-          '<div class="' + PAD + ' border-[#e5e7eb] px-6">' +
+          '<div class="' + PAD + ' border-gray-200 dark:border-white/10 px-6">' +
             '<p data-sign-preview aria-hidden="true" class="line-clamp-3 w-full text-center font-[\'Meow_Script\',cursive] text-[56px] leading-[64px] wrap-anywhere text-black"></p>' +
           '</div>' +
         '</div>' +
@@ -78,8 +78,8 @@ window.OBSign = (function () {
     return '<div role="status" class="flex flex-col items-center gap-6 px-6 py-12">' +
       '<img src="' + ASSETS + 'loader.svg" alt="" width="44" height="44" class="size-11 animate-spin motion-reduce:animate-none">' +
       '<div class="flex flex-col items-center gap-2 text-center">' +
-        '<p id="ob-sign-processing" class="text-lg leading-6 font-semibold text-[#111827]">We’re processing your request</p>' +
-        '<p class="text-sm leading-5 text-[#6b7280]">Please wait</p>' +
+        '<p id="ob-sign-processing" class="text-lg leading-6 font-semibold text-gray-900 dark:text-white">We’re processing your request</p>' +
+        '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Please wait</p>' +
       '</div>' +
     '</div>';
   }
@@ -92,7 +92,7 @@ window.OBSign = (function () {
       bare: true,
       header: header(),
       footer: footer(),
-      panelClass: 'relative flex w-full max-w-[512px] flex-col overflow-hidden rounded-lg bg-white shadow-xl'
+      panelClass: 'relative flex w-full max-w-[512px] flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-xl'
     });
     var $ = function (sel) { return backdrop.querySelector(sel); };
     var mode = 'draw';
@@ -133,10 +133,10 @@ window.OBSign = (function () {
       clearBtn.classList.add('hidden');
     }
     function setPadError(on) {
-      pad.classList.toggle('border-[#fca5a5]', on);
-      pad.classList.toggle('border-[#e5e7eb]', !on);
-      hint.classList.toggle('text-[#b91c1c]', on);
-      hint.classList.toggle('text-[#6b7280]', !on);
+      pad.classList.toggle('border-red-300', on);
+      pad.classList.toggle('border-gray-200 dark:border-white/10', !on);
+      hint.classList.toggle('text-red-700 dark:text-red-400', on);
+      hint.classList.toggle('text-gray-500 dark:text-gray-400', !on);
     }
     function point(e) {
       var r = canvas.getBoundingClientRect();
@@ -220,7 +220,7 @@ window.OBSign = (function () {
       }
       // Swap the dialog for the processing state.
       var dialog = backdrop.querySelector('[data-ob-modal-dialog]');
-      dialog.className = 'relative flex w-full max-w-[512px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5 focus:outline-none';
+      dialog.className = 'relative flex w-full max-w-[512px] flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-none';
       dialog.setAttribute('aria-labelledby', 'ob-sign-processing');
       dialog.innerHTML = processingMarkup();
       backdrop.setAttribute('data-busy', 'true');

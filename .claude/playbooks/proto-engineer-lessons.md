@@ -35,3 +35,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   `generateFallbackCards` from `.catch`; a page that supplies its own cards must bypass it (see `transformSharedData` branch).
 - 2026-11-05 [app-checkbox] data-* attributes move to the inner `<input>`: query `[data-x]` gets the input (click it in tests).
 - 2026-11-05 [shell-navigation] SPA swaps don't run inline `<script>`s: per-page config must also be applied in `configurePage`.
+
+- 2026-11-06 [dark-mode] Tailwind `dark:` follows the OS unless the page has `@custom-variant dark (&:where(.dark, .dark *))`; `?theme=dark|light` in theme-init.js switches pages without a menu.
+- 2026-11-06 [dark-mode] Bulk hex→class + `dark:` pair via a script: parse variants incl. `data-[x]:`/`aria-[x]:` (else the pair loses its variant), skip a token whose segment already has a `dark:` pair, and prove light with pixel-compare. pixel-compare has no init script: SX pages need a custom capture that adds `tools/ui-qa/init/sx-demo-case.js`.
