@@ -134,9 +134,12 @@ window.OBSign = (function () {
     }
     function setPadError(on) {
       pad.classList.toggle('border-red-300', on);
-      pad.classList.toggle('border-gray-200 dark:border-white/10', !on);
-      hint.classList.toggle('text-red-700 dark:text-red-400', on);
-      hint.classList.toggle('text-gray-500 dark:text-gray-400', !on);
+      pad.classList.toggle('border-gray-200', !on);
+      pad.classList.toggle('dark:border-white/10', !on);
+      hint.classList.toggle('text-red-700', on);
+      hint.classList.toggle('dark:text-red-400', on);
+      hint.classList.toggle('text-gray-500', !on);
+      hint.classList.toggle('dark:text-gray-400', !on);
     }
     function point(e) {
       var r = canvas.getBoundingClientRect();

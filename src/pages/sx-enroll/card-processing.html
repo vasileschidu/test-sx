@@ -24,20 +24,20 @@
   <script src="../../scripts/data-source.js"></script>
   <script src="../../scripts/sx-demo-case.js?v=20261106e"></script>
   <script src="../../scripts/onboarding-transitions.js?v=20261106a"></script>
-  <script src="../../scripts/sx-enroll.js?v=20261106b"></script>
-  <script src="../../scripts/onboarding-sidebar.js?v=20261106a"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261106c"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261106b"></script>
   <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
   <script src="../../scripts/onboarding-modal.js?v=20261106a"></script>
-  <script src="../../scripts/onboarding-decline.js?v=20261106a"></script>
+  <script src="../../scripts/onboarding-decline.js?v=20261106b"></script>
   <script src="../../scripts/stp-state.js?v=20261106a"></script>
-  <script src="../../scripts/sx-enroll-acp.js?v=20261106a"></script>
+  <script src="../../scripts/sx-enroll-acp.js?v=20261106d"></script>
   <script src="../../scripts/onboarding-stepper.js?v=20261104a"></script>
   <script src="../../scripts/onboarding-mobile-header.js"></script>
   <link rel="stylesheet" href="../../styles/cursor.css" />
 </head>
-<body data-sx-step="card-processing" class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+<body data-sx-step="card-processing" class="min-h-screen bg-white dark:bg-gray-900 px-0 antialiased font-['Inter'] lg:bg-gray-200 dark:lg:bg-gray-950 lg:px-6">
 
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white dark:bg-gray-900 lg:h-screen lg:flex-row lg:overflow-hidden">
 
     <div data-ob-sidebar></div>
 
@@ -59,17 +59,17 @@
             <div class="flex flex-col gap-3">
               <p class="type-title-small text-default">How it works:</p>
               <ol role="list" class="flex flex-col gap-3">
-                <li class="flex items-start gap-3"><span aria-hidden="true" class="flex size-5 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-700">1</span><span class="type-body text-secondary">Continue processing payments manually until set up is complete.</span></li>
-                <li class="flex items-start gap-3"><span aria-hidden="true" class="flex size-5 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-700">2</span><span class="type-body text-secondary">We’ll confirm eligibility and initiate one small (micro) deposit into the account the business currently uses to settle card payments (typically deposited in 2–3 business days).</span></li>
-                <li class="flex items-start gap-3"><span aria-hidden="true" class="flex size-5 shrink-0 items-center justify-center rounded-full bg-gray-100 text-xs font-medium text-gray-700">3</span><span class="type-body text-secondary">Verify the micro deposit and set up is complete (Opt-out is available).</span></li>
+                <li class="flex items-start gap-3"><span aria-hidden="true" class="flex size-5 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-xs font-medium text-gray-700 dark:text-gray-300">1</span><span class="type-body text-secondary">Continue processing payments manually until set up is complete.</span></li>
+                <li class="flex items-start gap-3"><span aria-hidden="true" class="flex size-5 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-xs font-medium text-gray-700 dark:text-gray-300">2</span><span class="type-body text-secondary">We’ll confirm eligibility and initiate one small (micro) deposit into the account the business currently uses to settle card payments (typically deposited in 2–3 business days).</span></li>
+                <li class="flex items-start gap-3"><span aria-hidden="true" class="flex size-5 shrink-0 items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-xs font-medium text-gray-700 dark:text-gray-300">3</span><span class="type-body text-secondary">Verify the micro deposit and set up is complete (Opt-out is available).</span></li>
               </ol>
             </div>
 
             <!-- Enrol toggle (components skill: toggle switch) -->
-            <div class="flex items-center justify-between gap-4 rounded-lg bg-gray-50 px-4 py-3">
+            <div class="flex items-center justify-between gap-4 rounded-lg bg-gray-50 dark:bg-white/5 px-4 py-3">
               <label id="sx-acp-toggle-label" for="sx-acp-toggle" class="type-label text-default">Yes, enroll in Automatic Card Processing</label>
-              <div class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 has-disabled:cursor-not-allowed has-disabled:opacity-50">
-                <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
+              <div class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 dark:bg-white/10 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 dark:outline-blue-400 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 has-disabled:cursor-not-allowed has-disabled:opacity-50">
+                <span class="size-5 rounded-full bg-white dark:bg-gray-900 shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
                 <input id="sx-acp-toggle" type="checkbox" name="acp" aria-labelledby="sx-acp-toggle-label" class="absolute inset-0 size-full appearance-none cursor-pointer focus:outline-hidden disabled:cursor-not-allowed" />
               </div>
             </div>
@@ -82,9 +82,9 @@
           <div class="mt-auto flex px-4 pb-6 lg:px-14 lg:pb-14">
             <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
               <a href="payment.html"
-                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 dark:text-gray-300 shadow-xs hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 lg:flex">Back</a>
               <button type="button" data-sx-next disabled
-                class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
+                class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
                 Next
                 <img src="../../assets/onboarding/icon-arrow-narrow-right.svg" alt="" width="20" height="20" class="size-5">
               </button>

@@ -114,10 +114,10 @@
       navigator.clipboard.writeText(value).then(
         function () {
           btn.setAttribute("aria-label", "Copied");
-          btn.classList.add("bg-green-50");
+          btn.classList.add("bg-green-50", "dark:bg-green-500/10");
           window.setTimeout(function () {
             btn.removeAttribute("aria-label");
-            btn.classList.remove("bg-green-50");
+            btn.classList.remove("bg-green-50", "dark:bg-green-500/10");
           }, 2000);
         },
         function () {},

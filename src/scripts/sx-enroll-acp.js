@@ -28,16 +28,16 @@
   var UI_KEY = "acp";
 
   var BADGE = {
-    done: "inline-flex w-fit items-center rounded-md bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20",
-    progress: "inline-flex w-fit items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10",
+    done: "inline-flex w-fit items-center rounded-md bg-green-50 dark:bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-700 dark:text-green-400 inset-ring inset-ring-green-600/20 dark:inset-ring-green-500/20",
+    progress: "inline-flex w-fit items-center rounded-md bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300 inset-ring inset-ring-blue-700/10 dark:inset-ring-blue-400/20",
   };
 
   // Native radio (same as the case launcher), with a disabled look.
   var RADIO =
-    "relative size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:border-gray-300 disabled:bg-gray-100 disabled:before:bg-gray-400";
+    "relative size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 before:absolute before:inset-1 before:rounded-full before:bg-white dark:before:bg-gray-900 not-checked:before:hidden checked:border-blue-600 dark:checked:border-blue-400 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:border-gray-300 dark:disabled:border-white/10 disabled:bg-gray-100 dark:disabled:bg-white/10 disabled:before:bg-gray-400";
 
   var LINK =
-    "inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 underline underline-offset-2 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50";
+    "inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 dark:text-blue-400 underline underline-offset-2 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-50";
 
   function ui() {
     return X.getState()[UI_KEY] || {};
@@ -71,17 +71,17 @@
   function agreementBody() {
     return AGREEMENT.map(function (p) {
       if (p.indexOf("## ") === 0)
-        return '<p class="pt-2 text-sm font-semibold text-gray-900">' + esc(p.slice(3)) + "</p>";
-      return '<p class="text-sm leading-6 text-gray-700">' + esc(p) + "</p>";
+        return '<p class="pt-2 text-sm font-semibold text-gray-900 dark:text-white">' + esc(p.slice(3)) + "</p>";
+      return '<p class="text-sm leading-6 text-gray-700 dark:text-gray-300">' + esc(p) + "</p>";
     }).join("");
   }
 
   /** The agreement "page" (also used by the signer page, sign-agreement.html). */
   function agreementArticle() {
     return (
-      '<article class="mx-auto flex max-w-3xl flex-col gap-3 rounded-sm bg-white p-6 shadow-sm ring-1 ring-black/5 sm:p-10">' +
-      '<p class="self-end text-4xl font-extrabold tracking-tight text-blue-900 italic">VISA</p>' +
-      '<h3 class="text-center text-lg font-semibold text-gray-900">Visa AR Manager – Online Participation Agreement</h3>' +
+      '<article class="mx-auto flex max-w-3xl flex-col gap-3 rounded-sm bg-white dark:bg-gray-900 p-6 shadow-sm ring-1 ring-black/5 dark:ring-white/10 sm:p-10">' +
+      '<p class="self-end text-4xl font-extrabold tracking-tight text-blue-900 dark:text-blue-400 italic">VISA</p>' +
+      '<h3 class="text-center text-lg font-semibold text-gray-900 dark:text-white">Visa AR Manager – Online Participation Agreement</h3>' +
       agreementBody() +
       "</article>"
     );
@@ -92,7 +92,7 @@
     var M = window.OBModal;
     M.open(
       '<div class="flex min-h-0 flex-1 flex-col p-6">' +
-        '<div tabindex="0" aria-label="Agreement text" class="min-h-0 flex-1 overflow-y-auto rounded border border-gray-200 bg-gray-50 p-4 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+        '<div tabindex="0" aria-label="Agreement text" class="min-h-0 flex-1 overflow-y-auto rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-4 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
         agreementArticle() +
         "</div>" +
         "</div>",
@@ -100,13 +100,13 @@
       {
         bare: true,
         header:
-          '<div class="flex shrink-0 items-center gap-2 border-b border-gray-200 py-3 pr-3 pl-6">' +
-          '<h2 id="sx-agreement-title" class="flex-1 text-base leading-6 font-medium text-gray-900">Visa AR Manager Participation Agreement</h2>' +
-          '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+          '<div class="flex shrink-0 items-center gap-2 border-b border-gray-200 dark:border-white/10 py-3 pr-3 pl-6">' +
+          '<h2 id="sx-agreement-title" class="flex-1 text-base leading-6 font-medium text-gray-900 dark:text-white">Visa AR Manager Participation Agreement</h2>' +
+          '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
           '<span class="sr-only">Close</span><img src="../../assets/onboarding/icon-x-lined-gray.svg" alt="" width="24" height="24" class="size-6"></button>' +
           "</div>",
         footer:
-          '<div class="flex justify-end border-t border-gray-200 px-6 py-4">' +
+          '<div class="flex justify-end border-t border-gray-200 dark:border-white/10 px-6 py-4">' +
           '<button type="button" data-ob-modal-close class="' +
           M.SECONDARY_BUTTON_MD +
           '">Close Agreement</button>' +
@@ -122,18 +122,18 @@
     var M = window.OBModal;
     var backdrop = M.open(
       '<div class="flex flex-col items-center gap-3 px-6 pb-6 text-center">' +
-        M.illustration("icon-exclamation-triangle-red.svg", "bg-red-50") +
-        '<h2 id="sx-optout-title" class="text-base leading-6 font-semibold text-gray-900">You are electing to opt out of automated card processing. Please confirm below.</h2>' +
-        '<p class="text-sm leading-5 text-gray-500">By opting out, card payments <span class="font-medium text-gray-900">will not automatically process</span> and you will need to manually key in the information.</p>' +
+        M.illustration("icon-exclamation-triangle-red.svg", "bg-red-50 dark:bg-red-500/10") +
+        '<h2 id="sx-optout-title" class="text-base leading-6 font-semibold text-gray-900 dark:text-white">You are electing to opt out of automated card processing. Please confirm below.</h2>' +
+        '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">By opting out, card payments <span class="font-medium text-gray-900 dark:text-white">will not automatically process</span> and you will need to manually key in the information.</p>' +
         "</div>",
       "sx-optout-title",
       {
         footer:
-          '<div class="grid grid-cols-2 gap-3 border-t border-gray-200 px-6 py-4">' +
-          '<button type="button" data-ob-modal-close class="inline-flex h-10 cursor-pointer items-center justify-center rounded-md bg-white px-3 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Cancel</button>' +
+          '<div class="grid grid-cols-2 gap-3 border-t border-gray-200 dark:border-white/10 px-6 py-4">' +
+          '<button type="button" data-ob-modal-close class="inline-flex h-10 cursor-pointer items-center justify-center rounded-md bg-white dark:bg-gray-900 px-3 text-sm font-semibold text-gray-900 dark:text-white shadow-xs inset-ring inset-ring-gray-300 dark:inset-ring-white/10 hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Cancel</button>' +
           '<button type="button" data-sx-optout-confirm class="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-md bg-red-600 px-3 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 disabled:cursor-not-allowed disabled:opacity-50">Yes, opt out</button>' +
           "</div>",
-        panelClass: "relative flex w-full max-w-md flex-col rounded-lg bg-white shadow-xl",
+        panelClass: "relative flex w-full max-w-md flex-col rounded-lg bg-white dark:bg-gray-900 shadow-xl",
       },
     );
     backdrop.querySelector("[data-sx-optout-confirm]").addEventListener("click", function (event) {
@@ -210,9 +210,9 @@
 
     function reviewRow() {
       return (
-        '<div class="flex items-center gap-3 rounded-lg bg-gray-50 px-4 py-3">' +
-        '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-500"><path fill-rule="evenodd" d="M4.5 2A1.5 1.5 0 0 0 3 3.5v13A1.5 1.5 0 0 0 4.5 18h11a1.5 1.5 0 0 0 1.5-1.5V7.621a1.5 1.5 0 0 0-.44-1.06l-4.12-4.122A1.5 1.5 0 0 0 11.378 2H4.5Zm2.25 8.5a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Zm0 3a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Z" clip-rule="evenodd" /></svg>' +
-        '<p class="min-w-0 flex-1 text-sm font-medium text-gray-900">Visa AR Manager Participation Agreement</p>' +
+        '<div class="flex items-center gap-3 rounded-lg bg-gray-50 dark:bg-white/5 px-4 py-3">' +
+        '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" d="M4.5 2A1.5 1.5 0 0 0 3 3.5v13A1.5 1.5 0 0 0 4.5 18h11a1.5 1.5 0 0 0 1.5-1.5V7.621a1.5 1.5 0 0 0-.44-1.06l-4.12-4.122A1.5 1.5 0 0 0 11.378 2H4.5Zm2.25 8.5a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Zm0 3a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5h-6.5Z" clip-rule="evenodd" /></svg>' +
+        '<p class="min-w-0 flex-1 text-sm font-medium text-gray-900 dark:text-white">Visa AR Manager Participation Agreement</p>' +
         '<button type="button" data-acp-review class="' + LINK + '">Review agreement</button>' +
         "</div>"
       );
@@ -220,10 +220,10 @@
 
     function openedBanner() {
       return (
-        '<div class="flex items-center gap-3 rounded-md bg-green-50 px-4 py-3">' +
+        '<div class="flex items-center gap-3 rounded-md bg-green-50 dark:bg-green-500/10 px-4 py-3">' +
         '<img src="../../assets/onboarding/icon-check-circle-green.svg" alt="" width="20" height="20" class="size-5 shrink-0">' +
-        '<p class="min-w-0 flex-1 text-sm font-medium text-gray-900">Agreement was opened</p>' +
-        '<button type="button" data-acp-review class="inline-flex shrink-0 cursor-pointer rounded-sm text-sm font-semibold text-gray-700 underline underline-offset-2 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50">Review again</button>' +
+        '<p class="min-w-0 flex-1 text-sm font-medium text-gray-900 dark:text-white">Agreement was opened</p>' +
+        '<button type="button" data-acp-review class="inline-flex shrink-0 cursor-pointer rounded-sm text-sm font-semibold text-gray-700 dark:text-gray-300 underline underline-offset-2 hover:text-gray-900 dark:hover:text-white focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-50">Review again</button>' +
         "</div>"
       );
     }
@@ -231,12 +231,12 @@
     function radioCard(value, label, formHtml) {
       var checked = choice === value;
       return (
-        '<div class="overflow-hidden rounded-lg border border-gray-200 bg-white">' +
-        '<label class="flex cursor-pointer items-center gap-3 px-4 py-3 hover:bg-gray-50 has-checked:bg-gray-50 has-disabled:cursor-not-allowed has-disabled:hover:bg-white">' +
+        '<div class="overflow-hidden rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900">' +
+        '<label class="flex cursor-pointer items-center gap-3 px-4 py-3 hover:bg-gray-50 dark:hover:bg-white/5 has-checked:bg-gray-50 dark:has-checked:bg-white/5 has-disabled:cursor-not-allowed has-disabled:hover:bg-white dark:has-disabled:hover:bg-gray-900">' +
         '<input type="radio" name="sx-acp-signer" value="' + value + '"' + (checked ? " checked" : "") + ' class="' + RADIO + '">' +
-        '<span class="text-sm font-medium text-gray-900">' + esc(label) + "</span>" +
+        '<span class="text-sm font-medium text-gray-900 dark:text-white">' + esc(label) + "</span>" +
         "</label>" +
-        (checked ? '<div class="flex flex-col gap-4 border-t border-gray-200 p-4">' + formHtml + "</div>" : "") +
+        (checked ? '<div class="flex flex-col gap-4 border-t border-gray-200 dark:border-white/10 p-4">' + formHtml + "</div>" : "") +
         "</div>"
       );
     }
@@ -247,7 +247,7 @@
       return (
         X.textField("sx-acp-a-first", "First Name", formA.first, { autocomplete: "given-name" }) +
         X.textField("sx-acp-a-last", "Last Name", formA.last, { autocomplete: "family-name" }) +
-        '<p class="w-fit rounded-md border border-gray-200 bg-gray-50 px-2 py-1 text-xs text-gray-700">Please confirm acceptance of the VISA AR Manager Participation Agreement.</p>' +
+        '<p class="w-fit rounded-md border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-2 py-1 text-xs text-gray-700 dark:text-gray-300">Please confirm acceptance of the VISA AR Manager Participation Agreement.</p>' +
         '<div><button type="button" data-acp-confirm class="' + BUTTON_MD + '">Confirm Acceptance</button></div>'
       );
     }
@@ -265,7 +265,7 @@
         '<p id="sx-acp-b-note-error" class="hidden ' + F.ERROR_TEXT + '"></p>' +
         "</div>" +
         (sendError
-          ? '<div role="alert" class="flex items-start gap-3 rounded-md bg-red-50 p-3"><img src="../../assets/onboarding/icon-exclamation-circle-red.svg" alt="" width="20" height="20" class="size-5 shrink-0"><p class="text-sm text-red-800">' + esc(sendError) + "</p></div>"
+          ? '<div role="alert" class="flex items-start gap-3 rounded-md bg-red-50 dark:bg-red-500/10 p-3"><img src="../../assets/onboarding/icon-exclamation-circle-red.svg" alt="" width="20" height="20" class="size-5 shrink-0"><p class="text-sm text-red-800 dark:text-red-300">' + esc(sendError) + "</p></div>"
           : "") +
         '<div><button type="button" data-acp-send class="' + BUTTON_MD + '">Send signing request</button></div>'
       );
@@ -273,10 +273,10 @@
 
     function statusCard(title, rows, footHtml) {
       return (
-        '<section aria-label="' + esc(title) + '" class="overflow-hidden rounded-lg border border-gray-200 bg-white">' +
-        '<h2 class="border-b border-gray-200 px-4 py-3 text-sm font-semibold text-gray-900">' + esc(title) + "</h2>" +
+        '<section aria-label="' + esc(title) + '" class="overflow-hidden rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900">' +
+        '<h2 class="border-b border-gray-200 dark:border-white/10 px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white">' + esc(title) + "</h2>" +
         '<div class="flex flex-col gap-2 p-4">' + rows + "</div>" +
-        (footHtml ? '<div class="border-t border-gray-200 px-4 py-3">' + footHtml + "</div>" : "") +
+        (footHtml ? '<div class="border-t border-gray-200 dark:border-white/10 px-4 py-3">' + footHtml + "</div>" : "") +
         "</section>"
       );
     }
@@ -300,13 +300,13 @@
           X.row("Delegated to", esc(a.delegatedTo)) +
           X.row("Email", '<span class="break-all">' + esc(a.email) + "</span>") +
           X.row("Sent at", esc(X.stamp(a.sentAt))),
-        '<p class="text-sm text-gray-500"><span class="font-medium text-gray-900">' + esc(a.delegatedTo) + "</span> will receive an email with a secure link to review and acknowledge the Visa AR Manager Participation Agreement.</p>" +
-          (delivery ? '<p data-acp-delivery class="mt-2 text-xs text-gray-500">' + esc(delivery) + ".</p>" : "") +
+        '<p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-medium text-gray-900 dark:text-white">' + esc(a.delegatedTo) + "</span> will receive an email with a secure link to review and acknowledge the Visa AR Manager Participation Agreement.</p>" +
+          (delivery ? '<p data-acp-delivery class="mt-2 text-xs text-gray-500 dark:text-gray-400">' + esc(delivery) + ".</p>" : "") +
           '<div class="mt-3 flex flex-wrap items-center gap-x-6 gap-y-2">' +
-          '<button type="button" data-acp-change class="inline-flex cursor-pointer items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Change signer</button>' +
+          '<button type="button" data-acp-change class="inline-flex cursor-pointer items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 dark:text-blue-400 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Change signer</button>' +
           // Test mode (no email delivered): the presenter opens the signer's link here.
           (a.delivered === false
-            ? '<a data-acp-signer-link href="' + esc(signerLink(a.email)) + '" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Open signer’s link' +
+            ? '<a data-acp-signer-link href="' + esc(signerLink(a.email)) + '" target="_blank" rel="noopener" class="inline-flex items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 dark:text-blue-400 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Open signer’s link' +
               '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M4.25 5.5a.75.75 0 0 0-.75.75v8.5c0 .414.336.75.75.75h8.5a.75.75 0 0 0 .75-.75v-4a.75.75 0 0 1 1.5 0v4A2.25 2.25 0 0 1 12.75 17h-8.5A2.25 2.25 0 0 1 2 14.75v-8.5A2.25 2.25 0 0 1 4.25 4h5a.75.75 0 0 1 0 1.5h-5Z" clip-rule="evenodd" /><path fill-rule="evenodd" d="M6.194 12.753a.75.75 0 0 0 1.06.053L16.5 4.44v2.81a.75.75 0 0 0 1.5 0v-4.5a.75.75 0 0 0-.75-.75h-4.5a.75.75 0 0 0 0 1.5h2.553l-9.056 8.194a.75.75 0 0 0-.053 1.06Z" clip-rule="evenodd" /></svg>' +
               '<span class="sr-only">(opens in a new tab)</span></a>'
             : "") +
@@ -341,10 +341,10 @@
       } else {
         panel.hidden = false;
         panel.innerHTML =
-          '<div class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4">' +
+          '<div class="flex flex-col gap-4 rounded-lg border border-gray-200 dark:border-white/10 p-4">' +
           openedBanner() +
           '<fieldset data-acp-fieldset class="flex flex-col gap-3">' +
-          '<legend class="mb-3 text-sm font-medium text-gray-900">Are you authorized to sign?</legend>' +
+          '<legend class="mb-3 text-sm font-medium text-gray-900 dark:text-white">Are you authorized to sign?</legend>' +
           radioCard("self", "Yes, I am authorized to sign", formSelf()) +
           radioCard("other", "No, send to an authorized signer", formOther()) +
           "</fieldset>" +

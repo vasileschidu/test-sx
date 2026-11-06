@@ -24,10 +24,10 @@
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
   <script src="../../../src/scripts/onboarding-transitions.js?v=20261106a"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261106b"></script>
   <script src="../../../src/scripts/onboarding-field.js?v=20261106a"></script>
   <script src="../../../src/scripts/onboarding-modal.js?v=20261106a"></script>
-  <script src="../../../src/scripts/onboarding-decline.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-decline.js?v=20261106b"></script>
   <script src="../../../src/scripts/onboarding-flow.js?v=20261106a"></script>
   <script src="../../../src/scripts/onboarding-stepper.js?v=20261104a"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
@@ -37,10 +37,10 @@
       <script src="../../scripts/checkbox-component.js"></script>
   </head>
 
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6 dark:bg-gray-900 dark:lg:bg-gray-950">
 
   <!-- CONTAINER -->
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden dark:bg-gray-900">
 
     <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js -->
     <div data-ob-sidebar></div>
@@ -55,33 +55,33 @@
             <!-- Title, intro and the client's message -->
             <div class="flex w-full flex-col gap-6">
               <div class="flex w-full flex-col gap-4">
-                <h1 class="text-3xl leading-9 text-[#1f2937]">Review your<br><span data-docs-header class="font-semibold">documents</span></h1>
-                <p class="text-sm leading-5 text-[#6b7280]">Please select to review the documents below before proceeding with your payment.</p>
+                <h1 class="text-3xl leading-9 text-gray-800 dark:text-white">Review your<br><span data-docs-header class="font-semibold">documents</span></h1>
+                <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Please select to review the documents below before proceeding with your payment.</p>
               </div>
 
-              <div class="flex w-full flex-col gap-2 rounded-md bg-[#f9fafb] p-4">
+              <div class="flex w-full flex-col gap-2 rounded-md bg-gray-50 p-4 dark:bg-white/5">
                 <button type="button" data-docs-message-toggle aria-expanded="true" aria-controls="docs-message"
                   class="flex w-full cursor-pointer items-center gap-2 rounded text-left text-sm leading-5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
                   <img src="../../assets/onboarding/icon-chat-alt.svg" alt="" width="18" height="18" class="m-px size-[18px] shrink-0">
-                  <span class="flex-1"><span data-ob-skeleton data-docs-message-title class="text-sm leading-5 font-medium text-black">Documents</span></span>
+                  <span class="flex-1"><span data-ob-skeleton data-docs-message-title class="text-sm leading-5 font-medium text-black dark:text-white">Documents</span></span>
                   <img data-docs-message-chevron src="../../assets/onboarding/icon-chevron-down-dark.svg" alt="" width="20" height="20" class="size-5 shrink-0 rotate-180 transition-transform duration-150">
                 </button>
-                <p id="docs-message" data-ob-skeleton data-docs-message class="text-sm leading-5 text-[#6b7280]"></p>
+                <p id="docs-message" data-ob-skeleton data-docs-message class="text-sm leading-5 text-gray-500 dark:text-gray-400"></p>
               </div>
             </div>
 
             <!-- Attachments + "still to review" alert -->
             <div class="flex w-full flex-col gap-6">
               <div class="flex w-full flex-col gap-2.5">
-                <p class="text-xs leading-4 font-medium tracking-[0.6px] text-[#4b5563] uppercase">Attachments</p>
+                <p class="text-xs leading-4 font-medium tracking-[0.6px] text-gray-600 uppercase dark:text-gray-400">Attachments</p>
                 <ul data-docs-list role="list" class="flex w-full flex-col gap-2.5"></ul>
               </div>
 
-              <div data-docs-alert role="alert" class="hidden w-full items-start gap-3 rounded-md bg-[#fef2f2] p-4">
+              <div data-docs-alert role="alert" class="hidden w-full items-start gap-3 rounded-md bg-red-50 p-4 dark:bg-red-500/10">
                 <img src="../../assets/onboarding/icon-exclamation-circle-red.svg" alt="" width="20" height="20" class="size-5 shrink-0">
                 <div class="flex flex-1 flex-col gap-2 text-sm leading-5">
-                  <p class="font-medium text-[#991b1b]">Open and mark the following attachments as Done to continue:</p>
-                  <ul data-docs-missing class="text-[#b91c1c]"></ul>
+                  <p class="font-medium text-red-800 dark:text-red-300">Open and mark the following attachments as Done to continue:</p>
+                  <ul data-docs-missing class="text-red-700 dark:text-red-400"></ul>
                 </div>
               </div>
             </div>
@@ -91,7 +91,7 @@
           <div class="mt-auto flex px-4 pb-6 lg:px-14 lg:pb-14">
             <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
               <a href="confirm-business-details.html"
-                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">Back</a>
               <button type="button" data-docs-next
                 class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
                 Next

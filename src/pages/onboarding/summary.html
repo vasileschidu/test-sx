@@ -16,10 +16,10 @@
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../scripts/sd-onboarding-context.js"></script>
   <script src="../../../src/scripts/onboarding-transitions.js?v=20261106a"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261106b"></script>
   <script src="../../../src/scripts/onboarding-field.js?v=20261106a"></script>
   <script src="../../../src/scripts/onboarding-modal.js?v=20261106a"></script>
-  <script src="../../../src/scripts/onboarding-decline.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-decline.js?v=20261106b"></script>
   <script src="../../../src/scripts/onboarding-flow.js?v=20261106a"></script>
   <script src="../../../src/scripts/onboarding-stepper.js?v=20261104a"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
@@ -171,10 +171,10 @@
       <script src="../../scripts/checkbox-component.js"></script>
   </head>
 
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6 dark:bg-gray-900 dark:lg:bg-gray-950">
 
   <!-- CONTAINER -->
-  <div class="mx-auto max-w-[1024px] w-full min-h-screen bg-white flex flex-col lg:h-screen lg:flex-row lg:overflow-hidden">
+  <div class="mx-auto max-w-[1024px] w-full min-h-screen bg-white flex flex-col lg:h-screen lg:flex-row lg:overflow-hidden dark:bg-gray-900">
 
     <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js -->
     <div data-ob-sidebar></div>
@@ -188,8 +188,8 @@
 
             <!-- Page header -->
             <div class="mb-2">
-              <h1 class="text-3xl font-semibold text-gray-900">Review Your Information</h1>
-              <p class="mt-2 text-sm text-gray-500">Please confirm the details below before submitting.</p>
+              <h1 class="text-3xl font-semibold text-gray-900 dark:text-white">Review Your Information</h1>
+              <p class="mt-2 text-sm text-gray-500 dark:text-gray-400">Please confirm the details below before submitting.</p>
             </div>
 
             <!-- Virtual card preview (instant-virtual-card only) -->
@@ -220,20 +220,20 @@
                   </div>
                 </div>
               </div>
-              <span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-500 ring-1 ring-inset ring-gray-500/20">Sample only — actual card details will be issued on submit</span>
+              <span class="inline-flex items-center rounded-md bg-gray-100 px-2 py-1 text-xs font-medium text-gray-500 ring-1 ring-inset ring-gray-500/20 dark:bg-white/10 dark:text-gray-400">Sample only — actual card details will be issued on submit</span>
             </div>
 
             <!-- Payment Summary -->
             <div class="flex w-full flex-col overflow-hidden rounded-md">
-              <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
+              <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4 dark:bg-white/5">
                 <dl class="w-full">
                   <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm/6 font-medium text-gray-900">Amount</dt>
-                    <dd id="sum-amount" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">$0.00</dd>
+                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Amount</dt>
+                    <dd id="sum-amount" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-300">$0.00</dd>
                   </div>
                   <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm/6 font-medium text-gray-900">Method of Payment</dt>
-                    <dd data-ob-skeleton id="sum-method" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Method of Payment</dt>
+                    <dd data-ob-skeleton id="sum-method" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-300">—</dd>
                   </div>
                 </dl>
               </div>
@@ -242,30 +242,30 @@
             <!-- Card Details (debit card method only) -->
             <div id="sum-card-details-card" class="hidden flex-col gap-2">
               <div class="flex w-full flex-col overflow-hidden rounded-md">
-                <div class="flex items-center px-5 py-2.5 bg-gray-100">
-                  <span class="text-sm font-semibold text-gray-900">Card Details</span>
+                <div class="flex items-center px-5 py-2.5 bg-gray-100 dark:bg-white/10">
+                  <span class="text-sm font-semibold text-gray-900 dark:text-white">Card Details</span>
                 </div>
-                <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
+                <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4 dark:bg-white/5">
                   <dl class="w-full">
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                      <dt class="text-sm/6 font-medium text-gray-900">Card Number</dt>
-                      <dd data-ob-skeleton id="sum-dc-number" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0">—</dd>
+                      <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Card Number</dt>
+                      <dd data-ob-skeleton id="sum-dc-number" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0 dark:text-gray-300">—</dd>
                     </div>
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                      <dt class="text-sm/6 font-medium text-gray-900">Name on Card</dt>
-                      <dd data-ob-skeleton id="sum-dc-name" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                      <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Name on Card</dt>
+                      <dd data-ob-skeleton id="sum-dc-name" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-300">—</dd>
                     </div>
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                      <dt class="text-sm/6 font-medium text-gray-900">Expiry</dt>
-                      <dd data-ob-skeleton id="sum-dc-expiry" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                      <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Expiry</dt>
+                      <dd data-ob-skeleton id="sum-dc-expiry" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-300">—</dd>
                     </div>
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                      <dt class="text-sm/6 font-medium text-gray-900">Security Code</dt>
-                      <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">
+                      <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Security Code</dt>
+                      <dd class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-300">
                         <span class="inline-flex items-center gap-2">
                           <span data-ob-skeleton id="sum-dc-cvv" class="font-['Roboto_Mono'] tracking-wider">•••</span>
                           <button id="btn-reveal-cvv" type="button" aria-label="Reveal security code" aria-pressed="false"
-                            class="rounded p-0.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700">
+                            class="rounded p-0.5 text-gray-500 hover:bg-gray-200 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-white/10 dark:hover:text-gray-300">
                             <svg id="cvv-eye" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-5">
                               <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
                               <path fill-rule="evenodd" d="M1.323 11.447C2.811 6.976 7.028 3.75 12.001 3.75c4.97 0 9.185 3.223 10.675 7.69.12.362.12.752 0 1.113-1.487 4.471-5.705 7.697-10.677 7.697-4.97 0-9.186-3.223-10.675-7.69a1.762 1.762 0 0 1 0-1.113ZM17.25 12a5.25 5.25 0 1 1-10.5 0 5.25 5.25 0 0 1 10.5 0Z" clip-rule="evenodd" />
@@ -286,26 +286,26 @@
 
             <div id="sum-bank-details-card" class="hidden flex-col gap-2">
               <div class="flex w-full flex-col overflow-hidden rounded-md">
-                <div class="flex items-center px-5 py-2.5 bg-gray-100">
-                  <span class="text-sm font-semibold text-gray-900">Bank Details</span>
+                <div class="flex items-center px-5 py-2.5 bg-gray-100 dark:bg-white/10">
+                  <span class="text-sm font-semibold text-gray-900 dark:text-white">Bank Details</span>
                 </div>
-                <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
+                <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4 dark:bg-white/5">
                   <dl class="w-full">
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                      <dt class="text-sm/6 font-medium text-gray-900">Account Type</dt>
-                      <dd data-ob-skeleton id="sum-ba-type" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                      <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Account Type</dt>
+                      <dd data-ob-skeleton id="sum-ba-type" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-300">—</dd>
                     </div>
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                      <dt class="text-sm/6 font-medium text-gray-900">Account Holder Name</dt>
-                      <dd data-ob-skeleton id="sum-ba-holder" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                      <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Account Holder Name</dt>
+                      <dd data-ob-skeleton id="sum-ba-holder" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-300">—</dd>
                     </div>
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                      <dt class="text-sm/6 font-medium text-gray-900">Routing Number</dt>
-                      <dd data-ob-skeleton id="sum-ba-routing" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0">—</dd>
+                      <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Routing Number</dt>
+                      <dd data-ob-skeleton id="sum-ba-routing" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0 dark:text-gray-300">—</dd>
                     </div>
                     <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                      <dt class="text-sm/6 font-medium text-gray-900">Account Number</dt>
-                      <dd data-ob-skeleton id="sum-ba-number" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0">—</dd>
+                      <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Account Number</dt>
+                      <dd data-ob-skeleton id="sum-ba-number" class="mt-0.5 text-sm/6 text-gray-700 font-['Roboto_Mono'] tracking-wider sm:col-span-2 sm:mt-0 dark:text-gray-300">—</dd>
                     </div>
                   </dl>
                 </div>
@@ -314,26 +314,26 @@
 
             <!-- Account Information -->
             <div class="flex w-full flex-col overflow-hidden rounded-md">
-              <div class="flex items-center px-5 py-2.5 bg-gray-100">
-                <span class="text-sm font-semibold text-gray-900">Account Information</span>
+              <div class="flex items-center px-5 py-2.5 bg-gray-100 dark:bg-white/10">
+                <span class="text-sm font-semibold text-gray-900 dark:text-white">Account Information</span>
               </div>
-              <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4">
+              <div class="flex flex-col items-start self-stretch bg-gray-50 px-5 py-4 dark:bg-white/5">
                 <dl class="w-full">
                   <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm/6 font-medium text-gray-900">Full Name</dt>
-                    <dd data-ob-skeleton id="sum-name" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Full Name</dt>
+                    <dd data-ob-skeleton id="sum-name" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-300">—</dd>
                   </div>
                   <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm/6 font-medium text-gray-900">Email</dt>
-                    <dd data-ob-skeleton id="sum-email" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Email</dt>
+                    <dd data-ob-skeleton id="sum-email" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-300">—</dd>
                   </div>
                   <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm/6 font-medium text-gray-900">Phone</dt>
-                    <dd data-ob-skeleton id="sum-phone" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Phone</dt>
+                    <dd data-ob-skeleton id="sum-phone" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-300">—</dd>
                   </div>
                   <div class="py-2 sm:grid sm:grid-cols-3 sm:gap-4">
-                    <dt class="text-sm/6 font-medium text-gray-900">Mailing Address</dt>
-                    <dd data-ob-skeleton id="sum-address" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0">—</dd>
+                    <dt class="text-sm/6 font-medium text-gray-900 dark:text-white">Mailing Address</dt>
+                    <dd data-ob-skeleton id="sum-address" class="mt-0.5 text-sm/6 text-gray-700 sm:col-span-2 sm:mt-0 dark:text-gray-300">—</dd>
                   </div>
                 </dl>
               </div>
@@ -344,7 +344,7 @@
           <!-- Actions -->
           <div class="w-full max-w-[640px] mt-auto pt-8 pb-6">
             <div class="flex items-center gap-6">
-              <a id="summary-back-link" href="instant-virtual-card.html" class="h-11 flex-1 inline-flex items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50">
+              <a id="summary-back-link" href="instant-virtual-card.html" class="h-11 flex-1 inline-flex items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10">
                 Back
               </a>
               <button type="button" onclick="window.location.href='create-account.html'" class="inline-flex h-11 flex-1 items-center justify-center rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">

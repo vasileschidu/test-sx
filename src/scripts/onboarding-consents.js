@@ -73,8 +73,8 @@ window.OBConsents = (function () {
             '<div class="rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-4">' + text + '</div>' +
           '</div>' +
           // White fade over the last lines: there is more below. Goes with the button at the end.
-          '<div data-vcs-fade aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-white/0 to-white"></div>' +
-          '<button type="button" data-vcs-more aria-label="Scroll down" class="absolute bottom-6 left-1/2 flex size-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 shadow-md inset-ring-2 inset-ring-white transition hover:bg-gray-200 dark:hover:bg-white/15 hover:text-gray-900 dark:hover:text-white active:bg-gray-300 dark:active:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+          '<div data-vcs-fade aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-white/0 to-white dark:from-gray-900/0 dark:to-gray-900"></div>' +
+          '<button type="button" data-vcs-more aria-label="Scroll down" class="absolute bottom-6 left-1/2 flex size-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 shadow-md inset-ring-2 inset-ring-white dark:inset-ring-gray-900 transition hover:bg-gray-200 dark:hover:bg-white/15 hover:text-gray-900 dark:hover:text-white active:bg-gray-300 dark:active:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
             '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-6"><path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z" clip-rule="evenodd" /></svg>' +
           '</button>' +
         '</div>'

@@ -31,4 +31,4 @@ Light/Dark = `src/scripts/design-tokens.js` 1:1. Switch: dashboard user menu "Da
 Batches 2–4 run in parallel after 1 (disjoint files). Then `npm run qa:code -- --dark` on samples, merge.
 
 ## Status
-- [ ] 1 shared layer  - [ ] 2 SX  - [ ] 3 SD US  - [ ] 4 SD UK  - [ ] QA + PR
+- [x] 1 shared layer  - [x] 2 SX  - [x] 3 SD US  - [x] 4 SD UK  - [ ] QA + PR

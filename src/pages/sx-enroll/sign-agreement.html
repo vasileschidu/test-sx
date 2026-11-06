@@ -28,19 +28,19 @@
   <script src="../../scripts/design-tokens.js"></script>
   <script src="../../scripts/data-source.js"></script>
   <script src="../../scripts/sx-demo-case.js?v=20261106e"></script>
-  <script src="../../scripts/sx-enroll.js?v=20261106b"></script>
-  <script src="../../scripts/onboarding-sidebar.js?v=20261106a"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261106c"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261106b"></script>
   <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
   <script src="../../scripts/onboarding-modal.js?v=20261106a"></script>
   <script src="../../scripts/stp-state.js?v=20261106a"></script>
-  <script src="../../scripts/sx-enroll-acp.js?v=20261106a"></script>
-  <script src="../../scripts/sx-sign-agreement.js?v=20261105a"></script>
+  <script src="../../scripts/sx-enroll-acp.js?v=20261106d"></script>
+  <script src="../../scripts/sx-sign-agreement.js?v=20261106a"></script>
   <link rel="stylesheet" href="../../styles/cursor.css" />
 </head>
-<body class="min-h-screen bg-white antialiased font-['Inter'] lg:bg-gray-100">
+<body class="min-h-screen bg-white dark:bg-gray-900 antialiased font-['Inter'] lg:bg-gray-100 dark:lg:bg-gray-950">
 
   <!-- Review & sign (shown by sx-sign-agreement.js when the link is valid) -->
-  <div data-sign-page hidden class="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-white">
+  <div data-sign-page hidden class="mx-auto flex min-h-screen w-full max-w-5xl flex-col bg-white dark:bg-gray-900">
     <main class="mx-auto flex w-full max-w-148 flex-1 flex-col gap-6 px-4 pt-10 pb-10 lg:px-0 lg:pt-14">
       <!-- Hero: the Figma card art (same as card-processing.html) -->
       <div aria-hidden="true" class="relative h-32 w-full overflow-hidden rounded-2xl bg-linear-to-r from-violet-100 via-blue-50 to-blue-200">
@@ -59,7 +59,7 @@
       <!-- Document step only: Confirm (the flow's full-width CTA, as Next in card-processing.html) -->
       <div data-sign-actions hidden class="mt-auto flex pt-6">
         <button type="button" data-sign-confirm
-          class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-3 text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">Confirm</button>
+          class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-3 text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">Confirm</button>
       </div>
     </main>
 
@@ -67,9 +67,9 @@
   </div>
 
   <!-- Invalid link: case missing / reset, request cancelled or already signed (Figma 37764:150589) -->
-  <main data-sign-expired hidden class="flex min-h-screen w-full items-center justify-center bg-gray-100 px-4 py-12">
-    <div role="status" class="flex w-full max-w-sm flex-col items-center gap-3 rounded-lg bg-white p-6 text-center shadow-xs">
-      <div class="flex size-12 items-center justify-center rounded-full bg-red-50">
+  <main data-sign-expired hidden class="flex min-h-screen w-full items-center justify-center bg-gray-100 dark:bg-white/10 px-4 py-12">
+    <div role="status" class="flex w-full max-w-sm flex-col items-center gap-3 rounded-lg bg-white dark:bg-gray-900 p-6 text-center shadow-xs">
+      <div class="flex size-12 items-center justify-center rounded-full bg-red-50 dark:bg-red-500/10">
         <img src="../../assets/onboarding/icon-x-circle-red.svg" alt="" width="24" height="24" class="size-6">
       </div>
       <h1 class="type-title-small text-default">This link has expired</h1>

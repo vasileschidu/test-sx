@@ -24,20 +24,20 @@
 <body data-uk-step="1" data-uk-back="verify.html" class="min-h-screen bg-[#1e326f] font-['Inter'] antialiased">
   <div class="flex min-h-screen w-full flex-col bg-[#1e326f]">
     <div data-uk-header></div>
-    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
+    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white dark:bg-gray-900 px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
       <div class="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-6">
       <div class="flex flex-col gap-4">
-        <h1 class="text-3xl font-semibold leading-9 text-gray-900">Let’s make sure<br>it’s you!</h1>
-        <p class="text-sm leading-5 text-gray-500">To collect your <span class="font-semibold text-gray-900">claim payment</span>, please give us a couple details</p>
+        <h1 class="text-3xl font-semibold leading-9 text-gray-900 dark:text-white">Let’s make sure<br>it’s you!</h1>
+        <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">To collect your <span class="font-semibold text-gray-900 dark:text-white">claim payment</span>, please give us a couple details</p>
       </div>
-      <form id="claim-form" class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4" autocomplete="off">
+      <form id="claim-form" class="flex flex-col gap-4 rounded-lg border border-gray-200 dark:border-white/10 p-4" autocomplete="off">
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="claim-number" class="text-sm leading-5 text-gray-900">Your claim number</label></div>
-            <input id="claim-number" name="claim-number" type="text" inputmode="numeric" placeholder="e.g. 123456789" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="claim-number" class="text-sm leading-5 text-gray-900 dark:text-white">Your claim number</label></div>
+            <input id="claim-number" name="claim-number" type="text" inputmode="numeric" placeholder="e.g. 123456789" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="postcode" class="text-sm leading-5 text-gray-900">Your postal code</label></div>
-            <input id="postcode" name="postcode" type="text" placeholder="e.g. WA14 2DT" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="postcode" class="text-sm leading-5 text-gray-900 dark:text-white">Your postal code</label></div>
+            <input id="postcode" name="postcode" type="text" placeholder="e.g. WA14 2DT" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
       </form>
       <div class="flex flex-1 flex-col justify-end gap-6">

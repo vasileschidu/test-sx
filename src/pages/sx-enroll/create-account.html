@@ -24,18 +24,18 @@
   <script src="../../scripts/data-source.js"></script>
   <script src="../../scripts/sx-demo-case.js?v=20261106e"></script>
   <script src="../../scripts/onboarding-transitions.js?v=20261106a"></script>
-  <script src="../../scripts/sx-enroll.js?v=20261106b"></script>
-  <script src="../../scripts/onboarding-sidebar.js?v=20261106a"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261106c"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261106b"></script>
   <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
   <script src="../../scripts/onboarding-modal.js?v=20261106a"></script>
-  <script src="../../scripts/onboarding-decline.js?v=20261106a"></script>
+  <script src="../../scripts/onboarding-decline.js?v=20261106b"></script>
   <script src="../../scripts/onboarding-stepper.js?v=20261104a"></script>
   <script src="../../scripts/onboarding-mobile-header.js"></script>
   <link rel="stylesheet" href="../../styles/cursor.css" />
 </head>
-<body data-sx-step="create-account" class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+<body data-sx-step="create-account" class="min-h-screen bg-white dark:bg-gray-900 px-0 antialiased font-['Inter'] lg:bg-gray-200 dark:lg:bg-gray-950 lg:px-6">
 
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white dark:bg-gray-900 lg:h-screen lg:flex-row lg:overflow-hidden">
 
     <div data-ob-sidebar></div>
 
@@ -50,22 +50,22 @@
             </div>
 
             <!-- What the account gives you (SD create-account) -->
-            <ul class="flex flex-col gap-3 rounded-lg bg-gray-50 p-4">
-              <li class="flex items-start gap-2"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-green-600"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><p class="text-sm text-gray-700"><span class="font-semibold">All transaction history:</span> See past and present transactions from <span data-sx-payer>Horizon Inc</span> and others.</p></li>
-              <li class="flex items-start gap-2"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-green-600"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><p class="text-sm text-gray-700"><span class="font-semibold">Self service:</span> Easily update your payment preferences.</p></li>
+            <ul class="flex flex-col gap-3 rounded-lg bg-gray-50 dark:bg-white/5 p-4">
+              <li class="flex items-start gap-2"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-green-600"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><p class="text-sm text-gray-700 dark:text-gray-300"><span class="font-semibold">All transaction history:</span> See past and present transactions from <span data-sx-payer>Horizon Inc</span> and others.</p></li>
+              <li class="flex items-start gap-2"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-green-600"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><p class="text-sm text-gray-700 dark:text-gray-300"><span class="font-semibold">Self service:</span> Easily update your payment preferences.</p></li>
             </ul>
 
             <!-- Account fields: rendered by sx-enroll.js -->
-            <div data-sx-account class="flex flex-col gap-4 rounded-lg border border-gray-300 p-4"></div>
+            <div data-sx-account class="flex flex-col gap-4 rounded-lg border border-gray-300 dark:border-white/10 p-4"></div>
 
             <template id="sx-rules-template">
-              <ul data-sx-rules aria-label="Password rules" class="flex flex-col gap-1 rounded-lg bg-gray-50 p-3">
-                <li data-rule="length" class="flex items-center gap-1 text-gray-700"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-rule-icon class="size-3 shrink-0 text-gray-400"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><span class="text-xs">At least 8 characters</span></li>
-                <li data-rule="upper" class="flex items-center gap-1 text-gray-700"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-rule-icon class="size-3 shrink-0 text-gray-400"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><span class="text-xs">At least one upper case letter</span></li>
-                <li data-rule="lower" class="flex items-center gap-1 text-gray-700"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-rule-icon class="size-3 shrink-0 text-gray-400"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><span class="text-xs">At least one lower case letter</span></li>
-                <li data-rule="number" class="flex items-center gap-1 text-gray-700"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-rule-icon class="size-3 shrink-0 text-gray-400"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><span class="text-xs">At least one number</span></li>
-                <li data-rule="special" class="flex items-center gap-1 text-gray-700"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-rule-icon class="size-3 shrink-0 text-gray-400"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><span class="text-xs">At least one special character</span></li>
-                <li data-rule="sequence" class="flex items-center gap-1 text-gray-700"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-rule-icon class="size-3 shrink-0 text-gray-400"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><span class="text-xs">Don't use more than four consecutive characters (e.g., 1234 or abcd)</span></li>
+              <ul data-sx-rules aria-label="Password rules" class="flex flex-col gap-1 rounded-lg bg-gray-50 dark:bg-white/5 p-3">
+                <li data-rule="length" class="flex items-center gap-1 text-gray-700 dark:text-gray-300"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-rule-icon class="size-3 shrink-0 text-gray-400 dark:text-gray-500"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><span class="text-xs">At least 8 characters</span></li>
+                <li data-rule="upper" class="flex items-center gap-1 text-gray-700 dark:text-gray-300"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-rule-icon class="size-3 shrink-0 text-gray-400 dark:text-gray-500"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><span class="text-xs">At least one upper case letter</span></li>
+                <li data-rule="lower" class="flex items-center gap-1 text-gray-700 dark:text-gray-300"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-rule-icon class="size-3 shrink-0 text-gray-400 dark:text-gray-500"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><span class="text-xs">At least one lower case letter</span></li>
+                <li data-rule="number" class="flex items-center gap-1 text-gray-700 dark:text-gray-300"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-rule-icon class="size-3 shrink-0 text-gray-400 dark:text-gray-500"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><span class="text-xs">At least one number</span></li>
+                <li data-rule="special" class="flex items-center gap-1 text-gray-700 dark:text-gray-300"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-rule-icon class="size-3 shrink-0 text-gray-400 dark:text-gray-500"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><span class="text-xs">At least one special character</span></li>
+                <li data-rule="sequence" class="flex items-center gap-1 text-gray-700 dark:text-gray-300"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-rule-icon class="size-3 shrink-0 text-gray-400 dark:text-gray-500"><path d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" fill-rule="evenodd" /></svg><span class="text-xs">Don't use more than four consecutive characters (e.g., 1234 or abcd)</span></li>
               </ul>
             </template>
           </div>
@@ -74,9 +74,9 @@
           <div class="mt-auto flex px-4 pb-6 lg:px-14 lg:pb-14">
             <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
               <a href="card-processing.html"
-                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 dark:text-gray-300 shadow-xs hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 lg:flex">Back</a>
               <button type="button" data-sx-next disabled
-                class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
+                class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
                 Next
                 <img src="../../assets/onboarding/icon-arrow-narrow-right.svg" alt="" width="20" height="20" class="size-5">
               </button>

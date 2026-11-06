@@ -226,8 +226,11 @@
       '</div>' +
       '<div class="flex h-5 items-center justify-center">' +
         '<span class="relative block h-[18px] w-[154.123px]" role="img" aria-label="Powered by Transcard">' +
-          '<img src="' + ASSETS + 'powered-by-dark.svg" alt="" width="86.2589" height="18" class="absolute left-0 top-0 block">' +
-          '<img src="' + ASSETS + 'transcard-wordmark-dark.svg" alt="" width="63.1235" height="11.8737" class="absolute inset-[11.46%_0_22.58%_59.04%] block">' +
+          '<img src="' + ASSETS + 'powered-by-dark.svg" alt="" width="86.2589" height="18" class="absolute left-0 top-0 block dark:hidden">' +
+          '<img src="' + ASSETS + 'transcard-wordmark-dark.svg" alt="" width="63.1235" height="11.8737" class="absolute inset-[11.46%_0_22.58%_59.04%] block dark:hidden">' +
+          // Dark mode: the light logo the navy sidebar uses.
+          '<img src="' + ASSETS + 'powered-by.svg" alt="" width="86.2589" height="18" class="absolute left-0 top-0 hidden dark:block">' +
+          '<img src="' + ASSETS + 'transcard-wordmark.svg" alt="" width="63.1235" height="11.8737" class="absolute inset-[11.46%_0_22.58%_59.04%] hidden dark:block">' +
         '</span>' +
       '</div>' +
     '</div>';

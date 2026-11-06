@@ -117,7 +117,8 @@ window.OBDecline = (function () {
     function validate() {
       var reasonInvalid = !selected;
       reasonValue.classList.toggle('text-red-300', reasonInvalid && !selected);
-      reasonValue.classList.toggle('text-gray-400 dark:text-gray-500', !reasonInvalid && !selected);
+      reasonValue.classList.toggle('text-gray-400', !reasonInvalid && !selected);
+      reasonValue.classList.toggle('dark:text-gray-500', !reasonInvalid && !selected);
       reasonIcon.classList.toggle('hidden', !reasonInvalid);
       reasonError.classList.toggle('hidden', !reasonInvalid);
       setFieldState(reasonBtn, reasonInvalid);
@@ -132,10 +133,13 @@ window.OBDecline = (function () {
       }
       noteError.textContent = noteMessage;
       noteError.classList.toggle('hidden', !noteMessage);
-      note.classList.toggle('text-red-900 dark:text-red-300', !!noteMessage);
-      note.classList.toggle('text-gray-900 dark:text-white', !noteMessage);
+      note.classList.toggle('text-red-900', !!noteMessage);
+      note.classList.toggle('dark:text-red-300', !!noteMessage);
+      note.classList.toggle('text-gray-900', !noteMessage);
+      note.classList.toggle('dark:text-white', !noteMessage);
       note.classList.toggle('placeholder:text-red-300', !!noteMessage);
-      note.classList.toggle('placeholder:text-gray-400 dark:placeholder:text-gray-500', !noteMessage);
+      note.classList.toggle('placeholder:text-gray-400', !noteMessage);
+      note.classList.toggle('dark:placeholder:text-gray-500', !noteMessage);
       setFieldState(note, !!noteMessage);
 
       return !reasonInvalid && !noteMessage;
@@ -196,8 +200,8 @@ window.OBDecline = (function () {
       selected = data.reasons[index];
       options.forEach(function (opt, i) { opt.setAttribute('aria-selected', i === index ? 'true' : 'false'); });
       reasonValue.textContent = selected;
-      reasonValue.classList.remove('text-gray-400 dark:text-gray-500', 'text-red-300');
-      reasonValue.classList.add('font-medium', 'text-gray-900 dark:text-white');
+      reasonValue.classList.remove('text-gray-400', 'dark:text-gray-500', 'text-red-300');
+      reasonValue.classList.add('font-medium', 'text-gray-900', 'dark:text-white');
       // "Other" needs an explanation, so the note stops being optional.
       optional.classList.toggle('hidden', isOther());
       openList(false);

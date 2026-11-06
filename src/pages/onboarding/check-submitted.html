@@ -25,7 +25,7 @@
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
   <script src="../../../src/scripts/onboarding-transitions.js?v=20261106a"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261106b"></script>
   <script src="../../../src/scripts/onboarding-field.js?v=20261106a"></script>
   <script src="../../../src/scripts/onboarding-modal.js?v=20261106a"></script>
   <script src="../../../src/scripts/onboarding-flow.js?v=20261106a"></script>
@@ -37,10 +37,10 @@
       <script src="../../scripts/checkbox-component.js"></script>
   </head>
 
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6 dark:bg-gray-900 dark:lg:bg-gray-950">
 
   <!-- CONTAINER -->
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden dark:bg-gray-900">
 
     <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js; every step done, no Decline -->
     <div data-ob-sidebar data-ob-step="all" data-ob-no-decline></div>
@@ -57,7 +57,7 @@
               <span class="relative block size-[45px]" aria-hidden="true">
                 <img src="../../assets/onboarding/cc-success-check.svg" alt="" width="95" height="95" class="absolute top-[-16px] left-[-25px] block max-w-none">
               </span>
-              <h1 class="text-center text-3xl leading-9 text-[#1f2937]">Check Request<br class="lg:hidden"> Submitted!</h1>
+              <h1 class="text-center text-3xl leading-9 text-gray-800 dark:text-white">Check Request<br class="lg:hidden"> Submitted!</h1>
             </div>
 
             <div data-cc-receipt class="flex w-full flex-col items-center">
@@ -82,12 +82,12 @@
               </section>
 
               <!-- Receipt -->
-              <div class="relative z-[1] flex flex-col items-start border-x border-t border-[#d1d5db] bg-white">
+              <div class="relative z-[1] flex flex-col items-start border-x border-t border-gray-300 bg-white dark:border-white/10 dark:bg-white/5">
                 <div class="flex w-[300px] flex-col items-center px-4">
                   <div class="w-full pt-10 pb-6">
-                    <div class="flex w-full flex-col items-center gap-4 rounded-md bg-[#f9fafb] px-6 py-5 text-center text-sm leading-5">
-                      <p class="w-full text-[#6b7280]">Your payment will be sent to you via check!</p>
-                      <button type="button" data-cc-check-how data-cc-no-pdf class="cursor-pointer rounded font-medium text-[#3671fb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">How this works</button>
+                    <div class="flex w-full flex-col items-center gap-4 rounded-md bg-gray-50 px-6 py-5 text-center text-sm leading-5 dark:bg-white/5">
+                      <p class="w-full text-gray-500 dark:text-gray-400">Your payment will be sent to you via check!</p>
+                      <button type="button" data-cc-check-how data-cc-no-pdf class="cursor-pointer rounded font-medium text-[#3671fb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400">How this works</button>
                     </div>
                   </div>
                   <!-- Details, filled by card-created.js -->
@@ -110,12 +110,12 @@
                 Finish
               </button>
               <button type="button" data-cc-download
-                class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-md border border-[#d1d5db] bg-white py-[15px] pr-[25px] pl-[23px] text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-md border border-gray-300 bg-white py-[15px] pr-[25px] pl-[23px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">
                 <img src="../../assets/onboarding/icon-download-gray.svg" alt="" width="20" height="20" class="size-5">
                 Download Receipt
               </button>
               <button type="button" data-cc-share
-                class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-md border border-[#d1d5db] bg-white py-[15px] pr-[25px] pl-[23px] text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                class="flex w-full cursor-pointer items-center justify-center gap-3 rounded-md border border-gray-300 bg-white py-[15px] pr-[25px] pl-[23px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">
                 <img src="../../assets/onboarding/icon-share.svg" alt="" width="20" height="20" class="size-5">
                 Share Receipt
               </button>

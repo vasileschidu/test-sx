@@ -115,7 +115,7 @@ window.SDUK = (function () {
       var inner;
       if (i < current) inner = img('step-done.svg', 'size-5');
       else if (i === current) inner = '<span class="relative block size-[10px]"><img alt="" src="' + ASSETS + 'step-current.svg" class="absolute -inset-1/2 block size-[200%] max-w-none" /></span>';
-      else inner = '<span class="block size-[10px] rounded-[5px] bg-white opacity-15"></span>';
+      else inner = '<span class="block size-[10px] rounded-[5px] bg-white dark:bg-gray-900 opacity-15"></span>';
       out += '<span class="flex size-5 items-center justify-center">' + inner + '</span>';
     }
     return out;
@@ -147,15 +147,15 @@ window.SDUK = (function () {
     document.querySelectorAll('[data-uk-footer]').forEach(function (host) {
       host.className = 'flex flex-col items-center justify-end gap-4 p-6 ' + (host.getAttribute('data-uk-footer') || '');
       host.innerHTML =
-        '<button type="button" class="flex cursor-pointer items-center gap-1 rounded bg-gray-100 px-1.5 py-0.5 text-xs font-semibold text-gray-600">' +
+        '<button type="button" class="flex cursor-pointer items-center gap-1 rounded bg-gray-100 dark:bg-white/10 px-1.5 py-0.5 text-xs font-semibold text-gray-600 dark:text-gray-400">' +
           img('flag-gb.svg', 'h-3 w-4 rounded-[2px]') + 'English' + img('icon-chevron-down.svg', 'size-4') + '</button>' +
         '<div class="flex items-center gap-2 text-xs whitespace-nowrap">' +
-          '<a href="#" class="rounded px-1.5 py-0.5 font-semibold text-gray-700 hover:underline">Terms of Use</a><span class="font-medium text-gray-500">•</span>' +
-          '<a href="#" class="rounded px-1.5 py-0.5 font-semibold text-gray-700 hover:underline">Privacy Policy</a><span class="font-medium text-gray-500">•</span>' +
-          '<a href="#" class="rounded px-1.5 py-0.5 font-semibold text-gray-700 hover:underline">E-Sign Consent</a>' +
+          '<a href="#" class="rounded px-1.5 py-0.5 font-semibold text-gray-700 dark:text-gray-300 hover:underline">Terms of Use</a><span class="font-medium text-gray-500 dark:text-gray-400">•</span>' +
+          '<a href="#" class="rounded px-1.5 py-0.5 font-semibold text-gray-700 dark:text-gray-300 hover:underline">Privacy Policy</a><span class="font-medium text-gray-500 dark:text-gray-400">•</span>' +
+          '<a href="#" class="rounded px-1.5 py-0.5 font-semibold text-gray-700 dark:text-gray-300 hover:underline">E-Sign Consent</a>' +
         '</div>' +
         '<div class="flex items-center gap-[5px]">' + img('shield-check.svg', 'size-[18px]') +
-          '<span class="text-xs font-medium text-gray-900 opacity-60">Powered by <span class="font-semibold">Transcard</span></span></div>';
+          '<span class="text-xs font-medium text-gray-900 dark:text-white opacity-60">Powered by <span class="font-semibold">Transcard</span></span></div>';
     });
   }
 
@@ -214,9 +214,9 @@ window.SDUK = (function () {
     wrap.innerHTML =
       '<div data-uk-backdrop class="fixed inset-0 bg-gray-900/75 opacity-0 transition-opacity duration-300 ease-out"></div>' +
       '<div data-uk-close-area class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-6">' +
-        '<div role="dialog" aria-modal="true" data-uk-panel class="relative w-full translate-y-4 transform overflow-hidden rounded-xl bg-white text-left opacity-0 shadow-xl transition-all duration-300 ease-out sm:translate-y-0 sm:scale-95 ' + (opts.size || 'sm:max-w-lg') + '">' +
+        '<div role="dialog" aria-modal="true" data-uk-panel class="relative w-full translate-y-4 transform overflow-hidden rounded-xl bg-white dark:bg-gray-900 text-left opacity-0 shadow-xl transition-all duration-300 ease-out sm:translate-y-0 sm:scale-95 ' + (opts.size || 'sm:max-w-lg') + '">' +
           (opts.bare ? '' : '<div class="flex flex-col items-end px-4 pt-4">' +
-            '<button type="button" data-uk-close data-uk-dismiss class="cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500"><span class="sr-only">Close</span>' +
+            '<button type="button" data-uk-close data-uk-dismiss class="cursor-pointer rounded-md p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-500 dark:hover:text-gray-400"><span class="sr-only">Close</span>' +
               '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg></button>' +
           '</div>') + opts.html +
         '</div>' +
@@ -246,7 +246,7 @@ window.SDUK = (function () {
     check: '<svg viewBox="0 0 24 24" fill="currentColor" class="size-11 text-green-500" aria-hidden="true"><path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm13.36-1.814a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd"/></svg>'
   };
 
-  var BTN_SECONDARY = 'w-full cursor-pointer rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50';
+  var BTN_SECONDARY = 'w-full cursor-pointer rounded-md bg-white dark:bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-gray-700 dark:text-gray-300 shadow-xs ring-1 ring-inset ring-gray-300 dark:ring-white/10 hover:bg-gray-50 dark:hover:bg-white/10';
   var BTN_PRIMARY = 'w-full cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
   var BTN_DANGER = 'w-full cursor-pointer rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600';
 
@@ -260,12 +260,12 @@ window.SDUK = (function () {
       '<div class="flex flex-col gap-6 px-6 pt-0 pb-6 sm:px-8">' +
         '<div class="flex flex-col items-center text-center">' + (ICONS[o.icon] || o.icon || '') +
           '<div class="' + (o.icon ? 'mt-6 ' : '') + 'flex flex-col items-center gap-2">' +
-            '<h2 class="text-center text-lg/6 font-semibold text-gray-900">' + o.title + '</h2>' +
-            (o.body ? '<div class="text-center text-sm/5 font-normal text-gray-500">' + o.body + '</div>' : '') +
+            '<h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">' + o.title + '</h2>' +
+            (o.body ? '<div class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">' + o.body + '</div>' : '') +
           '</div>' +
         '</div>' + (o.extra || '') +
       '</div>' +
-      '<div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5">' +
+      '<div class="flex w-full gap-3 border-t border-gray-200 dark:border-white/10 px-6 py-5">' +
         (o.cancel ? '<button type="button" data-uk-close class="' + BTN_SECONDARY + '">' + o.cancel + '</button>' : '') +
         '<button type="button" data-uk-confirm class="' + confirmCls + '">' + (o.confirm || 'Close') + '</button>' +
       '</div>' });
@@ -307,7 +307,7 @@ window.SDUK = (function () {
         var title = btn.getAttribute('data-uk-review-title') || 'Terms';
         confirmModal({
           icon: 'doc', title: title,
-          body: '<p>This is a demo version of the ' + title + '. In the live flow the full document opens here.</p><p class="mt-3">Select <span class="font-semibold text-gray-900">I’ve read it</span> to confirm.</p>',
+          body: '<p>This is a demo version of the ' + title + '. In the live flow the full document opens here.</p><p class="mt-3">Select <span class="font-semibold text-gray-900 dark:text-white">I’ve read it</span> to confirm.</p>',
           cancel: 'Cancel', confirm: 'I’ve read it',
           onConfirm: function () {
             done[key] = true;
@@ -362,7 +362,7 @@ window.SDUK = (function () {
     infoModal: infoModal,
     closeModal: closeModal,
     confirmModal: confirmModal,
-    closeX: '<button type="button" data-uk-close aria-label="Close" class="absolute right-4 top-4 cursor-pointer rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>',
+    closeX: '<button type="button" data-uk-close aria-label="Close" class="absolute right-4 top-4 cursor-pointer rounded-md p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-500 dark:hover:text-gray-400"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>',
     initConsents: initConsents
   };
 })();

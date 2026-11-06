@@ -27,10 +27,10 @@
   var esc = X.esc;
 
   var BADGE_DONE =
-    "inline-flex w-fit items-center rounded-md bg-green-50 px-2 py-0.5 text-xs font-medium text-green-700 inset-ring inset-ring-green-600/20";
+    "inline-flex w-fit items-center rounded-md bg-green-50 dark:bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-700 dark:text-green-400 inset-ring inset-ring-green-600/20 dark:inset-ring-green-500/20";
 
   var LOADER =
-    '<div role="status" class="absolute inset-0 flex items-center justify-center bg-white/70">' +
+    '<div role="status" class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-gray-900/70">' +
     '<img src="../../assets/onboarding/loader.svg" alt="" width="44" height="44" class="size-11 animate-spin motion-reduce:animate-none">' +
     '<span class="sr-only">Loading…</span>' +
     "</div>";
@@ -81,7 +81,7 @@
     function documentView() {
       return (
         '<div class="relative">' +
-        '<div tabindex="0" aria-label="Visa AR Manager Participation Agreement" class="h-96 overflow-y-auto rounded-lg border border-gray-200 bg-gray-50 p-4 focus-visible:outline-2 focus-visible:outline-blue-600 lg:h-150">' +
+        '<div tabindex="0" aria-label="Visa AR Manager Participation Agreement" class="h-96 overflow-y-auto rounded-lg border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-4 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 lg:h-150">' +
         X.agreementArticle() +
         "</div>" +
         (busy ? LOADER : "") +
@@ -91,10 +91,10 @@
 
     function formView() {
       return (
-        '<div class="relative flex flex-col gap-4 rounded-lg border border-gray-200 bg-white p-4">' +
-        '<div class="flex items-center gap-3 rounded-md bg-green-50 px-4 py-3">' +
+        '<div class="relative flex flex-col gap-4 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 p-4">' +
+        '<div class="flex items-center gap-3 rounded-md bg-green-50 dark:bg-green-500/10 px-4 py-3">' +
         '<img src="../../assets/onboarding/icon-check-circle-green.svg" alt="" width="20" height="20" class="size-5 shrink-0">' +
-        '<p class="min-w-0 flex-1 text-sm font-medium text-gray-900">Agreement was confirmed</p>' +
+        '<p class="min-w-0 flex-1 text-sm font-medium text-gray-900 dark:text-white">Agreement was confirmed</p>' +
         "</div>" +
         '<fieldset data-sign-fieldset class="flex flex-col gap-4"' + (busy ? " disabled" : "") + ">" +
         '<legend class="sr-only">Your name</legend>' +
@@ -111,8 +111,8 @@
     function doneView() {
       var a = ((window.SXDemoCase.get() || {}).enrol || {}).agreement || {};
       return (
-        '<section aria-label="Acknowledgement Complete" class="overflow-hidden rounded-lg border border-gray-200 bg-white">' +
-        '<h2 tabindex="-1" class="border-b border-gray-200 px-4 py-3 text-sm font-semibold text-gray-900 focus:outline-hidden">Acknowledgement Complete</h2>' +
+        '<section aria-label="Acknowledgement Complete" class="overflow-hidden rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900">' +
+        '<h2 tabindex="-1" class="border-b border-gray-200 dark:border-white/10 px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white focus:outline-hidden">Acknowledgement Complete</h2>' +
         '<div class="flex flex-col gap-2 p-4">' +
         X.row("Status", '<span class="' + BADGE_DONE + '">Completed</span>') +
         X.row("Signed by", esc(a.signedBy)) +

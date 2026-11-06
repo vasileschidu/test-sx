@@ -24,11 +24,11 @@
 <body data-uk-step="4" data-uk-back="card.html" class="min-h-screen bg-[#1e326f] font-['Inter'] antialiased">
   <div class="flex min-h-screen w-full flex-col bg-[#1e326f]">
     <div data-uk-header></div>
-    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
+    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white dark:bg-gray-900 px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
       <div class="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-6">
       <div class="flex flex-col gap-4">
-        <h1 class="text-3xl font-semibold leading-9 text-gray-900">One Final Step</h1>
-        <p class="text-sm leading-5 text-gray-500">Make sure all the details are accurate</p>
+        <h1 class="text-3xl font-semibold leading-9 text-gray-900 dark:text-white">One Final Step</h1>
+        <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Make sure all the details are accurate</p>
       </div>
       <div class="uk-amount relative flex w-full flex-col items-center overflow-hidden rounded-2xl">
         <img alt="" src="../../assets/sd-uk/bubble-1.svg" class="pointer-events-none absolute top-[calc(50%-72px)] left-[calc(50%-113.5px)] size-[162px] max-w-none -translate-x-1/2 -translate-y-1/2 -rotate-[105deg]">
@@ -41,35 +41,35 @@
         </div>
       </div>
       <div class="flex flex-col gap-3">
-        <div class="flex items-center gap-4 rounded-lg bg-gray-50 p-6">
+        <div class="flex items-center gap-4 rounded-lg bg-gray-50 dark:bg-white/5 p-6">
           <div class="flex min-w-px flex-1 flex-col">
-            <p class="text-xs leading-4 font-medium text-gray-500">Full Name</p>
-            <p class="text-base leading-6 text-gray-900" data-uk-text="fullName"></p>
+            <p class="text-xs leading-4 font-medium text-gray-500 dark:text-gray-400">Full Name</p>
+            <p class="text-base leading-6 text-gray-900 dark:text-white" data-uk-text="fullName"></p>
           </div>
-          <a href="card.html" class="shrink-0 py-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</a>
+          <a href="card.html" class="shrink-0 py-1.5 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">Edit</a>
         </div>
-        <div class="flex items-center gap-4 rounded-lg bg-gray-50 p-6">
+        <div class="flex items-center gap-4 rounded-lg bg-gray-50 dark:bg-white/5 p-6">
           <div class="flex min-w-px flex-1 flex-col">
-            <p class="text-xs leading-4 font-medium text-gray-500">Billing Address</p>
-            <p class="text-base leading-6 text-gray-900 whitespace-pre-line" data-uk-text="addressLines"></p>
+            <p class="text-xs leading-4 font-medium text-gray-500 dark:text-gray-400">Billing Address</p>
+            <p class="text-base leading-6 text-gray-900 dark:text-white whitespace-pre-line" data-uk-text="addressLines"></p>
           </div>
-          <a href="card.html" class="shrink-0 py-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</a>
+          <a href="card.html" class="shrink-0 py-1.5 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">Edit</a>
         </div>
-        <div class="flex items-center gap-4 rounded-lg bg-gray-50 p-6">
+        <div class="flex items-center gap-4 rounded-lg bg-gray-50 dark:bg-white/5 p-6">
           <div class="flex min-w-px flex-1 flex-col">
-            <p class="text-xs leading-4 font-medium text-gray-500">Contact Info</p>
-            <p class="text-base leading-6 text-gray-900" data-uk-text="claimant.phone"></p>
-            <p class="text-base leading-6 text-gray-900" data-uk-text="claimant.email"></p>
+            <p class="text-xs leading-4 font-medium text-gray-500 dark:text-gray-400">Contact Info</p>
+            <p class="text-base leading-6 text-gray-900 dark:text-white" data-uk-text="claimant.phone"></p>
+            <p class="text-base leading-6 text-gray-900 dark:text-white" data-uk-text="claimant.email"></p>
           </div>
-          <a href="card.html" class="shrink-0 py-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700">Edit</a>
+          <a href="card.html" class="shrink-0 py-1.5 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">Edit</a>
         </div>
       </div>
-        <div class="flex flex-col overflow-hidden rounded-lg border border-gray-200" data-uk-consents>
-          <div class="flex gap-3 bg-gray-50 p-3"><img alt="" src="../../assets/sd-uk/info-circle-gray.svg" class="size-[18px] shrink-0"><p class="flex-1 text-xs leading-4 text-gray-800">Please review below terms. Once reviewed, please return to this page to express your consent by marking the appropriate checkboxes.</p></div>
-          <label class="flex cursor-pointer items-center gap-6 border-t border-gray-200 p-3.5"><span class="flex-1 text-xs leading-4 font-medium text-gray-700">I've read and agree to the <span class="text-blue-600">Virtual Card Terms &amp; Conditions</span>.</span><div class="group grid size-4 shrink-0 grid-cols-1"><input type="checkbox" data-uk-consent class="col-start-1 row-start-1 cursor-pointer appearance-none rounded-sm border border-gray-300 bg-white checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 forced-colors:appearance-auto" /><svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg></div></label>
-          <div class="flex items-center gap-6 border-t border-gray-200 p-3.5"><p class="flex-1 text-xs leading-4 font-medium text-gray-700">I've read and consent to the <span class="text-blue-600">Terms of Use</span>.</p><button type="button" data-uk-review="terms" data-uk-review-title="Terms of Use" class="shrink-0 cursor-pointer text-xs leading-4 font-semibold text-blue-600 hover:text-blue-700">Review</button></div>
-          <div class="flex items-center gap-6 border-t border-gray-200 p-3.5"><p class="flex-1 text-xs leading-4 font-medium text-gray-700">I consent to Transcard collecting, using, and storing my personal information (e.g. name, email address, phone number, date of birth, and associated financial details) to process payments. This information may be shared with regulators and service providers. For details, see our <span class="text-blue-600">Privacy Policy</span>.</p><button type="button" data-uk-review="privacy" data-uk-review-title="Privacy Policy" class="shrink-0 cursor-pointer text-xs leading-4 font-semibold text-blue-600 hover:text-blue-700">Review</button></div>
-          <div class="flex items-center gap-6 border-t border-gray-200 p-3.5"><p class="flex-1 text-xs leading-4 font-medium text-gray-700">I've read and consent to the <span class="text-blue-600">E-Sign Consent</span>.</p><button type="button" data-uk-review="esign" data-uk-review-title="E-Sign Consent" class="shrink-0 cursor-pointer text-xs leading-4 font-semibold text-blue-600 hover:text-blue-700">Review</button></div>
+        <div class="flex flex-col overflow-hidden rounded-lg border border-gray-200 dark:border-white/10" data-uk-consents>
+          <div class="flex gap-3 bg-gray-50 dark:bg-white/5 p-3"><img alt="" src="../../assets/sd-uk/info-circle-gray.svg" class="size-[18px] shrink-0"><p class="flex-1 text-xs leading-4 text-gray-800 dark:text-gray-200">Please review below terms. Once reviewed, please return to this page to express your consent by marking the appropriate checkboxes.</p></div>
+          <label class="flex cursor-pointer items-center gap-6 border-t border-gray-200 dark:border-white/10 p-3.5"><span class="flex-1 text-xs leading-4 font-medium text-gray-700 dark:text-gray-300">I've read and agree to the <span class="text-blue-600 dark:text-blue-400">Virtual Card Terms &amp; Conditions</span>.</span><div class="group grid size-4 shrink-0 grid-cols-1"><input type="checkbox" data-uk-consent class="col-start-1 row-start-1 cursor-pointer appearance-none rounded-sm border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 forced-colors:appearance-auto" /><svg viewBox="0 0 14 14" fill="none" class="pointer-events-none col-start-1 row-start-1 size-3.5 self-center justify-self-center stroke-white"><path d="M3 8L6 11L11 3.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="opacity-0 group-has-checked:opacity-100" /></svg></div></label>
+          <div class="flex items-center gap-6 border-t border-gray-200 dark:border-white/10 p-3.5"><p class="flex-1 text-xs leading-4 font-medium text-gray-700 dark:text-gray-300">I've read and consent to the <span class="text-blue-600 dark:text-blue-400">Terms of Use</span>.</p><button type="button" data-uk-review="terms" data-uk-review-title="Terms of Use" class="shrink-0 cursor-pointer text-xs leading-4 font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">Review</button></div>
+          <div class="flex items-center gap-6 border-t border-gray-200 dark:border-white/10 p-3.5"><p class="flex-1 text-xs leading-4 font-medium text-gray-700 dark:text-gray-300">I consent to Transcard collecting, using, and storing my personal information (e.g. name, email address, phone number, date of birth, and associated financial details) to process payments. This information may be shared with regulators and service providers. For details, see our <span class="text-blue-600 dark:text-blue-400">Privacy Policy</span>.</p><button type="button" data-uk-review="privacy" data-uk-review-title="Privacy Policy" class="shrink-0 cursor-pointer text-xs leading-4 font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">Review</button></div>
+          <div class="flex items-center gap-6 border-t border-gray-200 dark:border-white/10 p-3.5"><p class="flex-1 text-xs leading-4 font-medium text-gray-700 dark:text-gray-300">I've read and consent to the <span class="text-blue-600 dark:text-blue-400">E-Sign Consent</span>.</p><button type="button" data-uk-review="esign" data-uk-review-title="E-Sign Consent" class="shrink-0 cursor-pointer text-xs leading-4 font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">Review</button></div>
         </div>
       <div class="flex flex-1 flex-col justify-end gap-6">
         <button type="button" id="card-confirm" disabled class="uk-grad flex h-14 w-full items-center justify-center gap-2 rounded-lg px-3.5 text-base font-semibold text-white shadow-[0_16px_24px_0_rgba(55,115,255,0.16)] transition-opacity opacity-40 cursor-not-allowed">Get Card Now<img alt="" src="../../assets/sd-uk/icon-arrow-right.svg" class="size-5"></button>

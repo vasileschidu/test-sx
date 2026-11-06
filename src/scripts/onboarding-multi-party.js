@@ -709,7 +709,7 @@
 
     var expired = mp.payment === 'expired';
     var icon = document.querySelector('[data-mp-closed-icon]');
-    icon.classList.add(expired ? 'bg-gray-50 dark:bg-white/5' : 'bg-red-50 dark:bg-red-500/10');
+    icon.classList.add.apply(icon.classList, (expired ? 'bg-gray-50 dark:bg-white/5' : 'bg-red-50 dark:bg-red-500/10').split(' '));
     icon.innerHTML = expired
       ? '<img src="' + ASSETS + 'icon-calendar-gray.svg" alt="" width="24" height="24" class="size-6">'
       : '<img src="../../assets/onboarding/icon-x-circle-red.svg" alt="" width="24" height="24" class="size-6">';
