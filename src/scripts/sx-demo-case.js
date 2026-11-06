@@ -104,7 +104,6 @@
         lastName: "Jackson",
         email: defaultRecipient,
       },
-      scenario: "A",
       enrol: {
         stp: null,
         signer: null,
@@ -264,7 +263,8 @@
     return {
       amount: Number(payment.amount) || 0,
       currency: payment.currency || "USD",
-      vendorEntry: payer.name || "",
+      // Vendor Entry = the supplier's business (Figma STP table "Pinnacle Group").
+      vendorEntry: (c.supplier && c.supplier.name) || "",
       invoice: payment.invoice || "",
       customer: payer.name || "",
       dateInitiated: payment.dateInitiated || todayIso(),
@@ -690,10 +690,6 @@
         window.PAYMENT_PREFERENCES_CONFIG || {});
       pp.storagePrefix = "sxdemo_" + c.id + "_pp_";
       pp.transformSharedData = toPaymentPreferencesData;
-      pp.getStpIds = function () {
-        var stp = (read() || {}).stp || {};
-        return stp.mid || stp.tid ? { mid: stp.mid, tid: stp.tid } : null;
-      };
       window.__ppConfig = pp;
     }
   }
@@ -737,6 +733,32 @@
   if (document.readyState === "loading")
     document.addEventListener("DOMContentLoaded", bootInstance);
   else bootInstance();
+
+  // Presenter control on every instance page: back to the launcher (case + new demo).
+  var DEMO_LINK_CLASS =
+    "rounded-sm px-2 py-1 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600";
+  function renderDemoBar() {
+    if (/\/pages\/demo\//.test(window.location.pathname)) return; // the launcher itself
+    if (!isPortalInstance() || document.getElementById("sx-demo-bar")) return;
+    var c = read();
+    var u = urls(c);
+    var bar = document.createElement("div");
+    bar.id = "sx-demo-bar";
+    bar.setAttribute("role", "region");
+    bar.setAttribute("aria-label", "Demo controls");
+    bar.className =
+      "fixed right-4 bottom-4 z-40 flex items-center gap-2 rounded-lg bg-white py-1.5 pr-1.5 pl-3 shadow-lg ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-white/10";
+    bar.innerHTML =
+      '<span class="text-xs font-medium text-gray-500 dark:text-gray-400">Demo case ' +
+      String(c.id).replace(/[<>&"]/g, "") +
+      "</span>" +
+      '<a href="' + u.launcher + '" class="' + DEMO_LINK_CLASS +
+      ' bg-white text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 active:bg-gray-100 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20">New demo</a>';
+    document.body.appendChild(bar);
+  }
+  if (document.readyState === "loading")
+    document.addEventListener("DOMContentLoaded", renderDemoBar);
+  else renderDemoBar();
 
   // Other tabs (the signer's tab, the portal) hear about changes too.
   window.addEventListener("storage", function (event) {

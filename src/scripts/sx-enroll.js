@@ -7,7 +7,8 @@
  * changing them (onboarding-sidebar / -stepper / -mobile-header / -modal /
  * -field / -sign / -consents, review-documents.js). This file adapts them:
  *   - window.OB_FLOW_STEPS: the 7 enrolment steps (links keep ?case=; signing is on Submit of the summary).
- *   - window.OB_MOBILE_MENU: Contact Us only (no Decline in this flow).
+ *   - window.OB_MOBILE_MENU: Contact Us, plus Decline Payment before the
+ *     payment is submitted (OBDecline → declined.html).
  *   - window.SDOnboardingContext: a small adapter (getState / saveState) on
  *     sessionStorage `sx-enroll-state`, so OBConsents, OBModal's Contact Us
  *     and review-documents.js keep their state; senderName / billNumber come
@@ -89,6 +90,18 @@
       },
     },
   ];
+  // Decline Payment until the payment is submitted (not on the end screens).
+  if (!/\/(complete|declined|sign-agreement)\.html$/.test(window.location.pathname))
+    window.OB_MOBILE_MENU.push({
+      label: "Decline Payment",
+      icon:
+        '<img src="' +
+        ASSETS +
+        'icon-x-circle-mini.svg" alt="" width="20" height="20" class="block size-5">',
+      onSelect: function () {
+        if (window.OBDecline) window.OBDecline.open();
+      },
+    });
 
   // ---- Session state + SD context adapter ----------------------------------
 
@@ -396,6 +409,16 @@
   // =========================================================================
   // Steps
   // =========================================================================
+
+  // ---- Declined (sidebar / mobile menu → OBDecline) --------------------------
+
+  page("declined", function (c) {
+    var declined = window.SDOnboardingContext.getState().declined || {};
+    if (declined.reason && !(c.enrol && c.enrol.declined))
+      window.SXDemoCase.update({ enrol: { declined: declined } });
+    document.querySelector("[data-sx-declined-reason]").textContent = declined.reason || "—";
+    document.querySelector("[data-sx-declined-note]").textContent = declined.note || "";
+  });
 
   // ---- Welcome -------------------------------------------------------------
 
@@ -888,6 +911,7 @@
       if (!data) return;
       window.OBConsents.mount(list, data.agreements, {
         stateKey: "consents",
+        documentScroll: true,
         onChange: function (all) {
           submit.disabled = !all;
         },
