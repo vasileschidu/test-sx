@@ -795,8 +795,8 @@
   // #manage-columns). Once the user applies a selection it stays as is on every tab;
   // applying the defaults again (Reset default) hands control back to the per-tab defaults.
   var TAB_COLUMNS_OFF_BY_DEFAULT = {
-    pending: ["dateInitiated", "dateProcessed", "failureReason"],
-    "action-required": ["dateInitiated", "dateProcessed", "failureReason"],
+    pending: ["dateProcessed", "failureReason"],
+    "action-required": ["dateProcessed", "failureReason"],
     paid: ["dateInitiated", "failureReason"],
     exceptions: ["dateProcessed"],
   };
@@ -847,7 +847,6 @@
       })
       .filter(function (col) {
         if (col.key === "failureReason") return false;
-        if (IS_SUPPLIER_PORTAL && col.key === "vendorEntry") return false;
         return true;
       })
       .map(function (col) {

@@ -30,7 +30,7 @@
 
     <script src="../../scripts/data-source.js"></script>
     <script src="../../scripts/stp-state.js?v=20261105p"></script>
-    <script src="../../scripts/sx-demo-case.js?v=20261105e"></script>
+    <script src="../../scripts/sx-demo-case.js?v=20261106d"></script>
     <script src="../../scripts/checkbox-component.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   </head>
@@ -39,65 +39,35 @@
       <header class="flex flex-col gap-2">
         <h1 class="type-title-page text-default">STP walkthrough</h1>
         <p class="type-description text-tertiary">
-          Create a demo case: one card payment from a payer to a supplier. The supplier enrols with it and
-          lands in a Supplier Portal that holds only this payment.
+          One card payment from a payer to a supplier. Start enrolment begins a fresh demo with this information;
+          Open Supplier Portal continues the current one, which holds only this payment.
         </p>
       </header>
 
       <form id="case-form" class="flex flex-col gap-4" novalidate>
-        <!-- Case information summary -->
-        <div class="flex flex-wrap items-center justify-between gap-3 rounded-md bg-gray-50 p-4 dark:bg-white/5">
-          <p id="case-summary" class="min-w-0 flex-1 text-sm font-normal text-gray-700 break-words dark:text-gray-300"></p>
-          <button id="edit-open" type="button" command="show-modal" commandfor="edit-dialog" class="cursor-pointer rounded-sm bg-white px-2 py-1 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20">Edit case information</button>
+        <!-- Case information (@details card) -->
+        <div class="flex flex-col items-start self-stretch">
+          <div class="flex items-center justify-between self-stretch rounded-t-md border border-gray-200 bg-gray-100 px-4 py-2 dark:border-white/10 dark:bg-white/10">
+            <span class="text-sm font-semibold text-gray-900 dark:text-gray-100">Case information</span>
+            <button id="edit-open" type="button" command="show-modal" commandfor="edit-dialog" class="cursor-pointer rounded-sm bg-white px-2 py-1 text-xs font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 active:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20">Edit</button>
+          </div>
+          <div id="case-summary" class="flex flex-col items-start gap-2 self-stretch rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5"></div>
         </div>
-
-        <!-- Starting scenario -->
-        <section class="flex flex-col gap-4 rounded-lg bg-default p-6 shadow-sm ring-1 ring-gray-900/5 dark:ring-white/10">
-          <fieldset class="flex flex-col gap-4">
-            <legend class="flex flex-col gap-1">
-              <span class="type-title-card text-default">Starting scenario</span>
-              <span class="type-description text-tertiary">How the supplier answers Automatic Card Processing during enrolment.</span>
-            </legend>
-            <div class="mt-4 flex flex-col gap-3">
-              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-                <span class="flex h-5 shrink-0 items-center">
-                  <input type="radio" name="scenario" value="A" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
-                </span>
-                <span class="flex flex-col text-sm">
-                  <span class="font-semibold text-gray-950 dark:text-white">A. I'm the signatory</span>
-                  <span class="text-gray-500 dark:text-gray-400">The contact signs the Visa agreement during enrolment.</span>
-                </span>
-              </label>
-              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-                <span class="flex h-5 shrink-0 items-center">
-                  <input type="radio" name="scenario" value="B" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
-                </span>
-                <span class="flex flex-col text-sm">
-                  <span class="font-semibold text-gray-950 dark:text-white">B. Send to another signer</span>
-                  <span class="text-gray-500 dark:text-gray-400">The agreement is emailed to the authorized signer in the case information.</span>
-                </span>
-              </label>
-              <label class="flex cursor-pointer items-start gap-3 rounded-lg border border-gray-200 bg-white p-3 hover:bg-gray-50 has-checked:border-blue-600 has-checked:ring-1 has-checked:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10">
-                <span class="flex h-5 shrink-0 items-center">
-                  <input type="radio" name="scenario" value="C" class="relative size-4 appearance-none rounded-full border border-gray-300 bg-white before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" />
-                </span>
-                <span class="flex flex-col text-sm">
-                  <span class="font-semibold text-gray-950 dark:text-white">C. Skip STP</span>
-                  <span class="text-gray-500 dark:text-gray-400">The supplier opts out and can opt in later from the portal.</span>
-                </span>
-              </label>
-            </div>
-          </fieldset>
-
-        </section>
 
         <div class="flex flex-wrap items-center justify-end gap-3">
           <button
-            id="case-create"
-            type="submit"
-            class="cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300"
+            id="case-open-portal"
+            type="button"
+            class="cursor-pointer rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 active:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20"
           >
-            Create case
+            Open Supplier Portal
+          </button>
+          <button
+            id="case-start-enrol"
+            type="submit"
+            class="cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 active:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300"
+          >
+            Start enrolment
           </button>
         </div>
       </form>
@@ -249,11 +219,6 @@
         var editForm = document.getElementById("edit-form");
         var emailInput = document.getElementById("f-signer-email");
         var emailHint = document.getElementById("f-signer-email-hint");
-        var SCENARIOS = {
-          A: "A. I'm the signatory",
-          B: "B. Send to another signer",
-          C: "C. Skip STP",
-        };
         var EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         var data = null;
 
@@ -327,12 +292,30 @@
         function renderCards() {
           var d = data;
           var signer = [d.signer.firstName, d.signer.lastName].join(" ").trim();
-          document.getElementById("case-summary").textContent = [
-            d.supplier.name,
-            d.payer.name,
-            money(d.payment.amount),
-            "signer " + signer,
-          ].join(" \u00b7 ");
+          var summary = document.getElementById("case-summary");
+          summary.replaceChildren.apply(
+            summary,
+            (d.id ? [["Current case", d.id]] : []).concat([
+              ["Supplier", d.supplier.name],
+              ["Contact", [d.supplier.contactFirst, d.supplier.contactLast].join(" ").trim() + "\n" + d.supplier.email],
+              ["Payer", d.payer.name],
+              ["Payment", money(d.payment.amount) + " \u00b7 " + d.payment.invoice],
+              ["Card", "Visa ending " + String(d.payment.cardNumber || "").slice(-4)],
+              ["Authorized signer", signer + "\n" + d.signer.email],
+            ]).map(function (r) {
+              var wrap = document.createElement("div");
+              wrap.className = "grid grid-cols-2 gap-4 self-stretch";
+              var l = document.createElement("span");
+              l.className = "text-sm font-medium text-gray-900 dark:text-gray-100";
+              l.textContent = r[0];
+              var v = document.createElement("span");
+              v.className = "text-sm font-normal text-gray-700 break-words whitespace-pre-line dark:text-gray-300";
+              v.textContent = r[1];
+              wrap.appendChild(l);
+              wrap.appendChild(v);
+              return wrap;
+            }),
+          );
         }
 
 
@@ -450,31 +433,10 @@
           return target;
         }
 
-        function fillScenario(d) {
-          form.querySelectorAll('input[name="scenario"]').forEach(function (radio) {
-            radio.checked = radio.value === (d.scenario || "A");
-          });
-        }
-
-        function readScenario() {
-          var checked = form.querySelector('input[name="scenario"]:checked');
-          return {
-            scenario: checked ? checked.value : "A",
-          };
-        }
-
         function setData(next) {
           data = next;
           renderCards();
-          fillScenario(next);
         }
-
-        form.addEventListener("change", function (event) {
-          if (!event.target.matches('input[name="scenario"]')) return;
-          var patch = readScenario();
-          if (Case.get()) setData(Case.update(patch) || mergePatch(data, patch));
-          else mergePatch(data, patch);
-        });
 
         document.getElementById("edit-open").addEventListener("click", openDialog);
 
@@ -510,16 +472,22 @@
           dialog.close();
         });
 
-        form.addEventListener("submit", function (event) {
-          event.preventDefault();
-          // Always a fresh run: keep the case information, drop the previous run's enrolment,
-          // signature, STP and paid state (create() clears them and gives a new case id).
+        // A fresh run: keep the case information, drop the previous run's enrolment,
+        // signature, STP and paid state (create() clears them and gives a new case id).
+        function createCase() {
           var info = {};
           ["supplier", "payer", "payment", "signer"].forEach(function (k) {
             info[k] = data[k];
           });
-          Case.create(mergePatch(info, readScenario()));
-          window.location.href = "stp-case-ready.html";
+          return Case.create(info);
+        }
+        form.addEventListener("submit", function (event) {
+          event.preventDefault();
+          window.location.href = Case.urls(createCase()).enrol;
+        });
+        // Continues the current case (enrolled or not); a first visit creates one.
+        document.getElementById("case-open-portal").addEventListener("click", function () {
+          window.location.href = Case.urls(Case.get() || createCase()).portal;
         });
 
         document.getElementById("case-defaults").addEventListener("click", function () {
