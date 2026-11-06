@@ -482,6 +482,42 @@
     );
   }
 
+  /**
+   * "Dark mode" row in the user menu: the blue toggle switch (components
+   * skill). Same storage key, .dark class and app-theme-change event as
+   * shared.js initThemeToggle(); the change listener is delegated below.
+   */
+  function themeToggleRowHtml() {
+    var isDark = document.documentElement.classList.contains("dark");
+    return (
+      '<label class="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-medium leading-5 text-gray-900 transition-colors hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">' +
+      "<span>Dark mode</span>" +
+      '<span class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/10 dark:inset-ring-white/10 dark:has-checked:bg-blue-500">' +
+      '<span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>' +
+      '<input type="checkbox" data-topbar-theme-toggle' +
+      (isDark ? " checked" : "") +
+      ' aria-label="Dark mode" class="absolute inset-0 size-full cursor-pointer appearance-none focus:outline-hidden" />' +
+      "</span>" +
+      "</label>"
+    );
+  }
+
+  document.addEventListener("change", function (event) {
+    var input = event.target.closest && event.target.closest("[data-topbar-theme-toggle]");
+    if (!input) return;
+    var isDark = input.checked;
+    document.documentElement.classList.toggle("dark", isDark);
+    try {
+      localStorage.setItem("theme", isDark ? "dark" : "light");
+    } catch (e) {}
+    document.querySelectorAll("[data-topbar-theme-toggle]").forEach(function (el) {
+      el.checked = isDark;
+    });
+    window.dispatchEvent(
+      new CustomEvent("app-theme-change", { detail: { isDark: isDark } }),
+    );
+  });
+
   /** Consumer portal user menu (Figma "User Dropdown Menu"): name + role, Profile, Sign out. */
   function consumerAccountMenuHtml() {
     var itemCls =
@@ -499,6 +535,7 @@
       '" class="' +
       itemCls +
       '"><span>Profile</span></a>' +
+      themeToggleRowHtml() +
       '<a href="#" class="' +
       itemCls +
       '">' +

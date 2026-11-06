@@ -2,7 +2,7 @@
 title: Design tokens
 type: reference
 status: draft
-last_reviewed: 2026-10-19
+last_reviewed: 2026-11-06
 ---
 
 # Design tokens
@@ -11,8 +11,10 @@ Figma and code use the same token **names**. Source of truth: the **🛠 SMART S
 
 **Palette:** the pages run Tailwind v4 from the CDN, but `src/scripts/tailwind-theme.js` pins the colours to the
 classic Tailwind v3 hex palette the Figma product files are drawn with (`blue-600 #2563EB`). The semantic
-classes below resolve through it. TODO(decide): SMART System's primitive variables currently hold the v4
-values (updated 2026-10-19, not published) — align them to the v3 palette or move code to v4.
+classes below resolve through it. Decided 2026-11-06: v3 everywhere. SMART System's `primitive-colors`
+now hold the same v3 hex as `tailwind-theme.js` (22 Tailwind families + `modal-background` = gray-900 at
+25/50/75 %); the v4-only families (mauve, olive, mist, taupe) are unused and kept. The previous values were
+the stock Tailwind v4 palette. Publish the library so product files pick it up.
 
 ## How to use them
 
