@@ -7,7 +7,11 @@
     "serve": "python3 tools/serve.py",
     "qa:code": "node tools/ui-qa/code-audit.mjs",
     "qa:hover": "node tools/ui-qa/hover-audit.mjs",
-    "qa:pixel": "node tools/ui-qa/pixel-compare.mjs"
+    "qa:pixel": "node tools/ui-qa/pixel-compare.mjs",
+    "hubspot:build": "node tools/hubspot/build.mjs",
+    "hubspot:preview": "node tools/hubspot/preview-server.mjs",
+    "hubspot:pages": "node tools/hubspot/sync-pages.mjs",
+    "hubspot:deploy": "node tools/hubspot/deploy.mjs"
   },
   "keywords": [],
   "author": "",

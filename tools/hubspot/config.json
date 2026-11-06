@@ -1,0 +1,10 @@
+{
+  "portalId": 885542,
+  "domain": "sx.transcard.com",
+  "fileManagerFolder": "test-sx",
+  "designManagerFolder": "test-sx-prototype",
+  "noindex": true,
+  "redirectStyle": 302,
+  "staticRoots": ["src", "assets", "wiki"],
+  "excludePages": ["src/pages/reports/"]
+}
