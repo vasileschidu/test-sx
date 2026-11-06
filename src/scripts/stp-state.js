@@ -5,9 +5,26 @@
 (function () {
   "use strict";
 
+  // STP walkthrough demo (?case=<id>, sx-demo-case.js): its STP state lives
+  // under "<key>:<id>", so the general portal keeps its own. The signer's
+  // sign-agreement.html opens without ?case= (email link): it uses the stored case.
+  function demoScope() {
+    try {
+      var id = new URLSearchParams(window.location.search).get("case");
+      if (!id && /\/sx-enroll\/sign-agreement\.html$/.test(window.location.pathname)) {
+        var stored = JSON.parse(localStorage.getItem("sx_demo_case_v1") || "null");
+        id = stored && stored.id;
+      }
+      return id ? ":" + id : "";
+    } catch (error) {
+      return "";
+    }
+  }
+  var SCOPE = demoScope();
+
   // v3: global STP setup progression state.
-  var STORAGE_KEY = "sx_global_stp_state_v3";
-  var LEGACY_STATUS_KEY = "sx_global_stp_status_v2";
+  var STORAGE_KEY = "sx_global_stp_state_v3" + SCOPE;
+  var LEGACY_STATUS_KEY = "sx_global_stp_status_v2" + SCOPE;
   var STATUS_ENABLED = "enabled";
   var STATUS_DISABLED = "disabled";
   var STATUS_IN_PROGRESS = "in_progress";
@@ -17,7 +34,7 @@
   var STEP_AGREEMENT_SIGNATURE_PENDING = "agreement_signature_pending";
   var STEP_COMPLETED = "completed";
   // Who the Visa agreement email went to and when, for the pending banner.
-  var AGREEMENT_REQUEST_KEY = "sx_stp_agreement_request_v1";
+  var AGREEMENT_REQUEST_KEY = "sx_stp_agreement_request_v1" + SCOPE;
   var RUNTIME_CONFIG_PATHS = [
     "../../../src/data/public-runtime-config.json",
     "/src/data/public-runtime-config.json",

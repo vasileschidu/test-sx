@@ -1,0 +1,54 @@
+<!--
+  @file sx-enroll/declined.html
+  @description Shown after the supplier declines the payment from the sidebar /
+    mobile menu (OBDecline, onboarding-decline.js). Figma "Payment was Declined"
+    38146:80118. The reason comes from the enrolment session; logic in sx-enroll.js.
+-->
+<!doctype html>
+<html lang="en" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Payment Declined · SMART Exchange</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <script src="../../scripts/tailwind-theme.js"></script>
+  <script src="../../scripts/design-tokens.js"></script>
+  <script src="../../scripts/data-source.js"></script>
+  <script src="../../scripts/sx-demo-case.js?v=20261106e"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261021a"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261106b"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261026a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261103f"></script>
+  <link rel="stylesheet" href="../../styles/cursor.css" />
+</head>
+<body data-sx-step="declined" class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white">
+
+    <main data-ob-content class="flex flex-1 flex-col items-center justify-center gap-9 px-4 py-10 lg:py-14">
+      <div class="flex w-full flex-col items-center gap-4 text-center">
+        <svg viewBox="0 0 44 44" fill="currentColor" aria-hidden="true" class="size-11 text-red-500">
+          <path d="M16.5 2.75C18.3234 2.75 20.072 3.47436 21.3613 4.76367C22.6506 6.05298 23.375 7.80164 23.375 9.625V13.0625C23.375 13.9742 23.7372 14.8485 24.3818 15.4932C25.0265 16.1378 25.9008 16.5 26.8125 16.5H30.25C32.0734 16.5 33.822 17.2244 35.1113 18.5137C36.4006 19.803 37.125 21.5516 37.125 23.375V37.8125C37.125 39.71 35.585 41.25 33.6875 41.25H10.3125C8.415 41.25 6.875 39.71 6.875 37.8125V6.1875C6.875 4.29 8.41317 2.75 10.3125 2.75H16.5ZM27.1094 21.6621C26.508 21.0607 25.533 21.0607 24.9316 21.6621L21.2715 25.3223L17.6113 21.6621C17.0099 21.0607 16.035 21.0607 15.4336 21.6621C14.8322 22.2635 14.8322 23.2384 15.4336 23.8398L19.0938 27.5L15.4336 31.1602C14.8322 31.7616 14.8322 32.7365 15.4336 33.3379C16.035 33.9393 17.0099 33.9393 17.6113 33.3379L21.2715 29.6777L24.9316 33.3379C25.533 33.9393 26.5089 33.9393 27.1104 33.3379C27.7113 32.7365 27.7115 31.7614 27.1104 31.1602L23.4492 27.5L27.1104 23.8398C27.7117 23.2384 27.7108 22.2635 27.1094 21.6621ZM23.7803 3.3291C26.8477 4.13567 29.6459 5.74269 31.8887 7.98535C34.1316 10.2283 35.7393 13.027 36.5459 16.0947C34.7988 14.5795 32.5626 13.7468 30.25 13.75H26.8125C26.433 13.75 26.125 13.442 26.125 13.0625V9.625C26.1282 7.31234 25.2955 5.0762 23.7803 3.3291Z" />
+        </svg>
+        <h1 class="text-lg leading-6 font-semibold text-gray-900 dark:text-white">Payment was Declined</h1>
+        <p class="max-w-[400px] text-sm leading-5 text-gray-700 dark:text-gray-300">You've chosen to decline this payment.<br>Please contact support if you need further assistance.</p>
+      </div>
+
+      <dl class="flex w-full max-w-[400px] flex-col gap-2 rounded-lg border border-gray-200 p-4 dark:border-white/10">
+        <div class="flex flex-wrap gap-y-1">
+          <dt class="min-w-[180px] flex-1 text-sm leading-5 font-medium text-gray-900 dark:text-white">Reason</dt>
+          <dd class="min-w-[180px] flex-1 text-sm leading-5 text-gray-600 dark:text-gray-400">
+            <span data-sx-declined-reason>—</span>
+            <span data-sx-declined-note class="mt-0.5 block text-gray-500 empty:hidden dark:text-gray-400"></span>
+          </dd>
+        </div>
+      </dl>
+    </main>
+
+    <footer data-ob-footer></footer>
+  </div>
+</body>
+</html>

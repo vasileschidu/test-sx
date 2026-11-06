@@ -3718,24 +3718,6 @@ window.__ppStorageKey = function (name) {
           "inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300";
       }
     }
-    // MID / TID (a page that knows them: the STP walkthrough instance),
-    // shown once the first card was processed (terminal verified).
-    var stpIdsEl = document.getElementById("pp-stp-ids");
-    if (stpIdsEl) {
-      var getIds = (window.__ppConfig || {}).getStpIds;
-      var ids =
-        typeof getIds === "function" &&
-        (showInlineVerify || isEnabled)
-          ? getIds()
-          : null;
-      stpIdsEl.hidden = !ids;
-      if (ids) {
-        stpIdsEl.querySelector("[data-pp-stp-mid]").textContent =
-          ids.mid || "—";
-        stpIdsEl.querySelector("[data-pp-stp-tid]").textContent =
-          ids.tid || "—";
-      }
-    }
     if (stpActionsWrap) {
       stpActionsWrap.classList.toggle(
         "hidden",

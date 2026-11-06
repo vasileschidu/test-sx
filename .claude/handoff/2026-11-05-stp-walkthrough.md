@@ -6,9 +6,9 @@ Branch: `stp-walkthrough`. Figma: `9DRzbyv7FDCDYFYN5ZGuwZ` ([R3] SMART Exchange)
 - **Batches 1–4 done and committed** on `stp-walkthrough` (last commit `e6e8db7`). Branch is **not pushed**, no PR yet.
   `main` = `74f732d` (all other branches — ai-setup, andrian-sandbox, figma-match — already merged and pushed earlier).
 - **Test links** (serve with `python3 tools/serve.py` → port **8899**; port 8935 belongs to another project):
-  - Launcher: http://localhost:8899/src/pages/demo/stp-case.html → Create case →
-  - Case ready: http://localhost:8899/src/pages/demo/stp-case-ready.html (Start enrolment / Open Supplier Portal open in new tabs,
-    Change case → launcher, Reset demo).
+  - Launcher: http://localhost:8899/src/pages/demo/stp-case.html — case information card (Edit) + Start enrolment (fresh case)
+    / Open Supplier Portal (current case). No scenario picker; stp-case-ready.html was removed (2026-11-06). Every instance
+    page has a "New demo" bar back to the launcher.
   - Enrolment: `src/pages/sx-enroll/index.html?case=<id>`; final "Go to SMART Exchange" opens the portal instance in a new tab.
 - **Waiting on Vasile (ask before acting):**
   1. Redeploy the Cloudflare worker (`cd workers/sd-sx-token-service && npx wrangler deploy`) so real B emails use STP copy —

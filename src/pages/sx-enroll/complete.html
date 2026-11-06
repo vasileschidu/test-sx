@@ -21,10 +21,10 @@
   <script src="../../scripts/design-tokens.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   <script src="../../scripts/data-source.js"></script>
-  <script src="../../scripts/stp-state.js?v=20261105p"></script>
-  <script src="../../scripts/sx-demo-case.js?v=20261105e"></script>
+  <script src="../../scripts/stp-state.js?v=20261106a"></script>
+  <script src="../../scripts/sx-demo-case.js?v=20261106e"></script>
   <script src="../../scripts/onboarding-transitions.js?v=20261021a"></script>
-  <script src="../../scripts/sx-enroll.js?v=20261105f"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261106b"></script>
   <script src="../../scripts/onboarding-sidebar.js?v=20261026a"></script>
   <script src="../../scripts/onboarding-field.js?v=20261013a"></script>
   <script src="../../scripts/onboarding-modal.js?v=20261103f"></script>
@@ -48,9 +48,9 @@
       <div class="flex w-full max-w-[400px] flex-col gap-6">
 
               <div
-                class="overflow-hidden rounded-xl border border-gray-200 dark:border-white/10"
+                class="overflow-hidden rounded-md border border-gray-200 bg-gray-50 dark:border-white/10 dark:bg-white/5"
               >
-                <div class="px-4 py-4 sm:px-6 sm:py-5">
+                <div class="p-4">
                   <p
                     class="text-sm font-semibold text-gray-600 dark:text-gray-400"
                   >
@@ -62,7 +62,7 @@
                   ></p>
                   <div
                     data-sx-card-section
-                    class="mt-5 flex w-fit items-center gap-3 rounded-lg bg-gray-100 pr-2 dark:bg-white/5"
+                    class="mt-5 flex w-fit items-center rounded-md bg-gray-100 dark:bg-white/5"
                   >
                     <div
                       class="flex h-[46px] w-[71px] flex-col items-end gap-0.5 rounded-md bg-gray-950 p-2 text-gray-200 font-['Roboto_Mono'] text-[10px] leading-3"
@@ -89,14 +89,14 @@
                       type="button"
                       command="show-modal"
                       commandfor="sx-card-details-dialog" data-sx-reveal
-                      class="inline-flex cursor-pointer items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-medium text-gray-600 hover:bg-gray-200 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300 dark:hover:bg-white/20 dark:hover:text-white"
+                      class="inline-flex cursor-pointer items-center gap-1 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-600 hover:bg-gray-200 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:bg-gray-300 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:hover:text-white"
                     >
                       Reveal Card Details
                       <svg
                         xmlns="http://www.w3.org/2000/svg"
                         viewBox="0 0 20 20"
                         fill="currentColor"
-                        class="size-4"
+                        class="size-4.5 text-gray-500 dark:text-gray-400"
                       >
                         <path
                           d="M10 12.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"
@@ -120,47 +120,47 @@
                 </div>
 
                 <div
-                  class="border-t border-gray-200 dark:border-white/10 px-4 py-4 sm:px-6"
+                  class="border-t border-gray-200 p-4 dark:border-white/10"
                 >
-                  <dl class="space-y-3">
-                    <div class="grid grid-cols-2 gap-4">
+                  <dl class="space-y-2">
+                    <div class="grid grid-cols-2 gap-6">
                       <dt
-                        class="text-sm/6 font-medium text-gray-700 dark:text-gray-300"
+                        class="text-xs font-normal text-gray-500 dark:text-gray-400"
                       >
                         Transaction ID
                       </dt>
                       <dd
                         data-ob-skeleton data-sx-txid
-                        class="truncate text-right text-sm/6 font-normal text-gray-900 dark:text-white"
+                        class="truncate text-xs font-medium text-gray-900 dark:text-white"
                       ></dd>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-2 gap-6">
                       <dt
-                        class="text-sm/6 font-medium text-gray-700 dark:text-gray-300"
+                        class="text-xs font-normal text-gray-500 dark:text-gray-400"
                       >
                         Payment date
                       </dt>
                       <dd
                         data-ob-skeleton data-sx-date
-                        class="text-right text-sm/6 font-normal text-gray-900 dark:text-white"
+                        class="text-xs font-medium text-gray-900 dark:text-white"
                       ></dd>
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-2 gap-6">
                       <dt
-                        class="text-sm/6 font-medium text-gray-700 dark:text-gray-300"
+                        class="text-xs font-normal text-gray-500 dark:text-gray-400"
                       >
                         Payment method
                       </dt>
                       <dd
                         data-ob-skeleton data-sx-method
-                        class="text-right text-sm/6 font-normal text-gray-900 dark:text-white"
+                        class="text-xs font-medium text-gray-900 dark:text-white"
                       ></dd>
                     </div>
                   </dl>
                 </div>
 
                 <div
-                  class="border-t border-gray-200 dark:border-white/10 px-4 py-4 sm:px-6"
+                  class="border-t border-gray-200 p-4 dark:border-white/10"
                 >
                   <button
                     type="button"
@@ -187,18 +187,18 @@
 
 
         <!-- SMART Exchange account -->
-        <section aria-labelledby="sx-account-title" class="overflow-hidden rounded-xl border border-gray-200">
-          <div class="flex flex-col gap-1 px-4 py-4 sm:px-6 sm:py-5">
+        <section aria-labelledby="sx-account-title" class="overflow-hidden rounded-md border border-gray-200 bg-white">
+          <div class="flex flex-col gap-1 p-4">
             <h2 id="sx-account-title" class="type-title-card text-default">SMART Exchange Account Created</h2>
             <p class="type-description text-tertiary">Access the account to view payment details.</p>
           </div>
-          <dl class="border-t border-gray-200 px-4 py-4 sm:px-6">
-            <div class="grid grid-cols-2 gap-4">
-              <dt class="text-sm/6 font-medium text-gray-700">Username</dt>
-              <dd data-ob-skeleton data-sx-username class="truncate text-right text-sm/6 font-normal text-gray-900">johnny@hotmail.com</dd>
+          <dl class="border-t border-gray-200 p-4">
+            <div class="grid grid-cols-2 gap-6">
+              <dt class="text-sm font-normal text-gray-500">Username</dt>
+              <dd data-ob-skeleton data-sx-username class="truncate text-sm font-normal text-gray-900">johnny@hotmail.com</dd>
             </div>
           </dl>
-          <div class="border-t border-gray-200 px-4 py-4 sm:px-6">
+          <div class="border-t border-gray-200 p-4">
             <a data-sx-portal href="../dashboard/supplier-portal.html" target="_blank" rel="noopener" class="-ml-2.5 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
               Go to SMART Exchange
               <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
