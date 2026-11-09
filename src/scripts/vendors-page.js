@@ -496,7 +496,7 @@
       nav +
       '" aria-label="' +
       label +
-      '" class="inline-flex size-[30px] cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-2 shadow-xs hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:hover:bg-white dark:border-white/10 dark:bg-white/5"' +
+      '" class="inline-flex size-[30px] cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-2 shadow-xs hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:shadow-none disabled:hover:bg-white dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10 dark:disabled:hover:bg-white/5"' +
       (disabled ? " disabled" : "") +
       '><img src="' +
       asset(icon) +

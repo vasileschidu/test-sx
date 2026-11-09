@@ -1416,7 +1416,9 @@ function ensureGlobalTopToastStyles() {
     '.sx-global-top-toast[data-state="leaving"]{transform:translate(-50%,8px);opacity:0;}' +
     ".sx-global-top-toast__msg{font-size:14px;line-height:20px;font-weight:500;}" +
     ".sx-global-top-toast__close{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:#D1D5DB;cursor:pointer;}" +
-    ".sx-global-top-toast__close:hover{background:rgba(255,255,255,.12);color:#fff;}";
+    ".sx-global-top-toast__close:hover{background:rgba(255,255,255,.12);color:#fff;}" +
+    // Dark: the page is gray-900 too, so go one step darker (gray-950) with a white/10 ring.
+    ".dark .sx-global-top-toast{background:#030712;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 10px 25px rgba(0,0,0,.5);}";
   document.head.appendChild(style);
 }
 

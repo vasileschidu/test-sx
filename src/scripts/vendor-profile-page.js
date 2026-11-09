@@ -460,7 +460,7 @@
         '">' +
         escapeHtml(badge.label) +
         "</span></div>" +
-        '<button type="button" data-vp-tab="activity" title="Open Activity & Invoice History" class="cursor-pointer rounded border border-gray-300 bg-white p-1 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/5"><span class="sr-only">More</span>' +
+        '<button type="button" data-vp-tab="activity" title="Open Activity & Invoice History" class="cursor-pointer rounded border border-gray-300 bg-white p-1 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/5 dark:hover:bg-white/10"><span class="sr-only">More</span>' +
         icon("activity-menu.svg", 18) +
         "</button></div>" +
         '<div class="h-px bg-gray-200 dark:bg-white/10"></div>' +

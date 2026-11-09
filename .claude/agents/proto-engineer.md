@@ -25,7 +25,7 @@ exactly like the design system with the least new code.
 
 ## Definition of done
 1. `node tools/ui-qa/code-audit.mjs --pages <changed pages> --files <changed files> [--dark]` and
-   `node tools/ui-qa/hover-audit.mjs --pages <changed pages>`, or start the `ui-qa-code` agent for a whole
+   `node tools/ui-qa/hover-audit.mjs --pages <changed pages>` (once light, once `--dark`), or start the `ui-qa-code` agent for a whole
    feature. Fix every major finding; re-run until none remains.
 2. For refactors / token swaps: `tools/ui-qa/pixel-compare.mjs` before/after must be identical (or explain each diff).
 3. **Update your playbook**: append dated lessons (≤ 3 lines, only if new — grep first) to
