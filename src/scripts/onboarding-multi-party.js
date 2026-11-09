@@ -259,8 +259,8 @@
 
   function allocationPage(root) {
     var mp = F.getMp();
-    // An expired, revoked or disputed payment has nothing left to allocate.
-    if (mp.payment && mp.payment !== 'active') { window.location.replace('payment-closed.html'); return; }
+    // An expired, revoked, declined or disputed payment has nothing left to allocate.
+    if (mp.payment && mp.payment !== 'active') { window.location.replace(F.closedUrl(mp)); return; }
     var entry = F.current(mp);
     var total = Object.keys(entry.amounts).reduce(function (s, k) { return s + Number(entry.amounts[k] || 0); }, 0);
 
@@ -500,8 +500,8 @@
 
   function statusPage(root) {
     var mp = F.getMp();
-    // Expired, revoked or disputed while waiting: that screen replaces this one.
-    if (mp.payment && mp.payment !== 'active') { window.location.replace('payment-closed.html'); return; }
+    // Expired, revoked, declined or disputed while waiting: that screen replaces this one.
+    if (mp.payment && mp.payment !== 'active') { window.location.replace(F.closedUrl(mp)); return; }
     var entry = F.current(mp);
     var share = F.myShare();
     var method = F.methodLabel();
@@ -681,6 +681,7 @@
     var ctx = state.payableContext || {};
     var verification = (!mp.payment || mp.payment === 'active') && state.revokedReason;
     if ((!mp.payment || mp.payment === 'active') && !verification) { window.location.replace('allocation.html'); return; }
+    if (mp.payment === 'declined') { window.location.replace('declined.html'); return; }
     if (verification) mp = Object.assign({}, mp, { payment: 'revoked', fallback: false });
     var M = window.OBModal;
     var people = F.parties(mp);

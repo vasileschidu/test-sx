@@ -107,6 +107,15 @@ one-line selected value: two-line block `in-[el-selectedcontent]:hidden` + a
 </div>
 ```
 
+### Segmented control (radio group, one row) — SD demo Scenario panel (`onboarding-flow.js` `segmented()`)
+Picks one of 2–4 short options. Container `grid grid-cols-{n} gap-1 rounded-lg bg-gray-100 p-1 dark:bg-white/5`; each option:
+```html
+<label class="relative flex min-h-8 cursor-pointer items-center justify-center rounded-md px-1.5 py-1 text-center text-xs leading-4 font-medium text-gray-600 hover:bg-white/60 hover:text-gray-900 has-checked:bg-white has-checked:text-gray-900 has-checked:shadow-xs has-checked:ring-1 has-checked:ring-gray-900/5 has-focus-visible:outline-2 has-focus-visible:outline-offset-1 has-focus-visible:outline-blue-600 has-disabled:cursor-not-allowed has-disabled:opacity-50 has-disabled:hover:bg-transparent dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white dark:has-checked:bg-white/15 dark:has-checked:text-white dark:has-checked:ring-white/10 dark:has-focus-visible:outline-blue-400">
+  <input type="radio" name="…" value="…" class="sr-only">Label
+</label>
+```
+Wrap in `<fieldset>` with `<legend class="mb-1.5 text-xs font-medium text-gray-500 dark:text-gray-400">`. Labels may wrap to two lines (`leading-4`).
+
 ### Read-only details box (no header; Figma SX enrolment / Get paid)
 `<div class="flex flex-col gap-4 rounded-md bg-gray-50 p-4 dark:bg-white/5">` + description list rows.
 Use when Figma shows a plain gray box; an Edit action goes above the box (right-aligned xs link), not in a header bar.

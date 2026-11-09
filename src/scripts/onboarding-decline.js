@@ -257,6 +257,8 @@ window.OBDecline = (function () {
           declined: { reason: selected, note: note.value.trim(), declinedAt: new Date().toISOString() }
         });
       }
+      // Multi-party: the payment is now declined for the demo too (Scenario shows "Declined").
+      if (window.OBFlow && window.OBFlow.isMultiParty()) window.OBFlow.decline();
       window.OBGo('declined.html');
     });
 
