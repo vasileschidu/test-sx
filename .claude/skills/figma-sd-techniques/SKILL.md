@@ -220,6 +220,16 @@ reference frame `1545:94795` (and wrapper `1537:101776`) no longer exists; 4.12 
   `Footer.minHeight = 222` (one CTA + gap 24 + the 142 page footer, as 4.2 (m)/(t)) and frame h = max(812|1024,
   Leading Content + 404 (m) / + 500 (t)). Only touch frames whose Footer holds a CTA: 4.9.1 Payment Status has its own
   footer (min 142, no CTA). Skip the modal frames (4.5/4.6/4.12, 812/1024). The 4.2 (m) reference itself overflows 2px.
+- **Batch arrow planner (2026-11-09, 20 arrows in 3 calls, all first or second candidate).** Collect every
+  existing connector's segments once, then for each job try candidate W values in order:
+  - Lane = source frame right + 48 / 80 / 112 …; approach = target top − 64 / 96 / 128 …; entry = target FRAME
+    `position {x: w × 0.7 / 0.62 …, y: 0}`; trigger exit = right edge middle.
+  - Each candidate gets cloneArrow plus one correction.
+  - Accept the first candidate that lands within 16px of W, hits no screen except its own two, and runs along no
+    existing segment (same axis, < 6px apart, > 10px shared). Then add its segments to the list, so later jobs avoid it.
+  - Script template: the planner used in this run (JOBS + `plan()`); rebuild it from §1–2 helpers.
+  - Two arrows from one button: exit at different y (`position {x:w, y:16}` / `{y:40}`) and give them different lanes
+    and approach rows.
 - **cloneArrow first-try offset is about (−156, +145…151)** for a `position` trigger (5 arrows, 2026-11-09). One
   correction W + (requested − actual) landed all 5 within 6px. Use one correction, then stop.
 - Gap above a bottom CTA in (m)/(t)/desktop form frames is `16 + Spacer + 16`. For a 56 minimum give the Spacer `minHeight 24`; don't switch a non-growing Spacer to grow (it moves the CTA to the frame bottom).
