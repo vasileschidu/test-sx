@@ -1947,12 +1947,12 @@
   function renderStatus(status) {
     if (IS_SUPPLIER_PORTAL) {
       var supplierBadge = {
-        pending: "border-yellow-300 bg-yellow-100 text-yellow-800",
-        "action-required": "border-yellow-300 bg-yellow-100 text-yellow-800",
-        processing: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-300",
-        paid: "border-green-200 bg-green-100 text-green-800 dark:border-green-400/30 dark:bg-green-500/15 dark:text-green-200",
-        exception: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-500/15 dark:text-red-200",
-        declined: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-500/15 dark:text-red-200",
+        pending: "border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/20 dark:bg-yellow-400/10 dark:text-yellow-500",
+        "action-required": "border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/20 dark:bg-yellow-400/10 dark:text-yellow-500",
+        processing: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-400",
+        paid: "border-green-200 bg-green-100 text-green-800 dark:border-green-500/20 dark:bg-green-400/10 dark:text-green-400",
+        exception: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
+        declined: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
       };
       var withClock = status === "pending" || status === "action-required";
       return (

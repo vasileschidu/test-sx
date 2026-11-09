@@ -14,28 +14,32 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261109a"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../../src/scripts/design-tokens.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
-  <script src="../../../src/scripts/onboarding-transitions.js?v=20261021a"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261026a"></script>
-  <script src="../../../src/scripts/onboarding-field.js?v=20261013a"></script>
-  <script src="../../../src/scripts/onboarding-modal.js?v=20261103f"></script>
-  <script src="../../../src/scripts/onboarding-decline.js?v=20261103e"></script>
-  <script src="../../../src/scripts/onboarding-flow.js?v=20261013k"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261106b"></script>
+  <script src="../../../src/scripts/onboarding-field.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-modal.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-decline.js?v=20261106b"></script>
+  <script src="../../../src/scripts/onboarding-flow.js?v=20261106a"></script>
   <script src="../../../src/scripts/onboarding-stepper.js?v=20261104a"></script>
   <script src="../../../src/scripts/onboarding-welcome.js?v=20261104a"></script>
   <link rel="stylesheet" href="../../../src/styles/cursor.css" />
     <link rel="stylesheet" href="../../styles/checkbox.css" />
       <script src="../../scripts/checkbox-component.js"></script>
   </head>
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6 dark:bg-gray-900 dark:lg:bg-gray-950">
 
   <!-- CONTAINER -->
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden dark:bg-gray-900">
 
     <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js; nothing started yet -->
     <div data-ob-sidebar data-ob-step="none"></div>
@@ -45,7 +49,7 @@
       <div data-ob-content class="flex flex-1 flex-col items-center gap-10 px-4 pt-10 pb-10 md:pb-4 lg:gap-9 lg:px-10 lg:py-14">
 
         <!-- Client logo slot (placeholder until the client's logo is set) -->
-        <div data-ob-no-skeleton class="flex h-[60px] w-[246px] shrink-0 items-center justify-center rounded-lg border-[2.5px] border-dashed border-gray-300 bg-gray-50">
+        <div data-ob-no-skeleton class="flex h-[60px] w-[246px] shrink-0 items-center justify-center rounded-lg border-[2.5px] border-dashed border-gray-300 bg-gray-50 dark:border-white/10 dark:bg-white/5">
           <span class="text-[15px] leading-5 font-medium tracking-[0.76px] text-gray-300 uppercase">Placeholder</span>
         </div>
 
@@ -122,11 +126,11 @@
       <el-dialog-backdrop class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
 
       <div tabindex="0" class="flex min-h-full items-end justify-center px-4 py-6 text-center focus:outline-none sm:items-center sm:px-0">
-        <el-dialog-panel class="relative transform overflow-hidden rounded-2xl bg-white px-8 pb-8 pt-6 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:w-full sm:max-w-lg antialiased data-closed:sm:translate-y-0 data-closed:sm:scale-95">
+        <el-dialog-panel class="relative transform overflow-hidden rounded-2xl bg-white px-8 pb-8 pt-6 text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:w-full sm:max-w-lg antialiased data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900">
 
           <!-- Close button -->
           <div class="absolute right-4 top-4">
-            <button command="close" commandfor="learn-more-dialog" type="button" class="rounded-md bg-white text-gray-400 hover:text-gray-500">
+            <button command="close" commandfor="learn-more-dialog" type="button" class="rounded-md bg-white text-gray-400 hover:text-gray-500 dark:bg-gray-900 dark:text-gray-500 dark:hover:text-gray-400">
               <span class="sr-only">Close</span>
               <svg class="size-6" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" aria-hidden="true">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
@@ -136,18 +140,18 @@
 
           <!-- Info icon -->
           <div class="mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-8 text-blue-600" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="size-8 text-blue-600 dark:text-blue-400" aria-hidden="true">
               <path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm8.706-1.442c1.146-.573 2.437.463 2.126 1.706l-.709 2.836.042-.02a.75.75 0 0 1 .67 1.34l-.04.022c-1.147.573-2.438-.463-2.127-1.706l.71-2.836-.042.02a.75.75 0 1 1-.671-1.34l.041-.022ZM12 9a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" />
             </svg>
           </div>
 
           <!-- Content -->
-          <h3 class="text-xl font-bold text-gray-900 mb-4" id="modal-title"><span data-learn-buyer>Horizon Inc.</span> is enhancing the way they will be paying you</h3>
+          <h3 class="text-xl font-bold text-gray-900 mb-4 dark:text-white" id="modal-title"><span data-learn-buyer>Horizon Inc.</span> is enhancing the way they will be paying you</h3>
 
-          <div class="space-y-4 text-sm text-gray-500">
+          <div class="space-y-4 text-sm text-gray-500 dark:text-gray-400">
             <p><span data-learn-buyer>Horizon Inc.</span> has partnered with Transcard to transition to digital payment interactions and remove the legacy paper-based process.</p>
             <p>With the new solution the speed of sending payments and documentation is greatly enhanced with improved tracking, reporting and reconciliation.</p>
-            <p>For more details on the changes we are making, you can contact <span data-learn-buyer class="font-semibold text-gray-900">Horizon Inc.</span> by emailing <span data-learn-email class="font-semibold text-gray-900">claims@horizoninc.com</span> or calling <span data-learn-phone class="font-semibold text-gray-900">800-504-3126</span>.</p>
+            <p>For more details on the changes we are making, you can contact <span data-learn-buyer class="font-semibold text-gray-900 dark:text-white">Horizon Inc.</span> by emailing <span data-learn-email class="font-semibold text-gray-900 dark:text-white">claims@horizoninc.com</span> or calling <span data-learn-phone class="font-semibold text-gray-900 dark:text-white">800-504-3126</span>.</p>
           </div>
 
         </el-dialog-panel>

@@ -15,29 +15,33 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Meow+Script&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261109a"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../scripts/design-tokens.js"></script>
   <script src="../../scripts/data-source.js"></script>
   <script src="../../scripts/sx-demo-case.js?v=20261106e"></script>
-  <script src="../../scripts/onboarding-transitions.js?v=20261021a"></script>
-  <script src="../../scripts/sx-enroll.js?v=20261106b"></script>
-  <script src="../../scripts/onboarding-sidebar.js?v=20261026a"></script>
-  <script src="../../scripts/onboarding-field.js?v=20261013a"></script>
-  <script src="../../scripts/onboarding-modal.js?v=20261103f"></script>
-  <script src="../../scripts/onboarding-decline.js?v=20261103e"></script>
-  <script src="../../scripts/onboarding-sign.js?v=20261103b"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261106a"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261106c"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261106b"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261106a"></script>
+  <script src="../../scripts/onboarding-decline.js?v=20261106b"></script>
+  <script src="../../scripts/onboarding-sign.js?v=20261106b"></script>
   <script src="../../scripts/checkbox-component.js"></script>
-  <script src="../../scripts/onboarding-consents.js?v=20261106d"></script>
+  <script src="../../scripts/onboarding-consents.js?v=20261106b"></script>
   <script src="../../scripts/onboarding-stepper.js?v=20261104a"></script>
   <script src="../../scripts/onboarding-mobile-header.js"></script>
   <link rel="stylesheet" href="../../styles/cursor.css" />
   <link rel="stylesheet" href="../../styles/checkbox.css" />
   <link rel="stylesheet" href="../../styles/onboarding-checkbox.css" />
 </head>
-<body data-sx-step="summary" class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+<body data-sx-step="summary" class="min-h-screen bg-white dark:bg-gray-900 px-0 antialiased font-['Inter'] lg:bg-gray-200 dark:lg:bg-gray-950 lg:px-6">
 
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white dark:bg-gray-900 lg:h-screen lg:flex-row lg:overflow-hidden">
 
     <div data-ob-sidebar></div>
 
@@ -82,16 +86,16 @@
             <template id="sx-visa-badge"><svg width="24" height="16" viewBox="0 0 24 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Visa" role="img" > <rect width="24" height="16" rx="1.2" fill="url(#visa-grad-sx-summary)" /> <path d="M12.309 7.05313C12.2987 7.85651 13.0305 8.30487 13.5818 8.57141C14.1483 8.84493 14.3385 9.0203 14.3364 9.26485C14.3321 9.6392 13.8845 9.80438 13.4656 9.81081C12.7349 9.82208 12.3101 9.61506 11.9722 9.45846L11.709 10.6807C12.0479 10.8357 12.6754 10.9708 13.3262 10.9767C14.8536 10.9767 15.853 10.2286 15.8584 9.06857C15.8644 7.5964 13.8061 7.51489 13.8202 6.85684C13.8251 6.65733 14.0169 6.44442 14.4374 6.39025C14.6455 6.3629 15.2201 6.34198 15.8714 6.63963L16.127 5.45708C15.7768 5.33051 15.3266 5.2093 14.7661 5.2093C13.3283 5.2093 12.3171 5.96764 12.309 7.05313ZM18.5836 5.3112C18.3047 5.3112 18.0696 5.47263 17.9647 5.7204L15.7827 10.8899H17.3091L17.6129 10.057H19.4781L19.6543 10.8899H20.9996L19.8257 5.3112H18.5836ZM18.7971 6.81822L19.2376 8.91304H18.0312L18.7971 6.81822ZM10.4583 5.3112L9.25517 10.8899H10.7096L11.9122 5.3112H10.4583ZM8.3066 5.3112L6.79266 9.10825L6.18028 5.87969C6.1084 5.51929 5.82464 5.3112 5.50953 5.3112H3.03459L3 5.47317C3.50807 5.58257 4.08532 5.75902 4.43502 5.9478C4.64906 6.0631 4.71013 6.16393 4.7804 6.43798L5.9403 10.8899H7.47747L9.83404 5.3112H8.3066Z" fill="white" /> <defs> <linearGradient id="visa-grad-sx-summary" x1="10.7812" y1="16" x2="15.6708" y2="0.32624" gradientUnits="userSpaceOnUse" > <stop stop-color="#222357" /> <stop offset="1" stop-color="#254AA5" /> </linearGradient> </defs> </svg></template>
 
             <!-- Consents (OBConsents) -->
-            <ul data-sx-consents role="list" class="flex w-full flex-col divide-y divide-gray-200 overflow-hidden rounded-lg border border-gray-200"></ul>
+            <ul data-sx-consents role="list" class="flex w-full flex-col divide-y divide-gray-200 dark:divide-white/10 overflow-hidden rounded-lg border border-gray-200 dark:border-white/10"></ul>
           </div>
 
           <!-- Actions: Back (desktop) + Next -->
           <div class="mt-auto flex px-4 pb-6 lg:px-14 lg:pb-14">
             <div class="grid w-full grid-cols-1 gap-8 lg:grid-cols-2">
               <a href="create-account.html"
-                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 lg:flex">Back</a>
+                class="hidden flex-1 items-center justify-center rounded-md border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 dark:text-gray-300 shadow-xs hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 lg:flex">Back</a>
               <button type="button" data-sx-submit disabled
-                class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
+                class="flex flex-1 cursor-pointer items-center justify-center gap-3 rounded-md bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] py-4 pr-[23px] pl-[25px] text-base leading-6 font-medium text-white hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100">
                 Submit
                 
               </button>

@@ -7,7 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261109a"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../../src/scripts/design-tokens.js"></script>
   <link rel="stylesheet" href="../../styles/sd-uk.css">
@@ -20,50 +24,50 @@
 <body data-uk-step="4" data-uk-back="bank.html" class="min-h-screen bg-[#1e326f] font-['Inter'] antialiased">
   <div class="flex min-h-screen w-full flex-col bg-[#1e326f]">
     <div data-uk-header></div>
-    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
+    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white dark:bg-gray-900 px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
       <div class="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-6">
       <div class="flex flex-col gap-4">
-        <h1 class="text-3xl font-semibold leading-9 text-gray-900">Review Account Information</h1>
-        <p class="text-sm leading-5 text-gray-500">Please fill in or edit your account information</p>
+        <h1 class="text-3xl font-semibold leading-9 text-gray-900 dark:text-white">Review Account Information</h1>
+        <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Please fill in or edit your account information</p>
       </div>
       <form id="billing-form" class="flex flex-col gap-4" autocomplete="off">
-        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4">
+        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 dark:border-white/10 p-4">
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-first" class="text-sm leading-5 text-gray-900">First Name</label></div>
-            <input id="d-first" name="d-first" type="text" placeholder="" data-uk-value="claimant.firstName" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6" disabled>
+            <div class="flex items-center justify-between"><label for="d-first" class="text-sm leading-5 text-gray-900 dark:text-white">First Name</label></div>
+            <input id="d-first" name="d-first" type="text" placeholder="" data-uk-value="claimant.firstName" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6" disabled>
           </div>
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-last" class="text-sm leading-5 text-gray-900">Last Name</label></div>
-            <input id="d-last" name="d-last" type="text" placeholder="" data-uk-value="claimant.lastName" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6" disabled>
+            <div class="flex items-center justify-between"><label for="d-last" class="text-sm leading-5 text-gray-900 dark:text-white">Last Name</label></div>
+            <input id="d-last" name="d-last" type="text" placeholder="" data-uk-value="claimant.lastName" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6" disabled>
           </div>
         </div>
-        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 p-4">
+        <div class="flex flex-col gap-4 rounded-lg border border-gray-200 dark:border-white/10 p-4">
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-line1" class="text-sm leading-5 text-gray-900">Address Line 1</label></div>
-            <input id="d-line1" name="d-line1" type="text" placeholder="" data-uk-value="claimant.address.line1" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="d-line1" class="text-sm leading-5 text-gray-900 dark:text-white">Address Line 1</label></div>
+            <input id="d-line1" name="d-line1" type="text" placeholder="" data-uk-value="claimant.address.line1" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-line2" class="text-sm leading-5 text-gray-900">Address Line 2</label><span class="text-sm text-gray-500">Optional</span></div>
-            <input id="d-line2" name="d-line2" type="text" placeholder="" data-uk-value="claimant.address.line2" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="d-line2" class="text-sm leading-5 text-gray-900 dark:text-white">Address Line 2</label><span class="text-sm text-gray-500 dark:text-gray-400">Optional</span></div>
+            <input id="d-line2" name="d-line2" type="text" placeholder="" data-uk-value="claimant.address.line2" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-city" class="text-sm leading-5 text-gray-900">City</label></div>
-            <input id="d-city" name="d-city" type="text" placeholder="" data-uk-value="claimant.address.city" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="d-city" class="text-sm leading-5 text-gray-900 dark:text-white">City</label></div>
+            <input id="d-city" name="d-city" type="text" placeholder="" data-uk-value="claimant.address.city" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <label for="d-region" class="text-sm leading-5 text-gray-900">Province/Territory</label>
+            <label for="d-region" class="text-sm leading-5 text-gray-900 dark:text-white">Province/Territory</label>
             <div class="grid grid-cols-1">
-              <select id="d-region" name="d-region" data-uk-select="regions" data-uk-select-value="claimant.address.region" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white pr-8 pl-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"><option value=""></option></select>
+              <select id="d-region" name="d-region" data-uk-select="regions" data-uk-select-value="claimant.address.region" class="col-start-1 row-start-1 h-10 w-full appearance-none rounded-md bg-white dark:bg-gray-900 pr-8 pl-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6"><option value=""></option></select>
               <img alt="" src="../../assets/sd-uk/icon-chevron-down.svg" class="pointer-events-none col-start-1 row-start-1 mr-2 size-5 self-center justify-self-end">
             </div>
           </div>
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="d-postcode" class="text-sm leading-5 text-gray-900">Postal Code</label></div>
-            <input id="d-postcode" name="d-postcode" type="text" placeholder="" data-uk-value="claimant.address.postcode" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="d-postcode" class="text-sm leading-5 text-gray-900 dark:text-white">Postal Code</label></div>
+            <input id="d-postcode" name="d-postcode" type="text" placeholder="" data-uk-value="claimant.address.postcode" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <span class="text-sm leading-5 text-gray-900">Country</span>
-            <div class="flex h-10 items-center gap-2 rounded-md bg-gray-50 px-3 text-base text-gray-400 outline-1 -outline-offset-1 outline-gray-200 sm:text-sm/6">
+            <span class="text-sm leading-5 text-gray-900 dark:text-white">Country</span>
+            <div class="flex h-10 items-center gap-2 rounded-md bg-gray-50 dark:bg-white/5 px-3 text-base text-gray-400 dark:text-gray-500 outline-1 -outline-offset-1 outline-gray-200 dark:outline-white/10 sm:text-sm/6">
               <img alt="" src="../../assets/sd-uk/flag-gb.svg" class="h-[15px] w-5"><span class="min-w-0 flex-1 truncate" data-uk-text="claimant.address.country"></span>
               <img alt="" src="../../assets/sd-uk/icon-chevron-down.svg" class="size-5 opacity-50">
             </div>

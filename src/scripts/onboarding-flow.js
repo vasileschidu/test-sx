@@ -329,20 +329,20 @@ window.OBFlow = (function () {
     if (!isMultiParty() || (here !== 'allocation' && here !== 'payment-closed' && !onStatus) || document.querySelector('[data-mp-demo]')) return;
     var mp = getMp();
     function option(name, value, label) {
-      return '<label class="flex cursor-pointer items-center gap-2 py-1 text-sm text-[#374151]">' +
+      return '<label class="flex cursor-pointer items-center gap-2 py-1 text-sm text-gray-700 dark:text-gray-300">' +
         '<input type="radio" name="' + name + '" value="' + value + '"' + (String(mp[name]) === value ? ' checked' : '') +
-        ' class="size-4 cursor-pointer accent-[#2563eb]">' + label + '</label>';
+        ' class="size-4 cursor-pointer accent-blue-600">' + label + '</label>';
     }
     function group(title, body) {
-      return '<fieldset class="flex flex-col gap-0.5"><legend class="mb-1 text-xs font-semibold tracking-wide text-[#6b7280] uppercase">' + title + '</legend>' + body + '</fieldset>';
+      return '<fieldset class="flex flex-col gap-0.5"><legend class="mb-1 text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase">' + title + '</legend>' + body + '</fieldset>';
     }
-    var button = 'cursor-pointer rounded-md border border-[#d1d5db] px-3 py-2 text-sm font-medium text-[#374151] hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
+    var button = 'cursor-pointer rounded-md border border-gray-300 dark:border-white/10 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400';
     var wrap = document.createElement('div');
     wrap.setAttribute('data-mp-demo', '');
     wrap.setAttribute('data-ob-no-skeleton', '');
     wrap.className = 'fixed right-4 bottom-4 z-40 flex flex-col items-end gap-2 font-[\'Inter\']';
     wrap.innerHTML =
-      '<div data-mp-demo-panel hidden class="flex max-h-[calc(100vh-5rem)] w-64 flex-col gap-4 overflow-y-auto rounded-lg border border-[#e5e7eb] bg-white p-4 shadow-xl">' +
+      '<div data-mp-demo-panel hidden class="flex max-h-[calc(100vh-5rem)] w-64 flex-col gap-4 overflow-y-auto rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 p-4 shadow-xl">' +
         // Payment Status: what can still happen after the user has submitted.
         (onStatus
           ? group('Other parties', option('othersProgress', 'none', 'Still choosing') + option('othersProgress', 'some', 'Some submitted') + option('othersProgress', 'all', 'All submitted'))
@@ -357,7 +357,7 @@ window.OBFlow = (function () {
         '<button type="button" data-mp-demo-changed class="' + button + '">Someone changes the allocation</button>' +
         '<button type="button" data-mp-demo-reset class="' + button + '">Reset scenario</button>' +
       '</div>' +
-      '<button type="button" data-mp-demo-toggle aria-expanded="false" class="cursor-pointer rounded-full bg-[#111827] px-4 py-2 text-sm font-medium text-white shadow-lg hover:bg-[#1f2937] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Scenario</button>';
+      '<button type="button" data-mp-demo-toggle aria-expanded="false" class="cursor-pointer rounded-full bg-gray-900 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-white shadow-lg hover:bg-gray-800 dark:hover:bg-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Scenario</button>';
     document.body.appendChild(wrap);
 
     var panel = wrap.querySelector('[data-mp-demo-panel]');

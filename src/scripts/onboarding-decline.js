@@ -25,15 +25,15 @@ window.OBDecline = (function () {
     return M.loadJson(DATA_PATH, REQUIRED);
   }
 
-  var FIELD = 'w-full rounded-md bg-white text-base leading-6 shadow-xs outline-1 -outline-offset-1';
+  var FIELD = 'w-full rounded-md bg-white dark:bg-white/5 text-base leading-6 shadow-xs outline-1 -outline-offset-1';
   // Colours from the SMART System "Text Field [New]" (see onboarding-field.js).
-  var FIELD_OK = 'outline-[#d1d5db] focus:outline-2 focus:-outline-offset-2 focus:outline-[#2563eb]';
-  var FIELD_ERROR = 'outline-[#fca5a5] focus:outline-2 focus:-outline-offset-2 focus:outline-[#ef4444]';
+  var FIELD_OK = 'outline-gray-300 dark:outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:focus:outline-blue-400';
+  var FIELD_ERROR = 'outline-red-300 focus:outline-2 focus:-outline-offset-2 focus:outline-red-500';
 
   function markup(data) {
     var options = data.reasons.map(function (reason, i) {
       return '<li role="option" id="ob-decline-opt-' + i + '" data-value="' + escapeHtml(reason) + '" aria-selected="false" ' +
-        'class="cursor-pointer px-4 py-3 text-sm leading-5 font-medium text-gray-900 hover:bg-gray-50 data-[active=true]:bg-gray-50">' +
+        'class="cursor-pointer px-4 py-3 text-sm leading-5 font-medium text-gray-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5 data-[active=true]:bg-gray-50 dark:data-[active=true]:bg-white/5">' +
         escapeHtml(reason) + '</li>';
     }).join('');
 
@@ -41,40 +41,40 @@ window.OBDecline = (function () {
           '<form novalidate id="ob-decline-form" data-ob-decline-form class="flex flex-col">' +
             '<div class="flex flex-col items-center gap-6 px-6 pb-6">' +
               '<div class="flex w-full flex-col items-center gap-4">' +
-                M.illustration('icon-exclamation-triangle.svg', 'bg-[#fef2f2]') +
+                M.illustration('icon-exclamation-triangle.svg', 'bg-red-50 dark:bg-red-500/10') +
                 '<div class="flex w-full flex-col items-center gap-2 text-center">' +
-                  '<h2 id="ob-decline-title" class="text-lg leading-6 font-medium text-gray-900">Decline Payment</h2>' +
-                  '<p id="ob-decline-desc" class="text-sm leading-5 text-gray-500">By selecting Decline Payment below, your payment will be declined and ' +
+                  '<h2 id="ob-decline-title" class="text-lg leading-6 font-medium text-gray-900 dark:text-white">Decline Payment</h2>' +
+                  '<p id="ob-decline-desc" class="text-sm leading-5 text-gray-500 dark:text-gray-400">By selecting Decline Payment below, your payment will be declined and ' +
                     '<span class="font-medium">' + escapeHtml(M.clientName()) + '</span> will be notified.</p>' +
                 '</div>' +
               '</div>' +
 
               // Reason: custom listbox, styled per the design.
               '<div class="relative flex w-full flex-col gap-1">' +
-                '<label id="ob-decline-reason-label" class="text-sm leading-5 font-medium text-gray-700">Reason</label>' +
+                '<label id="ob-decline-reason-label" class="text-sm leading-5 font-medium text-gray-700 dark:text-gray-300">Reason</label>' +
                 '<button type="button" data-ob-decline-reason aria-haspopup="listbox" aria-expanded="false" aria-labelledby="ob-decline-reason-label ob-decline-reason-value" ' +
-                  'class="' + FIELD + ' ' + FIELD_OK + ' flex h-10 cursor-pointer items-center gap-2 px-3 text-left aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-[#2563eb]">' +
-                  '<span id="ob-decline-reason-value" data-ob-decline-reason-value class="min-w-0 flex-1 truncate text-[#9ca3af]">Select the reason</span>' +
+                  'class="' + FIELD + ' ' + FIELD_OK + ' flex h-10 cursor-pointer items-center gap-2 px-3 text-left aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 dark:aria-expanded:outline-blue-400">' +
+                  '<span id="ob-decline-reason-value" data-ob-decline-reason-value class="min-w-0 flex-1 truncate text-gray-400 dark:text-gray-500">Select the reason</span>' +
                   '<span class="flex shrink-0 items-center gap-0.5">' +
                     '<img src="' + ASSETS + 'icon-selector.svg" alt="" width="20" height="20" class="size-5">' +
                     '<img src="' + ASSETS + 'icon-exclamation-circle-error.svg" alt="" width="20" height="20" data-ob-decline-reason-icon class="hidden size-5">' +
                   '</span>' +
                 '</button>' +
                 '<ul role="listbox" tabindex="-1" data-ob-decline-list aria-labelledby="ob-decline-reason-label" ' +
-                  'class="fixed z-10 hidden overflow-y-auto rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none">' +
+                  'class="fixed z-10 hidden overflow-y-auto rounded-md bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black/5 dark:ring-white/10 focus:outline-none">' +
                   options +
                 '</ul>' +
-                '<p data-ob-decline-reason-error class="hidden text-sm leading-5 text-[#dc2626]">Reason is required.</p>' +
+                '<p data-ob-decline-reason-error class="hidden text-sm leading-5 text-red-600 dark:text-red-400">Reason is required.</p>' +
               '</div>' +
 
               '<div class="flex w-full flex-col gap-1">' +
                 '<div class="flex w-full items-start gap-1 text-sm leading-5 font-medium">' +
-                  '<label for="ob-decline-note" class="flex-1 text-gray-700">Additional Note</label>' +
-                  '<span data-ob-decline-optional class="shrink-0 text-gray-500">Optional</span>' +
+                  '<label for="ob-decline-note" class="flex-1 text-gray-700 dark:text-gray-300">Additional Note</label>' +
+                  '<span data-ob-decline-optional class="shrink-0 text-gray-500 dark:text-gray-400">Optional</span>' +
                 '</div>' +
                 '<textarea id="ob-decline-note" data-ob-decline-note rows="2" maxlength="' + data.noteMaxLength + '" placeholder="Please provide more details" ' +
-                  'class="' + FIELD + ' ' + FIELD_OK + ' block min-h-[66px] resize-y px-3 py-2 font-medium text-[#111827] placeholder:font-normal placeholder:text-[#9ca3af]"></textarea>' +
-                '<p data-ob-decline-note-error class="hidden text-sm leading-5 text-[#dc2626]"></p>' +
+                  'class="' + FIELD + ' ' + FIELD_OK + ' block min-h-[66px] resize-y px-3 py-2 font-medium text-gray-900 dark:text-white placeholder:font-normal placeholder:text-gray-400 dark:placeholder:text-gray-500"></textarea>' +
+                '<p data-ob-decline-note-error class="hidden text-sm leading-5 text-red-600 dark:text-red-400"></p>' +
               '</div>' +
             '</div>' +
           '</form>';
@@ -83,8 +83,8 @@ window.OBDecline = (function () {
   // Rendered below the form by the dialog shell; `form` ties Submit to the form.
   function footer() {
     return '<div class="flex flex-col gap-4 px-6 pb-6">' +
-      '<button type="submit" form="ob-decline-form" class="' + M.BUTTON_BASE + ' bg-[#dc2626] text-white hover:bg-[#ef4444] focus-visible:outline-[#dc2626]">Decline Payment</button>' +
-      '<button type="button" data-ob-modal-close class="' + M.BUTTON + ' border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus-visible:outline-blue-600">Cancel</button>' +
+      '<button type="submit" form="ob-decline-form" class="' + M.BUTTON_BASE + ' bg-red-600 text-white hover:bg-red-500 focus-visible:outline-red-600">Decline Payment</button>' +
+      '<button type="button" data-ob-modal-close class="' + M.BUTTON + ' border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Cancel</button>' +
     '</div>';
   }
 
@@ -116,8 +116,9 @@ window.OBDecline = (function () {
 
     function validate() {
       var reasonInvalid = !selected;
-      reasonValue.classList.toggle('text-[#fca5a5]', reasonInvalid && !selected);
-      reasonValue.classList.toggle('text-[#9ca3af]', !reasonInvalid && !selected);
+      reasonValue.classList.toggle('text-red-300', reasonInvalid && !selected);
+      reasonValue.classList.toggle('text-gray-400', !reasonInvalid && !selected);
+      reasonValue.classList.toggle('dark:text-gray-500', !reasonInvalid && !selected);
       reasonIcon.classList.toggle('hidden', !reasonInvalid);
       reasonError.classList.toggle('hidden', !reasonInvalid);
       setFieldState(reasonBtn, reasonInvalid);
@@ -132,10 +133,13 @@ window.OBDecline = (function () {
       }
       noteError.textContent = noteMessage;
       noteError.classList.toggle('hidden', !noteMessage);
-      note.classList.toggle('text-[#7f1d1d]', !!noteMessage);
-      note.classList.toggle('text-[#111827]', !noteMessage);
-      note.classList.toggle('placeholder:text-[#fca5a5]', !!noteMessage);
-      note.classList.toggle('placeholder:text-[#9ca3af]', !noteMessage);
+      note.classList.toggle('text-red-900', !!noteMessage);
+      note.classList.toggle('dark:text-red-300', !!noteMessage);
+      note.classList.toggle('text-gray-900', !noteMessage);
+      note.classList.toggle('dark:text-white', !noteMessage);
+      note.classList.toggle('placeholder:text-red-300', !!noteMessage);
+      note.classList.toggle('placeholder:text-gray-400', !noteMessage);
+      note.classList.toggle('dark:placeholder:text-gray-500', !noteMessage);
       setFieldState(note, !!noteMessage);
 
       return !reasonInvalid && !noteMessage;
@@ -196,8 +200,8 @@ window.OBDecline = (function () {
       selected = data.reasons[index];
       options.forEach(function (opt, i) { opt.setAttribute('aria-selected', i === index ? 'true' : 'false'); });
       reasonValue.textContent = selected;
-      reasonValue.classList.remove('text-[#9ca3af]', 'text-[#fca5a5]');
-      reasonValue.classList.add('font-medium', 'text-[#111827]');
+      reasonValue.classList.remove('text-gray-400', 'dark:text-gray-500', 'text-red-300');
+      reasonValue.classList.add('font-medium', 'text-gray-900', 'dark:text-white');
       // "Other" needs an explanation, so the note stops being optional.
       optional.classList.toggle('hidden', isOther());
       openList(false);

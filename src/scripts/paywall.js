@@ -48,9 +48,9 @@
     M.open(
       '<div class="flex flex-col items-center gap-6 px-6 pb-6">' +
         '<div class="flex w-full flex-col items-center gap-4">' +
-          M.illustration(icon, 'bg-[#eff6ff]') +
+          M.illustration(icon, 'bg-blue-50 dark:bg-blue-500/10') +
           '<div class="flex w-full flex-col items-center gap-2 text-center">' +
-            '<h2 id="pay-dialog-title" class="text-lg leading-6 font-medium text-[#111827]">' + M.escapeHtml(title) + '</h2>' +
+            '<h2 id="pay-dialog-title" class="text-lg leading-6 font-medium text-gray-900 dark:text-white">' + M.escapeHtml(title) + '</h2>' +
             bodyHtml +
           '</div>' +
         '</div>' +
@@ -67,23 +67,23 @@
     var chevron = '<img src="' + ASSETS + 'icon-chevron-right-gray.svg" alt="" width="20" height="20" ' +
       'class="size-5 shrink-0 transition duration-200 ease-out group-hover:translate-x-1 group-hover:brightness-[0.8] ' +
       'group-focus-visible:translate-x-1 group-focus-visible:brightness-[0.8] motion-reduce:transition-none">';
-    var cls = 'group flex w-full cursor-pointer items-center gap-4 rounded-lg border border-[#e5e7eb] bg-white p-3 text-left hover:bg-gray-50 ' +
-      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600';
+    var cls = 'group flex w-full cursor-pointer items-center gap-4 rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 p-3 text-left hover:bg-gray-50 dark:hover:bg-white/5 ' +
+      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400';
     if (method.compact) {
       return '<li><button type="button" data-pay-method="' + i + '" class="' + cls + '">' +
         '<span class="flex min-w-0 flex-1 flex-wrap gap-x-1.5 text-xs leading-4">' +
-          '<span data-ob-skeleton class="font-semibold text-[#111827]">' + esc(method.label) + '</span>' +
-          '<span data-ob-skeleton class="text-[#6b7280]">' + esc(method.detail) + '</span>' +
+          '<span data-ob-skeleton class="font-semibold text-gray-900 dark:text-white">' + esc(method.label) + '</span>' +
+          '<span data-ob-skeleton class="text-gray-500 dark:text-gray-400">' + esc(method.detail) + '</span>' +
         '</span>' + chevron + '</button></li>';
     }
     return '<li><button type="button" data-pay-method="' + i + '" class="' + cls + '">' +
       '<span class="flex min-w-0 flex-1 items-center gap-3">' +
-        '<span data-ob-skeleton class="flex size-8 shrink-0 items-center justify-center rounded-md bg-[#f9fafb]">' +
+        '<span data-ob-skeleton class="flex size-8 shrink-0 items-center justify-center rounded-md bg-gray-50 dark:bg-white/5">' +
           '<img src="' + ASSETS + method.icon + '" alt="" width="24" height="24" class="size-6">' +
         '</span>' +
         '<span class="flex min-w-0 flex-col items-start gap-0.5">' +
-          '<span data-ob-skeleton class="text-sm leading-5 font-semibold text-[#111827]">' + esc(method.label) + '</span>' +
-          '<span data-ob-skeleton class="text-xs leading-4 text-[#6b7280]">' + esc(method.detail) + '</span>' +
+          '<span data-ob-skeleton class="text-sm leading-5 font-semibold text-gray-900 dark:text-white">' + esc(method.label) + '</span>' +
+          '<span data-ob-skeleton class="text-xs leading-4 text-gray-500 dark:text-gray-400">' + esc(method.detail) + '</span>' +
         '</span>' +
       '</span>' + chevron + '</button></li>';
   }
@@ -103,13 +103,13 @@
 
     document.querySelector('[data-pay-chip="message"]').addEventListener('click', function () {
       infoDialog('icon-chat-alt-lined.svg', data.message.title,
-        '<p class="text-sm leading-5 text-[#6b7280]">' + M.escapeHtml(data.message.body) + '</p>');
+        '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">' + M.escapeHtml(data.message.body) + '</p>');
     });
 
     document.querySelector('[data-pay-chip="expiration"]').addEventListener('click', function () {
       infoDialog('icon-calendar-lined.svg', 'Expiration',
-        '<p class="text-sm leading-5 text-[#6b7280]">This payment will be available for disbursement to your desired payment method until the date listed below. Funds will not be available after this day.</p>' +
-        '<p class="text-sm leading-5 font-medium text-[#111827]">Expiration Date: ' + M.escapeHtml(longDate(data.expirationDate)) + '</p>');
+        '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">This payment will be available for disbursement to your desired payment method until the date listed below. Funds will not be available after this day.</p>' +
+        '<p class="text-sm leading-5 font-medium text-gray-900 dark:text-white">Expiration Date: ' + M.escapeHtml(longDate(data.expirationDate)) + '</p>');
     });
 
     // Amount and sender from the payment context.
@@ -134,7 +134,7 @@
       .catch(function (error) {
         console.error('[payment]', error);
         var list = document.querySelector('[data-pay-methods]');
-        if (list) list.innerHTML = '<li class="text-sm text-[#6b7280]">Payment methods are unavailable right now. Please try again later.</li>';
+        if (list) list.innerHTML = '<li class="text-sm text-gray-500 dark:text-gray-400">Payment methods are unavailable right now. Please try again later.</li>';
       });
     if (window.OnboardingTransitions && window.OnboardingTransitions.waitFor) window.OnboardingTransitions.waitFor(ready);
   });

@@ -7,7 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261109a"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../../src/scripts/design-tokens.js"></script>
   <link rel="stylesheet" href="../../styles/sd-uk.css">
@@ -20,35 +24,35 @@
 <body data-uk-step="2" data-uk-back="claim.html" class="min-h-screen bg-[#1e326f] font-['Inter'] antialiased">
   <div class="flex min-h-screen w-full flex-col bg-[#1e326f]">
     <div data-uk-header></div>
-    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
+    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white dark:bg-gray-900 px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
       <div class="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-6">
       <div class="flex flex-col gap-4">
-        <h1 class="text-3xl font-semibold leading-9 text-gray-900">Review your claim</h1>
-        <p class="text-sm leading-5 text-gray-500">Please tap to review the documents below before proceeding with your payment</p>
+        <h1 class="text-3xl font-semibold leading-9 text-gray-900 dark:text-white">Review your claim</h1>
+        <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Please tap to review the documents below before proceeding with your payment</p>
       </div>
-      <button type="button" id="doc-message" aria-expanded="true" class="flex w-full cursor-pointer flex-col gap-2 rounded-md bg-gray-50 p-4 text-left">
+      <button type="button" id="doc-message" aria-expanded="true" class="flex w-full cursor-pointer flex-col gap-2 rounded-md bg-gray-50 dark:bg-white/5 p-4 text-left">
         <span class="flex w-full items-start gap-2">
           <img alt="" src="../../assets/sd-uk/icon-mail-blue.svg" class="size-5">
-          <span class="min-w-px flex-1 text-sm leading-5 font-medium text-gray-900" data-uk-text="claim.document.title">Insurance claim</span>
+          <span class="min-w-px flex-1 text-sm leading-5 font-medium text-gray-900 dark:text-white" data-uk-text="claim.document.title">Insurance claim</span>
           <img alt="" src="../../assets/sd-uk/icon-chevron-up.svg" class="size-5 transition-transform" data-chevron>
         </span>
-        <span class="text-sm leading-5 text-gray-500" data-doc-intro data-uk-text="claim.document.intro"></span>
+        <span class="text-sm leading-5 text-gray-500 dark:text-gray-400" data-doc-intro data-uk-text="claim.document.intro"></span>
       </button>
       <div class="flex flex-col gap-2.5">
-        <p class="text-xs leading-4 font-medium tracking-[0.6px] text-gray-600 uppercase">Attachments</p>
-        <button type="button" id="doc-open" class="flex w-full cursor-pointer items-center gap-3 rounded-lg border border-gray-300 bg-white p-4 text-left drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] hover:bg-gray-50">
-          <span class="h-[42px] w-[30px] shrink-0 overflow-hidden rounded-[1.2px] border border-gray-300"><img alt="" src="../../assets/sd-uk/claim-form/thumb.jpg" class="size-full object-cover object-top"></span>
+        <p class="text-xs leading-4 font-medium tracking-[0.6px] text-gray-600 dark:text-gray-400 uppercase">Attachments</p>
+        <button type="button" id="doc-open" class="flex w-full cursor-pointer items-center gap-3 rounded-lg border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 p-4 text-left drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] hover:bg-gray-50 dark:hover:bg-white/10">
+          <span class="h-[42px] w-[30px] shrink-0 overflow-hidden rounded-[1.2px] border border-gray-300 dark:border-white/10"><img alt="" src="../../assets/sd-uk/claim-form/thumb.jpg" class="size-full object-cover object-top"></span>
           <span class="flex min-w-px flex-1 flex-col gap-0.5">
-            <span class="truncate text-base leading-6 text-gray-900" data-uk-text="claim.document.fileName"></span>
-            <span class="flex items-center gap-2 text-xs leading-4 text-gray-500"><span data-uk-text="claim.document.type"></span><span class="size-0.5 rounded-full bg-gray-400"></span><span data-uk-text="claim.document.size"></span></span>
+            <span class="truncate text-base leading-6 text-gray-900 dark:text-white" data-uk-text="claim.document.fileName"></span>
+            <span class="flex items-center gap-2 text-xs leading-4 text-gray-500 dark:text-gray-400"><span data-uk-text="claim.document.type"></span><span class="size-0.5 rounded-full bg-gray-400"></span><span data-uk-text="claim.document.size"></span></span>
           </span>
-          <span class="hidden shrink-0 items-center gap-1 text-xs font-medium text-green-600" data-doc-done><svg viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"/></svg>Accepted</span>
+          <span class="hidden shrink-0 items-center gap-1 text-xs font-medium text-green-600 dark:text-green-400" data-doc-done><svg viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"/></svg>Accepted</span>
         </button>
       </div>
       <div class="flex flex-1 flex-col justify-end gap-6">
         <div class="flex flex-col gap-4">
         <button type="button" id="doc-accept" disabled class="uk-grad flex h-14 w-full items-center justify-center gap-2 rounded-lg px-3.5 text-base font-semibold text-white shadow-[0_16px_24px_0_rgba(55,115,255,0.16)] transition-opacity opacity-40 cursor-not-allowed">Accept</button>
-        <button type="button" id="doc-dispute" class="flex h-14 w-full cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white px-3.5 text-base font-semibold text-gray-700 shadow-xs hover:bg-gray-50">Dispute</button>
+        <button type="button" id="doc-dispute" class="flex h-14 w-full cursor-pointer items-center justify-center rounded-md border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 px-3.5 text-base font-semibold text-gray-700 dark:text-gray-300 shadow-xs hover:bg-gray-50 dark:hover:bg-white/10">Dispute</button>
         </div>
         <div data-uk-footer></div>
       </div>
@@ -56,19 +60,19 @@
     </main>
   </div>
   <!-- Full-screen document viewer (Figma 4.1) -->
-  <div id="doc-viewer" class="fixed inset-0 z-40 hidden flex-col bg-white lg:inset-x-auto lg:inset-y-8 lg:left-1/2 lg:w-[760px] lg:-translate-x-1/2 lg:overflow-hidden lg:rounded-2xl lg:shadow-[0_0_0_100vmax_rgba(17,24,39,0.6)]">
+  <div id="doc-viewer" class="fixed inset-0 z-40 hidden flex-col bg-white dark:bg-gray-900 lg:inset-x-auto lg:inset-y-8 lg:left-1/2 lg:w-[760px] lg:-translate-x-1/2 lg:overflow-hidden lg:rounded-2xl lg:shadow-[0_0_0_100vmax_rgba(17,24,39,0.6)]">
     <div class="flex items-center justify-between px-4 pt-4">
-      <button type="button" data-viewer-close aria-label="Close" class="-m-1 cursor-pointer rounded-md p-1 text-gray-700 hover:bg-gray-100"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
-      <div class="flex items-center gap-4 text-gray-700">
-        <button type="button" aria-label="Share" class="-m-1 cursor-pointer rounded-md p-1 hover:bg-gray-100"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"/></svg></button>
-        <a href="../../assets/sd-uk/claim-form/page-1.jpg" download aria-label="Download" class="-m-1 rounded-md p-1 hover:bg-gray-100"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg></a>
+      <button type="button" data-viewer-close aria-label="Close" class="-m-1 cursor-pointer rounded-md p-1 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12"/></svg></button>
+      <div class="flex items-center gap-4 text-gray-700 dark:text-gray-300">
+        <button type="button" aria-label="Share" class="-m-1 cursor-pointer rounded-md p-1 hover:bg-gray-100 dark:hover:bg-white/10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"/></svg></button>
+        <a href="../../assets/sd-uk/claim-form/page-1.jpg" download aria-label="Download" class="-m-1 rounded-md p-1 hover:bg-gray-100 dark:hover:bg-white/10"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg></a>
       </div>
     </div>
-    <p class="px-4 pt-4 pb-4 text-xl leading-7 font-semibold break-all text-gray-900"><span data-uk-text="claim.document.fileName"></span>.pdf</p>
-    <div class="flex-1 overflow-y-auto bg-gray-100 px-6 py-6">
+    <p class="px-4 pt-4 pb-4 text-xl leading-7 font-semibold break-all text-gray-900 dark:text-white"><span data-uk-text="claim.document.fileName"></span>.pdf</p>
+    <div class="flex-1 overflow-y-auto bg-gray-100 dark:bg-white/10 px-6 py-6">
       <div class="flex flex-col gap-6" data-viewer-pages></div>
     </div>
-    <div class="flex justify-end border-t border-gray-200 bg-white px-4 py-3">
+    <div class="flex justify-end border-t border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 px-4 py-3">
       <button type="button" id="viewer-accept" class="h-10 cursor-pointer rounded-md bg-emerald-400 px-4 text-base font-semibold text-white hover:bg-emerald-500">Accept</button>
     </div>
   </div>
@@ -78,7 +82,7 @@
       var viewer = document.getElementById('doc-viewer');
       var pagesHost = viewer.querySelector('[data-viewer-pages]');
       for (var i = 1; i <= SDUK.data.claim.document.pages; i++) {
-        pagesHost.insertAdjacentHTML('beforeend', '<img alt="Page ' + i + '" loading="lazy" src="../../assets/sd-uk/claim-form/page-' + i + '.jpg" class="w-full bg-white shadow-sm">');
+        pagesHost.insertAdjacentHTML('beforeend', '<img alt="Page ' + i + '" loading="lazy" src="../../assets/sd-uk/claim-form/page-' + i + '.jpg" class="w-full bg-white dark:bg-gray-900 shadow-sm">');
       }
 
       function paintAccepted() {
@@ -115,14 +119,14 @@
       document.getElementById('doc-dispute').addEventListener('click', function () {
         var m = SDUK.modal({ html:
           '<div class="flex flex-col items-center gap-4 px-6 pt-0 pb-6 text-center">' +
-            '<svg viewBox="0 0 24 24" fill="currentColor" class="size-10 text-red-600"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd"/></svg>' +
-            '<p class="text-lg leading-7 font-medium text-gray-900">Dispute Documents</p>' +
-            '<div class="flex flex-col gap-4 text-sm leading-5 text-gray-500"><p>Are you sure you want to dispute the documents?</p>' +
-            '<p>The payment request will be cancelled and you’ll need to contact <span class="font-semibold text-gray-900">' + SDUK.data.payer.name + '</span> to receive the payment.</p></div>' +
+            '<svg viewBox="0 0 24 24" fill="currentColor" class="size-10 text-red-600 dark:text-red-400"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd"/></svg>' +
+            '<p class="text-lg leading-7 font-medium text-gray-900 dark:text-white">Dispute Documents</p>' +
+            '<div class="flex flex-col gap-4 text-sm leading-5 text-gray-500 dark:text-gray-400"><p>Are you sure you want to dispute the documents?</p>' +
+            '<p>The payment request will be cancelled and you’ll need to contact <span class="font-semibold text-gray-900 dark:text-white">' + SDUK.data.payer.name + '</span> to receive the payment.</p></div>' +
           '</div>' +
           '<div class="flex flex-col gap-3 px-6 pb-6">' +
             '<button type="button" data-confirm-dispute class="h-12 w-full cursor-pointer rounded-md bg-red-600 text-base font-semibold text-white hover:bg-red-500">Dispute</button>' +
-            '<button type="button" data-uk-close class="h-12 w-full cursor-pointer rounded-md border border-gray-300 bg-white text-base font-semibold text-gray-700 hover:bg-gray-50">Cancel</button>' +
+            '<button type="button" data-uk-close class="h-12 w-full cursor-pointer rounded-md border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 text-base font-semibold text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/10">Cancel</button>' +
           '</div>' });
         m.querySelector('[data-confirm-dispute]').addEventListener('click', function () { SDUK.go('contact.html'); });
       });

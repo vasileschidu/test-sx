@@ -25,23 +25,23 @@ window.OBField = (function () {
 
   var ASSETS = '../../assets/onboarding/';
 
-  var BASE = 'w-full rounded-md bg-white text-base leading-6 font-medium text-[#111827] shadow-xs ' +
-    'outline-1 -outline-offset-1 outline-[#d1d5db] ' +
-    'placeholder:font-normal placeholder:text-[#9ca3af] ' +
+  var BASE = 'w-full rounded-md bg-white dark:bg-white/5 text-base leading-6 font-medium text-gray-900 dark:text-white shadow-xs ' +
+    'outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 ' +
+    'placeholder:font-normal placeholder:text-gray-400 dark:placeholder:text-gray-500 ' +
     // Hover darkens the stroke one step (not while focused or disabled).
-    'not-aria-[invalid=true]:hover:not-focus:not-disabled:outline-[#9ca3af] ' +
-    'aria-[invalid=true]:hover:not-focus:not-disabled:outline-[#f87171] ' +
-    'focus:outline-2 focus:-outline-offset-2 focus:outline-[#2563eb] ' +
-    'disabled:cursor-not-allowed disabled:bg-[#f9fafb] disabled:text-[#6b7280] disabled:placeholder:text-[#d1d5db] ' +
-    'aria-invalid:text-[#7f1d1d] aria-invalid:outline-[#fca5a5] aria-invalid:placeholder:text-[#fca5a5] ' +
-    'aria-invalid:focus:outline-[#ef4444] aria-invalid:disabled:text-[#7f1d1d]';
+    'not-aria-[invalid=true]:hover:not-focus:not-disabled:outline-gray-400 dark:not-aria-[invalid=true]:hover:not-focus:not-disabled:outline-white/20 ' +
+    'aria-[invalid=true]:hover:not-focus:not-disabled:outline-red-400 ' +
+    'focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:focus:outline-blue-400 ' +
+    'disabled:cursor-not-allowed disabled:bg-gray-50 dark:disabled:bg-white/10 disabled:text-gray-500 dark:disabled:text-gray-400 disabled:placeholder:text-gray-300 dark:disabled:placeholder:text-gray-600 ' +
+    'aria-invalid:text-red-900 dark:aria-invalid:text-red-300 aria-invalid:outline-red-300 aria-invalid:placeholder:text-red-300 ' +
+    'aria-invalid:focus:outline-red-500 aria-invalid:disabled:text-red-900 dark:aria-invalid:disabled:text-red-300';
 
   var INPUT = 'block h-10 px-3 aria-invalid:pr-10 ' + BASE;
   var TEXTAREA = 'block px-3 py-2 ' + BASE;
 
-  var LABEL = 'text-sm leading-5 font-medium text-[#374151]';
-  var HELPER = 'text-sm leading-5 text-[#6b7280]';
-  var ERROR_TEXT = 'text-sm leading-5 text-[#dc2626]';
+  var LABEL = 'text-sm leading-5 font-medium text-gray-700 dark:text-gray-300';
+  var HELPER = 'text-sm leading-5 text-gray-500 dark:text-gray-400';
+  var ERROR_TEXT = 'text-sm leading-5 text-red-600 dark:text-red-400';
 
   /** The red (!) shown inside an errored field; hidden while the field is disabled. */
   function errorIcon(extra) {
