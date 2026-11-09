@@ -198,6 +198,14 @@ reference frame `1545:94795` (and wrapper `1537:101776`) no longer exists; 4.12 
 - **cloneArrow W offset with a `position` trigger:** the "Request Code" source has a BOTTOM-magnet trigger. With a `position` trigger the result once landed off by (−156, +144) from the requested W. Check the new route with `connectorSegments`; if it is off, rebuild once with W + (requested − actual). Keep the old connector until the new route checks out.
 - The W offset also happens with a BOTTOM-magnet trigger (2026-10-26, 8.19 → 8.20 straight-down arrow: off by (−9178, +70)). The one-shot correction W + (requested − actual) fixed it. Always check `connectorSegments` after every cloneArrow.
 - Modal buttons are often **renamed instances** ("OK", "Close"), not "General/Button". To scan labels, search TEXT nodes whose ancestor chain contains `Button/Primary`.
+- **To move an arrow's trigger, reassign the endpoint on a copy of the existing connector, not on a clone of
+  Request Code** (2026-11-09: it worked on all 3 "Scroll to the end" arrows 7.12/8.14/9.5 where cloneArrow had failed).
+  Do `const c = old.clone(); old.parent.appendChild(c); c.connectorEnd = { endpointNodeId: btn.id, position }`. The
+  copy keeps the editor's own route shape: the lane stays just outside the frame and the target entry is unchanged.
+  Check `connectorSegments` + the screen-hit test. If it is clean, `old.remove()` and insert the copy at the old
+  z-index; otherwise remove the copy, so the original is never touched. New ids: `1667:93343/93347/93351`.
+- `connectorTextPosition` throws "not a supported API" even on read (`'connectorTextPosition' in c` is true), and a
+  failed call is rolled back. Arrow labels can only be moved by hand in the editor.
 - **cloneArrow from a small ABSOLUTE trigger inside a modal (the 48px "Scroll down" button) is unreliable** (2026-11-09).
   Exit `position {x:48, y:24}`, lane right of the desktop frame: 6.6 (`1636:93331`) landed 14px off in y after one
   correction; 7.12 / 8.14 / 9.5 never converged (3 linear corrections each: the lane collapsed onto the target x or
