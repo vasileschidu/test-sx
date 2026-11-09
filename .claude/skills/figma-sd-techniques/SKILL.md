@@ -207,4 +207,11 @@ reference frame `1545:94795` (and wrapper `1537:101776`) no longer exists; 4.12 
 - **General/Button is a wrapper** (no Size property, no fill) around a nested `Button/Primary` / `Button/Secondary` instance (Size xs–xl). For another size: `wrapper.children[0].setProperties({Size:'md'})`, then set wrapper AND inner `layoutSizingHorizontal='HUG'` and wrapper `layoutSizingVertical='HUG'` (the Default Primary wrapper is FIXED 56 and keeps the md inner at 56). The Primary wrapper turns on a right arrow icon: set every `Right Icon#…`/`Left Icon#…` boolean to false. The visible radius and the glow live on the **inner** instance; the wrapper's radius (10) is invisible.
 - **Removing a node that is a connector endpoint deletes the connector too** (2026-11-05: removing button 868:11113 silently removed arrow 1377:94234). Collect every connector id/endpoint you need BEFORE removing anything, and never touch a connector object after removing its endpoint (throws "node does not exist", the whole call rolls back). Before deleting buttons/frames, check that no arrow you must keep ends on them.
 - Removing a button from a 2-button CTA in a fixed-height (m)/(t) frame: shrink the frame by 56 + gap (80 on Current Allocation), clamped to 812 / 1024; leave 812/1024 viewport (modal) frames as they are. Desktop needs nothing (CTA bottom-anchored).
+- **Section 4 summary frames (2026-11-09):** the Dispute removal left `Content > Footer` (alMAX, grow) with
+  `minHeight 302` (two-button size), so the single CTA sat 80 lower and the Powered-by row was clipped. Fix:
+  `Footer.minHeight = 222` (one CTA + gap 24 + the 142 page footer, as 4.2 (m)/(t)) and frame h = max(812|1024,
+  Leading Content + 404 (m) / + 500 (t)). Only touch frames whose Footer holds a CTA: 4.9.1 Payment Status has its own
+  footer (min 142, no CTA). Skip the modal frames (4.5/4.6/4.12, 812/1024). The 4.2 (m) reference itself overflows 2px.
+- **cloneArrow first-try offset is about (−156, +145…151)** for a `position` trigger (5 arrows, 2026-11-09). One
+  correction W + (requested − actual) landed all 5 within 6px. Use one correction, then stop.
 - Gap above a bottom CTA in (m)/(t)/desktop form frames is `16 + Spacer + 16`. For a 56 minimum give the Spacer `minHeight 24`; don't switch a non-growing Spacer to grow (it moves the CTA to the frame bottom).
