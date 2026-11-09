@@ -98,7 +98,7 @@ Target: `Modal & Background` (the scroll layer) > `Modal Wrapper` (24 top/bottom
    tablet, 343 phone, or the modal's own width, e.g. 1048 Review/viewer), height **HUG**, `maxHeight=null`,
    `clipsContent=true`, `overflowDirection='NONE'`. Children Header / "Content" / Footer: HUG, no own scroll, original
    look. Exception: Review and agree and the Document viewer use `Modal & Background` (padding 24, no scroll) > `Modal`
-   (height FILL + maxHeight 752) with the inner scroller FILL — no wrapper (user's 6.6 desktop, 2026-11-03). Instance children: don't set `overflowDirection` (throws "cannot be overridden").
+   (height FILL, no maxHeight; backdrop padding 16 all round since 2026-11-09) with the inner scroller FILL — no wrapper (user's 6.6 desktop, 2026-11-03). Instance children: don't set `overflowDirection` (throws "cannot be overridden").
 5. Verify: the card box at normal size is unchanged (x, y, w, h); a tall card shows y < 0 in the editor — expected.
 Node ids of the card and its children survive the reparent.
 **Screen frame: `numberOfFixedChildren = 0`.** Phone/tablet screens had 2–3 "Fixed" children; with the backdrop among
@@ -180,7 +180,7 @@ How to read it: 0 in `modal.framesWithIssues`, `reactions.broken`, `connectors.d
 nothing from the audit on your own**: fixes go through the user first.
 What it cannot see: real prototype behaviour (whether a scroll actually works when played), hotspot geometry of the
 scroll-end triggers, whether an arrow/reaction points at the *right* screen, card widths, flow starting points.
-Known state 2026-11-04: 180 standard + 35 exception modals all clean; 24 exception (m)/(t) frames (3.3/3.7/3.8/3.9,
+Known state 2026-11-09: 177 standard + 35 exception, all clean with the full-height rule (exception = MB padding 16, Modal FILL, no maxHeight; Document viewer has no 3.9 desktop frame; phone "Tap to open full screen" badge pinned 36 above the Preview bottom, CENTER/MAX; tablet badges hidden, as code `md:hidden`). Earlier:  180 standard + 35 exception modals all clean; 24 exception (m)/(t) frames (3.3/3.7/3.8/3.9,
 6.6/6.7, 7.12/7.13, 8.14/8.15, 9.5/9.6) have the backdrop fixed (fixed=2: Top Bar + Modal & Background), untested
 whether that blocks the inner scroller; 1 empty ON_CLICK on 0.0 (m) Welcome "Ellipse 38" `1084:35152`. The original
 reference frame `1545:94795` (and wrapper `1537:101776`) no longer exists; 4.12 `959:25701` has the identical structure.

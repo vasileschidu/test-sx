@@ -78,9 +78,9 @@ async function prototypeAudit(page, opts = {}) {
         for (const s of extraScrollers(card, null).slice(0, 3)) devs.push('Modal has own scroll: ' + s.name + ' ' + s.id + ' (' + val(s, 'overflowDirection') + ')');
       }
     } else {
-      // Review and agree (Agreement scroller) is full height since 2026-11-09: MB padding 16 all round, no maxHeight
-      // (sandbox h-[calc(100dvh-2rem)]). The document Viewer keeps padding 24 + maxHeight 752.
-      const full = scroller.name !== 'Viewer';
+      // Review and agree and the Document viewer are full height since 2026-11-09: MB padding 16 all round, Modal FILL
+      // with no maxHeight (sandbox h-[calc(100dvh-2rem)], commit 0343e34).
+      const full = true;
       if (!checkBackdrop(devs, mb, frame, Object.assign({}, common, { paddingTop: full ? 16 : 24, paddingBottom: full ? 16 : 24, clipsContent: false, overflowDirection: 'NONE' }, full ? { paddingLeft: 16, paddingRight: 16 } : {}))) return { kind, devs };
       if (mb.children.some(c => c.name === WR)) devs.push('Wrapper present (exception expects MB > Modal directly)');
       const card = mb.children.find(c => c.name === 'Modal');

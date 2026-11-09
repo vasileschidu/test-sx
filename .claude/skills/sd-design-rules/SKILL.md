@@ -53,13 +53,15 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
     scroll inside the Modal (previous version, replaced) and do not top-align the backdrop.
     **Exception (user-built on 6.6 desktop `1170:9894`, 2026-11-03): Review and agree (6.6/6.7, 7.12/7.13, 8.14/8.15,
     9.5/9.6) and the Document viewer (3.3/3.7/3.8/3.9) scroll ONLY inside the card**: `Modal & Background` (CENTER,
-    padding 24/16, #000 @75% + blur 5, no clip, no scroll) > `Modal` (FIXED width, height **FILL + maxHeight 752**,
-    clip, no scroll) with the inner "Agreement (scroll)" / "Viewer" FILL + vertical scroll. No Modal Wrapper.
+    padding **16 all round**, #000 @75% + blur 5, no clip, no scroll) > `Modal` (FIXED width, height **FILL, no maxHeight**:
+    full height, 16 from every frame edge, since 2026-11-09), clip, no scroll, with the inner "Agreement (scroll)" /
+    "Viewer" FILL + vertical scroll. No Modal Wrapper.
   - **Code:** `OBModal.open(body, labelledBy, { header, footer, bare, panelClass })`. The backdrop `[data-ob-modal]` is
     `fixed inset-0 overflow-y-auto`; `[data-ob-modal-frame]` is `flex min-h-full items-center justify-center px-4 py-6`;
     the panel keeps its natural height. Dialogs whose design has an inner scroller (Review and agree, document viewer)
-    cap the panel with `max-h-[min(752px,calc(100dvh-3rem))]` / `h-[min(752px,calc(100dvh-3rem))]` and a `min-h-0`
-    body root. Open with `dialog.focus({ preventScroll: true })`, or the backdrop jumps and the 24 top gap is lost.
+    are full height: `panelClass` `relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden`,
+    the frame's `px-4 py-6` swapped for `p-4` (16 on every side), and a `min-h-0 flex-1` body root
+    (`onboarding-consents.js` openReview, `review-documents.js` openViewer; commit 0343e34). Open with `dialog.focus({ preventScroll: true })`, or the backdrop jumps and the 24 top gap is lost.
     Popups inside a dialog (Decline reason list) are `fixed`: the backdrop's blur makes it their containing block and it
     scrolls, so add `backdrop.scrollTop` to the top. A footer submit button needs `form="<id>"`. On a failed submit use
     `OBModal.revealField(field, errorEl)` so the error message scrolls into view too (sd-qa, 2026-11-03).
