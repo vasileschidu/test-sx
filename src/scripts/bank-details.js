@@ -63,7 +63,7 @@
         (opts.hint ? '<p id="bank-' + id + '-hint" data-bank-hint hidden class="' + F.HELPER + '">' + esc(opts.hint) + '</p>' : '') +
         '<p id="bank-' + id + '-error" data-bank-error class="hidden ' + F.ERROR_TEXT + '"></p>' +
       '</div>' +
-      (opts.linked ? '<p data-bank-linked hidden class="-mt-2 rounded-md bg-[#f9fafb] dark:bg-white/5 px-3 pt-5 pb-3 text-sm leading-5 text-[#374151] dark:text-gray-300"></p>' : '') +
+      (opts.linked ? '<p data-bank-linked hidden class="-mt-2 rounded-md bg-[#f9fafb] dark:bg-white/5 px-3 pt-5 pb-3 dark:mt-1 dark:pt-3 text-sm leading-5 text-[#374151] dark:text-gray-300"></p>' : '') +
     '</div>';
   }
 
