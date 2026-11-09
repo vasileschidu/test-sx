@@ -252,7 +252,7 @@
 
                                         <!-- Add bank account -->
                                         <button type="button" command="show-modal" commandfor="pp-add-bank-account-dialog"
-                                            class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">
+                                            class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-500/10 cursor-pointer">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                                 fill="currentColor" class="size-4">
                                                 <path
@@ -299,7 +299,7 @@
 
                                         <!-- Add address -->
                                         <button type="button" command="show-modal" commandfor="pp-add-check-dialog"
-                                            class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">
+                                            class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-500/10 cursor-pointer">
                                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
                                                 fill="currentColor" class="size-4">
                                                 <path
@@ -773,7 +773,7 @@
                                 </button>
                             </div>
 
-                            <div id="pp-adv-table-state" class="mt-4 hidden w-full rounded-lg">
+                            <div id="pp-adv-table-state" class="mt-4 hidden w-full rounded-lg px-4 sm:px-6">
                                 <div class="flex w-full items-center gap-4 bg-gray-50 px-2 py-1 dark:bg-white/5">
                                     <div class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400">Payer Name</div>
                                     <div class="min-w-0 flex-1 text-xs font-medium text-gray-500 dark:text-gray-400">Primary Method of Payment</div>
@@ -811,7 +811,7 @@
                                                 <button type="button"
                                                     class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                     <el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white">
-                                                        <span class="text-gray-400 dark:text-gray-500">Select payment method</span>
+                                                        <span class="truncate text-gray-400 dark:text-gray-500">Select payment method</span>
                                                     </el-selectedcontent>
                                                     <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
                                                         class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
@@ -831,7 +831,7 @@
                                                 <button type="button"
                                                     class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                     <el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white">
-                                                        <span class="text-gray-400 dark:text-gray-500">Select payment method</span>
+                                                        <span class="truncate text-gray-400 dark:text-gray-500">Select payment method</span>
                                                     </el-selectedcontent>
                                                     <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
                                                         class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
@@ -851,7 +851,7 @@
                                                 <button type="button"
                                                     class="grid w-full cursor-default grid-cols-1 rounded-md bg-white py-1.5 pr-2 pl-3 text-left font-medium text-gray-900 outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 text-base sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10">
                                                     <el-selectedcontent class="col-start-1 row-start-1 truncate pr-6 font-medium text-gray-900 dark:text-white">
-                                                        <span class="text-gray-400 dark:text-gray-500">Select payment method</span>
+                                                        <span class="truncate text-gray-400 dark:text-gray-500">Select payment method</span>
                                                     </el-selectedcontent>
                                                     <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
                                                         class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
@@ -878,7 +878,7 @@
                                 </div>
                                 <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
                                 <div class="flex w-full items-center py-5">
-                                    <button id="pp-adv-add-payer-btn" type="button" class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-600/20 cursor-pointer">
+                                    <button id="pp-adv-add-payer-btn" type="button" class="self-start whitespace-nowrap inline-flex items-center gap-2 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-600/10 dark:text-blue-400 dark:hover:bg-blue-500/10 cursor-pointer">
                                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                                             <path fill-rule="evenodd" d="M9.25 4a.75.75 0 0 1 1.5 0v5.25H16a.75.75 0 0 1 0 1.5h-5.25V16a.75.75 0 0 1-1.5 0v-5.25H4a.75.75 0 0 1 0-1.5h5.25V4Z" clip-rule="evenodd" />
                                         </svg>
@@ -887,7 +887,7 @@
                                 </div>
                             </div>
 
-                            <div data-pp-adv-footer-on-customize class="hidden -mx-4 border-t border-gray-200 px-4 pt-4 dark:border-white/10 sm:-mx-6 sm:px-6">
+                            <div data-pp-adv-footer-on-customize class="hidden border-t border-gray-200 px-4 py-4 dark:border-white/10 sm:px-6">
                                 <div class="flex w-full justify-end gap-3">
                                     <button id="pp-adv-undo-btn" type="button" disabled
                                         class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">
@@ -2172,7 +2172,7 @@
         // Same page as the SMART Exchange, pointed at the consumer's own data.
         window.PAYMENT_PREFERENCES_CONFIG = { dataset: 'consumer-payment-preferences', storagePrefix: 'cp_pp_' };
     </script>
-    <script src="../../../src/scripts/pages/payment-preferences-page.js?v=adv-footer-20261008l" defer></script>
+    <script src="../../../src/scripts/pages/payment-preferences-page.js?v=20261109a" defer></script>
 
 </body>
 
