@@ -1341,30 +1341,143 @@ window.__ppStorageKey = function (name) {
     '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 shrink-0 text-emerald-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.4C11.5346 14.4 14.4 11.5346 14.4 8C14.4 4.46538 11.5346 1.6 8 1.6C4.46538 1.6 1.6 4.46538 1.6 8C1.6 11.5346 4.46538 14.4 8 14.4ZM11.0852 6.5529C11.2801 6.28491 11.2209 5.90966 10.9529 5.71476C10.6849 5.51986 10.3097 5.57911 10.1148 5.8471L7.32776 9.67923L5.82426 8.17574C5.58995 7.94142 5.21005 7.94142 4.97574 8.17574C4.74142 8.41005 4.74142 8.78995 4.97574 9.02426L6.97574 11.0243C7.09982 11.1483 7.27199 11.2119 7.44693 11.1982C7.62187 11.1844 7.78203 11.0948 7.88524 10.9529L11.0852 6.5529Z" /></svg>';
   var ADV_X_ICON =
     '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 shrink-0 text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M8 14.4C11.5346 14.4 14.4 11.5346 14.4 8C14.4 4.46538 11.5346 1.6 8 1.6C4.46538 1.6 1.6 4.46538 1.6 8C1.6 11.5346 4.46538 14.4 8 14.4ZM6.62426 5.77574C6.38995 5.54142 6.01005 5.54142 5.77574 5.77574C5.54142 6.01005 5.54142 6.38995 5.77574 6.62426L7.15147 8L5.77574 9.37574C5.54142 9.61005 5.54142 9.98995 5.77574 10.2243C6.01005 10.4586 6.38995 10.4586 6.62426 10.2243L8 8.84853L9.37574 10.2243C9.61005 10.4586 9.98995 10.4586 10.2243 10.2243C10.4586 9.98995 10.4586 9.61005 10.2243 9.37574L8.84853 8L10.2243 6.62426C10.4586 6.38995 10.4586 6.01005 10.2243 5.77574C9.98995 5.54142 9.61005 5.54142 9.37574 5.77574L8 7.15147L6.62426 5.77574Z" /></svg>';
-  var ADV_WARNING_ICON =
-    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-amber-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.27598 3.0253C9.0322 1.65823 10.9678 1.65823 11.724 3.0253L17.2431 13.0025C17.9848 14.3433 17.0319 16 15.5191 16H4.48093C2.96807 16 2.01521 14.3433 2.75691 13.0025L8.27598 3.0253ZM10.9889 12.983C10.9889 13.5384 10.5461 13.9887 9.99992 13.9887C9.45369 13.9887 9.01089 13.5384 9.01089 12.983C9.01089 12.4276 9.45369 11.9773 9.99992 11.9773C10.5461 11.9773 10.9889 12.4276 10.9889 12.983ZM9.99991 4.93733C9.45369 4.93733 9.01089 5.3876 9.01089 5.94303V8.96016C9.01089 9.51559 9.45369 9.96587 9.99991 9.96587C10.5461 9.96587 10.9889 9.51559 10.9889 8.96016V5.94303C10.9889 5.3876 10.5461 4.93733 9.99991 4.93733Z" /></svg>';
+
+  // The dropdown list scrolls and clips its children, so the validation
+  // tooltip is placed against the viewport instead of inside the list.
+  function placeBankTooltip(host) {
+    var tip = host.querySelector('[role="tooltip"]');
+    if (!tip) return;
+    var arrow = tip.firstElementChild;
+    var rect = host.getBoundingClientRect();
+    var tipHeight = tip.offsetHeight;
+    var above = rect.top > tipHeight + 16;
+    tip.style.position = "fixed";
+    tip.style.left = rect.left + rect.width / 2 + "px";
+    tip.style.right = "auto";
+    tip.style.margin = "0";
+    tip.style.bottom = "auto";
+    tip.style.top = (above ? rect.top - tipHeight - 10 : rect.bottom + 10) + "px";
+    if (arrow) {
+      arrow.classList.toggle("-bottom-1", above);
+      arrow.classList.toggle("-top-1", !above);
+    }
+  }
+
+  function wireBankTooltips(optsEl) {
+    optsEl.querySelectorAll("[data-bank-validation]").forEach(function (host) {
+      if (host.hasAttribute("data-tip-wired")) return;
+      host.setAttribute("data-tip-wired", "");
+      ["mouseenter", "focus"].forEach(function (type) {
+        host.addEventListener(type, function () {
+          placeBankTooltip(host);
+        });
+      });
+    });
+  }
+
+  function bankValidationIconHtml(status, fallback) {
+    return window.PPComponents &&
+      typeof window.PPComponents.buildBankValidationIcon === "function"
+      ? window.PPComponents.buildBankValidationIcon(status)
+      : fallback || "";
+  }
+
+  // Global Preferences dropdowns: every bank account carries its validation
+  // icon and tooltip. Their options also seed the Advanced Settings rows, which
+  // decorate again, so an option that already has its icon is left alone.
+  // An unverified account can't be picked: it goes last in the list, greyed
+  // out and disabled, and keeps only its tooltip.
+  function markUnverifiedOption(optsEl, optionEl) {
+    var titleRow = optionEl.querySelector("span.flex.items-center.gap-1\\.5");
+    if (!titleRow) return;
+    var secondary = titleRow.parentElement.querySelector(
+      ".block.text-sm, .truncate.text-sm\\/5",
+    );
+    optsEl.appendChild(optionEl);
+    titleRow.classList.replace("font-medium", "font-semibold");
+    titleRow.classList.remove("text-gray-900", "dark:text-white");
+    titleRow.classList.add("text-gray-500", "dark:text-gray-400");
+    if (secondary) {
+      secondary.classList.replace("text-gray-500", "text-gray-400");
+      secondary.classList.add("dark:text-gray-500");
+    }
+    optionEl.setAttribute("disabled", "");
+    optionEl.setAttribute("aria-disabled", "true");
+    optionEl.classList.add("pointer-events-none", "bg-gray-50", "dark:bg-white/5");
+    // A disabled account greys out its bank icon to the secondary text grey.
+    var bankIcon = optionEl.querySelector(":scope > div > .shrink-0");
+    if (bankIcon) {
+      bankIcon.classList.remove("text-gray-500", "dark:text-gray-400");
+      bankIcon.classList.add("text-gray-400", "dark:text-gray-500");
+      // Some icons (the page's static markup) carry a fixed grey in their fill;
+      // let them follow the text colour instead.
+      bankIcon.querySelectorAll("[fill]").forEach(function (shape) {
+        if (shape.getAttribute("fill") !== "none")
+          shape.setAttribute("fill", "currentColor");
+      });
+    }
+    // The row is disabled, but its tooltip still has to answer the hover.
+    var tipHost = optionEl.querySelector("[data-bank-validation]");
+    if (tipHost) tipHost.classList.add("pointer-events-auto");
+    // The select reads "disabled" when it sets itself up, so a row disabled
+    // afterwards also needs its click stopped here.
+    if (!optsEl.hasAttribute("data-unverified-guard")) {
+      optsEl.setAttribute("data-unverified-guard", "");
+      optsEl.addEventListener(
+        "click",
+        function (event) {
+          if (event.target.closest && event.target.closest("el-option[disabled]")) {
+            event.preventDefault();
+            event.stopPropagation();
+          }
+        },
+        true,
+      );
+    }
+  }
+
+  function addBankTooltips(optsEl) {
+    // Same accounts as Advanced Settings: verified ones, plus a single
+    // unverified one at the end. Locked accounts can't be used, so they go.
+    var unverifiedKept = false;
+    optsEl.querySelectorAll("el-option").forEach(function (optionEl) {
+      var state = advBankStatusById[optionEl.getAttribute("value")];
+      if (!state || state === "verified") return;
+      if (state !== "unverified" || unverifiedKept) optionEl.remove();
+      else unverifiedKept = true;
+    });
+    optsEl.querySelectorAll("el-option").forEach(function (optionEl) {
+      var status = advBankStatusById[optionEl.getAttribute("value")];
+      if (!status || optionEl.querySelector("[data-bank-validation]")) return;
+      var titleRow = optionEl.querySelector("span.flex.items-center.gap-1\\.5");
+      if (!titleRow || !titleRow.firstElementChild) return;
+      titleRow.firstElementChild.insertAdjacentHTML(
+        "afterend",
+        bankValidationIconHtml(status),
+      );
+    });
+    optsEl.querySelectorAll("el-option").forEach(function (optionEl) {
+      if (advBankStatusById[optionEl.getAttribute("value")] === "unverified")
+        markUnverifiedOption(optsEl, optionEl);
+    });
+    wireBankTooltips(optsEl);
+  }
 
   function decorateBankOptions(optsEl) {
     var unverifiedShown = false;
     optsEl.querySelectorAll("el-option").forEach(function (optionEl) {
-      var checkEl = optionEl.querySelector(":scope > span.text-blue-600");
-      if (checkEl) checkEl.classList.replace("text-blue-600", "text-emerald-500");
       var status = advBankStatusById[optionEl.getAttribute("value")];
       if (!status) return;
-      var titleRow = optionEl.querySelector(
-        ".flex.items-center.gap-1\\.5.self-stretch",
-      );
+      var titleRow = optionEl.querySelector("span.flex.items-center.gap-1\\.5");
       if (!titleRow) return;
       var title = titleRow.firstElementChild;
-      var secondary = titleRow.parentElement.querySelector(".block.text-sm");
+      var hasIcon = !!optionEl.querySelector("[data-bank-validation]");
       if (status === "verified") {
-        title.insertAdjacentHTML(
-          "afterend",
-          window.PPComponents &&
-            typeof window.PPComponents.buildBankValidationIcon === "function"
-            ? window.PPComponents.buildBankValidationIcon("verified")
-            : ADV_CHECK_ICON,
-        );
+        if (!hasIcon)
+          title.insertAdjacentHTML(
+            "afterend",
+            bankValidationIconHtml("verified", ADV_CHECK_ICON),
+          );
         return;
       }
       // Only one unverified account is listed, always last.
@@ -1373,55 +1486,110 @@ window.__ppStorageKey = function (name) {
         return;
       }
       unverifiedShown = true;
-      optsEl.appendChild(optionEl);
-      title.insertAdjacentHTML("afterend", ADV_X_ICON);
-      titleRow.classList.replace("font-medium", "font-semibold");
-      titleRow.classList.add("text-gray-500", "dark:text-gray-400");
-      if (secondary) {
-        secondary.classList.replace("text-gray-500", "text-gray-400");
-        secondary.classList.add("dark:text-gray-500");
-      }
-      optionEl.setAttribute("disabled", "");
-      optionEl.setAttribute("aria-disabled", "true");
-      optionEl.classList.add("pointer-events-none", "bg-gray-50", "dark:bg-white/5", "flex", "flex-col", "gap-3");
-      optionEl.insertAdjacentHTML(
-        "beforeend",
-        '<div class="flex items-start gap-3 rounded-md border border-yellow-200 bg-yellow-50 p-2 in-[el-selectedcontent]:hidden dark:border-yellow-400/20 dark:bg-yellow-400/10">' +
-          ADV_WARNING_ICON +
-          '<p class="text-sm/5 font-normal whitespace-normal text-yellow-700 dark:text-yellow-300">This bank account hasn\'t been verified yet. Please select a verified account or add a new one.</p></div>',
-      );
+      if (!hasIcon)
+        title.insertAdjacentHTML(
+          "afterend",
+          bankValidationIconHtml("unverified", ADV_X_ICON),
+        );
+      markUnverifiedOption(optsEl, optionEl);
     });
+    wireBankTooltips(optsEl);
   }
+
+  // The payer's-card option in the shared Advanced Settings layout, keeping
+  // the wording and icon of the page it comes from.
+  function buildPayersCardOption(source) {
+    var oneLine = function (el) {
+      return el ? el.textContent.replace(/\s+/g, " ").trim() : "";
+    };
+    var title = source.querySelector(".font-semibold, .font-medium");
+    var subtitle = source.querySelector('[class*="text-sm"]:not(.font-semibold)');
+    var icon = source.querySelector("svg");
+    var name = oneLine(title);
+    var option = document.createElement("el-option");
+    option.setAttribute("value", "payers-card");
+    option.className =
+      "group/option relative block cursor-default select-none px-4 py-3 text-gray-900 aria-selected:bg-gray-100 aria-selected:pr-11 focus:bg-gray-100 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10";
+    option.innerHTML =
+      '<div class="flex items-start gap-3 in-[el-selectedcontent]:items-center in-[el-selectedcontent]:gap-2">' +
+      '<div class="shrink-0 py-0.5 text-gray-500 in-[el-selectedcontent]:py-0 in-[el-selectedcontent]:text-gray-400 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-500">' +
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
+      (icon ? icon.innerHTML : "") +
+      "</svg></div>" +
+      '<div class="flex min-w-0 flex-1 flex-col gap-1 in-[el-selectedcontent]:hidden">' +
+      '<span class="flex items-center gap-1.5 text-sm/5 font-semibold whitespace-nowrap text-gray-900 dark:text-white"><span>' +
+      escapeHtml(name) +
+      "</span></span>" +
+      '<span class="truncate text-sm/5 text-gray-500 dark:text-gray-400">' +
+      escapeHtml(oneLine(subtitle)) +
+      "</span></div>" +
+      '<span class="hidden truncate font-medium in-[el-selectedcontent]:block">' +
+      escapeHtml(name) +
+      "</span></div>" +
+      '<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-emerald-500 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" /></svg></span>';
+    return option;
+  }
+
+  var ADV_METHOD_OPTIONS_CLASS =
+    "max-h-80 w-[416px] max-w-[calc(100vw-2rem)] overflow-auto divide-y divide-gray-200 rounded-md bg-white shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:divide-white/10 dark:bg-gray-800 dark:outline-white/10";
+
+  // Shared with the Global Preferences render, which lives in another closure.
+  window.__ppBankUi = {
+    statusById: advBankStatusById,
+    addTooltips: addBankTooltips,
+    buildPayersCardOption: buildPayersCardOption,
+    // Same list as Advanced Settings, sized to its field instead of 416px.
+    listClass: ADV_METHOD_OPTIONS_CLASS.replace(
+      "w-[416px] max-w-[calc(100vw-2rem)]",
+      "w-(--button-width)",
+    ),
+  };
+
+  window.addEventListener("pp-accounts-ready", function () {
+    hydrateMethodSelects();
+  });
 
   function hydrateMethodSelects() {
     var optionsHtml = getMethodOptionsTemplateHtml();
     if (!optionsHtml) return;
-    var isConsumerPage = window.location.pathname.indexOf("consumer-") !== -1;
-    var globalSelect = getGlobalMethodSelect();
-    var globalOptions = globalSelect && globalSelect.querySelector("el-options");
-    var globalButton = globalSelect && globalSelect.querySelector(":scope > button");
-    var globalContent = globalSelect && globalSelect.querySelector("el-selectedcontent");
-    if (isConsumerPage)
-    rowsWrap
-      .querySelectorAll("[data-adv-method-select]")
-      .forEach(function (selectEl) {
-        var button = selectEl.querySelector(":scope > button");
-        var content = selectEl.querySelector("el-selectedcontent");
-        if (button && globalButton) button.className = globalButton.className;
-        if (content && globalContent)
-          content.className = globalContent.className;
-      });
     rowsWrap
       .querySelectorAll("[data-adv-method-options]")
       .forEach(function (optsEl) {
-        // Advanced Settings rows are narrow, so their lists keep a fixed 416px width.
-        if (isConsumerPage)
-          optsEl.className = globalOptions.className.replace(
-            "w-(--button-width)",
-            "w-[416px] max-w-[calc(100vw-2rem)]",
-          );
+        // Advanced Settings rows are narrow, so their lists keep a fixed 416px
+        // width. The list and its options look the same on both portals.
+        optsEl.className = ADV_METHOD_OPTIONS_CLASS;
         optsEl.innerHTML = optionsHtml;
-        if (isConsumerPage) decorateBankOptions(optsEl);
+        // Account and address options are rebuilt from the data in the shared
+        // layout, so both portals render the very same rows.
+        var builders = window.__ppOptionBuilders;
+        if (
+          builders &&
+          (builders.accounts().length || builders.addresses().length)
+        ) {
+          var payersCard = optsEl.querySelector('el-option[value="payers-card"]');
+          optsEl.innerHTML = "";
+          if (payersCard) optsEl.appendChild(buildPayersCardOption(payersCard));
+          builders.accounts().forEach(function (account) {
+            if (account.validationStatus)
+              advBankStatusById[account.id] = account.validationStatus;
+            optsEl.appendChild(builders.createBankOption(account, true));
+          });
+          builders.addresses().forEach(function (address) {
+            optsEl.appendChild(builders.createAddressOption(address, true));
+          });
+        }
+        // The options are copied from Global Preferences, so a selection made
+        // there must not carry over: it would mark this field as filled and
+        // turn its placeholder to the filled (medium) weight.
+        optsEl.querySelectorAll('el-option[aria-selected="true"]').forEach(function (o) {
+          o.removeAttribute("aria-selected");
+        });
+        decorateBankOptions(optsEl);
+        var hostSelect = optsEl.closest("el-select");
+        if (hostSelect && typeof updateElSelectFilledState === "function")
+          requestAnimationFrame(function () {
+            updateElSelectFilledState(hostSelect);
+          });
       });
     rowsWrap.querySelectorAll(".pp-adv-row").forEach(function (rowEl) {
       applyRowMethodUniqueness(rowEl);
@@ -1644,6 +1812,9 @@ window.__ppStorageKey = function (name) {
   ]).then(function (results) {
     customersCache = results[0];
     hydratePayerSelects();
+    document
+      .querySelectorAll('el-select[name^="gp-default-payment-method-"] el-options')
+      .forEach(addBankTooltips);
     hydrateMethodSelects();
   });
   setAdvancedDirty(false);
@@ -2288,7 +2459,9 @@ window.__ppStorageKey = function (name) {
     }
   }
 
-  function createBankOption(account) {
+  function createBankOption(account, supplierLayout) {
+    var consumerLayout =
+      !supplierLayout && window.location.pathname.indexOf("consumer-") !== -1;
     var option = document.createElement("el-option");
     option.setAttribute("value", account.id);
     option.setAttribute("data-gp-bank-option", "true");
@@ -2299,9 +2472,9 @@ window.__ppStorageKey = function (name) {
       '  <div class="shrink-0 py-0.5 text-gray-500 in-[el-selectedcontent]:py-0 in-[el-selectedcontent]:text-gray-400 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-500">' +
       '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.67411 2.07459C9.88011 1.97514 10.1202 1.97514 10.3262 2.07459L17.5762 5.57459C17.9493 5.75467 18.1057 6.20304 17.9256 6.57606C17.7576 6.92403 17.3561 7.08351 17.0002 6.95718V16.5H17.2502C17.6644 16.5 18.0002 16.8358 18.0002 17.25C18.0002 17.6642 17.6644 18 17.2502 18H2.75017C2.33596 18 2.00017 17.6642 2.00017 17.25C2.00017 16.8358 2.33596 16.5 2.75017 16.5H3.00017V6.95718C2.6442 7.08351 2.24274 6.92403 2.07476 6.57606C1.89468 6.20304 2.05109 5.75467 2.42411 5.57459L9.67411 2.07459ZM11 6C11 6.55228 10.5523 7 10 7C9.44772 7 9 6.55228 9 6C9 5.44772 9.44772 5 10 5C10.5523 5 11 5.44772 11 6ZM7.5 9.75C7.5 9.33579 7.16421 9 6.75 9C6.33579 9 6 9.33579 6 9.75V15.25C6 15.6642 6.33579 16 6.75 16C7.16421 16 7.5 15.6642 7.5 15.25V9.75ZM10.75 9.75C10.75 9.33579 10.4142 9 10 9C9.58579 9 9.25 9.33579 9.25 9.75V15.25C9.25 15.6642 9.58579 16 10 16C10.4142 16 10.75 15.6642 10.75 15.25V9.75ZM14 9.75C14 9.33579 13.6642 9 13.25 9C12.8358 9 12.5 9.33579 12.5 9.75V15.25C12.5 15.6642 12.8358 16 13.25 16C13.6642 16 14 15.6642 14 15.25V9.75Z"/></svg>' +
       "  </div>" +
-      (window.location.pathname.indexOf("consumer-") !== -1
+      (consumerLayout
         ? ('  <div class="in-[el-selectedcontent]:hidden">' +
-      '    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>' +
+      '    <span class="flex items-center gap-1.5 self-stretch truncate font-semibold"><span>' +
       account.name +
       "</span></span>" +
       '    <span class="block text-sm text-gray-500 dark:text-gray-400">••••')
@@ -2320,7 +2493,7 @@ window.__ppStorageKey = function (name) {
       account.last4 +
       "</span>" +
       "</div>" +
-      '<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
+      '<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-emerald-500 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
       '  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
       '    <path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
       "  </svg>" +
@@ -2328,7 +2501,9 @@ window.__ppStorageKey = function (name) {
     return option;
   }
 
-  function createAddressOption(address) {
+  function createAddressOption(address, supplierLayout) {
+    var consumerLayout =
+      !supplierLayout && window.location.pathname.indexOf("consumer-") !== -1;
     var option = document.createElement("el-option");
     option.setAttribute("value", address.id);
     option.setAttribute("data-gp-address-option", "true");
@@ -2339,9 +2514,9 @@ window.__ppStorageKey = function (name) {
       '  <div class="shrink-0 py-0.5 text-gray-500 in-[el-selectedcontent]:py-0 in-[el-selectedcontent]:text-gray-400 dark:text-gray-400 dark:in-[el-selectedcontent]:text-gray-500">' +
       '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" clip-rule="evenodd" d="M16.25 2C16.6642 2 17 2.33579 17 2.75C17 3.16421 16.6642 3.5 16.25 3.5H16V16.5H16.25C16.6642 16.5 17 16.8358 17 17.25C17 17.6642 16.6642 18 16.25 18H12.75C12.3358 18 12 17.6642 12 17.25V14.75C12 14.3358 11.6642 14 11.25 14H8.75C8.33579 14 8 14.3358 8 14.75V17.25C8 17.6642 7.66421 18 7.25 18H3.75C3.33579 18 3 17.6642 3 17.25C3 16.8358 3.33579 16.5 3.75 16.5H4V3.5H3.75C3.33579 3.5 3 3.16421 3 2.75C3 2.33579 3.33579 2 3.75 2H16.25ZM7.5 9C7.22386 9 7 9.22386 7 9.5V10.5C7 10.7761 7.22386 11 7.5 11H8.5C8.77614 11 9 10.7761 9 10.5V9.5C9 9.22386 8.77614 9 8.5 9H7.5ZM11.5 9C11.2239 9 11 9.22386 11 9.5V10.5C11 10.7761 11.2239 11 11.5 11H12.5C12.7761 11 13 10.7761 13 10.5V9.5C13 9.22386 12.7761 9 12.5 9H11.5ZM7.5 5C7.22386 5 7 5.22386 7 5.5V6.5C7 6.77614 7.22386 7 7.5 7H8.5C8.77614 7 9 6.77614 9 6.5V5.5C9 5.22386 8.77614 5 8.5 5H7.5ZM11.5 5C11.2239 5 11 5.22386 11 5.5V6.5C11 6.77614 11.2239 7 11.5 7H12.5C12.7761 7 13 6.77614 13 6.5V5.5C13 5.22386 12.7761 5 12.5 5H11.5Z"/></svg>' +
       "  </div>" +
-      (window.location.pathname.indexOf("consumer-") !== -1
+      (consumerLayout
         ? ('  <div class="in-[el-selectedcontent]:hidden">' +
-      '    <span class="flex items-center gap-1.5 self-stretch truncate font-medium group-aria-selected/option:font-semibold"><span>Check</span><svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none"><path d="M7.79922 5.99995C7.79922 6.99406 6.99333 7.79995 5.99922 7.79995C5.00511 7.79995 4.19922 6.99406 4.19922 5.99995C4.19922 5.00584 5.00511 4.19995 5.99922 4.19995C6.99333 4.19995 7.79922 5.00584 7.79922 5.99995Z" fill="#6B7280"/></svg><span>')
+      '    <span class="flex items-center gap-1.5 self-stretch truncate font-semibold"><span>Check</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true" class="size-3 shrink-0 text-gray-500 dark:text-gray-400"><path d="M7.8 6C7.8 6.99411 6.99411 7.8 6 7.8C5.00589 7.8 4.2 6.99411 4.2 6C4.2 5.00589 5.00589 4.2 6 4.2C6.99411 4.2 7.8 5.00589 7.8 6Z"/></svg><span>')
         : ('  <div class="flex min-w-0 flex-1 flex-col gap-1 in-[el-selectedcontent]:hidden">' +
       '    <span class="flex items-center gap-1.5 text-sm/5 font-semibold whitespace-nowrap text-gray-900 dark:text-white"><span>Check</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 12" fill="currentColor" aria-hidden="true" class="size-3 shrink-0 text-gray-500 dark:text-gray-400"><path d="M7.8 6C7.8 6.99411 6.99411 7.8 6 7.8C5.00589 7.8 4.2 6.99411 4.2 6C4.2 5.00589 5.00589 4.2 6 4.2C6.99411 4.2 7.8 5.00589 7.8 6Z"/></svg><span>')) +
       address.displayName +
@@ -2354,7 +2529,7 @@ window.__ppStorageKey = function (name) {
       address.displayName +
       "</span>" +
       "</div>" +
-      '<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
+      '<span class="absolute inset-y-0 right-0 flex items-center pr-4 text-emerald-500 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden">' +
       '  <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5">' +
       '    <path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd" />' +
       "  </svg>" +
@@ -2432,9 +2607,16 @@ window.__ppStorageKey = function (name) {
       allowedValues.add(address.id);
     });
 
+    var bankUi = window.__ppBankUi;
+    bankAccounts.forEach(function (account) {
+      if (bankUi && account.validationStatus)
+        bankUi.statusById[account.id] = account.validationStatus;
+    });
+
     gpSelects.forEach(function (selectEl) {
       var optionsEl = selectEl.querySelector("el-options");
       if (!optionsEl) return;
+      if (bankUi) optionsEl.className = bankUi.listClass;
 
       optionsEl
         .querySelectorAll(
@@ -2450,7 +2632,7 @@ window.__ppStorageKey = function (name) {
       var insertBeforeEl = payersCardEl ? payersCardEl.nextSibling : null;
 
       bankAccounts.forEach(function (account) {
-        var optionEl = createBankOption(account);
+        var optionEl = createBankOption(account, true);
         if (insertBeforeEl) {
           optionsEl.insertBefore(optionEl, insertBeforeEl);
         } else {
@@ -2459,13 +2641,22 @@ window.__ppStorageKey = function (name) {
       });
 
       checkAddresses.forEach(function (address) {
-        var optionEl = createAddressOption(address);
+        var optionEl = createAddressOption(address, true);
         if (insertBeforeEl) {
           optionsEl.insertBefore(optionEl, insertBeforeEl);
         } else {
           optionsEl.appendChild(optionEl);
         }
       });
+
+      // The payer's-card row keeps its element (and its selection) but takes
+      // the Advanced Settings layout too.
+      if (bankUi && payersCardEl) {
+        var payersLayout = bankUi.buildPayersCardOption(payersCardEl);
+        payersCardEl.className = payersLayout.className;
+        payersCardEl.innerHTML = payersLayout.innerHTML;
+      }
+      if (bankUi) bankUi.addTooltips(optionsEl);
 
       var selectedValue =
         typeof window.__ppGetGpSelectedValue === "function"
@@ -2478,6 +2669,18 @@ window.__ppStorageKey = function (name) {
       }
     });
   }
+
+  // The Advanced Settings closure builds its payment-method lists from these.
+  window.__ppOptionBuilders = {
+    createBankOption: createBankOption,
+    createAddressOption: createAddressOption,
+    accounts: function () {
+      return bankAccounts;
+    },
+    addresses: function () {
+      return checkAddresses;
+    },
+  };
 
   function renderAllViews() {
     renderBankAccountsList();
@@ -2667,6 +2870,7 @@ window.__ppStorageKey = function (name) {
     saveBankAccounts();
     saveCheckAddresses();
     renderAllViews();
+    window.dispatchEvent(new Event("pp-accounts-ready"));
   }
 
   routingInput.addEventListener("input", function () {

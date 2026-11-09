@@ -3003,13 +3003,52 @@
     );
   }
 
+  // Figma activity-log icons (14px): clock = pending, in-progress ring = initiated.
+  // Paid / exception variants are not in the file, so they follow the same solid style.
+  var CONSUMER_ACTIVITY_ICONS = {
+    yellow: '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 12.6C10.0928 12.6 12.6 10.0928 12.6 7C12.6 3.90721 10.0928 1.4 7 1.4C3.90721 1.4 1.4 3.90721 1.4 7C1.4 10.0928 3.90721 12.6 7 12.6ZM7.7 4.2C7.7 3.8134 7.3866 3.5 7 3.5C6.6134 3.5 6.3 3.8134 6.3 4.2V7C6.3 7.18565 6.37375 7.3637 6.50503 7.49497L8.48492 9.47487C8.75829 9.74824 9.20151 9.74824 9.47487 9.47487C9.74824 9.20151 9.74824 8.75829 9.47487 8.48492L7.7 6.71005V4.2Z" fill="#F59E0B"/></svg>',
+    gray: '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><g fill="#6B7280"><path d="M7.35005 12.5892C7.15712 12.6011 6.99999 12.4433 6.99999 12.25V11.55C6.99999 11.3567 7.15724 11.2015 7.34988 11.1856C9.50577 11.0078 11.2 9.20176 11.2 6.99999C11.2 4.79823 9.50577 2.99216 7.34988 2.81436C7.15724 2.79847 6.99999 2.64329 6.99999 2.44999V1.74999C6.99999 1.55669 7.15712 1.39886 7.35005 1.41076C10.2798 1.59146 12.6 4.02477 12.6 6.99999C12.6 9.97522 10.2798 12.4085 7.35005 12.5892Z"/><path d="M5.5433 10.9405C5.74655 11.0157 5.85735 11.245 5.76843 11.4426L5.48432 12.0739C5.41196 12.2348 5.23079 12.3177 5.06531 12.2568C4.81773 12.1657 4.57837 12.0575 4.34864 11.9338C4.19345 11.8503 4.13551 11.6597 4.20784 11.499L4.49194 10.8677C4.58088 10.67 4.82604 10.6009 5.01701 10.7033C5.18586 10.7939 5.36162 10.8733 5.5433 10.9405Z"/><path d="M4.34865 2.06619C4.19346 2.14976 4.13552 2.3403 4.20785 2.50103L4.49195 3.13236C4.58089 3.33 4.82604 3.39914 5.01702 3.29666C5.18587 3.20606 5.36163 3.12667 5.54331 3.05949C5.74655 2.98433 5.85736 2.75501 5.76843 2.5574L5.48433 1.92607C5.41197 1.76526 5.2308 1.68227 5.06532 1.74319C4.81774 1.83433 4.57838 1.94247 4.34865 2.06619Z"/><path d="M1.41352 6.6076C1.40479 6.7337 1.40024 6.86095 1.4 6.98921V7.0108C1.40024 7.13907 1.40479 7.26632 1.41352 7.39243C1.42572 7.56856 1.57583 7.70002 1.75238 7.70002H2.44445C2.66088 7.70002 2.82449 7.50533 2.8098 7.2894C2.80329 7.19378 2.79999 7.09728 2.79999 7.00001C2.79999 6.90274 2.80329 6.80625 2.8098 6.71063C2.82449 6.4947 2.66088 6.30002 2.44445 6.30002H1.75238C1.57583 6.30002 1.42571 6.43147 1.41352 6.6076Z"/><path d="M2.5302 10.3741C2.63653 10.5147 2.83376 10.5429 2.98159 10.4468L3.56193 10.0696C3.74358 9.95155 3.77448 9.69884 3.64407 9.52585C3.5283 9.37227 3.42282 9.21049 3.32867 9.04153C3.22327 8.85239 2.97989 8.77818 2.79835 8.89619L2.21796 9.27344C2.06998 9.36962 2.01573 9.56156 2.10144 9.71583C2.22914 9.94566 2.37254 10.1656 2.5302 10.3741Z"/><path d="M2.79835 5.10381C2.9799 5.22181 3.22328 5.1476 3.32868 4.95846C3.42283 4.78951 3.52831 4.62773 3.64408 4.47415C3.77449 4.30116 3.74359 4.04845 3.56195 3.93038L2.98161 3.55316C2.83377 3.45706 2.63655 3.48524 2.53022 3.62589C2.37256 3.83442 2.22915 4.05433 2.10145 4.28416C2.01574 4.43843 2.06999 4.63037 2.21797 4.72655L2.79835 5.10381Z"/></g></svg>',
+    green: '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 12.6C10.0928 12.6 12.6 10.0928 12.6 7C12.6 3.90721 10.0928 1.4 7 1.4C3.90721 1.4 1.4 3.90721 1.4 7C1.4 10.0928 3.90721 12.6 7 12.6ZM9.3 5.8C9.5 5.5 9.4 5.2 9.1 5C8.8 4.8 8.5 4.9 8.3 5.2L6.3 8.1L5.2 7C4.9 6.8 4.6 6.8 4.4 7C4.2 7.3 4.2 7.6 4.4 7.8L6 9.4C6.1 9.5 6.3 9.6 6.5 9.5C6.6 9.5 6.8 9.4 6.9 9.3L9.3 5.8Z" fill="#16A34A"/></svg>',
+    red: '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 12.6C10.0928 12.6 12.6 10.0928 12.6 7C12.6 3.90721 10.0928 1.4 7 1.4C3.90721 1.4 1.4 3.90721 1.4 7C1.4 10.0928 3.90721 12.6 7 12.6ZM7.7 4.2C7.7 3.8 7.4 3.5 7 3.5C6.6 3.5 6.3 3.8 6.3 4.2V7C6.3 7.4 6.6 7.7 7 7.7C7.4 7.7 7.7 7.4 7.7 7ZM7 10.5C7.4 10.5 7.7 10.2 7.7 9.8C7.7 9.4 7.4 9.1 7 9.1C6.6 9.1 6.3 9.4 6.3 9.8C6.3 10.2 6.6 10.5 7 10.5Z" fill="#DC2626"/></svg>'
+  };
+
+  function getConsumerActivityIcon(dotClasses) {
+    var key = /bg-yellow/.test(dotClasses) ? 'yellow'
+      : /bg-green/.test(dotClasses) ? 'green'
+      : /bg-red/.test(dotClasses) ? 'red' : 'gray';
+    return CONSUMER_ACTIVITY_ICONS[key];
+  }
+
+  // tableStyle: the expanded table row keeps the small-dot log; the Get Paid
+  // panel uses the Figma icon timeline (same as the Consumer Portal).
   function buildActivityLogItem(
     dotClasses,
     title,
     description,
     timestampLabel,
     showLine,
+    tableStyle,
   ) {
+    if (!tableStyle) {
+      return (
+        '<div class="flex gap-4">' +
+        '<div class="flex w-3.5 flex-none self-stretch flex-col items-center gap-1.5 pt-1.5">' +
+        getConsumerActivityIcon(dotClasses) +
+        (showLine
+          ? '<div class="flex-1 w-0.5 bg-gray-200 dark:bg-white/10"></div>'
+          : "") +
+        "</div>" +
+        '<div class="flex min-w-0 flex-col gap-1 pb-6">' +
+        '<p class="text-base/6 font-medium text-gray-900 dark:text-white">' +
+        title +
+        "</p>" +
+        '<p class="text-sm/5 text-gray-700 dark:text-gray-300">' +
+        buildInlineActivityDescription(description, timestampLabel) +
+        "</p>" +
+        "</div>" +
+        "</div>"
+      );
+    }
     var lineHtml = showLine
       ? '<div class="flex-1 w-px bg-gray-200 dark:bg-white/10"></div>'
       : "";
@@ -3034,21 +3073,33 @@
   }
 
   function buildActivityLogSection(entry) {
-    var items = buildEntryActivityLogItems(entry);
+    // Same icon timeline as the Get Paid panel (Figma Activity Log row, 38663:249542).
+    var items = buildEntryActivityLogItems(entry, false);
 
     return (
       '<div class="flex">' +
       '<div class="' +
       DETAIL_LABEL +
       '">Activity Log</div>' +
-      '<div class="flex-1 p-4">' +
+      '<div class="flex-1 px-6 py-3">' +
       items +
       "</div>" +
       "</div>"
     );
   }
 
-  function buildEntryActivityLogItems(entry) {
+  function buildEntryActivityLogItems(entry, tableStyle) {
+    var inlineDates = !tableStyle;
+    function item(dotClasses, title, description, timestampLabel, showLine) {
+      return buildActivityLogItem(
+        dotClasses,
+        title,
+        description,
+        timestampLabel,
+        showLine,
+        tableStyle,
+      );
+    }
     var invoice = escapeHtml(entry.invoice || "");
     var log = entry.details.activityLog;
     var items = "";
@@ -3069,22 +3120,24 @@
         ? formatActivityDate(log[0].date)
         : formatDate(entry.dateInitiated);
 
-      items += buildActivityLogItem(
+      items += item(
         "bg-green-100 ring-1 ring-green-700/60 dark:bg-green-400/10 dark:ring-green-400/20",
         "Paid",
         'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' +
           invoice +
-          "</span> has been processed",
-        processedDate,
+          "</span> has been processed" +
+          (inlineDates && processedDate ? " on " + processedDate : ""),
+        inlineDates ? "" : processedDate,
         true,
       );
-      items += buildActivityLogItem(
+      items += item(
         "bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20",
         "Initiated",
         'Payment with id <span class="font-medium text-blue-600 dark:text-blue-400">#' +
           invoice +
-          "</span> has been initiated",
-        initiatedDate,
+          "</span> has been initiated" +
+          (inlineDates && initiatedDate ? " on " + initiatedDate : ""),
+        inlineDates ? "" : initiatedDate,
         false,
       );
     } else if (entry.status === "exception" || entry.status === "declined") {
@@ -3111,14 +3164,14 @@
           "</span>";
       }
 
-      items += buildActivityLogItem(
+      items += item(
         "bg-red-100 ring-1 ring-red-700/60 dark:bg-red-400/10 dark:ring-red-400/20",
         declined ? "Declined" : "Payment Exception",
         exceptionDescription,
         failedDate,
         true,
       );
-      items += buildActivityLogItem(
+      items += item(
         "bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20",
         "Initiated",
         'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' +
@@ -3154,14 +3207,14 @@
         pendingDescription =
           "Card details have been provided. Mark this payment as paid once funds are confirmed.";
       }
-      items += buildActivityLogItem(
+      items += item(
         "bg-yellow-100 ring-1 ring-yellow-700/60 dark:bg-yellow-400/10 dark:ring-yellow-400/20",
         pendingTitle,
         pendingDescription,
         pendingDate,
         true,
       );
-      items += buildActivityLogItem(
+      items += item(
         "bg-gray-100 ring-1 ring-gray-300 dark:bg-white/10 dark:ring-white/20",
         "Initiated",
         'Payment for invoice <span class="font-medium text-blue-600 dark:text-blue-400">#' +
