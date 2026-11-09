@@ -95,6 +95,19 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
 - **Disabled secondary buttons have no shadow**, and the Review and agree md Cancel has no shadow, as in Figma/library (user, 2026-10-26). Enabled 56px secondaries keep the 0 1 2 shadow. Code: `disabled:shadow-none`; `SECONDARY_BUTTON_MD` has no shadow.
 - Don't change library components (SMART System) for SD-only fixes. Override locally in the SD file.
 
+## Dark mode (SD, 2026-11-09)
+
+Dark mode came from main (Vasile, `theme-init.js`, `?theme=dark|light`, class-based `dark:` variant). Every SD change ships light + dark (CLAUDE.md). Light must stay pixel-identical when fixing dark: keep the light classes/hex and **add** a `dark:` twin; check light with `sd-regression --local --visual`.
+
+- **Dark twins used in SD:** `text-[#111827]`→`dark:text-white`, `#374151`→`dark:text-gray-300`, `#6b7280`→`dark:text-gray-400`, `#2563eb`→`dark:text-blue-400`, `bg-[#f9fafb]`/`bg-white` (inner boxes)→`dark:bg-white/5`, borders `#e5e7eb`/`#d1d5db`→`dark:border-white/10`. Dialog panels `bg-white`→`dark:bg-gray-900` + `dark:ring-white/10`. Every hover/focus gets its dark twin (`dark:hover:bg-white/10`, `dark:focus-visible:outline-blue-400`).
+- **SVG assets made for a white page break in dark:** a check cut out of a blue circle shows the page (looks black); a pale `#BFDBFE` halo glows; near-white grey lines glare; a white band shows. Fix = keep the `<img>` with `dark:hidden` and add a CSS element `hidden dark:block` (dots/bullets: blue-500, current `ring-4 ring-blue-500/30`, pending `bg-white/20`; separators: `border-white/15`), or a `-dark.svg` asset (receipt edge: page-colour bites, white/10 outline, no fill over an already white/5 body).
+- **Translucent dark inputs (`bg-white/5`) show anything tucked under them** (e.g. the routing note with `-mt-2`): give the input wrapper the page colour underneath (`dark:bg-gray-900`).
+- The routing note is a shade darker than the input in dark (`gray-950/25`), mirroring light (gray-50 tray under a white input) (user, 2026-11-09).
+- Canvas ink can't use classes: read the theme from a rendered element (signature: title colour white → `#ffffff`, else `#111827`).
+- Review and agree on SD summaries: `documentScroll: true` + `scrollToEnd: true` (one click to the end; SX keeps a page per click). Figma frames still show the inner scroller and light only.
+- QA in dark: `qa:hover --dark` flags the sidebar / Contact Us / labels as `dark-low-contrast` (1.2) because it reads the container's colour, not the text's. Known false positives (same count before and after a change), not a reason to edit. Compare before/after with a worktree on another port (`SX_BASE=http://127.0.0.1:8898`).
+- `revoked.html` is a redirect stub to `payment-closed.html`; it needs no theme.
+
 ## Usage budget (all agents and the coordinator)
 
 Adapted from the suite `usage-budget` skill. Quality comes first: if a cheaper setup misses things, go back.
