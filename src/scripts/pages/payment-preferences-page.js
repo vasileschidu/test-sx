@@ -1376,16 +1376,19 @@ window.__ppStorageKey = function (name) {
       optsEl.appendChild(optionEl);
       title.insertAdjacentHTML("afterend", ADV_X_ICON);
       titleRow.classList.replace("font-medium", "font-semibold");
-      titleRow.classList.add("text-gray-500");
-      if (secondary) secondary.classList.replace("text-gray-500", "text-gray-400");
+      titleRow.classList.add("text-gray-500", "dark:text-gray-400");
+      if (secondary) {
+        secondary.classList.replace("text-gray-500", "text-gray-400");
+        secondary.classList.add("dark:text-gray-500");
+      }
       optionEl.setAttribute("disabled", "");
       optionEl.setAttribute("aria-disabled", "true");
-      optionEl.classList.add("pointer-events-none", "bg-gray-50", "flex", "flex-col", "gap-3");
+      optionEl.classList.add("pointer-events-none", "bg-gray-50", "dark:bg-white/5", "flex", "flex-col", "gap-3");
       optionEl.insertAdjacentHTML(
         "beforeend",
-        '<div class="flex items-start gap-3 rounded-md border border-yellow-200 bg-yellow-50 p-2 in-[el-selectedcontent]:hidden">' +
+        '<div class="flex items-start gap-3 rounded-md border border-yellow-200 bg-yellow-50 p-2 in-[el-selectedcontent]:hidden dark:border-yellow-400/20 dark:bg-yellow-400/10">' +
           ADV_WARNING_ICON +
-          '<p class="text-sm/5 font-normal whitespace-normal text-yellow-700">This bank account hasn\'t been verified yet. Please select a verified account or add a new one.</p></div>',
+          '<p class="text-sm/5 font-normal whitespace-normal text-yellow-700 dark:text-yellow-300">This bank account hasn\'t been verified yet. Please select a verified account or add a new one.</p></div>',
       );
     });
   }
