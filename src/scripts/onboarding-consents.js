@@ -50,10 +50,15 @@ window.OBConsents = (function () {
 
   // ---- "Review and agree" dialog -------------------------------------
 
+  // Dark: CSS dots instead of the SVGs (their pale #BFDBFE halo glows on a dark panel).
+  var DARK_DOT = '<span class="hidden size-2.5 shrink-0 rounded-full dark:block ';
   function dots(index) {
     return agreements.map(function (a, i) {
-      if (i === index) return '<span class="relative block size-2.5 shrink-0"><img src="' + ASSETS + 'step-current.svg" alt="" class="absolute -inset-[40%] block size-[180%] max-w-none"></span>';
-      return '<img src="' + ASSETS + (accepted[a.id] ? 'step-complete.svg" alt="" width="10" height="10" class="block size-2.5 shrink-0">' : 'step-incomplete.svg" alt="" width="10" height="10" class="block size-2.5 shrink-0 dark:opacity-30">');
+      if (i === index) return '<span class="relative block size-2.5 shrink-0 dark:hidden"><img src="' + ASSETS + 'step-current.svg" alt="" class="absolute -inset-[40%] block size-[180%] max-w-none"></span>' +
+        DARK_DOT + 'bg-blue-500 ring-4 ring-blue-500/30"></span>';
+      var done = accepted[a.id];
+      return '<img src="' + ASSETS + (done ? 'step-complete.svg' : 'step-incomplete.svg') + '" alt="" width="10" height="10" class="block size-2.5 shrink-0 dark:hidden">' +
+        DARK_DOT + (done ? 'bg-blue-500' : 'bg-white/20') + '"></span>';
     }).join('');
   }
 
