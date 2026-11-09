@@ -431,12 +431,10 @@ function navLinkCls(id, activeId, extra) {
     "w-full items-center justify-between gap-3 rounded-md " +
     (consumerPortal ? "px-2" : "py-2 pl-2 pr-3") +
     " py-2 text-left text-base leading-6 font-medium transition-colors cursor-pointer focus-visible:outline-none";
-  const dark = consumerPortal
-    ? ""
-    : " dark:bg-white/10 dark:text-white dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white";
-  const darkInactive = consumerPortal
-    ? ""
-    : " dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white";
+  const dark =
+    " dark:bg-white/10 dark:text-white dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white";
+  const darkInactive =
+    " dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white";
   const active =
     "is-active bg-gray-100 text-gray-900 hover:bg-gray-100 hover:text-gray-900 focus-visible:bg-gray-100 focus-visible:text-gray-900" +
     dark;

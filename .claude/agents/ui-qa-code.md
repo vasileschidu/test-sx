@@ -21,7 +21,8 @@ report — you do not design and you do not fix.
    font-size off the Tailwind scale, text / background / border colours outside the palette,
    raw-hex, arbitrary-px, inline-style, arbitrary-colour (minor unless the rule says major).
 3. `node tools/ui-qa/hover-audit.mjs --pages <list> [--scope "<css>"]` — `no-hover` and `covered` are major
-   (selected / active items need a visible hover too).
+   (selected / active items need a visible hover too). Run it again with `--dark`: `dark-light-hover` is major
+   (a hover that turns light in dark mode); `dark-low-contrast` is major except Tailwind's blue primary buttons.
 4. Judge each finding: drop false positives and say why in one line (e.g. third-party widget, intended custom colour
    from the Figma SD navy). Open the screenshots (`tools/ui-qa/out/code/*.png`) for what scripts can't see:
    alignment, equal gaps between repeated rows, the component is the inventory one, states present,
