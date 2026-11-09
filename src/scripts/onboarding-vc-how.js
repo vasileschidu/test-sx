@@ -37,43 +37,45 @@ window.OBVirtualCardHow = (function () {
     var M = window.OBModal;
     var backdrop = M.open(
       '<div class="flex flex-col items-center gap-4 px-6 pt-6 pb-4">' +
-        '<div class="flex flex-col items-center gap-2 text-center">' +
+        '<div class="flex flex-col items-center gap-3 text-center">' +
           '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Here’s a Sample</p>' +
           '<h2 id="vc-how-title" class="text-3xl leading-9 text-gray-900 dark:text-white">Virtual Card</h2>' +
         '</div>' +
         sampleCard() +
-        '<button type="button" data-vc-trademark aria-expanded="false" class="flex cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+        '<button type="button" data-vc-trademark aria-expanded="false" class="-my-1.5 flex cursor-pointer items-center gap-2 rounded px-2.5 py-1.5 text-xs leading-4 font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
           '<img src="' + ASSETS + 'icon-info-mini.svg" alt="" width="14" height="14" class="size-3.5">Trademark Disclaimer' +
         '</button>' +
         '<p data-vc-trademark-text class="hidden text-center text-xs leading-4 text-gray-500 dark:text-gray-400">Mastercard and the circles design are registered trademarks of Mastercard International Incorporated. The card shown is a sample; your card details will differ.</p>' +
-        '<div class="flex w-full flex-col gap-2 text-left">' +
-          '<div class="flex flex-col items-center gap-2 pb-3">' +
-            '<p class="text-base leading-6 text-gray-900 dark:text-white">Digital Wallet:</p>' +
-            '<p class="flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-3 py-1.5 text-sm leading-5 font-medium text-gray-500 dark:text-gray-400">' +
+        '<div class="flex w-full flex-col gap-4 text-left">' +
+          '<div class="flex flex-col items-center gap-4">' +
+            '<p class="text-base leading-5 text-gray-900 dark:text-white">Digital Wallet:</p>' +
+            '<p class="flex items-center gap-1.5 rounded-md border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 px-3.5 py-2 text-sm leading-5 font-medium text-gray-500 dark:text-gray-400">' +
               '<img src="' + ASSETS + 'icon-face-frown.svg" alt="" width="24" height="24" class="size-6">Currently not supported</p>' +
           '</div>' +
-          '<p class="text-base leading-6 font-semibold text-gray-900 dark:text-white">How you can use your Virtual Card?</p>' +
-          '<p class="text-xs leading-4 text-gray-500 dark:text-gray-400">You may use your Virtual Card for payments where card number, expiry and CVC is required, such as:</p>' +
-          '<ul class="list-disc space-y-2 pl-5 text-xs leading-[18px] text-gray-500 dark:text-gray-400">' +
+          '<div class="flex flex-col gap-2.5">' +
+          '<p class="text-base leading-5 font-semibold text-gray-900 dark:text-white">How you can use your Virtual Card?</p>' +
+          '<p class="text-[13px] leading-4 text-gray-500 dark:text-gray-400">You may use your Virtual Card for payments where card number, expiry and CVC is required, such as:</p>' +
+          '<ul class="list-inside list-disc space-y-2 text-[13px] leading-4 text-gray-500 dark:text-gray-400">' +
             bullet('online shopping', 'to make online purchases on various retail and non-retail platforms as many e-commerce websites and online service providers accept them;') +
             bullet('food ordering and delivery platforms', 'to make online purchase from well-known food and grocery ordering and delivery platforms;') +
             bullet('app store purchases', 'to make purchases on app stores for mobile applications, digital content and various services;') +
             bullet('travel booking', 'to book transfers, flights, hotels, and other travel-related services online.') +
           '</ul>' +
-          '<p class="text-xs leading-[18px] text-gray-500 dark:text-gray-400">Your funds are immediately available for your online money management and can be used in mediums where non-tangible payments are accepted.</p>' +
-          '<p class="text-xs leading-[18px] text-gray-500 dark:text-gray-400"><span class="font-semibold text-gray-900 dark:text-white">Please note:</span> you will not be able to withdraw cash from your Virtual Card or transfer money to bank accounts.</p>' +
+          '<p class="text-[13px] leading-4 text-gray-500 dark:text-gray-400">Your funds are immediately available for your online money management and can be used in mediums where non-tangible payments are accepted.</p>' +
+          '<p class="text-[13px] leading-4 text-gray-500 dark:text-gray-400"><span class="font-semibold text-gray-900 dark:text-white">Please note:</span> you will not be able to withdraw cash from your Virtual Card or transfer money to bank accounts.</p>' +
+          '</div>' +
         '</div>' +
       '</div>',
       'vc-how-title',
       {
         bare: true,
-        header: '<div class="flex shrink-0 items-center border-b border-gray-300 dark:border-white/10 px-3 py-1.5">' +
+        header: '<div class="flex shrink-0 items-center border-b border-gray-300 dark:border-white/10 px-4 py-3">' +
           '<button type="button" data-ob-modal-close class="m-1 inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
             '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5">' +
           '</button>' +
         '</div>',
         footer: '<div class="flex justify-center border-t border-gray-300 dark:border-white/10 p-4">' +
-          '<button type="button" data-vc-terms class="cursor-pointer rounded px-1.5 py-0.5 text-xs leading-4 font-semibold text-blue-600 dark:text-blue-400 hover:underline focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Terms &amp; Conditions</button>' +
+          '<button type="button" data-vc-terms class="-my-0.5 cursor-pointer rounded px-1.5 py-0.5 text-xs leading-4 font-semibold text-blue-600 dark:text-blue-400 hover:underline focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Terms &amp; Conditions</button>' +
         '</div>',
         panelClass: 'relative flex w-full max-w-[512px] flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-xl'
       }

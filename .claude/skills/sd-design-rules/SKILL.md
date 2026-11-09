@@ -112,6 +112,13 @@ Dark mode came from main (Vasile, `theme-init.js`, `?theme=dark|light`, class-ba
 - QA in dark: `qa:hover --dark` flags the sidebar / Contact Us / labels as `dark-low-contrast` (1.2) because it reads the container's colour, not the text's. Known false positives (same count before and after a change), not a reason to edit. Compare before/after with a worktree on another port (`SX_BASE=http://127.0.0.1:8898`).
 - `revoked.html` is a redirect stub to `payment-closed.html`; it needs no theme.
 
+## Dialog spacing (sd-sandbox, 2026-11-09)
+
+- Message dialogs (4.5 How it works…): "Learn more" sits 8 below the body text (no extra `mt-2`), Actions 24 below, Content padding 0/36/36/36.
+- Faster dialog (8.17/8.18, 9.8/9.9): 512 wide at every breakpoint, title 16 below the X row, options 60 tall (`border-2` + `py-[18px] px-[14px]`), card 428.
+- VC "How this works" (6.4 / 6.2.2): header 65 (`px-4 py-3` around the 32 close button), body copy is Figma 13 px auto line height → `text-[13px] leading-4`, 16 px labels `leading-5`, text gap 10. Bullets in Figma are inline "•  " text with no hanging indent → `list-inside list-disc` (no `pl-*`), or the phone list wraps one line more.
+- Fixed-height Figma phone frames (e.g. 1.0 (m) Verification, 830) bottom-anchor the CTA block: compare at the frame height (`--h 830`), not 812, before calling a Δ≈18 a bug.
+
 ## Usage budget (all agents and the coordinator)
 
 Adapted from the suite `usage-budget` skill. Quality comes first: if a cheaper setup misses things, go back.

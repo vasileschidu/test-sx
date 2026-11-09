@@ -231,7 +231,7 @@
         '<p>When the allocation changes, every party is notified and has to accept the new one.</p>' +
         '<p>Once all parties have accepted and chosen how to receive their share, the payment is processed.</p>' +
       '</div>' +
-      '<a href="#" class="mt-2 inline-flex items-center gap-3 self-center rounded-md px-6 py-3 text-base leading-6 font-medium text-blue-600 dark:text-blue-400 underline focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+      '<a href="#" class="inline-flex items-center gap-3 self-center rounded-md px-6 py-3 text-base leading-6 font-medium text-blue-600 dark:text-blue-400 underline focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
         '<img src="' + ASSETS + 'icon-question-circle.svg" alt="" width="20" height="20" class="size-5">Learn more</a>',
       '<button type="button" data-ob-modal-close class="' + window.OBModal.PRIMARY_BUTTON + '">Close</button>');
   }
