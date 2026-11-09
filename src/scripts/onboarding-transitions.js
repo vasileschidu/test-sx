@@ -88,6 +88,7 @@
     style.id = STYLE_ID;
     style.textContent = [
       ':root{--ob-skel-bg:#e8eaed;--ob-skel-bg-strong:#d6dae1;--ob-skel-radius:0.375rem;}',
+      '.dark{--ob-skel-bg:rgba(255,255,255,.1);--ob-skel-bg-strong:rgba(255,255,255,.16);}',
       '[data-ob-tone="dark"]{--ob-skel-bg:rgba(255,255,255,.16);--ob-skel-bg-strong:rgba(255,255,255,.28);}',
       // Only the values that are about to be masked are held back until the
       // scan runs — hiding the whole area instead would fade every heading,

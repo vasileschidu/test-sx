@@ -818,12 +818,12 @@ function buildConsumerFooter(id, isDesktopCollapsed) {
   const wrap = id ? `id="${id}" ` : "";
   if (id)
     return `<div ${wrap}class="h-[74px] w-full shrink-0">
-<div data-sidebar-expanded-footer class="${isDesktopCollapsed ? "hidden " : ""}flex h-full flex-col items-center gap-2 pt-4 pb-0"><div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /><span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span><img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16" /></div><div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400"><a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span><a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>
+<div data-sidebar-expanded-footer class="${isDesktopCollapsed ? "hidden " : ""}flex h-full flex-col items-center gap-2 pt-4 pb-0"><div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /><span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span><img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16 dark:invert" /></div><div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400"><a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span><a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>
 <div data-sidebar-collapsed-footer class="${isDesktopCollapsed ? "" : "hidden "}flex h-full w-full flex-col gap-[10px]"><div class="flex w-full items-center justify-center gap-2 px-px py-4"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /></div></div></div>`;
       return `<div ${wrap}class="flex flex-col items-center gap-2 pt-4 pb-0">
 <div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" />
 <span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span>
-<img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16" /></div>
+<img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16 dark:invert" /></div>
 <div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400">
 <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span>
 <a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>`;

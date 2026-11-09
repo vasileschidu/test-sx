@@ -53,15 +53,15 @@
 
   function item(label, lines) {
     return '<div class="flex flex-col">' +
-      '<p class="text-xs leading-4 font-medium text-[#6b7280]">' + esc(label) + '</p>' +
-      lines.filter(Boolean).map(function (l) { return '<p class="text-base leading-6 break-words text-[#111827]"><span data-ob-skeleton>' + esc(l) + '</span></p>'; }).join('') +
+      '<p class="text-xs leading-4 font-medium text-gray-500 dark:text-gray-400">' + esc(label) + '</p>' +
+      lines.filter(Boolean).map(function (l) { return '<p class="text-base leading-6 break-words text-gray-900 dark:text-white"><span data-ob-skeleton>' + esc(l) + '</span></p>'; }).join('') +
     '</div>';
   }
 
   function group(section, items, href) {
-    return '<div class="flex items-center gap-4 rounded-md bg-[#f9fafb] p-6">' +
+    return '<div class="flex items-center gap-4 rounded-md bg-gray-50 dark:bg-white/5 p-6">' +
       '<div class="flex min-w-0 flex-1 flex-col gap-4">' + items + '</div>' +
-      '<a href="' + (href || variant.form + '#' + section) + '" class="shrink-0 rounded text-sm leading-5 font-medium text-[#2b61df] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Edit</a>' +
+      '<a href="' + (href || variant.form + '#' + section) + '" class="shrink-0 rounded text-sm leading-5 font-medium text-[#2b61df] dark:text-blue-400 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Edit</a>' +
     '</div>';
   }
 
@@ -71,16 +71,16 @@
     var lines = D.cardLines(card);
     return '<div class="flex flex-col gap-3">' +
       '<div class="relative flex items-center gap-3">' + D.badge(card.brand, true) +
-        '<button type="button" data-vcs-trademark aria-expanded="false" aria-controls="vcs-trademark-text" class="flex cursor-pointer items-center gap-1.5 rounded text-xs leading-[18px] text-[#4d4e50] hover:text-[#111827] focus-visible:outline-2 focus-visible:outline-blue-600">' +
+        '<button type="button" data-vcs-trademark aria-expanded="false" aria-controls="vcs-trademark-text" class="flex cursor-pointer items-center gap-1.5 rounded text-xs leading-[18px] text-[#4d4e50] dark:text-gray-400 hover:text-gray-900 dark:hover:text-white focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
           '<img src="../../assets/onboarding/cc-info.svg" alt="" width="12.8" height="12.8" class="block size-[12.8px]">Trademark Disclaimer</button>' +
-        '<div id="vcs-trademark-text" data-vcs-trademark-text role="tooltip" hidden class="absolute top-full left-0 z-10 mt-2 w-[312px] max-w-[calc(100vw-4rem)] space-y-[18px] rounded-md bg-[#262626] p-4 text-xs leading-[18px] text-white shadow-lg">' +
+        '<div id="vcs-trademark-text" data-vcs-trademark-text role="tooltip" hidden class="absolute top-full left-0 z-10 mt-2 w-[312px] max-w-[calc(100vw-4rem)] space-y-[18px] rounded-md bg-neutral-800 p-4 text-xs leading-[18px] text-white shadow-lg">' +
           trademark.map(function (t) { return '<p>' + esc(t) + '</p>'; }).join('') +
         '</div>' +
       '</div>' +
       '<div class="flex flex-col gap-0.5">' +
-        '<p class="text-base leading-6 text-[#111827]"><span data-ob-skeleton>' + esc(lines[0]) + '</span></p>' +
-        '<p class="text-xs leading-4 font-medium text-[#6b7280]">' + esc(lines[1]) + '</p>' +
-        '<p class="text-xs leading-4 font-medium text-[#6b7280]">' + esc(lines[2]) + '</p>' +
+        '<p class="text-base leading-6 text-gray-900 dark:text-white"><span data-ob-skeleton>' + esc(lines[0]) + '</span></p>' +
+        '<p class="text-xs leading-4 font-medium text-gray-500 dark:text-gray-400">' + esc(lines[1]) + '</p>' +
+        '<p class="text-xs leading-4 font-medium text-gray-500 dark:text-gray-400">' + esc(lines[2]) + '</p>' +
       '</div>' +
     '</div>';
   }

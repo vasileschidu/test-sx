@@ -15,17 +15,21 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../../src/scripts/design-tokens.js"></script>
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
-  <script src="../../../src/scripts/onboarding-transitions.js?v=20261021a"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261026a"></script>
-  <script src="../../../src/scripts/onboarding-field.js?v=20261013a"></script>
-  <script src="../../../src/scripts/onboarding-modal.js?v=20261103f"></script>
-  <script src="../../../src/scripts/onboarding-decline.js?v=20261103e"></script>
-  <script src="../../../src/scripts/onboarding-flow.js?v=20261013k"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261106b"></script>
+  <script src="../../../src/scripts/onboarding-field.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-modal.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-decline.js?v=20261106b"></script>
+  <script src="../../../src/scripts/onboarding-flow.js?v=20261106a"></script>
   <script src="../../../src/scripts/onboarding-stepper.js?v=20261104a"></script>
   <script src="../../../src/scripts/onboarding-mobile-header.js"></script>
   <script src="../../../src/scripts/confirm-business-details.js?v=20261026a"></script>
@@ -34,10 +38,10 @@
       <script src="../../scripts/checkbox-component.js"></script>
   </head>
 
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6 dark:bg-gray-900 dark:lg:bg-gray-950">
 
   <!-- CONTAINER -->
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden dark:bg-gray-900">
 
     <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js -->
     <div data-ob-sidebar></div>
@@ -51,20 +55,20 @@
           <div class="flex flex-col gap-6 px-4 pt-10 lg:px-14 lg:pt-14">
             <!-- Title + intro -->
             <div class="flex w-full max-w-[460px] flex-col gap-4">
-              <h1 class="text-3xl leading-9 text-[#1f2937]">Let’s make sure<br><span class="font-semibold">it’s you!</span></h1>
-              <p class="text-sm leading-5 text-gray-500">
-                To collect your <span data-ob-skeleton data-identity-payment class="font-medium text-[#1f2937]">$487.00</span>, please give us a couple details
+              <h1 class="text-3xl leading-9 text-gray-800 dark:text-white">Let’s make sure<br><span class="font-semibold">it’s you!</span></h1>
+              <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">
+                To collect your <span data-ob-skeleton data-identity-payment class="font-medium text-gray-800 dark:text-white">$487.00</span>, please give us a couple details
               </p>
             </div>
 
             <div class="flex w-full flex-col gap-6">
               <!-- Questions card: fields rendered from sd-identity.json -->
-              <div data-identity-card class="flex w-full flex-col gap-4 rounded-[10px] border border-[#e8e8e8] px-4 py-6"></div>
+              <div data-identity-card class="flex w-full flex-col gap-4 rounded-[10px] border border-[#e8e8e8] px-4 py-6 dark:border-white/10"></div>
 
               <!-- Shown after a submission with a wrong answer -->
-              <div data-identity-alert role="alert" class="hidden w-full items-start gap-3 rounded-md bg-[#fef2f2] p-4">
+              <div data-identity-alert role="alert" class="hidden w-full items-start gap-3 rounded-md bg-red-50 p-4 dark:bg-red-500/10">
                 <img src="../../assets/onboarding/icon-exclamation-circle-info.svg" alt="" width="20" height="20" class="size-5 shrink-0">
-                <p class="flex-1 text-sm leading-5 text-[#991b1b]">
+                <p class="flex-1 text-sm leading-5 text-red-800 dark:text-red-300">
                   At least one of the submitted answer(s) is invalid. You have <span data-identity-remaining>2</span> out of <span data-identity-max>3</span> attempts remaining.
                 </p>
               </div>

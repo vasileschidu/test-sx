@@ -7,7 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../../src/scripts/design-tokens.js"></script>
   <link rel="stylesheet" href="../../styles/sd-uk.css">
@@ -20,38 +24,38 @@
 <body data-uk-step="4" data-uk-back="payment.html" class="min-h-screen bg-[#1e326f] font-['Inter'] antialiased">
   <div class="flex min-h-screen w-full flex-col bg-[#1e326f]">
     <div data-uk-header></div>
-    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
+    <main class="flex flex-1 flex-col rounded-t-[24px] bg-white dark:bg-gray-900 px-4 pt-9 sm:px-6 lg:rounded-t-[32px] lg:pt-12">
       <div class="mx-auto flex w-full max-w-[640px] flex-1 flex-col gap-6">
       <div class="flex flex-col gap-4">
-        <h1 class="text-3xl font-semibold leading-9 text-gray-900">Enter Your<br>Bank Account Details</h1>
-        <p class="text-sm leading-5 text-gray-500"><span class="font-semibold text-gray-900" data-uk-text="amount"></span> will be deposited to your bank account</p>
+        <h1 class="text-3xl font-semibold leading-9 text-gray-900 dark:text-white">Enter Your<br>Bank Account Details</h1>
+        <p class="text-sm leading-5 text-gray-500 dark:text-gray-400"><span class="font-semibold text-gray-900 dark:text-white" data-uk-text="amount"></span> will be deposited to your bank account</p>
       </div>
-      <div class="flex gap-3 rounded-md bg-blue-50 p-4"><svg viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0 text-blue-500"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg><p class="text-sm leading-5 text-blue-700">It's important to verify your entries to ensure payment is received to your valid bank account.</p></div>
+      <div class="flex gap-3 rounded-md bg-blue-50 dark:bg-blue-500/10 p-4"><svg viewBox="0 0 20 20" fill="currentColor" class="size-5 shrink-0 text-blue-500"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd"/></svg><p class="text-sm leading-5 text-blue-700 dark:text-blue-300">It's important to verify your entries to ensure payment is received to your valid bank account.</p></div>
       <form id="bank-form" class="flex flex-col gap-6" autocomplete="off">
         <fieldset class="flex flex-col gap-3">
-          <legend class="mb-3 text-sm leading-5 text-gray-900">Account Type</legend>
+          <legend class="mb-3 text-sm leading-5 text-gray-900 dark:text-white">Account Type</legend>
           <div class="flex gap-6">
-            <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-900"><input type="radio" name="b-type" value="Current" checked class="size-4 cursor-pointer accent-blue-600">Current</label>
-            <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-900"><input type="radio" name="b-type" value="Savings" class="size-4 cursor-pointer accent-blue-600">Savings</label>
+            <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-900 dark:text-white"><input type="radio" name="b-type" value="Current" checked class="size-4 cursor-pointer accent-blue-600">Current</label>
+            <label class="flex cursor-pointer items-center gap-2 text-sm text-gray-900 dark:text-white"><input type="radio" name="b-type" value="Savings" class="size-4 cursor-pointer accent-blue-600">Savings</label>
           </div>
         </fieldset>
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="b-holder" class="text-sm leading-5 text-gray-900">Account Holder Name</label></div>
-            <input id="b-holder" name="b-holder" type="text" placeholder="" data-uk-value="fullName" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="b-holder" class="text-sm leading-5 text-gray-900 dark:text-white">Account Holder Name</label></div>
+            <input id="b-holder" name="b-holder" type="text" placeholder="" data-uk-value="fullName" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <label for="b-sort" class="text-sm leading-5 text-gray-900">Sort Code</label>
-            <input id="b-sort" inputmode="numeric" maxlength="6" placeholder="000000" data-uk-value="bank.sortCode" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
-            <p class="hidden rounded-md bg-gray-50 px-3 py-2 text-sm text-gray-600" data-sort-bank>This Sort Code is linked to <span class="font-semibold text-gray-900" data-uk-text="bank.bankName"></span></p>
+            <label for="b-sort" class="text-sm leading-5 text-gray-900 dark:text-white">Sort Code</label>
+            <input id="b-sort" inputmode="numeric" maxlength="6" placeholder="000000" data-uk-value="bank.sortCode" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
+            <p class="hidden rounded-md bg-gray-50 dark:bg-white/5 px-3 py-2 text-sm text-gray-600 dark:text-gray-400" data-sort-bank>This Sort Code is linked to <span class="font-semibold text-gray-900 dark:text-white" data-uk-text="bank.bankName"></span></p>
           </div>
           <div class="flex flex-col gap-2">
-            <div class="flex items-center justify-between"><label for="b-account" class="text-sm leading-5 text-gray-900">Account Number</label></div>
-            <input id="b-account" name="b-account" type="text" inputmode="numeric" placeholder="8 digits" data-uk-value="bank.accountNumber" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
+            <div class="flex items-center justify-between"><label for="b-account" class="text-sm leading-5 text-gray-900 dark:text-white">Account Number</label></div>
+            <input id="b-account" name="b-account" type="text" inputmode="numeric" placeholder="8 digits" data-uk-value="bank.accountNumber" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
           </div>
           <div class="flex flex-col gap-2">
-            <label for="b-account2" class="text-sm leading-5 text-gray-900">Re-Enter Account Number</label>
-            <input id="b-account2" inputmode="numeric" maxlength="8" data-uk-value="bank.accountNumber" autocomplete="off" class="block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 disabled:text-gray-500 sm:text-sm/6">
-            <p class="hidden text-sm text-red-600" data-mismatch>Account numbers don't match.</p>
+            <label for="b-account2" class="text-sm leading-5 text-gray-900 dark:text-white">Re-Enter Account Number</label>
+            <input id="b-account2" inputmode="numeric" maxlength="8" data-uk-value="bank.accountNumber" autocomplete="off" class="block h-10 w-full rounded-md bg-white dark:bg-gray-900 px-3 text-base text-gray-900 dark:text-white outline-1 -outline-offset-1 outline-gray-300 dark:outline-white/10 placeholder:text-gray-400 dark:placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 disabled:bg-gray-50 dark:disabled:bg-white/5 disabled:text-gray-500 sm:text-sm/6">
+            <p class="hidden text-sm text-red-600 dark:text-red-400" data-mismatch>Account numbers don't match.</p>
           </div>
       </form>
       <div class="flex flex-1 flex-col justify-end gap-6">

@@ -244,10 +244,10 @@
   function row(label, valueHtml, extra) {
     return (
       '<div class="grid grid-cols-2 gap-4 self-stretch">' +
-      '<span class="text-sm font-medium text-gray-900">' +
+      '<span class="text-sm font-medium text-gray-900 dark:text-white">' +
       esc(label) +
       "</span>" +
-      '<span class="min-w-0 text-sm font-normal break-words text-gray-700' +
+      '<span class="min-w-0 text-sm font-normal break-words text-gray-700 dark:text-gray-300' +
       (extra ? " " + extra : "") +
       '">' +
       valueHtml +
@@ -361,7 +361,7 @@
       "Create one in the case launcher and start the enrolment from there.</p>" +
       '<a href="' +
       esc(launcher) +
-      '" class="inline-flex w-fit items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
+      '" class="inline-flex w-fit items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 dark:text-blue-400 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
       "Open the case launcher" +
       '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.19L10.22 5.53a.75.75 0 1 1 1.06-1.06l5 5a.75.75 0 0 1 0 1.06l-5 5a.75.75 0 1 1-1.06-1.06l3.72-3.72H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" /></svg>' +
       "</a>" +
@@ -436,18 +436,18 @@
         var M = window.OBModal;
         M.open(
           '<div class="flex flex-col gap-4 px-8 pb-8">' +
-            M.illustration("icon-info-circle-blue.svg", "bg-blue-50") +
-            '<h2 id="sx-learn-title" class="text-xl font-bold text-gray-900">' +
+            M.illustration("icon-info-circle-blue.svg", "bg-blue-50 dark:bg-blue-500/10") +
+            '<h2 id="sx-learn-title" class="text-xl font-bold text-gray-900 dark:text-white">' +
             esc(c.payer.name) +
             " is enhancing the way they pay you</h2>" +
-            '<div class="flex flex-col gap-4 text-sm text-gray-500">' +
+            '<div class="flex flex-col gap-4 text-sm text-gray-500 dark:text-gray-400">' +
             "<p>" +
             esc(c.payer.name) +
             " has partnered with Transcard to move payments and documents online and retire the paper-based process.</p>" +
             "<p>With SMART Exchange you see every payment from " +
             esc(c.payer.name) +
             " in one place, with faster processing and better tracking and reconciliation.</p>" +
-            "<p>Questions about the change? Use <span class=\"font-semibold text-gray-900\">Contact Us</span> in the menu.</p>" +
+            "<p>Questions about the change? Use <span class=\"font-semibold text-gray-900 dark:text-white\">Contact Us</span> in the menu.</p>" +
             "</div>" +
             "</div>",
           "sx-learn-title",
@@ -544,7 +544,7 @@
         "</span>" +
         '<button type="button" data-sx-tin-toggle aria-pressed="' +
         revealed +
-        '" class="inline-flex size-6 cursor-pointer items-center justify-center rounded-md text-gray-400 hover:bg-gray-200 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+        '" class="inline-flex size-6 cursor-pointer items-center justify-center rounded-md text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-white/15 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
         '<span class="sr-only">' +
         (revealed ? "Hide" : "Show") +
         " TIN</span>" +
@@ -666,9 +666,9 @@
       M.open(
         '<div class="flex flex-col items-center gap-6 px-6 pb-6">' +
           '<div class="flex w-full flex-col items-center gap-4">' +
-          M.illustration(icon, "bg-blue-50") +
+          M.illustration(icon, "bg-blue-50 dark:bg-blue-500/10") +
           '<div class="flex w-full flex-col items-center gap-2 text-center">' +
-          '<h2 id="pay-dialog-title" class="text-lg leading-6 font-medium text-gray-900">' +
+          '<h2 id="pay-dialog-title" class="text-lg leading-6 font-medium text-gray-900 dark:text-white">' +
           esc(title) +
           "</h2>" +
           html +
@@ -687,7 +687,7 @@
       info(
         "icon-chat-alt-lined.svg",
         "A note from " + c.payer.name,
-        '<p class="text-sm leading-5 text-gray-500">Payment for invoice ' +
+        '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Payment for invoice ' +
           esc(c.payment.invoice) +
           ". Thank you for your business.</p>",
       );
@@ -699,8 +699,8 @@
       info(
         "icon-calendar-lined.svg",
         "Expiration",
-        '<p class="text-sm leading-5 text-gray-500">This card payment can be processed until the date below. After that the card is closed.</p>' +
-          '<p class="text-sm leading-5 font-medium text-gray-900">Expiration Date: ' +
+        '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">This card payment can be processed until the date below. After that the card is closed.</p>' +
+          '<p class="text-sm leading-5 font-medium text-gray-900 dark:text-white">Expiration Date: ' +
           esc(longDate(initiated.toISOString())) +
           "</p>",
       );
@@ -762,7 +762,7 @@
     return (
       '<button type="button" data-sx-eye="' +
       id +
-      '" aria-pressed="false" class="absolute top-1/2 right-2 flex size-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+      '" aria-pressed="false" class="absolute top-1/2 right-2 flex size-7 -translate-y-1/2 cursor-pointer items-center justify-center rounded-md text-gray-400 dark:text-gray-500 hover:bg-gray-100 dark:hover:bg-white/10 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
       '<span class="sr-only">Show password</span>' +
       EYE +
       "</button>"
@@ -824,8 +824,11 @@
         var icon = li.querySelector("[data-rule-icon]");
         icon.classList.toggle("text-green-600", ok);
         icon.classList.toggle("text-gray-400", !ok);
+        icon.classList.toggle("dark:text-gray-500", !ok);
         li.classList.toggle("text-gray-900", ok);
+        li.classList.toggle("dark:text-white", ok);
         li.classList.toggle("text-gray-700", !ok);
+        li.classList.toggle("dark:text-gray-300", !ok);
       });
       return all;
     }
@@ -972,7 +975,7 @@
    * call is wrapped and the frame padding swapped after it opens.
    */
   var VIEWER_PANEL =
-    "relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white shadow-lg ring-1 ring-black/5";
+    "relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black/5 dark:ring-white/10";
 
   var FULL_HEIGHT_DIALOGS = ["doc-viewer-title", "sx-agreement-title"];
 
