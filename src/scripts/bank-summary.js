@@ -105,6 +105,7 @@
     window.OBConsents.mount(document.querySelector('[data-bks-consents]'), data.agreements, {
       stateKey: 'bankConsents',
       documentScroll: true,
+      scrollToEnd: true,
       onChange: function (all) { submitBtn.disabled = !all; }
     });
 

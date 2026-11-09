@@ -6,11 +6,12 @@
  * scrolled to the end, ticks that consent and moves on to the next one.
  * Unticking a consent withdraws it.
  *
- *   OBConsents.mount(listEl, agreements, { stateKey, onChange(allAccepted), documentScroll })
+ *   OBConsents.mount(listEl, agreements, { stateKey, onChange(allAccepted), documentScroll, scrollToEnd })
  *
  * documentScroll (SMART Exchange): the grey box hugs the whole text and the
  * dialog body scrolls it like a page, with a white fade and a centred round
- * "scroll down" button until the end is reached. Off by default (SMART Disburse keeps the inner scroller).
+ * "scroll down" button until the end is reached. Off by default.
+ * scrollToEnd (SMART Disburse): the button goes straight to the end instead of a page at a time.
  *
  * Acceptance is kept in the onboarding session under `stateKey`.
  */
@@ -125,7 +126,8 @@ window.OBConsents = (function () {
     }
     if (more) more.addEventListener('click', function () {
       // A page at a time, like the scroll cue on Google's terms.
-      scroller.scrollBy({ top: scroller.clientHeight * 0.8, behavior: 'smooth' });
+      if (opts.scrollToEnd) scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
+      else scroller.scrollBy({ top: scroller.clientHeight * 0.8, behavior: 'smooth' });
     });
     scroller.addEventListener('scroll', checkEnd);
     // The dialog shrinks to a short text (it has a max height, not a fixed one).
