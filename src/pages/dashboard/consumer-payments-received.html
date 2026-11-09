@@ -40,7 +40,7 @@
     <script src="../../../src/scripts/sidebar-boot.js"></script>
     <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
     <script src="../../../src/scripts/app-plans.js"></script>
-    <script src="../../../src/scripts/nav-component.js?v=20261109b"></script>
+    <script src="../../../src/scripts/nav-component.js?v=20261109c"></script>
     <script src="../../../src/scripts/stp-state.js?v=20261106a"></script>
     <script src="../../../src/scripts/app-switch.js"></script>
     <script src="../../../src/scripts/topbar-component.js?v=20261109a"></script>
@@ -150,18 +150,15 @@
 
                 <!-- ===== GET PAID PANEL ===== -->
                 <div id="get-paid-panel"
-                    class="hidden mx-auto w-full max-w-[1280px] rounded-xl border border-gray-200 dark:border-white/10 bg-white shadow-xs dark:bg-gray-900 overflow-clip mb-4">
+                    class="hidden mb-4 overflow-clip rounded-lg bg-white shadow-sm dark:bg-gray-900 dark:shadow-none dark:outline dark:-outline-offset-1 dark:outline-white/10">
 
                     <!-- Panel Header -->
                     <div class="px-4 pt-4 sm:px-6 sm:pt-6">
                         <div class="flex w-full items-center gap-4 border-b border-gray-200 pb-4 dark:border-white/10">
                             <button id="get-paid-back" type="button"
-                                class="inline-flex size-8 items-center justify-center rounded-md p-1 text-gray-400 transition-colors hover:bg-gray-100 hover:text-gray-500 dark:text-gray-500 dark:hover:bg-white/10">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
-                                    stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                                </svg>
+                                class="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-2 transition-colors hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">
+                                <img src="../../assets/get-paid/arrow-left-24.svg" alt="" width="24" height="24"
+                                    class="size-6" />
                                 <span class="sr-only">Back</span>
                             </button>
                             <h2 class="text-lg/6 font-medium text-gray-900 dark:text-white">Get Paid</h2>
@@ -194,11 +191,11 @@
                                 </div>
                                 <div class="flex w-full flex-col-reverse gap-2 sm:w-auto sm:flex-row sm:items-center sm:justify-end">
                                     <button id="gp-decline-btn" type="button"
-                                        class="hidden w-full rounded-md bg-white px-4 py-2 text-sm font-semibold text-red-600 shadow-xs inset-ring inset-ring-gray-300 hover:bg-red-50 hover:text-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 sm:w-auto sm:shrink-0 dark:bg-white/10 dark:text-red-400 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-red-500/10 dark:hover:text-red-300">
+                                        class="hidden w-full rounded-md bg-white px-2.5 py-1.5 text-sm leading-5 font-semibold text-red-600 shadow-xs inset-ring inset-ring-gray-300 hover:bg-red-50 hover:text-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 sm:w-auto sm:shrink-0 dark:bg-white/10 dark:text-red-400 dark:shadow-none dark:inset-ring-white/10 dark:hover:bg-red-500/10 dark:hover:text-red-300">
                                         Decline
                                     </button>
                                     <button id="gp-submit-btn" type="button" disabled
-                                        class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-blue-600 sm:w-auto sm:shrink-0">
+                                        class="w-full cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm leading-5 font-semibold whitespace-nowrap text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600 sm:w-auto sm:shrink-0 dark:bg-blue-500 dark:hover:bg-blue-400 dark:disabled:hover:bg-blue-500">
                                         Submit and Get Paid
                                     </button>
                                 </div>
@@ -251,10 +248,9 @@
 
                                 <!-- Declining Date -->
                                 <div id="gp-decline-date-item" class="hidden flex-col items-start gap-1">
-                                    <span class="text-sm font-medium leading-5 text-red-600 dark:text-red-400">Declining
-                                        Date</span>
+                                    <span class="py-1 text-xs leading-4 font-medium tracking-[0.6px] text-red-600 uppercase dark:text-red-400">Declining Date</span>
                                     <span id="gp-decline-date"
-                                        class="text-sm font-normal leading-5 text-gray-600 dark:text-gray-400"></span>
+                                        class="text-base leading-6 font-medium text-gray-700 dark:text-gray-200"></span>
                                 </div>
 
                                 <div id="gp-decline-reason-separator"
@@ -262,10 +258,9 @@
 
                                 <!-- Declining Reason -->
                                 <div id="gp-decline-reason-item" class="hidden min-w-0 flex-col items-start gap-1">
-                                    <span class="text-sm font-medium leading-5 text-red-600 dark:text-red-400">Declining
-                                        Reason</span>
+                                    <span class="py-1 text-xs leading-4 font-medium tracking-[0.6px] text-red-600 uppercase dark:text-red-400">Declining Reason</span>
                                     <span id="gp-decline-reason-summary"
-                                        class="max-w-[360px] truncate text-sm font-normal leading-5 text-gray-600 dark:text-gray-400"></span>
+                                        class="max-w-[360px] truncate text-base leading-6 font-medium text-gray-700 dark:text-gray-200"></span>
                                 </div>
 
                             </div>
@@ -406,12 +401,8 @@
                                                         class="col-start-1 row-start-1 flex items-center gap-2 pr-6 text-gray-900 dark:text-white"><span
                                                             class="truncate text-gray-400 dark:text-gray-500">Select
                                                             payment method</span></el-selectedcontent>
-                                                    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"
-                                                        class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400">
-                                                        <path
-                                                            d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"
-                                                            clip-rule="evenodd" fill-rule="evenodd" />
-                                                    </svg>
+                                                    <img src="../../assets/get-paid/selector-20.svg" alt="" width="20" height="20"
+                                                        class="col-start-1 row-start-1 size-5 self-center justify-self-end" />
                                                 </button>
                                                 <el-options anchor="bottom start" popover
                                                     class="max-h-[21rem] w-(--button-width) overflow-auto rounded-md bg-white pt-1 text-sm shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10">
@@ -886,13 +877,8 @@
                                     class="mt-9 w-full flex items-center justify-between gap-6 border-b border-gray-200 pb-4 text-left dark:border-white/10">
                                     <span class="text-lg/6 font-medium text-gray-900 dark:text-white">Receivable
                                         Summary</span>
-                                    <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                        class="size-5 rotate-180 text-gray-400 dark:text-gray-500 transition-transform">
-                                        <path fill-rule="evenodd"
-                                            d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                                            clip-rule="evenodd" />
-                                    </svg>
+                                    <img data-collapse-icon src="../../assets/get-paid/chevron-down-20.svg" alt="" width="20" height="20"
+                                        class="size-5 shrink-0 rotate-180 transition-transform" />
                                 </button>
                                 <div id="gp-receivable-content" class="pt-6">
                                     <p class="text-sm text-gray-500 dark:text-gray-400">No receivable details available.
@@ -906,13 +892,8 @@
                                     class="mt-9 w-full flex items-center justify-between gap-6 border-b border-gray-200 pb-4 text-left dark:border-white/10">
                                     <span class="text-lg/6 font-medium text-gray-900 dark:text-white">Activity
                                         Log</span>
-                                    <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                        fill="currentColor"
-                                        class="size-5 rotate-180 text-gray-400 dark:text-gray-500 transition-transform">
-                                        <path fill-rule="evenodd"
-                                            d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z"
-                                            clip-rule="evenodd" />
-                                    </svg>
+                                    <img data-collapse-icon src="../../assets/get-paid/chevron-down-20.svg" alt="" width="20" height="20"
+                                        class="size-5 shrink-0 rotate-180 transition-transform" />
                                 </button>
                                 <div id="gp-activity-content" class="pt-6 pb-6">
                                     <!-- populated by JS -->
@@ -926,7 +907,7 @@
                     <!-- Panel Footer: mirrors the header submit button -->
                     <div class="flex items-center justify-end border-t border-gray-200 p-4 sm:p-6 dark:border-white/10">
                         <button id="gp-submit-btn-footer" type="button" disabled
-                            class="w-full rounded-md bg-blue-600 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 disabled:opacity-40 disabled:cursor-not-allowed disabled:hover:bg-blue-600 sm:w-auto">
+                            class="w-full cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm leading-5 font-semibold whitespace-nowrap text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600 sm:w-auto dark:bg-blue-500 dark:hover:bg-blue-400 dark:disabled:hover:bg-blue-500">
                             Submit and Get Paid
                         </button>
                     </div>
@@ -985,78 +966,50 @@
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10">
                                                             <span class="min-w-0 flex-1">Amount</span>
                                                             <span data-filter-count-badge="amount" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" data-nav-chevron
-                                                                class="hidden size-5 shrink-0 text-gray-500 dark:text-gray-400">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
+                                                            <img src="../../../src/assets/table/chevron-right.svg" width="20" height="20" alt="" data-nav-chevron
+                                                                class="hidden shrink-0" />
                                                         </button>
                                                         <button type="button" data-filter-open="customer" data-filter-nav
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10">
                                                             <span class="min-w-0 flex-1">Payer</span>
                                                             <span data-filter-count-badge="customer" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" data-nav-chevron
-                                                                class="hidden size-5 shrink-0 text-gray-500 dark:text-gray-400">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
+                                                            <img src="../../../src/assets/table/chevron-right.svg" width="20" height="20" alt="" data-nav-chevron
+                                                                class="hidden shrink-0" />
                                                         </button>
                                                         <button type="button" data-filter-open="status" data-filter-nav
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10">
                                                             <span class="min-w-0 flex-1">Status</span>
                                                             <span data-filter-count-badge="status" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" data-nav-chevron
-                                                                class="hidden size-5 shrink-0 text-gray-500 dark:text-gray-400">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
+                                                            <img src="../../../src/assets/table/chevron-right.svg" width="20" height="20" alt="" data-nav-chevron
+                                                                class="hidden shrink-0" />
                                                         </button>
                                                         <button type="button" data-filter-open="method" data-filter-nav
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10">
                                                             <span class="min-w-0 flex-1">Payment Method</span>
                                                             <span data-filter-count-badge="method" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" data-nav-chevron
-                                                                class="hidden size-5 shrink-0 text-gray-500 dark:text-gray-400">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
+                                                            <img src="../../../src/assets/table/chevron-right.svg" width="20" height="20" alt="" data-nav-chevron
+                                                                class="hidden shrink-0" />
                                                         </button>
                                                         <button type="button" data-filter-open="failure_reason" data-filter-nav
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10">
                                                             <span class="min-w-0 flex-1">Failure Reason</span>
                                                             <span data-filter-count-badge="failure_reason" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" data-nav-chevron
-                                                                class="hidden size-5 shrink-0 text-gray-500 dark:text-gray-400">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
+                                                            <img src="../../../src/assets/table/chevron-right.svg" width="20" height="20" alt="" data-nav-chevron
+                                                                class="hidden shrink-0" />
                                                         </button>
                                                         <button type="button" data-filter-open="initiated_date" data-filter-nav
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10">
                                                             <span class="min-w-0 flex-1" data-filter-label="initiated_date">Date Initiated</span>
                                                             <span data-filter-count-badge="initiated_date" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" data-nav-chevron
-                                                                class="hidden size-5 shrink-0 text-gray-500 dark:text-gray-400">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
+                                                            <img src="../../../src/assets/table/chevron-right.svg" width="20" height="20" alt="" data-nav-chevron
+                                                                class="hidden shrink-0" />
                                                         </button>
                                                         <button type="button" data-filter-open="processed_date" data-filter-nav
                                                             class="flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/10">
                                                             <span class="min-w-0 flex-1" data-filter-label="processed_date">Date Processed</span>
                                                             <span data-filter-count-badge="processed_date" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>
-                                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" data-nav-chevron
-                                                                class="hidden size-5 shrink-0 text-gray-500 dark:text-gray-400">
-                                                                <path fill-rule="evenodd"
-                                                                    d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 1 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z"
-                                                                    clip-rule="evenodd" />
-                                                            </svg>
+                                                            <img src="../../../src/assets/table/chevron-right.svg" width="20" height="20" alt="" data-nav-chevron
+                                                                class="hidden shrink-0" />
                                                         </button>
                                                     </div>
                                                 </div>
@@ -1836,13 +1789,8 @@
                             <button type="button" id="gp-card-how-toggle"
                                 class="flex w-full cursor-pointer list-none items-center justify-between text-sm font-medium leading-6 text-slate-950 dark:text-white">
                                 <span>How can you use the payer’s card?</span>
-                                <svg data-collapse-icon xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"
-                                    fill="currentColor"
-                                    class="size-4 text-gray-500 transition-transform dark:text-gray-400">
-                                    <path fill-rule="evenodd"
-                                        d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.24a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08Z"
-                                        clip-rule="evenodd" />
-                                </svg>
+                                <img data-collapse-icon src="../../assets/get-paid/chevron-down-20.svg" alt="" width="20" height="20"
+                                        class="size-5 shrink-0 transition-transform" />
                             </button>
                             <div id="gp-card-how-content" class="mt-2 hidden flex-col gap-1.5 text-sm font-normal leading-6 text-gray-700 dark:text-gray-300">
                                 <p>The payer has provided their card to cover a specific amount. You are only authorized to charge the amount indicated. To process the payment, enter the card details into your card terminal.</p>
@@ -2320,7 +2268,7 @@
 
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
     <script src="../../../src/scripts/table-ui.js?v=20261006f"></script>
-    <script src="../../../src/scripts/consumer-exchanges-table.js?v=20261029-filter"></script>
+    <script src="../../../src/scripts/consumer-exchanges-table.js?v=20261109-declined2"></script>
 
   <script src="../../../src/scripts/review-modal.js"></script>
 </body>

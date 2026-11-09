@@ -150,7 +150,11 @@
       "accountNumber": "000048390108419",
       "maskedRouting": "•••••2847",
       "routingNumber": "121002847",
-      "address": "1200 Market Street\nSuite 400\nSan Francisco, CA 94102\nUS"
+      "address": "1200 Market Street\nSuite 400\nSan Francisco, CA 94102\nUS",
+      "validationStatus": "verified",
+      "lastValidationDate": "Aug 04, 2024",
+      "fraudScore": 10,
+      "lastFraudScoreDate": "Aug 04, 2024"
     },
     {
       "id": "citi-3674",
@@ -164,7 +168,8 @@
       "accountNumber": "000040198913674",
       "maskedRouting": "•••••0089",
       "routingNumber": "021000089",
-      "address": "388 Greenwich Street\nNew York, NY 10013\nUS"
+      "address": "388 Greenwich Street\nNew York, NY 10013\nUS",
+      "validationStatus": "unverified"
     },
     {
       "id": "sd-balance-2230",
