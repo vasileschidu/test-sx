@@ -84,8 +84,11 @@
 
   // ---- Receipt details -------------------------------------------------------
 
-  var LINE = '<img src="' + ASSETS + 'cc-line-dashed.svg" alt="" width="268" height="1" class="block h-px w-full">';
-  var LINE_SOLID = '<img src="' + ASSETS + 'cc-line-solid.svg" alt="" width="268" height="1" class="block h-px w-full">';
+  // Separators: SVGs in light, CSS borders in dark (the SVG greys are near-white on a dark receipt).
+  var LINE = '<img src="' + ASSETS + 'cc-line-dashed.svg" alt="" width="268" height="1" class="block h-px w-full dark:hidden">' +
+    '<span aria-hidden="true" class="hidden w-full border-t border-dashed border-white/15 dark:block"></span>';
+  var LINE_SOLID = '<img src="' + ASSETS + 'cc-line-solid.svg" alt="" width="268" height="1" class="block h-px w-full dark:hidden">' +
+    '<span aria-hidden="true" class="hidden w-full border-t border-white/15 dark:block"></span>';
 
   function item(label, lines) {
     return '<div class="flex flex-col">' +
