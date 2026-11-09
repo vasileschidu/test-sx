@@ -146,7 +146,7 @@
     var id = 'vc-' + field.id;
     var label = '<div class="flex items-start gap-1">' +
       '<label for="' + id + '" class="' + F.LABEL + '">' + esc(field.label) + '</label>' +
-      (field.optional ? '<span class="flex-1 text-right text-sm leading-5 font-medium text-[#9ca3af]">Optional</span>' : '') +
+      (field.optional ? '<span class="flex-1 text-right text-sm leading-5 font-medium text-gray-400 dark:text-gray-500">Optional</span>' : '') +
     '</div>';
     var describedBy = ' aria-describedby="' + id + '-error"';
     var control;
@@ -156,13 +156,13 @@
       var opts = (field.placeholder ? '<option value="">' + esc(field.placeholder) + '</option>' : '') +
         list.map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('');
       control = '<select id="' + id + '" name="' + field.id + '" data-vc-field="' + field.id + '" data-ob-skeleton' + describedBy + ' aria-invalid="false" ' +
-          'class="' + F.INPUT + ' cursor-pointer appearance-none pr-10 aria-invalid:pr-16 data-[empty=true]:font-normal data-[empty=true]:text-[#9ca3af] aria-invalid:data-[empty=true]:text-[#fca5a5]' + (field.flag ? ' pl-10' : '') + '">' + opts + '</select>' +
+          'class="' + F.INPUT + ' cursor-pointer appearance-none pr-10 aria-invalid:pr-16 data-[empty=true]:font-normal data-[empty=true]:text-gray-400 dark:data-[empty=true]:text-gray-500 aria-invalid:data-[empty=true]:text-red-300' + (field.flag ? ' pl-10' : '') + '">' + opts + '</select>' +
         (field.flag ? flagMarkup() : '') +
         '<img src="' + ASSETS + 'icon-chevron-down-select.svg" alt="" width="20" height="20" class="pointer-events-none absolute top-1/2 right-3 size-5 -translate-y-1/2">' +
         F.errorIcon('right-10!');
     } else {
       control = (field.prefix
-          ? '<span aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 items-center gap-1 text-base leading-6 text-[#6b7280]">' +
+          ? '<span aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 flex -translate-y-1/2 items-center gap-1 text-base leading-6 text-gray-500 dark:text-gray-400">' +
               esc(field.prefix) + '<img src="' + ASSETS + 'icon-chevron-down-addon.svg" alt="" width="20" height="20" class="size-5"></span>'
           : '') +
         '<input id="' + id + '" name="' + field.id + '" data-vc-field="' + field.id + '" data-ob-skeleton type="' + (field.type === 'email' ? 'email' : 'text') + '"' +
@@ -187,7 +187,7 @@
     var variant = VARIANTS[form.getAttribute('data-vc-variant')] || VARIANTS.card;
     var sectionsEl = document.querySelector('[data-vc-sections]');
     sectionsEl.innerHTML = variant.sections.map(function (section) {
-      return '<fieldset id="vc-section-' + section.id + '" class="flex w-full scroll-mt-6 flex-col gap-4 rounded-lg border border-[#d1d5db] px-4 pt-6 pb-4">' +
+      return '<fieldset id="vc-section-' + section.id + '" class="flex w-full scroll-mt-6 flex-col gap-4 rounded-lg border border-gray-300 dark:border-white/10 px-4 pt-6 pb-4">' +
         section.fields.map(function (f) { return fieldMarkup(f, data); }).join('') +
       '</fieldset>';
     }).join('');

@@ -16,24 +16,28 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261109a"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../scripts/design-tokens.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
   <script src="../../scripts/data-source.js"></script>
   <script src="../../scripts/stp-state.js?v=20261106a"></script>
   <script src="../../scripts/sx-demo-case.js?v=20261106e"></script>
-  <script src="../../scripts/onboarding-transitions.js?v=20261021a"></script>
-  <script src="../../scripts/sx-enroll.js?v=20261106b"></script>
-  <script src="../../scripts/onboarding-sidebar.js?v=20261026a"></script>
-  <script src="../../scripts/onboarding-field.js?v=20261013a"></script>
-  <script src="../../scripts/onboarding-modal.js?v=20261103f"></script>
-  <script src="../../scripts/sx-enroll-complete.js?v=20261105c"></script>
+  <script src="../../scripts/onboarding-transitions.js?v=20261106a"></script>
+  <script src="../../scripts/sx-enroll.js?v=20261106c"></script>
+  <script src="../../scripts/onboarding-sidebar.js?v=20261106b"></script>
+  <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261109a"></script>
+  <script src="../../scripts/sx-enroll-complete.js?v=20261106b"></script>
   <link rel="stylesheet" href="../../styles/cursor.css" />
 </head>
-<body data-sx-step="complete" class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+<body data-sx-step="complete" class="min-h-screen bg-white dark:bg-gray-900 px-0 antialiased font-['Inter'] lg:bg-gray-200 dark:lg:bg-gray-950 lg:px-6">
 
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white dark:bg-gray-900">
 
     <main data-ob-content class="flex flex-1 flex-col items-center gap-6 px-4 py-10 lg:py-14">
 
@@ -89,7 +93,7 @@
                       type="button"
                       command="show-modal"
                       commandfor="sx-card-details-dialog" data-sx-reveal
-                      class="inline-flex cursor-pointer items-center gap-1 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-600 hover:bg-gray-200 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:bg-gray-300 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:hover:text-white"
+                      class="inline-flex cursor-pointer items-center gap-1 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-600 hover:bg-gray-200 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 active:bg-gray-300 dark:active:bg-white/20 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:hover:text-white"
                     >
                       Reveal Card Details
                       <svg
@@ -109,13 +113,13 @@
                       </svg>
                     </button>
                   </div>
-                  <div data-sx-stp-banner hidden class="mt-4 flex items-start gap-2 rounded-md bg-blue-50 p-3">
+                  <div data-sx-stp-banner hidden class="mt-4 flex items-start gap-2 rounded-md bg-blue-50 dark:bg-blue-500/10 p-3">
                     <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-blue-400"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" /></svg>
-                    <p class="text-sm text-blue-700">Continue processing payments manually until automatic card processing set up is complete.</p>
+                    <p class="text-sm text-blue-700 dark:text-blue-300">Continue processing payments manually until automatic card processing set up is complete.</p>
                   </div>
-                  <div data-sx-paid-banner hidden role="status" class="mt-4 flex items-start gap-2 rounded-md bg-green-50 p-3">
+                  <div data-sx-paid-banner hidden role="status" class="mt-4 flex items-start gap-2 rounded-md bg-green-50 dark:bg-green-500/10 p-3">
                     <img src="../../assets/onboarding/icon-check-circle-green.svg" alt="" width="20" height="20" class="size-5 shrink-0">
-                    <p class="text-sm text-green-800">Card processed. The payment shows as <span class="font-medium">Paid</span> in SMART Exchange.</p>
+                    <p class="text-sm text-green-800 dark:text-green-300">Card processed. The payment shows as <span class="font-medium">Paid</span> in SMART Exchange.</p>
                   </div>
                 </div>
 
@@ -187,19 +191,19 @@
 
 
         <!-- SMART Exchange account -->
-        <section aria-labelledby="sx-account-title" class="overflow-hidden rounded-md border border-gray-200 bg-white">
+        <section aria-labelledby="sx-account-title" class="overflow-hidden rounded-md border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900">
           <div class="flex flex-col gap-1 p-4">
             <h2 id="sx-account-title" class="type-title-card text-default">SMART Exchange Account Created</h2>
             <p class="type-description text-tertiary">Access the account to view payment details.</p>
           </div>
-          <dl class="border-t border-gray-200 p-4">
+          <dl class="border-t border-gray-200 dark:border-white/10 p-4">
             <div class="grid grid-cols-2 gap-6">
-              <dt class="text-sm font-normal text-gray-500">Username</dt>
-              <dd data-ob-skeleton data-sx-username class="truncate text-sm font-normal text-gray-900">johnny@hotmail.com</dd>
+              <dt class="text-sm font-normal text-gray-500 dark:text-gray-400">Username</dt>
+              <dd data-ob-skeleton data-sx-username class="truncate text-sm font-normal text-gray-900 dark:text-white">johnny@hotmail.com</dd>
             </div>
           </dl>
-          <div class="border-t border-gray-200 p-4">
-            <a data-sx-portal href="../dashboard/supplier-portal.html" target="_blank" rel="noopener" class="-ml-2.5 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 hover:bg-blue-100 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+          <div class="border-t border-gray-200 dark:border-white/10 p-4">
+            <a data-sx-portal href="../dashboard/supplier-portal.html" target="_blank" rel="noopener" class="-ml-2.5 inline-flex items-center gap-1.5 rounded-md px-2.5 py-1.5 text-sm font-semibold text-blue-600 dark:text-blue-400 hover:bg-blue-100 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">
               Go to SMART Exchange
               <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>
             </a>
@@ -233,7 +237,7 @@
                 type="button"
                 command="close"
                 commandfor="sx-card-details-dialog"
-                class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-600"
+                class="rounded-md p-1 text-gray-400 dark:text-gray-500 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400"
               >
                 <span class="sr-only">Close</span>
                 <svg
@@ -432,7 +436,7 @@
                   <button
                     type="button"
                     data-sx-copy="full-number"
-                    class="copy-btn -ml-1 inline-flex focus-visible:outline-2 focus-visible:outline-blue-600 w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer"
+                    class="copy-btn -ml-1 inline-flex focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer"
                   >
                     <span data-sx-vc="full-number" class="text-sm font-normal"
                       >5444 1234 0000 5612</span
@@ -460,7 +464,7 @@
                   <button
                     type="button"
                     data-sx-copy="full-expiry"
-                    class="copy-btn -ml-1 inline-flex focus-visible:outline-2 focus-visible:outline-blue-600 w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer"
+                    class="copy-btn -ml-1 inline-flex focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer"
                   >
                     <span data-sx-vc="full-expiry" class="text-sm font-normal"
                       >12/2026</span
@@ -488,7 +492,7 @@
                   <button
                     type="button"
                     data-sx-copy="cvc2"
-                    class="copy-btn -ml-1 inline-flex focus-visible:outline-2 focus-visible:outline-blue-600 w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer"
+                    class="copy-btn -ml-1 inline-flex focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 dark:text-gray-300 dark:hover:bg-white/20 cursor-pointer"
                   >
                     <span data-sx-vc="cvc2" class="text-sm font-normal">999</span>
                     <svg
@@ -515,7 +519,7 @@
                 <button
                   type="button"
                   data-sx-how-toggle aria-expanded="true" aria-controls="sx-card-how-content"
-                  class="flex w-full cursor-pointer list-none items-center justify-between rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 text-sm font-medium leading-6 text-slate-950 dark:text-white"
+                  class="flex w-full cursor-pointer list-none items-center justify-between rounded-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 text-sm font-medium leading-6 text-slate-950 dark:text-white"
                 >
                   <span>How can you use the payer’s card?</span>
                   <svg
@@ -571,10 +575,10 @@
               <div data-sx-process class="flex w-full flex-col gap-3 border-t border-gray-200 pt-4 dark:border-white/10">
                 <p data-sx-process-hint class="type-caption text-tertiary">Demo test: simulates running this card through your terminal. The payment turns Paid and the MID / TID are captured. Skip it to process the payment in the portal instead.</p>
                 <button type="button" data-sx-process-btn
-                  class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50">I’ve processed this card in my terminal</button>
-                <div data-sx-processed hidden role="status" class="flex items-start gap-2 rounded-md bg-green-50 p-3">
+                  class="inline-flex w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-white dark:bg-gray-900 px-3.5 py-2.5 text-sm font-semibold text-gray-900 dark:text-white shadow-xs inset-ring inset-ring-gray-300 dark:inset-ring-white/10 hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-50">I’ve processed this card in my terminal</button>
+                <div data-sx-processed hidden role="status" class="flex items-start gap-2 rounded-md bg-green-50 dark:bg-green-500/10 p-3">
                   <img src="../../assets/onboarding/icon-check-circle-green.svg" alt="" width="20" height="20" class="size-5 shrink-0">
-                  <div class="flex min-w-0 flex-col gap-1 text-sm text-green-800">
+                  <div class="flex min-w-0 flex-col gap-1 text-sm text-green-800 dark:text-green-300">
                     <p class="font-medium">Card processed, payment marked as Paid.</p>
                     <p data-sx-mid-tid></p>
                   </div>

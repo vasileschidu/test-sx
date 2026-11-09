@@ -7,7 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261109a"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../../src/scripts/design-tokens.js"></script>
   <link rel="stylesheet" href="../../styles/sd-uk.css">
@@ -17,13 +21,13 @@
   <script src="../../scripts/checkbox-component.js"></script>
 </head>
 <!-- SMART Disburse UK · 7.2 Virtual card created + receipt -->
-<body class="min-h-screen bg-white font-['Inter'] antialiased">
-  <div class="flex min-h-screen w-full flex-col bg-white">
+<body class="min-h-screen bg-white dark:bg-gray-900 font-['Inter'] antialiased">
+  <div class="flex min-h-screen w-full flex-col bg-white dark:bg-gray-900">
     <main class="flex flex-1 flex-col px-4 pt-14 sm:px-6">
       <div class="mx-auto flex w-full max-w-[480px] flex-col gap-6">
       <div class="flex flex-col items-center gap-2">
         <span class="relative block size-[45px]"><img alt="" src="../../assets/sd-uk/success-check.svg" class="absolute inset-[-35.56%_-55.56%_-75.56%_-55.56%] block max-w-none"></span>
-        <h1 class="text-center text-3xl leading-9 text-gray-900">Card Created!</h1>
+        <h1 class="text-center text-3xl leading-9 text-gray-900 dark:text-white">Card Created!</h1>
       </div>
       <div class="flex flex-col items-center gap-4">
         <div class="uk-mono relative h-[219px] w-full max-w-[344px] overflow-hidden rounded-[10px] bg-gradient-to-b from-[#1e326f] to-[#090c38] text-white shadow-[0_20px_50px_-12px_rgba(0,0,0,0.25)]">
@@ -38,52 +42,52 @@
         <img alt="Add to Apple Wallet" src="../../assets/sd-uk/apple-wallet.svg" class="h-11 w-[142px] rounded-md">
         <div class="flex w-full max-w-[344px] flex-col">
           <button type="button" data-save-card class="flex h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-blue-600 px-3.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500"><img alt="" src="../../assets/sd-uk/icon-download.svg" class="size-5">Save Card Details</button>
-          <div class="flex flex-col gap-4 border-x border-gray-300 px-4 pt-4">
-            <div class="flex flex-col gap-4 rounded-md bg-gray-50 px-4 py-5 text-center">
-              <p class="text-sm leading-5 text-gray-500">Here's your brand new Virtual Card, loaded with your <span class="font-semibold text-gray-800" data-uk-text="amount"></span>.</p>
+          <div class="flex flex-col gap-4 border-x border-gray-300 dark:border-white/10 px-4 pt-4">
+            <div class="flex flex-col gap-4 rounded-md bg-gray-50 dark:bg-white/5 px-4 py-5 text-center">
+              <p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Here's your brand new Virtual Card, loaded with your <span class="font-semibold text-gray-800 dark:text-gray-200" data-uk-text="amount"></span>.</p>
               <button type="button" data-how-to-use class="cursor-pointer text-sm leading-5 font-medium text-[#3671fb] hover:underline">How you can use your Virtual Card</button>
             </div>
-            <p class="flex items-center justify-center gap-2 text-xs leading-[18px] text-gray-500"><img alt="" src="../../assets/sd-uk/icon-trademark.svg" class="size-[13px]">Trademark Disclaimer</p>
+            <p class="flex items-center justify-center gap-2 text-xs leading-[18px] text-gray-500 dark:text-gray-400"><img alt="" src="../../assets/sd-uk/icon-trademark.svg" class="size-[13px]">Trademark Disclaimer</p>
           </div>
-      <div class="flex w-full flex-col border-x border-b border-gray-300 bg-white">
+      <div class="flex w-full flex-col border-x border-b border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900">
         <div class="flex flex-col gap-4 px-4">
           <div class="flex flex-col gap-3">
-            <img alt="" src="../../assets/sd-uk/receipt-line.svg" class="h-px w-full">
+            <img alt="" src="../../assets/sd-uk/receipt-line.svg" class="h-px w-full dark:opacity-30">
             <div class="flex w-full flex-col">
-              <p class="text-xs leading-4 font-medium text-gray-500">Full Name</p>
-              <p class="text-base leading-6 break-all text-gray-900" data-uk-text="fullName"></p>
+              <p class="text-xs leading-4 font-medium text-gray-500 dark:text-gray-400">Full Name</p>
+              <p class="text-base leading-6 break-all text-gray-900 dark:text-white" data-uk-text="fullName"></p>
             </div>
-            <img alt="" src="../../assets/sd-uk/receipt-line.svg" class="h-px w-full">
+            <img alt="" src="../../assets/sd-uk/receipt-line.svg" class="h-px w-full dark:opacity-30">
             <div class="flex w-full flex-col">
-              <p class="text-xs leading-4 font-medium text-gray-500">Billing Address</p>
-              <p class="text-base leading-6 break-all text-gray-900 whitespace-pre-line" data-uk-text="addressLines"></p>
+              <p class="text-xs leading-4 font-medium text-gray-500 dark:text-gray-400">Billing Address</p>
+              <p class="text-base leading-6 break-all text-gray-900 dark:text-white whitespace-pre-line" data-uk-text="addressLines"></p>
             </div>
-            <img alt="" src="../../assets/sd-uk/receipt-line.svg" class="h-px w-full">
+            <img alt="" src="../../assets/sd-uk/receipt-line.svg" class="h-px w-full dark:opacity-30">
             <div class="flex w-full flex-col">
-              <p class="text-xs leading-4 font-medium text-gray-500">Contact Info</p>
-              <p class="text-base leading-6 break-all text-gray-900" data-uk-text="claimant.phone"></p>
+              <p class="text-xs leading-4 font-medium text-gray-500 dark:text-gray-400">Contact Info</p>
+              <p class="text-base leading-6 break-all text-gray-900 dark:text-white" data-uk-text="claimant.phone"></p>
             </div>
-            <img alt="" src="../../assets/sd-uk/receipt-line.svg" class="h-px w-full">
+            <img alt="" src="../../assets/sd-uk/receipt-line.svg" class="h-px w-full dark:opacity-30">
             <div class="flex w-full flex-col">
-              <p class="text-xs leading-4 font-medium text-gray-500">Receipt Date</p>
-              <p class="text-base leading-6 break-all text-gray-900" data-uk-text="receipt.date"></p>
+              <p class="text-xs leading-4 font-medium text-gray-500 dark:text-gray-400">Receipt Date</p>
+              <p class="text-base leading-6 break-all text-gray-900 dark:text-white" data-uk-text="receipt.date"></p>
             </div>
-            <img alt="" src="../../assets/sd-uk/receipt-line.svg" class="h-px w-full">
+            <img alt="" src="../../assets/sd-uk/receipt-line.svg" class="h-px w-full dark:opacity-30">
             <div class="flex w-full flex-col">
-              <p class="text-xs leading-4 font-medium text-gray-500">Transaction ID</p>
-              <p class="text-base leading-6 break-all text-gray-900" data-uk-text="receipt.cardTransactionId"></p>
+              <p class="text-xs leading-4 font-medium text-gray-500 dark:text-gray-400">Transaction ID</p>
+              <p class="text-base leading-6 break-all text-gray-900 dark:text-white" data-uk-text="receipt.cardTransactionId"></p>
             </div>
-            <img alt="" src="../../assets/sd-uk/receipt-line-solid.svg" class="h-px w-full">
-            <p class="text-base leading-6 font-semibold text-gray-900" data-uk-text="payer.name"></p>
+            <img alt="" src="../../assets/sd-uk/receipt-line-solid.svg" class="h-px w-full dark:opacity-30">
+            <p class="text-base leading-6 font-semibold text-gray-900 dark:text-white" data-uk-text="payer.name"></p>
           </div>
         </div>
-        <img alt="" src="../../assets/sd-uk/receipt-edge.svg" class="mt-3 h-[25px] w-full">
+        <img alt="" src="../../assets/sd-uk/receipt-edge.svg" class="mt-3 h-[25px] w-full dark:opacity-10">
       </div>
         </div>
       </div>
       <div class="flex flex-col gap-4 pt-6">
         <button type="button" data-download class="flex h-14 w-full cursor-pointer items-center justify-center gap-2 rounded-md bg-blue-600 px-3.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500"><img alt="" src="../../assets/sd-uk/icon-download.svg" class="size-5">Download Receipt</button>
-        <a href="../../../index.html" data-finish class="flex h-14 w-full items-center justify-center rounded-md border border-gray-300 bg-white px-3.5 text-base font-semibold text-gray-700 shadow-xs hover:bg-gray-50">Finish and Close</a>
+        <a href="../../../index.html" data-finish class="flex h-14 w-full items-center justify-center rounded-md border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 px-3.5 text-base font-semibold text-gray-700 dark:text-gray-300 shadow-xs hover:bg-gray-50 dark:hover:bg-white/10">Finish and Close</a>
       </div>
       <div data-uk-footer></div>
       </div>
@@ -99,7 +103,7 @@
     SDUK.ready(function () {
       // Contact info shows phone and email, as in Figma.
       var phone = document.querySelector('[data-uk-text="claimant.phone"]');
-      phone.insertAdjacentHTML('afterend', '<p class="text-base leading-6 text-gray-900">' + SDUK.model().claimant.email + '</p>');
+      phone.insertAdjacentHTML('afterend', '<p class="text-base leading-6 text-gray-900 dark:text-white">' + SDUK.model().claimant.email + '</p>');
       document.querySelector('[data-save-card]').addEventListener('click', function () { SDUK.infoModal('Card details saved', '<p>Your card number, expiry date and CVC2 were saved to this device.</p>'); });
       document.querySelector('[data-how-to-use]').addEventListener('click', function () { SDUK.infoModal('Using your Virtual Card', '<p>Use it anywhere Mastercard is accepted online, or add it to Apple Wallet to pay in store with your phone.</p>'); });
     });

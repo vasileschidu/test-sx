@@ -25,13 +25,13 @@ window.OBModal = (function () {
   var BUTTON = BUTTON_BASE + ' shadow-xs';
   // Modal primary button (Figma "Button/Primary": blue gradient, no glow, radius 6, 56 tall).
   // Disabled: 40% opacity, no hover change.
-  var PRIMARY_BUTTON = BUTTON_BASE + ' bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] text-white hover:brightness-110 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100';
+  var PRIMARY_BUTTON = BUTTON_BASE + ' bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] text-white hover:brightness-110 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100';
 
   // General/Button size md (Figma, e.g. "Review and agree" Cancel/Accept): 32 tall, padding 6/10,
   // gap 4, radius 6, Inter Medium 14/20, hugs the label. The secondary's 1px border sits inside the 32.
   var BUTTON_MD_BASE = 'inline-flex h-8 shrink-0 cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 text-sm leading-5 font-medium focus-visible:outline-2 focus-visible:outline-offset-2';
-  var PRIMARY_BUTTON_MD = BUTTON_MD_BASE + ' py-1.5 bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] text-white hover:brightness-110 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100';
-  var SECONDARY_BUTTON_MD = BUTTON_MD_BASE + ' border border-[#d1d5db] bg-white py-[5px] text-[#374151] hover:bg-gray-50 focus-visible:outline-blue-600';
+  var PRIMARY_BUTTON_MD = BUTTON_MD_BASE + ' py-1.5 bg-[linear-gradient(153deg,#3773ff_3.3%,#2254ca_99.2%)] text-white hover:brightness-110 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:brightness-100';
+  var SECONDARY_BUTTON_MD = BUTTON_MD_BASE + ' border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 py-[5px] text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400';
 
   function validateData(data, requiredFields) {
     if (!data) return false;
@@ -69,7 +69,7 @@ window.OBModal = (function () {
    */
   function agreementHtml(body) {
     return (body || []).map(function (p) {
-      if (p.indexOf('## ') === 0) return '<p class="pt-2 font-semibold text-[#111827]">' + escapeHtml(p.slice(3)) + '</p>';
+      if (p.indexOf('## ') === 0) return '<p class="pt-2 font-semibold text-gray-900 dark:text-white">' + escapeHtml(p.slice(3)) + '</p>';
       return '<p>' + escapeHtml(p).replace(/sales@transcard\.com/g, '<a href="mailto:sales@transcard.com" class="underline">sales@transcard.com</a>') + '</p>';
     }).join('');
   }
@@ -105,18 +105,18 @@ window.OBModal = (function () {
    */
   function copyRow(label, valueHtml, copyValue) {
     return '<div class="flex flex-col gap-0.5">' +
-      '<dt class="text-sm leading-5 text-gray-600">' + label + '</dt>' +
+      '<dt class="text-sm leading-5 text-gray-600 dark:text-gray-400">' + label + '</dt>' +
       '<dd class="flex items-center gap-3.5">' +
         '<span class="min-w-0 flex-1 truncate text-sm leading-5">' + valueHtml + '</span>' +
         '<button type="button" data-ob-copy="' + escapeHtml(copyValue) + '" ' +
           'class="group relative flex size-[18px] shrink-0 cursor-pointer items-center justify-center rounded-[4px] ' +
-          '[&:hover:not([data-copied])]:bg-[#f3f4f6] [&:hover:not([data-copied])]:shadow-[0_0_0_4px_#f3f4f6] ' +
-          'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600">' +
+          '[&:hover:not([data-copied])]:bg-[#f3f4f6] [&:hover:not([data-copied])]:shadow-[0_0_0_4px_#f3f4f6] dark:[&:hover:not([data-copied])]:bg-white/10 dark:[&:hover:not([data-copied])]:shadow-[0_0_0_4px_rgba(255,255,255,0.1)] ' +
+          'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
           '<span class="sr-only">Copy ' + label + '</span>' +
           '<img src="' + ASSETS + 'icon-duplicate.svg" alt="" width="18" height="18" class="size-[18px] group-hover:hidden group-data-copied:hidden">' +
           '<img src="' + ASSETS + 'icon-duplicate-dark.svg" alt="" width="18" height="18" class="hidden size-[18px] group-hover:block group-data-copied:hidden">' +
           '<img src="' + ASSETS + 'icon-copy-check-green.svg" alt="" width="18" height="18" class="hidden size-[18px] group-data-copied:block">' +
-          '<span aria-hidden="true" class="pointer-events-none invisible absolute bottom-full left-1/2 z-10 mb-2 max-w-[200px] -translate-x-1/2 translate-y-1 rounded-lg bg-[#111827] px-2.5 py-1 text-sm leading-5 whitespace-nowrap text-[#f3f4f6] opacity-0 drop-shadow-[0_10px_7.5px_rgba(0,0,0,0.1)] transition duration-150 ease-out ' +
+          '<span aria-hidden="true" class="pointer-events-none invisible absolute bottom-full left-1/2 z-10 mb-2 max-w-[200px] -translate-x-1/2 translate-y-1 rounded-lg bg-gray-900 dark:bg-gray-700 px-2.5 py-1 text-sm leading-5 whitespace-nowrap text-gray-100 opacity-0 drop-shadow-[0_10px_7.5px_rgba(0,0,0,0.1)] transition duration-150 ease-out ' +
             'group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:visible group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transition-none">' +
             '<span class="group-data-copied:hidden">Copy</span><span class="hidden group-data-copied:inline">Copied</span>' +
           '</span>' +
@@ -133,18 +133,18 @@ window.OBModal = (function () {
     var phone = (contact && contact.phone) || '';
     var email = (contact && contact.email) || '';
     var reference = ctx.billNumber || state.billNumber || '';
-    var link = 'text-sm leading-5 font-medium text-[#2563eb] hover:underline';
+    var link = 'text-sm leading-5 font-medium text-blue-600 dark:text-blue-400 hover:underline';
 
     return '<dl class="flex w-full flex-col gap-2">' +
       '<div><dt class="sr-only">Company</dt>' +
-        '<dd class="text-base leading-6 font-semibold text-gray-900">' + escapeHtml(clientName()) + '</dd></div>' +
+        '<dd class="text-base leading-6 font-semibold text-gray-900 dark:text-white">' + escapeHtml(clientName()) + '</dd></div>' +
       copyRow('Phone Number', phone
         ? '<a href="tel:' + escapeHtml(phone.replace(/[^\d+]/g, '')) + '" class="' + link + '">' + escapeHtml(phone) + '</a>'
-        : '<span class="text-sm text-gray-500">—</span>', phone) +
+        : '<span class="text-sm text-gray-500 dark:text-gray-400">—</span>', phone) +
       copyRow('Email Address', email
         ? '<a href="mailto:' + escapeHtml(email) + '" class="' + link + '">' + escapeHtml(email) + '</a>'
-        : '<span class="text-sm text-gray-500">—</span>', email) +
-      copyRow('Reference', '<span class="text-sm leading-5 font-medium text-gray-900">' + escapeHtml(reference || '—') + '</span>', reference) +
+        : '<span class="text-sm text-gray-500 dark:text-gray-400">—</span>', email) +
+      copyRow('Reference', '<span class="text-sm leading-5 font-medium text-gray-900 dark:text-white">' + escapeHtml(reference || '—') + '</span>', reference) +
     '</dl>';
   }
 
@@ -189,7 +189,7 @@ window.OBModal = (function () {
     opts = opts || {};
     if (current) close();
     var lastFocus = document.activeElement;
-    var panelClass = opts.panelClass || 'relative flex w-full max-w-[512px] flex-col rounded-lg bg-white shadow-xl';
+    var panelClass = opts.panelClass || 'relative flex w-full max-w-[512px] flex-col rounded-lg bg-white dark:bg-gray-900 shadow-xl';
     var wrap = document.createElement('div');
     wrap.innerHTML =
       '<div data-ob-modal class="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-[5px]">' +
@@ -198,7 +198,7 @@ window.OBModal = (function () {
           'class="' + panelClass + ' focus:outline-none">' +
           (opts.bare ? '' :
           '<div class="flex h-14 shrink-0 items-end px-4 pt-4">' +
-            '<button type="button" data-ob-modal-close class="m-1 inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-blue-600">' +
+            '<button type="button" data-ob-modal-close class="m-1 inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
               '<span class="sr-only">Close</span>' +
               '<img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5">' +
             '</button>' +
@@ -300,8 +300,8 @@ window.OBContact = (function () {
       M.open(
         '<div class="flex flex-col items-center gap-6 px-6 pb-6">' +
           '<div class="flex w-full flex-col items-center gap-4">' +
-            M.illustration('icon-menu-lined.svg', 'bg-[#eff6ff]') +
-            '<h2 id="ob-contact-title" class="w-full text-center text-lg leading-6 font-medium text-gray-900">Contact Us</h2>' +
+            M.illustration('icon-menu-lined.svg', 'bg-blue-50 dark:bg-blue-500/10') +
+            '<h2 id="ob-contact-title" class="w-full text-center text-lg leading-6 font-medium text-gray-900 dark:text-white">Contact Us</h2>' +
           '</div>' +
           M.contactCard(contact) +
         '</div>',

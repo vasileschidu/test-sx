@@ -7,7 +7,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Roboto+Mono:wght@400;600&family=Dancing+Script:wght@500&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261109a"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../../src/scripts/design-tokens.js"></script>
   <link rel="stylesheet" href="../../styles/sd-uk.css">
@@ -17,11 +21,11 @@
   <script src="../../scripts/checkbox-component.js"></script>
 </head>
 <!-- SMART Disburse UK · 1. Welcome — claim payout invite (Figma 1. Welcome Screen) -->
-<body class="min-h-screen bg-white font-['Inter'] antialiased">
-  <div class="flex min-h-screen w-full flex-col bg-white">
+<body class="min-h-screen bg-white dark:bg-gray-900 font-['Inter'] antialiased">
+  <div class="flex min-h-screen w-full flex-col bg-white dark:bg-gray-900">
     <main class="flex flex-1 flex-col px-4 pt-12 sm:px-6 justify-center">
       <div class="mx-auto flex w-full max-w-[480px] flex-col gap-6">
-      <div class="flex h-[60px] w-[246px] items-center justify-center self-center rounded-[10px] border-[2.5px] border-dashed border-gray-300 bg-gray-50" title="Client logo">
+      <div class="flex h-[60px] w-[246px] items-center justify-center self-center rounded-[10px] border-[2.5px] border-dashed border-gray-300 dark:border-white/10 bg-gray-50 dark:bg-white/5" title="Client logo">
         <img alt="" src="../../assets/sd-uk/logo-placeholder.svg" class="size-[35px]">
       </div>
       <div class="flex flex-col gap-10">

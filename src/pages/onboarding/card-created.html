@@ -16,29 +16,33 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <script src="../../scripts/theme-init.js?v=20261109a"></script>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+  <style type="text/tailwindcss">
+    @custom-variant dark (&:where(.dark, .dark *));
+  </style>
   <script src="../../scripts/tailwind-theme.js"></script>
   <script src="../../../src/scripts/design-tokens.js"></script>
   <script src="../../../src/scripts/data-source.js"></script>
   <script src="../../../src/scripts/sd-onboarding-context.js?v=20261013b"></script>
-  <script src="../../../src/scripts/onboarding-transitions.js?v=20261021a"></script>
-  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261026a"></script>
-  <script src="../../../src/scripts/onboarding-field.js?v=20261013a"></script>
-  <script src="../../../src/scripts/onboarding-modal.js?v=20261105u"></script>
-  <script src="../../../src/scripts/onboarding-flow.js?v=20261013k"></script>
+  <script src="../../../src/scripts/onboarding-transitions.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-sidebar.js?v=20261106b"></script>
+  <script src="../../../src/scripts/onboarding-field.js?v=20261106a"></script>
+  <script src="../../../src/scripts/onboarding-modal.js?v=20261109a"></script>
+  <script src="../../../src/scripts/onboarding-flow.js?v=20261106a"></script>
   <script src="../../../src/scripts/onboarding-stepper.js?v=20261104a"></script>
-  <script src="../../../src/scripts/onboarding-vc-how.js?v=20261105u"></script>
-  <script src="../../../src/scripts/card-created.js?v=20261105u"></script>
+  <script src="../../../src/scripts/onboarding-vc-how.js?v=20261109a"></script>
+  <script src="../../../src/scripts/card-created.js?v=20261109a"></script>
   <link rel="stylesheet" href="../../../src/styles/cursor.css" />
     <link rel="stylesheet" href="../../styles/checkbox.css" />
     <link rel="stylesheet" href="../../styles/onboarding-checkbox.css" />
       <script src="../../scripts/checkbox-component.js"></script>
   </head>
 
-<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6">
+<body class="min-h-screen bg-white px-0 antialiased font-['Inter'] lg:bg-gray-200 lg:px-6 dark:bg-gray-900 dark:lg:bg-gray-950">
 
   <!-- CONTAINER -->
-  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden">
+  <div class="mx-auto flex min-h-screen w-full max-w-[1024px] flex-col bg-white lg:h-screen lg:flex-row lg:overflow-hidden dark:bg-gray-900">
 
     <!-- LEFT SIDEBAR: rendered by onboarding-sidebar.js; every step done, no Decline -->
     <div data-ob-sidebar data-ob-step="all" data-ob-no-decline></div>
@@ -55,7 +59,7 @@
               <span class="relative block size-[45px]" aria-hidden="true">
                 <img src="../../assets/onboarding/cc-success-check.svg" alt="" width="95" height="95" class="absolute top-[-16px] left-[-25px] block max-w-none">
               </span>
-              <h1 class="text-center text-3xl leading-9 whitespace-nowrap text-[#1f2937]">Card Created!</h1>
+              <h1 class="text-center text-3xl leading-9 whitespace-nowrap text-gray-800 dark:text-white">Card Created!</h1>
             </div>
 
             <div data-cc-receipt class="flex flex-col items-center">
@@ -77,19 +81,19 @@
               </div>
 
               <!-- Receipt -->
-              <div class="relative z-[1] flex flex-col items-start border-x border-t border-[#d1d5db] bg-white pt-10">
+              <div class="relative z-[1] flex flex-col items-start border-x border-t border-gray-300 bg-white pt-10 dark:border-white/10 dark:bg-white/5">
                 <div class="flex w-[300px] flex-col items-center gap-6 px-4">
                   <div class="flex flex-col items-center gap-2">
                     <button type="button" data-cc-trademark aria-expanded="false" aria-controls="cc-trademark-text"
-                      class="flex cursor-pointer items-center justify-center gap-2 rounded px-1 text-xs leading-[18px] text-[#6b7280] hover:text-[#374151] focus-visible:outline-2 focus-visible:outline-blue-600">
+                      class="flex cursor-pointer items-center justify-center gap-2 rounded px-1 text-xs leading-[18px] text-gray-500 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-300">
                       <img src="../../assets/onboarding/cc-info.svg" alt="" width="12.8" height="12.8" class="block size-[12.8px]">Trademark Disclaimer
                     </button>
-                    <p id="cc-trademark-text" data-cc-trademark-text hidden class="w-[268px] text-center text-xs leading-4 text-[#6b7280]"></p>
+                    <p id="cc-trademark-text" data-cc-trademark-text hidden class="w-[268px] text-center text-xs leading-4 text-gray-500 dark:text-gray-400"></p>
                   </div>
 
-                  <div class="flex w-full flex-col items-center gap-4 rounded-md bg-[#f9fafb] px-4 py-5 text-center">
-                    <p class="w-full text-sm leading-5 text-[#6b7280]">Here’s your brand new Virtual Card, loaded with your <span data-cc-loaded data-ob-skeleton class="font-semibold text-[#1f2937]">$487.00</span>.</p>
-                    <button type="button" data-cc-how class="cursor-pointer rounded text-sm leading-5 font-medium text-[#3671fb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" data-cc-no-pdf>How to use this card</button>
+                  <div class="flex w-full flex-col items-center gap-4 rounded-md bg-gray-50 px-4 py-5 text-center dark:bg-white/5">
+                    <p class="w-full text-sm leading-5 text-gray-500 dark:text-gray-400">Here’s your brand new Virtual Card, loaded with your <span data-cc-loaded data-ob-skeleton class="font-semibold text-gray-800 dark:text-white">$487.00</span>.</p>
+                    <button type="button" data-cc-how class="cursor-pointer rounded text-sm leading-5 font-medium text-[#3671fb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400" data-cc-no-pdf>How to use this card</button>
                   </div>
 
                   <!-- Details, filled by card-created.js -->
@@ -113,7 +117,7 @@
                 Download Receipt
               </button>
               <button type="button" data-cc-finish
-                class="flex w-full cursor-pointer items-center justify-center rounded-md border border-[#d1d5db] bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-[#374151] shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">
+                class="flex w-full cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white px-[25px] py-[15px] text-base leading-6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10">
                 Finish and Close
               </button>
             </div>

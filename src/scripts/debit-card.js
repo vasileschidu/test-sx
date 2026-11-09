@@ -56,7 +56,7 @@
       field('number', 'Debit Card Number', { numeric: true, autocomplete: 'cc-number', placeholder: '0000 0000 0000 0000', badge: true }) +
       '<div class="flex items-start gap-4">' +
         field('month', 'MM', { numeric: true, autocomplete: 'cc-exp-month', placeholder: 'MM' }) +
-        '<span aria-hidden="true" class="flex h-10 w-1.5 shrink-0 items-center self-start mt-6 text-sm leading-5 text-[#9ca3af]">/</span>' +
+        '<span aria-hidden="true" class="flex h-10 w-1.5 shrink-0 items-center self-start mt-6 text-sm leading-5 text-gray-400 dark:text-gray-500">/</span>' +
         field('year', 'YY', { numeric: true, autocomplete: 'cc-exp-year', placeholder: 'YY' }) +
       '</div>';
 
@@ -109,9 +109,9 @@
     function showAlert(on) {
       alertEl.hidden = !on;
       alertEl.innerHTML = on
-        ? '<div role="alert" class="flex w-full items-start gap-3 rounded-md bg-[#fef2f2] p-4">' +
+        ? '<div role="alert" class="flex w-full items-start gap-3 rounded-md bg-red-50 dark:bg-red-500/10 p-4">' +
             '<img src="../../assets/onboarding/icon-x-circle-red.svg" alt="" width="20" height="20" class="size-5 shrink-0">' +
-            '<p class="text-sm leading-5 text-[#991b1b]">' + esc(data.declined) + '</p>' +
+            '<p class="text-sm leading-5 text-red-800 dark:text-red-300">' + esc(data.declined) + '</p>' +
           '</div>'
         : '';
     }
