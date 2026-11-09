@@ -53,7 +53,7 @@ window.OBConsents = (function () {
   function dots(index) {
     return agreements.map(function (a, i) {
       if (i === index) return '<span class="relative block size-2.5 shrink-0"><img src="' + ASSETS + 'step-current.svg" alt="" class="absolute -inset-[40%] block size-[180%] max-w-none"></span>';
-      return '<img src="' + ASSETS + (accepted[a.id] ? 'step-complete.svg' : 'step-incomplete.svg') + '" alt="" width="10" height="10" class="block size-2.5 shrink-0">';
+      return '<img src="' + ASSETS + (accepted[a.id] ? 'step-complete.svg" alt="" width="10" height="10" class="block size-2.5 shrink-0">' : 'step-incomplete.svg" alt="" width="10" height="10" class="block size-2.5 shrink-0 dark:opacity-30">');
     }).join('');
   }
 
@@ -74,7 +74,7 @@ window.OBConsents = (function () {
           '</div>' +
           // White fade over the last lines: there is more below. Goes with the button at the end.
           '<div data-vcs-fade aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-white/0 to-white dark:from-gray-900/0 dark:to-gray-900"></div>' +
-          '<button type="button" data-vcs-more aria-label="Scroll down" class="absolute bottom-6 left-1/2 flex size-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 shadow-md inset-ring-2 inset-ring-white dark:inset-ring-gray-900 transition hover:bg-gray-200 dark:hover:bg-white/15 hover:text-gray-900 dark:hover:text-white active:bg-gray-300 dark:active:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+          '<button type="button" data-vcs-more aria-label="Scroll down" class="absolute bottom-6 left-1/2 flex size-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-md dark:shadow-black/50 inset-ring-2 inset-ring-white dark:inset-ring-1 dark:inset-ring-white/15 transition hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white active:bg-gray-300 dark:active:bg-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
             '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-6"><path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z" clip-rule="evenodd" /></svg>' +
           '</button>' +
         '</div>'

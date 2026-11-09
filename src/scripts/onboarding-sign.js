@@ -68,7 +68,7 @@ window.OBSign = (function () {
             '<p id="ob-sign-name-error" data-sign-name-error class="hidden ' + F.ERROR_TEXT + '"></p>' +
           '</div>' +
           '<div class="' + PAD + ' border-gray-200 dark:border-white/10 px-6">' +
-            '<p data-sign-preview aria-hidden="true" class="line-clamp-3 w-full text-center font-[\'Meow_Script\',cursive] text-[56px] leading-[64px] wrap-anywhere text-black"></p>' +
+            '<p data-sign-preview aria-hidden="true" class="line-clamp-3 w-full text-center font-[\'Meow_Script\',cursive] text-[56px] leading-[64px] wrap-anywhere text-black dark:text-white"></p>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -113,6 +113,11 @@ window.OBSign = (function () {
     var hint = $('[data-sign-hint]');
     var clearBtn = $('[data-sign-clear]');
     var ctx = canvas.getContext('2d');
+    function ink() {
+      var title = document.getElementById('ob-sign-title');
+      var dark = title && getComputedStyle(title).color === 'rgb(255, 255, 255)';
+      return dark ? '#ffffff' : '#111827';
+    }
     var drawing = false;
     var hasInk = false;
     var last = null;
@@ -127,7 +132,8 @@ window.OBSign = (function () {
       ctx.lineWidth = 2.2;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.strokeStyle = '#111827';
+      // Ink follows the theme (the title's colour): #111827 light, white dark.
+      ctx.strokeStyle = ink();
       hasInk = false;
       hint.classList.remove('hidden');
       clearBtn.classList.add('hidden');
@@ -151,7 +157,7 @@ window.OBSign = (function () {
       canvas.setPointerCapture(e.pointerId);
       ctx.beginPath();
       ctx.arc(last.x, last.y, 1.1, 0, Math.PI * 2);
-      ctx.fillStyle = '#111827';
+      ctx.fillStyle = ink();
       ctx.fill();
       if (!hasInk) {
         hasInk = true;

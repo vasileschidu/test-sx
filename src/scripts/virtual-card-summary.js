@@ -158,6 +158,7 @@
 
     window.OBConsents.mount(consentsEl, agreements, {
       stateKey: variant.consents,
+      documentScroll: true,
       onChange: function (all) { submitBtn.disabled = !all; }
     });
 

@@ -205,7 +205,8 @@
           return '<span class="relative block size-2.5 shrink-0"><img src="' + ASSETS + 'step-current.svg" alt="" class="absolute -inset-[40%] block size-[180%] max-w-none"></span>';
         }
         var file = isReviewed(doc) ? 'step-complete.svg' : 'step-incomplete.svg';
-        return '<img src="' + ASSETS + file + '" alt="" width="10" height="10" class="block size-2.5 shrink-0">';
+        // The light grey "not yet" dot glows on a dark panel: dim it there.
+        return '<img src="' + ASSETS + file + '" alt="" width="10" height="10" class="block size-2.5 shrink-0' + (isReviewed(doc) ? '' : ' dark:opacity-30') + '">';
       }).join('');
     }
 

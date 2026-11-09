@@ -166,7 +166,7 @@
       setError('');
       title.textContent = channel.check;
       intro.innerHTML = 'We have sent a verification code to the ' + channel.label + ' ' +
-        '<span class="font-semibold text-gray-900">' + contactEl.textContent + '</span>.';
+        '<span class="font-semibold text-gray-900 dark:text-white">' + contactEl.textContent + '</span>.';
       ready.classList.add('hidden');
       consent.classList.add('hidden');
       field.classList.remove('hidden');

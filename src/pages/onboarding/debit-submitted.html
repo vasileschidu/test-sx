@@ -31,7 +31,7 @@
   <script src="../../../src/scripts/onboarding-flow.js?v=20261106a"></script>
   <script src="../../../src/scripts/onboarding-stepper.js?v=20261104a"></script>
     <script src="../../../src/scripts/onboarding-debit.js"></script>
-  <script src="../../../src/scripts/card-created.js?v=20261109a"></script>
+  <script src="../../../src/scripts/card-created.js?v=20261109b"></script>
   <link rel="stylesheet" href="../../../src/styles/cursor.css" />
     <link rel="stylesheet" href="../../styles/checkbox.css" />
     <link rel="stylesheet" href="../../styles/onboarding-checkbox.css" />
@@ -48,12 +48,12 @@
 
     <!-- RIGHT COLUMN (scrolls) -->
     <div class="flex flex-1 flex-col lg:min-h-0 lg:overflow-y-auto">
-      <div class="flex flex-1 flex-col bg-[linear-gradient(180deg,#ecfdf5_0%,rgba(236,253,245,0)_64.668%)] lg:min-h-screen lg:bg-none">
+      <div class="flex flex-1 flex-col bg-[linear-gradient(180deg,#ecfdf5_0%,rgba(236,253,245,0)_64.668%)] dark:bg-[linear-gradient(180deg,rgba(16,185,129,0.12)_0%,rgba(16,185,129,0)_64.668%)] lg:min-h-screen lg:bg-none lg:dark:bg-none">
 
         <div data-ob-content class="flex flex-1 flex-col gap-10 px-4 pt-14 lg:gap-14 lg:px-0 lg:pt-0">
 
           <!-- Successfully Submitted! + amount + receipt -->
-          <div data-cc-capture data-cc-variant="debit" class="flex w-full flex-col items-center gap-14 lg:gap-9 lg:bg-[linear-gradient(180deg,#ecfdf5_0%,rgba(236,253,245,0)_25.234%)] lg:px-14 lg:pt-14">
+          <div data-cc-capture data-cc-variant="debit" class="flex w-full flex-col items-center gap-14 lg:gap-9 lg:bg-[linear-gradient(180deg,#ecfdf5_0%,rgba(236,253,245,0)_25.234%)] lg:dark:bg-[linear-gradient(180deg,rgba(16,185,129,0.12)_0%,rgba(16,185,129,0)_25.234%)] lg:px-14 lg:pt-14">
             <div class="flex flex-col items-center gap-2">
               <span class="relative block size-[45px]" aria-hidden="true">
                 <img src="../../assets/onboarding/cc-success-check.svg" alt="" width="95" height="95" class="absolute top-[-16px] left-[-25px] block max-w-none">
