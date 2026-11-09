@@ -412,9 +412,13 @@ window.OBFlow = (function () {
     document.addEventListener('keydown', function (event) {
       if (event.key === 'Escape' && !panel.hidden) setOpen(false);
     });
-    // The pages pick the right screen for the new state on load. Payment
-    // Status stays put (keeping its ?final= link) unless the payment ended.
-    function reopen() { window.location.href = 'allocation.html'; }
+    // Where Reset / "Active" bring the user back: the scenario page they came from.
+    // Payment Status keeps its ?final= link, also after a detour to a closed screen.
+    var returnTo = onStatus ? here + '.html' + window.location.search
+      : here === 'allocation' ? 'allocation.html'
+      : (mp.returnTo || 'allocation.html');
+    if (here === 'allocation' && mp.returnTo) { delete mp.returnTo; saveMp(mp); }
+    function reopen() { window.location.href = returnTo; }
     function clearDecline() {
       if (window.SDOnboardingContext) window.SDOnboardingContext.saveState({ declined: null });
     }
@@ -424,6 +428,9 @@ window.OBFlow = (function () {
       patch[input.name] = input.value === 'true' ? true : input.value === 'false' ? false : input.value;
       setDemo(patch);
       var payment = getMp().payment;
+      if (payment !== 'active' && returnTo !== 'allocation.html') {
+        var keep = getMp(); keep.returnTo = returnTo; saveMp(keep);
+      }
       if (input.name === 'payment') {
         if (payment === 'declined') {
           // Same as confirming the Decline Payment dialog.
@@ -443,12 +450,13 @@ window.OBFlow = (function () {
       saveMp(mp);
       clearDecline();
       someoneChanges();
-      reopen();
+      // A new split has to be accepted again: always Current Allocation.
+      window.location.href = 'allocation.html';
     });
     wrap.querySelector('[data-mp-demo-reset]').addEventListener('click', function () {
       resetMp();
       clearDecline();
-      reopen();
+      reopen();   // back to the page the scenario started from (Payment Status stays Payment Status)
     });
   }
 
