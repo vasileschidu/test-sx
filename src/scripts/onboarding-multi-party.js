@@ -133,16 +133,16 @@
     var tone, icon, text;
     if (left < HOUR) {
       var secs = Math.floor(left / 1000);
-      tone = 'border border-red-300 bg-red-50 dark:bg-red-500/10 py-[9px] font-medium text-red-700 dark:text-red-400 hover:bg-red-100';
+      tone = 'border border-red-300 dark:border-red-500/40 bg-red-50 dark:bg-red-500/10 py-[9px] font-medium text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20';
       icon = 'icon-calendar-red.svg';
       text = 'Expires in ' + Math.floor(secs / 60) + ' min and ' + (secs % 60) + ' sec';
     } else if (left < DAY) {
       var hours = Math.floor(left / HOUR);
-      tone = 'border border-amber-300 bg-amber-50 dark:bg-amber-500/10 py-[9px] font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-100';
+      tone = 'border border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/10 py-[9px] font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/20';
       icon = 'icon-calendar-amber.svg';
       text = 'Expires in ' + hours + (hours === 1 ? ' hour' : ' hours');
     } else if (opts.showDate) {
-      tone = 'border border-blue-300 bg-gray-50 dark:bg-white/5 py-[9px] font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10';
+      tone = 'border border-blue-300 dark:border-blue-500/40 bg-gray-50 dark:bg-white/5 py-[9px] font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10';
       icon = 'icon-calendar-exclamation.svg';
       // Phones have room for the full date: "How it works" shrinks to an (i) button there.
       text = stamp(expires.toISOString()).replace(' (ET)', '');
