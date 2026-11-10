@@ -76,7 +76,8 @@ window.OBSign = (function () {
 
   function processingMarkup() {
     return '<div role="status" class="flex flex-col items-center gap-6 px-6 py-12">' +
-      '<img src="' + ASSETS + 'loader.svg" alt="" width="44" height="44" class="size-11 animate-spin motion-reduce:animate-none">' +
+      '<img src="' + ASSETS + 'loader.svg" alt="" width="44" height="44" class="size-11 animate-spin motion-reduce:animate-none dark:hidden">' +
+      '<img src="' + ASSETS + 'loader-dark.svg" alt="" width="44" height="44" class="hidden size-11 animate-spin motion-reduce:animate-none dark:block">' +
       '<div class="flex flex-col items-center gap-2 text-center">' +
         '<p id="ob-sign-processing" class="text-lg leading-6 font-semibold text-gray-900 dark:text-white">We’re processing your request</p>' +
         '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Please wait</p>' +
