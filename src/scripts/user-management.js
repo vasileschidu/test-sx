@@ -25,43 +25,13 @@
   var refs = {};
   var pendingRemoveId = null;
 
-  // Status pill badges with a leading icon (Figma 6.0); Pending is used by phase 3.
-  var ICON_CHECK_CIRCLE =
-    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Zm3.844-8.791a.75.75 0 0 0-1.188-.918l-3.7 4.79-1.649-1.833a.75.75 0 1 0-1.114 1.004l2.25 2.5a.75.75 0 0 0 1.15-.043l4.25-5.5Z" clip-rule="evenodd" /></svg>';
-  var ICON_LINK_OFF =
-    '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-3.5 shrink-0"><path stroke-linecap="round" stroke-linejoin="round" d="M6.5 4.5 7.6 3.4a2.83 2.83 0 0 1 4 4L10.5 8.5M9.5 11.5l-1.1 1.1a2.83 2.83 0 0 1-4-4L5.5 7.5M2 2l12 12" /></svg>';
-  var ICON_CLOCK =
-    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" d="M1 8a7 7 0 1 1 14 0A7 7 0 0 1 1 8Zm7.75-4.25a.75.75 0 0 0-1.5 0V8c0 .414.336.75.75.75h3.25a.75.75 0 0 0 0-1.5h-2.5v-3.5Z" clip-rule="evenodd" /></svg>';
-  var STATUS = {
-    active: {
-      label: "Active",
-      icon: ICON_CHECK_CIRCLE,
-      cls: "bg-green-100 text-green-800 dark:bg-green-400/10 dark:text-green-400",
-      iconCls: "text-green-500 dark:text-green-400",
-    },
-    inactive: {
-      label: "Inactive",
-      icon: ICON_LINK_OFF,
-      cls: "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300",
-      iconCls: "text-gray-500 dark:text-gray-400",
-    },
-    pending: {
-      label: "Pending",
-      icon: ICON_CLOCK,
-      cls: "bg-amber-100 text-amber-800 dark:bg-amber-400/10 dark:text-amber-400",
-      iconCls: "text-amber-500 dark:text-amber-400",
-    },
-  };
-
-  // Initials avatars: solid colour, white text (Figma 6.0).
-  var AVATAR_TONES = [
-    "bg-purple-500",
-    "bg-cyan-500",
-    "bg-indigo-500",
-    "bg-pink-500",
-    "bg-emerald-500",
-    "bg-orange-500",
-  ];
+  // Avatar, status badge and names are shared with the profile page (um-ui.js).
+  var UI = window.UMUi;
+  var escapeHtml = UI.escapeHtml;
+  var fullName = UI.fullName;
+  var roleNames = UI.roleNames;
+  var avatar = UI.avatar;
+  var statusBadge = UI.statusBadge;
 
   var HEADER_CELL =
     "h-16 border-b border-gray-200 px-4 pt-5 pb-3 align-middle text-left type-overline text-gray-500 dark:border-white/10 dark:text-gray-400";
@@ -76,15 +46,6 @@
   var ICON_TRASH =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M8.75 1A2.75 2.75 0 0 0 6 3.75v.443c-.795.077-1.584.176-2.365.298a.75.75 0 1 0 .23 1.482l.149-.022.841 10.518A2.75 2.75 0 0 0 7.596 19h4.807a2.75 2.75 0 0 0 2.742-2.53l.841-10.52.149.023a.75.75 0 0 0 .23-1.482A41.03 41.03 0 0 0 14 4.193V3.75A2.75 2.75 0 0 0 11.25 1h-2.5ZM10 4c.84 0 1.673.025 2.5.075V3.75c0-.69-.56-1.25-1.25-1.25h-2.5c-.69 0-1.25.56-1.25 1.25v.325C8.327 4.025 9.16 4 10 4ZM8.58 7.72a.75.75 0 0 0-1.5.06l.3 7.5a.75.75 0 1 0 1.5-.06l-.3-7.5Zm4.34.06a.75.75 0 1 0-1.5-.06l-.3 7.5a.75.75 0 1 0 1.5.06l.3-7.5Z" clip-rule="evenodd" /></svg>';
 
-  function escapeHtml(value) {
-    return String(value == null ? "" : value)
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#39;");
-  }
-
   function asset(name) {
     return ASSETS + name;
   }
@@ -94,37 +55,11 @@
       window.showGlobalTopToast(message, tone ? { tone: tone } : undefined);
   }
 
-  function fullName(user) {
-    return (user.firstName + " " + user.lastName).trim();
-  }
-
-  function initials(user) {
-    return (
-      (user.firstName || "").charAt(0) + (user.lastName || "").charAt(0)
-    ).toUpperCase();
-  }
-
-  function avatarTone(user) {
-    var hash = 5381;
-    for (var i = 0; i < user.id.length; i += 1)
-      hash = ((hash * 33) ^ user.id.charCodeAt(i)) >>> 0;
-    return AVATAR_TONES[hash % AVATAR_TONES.length];
-  }
-
   function businessName() {
     var active = window.AppPlans && window.AppPlans.getActiveBusiness();
     if (active && active.name) return active.name;
     var business = window.UMStore.getBusiness();
     return (business && business.name) || "this business";
-  }
-
-  function roleNames(user) {
-    return (user.roleIds || [])
-      .map(function (id) {
-        var role = window.UMStore.getRole(id);
-        return role ? role.name : null;
-      })
-      .filter(Boolean);
   }
 
   function isYou(user) {
@@ -145,9 +80,12 @@
         return sortValue(a, state.sortKey).localeCompare(sortValue(b, state.sortKey)) * dir;
       });
     } else {
-      // Unsorted: the owner first, then the list as seeded.
+      // Unsorted: Me first, then the owner, then the list as seeded (Figma 6.0 / 6.5).
+      var rank = function (user) {
+        return isYou(user) ? 2 : user.owner ? 1 : 0;
+      };
       users.sort(function (a, b) {
-        return (b.owner ? 1 : 0) - (a.owner ? 1 : 0);
+        return rank(b) - rank(a);
       });
     }
     if (!query) return users;
@@ -174,22 +112,6 @@
   }
 
   // ── Cell pieces (shared by the table and the phone cards) ──
-
-  function avatar(user) {
-    if (user.photo)
-      return (
-        '<img src="../../../src/' +
-        escapeHtml(user.photo) +
-        '" alt="" class="size-10 shrink-0 rounded-full object-cover outline -outline-offset-1 outline-black/5 dark:outline-white/10" />'
-      );
-    return (
-      '<span aria-hidden="true" class="flex size-10 shrink-0 items-center justify-center rounded-full text-base text-white ' +
-      avatarTone(user) +
-      '">' +
-      escapeHtml(initials(user)) +
-      "</span>"
-    );
-  }
 
   function meBadge() {
     return '<span class="inline-flex shrink-0 items-center rounded-full bg-blue-100 px-2.5 py-0.5 type-label-small text-blue-800 dark:bg-blue-400/10 dark:text-blue-400">Me</span>';
@@ -247,26 +169,32 @@
     );
   }
 
-  function statusBadge(user) {
-    var status = STATUS[user.status] || STATUS.inactive;
-    return (
-      '<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 type-label-small whitespace-nowrap ' +
-      status.cls +
-      '"><span class="inline-flex ' +
-      status.iconCls +
-      '">' +
-      status.icon +
-      "</span>" +
-      status.label +
-      "</span>"
-    );
+  function isAdmin() {
+    return window.UMStore.getViewer().isAdmin;
+  }
+
+  function profileHref(user) {
+    return UI.withViewer("user-profile.html?id=" + encodeURIComponent(user.id));
   }
 
   function actions(user) {
     var name = fullName(user);
+    // A member (Figma 6.5) only gets "Edit my profile" on their own row.
+    if (!isAdmin()) {
+      if (!isYou(user)) return "";
+      return (
+        '<div class="flex justify-end"><span class="isolate inline-flex rounded-md shadow-xs dark:shadow-none"><a href="' +
+        escapeHtml(profileHref(user)) +
+        '" data-tooltip="Edit my profile" aria-label="Edit my profile" class="' +
+        GROUP_BUTTON +
+        ' rounded-md">' +
+        ICON_PENCIL +
+        "</a></span></div>"
+      );
+    }
     var edit =
-      '<button type="button" data-um-edit="' +
-      escapeHtml(user.id) +
+      '<a href="' +
+      escapeHtml(profileHref(user)) +
       '" data-tooltip="Edit Profile" aria-label="Edit profile of ' +
       escapeHtml(name) +
       '" class="' +
@@ -274,7 +202,7 @@
       (user.owner ? " rounded-md" : " rounded-l-md") +
       '">' +
       ICON_PENCIL +
-      "</button>";
+      "</a>";
     // The owner can't be removed: only the edit button (Figma 6.0).
     var remove = user.owner
       ? ""
@@ -654,7 +582,7 @@
     document.addEventListener("click", function (event) {
       var target = event.target.closest
         ? event.target.closest(
-            "[data-um-remove],[data-um-edit],[data-um-roles],[data-um-sort],[data-page-nav]",
+            "[data-um-remove],[data-um-roles],[data-um-sort],[data-page-nav]",
           )
         : null;
       if (!target || !document.getElementById("um-panel-users").contains(target))
@@ -689,8 +617,6 @@
         if (again) again.focus();
         return;
       }
-      if (target.hasAttribute("data-um-edit"))
-        return toast("User profiles are not in this demo yet.", "info");
       var nav = target.getAttribute("data-page-nav");
       var totalPages = getTotalPages(getFilteredUsers().length);
       if (nav === "first") state.currentPage = 1;
@@ -715,9 +641,14 @@
     bindEvents();
     renderSkeleton();
     window.UMStore.onChange(render);
+    window.UMStore.onChange(UI.syncTopbar);
     window.UMStore.load()
       .then(function () {
         state.loaded = true;
+        UI.syncTopbar();
+        // Figma 6.5: a member can't invite users.
+        var addUser = document.getElementById("um-add-user");
+        if (addUser) addUser.hidden = !isAdmin();
         render();
       })
       .catch(function () {

@@ -53,3 +53,7 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-10 [qa] `clipped-text-no-tooltip` on `p.min-w-0.truncate` @390 on every dashboard page = topbar greeting; fixed with a title.
 - 2026-11-10 [figma][user-management] Built without Figma once and had to redo tabs, badges, actions and a whole page: if no
   Figma screenshot is reachable, ask the coordinator for PNGs before building, don't infer layout from a text brief.
+- 2026-11-10 [user-management][store] A store that re-syncs a field from another source on every load (UMStore.syncCurrentUser
+  ← company profile) silently undoes local edits: mark locally edited records (`nameEdited`) and skip the sync for them.
+- 2026-11-10 [shell][topbar] Page-level top-bar updates: name hooks are `data-topbar-greeting-name|profile-name|avatar-initials`;
+  the avatar `<img>` has no hook (`button[aria-label="Open user menu"] img`); the topbar's own fill runs first on the same promise.

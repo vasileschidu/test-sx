@@ -527,6 +527,7 @@ window.AppPlans = (function () {
       "vendor-profile.html": "vendors",
       "my-company-profile.html": "my-company-profile",
       "user-management.html": "settings",
+      "user-profile.html": "settings",
       "business-details.html": "settings",
       "ap-ar-payments.html": "ap-ar",
       "payment-program-configuration.html": "transcard-only",

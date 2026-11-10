@@ -37,6 +37,10 @@
       { label: "Settings", href: "user-management.html" },
       { label: "User Management", href: null },
     ],
+    "user-profile.html": [
+      { label: "Settings", href: "user-management.html" },
+      { label: "User Management", href: null },
+    ],
     "business-details.html": [
       { label: "Settings", href: "user-management.html" },
       { label: "Business Details", href: null },
@@ -69,6 +73,7 @@
       "consumer-my-profile.html": "My Profile",
       "my-company-profile.html": "My Company Profile",
       "user-management.html": "User Management",
+      "user-profile.html": "User Management",
       "business-details.html": "Business Details",
     };
     return map[file] || "Dashboard";

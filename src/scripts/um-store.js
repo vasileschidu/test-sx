@@ -6,7 +6,9 @@
  *
  *   UMStore.load()                 → Promise<state>   (seed on first run)
  *   UMStore.getUsers() / getRoles() / getRole(id) / getUser(id)
- *   UMStore.getCurrentUser()       → the signed-in admin ("You")
+ *   UMStore.getCurrentUser()       → the signed-in user ("Me")
+ *   UMStore.getViewer()            → { mode: "admin"|"member", isAdmin, user } — demo: ?as=member
+ *   UMStore.updateUser(id, patch)  → firstName / lastName / phone / photo (data URL or null)
  *   UMStore.getBusiness()          → business details (Business Details page)
  *   UMStore.removeUser(id)         → removes the user from the business
  *   UMStore.setBusinessSetting(key, value)
@@ -23,6 +25,20 @@ window.UMStore = (function () {
   var SEED = "user-management";
   // Bump with the seed's "version": an older saved copy is replaced by the new seed.
   var SEED_VERSION = 4;
+
+  // Demo viewer (Figma 6.5): ?as=member shows the list as a View Only member;
+  // ?as=admin (or nothing) is the admin/owner. Kept for the tab's session.
+  var VIEWER_KEY = "sx_um_viewer";
+  var viewerMode = (function () {
+    var asParam = new URLSearchParams(window.location.search).get("as");
+    try {
+      if (asParam === "member" || asParam === "admin")
+        window.sessionStorage.setItem(VIEWER_KEY, asParam);
+      return window.sessionStorage.getItem(VIEWER_KEY) === "member" ? "member" : "admin";
+    } catch (e) {
+      return asParam === "member" ? "member" : "admin";
+    }
+  })();
 
   var state = null;
   var loading = null;
@@ -99,12 +115,13 @@ window.UMStore = (function () {
       .getMyCompanyProfile()
       .then(function (profile) {
         var contact = (profile && profile.contact) || {};
-        var me = state && getUser(state.currentUserId);
+        var me = state && rawUser(state.currentUserId);
         if (!me) return;
         var name = String(contact.name || "").trim();
         var email = String(contact.email || "").trim();
         var changed = false;
-        if (name) {
+        // Once Me edits their name on the profile page, that edit wins.
+        if (name && !me.nameEdited) {
           var parts = name.split(/\s+/);
           var first = parts.shift();
           var last = parts.join(" ");
@@ -135,14 +152,63 @@ window.UMStore = (function () {
     });
   }
 
+  function rawUser(id) {
+    return state
+      ? state.users.filter(function (user) {
+          return user.id === id;
+        })[0] || null
+      : null;
+  }
+
+  // As a member, Me is a View Only user and the first other admin owns the business.
+  function present(user) {
+    if (viewerMode !== "member" || !state) return user;
+    if (user.id === state.currentUserId)
+      return Object.assign({}, user, { roleIds: ["view-only"], owner: false });
+    if (user.id === memberViewOwnerId())
+      return Object.assign({}, user, { owner: true });
+    return user;
+  }
+
+  function memberViewOwnerId() {
+    var owner = state.users.filter(function (user) {
+      return user.id !== state.currentUserId && (user.roleIds || []).indexOf("admin") !== -1;
+    })[0];
+    return owner ? owner.id : null;
+  }
+
   function getUsers() {
-    return state ? state.users.slice() : [];
+    return state ? state.users.map(present) : [];
   }
 
   function getUser(id) {
-    return getUsers().filter(function (user) {
-      return user.id === id;
-    })[0] || null;
+    var user = rawUser(id);
+    return user ? present(user) : null;
+  }
+
+  function getViewer() {
+    return {
+      mode: viewerMode,
+      isAdmin: viewerMode === "admin",
+      user: getCurrentUser(),
+    };
+  }
+
+  var EDITABLE = ["firstName", "lastName", "phone", "photo"];
+
+  function updateUser(id, patch) {
+    var user = rawUser(id);
+    if (!user || !patch) return null;
+    EDITABLE.forEach(function (key) {
+      if (!Object.prototype.hasOwnProperty.call(patch, key)) return;
+      var value = patch[key];
+      if (value === null || value === "") delete user[key];
+      else user[key] = String(value);
+    });
+    if (id === state.currentUserId && ("firstName" in patch || "lastName" in patch))
+      user.nameEdited = true;
+    write();
+    return getUser(id);
   }
 
   function getRoles() {
@@ -193,6 +259,8 @@ window.UMStore = (function () {
     getRoles: getRoles,
     getRole: getRole,
     getCurrentUser: getCurrentUser,
+    getViewer: getViewer,
+    updateUser: updateUser,
     getBusiness: getBusiness,
     removeUser: removeUser,
     setBusinessSetting: setBusinessSetting,

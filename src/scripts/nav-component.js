@@ -153,6 +153,7 @@ const APP_NAV_PAGE_MAP = {
   "consumer-my-profile.html": "my-profile",
   "my-company-profile.html": "my-company-profile",
   "user-management.html": "user-management",
+  "user-profile.html": "user-management",
   "business-details.html": "business-details",
 };
 

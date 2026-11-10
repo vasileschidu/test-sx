@@ -214,6 +214,19 @@ to reseed), localStorage `sx_um_v1`.
   app cards (`rounded-md border-gray-300 p-4`, status pill Under Review blue / In Progress gray, "Go to Portal" ↗ link),
   settings row (text `max-w-md` + toggle + "Off/On" label).
 
+### User profile (`user-profile.js`, Figma User Management 6.5–6.9)
+Shared UM markup `UMUi` (`um-ui.js`): `avatar(user, {size, text})` (photo path / data URL or initials), `statusBadge`,
+`fullName`, `roleNames`, `withViewer(href)`, `syncTopbar()` (Me's name / photo into `<app-topbar>` via `data-topbar-*`).
+Store: `UMStore.getViewer()` (`?as=member` → View Only member, kept in sessionStorage `sx_um_viewer`), `updateUser(id, patch)`.
+- **Avatar photo badges** (`relative` wrapper around a `size-20` avatar): upload `absolute -top-0.5 -right-0.5 size-6
+  rounded-full bg-white ring-1 ring-gray-300` pencil → hidden `input[type=file]` (png/jpg ≤ 2 MB, resized to 256px data URL);
+  remove `-right-0.5 -bottom-0.5` red trash, only when there is a photo → destructive confirm (Vendors `vn-confirm-dialog` copy).
+- **Inline-edit row** (`dl.divide-y` > `div.sm:grid.sm:grid-cols-3.sm:min-h-22`): `dt` label | `dd sm:col-span-2` value + "Update"
+  link (`type-link text-blue-600`). Update → `OBField.INPUT` (+ `errorIcon()`, `#<id>-error` with `OBField.ERROR_TEXT`, errors via
+  `OBField.setError`) `sm:max-w-xs` + Cancel (secondary md) / Save (primary md) `sm:w-26`. One row at a time; Enter saves, Esc
+  cancels, focus returns to Update. Read-only rows (Email) have no Update.
+- **Member list view** (6.5): no Add New User; only the Me row has one `rounded-md` edit link "Edit my profile"; Me first.
+
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).
 2. Add a row/snippet here, and a note to `wiki/design-system/` when it is a product pattern.
