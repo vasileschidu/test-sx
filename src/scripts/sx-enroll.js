@@ -946,12 +946,17 @@
    * SX look for the shared SD sidebar (onboarding-sidebar.js renders it on
    * DOMContentLoaded, after this script's listener, hence the timeout): the
    * SMART Exchange logo from Figma (36525:48449) and a 48px side padding so
-   * "Automatic Card Processing" stays on one line.
+   * "Automatic Card Processing" stays on one line; the footer block is centred.
    */
   function applySidebarLook() {
     var slots = document.querySelectorAll("[data-ob-sidebar]");
     for (var i = 0; i < slots.length; i += 1) {
       slots[i].classList.replace("px-14", "px-12");
+      // The 212px footer block (Contact / Decline, language, terms, Powered by) is
+      // right-aligned like the logo; with 48px padding that leaves 65 left / 48 right.
+      // Centre it in the sidebar.
+      var footer = slots[i].querySelector(".w-\\[212px\\]");
+      if (footer) footer.classList.add("self-center");
       var logo = slots[i].querySelector('img[src$="menu-logo.svg"]');
       if (!logo) continue;
       var mark = logo.parentNode;
