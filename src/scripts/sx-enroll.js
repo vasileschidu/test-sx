@@ -544,7 +544,7 @@
         "</span>" +
         '<button type="button" data-sx-tin-toggle aria-pressed="' +
         revealed +
-        '" class="inline-flex size-6 cursor-pointer items-center justify-center rounded-md text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-white/15 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+        '" class="inline-flex size-6 cursor-pointer items-center justify-center rounded-md text-gray-400 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/15 hover:text-gray-600 dark:hover:text-white active:bg-gray-300 dark:active:bg-white/20 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
         '<span class="sr-only">' +
         (revealed ? "Hide" : "Show") +
         " TIN</span>" +
