@@ -31,8 +31,8 @@
   <script src="../../scripts/sx-enroll.js?v=20261110b"></script>
   <script src="../../scripts/onboarding-sidebar.js?v=20261106b"></script>
   <script src="../../scripts/onboarding-field.js?v=20261106a"></script>
-  <script src="../../scripts/onboarding-modal.js?v=20261110a"></script>
-  <script src="../../scripts/sx-enroll-complete.js?v=20261106b"></script>
+  <script src="../../scripts/onboarding-modal.js?v=20261110c"></script>
+  <script src="../../scripts/sx-enroll-complete.js?v=20261110c"></script>
   <link rel="stylesheet" href="../../styles/cursor.css" />
 </head>
 <body data-sx-step="complete" class="min-h-screen bg-white dark:bg-gray-900 px-0 antialiased font-['Inter'] lg:bg-gray-200 dark:lg:bg-gray-950 lg:px-6">
@@ -433,82 +433,30 @@
                     class="text-sm font-medium text-gray-900 dark:text-gray-100"
                     >Card Number</span
                   >
-                  <button
-                    type="button"
-                    data-sx-copy="full-number"
-                    class="copy-btn group -ml-1 inline-flex focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 active:bg-gray-300 dark:text-gray-300 dark:hover:bg-white/10 dark:active:bg-white/15 cursor-pointer"
-                  >
-                    <span data-sx-vc="full-number" class="text-sm font-normal"
-                      >5444 1234 0000 5612</span
-                    >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="size-4 shrink-0 text-gray-400 dark:text-gray-400 dark:group-hover:text-gray-200"
-                    >
-                      <path
-                        d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z"
-                      />
-                      <path
-                        d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z"
-                      />
-                    </svg>
-                  </button>
+                  <div class="flex items-center gap-3.5">
+                    <span data-sx-vc="full-number" class="text-sm font-normal text-gray-700 dark:text-gray-300">5444 1234 0000 5612</span>
+                    <span data-sx-copy-slot="full-number" data-label="Card Number"></span>
+                  </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4 self-stretch">
                   <span
                     class="text-sm font-medium text-gray-900 dark:text-gray-100"
                     >Expires</span
                   >
-                  <button
-                    type="button"
-                    data-sx-copy="full-expiry"
-                    class="copy-btn group -ml-1 inline-flex focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 active:bg-gray-300 dark:text-gray-300 dark:hover:bg-white/10 dark:active:bg-white/15 cursor-pointer"
-                  >
-                    <span data-sx-vc="full-expiry" class="text-sm font-normal"
-                      >12/2026</span
-                    >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="size-4 shrink-0 text-gray-400 dark:text-gray-400 dark:group-hover:text-gray-200"
-                    >
-                      <path
-                        d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z"
-                      />
-                      <path
-                        d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z"
-                      />
-                    </svg>
-                  </button>
+                  <div class="flex items-center gap-3.5">
+                    <span data-sx-vc="full-expiry" class="text-sm font-normal text-gray-700 dark:text-gray-300">12/2026</span>
+                    <span data-sx-copy-slot="full-expiry" data-label="Expires"></span>
+                  </div>
                 </div>
                 <div class="grid grid-cols-2 gap-4 self-stretch">
                   <span
                     class="text-sm font-medium text-gray-900 dark:text-gray-100"
                     >CVC2</span
                   >
-                  <button
-                    type="button"
-                    data-sx-copy="cvc2"
-                    class="copy-btn group -ml-1 inline-flex focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 w-fit items-center gap-1.5 rounded-md px-1.5 py-0.5 text-gray-700 transition-colors hover:bg-gray-200 active:bg-gray-300 dark:text-gray-300 dark:hover:bg-white/10 dark:active:bg-white/15 cursor-pointer"
-                  >
-                    <span data-sx-vc="cvc2" class="text-sm font-normal">999</span>
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                      class="size-4 shrink-0 text-gray-400 dark:text-gray-400 dark:group-hover:text-gray-200"
-                    >
-                      <path
-                        d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z"
-                      />
-                      <path
-                        d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z"
-                      />
-                    </svg>
-                  </button>
+                  <div class="flex items-center gap-3.5">
+                    <span data-sx-vc="cvc2" class="text-sm font-normal text-gray-700 dark:text-gray-300">999</span>
+                    <span data-sx-copy-slot="cvc2" data-label="CVC2"></span>
+                  </div>
                 </div>
               </div>
 

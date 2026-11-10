@@ -42,6 +42,7 @@ state and add a row here in the same change. Tokens: see the `design-system` ski
 | Step change + loading | `OnboardingTransitions` / `OBGo(href)` (`onboarding-transitions.js`); mark token values with `data-ob-skeleton`, async content with `OnboardingTransitions.waitFor(promise)` |
 | Token data | `SDOnboardingContext.bootstrap()` / `getState()` / `saveState()` |
 | Dialog shell | `OBModal` (blur, Esc, focus trap); `OBContact` = Contact Us |
+| Copy value button | `OBModal.copyButton(label, value)`: 18px icon button, hover chip, "Copy"/"Copied" tooltip, green check; click handled by OBModal. Used by the Contact Us card (`copyRow`) and SX card details (`sx-enroll-complete.js`). Don't build another copy button. |
 | Text field | `OBField` — SMART System „Text Field [New]" with default/hover/focus/disabled/error |
 | Sign to authorize | `OBSign.open({ name, allowedPattern, allowedMessage, onSigned })` |
 | Consents | `OBConsents.mount(listEl, agreements, { stateKey, onChange, documentScroll })` — `documentScroll` (SX only): the grey box hugs the text, the dialog body scrolls it, white bottom fade + centred round gray (bg-gray-100, 2px white inset-ring) "scroll down" button until the end (both hide there) (Accept unlocks there) |
