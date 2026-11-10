@@ -33,6 +33,14 @@
     ],
     "consumer-my-profile.html": [{ label: "My Profile", href: null }],
     "my-company-profile.html": [{ label: "My Company Profile", href: null }],
+    "user-management.html": [
+      { label: "Settings", href: "user-management.html" },
+      { label: "User Management", href: null },
+    ],
+    "business-details.html": [
+      { label: "Settings", href: "user-management.html" },
+      { label: "Business Details", href: null },
+    ],
   };
 
   function normalizePageFile(file) {
@@ -60,6 +68,8 @@
       "consumer-payment-preferences.html": "Payment Preferences",
       "consumer-my-profile.html": "My Profile",
       "my-company-profile.html": "My Company Profile",
+      "user-management.html": "User Management",
+      "business-details.html": "Business Details",
     };
     return map[file] || "Dashboard";
   }
@@ -638,9 +648,7 @@
       idBadge(active) +
       "      </span>" +
       "    </div>" +
-      '    <a href="' +
-      currentAccountLinks().profile.href +
-      '" class="' +
+      '    <a href="business-details.html" class="' +
       secondaryBtn +
       '">Business Details</a>' +
       "  </div>" +
@@ -1161,6 +1169,10 @@
       ).forEach(function (node) {
         node.textContent = personName;
       });
+      // The greeting truncates on phones: keep the full text as its tooltip.
+      this.querySelectorAll("[data-topbar-greeting]").forEach(function (node) {
+        node.title = "Hello, " + personName;
+      });
       this.querySelectorAll("[data-topbar-profile-email]").forEach(
         function (node) {
           node.textContent = personEmail;
@@ -1338,7 +1350,7 @@
         '        <span class="sr-only">Open sidebar</span>' +
         '        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M2 5.75A.75.75 0 0 1 2.75 5h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 5.75Zm0 4.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 4.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 14.25Z" /></svg>' +
         "      </button>" +
-        "      <p class=\"min-w-0 truncate font-['Inter'] text-2xl font-bold leading-8 text-gray-900 dark:text-white\">Hello, <span data-topbar-greeting-name>Johnny Anderson</span></p>" +
+        "      <p data-topbar-greeting title=\"Hello, Johnny Anderson\" class=\"min-w-0 truncate font-['Inter'] text-2xl font-bold leading-8 text-gray-900 dark:text-white\">Hello, <span data-topbar-greeting-name>Johnny Anderson</span></p>" +
         "    </div>" +
         '    <div class="flex shrink-0 items-center gap-6">' +
         '      <button type="button" data-topbar-notification-trigger data-consumer-notification-trigger aria-haspopup="dialog" aria-label="Notifications, 6 unread" class="group relative flex size-9 shrink-0 items-center justify-center rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-600 active:bg-gray-200 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:active:bg-white/10 cursor-pointer">' +

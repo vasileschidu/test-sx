@@ -1,0 +1,195 @@
+{
+  "version": 4,
+  "currentUserId": "u-johnny-anderson",
+  "business": {
+    "id": "big-kahuna-burger",
+    "name": "Big Kahuna Burger Ltd",
+    "status": "Active",
+    "createdOn": "2023-06-09",
+    "businessId": "663271",
+    "applications": [
+      {
+        "id": "smart-enroll",
+        "name": "SMART Enroll",
+        "status": "under-review",
+        "note": "Edits are only possible in SMART Enroll",
+        "portalHref": "../sx-enroll/index.html"
+      },
+      {
+        "id": "smart-hub",
+        "name": "SMART Hub",
+        "status": "in-progress",
+        "note": "Edits are only possible in SMART Enroll",
+        "portalHref": "bills-and-payables.html"
+      }
+    ],
+    "settings": {
+      "achDebit": false
+    }
+  },
+  "roles": [
+    {
+      "id": "admin",
+      "name": "Admin",
+      "description": "Manages users, roles and every business setting."
+    },
+    {
+      "id": "full-access",
+      "name": "Full Access",
+      "description": "Can view and change everything except users and roles."
+    },
+    {
+      "id": "view-only",
+      "name": "View Only",
+      "description": "Can view every page, but cannot change anything."
+    },
+    {
+      "id": "edit-bills",
+      "name": "Edit Bills",
+      "description": "Can create, edit and approve bills and payables."
+    },
+    {
+      "id": "analyst",
+      "name": "Analyst",
+      "description": "Can view insights and export reports."
+    },
+    {
+      "id": "connect-onboarding-analyst",
+      "name": "Connect Onboarding Analyst",
+      "description": "Reviews and completes vendor onboarding in Connect."
+    }
+  ],
+  "users": [
+    {
+      "id": "u-johnny-anderson",
+      "firstName": "Johnny",
+      "lastName": "Anderson",
+      "email": "j.anderson@mail.com",
+      "roleIds": [
+        "admin"
+      ],
+      "status": "active",
+      "owner": true,
+      "phone": "+1 (555) 987-6543",
+      "photo": "assets/topbar/avatar.png"
+    },
+    {
+      "id": "u-cody-fisher",
+      "firstName": "Cody",
+      "lastName": "Fisher",
+      "email": "cody.fisher@bigkahunaburger.com",
+      "roleIds": [
+        "full-access"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-esther-howard",
+      "firstName": "Esther",
+      "lastName": "Howard",
+      "email": "esther.howard@bigkahunaburger.com",
+      "roleIds": [
+        "view-only"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-jenny-wilson",
+      "firstName": "Jenny",
+      "lastName": "Wilson",
+      "email": "jenny.wilson@bigkahunaburger.com",
+      "roleIds": [
+        "admin",
+        "edit-bills",
+        "view-only",
+        "analyst",
+        "connect-onboarding-analyst"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-kristin-watson",
+      "firstName": "Kristin",
+      "lastName": "Watson",
+      "email": "kristin.watson@bigkahunaburger.com",
+      "roleIds": [
+        "analyst"
+      ],
+      "status": "inactive"
+    },
+    {
+      "id": "u-cameron-williamson",
+      "firstName": "Cameron",
+      "lastName": "Williamson",
+      "email": "cameron.williamson@bigkahunaburger.com",
+      "roleIds": [
+        "edit-bills"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-leslie-alexander",
+      "firstName": "Leslie",
+      "lastName": "Alexander",
+      "email": "leslie.alexander@bigkahunaburger.com",
+      "roleIds": [
+        "connect-onboarding-analyst"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "u-guy-hawkins",
+      "firstName": "Guy",
+      "lastName": "Hawkins",
+      "email": "guy.hawkins@bigkahunaburger.com",
+      "roleIds": [
+        "admin",
+        "edit-bills",
+        "view-only",
+        "analyst"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-robert-fox",
+      "firstName": "Robert",
+      "lastName": "Fox",
+      "email": "robert.fox@bigkahunaburger.com",
+      "roleIds": [
+        "full-access"
+      ],
+      "status": "inactive"
+    },
+    {
+      "id": "u-jacob-jones",
+      "firstName": "Jacob",
+      "lastName": "Jones",
+      "email": "jacob.jones@bigkahunaburger.com",
+      "roleIds": [
+        "view-only"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-darlene-robertson",
+      "firstName": "Darlene",
+      "lastName": "Robertson",
+      "email": "darlene.robertson@bigkahunaburger.com",
+      "roleIds": [
+        "edit-bills",
+        "analyst"
+      ],
+      "status": "pending"
+    },
+    {
+      "id": "u-wade-warren",
+      "firstName": "Wade",
+      "lastName": "Warren",
+      "email": "wade.warren@bigkahunaburger.com",
+      "roleIds": [
+        "admin"
+      ],
+      "status": "active"
+    }
+  ]
+}

@@ -45,3 +45,11 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-06 [dark-mode] A hex/class→dark: bulk script must skip tokens whose variant chain already contains `dark:` (else `dark:dark:text-…`), and `classList.toggle/add("a dark:b")` with a space throws InvalidCharacterError — split into two calls. Grep both after every bulk run.
 - 2026-11-06 [dark-mode] `inset-ring-gray-300` (secondary buttons) needs `dark:inset-ring-white/10`; green status badges/banners `bg-green-50`→`dark:bg-green-500/10` + `text-green-700`→`dark:text-green-400`.
 - 2026-11-06 [dark-mode] Scratchpad is shared by parallel agents: don't reuse/rely on a helper (conv.py) between runs — copy it to a private name first. First-run pixel "before" of a page can differ from a later baseline of the same code (flake): re-capture a baseline before blaming the change.
+- 2026-11-10 [shell][user-management] A new dashboard page needs 4 shell edits: nav.json + app-plans (href, `moduleForPage`),
+  nav-component (`APP_NAV_PAGE_MAP` + fallback NAV), topbar (breadcrumb + title maps). Pages outside shell-navigation's
+  PAGE_CONFIGS just do a full load — no SPA config needed.
+- 2026-11-10 [modal][a11y] el-dialog restores focus to its trigger on close; if the action removed that row, focus the
+  next target in the dialog's `close` event (setTimeout 0), not right after `dialog.close()`.
+- 2026-11-10 [qa] `clipped-text-no-tooltip` on `p.min-w-0.truncate` @390 on every dashboard page = topbar greeting; fixed with a title.
+- 2026-11-10 [figma][user-management] Built without Figma once and had to redo tabs, badges, actions and a whole page: if no
+  Figma screenshot is reachable, ask the coordinator for PNGs before building, don't infer layout from a text brief.

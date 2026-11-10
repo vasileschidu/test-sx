@@ -100,7 +100,18 @@ const APP_NAV_DATA = [
     id: "settings",
     label: "Settings",
     icon: "settings",
-    children: [{ id: "user-management", label: "User Management", href: "#" }],
+    children: [
+      {
+        id: "business-details",
+        label: "Business Details",
+        href: "business-details.html",
+      },
+      {
+        id: "user-management",
+        label: "User Management",
+        href: "user-management.html",
+      },
+    ],
   },
   {
     type: "expandable",
@@ -141,6 +152,8 @@ const APP_NAV_PAGE_MAP = {
   "consumer-payment-preferences.html": "cp-payment-preferences",
   "consumer-my-profile.html": "my-profile",
   "my-company-profile.html": "my-company-profile",
+  "user-management.html": "user-management",
+  "business-details.html": "business-details",
 };
 
 const APP_NAV_REACT_ROUTE_MAP = {

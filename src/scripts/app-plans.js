@@ -153,7 +153,16 @@ window.AppPlans = (function () {
         label: "Settings",
         icon: "settings",
         children: [
-          { id: "user-management", label: "User Management", href: "#" },
+          {
+            id: "business-details",
+            label: "Business Details",
+            href: "business-details.html",
+          },
+          {
+            id: "user-management",
+            label: "User Management",
+            href: "user-management.html",
+          },
         ],
       },
       // The SX instance (Figma 34510:42009): Settings is open and holds My
@@ -517,6 +526,8 @@ window.AppPlans = (function () {
       "vendors.html": "vendors",
       "vendor-profile.html": "vendors",
       "my-company-profile.html": "my-company-profile",
+      "user-management.html": "settings",
+      "business-details.html": "settings",
       "ap-ar-payments.html": "ap-ar",
       "payment-program-configuration.html": "transcard-only",
       "consumer-payments-received.html": "payments-received",

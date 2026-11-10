@@ -140,6 +140,7 @@ Document preview: scroll box `h-96 lg:h-150 overflow-y-auto rounded-lg border bg
 `onboarding/loader.svg` `size-11 animate-spin` (`role="status"`), controls disabled. Invalid / used link: full-page `bg-gray-100`
 centred `max-w-sm rounded-lg bg-white p-6 text-center` card, `size-12 rounded-full bg-red-50` + `icon-x-circle-red.svg`, `type-title-small`.
 
+Toggle switch dark: track `dark:bg-white/5 dark:inset-ring-white/10 dark:outline-blue-500 dark:has-checked:bg-blue-500`.
 Toggle switch disabled: add `has-disabled:cursor-not-allowed has-disabled:opacity-50` on the track, `disabled:cursor-not-allowed` on the input.
 Password reveal: eye button `absolute top-1/2 right-2 size-7 -translate-y-1/2 rounded-md text-gray-400 hover:bg-gray-100` in the input's `relative` wrapper, `aria-pressed`.
 
@@ -181,6 +182,37 @@ business) and Date Initiated, as in the Figma STP table.
 Reuses SD's `OBDecline` (`onboarding-decline.js`, reasons `sd-decline.json`): sidebar card + `OB_MOBILE_MENU` item (not on
 complete / declined / sign-agreement). Confirm → `declined.html` (Figma 38146:80118): red document-cross icon, "Payment was
 Declined", Reason row in a bordered box; the reason is saved to the case as `enrol.declined`.
+
+### User Management list (`user-management.js`, Figma User Management 6.0–6.4)
+Data `UMStore` (`um-store.js`): `load()`, `getUsers/getUser/getRoles/getRole/getCurrentUser/getBusiness`, `removeUser(id)`,
+`setBusinessSetting(k, v)`, `onChange(fn)`, `reset()`; seed `src/data/user-management.json` (bump `version` + `SEED_VERSION`
+to reseed), localStorage `sx_um_v1`.
+- **Icon pill tabs** (own white card `p-4`): `role="tab"` buttons `group inline-flex gap-2 rounded-md px-3 py-2 type-label-large
+  text-gray-600 hover:bg-gray-50 aria-selected:bg-gray-100 aria-selected:text-gray-900` (+ dark `white/5`·`white/10`), size-6
+  outline icon `text-gray-400 group-aria-selected:text-blue-600`; arrow keys move between tabs.
+- **Table → cards**: same rows twice — `table` in `hidden md:block`, `ul.divide-y md:hidden` cards. Header and row lines
+  solid (no dashed). Pagination copied from `vendors-page.js`, right under the last row (`border-t`, no `mt`, last row
+  `border-b-0`).
+- **Sort header** (Andrian, 2026-11-10): Figma's double selector inline as two `<path>`s on currentColor (size-5). Idle:
+  both halves `gray-400`, `group-hover:gray-600` (dark `gray-500`/`gray-300`). Sorted: the direction's half `blue-600`
+  (dark `blue-400`), the other `gray-300` (dark `gray-600`), label `gray-900`/white. Click the upper arrow = asc, lower =
+  desc, the active arrow again = off; click the label / keyboard = asc → desc → off. `aria-sort` on the `th`.
+- **Pinned actions column** (Bills/Payables principle): scroller `data-table-scroll mx-4 sm:mx-6 overflow-x-auto` (margin,
+  not padding, so the column pins at the card edge), table `min-w-4xl xl:min-w-0`. When it overflows, the action `th`/`td`
+  (`data-action-column`, opaque bg incl. `group-hover`) get `sticky right-0 z-10` plus a `::before` edge gradient
+  `right-full w-6 bg-linear-to-l from-black/5` (dark `from-black/20`). No divider line, and no box-shadow: a per-cell
+  shadow fades at every row and shows seams.
+- **Avatar**: photo `size-10 rounded-full object-cover`, else initials on a solid colour (`bg-purple-500`…) + white text.
+- **Status pill with icon**: `rounded-full px-2 py-0.5 type-label-small gap-1` + size-3.5 icon — Active green-100/800 check-circle,
+  Inactive gray-100/700 link-off, Pending amber-100/800 clock (dark `{c}-400/10`·`{c}-400`). "Me" badge blue-100/800 pill.
+- **Row action button group**: `isolate inline-flex rounded-md shadow-xs` with 32px `inset-ring inset-ring-gray-300` buttons
+  (`rounded-l-md` / `-ml-px rounded-r-md`), size-4 icons, `data-tooltip` "Edit Profile" / "Delete"; the owner row has edit only.
+- **"+N" chip** `rounded-full bg-gray-100 px-1.5 type-label-small` → "Roles for: <b>name</b>" list dialog (full-height on phones).
+- **Destructive confirm** = Vendors `vn-confirm-dialog` layout (X, centred size-11 red triangle, full-width red + bordered Cancel).
+- **Business Details** (`business-details.html`, Settings › Business Details + switcher button): bordered header card (name
+  `text-2xl` + Status / Created On / Business ID columns `sm:divide-x`, ID with `OBModal.copyButton` — load `onboarding-modal.js`),
+  app cards (`rounded-md border-gray-300 p-4`, status pill Under Review blue / In Progress gray, "Go to Portal" ↗ link),
+  settings row (text `max-w-md` + toggle + "Off/On" label).
 
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).

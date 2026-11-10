@@ -743,7 +743,8 @@ function settingsFlyoutEntries() {
       });
     });
   } else {
-    items.push({ label: "User Management", href: "#" });
+    items.push({ label: "Business Details", href: "business-details.html" });
+    items.push({ label: "User Management", href: "user-management.html" });
   }
   return items;
 }
