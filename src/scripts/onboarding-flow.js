@@ -344,6 +344,20 @@ window.OBFlow = (function () {
     var pages = ['allocation', 'payment-closed', 'payment-status', 'declined'];
     if (!isMultiParty() || pages.indexOf(here) === -1 || document.querySelector('[data-mp-demo]')) return;
     var mp = getMp();
+    // A closed / declined screen reached from Payment Status keeps the Payment Status options.
+    var statusSet = onStatus || (here !== 'allocation' && /^payment-status/.test(mp.returnTo || ''));
+    // Unset "Other parties": Payment Status counts whoever accepted the allocation as
+    // submitted, so show that as the picked option.
+    function derivedProgress() {
+      var accepted = current(mp).accepted || {};
+      var list = others(mp);
+      var done = list.filter(function (p) { return accepted[p.id]; }).length;
+      return done === 0 ? 'none' : done === list.length ? 'all' : 'some';
+    }
+    function value(name) {
+      if (name === 'othersProgress' && mp.othersProgress === undefined) return derivedProgress();
+      return mp[name];
+    }
 
     // Segmented control: one row of options, the picked one raised (components skill).
     function segmented(name, title, options) {
@@ -353,7 +367,7 @@ window.OBFlow = (function () {
         '<div class="grid ' + cols + ' gap-1 rounded-lg bg-gray-100 p-1 dark:bg-white/5">' +
           options.map(function (o) {
             return '<label class="relative flex min-h-8 cursor-pointer items-center justify-center rounded-md px-1.5 py-1 text-center text-xs leading-4 font-medium text-gray-600 hover:bg-white/60 hover:text-gray-900 has-checked:bg-white has-checked:text-gray-900 has-checked:shadow-xs has-checked:ring-1 has-checked:ring-gray-900/5 has-focus-visible:outline-2 has-focus-visible:outline-offset-1 has-focus-visible:outline-blue-600 has-disabled:cursor-not-allowed has-disabled:opacity-50 has-disabled:hover:bg-transparent dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white dark:has-checked:bg-white/15 dark:has-checked:text-white dark:has-checked:ring-white/10 dark:has-focus-visible:outline-blue-400">' +
-              '<input type="radio" name="' + name + '" value="' + o[0] + '"' + (String(mp[name]) === o[0] ? ' checked' : '') + ' class="sr-only">' + o[1] +
+              '<input type="radio" name="' + name + '" value="' + o[0] + '"' + (String(value(name)) === o[0] ? ' checked' : '') + ' class="sr-only">' + o[1] +
             '</label>';
           }).join('') +
         '</div>' +
@@ -380,10 +394,10 @@ window.OBFlow = (function () {
         '</div>' +
         '<div class="flex min-h-0 flex-col gap-4 overflow-y-auto px-4 py-4">' +
           // Payment Status: what can still happen after the user has submitted.
-          (onStatus ? segmented('othersProgress', 'Other parties', [['none', 'Still choosing'], ['some', 'Some submitted'], ['all', 'All submitted']]) : '') +
+          (statusSet ? segmented('othersProgress', 'Other parties', [['none', 'Still choosing'], ['some', 'Some submitted'], ['all', 'All submitted']]) : '') +
           segmented('payment', 'Payment', [['active', 'Active'], ['expired', 'Expired'], ['revoked', 'Revoked'], ['declined', 'Declined']]) +
           segmented('fallback', 'Fallback check to primary party', [['true', 'Yes'], ['false', 'No']]) +
-          (onStatus ? '' :
+          (statusSet ? '' :
             segmented('role', 'You are', [['primary', 'Primary party'], ['party', 'Other party']]) +
             segmented('parties', 'Parties', [['2', '2'], ['3', '3'], ['5', '5']]) +
             segmented('scenario', 'Allocation', [['first', 'Nobody accepted'], ['some', 'Others accepted'], ['zero', 'Your share is $0']])) +
