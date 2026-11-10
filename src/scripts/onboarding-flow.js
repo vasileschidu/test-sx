@@ -393,9 +393,9 @@ window.OBFlow = (function () {
           '<button type="button" data-mp-demo-close aria-label="Close" class="-mr-1 inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 active:bg-gray-200 focus-visible:outline-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-200 dark:active:bg-white/15 dark:focus-visible:outline-blue-400">' + ICON_X + '</button>' +
         '</div>' +
         '<div class="flex min-h-0 flex-col gap-4 overflow-y-auto px-4 py-4">' +
+          segmented('payment', 'Payment', [['active', 'Active'], ['expired', 'Expired'], ['revoked', 'Revoked'], ['declined', 'Declined']]) +
           // Payment Status: what can still happen after the user has submitted.
           (statusSet ? segmented('othersProgress', 'Other parties', [['none', 'Still choosing'], ['some', 'Some submitted'], ['all', 'All submitted']]) : '') +
-          segmented('payment', 'Payment', [['active', 'Active'], ['expired', 'Expired'], ['revoked', 'Revoked'], ['declined', 'Declined']]) +
           segmented('fallback', 'Fallback check to primary party', [['true', 'Yes'], ['false', 'No']]) +
           (statusSet ? '' :
             segmented('role', 'You are', [['primary', 'Primary party'], ['party', 'Other party']]) +
