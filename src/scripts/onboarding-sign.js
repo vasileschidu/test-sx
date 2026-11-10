@@ -68,7 +68,7 @@ window.OBSign = (function () {
             '<p id="ob-sign-name-error" data-sign-name-error class="hidden ' + F.ERROR_TEXT + '"></p>' +
           '</div>' +
           '<div class="' + PAD + ' border-gray-200 dark:border-white/10 px-6">' +
-            '<p data-sign-preview aria-hidden="true" class="line-clamp-3 w-full text-center font-[\'Meow_Script\',cursive] text-[56px] leading-[64px] wrap-anywhere text-black dark:text-white"></p>' +
+            '<p data-sign-preview aria-hidden="true" class="-mb-3 line-clamp-3 w-full pb-3 text-center font-[\'Meow_Script\',cursive] text-[56px] leading-[64px] wrap-anywhere text-black dark:text-white"></p>' +
           '</div>' +
         '</div>' +
       '</div>';
