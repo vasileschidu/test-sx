@@ -76,7 +76,8 @@
     return '<li class="flex flex-col">' +
       '<div class="flex min-h-10 items-center justify-between gap-3">' +
         '<div class="flex min-w-0 items-center gap-2.5">' +
-          '<img src="' + ASSETS + 'avatar.svg" alt="" width="24" height="24" class="size-6 shrink-0">' +
+          '<img src="' + ASSETS + 'avatar.svg" alt="" width="24" height="24" class="size-6 shrink-0 dark:hidden">' +
+          '<img src="' + ASSETS + 'avatar-dark.svg" alt="" width="24" height="24" class="hidden size-6 shrink-0 dark:block">' +
           '<div class="flex min-w-0 flex-col text-sm leading-5 font-medium">' +
             '<span data-ob-skeleton class="truncate text-gray-900 dark:text-white">' + esc(p.name) + '</span>' +
             (sub ? '<span data-ob-skeleton class="text-gray-500 dark:text-gray-400">' + sub + '</span>' : '') +
