@@ -4,7 +4,8 @@
  *   UMUi.escapeHtml(v), .fullName(user), .initials(user), .roleNames(user)
  *   UMUi.avatar(user, { size, text })  photo (path under src/ or data URL) or initials
  *                                      on a solid colour (Figma 6.0)
- *   UMUi.statusBadge(user)             pill with a leading icon: Active / Inactive / Pending
+ *   UMUi.statusBadge(user)             pill with a leading icon: Active / Inactive / Invitation Sent /
+ *                                      Expired / Requires Action (UMStore.getUserStatus)
  *   UMUi.withViewer(href)              keeps ?as=member on links between UM pages
  *   UMUi.syncTopbar()                  shows Me's name / photo in <app-topbar> on UM pages
  *                                      (data-topbar-* hooks; the avatar <img> has no hook)
@@ -31,9 +32,22 @@ window.UMUi = (function () {
       cls: "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300",
       iconCls: "text-gray-500 dark:text-gray-400",
     },
-    pending: {
-      label: "Pending",
+    // Figma 6.9i: blue pill with a dashed circle.
+    invited: {
+      label: "Invitation Sent",
+      icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2" aria-hidden="true" class="size-3.5 shrink-0"><circle cx="8" cy="8" r="6" /></svg>',
+      cls: "bg-blue-100 text-blue-800 dark:bg-blue-400/10 dark:text-blue-400",
+      iconCls: "text-blue-500 dark:text-blue-400",
+    },
+    expired: {
+      label: "Expired",
       icon: ICON_CLOCK,
+      cls: "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300",
+      iconCls: "text-gray-500 dark:text-gray-400",
+    },
+    "requires-action": {
+      label: "Requires Action",
+      icon: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" d="M6.701 2.25c.577-1 2.02-1 2.598 0l5.196 9a1.5 1.5 0 0 1-1.299 2.25H2.804a1.5 1.5 0 0 1-1.3-2.25l5.197-9ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 1 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" /></svg>',
       cls: "bg-amber-100 text-amber-800 dark:bg-amber-400/10 dark:text-amber-400",
       iconCls: "text-amber-500 dark:text-amber-400",
     },
@@ -59,6 +73,11 @@ window.UMUi = (function () {
 
   function fullName(user) {
     return ((user.firstName || "") + " " + (user.lastName || "")).trim();
+  }
+
+  /** The name a list shows: "-" for people added without a name (Figma 6.9i Requires Action). */
+  function displayName(user) {
+    return fullName(user) || "-";
   }
 
   function initials(user) {
@@ -90,6 +109,13 @@ window.UMUi = (function () {
   function avatar(user, opts) {
     var size = (opts && opts.size) || "size-10";
     var text = (opts && opts.text) || "text-base";
+    // No name yet (Requires Action): gray placeholder person, as in Figma 6.9i.
+    if (!user.photo && !initials(user))
+      return (
+        '<span aria-hidden="true" class="flex ' +
+        size +
+        ' shrink-0 overflow-hidden rounded-full bg-gray-100 text-gray-300 dark:bg-white/10 dark:text-gray-600"><svg viewBox="0 0 24 24" fill="currentColor" class="size-full"><path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" /></svg></span>'
+      );
     if (user.photo)
       return (
         '<img src="' +
@@ -112,7 +138,8 @@ window.UMUi = (function () {
   }
 
   function statusBadge(user) {
-    var status = STATUS[user.status] || STATUS.inactive;
+    var key = window.UMStore ? window.UMStore.getUserStatus(user) : user.status;
+    var status = STATUS[key] || STATUS.inactive;
     return (
       '<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 type-label-small whitespace-nowrap ' +
       status.cls +
@@ -175,6 +202,7 @@ window.UMUi = (function () {
     syncTopbar: syncTopbar,
     escapeHtml: escapeHtml,
     fullName: fullName,
+    displayName: displayName,
     initials: initials,
     roleNames: roleNames,
     avatar: avatar,

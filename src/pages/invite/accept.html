@@ -1,0 +1,50 @@
+<!--
+  @file invite/accept.html
+  @description The page an invitation email links to (User Management phase 3). No dashboard
+    shell. ?inv=<base64url JSON> carries the invite, so it works on any device. States: set up
+    your account → welcome; expired; revoked / unknown; already accepted; broken link.
+    Same browser as the inviter: accepting turns the user Active in UMStore. Logic: um-accept.js.
+-->
+<!doctype html>
+<html lang="en" class="h-full bg-gray-100 dark:bg-gray-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accept invitation · SMART Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="../../scripts/theme-init.js?v=20261109a"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+    <script src="../../scripts/tailwind-theme.js"></script>
+    <script src="../../scripts/design-tokens.js"></script>
+    <link rel="stylesheet" href="../../styles/cursor.css" />
+    <link rel="stylesheet" href="../../styles/checkbox.css" />
+    <script src="../../scripts/checkbox-component.js"></script>
+    <script src="../../scripts/data-source.js"></script>
+    <script src="../../scripts/onboarding-field.js?v=20261106a" defer></script>
+    <script src="../../scripts/um-store.js?v=20261110s7" defer></script>
+    <script src="../../scripts/um-email.js?v=20261110p3" defer></script>
+    <script src="../../scripts/um-accept.js?v=20261110p3" defer></script>
+  </head>
+  <body class="h-full font-['Inter'] antialiased">
+    <main class="flex min-h-full flex-col items-center px-4 py-10 sm:py-16">
+      <div class="flex w-full max-w-lg flex-col items-center gap-8">
+        <a href="../dashboard/user-management.html" class="rounded-md hover:opacity-80 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600">
+          <img src="../../assets/illustrations/SMART%20Hub.svg" width="131" height="33" alt="SMART Hub" class="h-8 w-auto dark:hidden" />
+          <img src="../../assets/illustrations/SMART%20Hub%20Dark.svg" width="131" height="33" alt="SMART Hub" class="hidden h-8 w-auto dark:block" />
+        </a>
+        <section id="ua-card" aria-live="polite" aria-busy="true" class="w-full rounded-lg bg-white p-6 shadow-sm ring-1 ring-gray-900/5 sm:p-8 dark:bg-gray-900 dark:ring-white/10">
+          <div class="flex animate-pulse flex-col gap-3" aria-hidden="true">
+            <div class="h-6 w-2/3 rounded bg-gray-200 dark:bg-white/15"></div>
+            <div class="h-4 w-1/2 rounded bg-gray-200 dark:bg-white/15"></div>
+          </div>
+        </section>
+        <p class="type-caption text-tertiary">Powered by Transcard</p>
+      </div>
+    </main>
+  </body>
+</html>

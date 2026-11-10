@@ -89,6 +89,17 @@ Options: name `font-normal group-aria-selected/option:font-semibold`. Two-line o
 one-line selected value: two-line block `in-[el-selectedcontent]:hidden` + a
 `hidden in-[el-selectedcontent]:block truncate` span.
 
+### Information circle + Tooltip (SMART System `PdvEp0MAIlof6O8MYaXCcy` 9352:21601, Size=Big, Bottom Text)
+For a longer explanation next to a label (role descriptions in `um-invite.js`). Not the shell `data-tooltip` chip
+(12px, centred, max 220px), which stays for short button labels.
+- Wrapper `group/info relative inline-flex size-5 items-center justify-center`; trigger `span[tabindex=0][role=button]`
+  with `aria-describedby`, Heroicons v2 mini `information-circle` at `size-4.5`, `text-gray-400 hover:text-gray-900`
+  (dark `gray-500` → white); no outline on hover, focus-visible outline only.
+- Tooltip `role="tooltip"`: `absolute top-full left-1/2 mt-3 -translate-x-2/5 w-max max-w-64 sm:max-w-[343px] rounded-lg
+  bg-gray-900 p-3 text-sm/5 font-normal text-gray-100 text-left shadow-xs`, arrow `before:` 12px rotated square at
+  `left-2/5`; shown by `group-hover/info` and `group-has-focus-visible/info` (invisible + opacity-0 otherwise);
+  dark `bg-gray-950 ring-1 ring-white/10`. The 2/5 offset keeps it inside a dialog's left column.
+
 ### Buttons
 - Secondary: `bg-white text-gray-900 font-semibold shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50`;
   sizes xs `rounded-sm px-2 py-1 text-xs` · sm `rounded-sm px-2 py-1 text-sm` · md `rounded-md px-2.5 py-1.5 text-sm`
@@ -226,6 +237,23 @@ Store: `UMStore.getViewer()` (`?as=member` → View Only member, kept in session
   `OBField.setError`) `sm:max-w-xs` + Cancel (secondary md) / Save (primary md) `sm:w-26`. One row at a time; Enter saves, Esc
   cancels, focus returns to Update. Read-only rows (Email) have no Update.
 - **Member list view** (6.5): no Add New User; only the Me row has one `rounded-md` edit link "Edit my profile"; Me first.
+
+### Invite flow (`um-invite.js`, `um-email.js`, `invite/accept.html`; Figma User Management 6.9i–6.13)
+- `UMInvite.open({ email, onDone })` injects + opens "Invite Business Member" (wide two-column dialog, phone = full-height
+  sheet): OBField inputs (leading icon = absolute size-5 svg + `pl-10`; read-only prefilled email `read-only:bg-gray-50`),
+  Optional hint, `OBField.TEXTAREA` message, **role checkbox cards** (`label` card `rounded-lg border p-4 has-checked:border-blue-600
+  has-checked:ring-1` + bare `<app-checkbox>` + name + **Information circle + Tooltip** (below) (click doesn't toggle) + `type-caption` apps),
+  **permission accordion** (button `aria-expanded` + chevron `group-aria-expanded:rotate-90` + name + app caption; chips
+  `rounded-full bg-gray-100 px-2.5 py-0.5 type-body`). Send = loading button (spinner + "Sending…").
+- `UMInvite.showResult(inv, result, { resent })` = Vendors result dialog + green check; when the email wasn't sent: gray box with
+  reason, read-only link field + `OBModal.copyButton` + "Open in email app" mailto.
+- Dynamically inserted `<el-dialog>` initialises a tick later: open it on the next frame (`whenReady`), not right after insert.
+- Status pills: Invitation Sent (blue, dashed circle), Expired (gray clock), Requires Action (amber triangle); placeholder avatar
+  (Tailwind Plus gray person) and "-" name for rows without a name; "Send Invitation →" blue link button in the Role column.
+- Row actions: Invitation Sent = resend + revoke; Expired = resend + remove; Requires Action = delete only (same 32px group).
+- Accept page: standalone (logo, centred `max-w-lg` card); form = SX create-account fields/rules/eye + `<app-checkbox label>` terms
+  with `error`; status cards (`size-12 rounded-full` tinted tile + `type-title-modal`) for expired / revoked / already / broken / done.
+- Demo bar `#um-demo-bar` (pattern of `#sx-demo-bar`): fixed bottom-right pill, xs secondary buttons Simulate accept / Reset demo data.
 
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).

@@ -57,3 +57,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   ← company profile) silently undoes local edits: mark locally edited records (`nameEdited`) and skip the sync for them.
 - 2026-11-10 [shell][topbar] Page-level top-bar updates: name hooks are `data-topbar-greeting-name|profile-name|avatar-initials`;
   the avatar `<img>` has no hook (`button[aria-label="Open user menu"] img`); the topbar's own fill runs first on the same promise.
+- 2026-11-10 [modal][tailwind-plus] A `<el-dialog>` inserted by JS upgrades a tick later and closes its `<dialog>`: `showModal()`
+  right after insertion silently does nothing. Open on the next frame (rAF + setTimeout 0) the first time.
+- 2026-11-10 [user-management][test] E2E tests that look for a new row must widen the page size first (the row may land on page 2).

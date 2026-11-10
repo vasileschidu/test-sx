@@ -24,6 +24,7 @@
   };
   var refs = {};
   var pendingRemoveId = null;
+  var pendingRemoveMode = "user"; // "user" | "revoke" | "expired" | "requires-action"
 
   // Avatar, status badge and names are shared with the profile page (um-ui.js).
   var UI = window.UMUi;
@@ -81,8 +82,13 @@
       });
     } else {
       // Unsorted: Me first, then the owner, then the list as seeded (Figma 6.0 / 6.5).
+      // Figma 6.9i: invitations and Requires Action rows come right after Me / the owner.
       var rank = function (user) {
-        return isYou(user) ? 2 : user.owner ? 1 : 0;
+        if (isYou(user)) return 4;
+        if (user.owner) return 3;
+        var st = status(user);
+        if (st === "invited" || st === "expired") return 2;
+        return st === "requires-action" ? 1 : 0;
       };
       users.sort(function (a, b) {
         return rank(b) - rank(a);
@@ -118,7 +124,7 @@
   }
 
   function nameBlock(user) {
-    var name = fullName(user);
+    var name = UI.displayName(user);
     return (
       '<div class="flex min-w-0 items-center gap-3">' +
       avatar(user) +
@@ -140,7 +146,23 @@
     );
   }
 
+  var ICON_RESEND =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M15.312 11.424a5.5 5.5 0 0 1-9.201 2.466l-.312-.311h2.433a.75.75 0 0 0 0-1.5H3.989a.75.75 0 0 0-.75.75v4.242a.75.75 0 0 0 1.5 0v-2.43l.31.31a7 7 0 0 0 11.712-3.138.75.75 0 0 0-1.449-.39Zm1.23-3.723a.75.75 0 0 0 .219-.53V2.929a.75.75 0 0 0-1.5 0V5.36l-.31-.31A7 7 0 0 0 3.239 8.188a.75.75 0 1 0 1.448.389A5.5 5.5 0 0 1 13.89 6.11l.311.31h-2.432a.75.75 0 0 0 0 1.5h4.243a.75.75 0 0 0 .53-.219Z" clip-rule="evenodd" /></svg>';
+
+  function status(user) {
+    return window.UMStore.getUserStatus(user);
+  }
+
   function rolesBlock(user) {
+    // Figma 6.9i: people added without an invitation get "Send Invitation →" instead of a role.
+    if (status(user) === "requires-action" && isAdmin())
+      return (
+        '<button type="button" data-um-send-invite="' +
+        escapeHtml(user.id) +
+        '" class="inline-flex cursor-pointer items-center gap-1 rounded-md type-body text-blue-600 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300">Send Invitation<span class="sr-only"> to ' +
+        escapeHtml(user.email) +
+        '</span><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path fill-rule="evenodd" d="M3 10a.75.75 0 0 1 .75-.75h10.638L10.23 5.29a.75.75 0 1 1 1.04-1.08l5.5 5.25a.75.75 0 0 1 0 1.08l-5.5 5.25a.75.75 0 1 1-1.04-1.08l4.158-3.96H3.75A.75.75 0 0 1 3 10Z" clip-rule="evenodd" /></svg></button>'
+      );
     var names = roleNames(user);
     if (!names.length) return '<span class="type-body text-tertiary">—</span>';
     var owner = user.owner
@@ -192,6 +214,46 @@
         "</a></span></div>"
       );
     }
+    var st = status(user);
+    var who = UI.displayName(user) === "-" ? user.email : name;
+    function trash(mode, tip, label) {
+      return (
+        '<button type="button" data-um-remove="' +
+        escapeHtml(user.id) +
+        '" data-um-remove-mode="' +
+        mode +
+        '" data-tooltip="' +
+        tip +
+        '" aria-label="' +
+        escapeHtml(label + " " + who) +
+        '" class="' +
+        GROUP_BUTTON
+      );
+    }
+    function group(inner) {
+      return '<div class="flex justify-end"><span class="isolate inline-flex rounded-md shadow-xs dark:shadow-none">' + inner + "</span></div>";
+    }
+    // Requires Action (6.9i): only delete. Invitation Sent: resend + revoke. Expired: resend + remove.
+    if (st === "requires-action")
+      return group(trash("requires-action", "Delete", "Delete") + ' rounded-md">' + ICON_TRASH + "</button>");
+    if (st === "invited" || st === "expired")
+      return group(
+        '<button type="button" data-um-resend="' +
+          escapeHtml(user.id) +
+          '" data-tooltip="Resend invitation" aria-label="Resend invitation to ' +
+          escapeHtml(who) +
+          '" class="' +
+          GROUP_BUTTON +
+          ' rounded-l-md">' +
+          ICON_RESEND +
+          "</button>" +
+          (st === "invited"
+            ? trash("revoke", "Revoke invitation", "Revoke invitation for")
+            : trash("expired", "Remove", "Remove")) +
+          ' -ml-px rounded-r-md">' +
+          ICON_TRASH +
+          "</button>",
+      );
     var edit =
       '<a href="' +
       escapeHtml(profileHref(user)) +
@@ -266,7 +328,7 @@
     return (
       "<colgroup><col />" +
       '<col class="w-3/10" />' +
-      '<col class="w-28" />' +
+      '<col class="w-40" />' +
       '<col class="w-24" />' +
       "</colgroup>" +
       "<thead><tr>" +
@@ -504,15 +566,32 @@
 
   // ── Modals ──
 
-  function openRemove(userId) {
+  // One destructive confirm (Figma 6.2) for every way a row leaves the list.
+  var REMOVE_COPY = {
+    user: { title: "Remove User from Business", button: "Remove", text: "Are you sure you want to Remove User {who}?" },
+    revoke: {
+      title: "Revoke Invitation",
+      button: "Revoke",
+      text: "Are you sure you want to revoke the invitation for {who}? The link in their email will stop working.",
+    },
+    expired: { title: "Remove Invitation", button: "Remove", text: "Are you sure you want to remove the expired invitation for {who}?" },
+    "requires-action": { title: "Remove User from Business", button: "Remove", text: "Are you sure you want to remove {who} from this business?" },
+  };
+
+  function openRemove(userId, mode) {
     var user = window.UMStore.getUser(userId);
     var dialog = document.getElementById("um-remove-dialog");
     if (!user || !dialog) return;
     pendingRemoveId = user.id;
-    document.getElementById("um-remove-text").innerHTML =
-      'Are you sure you want to Remove User <span class="font-medium text-gray-900 dark:text-white">' +
-      escapeHtml(fullName(user)) +
-      "</span>?";
+    pendingRemoveMode = REMOVE_COPY[mode] ? mode : "user";
+    var copy = REMOVE_COPY[pendingRemoveMode];
+    var who = UI.displayName(user) === "-" ? user.email : fullName(user);
+    document.getElementById("um-remove-title").textContent = copy.title;
+    document.getElementById("um-remove-confirm").textContent = copy.button;
+    document.getElementById("um-remove-text").innerHTML = escapeHtml(copy.text).replace(
+      "{who}",
+      '<span class="font-medium text-gray-900 dark:text-white">' + escapeHtml(who) + "</span>",
+    );
     dialog.showModal();
   }
 
@@ -533,9 +612,25 @@
         },
         { once: true },
       );
+    var who = UI.displayName(user) === "-" ? user.email : fullName(user);
     if (window.UMStore.removeUser(user.id))
-      toast(fullName(user) + " was removed from " + businessName());
+      toast(
+        pendingRemoveMode === "revoke"
+          ? "Invitation for " + who + " was revoked"
+          : who + " was removed from " + businessName(),
+      );
     if (dialog) dialog.close();
+  }
+
+  function resend(userId, button) {
+    var inv = window.UMStore.resendInvitation(userId);
+    if (!inv) return;
+    if (button) button.disabled = true;
+    window.UMEmail.sendInvite(inv).then(function (result) {
+      if (button) button.disabled = false;
+      if (result.sent) toast("Invitation resent to " + inv.email);
+      else window.UMInvite.showResult(inv, result, { resent: true });
+    });
   }
 
   function openRoles(userId) {
@@ -565,7 +660,7 @@
     var addUser = document.getElementById("um-add-user");
     if (addUser)
       addUser.addEventListener("click", function () {
-        toast("Inviting users is not in this demo yet.", "info");
+        window.UMInvite.open();
       });
 
     var confirm = document.getElementById("um-remove-confirm");
@@ -582,13 +677,19 @@
     document.addEventListener("click", function (event) {
       var target = event.target.closest
         ? event.target.closest(
-            "[data-um-remove],[data-um-roles],[data-um-sort],[data-page-nav]",
+            "[data-um-remove],[data-um-roles],[data-um-sort],[data-page-nav],[data-um-resend],[data-um-send-invite]",
           )
         : null;
       if (!target || !document.getElementById("um-panel-users").contains(target))
         return;
       if (target.hasAttribute("data-um-remove"))
-        return openRemove(target.getAttribute("data-um-remove"));
+        return openRemove(target.getAttribute("data-um-remove"), target.getAttribute("data-um-remove-mode"));
+      if (target.hasAttribute("data-um-resend"))
+        return resend(target.getAttribute("data-um-resend"), target);
+      if (target.hasAttribute("data-um-send-invite")) {
+        var row = window.UMStore.getUser(target.getAttribute("data-um-send-invite"));
+        return row && window.UMInvite.open({ email: row.email });
+      }
       if (target.hasAttribute("data-um-roles"))
         return openRoles(target.getAttribute("data-um-roles"));
       if (target.hasAttribute("data-um-sort")) {
@@ -630,6 +731,67 @@
     });
   }
 
+  // ── Demo controls (pattern of sx-demo-case.js #sx-demo-bar): accept the newest pending
+  // invite as if its link had been opened, and reset the module's demo data. ──
+
+  var DEMO_BUTTON =
+    "rounded-sm px-2 py-1 text-xs font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 bg-white text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 active:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20 dark:disabled:hover:bg-white/10 cursor-pointer";
+
+  function newestPending() {
+    return window.UMStore.getUsers()
+      .filter(function (user) {
+        return status(user) === "invited";
+      })
+      .map(function (user) {
+        return window.UMStore.getInvitationForUser(user.id);
+      })
+      .filter(Boolean)
+      .sort(function (a, b) {
+        return String(b.sentAt).localeCompare(String(a.sentAt));
+      })[0];
+  }
+
+  function renderDemoBar() {
+    if (document.getElementById("um-demo-bar") || document.getElementById("sx-demo-bar")) return;
+    var bar = document.createElement("div");
+    bar.id = "um-demo-bar";
+    bar.setAttribute("role", "region");
+    bar.setAttribute("aria-label", "Demo controls");
+    bar.className =
+      "fixed right-4 bottom-4 z-40 flex items-center gap-2 rounded-lg bg-white py-1.5 pr-1.5 pl-3 shadow-lg ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-white/10";
+    bar.innerHTML =
+      '<span class="text-xs font-medium text-gray-500 dark:text-gray-400">Demo</span>' +
+      '<button type="button" data-um-demo="accept" class="' + DEMO_BUTTON + '">Simulate accept</button>' +
+      '<button type="button" data-um-demo="reset" class="' + DEMO_BUTTON + '">Reset demo data</button>';
+    document.body.appendChild(bar);
+    // Room under the card so the fixed bar never covers the pagination.
+    var main = document.querySelector("#main-content-wrapper main");
+    if (main) main.classList.add("pb-20");
+    bar.addEventListener("click", function (event) {
+      var button = event.target.closest("[data-um-demo]");
+      if (!button) return;
+      if (button.getAttribute("data-um-demo") === "reset") {
+        window.UMStore.reset().then(function () {
+          toast("Demo data reset");
+        });
+        return;
+      }
+      var inv = newestPending();
+      if (!inv) return;
+      window.UMStore.acceptInvitation(inv.id);
+      toast((inv.firstName + " " + inv.lastName).trim() + " accepted the invitation");
+    });
+    syncDemoBar();
+  }
+
+  function syncDemoBar() {
+    var accept = document.querySelector('[data-um-demo="accept"]');
+    if (!accept) return;
+    var inv = newestPending();
+    accept.disabled = !inv;
+    accept.title = inv ? "Accept the invitation for " + inv.email : "No invitation is waiting";
+  }
+
   function init() {
     refs.table = document.getElementById("um-users-table");
     refs.cards = document.getElementById("um-users-cards");
@@ -642,6 +804,7 @@
     renderSkeleton();
     window.UMStore.onChange(render);
     window.UMStore.onChange(UI.syncTopbar);
+    window.UMStore.onChange(syncDemoBar);
     window.UMStore.load()
       .then(function () {
         state.loaded = true;
@@ -649,6 +812,7 @@
         // Figma 6.5: a member can't invite users.
         var addUser = document.getElementById("um-add-user");
         if (addUser) addUser.hidden = !isAdmin();
+        if (isAdmin()) renderDemoBar();
         render();
       })
       .catch(function () {

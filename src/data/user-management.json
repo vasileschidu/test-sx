@@ -1,5 +1,5 @@
 {
-  "version": 4,
+  "version": 7,
   "currentUserId": "u-johnny-anderson",
   "business": {
     "id": "big-kahuna-burger",
@@ -29,34 +29,56 @@
   },
   "roles": [
     {
-      "id": "admin",
-      "name": "Admin",
-      "description": "Manages users, roles and every business setting."
-    },
-    {
       "id": "full-access",
       "name": "Full Access",
-      "description": "Can view and change everything except users and roles."
+      "description": "This role has full view and action capabilities for both Account Payables and Account Receivables. Additionally, the Business Owner can manage users and create Business-specific roles",
+      "apps": "SMART Hub & DevPortal",
+      "permissionIds": [
+        "um-view",
+        "ar-invoices",
+        "ar-invoice-details",
+        "ar-collect",
+        "ar-cancel",
+        "ar-rerun",
+        "ar-customers",
+        "ar-customer",
+        "ar-invite",
+        "ar-nudge",
+        "ar-renudge",
+        "ar-accept",
+        "ar-reject",
+        "ar-delete-link",
+        "ap-bills",
+        "ap-bill-details",
+        "ap-create",
+        "ap-approve",
+        "ap-pay",
+        "ap-vendors",
+        "ap-vendor",
+        "ap-invite",
+        "in-view",
+        "in-export",
+        "co-review",
+        "co-complete"
+      ]
     },
     {
       "id": "view-only",
       "name": "View Only",
-      "description": "Can view every page, but cannot change anything."
-    },
-    {
-      "id": "edit-bills",
-      "name": "Edit Bills",
-      "description": "Can create, edit and approve bills and payables."
-    },
-    {
-      "id": "analyst",
-      "name": "Analyst",
-      "description": "Can view insights and export reports."
-    },
-    {
-      "id": "connect-onboarding-analyst",
-      "name": "Connect Onboarding Analyst",
-      "description": "Reviews and completes vendor onboarding in Connect."
+      "description": "This role can view every list and detail page in Account Payables and Account Receivables, but cannot take any action.",
+      "apps": "SMART Hub & DevPortal",
+      "permissionIds": [
+        "um-view",
+        "ar-invoices",
+        "ar-invoice-details",
+        "ar-customers",
+        "ar-customer",
+        "ap-bills",
+        "ap-bill-details",
+        "ap-vendors",
+        "ap-vendor",
+        "in-view"
+      ]
     }
   ],
   "users": [
@@ -66,7 +88,7 @@
       "lastName": "Anderson",
       "email": "j.anderson@mail.com",
       "roleIds": [
-        "admin"
+        "full-access"
       ],
       "status": "active",
       "owner": true,
@@ -99,11 +121,8 @@
       "lastName": "Wilson",
       "email": "jenny.wilson@bigkahunaburger.com",
       "roleIds": [
-        "admin",
-        "edit-bills",
-        "view-only",
-        "analyst",
-        "connect-onboarding-analyst"
+        "full-access",
+        "view-only"
       ],
       "status": "active"
     },
@@ -113,7 +132,7 @@
       "lastName": "Watson",
       "email": "kristin.watson@bigkahunaburger.com",
       "roleIds": [
-        "analyst"
+        "view-only"
       ],
       "status": "inactive"
     },
@@ -123,7 +142,7 @@
       "lastName": "Williamson",
       "email": "cameron.williamson@bigkahunaburger.com",
       "roleIds": [
-        "edit-bills"
+        "full-access"
       ],
       "status": "active"
     },
@@ -133,9 +152,10 @@
       "lastName": "Alexander",
       "email": "leslie.alexander@bigkahunaburger.com",
       "roleIds": [
-        "connect-onboarding-analyst"
+        "view-only"
       ],
-      "status": "pending"
+      "status": "invited",
+      "invitationId": "inv-leslie"
     },
     {
       "id": "u-guy-hawkins",
@@ -143,10 +163,8 @@
       "lastName": "Hawkins",
       "email": "guy.hawkins@bigkahunaburger.com",
       "roleIds": [
-        "admin",
-        "edit-bills",
-        "view-only",
-        "analyst"
+        "full-access",
+        "view-only"
       ],
       "status": "active"
     },
@@ -176,10 +194,11 @@
       "lastName": "Robertson",
       "email": "darlene.robertson@bigkahunaburger.com",
       "roleIds": [
-        "edit-bills",
-        "analyst"
+        "full-access",
+        "view-only"
       ],
-      "status": "pending"
+      "status": "invited",
+      "invitationId": "inv-darlene"
     },
     {
       "id": "u-wade-warren",
@@ -187,9 +206,217 @@
       "lastName": "Warren",
       "email": "wade.warren@bigkahunaburger.com",
       "roleIds": [
-        "admin"
+        "full-access"
       ],
       "status": "active"
+    },
+    {
+      "id": "u-ra-savannah",
+      "firstName": "",
+      "lastName": "",
+      "email": "savannah.nguyen@bigkahunaburger.com",
+      "roleIds": [],
+      "status": "requires-action",
+      "source": "import"
+    },
+    {
+      "id": "u-ra-emil",
+      "firstName": "",
+      "lastName": "",
+      "email": "emil.schaefer@bigkahunaburger.com",
+      "roleIds": [],
+      "status": "requires-action",
+      "source": "import"
+    }
+  ],
+  "permissionCategories": [
+    {
+      "id": "user-management",
+      "name": "User Management",
+      "app": "SMART Hub & DevPortal",
+      "permissions": [
+        {
+          "id": "um-view",
+          "name": "View Users List"
+        },
+        {
+          "id": "um-invite",
+          "name": "Invite Users"
+        },
+        {
+          "id": "um-edit",
+          "name": "Edit User Profiles"
+        },
+        {
+          "id": "um-remove",
+          "name": "Remove Users"
+        },
+        {
+          "id": "um-roles",
+          "name": "Manage Roles"
+        }
+      ]
+    },
+    {
+      "id": "accounts-receivable",
+      "name": "Accounts Receivable",
+      "app": "SMART Hub",
+      "permissions": [
+        {
+          "id": "ar-invoices",
+          "name": "View Invoices List"
+        },
+        {
+          "id": "ar-invoice-details",
+          "name": "View Invoice Details"
+        },
+        {
+          "id": "ar-collect",
+          "name": "Initiate Collection on Invoice"
+        },
+        {
+          "id": "ar-cancel",
+          "name": "Cancel Scheduled Invoice"
+        },
+        {
+          "id": "ar-rerun",
+          "name": "Re-Run Invoice"
+        },
+        {
+          "id": "ar-customers",
+          "name": "View Customers List"
+        },
+        {
+          "id": "ar-customer",
+          "name": "View Customer Profile"
+        },
+        {
+          "id": "ar-invite",
+          "name": "Invite Customer to the Network"
+        },
+        {
+          "id": "ar-nudge",
+          "name": "Send a Nudge Link Request to the Customer"
+        },
+        {
+          "id": "ar-renudge",
+          "name": "Re-Send a Nudge Link Request to the Customer"
+        },
+        {
+          "id": "ar-accept",
+          "name": "Accept Link Request from Customer"
+        },
+        {
+          "id": "ar-reject",
+          "name": "Reject Link Request from Customer"
+        },
+        {
+          "id": "ar-delete-link",
+          "name": "Delete Link with Customer"
+        }
+      ]
+    },
+    {
+      "id": "accounts-payable",
+      "name": "Accounts Payable",
+      "app": "SMART Hub",
+      "permissions": [
+        {
+          "id": "ap-bills",
+          "name": "View Bills List"
+        },
+        {
+          "id": "ap-bill-details",
+          "name": "View Bill Details"
+        },
+        {
+          "id": "ap-create",
+          "name": "Create and Edit Bills"
+        },
+        {
+          "id": "ap-approve",
+          "name": "Approve Bills"
+        },
+        {
+          "id": "ap-pay",
+          "name": "Pay Bills"
+        },
+        {
+          "id": "ap-vendors",
+          "name": "View Vendors List"
+        },
+        {
+          "id": "ap-vendor",
+          "name": "View Vendor Profile"
+        },
+        {
+          "id": "ap-invite",
+          "name": "Invite Vendor to the Network"
+        }
+      ]
+    },
+    {
+      "id": "insights",
+      "name": "Insights",
+      "app": "SMART Hub",
+      "permissions": [
+        {
+          "id": "in-view",
+          "name": "View Insights"
+        },
+        {
+          "id": "in-export",
+          "name": "Export Reports"
+        }
+      ]
+    },
+    {
+      "id": "connect",
+      "name": "Connect Onboarding",
+      "app": "DevPortal",
+      "permissions": [
+        {
+          "id": "co-review",
+          "name": "Review Vendor Onboarding"
+        },
+        {
+          "id": "co-complete",
+          "name": "Complete Vendor Onboarding"
+        }
+      ]
+    }
+  ],
+  "invitations": [
+    {
+      "id": "inv-leslie",
+      "userId": "u-leslie-alexander",
+      "email": "leslie.alexander@bigkahunaburger.com",
+      "firstName": "Leslie",
+      "lastName": "Alexander",
+      "phone": "",
+      "roleIds": [
+        "view-only"
+      ],
+      "message": "Hi, please help me with setting up the company profile for SMART Hub.",
+      "status": "pending",
+      "sentDaysAgo": 2,
+      "invitedBy": "u-johnny-anderson"
+    },
+    {
+      "id": "inv-darlene",
+      "userId": "u-darlene-robertson",
+      "email": "darlene.robertson@bigkahunaburger.com",
+      "firstName": "Darlene",
+      "lastName": "Robertson",
+      "phone": "",
+      "roleIds": [
+        "full-access",
+        "view-only"
+      ],
+      "message": "Hi, please help me with setting up the company profile for SMART Hub.",
+      "status": "pending",
+      "sentDaysAgo": 9,
+      "invitedBy": "u-johnny-anderson"
     }
   ]
 }
