@@ -12,6 +12,10 @@
  *   UMStore.getBusiness()          → business details (Business Details page)
  *   UMStore.removeUser(id)         → removes the user from the business
  *   UMStore.setBusinessSetting(key, value)
+ *   UMStore.createRole({ name, description, permissionIds }) / updateRole(id, patch) → role | { error }
+ *   UMStore.deleteRole(id)         → { ok } | { ok:false, reason:"in-use", count }
+ *   UMStore.getRoleUsage(id)       → number of users (incl. invited) holding the role
+ *   UMStore.isRoleNameTaken(name, exceptId) / roleApps(permissionIds)
  *   UMStore.getPermissionCategories() / getUserStatus(user) ("expired" when an invite ran out)
  *   UMStore.findEmail(email)       → "user" | "invited" | null (requires-action rows don't count)
  *   UMStore.createInvitation(data) → { invitation, user } — a Requires Action row with that email is reused
@@ -31,7 +35,7 @@ window.UMStore = (function () {
   var STORAGE_KEY = "sx_um_v1";
   var SEED = "user-management";
   // Bump with the seed's "version": an older saved copy is replaced by the new seed.
-  var SEED_VERSION = 7;
+  var SEED_VERSION = 8;
   var INVITE_DAYS = 7;
   var DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -115,6 +119,9 @@ window.UMStore = (function () {
     }
     loading = fetchSeed().then(function (seed) {
       state = fromSeed(seed);
+      // A newer seed must not wipe what was done in the demo: keep the people invited, the roles
+      // created and the edits made, and drop only what the new seed no longer knows (old roles).
+      if (saved && saved.users) carryOver(saved, state);
       loading = null;
       write();
       return syncCurrentUser().then(function () {
@@ -122,6 +129,70 @@ window.UMStore = (function () {
       });
     });
     return loading;
+  }
+
+  function carryOver(saved, next) {
+    var seedUserIds = {};
+    next.users.forEach(function (u) {
+      seedUserIds[u.id] = true;
+    });
+    var seedRoleIds = {};
+    next.roles.forEach(function (r) {
+      seedRoleIds[r.id] = true;
+    });
+    var permIds = {};
+    (next.permissionCategories || []).forEach(function (c) {
+      (c.permissions || []).forEach(function (pm) {
+        permIds[pm.id] = true;
+      });
+    });
+    // Roles created in the demo (ids the seed doesn't have), with permissions that still exist.
+    (saved.roles || []).forEach(function (r) {
+      if (seedRoleIds[r.id]) return;
+      var perms = (r.permissionIds || []).filter(function (id) {
+        return permIds[id];
+      });
+      if (!perms.length) return;
+      next.roles.push(Object.assign({}, r, { permissionIds: perms }));
+      seedRoleIds[r.id] = true;
+    });
+    function liveRoles(ids) {
+      var kept = (ids || []).filter(function (id) {
+        return seedRoleIds[id];
+      });
+      return kept.length ? kept : ["view-only"].filter(function (id) {
+        return seedRoleIds[id];
+      });
+    }
+    // Invitations created in the demo, then users: new ones added, seeded ones keep their edits.
+    var seedInvIds = {};
+    next.invitations.forEach(function (i) {
+      seedInvIds[i.id] = true;
+    });
+    (saved.invitations || []).forEach(function (i) {
+      if (seedInvIds[i.id]) return;
+      next.invitations.push(Object.assign({}, i, { roleIds: liveRoles(i.roleIds) }));
+    });
+    var removed = saved.removedUserIds || [];
+    (saved.users || []).forEach(function (u) {
+      if (seedUserIds[u.id]) {
+        var seeded = next.users.filter(function (x) {
+          return x.id === u.id;
+        })[0];
+        ["firstName", "lastName", "phone", "photo", "status", "nameEdited", "invitationId"].forEach(function (k) {
+          if (k in u) seeded[k] = u[k];
+        });
+        if (u.roleIds) seeded.roleIds = liveRoles(u.roleIds);
+      } else {
+        next.users.push(Object.assign({}, u, { roleIds: liveRoles(u.roleIds) }));
+      }
+    });
+    // Seeded users removed in the demo stay removed.
+    next.users = next.users.filter(function (u) {
+      return removed.indexOf(u.id) === -1;
+    });
+    next.removedUserIds = removed.slice();
+    if (saved.business && saved.business.settings) next.business.settings = saved.business.settings;
   }
 
   // The signed-in user ("Me") is the person in the top bar: name and email come
@@ -264,6 +335,8 @@ window.UMStore = (function () {
     state.users = state.users.filter(function (user) {
       return user.id !== id;
     });
+    // Remembered so a newer seed doesn't bring the person back (carryOver).
+    state.removedUserIds = (state.removedUserIds || []).concat(id);
     if (state.users.length === before) return false;
     write();
     return true;
@@ -276,6 +349,103 @@ window.UMStore = (function () {
   }
 
   // ── Invitations (phase 3) ──
+
+  // ── Roles (phase 4) ──
+
+  function normName(name) {
+    return String(name || "").trim().replace(/\s+/g, " ").toLowerCase();
+  }
+
+  function isRoleNameTaken(name, exceptId) {
+    return state.roles.some(function (role) {
+      return role.id !== exceptId && normName(role.name) === normName(name);
+    });
+  }
+
+  /** "SMART Hub", "DevPortal" or "SMART Hub & DevPortal", from the permission groups used. */
+  function roleApps(permissionIds) {
+    var ids = {};
+    (permissionIds || []).forEach(function (id) {
+      ids[id] = true;
+    });
+    var apps = {};
+    state.permissionCategories.forEach(function (cat) {
+      if (!cat.permissions.some(function (p) { return ids[p.id]; })) return;
+      String(cat.app || "").split("&").forEach(function (app) {
+        if (app.trim()) apps[app.trim()] = true;
+      });
+    });
+    var order = ["SMART Hub", "DevPortal"];
+    var list = Object.keys(apps).sort(function (a, b) {
+      return (order.indexOf(a) + 1 || 99) - (order.indexOf(b) + 1 || 99);
+    });
+    return list.join(" & ") || "SMART Hub";
+  }
+
+  function getRoleUsage(id) {
+    return state
+      ? state.users.filter(function (user) {
+          return (user.roleIds || []).indexOf(id) !== -1;
+        }).length
+      : 0;
+  }
+
+  function cleanRole(data) {
+    var ids = {};
+    state.permissionCategories.forEach(function (cat) {
+      cat.permissions.forEach(function (p) {
+        ids[p.id] = true;
+      });
+    });
+    return {
+      name: String(data.name || "").trim().replace(/\s+/g, " "),
+      description: String(data.description || "").trim(),
+      permissionIds: (data.permissionIds || []).filter(function (id, i, all) {
+        return ids[id] && all.indexOf(id) === i;
+      }),
+    };
+  }
+
+  function createRole(data) {
+    var clean = cleanRole(data);
+    if (!clean.name) return { error: "name" };
+    if (isRoleNameTaken(clean.name)) return { error: "taken" };
+    if (!clean.permissionIds.length) return { error: "permissions" };
+    var base = clean.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "role";
+    var id = base;
+    for (var n = 2; getRole(id); n += 1) id = base + "-" + n;
+    var role = Object.assign({ id: id, createdAt: new Date().toISOString(), apps: roleApps(clean.permissionIds) }, clean);
+    state.roles.push(role);
+    write();
+    return role;
+  }
+
+  function updateRole(id, patch) {
+    var role = state.roles.filter(function (r) {
+      return r.id === id;
+    })[0];
+    if (!role) return { error: "unknown" };
+    var clean = cleanRole(Object.assign({}, role, patch));
+    if (!clean.name) return { error: "name" };
+    if (isRoleNameTaken(clean.name, id)) return { error: "taken" };
+    if (!clean.permissionIds.length) return { error: "permissions" };
+    Object.assign(role, clean, { apps: roleApps(clean.permissionIds), updatedAt: new Date().toISOString() });
+    write();
+    return role;
+  }
+
+  /** A role somebody holds can't go: the caller shows who still has it. */
+  function deleteRole(id) {
+    var count = getRoleUsage(id);
+    if (count) return { ok: false, reason: "in-use", count: count };
+    var before = state.roles.length;
+    state.roles = state.roles.filter(function (role) {
+      return role.id !== id;
+    });
+    if (state.roles.length === before) return { ok: false, reason: "unknown" };
+    write();
+    return { ok: true };
+  }
 
   function getPermissionCategories() {
     return state ? state.permissionCategories.slice() : [];
@@ -435,6 +605,12 @@ window.UMStore = (function () {
     setBusinessSetting: setBusinessSetting,
     onChange: onChange,
     getPermissionCategories: getPermissionCategories,
+    createRole: createRole,
+    updateRole: updateRole,
+    deleteRole: deleteRole,
+    getRoleUsage: getRoleUsage,
+    isRoleNameTaken: isRoleNameTaken,
+    roleApps: roleApps,
     getUserStatus: getUserStatus,
     findEmail: findEmail,
     createInvitation: createInvitation,

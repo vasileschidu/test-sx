@@ -255,6 +255,26 @@ Store: `UMStore.getViewer()` (`?as=member` → View Only member, kept in session
   with `error`; status cards (`size-12 rounded-full` tinted tile + `type-title-modal`) for expired / revoked / already / broken / done.
 - Demo bar `#um-demo-bar` (pattern of `#sx-demo-bar`): fixed bottom-right pill, xs secondary buttons Simulate accept / Reset demo data.
 
+### Roles (`um-roles.js`, Figma User Management 4. Roles, 7.01–7.13)
+Store: `createRole / updateRole / deleteRole / getRoleUsage / isRoleNameTaken / roleApps`; permissions live in
+`permissionCategories` (id, name, app, permissions[{ id, name, description }]). Table pieces shared with Users: `UMUi.table`
+(`HEADER_CELL`, `CELL`, `GROUP_BUTTON`, icons, `sortHeader(key, label, sortKey, sortDir, attr)`, `nextSort(...)`,
+`pagination({ page, pageSize, total, sizeId })`, `syncSticky(table)`).
+- **Row actions with ⋮ menu** (7.11): `GROUP_BUTTON` edit + delete + `<el-dropdown>` ⋮ (`rounded-r-md`, `aria-expanded:outline-2`)
+  with `el-menu` Edit / Duplicate / Delete (red). Description cell `line-clamp-2` + `title`.
+- **Role form** (in-page card replacing the list): header title + **Select Preset** (`el-dropdown` text button, `aria-expanded:outline-2
+  outline-blue-600`; menu rows with a blue check on the chosen one; label becomes "Preset: **Name**"); sections "Role Information"
+  (OBField input `max-w-md` + textarea) and "Permissions"; footer Cancel / Create|Save **xl**, natural width.
+- **Permission accordion with Select All** (7.02/7.09/7.13): header row `px-2 py-3` (open → `bg-gray-50 dark:bg-white/5`) = toggle
+  button (chevron `group-aria-expanded:-rotate-90` + `text-base/6 font-medium` name + `type-caption` app) + `h-6 w-px` divider +
+  links: none selected → **Select All** (blue); all → **Deselect All** (red); some → Select All + **Remove Selection** (red).
+- **Permission chip** (toggle, 7.03/7.04): `button[aria-pressed] rounded-full py-0.5 pr-2.5 pl-2 type-body gap-1` — off: `bg-gray-100
+  text-gray-700` + gray `+`; on: `bg-blue-100 text-blue-800` + blue `×` (dark `white/10` · `blue-400/15`); `data-tooltip` (dark
+  chip, `data-tooltip-side="top"`) carries the permission description.
+- **Role Created** (7.05) = the Vendors result dialog with green check; from the invite the Done button reads "Back to Invite".
+- **Delete**: destructive confirm; a role in use turns it into "Role in Use" (amber triangle, blue **Show Users** → Users tab
+  searched by role name).
+
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).
 2. Add a row/snippet here, and a note to `wiki/design-system/` when it is a product pattern.

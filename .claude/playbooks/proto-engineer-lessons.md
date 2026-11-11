@@ -60,3 +60,8 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-10 [modal][tailwind-plus] A `<el-dialog>` inserted by JS upgrades a tick later and closes its `<dialog>`: `showModal()`
   right after insertion silently does nothing. Open on the next frame (rAF + setTimeout 0) the first time.
 - 2026-11-10 [user-management][test] E2E tests that look for a new row must widen the page size first (the row may land on page 2).
+- 2026-11-11 [modal][tailwind-plus] `el-dialog.close()` animates out and the page stays inert until the `close` event: open the
+  next screen (or focus a field) in that event, else typing and focus silently go nowhere.
+- 2026-11-11 [checkbox] `<app-checkbox>` moves `data-*` onto its inner input: query `input[data-x]`, not `[data-x] input`.
+- 2026-11-11 [refactor][qa] Prove a shared-helper extraction with request interception: `page.route(/file\.js(\?|$)/)` serving
+  `git show HEAD:` copies, then compare the rendered HTML. Globs like `**/x.js*` also catch `x.json`.

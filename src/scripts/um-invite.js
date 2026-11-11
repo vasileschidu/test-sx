@@ -258,7 +258,9 @@ window.UMInvite = (function () {
           // Type=Hover (Bottom Text), Size=Big): 18px solid info icon, gray-400 → gray-900 on hover;
           // tooltip under it: gray-900, p-3, rounded-lg, max 343px, text-sm regular gray-100, left-aligned,
           // centred 20×9 arrow on top. Shows on hover and on keyboard focus.
-          '<span class="group/info relative inline-flex size-5 items-center justify-center">' +
+          // No description → no info icon.
+          (String(role.description || "").trim()
+            ? '<span class="group/info relative inline-flex size-5 items-center justify-center">' +
           '<span tabindex="0" role="button" data-umi-role-info aria-describedby="umi-role-tip-' +
           esc(role.id) +
           '" class="inline-flex cursor-help rounded-full text-gray-400 hover:text-gray-900 focus-visible:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:text-white dark:focus-visible:text-white dark:focus-visible:outline-blue-400">' +
@@ -271,7 +273,9 @@ window.UMInvite = (function () {
           esc(role.id) +
           '" role="tooltip" class="pointer-events-none invisible absolute top-full left-1/2 z-30 mt-3 w-max max-w-64 -translate-x-2/5 sm:max-w-[343px] rounded-lg bg-gray-900 p-3 text-left text-sm/5 font-normal text-gray-100 opacity-0 shadow-xs transition-opacity duration-150 group-hover/info:visible group-hover/info:opacity-100 group-has-focus-visible/info:visible group-has-focus-visible/info:opacity-100 before:absolute before:-top-1 before:left-2/5 before:size-3 before:-translate-x-1/2 before:rotate-45 before:rounded-[2px] before:bg-inherit dark:bg-gray-950 dark:ring-1 dark:ring-white/10">' +
           esc(role.description || "") +
-          "</span></span></span>" +
+          "</span></span>"
+            : "") +
+          "</span>" +
           '<span class="type-caption text-tertiary">' +
           esc(role.apps || "SMART Hub") +
           "</span></span></label>"
@@ -451,11 +455,44 @@ window.UMInvite = (function () {
     });
   }
 
+  function checkRole(id) {
+    var box = document.querySelector('[data-umi-role="' + id + '"]');
+    if (!box) return;
+    var input = box.querySelector("input[type=checkbox]") || box;
+    if ("checked" in input) input.checked = true;
+    else box.setAttribute("checked", "");
+  }
+
+  /** What was typed, so "+ Create Role" can bring the person back to it (phase 4). */
+  function draft() {
+    var email = document.getElementById("umi-email");
+    return {
+      firstName: document.getElementById("umi-first").value,
+      lastName: document.getElementById("umi-last").value,
+      email: email.value,
+      emailLocked: email.readOnly,
+      phone: document.getElementById("umi-phone").value,
+      message: document.getElementById("umi-message").value,
+      roleIds: selectedRoles(),
+    };
+  }
+
+  /** options.draft (from draft()) refills the form, e.g. after creating a role. */
   function open(options) {
     opts = options || {};
     editId = null;
+    var saved = opts.draft;
     return ensureDialogs().then(function () {
-      reset(opts.email);
+      reset(saved && saved.emailLocked ? saved.email : opts.email);
+      if (saved) {
+        document.getElementById("umi-first").value = saved.firstName || "";
+        document.getElementById("umi-last").value = saved.lastName || "";
+        if (!saved.emailLocked) document.getElementById("umi-email").value = saved.email || "";
+        document.getElementById("umi-phone").value = saved.phone || "";
+        document.getElementById("umi-message").value = saved.message || "";
+        (saved.roleIds || []).forEach(checkRole);
+        renderPermissions();
+      }
       document.getElementById("um-invite-dialog").showModal();
       setTimeout(function () {
         document.getElementById("umi-first").focus();
@@ -576,9 +613,48 @@ window.UMInvite = (function () {
       var again = document.querySelector('[data-umi-group="' + id + '"]');
       if (again) again.focus();
     });
+    // "+ Create Role": park the invite, create the role on the Roles tab, then come back to the
+    // invite with everything still filled in and the new role ticked (Roles tab, phase 4).
     document.querySelector("[data-umi-create-role]").addEventListener("click", function () {
-      if (typeof window.showGlobalTopToast === "function")
-        window.showGlobalTopToast("Creating roles is coming soon.", { tone: "info" });
+      if (!window.UMRoles) {
+        if (typeof window.showGlobalTopToast === "function")
+          window.showGlobalTopToast("Create roles in SMART Hub › Settings › User Management › Roles.", { tone: "info" });
+        return;
+      }
+      var parked = draft();
+      var back = opts;
+      var editingId = editId;
+      function restore(extraRoleId) {
+        if (extraRoleId) parked.roleIds.push(extraRoleId);
+        if (!editingId) return open({ draft: parked, onDone: back.onDone });
+        return openEdit(editingId, back).then(function () {
+          document.getElementById("umi-first").value = parked.firstName;
+          document.getElementById("umi-last").value = parked.lastName;
+          document.getElementById("umi-phone").value = parked.phone;
+          document.querySelectorAll("#umi-roles input[type=checkbox]").forEach(function (box) {
+            box.checked = false;
+          });
+          parked.roleIds.forEach(checkRole);
+          renderPermissions();
+        });
+      }
+      // The page stays inert while the dialog animates out: open the role form once it's gone.
+      var dialog = document.getElementById("um-invite-dialog");
+      dialog.addEventListener("close", function () {
+        setTimeout(createRole, 0);
+      }, { once: true });
+      dialog.close();
+      function createRole() {
+      window.UMRoles.openCreate({
+        returnLabel: editingId ? "Back to User" : "Back to Invite",
+        onCancel: function () {
+          restore();
+        },
+        onCreated: function (role) {
+          return restore(role.id);
+        },
+      });
+      }
     });
   }
 
