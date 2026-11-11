@@ -170,7 +170,7 @@ window.UMRoles = (function () {
           '<td class="' + T.CELL + '"><span class="type-caption text-secondary">' + esc(appsOf(role)) + "</span></td>" +
           '<td class="' + T.CELL + '">' + description(role) + "</td>" +
           (isAdmin()
-            ? '<td data-action-column class="' + T.CELL + ' bg-white group-hover:bg-gray-50 dark:bg-gray-900 dark:group-hover:bg-gray-800">' + actions(role) + "</td>"
+            ? '<td data-action-column class="' + T.CELL + ' bg-white group-hover:bg-gray-50 dark:bg-gray-900 dark:group-hover:bg-gray-900 dark:group-hover:bg-linear-to-r dark:group-hover:from-white/5 dark:group-hover:to-white/5">' + actions(role) + "</td>"
             : "") +
           "</tr>"
         );

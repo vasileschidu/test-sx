@@ -576,39 +576,235 @@
   }
 
   /**
-   * "Dark mode" row in the user menu: the blue toggle switch (components
-   * skill). Same storage key, .dark class and app-theme-change event as
-   * shared.js initThemeToggle(); the change listener is delegated below.
+   * "Appearance" row in the user menu (Andrian, 2026-11-11): label + current
+   * value + chevron; hover / click opens a submenu to the left with
+   * System default (we'll match your system preferences) / Dark mode / Light mode.
+   * State lives in theme-init.js (window.SXTheme): localStorage.theme =
+   * "system" | "light" | "dark". The submenu is its own manual popover so it
+   * sits in the top layer beside the el-menu popover (which clips overflow).
    */
+  var APPEARANCE_OPTIONS = [
+    { mode: "system", label: "System default", hint: "We’ll match your system preferences" },
+    { mode: "dark", label: "Dark mode" },
+    { mode: "light", label: "Light mode" },
+  ];
+
+  function currentThemeMode() {
+    return window.SXTheme && window.SXTheme.get
+      ? window.SXTheme.get()
+      : document.documentElement.classList.contains("dark")
+        ? "dark"
+        : "light";
+  }
+
+  function appearanceLabel(mode) {
+    for (var i = 0; i < APPEARANCE_OPTIONS.length; i++)
+      if (APPEARANCE_OPTIONS[i].mode === mode) return APPEARANCE_OPTIONS[i].label;
+    return "";
+  }
+
+  var CHECK_ICON =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-blue-600 dark:text-blue-400"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>';
+
   function themeToggleRowHtml() {
-    var isDark = document.documentElement.classList.contains("dark");
     return (
-      '<label class="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-medium leading-5 text-gray-900 transition-colors hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">' +
-      "<span>Dark mode</span>" +
-      '<span class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/10 dark:inset-ring-white/10 dark:has-checked:bg-blue-500">' +
-      '<span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>' +
-      '<input type="checkbox" data-topbar-theme-toggle' +
-      (isDark ? " checked" : "") +
-      ' aria-label="Dark mode" class="absolute inset-0 size-full cursor-pointer appearance-none focus:outline-hidden" />' +
-      "</span>" +
-      "</label>"
+      '<button type="button" data-topbar-appearance aria-haspopup="menu" aria-expanded="false" class="group flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-2.5 text-left transition-colors hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden aria-expanded:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:aria-expanded:bg-white/5">' +
+      '<span class="flex min-w-0 flex-col">' +
+      '<span class="text-sm font-medium leading-5 text-gray-900 dark:text-white">Appearance</span>' +
+      '<span data-topbar-appearance-value class="truncate text-xs leading-4 text-gray-500 dark:text-gray-400">' +
+      appearanceLabel(currentThemeMode()) +
+      "</span></span>" +
+      // Heroicons mini chevron-right
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>' +
+      "</button>"
     );
   }
 
-  document.addEventListener("change", function (event) {
-    var input = event.target.closest && event.target.closest("[data-topbar-theme-toggle]");
-    if (!input) return;
-    var isDark = input.checked;
-    document.documentElement.classList.toggle("dark", isDark);
-    try {
-      localStorage.setItem("theme", isDark ? "dark" : "light");
-    } catch (e) {}
-    document.querySelectorAll("[data-topbar-theme-toggle]").forEach(function (el) {
-      el.checked = isDark;
+  var appearanceMenu = null;
+  var appearanceTrigger = null;
+  var appearanceCloseTimer = null;
+
+  function ensureAppearanceMenu() {
+    if (appearanceMenu) return appearanceMenu;
+    appearanceMenu = document.createElement("div");
+    appearanceMenu.id = "topbar-appearance-menu";
+    appearanceMenu.setAttribute("popover", "manual");
+    appearanceMenu.setAttribute("role", "menu");
+    appearanceMenu.setAttribute("aria-label", "Appearance");
+    appearanceMenu.className =
+      "m-0 w-max min-w-64 rounded-lg bg-white p-1 font-['Inter'] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.10),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] dark:bg-gray-800 dark:shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.40),0px_4px_6px_-2px_rgba(0,0,0,0.30),0px_0px_0px_1px_rgba(255,255,255,0.10)]";
+    appearanceMenu.style.inset = "auto";
+    appearanceMenu.addEventListener("mouseenter", cancelAppearanceClose);
+    appearanceMenu.addEventListener("mouseleave", scheduleAppearanceClose);
+    appearanceMenu.addEventListener("click", function (event) {
+      var opt = event.target.closest("[data-topbar-theme]");
+      if (!opt) return;
+      if (window.SXTheme && window.SXTheme.set) window.SXTheme.set(opt.getAttribute("data-topbar-theme"));
+      renderAppearanceOptions();
+      syncAppearanceValue();
+      // The user menu is gone by now (focus / click left it): close and give
+      // focus back to the avatar button.
+      var userMenu = appearanceTrigger && appearanceTrigger.closest("el-menu");
+      if (!userMenu || !userMenu.matches(":popover-open")) {
+        var avatarBtn = userMenu && userMenu.parentElement && userMenu.parentElement.querySelector('button[aria-label="Open user menu"]');
+        closeAppearanceMenu(false);
+        if (avatarBtn && event.detail === 0) avatarBtn.focus();
+      }
     });
-    window.dispatchEvent(
-      new CustomEvent("app-theme-change", { detail: { isDark: isDark } }),
-    );
+    appearanceMenu.addEventListener("keydown", function (event) {
+      var items = Array.prototype.slice.call(appearanceMenu.querySelectorAll("[data-topbar-theme]"));
+      var idx = items.indexOf(document.activeElement);
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        var next = (idx + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+        items[next].focus();
+      } else if (event.key === "Escape" || event.key === "ArrowRight") {
+        event.preventDefault();
+        event.stopPropagation();
+        closeAppearanceMenu(true);
+      }
+    });
+    document.body.appendChild(appearanceMenu);
+    return appearanceMenu;
+  }
+
+  function renderAppearanceOptions() {
+    var menu = ensureAppearanceMenu();
+    var mode = currentThemeMode();
+    menu.innerHTML = APPEARANCE_OPTIONS.map(function (opt) {
+      var on = opt.mode === mode;
+      return (
+        '<button type="button" role="menuitemradio" data-topbar-theme="' +
+        opt.mode +
+        '" aria-checked="' +
+        on +
+        '" class="flex w-full cursor-pointer items-start gap-2 rounded-md px-2 py-2 text-left transition-colors hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:hover:bg-white/5 dark:focus:bg-white/5">' +
+        '<span class="flex size-5 shrink-0 items-center justify-center">' +
+        (on ? CHECK_ICON : "") +
+        "</span>" +
+        '<span class="flex flex-col gap-0.5">' +
+        '<span class="text-sm font-medium leading-5 text-gray-900 dark:text-white">' +
+        opt.label +
+        "</span>" +
+        (opt.hint
+          ? '<span class="text-xs leading-4 text-gray-500 dark:text-gray-400">' + opt.hint + "</span>"
+          : "") +
+        "</span></button>"
+      );
+    }).join("");
+  }
+
+  function syncAppearanceValue() {
+    var label = appearanceLabel(currentThemeMode());
+    document.querySelectorAll("[data-topbar-appearance-value]").forEach(function (el) {
+      el.textContent = label;
+    });
+  }
+
+  function positionAppearanceMenu(trigger) {
+    var menu = ensureAppearanceMenu();
+    var host = trigger.closest("el-menu") || trigger;
+    var hostRect = host.getBoundingClientRect();
+    var rowRect = trigger.getBoundingClientRect();
+    var w = menu.offsetWidth;
+    var h = menu.offsetHeight;
+    var gap = 8;
+    // Left of the user menu (it sits at the right edge); right of it if no room.
+    var left = hostRect.left - gap - w;
+    if (left < 8) left = Math.min(hostRect.right + gap, window.innerWidth - w - 8);
+    var top = Math.max(8, Math.min(rowRect.top - 4, window.innerHeight - h - 8));
+    menu.style.left = left + "px";
+    menu.style.top = top + "px";
+  }
+
+  function openAppearanceMenu(trigger, focusFirst) {
+    cancelAppearanceClose();
+    var menu = ensureAppearanceMenu();
+    renderAppearanceOptions();
+    appearanceTrigger = trigger;
+    trigger.setAttribute("aria-expanded", "true");
+    if (!menu.matches(":popover-open")) menu.showPopover();
+    positionAppearanceMenu(trigger);
+    if (focusFirst) {
+      var first = menu.querySelector('[aria-checked="true"]') || menu.querySelector("[data-topbar-theme]");
+      if (first) first.focus();
+    }
+  }
+
+  function closeAppearanceMenu(returnFocus) {
+    cancelAppearanceClose();
+    if (appearanceMenu && appearanceMenu.matches(":popover-open")) appearanceMenu.hidePopover();
+    if (appearanceTrigger) {
+      appearanceTrigger.setAttribute("aria-expanded", "false");
+      if (returnFocus) appearanceTrigger.focus();
+    }
+    appearanceTrigger = null;
+  }
+
+  function cancelAppearanceClose() {
+    if (appearanceCloseTimer) clearTimeout(appearanceCloseTimer);
+    appearanceCloseTimer = null;
+  }
+
+  function scheduleAppearanceClose() {
+    cancelAppearanceClose();
+    appearanceCloseTimer = setTimeout(function () {
+      closeAppearanceMenu(false);
+    }, 200);
+  }
+
+  // Row: hover opens, leaving closes after 200 ms (unless the pointer reaches the submenu).
+  document.addEventListener("mouseover", function (event) {
+    var row = event.target.closest && event.target.closest("[data-topbar-appearance]");
+    if (row) openAppearanceMenu(row, false);
+  });
+  document.addEventListener("mouseout", function (event) {
+    var row = event.target.closest && event.target.closest("[data-topbar-appearance]");
+    if (!row || (event.relatedTarget && row.contains(event.relatedTarget))) return;
+    scheduleAppearanceClose();
+  });
+  // Click / Enter / ArrowLeft open it; capture so el-menu does not close the user menu.
+  document.addEventListener(
+    "click",
+    function (event) {
+      var row = event.target.closest && event.target.closest("[data-topbar-appearance]");
+      if (!row) return;
+      event.preventDefault();
+      event.stopPropagation();
+      openAppearanceMenu(row, event.detail === 0);
+    },
+    true,
+  );
+  document.addEventListener(
+    "keydown",
+    function (event) {
+      var row = event.target.closest && event.target.closest("[data-topbar-appearance]");
+      if (!row || event.key !== "ArrowLeft") return;
+      event.preventDefault();
+      event.stopPropagation();
+      openAppearanceMenu(row, true);
+    },
+    true,
+  );
+  // The user menu closing (light dismiss, Escape, item) closes the submenu too,
+  // unless the click was inside the submenu itself.
+  document.addEventListener(
+    "toggle",
+    function (event) {
+      if (event.newState !== "closed" || !event.target.matches || !event.target.matches("el-menu")) return;
+      if (!appearanceTrigger || !event.target.contains(appearanceTrigger)) return;
+      // Keyboard: focus moved into the submenu (which closes el-menu) — keep it.
+      if (appearanceMenu && appearanceMenu.contains(document.activeElement)) return;
+      closeAppearanceMenu(false);
+    },
+    true,
+  );
+  window.addEventListener("app-theme-change", function () {
+    syncAppearanceValue();
+    if (appearanceMenu && appearanceMenu.matches(":popover-open")) renderAppearanceOptions();
+  });
+  window.addEventListener("resize", function () {
+    closeAppearanceMenu(false);
   });
 
   /** Consumer portal user menu (Figma "User Dropdown Menu"): name + role, Profile, Sign out. */
@@ -931,7 +1127,14 @@
       // Changing view swaps the whole instance, so it gets a real loading
       // state rather than items rearranging under the cursor.
       if (window.AppSwitch) {
-        window.AppSwitch.run(applySwitch);
+        var target = window.AppPlans.getBusinesses().filter(function (b) {
+          return b.id === nextId;
+        })[0];
+        var targetName = target ? target.name : button.textContent.trim();
+        window.AppSwitch.run(applySwitch, null, {
+          name: targetName,
+          initials: businessInitials(targetName),
+        });
       } else {
         applySwitch();
         document.querySelectorAll("app-nav").forEach(function (nav) {

@@ -337,7 +337,7 @@
           '<td class="' + CELL + '">' + nameBlock(user) + "</td>" +
           '<td class="' + CELL + '">' + rolesBlock(user) + "</td>" +
           '<td class="' + CELL + '">' + statusBadge(user) + "</td>" +
-          '<td data-action-column class="' + CELL + ' bg-white group-hover:bg-gray-50 dark:bg-gray-900 dark:group-hover:bg-gray-800">' + actions(user) + "</td>" +
+          '<td data-action-column class="' + CELL + ' bg-white group-hover:bg-gray-50 dark:bg-gray-900 dark:group-hover:bg-gray-900 dark:group-hover:bg-linear-to-r dark:group-hover:from-white/5 dark:group-hover:to-white/5">' + actions(user) + "</td>" +
           "</tr>"
         );
       })

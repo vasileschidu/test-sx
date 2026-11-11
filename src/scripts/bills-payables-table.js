@@ -89,8 +89,10 @@
   ];
   var INACTIVE_TAB_LINK_CLASSES = [
     "text-gray-500",
+    "hover:bg-gray-50",
     "hover:text-gray-700",
     "dark:text-gray-400",
+    "dark:hover:bg-white/5",
     "dark:hover:text-gray-200",
   ];
   var ACTIVE_BADGE_CLASSES = [
@@ -201,12 +203,6 @@
   var pendingScheduleCancelId = "";
   var pendingRerunId = "";
   var draggingColumnKey = "";
-  var ICON_SORT =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-70" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-70" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var ICON_SORT_ASC =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path transform="translate(10 5.6) scale(1.2) translate(-10 -5.6)" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-40" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var ICON_SORT_DESC =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-40" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path transform="translate(10 14.4) scale(1.2) translate(-10 -14.4)" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
   var ICON_CHEVRON_DOWN =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
 
@@ -236,7 +232,8 @@
     if (!col) return " px-4";
     if (col.type === "expand") return " w-[52px] min-w-[52px] px-0";
     if (col.type === "select") return " w-8 min-w-8 px-2";
-    if (col.type === "action") return " w-[100px] min-w-[100px] px-0";
+    // Shrinks to the button (as the Users table): no empty space left of "Pay".
+    if (col.type === "action") return " w-px whitespace-nowrap px-4";
     if (col.key === "amount") return " w-[162px] min-w-[162px] px-4";
     if (col.key === "billNumber") return " w-[140px] min-w-[140px] px-4";
     if (col.key === "source") return " w-[208px] min-w-[208px] px-4";
@@ -1625,17 +1622,24 @@
     });
   }
 
+  // Two-tone sort arrows, same as the Users table (um-ui.js sortHeader): the
+  // active half blue, the other dimmed; click the upper / lower arrow to pick asc / desc.
+  var SORT_ARROW_UP = "M10 3C10.2652 3 10.5196 3.10536 10.7071 3.29289L13.7071 6.29289C14.0976 6.68342 14.0976 7.31658 13.7071 7.70711C13.3166 8.09763 12.6834 8.09763 12.2929 7.70711L10 5.41421L7.70711 7.70711C7.31658 8.09763 6.68342 8.09763 6.29289 7.70711C5.90237 7.31658 5.90237 6.68342 6.29289 6.29289L9.29289 3.29289C9.48043 3.10536 9.73478 3 10 3Z";
+  var SORT_ARROW_DOWN = "M6.29289 12.2929C6.68342 11.9024 7.31658 11.9024 7.70711 12.2929L10 14.5858L12.2929 12.2929C12.6834 11.9024 13.3166 11.9024 13.7071 12.2929C14.0976 12.6834 14.0976 13.3166 13.7071 13.7071L10.7071 16.7071C10.3166 17.0976 9.68342 17.0976 9.29289 16.7071L6.29289 13.7071C5.90237 13.3166 5.90237 12.6834 6.29289 12.2929Z";
+  var SORT_TONE_IDLE =
+    "text-gray-400 group-hover:text-gray-600 dark:text-gray-500 dark:group-hover:text-gray-300";
+  var SORT_TONE_ON = "text-blue-600 dark:text-blue-400";
+  var SORT_TONE_DIM = "text-gray-300 dark:text-gray-600";
+
   function buildSortBadge(direction) {
-    var cls = direction
-      ? "inline-flex size-5 shrink-0 items-center justify-center text-blue-600 dark:text-blue-400"
-      : "inline-flex size-5 shrink-0 items-center justify-center text-gray-400 group-hover:text-gray-600 dark:text-gray-500";
-    var icon =
-      direction === "asc"
-        ? ICON_SORT_ASC
-        : direction === "desc"
-          ? ICON_SORT_DESC
-          : ICON_SORT;
-    return '<span class="' + cls + '">' + icon + "</span>";
+    var upTone = !direction ? SORT_TONE_IDLE : direction === "asc" ? SORT_TONE_ON : SORT_TONE_DIM;
+    var downTone = !direction ? SORT_TONE_IDLE : direction === "desc" ? SORT_TONE_ON : SORT_TONE_DIM;
+    return (
+      '<svg viewBox="0 0 20 20" aria-hidden="true" data-sort-arrows class="size-5 shrink-0">' +
+      '<path fill="currentColor" class="' + upTone + '" d="' + SORT_ARROW_UP + '"/>' +
+      '<path fill="currentColor" class="' + downTone + '" d="' + SORT_ARROW_DOWN + '"/>' +
+      "</svg>"
+    );
   }
 
   function sortRows(rows) {
@@ -3914,7 +3918,7 @@
           : " border-b border-gray-200 dark:border-white/10";
         var expanded = state.expandedRows.has(row.id);
         var actionBgClass = expanded
-          ? " bg-gray-100 dark:bg-white/5"
+          ? " bg-gray-100 dark:bg-gray-900 dark:bg-linear-to-r dark:from-white/5 dark:to-white/5"
           : " bg-white dark:bg-gray-900";
         var rowCells = renderColumns
           .map(function (col) {
@@ -3979,7 +3983,9 @@
                 columnWidthClass(col) +
                 cb +
                 actionBgClass +
-                ' group-hover:bg-gray-50 dark:group-hover:bg-white/5">' +
+                // Opaque sticky cell: same white/5 layer as the row, over gray-900 (as exchanges-table.js),
+                // so the pinned Pay column does not show a lighter block on dark hover.
+                ' group-hover:bg-gray-50 dark:group-hover:bg-gray-900 dark:group-hover:bg-linear-to-r dark:group-hover:from-white/5 dark:group-hover:to-white/5">' +
                 actionButton +
                 "</td>"
               );
@@ -4158,22 +4164,28 @@
     refreshStickyAction();
   }
 
-  function applyActionDivider(cell, isActive, isDark) {
-    if (isActive) {
-      cell.style.borderLeftWidth = "1px";
-      cell.style.borderLeftStyle = "solid";
-      cell.style.borderLeftColor = isDark
-        ? "rgba(255,255,255,0.10)"
-        : "rgba(0,0,0,0.15)";
-      cell.style.boxShadow = isDark
-        ? "-10px 0 15px -3px rgba(0,0,0,0.3), -4px 0 6px -4px rgba(0,0,0,0.3)"
-        : "-10px 0 15px -3px rgba(0,0,0,0.1), -4px 0 6px -4px rgba(0,0,0,0.1)";
-    } else {
-      cell.style.borderLeftWidth = "0px";
-      cell.style.borderLeftStyle = "solid";
-      cell.style.borderLeftColor = "transparent";
-      cell.style.boxShadow = "none";
-    }
+  // Pinned Pay column, same approach as the Users table (um-ui.js STUCK_CLASSES):
+  // no divider line, just a soft gradient on its left edge while the table overflows.
+  var STUCK_EDGE_CLASSES = [
+    "before:pointer-events-none",
+    "before:absolute",
+    "before:inset-y-0",
+    "before:right-full",
+    "before:w-6",
+    "before:bg-linear-to-l",
+    "before:from-black/5",
+    "before:to-transparent",
+    "dark:before:from-black/20",
+  ];
+
+  function applyActionDivider(cell, isActive) {
+    STUCK_EDGE_CLASSES.forEach(function (cls) {
+      cell.classList.toggle(cls, isActive);
+    });
+    cell.style.borderLeftWidth = "";
+    cell.style.borderLeftStyle = "";
+    cell.style.borderLeftColor = "";
+    cell.style.boxShadow = "";
   }
 
   function initStickyAction(table) {
@@ -4184,7 +4196,6 @@
     function sync() {
       var maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
       var isOverflowing = maxScrollLeft > 0.5;
-      var isDark = document.documentElement.classList.contains("dark");
       var actionColumns = table.querySelectorAll("[data-action-column]");
       actionColumns.forEach(function (cell) {
         if (isOverflowing) {
@@ -4192,7 +4203,7 @@
         } else {
           cell.classList.remove("sticky", "right-0", "z-10");
         }
-        applyActionDivider(cell, isOverflowing, isDark);
+        applyActionDivider(cell, isOverflowing);
       });
     }
 
@@ -4645,7 +4656,20 @@
         var sortBtn = e.target.closest("[data-sort-key]");
         if (sortBtn) {
           var sortKey = sortBtn.getAttribute("data-sort-key");
-          if (state.sortKey !== sortKey) {
+          // Mouse click on the arrows: upper half = asc, lower half = desc
+          // (clicking the active arrow again turns sorting off).
+          var arrows = e.target.closest && e.target.closest("[data-sort-arrows]");
+          if (arrows && e.detail > 0) {
+            var box = arrows.getBoundingClientRect();
+            var picked = e.clientY < box.top + box.height / 2 ? "asc" : "desc";
+            if (state.sortKey === sortKey && state.sortDirection === picked) {
+              state.sortKey = "";
+              state.sortDirection = "";
+            } else {
+              state.sortKey = sortKey;
+              state.sortDirection = picked;
+            }
+          } else if (state.sortKey !== sortKey) {
             state.sortKey = sortKey;
             state.sortDirection = "asc";
           } else if (state.sortDirection === "asc") {

@@ -52,21 +52,22 @@
 
 /* ===== Modal close button hover ===== */
 // Match icon-only modal close buttons to the Manage Columns close control.
+// Not the mobile sidebar (#sidebar): its X sits on the dark backdrop, own hover in nav-component.js.
 (function injectModalCloseHoverStyles() {
   if (document.getElementById("shell-modal-close-hover-styles")) return;
   var style = document.createElement("style");
   style.id = "shell-modal-close-hover-styles";
   style.textContent = [
-    'dialog button[command="close"]:has(svg):hover,',
-    'dialog button[command="close"]:has(img):hover,',
-    'dialog button[aria-label*="close" i]:hover,',
-    "dialog button[data-mc-dispute-close]:hover {",
+    'dialog:not(#sidebar) button[command="close"]:has(svg):hover,',
+    'dialog:not(#sidebar) button[command="close"]:has(img):hover,',
+    'dialog:not(#sidebar) button[aria-label*="close" i]:hover,',
+    "dialog:not(#sidebar) button[data-mc-dispute-close]:hover {",
     "  background-color: rgb(243 244 246); color: rgb(107 114 128);",
     "}",
-    '.dark dialog button[command="close"]:has(svg):hover,',
-    '.dark dialog button[command="close"]:has(img):hover,',
-    '.dark dialog button[aria-label*="close" i]:hover,',
-    ".dark dialog button[data-mc-dispute-close]:hover {",
+    '.dark dialog:not(#sidebar) button[command="close"]:has(svg):hover,',
+    '.dark dialog:not(#sidebar) button[command="close"]:has(img):hover,',
+    '.dark dialog:not(#sidebar) button[aria-label*="close" i]:hover,',
+    ".dark dialog:not(#sidebar) button[data-mc-dispute-close]:hover {",
     "  background-color: rgb(255 255 255 / 0.1); color: rgb(209 213 219);",
     "}",
   ].join("\n");
@@ -117,7 +118,7 @@
       "  background: #111827; color: #fff; font-size: 12px; line-height: 16px; font-weight: 500; text-align: center; text-wrap: balance;",
       "  box-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1); opacity: 0; }",
       "#shell-tooltip > i { position: absolute; width: 8px; height: 8px; border-radius: 1px; background: inherit; transform: rotate(45deg); }",
-      ".dark #shell-tooltip { background: #030712; box-shadow: 0 0 0 1px rgb(255 255 255 / .1); }",
+      ".dark #shell-tooltip { background: #1f2937; box-shadow: 0 0 0 1px rgb(255 255 255 / .1); }", // gray-800, like the sidebar flyouts
       "@media (prefers-reduced-motion: reduce) { #shell-tooltip { transition: none !important; } }",
     ].join("\n");
     document.head.appendChild(style);

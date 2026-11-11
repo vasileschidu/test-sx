@@ -72,7 +72,7 @@
     ? ["bg-blue-50", "text-blue-600", "dark:bg-blue-500/15", "dark:text-blue-300"]
     : ["bg-blue-100", "text-blue-700", "dark:bg-blue-500/20", "dark:text-blue-300"];
   var INACTIVE_TAB_LINK_CLASSES = IS_SUPPLIER_PORTAL
-    ? ["text-gray-500", "hover:text-gray-700", "dark:text-gray-400", "dark:hover:text-gray-200"]
+    ? ["text-gray-500", "hover:bg-gray-50", "hover:text-gray-700", "dark:text-gray-400", "dark:hover:bg-white/5", "dark:hover:text-gray-200"]
     : ["text-gray-500", "dark:text-gray-400"];
   var EXCEPTION_TAB_LINK_CLASSES = [
     "bg-red-50",
@@ -3334,22 +3334,29 @@
 
   // ── Sticky action column ──
 
-  function applyActionDivider(cell, isActive, isDark) {
-    if (isActive) {
-      cell.style.borderLeftWidth = "1px";
-      cell.style.borderLeftStyle = "solid";
-      cell.style.borderLeftColor = isDark
-        ? "rgba(255,255,255,0.10)"
-        : "rgba(0,0,0,0.15)";
-      cell.style.boxShadow = isDark
-        ? "-10px 0 15px -3px rgba(0,0,0,0.3), -4px 0 6px -4px rgba(0,0,0,0.3)"
-        : "-10px 0 15px -3px rgba(0,0,0,0.1), -4px 0 6px -4px rgba(0,0,0,0.1)";
-    } else {
-      cell.style.borderLeftWidth = "0px";
-      cell.style.borderLeftStyle = "solid";
-      cell.style.borderLeftColor = "transparent";
-      cell.style.boxShadow = "none";
-    }
+  // Same approach as the Users and Bills tables (um-ui.js STUCK_CLASSES): no
+  // divider line, a soft gradient on the pinned column's left edge while the
+  // table overflows.
+  var STUCK_EDGE_CLASSES = [
+    "before:pointer-events-none",
+    "before:absolute",
+    "before:inset-y-0",
+    "before:right-full",
+    "before:w-6",
+    "before:bg-linear-to-l",
+    "before:from-black/5",
+    "before:to-transparent",
+    "dark:before:from-black/20",
+  ];
+
+  function applyActionDivider(cell, isActive) {
+    STUCK_EDGE_CLASSES.forEach(function (cls) {
+      cell.classList.toggle(cls, isActive);
+    });
+    cell.style.borderLeftWidth = "";
+    cell.style.borderLeftStyle = "";
+    cell.style.borderLeftColor = "";
+    cell.style.boxShadow = "";
   }
 
   function initStickyAction(table) {
@@ -3360,7 +3367,6 @@
     function sync() {
       var maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
       var isOverflowing = maxScrollLeft > 0.5;
-      var isDark = document.documentElement.classList.contains("dark");
       var actionColumns = table.querySelectorAll(ACTION_COLUMN_SELECTOR);
 
       actionColumns.forEach(function (cell) {
@@ -3369,7 +3375,7 @@
         } else {
           cell.classList.remove("sticky", "right-0", "z-10");
         }
-        applyActionDivider(cell, isOverflowing, isDark);
+        applyActionDivider(cell, isOverflowing);
       });
     }
 

@@ -372,22 +372,13 @@ function smartHubLogoImg(alt) {
 }
 
 function buildSmartHubMarkHtml() {
-  // Crops the tile out of the full logo art (34.2px square at its left edge) and scales it to 32px.
-  var tile = smartHubLogoImg("").replace(
-    /class="[^"]*"/g,
-    function (match) {
-      var dark = match.indexOf("dark:hidden") !== -1;
-      var darkOnly = match.indexOf("dark:block") !== -1;
-      return (
-        'class="absolute left-0 top-0 h-[32.75px] w-[131px] max-w-none ' +
-        (dark ? "dark:hidden" : darkOnly ? "hidden dark:block" : "") +
-        '"'
-      );
-    },
-  );
+  // The tile on its own (smart-hub-tile.svg, exact bounds): cropping it out of the
+  // full logo at 32.75px clipped its bottom edge in a 32px box.
   return (
-    '<span class="relative block size-8 shrink-0 overflow-hidden transition-opacity duration-100 ease-out group-hover/logomark:opacity-0">' +
-    tile +
+    '<span class="relative block size-8 shrink-0 transition-opacity duration-100 ease-out group-hover/logomark:opacity-0">' +
+    '<img src="' +
+    illustrationAsset("smart-hub-tile.svg") +
+    '?v=20261111" width="32" height="32" alt="" class="block size-8 max-w-none">' +
     "</span>"
   );
 }
@@ -414,7 +405,8 @@ function buildLogoHtml(justifyClass) {
   return (
     (activeBrand() === "consumer-portal"
       ? '<div class="flex h-8 w-full items-center '
-      : '<div class="flex h-8 items-start overflow-hidden ') +
+      : // No overflow-hidden: the 32.75px logo in this 32px row lost its bottom corners.
+        '<div class="flex h-8 items-center ') +
     (justifyClass || "justify-center") +
     '" data-smart-hub-logo>' +
     buildFullLogoSvgHtml() +
@@ -431,6 +423,11 @@ const TRANSCARD_SHIELD_SVG =
 const ACCOUNT_INFO_ICON_SVG =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-6"><path fill-rule="evenodd" d="M18 10C18 14.4183 14.4183 18 10 18C5.58172 18 2 14.4183 2 10C2 5.58172 5.58172 2 10 2C14.4183 2 18 5.58172 18 10ZM11 6C11 6.55228 10.5523 7 10 7C9.44772 7 9 6.55228 9 6C9 5.44772 9.44772 5 10 5C10.5523 5 11 5.44772 11 6ZM9 9C8.58579 9 8.25 9.33579 8.25 9.75C8.25 10.1642 8.58579 10.5 9 10.5H9.25343C9.41338 10.5 9.53218 10.6482 9.49749 10.8043L9.03834 12.8704C8.79548 13.9633 9.62711 15 10.7467 15H11C11.4142 15 11.75 14.6642 11.75 14.25C11.75 13.8358 11.4142 13.5 11 13.5H10.7467C10.5867 13.5 10.4679 13.3518 10.5026 13.1957L10.9618 11.1296C11.2046 10.0368 10.373 9 9.25343 9H9Z" clip-rule="evenodd"/></svg>';
 
+// Collapsed rail "Your Account Information" icon (Andrian 2026-11-11).
+const RAIL_ACCOUNT_ICON_SVG =
+  // Heroicons outline squares-plus, 24px like the nav icons, gray-500.
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6 shrink-0 text-gray-500"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 16.875h3.375m0 0h3.375m-3.375 0V13.5m0 3.375v3.375M6 10.5h2.25a2.25 2.25 0 0 0 2.25-2.25V6a2.25 2.25 0 0 0-2.25-2.25H6A2.25 2.25 0 0 0 3.75 6v2.25A2.25 2.25 0 0 0 6 10.5Zm0 9.75h2.25A2.25 2.25 0 0 0 10.5 18v-2.25a2.25 2.25 0 0 0-2.25-2.25H6a2.25 2.25 0 0 0-2.25 2.25V18A2.25 2.25 0 0 0 6 20.25Zm9.75-9.75H18a2.25 2.25 0 0 0 2.25-2.25V6A2.25 2.25 0 0 0 18 3.75h-2.25A2.25 2.25 0 0 0 13.5 6v2.25a2.25 2.25 0 0 0 2.25 2.25Z"/></svg>';
+
 const HELP_ICON_SVG =
   '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-6 text-gray-400"><path fill-rule="evenodd" d="M2.25 12c0-5.385 4.365-9.75 9.75-9.75s9.75 4.365 9.75 9.75-4.365 9.75-9.75 9.75S2.25 17.385 2.25 12Zm11.378-3.917c-.89-.777-2.366-.777-3.255 0a.75.75 0 0 1-.988-1.129c1.454-1.272 3.776-1.272 5.23 0 1.513 1.324 1.513 3.518.005 4.846a3.75 3.75 0 0 1-.837.552c-.676.328-1.028.774-1.028 1.152v.75a.75.75 0 0 1-1.5 0v-.75c0-1.279 1.06-2.107 1.875-2.502.182-.088.351-.199.503-.331.83-.727.83-1.857 0-2.584ZM12 18a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd"/></svg>';
 
@@ -439,12 +436,13 @@ const HELP_ICON_SVG =
 function navLinkCls(id, activeId, extra) {
   const consumerPortal = activeBrand() === "consumer-portal";
   const isCollapsed = Boolean(extra && extra.indexOf("size-10") !== -1);
-  const base =
-    "nav-item group relative flex " +
-    (isCollapsed ? "" : "min-h-10 ") +
-    "w-full items-center justify-between gap-3 rounded-md " +
-    (consumerPortal ? "px-2" : "py-2 pl-2 pr-3") +
-    " py-2 text-left text-base leading-6 font-medium transition-colors cursor-pointer focus-visible:outline-none";
+  // Collapsed rail: a fixed 40×40 square, icon centred (Figma: x 24–64 in the
+  // 88px rail). w-full / pl-2 pr-3 would make it 39px wide and off-centre.
+  const base = isCollapsed
+    ? "nav-item group relative flex size-10 shrink-0 self-start items-center justify-center rounded-md p-0 text-left text-base leading-6 font-medium transition-colors cursor-pointer focus-visible:outline-none"
+    : "nav-item group relative flex min-h-10 w-full items-center justify-between gap-3 rounded-md " +
+      (consumerPortal ? "px-2" : "py-2 pl-2 pr-3") +
+      " py-2 text-left text-base leading-6 font-medium transition-colors cursor-pointer focus-visible:outline-none";
   const dark =
     " dark:bg-white/10 dark:text-white dark:hover:bg-white/10 dark:hover:text-white dark:focus-visible:bg-white/10 dark:focus-visible:text-white";
   const darkInactive =
@@ -572,7 +570,8 @@ ${buildNavTrailing(item, isDesktopCollapsed)}
 /** Locked modules stay visible and carry the plan's upgrade affordance. */
 function buildNavBadge(item, isDesktopCollapsed) {
   if (!item || !item.badge || isDesktopCollapsed) return "";
-  return `<span class="ml-auto shrink-0 rounded-sm bg-blue-50 px-1.5 py-0.5 text-[11px] font-semibold text-blue-700 dark:bg-blue-400/10 dark:text-blue-300">${item.badge}</span>`;
+  // Design-system badge (blue), not a button-like chip.
+  return `<span class="ml-auto inline-flex shrink-0 items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30">${item.badge}</span>`;
 }
 
 function buildNavLinkArrow(
@@ -608,9 +607,10 @@ function buildSmartExchangeItem(
 ) {
   const isActive = item.id === activeId;
   const rowCls =
-    "group relative flex h-10 w-full items-center justify-between rounded-md py-2 pl-2 pr-3 text-left text-base font-medium transition-colors " +
-    (isActive ? NAV_ITEM_ACTIVE : NAV_ITEM_INACTIVE) +
-    collapsedNavItemSizeCls(isDesktopCollapsed);
+    (isDesktopCollapsed
+      ? "group relative flex size-10 shrink-0 self-start items-center justify-center rounded-md p-0 text-left text-base font-medium transition-colors "
+      : "group relative flex h-10 w-full items-center justify-between rounded-md py-2 pl-2 pr-3 text-left text-base font-medium transition-colors ") +
+    (isActive ? NAV_ITEM_ACTIVE : NAV_ITEM_INACTIVE);
   const linkCls =
     "nav-item " +
     (isActive ? "is-active " : "") +
@@ -641,9 +641,15 @@ ${buildSubmenu(item.children, activeId, expand, routerMode)}`;
 function buildExpandableItem(item, activeId, routerMode, isDesktopCollapsed) {
   const chevronCls =
     "chevron-icon size-5 text-gray-500 transition-transform dark:text-gray-400";
+  const childActive = (item.children || []).some(
+    (child) => child.id === activeId,
+  );
+  // Collapsed rail: the submenu stays closed (it opens as a flyout on hover)
+  // and the parent icon carries the active state instead.
+  const rowActiveId = isDesktopCollapsed && childActive ? item.id : activeId;
   const rowCls = navLinkCls(
     item.id,
-    activeId,
+    rowActiveId,
     collapsedNavItemSizeCls(isDesktopCollapsed),
   );
   const contentCls = "flex min-w-0 items-center gap-3";
@@ -656,13 +662,13 @@ function buildExpandableItem(item, activeId, routerMode, isDesktopCollapsed) {
       ? " rotate-180"
       : "");
   return `<button type="button" class="${rowCls}" data-expandable-trigger data-item-id="${item.id}">
-<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, activeId, isDesktopCollapsed))}<span class="${labelCls}">${item.label}</span></span>
+<span class="${contentCls}">${renderIcon(item.icon, navIconCls(item.id, rowActiveId, isDesktopCollapsed))}<span class="${labelCls}">${item.label}</span></span>
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="${chevronCls}${chevronHiddenCls}"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>
 </button>
 ${buildSubmenu(
   item.children,
   activeId,
-  !!item.expanded || item.children.some((child) => child.id === activeId),
+  !isDesktopCollapsed && (!!item.expanded || childActive),
   routerMode,
 )}`;
 }
@@ -820,7 +826,7 @@ function buildConsumerHelpBlock(id, isDesktopCollapsed) {
   if (id)
     return `<div ${wrap}class="flex w-full flex-col">
 <div data-sidebar-expanded-help class="${isDesktopCollapsed ? "hidden " : ""}flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-white/10"><button type="button" data-help-trigger aria-haspopup="true" aria-expanded="false" class="self-start inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 aria-expanded:bg-white aria-expanded:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] focus-visible:outline-none focus-visible:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] dark:aria-expanded:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6] hover:bg-gray-100 hover:text-gray-900 transition-colors dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100 cursor-pointer"><img src="../../../assets/icons/consumer-portal/help.svg" alt="" class="size-[18px]" />Help from Transcard</button></div>
-<div data-sidebar-collapsed-help class="${isDesktopCollapsed ? "" : "hidden "}flex w-full flex-col gap-4"><div class="h-px w-full bg-gray-200 dark:bg-white/10"></div><button type="button" data-help-trigger aria-haspopup="true" aria-expanded="false" aria-label="Help from Transcard" data-sidebar-btn-tooltip="Help from Transcard" class="flex h-8 w-full items-center justify-center rounded-md cursor-pointer aria-expanded:bg-white aria-expanded:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] focus-visible:outline-none focus-visible:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] dark:aria-expanded:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6] hover:bg-gray-100 dark:hover:bg-white/10"><img src="../../../assets/icons/consumer-portal/help.svg" alt="" class="size-[18px]" /></button></div></div>`;
+<div data-sidebar-collapsed-help class="${isDesktopCollapsed ? "" : "hidden "}flex w-full flex-col gap-4"><div class="h-px w-full bg-gray-200 dark:bg-white/10"></div><button type="button" data-help-trigger aria-haspopup="true" aria-expanded="false" aria-label="Help from Transcard" data-sidebar-btn-tooltip="Help from Transcard" class="flex size-10 shrink-0 self-start items-center justify-center rounded-md cursor-pointer aria-expanded:bg-white aria-expanded:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] focus-visible:outline-none focus-visible:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] dark:aria-expanded:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6] hover:bg-gray-100 dark:hover:bg-white/10"><img src="../../../assets/icons/consumer-portal/help.svg" alt="" class="size-[18px]" /></button></div></div>`;
       return `<div ${wrap}class="flex flex-col gap-2 border-t border-gray-200 pt-4 dark:border-white/10">
 <button type="button" data-help-trigger aria-haspopup="true" aria-expanded="false" class="self-start inline-flex items-center gap-1 rounded-md px-2.5 py-1.5 text-sm font-semibold text-gray-700 aria-expanded:bg-white aria-expanded:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] focus-visible:outline-none focus-visible:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] dark:aria-expanded:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6] hover:bg-gray-100 hover:text-gray-900 transition-colors dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-gray-100 cursor-pointer">
 <img src="../../../assets/icons/consumer-portal/help.svg" alt="" class="size-[18px]" />Help from Transcard</button></div>`;
@@ -830,15 +836,15 @@ function buildConsumerFooter(id, isDesktopCollapsed) {
   const wrap = id ? `id="${id}" ` : "";
   if (id)
     return `<div ${wrap}class="h-[74px] w-full shrink-0">
-<div data-sidebar-expanded-footer class="${isDesktopCollapsed ? "hidden " : ""}flex h-full flex-col items-center gap-2 pt-4 pb-0"><div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /><span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span><img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16 dark:invert" /></div><div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400"><a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span><a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>
-<div data-sidebar-collapsed-footer class="${isDesktopCollapsed ? "" : "hidden "}flex h-full w-full flex-col gap-[10px]"><div class="flex w-full items-center justify-center gap-2 px-px py-4"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /></div></div></div>`;
+<div data-sidebar-expanded-footer class="${isDesktopCollapsed ? "hidden " : ""}flex h-full flex-col items-center gap-2 pt-4 pb-0"><div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /><span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span><img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16 dark:invert" /></div><div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400"><a href="https://smart-enroll.com/terms-of-use/EN" target="_blank" rel="noopener noreferrer" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use<span class="sr-only"> (opens in a new tab)</span></a><span class="text-gray-300 dark:text-gray-600">•</span><a href="https://smart-enroll.com/privacy-policy/EN" target="_blank" rel="noopener noreferrer" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a></div></div>
+<div data-sidebar-collapsed-footer class="${isDesktopCollapsed ? "" : "hidden "}flex h-full w-full flex-col gap-[10px]"><div class="flex w-full items-center justify-center px-px py-1.5"><button type="button" data-footer-flyout-trigger aria-haspopup="menu" aria-expanded="false" aria-label="Powered by Transcard" class="inline-flex size-10 items-center justify-center rounded-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 cursor-pointer"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /></button></div></div></div>`;
       return `<div ${wrap}class="flex flex-col items-center gap-2 pt-4 pb-0">
 <div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" />
 <span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span>
 <img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16 dark:invert" /></div>
 <div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400">
-<a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span>
-<a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>`;
+<a href="https://smart-enroll.com/terms-of-use/EN" target="_blank" rel="noopener noreferrer" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use<span class="sr-only"> (opens in a new tab)</span></a><span class="text-gray-300 dark:text-gray-600">•</span>
+<a href="https://smart-enroll.com/privacy-policy/EN" target="_blank" rel="noopener noreferrer" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a></div></div>`;
 }
 
 function buildHelpBlock(id, collapsed) {
@@ -855,7 +861,7 @@ function buildHelpBlock(id, collapsed) {
   return `<div ${wrap}class="flex w-full flex-col gap-4">
 <div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>
 ${expandedBtn}
-<button type="button" data-support-trigger data-help-variant="collapsed" data-sidebar-btn-tooltip="Help from Transcard" aria-haspopup="dialog" aria-expanded="false" aria-controls="dashboard-support-flyout" aria-label="Help from Transcard" class="${collapsed ? "" : "!hidden "}flex h-8 w-full items-center justify-center rounded-md hover:bg-gray-100 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 cursor-pointer">${helpIcon}</button></div>`;
+<button type="button" data-support-trigger data-help-variant="collapsed" data-sidebar-btn-tooltip="Help from Transcard" aria-haspopup="dialog" aria-expanded="false" aria-controls="dashboard-support-flyout" aria-label="Help from Transcard" class="${collapsed ? "" : "!hidden "}flex size-10 shrink-0 self-start items-center justify-center rounded-md hover:bg-gray-100 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 cursor-pointer">${helpIcon}</button></div>`;
 }
 
 function accountInfoAssetPath(file) {
@@ -963,7 +969,7 @@ ${buildAccountInfoPanel(panelId)}
 }
 
 function accountInfoCollapsedButton(collapsed) {
-  return `<button type="button" data-account-info-trigger data-account-variant="collapsed" data-sidebar-btn-tooltip="Your Account Information" aria-haspopup="dialog" aria-expanded="false" aria-controls="dashboard-account-info-flyout" aria-label="Your Account Information" class="${collapsed ? "" : "!hidden "}mx-auto inline-flex size-10 shrink-0 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10 cursor-pointer">${ACCOUNT_INFO_ICON_SVG}</button>`;
+  return `<button type="button" data-account-info-trigger data-account-variant="collapsed" data-sidebar-btn-tooltip="Your Account Information" aria-haspopup="dialog" aria-expanded="false" aria-controls="dashboard-account-info-flyout" aria-label="Your Account Information" class="${collapsed ? "" : "!hidden "}mx-auto inline-flex size-10 shrink-0 items-center justify-center rounded-md text-gray-400 transition-colors hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300 dark:hover:bg-white/10 cursor-pointer">${RAIL_ACCOUNT_ICON_SVG}</button>`;
 }
 
 function footerBrandMarkup() {
@@ -973,9 +979,9 @@ ${TRANSCARD_SHIELD_SVG}
 ${TRANSCARD_LOGO_SVG}
 </div>
 <div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400">
-<a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a>
+<a href="https://smart-enroll.com/terms-of-use/EN" target="_blank" rel="noopener noreferrer" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use<span class="sr-only"> (opens in a new tab)</span></a>
 <span class="text-gray-700 dark:text-gray-400">•</span>
-<a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a>
+<a href="https://smart-enroll.com/privacy-policy/EN" target="_blank" rel="noopener noreferrer" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a>
 </div>`;
 }
 
@@ -1147,7 +1153,9 @@ class AppNav extends HTMLElement {
       collapsed,
     );
     const consumerPortal = activeBrand() === "consumer-portal";
-    const panelPadding = "px-6 pt-6 pb-6";
+    // Collapsed: the 1px border-r sits inside the right padding, so the rail's
+    // content is 40px (Figma 24 | 40 | 24 incl. border).
+    const panelPadding = collapsed ? "pl-6 pr-5.75 pt-6 pb-6" : "px-6 pt-6 pb-6";
     const contentGap = "gap-9";
     const menuGap = consumerPortal ? "gap-0" : "gap-1.5";
     const navLogoAlignment = "justify-start";
@@ -1174,7 +1182,7 @@ class AppNav extends HTMLElement {
 <div tabindex="0" class="fixed inset-0 flex focus:outline-none">
 <el-dialog-panel class="group/dialog-panel relative mr-16 flex w-full max-w-[312px] flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full">
 <div class="absolute top-0 left-full flex w-16 justify-center pt-5 duration-300 ease-in-out group-data-closed/dialog-panel:opacity-0">
-<button type="button" command="close" commandfor="sidebar" class="-m-2.5 p-2.5">
+<button type="button" command="close" commandfor="sidebar" class="-m-2.5 cursor-pointer rounded-md p-2.5 transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white">
 <span class="sr-only">Close sidebar</span>
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6 text-white"><path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
 </button></div>
@@ -1194,8 +1202,9 @@ ${buildFooter("")}
 
 <!-- ===== STATIC SIDEBAR FOR DESKTOP (hidden below lg) ===== -->
 <div id="desktop-sidebar-shell" class="hidden lg:fixed lg:top-[var(--stp-alert-height,0px)] lg:left-0 lg:z-50 lg:flex lg:h-[calc(100vh-var(--stp-alert-height,0px))] lg:flex-col ${collapsed ? "is-collapsed lg:w-[88px]" : desktopWidth}">
-<div id="desktop-sidebar-panel" class="flex h-full grow flex-col justify-between gap-6 overflow-y-auto border-r border-gray-200 bg-white ${panelPadding} dark:border-white/10 dark:bg-gray-900">
+<div id="desktop-sidebar-panel" class="flex h-full grow flex-col justify-between gap-6 overflow-x-hidden overflow-y-auto border-r border-gray-200 bg-white ${panelPadding} dark:border-white/10 dark:bg-gray-900">
 <div class="flex flex-col ${contentGap}">
+<div data-sidebar-head class="sticky -top-6 z-10 -mt-6 -mb-6 pt-6 pb-6 ${collapsed ? "-ml-6 -mr-5.75 pl-6 pr-5.75" : "-mx-6 px-6"} bg-white transition-shadow duration-150 data-[scrolled=true]:shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.08),0px_2px_4px_-2px_rgba(0,0,0,0.06)] dark:bg-gray-900 dark:data-[scrolled=true]:shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.40),0px_2px_4px_-2px_rgba(0,0,0,0.30)]">
 <div id="desktop-logo-row" class="relative flex ${collapsed ? "w-10 h-8 justify-center" : "w-full h-8 justify-start px-1"} items-center">
 <div id="desktop-logo-full" class="${collapsed ? "hidden" : ""} flex min-w-0 flex-1 items-center pr-10">${buildLogoHtml("justify-start")}</div>
 <button type="button" id="desktop-sidebar-collapse-btn" data-sidebar-toggle data-sidebar-btn-tooltip="Collapse" aria-label="Collapse sidebar" class="${collapsed ? "hidden " : ""}absolute right-1 w-10 h-8 top-1/2 flex -translate-y-1/2 items-center justify-center rounded-md text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-white/5 dark:hover:text-gray-300 transition-colors cursor-pointer">
@@ -1204,6 +1213,7 @@ ${collapseControl}
 <div id="desktop-logo-mark" class="${collapsed ? "flex" : "hidden"} group/logomark relative h-8 w-10 shrink-0 items-center justify-center overflow-visible">
 ${logoMark}
 <button type="button" data-sidebar-toggle data-sidebar-btn-tooltip="Expand" aria-label="Expand sidebar" class="absolute left-1 top-0 flex size-8 items-center justify-center rounded-lg text-gray-500 bg-white dark:bg-gray-900 opacity-0 group-hover/logomark:opacity-100 hover:bg-gray-100 hover:text-gray-700 dark:hover:bg-gray-800 dark:hover:text-gray-300 transition-opacity duration-100 ease-out cursor-pointer"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg></button>
+</div>
 </div>
 </div>
 <nav class="relative flex w-full flex-col ${menuGap}" data-nav="desktop">
