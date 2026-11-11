@@ -15,6 +15,9 @@ state and add a row here in the same change. Tokens: see the `design-system` ski
 | Sidebar | `<app-nav>` · `nav-component.js`, `sidebar.js`, `sidebar-boot.js` | never hand-write nav markup; active item from `body[data-page]` |
 | Top bar | `<app-topbar>` · `topbar-component.js` | title/breadcrumbs from `data-title` / page path; business + account menus built in |
 | Shell glue | `shared.js` (load on every dashboard page) | tooltips (`data-tooltip="…"`, `data-tooltip-side`), focus/cursor rules, theme |
+| Toast | `showGlobalTopToast(msg, { tone })` (`shared.js`) | dark pill, top centre, 3 s. `tone`: `"success"` (default, green check) · `"info"` (blue i, not-a-success outcomes) · `"error"` (red x-circle red-500 / dark red-400, `role="alert"`, e.g. file too large) |
+| Page card | every dashboard page | white content card `rounded-lg bg-white shadow-sm dark:bg-gray-900` at **every** width (no `rounded-none sm:rounded-lg`), inside `main` with a phone gutter `p-2` (never `p-0`) |
+| Top-bar user | `<app-topbar>` | in views with User Management (not the Consumer Portal, not the STP `?case=` instance): greeting, menu name / email and avatar (photo or UM initials) come from `localStorage.sx_um_v1` (`currentUserId`), else the company profile; "Profile" → `user-profile.html`. Re-renders on the `sx-um-change` event (UMStore writes) and `storage` |
 | Product switch | `AppPlans`, `AppSwitch` (`app-plans.js`, `app-switch.js`) | which portal/plan is active, cross-product links |
 | Data | `DataSource.load(paths)` (`data-source.js`) | the only JSON loader; `DataSource.configure({ apiBaseUrl })` swaps to an API |
 

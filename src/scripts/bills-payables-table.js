@@ -4266,7 +4266,8 @@
     var rangeLabel = total ? start + " - " + end : "0 - 0";
     refs.pagination.innerHTML =
       '<div class="flex w-full flex-wrap items-center justify-end gap-4">' +
-      '<div class="flex h-10 items-center gap-4">' +
+      // Phones: let "Rows per Page / Showing / buttons" wrap instead of running off the card.
+      '<div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-3 sm:h-10 sm:flex-nowrap">' +
       '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">Rows per Page:</span>' +
       '<el-dropdown class="inline-block">' +
       '<button type="button" class="inline-flex h-10 w-[75px] items-center justify-between rounded-md border border-gray-300 bg-white px-3 text-base leading-6 font-medium text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:shadow-none dark:hover:bg-white/10">' +

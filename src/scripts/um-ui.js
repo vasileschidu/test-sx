@@ -9,8 +9,6 @@
  *   UMUi.withViewer(href)              keeps ?as=member on links between UM pages
  *   UMUi.table                         table pieces shared by Users and Roles: cell classes, row-action
  *                                      button + icons, sortHeader / nextSort, pagination, syncSticky
- *   UMUi.syncTopbar()                  shows Me's name / photo in <app-topbar> on UM pages
- *                                      (data-topbar-* hooks; the avatar <img> has no hook)
  */
 window.UMUi = (function () {
   "use strict";
@@ -165,45 +163,6 @@ window.UMUi = (function () {
     var viewer = window.UMStore && window.UMStore.getViewer();
     if (!viewer || viewer.isAdmin) return href;
     return href + (href.indexOf("?") === -1 ? "?" : "&") + "as=member";
-  }
-
-  // The top bar fills its name hooks from the company profile; after Me edits their
-  // name or photo on the profile page, the UM pages show the edit there too.
-  function syncTopbar() {
-    var me = window.UMStore && window.UMStore.getCurrentUser();
-    var bar = document.querySelector("app-topbar");
-    if (!me || !bar) return;
-    var name = fullName(me);
-    bar.querySelectorAll("[data-topbar-greeting-name], [data-topbar-profile-name]").forEach(function (node) {
-      node.textContent = name;
-    });
-    bar.querySelectorAll("[data-topbar-greeting]").forEach(function (node) {
-      node.title = "Hello, " + name;
-    });
-    bar.querySelectorAll("[data-topbar-avatar-initials]").forEach(function (node) {
-      node.textContent = initials(me);
-    });
-    var button = bar.querySelector('button[aria-label="Open user menu"]');
-    var img = button && button.querySelector("img");
-    if (!img) return;
-    var fallback = button.querySelector("[data-um-topbar-initials]");
-    if (me.photo) {
-      img.src = photoSrc(me);
-      img.hidden = false;
-      if (fallback) fallback.remove();
-      return;
-    }
-    img.hidden = true;
-    if (!fallback) {
-      fallback = document.createElement("span");
-      fallback.setAttribute("data-um-topbar-initials", "");
-      fallback.setAttribute("aria-hidden", "true");
-      button.appendChild(fallback);
-    }
-    fallback.className =
-      "flex size-10 items-center justify-center rounded-full border-2 border-white text-base text-white dark:border-gray-800 " +
-      avatarTone(me);
-    fallback.textContent = initials(me);
   }
 
 
@@ -365,7 +324,6 @@ window.UMUi = (function () {
 
   return {
     table: table,
-    syncTopbar: syncTopbar,
     escapeHtml: escapeHtml,
     fullName: fullName,
     displayName: displayName,

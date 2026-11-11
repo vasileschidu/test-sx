@@ -1418,7 +1418,10 @@ function ensureGlobalTopToastStyles() {
     ".sx-global-top-toast__close{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:#D1D5DB;cursor:pointer;}" +
     ".sx-global-top-toast__close:hover{background:rgba(255,255,255,.12);color:#fff;}" +
     // Dark: the page is gray-900 too, so go one step darker (gray-950) with a white/10 ring.
-    ".dark .sx-global-top-toast{background:#030712;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 10px 25px rgba(0,0,0,.5);}";
+    ".dark .sx-global-top-toast{background:#030712;box-shadow:0 0 0 1px rgba(255,255,255,.1),0 10px 25px rgba(0,0,0,.5);}" +
+    // tone:"error" icon: red-500, red-400 in dark.
+    ".sx-global-top-toast__icon--error{color:#EF4444;}" +
+    ".dark .sx-global-top-toast__icon--error{color:#F87171;}";
   document.head.appendChild(style);
 }
 
@@ -1438,11 +1441,13 @@ function hideGlobalTopToast() {
   }, 240);
 }
 
-// options.tone: "success" (default, green check) or "info" (blue info icon,
-// for outcomes that are not a success, e.g. an email that was not sent).
+// options.tone: "success" (default, green check), "info" (blue info icon, for
+// outcomes that are not a success, e.g. an email that was not sent) or "error"
+// (red x-circle, announced as an alert, e.g. a file that is too large).
 function showGlobalTopToast(message, options) {
   var text = String(message || "").trim();
   var isInfo = !!(options && options.tone === "info");
+  var isError = !!(options && options.tone === "error");
   if (!text) return;
   ensureGlobalTopToastStyles();
   if (_globalTopToast.removeTimer) {
@@ -1460,13 +1465,17 @@ function showGlobalTopToast(message, options) {
 
   var toast = document.createElement("div");
   toast.className = "sx-global-top-toast";
-  toast.setAttribute("role", "status");
-  toast.setAttribute("aria-live", "polite");
-  var icon = isInfo
+  toast.setAttribute("role", isError ? "alert" : "status");
+  toast.setAttribute("aria-live", isError ? "assertive" : "polite");
+  var icon = isError
+    ? '<path fill-rule="evenodd" clip-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM8.28 7.22a.75.75 0 0 0-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 1 0 1.06 1.06L10 11.06l1.72 1.72a.75.75 0 1 0 1.06-1.06L11.06 10l1.72-1.72a.75.75 0 0 0-1.06-1.06L10 8.94 8.28 7.22Z" fill="currentColor"/>'
+    : isInfo
     ? '<path fill-rule="evenodd" clip-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" fill="#60A5FA"/>'
     : '<path fill-rule="evenodd" clip-rule="evenodd" d="M10 18C14.4183 18 18 14.4183 18 10C18 5.58172 14.4183 2 10 2C5.58172 2 2 5.58172 2 10C2 14.4183 5.58172 18 10 18ZM13.8566 8.19113C14.1002 7.85614 14.0261 7.38708 13.6911 7.14345C13.3561 6.89982 12.8871 6.97388 12.6434 7.30887L9.15969 12.099L7.28033 10.2197C6.98744 9.92678 6.51256 9.92678 6.21967 10.2197C5.92678 10.5126 5.92678 10.9874 6.21967 11.2803L8.71967 13.7803C8.87477 13.9354 9.08999 14.0149 9.30867 13.9977C9.52734 13.9805 9.72754 13.8685 9.85655 13.6911L13.8566 8.19113Z" fill="#10B981"/>';
   toast.innerHTML =
-    '<span aria-hidden="true" class="inline-flex shrink-0">' +
+    '<span aria-hidden="true" class="inline-flex shrink-0' +
+    (isError ? " sx-global-top-toast__icon--error" : "") +
+    '">' +
     '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">' +
     icon +
     "</svg>" +

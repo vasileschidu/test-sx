@@ -397,6 +397,81 @@
         };
   }
 
+  /**
+   * User Management (SMART Hub settings) is in this view: the avatar menu's
+   * "Profile" opens the user's own profile and the bar shows the UM user.
+   * Not in views without the module (Consumer Portal) nor in the STP demo
+   * case instance (?case=), which keep the company-profile behaviour.
+   */
+  function hasUserManagement() {
+    if (window.SXDemoCase && window.SXDemoCase.isPortalInstance()) return false;
+    if (!window.AppPlans || !window.AppPlans.visibleModules) return false;
+    return window.AppPlans.visibleModules().some(function (module) {
+      return (
+        module.state === "enabled" &&
+        ((module.nav && module.nav.children) || []).some(function (child) {
+          return child.id === "user-management";
+        })
+      );
+    });
+  }
+
+  function profileMenuHref() {
+    return hasUserManagement()
+      ? "user-profile.html"
+      : currentAccountLinks().profile.href;
+  }
+
+  /**
+   * The signed-in user from User Management's saved state (localStorage
+   * sx_um_v1, written by um-store.js), read directly so no page has to load the
+   * store. Null when there is none or it can't be read.
+   */
+  var UM_STORAGE_KEY = "sx_um_v1";
+  function umCurrentUser() {
+    if (!hasUserManagement()) return null;
+    try {
+      var state = JSON.parse(window.localStorage.getItem(UM_STORAGE_KEY) || "null");
+      if (!state || !state.users) return null;
+      var me = state.users.filter(function (user) {
+        return user.id === state.currentUserId;
+      })[0];
+      if (!me) return null;
+      return {
+        id: me.id,
+        name: [me.firstName, me.lastName].filter(Boolean).join(" ").trim(),
+        email: String(me.email || "").trim(),
+        photo: me.photo || "",
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /** A UM photo is a data URL or a path under src/ (e.g. assets/topbar/avatar.png). */
+  function umPhotoSrc(photo) {
+    if (/^data:image\//.test(photo)) return photo;
+    var path = window.location.pathname || "";
+    var index = path.indexOf("/src/pages/");
+    return (index >= 0 ? path.slice(0, index) : "") + "/src/" + photo;
+  }
+
+  // Initials avatar colours, as in the User Management list (um-ui.js).
+  var UM_AVATAR_TONES = [
+    "bg-purple-500",
+    "bg-cyan-500",
+    "bg-indigo-500",
+    "bg-pink-500",
+    "bg-emerald-500",
+    "bg-orange-500",
+  ];
+  function umAvatarTone(id) {
+    var hash = 5381;
+    for (var i = 0; i < String(id).length; i += 1)
+      hash = ((hash * 33) ^ String(id).charCodeAt(i)) >>> 0;
+    return UM_AVATAR_TONES[hash % UM_AVATAR_TONES.length];
+  }
+
   /** A profile/preferences link that follows the active product. */
   function accountLink(kind, iconHtml) {
     var link = currentAccountLinks()[kind];
@@ -418,6 +493,9 @@
         var labels = anchor.querySelectorAll("span");
         if (labels.length) labels[labels.length - 1].textContent = link.label;
       });
+    host.querySelectorAll("[data-topbar-profile-link]").forEach(function (anchor) {
+      anchor.setAttribute("href", profileMenuHref());
+    });
   }
 
   /** Supplier user menu: same content as the Consumer Portal (name, role, Profile, Sign out). */
@@ -545,8 +623,8 @@
       '  <p data-topbar-profile-name class="truncate text-base font-semibold leading-6 text-gray-900 dark:text-white">Johnny Anderson</p>' +
       '  <p class="truncate text-sm leading-5 text-gray-500 dark:text-gray-400">Role</p>' +
       "</div>" +
-      '<a href="' +
-      currentAccountLinks().profile.href +
+      '<a data-topbar-profile-link href="' +
+      profileMenuHref() +
       '" class="' +
       itemCls +
       '"><span>Profile</span></a>' +
@@ -845,6 +923,9 @@
                   : consumerBusinessMenuHtml();
             });
           syncAccountLinks(bar);
+          // The new view may or may not have User Management: re-pick the user.
+          if (bar._lastProfile && typeof bar.applyProfileData === "function")
+            bar.applyProfileData(bar._lastProfile);
         });
       }
       // Changing view swaps the whole instance, so it gets a real loading
@@ -885,6 +966,7 @@
       }
       this.bindStp();
       this.bindProfileData();
+      this.bindUmUpdates();
     }
 
     // The STP banner sits inside the top bar, between the greeting row and the
@@ -1084,6 +1166,12 @@
         );
         this._profileReadyHandler = null;
       }
+      if (this._umUpdateHandler) {
+        window.removeEventListener("storage", this._umUpdateHandler);
+        document.removeEventListener("sx-um-change", this._umUpdateHandler);
+        this._umUpdateHandler = null;
+        this._umUpdatesBound = false;
+      }
     }
 
     bindProfileData() {
@@ -1136,6 +1224,12 @@
         profile.contact && profile.contact.email
           ? String(profile.contact.email || "").trim()
           : String(profile.businessEmail || "").trim() || "j.anderson@mail.com";
+      // User Management's signed-in user (sx_um_v1) wins over the company profile.
+      var me = umCurrentUser();
+      if (me) {
+        personName = me.name || personName;
+        personEmail = me.email || personEmail;
+      }
       // STP walkthrough instance: the demo case's supplier and contact.
       var demoCase =
         window.SXDemoCase && window.SXDemoCase.isPortalInstance()
@@ -1155,6 +1249,8 @@
         personEmail = demoCase.supplier.email || personEmail;
       }
       var initials = buildInitials(personName);
+      this._lastProfile = profile;
+      this.applyAvatar(demoCase ? null : me, initials);
 
       // The switcher label names the active business/view; the company
       // profile only supplies it when no plan model is present.
@@ -1201,6 +1297,47 @@
           secondaryWrap.classList.add("hidden");
         }
       }
+    }
+
+    /** The avatar button: the UM user's photo, their initials, or the default picture. */
+    applyAvatar(me, initials) {
+      var img = this.querySelector("[data-topbar-avatar-img]");
+      if (!img) return;
+      if (!img.hasAttribute("data-default-src"))
+        img.setAttribute("data-default-src", img.getAttribute("src"));
+      var button = img.parentElement;
+      var fallback = button.querySelector("[data-topbar-avatar-fallback]");
+      if (me && !me.photo) {
+        img.hidden = true;
+        if (!fallback) {
+          fallback = document.createElement("span");
+          fallback.setAttribute("data-topbar-avatar-fallback", "");
+          fallback.setAttribute("aria-hidden", "true");
+          button.appendChild(fallback);
+        }
+        fallback.className =
+          "flex size-10 items-center justify-center rounded-full border-2 border-white text-base text-white dark:border-gray-800 " +
+          umAvatarTone(me.id);
+        fallback.textContent = initials;
+        return;
+      }
+      if (fallback) fallback.remove();
+      img.hidden = false;
+      var src = me && me.photo ? umPhotoSrc(me.photo) : img.getAttribute("data-default-src");
+      if (img.getAttribute("src") !== src) img.setAttribute("src", src);
+    }
+
+    /** Re-apply when User Management changes (this tab: sx-um-change; other tabs: storage). */
+    bindUmUpdates() {
+      if (this._umUpdatesBound) return;
+      this._umUpdatesBound = true;
+      var self = this;
+      this._umUpdateHandler = function (event) {
+        if (event.type === "storage" && event.key !== UM_STORAGE_KEY && event.key !== null) return;
+        if (self._lastProfile) self.applyProfileData(self._lastProfile);
+      };
+      window.addEventListener("storage", this._umUpdateHandler);
+      document.addEventListener("sx-um-change", this._umUpdateHandler);
     }
 
     bindStp() {
@@ -1382,7 +1519,7 @@
         '        <button type="button" aria-label="Open user menu" class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full shadow-[0px_1px_2px_rgba(0,0,0,0.05)] transition-shadow hover:ring-2 hover:ring-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-expanded:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] aria-expanded:hover:ring-0 dark:hover:ring-white/20 dark:aria-expanded:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6]">' +
         '          <img src="' +
         topbarAsset("avatar.png") +
-        '" width="40" height="40" alt="" class="size-10 rounded-full border-2 border-white object-cover dark:border-gray-800">' +
+        '" data-topbar-avatar-img width="40" height="40" alt="" class="size-10 rounded-full border-2 border-white object-cover dark:border-gray-800">' +
         "        </button>" +
         '        <el-menu anchor="bottom end" popover class="' +
         consumerUserMenuClass() +

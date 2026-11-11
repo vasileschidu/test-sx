@@ -81,6 +81,10 @@ window.UMStore = (function () {
         fn(state);
       } catch (e) {}
     });
+    // The top bar (topbar-component.js) reads sx_um_v1 itself and re-renders on this.
+    try {
+      document.dispatchEvent(new CustomEvent("sx-um-change"));
+    } catch (e) {}
   }
 
   function fromSeed(seed) {

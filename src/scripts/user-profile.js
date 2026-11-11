@@ -269,9 +269,9 @@
     input.value = "";
     if (!file) return;
     if (PHOTO_TYPES.indexOf(file.type) === -1)
-      return toast("Photo not uploaded: use a PNG or JPG image.", "info");
+      return toast("Photo not uploaded: use a PNG or JPG image.", "error");
     if (file.size > MAX_PHOTO_BYTES)
-      return toast("Photo not uploaded: the image is larger than 2 MB.", "info");
+      return toast("Photo not uploaded: the image is larger than 2 MB.", "error");
     resizeToDataUrl(file)
       .then(function (dataUrl) {
         window.UMStore.updateUser(userId, { photo: dataUrl });
@@ -279,7 +279,7 @@
         document.getElementById("up-photo-edit").focus();
       })
       .catch(function () {
-        toast("Photo not uploaded: the image could not be read.", "info");
+        toast("Photo not uploaded: the image could not be read.", "error");
       });
   }
 
@@ -370,16 +370,14 @@
         }
         bindEvents();
         render();
-        UI.syncTopbar();
         window.UMStore.onChange(function () {
           renderHeader();
           if (!editing) renderRows();
-          UI.syncTopbar();
         });
         document.getElementById("up-body").removeAttribute("aria-busy");
       })
       .catch(function () {
-        toast("The profile could not be loaded. Reload the page to try again.", "info");
+        toast("The profile could not be loaded. Reload the page to try again.", "error");
       });
   }
 

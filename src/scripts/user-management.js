@@ -696,12 +696,10 @@
     bindEvents();
     renderSkeleton();
     window.UMStore.onChange(render);
-    window.UMStore.onChange(UI.syncTopbar);
     window.UMStore.onChange(syncDemoBar);
     window.UMStore.load()
       .then(function () {
         state.loaded = true;
-        UI.syncTopbar();
         // Figma 6.5: a member can't invite users.
         var addUser = document.getElementById("um-add-user");
         if (addUser) addUser.hidden = !isAdmin();
@@ -710,7 +708,7 @@
       })
       .catch(function () {
         refs.cards.innerHTML = refs.table.innerHTML = "";
-        toast("Users could not be loaded. Reload the page to try again.", "info");
+        toast("Users could not be loaded. Reload the page to try again.", "error");
       });
   }
 

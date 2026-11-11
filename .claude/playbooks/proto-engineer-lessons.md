@@ -65,3 +65,7 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-11 [checkbox] `<app-checkbox>` moves `data-*` onto its inner input: query `input[data-x]`, not `[data-x] input`.
 - 2026-11-11 [refactor][qa] Prove a shared-helper extraction with request interception: `page.route(/file\.js(\?|$)/)` serving
   `git show HEAD:` copies, then compare the rendered HTML. Globs like `**/x.js*` also catch `x.json`.
+- 2026-11-11 [shell][topbar] Cross-module data in the shared top bar: read the other module's localStorage directly (try/catch,
+  fallback to today), gate it by plan (`AppPlans.visibleModules()` nav children), and re-render on a custom event + `storage`.
+- 2026-11-11 [qa] Is a major pre-existing? Copy `git show HEAD:<page>` to a temp page next to it, audit, delete it.
+- 2026-11-11 [cards] Rounding phone cards also needs the `main` gutter: `p-0 sm:p-2` pages put the rounded corners on the screen edge.
