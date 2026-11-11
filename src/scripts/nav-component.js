@@ -812,19 +812,32 @@ function buildConsumerHelpBlock(id, isDesktopCollapsed) {
 <img src="../../../assets/icons/consumer-portal/help.svg" alt="" class="size-[18px]" />Help from Transcard</button></div>`;
 }
 
+/* Consumer Portal language selector (Figma "SD Versioning" 15644:38783). Popover lives in sidebar.js. */
+const LANG_FLAG_US =
+  '<span class="relative inline-block h-3 w-4 shrink-0 overflow-hidden rounded-[1.5px] shadow-[0_1px_1.5px_rgba(0,0,0,0.1),0_1px_1px_rgba(0,0,0,0.06)]"><img src="../../../assets/icons/consumer-portal/flags/us-20.svg" alt="" class="absolute inset-0 size-full max-w-none" /><span aria-hidden="true" class="absolute inset-0 rounded-[1.5px] bg-gradient-to-b from-white/70 to-black/30 mix-blend-overlay ring-1 ring-inset ring-black/10"></span></span>';
+const LANG_BTN_CLS =
+  "group/lang inline-flex items-center justify-center gap-1 rounded-sm bg-gray-100 px-1.5 py-0.5 text-xs leading-4 font-semibold text-gray-600 hover:bg-gray-200 hover:text-gray-700 aria-expanded:bg-gray-100 focus-visible:outline-none focus-visible:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/15 dark:hover:text-white dark:aria-expanded:bg-white/10 dark:focus-visible:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6] transition-colors cursor-pointer";
+function buildConsumerLanguage(collapsed) {
+  const chevron =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 shrink-0 text-gray-500 transition-transform group-aria-expanded/lang:rotate-180 dark:text-gray-400"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>';
+  return `<div class="flex w-full justify-center"><button type="button" data-lang-trigger aria-haspopup="true" aria-expanded="false" aria-label="Language" class="${LANG_BTN_CLS}"><span data-lang-flag class="inline-flex size-4 items-center justify-center">${LANG_FLAG_US}</span><span data-lang-label${collapsed ? ' class="hidden"' : ""}>English</span>${collapsed ? "" : chevron}</button></div>`;
+}
+
 function buildConsumerFooter(id, isDesktopCollapsed) {
+  return `<div class="flex w-full flex-col gap-1">${buildConsumerLanguage(isDesktopCollapsed)}${buildConsumerFooterCore(id, isDesktopCollapsed)}</div>`;
+}
+
+function buildConsumerFooterCore(id, isDesktopCollapsed) {
   const wrap = id ? `id="${id}" ` : "";
   if (id)
-    return `<div ${wrap}class="h-[74px] w-full shrink-0">
-<div data-sidebar-expanded-footer class="${isDesktopCollapsed ? "hidden " : ""}flex h-full flex-col items-center gap-2 pt-4 pb-0"><div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /><span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span><img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16 dark:invert" /></div><div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400"><a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span><a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>
+    return `<div ${wrap}class="min-h-[74px] w-full shrink-0">
+<div data-sidebar-expanded-footer class="${isDesktopCollapsed ? "hidden " : ""}flex flex-col items-center gap-2 pt-4 pb-0"><div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /><span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span><img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16 dark:invert" /></div><div class="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-xs font-medium text-gray-700 dark:text-gray-400"><a href="#" class="whitespace-nowrap hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span><a href="#" class="whitespace-nowrap hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>
 <div data-sidebar-collapsed-footer class="${isDesktopCollapsed ? "" : "hidden "}flex h-full w-full flex-col gap-[10px]"><div class="flex w-full items-center justify-center gap-2 px-px py-4"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" /></div></div></div>`;
       return `<div ${wrap}class="flex flex-col items-center gap-2 pt-4 pb-0">
 <div class="flex items-center gap-1"><img src="../../../assets/icons/consumer-portal/shield.svg" alt="" class="size-[18px]" />
 <span class="text-xs font-medium text-gray-800 dark:text-gray-300">Powered by</span>
 <img src="../../../assets/icons/consumer-portal/transcard.svg" alt="Transcard" class="w-16 dark:invert" /></div>
-<div class="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-gray-400">
-<a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span>
-<a href="#" class="hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>`;
+<div class="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 text-xs font-medium text-gray-700 dark:text-gray-400"><a href="#" class="whitespace-nowrap hover:text-gray-900 dark:hover:text-white transition-colors">Terms of Use</a><span class="text-gray-300 dark:text-gray-600">•</span><a href="#" class="whitespace-nowrap hover:text-gray-900 dark:hover:text-white transition-colors">Privacy Policy</a></div></div>`;
 }
 
 function buildHelpBlock(id, collapsed) {

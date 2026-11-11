@@ -1601,3 +1601,118 @@ if (document.fonts && document.fonts.ready) {
     if (activeTrigger) position(activeTrigger);
   });
 })();
+
+/* Consumer portal language selector popover (Figma "SD Versioning" 15644:38783). English, Spanish, French (Canada). */
+(function () {
+  /* Flags exported from the Figma "Flags" library component (assets/icons/consumer-portal/flags). */
+  var SHELL = 'relative inline-block shrink-0 overflow-hidden rounded-[1.5px] shadow-[0_1px_1.5px_rgba(0,0,0,0.1),0_1px_1px_rgba(0,0,0,0.06)] ';
+  var SHEEN = '<span aria-hidden="true" class="absolute inset-0 rounded-[1.5px] bg-gradient-to-b from-white/70 to-black/30 mix-blend-overlay ring-1 ring-inset ring-black/10"></span>';
+  var FLAGS = {
+    get: function (key, big) {
+      return '<span class="' + SHELL + (big ? "h-[15px] w-5" : "h-3 w-4") + '">' +
+        '<img src="../../../assets/icons/consumer-portal/flags/' + key + '-20.svg" alt="" class="absolute inset-0 size-full max-w-none" />' +
+        SHEEN + "</span>";
+    },
+  };
+  var GROUPS = [
+    { country: "United States", flag: "us", langs: [{ id: "en", label: "English", html: "en-US" }] },
+    { country: "Canada", flag: "ca", langs: [{ id: "fr-CA", label: "Français", html: "fr-CA" }] },
+    { country: "Spain", flag: "es", langs: [{ id: "es", label: "Español", html: "es" }] },
+  ];
+  var KEY = "consumer-language";
+  var popover = null, activeTrigger = null, current = "en";
+  try { current = localStorage.getItem(KEY) || "en"; } catch (e) {}
+  if (!GROUPS.some(function (g) { return g.langs.some(function (l) { return l.id === current; }); })) current = "en";
+
+  function find(id) {
+    for (var i = 0; i < GROUPS.length; i++)
+      for (var j = 0; j < GROUPS[i].langs.length; j++)
+        if (GROUPS[i].langs[j].id === id) return { g: GROUPS[i], l: GROUPS[i].langs[j] };
+  }
+  function applyTriggers() {
+    var f = find(current);
+    document.documentElement.lang = f.l.html;
+    if (applyTriggers.last !== f.l.html) {
+      applyTriggers.last = f.l.html;
+      document.dispatchEvent(new CustomEvent("consumer-language-change", { detail: { lang: f.l.html } }));
+    }
+    document.querySelectorAll("[data-lang-trigger]").forEach(function (t) {
+      t.querySelector("[data-lang-flag]").innerHTML = FLAGS.get(f.g.flag, false);
+      t.querySelector("[data-lang-label]").textContent = f.l.label;
+    });
+  }
+  function render() {
+    var check = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-green-600 dark:text-green-400"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>';
+    popover.innerHTML = GROUPS.map(function (g, i) {
+      return '<div class="flex flex-col gap-2 px-3 py-3' + (i ? " border-t border-gray-100 dark:border-white/10" : "") + '">' +
+        '<div class="flex items-center gap-2 px-1 text-sm font-semibold text-gray-900 dark:text-white">' + FLAGS.get(g.flag, true) + g.country + "</div>" +
+        '<div class="flex flex-wrap gap-1 pl-7">' + g.langs.map(function (l) {
+          var on = l.id === current;
+          return '<button type="button" role="menuitemradio" aria-checked="' + on + '" data-lang-option="' + l.id + '" class="inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-sm cursor-pointer transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 dark:focus-visible:ring-blue-500 ' +
+            (on ? "bg-gray-100 font-semibold text-gray-900 dark:bg-white/10 dark:text-white" : "font-medium text-gray-500 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white") + '">' + l.label + (on ? check : "") + "</button>";
+        }).join("") + "</div></div>";
+    }).join("");
+  }
+  function build() {
+    var el = document.createElement("div");
+    el.id = "language-popover";
+    el.setAttribute("role", "menu");
+    el.setAttribute("aria-label", "Language");
+    el.className = "fixed z-[85] hidden w-[220px] overflow-hidden rounded-lg bg-white shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] dark:bg-gray-800 dark:shadow-none dark:ring-1 dark:ring-white/10";
+    document.body.appendChild(el);
+    return el;
+  }
+  function position(t) {
+    /* Anchor by `bottom` (not `top = r.top - height`): the popover's height is wrong on the first
+       open because the Tailwind CDN hasn't generated the new classes yet when we measure it. */
+    var r = t.getBoundingClientRect(), w = 220;
+    popover.style.width = w + "px";
+    popover.style.left = Math.max(8, Math.min(r.left, window.innerWidth - w - 8)) + "px";
+    popover.style.top = "auto";
+    popover.style.bottom = window.innerHeight - r.top + 6 + "px";
+    popover.style.maxHeight = Math.max(80, r.top - 14) + "px";
+  }
+  function setOpen(open, t) {
+    if (open) {
+      popover = popover || build();
+      render();
+      popover.classList.remove("hidden");
+      activeTrigger = t;
+      t.setAttribute("aria-expanded", "true");
+      position(t);
+    } else if (popover && activeTrigger) {
+      popover.classList.add("hidden");
+      activeTrigger.setAttribute("aria-expanded", "false");
+      activeTrigger = null;
+    }
+  }
+  document.addEventListener("click", function (e) {
+    var opt = e.target.closest && e.target.closest("[data-lang-option]");
+    if (opt) {
+      current = opt.getAttribute("data-lang-option");
+      try { localStorage.setItem(KEY, current); } catch (err) {}
+      applyTriggers();
+      var t = activeTrigger;
+      setOpen(false);
+      if (t) t.focus();
+      return;
+    }
+    var trigger = e.target.closest && e.target.closest("[data-lang-trigger]");
+    if (trigger) {
+      var was = activeTrigger === trigger;
+      setOpen(false);
+      if (!was) setOpen(true, trigger);
+      return;
+    }
+    if (activeTrigger && !(popover && popover.contains(e.target))) setOpen(false);
+  });
+  document.addEventListener("keydown", function (e) {
+    if (e.key === "Escape" && activeTrigger) { var t = activeTrigger; setOpen(false); t.focus(); }
+  });
+  window.addEventListener("resize", function () { if (activeTrigger) position(activeTrigger); });
+  new MutationObserver(function () {
+    var t = document.querySelector("[data-lang-trigger] [data-lang-label]");
+    if (t && t.textContent !== find(current).l.label) applyTriggers();
+  }).observe(document.body, { childList: true, subtree: true });
+  applyTriggers();
+})();
