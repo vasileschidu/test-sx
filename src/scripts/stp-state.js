@@ -89,6 +89,21 @@
     return { stpStatus: stpStatus, stpStep: stpStep };
   }
 
+  // ?stp=reset (demo): back to the start — "Opt in" banner / step 1 — by
+  // dropping the stored progression and agreement request, then the param.
+  (function resetFromUrl() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get("stp") !== "reset") return;
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(LEGACY_STATUS_KEY);
+      localStorage.removeItem(AGREEMENT_REQUEST_KEY);
+      params.delete("stp");
+      var query = params.toString();
+      history.replaceState(null, "", window.location.pathname + (query ? "?" + query : "") + window.location.hash);
+    } catch (e) {}
+  })();
+
   function readStoredState() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
