@@ -1584,69 +1584,67 @@
 
     <!-- ===== DECLINE PAYMENT CONFIRM MODAL ===== -->
     <el-dialog>
-        <dialog id="gp-decline-confirm-dialog"
-            class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
-            <el-dialog-backdrop
-                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
-            <div tabindex="0"
-                class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
-                <el-dialog-panel
-                    class="relative w-full transform overflow-hidden rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
-                    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
-                        <button type="button" command="close" commandfor="gp-decline-confirm-dialog"
-                            class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
-                            <span class="sr-only">Close</span>
-                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true">
-                                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
-                        <div class="flex flex-col items-center text-center">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44"
-                                fill="none" aria-hidden="true">
-                                <path fill-rule="evenodd" clip-rule="evenodd"
-                                    d="M18.6667 5.48896C20.1486 2.92229 23.8532 2.9223 25.3351 5.48897L39.1482 29.414C40.6301 31.9806 38.7777 35.189 35.814 35.189H8.18777C5.22404 35.189 3.37171 31.9806 4.85358 29.414L18.6667 5.48896ZM22.0008 11C22.9121 11 23.6508 11.7387 23.6508 12.65V20.35C23.6508 21.2612 22.9121 22 22.0008 22C21.0895 22 20.3508 21.2612 20.3508 20.35L20.3508 12.65C20.3508 11.7387 21.0895 11 22.0008 11ZM22.0008 30.8C23.2158 30.8 24.2008 29.815 24.2008 28.6C24.2008 27.3849 23.2158 26.4 22.0008 26.4C20.7858 26.4 19.8008 27.3849 19.8008 28.6C19.8008 29.815 20.7858 30.8 22.0008 30.8Z"
-                                    fill="#EF4444" />
-                            </svg>
-                            <div class="mt-6 flex flex-col items-center gap-2">
-                                <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">
-                                    Decline Payment
-                                </h2>
-                                <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">
-                                    This will move the payment to Exceptions. Add a reason so the team knows what needs
-                                    to be corrected.
-                                </p>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="gp-decline-reason"
-                                class="block text-sm/6 font-medium text-gray-900 dark:text-white">Reason for
-                                decline</label>
-                            <div class="mt-2">
-                                <textarea id="gp-decline-reason" rows="4"
-                                    class="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
-                                    placeholder="Example: Supporting document does not match the invoice amount."></textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
-                        <button type="button" command="close" commandfor="gp-decline-confirm-dialog"
-                            class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">
-                            Cancel
-                        </button>
-                        <button id="gp-decline-confirm-btn" type="button" disabled
-                            class="w-full rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-red-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 cursor-pointer">
-                            Decline Payment
-                        </button>
-                    </div>
-                </el-dialog-panel>
-            </div>
-        </dialog>
+    <dialog id="gp-decline-confirm-dialog" class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+    <el-dialog-backdrop class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+    <div tabindex="0" class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
+    <el-dialog-panel class="relative w-full transform rounded-xl bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:max-w-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10">
+    <div class="flex self-stretch flex-col items-end justify-end px-4 pt-4">
+    <button type="button" command="close" commandfor="gp-decline-confirm-dialog" class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer">
+    <span class="sr-only">Close</span>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+    </button>
+    </div>
+    <div class="flex flex-col gap-6 p-6 px-8 pt-0">
+    <div class="flex flex-col items-center text-center">
+    <svg xmlns="http://www.w3.org/2000/svg" width="44" height="44" viewBox="0 0 44 44" fill="none" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M18.6667 5.48896C20.1486 2.92229 23.8532 2.9223 25.3351 5.48897L39.1482 29.414C40.6301 31.9806 38.7777 35.189 35.814 35.189H8.18777C5.22404 35.189 3.37171 31.9806 4.85358 29.414L18.6667 5.48896ZM22.0008 11C22.9121 11 23.6508 11.7387 23.6508 12.65V20.35C23.6508 21.2612 22.9121 22 22.0008 22C21.0895 22 20.3508 21.2612 20.3508 20.35L20.3508 12.65C20.3508 11.7387 21.0895 11 22.0008 11ZM22.0008 30.8C23.2158 30.8 24.2008 29.815 24.2008 28.6C24.2008 27.3849 23.2158 26.4 22.0008 26.4C20.7858 26.4 19.8008 27.3849 19.8008 28.6C19.8008 29.815 20.7858 30.8 22.0008 30.8Z" fill="#EF4444" /></svg>
+    <div class="mt-6 flex flex-col items-center gap-2">
+    <h2 class="text-center text-lg/6 font-semibold text-gray-900 dark:text-white">Decline Payment</h2>
+    <p class="text-center text-sm/5 font-normal text-gray-500 dark:text-gray-400">By selecting Decline Payment below, your payment will be declined and <span id="gp-decline-client" class="font-medium text-gray-700 dark:text-gray-300">[ClientName]</span> will be notified.</p>
+    </div>
+    </div>
+    <div class="flex flex-col gap-4">
+    <div>
+    <label id="gp-decline-reason-label" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Reason</label>
+    <el-select name="declineReason" id="gp-decline-reason-select" class="mt-2 block w-full">
+    <button type="button" aria-labelledby="gp-decline-reason-label" aria-describedby="gp-decline-reason-error" class="grid h-10 w-full cursor-default grid-cols-1 items-center rounded-md bg-white px-3 text-left text-base leading-6 text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 aria-invalid:outline-red-300 aria-invalid:focus-visible:outline-red-500 aria-invalid:aria-expanded:outline-red-500 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:aria-expanded:outline-blue-500 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus-visible:outline-red-400 dark:aria-invalid:aria-expanded:outline-red-400 sm:text-sm/6">
+    <el-selectedcontent class="col-start-1 row-start-1 flex min-w-0 items-center gap-2 pr-7 text-gray-900 dark:text-white"><span class="truncate text-gray-400 dark:text-gray-500">Select the reason</span></el-selectedcontent>
+    <span id="gp-decline-reason-error-icon" class="pointer-events-none col-start-1 row-start-1 mr-6 hidden self-center justify-self-end text-red-500 dark:text-red-400"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z"/></svg></span>
+    <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"/></svg>
+    </button>
+    <el-options anchor="bottom start" popover class="max-h-60 w-(--button-width) overflow-auto rounded-md bg-white py-1 shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(1)] data-leave:transition data-leave:transition-discrete data-leave:duration-100 data-leave:ease-in data-closed:data-leave:opacity-0 dark:bg-gray-800 dark:outline-white/10">
+    <el-option value="Zero balance acct (patient does not owe on the acct)" class="group/option relative block cursor-default select-none py-2 pr-11 pl-3 text-sm/5 text-gray-900 aria-selected:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10"><span class="block truncate font-normal group-aria-selected/option:font-semibold">Zero balance acct (patient does not owe on the acct)</span><span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-blue-400"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd"/></svg></span></el-option>
+    <el-option value="Unable to post" class="group/option relative block cursor-default select-none py-2 pr-11 pl-3 text-sm/5 text-gray-900 aria-selected:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10"><span class="block truncate font-normal group-aria-selected/option:font-semibold">Unable to post</span><span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-blue-400"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd"/></svg></span></el-option>
+    <el-option value="Invalid Provider" class="group/option relative block cursor-default select-none py-2 pr-11 pl-3 text-sm/5 text-gray-900 aria-selected:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10"><span class="block truncate font-normal group-aria-selected/option:font-semibold">Invalid Provider</span><span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-blue-400"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd"/></svg></span></el-option>
+    <el-option value="Unable to locate acct" class="group/option relative block cursor-default select-none py-2 pr-11 pl-3 text-sm/5 text-gray-900 aria-selected:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10"><span class="block truncate font-normal group-aria-selected/option:font-semibold">Unable to locate acct</span><span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-blue-400"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd"/></svg></span></el-option>
+    <el-option value="Duplicate payment creates a credit balance." class="group/option relative block cursor-default select-none py-2 pr-11 pl-3 text-sm/5 text-gray-900 aria-selected:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10"><span class="block truncate font-normal group-aria-selected/option:font-semibold">Duplicate payment creates a credit balance.</span><span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-blue-400"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd"/></svg></span></el-option>
+    <el-option value="Account charge off (sent to collections)" class="group/option relative block cursor-default select-none py-2 pr-11 pl-3 text-sm/5 text-gray-900 aria-selected:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10"><span class="block truncate font-normal group-aria-selected/option:font-semibold">Account charge off (sent to collections)</span><span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-blue-400"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd"/></svg></span></el-option>
+    <el-option value="Could not allocate to guarantor" class="group/option relative block cursor-default select-none py-2 pr-11 pl-3 text-sm/5 text-gray-900 aria-selected:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10"><span class="block truncate font-normal group-aria-selected/option:font-semibold">Could not allocate to guarantor</span><span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-blue-400"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd"/></svg></span></el-option>
+    <el-option value="Remit Rejected" class="group/option relative block cursor-default select-none py-2 pr-11 pl-3 text-sm/5 text-gray-900 aria-selected:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10"><span class="block truncate font-normal group-aria-selected/option:font-semibold">Remit Rejected</span><span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-blue-400"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd"/></svg></span></el-option>
+    <el-option value="Other" class="group/option relative block cursor-default select-none py-2 pr-11 pl-3 text-sm/5 text-gray-900 aria-selected:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:text-white dark:aria-selected:bg-white/10 dark:focus:bg-white/10"><span class="block truncate font-normal group-aria-selected/option:font-semibold">Other</span><span class="absolute inset-y-0 right-0 flex items-center pr-4 text-blue-600 group-not-aria-selected/option:hidden in-[el-selectedcontent]:hidden dark:text-blue-400"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" fill-rule="evenodd"/></svg></span></el-option>
+    </el-options>
+    </el-select>
+    <p id="gp-decline-reason-error" class="mt-2 hidden text-sm/5 text-red-600 dark:text-red-400"></p>
+    </div>
+    <div>
+    <div class="flex items-baseline justify-between">
+    <label for="gp-decline-reason" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Additional Note</label>
+    <span id="gp-decline-note-optional" class="text-sm/6 text-gray-500 dark:text-gray-400">Optional</span>
+    </div>
+    <textarea id="gp-decline-reason" rows="3" aria-describedby="gp-decline-note-error" class="mt-2 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-500 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-400" placeholder="Please provide more details"></textarea>
+    <p id="gp-decline-note-error" class="mt-2 hidden text-sm/5 text-red-600 dark:text-red-400"></p>
+    </div>
+    </div>
+    </div>
+    <div class="flex w-full gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">
+    <button type="button" command="close" commandfor="gp-decline-confirm-dialog" class="w-full rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10 cursor-pointer">Cancel</button>
+    <button id="gp-decline-confirm-btn" type="button" class="w-full rounded-md bg-red-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 cursor-pointer">Decline Payment</button>
+    </div>
+    </el-dialog-panel>
+    </div>
+    </dialog>
     </el-dialog>
-
-    <!-- ===== GET PAID: SMART CARD MODAL ===== -->
+    
+<!-- ===== GET PAID: SMART CARD MODAL ===== -->
     <el-dialog>
         <dialog id="gp-card-details-dialog"
             class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
@@ -2268,7 +2266,7 @@
 
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
     <script src="../../../src/scripts/table-ui.js?v=20261006f"></script>
-    <script src="../../../src/scripts/consumer-exchanges-table.js?v=20261109-declined2"></script>
+    <script src="../../../src/scripts/consumer-exchanges-table.js?v=20261110-decline"></script>
 
   <script src="../../../src/scripts/review-modal.js"></script>
 </body>

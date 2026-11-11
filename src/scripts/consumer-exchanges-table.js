@@ -7866,17 +7866,73 @@
       var normalizedInvoice = String(invoice || '').trim();
       if (!normalizedInvoice) return;
       pendingDeclineInvoice = normalizedInvoice;
-      var reasonEl = document.getElementById('gp-decline-reason');
-      var confirmBtn = document.getElementById('gp-decline-confirm-btn');
       var dialog = document.getElementById('gp-decline-confirm-dialog');
-      if (reasonEl) reasonEl.value = '';
-      if (confirmBtn) confirmBtn.disabled = true;
+      var clientEl = document.getElementById('gp-decline-client');
+      var targetEntry = findEntryByInvoice(normalizedInvoice);
+      if (clientEl) clientEl.textContent = (targetEntry && targetEntry.customer) || 'the client';
+      resetDeclineForm();
       if (dialog && typeof dialog.showModal === 'function' && !dialog.open) {
         dialog.showModal();
-        window.setTimeout(function () {
-          if (reasonEl) reasonEl.focus();
-        }, 50);
       }
+    }
+
+    var DECLINE_NOTE_MIN = 10;
+    var DECLINE_NOTE_MAX = 255;
+
+    function getDeclineSelect() {
+      return document.querySelector('el-select[name="declineReason"]');
+    }
+
+    function getDeclineReasonValue() {
+      var sel = getDeclineSelect();
+      var opt = sel && sel.querySelector('el-option[aria-selected="true"]');
+      return opt ? String(opt.getAttribute('value') || '') : '';
+    }
+
+    function setDeclineError(field, message) {
+      var isReason = field === 'reason';
+      var errEl = document.getElementById(isReason ? 'gp-decline-reason-error' : 'gp-decline-note-error');
+      var control = isReason
+        ? document.querySelector('#gp-decline-reason-select > button')
+        : document.getElementById('gp-decline-reason');
+      var icon = document.getElementById('gp-decline-reason-error-icon');
+      if (errEl) {
+        errEl.textContent = message || '';
+        errEl.classList.toggle('hidden', !message);
+      }
+      if (control) {
+        if (message) control.setAttribute('aria-invalid', 'true');
+        else control.removeAttribute('aria-invalid');
+      }
+      if (isReason && icon) icon.classList.toggle('hidden', !message);
+    }
+
+    function getDeclineNoteError(reasonValue, note) {
+      var trimmed = String(note || '').trim();
+      if (reasonValue === 'Other' && !trimmed) return 'Additional Note is required.';
+      if (trimmed && (reasonValue === 'Other' && trimmed.length < DECLINE_NOTE_MIN || trimmed.length > DECLINE_NOTE_MAX)) {
+        return 'Enter a minimum of ' + DECLINE_NOTE_MIN + ' and a maximum of ' + DECLINE_NOTE_MAX + ' characters.';
+      }
+      return '';
+    }
+
+    function syncDeclineNoteOptional() {
+      var optionalEl = document.getElementById('gp-decline-note-optional');
+      if (optionalEl) optionalEl.classList.toggle('hidden', getDeclineReasonValue() === 'Other');
+    }
+
+    function resetDeclineForm() {
+      var noteEl = document.getElementById('gp-decline-reason');
+      var sel = getDeclineSelect();
+      if (noteEl) noteEl.value = '';
+      if (sel) {
+        sel.querySelectorAll('el-option').forEach(function (opt) { opt.removeAttribute('aria-selected'); });
+        var content = sel.querySelector('el-selectedcontent');
+        if (content) content.innerHTML = '<span class="truncate text-gray-400 dark:text-gray-500">Select the reason</span>';
+      }
+      setDeclineError('reason', '');
+      setDeclineError('note', '');
+      syncDeclineNoteOptional();
     }
 
     function declinePendingPayment(invoice, reason) {
@@ -7946,16 +8002,36 @@
     var declineConfirmDialog = document.getElementById('gp-decline-confirm-dialog');
     var declineConfirmBtn = document.getElementById('gp-decline-confirm-btn');
     var declineReasonEl = document.getElementById('gp-decline-reason');
-    if (declineReasonEl && declineConfirmBtn) {
+    var declineSelectEl = getDeclineSelect();
+    if (declineSelectEl) {
+      var declineSelectObserver = new MutationObserver(function () {
+        if (getDeclineReasonValue()) setDeclineError('reason', '');
+        syncDeclineNoteOptional();
+        // Leaving "Other" makes the note optional again, so drop a stale note error.
+        if (!getDeclineNoteError(getDeclineReasonValue(), declineReasonEl ? declineReasonEl.value : '')) setDeclineError('note', '');
+      });
+      declineSelectEl.querySelectorAll('el-option').forEach(function (opt) {
+        declineSelectObserver.observe(opt, { attributes: true, attributeFilter: ['aria-selected'] });
+      });
+    }
+    if (declineReasonEl) {
       declineReasonEl.addEventListener('input', function () {
-        declineConfirmBtn.disabled = String(declineReasonEl.value || '').trim().length === 0;
+        var noteEl = document.getElementById('gp-decline-note-error');
+        // Clear the error once the text becomes valid; show nothing new while typing.
+        if (noteEl && !noteEl.classList.contains('hidden') && !getDeclineNoteError(getDeclineReasonValue(), declineReasonEl.value)) {
+          setDeclineError('note', '');
+        }
       });
     }
     if (declineConfirmBtn) {
       declineConfirmBtn.addEventListener('click', function () {
-        var reason = declineReasonEl ? declineReasonEl.value : '';
-        if (!String(reason || '').trim()) return;
-        declinePendingPayment(pendingDeclineInvoice, reason);
+        var reasonValue = getDeclineReasonValue();
+        var note = declineReasonEl ? String(declineReasonEl.value || '').trim() : '';
+        var noteError = getDeclineNoteError(reasonValue, note);
+        setDeclineError('reason', reasonValue ? '' : 'Reason is required.');
+        setDeclineError('note', noteError);
+        if (!reasonValue || noteError) return;
+        declinePendingPayment(pendingDeclineInvoice, note ? reasonValue + ': ' + note : reasonValue);
         pendingDeclineInvoice = '';
         if (declineConfirmDialog && declineConfirmDialog.open && typeof declineConfirmDialog.close === 'function') {
           declineConfirmDialog.close();
@@ -7965,8 +8041,7 @@
     if (declineConfirmDialog) {
       declineConfirmDialog.addEventListener('close', function () {
         pendingDeclineInvoice = '';
-        if (declineReasonEl) declineReasonEl.value = '';
-        if (declineConfirmBtn) declineConfirmBtn.disabled = true;
+        resetDeclineForm();
       });
     }
 
