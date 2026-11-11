@@ -15,6 +15,7 @@
  *   UMStore.getPermissionCategories() / getUserStatus(user) ("expired" when an invite ran out)
  *   UMStore.findEmail(email)       → "user" | "invited" | null (requires-action rows don't count)
  *   UMStore.createInvitation(data) → { invitation, user } — a Requires Action row with that email is reused
+ *   UMStore.updateUser(id, {firstName,lastName,phone,photo,roleIds}) — roleIds also update the invitation
  *   UMStore.resendInvitation(userId) / revokeInvitation(userId) / getInvitation(id) / getInvitationForUser(userId)
  *   UMStore.acceptInvitation(id, { firstName, lastName }) → "accepted" | "already" | "revoked" | "expired" | "unknown"
  *   UMStore.hasSavedState()        → true when this browser holds sx_um_v1 (accept page)
@@ -222,6 +223,11 @@ window.UMStore = (function () {
       if (value === null || value === "") delete user[key];
       else user[key] = String(value);
     });
+    if (Array.isArray(patch.roleIds) && patch.roleIds.length) {
+      user.roleIds = patch.roleIds.slice();
+      var inv = user.invitationId && getInvitation(user.invitationId);
+      if (inv) inv.roleIds = patch.roleIds.slice();
+    }
     if (id === state.currentUserId && ("firstName" in patch || "lastName" in patch))
       user.nameEdited = true;
     write();

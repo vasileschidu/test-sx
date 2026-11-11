@@ -90,8 +90,14 @@
         if (st === "invited" || st === "expired") return 2;
         return st === "requires-action" ? 1 : 0;
       };
+      // Within the invitations: the most recently sent first, so a new invite shows right under Me.
+      var sentAt = function (user) {
+        var inv = window.UMStore.getInvitationForUser && window.UMStore.getInvitationForUser(user.id);
+        var time = inv && Date.parse(inv.sentAt);
+        return isNaN(time) ? 0 : time || 0;
+      };
       users.sort(function (a, b) {
-        return rank(b) - rank(a);
+        return rank(b) - rank(a) || (rank(a) === 2 ? sentAt(b) - sentAt(a) : 0);
       });
     }
     if (!query) return users;
@@ -254,17 +260,26 @@
           ICON_TRASH +
           "</button>",
       );
-    var edit =
-      '<a href="' +
-      escapeHtml(profileHref(user)) +
-      '" data-tooltip="Edit Profile" aria-label="Edit profile of ' +
-      escapeHtml(name) +
-      '" class="' +
-      GROUP_BUTTON +
-      (user.owner ? " rounded-md" : " rounded-l-md") +
-      '">' +
-      ICON_PENCIL +
-      "</a>";
+    // Me → my profile page (photo, inline edit). Anyone else → the Edit modal (same layout as Invite).
+    var edit = isYou(user)
+      ? '<a href="' +
+        escapeHtml(profileHref(user)) +
+        '" data-tooltip="Edit my profile" aria-label="Edit my profile" class="' +
+        GROUP_BUTTON +
+        (user.owner ? " rounded-md" : " rounded-l-md") +
+        '">' +
+        ICON_PENCIL +
+        "</a>"
+      : '<button type="button" data-um-edit-user="' +
+        escapeHtml(user.id) +
+        '" data-tooltip="Edit user" aria-label="Edit ' +
+        escapeHtml(name) +
+        '" class="' +
+        GROUP_BUTTON +
+        (user.owner ? " rounded-md" : " rounded-l-md") +
+        '">' +
+        ICON_PENCIL +
+        "</button>";
     // The owner can't be removed: only the edit button (Figma 6.0).
     var remove = user.owner
       ? ""
@@ -677,7 +692,7 @@
     document.addEventListener("click", function (event) {
       var target = event.target.closest
         ? event.target.closest(
-            "[data-um-remove],[data-um-roles],[data-um-sort],[data-page-nav],[data-um-resend],[data-um-send-invite]",
+            "[data-um-remove],[data-um-roles],[data-um-sort],[data-page-nav],[data-um-resend],[data-um-send-invite],[data-um-edit-user]",
           )
         : null;
       if (!target || !document.getElementById("um-panel-users").contains(target))
@@ -686,6 +701,8 @@
         return openRemove(target.getAttribute("data-um-remove"), target.getAttribute("data-um-remove-mode"));
       if (target.hasAttribute("data-um-resend"))
         return resend(target.getAttribute("data-um-resend"), target);
+      if (target.hasAttribute("data-um-edit-user"))
+        return window.UMInvite.openEdit(target.getAttribute("data-um-edit-user"));
       if (target.hasAttribute("data-um-send-invite")) {
         var row = window.UMStore.getUser(target.getAttribute("data-um-send-invite"));
         return row && window.UMInvite.open({ email: row.email });

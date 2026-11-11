@@ -44,6 +44,7 @@ window.UMInvite = (function () {
 
   var expanded = {}; // permission category id → open
   var opts = {};
+  var editId = null;
 
   // ── Markup ──
 
@@ -123,7 +124,7 @@ window.UMInvite = (function () {
         hint: "Optional",
       }) +
       "</div>" +
-      '<div class="flex flex-col gap-2"><label for="umi-message" class="' +
+      '<div id="umi-message-block" class="flex flex-col gap-2"><label for="umi-message" class="' +
       LABEL +
       '">Add a Message</label><textarea id="umi-message" rows="3" placeholder="' + DEFAULT_MESSAGE + '" class="' +
       window.OBField.TEXTAREA +
@@ -156,7 +157,7 @@ window.UMInvite = (function () {
           panel +
           '">' +
           '<div class="flex shrink-0 items-center gap-3 border-b border-gray-200 py-3 pr-3 pl-6 dark:border-white/10">' +
-          '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"><path d="M10 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 18a9.953 9.953 0 0 1-5.385-1.572ZM16.25 5.75a.75.75 0 0 0-1.5 0v2h-2a.75.75 0 0 0 0 1.5h2v2a.75.75 0 0 0 1.5 0v-2h2a.75.75 0 0 0 0-1.5h-2v-2Z" /></svg>' +
+          '<span data-umi-icon="invite" class="contents"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"><path d="M10 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 18a9.953 9.953 0 0 1-5.385-1.572ZM16.25 5.75a.75.75 0 0 0-1.5 0v2h-2a.75.75 0 0 0 0 1.5h2v2a.75.75 0 0 0 1.5 0v-2h2a.75.75 0 0 0 0-1.5h-2v-2Z" /></svg></span><span data-umi-icon="edit" class="hidden"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 dark:text-gray-500"><path d="m5.433 13.917 1.262-3.155A4 4 0 0 1 7.58 9.42l6.92-6.918a2.121 2.121 0 0 1 3 3l-6.92 6.918c-.383.383-.84.685-1.343.886l-3.154 1.262a.5.5 0 0 1-.65-.65Z" /><path d="M3.5 5.75c0-.69.56-1.25 1.25-1.25H10A.75.75 0 0 0 10 3H4.75A2.75 2.75 0 0 0 2 5.75v9.5A2.75 2.75 0 0 0 4.75 18h9.5A2.75 2.75 0 0 0 17 15.25V10a.75.75 0 0 0-1.5 0v5.25c0 .69-.56 1.25-1.25 1.25h-9.5c-.69 0-1.25-.56-1.25-1.25v-9.5Z" /></svg></span>' +
           '<h2 id="umi-title" class="min-w-0 flex-1 truncate text-lg/7 font-medium text-default">Invite Business Member</h2>' +
           '<button type="button" command="close" commandfor="um-invite-dialog" class="' +
           CLOSE_BUTTON +
@@ -354,6 +355,7 @@ window.UMInvite = (function () {
     if (id === "umi-email") {
       if (!value) return "Email Address is Required";
       if (!validEmail(value)) return "Enter a valid email address";
+      if (editId) return "";
       var taken = window.UMStore.findEmail(value);
       if (taken === "user") return "This person is already a user of this business";
       if (taken === "invited") return "An invitation was already sent to this email";
@@ -392,6 +394,14 @@ window.UMInvite = (function () {
 
   // ── Open / send ──
 
+  function setMode(edit, name) {
+    document.getElementById("umi-title").textContent = edit ? name || "Edit Business Member" : "Invite Business Member";
+    document.querySelector('[data-umi-icon="invite"]').classList.toggle("hidden", edit);
+    // Edit: the title is just the person's name, no icon.
+    document.querySelector('[data-umi-icon="edit"]').classList.add("hidden");
+    document.getElementById("umi-message-block").classList.toggle("hidden", edit);
+  }
+
   function reset(email) {
     var form = document.getElementById("umi-form");
     form.reset();
@@ -408,11 +418,42 @@ window.UMInvite = (function () {
     renderPermissions();
     var send = document.getElementById("umi-send");
     send.disabled = false;
-    send.innerHTML = "Send Invite";
+    send.innerHTML = editId ? "Save Changes" : "Send Invite";
+    var editing = editId && window.UMStore.getUser(editId);
+    setMode(!!editId, editing && [editing.firstName, editing.lastName].filter(Boolean).join(" "));
+  }
+
+  // Edit a business member in the same dialog as Invite (Andrian, 2026-11-11): names, phone and
+  // roles prefilled; email read-only; no message; "Save Changes".
+  function openEdit(userId, options) {
+    var user = window.UMStore.getUser(userId);
+    if (!user) return Promise.resolve();
+    opts = options || {};
+    editId = userId;
+    return ensureDialogs().then(function () {
+      reset(user.email);
+      document.getElementById("umi-first").value = user.firstName || "";
+      document.getElementById("umi-last").value = user.lastName || "";
+      document.getElementById("umi-phone").value = user.phone || "";
+      (user.roleIds || []).forEach(function (id) {
+        var box = document.querySelector('[data-umi-role="' + id + '"]');
+        if (box) {
+          var input = box.querySelector("input[type=checkbox]") || box;
+          if ("checked" in input) input.checked = true;
+          else box.setAttribute("checked", "");
+        }
+      });
+      renderPermissions();
+      document.getElementById("um-invite-dialog").showModal();
+      setTimeout(function () {
+        document.getElementById("umi-first").focus();
+      }, 50);
+    });
   }
 
   function open(options) {
     opts = options || {};
+    editId = null;
     return ensureDialogs().then(function () {
       reset(opts.email);
       document.getElementById("um-invite-dialog").showModal();
@@ -429,6 +470,24 @@ window.UMInvite = (function () {
     var invalid = validateAll();
     if (invalid) {
       invalid.focus();
+      return;
+    }
+    if (editId) {
+      var savedUser = window.UMStore.updateUser(editId, {
+        firstName: document.getElementById("umi-first").value.trim(),
+        lastName: document.getElementById("umi-last").value.trim(),
+        phone: document.getElementById("umi-phone").value.trim(),
+        roleIds: selectedRoles(),
+      });
+      document.getElementById("um-invite-dialog").close();
+      if (typeof window.showGlobalTopToast === "function")
+        window.showGlobalTopToast(
+          "Changes to " +
+            ((savedUser && [savedUser.firstName, savedUser.lastName].filter(Boolean).join(" ")) || "the user") +
+            " saved.",
+          { tone: "success" },
+        );
+      if (typeof opts.onDone === "function") opts.onDone();
       return;
     }
     send.disabled = true;
@@ -523,5 +582,5 @@ window.UMInvite = (function () {
     });
   }
 
-  return { open: open, showResult: showResult };
+  return { open: open, openEdit: openEdit, showResult: showResult };
 })();
