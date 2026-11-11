@@ -35,7 +35,7 @@ window.UMStore = (function () {
   var STORAGE_KEY = "sx_um_v1";
   var SEED = "user-management";
   // Bump with the seed's "version": an older saved copy is replaced by the new seed.
-  var SEED_VERSION = 8;
+  var SEED_VERSION = 10;
   var INVITE_DAYS = 7;
   var DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -132,6 +132,16 @@ window.UMStore = (function () {
   }
 
   function carryOver(saved, next) {
+    // Seed rows that were taken out of the seed later (seed "retiredIds") don't come back.
+    var retired = next.retiredIds || [];
+    saved = Object.assign({}, saved, {
+      users: (saved.users || []).filter(function (u) {
+        return retired.indexOf(u.id) === -1;
+      }),
+      invitations: (saved.invitations || []).filter(function (i) {
+        return retired.indexOf(i.id) === -1;
+      }),
+    });
     var seedUserIds = {};
     next.users.forEach(function (u) {
       seedUserIds[u.id] = true;
@@ -484,7 +494,7 @@ window.UMStore = (function () {
       return normEmail(user.email) === target && user.status !== "requires-action";
     })[0];
     if (!hit) return null;
-    return hit.status === "invited" ? "invited" : "user";
+    return hit.status === "invited" || hit.status === "revoked" ? "invited" : "user";
   }
 
   function uid(prefix) {
@@ -538,14 +548,24 @@ window.UMStore = (function () {
     var inv = getInvitationForUser(userId);
     if (!inv) return null;
     inv.status = "pending";
+    var revokedUser = rawUser(userId);
+    if (revokedUser && revokedUser.status === "revoked") revokedUser.status = "invited";
     stamp(inv);
     write();
     return inv;
   }
 
-  /** Revoke = the row leaves the list and the link shows "revoked". */
+  /** Revoke = the link stops working ("revoked"); the row stays with a gray "Revoked" status,
+   *  from where it can be resent or removed (Andrian, 2026-11-11). */
   function revokeInvitation(userId) {
-    return removeUser(userId);
+    var user = rawUser(userId);
+    var inv = getInvitationForUser(userId);
+    if (!user || !inv) return false;
+    inv.status = "revoked";
+    inv.revokedAt = new Date().toISOString();
+    user.status = "revoked";
+    write();
+    return true;
   }
 
   function acceptInvitation(id, names) {

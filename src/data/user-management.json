@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 10,
   "currentUserId": "u-johnny-anderson",
   "business": {
     "id": "big-kahuna-burger",
@@ -249,6 +249,29 @@
       "roleIds": [],
       "status": "requires-action",
       "source": "import"
+    },
+    {
+      "id": "u-courtney-henry",
+      "firstName": "Courtney",
+      "lastName": "Henry",
+      "email": "courtney.henry@bigkahunaburger.com",
+      "roleIds": [
+        "full-access"
+      ],
+      "status": "invited",
+      "invitationId": "inv-courtney",
+      "phone": "+1 (555) 214-0387"
+    },
+    {
+      "id": "u-brooklyn-simmons",
+      "firstName": "Brooklyn",
+      "lastName": "Simmons",
+      "email": "brooklyn.simmons@bigkahunaburger.com",
+      "roleIds": [
+        "view-only"
+      ],
+      "status": "invited",
+      "invitationId": "inv-brooklyn"
     }
   ],
   "permissionCategories": [
@@ -525,6 +548,42 @@
       "status": "pending",
       "sentDaysAgo": 9,
       "invitedBy": "u-johnny-anderson"
+    },
+    {
+      "id": "inv-courtney",
+      "userId": "u-courtney-henry",
+      "email": "courtney.henry@bigkahunaburger.com",
+      "firstName": "Courtney",
+      "lastName": "Henry",
+      "phone": "+1 (555) 214-0387",
+      "roleIds": [
+        "full-access"
+      ],
+      "message": "",
+      "status": "pending",
+      "sentDaysAgo": 0,
+      "invitedBy": "u-johnny-anderson"
+    },
+    {
+      "id": "inv-brooklyn",
+      "userId": "u-brooklyn-simmons",
+      "email": "brooklyn.simmons@bigkahunaburger.com",
+      "firstName": "Brooklyn",
+      "lastName": "Simmons",
+      "phone": "",
+      "roleIds": [
+        "view-only"
+      ],
+      "message": "",
+      "status": "pending",
+      "sentDaysAgo": 1,
+      "invitedBy": "u-johnny-anderson"
     }
+  ],
+  "retiredIds": [
+    "inv-ralph",
+    "inv-theresa",
+    "u-ralph-edwards",
+    "u-theresa-webb"
   ]
 }

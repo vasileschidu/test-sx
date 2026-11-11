@@ -75,7 +75,7 @@
         if (isYou(user)) return 4;
         if (user.owner) return 3;
         var st = status(user);
-        if (st === "invited" || st === "expired") return 2;
+        if (st === "invited" || st === "expired" || st === "revoked") return 2;
         return st === "requires-action" ? 1 : 0;
       };
       // Within the invitations: the most recently sent first, so a new invite shows right under Me.
@@ -236,10 +236,10 @@
     function group(inner) {
       return '<div class="flex justify-end"><span class="isolate inline-flex rounded-md shadow-xs dark:shadow-none">' + inner + "</span></div>";
     }
-    // Requires Action (6.9i): only delete. Invitation Sent: resend + revoke. Expired: resend + remove.
+    // Requires Action (6.9i): only delete. Invitation Sent: resend + revoke. Expired / Revoked: resend + remove.
     if (st === "requires-action")
       return group(trash("requires-action", "Delete", "Delete") + ' rounded-md">' + ICON_TRASH + "</button>");
-    if (st === "invited" || st === "expired")
+    if (st === "invited" || st === "expired" || st === "revoked")
       return group(
         '<button type="button" data-um-resend="' +
           escapeHtml(user.id) +
@@ -252,7 +252,7 @@
           "</button>" +
           (st === "invited"
             ? trash("revoke", "Revoke invitation", "Revoke invitation for")
-            : trash("expired", "Remove", "Remove")) +
+            : trash(st === "revoked" ? "revoked" : "expired", "Remove", "Remove")) +
           ' -ml-px rounded-r-md">' +
           ICON_TRASH +
           "</button>",
@@ -483,6 +483,7 @@
       text: "Are you sure you want to revoke the invitation for {who}? The link in their email will stop working.",
     },
     expired: { title: "Remove Invitation", button: "Remove", text: "Are you sure you want to remove the expired invitation for {who}?" },
+    revoked: { title: "Remove Invitation", button: "Remove", text: "Are you sure you want to remove the revoked invitation for {who}?" },
     "requires-action": { title: "Remove User from Business", button: "Remove", text: "Are you sure you want to remove {who} from this business?" },
   };
 
@@ -521,12 +522,10 @@
         { once: true },
       );
     var who = UI.displayName(user) === "-" ? user.email : fullName(user);
-    if (window.UMStore.removeUser(user.id))
-      toast(
-        pendingRemoveMode === "revoke"
-          ? "Invitation for " + who + " was revoked"
-          : who + " was removed from " + businessName(),
-      );
+    if (pendingRemoveMode === "revoke") {
+      // Revoke keeps the row (status "Revoked"); Resend brings the invitation back.
+      if (window.UMStore.revokeInvitation(user.id)) toast("Invitation for " + who + " was revoked");
+    } else if (window.UMStore.removeUser(user.id)) toast(who + " was removed from " + businessName());
     if (dialog) dialog.close();
   }
 
