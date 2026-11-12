@@ -176,6 +176,7 @@ function getInitialSidebarCollapsed() {
   }
 
   try {
+    if (window.matchMedia && window.matchMedia("(min-width: 1024px) and (max-width: 1279px)").matches) return true;
     return localStorage.getItem("dashboard-sidebar-collapsed-v1") === "true";
   } catch (error) {
     return false;
@@ -531,7 +532,7 @@ function buildSubmenuItems(children, activeId, routerMode) {
 
 function buildSubmenu(children, activeId, expanded, routerMode) {
   const openCls = expanded
-    ? "nav-submenu ml-9 flex flex-col gap-1 overflow-hidden max-h-96 opacity-100 pointer-events-auto transition-all duration-400 ease-in-out"
+    ? "nav-submenu ml-9 flex flex-col gap-1 overflow-hidden max-h-160 opacity-100 pointer-events-auto transition-all duration-400 ease-in-out"
     : "nav-submenu ml-9 flex flex-col gap-1 overflow-hidden max-h-0 opacity-0 pointer-events-none transition-all duration-400 ease-in-out";
   return `<div class="${openCls}">${buildSubmenuItems(children, activeId, routerMode)}</div>`;
 }
@@ -1111,7 +1112,7 @@ class AppNav extends HTMLElement {
             var sub = btn.nextElementSibling;
             if (!sub || !sub.classList.contains("nav-submenu")) return;
             sub.classList.remove("max-h-0", "opacity-0", "pointer-events-none");
-            sub.classList.add("max-h-96", "opacity-100", "pointer-events-auto");
+            sub.classList.add("max-h-160", "opacity-100", "pointer-events-auto");
             var chevron = btn.querySelector(".chevron-icon");
             if (chevron) chevron.classList.add("rotate-180");
           });
@@ -1159,7 +1160,7 @@ class AppNav extends HTMLElement {
     const contentGap = "gap-9";
     const menuGap = consumerPortal ? "gap-0" : "gap-1.5";
     const navLogoAlignment = "justify-start";
-    const desktopWidth = "lg:w-[312px]";
+    const desktopWidth = "lg:w-[360px]";
     const collapseControl =
       '<img src="../../../assets/icons/consumer-portal/collapse.svg" alt="" class="size-5" />';
     const logoMark = consumerPortal
@@ -1180,7 +1181,7 @@ class AppNav extends HTMLElement {
 <dialog id="sidebar" class="backdrop:bg-transparent lg:hidden">
 <el-dialog-backdrop class="fixed inset-0 bg-gray-900/80 transition-opacity duration-300 ease-linear data-closed:opacity-0"></el-dialog-backdrop>
 <div tabindex="0" class="fixed inset-0 flex focus:outline-none">
-<el-dialog-panel class="group/dialog-panel relative mr-16 flex w-full max-w-[312px] flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full">
+<el-dialog-panel class="group/dialog-panel relative mr-16 flex w-full max-w-[360px] flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full">
 <div class="absolute top-0 left-full flex w-16 justify-center pt-5 duration-300 ease-in-out group-data-closed/dialog-panel:opacity-0">
 <button type="button" command="close" commandfor="sidebar" class="-m-2.5 cursor-pointer rounded-md p-2.5 transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white">
 <span class="sr-only">Close sidebar</span>
@@ -1202,7 +1203,7 @@ ${buildFooter("")}
 
 <!-- ===== STATIC SIDEBAR FOR DESKTOP (hidden below lg) ===== -->
 <div id="desktop-sidebar-shell" class="hidden lg:fixed lg:top-[var(--stp-alert-height,0px)] lg:left-0 lg:z-50 lg:flex lg:h-[calc(100vh-var(--stp-alert-height,0px))] lg:flex-col ${collapsed ? "is-collapsed lg:w-[88px]" : desktopWidth}">
-<div id="desktop-sidebar-panel" class="flex h-full grow flex-col justify-between gap-6 overflow-x-hidden overflow-y-auto border-r border-gray-200 bg-white ${panelPadding} dark:border-white/10 dark:bg-gray-900">
+<div id="desktop-sidebar-panel" class="flex h-full grow flex-col justify-between gap-6 overflow-x-hidden overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden border-r border-gray-200 bg-white ${panelPadding} dark:border-white/10 dark:bg-gray-900">
 <div class="flex flex-col ${contentGap}">
 <div data-sidebar-head class="sticky -top-6 z-10 -mt-6 -mb-6 pt-6 pb-6 ${collapsed ? "-ml-6 -mr-5.75 pl-6 pr-5.75" : "-mx-6 px-6"} bg-white transition-shadow duration-150 data-[scrolled=true]:shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.08),0px_2px_4px_-2px_rgba(0,0,0,0.06)] dark:bg-gray-900 dark:data-[scrolled=true]:shadow-[0px_4px_6px_-1px_rgba(0,0,0,0.40),0px_2px_4px_-2px_rgba(0,0,0,0.30)]">
 <div id="desktop-logo-row" class="relative flex ${collapsed ? "w-10 h-8 justify-center" : "w-full h-8 justify-start px-1"} items-center">

@@ -39,15 +39,15 @@
       src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1"
       type="module"
     ></script>
-    <script src="../../../src/scripts/sidebar-boot.js"></script>
+    <script src="../../../src/scripts/sidebar-boot.js?v=20261112cmp"></script>
     <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
     <script src="../../../src/scripts/app-plans.js"></script>
-    <script src="../../../src/scripts/nav-component.js?v=20261111hs"></script>
+    <script src="../../../src/scripts/nav-component.js?v=20261112sb"></script>
     <script src="../../../src/scripts/stp-state.js?v=20261112dd"></script>
     <script src="../../../src/scripts/app-switch.js?v=20261111sk3"></script>
     <script src="../../../src/scripts/topbar-component.js?v=20261111sw"></script>
     <script src="../../scripts/checkbox-component.js"></script>
-    <script src="../../../src/scripts/sidebar.js?v=20261111hs2" defer></script>
+    <script src="../../../src/scripts/sidebar.js?v=20261112cmp" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
     <script src="../../../src/scripts/shared.js?v=20261111mx" defer></script>
     <script src="../../../src/scripts/shell-navigation.js?v=20261106c" defer></script>
@@ -71,7 +71,7 @@
       <!-- ===== MAIN CONTENT ===== -->
       <div
         id="main-content-wrapper"
-        class="min-w-0 min-h-screen flex flex-col lg:pl-[312px]"
+        class="min-w-0 min-h-screen flex flex-col lg:pl-[360px]"
       >
         <!-- ===== TOP HEADER BAR ===== -->
         <app-topbar></app-topbar>
@@ -441,20 +441,20 @@
                         class="mt-0 hidden max-h-0 overflow-hidden bg-transparent p-0 opacity-0 pointer-events-none transition-all duration-300 ease-out lg:mt-0 lg:block lg:max-h-none lg:overflow-visible lg:p-0 lg:opacity-100 lg:pointer-events-auto"
                       >
                         <div
-                          class="flex flex-col gap-4 lg:h-16 lg:flex-row lg:items-center lg:gap-6"
+                          class="flex flex-col gap-4 lg:min-h-16 lg:flex-row lg:items-start lg:gap-6"
                         >
                           <!-- Date Initiated -->
                           <div
-                            class="group/date relative flex flex-col items-start gap-1 py-3 first:pt-0 lg:py-0"
+                            class="group/date relative flex shrink-0 flex-col items-start gap-1 py-3 first:pt-0 lg:py-0"
                           >
                             <span
                               id="gp-date-label"
-                              class="py-1 text-xs leading-4 font-medium tracking-[0.6px] text-gray-500 uppercase dark:text-gray-400"
+                              class="py-1 text-xs leading-4 font-medium tracking-[0.6px] whitespace-nowrap text-gray-500 uppercase dark:text-gray-400"
                               >Date Initiated</span
                             >
                             <span
                               id="gp-date"
-                              class="text-base leading-6 font-medium text-gray-700 dark:text-gray-200"
+                              class="whitespace-nowrap text-base leading-6 font-medium text-gray-700 dark:text-gray-200"
                             ></span>
                             <span
                               id="gp-date-past-due-tooltip"
@@ -465,7 +465,7 @@
                             </span>
                           </div>
                           <div
-                            class="hidden h-[52px] w-px shrink-0 self-center bg-gray-200 lg:block dark:bg-white/10"
+                            class="hidden h-[52px] w-px shrink-0 self-start bg-gray-200 lg:block dark:bg-white/10"
                           ></div>
 
                           <!-- Payee -->
@@ -474,7 +474,7 @@
                           >
                             <span
                               id="gp-customer-label"
-                              class="py-1 text-xs leading-4 font-medium tracking-[0.6px] text-gray-500 uppercase dark:text-gray-400"
+                              class="py-1 text-xs leading-4 font-medium tracking-[0.6px] whitespace-nowrap text-gray-500 uppercase dark:text-gray-400"
                               >Vendor</span
                             >
                             <div class="flex min-w-0 items-center">
@@ -518,16 +518,16 @@
                           </div>
                           <div class="hidden"></div>
                           <div
-                            class="hidden h-[52px] w-px shrink-0 self-center bg-gray-200 lg:block dark:bg-white/10"
+                            class="hidden h-[52px] w-px shrink-0 self-start bg-gray-200 lg:block dark:bg-white/10"
                           ></div>
 
                           <!-- Bill # -->
                           <div
-                            class="flex flex-col items-start gap-1 py-3 lg:py-0"
+                            class="flex shrink-0 flex-col items-start gap-1 py-3 lg:py-0"
                           >
                             <span
                               id="gp-invoice-label"
-                              class="py-1 text-xs leading-4 font-medium tracking-[0.6px] text-gray-500 uppercase dark:text-gray-400"
+                              class="py-1 text-xs leading-4 font-medium tracking-[0.6px] whitespace-nowrap text-gray-500 uppercase dark:text-gray-400"
                               >Bill Reference</span
                             >
                             <button
@@ -538,27 +538,27 @@
                             >
                               <span
                                 id="gp-invoice"
-                                class="text-base leading-6 font-medium text-gray-700 dark:text-gray-200"
+                                class="whitespace-nowrap text-base leading-6 font-medium text-gray-700 dark:text-gray-200"
                               ></span>
                               <svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true" class="size-5 shrink-0 text-gray-500 dark:text-gray-400"><path d="M8 2C7.44772 2 7 2.44772 7 3C7 3.55228 7.44772 4 8 4H10C10.5523 4 11 3.55228 11 3C11 2.44772 10.5523 2 10 2H8Z" fill="currentColor"/><path d="M3 5C3 3.89543 3.89543 3 5 3C5 4.65685 6.34315 6 8 6H10C11.6569 6 13 4.65685 13 3C14.1046 3 15 3.89543 15 5V11H10.4142L11.7071 9.70711C12.0976 9.31658 12.0976 8.68342 11.7071 8.29289C11.3166 7.90237 10.6834 7.90237 10.2929 8.29289L7.29289 11.2929C6.90237 11.6834 6.90237 12.3166 7.29289 12.7071L10.2929 15.7071C10.6834 16.0976 11.3166 16.0976 11.7071 15.7071C12.0976 15.3166 12.0976 14.6834 11.7071 14.2929L10.4142 13H15V16C15 17.1046 14.1046 18 13 18H5C3.89543 18 3 17.1046 3 16V5Z" fill="currentColor"/><path d="M15 11H17C17.5523 11 18 11.4477 18 12C18 12.5523 17.5523 13 17 13H15V11Z" fill="currentColor"/></svg>
                             </button>
                           </div>
                           <div
-                            class="hidden h-[52px] w-px shrink-0 self-center bg-gray-200 lg:block dark:bg-white/10"
+                            class="hidden h-[52px] w-px shrink-0 self-start bg-gray-200 lg:block dark:bg-white/10"
                           ></div>
 
                           <!-- Attachments -->
                           <div
-                            class="flex min-w-0 flex-col items-start gap-1 py-3 last:pb-0 lg:py-0"
+                            class="flex min-w-0 flex-col items-start gap-1 py-3 last:pb-0 lg:flex-1 lg:py-0"
                           >
                             <span
                               id="gp-attachments-label"
-                              class="py-1 text-xs leading-4 font-medium tracking-[0.6px] text-gray-500 uppercase dark:text-gray-400"
+                              class="py-1 text-xs leading-4 font-medium tracking-[0.6px] whitespace-nowrap text-gray-500 uppercase dark:text-gray-400"
                               >Attachments</span
                             >
                             <div
                               id="gp-pill-attachments"
-                              class="flex min-w-0 flex-wrap items-center gap-2"
+                              class="flex w-full min-w-0 items-center gap-2"
                             >
                               <span
                                 class="text-sm font-normal leading-5 text-gray-600 dark:text-gray-400"
@@ -585,30 +585,23 @@
                           >
                             Origination Account
                           </p>
-                          <button
-                            type="button"
-                            class="group/info relative inline-flex size-5 items-center justify-center rounded-full text-gray-400 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-500"
-                            aria-label="Origination account information"
-                          >
-                            <svg
-                              viewBox="0 0 20 20"
-                              fill="currentColor"
-                              aria-hidden="true"
-                              class="size-[18px]"
-                            >
-                              <path
-                                fill-rule="evenodd"
-                                d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z"
-                                clip-rule="evenodd"
-                              />
-                            </svg>
+                          <!-- Information circle + Tooltip (components skill, SMART System 9352:21601). -->
+                          <span class="group/info relative inline-flex size-5 items-center justify-center">
                             <span
-                              role="tooltip"
-                              class="pointer-events-none invisible absolute bottom-full left-1/2 z-50 mb-2 w-max max-w-[343px] -translate-x-1/2 rounded-lg bg-gray-900 px-3 py-3 text-left text-sm leading-5 font-normal text-gray-100 opacity-0 shadow-lg group-hover/info:visible group-hover/info:opacity-100 group-focus-within/info:visible group-focus-within/info:opacity-100"
+                              tabindex="0"
+                              role="button"
+                              aria-describedby="pp-orig-account-tip"
+                              class="inline-flex cursor-help rounded-full text-gray-400 hover:text-gray-900 focus-visible:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:text-white dark:focus-visible:text-white dark:focus-visible:outline-blue-400"
                             >
-                              The account this payment is sent from.
+                              <span class="sr-only">About Origination Account</span>
+                              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" /></svg>
                             </span>
-                          </button>
+                            <span
+                              id="pp-orig-account-tip"
+                              role="tooltip"
+                              class="pointer-events-none invisible absolute top-full left-1/2 z-30 mt-3 w-max max-w-64 -translate-x-2/5 sm:max-w-[343px] rounded-lg bg-gray-900 p-3 text-left text-sm/5 font-normal text-gray-100 opacity-0 shadow-xs transition-opacity duration-150 group-hover/info:visible group-hover/info:opacity-100 group-has-focus-visible/info:visible group-has-focus-visible/info:opacity-100 before:absolute before:-top-1 before:left-2/5 before:size-3 before:-translate-x-1/2 before:rotate-45 before:rounded-[2px] before:bg-inherit dark:bg-gray-950 dark:ring-1 dark:ring-white/10"
+                            >Please note that the balance shown is as provided by your bank. On occasion, it might not always account for pending transactions.</span>
+                          </span>
                         </div>
                         <div class="w-full">
                           <el-select
@@ -2427,7 +2420,7 @@
                       <button
                         type="button"
                         id="gp-receivable-toggle"
-                        class="flex w-full cursor-pointer items-center justify-between border-b border-gray-200 pt-9 pb-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10"
+                        class="flex w-full cursor-pointer items-center justify-between border-b border-gray-200 pt-15 pb-4 text-left focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10"
                       >
                         <span
                           class="text-lg leading-6 font-medium text-gray-900 dark:text-white"
@@ -3219,14 +3212,6 @@
               class="flex items-start gap-2 border-b border-gray-200 p-6 dark:border-white/10"
             >
               <div class="flex min-w-0 flex-1 flex-col gap-4">
-                <div data-review-steps class="flex items-center gap-5">
-                  <div data-review-dots class="flex items-center gap-2.5"></div>
-                  <span
-                    data-review-count
-                    class="text-sm/5 text-gray-500 dark:text-gray-400"
-                    >1 of 1</span
-                  >
-                </div>
                 <div class="flex flex-col gap-2.5">
                   <h3
                     id="gp-review-dialog-title"
@@ -3235,8 +3220,11 @@
                   >
                     Review Document
                   </h3>
-                  <p class="text-sm/5 text-gray-500 dark:text-gray-400">
-                    Please read the document below before continuing.
+                  <p
+                    data-review-subtitle
+                    class="text-sm/5 text-gray-500 dark:text-gray-400"
+                  >
+                    PDF
                   </p>
                 </div>
               </div>
@@ -3259,101 +3247,14 @@
                 </svg>
               </button>
             </div>
-            <div class="flex min-h-0 flex-1 flex-col p-6">
+            <div class="flex min-h-0 flex-auto flex-col p-6">
+              <!-- The document itself: review-modal.js draws its pages here (pdf.js). -->
               <div
-                class="flex min-h-0 flex-1 flex-col gap-4 overflow-y-auto rounded border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5"
-              >
-                <p
-                  data-review-heading
-                  class="text-base/6 font-semibold text-gray-900 dark:text-white"
-                >
-                  Document
-                </p>
-                <p class="text-sm/5 text-gray-700 dark:text-gray-300">
-                  All products and services provided by Transcard are subject to
-                  the Terms of Use and disclaimers of the applicable agreement
-                  governing their supply and use. Where country specific Terms
-                  of Use conflict with these Transcard Terms of Use, the country
-                  specific Terms of Use shall prevail for products and services
-                  taken within that country. Please carefully review any of the
-                  country specific Terms of Use as outlined within the
-                  supplement links.
-                </p>
-                <p class="text-sm/5 text-gray-700 dark:text-gray-300">
-                  These Terms &amp; Conditions (these “Terms”) are a legally
-                  binding agreement governing access to and use of our Service
-                  between you (the “you”, “your”) and Transcard Payments, LLC, a
-                  Nevada limited liability company, its officers, directors,
-                  consultants, agents, employees and affiliates (collectively,
-                  “Company”, “we”, “our”, “us”) with offices located at 1010
-                  Market Street, Chattanooga, TN, 37402 (the “Licensee”). For
-                  direct communication you can reach us at
-                  <a href="mailto:sales@transcard.com" class="underline"
-                    >sales@transcard.com</a
-                  >.
-                </p>
-                <p class="text-sm/5 text-gray-700 dark:text-gray-300">
-                  As used in these Terms, “Service” refers to our online
-                  platform, website, the App, any software, programs,
-                  documentation, tools, and components, and any updates
-                  (including software maintenance, service information, help
-                  content, bug fixes or maintenance releases) provided to you by
-                  us, directly or indirectly. To use the Service, you must agree
-                  to all the terms in these Terms. We may present to you an
-                  offer from a Bank to open one or more of the following: a
-                  Transcard deposit account (“Banking Account”), a Transcard
-                  debit card (“Transcard Debit Card”) and, individually and
-                  collectively, with the Banking Account and Transcard Card,
-                  (the “Bank Products”). Our Services may be provided to you to
-                  help you view, manage and access your Bank Products. The Bank
-                  Products are made available by a bank, member of the Federal
-                  Deposit Insurance Corporation (each, a “Bank”), in partnership
-                  with us. We operate software that allows you to access
-                  services of Bank but we do not provide banking services. All
-                  banking, lending and money transmission services are provided
-                  by the Bank. The Bank Products are each governed by the Terms
-                  of Use you enter into with each Bank (the “Bank Agreement”).
-                  The Bank Products are not offered by us, and instead are
-                  offered by Bank.
-                </p>
-                <p class="text-sm/5 text-gray-700 dark:text-gray-300">
-                  These Terms &amp; Conditions (these “Terms”) are a legally
-                  binding agreement governing access to and use of our Service
-                  between you (the “you”, “your”) and Transcard Payments, LLC, a
-                  Nevada limited liability company, its officers, directors,
-                  consultants, agents, employees and affiliates (collectively,
-                  “Company”, “we”, “our”, “us”) with offices located at 1010
-                  Market Street, Chattanooga, TN, 37402 (the “Licensee”). For
-                  direct communication you can reach us at
-                  <a href="mailto:sales@transcard.com" class="underline"
-                    >sales@transcard.com</a
-                  >.
-                </p>
-                <p class="text-sm/5 text-gray-700 dark:text-gray-300">
-                  As used in these Terms, “Service” refers to our online
-                  platform, website, the App, any software, programs,
-                  documentation, tools, and components, and any updates
-                  (including software maintenance, service information, help
-                  content, bug fixes or maintenance releases) provided to you by
-                  us, directly or indirectly. To use the Service, you must agree
-                  to all the terms in these Terms. We may present to you an
-                  offer from a Bank to open one or more of the following: a
-                  Transcard deposit account (“Banking Account”), a Transcard
-                  debit card (“Transcard Debit Card”) and, individually and
-                  collectively, with the Banking Account and Transcard Card,
-                  (the “Bank Products”). Our Services may be provided to you to
-                  help you view, manage and access your Bank Products. The Bank
-                  Products are made available by a bank, member of the Federal
-                  Deposit Insurance Corporation (each, a “Bank”), in partnership
-                  with us. We operate software that allows you to access
-                  services of Bank but we do not provide banking services. All
-                  banking, lending and money transmission services are provided
-                  by the Bank. The Bank Products are each governed by the Terms
-                  of Use you enter into with each Bank (the “Bank Agreement”).
-                  The Bank Products are not offered by us, and instead are
-                  offered by Bank.
-                </p>
-              </div>
+                data-review-pdf
+                role="document"
+                aria-label="Document preview"
+                class="flex max-h-[70vh] min-h-0 shrink flex-col items-center gap-4 overflow-y-auto rounded border border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5"
+              ></div>
             </div>
             <div
               class="flex items-center justify-end border-t border-gray-200 px-6 py-5 dark:border-white/10"
@@ -3379,32 +3280,6 @@
                     />
                   </svg>
                   Download
-                </button>
-              </div>
-              <div class="flex items-center gap-2.5">
-                <button
-                  type="button"
-                  data-review-prev
-                  disabled
-                  class="inline-flex cursor-pointer items-center justify-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10"
-                >
-                  Previous
-                </button>
-                <button
-                  type="button"
-                  data-review-next
-                  class="hidden inline-flex cursor-pointer items-center justify-center rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-40 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10"
-                >
-                  Next
-                </button>
-                <button
-                  id="gp-mark-read-btn"
-                  type="button"
-                  command="close"
-                  commandfor="gp-review-dialog"
-                  class="inline-flex cursor-pointer items-center justify-center rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600"
-                >
-                  Done
                 </button>
               </div>
             </div>
@@ -5201,7 +5076,7 @@
       </dialog>
     </el-dialog>
 
-    <script src="../../../src/scripts/payables-pay.js?v=20261008e"></script>
-    <script src="../../../src/scripts/review-modal.js"></script>
+    <script src="../../../src/scripts/payables-pay.js?v=20261112mo"></script>
+    <script src="../../../src/scripts/review-modal.js?v=20261112pj"></script>
   </body>
 </html>

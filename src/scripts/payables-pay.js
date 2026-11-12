@@ -2727,9 +2727,17 @@
       checkEditBtn.style.display = isConfirmed ? "none" : "";
     }
 
-    if (submitBtn) submitBtn.classList.toggle("hidden", isConfirmed);
+    // style.display too: the buttons' own inline-flex beats the hidden class, so a
+    // Paid / In Progress payable still showed a live "Pay: $…" button.
+    if (submitBtn) {
+      submitBtn.classList.toggle("hidden", isConfirmed);
+      submitBtn.style.display = isConfirmed ? "none" : "";
+    }
     var footerPayGroup = document.getElementById("gp-footer-pay-group");
-    if (footerPayGroup) footerPayGroup.classList.toggle("hidden", isConfirmed);
+    if (footerPayGroup) {
+      footerPayGroup.classList.toggle("hidden", isConfirmed);
+      footerPayGroup.style.display = isConfirmed ? "none" : "";
+    }
     if (headerCancelBtn)
       headerCancelBtn.classList.toggle(
         "hidden",
@@ -5570,7 +5578,6 @@
       .trim();
     var label = escapeHtml(cleanLabel || rawLabel);
     var last4 = getAccountLast4(account);
-    var amount = escapeHtml(formatOriginationAvailableAmount(account));
     return (
       '<span class="inline-flex min-w-0 items-center justify-between gap-4 w-full pr-6">' +
       '<span class="flex min-w-0 items-center ' +
@@ -5584,11 +5591,7 @@
       (last4 ? " ••••" + escapeHtml(last4) : "") +
       "</span>" +
       "</span>" +
-      (account.hideAmount
-        ? ""
-        : '<span class="shrink-0 text-sm font-semibold text-gray-700 dark:text-gray-300">' +
-          amount +
-          "</span>") +
+      // R2: the closed field shows icon + name ••••last4 only; the balance is in the list.
       "</span>"
     );
   }
@@ -5720,14 +5723,17 @@
       '<span class="truncate font-medium">' + escapeHtml(text) + "</span>";
   }
 
+  // Figma R2 Pay page (DyBC356t1jIcoPrKjf9Ra8, "2. ACH as MoP"): ACH, Cross-border,
+  // Wire, Card, Check, SMART Disburse, SMART Exchange; unavailable ones (RTP) last.
   var PAY_METHOD_ORDER = [
     "ach",
+    "cross_border",
     "wire",
     "card",
-    "smart_disburse",
-    "rtp",
     "check",
+    "smart_disburse",
     "smart_exchange",
+    "rtp",
   ];
 
   function orderPayMethodItems(items) {
@@ -6814,6 +6820,7 @@
         id: "check",
         available: normalized.check.length > 0,
         label: "Check",
+        meta: "(Slowest)",
         subtitle: "Slowest form of payment (approximately 7-10 days)",
       });
     methodItems.push({
@@ -7509,14 +7516,46 @@
       false,
     );
 
+    // R2 Pay page (DyBC356t1jIcoPrKjf9Ra8, 2. ACH as MoP): no "My Account Details"
+    // box under the origination account — account details live under the MoP.
     var details = document.getElementById("pp-orig-bank-details");
-    if (details) details.classList.toggle("hidden", !account);
+    if (details) details.classList.add("hidden");
 
     if (account) {
       _origDetailsState.expanded = false;
       applyOriginationExpandedState();
       applyOriginationRevealState();
     }
+  }
+
+  // A mouse pick in any el-select returns focus to its button, which Chrome then
+  // paints as focus-visible (the blue ring stayed after choosing). Drop that focus
+  // after a real click (event.detail > 0); keyboard picks keep the ring.
+  if (!window.__ppSelectBlurBound) {
+    window.__ppSelectBlurBound = true;
+    document.addEventListener("click", function (event) {
+      if (!event.detail) return;
+      var option = event.target.closest && event.target.closest("el-option");
+      var select = option && option.closest("el-select");
+      if (!select) return;
+      var btn = select.querySelector("button");
+      if (!btn) return;
+      // el-select hands focus back after its close animation: blur it whenever
+      // it lands within the next 400 ms.
+      var until = Date.now() + 400;
+      var drop = function () {
+        if (Date.now() <= until) btn.blur();
+        btn.removeEventListener("focus", drop);
+      };
+      btn.addEventListener("focus", drop);
+      setTimeout(function () {
+        if (document.activeElement === btn) btn.blur();
+      }, 0);
+      setTimeout(function () {
+        btn.removeEventListener("focus", drop);
+        if (document.activeElement === btn && Date.now() <= until + 50) btn.blur();
+      }, 400);
+    });
   }
 
   function initOriginationAccountSelector(accounts, row) {
@@ -7529,6 +7568,20 @@
           );
         })
       : [];
+    // Figma "Origination Account Input States" (SH Sandbox 4300:153413): the list also
+    // shows an inactive account (gray, not selectable, amber "This bank account is
+    // inactive" note). Demo-only here — bank-accounts.json is shared with SX / Consumer.
+    if (!list.some(isOriginationAccountInactive)) {
+      list.push({
+        id: "insurance-1911",
+        displayName: "Insurance Bank Account",
+        bankName: "Regions Bank",
+        last4: "1911",
+        availableAmount: 56921.02,
+        currency: "USD",
+        status: "inactive",
+      });
+    }
     var selectEl = document.getElementById("pp-orig-bank-select");
     var optionsEl = document.getElementById("pp-orig-bank-options");
     var selectedEl = document.getElementById("pp-orig-bank-selected");
@@ -7734,7 +7787,56 @@
     var displayStatus = getDisplayStatus(row);
     setStatusBadge(displayStatus.key, displayStatus.label);
     renderPillAttachments(row);
+    renderPayableSummary(row);
     renderPayPageActivityLog(row);
+  }
+
+  // Payable Summary (R2 Pay page, DyBC356t1jIcoPrKjf9Ra8 "1. Default view"): the bill's
+  // line items — ITEM (n) / QUANTITY / UNIT PRICE / AMOUNT — then subtotal, tax, total.
+  // Same lines as the invoice PDF (details.items in bills-payables.json).
+  function renderPayableSummary(row) {
+    var box = document.getElementById("gp-receivable-content");
+    var items = row && row.details && Array.isArray(row.details.items) ? row.details.items : [];
+    if (!box || !items.length) return;
+    var cur = escapeHtml((row && row.currency) || "USD");
+    var money = function (n) {
+      return (
+        '<span class="text-gray-900 dark:text-white">$' +
+        Number(n || 0).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 }) +
+        '</span> <span class="text-gray-500 dark:text-gray-400">' + cur + "</span>"
+      );
+    };
+    // Figma SH Sandbox 4138:93499: dashed rule under the header, solid row rules,
+    // plain item names, gray quantity, no totals.
+    var TH = "px-3 py-2 text-xs/4 font-normal tracking-wide text-gray-500 uppercase dark:text-gray-400";
+    var TD = "px-3 py-1.5 text-sm/5 whitespace-nowrap";
+    var body = items
+      .map(function (it) {
+        var qty = escapeHtml(String(it.quantity == null ? 1 : it.quantity));
+        return (
+          '<tr class="border-t border-gray-200 first:border-t-0 dark:border-white/10">' +
+          '<td class="' + TD + ' whitespace-normal text-gray-900 dark:text-white">' + escapeHtml(it.name || "Item") + "</td>" +
+          '<td class="' + TD + ' text-gray-500 dark:text-gray-400">' + qty + "</td>" +
+          '<td class="' + TD + ' text-right">' + money(it.unitPrice) + "</td>" +
+          '<td class="' + TD + ' text-right">' + money(it.amount) + "</td>" +
+          "</tr>"
+        );
+      })
+      .join("");
+    box.className = box.className.replace(/\bpx-5\b|\bsm:px-8\b|\bpt-4\b|\bpt-2\b/g, "").trim() + " pt-4";
+    box.innerHTML =
+      '<div class="overflow-x-auto">' +
+      '<table class="w-full min-w-[32rem] text-left">' +
+      '<thead><tr class="border-b border-dashed border-gray-200 dark:border-white/10">' +
+      '<th class="' + TH + ' w-1/2">Item (' + items.length + ")</th>" +
+      '<th class="' + TH + '">Quantity</th>' +
+      '<th class="' + TH + ' text-right">Unit price</th>' +
+      '<th class="' + TH + ' text-right">Amount</th>' +
+      "</tr></thead><tbody>" + body + "</tbody></table></div>";
+    // Open by default (Figma chevron up).
+    box.classList.remove("hidden");
+    var icon = document.querySelector("#gp-receivable-toggle [data-collapse-icon]");
+    if (icon) icon.classList.add("rotate-180");
   }
 
   function renderPillAttachments(row) {
@@ -7753,22 +7855,101 @@
     var iconSvg =
       '<img src="../../../src/assets/table/document-text-14.svg" width="14" height="14" alt="" class="shrink-0" />';
 
-    attachmentsWrap.innerHTML = attachments
-      .map(function (att, idx) {
-        var name = escapeHtml((att && att.name) || "Attachment " + (idx + 1));
-        return (
-          '<button type="button" command="show-modal" commandfor="gp-review-dialog" data-attachment-index="' +
-          idx +
-          '"' +
-          ' class="inline-flex cursor-pointer items-center gap-0.5 rounded border border-gray-200 bg-gray-100 py-0.5 pr-2 pl-1 text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-200 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10">' +
-          iconSvg +
-          '<span class="truncate max-w-[220px]">' +
-          name +
-          "</span>" +
-          "</button>"
-        );
-      })
-      .join("");
+    var PILL_CLASS =
+      "inline-flex cursor-pointer items-center gap-0.5 rounded border border-gray-200 bg-gray-100 py-0.5 pr-2 pl-1 text-sm leading-5 font-medium text-gray-800 transition-colors hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-200 dark:hover:bg-white/10";
+    var names = attachments.map(function (att, idx) {
+      return escapeHtml((att && att.name) || "Attachment " + (idx + 1));
+    });
+    // Real file for the preview / download when the attachment has one (repo-relative).
+    var srcs = attachments.map(function (att) {
+      return att && att.src ? escapeHtml("../../../" + String(att.src).replace(/^\/+/, "")) : "";
+    });
+    // "PDF · 2.1 MB" under the document title in the preview.
+    var metas = attachments.map(function (att, idx) {
+      var ext = (names[idx].match(/\.([a-z0-9]+)$/i) || [])[1];
+      var size = att && att.size ? String(att.size).replace(/^([\d.]+)\s*(kb|mb|gb)$/i, function (m, n, u) {
+        return n + " " + u.toUpperCase();
+      }) : "";
+      return escapeHtml([ext ? ext.toUpperCase() : "", size].filter(Boolean).join(" · "));
+    });
+
+    // One row: as many pills as fit, the rest behind a "+N" menu (fitAttachmentPills).
+    attachmentsWrap.innerHTML =
+      names
+        .map(function (name, idx) {
+          return (
+            '<button type="button" command="show-modal" commandfor="gp-review-dialog" data-attachment-pill data-review-item data-review-index="' +
+            idx +
+            '" data-review-name="' + name + '" data-review-meta="' + metas[idx] + '"' + (srcs[idx] ? ' data-review-src="' + srcs[idx] + '"' : "") + ' data-attachment-index="' +
+            idx +
+            '" title="' + name + '" class="' + PILL_CLASS + ' min-w-0 shrink-0">' +
+            iconSvg +
+            '<span class="truncate max-w-[220px]">' + name + "</span>" +
+            "</button>"
+          );
+        })
+        .join("") +
+      '<el-dropdown data-attachment-more class="relative hidden shrink-0">' +
+      '<button type="button" aria-haspopup="menu" class="' + PILL_CLASS + ' px-2 aria-expanded:bg-gray-200 dark:aria-expanded:bg-white/10"><span data-attachment-more-label></span></button>' +
+      '<el-menu anchor="bottom start" popover class="w-max max-w-80 origin-top-left rounded-md bg-white py-1 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline outline-transparent transition transition-discrete [--anchor-gap:--spacing(1)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.40),0px_4px_6px_-2px_rgba(0,0,0,0.30),0px_0px_0px_1px_rgba(255,255,255,0.10)]">' +
+      names
+        .map(function (name, idx) {
+          return (
+            '<button type="button" command="show-modal" commandfor="gp-review-dialog" data-attachment-menu-item data-review-item data-review-index="' +
+            idx +
+            '" data-review-name="' + name + '" data-review-meta="' + metas[idx] + '"' + (srcs[idx] ? ' data-review-src="' + srcs[idx] + '"' : "") + ' data-attachment-index="' +
+            idx +
+            '" class="flex w-full cursor-pointer items-center gap-2 px-4 py-2 text-left text-sm leading-5 font-medium text-gray-700 hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:text-gray-200 dark:hover:bg-white/5 dark:focus:bg-white/5">' +
+            iconSvg +
+            '<span class="truncate">' + name + "</span></button>"
+          );
+        })
+        .join("") +
+      "</el-menu></el-dropdown>";
+
+    fitAttachmentPills(attachmentsWrap);
+    if (!attachmentsWrap.__fitObserver && window.ResizeObserver) {
+      attachmentsWrap.__fitObserver = new ResizeObserver(function () {
+        fitAttachmentPills(attachmentsWrap);
+      });
+      attachmentsWrap.__fitObserver.observe(attachmentsWrap);
+    }
+  }
+
+  // Shows the pills that fit on one row; the hidden ones move into the "+N" menu.
+  // If even one pill doesn't fit, the first one truncates instead.
+  function fitAttachmentPills(wrap) {
+    var pills = Array.prototype.slice.call(wrap.querySelectorAll("[data-attachment-pill]"));
+    var more = wrap.querySelector("[data-attachment-more]");
+    if (!pills.length || !more) return;
+    var items = wrap.querySelectorAll("[data-attachment-menu-item]");
+    var label = more.querySelector("[data-attachment-more-label]");
+    // style.display, not the hidden class: the pills' inline-flex would win over it.
+    var show = function (el, on) {
+      el.style.display = on ? "" : "none";
+    };
+    pills.forEach(function (p) {
+      show(p, true);
+      p.classList.add("shrink-0");
+    });
+    more.classList.remove("hidden");
+    show(more, false);
+    var fits = function () {
+      return wrap.scrollWidth <= wrap.clientWidth + 1;
+    };
+    var shown = pills.length;
+    if (!fits()) {
+      show(more, true);
+      while (shown > 1) {
+        shown -= 1;
+        show(pills[shown], false);
+        if (label) label.textContent = "+" + (pills.length - shown);
+        if (fits()) break;
+      }
+      if (!fits()) pills[0].classList.remove("shrink-0");
+    }
+    if (label) label.textContent = "+" + (pills.length - shown);
+    for (var i = 0; i < items.length; i += 1) show(items[i], i >= shown);
   }
 
   function initSummaryAndActivityToggles() {

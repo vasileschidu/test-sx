@@ -83,9 +83,9 @@ function normalizeMainContentWrapperLayout(collapsed) {
         "true";
   mainContentWrapper.classList.remove(
     "lg:pl-[304px]",
-    "lg:pl-[312px]",
+    "lg:pl-[360px]",
     "lg:pl-[288px]",
-    "lg:pl-[312px]",
+    "lg:pl-[360px]",
     "lg:pl-[68px]",
     "lg:pl-[80px]",
     "lg:pl-[81px]",
@@ -98,7 +98,7 @@ function normalizeMainContentWrapperLayout(collapsed) {
     "flex-col",
   );
   mainContentWrapper.classList.add(
-    isCollapsed ? "lg:pl-[88px]" : "lg:pl-[312px]",
+    isCollapsed ? "lg:pl-[88px]" : "lg:pl-[360px]",
   );
 }
 
@@ -183,6 +183,29 @@ function isDesktopSidebarCollapsed() {
     desktopSidebarShell &&
     desktopSidebarShell.classList.contains("is-collapsed"),
   );
+}
+
+// 1024–1279px: the rail starts collapsed (not enough room for 360px + content).
+// Opening it there works but isn't saved; from 1280px the saved choice applies again.
+var COMPACT_DESKTOP_QUERY = "(min-width: 1024px) and (max-width: 1279px)";
+function isCompactDesktopViewport() {
+  return !!(window.matchMedia && window.matchMedia(COMPACT_DESKTOP_QUERY).matches);
+}
+
+function getInitialDesktopSidebarCollapsed() {
+  return isCompactDesktopViewport() || loadDesktopSidebarCollapsedPreference();
+}
+
+function bindCompactDesktopSidebar() {
+  if (window.__compactDesktopSidebarBound || !window.matchMedia) return;
+  window.__compactDesktopSidebarBound = true;
+  var mq = window.matchMedia(COMPACT_DESKTOP_QUERY);
+  var onChange = function () {
+    if (!getSidebarRefs().desktopSidebarShell) return;
+    setDesktopSidebarCollapsed(getInitialDesktopSidebarCollapsed());
+  };
+  if (mq.addEventListener) mq.addEventListener("change", onChange);
+  else if (mq.addListener) mq.addListener(onChange);
 }
 
 function loadDesktopSidebarCollapsedPreference() {
@@ -481,7 +504,7 @@ function closeAllDesktopSubmenus() {
   var desktopNav = getSidebarRefs().desktopNav;
   if (!desktopNav) return;
   desktopNav.querySelectorAll(".nav-submenu").forEach(function (submenu) {
-    submenu.classList.remove("max-h-96", "opacity-100", "pointer-events-auto");
+    submenu.classList.remove("max-h-160", "opacity-100", "pointer-events-auto");
     submenu.classList.add("max-h-0", "opacity-0", "pointer-events-none");
   });
   desktopNav
@@ -551,10 +574,10 @@ function setDesktopSidebarCollapsed(collapsed) {
     "lg:w-[81px]",
     "lg:w-[304px]",
     "lg:w-[80px]",
-    "lg:w-[312px]",
+    "lg:w-[360px]",
     "lg:w-[88px]",
   );
-  desktopSidebarShell.classList.toggle("lg:w-[312px]", !collapsed);
+  desktopSidebarShell.classList.toggle("lg:w-[360px]", !collapsed);
   desktopSidebarShell.classList.toggle("lg:w-[88px]", collapsed);
   desktopSidebarPanel.classList.remove(
     "p-5",
@@ -687,7 +710,7 @@ function setDesktopSidebarCollapsed(collapsed) {
   closeSettingsFlyout();
   closeAccountInfoFlyout();
   closeSupportFlyout();
-  saveDesktopSidebarCollapsedPreference(collapsed);
+  if (!isCompactDesktopViewport()) saveDesktopSidebarCollapsedPreference(collapsed);
   requestAnimationFrame(function () {
     syncDesktopNavCurrentIndicator();
   });
@@ -704,10 +727,10 @@ function toggleSubmenuAnimation(submenu, chevron) {
   const isCollapsed = submenu.classList.contains("max-h-0");
   if (isCollapsed) {
     submenu.classList.remove("max-h-0", "opacity-0", "pointer-events-none");
-    submenu.classList.add("max-h-96", "opacity-100", "pointer-events-auto");
+    submenu.classList.add("max-h-160", "opacity-100", "pointer-events-auto");
     if (chevron) chevron.classList.add("rotate-180");
   } else {
-    submenu.classList.remove("max-h-96", "opacity-100", "pointer-events-auto");
+    submenu.classList.remove("max-h-160", "opacity-100", "pointer-events-auto");
     submenu.classList.add("max-h-0", "opacity-0", "pointer-events-none");
     if (chevron) chevron.classList.remove("rotate-180");
   }
@@ -1730,7 +1753,8 @@ function initDashboardSidebar() {
   bindDashboardSidebarRuntime();
   normalizeMainContentWrapperLayout();
   prepareDesktopNavLabels();
-  setDesktopSidebarCollapsed(loadDesktopSidebarCollapsedPreference());
+  setDesktopSidebarCollapsed(getInitialDesktopSidebarCollapsed());
+  bindCompactDesktopSidebar();
   syncActiveNavItemStyles();
   requestAnimationFrame(function () {
     clearSidebarBootState();
