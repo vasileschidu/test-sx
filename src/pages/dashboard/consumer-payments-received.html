@@ -41,7 +41,7 @@
     <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
     <script src="../../../src/scripts/app-plans.js"></script>
     <script src="../../../src/scripts/nav-component.js?v=20261111hs"></script>
-    <script src="../../../src/scripts/stp-state.js?v=20261111rs2"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261112dd"></script>
     <script src="../../../src/scripts/app-switch.js?v=20261111sk3"></script>
     <script src="../../../src/scripts/topbar-component.js?v=20261111sw"></script>
     <script src="../../scripts/checkbox-component.js"></script>
@@ -1095,6 +1095,7 @@
 
                                     <!-- Export -->
                                     <button
+                          id="cp-export-btn"
                                         class="inline-flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 text-base leading-6 font-semibold whitespace-nowrap text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:w-auto dark:border-white/15 dark:bg-white/5 dark:text-gray-200 dark:shadow-none dark:hover:bg-white/10">
                                         Export
                                         <svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true" class="shrink-0 text-gray-500 dark:text-gray-400"><path d="M9.25 13.25C9.25 13.6642 9.58578 14 10 14C10.4142 14 10.75 13.6642 10.75 13.25L10.75 4.63642L13.7047 7.76497C13.9891 8.06611 14.4638 8.07967 14.765 7.79526C15.0661 7.51085 15.0797 7.03617 14.7953 6.73503L10.5453 2.23503C10.4036 2.08501 10.2063 2 10 2C9.79365 2 9.59642 2.08501 9.45474 2.23503L5.20474 6.73503C4.92033 7.03617 4.93389 7.51085 5.23503 7.79526C5.53617 8.07967 6.01085 8.0661 6.29526 7.76497L9.25 4.63642L9.25 13.25Z" fill="currentColor"/><path d="M3.5 12.75C3.5 12.3358 3.16421 12 2.75 12C2.33579 12 2 12.3358 2 12.75V15.25C2 16.7688 3.23122 18 4.75 18H15.25C16.7688 18 18 16.7688 18 15.25V12.75C18 12.3358 17.6642 12 17.25 12C16.8358 12 16.5 12.3358 16.5 12.75V15.25C16.5 15.9404 15.9404 16.5 15.25 16.5H4.75C4.05964 16.5 3.5 15.9404 3.5 15.25V12.75Z" fill="currentColor"/></svg>
@@ -1189,7 +1190,7 @@
         <dialog id="sx-manage-columns-dialog" aria-labelledby="sx-manage-columns-title"
             class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
             <el-dialog-backdrop
-                class="fixed inset-0 bg-gray-900/30 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
             <div tabindex="0"
                 class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
@@ -1219,7 +1220,7 @@
                             Reset default
                         </button>
                         <button id="sx-manage-columns-apply-btn" type="button"
-                            class="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300">
+                            class="rounded-md bg-blue-600 px-3 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">
                             Apply changes
                         </button>
                     </div>
@@ -1233,7 +1234,7 @@
         <dialog id="sx-view-details-dialog" aria-labelledby="sx-view-details-title"
             class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
             <el-dialog-backdrop
-                class="fixed inset-0 bg-gray-900/30 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
+                class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>
             <div tabindex="0"
                 class="flex min-h-full items-end justify-center p-4 text-center focus:outline-none sm:items-center sm:p-6">
                 <el-dialog-panel
@@ -2261,7 +2262,8 @@
 
     <!-- Loads exchange data from JSON and renders table rows dynamically -->
     <script src="../../../src/scripts/table-ui.js?v=20261006f"></script>
-    <script src="../../../src/scripts/consumer-exchanges-table.js?v=20261111ic"></script>
+    <script src="../../../src/scripts/table-export.js?v=20261112ex"></script>
+    <script src="../../../src/scripts/consumer-exchanges-table.js?v=20261112mc"></script>
 
   <script src="../../../src/scripts/review-modal.js"></script>
 </body>

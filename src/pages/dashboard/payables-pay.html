@@ -43,7 +43,7 @@
     <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
     <script src="../../../src/scripts/app-plans.js"></script>
     <script src="../../../src/scripts/nav-component.js?v=20261111hs"></script>
-    <script src="../../../src/scripts/stp-state.js?v=20261111rs2"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261112dd"></script>
     <script src="../../../src/scripts/app-switch.js?v=20261111sk3"></script>
     <script src="../../../src/scripts/topbar-component.js?v=20261111sw"></script>
     <script src="../../scripts/checkbox-component.js"></script>
@@ -205,7 +205,7 @@
                             aria-label="Schedule payment"
                             aria-expanded="false"
                             aria-controls="pp-schedule-dropdown"
-                            class="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md bg-gray-100 p-2.5 text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20"
+                            class="inline-flex size-8 shrink-0 cursor-pointer items-center justify-center rounded-md bg-gray-100 p-1.5 text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20"
                           >
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
@@ -280,7 +280,7 @@
                           </span>
                           <div
                             id="pp-schedule-dropdown"
-                            class="pointer-events-none invisible absolute left-1/2 top-full z-50 mt-1.5 w-72 -translate-x-1/2 origin-top rounded-md bg-white shadow-lg outline-1 outline-black/5 opacity-0 scale-95 transition duration-100 ease-out dark:bg-gray-900 dark:outline-white/10"
+                            class="pointer-events-none invisible absolute right-0 top-full z-50 mt-1.5 w-72 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 opacity-0 scale-95 transition duration-100 ease-out dark:bg-gray-900 dark:outline-white/10"
                           >
                             <div class="relative p-3">
                               <div>
@@ -399,7 +399,7 @@
                           disabled
                           class="order-1 inline-flex cursor-pointer items-center justify-center rounded-md bg-blue-600 px-2.5 py-1.5 text-sm leading-5 font-semibold whitespace-nowrap text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600"
                         >
-                          Pay: <span id="gp-header-pay-amount"></span>
+                          Pay:<span id="gp-header-pay-amount" class="ml-1"></span>
                         </button>
                       </div>
                     </div>
@@ -2567,7 +2567,7 @@
                     disabled
                     class="peer inline-flex cursor-pointer items-center justify-center bg-blue-600 px-2.5 py-1.5 text-sm leading-5 font-semibold whitespace-nowrap text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600"
                   >
-                    Pay: <span id="gp-footer-pay-amount"></span>
+                    Pay:<span id="gp-footer-pay-amount" class="ml-1"></span>
                   </button>
                   <span class="w-px self-stretch bg-blue-700 peer-disabled:opacity-40"></span>
                   <button
@@ -2823,7 +2823,7 @@
                                     id="sx-table-filter-apply-btn"
                                     type="button"
                                     disabled
-                                    class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer"
+                                    class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 cursor-pointer"
                                   >
                                     Apply
                                   </button>
@@ -2864,7 +2864,7 @@
                                     id="sx-table-filter-apply-status-btn"
                                     type="button"
                                     disabled
-                                    class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer"
+                                    class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 cursor-pointer"
                                   >
                                     Apply
                                   </button>
@@ -2905,7 +2905,7 @@
                                     id="sx-table-filter-apply-method-btn"
                                     type="button"
                                     disabled
-                                    class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer"
+                                    class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 cursor-pointer"
                                   >
                                     Apply
                                   </button>
@@ -3072,7 +3072,7 @@
                                     id="sx-table-filter-apply-date-btn"
                                     type="button"
                                     disabled
-                                    class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer"
+                                    class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 cursor-pointer"
                                   >
                                     Apply
                                   </button>

@@ -29,7 +29,7 @@
     </style>
 
     <script src="../../scripts/data-source.js"></script>
-    <script src="../../scripts/stp-state.js?v=20261111rs2"></script>
+    <script src="../../scripts/stp-state.js?v=20261112dd"></script>
     <script src="../../scripts/sx-demo-case.js?v=20261106e"></script>
     <script src="../../scripts/checkbox-component.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1" type="module"></script>
@@ -65,7 +65,7 @@
           <button
             id="case-start-enrol"
             type="submit"
-            class="cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 active:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300"
+            class="cursor-pointer rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 active:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60"
           >
             Start enrolment
           </button>
@@ -199,7 +199,7 @@
                 <button id="case-defaults" type="button" class="mr-auto inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-blue-600 hover:text-blue-700 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300">Restore defaults</button>
                 <p id="edit-dialog-note" class="hidden w-full type-description-small text-tertiary">Changes apply to the current case.</p>
                 <button type="button" command="close" commandfor="edit-dialog" class="cursor-pointer rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20">Cancel</button>
-                <button type="submit" class="cursor-pointer rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300">Save</button>
+                <button type="submit" class="cursor-pointer rounded-md bg-blue-600 px-3 py-2 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">Save</button>
               </div>
             </form>
           </el-dialog-panel>

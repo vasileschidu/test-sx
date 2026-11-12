@@ -1085,8 +1085,8 @@
       '" class="group relative flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 dark:hover:bg-white/5' +
       (disabled ? " opacity-60" : "") +
       '">' +
-      '  <span data-drop-line="before" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="top:0;transform:translateY(-50%);"></span>' +
-      '  <span data-drop-line="after" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="bottom:0;transform:translateY(50%);"></span>' +
+      '  <span data-drop-line="before" class="pointer-events-none absolute left-0 right-0 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="top:0;transform:translateY(-50%);"></span>' +
+      '  <span data-drop-line="after" class="pointer-events-none absolute left-0 right-0 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="bottom:0;transform:translateY(50%);"></span>' +
       '  <button type="button" draggable="true" data-column-drag-handle="' +
       escapeHtml(col.key) +
       '" class="inline-flex size-5 shrink-0 cursor-grab items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-500 active:cursor-grabbing dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
@@ -1095,7 +1095,7 @@
       '      <path d="M2.40039 10.8001C2.40039 10.1374 2.93765 9.6001 3.60039 9.6001C4.26313 9.6001 4.80039 10.1374 4.80039 10.8001C4.80039 11.4628 4.26313 12.0001 3.60039 12.0001C2.93765 12.0001 2.40039 11.4628 2.40039 10.8001Z" /><path d="M6.80039 10.8001C6.80039 10.1374 7.33765 9.6001 8.00039 9.6001C8.66313 9.6001 9.20039 10.1374 9.20039 10.8001C9.20039 11.4628 8.66313 12.0001 8.00039 12.0001C7.33765 12.0001 6.80039 11.4628 6.80039 10.8001Z" /><path d="M12.4004 9.6001C11.7376 9.6001 11.2004 10.1374 11.2004 10.8001C11.2004 11.4628 11.7376 12.0001 12.4004 12.0001C13.0631 12.0001 13.6004 11.4628 13.6004 10.8001C13.6004 10.1374 13.0631 9.6001 12.4004 9.6001Z" /><path d="M2.40039 6.00005C2.40039 5.33731 2.93765 4.80005 3.60039 4.80005C4.26313 4.80005 4.80039 5.33731 4.80039 6.00005C4.80039 6.66279 4.26313 7.20005 3.60039 7.20005C2.93765 7.20005 2.40039 6.66279 2.40039 6.00005Z" /><path d="M6.80039 6.00005C6.80039 5.33731 7.33765 4.80005 8.00039 4.80005C8.66313 4.80005 9.20039 5.33731 9.20039 6.00005C9.20039 6.66279 8.66313 7.20005 8.00039 7.20005C7.33765 7.20005 6.80039 6.66279 6.80039 6.00005Z" /><path d="M12.4004 4.80005C11.7376 4.80005 11.2004 5.33731 11.2004 6.00005C11.2004 6.66279 11.7376 7.20005 12.4004 7.20005C13.0631 7.20005 13.6004 6.66279 13.6004 6.00005C13.6004 5.33731 13.0631 4.80005 12.4004 4.80005Z" />' +
       "    </svg>" +
       "  </button>" +
-      '  <app-checkbox class="min-w-0 flex-1" data-column-visibility-toggle="' +
+      '  <app-checkbox class="min-w-0" data-column-visibility-toggle="' +
       escapeHtml(col.key) +
       '"' +
       (checked ? " checked" : "") +
@@ -5859,11 +5859,11 @@
       "sx-manage-columns-reset-btn",
     );
     var LIFT_CLASSES = [
-      "bg-white",
+      "!bg-white",
       "shadow-lg",
       "ring-1",
       "ring-gray-900/10",
-      "dark:bg-gray-800",
+      "dark:!bg-gray-800",
       "dark:ring-white/15",
     ];
     function liftRow(row, on) {
@@ -5975,12 +5975,23 @@
           );
         }
       }
+      // Figma: the row stays in place, faded, while its lifted copy follows the cursor.
+      setTimeout(function () {
+        liftRow(row, false);
+        row.classList.add("opacity-40");
+      }, 0);
     });
 
     manageColumnsList.addEventListener("dragend", function (event) {
       var row = event.target.closest("[data-column-order-row]");
       if (row) liftRow(row, false);
       clearAllLifts(manageColumnsList);
+      Array.prototype.forEach.call(
+        document.querySelectorAll("[data-column-order-row].opacity-40"),
+        function (r) {
+          r.classList.remove("opacity-40");
+        },
+      );
       draggingColumnKey = "";
       dragTargetKey = "";
       dragTargetPosition = "before";
@@ -10389,6 +10400,42 @@
         console.error("Failed to load exchanges data:", error);
         updateTabBadges([]);
       });
+  }
+
+
+  // ── Export (format menu, table-export.js) ──
+  // Every filtered + sorted row of the active tab, the visible data columns,
+  // cell text as rendered (badges / icons reduced to their text).
+  function exportCellText(html) {
+    var box = document.createElement("div");
+    box.innerHTML = html == null ? "" : String(html);
+    box.querySelectorAll(".sr-only, svg, img").forEach(function (n) {
+      n.remove();
+    });
+    return box.textContent.replace(/\s+/g, " ").trim();
+  }
+  function getExportData() {
+    var cols = (paginationState.columns || []).filter(function (c) {
+      return c && c.type !== "expand" && c.type !== "action" && c.type !== "select" && (c.label || c.key);
+    });
+    var tab = document.querySelector('nav[aria-label="Tabs"] [aria-current="page"] span');
+    var label = tab ? tab.textContent.trim() : "";
+    return {
+      columns: cols.map(function (c) {
+        return c.label || c.key;
+      }),
+      label: label,
+      title: "SMART Exchange payments" + (label ? " — " + label : ""),
+      rows: (paginationState.allEntries || []).map(function (entry) {
+        return cols.map(function (c) {
+          return exportCellText(renderCellValue(c, entry));
+        });
+      }),
+    };
+  }
+  var exportButton = document.getElementById("sx-export-btn");
+  if (exportButton && window.TableExport) {
+    window.TableExport.attach(exportButton, { name: "smart-exchange", getData: getExportData });
   }
 
   window.initSmartExchangePage = init;

@@ -255,6 +255,9 @@
     var refresh = document.getElementById("bp-refresh-btn");
     panel.style.display = count > 0 ? "flex" : "none";
     if (refresh) refresh.style.display = count > 0 ? "none" : "";
+    // The header compacts its toolbar while a selection shows (see bills-and-payables.html).
+    var head = panel.closest(".group\\/head");
+    if (head) head.setAttribute("data-selecting", count > 0 ? "true" : "false");
     var label = panel.querySelector("[data-selected-count]");
     if (label) label.textContent = count + " selected";
   }
@@ -1000,11 +1003,11 @@
       "" +
       '<div data-column-order-row="' +
       escapeHtml(col.key) +
-      '" class="group relative flex items-center gap-2.5 p-2' +
+      '" class="group relative flex items-center gap-2.5 rounded-lg p-2 hover:bg-gray-50 dark:hover:bg-white/5' +
       (disabled ? " opacity-60" : "") +
       '">' +
-      '  <span data-drop-line="before" class="pointer-events-none absolute top-0 right-2 left-7 z-10 h-0.5 -translate-y-1/2 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out"></span>' +
-      '  <span data-drop-line="after" class="pointer-events-none absolute right-2 bottom-0 left-7 z-10 h-0.5 translate-y-1/2 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out"></span>' +
+      '  <span data-drop-line="before" class="pointer-events-none absolute top-0 right-0 left-0 z-10 h-0.5 -translate-y-1/2 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out"></span>' +
+      '  <span data-drop-line="after" class="pointer-events-none absolute right-0 bottom-0 left-0 z-10 h-0.5 translate-y-1/2 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out"></span>' +
       '  <button type="button" draggable="true" data-column-drag-handle="' +
       escapeHtml(col.key) +
       '" class="inline-flex shrink-0 cursor-grab items-center justify-center rounded p-0.5 text-gray-500 active:cursor-grabbing dark:text-gray-400">' +
@@ -1013,7 +1016,7 @@
       '      <path d="M2.40039 10.8001C2.40039 10.1374 2.93765 9.6001 3.60039 9.6001C4.26313 9.6001 4.80039 10.1374 4.80039 10.8001C4.80039 11.4628 4.26313 12.0001 3.60039 12.0001C2.93765 12.0001 2.40039 11.4628 2.40039 10.8001Z" /><path d="M6.80039 10.8001C6.80039 10.1374 7.33765 9.6001 8.00039 9.6001C8.66313 9.6001 9.20039 10.1374 9.20039 10.8001C9.20039 11.4628 8.66313 12.0001 8.00039 12.0001C7.33765 12.0001 6.80039 11.4628 6.80039 10.8001Z" /><path d="M12.4004 9.6001C11.7376 9.6001 11.2004 10.1374 11.2004 10.8001C11.2004 11.4628 11.7376 12.0001 12.4004 12.0001C13.0631 12.0001 13.6004 11.4628 13.6004 10.8001C13.6004 10.1374 13.0631 9.6001 12.4004 9.6001Z" /><path d="M2.40039 6.00005C2.40039 5.33731 2.93765 4.80005 3.60039 4.80005C4.26313 4.80005 4.80039 5.33731 4.80039 6.00005C4.80039 6.66279 4.26313 7.20005 3.60039 7.20005C2.93765 7.20005 2.40039 6.66279 2.40039 6.00005Z" /><path d="M6.80039 6.00005C6.80039 5.33731 7.33765 4.80005 8.00039 4.80005C8.66313 4.80005 9.20039 5.33731 9.20039 6.00005C9.20039 6.66279 8.66313 7.20005 8.00039 7.20005C7.33765 7.20005 6.80039 6.66279 6.80039 6.00005Z" /><path d="M12.4004 4.80005C11.7376 4.80005 11.2004 5.33731 11.2004 6.00005C11.2004 6.66279 11.7376 7.20005 12.4004 7.20005C13.0631 7.20005 13.6004 6.66279 13.6004 6.00005C13.6004 5.33731 13.0631 4.80005 12.4004 4.80005Z" />' +
       "    </svg>" +
       "  </button>" +
-      '  <app-checkbox class="min-w-0 flex-1" data-column-visibility-toggle="' +
+      '  <app-checkbox class="min-w-0" data-column-visibility-toggle="' +
       escapeHtml(col.key) +
       '"' +
       (checked ? " checked" : "") +
@@ -3568,11 +3571,11 @@
     )
       return;
     var LIFT_CLASSES = [
-      "bg-white",
+      "!bg-white",
       "shadow-lg",
       "ring-1",
       "ring-gray-900/10",
-      "dark:bg-gray-800",
+      "dark:!bg-gray-800",
       "dark:ring-white/15",
     ];
     function liftRow(row, on) {
@@ -3723,6 +3726,11 @@
           );
         }
       } catch (error) {}
+      // Figma: the row stays in place, faded, while its lifted copy follows the cursor.
+      setTimeout(function () {
+        liftRow(row, false);
+        row.classList.add("opacity-40");
+      }, 0);
     });
 
     refs.manageColumnsList.addEventListener("dragover", function (event) {
@@ -3757,6 +3765,12 @@
 
     refs.manageColumnsList.addEventListener("dragend", function () {
       clearAllLifts(refs.manageColumnsList);
+      Array.prototype.forEach.call(
+        document.querySelectorAll("[data-column-order-row].opacity-40"),
+        function (r) {
+          r.classList.remove("opacity-40");
+        },
+      );
       draggingColumnKey = "";
       dragTargetKey = "";
       dragTargetPosition = "before";
@@ -4330,7 +4344,8 @@
       "</div>";
   }
 
-  function exportCurrentRows() {
+  /** Export data for TableExport: every filtered row of the active tab, 8 columns. */
+  function getExportData() {
     var rows = getFilteredRows();
     var columns = [
       "amount",
@@ -4352,33 +4367,24 @@
       "Date Initiated",
       "Status",
     ];
-    var csv = [headers.join(",")];
-
-    rows.forEach(function (row) {
-      var values = columns.map(function (key) {
-        var value =
-          key === "amount"
+    var activeTab = document.querySelector('nav[aria-label="Tabs"] [data-tab][aria-current="page"] span');
+    var label = activeTab ? activeTab.textContent.trim() : "";
+    return {
+      columns: headers,
+      label: label,
+      title: "Bills and Payables" + (label ? " — " + label : ""),
+      rows: rows.map(function (row) {
+        return columns.map(function (key) {
+          return key === "amount"
             ? formatMoney(row.amount, row.currency)
             : key === "dueDate" || key === "adDate"
               ? formatDate(row[key])
               : key === "statusLabel"
                 ? getDisplayStatusLabel(row)
                 : row[key];
-        var safe = String(value == null ? "" : value).replace(/"/g, '""');
-        return '"' + safe + '"';
-      });
-      csv.push(values.join(","));
-    });
-
-    var blob = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url;
-    a.download = "bills-payables-export.csv";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+        });
+      }),
+    };
   }
 
   function bindEvents() {
@@ -4419,10 +4425,9 @@
       });
     }
 
-    if (refs.exportBtn) {
-      refs.exportBtn.addEventListener("click", function () {
-        exportCurrentRows();
-      });
+    // Export = format menu (CSV / JSON / Excel / PDF), table-export.js.
+    if (refs.exportBtn && window.TableExport) {
+      window.TableExport.attach(refs.exportBtn, { name: "bills-payables", getData: getExportData });
     }
 
     if (refs.tabNav && refs.tabNav.dataset.tabBound !== "1") {

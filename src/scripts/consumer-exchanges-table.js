@@ -923,8 +923,8 @@
       : '';
     return '' +
       '<div data-column-order-row="' + escapeHtml(col.key) + '" class="group relative flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 dark:hover:bg-white/5' + (disabled ? ' opacity-60' : '') + '">' +
-      '  <span data-drop-line="before" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="top:0;transform:translateY(-50%);"></span>' +
-      '  <span data-drop-line="after" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="bottom:0;transform:translateY(50%);"></span>' +
+      '  <span data-drop-line="before" class="pointer-events-none absolute left-0 right-0 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="top:0;transform:translateY(-50%);"></span>' +
+      '  <span data-drop-line="after" class="pointer-events-none absolute left-0 right-0 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="bottom:0;transform:translateY(50%);"></span>' +
       '  <button type="button" draggable="true" data-column-drag-handle="' + escapeHtml(col.key) + '" class="inline-flex size-5 shrink-0 cursor-grab items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-500 active:cursor-grabbing dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
       '    <span class="sr-only">Reorder column</span>' +
       '    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4">' +
@@ -4482,7 +4482,7 @@
     var manageColumnsList = document.getElementById('sx-manage-columns-list');
     var manageColumnsApplyBtn = document.getElementById('sx-manage-columns-apply-btn');
     var manageColumnsResetBtn = document.getElementById('sx-manage-columns-reset-btn');
-    var LIFT_CLASSES = ['bg-white', 'shadow-lg', 'ring-1', 'ring-gray-900/10', 'dark:bg-gray-800', 'dark:ring-white/15'];
+    var LIFT_CLASSES = ['!bg-white', 'shadow-lg', 'ring-1', 'ring-gray-900/10', 'dark:!bg-gray-800', 'dark:ring-white/15'];
     function liftRow(row, on) {
       if (!row) return;
       LIFT_CLASSES.forEach(function (c) { row.classList.toggle(c, on); });
@@ -4563,12 +4563,18 @@
           event.dataTransfer.setDragImage(row, event.clientX - box.left, event.clientY - box.top);
         }
       }
+      // Figma: the row stays in place, faded, while its lifted copy follows the cursor.
+      setTimeout(function () {
+        liftRow(row, false);
+        row.classList.add('opacity-40');
+      }, 0);
     });
 
     manageColumnsList.addEventListener('dragend', function (event) {
       var row = event.target.closest('[data-column-order-row]');
       if (row) liftRow(row, false);
       clearAllLifts(manageColumnsList);
+      Array.prototype.forEach.call(document.querySelectorAll('[data-column-order-row].opacity-40'), function (r) { r.classList.remove('opacity-40'); });
       draggingColumnKey = '';
       dragTargetKey = '';
       dragTargetPosition = 'before';
@@ -8585,6 +8591,42 @@
         console.error('Failed to load exchanges data:', error);
         updateTabBadges([]);
       });
+  }
+
+
+  // ── Export (format menu, table-export.js) ──
+  // Every filtered + sorted row of the active tab, the visible data columns,
+  // cell text as rendered (badges / icons reduced to their text).
+  function exportCellText(html) {
+    var box = document.createElement("div");
+    box.innerHTML = html == null ? "" : String(html);
+    box.querySelectorAll(".sr-only, svg, img").forEach(function (n) {
+      n.remove();
+    });
+    return box.textContent.replace(/\s+/g, " ").trim();
+  }
+  function getExportData() {
+    var cols = (paginationState.columns || []).filter(function (c) {
+      return c && c.type !== "expand" && c.type !== "action" && c.type !== "select" && (c.label || c.key);
+    });
+    var tab = document.querySelector('nav[aria-label="Tabs"] [aria-current="page"] span');
+    var label = tab ? tab.textContent.trim() : "";
+    return {
+      columns: cols.map(function (c) {
+        return c.label || c.key;
+      }),
+      label: label,
+      title: "Payments Received" + (label ? " — " + label : ""),
+      rows: (paginationState.allEntries || []).map(function (entry) {
+        return cols.map(function (c) {
+          return exportCellText(renderCellValue(c, entry));
+        });
+      }),
+    };
+  }
+  var exportButton = document.getElementById("cp-export-btn");
+  if (exportButton && window.TableExport) {
+    window.TableExport.attach(exportButton, { name: "payments-received", getData: getExportData });
   }
 
   window.initSmartExchangePage = init;
