@@ -23,38 +23,38 @@ window.UMUi = (function () {
     active: {
       label: "Active",
       icon: ICON_CHECK_CIRCLE,
-      cls: "bg-green-100 text-green-800 dark:bg-green-400/10 dark:text-green-400",
+      cls: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
       iconCls: "text-green-500 dark:text-green-400",
     },
     inactive: {
       label: "Inactive",
       icon: ICON_LINK_OFF,
-      cls: "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300",
+      cls: "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300",
       iconCls: "text-gray-500 dark:text-gray-400",
     },
     // Figma 6.9i: blue pill with a dashed circle.
     invited: {
       label: "Invitation Sent",
       icon: '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2 2" aria-hidden="true" class="size-3.5 shrink-0"><circle cx="8" cy="8" r="6" /></svg>',
-      cls: "bg-blue-100 text-blue-800 dark:bg-blue-400/10 dark:text-blue-400",
+      cls: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400",
       iconCls: "text-blue-500 dark:text-blue-400",
     },
     expired: {
       label: "Expired",
       icon: ICON_CLOCK,
-      cls: "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300",
+      cls: "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300",
       iconCls: "text-gray-500 dark:text-gray-400",
     },
     revoked: {
       label: "Revoked",
       icon: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14Zm2.78-4.22a.75.75 0 0 1-1.06 0L8 9.06l-1.72 1.72a.75.75 0 1 1-1.06-1.06L6.94 8 5.22 6.28a.75.75 0 0 1 1.06-1.06L8 6.94l1.72-1.72a.75.75 0 1 1 1.06 1.06L9.06 8l1.72 1.72a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" /></svg>',
-      cls: "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300",
+      cls: "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300",
       iconCls: "text-gray-500 dark:text-gray-400",
     },
     "requires-action": {
       label: "Requires Action",
       icon: '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" d="M6.701 2.25c.577-1 2.02-1 2.598 0l5.196 9a1.5 1.5 0 0 1-1.299 2.25H2.804a1.5 1.5 0 0 1-1.3-2.25l5.197-9ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 1 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" /></svg>',
-      cls: "bg-amber-100 text-amber-800 dark:bg-amber-400/10 dark:text-amber-400",
+      cls: "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
       iconCls: "text-amber-500 dark:text-amber-400",
     },
   };
@@ -147,7 +147,7 @@ window.UMUi = (function () {
     var key = window.UMStore ? window.UMStore.getUserStatus(user) : user.status;
     var status = STATUS[key] || STATUS.inactive;
     return (
-      '<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 type-label-small whitespace-nowrap ' +
+      '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border whitespace-nowrap ' +
       status.cls +
       '"><span class="inline-flex ' +
       status.iconCls +

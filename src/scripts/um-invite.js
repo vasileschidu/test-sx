@@ -335,7 +335,7 @@ window.UMInvite = (function () {
               return ids[p.id];
             })
             .map(function (p) {
-              return '<li class="rounded-full bg-gray-100 px-2.5 py-0.5 type-body text-gray-800 dark:bg-white/10 dark:text-gray-200">' + esc(p.name) + "</li>";
+              return '<li class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-sm/5 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300">' + esc(p.name) + "</li>";
             })
             .join("") +
           "</ul></div>"
@@ -449,9 +449,6 @@ window.UMInvite = (function () {
       });
       renderPermissions();
       document.getElementById("um-invite-dialog").showModal();
-      setTimeout(function () {
-        document.getElementById("umi-first").focus();
-      }, 50);
     });
   }
 
@@ -494,9 +491,6 @@ window.UMInvite = (function () {
         renderPermissions();
       }
       document.getElementById("um-invite-dialog").showModal();
-      setTimeout(function () {
-        document.getElementById("umi-first").focus();
-      }, 50);
     });
   }
 

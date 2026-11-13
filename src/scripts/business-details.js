@@ -20,13 +20,13 @@
     "under-review": {
       label: "Under Review",
       icon: ICON_CLOCK,
-      cls: "bg-blue-100 text-blue-800 dark:bg-blue-400/10 dark:text-blue-400",
+      cls: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400",
       iconCls: "text-blue-500 dark:text-blue-400",
     },
     "in-progress": {
       label: "In Progress",
       icon: ICON_PROGRESS,
-      cls: "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300",
+      cls: "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300",
       iconCls: "text-gray-500 dark:text-gray-400",
     },
   };
@@ -52,10 +52,10 @@
   function statusBadge(status) {
     var active = status === "Active";
     return (
-      '<span class="inline-flex items-center rounded-full px-2.5 py-0.5 type-label ' +
+      '<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-sm/5 font-medium border ' +
       (active
-        ? "bg-green-100 text-green-800 dark:bg-green-400/10 dark:text-green-400"
-        : "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-300") +
+        ? "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400"
+        : "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300") +
       '">' +
       escapeHtml(status) +
       "</span>"
@@ -65,7 +65,7 @@
   function appBadge(key) {
     var status = APP_STATUS[key] || APP_STATUS["in-progress"];
     return (
-      '<span class="inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 type-label-small whitespace-nowrap ' +
+      '<span class="inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border whitespace-nowrap ' +
       status.cls +
       '"><span class="inline-flex ' +
       status.iconCls +

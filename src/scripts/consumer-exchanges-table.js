@@ -76,36 +76,8 @@
   var ACTIVE_EXCEPTIONS_TAB_CLASSES = ['bg-red-50', 'text-red-600', 'dark:bg-red-500/20', 'dark:text-red-300'];
   var INACTIVE_TAB_LINK_CLASSES = ['text-gray-500', 'dark:text-gray-400'];
   var INACTIVE_TAB_HOVER_CLASSES = ['hover:bg-gray-50', 'hover:text-gray-700', 'dark:hover:bg-white/5', 'dark:hover:text-gray-200'];
-  var ACTIVE_BADGE_CLASSES = IS_CONSUMER_TABLE ? [
-    'bg-blue-100',
-    'text-blue-800',
-    'border-blue-200',
-    'dark:bg-blue-400/10',
-    'dark:text-blue-300',
-    'dark:border-blue-400/30',
-  ] : [
-    'bg-blue-50',
-    'text-blue-700',
-    'inset-ring-blue-700/10',
-    'dark:bg-blue-400/10',
-    'dark:text-blue-400',
-    'dark:inset-ring-blue-400/30',
-  ];
-  var INACTIVE_BADGE_CLASSES = IS_CONSUMER_TABLE ? [
-    'bg-gray-100',
-    'text-gray-800',
-    'border-gray-200',
-    'dark:bg-gray-400/10',
-    'dark:text-gray-300',
-    'dark:border-gray-400/20',
-  ] : [
-    'bg-gray-50',
-    'text-gray-600',
-    'inset-ring-gray-500/10',
-    'dark:bg-gray-400/10',
-    'dark:text-gray-400',
-    'dark:inset-ring-gray-400/20',
-  ];
+  var ACTIVE_BADGE_CLASSES = ['border-blue-200', 'bg-blue-100', 'text-blue-800', 'dark:border-blue-400/20', 'dark:bg-blue-400/10', 'dark:text-blue-400'];
+  var INACTIVE_BADGE_CLASSES = ['border-gray-200', 'bg-gray-100', 'text-gray-800', 'dark:border-white/15', 'dark:bg-white/10', 'dark:text-gray-300'];
 
   var DEFAULT_PAGE_SIZE = 10;
   var PAGE_SIZE_OPTIONS = [5, 10, 25, 50, 100];
@@ -224,15 +196,15 @@
 
   var STATUS_STYLES = {
     pending:
-      'bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20',
+      'border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400',
     processing:
-      'bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/20',
+      'border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400',
     paid:
-      'bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20',
+      'border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400',
     exception:
-      'bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20',
+      'border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400',
     declined:
-      'bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20',
+      'border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400',
   };
 
   var STATUS_LABELS = {
@@ -919,7 +891,7 @@
 
   function buildManageColumnsRowHTML(col, checked, disabled) {
     var scopeBadge = col && col.key === 'failureReason'
-      ? '<span class="shrink-0 rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10">Exceptions</span>'
+      ? '<span class="items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 shrink-0">Exceptions</span>'
       : '';
     return '' +
       '<div data-column-order-row="' + escapeHtml(col.key) + '" class="group relative flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 dark:hover:bg-white/5' + (disabled ? ' opacity-60' : '') + '">' +
@@ -1507,11 +1479,11 @@
   }
 
   var CONSUMER_STATUS_STYLES = {
-    pending: 'border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300',
-    processing: 'border-blue-300 bg-blue-100 text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-300',
-    paid: 'border-green-300 bg-green-100 text-green-800 dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-400',
-    exception: 'border-red-200 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400',
-    declined: 'border-red-200 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400'
+    pending: 'border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400',
+    processing: 'border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400',
+    paid: 'border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400',
+    exception: 'border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400',
+    declined: 'border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400'
   };
   var CONSUMER_PENDING_CLOCK_ICON = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0 text-yellow-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm.75-13a.75.75 0 0 0-1.5 0v5c0 .414.336.75.75.75h4a.75.75 0 0 0 0-1.5h-3.25V5Z" clip-rule="evenodd"/></svg>';
 
@@ -1530,11 +1502,11 @@
     }
     var badgeClasses = STATUS_STYLES[status] || STATUS_STYLES.pending;
     if (status === 'processing') {
-      return '<span data-processing-tooltip="true" class="inline-flex cursor-default items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + badgeClasses + '">' +
+      return '<span data-processing-tooltip="true" class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border cursor-default ' + badgeClasses + '">' +
         escapeHtml(getStatusLabel(status)) +
       '</span>';
     }
-    return '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + badgeClasses + '">' +
+    return '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border ' + badgeClasses + '">' +
       escapeHtml(getStatusLabel(status)) +
       '</span>';
   }
@@ -1723,7 +1695,7 @@
       '<div class="flex">' +
         '<div class="' + DETAIL_LABEL + '">Status</div>' +
         '<div class="flex-1 flex flex-col items-start gap-2 p-4">' +
-          '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' + statusClass + '">' +
+          '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border ' + statusClass + '">' +
             escapeHtml(getStatusLabel(displayStatus)) +
           '</span>' +
           (declineReason
@@ -2312,7 +2284,7 @@
               '<div class="col-span-4 grid grid-cols-subgrid items-center bg-gray-50 dark:bg-white/5">' +
                 '<div class="flex min-w-0 items-center gap-2.5 px-4 py-3">' + CONSUMER_AVATAR +
                   '<span class="truncate text-sm/5 font-medium text-gray-900 dark:text-white">' + escapeHtml(payeeName) + '</span>' +
-                  '<span class="inline-flex shrink-0 items-center rounded-full border border-blue-200 bg-blue-100 px-2 py-0.5 text-xs/4 font-medium text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-300">You</span>' +
+                  '<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400 shrink-0">You</span>' +
                 '</div>' +
                 '<div class="px-4 py-3 text-sm/5 font-medium text-gray-900 dark:text-white">' + detailMethod + '</div>' +
                 '<div class="px-4 py-4 text-right text-sm/5 whitespace-nowrap"><span class="font-medium text-gray-900 dark:text-white">' + escapeHtml(formatCurrency(entry.amount, entry.currency)) + '</span> <span class="font-normal text-gray-500 dark:text-gray-400">' + escapeHtml(entry.currency || 'USD') + '</span></div>' +
@@ -6417,7 +6389,7 @@
   function applyConsumerPendingBadge(badge) {
     if (!IS_CONSUMER_TABLE) return;
     var label = badge.textContent;
-    badge.className = 'inline-flex items-center gap-0.5 rounded-sm border border-yellow-300 bg-yellow-100 py-0.5 pr-2 pl-1 text-sm/5 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-500';
+    badge.className = 'inline-flex items-center gap-0.5 rounded py-0.5 pl-1 pr-2 text-sm/5 font-medium border border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400';
     badge.innerHTML = PENDING_CLOCK_ICON + '<span></span>';
     badge.lastChild.textContent = label;
   }
@@ -6428,33 +6400,33 @@
     badge.removeAttribute('title');
     if (entry.status === 'paid') {
       badge.textContent = 'Paid';
-      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:inset-ring-green-400/30';
+      badge.className = 'inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400';
       return;
     }
     if (entry.status === 'declined') {
       badge.textContent = 'Declined';
-      badge.className = 'inline-flex items-center gap-0.5 rounded border border-red-300 bg-red-100 py-0.5 pr-2 pl-2 text-sm leading-5 font-medium text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400';
+      badge.className = 'inline-flex items-center gap-1 rounded px-2 py-0.5 text-sm/5 font-medium border border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400';
       return;
     }
     if (entry.status === 'exception') {
       badge.textContent = 'Exception';
-      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-red-50 text-red-700 inset-ring-red-600/20 dark:bg-red-500/10 dark:text-red-300 dark:inset-ring-red-400/30';
+      badge.className = 'inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400';
       return;
     }
     if (entry.status === 'processing') {
       badge.textContent = 'Processing';
       badge.title = 'ACH is processing automatically. Standard ACH processing time is typically 1-2 business days.';
-      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/20';
+      badge.className = 'inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400';
       return;
     }
     if (isPendingAutoProcessingEntry(entry)) {
       badge.textContent = 'Pending';
-      badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20';
+      badge.className = 'inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400';
       applyConsumerPendingBadge(badge);
       return;
     }
     badge.textContent = 'Pending Your Action';
-    badge.className = 'inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20';
+    badge.className = 'inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400';
     applyConsumerPendingBadge(badge);
   }
 

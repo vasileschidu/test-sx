@@ -28,10 +28,10 @@
     <script src="../../../src/scripts/sidebar-boot.js?v=20261112cmp"></script>
     <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
     <script src="../../../src/scripts/app-plans.js"></script>
-    <script src="../../../src/scripts/nav-component.js?v=20261112sb"></script>
-    <script src="../../../src/scripts/stp-state.js?v=20261112dd"></script>
+    <script src="../../../src/scripts/nav-component.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261112bdg"></script>
     <script src="../../../src/scripts/app-switch.js?v=20261111sk3"></script>
-    <script src="../../../src/scripts/topbar-component.js?v=20261111sw"></script>
+    <script src="../../../src/scripts/topbar-component.js?v=20261112bdg"></script>
     <script src="../../scripts/checkbox-component.js"></script>
     <script src="../../../src/scripts/sidebar.js?v=20261112cmp" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
@@ -140,7 +140,7 @@
                           id="bp-search-input"
                           type="text"
                           placeholder="Search"
-                          class="block h-10 w-full rounded-md border border-gray-300 bg-white py-0 pr-3 pl-10 text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:focus:outline-blue-500"
+                          class="block h-10 w-full rounded-md border border-gray-300 bg-white py-0 pr-3 pl-10 text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:focus:outline-blue-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25"
                         />
                       </div>
 
@@ -157,7 +157,7 @@
                             Filter
                             <span
                               data-filter-count
-                              class="hidden min-w-6 items-center justify-center rounded-full border border-gray-200 bg-gray-100 px-2 py-0.5 text-sm leading-5 font-medium text-gray-800 tabular-nums dark:border-white/15 dark:bg-white/10 dark:text-gray-200"
+                              class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-sm/5 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 min-w-6 justify-center tabular-nums"
                             ></span>
                             <svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true" data-filter-chevron class="shrink-0 transition-transform duration-200 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.29288 7.29289C5.68341 6.90237 6.31657 6.90237 6.7071 7.29289L9.99998 10.5858L13.2929 7.29289C13.6834 6.90237 14.3166 6.90237 14.7071 7.29289C15.0976 7.68342 15.0976 8.31658 14.7071 8.70711L10.7071 12.7071C10.3166 13.0976 9.6834 13.0976 9.29288 12.7071L5.29288 8.70711C4.90236 8.31658 4.90236 7.68342 5.29288 7.29289Z" fill="currentColor"/></svg>
                           </button>
@@ -186,7 +186,7 @@
                                       <span class="min-w-0 flex-1">Amount</span>
                                       <span
                                         data-filter-count-badge="amount"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -200,7 +200,7 @@
                                       <span class="min-w-0 flex-1">Payee</span>
                                       <span
                                         data-filter-count-badge="payee"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -216,7 +216,7 @@
                                       >
                                       <span
                                         data-filter-count-badge="method"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -230,7 +230,7 @@
                                       <span class="min-w-0 flex-1">Status</span>
                                       <span
                                         data-filter-count-badge="status"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -246,7 +246,7 @@
                                       >
                                       <span
                                         data-filter-count-badge="failure_reason"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -262,7 +262,7 @@
                                       >
                                       <span
                                         data-filter-count-badge="due_date"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -278,7 +278,7 @@
                                       >
                                       <span
                                         data-filter-count-badge="initiated_date"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -294,7 +294,7 @@
                                       >
                                       <span
                                         data-filter-count-badge="payment_date"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -308,7 +308,7 @@
                                       <span class="min-w-0 flex-1">Source</span>
                                       <span
                                         data-filter-count-badge="source"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -335,7 +335,7 @@
                                         type="search"
                                         data-filter-search="bp-table-filter-payees"
                                         placeholder="Search payee"
-                                        class="h-[33px] w-full rounded-md border border-gray-300 bg-white pr-2 pl-10 text-sm leading-5 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500"
+                                        class="h-[33px] w-full rounded-md border border-gray-300 bg-white pr-2 pl-10 text-sm leading-5 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25"
                                       />
                                     </div>
                                     <div
@@ -632,7 +632,7 @@
                       <span>Ready to Pay</span>
                       <span
                         data-tab-count="ready_to_pay"
-                        class="inline-flex items-center rounded-[512px] border border-blue-200 bg-blue-100 px-2 py-0.5 text-xs leading-4 font-medium text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/15 dark:text-blue-200"
+                        class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                         >0</span
                       >
                     </a>
@@ -644,7 +644,7 @@
                       <span>In Progress</span>
                       <span
                         data-tab-count="in_progress"
-                        class="inline-flex items-center rounded-[512px] border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs leading-4 font-medium text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-200"
+                        class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300"
                         >0</span
                       >
                     </a>
@@ -656,7 +656,7 @@
                       <span>Paid</span>
                       <span
                         data-tab-count="paid"
-                        class="inline-flex items-center rounded-[512px] border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs leading-4 font-medium text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-200"
+                        class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300"
                         >0</span
                       >
                     </a>
@@ -668,7 +668,7 @@
                       <span>Exceptions</span>
                       <span
                         data-tab-count="exception"
-                        class="inline-flex items-center rounded-[512px] border border-red-200 bg-red-100 px-2 py-0.5 text-xs leading-4 font-medium text-red-800 dark:border-red-400/30 dark:bg-red-400/15 dark:text-red-200"
+                        class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400"
                         >0</span
                       >
                     </a>
@@ -1125,6 +1125,6 @@
 
     <script src="../../../src/scripts/table-ui.js?v=20261006f"></script>
     <script src="../../../src/scripts/table-export.js?v=20261112ex"></script>
-    <script src="../../../src/scripts/bills-payables-table.js?v=20261112s4"></script>
+    <script src="../../../src/scripts/bills-payables-table.js?v=20261113tc"></script>
   </body>
 </html>

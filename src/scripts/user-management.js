@@ -123,7 +123,7 @@
   // ── Cell pieces (shared by the table and the phone cards) ──
 
   function meBadge() {
-    return '<span class="inline-flex shrink-0 items-center rounded-full bg-blue-100 px-2.5 py-0.5 type-label-small text-blue-800 dark:bg-blue-400/10 dark:text-blue-400">Me</span>';
+    return '<span class="inline-flex shrink-0 items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400">Me</span>';
   }
 
   function nameBlock(user) {

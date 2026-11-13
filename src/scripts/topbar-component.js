@@ -851,7 +851,7 @@
     var active = plans.getActiveBusiness();
     var badge = function (text) {
       return (
-        '<span class="inline-flex w-fit items-center rounded-sm border border-gray-200 bg-gray-100 px-2 pt-px text-xs leading-4 text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-200">' +
+        '<span class="inline-flex w-fit items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300">' +
         text +
         "</span>"
       );
@@ -904,7 +904,7 @@
     var active = plans.getActiveBusiness();
     var idBadge = function (business) {
       return (
-        '<span class="inline-flex w-fit items-center rounded-sm border border-gray-200 bg-gray-100 px-2 pt-px text-xs leading-4 text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-200">ID : ' +
+        '<span class="inline-flex w-fit items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300">ID : ' +
         (business.accountId || "593596832") +
         "</span>"
       );

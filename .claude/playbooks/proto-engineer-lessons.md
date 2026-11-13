@@ -69,3 +69,5 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   fallback to today), gate it by plan (`AppPlans.visibleModules()` nav children), and re-render on a custom event + `storage`.
 - 2026-11-11 [qa] Is a major pre-existing? Copy `git show HEAD:<page>` to a temp page next to it, audit, delete it.
 - 2026-11-11 [cards] Rounding phone cards also needs the `main` gutter: `p-0 sm:p-2` pages put the rounded corners on the screen edge.
+- 2026-11-13 [badges] Badge = Figma `13387:1709`: `gap-1 rounded(-full) px-2 py-0.5 text-xs/4|text-sm/5 font-medium border` + `{c}-100/200/800` (dark `{c}-400/10|20|400`); green->emerald, yellow->amber. Bulk-convert with a run-regex over `[^"'`<>]+` (not quoted strings: JS concat breaks quote pairing) and review the dry-run diff; clock/icon-left badges keep `gap-0.5 py-0.5 pl-1 pr-2`.
+- 2026-11-13 [qa] `qa:code --pages` needs full paths (`src/pages/dashboard/x.html`), not page names; a stuck Chrome launch/page.goto timeout is transient: re-run in background.

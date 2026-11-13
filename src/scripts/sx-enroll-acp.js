@@ -28,8 +28,8 @@
   var UI_KEY = "acp";
 
   var BADGE = {
-    done: "inline-flex w-fit items-center rounded-md bg-green-50 dark:bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-700 dark:text-green-400 inset-ring inset-ring-green-600/20 dark:inset-ring-green-500/20",
-    progress: "inline-flex w-fit items-center rounded-md bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300 inset-ring inset-ring-blue-700/10 dark:inset-ring-blue-400/20",
+    done: "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400 w-fit",
+    progress: "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400 w-fit",
   };
 
   // Native radio (same as the case launcher), with a disabled look.

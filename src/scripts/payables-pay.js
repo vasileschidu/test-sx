@@ -3,6 +3,13 @@
  * Populates Pay page using selected payable record.
  */
 (function () {
+  // SMART Disburse cube / SMART Exchange logomark (same assets as the Vendors page,
+  // Figma R2 Pay page MoP list).
+  var SD_METHOD_ICON =
+    '<img src="../../../src/assets/vendors/method-smart-disburse.svg" alt="" width="20" height="20" class="size-5 shrink-0 object-contain" />';
+  var SX_METHOD_ICON =
+    '<img src="../../../src/assets/vendors/method-smart-exchange.svg" alt="" width="20" height="20" class="size-5 shrink-0 object-contain" />';
+
   "use strict";
 
   var JSON_PATH_FALLBACKS = [
@@ -123,12 +130,12 @@
       ready_to_pay:
         "border border-gray-200 bg-gray-100 text-gray-900 dark:border-white/15 dark:bg-white/10 dark:text-gray-200",
       in_progress:
-        "bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30",
+        "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400",
       scheduled:
-        "bg-gray-100 text-gray-700 inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-300 dark:inset-ring-white/15",
-      paid: "bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20",
+        "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300",
+      paid: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
       exception:
-        "bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20",
+        "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
     };
     var labels = {
       ready_to_pay: "Unprocessed",
@@ -140,9 +147,9 @@
     var key = String(status || "ready_to_pay");
     var isReady = key === "ready_to_pay";
     el.className = isReady
-      ? "inline-flex items-center gap-0.5 rounded border py-0.5 pr-2 pl-1 text-sm leading-5 font-medium " +
+      ? "inline-flex items-center gap-0.5 rounded py-0.5 pl-1 pr-2 text-sm/5 font-medium border " +
         styles.ready_to_pay
-      : "inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-xs font-medium inset-ring " +
+      : "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border " +
         (styles[key] || styles.ready_to_pay);
     el.innerHTML =
       isReady
@@ -665,11 +672,11 @@
       .toLowerCase()
       .replace(/[\s-]+/g, "_");
     if (usage === "single_use") {
-      return '<span class="inline-flex shrink-0 items-center rounded-full border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs leading-4 font-medium text-gray-800 in-[el-selectedcontent]:hidden dark:border-white/10 dark:bg-white/10 dark:text-gray-200">Single use</span>';
+      return '<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 shrink-0 in-[el-selectedcontent]:hidden">Single use</span>';
     }
     if (usage === "reloadable") {
       return (
-        '<span class="inline-flex shrink-0 items-center gap-0.5 rounded-full border border-gray-200 bg-gray-100 py-0.5 pr-1 pl-2 text-xs leading-4 font-medium text-gray-800 in-[el-selectedcontent]:hidden dark:border-white/10 dark:bg-white/10 dark:text-gray-200">Reloadable' +
+        '<span class="inline-flex items-center gap-0.5 rounded-full py-0.5 pr-1 pl-2 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 shrink-0 in-[el-selectedcontent]:hidden">Reloadable' +
         '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3.5 text-gray-400"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" /></svg>' +
         "</span>"
       );
@@ -1120,7 +1127,7 @@
         escapeHtml(item.label) +
         "</span>" +
         (item.badge
-          ? '<span class="inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-500/20 dark:bg-yellow-500/10 dark:text-yellow-300">' +
+          ? '<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400">' +
             escapeHtml(item.badge) +
             "</span>"
           : "") +
@@ -1269,7 +1276,7 @@
           escapeHtml(item.label) +
           "</label>" +
           (item.badge
-            ? '<span class="ml-2 inline-flex shrink-0 items-center rounded-md bg-amber-50 px-2 py-1 text-xs font-medium text-amber-700 ring-1 ring-inset ring-amber-200 dark:bg-amber-400/10 dark:text-amber-300 dark:ring-amber-400/20">' +
+            ? '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400 ml-2 shrink-0">' +
               escapeHtml(item.badge) +
               "</span>"
             : "") +
@@ -1699,16 +1706,10 @@
     var wrap = document.getElementById("pp-schedule-wrap");
     var panel = document.getElementById("pp-schedule-dropdown");
     var simpleBtn = document.getElementById("pp-schedule-simple-btn");
-    var dateBtn = document.getElementById("pp-schedule-chip-date-btn");
     if (!wrap || !panel) return;
     _schedulePickerState.open = !!open;
     if (simpleBtn)
       simpleBtn.setAttribute(
-        "aria-expanded",
-        _schedulePickerState.open ? "true" : "false",
-      );
-    if (dateBtn)
-      dateBtn.setAttribute(
         "aria-expanded",
         _schedulePickerState.open ? "true" : "false",
       );
@@ -1723,66 +1724,7 @@
 
   function applyConfirmedScheduleDate(iso) {
     var parsed = isoStringToDate(iso);
-    var simpleBtn = document.getElementById("pp-schedule-simple-btn");
-    var segmentedChip = document.getElementById("pp-schedule-segmented-chip");
-    var chipText = document.getElementById("pp-schedule-chip-text");
-    var clearBtn = document.getElementById("pp-schedule-chip-clear-btn");
-    var dateInput = document.getElementById("pp-schedule-date-input");
-    var dateMaskFilled = document.getElementById(
-      "pp-schedule-date-mask-filled",
-    );
-    var dateMaskEmpty = document.getElementById("pp-schedule-date-mask-empty");
-    if (
-      !simpleBtn ||
-      !segmentedChip ||
-      !chipText ||
-      !dateInput ||
-      !dateMaskFilled ||
-      !dateMaskEmpty
-    )
-      return;
-
-    _schedulePickerState.selectedDate = parsed
-      ? new Date(parsed.getTime())
-      : null;
-    _schedulePickerState.confirmedDate = parsed
-      ? new Date(parsed.getTime())
-      : null;
-    _schedulePickerState.monthCursor = getMonthStart(parsed || new Date());
-    _schedulePickerState.draftInput = parsed
-      ? formatIsoAsUsInput(toIsoDate(parsed))
-      : "";
-
-    dateInput.value = _schedulePickerState.draftInput;
-    renderInputMaskDisplay(
-      _schedulePickerState.draftInput,
-      dateMaskFilled,
-      dateMaskEmpty,
-    );
-    renderScheduleCalendar();
-
-    if (parsed) {
-      simpleBtn.classList.add("hidden");
-      simpleBtn.style.display = "none";
-      simpleBtn.setAttribute("aria-hidden", "true");
-      segmentedChip.classList.remove("hidden");
-      segmentedChip.classList.add("inline-flex");
-      segmentedChip.style.display = "";
-      segmentedChip.setAttribute("aria-hidden", "false");
-      chipText.textContent = formatDate(toIsoDate(parsed));
-      if (clearBtn) clearBtn.classList.add("hidden");
-    } else {
-      simpleBtn.classList.remove("hidden");
-      simpleBtn.style.display = "";
-      simpleBtn.setAttribute("aria-hidden", "false");
-      segmentedChip.classList.remove("inline-flex");
-      segmentedChip.classList.add("hidden");
-      segmentedChip.style.display = "none";
-      segmentedChip.setAttribute("aria-hidden", "true");
-      chipText.textContent = "--";
-      if (clearBtn) clearBtn.classList.remove("hidden");
-    }
-
+    setScheduleConfirmedDate(parsed);
     setScheduleDropdownOpen(false);
   }
 
@@ -1800,6 +1742,174 @@
     return "";
   }
 
+  /* ===== Schedule for later (Figma SH Sandbox 4364:163452) =====
+   * Calendar button → menu with recommended times (Tomorrow morning, Monday
+   * morning, Due date — 9 AM ET), "Choose another date" (the Schedule for Later
+   * dialog) and "Cancel schedule". A set date shows as a chip under the actions
+   * ("Schedule for:" / "Due Date:") and a blue dot on the calendar button.
+   * Our additions to the Figma calendar: a dot on the due date and a line
+   * saying how the chosen day sits against the due date. */
+
+  function getTodayStart() {
+    var t = new Date();
+    return new Date(t.getFullYear(), t.getMonth(), t.getDate());
+  }
+
+
+
+  /** The payable's due date (local midnight), or null. */
+  function getScheduleDueDate() {
+    var row = _payContext && _payContext.row;
+    var raw = String((row && row.dueDate) || "").slice(0, 10);
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(raw)) return null;
+    return isoStringToDate(raw);
+  }
+
+  function isSchedulableDate(d) {
+    return !!d && d >= getTodayStart();
+  }
+
+  /** The recommended times, in Figma order. A row with no usable date is disabled. */
+  function getScheduleRecommendations() {
+    var t = getTodayStart();
+    var tomorrow = new Date(t.getFullYear(), t.getMonth(), t.getDate() + 1);
+    // The Monday after tomorrow, so the two rows never show the same day.
+    var monday = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate() + 1);
+    while (monday.getDay() !== 1) monday.setDate(monday.getDate() + 1);
+    var due = getScheduleDueDate();
+    return [
+      { key: "tomorrow", label: "Tomorrow morning", date: tomorrow },
+      { key: "monday", label: "Monday morning", date: monday },
+      {
+        key: "due",
+        label: "Due date",
+        date: isSchedulableDate(due) ? due : null,
+        note: !due ? "No due date" : "Overdue",
+      },
+    ];
+  }
+
+  function formatScheduleRecTime(d) {
+    return (
+      d.toLocaleDateString("en-US", { month: "short", day: "2-digit" }) +
+      ", 09:00 AM (ET)"
+    );
+  }
+
+  /** "February 03, 2025" — the chip's date. */
+  function formatScheduleChipDate(d) {
+    return d.toLocaleDateString("en-US", {
+      month: "long",
+      day: "2-digit",
+      year: "numeric",
+    });
+  }
+
+  var SCHEDULE_CHECK_ICON =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-emerald-500 dark:text-emerald-400"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /></svg>';
+
+  /** Recommended rows for the menu (vs the set date) and the dialog (vs the picked date). */
+  function renderScheduleRecs() {
+    var baseRecs = getScheduleRecommendations();
+    function rows(compareTo, attr) {
+      var recs = baseRecs;
+      // A date picked in the calendar isn't one of the three: show it on top, checked.
+      var c = _schedulePickerState.confirmedDate;
+      if (
+        c &&
+        !baseRecs.some(function (r) { return r.date && isSameDay(r.date, c); })
+      )
+        recs = [{ key: "selected", label: "Scheduled date", date: c }].concat(baseRecs);
+      return recs
+        .map(function (r) {
+          var on = !!(compareTo && r.date && isSameDay(compareTo, r.date));
+          var right = r.date
+            ? formatScheduleRecTime(r.date)
+            : r.note === "Overdue"
+              ? '<span class="text-red-600 dark:text-red-400">Overdue</span>'
+              : r.note || "";
+          return (
+            '<button type="button" ' +
+            attr +
+            '="' +
+            r.key +
+            '"' +
+            (r.date ? "" : " disabled") +
+            ' aria-pressed="' +
+            (on ? "true" : "false") +
+            '" class="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm/5 focus-visible:outline-none ' +
+            // In the dialog the list is inset (px-2), so its rows get rounded corners.
+            (attr === "data-schedule-pick" ? "rounded-md " : "") +
+            (r.date
+              ? "cursor-pointer hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/10 dark:focus-visible:bg-white/10 "
+              : "cursor-not-allowed opacity-50 ") +
+            (on ? "bg-gray-100 dark:bg-white/10 " : "") +
+            '">' +
+            '<span class="min-w-0 flex-1 truncate text-gray-900 dark:text-white ' +
+            (on ? "font-semibold" : "font-medium") +
+            '">' +
+            r.label +
+            "</span>" +
+            '<span class="shrink-0 whitespace-nowrap text-gray-500 dark:text-gray-400">' +
+            right +
+            "</span>" +
+            (on ? SCHEDULE_CHECK_ICON : "") +
+            "</button>"
+          );
+        })
+        .join("");
+    }
+    var menu = document.getElementById("pp-schedule-menu-recs");
+    if (menu)
+      menu.innerHTML = rows(_schedulePickerState.confirmedDate, "data-schedule-rec");
+    var dlg = document.getElementById("pp-schedule-dialog-recs");
+    if (dlg)
+      dlg.innerHTML = rows(_schedulePickerState.selectedDate, "data-schedule-pick");
+    var cancelSchedule = document.getElementById("pp-schedule-cancel-schedule-btn");
+    if (cancelSchedule) {
+      var hasDate = !!_schedulePickerState.confirmedDate;
+      cancelSchedule.classList.toggle("hidden", !hasDate);
+      cancelSchedule.classList.toggle("block", hasDate);
+    }
+  }
+
+  function getScheduleRecDate(key) {
+    var recs = getScheduleRecommendations();
+    for (var i = 0; i < recs.length; i += 1) {
+      if (recs[i].key === key) return recs[i].date;
+    }
+    return null;
+  }
+
+  /** Chip under the actions + dot on the calendar button(s). */
+  function renderScheduleChip() {
+    var chip = document.getElementById("pp-schedule-segmented-chip");
+    var chipText = document.getElementById("pp-schedule-chip-text");
+    var chipLabel = document.getElementById("pp-schedule-chip-label");
+    var dot = document.getElementById("pp-schedule-dot");
+    var c = _schedulePickerState.confirmedDate;
+    if (chip) {
+      chip.classList.toggle("hidden", !c);
+      chip.classList.toggle("inline-flex", !!c);
+      chip.style.display = c ? "" : "none";
+      chip.setAttribute("aria-hidden", c ? "false" : "true");
+    }
+    if (chipText) chipText.textContent = c ? formatScheduleChipDate(c) : "--";
+    if (chipLabel) {
+      var dueRec = getScheduleRecDate("due");
+      chipLabel.textContent =
+        c && dueRec && isSameDay(c, dueRec) ? "Due Date:" : "Schedule for:";
+    }
+    if (dot) dot.classList.toggle("hidden", !c);
+    var simpleBtn = document.getElementById("pp-schedule-simple-btn");
+    if (simpleBtn)
+      simpleBtn.setAttribute(
+        "aria-label",
+        c ? "Scheduled for " + formatScheduleChipDate(c) + ". Change schedule" : "Schedule payment",
+      );
+    renderScheduleRecs();
+  }
+
   function renderScheduleCalendar() {
     var label = document.getElementById("pp-schedule-month-label");
     var grid = document.getElementById("pp-schedule-grid");
@@ -1810,65 +1920,183 @@
     _schedulePickerState.monthCursor = getMonthStart(monthStart);
     label.textContent = _schedulePickerState.monthCursor.toLocaleDateString(
       "en-US",
-      {
-        month: "long",
-        year: "numeric",
-      },
+      { month: "long", year: "numeric" },
     );
 
-    var startWeekdayMondayFirst =
-      (_schedulePickerState.monthCursor.getDay() + 6) % 7;
+    // US calendar: weeks start on Sunday.
+    var startWeekday = _schedulePickerState.monthCursor.getDay();
     var firstVisibleDate = new Date(_schedulePickerState.monthCursor);
-    firstVisibleDate.setDate(
-      firstVisibleDate.getDate() - startWeekdayMondayFirst,
-    );
+    firstVisibleDate.setDate(firstVisibleDate.getDate() - startWeekday);
+    var monthDays = new Date(
+      _schedulePickerState.monthCursor.getFullYear(),
+      _schedulePickerState.monthCursor.getMonth() + 1,
+      0,
+    ).getDate();
+    // Only the weeks the month needs.
+    var cellCount = Math.ceil((startWeekday + monthDays) / 7) * 7;
 
-    var today = new Date();
+    var todayStart = getTodayStart();
+    var dueDate = getScheduleDueDate();
+    var dueOverdue = !!dueDate && dueDate < todayStart;
     var html = "";
-    for (var i = 0; i < 42; i += 1) {
+    for (var i = 0; i < cellCount; i += 1) {
       var cellDate = new Date(firstVisibleDate);
       cellDate.setDate(firstVisibleDate.getDate() + i);
-      var isCurrentMonth =
-        cellDate.getMonth() === _schedulePickerState.monthCursor.getMonth();
-      var isToday = isSameDay(cellDate, today);
+      // Only this month's days; other months' slots stay empty.
+      if (cellDate.getMonth() !== _schedulePickerState.monthCursor.getMonth()) {
+        html += '<div aria-hidden="true"></div>';
+        continue;
+      }
+      var isToday = isSameDay(cellDate, todayStart);
       var isSelected =
         _schedulePickerState.selectedDate &&
         isSameDay(cellDate, _schedulePickerState.selectedDate);
+      var isOff = !isSchedulableDate(cellDate);
+      var isDue = !!dueDate && isSameDay(cellDate, dueDate);
       var iso = toIsoDate(cellDate);
 
-      var buttonClasses = [
-        "cursor-pointer py-1.5",
-        isCurrentMonth
-          ? "bg-white text-gray-900 hover:bg-gray-100 dark:bg-gray-900 dark:text-gray-100 dark:hover:bg-white/10"
-          : "bg-gray-50 text-gray-400 hover:bg-gray-100 dark:bg-black/20 dark:text-gray-500 dark:hover:bg-white/10",
-      ].join(" ");
-      var timeClasses = [
-        "mx-auto flex size-7 items-center justify-center rounded-full",
-        isSelected ? "bg-blue-600 font-semibold text-white" : "",
-        !isSelected && isToday
-          ? "font-semibold text-blue-600 dark:text-blue-400"
-          : "",
-      ]
-        .join(" ")
-        .trim();
+      var dayClasses =
+        "relative mx-auto flex size-10 items-center justify-center rounded-full transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-blue-600 " +
+        (isSelected
+          ? "cursor-pointer bg-blue-600 font-semibold text-white hover:bg-blue-500 dark:bg-blue-500 dark:hover:bg-blue-400"
+          : isOff
+            ? "cursor-not-allowed text-gray-300 dark:text-gray-600"
+            : "cursor-pointer hover:bg-gray-100 dark:hover:bg-white/10 " +
+              (isToday
+                ? "font-semibold text-blue-600 dark:text-blue-400"
+                : "font-medium text-gray-900 dark:text-white"));
 
       html +=
-        "" +
         '<button type="button" class="' +
-        buttonClasses +
+        dayClasses +
         '" data-schedule-date="' +
         iso +
+        '"' +
+        (isOff ? " disabled" : "") +
+        (isSelected ? ' aria-pressed="true"' : "") +
+        ' aria-label="' +
+        cellDate.toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric", year: "numeric" }) +
+        (isToday ? ", today" : "") +
+        (isDue ? ", due date" : "") +
         '">' +
         '<time datetime="' +
         iso +
-        '" class="' +
-        timeClasses +
         '">' +
         cellDate.getDate() +
         "</time>" +
+        (isDue
+          ? '<span aria-hidden="true" class="absolute bottom-1 left-1/2 size-1 -translate-x-1/2 rounded-full ' +
+            (isSelected ? "bg-white" : dueOverdue ? "bg-red-500" : "bg-amber-500") +
+            '"></span>'
+          : "") +
         "</button>";
     }
     grid.innerHTML = html;
+
+    // A schedule can't be in the past: no going back before this month.
+    var thisMonth = getMonthStart(todayStart);
+    var cur = _schedulePickerState.monthCursor;
+    var prevBtn = document.getElementById("pp-schedule-prev");
+    var prevYearBtn = document.getElementById("pp-schedule-prev-year");
+    if (prevBtn) prevBtn.disabled = cur <= thisMonth;
+    if (prevYearBtn)
+      prevYearBtn.disabled =
+        new Date(cur.getFullYear() - 1, cur.getMonth(), 1) < thisMonth;
+    renderScheduleExtras();
+  }
+
+  /** Due line, "Pays on …" summary, Select state and the dialog's recommended rows. */
+  function renderScheduleExtras() {
+    var todayStart = getTodayStart();
+    var due = getScheduleDueDate();
+    var overdue = !!due && due < todayStart;
+    var box = document.getElementById("pp-schedule-due");
+    var text = document.getElementById("pp-schedule-due-text");
+    var badge = document.getElementById("pp-schedule-due-badge");
+    var legendDot = document.getElementById("pp-schedule-legend-dot");
+    if (box) {
+      box.classList.toggle("hidden", !due);
+      box.classList.toggle("flex", !!due);
+    }
+    if (due && text)
+      text.textContent = due.toLocaleDateString("en-US", {
+        weekday: "short",
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      });
+    if (legendDot) {
+      legendDot.classList.toggle("bg-red-500", overdue);
+      legendDot.classList.toggle("bg-amber-500", !overdue);
+    }
+
+    var sel = _schedulePickerState.selectedDate;
+    var confirmBtn = document.getElementById("pp-schedule-confirm-btn");
+    // Nothing to save until a different, valid day is picked.
+    var setDate = _schedulePickerState.confirmedDate;
+    if (confirmBtn) {
+      confirmBtn.disabled =
+        !isSchedulableDate(sel) || !!(setDate && isSameDay(sel, setDate));
+      // Rescheduling reads as a change, not a first pick.
+      confirmBtn.textContent = setDate ? "Change date" : "Select";
+    }
+
+    // Two short lines: "● Due Tue, Dec 1, 2026 · in 18 days" and, once a day is
+    // picked, "● Pays Fri, Nov 20, 2026 at 9:00 AM ET · 11 days early".
+    var paysRow = document.getElementById("pp-schedule-pays-row");
+    var paysText = document.getElementById("pp-schedule-pays-text");
+    function days(n) {
+      return n + (n === 1 ? " day" : " days");
+    }
+    if (badge) {
+      var left = due ? Math.round((due - todayStart) / 86400000) : 0;
+      badge.innerHTML = !due
+        ? ""
+        : " · " +
+          (overdue
+            ? '<span class="font-medium text-red-600 dark:text-red-400">Overdue</span>'
+            : left === 0
+              ? '<span class="font-medium text-amber-700 dark:text-amber-400">Today</span>'
+              : "in " + days(left));
+    }
+    if (paysRow) {
+      paysRow.classList.toggle("hidden", !sel);
+      paysRow.classList.toggle("flex", !!sel);
+    }
+    if (paysText) {
+      if (!sel) {
+        paysText.innerHTML = "";
+      } else if (sel < todayStart) {
+        paysText.innerHTML = '<span class="text-red-600 dark:text-red-400">Choose today or a later date</span>';
+      } else {
+        var rel = "";
+        if (due) {
+          var diff = Math.round((sel - due) / 86400000);
+          rel =
+            " · " +
+            (diff === 0
+              ? '<span class="font-medium text-emerald-700 dark:text-emerald-400">On the due date</span>'
+              : diff < 0
+                ? '<span class="font-medium text-emerald-700 dark:text-emerald-400">' + days(-diff) + " early</span>"
+                : '<span class="font-medium text-amber-700 dark:text-amber-400">' + days(diff) + " late</span>");
+        }
+        paysText.innerHTML =
+          'Pays <span class="font-medium text-gray-700 dark:text-gray-300">' +
+          sel.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric", year: "numeric" }) +
+          "</span> at 9:00 AM ET" +
+          rel;
+      }
+    }
+    renderScheduleRecs();
+  }
+
+  function setScheduleConfirmedDate(d) {
+    _schedulePickerState.confirmedDate = d ? new Date(d.getTime()) : null;
+    _schedulePickerState.selectedDate = d ? new Date(d.getTime()) : null;
+    _schedulePickerState.monthCursor = getMonthStart(d || new Date());
+    renderScheduleCalendar();
+    renderScheduleChip();
+    renderMethodEtaWarning();
   }
 
   function initScheduleDropdown() {
@@ -1877,19 +2105,8 @@
     _schedulePickerState.selectedDate = null;
     _schedulePickerState.confirmedDate = null;
     _schedulePickerState.monthCursor = getMonthStart(new Date());
-    _schedulePickerState.draftInput = "";
     if (_schedulePickerState.bound) {
-      var existingChipText = document.getElementById("pp-schedule-chip-text");
-      var existingSimple = document.getElementById("pp-schedule-simple-btn");
-      var existingSegmented = document.getElementById(
-        "pp-schedule-segmented-chip",
-      );
-      if (existingChipText) existingChipText.textContent = "--";
-      if (existingSimple) existingSimple.classList.remove("hidden");
-      if (existingSegmented) {
-        existingSegmented.classList.remove("inline-flex");
-        existingSegmented.classList.add("hidden");
-      }
+      renderScheduleChip();
       return;
     }
     _schedulePickerState.bound = true;
@@ -1897,270 +2114,145 @@
     var wrap = document.getElementById("pp-schedule-wrap");
     var panel = document.getElementById("pp-schedule-dropdown");
     var simpleBtn = document.getElementById("pp-schedule-simple-btn");
-    var segmentedChip = document.getElementById("pp-schedule-segmented-chip");
-    var dateBtn = document.getElementById("pp-schedule-chip-date-btn");
-    var clearBtn = document.getElementById("pp-schedule-chip-clear-btn");
-    var prev = document.getElementById("pp-schedule-prev");
-    var next = document.getElementById("pp-schedule-next");
+    var dialog = document.getElementById("pp-schedule-dialog");
     var grid = document.getElementById("pp-schedule-grid");
     var confirmBtn = document.getElementById("pp-schedule-confirm-btn");
-    var chipText = document.getElementById("pp-schedule-chip-text");
-    var dateInput = document.getElementById("pp-schedule-date-input");
-    var dateMaskFilled = document.getElementById(
-      "pp-schedule-date-mask-filled",
-    );
-    var dateMaskEmpty = document.getElementById("pp-schedule-date-mask-empty");
-    if (
-      !wrap ||
-      !panel ||
-      !simpleBtn ||
-      !segmentedChip ||
-      !dateBtn ||
-      !prev ||
-      !next ||
-      !grid ||
-      !confirmBtn ||
-      !chipText ||
-      !dateInput ||
-      !dateMaskFilled ||
-      !dateMaskEmpty
-    )
-      return;
+    var clearBtn = document.getElementById("pp-schedule-chip-clear-btn");
+    var dateBtn = document.getElementById("pp-schedule-chip-date-btn");
+    if (!wrap || !panel || !simpleBtn || !dialog || !grid || !confirmBtn) return;
 
-    function getCaretIndexFromDigitsCount(count, formatted) {
-      if (!formatted) return 0;
-      var map = [0, 1, 5, 6, 10, 11, 12, 13, 14];
-      var safeCount = Math.max(0, Math.min(8, count));
-      var idx = map[safeCount];
-      return Math.max(0, Math.min(idx, formatted.length));
-    }
-
-    function renderScheduleDateInput() {
-      var iso = _schedulePickerState.selectedDate
-        ? toIsoDate(_schedulePickerState.selectedDate)
-        : "";
-      var display = _schedulePickerState.draftInput || formatIsoAsUsInput(iso);
-      dateInput.value = display;
-      renderInputMaskDisplay(display, dateMaskFilled, dateMaskEmpty);
-    }
-
-    function renderScheduleChip() {
-      if (_schedulePickerState.confirmedDate) {
-        simpleBtn.classList.add("hidden");
-        simpleBtn.style.display = "none";
-        simpleBtn.setAttribute("aria-hidden", "true");
-        segmentedChip.classList.remove("hidden");
-        segmentedChip.classList.add("inline-flex");
-        segmentedChip.style.display = "";
-        segmentedChip.setAttribute("aria-hidden", "false");
-        chipText.textContent = formatDate(
-          toIsoDate(_schedulePickerState.confirmedDate),
-        );
-      } else {
-        simpleBtn.classList.remove("hidden");
-        simpleBtn.style.display = "";
-        simpleBtn.setAttribute("aria-hidden", "false");
-        segmentedChip.classList.remove("inline-flex");
-        segmentedChip.classList.add("hidden");
-        segmentedChip.style.display = "none";
-        segmentedChip.setAttribute("aria-hidden", "true");
-        chipText.textContent = "--";
-      }
-    }
-
-    function setScheduleDateFromInput(rawInput) {
-      var formatted = formatUsInput(rawInput);
-      var iso = usInputToIso(formatted);
-      _schedulePickerState.draftInput = formatted;
-      if (!formatted) {
-        _schedulePickerState.selectedDate = null;
-        _schedulePickerState.monthCursor = getMonthStart(new Date());
-      } else if (iso) {
-        var parsed = isoStringToDate(iso);
-        if (parsed) {
-          _schedulePickerState.selectedDate = parsed;
-          _schedulePickerState.monthCursor = getMonthStart(parsed);
-          _schedulePickerState.draftInput = formatIsoAsUsInput(iso);
-        }
-      }
-      return formatted;
-    }
-
-    _schedulePickerState.monthCursor = getMonthStart(new Date());
-    _schedulePickerState.draftInput = "";
     renderScheduleCalendar();
-    renderScheduleDateInput();
     renderScheduleChip();
     setScheduleDropdownOpen(false);
 
     function onScheduleTriggerClick(event) {
       event.preventDefault();
       event.stopPropagation();
+      if (!_schedulePickerState.open) renderScheduleRecs();
       setScheduleDropdownOpen(!_schedulePickerState.open);
-      if (_schedulePickerState.open) {
-        if (
-          !_schedulePickerState.selectedDate &&
-          _schedulePickerState.confirmedDate
-        ) {
-          _schedulePickerState.selectedDate = new Date(
-            _schedulePickerState.confirmedDate.getTime(),
-          );
-          _schedulePickerState.draftInput = formatIsoAsUsInput(
-            toIsoDate(_schedulePickerState.selectedDate),
-          );
-          _schedulePickerState.monthCursor = getMonthStart(
-            _schedulePickerState.selectedDate,
-          );
-        }
-        renderScheduleCalendar();
-        renderScheduleDateInput();
-      }
     }
-
     simpleBtn.addEventListener("click", onScheduleTriggerClick);
-    dateBtn.addEventListener("click", onScheduleTriggerClick);
 
-    prev.addEventListener("click", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      _schedulePickerState.monthCursor = shiftMonths(
-        _schedulePickerState.monthCursor,
-        -1,
-      );
+    function openScheduleDialog() {
+      setScheduleDropdownOpen(false);
+      var c = _schedulePickerState.confirmedDate;
+      _schedulePickerState.selectedDate = c ? new Date(c.getTime()) : null;
+      // Open on the set date's month, else on the current month.
+      _schedulePickerState.monthCursor = getMonthStart(c || new Date());
       renderScheduleCalendar();
-    });
+      // The dialog hands focus back to whatever had it. From the menu that was
+      // "Choose another date", which then stayed highlighted (focus-visible)
+      // the next time the menu opened; give it to the calendar button instead.
+      var active = document.activeElement;
+      if (active && panel.contains(active)) {
+        var trigger = panel.parentNode && panel.parentNode.querySelector("button");
+        if (trigger) trigger.focus({ preventScroll: true });
+      }
+      openDialogById("pp-schedule-dialog");
+    }
+    // The date in the chip opens the calendar on that date.
+    if (dateBtn)
+      dateBtn.addEventListener("click", function (event) {
+        event.preventDefault();
+        event.stopPropagation();
+        openScheduleDialog();
+      });
 
-    next.addEventListener("click", function (event) {
-      event.preventDefault();
-      event.stopPropagation();
-      _schedulePickerState.monthCursor = shiftMonths(
-        _schedulePickerState.monthCursor,
-        1,
-      );
+    function shiftMonth(by) {
+      var m = _schedulePickerState.monthCursor || getMonthStart(new Date());
+      var next = new Date(m.getFullYear(), m.getMonth() + by, 1);
+      if (next < getMonthStart(getTodayStart())) return;
+      _schedulePickerState.monthCursor = next;
       renderScheduleCalendar();
+    }
+    [
+      ["pp-schedule-prev", -1],
+      ["pp-schedule-next", 1],
+      ["pp-schedule-prev-year", -12],
+      ["pp-schedule-next-year", 12],
+    ].forEach(function (pair) {
+      var b = document.getElementById(pair[0]);
+      if (b)
+        b.addEventListener("click", function (event) {
+          event.preventDefault();
+          shiftMonth(pair[1]);
+        });
     });
 
     grid.addEventListener("click", function (event) {
-      var target = event.target;
-      if (!target) return;
-      var btnNode = target.closest("button[data-schedule-date]");
-      if (!btnNode) return;
+      var btnNode = event.target.closest("button[data-schedule-date]");
+      if (!btnNode || btnNode.disabled) return;
       var iso = btnNode.getAttribute("data-schedule-date");
       if (!iso) return;
-      _schedulePickerState.selectedDate = new Date(iso + "T00:00:00");
-      _schedulePickerState.draftInput = formatIsoAsUsInput(iso);
-      renderScheduleDateInput();
+      _schedulePickerState.selectedDate = isoStringToDate(iso);
       renderScheduleCalendar();
     });
 
-    dateInput.addEventListener("click", function (event) {
+    // Menu: a recommended time sets the date at once.
+    panel.addEventListener("click", function (event) {
       event.stopPropagation();
+      var rec = event.target.closest("[data-schedule-rec]");
+      if (rec && !rec.disabled) {
+        var key = rec.getAttribute("data-schedule-rec");
+        var d = key === "selected" ? null : getScheduleRecDate(key);
+        if (d) setScheduleConfirmedDate(d);
+        setScheduleDropdownOpen(false);
+        return;
+      }
+      if (event.target.closest("#pp-schedule-other-btn")) {
+        openScheduleDialog();
+        return;
+      }
+      if (event.target.closest("#pp-schedule-cancel-schedule-btn")) {
+        setScheduleConfirmedDate(null);
+        setScheduleDropdownOpen(false);
+      }
     });
-    dateInput.addEventListener("focus", function () {
-      if (!String(dateInput.value || "").trim()) {
-        _schedulePickerState.monthCursor = getMonthStart(new Date());
+
+    // Dialog: a recommended time picks that day in the calendar.
+    var dialogRecs = document.getElementById("pp-schedule-dialog-recs");
+    if (dialogRecs)
+      dialogRecs.addEventListener("click", function (event) {
+        var b = event.target.closest("[data-schedule-pick]");
+        if (!b || b.disabled) return;
+        var key = b.getAttribute("data-schedule-pick");
+        var d =
+          key === "selected"
+            ? _schedulePickerState.confirmedDate
+            : getScheduleRecDate(key);
+        if (!d) return;
+        _schedulePickerState.selectedDate = new Date(d.getTime());
+        _schedulePickerState.monthCursor = getMonthStart(d);
         renderScheduleCalendar();
-      }
-    });
-
-    dateInput.addEventListener("keydown", function (event) {
-      if (event.key !== "Backspace") return;
-      var start =
-        typeof dateInput.selectionStart === "number"
-          ? dateInput.selectionStart
-          : 0;
-      var end =
-        typeof dateInput.selectionEnd === "number" ? dateInput.selectionEnd : 0;
-      if (start !== end || start <= 0) return;
-      var value = String(dateInput.value || "");
-      var prevChar = value.charAt(start - 1);
-      if (prevChar !== " " && prevChar !== "/") return;
-      var removeIdx = -1;
-      for (var i = start - 1; i >= 0; i -= 1) {
-        if (/\d/.test(value.charAt(i))) {
-          removeIdx = i;
-          break;
-        }
-      }
-      if (removeIdx < 0) return;
-      event.preventDefault();
-      dateInput.value = value.slice(0, removeIdx) + value.slice(removeIdx + 1);
-      try {
-        dateInput.setSelectionRange(removeIdx, removeIdx);
-      } catch (err) {
-        // Ignore selection errors on unsupported input states.
-      }
-      dateInput.dispatchEvent(new Event("input", { bubbles: true }));
-    });
-
-    dateInput.addEventListener("input", function () {
-      var selectionStart =
-        typeof dateInput.selectionStart === "number"
-          ? dateInput.selectionStart
-          : dateInput.value.length;
-      var digitsBeforeCaret = String(dateInput.value || "")
-        .slice(0, selectionStart)
-        .replace(/\D/g, "").length;
-      var formatted = setScheduleDateFromInput(dateInput.value);
-      dateInput.value = formatted;
-      renderInputMaskDisplay(formatted, dateMaskFilled, dateMaskEmpty);
-      renderScheduleCalendar();
-      var nextCaret = getCaretIndexFromDigitsCount(
-        digitsBeforeCaret,
-        formatted,
-      );
-      try {
-        dateInput.setSelectionRange(nextCaret, nextCaret);
-      } catch (err) {
-        // Ignore selection errors on unsupported input states.
-      }
-    });
+      });
 
     confirmBtn.addEventListener("click", function (event) {
       event.preventDefault();
-      event.stopPropagation();
-      if (!_schedulePickerState.selectedDate) {
-        _schedulePickerState.selectedDate = new Date();
-      }
-      _schedulePickerState.confirmedDate = new Date(
-        _schedulePickerState.selectedDate.getTime(),
-      );
-      _schedulePickerState.monthCursor = getMonthStart(
-        _schedulePickerState.selectedDate,
-      );
-      _schedulePickerState.draftInput = formatIsoAsUsInput(
-        toIsoDate(_schedulePickerState.selectedDate),
-      );
-      renderScheduleDateInput();
-      renderScheduleCalendar();
-      renderScheduleChip();
-      setScheduleDropdownOpen(false);
+      var sel = _schedulePickerState.selectedDate;
+      if (!isSchedulableDate(sel)) return;
+      setScheduleConfirmedDate(sel);
+      closeDialogById("pp-schedule-dialog");
+    });
+
+    // Cancel / Esc / ×: nothing changes; the picked day goes back to the set one.
+    dialog.addEventListener("close", function () {
+      var c = _schedulePickerState.confirmedDate;
+      _schedulePickerState.selectedDate = c ? new Date(c.getTime()) : null;
+      renderScheduleExtras();
     });
 
     if (clearBtn) {
       clearBtn.addEventListener("click", function (event) {
         event.preventDefault();
         event.stopPropagation();
-        _schedulePickerState.selectedDate = null;
-        _schedulePickerState.confirmedDate = null;
-        _schedulePickerState.draftInput = "";
-        _schedulePickerState.monthCursor = getMonthStart(new Date());
-        renderScheduleDateInput();
-        renderScheduleCalendar();
-        renderScheduleChip();
+        setScheduleConfirmedDate(null);
         setScheduleDropdownOpen(false);
       });
     }
 
-    panel.addEventListener("click", function (event) {
-      event.stopPropagation();
-    });
-
     document.addEventListener("click", function (event) {
       if (!_schedulePickerState.open) return;
-      if (!wrap.contains(event.target)) {
-        setScheduleDropdownOpen(false);
-      }
+      if (!wrap.contains(event.target)) setScheduleDropdownOpen(false);
     });
 
     document.addEventListener("keydown", function (event) {
@@ -2168,6 +2260,81 @@
         setScheduleDropdownOpen(false);
       }
     });
+  }
+
+  /**
+   * Footer calendar: the same button as the header (blue dot when a date is
+   * set). It drives the header button, so there is one menu and one state; the
+   * menu moves into whichever row opened it and opens upwards in the footer.
+   */
+  var PP_PANEL_DOWN = ["top-full", "mt-1", "origin-top-right"];
+  var PP_PANEL_UP = ["bottom-full", "mb-1", "origin-bottom-right"];
+
+  function initFooterSchedule() {
+    var wrap = document.getElementById("pp-schedule-wrap");
+    var panel = document.getElementById("pp-schedule-dropdown");
+    var topBtn = document.getElementById("pp-schedule-simple-btn");
+    var topDot = document.getElementById("pp-schedule-dot");
+    var fWrap = document.getElementById("gp-footer-schedule-wrap");
+    var fBtn = document.getElementById("gp-footer-schedule-btn");
+    var fDot = document.getElementById("gp-footer-schedule-dot");
+    if (!wrap || !panel || !topBtn || !fWrap || !fBtn) return;
+
+    function sync() {
+      var topShown =
+        !wrap.classList.contains("hidden") &&
+        topBtn.style.display !== "none" &&
+        !topBtn.classList.contains("hidden");
+      fWrap.style.display = topShown ? "" : "none";
+      if (fDot && topDot) fDot.classList.toggle("hidden", topDot.classList.contains("hidden"));
+      fBtn.setAttribute("aria-label", topBtn.getAttribute("aria-label") || "Schedule payment");
+      fBtn.disabled = !!topBtn.disabled;
+      fBtn.setAttribute(
+        "aria-expanded",
+        _schedulePickerState.open && fWrap.contains(panel) ? "true" : "false",
+      );
+    }
+
+    function placePanel(inFooter) {
+      var host = inFooter ? fWrap : wrap;
+      if (panel.parentNode !== host) host.appendChild(panel);
+      (inFooter ? PP_PANEL_DOWN : PP_PANEL_UP).forEach(function (c) { panel.classList.remove(c); });
+      (inFooter ? PP_PANEL_UP : PP_PANEL_DOWN).forEach(function (c) { panel.classList.add(c); });
+    }
+
+    var fromFooter = false;
+    // Opened from the header again: the menu goes back under it (capture runs before the toggle).
+    topBtn.addEventListener("click", function () {
+      if (!fromFooter && panel.parentNode !== wrap) {
+        if (_schedulePickerState.open) setScheduleDropdownOpen(false);
+        placePanel(false);
+      }
+    }, true);
+
+    fBtn.addEventListener("click", function (event) {
+      event.preventDefault();
+      // The menu closes on any click outside the header wrap; keep this one to ourselves.
+      event.stopPropagation();
+      if (panel.parentNode !== fWrap) {
+        if (_schedulePickerState.open) setScheduleDropdownOpen(false);
+        placePanel(true);
+      }
+      fromFooter = true;
+      topBtn.click();
+      fromFooter = false;
+      sync();
+    });
+    // Outside clicks while the menu sits in the footer.
+    document.addEventListener("click", function (event) {
+      if (!_schedulePickerState.open || panel.parentNode !== fWrap) return;
+      if (!fWrap.contains(event.target)) setScheduleDropdownOpen(false);
+    });
+
+    var mo = new MutationObserver(sync);
+    [wrap, topBtn, topDot].forEach(function (el) {
+      if (el) mo.observe(el, { attributes: true, attributeFilter: ["class", "style", "aria-expanded", "aria-label", "disabled"] });
+    });
+    sync();
   }
 
   function setPayStepBadgeById(badgeId, displayNumber, isComplete) {
@@ -2197,9 +2364,10 @@
 
   function buildSelectFilledContent(item) {
     if (!item || !item.label) return "";
+    // Brand-coloured SD / SX icons in the selected field too (were a gray variant).
     var iconSvg = item.hideSelectedIcon
       ? ""
-      : item.selectedIcon || item.icon || "";
+      : item.icon || item.selectedIcon || "";
     if (!iconSvg) {
       return (
         '<span class="truncate font-medium">' +
@@ -2218,6 +2386,63 @@
       "</span>" +
       "</span>"
     );
+  }
+
+  var _payStepState = {
+    step1Done: false,
+    step2Done: false,
+    methodChosen: false,
+    showErrors: false,
+  };
+
+  function setPayFieldError(selectId, msgId, message) {
+    var trigger = document.querySelector("#" + selectId + " > button");
+    var msg = document.getElementById(msgId);
+    if (trigger) {
+      if (message) {
+        trigger.setAttribute("aria-invalid", "true");
+        trigger.setAttribute("aria-describedby", msgId);
+      } else {
+        trigger.removeAttribute("aria-invalid");
+        trigger.removeAttribute("aria-describedby");
+      }
+    }
+    if (msg) {
+      msg.textContent = message || "";
+      msg.classList.toggle("hidden", !message);
+    }
+  }
+
+  /** Red stroke + helper text on what's still missing (only after a Pay click). */
+  function renderPayRequiredErrors() {
+    var st = _payStepState;
+    setPayFieldError(
+      "pp-orig-bank-select",
+      "pp-orig-required",
+      st.step1Done ? "" : "Select an origination account.",
+    );
+    setPayFieldError(
+      "pp-pay-method-select",
+      "pp-method-required",
+      !st.methodChosen
+        ? "Select a payment method."
+        : st.step2Done
+          ? ""
+          : "Complete the payment method details below.",
+    );
+    if (st.step1Done && st.step2Done) st.showErrors = false;
+  }
+
+  /** Pay clicked with something missing: show the errors and go to the first one. */
+  function showPayRequiredErrors() {
+    _payStepState.showErrors = true;
+    renderPayRequiredErrors();
+    var firstId = !_payStepState.step1Done
+      ? "pp-orig-bank-select"
+      : "pp-pay-method-select";
+    var trigger = document.querySelector("#" + firstId + " > button");
+    // Scroll only: focusing would paint the blue focus ring over the red error stroke.
+    if (trigger) trigger.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 
   function updatePayStepStates() {
@@ -2295,8 +2520,15 @@
     var scheduleBtn =
       document.getElementById("pp-schedule-simple-btn") ||
       document.getElementById("pp-schedule-chip-date-btn");
-    if (payBtn) payBtn.disabled = !canSubmit;
-    if (footerPayBtn) footerPayBtn.disabled = !canSubmit;
+    // Pay stays enabled; a click with something missing marks the required
+    // fields instead (showPayRequiredErrors). Fixed fields clear here.
+    if (payBtn) payBtn.disabled = false;
+    if (footerPayBtn) footerPayBtn.disabled = false;
+    _payStepState.step1Done = step1Done;
+    _payStepState.step2Done = step2Done;
+    _payStepState.methodChosen = !!selectedMethod;
+    renderMethodEtaWarning();
+    if (_payStepState.showErrors) renderPayRequiredErrors();
     var footerPayMenu = document.getElementById("gp-footer-pay-menu");
     if (footerPayMenu) footerPayMenu.disabled = !canSubmit;
     if (scheduleBtn) scheduleBtn.disabled = false;
@@ -2733,6 +2965,8 @@
       submitBtn.classList.toggle("hidden", isConfirmed);
       submitBtn.style.display = isConfirmed ? "none" : "";
     }
+    var submitTip = document.getElementById("gp-submit-tip");
+    if (submitTip) submitTip.style.display = isConfirmed ? "none" : "";
     var footerPayGroup = document.getElementById("gp-footer-pay-group");
     if (footerPayGroup) {
       footerPayGroup.classList.toggle("hidden", isConfirmed);
@@ -2859,17 +3093,15 @@
         id: "smart_disburse",
         label: "SMART Disburse",
         subtitle: "Send a disbursement choice to payee",
-        icon: '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#406AFF"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#406AFF"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#406AFF"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#406AFF"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#406AFF"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>',
-        selectedIcon:
-          '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#374151"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#374151"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#374151"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#374151"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#374151"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>',
+        icon: SD_METHOD_ICON,
+        selectedIcon: SD_METHOD_ICON,
       },
       smart_exchange: {
         id: "smart_exchange",
         label: "SMART Exchange",
         subtitle: "Pay inside SMART Exchange",
-        icon: '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#F5B842"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#F5B842"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#F5B842"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#F5B842"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#F5B842"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>',
-        selectedIcon:
-          '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#374151"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#374151"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#374151"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#374151"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#374151"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>',
+        icon: SX_METHOD_ICON,
+        selectedIcon: SX_METHOD_ICON,
       },
     };
 
@@ -4145,7 +4377,7 @@
           ? sendToBadgeTexts
               .map(function (text) {
                 return (
-                  '<span class="inline-flex max-w-full items-center rounded-md bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-700 dark:bg-white/10 dark:text-gray-200"><span class="truncate">' +
+                  '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-sm/5 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 max-w-full"><span class="truncate">' +
                   escapeHtml(text) +
                   "</span></span>"
                 );
@@ -4248,6 +4480,10 @@
           ? "Send on"
           : "Payment date";
     if (dateIcon) dateIcon.classList.toggle("hidden", !isScheduled);
+    // Figma 4715:133905: a scheduled payment is confirmed with "Schedule Payment".
+    var confirmSubmitBtn = document.getElementById("pp-payment-confirm-submit-btn");
+    if (confirmSubmitBtn)
+      confirmSubmitBtn.textContent = isScheduled ? "Schedule Payment" : "Confirm payment";
     if (genericDetails) {
       genericDetails.classList.toggle("hidden", isCheck);
       genericDetails.classList.toggle("mt-3", !isSmart);
@@ -4264,7 +4500,7 @@
         ? badgeTexts
             .map(function (text) {
               return (
-                '<span class="inline-flex max-w-full items-center rounded-md bg-gray-100 px-2 py-0.5 text-sm font-medium text-gray-700 dark:bg-white/10 dark:text-gray-200"><span class="truncate">' +
+                '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-sm/5 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 max-w-full"><span class="truncate">' +
                 escapeHtml(text) +
                 "</span></span>"
               );
@@ -5282,13 +5518,15 @@
 
     entryBtn.addEventListener("click", function (event) {
       event.preventDefault();
+      updatePayStepStates();
       var selection = getCurrentPaymentConfirmSelection();
+      if (!_payStepState.step1Done || !_payStepState.step2Done) {
+        showPayRequiredErrors();
+        return;
+      }
       if (!selection) {
-        if (typeof window.showGlobalTopToast === "function") {
-          window.showGlobalTopToast(
-            "Complete the payment details to continue.",
-          );
-        }
+        if (typeof window.showGlobalTopToast === "function")
+          window.showGlobalTopToast("Complete the payment details to continue.");
         return;
       }
       populatePaymentConfirmModal(selection);
@@ -5758,7 +5996,7 @@
         '<span class="text-sm leading-5 font-normal text-gray-500 dark:text-gray-400">' +
         label +
         "</span>" +
-        '<span class="inline-flex items-center rounded-md bg-gray-200 px-2 py-0.5 text-xs leading-4 font-medium text-gray-700 dark:bg-white/10 dark:text-gray-300">Not available</span>' +
+        '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300">Not available</span>' +
         "</div>" +
         '<p class="text-sm leading-5 font-normal text-gray-400 dark:text-gray-500">Payment method is not available for this bank account. Please select another bank account or contact support for more information.</p>' +
         "</el-option>"
@@ -5785,7 +6023,7 @@
         : "") +
       "</span>" +
       (item.badge
-        ? '<span class="inline-flex shrink-0 items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs leading-4 font-medium text-blue-700 inset-ring inset-ring-blue-700/10 in-[el-selectedcontent]:hidden dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30">' +
+        ? '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400 shrink-0 in-[el-selectedcontent]:hidden">' +
           escapeHtml(item.badge) +
           "</span>"
         : "") +
@@ -5899,6 +6137,21 @@
     if (smartExchangeDetails) smartExchangeDetails.classList.add("hidden");
   }
 
+  // Copy next to a revealed value = the shared copy button (OBModal.copyButton:
+  // hover chip, "Copy"/"Copied" tooltip, green check). The wrapper span holds the
+  // value (data-copy-source) and an empty [data-copy-slot] filled only while revealed.
+  function setCopySlot(wrapId, visible, label) {
+    var wrap = document.getElementById(wrapId);
+    if (!wrap) return;
+    var slot = wrap.querySelector("[data-copy-slot]");
+    if (!slot) return;
+    var valueEl = document.getElementById(wrap.getAttribute("data-copy-source") || "");
+    var value = valueEl ? String(valueEl.textContent || "").trim() : "";
+    var ok = visible && value && value !== "--" && window.OBModal && OBModal.copyButton;
+    slot.innerHTML = ok ? OBModal.copyButton(label, value) : "";
+    slot.classList.toggle("hidden", !ok);
+  }
+
   function setBankCopyVisible(buttonId, visible) {
     var btn = document.getElementById(buttonId);
     if (!btn) return;
@@ -5945,8 +6198,8 @@
       routingEl.textContent = revealed
         ? account.routingNumber || account.maskedRouting || "--"
         : account.maskedRouting || "--";
-      setBankCopyVisible("gp-pmc-bank-acct-copy-btn", revealed);
-      setBankCopyVisible("gp-pmc-bank-routing-copy-btn", revealed);
+      setCopySlot("gp-pmc-bank-acct-copy-btn", revealed, "account number");
+      setCopySlot("gp-pmc-bank-routing-copy-btn", revealed, "routing number");
     }
 
     btn.onclick = function () {
@@ -6282,8 +6535,8 @@
             .toLowerCase();
           var isAllowed = _allowedTestEmails.indexOf(tokenValue) !== -1;
           var badgeClass = isAllowed
-            ? "bg-blue-100 text-blue-700 dark:bg-blue-500/10 dark:text-blue-300"
-            : "bg-gray-100 text-gray-700 dark:bg-white/10 dark:text-gray-200";
+            ? "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
+            : "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300";
           return (
             "" +
             '<span data-token-label="' +
@@ -6297,7 +6550,7 @@
             ) +
             '" data-token-type="' +
             escapeHtml(String((token && token.type) || "")) +
-            '" class="inline-flex max-w-full items-center gap-1 rounded-md px-2 py-0.5 text-sm font-medium ' +
+            '" class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-sm/5 font-medium border max-w-full ' +
             badgeClass +
             '">' +
             '  <span class="truncate">' +
@@ -6773,9 +7026,8 @@
         available: normalized.smartDisburse.length > 0,
         label: "SMART Disburse",
         subtitle: "Send a disbursement choice to payee",
-        icon: '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#406AFF"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#406AFF"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#406AFF"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#406AFF"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#406AFF"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>',
-        selectedIcon:
-          '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#374151"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#374151"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#374151"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#374151"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#374151"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>',
+        icon: SD_METHOD_ICON,
+        selectedIcon: SD_METHOD_ICON,
       });
     {
       methodItems.push({
@@ -6787,9 +7039,8 @@
         ),
         label: "SMART Exchange",
         subtitle: "Pay inside SMART Exchange",
-        icon: '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#F5B842"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#F5B842"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#F5B842"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#F5B842"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#F5B842"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>',
-        selectedIcon:
-          '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#374151"/><g clip-path="url(#clip0_1_52857)"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9763 14.5594L4.7793 14.5594L4.7793 17.0894L13.839 17.0894C14.2234 17.0894 14.4893 16.705 14.3536 16.3453L9.71431 4.04161L7.34701 4.93424L10.9763 14.5594Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(-1 0 0 1 17.5586 1.46387)" fill="#374151"/><path d="M4.67241 12.4575H2.14395L4.8856 19.7285H7.41406L4.67241 12.4575Z" fill="#374151"/><path fill-rule="evenodd" clip-rule="evenodd" d="M19.0237 15.4387L25.2207 15.4387L25.2207 12.9087L16.161 12.9087C15.7766 12.9087 15.5107 13.293 15.6464 13.6527L20.2857 25.9564L22.653 25.0638L19.0237 15.4387Z" fill="white"/><rect width="10.7121" height="4.21913" transform="matrix(1 1.74846e-07 1.74846e-07 -1 12.4414 28.5342)" fill="#374151"/><path d="M25.3276 17.5405L27.8561 17.5405L25.1144 10.2695L22.5859 10.2695L25.3276 17.5405Z" fill="#374151"/></g><defs><clipPath id="clip0_1_52857"><rect width="22" height="22" fill="white" transform="translate(4 3.99902)"/></clipPath></defs></svg>',
+        icon: SX_METHOD_ICON,
+        selectedIcon: SX_METHOD_ICON,
       });
     }
     methodItems.push({
@@ -7358,8 +7609,10 @@
       }
     }
 
-    setCopyVisible("pp-orig-bank-acct-copy-btn", revealed);
-    setCopyVisible("pp-orig-bank-routing-copy-btn", revealed);
+    setTimeout(function () {
+      setCopySlot("pp-orig-bank-acct-copy-btn", revealed, "account number");
+      setCopySlot("pp-orig-bank-routing-copy-btn", revealed, "routing number");
+    }, 0);
 
     setMaskedField(
       "pp-orig-bank-account",
@@ -7531,17 +7784,13 @@
   // A mouse pick in any el-select returns focus to its button, which Chrome then
   // paints as focus-visible (the blue ring stayed after choosing). Drop that focus
   // after a real click (event.detail > 0); keyboard picks keep the ring.
+  // A mouse pick in an el-select — or a click outside that closes it — hands focus
+  // back to its button, which Chrome then paints as focus-visible (the blue ring
+  // stayed). Drop that returned focus for mouse interactions; keyboard keeps it.
   if (!window.__ppSelectBlurBound) {
     window.__ppSelectBlurBound = true;
-    document.addEventListener("click", function (event) {
-      if (!event.detail) return;
-      var option = event.target.closest && event.target.closest("el-option");
-      var select = option && option.closest("el-select");
-      if (!select) return;
-      var btn = select.querySelector("button");
+    var dropReturnedFocus = function (btn) {
       if (!btn) return;
-      // el-select hands focus back after its close animation: blur it whenever
-      // it lands within the next 400 ms.
       var until = Date.now() + 400;
       var drop = function () {
         if (Date.now() <= until) btn.blur();
@@ -7555,7 +7804,27 @@
         btn.removeEventListener("focus", drop);
         if (document.activeElement === btn && Date.now() <= until + 50) btn.blur();
       }, 400);
+    };
+    // Pick with the mouse.
+    document.addEventListener("click", function (event) {
+      if (!event.detail) return;
+      var option = event.target.closest && event.target.closest("el-option");
+      var select = option && option.closest("el-select");
+      if (select) dropReturnedFocus(select.querySelector("button"));
     });
+    // Mouse down outside an open el-select (light dismiss).
+    document.addEventListener(
+      "pointerdown",
+      function (event) {
+        document.querySelectorAll("el-select").forEach(function (select) {
+          var btn = select.querySelector("button");
+          if (!btn || btn.getAttribute("aria-expanded") !== "true") return;
+          if (select.contains(event.target)) return;
+          dropReturnedFocus(btn);
+        });
+      },
+      true,
+    );
   }
 
   function initOriginationAccountSelector(accounts, row) {
@@ -7714,6 +7983,129 @@
     }
   }
 
+  /* ===== Due date state (Figma SH Sandbox 4157:108844 / 4157:108789) =====
+   * Overdue: red date + (!) "N days overdue" + red "Past Due" badge.
+   * Today:   amber date + (!) "Due today" + amber "Due Today" badge.
+   * Soon (≤ 3 days): amber date + "in N days".  Later: "in N days" in gray.
+   * Paid / in progress payables keep a plain date. */
+  var DUE_SOON_DAYS = 3;
+  var DUE_ICON_SVG =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-8-5a.75.75 0 0 1 .75.75v4.5a.75.75 0 0 1-1.5 0v-4.5A.75.75 0 0 1 10 5Zm0 10a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" /></svg>';
+
+  function getDueInfo(row) {
+    var raw = String((row && row.dueDate) || "").slice(0, 10);
+    var due = /^\d{4}-\d{2}-\d{2}$/.test(raw) ? isoStringToDate(raw) : null;
+    if (!due) return null;
+    var days = Math.round((due - getTodayStart()) / 86400000);
+    return {
+      due: due,
+      days: days,
+      state: days < 0 ? "overdue" : days === 0 ? "today" : days <= DUE_SOON_DAYS ? "soon" : "later",
+    };
+  }
+
+  function renderDueState(row) {
+    var field = document.getElementById("gp-date");
+    var icon = document.getElementById("gp-date-icon");
+    var rel = document.getElementById("gp-date-rel");
+    var badge = document.getElementById("gp-due-badge");
+    var info = getDueInfo(row);
+    var settled = isConfirmedPayableRow(row);
+    var state = !info || settled ? "plain" : info.state;
+    var n = info ? Math.abs(info.days) : 0;
+    var plural = n === 1 ? " day" : " days";
+
+    var DATE_TONES = ["text-gray-700", "dark:text-gray-200", "text-red-600", "dark:text-red-400", "text-amber-700", "dark:text-amber-400"];
+    if (field) {
+      DATE_TONES.forEach(function (c) { field.classList.remove(c); });
+      field.classList.add.apply(
+        field.classList,
+        state === "overdue"
+          ? ["text-red-600", "dark:text-red-400"]
+          : state === "today" || state === "soon"
+            ? ["text-amber-700", "dark:text-amber-400"]
+            : ["text-gray-700", "dark:text-gray-200"],
+      );
+    }
+    if (icon) {
+      var showIcon = state === "overdue" || state === "today";
+      var tipText = state === "overdue" ? n + plural + " overdue" : "Due today";
+      icon.classList.toggle("hidden", !showIcon);
+      icon.classList.toggle("inline-flex", showIcon);
+      icon.classList.toggle("text-red-500", state === "overdue");
+      icon.classList.toggle("dark:text-red-400", state === "overdue");
+      icon.classList.toggle("text-amber-500", state === "today");
+      icon.classList.toggle("dark:text-amber-400", state === "today");
+      if (showIcon) {
+        icon.setAttribute("data-tooltip", tipText);
+        icon.setAttribute("aria-label", tipText);
+      } else {
+        icon.removeAttribute("data-tooltip");
+        icon.removeAttribute("aria-label");
+      }
+    }
+    if (rel) {
+      var showRel = state === "soon" || state === "later";
+      rel.classList.toggle("hidden", !showRel);
+      rel.textContent = showRel ? "in " + n + plural : "";
+    }
+    if (badge) {
+      var showBadge = state === "overdue" || state === "today";
+      badge.className = showBadge
+        ? "inline-flex items-center gap-1 rounded border py-0.5 pr-2 pl-1 text-sm/5 font-medium " +
+          (state === "overdue"
+            ? "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400"
+            : "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400")
+        : "hidden";
+      badge.innerHTML = showBadge
+        ? DUE_ICON_SVG + "<span>" + (state === "overdue" ? "Past Due" : "Due Today") + "</span>"
+        : "";
+    }
+    renderMethodEtaWarning();
+  }
+
+  /** How long a method takes to land, from the day it's sent. */
+  var METHOD_ETA = {
+    ach: { businessDays: 3, label: "ACH usually takes 1–3 business days" },
+    check: { calendarDays: 10, label: "A check usually takes 7–10 days" },
+  };
+
+  /** Amber note under Method of Payment when the chosen method lands after the due date. */
+  function renderMethodEtaWarning() {
+    var box = document.getElementById("pp-method-eta-warning");
+    var text = document.getElementById("pp-method-eta-text");
+    if (!box || !text) return;
+    var row = _payContext && _payContext.row;
+    var info = getDueInfo(row);
+    var method = getSelectedOptionValueByOptionsId("pp-pay-method-options");
+    var eta = METHOD_ETA[String(method || "")];
+    var show = false;
+    // Already overdue: the badge says so; nothing to add per method.
+    if (info && eta && info.days >= 0 && !isConfirmedPayableRow(row)) {
+      var start = (_schedulePickerState && _schedulePickerState.confirmedDate) || getTodayStart();
+      var arrive = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+      if (eta.calendarDays) {
+        arrive.setDate(arrive.getDate() + eta.calendarDays);
+      } else {
+        var left = eta.businessDays;
+        while (left > 0) {
+          arrive.setDate(arrive.getDate() + 1);
+          if (arrive.getDay() !== 0 && arrive.getDay() !== 6) left -= 1;
+        }
+      }
+      if (arrive > info.due) {
+        show = true;
+        text.textContent =
+          eta.label +
+          ", so it may arrive after the due date (" +
+          info.due.toLocaleDateString("en-US", { month: "short", day: "numeric" }) +
+          ").";
+      }
+    }
+    box.classList.toggle("hidden", !show);
+    box.classList.toggle("flex", show);
+  }
+
   function populatePage(row, payeeProfile) {
     if (!row) return;
     setText("gp-date-label", "Due Date");
@@ -7725,14 +8117,7 @@
     setText("gp-footer-pay-amount", formatMoney(row.amount, row.currency));
     setText("gp-currency", row.currency || "USD");
     setText("gp-date", formatDate(row.dueDate));
-    var dueDateField = document.getElementById("gp-date");
-    var dueDateTooltip = document.getElementById("gp-date-past-due-tooltip");
-    if (dueDateField) {
-      dueDateField.classList.add("text-gray-700", "dark:text-gray-200");
-      dueDateField.classList.remove("text-red-600", "dark:text-red-400");
-      dueDateField.removeAttribute("title");
-    }
-    if (dueDateTooltip) dueDateTooltip.classList.add("hidden");
+    renderDueState(row);
     setText(
       "gp-customer",
       (payeeProfile && payeeProfile.name) || row.payeeName,
@@ -8467,6 +8852,7 @@
     initPayInfoToggle();
     initRefreshButtons();
     initScheduleDropdown();
+    initFooterSchedule();
     initPayablesCardDetailsModalSync();
     initPayablesCardDetailsHowItWorksToggle();
     initPaymentConfirmFlow();

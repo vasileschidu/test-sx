@@ -542,7 +542,7 @@ function buildCountBadge(item, isDesktopCollapsed) {
   var count = NAV_LIVE_COUNTS.bills;
   var hidden = count == null || count < 1 ? " hidden" : "";
   var text = count == null || count < 1 ? "" : String(count);
-  return `<span data-nav-count="bills" class="shrink-0 rounded-[512px] border border-gray-200 bg-gray-100 px-2 py-[2px] text-xs font-medium leading-4 text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-200${hidden}">${text}</span>`;
+  return `<span data-nav-count="bills" class="inline-flex shrink-0 items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300${hidden}">${text}</span>`;
 }
 
 function buildNavTrailing(item, isDesktopCollapsed) {
@@ -572,7 +572,7 @@ ${buildNavTrailing(item, isDesktopCollapsed)}
 function buildNavBadge(item, isDesktopCollapsed) {
   if (!item || !item.badge || isDesktopCollapsed) return "";
   // Design-system badge (blue), not a button-like chip.
-  return `<span class="ml-auto inline-flex shrink-0 items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-400 dark:inset-ring-blue-400/30">${item.badge}</span>`;
+  return `<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400 ml-auto shrink-0">${item.badge}</span>`;
 }
 
 function buildNavLinkArrow(

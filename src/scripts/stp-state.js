@@ -665,7 +665,7 @@
   // Resend / Send to another person in case the signer doesn't respond.
 
   var PENDING_BADGE =
-    "inline-flex w-fit items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10";
+    "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400 w-fit";
 
   function pendingRow(label, valueHtml) {
     return (

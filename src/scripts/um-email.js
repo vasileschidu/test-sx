@@ -97,6 +97,8 @@ window.UMEmail = (function () {
       }),
       business: business.name || (active && active.name) || "",
       invitedBy: inviter ? (inviter.firstName + " " + inviter.lastName).trim() : "",
+      // Figma "Create Account from Invitation" shows the inviter's email.
+      invitedByEmail: inviter && inviter.email ? inviter.email : "",
       message: inv.message || "",
       exp: inv.expiresAt,
     };

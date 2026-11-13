@@ -17,20 +17,20 @@
   var STATUS = {
     attention: {
       label: "Needs attention",
-      cls: "bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20",
+      cls: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
     },
     awaiting: {
       label: "Awaiting choice",
-      cls: "bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20",
+      cls: "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
     },
     digital: {
       label: "Paying digitally",
-      cls: "bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20",
+      cls: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
     },
   };
   STATUS.unassigned = {
     label: "Unassigned",
-    cls: "bg-gray-50 text-gray-600 inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20",
+    cls: "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300",
   };
   var STATUS_ORDER = ["attention", "awaiting", "digital", "unassigned"];
   // Stands in for a program id on suppliers who aren't in one, so "Unassigned"
@@ -380,7 +380,7 @@
       "</span>" +
       '<span data-filter-count-badge="' +
       panel.key +
-      '" class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30">0</span>' +
+      '" class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400">0</span>' +
       window.TableUi.icon("chevron-right.svg", 20, 20, "hidden").replace(
         "<img ",
         "<img data-nav-chevron ",
@@ -416,13 +416,13 @@
       '<div class="flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center">' +
       '<div class="w-full sm:w-auto"><div class="grid grid-cols-1">' +
       '<input id="pp-sup-search" type="text" autocomplete="off" placeholder="Search suppliers..." aria-label="Search suppliers"' +
-      ' class="col-start-1 row-start-1 block h-8 w-full rounded-md bg-white py-0 pr-3 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:pl-9 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500" />' +
+      ' class="col-start-1 row-start-1 block h-8 w-full rounded-md bg-white py-0 pr-3 pl-10 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:pl-9 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500 hover:not-focus:outline-gray-400 dark:hover:not-focus:outline-white/20" />' +
       '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 sm:size-4 dark:text-gray-500"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>' +
       "</div></div>" +
       '<div class="flex w-full gap-3 sm:w-auto">' +
       '<div id="pp-sup-filter-dropdown" class="relative inline-block w-full sm:w-auto">' +
       '<button id="pp-sup-filter-btn" type="button" aria-haspopup="true" aria-expanded="false" class="inline-flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 sm:w-auto dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10">Filter' +
-      '<span data-filter-count class="hidden items-center rounded-full bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 tabular-nums inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10"></span>' +
+      '<span data-filter-count class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 tabular-nums"></span>' +
       '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" data-filter-chevron class="-mr-0.5 size-5 transition-transform"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>' +
       "</button>" +
       '<div id="pp-sup-filter-menu" class="pointer-events-none invisible absolute right-0 z-[60] mt-2 w-[628px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white opacity-0 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:ring-1 dark:ring-white/10">' +
@@ -1035,7 +1035,7 @@
       ' <span class="font-normal text-gray-500 dark:text-gray-400">USD</span></td>' +
       '<td class="' +
       TD +
-      '"><span class="inline-flex max-w-full items-center truncate rounded-md px-2 py-1 text-xs font-medium whitespace-nowrap inset-ring ' +
+      '"><span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border max-w-full truncate whitespace-nowrap ' +
       st.cls +
       '">' +
       st.label +

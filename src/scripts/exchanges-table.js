@@ -80,12 +80,8 @@
     "dark:bg-red-500/15",
     "dark:text-red-300",
   ];
-  var ACTIVE_BADGE_CLASSES = IS_SUPPLIER_PORTAL
-    ? ["bg-blue-100", "text-blue-800", "border-blue-200", "dark:bg-blue-400/15", "dark:text-blue-200", "dark:border-blue-400/30"]
-    : ["bg-blue-50", "text-blue-700", "inset-ring-blue-700/10", "dark:bg-blue-400/10", "dark:text-blue-400", "dark:inset-ring-blue-400/30"];
-  var INACTIVE_BADGE_CLASSES = IS_SUPPLIER_PORTAL
-    ? ["bg-gray-100", "text-gray-800", "border-gray-200", "dark:bg-white/10", "dark:text-gray-200", "dark:border-white/15"]
-    : ["bg-gray-50", "text-gray-600", "inset-ring-gray-500/10", "dark:bg-gray-400/10", "dark:text-gray-400", "dark:inset-ring-gray-400/20"];
+  var ACTIVE_BADGE_CLASSES = ["border-blue-200", "bg-blue-100", "text-blue-800", "dark:border-blue-400/20", "dark:bg-blue-400/10", "dark:text-blue-400"];
+  var INACTIVE_BADGE_CLASSES = ["border-gray-200", "bg-gray-100", "text-gray-800", "dark:border-white/15", "dark:bg-white/10", "dark:text-gray-300"];
 
   var DEFAULT_PAGE_SIZE = IS_SUPPLIER_PORTAL ? 10 : 16;
   var PAGE_SIZE_OPTIONS = IS_SUPPLIER_PORTAL
@@ -210,14 +206,14 @@
 
   var STATUS_STYLES = {
     pending:
-      "bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20",
+      "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
     processing:
-      "bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/20",
-    paid: "bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20",
+      "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400",
+    paid: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
     exception:
-      "bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20",
+      "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
     declined:
-      "bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20",
+      "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
   };
 
   var STATUS_LABELS = {
@@ -1076,7 +1072,7 @@
   function buildManageColumnsRowHTML(col, checked, disabled) {
     var scopeBadge =
       col && col.key === "failureReason"
-        ? '<span class="shrink-0 rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10">Exceptions</span>'
+        ? '<span class="items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 shrink-0">Exceptions</span>'
         : "";
     return (
       "" +
@@ -1947,17 +1943,17 @@
   function renderStatus(status) {
     if (IS_SUPPLIER_PORTAL) {
       var supplierBadge = {
-        pending: "border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/20 dark:bg-yellow-400/10 dark:text-yellow-500",
-        "action-required": "border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/20 dark:bg-yellow-400/10 dark:text-yellow-500",
-        processing: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-400",
-        paid: "border-green-200 bg-green-100 text-green-800 dark:border-green-500/20 dark:bg-green-400/10 dark:text-green-400",
+        pending: "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
+        "action-required": "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
+        processing: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400",
+        paid: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
         exception: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
         declined: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
       };
       var withClock = status === "pending" || status === "action-required";
       return (
-        '<span class="inline-flex items-center justify-center whitespace-nowrap rounded border text-sm leading-5 font-medium ' +
-        (withClock ? "gap-0.5 py-0.5 pr-2 pl-1 " : "px-2 py-0.5 ") +
+        '<span class="inline-flex items-center justify-center whitespace-nowrap rounded border text-sm/5 font-medium ' +
+        (withClock ? "gap-0.5 py-0.5 pr-2 pl-1 " : "gap-1 px-2 py-0.5 ") +
         (supplierBadge[status] || supplierBadge.pending) +
         '">' +
         (withClock ? tableIcon("clock-14.svg", 14, 14) : "") +
@@ -1968,7 +1964,7 @@
     var badgeClasses = STATUS_STYLES[status] || STATUS_STYLES.pending;
     if (status === "processing") {
       return (
-        '<span data-processing-tooltip="true" class="inline-flex cursor-default items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
+        '<span data-processing-tooltip="true" class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border cursor-default ' +
         badgeClasses +
         '">' +
         escapeHtml(getStatusLabel(status)) +
@@ -1976,7 +1972,7 @@
       );
     }
     return (
-      '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
+      '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border ' +
       badgeClasses +
       '">' +
       escapeHtml(getStatusLabel(status)) +
@@ -2232,7 +2228,7 @@
       '<div class="flex-1 flex flex-col items-start gap-2 p-4">' +
       (IS_SUPPLIER_PORTAL
         ? renderStatus(displayStatus)
-        : '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
+        : '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border ' +
           statusClass +
           '">' +
           escapeHtml(getStatusLabel(displayStatus)) +
@@ -8214,14 +8210,14 @@
   }
 
   var GET_PAID_BADGE_BASE_CLASS =
-    "inline-flex items-center gap-0.5 rounded border py-0.5 pr-2 text-sm leading-5 font-medium";
+    "inline-flex items-center gap-1 rounded px-2 py-0.5 text-sm/5 font-medium border";
   var GET_PAID_BADGE_TONES = {
     yellow:
-      "border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-400",
+      "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
     green:
-      "border-green-300 bg-green-100 text-green-800 dark:border-green-400/30 dark:bg-green-400/10 dark:text-green-400",
-    red: "border-red-300 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400",
-    blue: "border-blue-300 bg-blue-100 text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-400",
+      "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
+    red: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
+    blue: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400",
   };
 
   function setGetPaidHeaderBadge(badge, text, tone, showClock) {
@@ -8541,11 +8537,11 @@
       if (showStatusBadge && status === "enabled") {
         stpStatusBadge.textContent = "Opted in";
         stpStatusBadge.className =
-          "inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30";
+          "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400";
       } else if (showStatusBadge) {
         stpStatusBadge.textContent = "Enabling pending";
         stpStatusBadge.className =
-          "inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-white/5 dark:text-gray-300 dark:ring-white/15";
+          "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300";
       }
     }
 

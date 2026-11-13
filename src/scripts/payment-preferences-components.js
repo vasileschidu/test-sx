@@ -491,10 +491,10 @@
     // 7-10 green, 4-6 yellow, 0-3 red.
     var tier = score >= 7 ? "good" : score >= 4 ? "medium" : "bad";
     var badgeClass = {
-      good: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-500/30 dark:bg-emerald-500/10 dark:text-emerald-300",
+      good: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
       medium:
-        "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-500/30 dark:bg-amber-500/10 dark:text-amber-300",
-      bad: "border-red-200 bg-red-100 text-red-800 dark:border-red-500/30 dark:bg-red-500/10 dark:text-red-300",
+        "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
+      bad: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
     }[tier];
     var shield = {
       good: "shield-check.svg",
@@ -504,7 +504,7 @@
     return (
       '<div data-bank-fraud class="flex flex-col items-start gap-2 self-stretch pt-4">' +
       '<div class="grid grid-cols-2 gap-4 self-stretch items-center"><span class="text-sm font-medium text-gray-900 dark:text-gray-100">Fraud Score</span>' +
-      '<span data-bank-fraud-score class="inline-flex w-fit items-center gap-0.5 rounded border py-0.5 pr-1 pl-2 text-xs font-medium ' +
+      '<span data-bank-fraud-score class="inline-flex w-fit items-center gap-0.5 rounded py-0.5 pr-1 pl-2 text-xs/4 font-medium border ' +
       badgeClass +
       '">' +
       escapeHtml(score) +
