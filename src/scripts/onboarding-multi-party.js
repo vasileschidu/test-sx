@@ -76,7 +76,8 @@
     return '<li class="flex flex-col">' +
       '<div class="flex min-h-10 items-center justify-between gap-3">' +
         '<div class="flex min-w-0 items-center gap-2.5">' +
-          '<img src="' + ASSETS + 'avatar.svg" alt="" width="24" height="24" class="size-6 shrink-0">' +
+          '<img src="' + ASSETS + 'avatar.svg" alt="" width="24" height="24" class="size-6 shrink-0 dark:hidden">' +
+          '<img src="' + ASSETS + 'avatar-dark.svg" alt="" width="24" height="24" class="hidden size-6 shrink-0 dark:block">' +
           '<div class="flex min-w-0 flex-col text-sm leading-5 font-medium">' +
             '<span data-ob-skeleton class="truncate text-gray-900 dark:text-white">' + esc(p.name) + '</span>' +
             (sub ? '<span data-ob-skeleton class="text-gray-500 dark:text-gray-400">' + sub + '</span>' : '') +
@@ -133,16 +134,16 @@
     var tone, icon, text;
     if (left < HOUR) {
       var secs = Math.floor(left / 1000);
-      tone = 'border border-red-300 bg-red-50 dark:bg-red-500/10 py-[9px] font-medium text-red-700 dark:text-red-400 hover:bg-red-100';
+      tone = 'border border-red-300 dark:border-red-500/40 bg-red-50 dark:bg-red-500/10 py-[9px] font-medium text-red-700 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-500/20';
       icon = 'icon-calendar-red.svg';
       text = 'Expires in ' + Math.floor(secs / 60) + ' min and ' + (secs % 60) + ' sec';
     } else if (left < DAY) {
       var hours = Math.floor(left / HOUR);
-      tone = 'border border-amber-300 bg-amber-50 dark:bg-amber-500/10 py-[9px] font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-100';
+      tone = 'border border-amber-300 dark:border-amber-500/40 bg-amber-50 dark:bg-amber-500/10 py-[9px] font-medium text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-500/20';
       icon = 'icon-calendar-amber.svg';
       text = 'Expires in ' + hours + (hours === 1 ? ' hour' : ' hours');
     } else if (opts.showDate) {
-      tone = 'border border-blue-300 bg-gray-50 dark:bg-white/5 py-[9px] font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10';
+      tone = 'border border-blue-300 dark:border-blue-500/40 bg-gray-50 dark:bg-white/5 py-[9px] font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-white/10';
       icon = 'icon-calendar-exclamation.svg';
       // Phones have room for the full date: "How it works" shrinks to an (i) button there.
       text = stamp(expires.toISOString()).replace(' (ET)', '');
@@ -231,7 +232,7 @@
         '<p>When the allocation changes, every party is notified and has to accept the new one.</p>' +
         '<p>Once all parties have accepted and chosen how to receive their share, the payment is processed.</p>' +
       '</div>' +
-      '<a href="#" class="mt-2 inline-flex items-center gap-3 self-center rounded-md px-6 py-3 text-base leading-6 font-medium text-blue-600 dark:text-blue-400 underline focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+      '<a href="#" class="inline-flex items-center gap-3 self-center rounded-md px-6 py-3 text-base leading-6 font-medium text-blue-600 dark:text-blue-400 underline focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
         '<img src="' + ASSETS + 'icon-question-circle.svg" alt="" width="20" height="20" class="size-5">Learn more</a>',
       '<button type="button" data-ob-modal-close class="' + window.OBModal.PRIMARY_BUTTON + '">Close</button>');
   }
@@ -259,10 +260,9 @@
 
   function allocationPage(root) {
     var mp = F.getMp();
-    // An expired, revoked or disputed payment has nothing left to allocate.
-    if (mp.payment && mp.payment !== 'active') { window.location.replace('payment-closed.html'); return; }
+    // An expired, revoked, declined or disputed payment has nothing left to allocate.
+    if (mp.payment && mp.payment !== 'active') { window.location.replace(F.closedUrl(mp)); return; }
     var entry = F.current(mp);
-    var me = F.parties(mp)[0];
     var total = Object.keys(entry.amounts).reduce(function (s, k) { return s + Number(entry.amounts[k] || 0); }, 0);
 
     var banner = mp.justChanged
@@ -295,7 +295,6 @@
       infoBox('<p>You can <span class="font-semibold">Change</span> current allocation and allocate amount(s) in a different way. Select <span class="font-semibold">Change</span> to proceed.</p>') +
       '<div class="mt-auto flex w-full flex-col gap-4 pt-4">' +
         '<button type="button" data-mp-accept class="' + PRIMARY_BTN + '">Accept and Continue</button>' +
-        (me.primary ? '<button type="button" data-mp-dispute class="' + SECONDARY_BTN + '">Dispute Total Amount</button>' : '') +
       '</div>';
 
     if (mp.justChanged) { delete mp.justChanged; F.saveMp(mp); }
@@ -304,20 +303,6 @@
     root.querySelector('[data-mp-accept]').addEventListener('click', function () {
       F.accept();
       window.OBGo(F.myShare() > 0 ? 'paywall.html' : 'payment-status.html');
-    });
-
-    var dispute = root.querySelector('[data-mp-dispute]');
-    if (dispute) dispute.addEventListener('click', function () {
-      var client = esc(window.OBModal.clientName());
-      messageDialog('icon-exclamation-red.svg', 'bg-red-100 dark:bg-red-500/20', 'Dispute Total Allocation Amount',
-        '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Are you sure you want to dispute the total allocation amount?</p>' +
-        '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">The payment request will be cancelled and you\'ll need to contact ' + client + ' to receive the payment.</p>',
-        '<button type="button" data-mp-dispute-confirm class="flex h-14 w-full cursor-pointer items-center justify-center rounded-md bg-red-600 px-[17px] text-base leading-6 font-medium text-white hover:bg-red-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600">Dispute</button>' +
-        '<button type="button" data-ob-modal-close class="' + SECONDARY_BTN + '">Cancel</button>');
-      document.querySelector('[data-mp-dispute-confirm]').addEventListener('click', function () {
-        window.OBModal.close();
-        window.OBGo('dispute.html');
-      });
     });
 
     // Someone else changed the split since the user last looked
@@ -516,8 +501,8 @@
 
   function statusPage(root) {
     var mp = F.getMp();
-    // Expired, revoked or disputed while waiting: that screen replaces this one.
-    if (mp.payment && mp.payment !== 'active') { window.location.replace('payment-closed.html'); return; }
+    // Expired, revoked, declined or disputed while waiting: that screen replaces this one.
+    if (mp.payment && mp.payment !== 'active') { window.location.replace(F.closedUrl(mp)); return; }
     var entry = F.current(mp);
     var share = F.myShare();
     var method = F.methodLabel();
@@ -697,6 +682,7 @@
     var ctx = state.payableContext || {};
     var verification = (!mp.payment || mp.payment === 'active') && state.revokedReason;
     if ((!mp.payment || mp.payment === 'active') && !verification) { window.location.replace('allocation.html'); return; }
+    if (mp.payment === 'declined') { window.location.replace('declined.html'); return; }
     if (verification) mp = Object.assign({}, mp, { payment: 'revoked', fallback: false });
     var M = window.OBModal;
     var people = F.parties(mp);

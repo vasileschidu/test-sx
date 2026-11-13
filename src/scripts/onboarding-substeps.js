@@ -13,12 +13,19 @@
 
   var ASSETS = '../../assets/onboarding/';
 
+  // Dark: CSS bullets instead of the SVGs (the check is cut out and shows the page through,
+  // and the current halo is a pale #BFDBFE that glows on a dark panel). Light keeps the SVGs.
+  var DARK = '<span class="hidden size-5 shrink-0 items-center justify-center dark:flex">';
+  var CHECK = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3 text-white"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /></svg>';
+
   function bullet(state) {
     if (state === 'done') {
-      return '<img src="' + ASSETS + 'substep-complete.svg" alt="" width="20" height="20" class="size-5 shrink-0">';
+      return '<img src="' + ASSETS + 'substep-complete.svg" alt="" width="20" height="20" class="size-5 shrink-0 dark:hidden">' +
+        DARK + '<span class="flex size-4 items-center justify-center rounded-full bg-blue-500">' + CHECK + '</span></span>';
     }
     if (state === 'current') {
-      return '<img src="' + ASSETS + 'substep-current.svg" alt="" width="20" height="20" class="size-5 shrink-0">';
+      return '<img src="' + ASSETS + 'substep-current.svg" alt="" width="20" height="20" class="size-5 shrink-0 dark:hidden">' +
+        DARK + '<span class="block size-2.5 rounded-full bg-blue-500 ring-4 ring-blue-500/30"></span></span>';
     }
     return '<span class="flex size-5 shrink-0 items-center justify-center"><span class="block size-2.5 rounded-full bg-gray-200 dark:bg-white/10"></span></span>';
   }

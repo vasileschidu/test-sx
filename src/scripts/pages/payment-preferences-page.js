@@ -3910,19 +3910,19 @@ window.__ppStorageKey = function (name) {
       if (isAgreementPending) {
         stpStatusBadge.textContent = "Pending Agreement Signature";
         stpStatusBadge.className =
-          "inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300";
+          "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400";
       } else if (showInlineVerify) {
         stpStatusBadge.textContent = "Action Required";
         stpStatusBadge.className =
-          "inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300";
+          "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400";
       } else if (status === "enabled") {
         stpStatusBadge.textContent = "Enabled";
         stpStatusBadge.className =
-          "inline-flex items-center rounded-full border border-green-200 bg-green-100 px-2 py-0.5 text-xs leading-4 font-medium text-green-800 dark:border-green-400/30 dark:bg-green-400/10 dark:text-green-300";
+          "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400";
       } else {
         stpStatusBadge.textContent = "Pending";
         stpStatusBadge.className =
-          "inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300";
+          "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400";
       }
     }
     if (stpActionsWrap) {

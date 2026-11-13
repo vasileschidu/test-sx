@@ -199,13 +199,17 @@
 
     var SMALL_BTN = 'inline-flex cursor-pointer items-center justify-center gap-1 rounded-md px-2.5 py-1.5 text-base leading-5 font-semibold lg:text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400';
 
+    // Dark: CSS dots instead of the SVGs (their pale #BFDBFE halo glows on a dark panel).
+    var DARK_DOT = '<span class="hidden size-2.5 shrink-0 rounded-full dark:block ';
     function dots(index) {
       return docs.map(function (doc, i) {
         if (i === index) {
-          return '<span class="relative block size-2.5 shrink-0"><img src="' + ASSETS + 'step-current.svg" alt="" class="absolute -inset-[40%] block size-[180%] max-w-none"></span>';
+          return '<span class="relative block size-2.5 shrink-0 dark:hidden"><img src="' + ASSETS + 'step-current.svg" alt="" class="absolute -inset-[40%] block size-[180%] max-w-none"></span>' +
+          DARK_DOT + 'bg-blue-500 ring-4 ring-blue-500/30"></span>';
         }
         var file = isReviewed(doc) ? 'step-complete.svg' : 'step-incomplete.svg';
-        return '<img src="' + ASSETS + file + '" alt="" width="10" height="10" class="block size-2.5 shrink-0">';
+        return '<img src="' + ASSETS + file + '" alt="" width="10" height="10" class="block size-2.5 shrink-0 dark:hidden">' +
+          DARK_DOT + (isReviewed(doc) ? 'bg-blue-500' : 'bg-white/20') + '"></span>';
       }).join('');
     }
 
@@ -322,13 +326,16 @@
     }
 
     function openViewer(index) {
-      // 752 tall (Figma), capped by the shell to the viewport minus its padding.
+      // Full height with a 16px gap on every side (same as the SX viewer and the terms dialogs).
       var backdrop = window.OBModal.open(viewerMarkup(index), 'doc-viewer-title', {
         bare: true,
         header: viewerHeader(index),
         footer: viewerFooter(index),
-        panelClass: 'relative flex h-[min(752px,calc(100dvh-3rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black/5 dark:ring-white/10'
+        panelClass: 'relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black/5 dark:ring-white/10'
       });
+      var frame = backdrop.querySelector('[data-ob-modal-frame]');
+      frame.classList.remove('px-4', 'py-6');
+      frame.classList.add('p-4');
       backdrop.querySelector('[data-doc-next]').addEventListener('click', function () {
         markReviewed(docs[index]);
         if (index < docs.length - 1) openViewer(index + 1);

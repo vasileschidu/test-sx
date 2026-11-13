@@ -17,7 +17,7 @@
       rel="stylesheet"
     />
 
-    <script src="../../../src/scripts/theme-init.js?v=20261109a"></script>
+    <script src="../../../src/scripts/theme-init.js?v=20261112ic"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="../../scripts/tailwind-theme.js"></script>
     <script src="../../../src/scripts/design-tokens.js"></script>
@@ -128,22 +128,22 @@
       }
     </style>
 
-    <script src="../../../src/scripts/sidebar-boot.js"></script>
+    <script src="../../../src/scripts/sidebar-boot.js?v=20261112cmp"></script>
     <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
     <script src="../../../src/scripts/app-plans.js"></script>
-    <script src="../../../src/scripts/nav-component.js"></script>
-    <script src="../../../src/scripts/stp-state.js?v=20261106a"></script>
-    <script src="../../../src/scripts/app-switch.js"></script>
-    <script src="../../../src/scripts/topbar-component.js?v=20261109a"></script>
+    <script src="../../../src/scripts/nav-component.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/app-switch.js?v=20261111sk3"></script>
+    <script src="../../../src/scripts/topbar-component.js?v=20261112bdg"></script>
     <script src="../../scripts/checkbox-component.js"></script>
-    <script src="../../../src/scripts/sidebar.js" defer></script>
+    <script src="../../../src/scripts/sidebar.js?v=20261112cmp" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
-    <script src="../../../src/scripts/shared.js" defer></script>
+    <script src="../../../src/scripts/shared.js?v=20261111mx" defer></script>
     <script src="../../../src/scripts/shell-navigation.js?v=20261106c" defer></script>
-    <script src="../../../src/scripts/payment-program-config.js" defer></script>
+    <script src="../../../src/scripts/payment-program-config.js?v=20261112bdg" defer></script>
     <script src="../../../src/scripts/table-ui.js?v=20261006f" defer></script>
     <script
-      src="../../../src/scripts/payment-program-suppliers.js"
+      src="../../../src/scripts/payment-program-suppliers.js?v=20261113hv"
       defer
     ></script>
       <link rel="stylesheet" href="../../styles/checkbox.css" />
@@ -155,13 +155,13 @@
 
       <div
         id="main-content-wrapper"
-        class="min-w-0 min-h-screen flex flex-col lg:pl-[312px]"
+        class="min-w-0 min-h-screen flex flex-col lg:pl-[360px]"
       >
         <app-topbar></app-topbar>
 
         <main class="flex w-full justify-center p-2 sm:p-2 lg:p-4">
           <section
-            class="w-full max-w-[1280px] overflow-hidden rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900"
+            class="w-full max-w-[1280px] overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-900"
           >
             <!-- List view: Configuration / Suppliers tabs -->
             <div id="pp-list-view">
@@ -225,7 +225,7 @@
         class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent backdrop:bg-transparent"
       >
         <el-dialog-backdrop
-          class="fixed inset-0 bg-slate-950/70 transition-opacity duration-300 ease-in-out data-closed:opacity-0"
+          class="fixed inset-0 bg-gray-900/75 transition-opacity duration-300 ease-in-out data-closed:opacity-0"
         ></el-dialog-backdrop>
         <div class="fixed inset-y-0 right-0 flex max-w-full">
           <el-dialog-panel
@@ -411,7 +411,7 @@
         class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent backdrop:bg-transparent"
       >
         <el-dialog-backdrop
-          class="fixed inset-0 bg-slate-950/70 transition-opacity duration-300 ease-in-out data-closed:opacity-0"
+          class="fixed inset-0 bg-gray-900/75 transition-opacity duration-300 ease-in-out data-closed:opacity-0"
         ></el-dialog-backdrop>
         <div class="fixed inset-y-0 right-0 flex max-w-full">
           <el-dialog-panel
@@ -598,7 +598,7 @@
         class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
       >
         <el-dialog-backdrop
-          class="fixed inset-0 bg-gray-900/60 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
         ></el-dialog-backdrop>
         <div
           tabindex="0"
@@ -760,7 +760,7 @@
         class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent backdrop:bg-transparent"
       >
         <el-dialog-backdrop
-          class="fixed inset-0 bg-slate-950/70 transition-opacity duration-300 ease-in-out data-closed:opacity-0"
+          class="fixed inset-0 bg-gray-900/75 transition-opacity duration-300 ease-in-out data-closed:opacity-0"
         ></el-dialog-backdrop>
         <div class="fixed inset-y-0 right-0 flex max-w-full">
           <el-dialog-panel
@@ -858,7 +858,7 @@
                       autocomplete="off"
                       placeholder="Search suppliers"
                       aria-label="Search suppliers"
-                      class="col-start-1 row-start-1 block h-8 w-full rounded-md bg-white py-0 pr-3 pl-10 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                      class="col-start-1 row-start-1 block h-8 w-full rounded-md bg-white py-0 pr-3 pl-10 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:not-focus:outline-gray-400 dark:hover:not-focus:outline-white/20"
                     />
                     <svg
                       viewBox="0 0 20 20"
@@ -941,7 +941,7 @@
         class="fixed inset-0 size-auto max-h-none max-w-none overflow-hidden bg-transparent backdrop:bg-transparent"
       >
         <el-dialog-backdrop
-          class="fixed inset-0 bg-slate-950/70 transition-opacity duration-300 ease-in-out data-closed:opacity-0"
+          class="fixed inset-0 bg-gray-900/75 transition-opacity duration-300 ease-in-out data-closed:opacity-0"
         ></el-dialog-backdrop>
         <div class="fixed inset-y-0 right-0 flex max-w-full">
           <el-dialog-panel
@@ -1129,7 +1129,7 @@
         class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
       >
         <el-dialog-backdrop
-          class="fixed inset-0 bg-gray-900/60 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
         ></el-dialog-backdrop>
         <div
           tabindex="0"
@@ -1221,7 +1221,7 @@
         class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
       >
         <el-dialog-backdrop
-          class="fixed inset-0 bg-gray-900/60 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
+          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in"
         ></el-dialog-backdrop>
         <div
           tabindex="0"

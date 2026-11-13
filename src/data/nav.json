@@ -74,7 +74,8 @@
       "label": "Settings",
       "icon": "settings",
       "children": [
-        { "id": "user-management", "label": "User Management", "href": "#" }
+        { "id": "business-details", "label": "Business Details", "href": "business-details.html" },
+        { "id": "user-management", "label": "User Management", "href": "user-management.html" }
       ]
     },
     {

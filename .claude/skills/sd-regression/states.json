@@ -25,7 +25,7 @@
     { "id": "instant-virtual-card-how", "path": "/src/pages/onboarding/instant-virtual-card.html", "pre": "all", "steps": [{ "click": "[data-vc-how]" }] },
     { "id": "virtual-card-summary", "path": "/src/pages/onboarding/virtual-card-summary.html", "pre": "all" },
     { "id": "virtual-card-summary-review", "path": "/src/pages/onboarding/virtual-card-summary.html", "pre": "all", "steps": [{ "click": "[data-vcs-review]" }] },
-    { "id": "virtual-card-summary-faster", "path": "/src/pages/onboarding/virtual-card-summary.html", "pre": "all", "steps": [{ "eval": "OBFaster.open()", "wait": 2500 }] },
+    { "id": "bank-summary-faster", "path": "/src/pages/onboarding/bank-summary.html", "pre": "all", "wait": 8000, "steps": [{ "eval": "OBFaster.open()", "wait": 2500 }] },
     { "id": "virtual-card-summary-sign", "path": "/src/pages/onboarding/virtual-card-summary.html", "pre": "all", "steps": [{ "eval": "OBSign.open({name:'Rachel Morris',onSigned(){}})" }] },
     { "id": "card-created", "path": "/src/pages/onboarding/card-created.html", "pre": "all" },
     { "id": "card-created-how", "path": "/src/pages/onboarding/card-created.html", "pre": "all", "steps": [{ "click": "[data-cc-how]" }] },

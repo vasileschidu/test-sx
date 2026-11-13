@@ -89,6 +89,21 @@
     return { stpStatus: stpStatus, stpStep: stpStep };
   }
 
+  // ?stp=reset (demo): back to the start — "Opt in" banner / step 1 — by
+  // dropping the stored progression and agreement request, then the param.
+  (function resetFromUrl() {
+    try {
+      var params = new URLSearchParams(window.location.search);
+      if (params.get("stp") !== "reset") return;
+      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(LEGACY_STATUS_KEY);
+      localStorage.removeItem(AGREEMENT_REQUEST_KEY);
+      params.delete("stp");
+      var query = params.toString();
+      history.replaceState(null, "", window.location.pathname + (query ? "?" + query : "") + window.location.hash);
+    } catch (e) {}
+  })();
+
   function readStoredState() {
     try {
       var raw = localStorage.getItem(STORAGE_KEY);
@@ -518,7 +533,7 @@
       '        <p data-inline-stp-delegate-row hidden class="type-description text-tertiary">Not the authorized signer? <button type="button" data-inline-stp-delegate class="cursor-pointer rounded-sm type-link text-brand underline underline-offset-2 hover:text-brand-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50"></button></p>' +
       "      </div>" +
       '      <div class="mt-6 flex w-full flex-col items-stretch gap-3 md:mt-8 md:flex-row md:items-center md:justify-between">' +
-      '        <button type="button" data-inline-stp-confirm disabled class="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-6 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300 md:w-auto">Confirm</button>' +
+      '        <button type="button" data-inline-stp-confirm disabled class="inline-flex w-full items-center justify-center rounded-md bg-blue-600 px-6 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 disabled:hover:bg-blue-300 md:w-auto">Confirm</button>' +
       '        <button type="button" data-inline-stp-close class="inline-flex w-full items-center justify-center rounded-md px-2.5 py-1.5 text-center text-sm font-semibold text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-white/10 md:ml-auto md:w-auto">Remind me later</button>' +
       "      </div>" +
       "    </div>" +
@@ -650,7 +665,7 @@
   // Resend / Send to another person in case the signer doesn't respond.
 
   var PENDING_BADGE =
-    "inline-flex w-fit items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10";
+    "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400 w-fit";
 
   function pendingRow(label, valueHtml) {
     return (
@@ -691,7 +706,7 @@
       '<p class="text-sm text-gray-500 dark:text-gray-400"><span class="font-medium text-gray-900 dark:text-white">' + escapeText(who) +
       "</span> will receive an email with a secure link to review and acknowledge the Visa AR Manager Participation Agreement. No response yet? Resend it, or send it to another authorized signer.</p>" +
       '<div class="flex flex-wrap items-center gap-3">' +
-      '<button type="button" data-stp-resend class="' + SETUP_CTA_CLASS + ' disabled:cursor-not-allowed disabled:bg-blue-300">Resend</button>' +
+      '<button type="button" data-stp-resend class="' + SETUP_CTA_CLASS + ' disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">Resend</button>' +
       '<button type="button" data-stp-send-other class="' + SETUP_SECONDARY_CLASS + '">Send to another person</button>' +
       "</div>" +
       '<p data-stp-send-status role="status" class="text-sm/5 text-gray-500 dark:text-gray-400"></p>' +
@@ -1050,7 +1065,7 @@
       field("stp-other-email", "Email", "email", "off") +
       '<div class="flex items-center justify-end gap-3">' +
       '<button type="button" data-stp-send-other-cancel class="' + SETUP_SECONDARY_CLASS + '">Cancel</button>' +
-      '<button type="submit" class="' + SETUP_CTA_CLASS + ' disabled:cursor-not-allowed disabled:bg-blue-300">Send</button>' +
+      '<button type="submit" class="' + SETUP_CTA_CLASS + ' disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">Send</button>' +
       "</div>" +
       "</form>"
     );
@@ -1153,7 +1168,7 @@
       "    </div>" +
       '    <div class="flex justify-end gap-3 border-t border-gray-200 px-6 py-5 dark:border-white/10">' +
       '      <button type="button" data-inline-verify-close class="rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-700 shadow-xs ring-1 ring-inset ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10 dark:hover:bg-white/10">Cancel</button>' +
-      '      <button id="sx-inline-verify-deposit-btn" type="button" disabled class="inline-flex items-center justify-center whitespace-nowrap rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300">Verify</button>' +
+      '      <button id="sx-inline-verify-deposit-btn" type="button" disabled class="inline-flex items-center justify-center whitespace-nowrap rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 disabled:hover:bg-blue-300">Verify</button>' +
       "    </div>" +
       "  </div>" +
       "</div>";

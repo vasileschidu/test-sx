@@ -163,7 +163,7 @@ window.OBFlow = (function () {
       scenario: 'first',        // first | some | zero
       parties: 3,               // 2 | 3 | 5, the user included
       expiry: 'days',           // days | hours | minutes
-      payment: 'active',        // active | expired | revoked | disputed
+      payment: 'active',        // active | expired | revoked | declined | disputed (no UI leads to disputed)
       fallback: true,           // expired / revoked: a check goes to the primary party
       log: scenarioLog('first', 3)
     };
@@ -233,6 +233,18 @@ window.OBFlow = (function () {
     mp.justChanged = true;
     delete mp.othersProgress;   // a new split: everyone submits again
     saveMp(mp);
+  }
+
+  /** The user declined the payment (Decline Payment dialog, or the demo): the "revoked" screen, declined.html. */
+  function decline() {
+    var mp = getMp();
+    mp.payment = 'declined';
+    saveMp(mp);
+  }
+
+  /** The screen that replaces Current Allocation / Payment Status once the payment ended. */
+  function closedUrl(mp) {
+    return (mp || getMp()).payment === 'declined' ? 'declined.html' : 'payment-closed.html';
   }
 
   /** The primary party disputed the total: the payment request is cancelled. */
@@ -321,43 +333,81 @@ window.OBFlow = (function () {
 
   // ---- Demo switcher -------------------------------------------------------------
 
+  // Example decline for the demo (the dialog's reasons live in src/data/sd-decline.json).
+  var DEMO_DECLINE = { reason: 'Unable to post', note: 'The amount does not match our records for this claim.' };
+
   function demoPanel() {
-    // Only where the scenario plays out: Current Allocation, and the screen that
-    // replaces it when the payment is expired, revoked or disputed.
+    // Only where the scenario plays out: Current Allocation, Payment Status, and the
+    // screens that replace them when the payment ended (closed, declined).
     var here = page();
     var onStatus = here === 'payment-status';
-    if (!isMultiParty() || (here !== 'allocation' && here !== 'payment-closed' && !onStatus) || document.querySelector('[data-mp-demo]')) return;
+    var pages = ['allocation', 'payment-closed', 'payment-status', 'declined'];
+    if (!isMultiParty() || pages.indexOf(here) === -1 || document.querySelector('[data-mp-demo]')) return;
     var mp = getMp();
-    function option(name, value, label) {
-      return '<label class="flex cursor-pointer items-center gap-2 py-1 text-sm text-gray-700 dark:text-gray-300">' +
-        '<input type="radio" name="' + name + '" value="' + value + '"' + (String(mp[name]) === value ? ' checked' : '') +
-        ' class="size-4 cursor-pointer accent-blue-600">' + label + '</label>';
+    // A closed / declined screen reached from Payment Status keeps the Payment Status options.
+    var statusSet = onStatus || (here !== 'allocation' && /^payment-status/.test(mp.returnTo || ''));
+    // Unset "Other parties": Payment Status counts whoever accepted the allocation as
+    // submitted, so show that as the picked option.
+    function derivedProgress() {
+      var accepted = current(mp).accepted || {};
+      var list = others(mp);
+      var done = list.filter(function (p) { return accepted[p.id]; }).length;
+      return done === 0 ? 'none' : done === list.length ? 'all' : 'some';
     }
-    function group(title, body) {
-      return '<fieldset class="flex flex-col gap-0.5"><legend class="mb-1 text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase">' + title + '</legend>' + body + '</fieldset>';
+    function value(name) {
+      if (name === 'othersProgress' && mp.othersProgress === undefined) return derivedProgress();
+      return mp[name];
     }
-    var button = 'cursor-pointer rounded-md border border-gray-300 dark:border-white/10 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400';
+
+    // Segmented control: one row of options, the picked one raised (components skill).
+    function segmented(name, title, options) {
+      var cols = { 2: 'grid-cols-2', 3: 'grid-cols-3', 4: 'grid-cols-4' }[options.length];
+      return '<fieldset data-mp-demo-group="' + name + '" class="flex flex-col gap-1.5">' +
+        '<legend class="mb-1.5 text-xs font-medium text-gray-500 dark:text-gray-400">' + title + '</legend>' +
+        '<div class="grid ' + cols + ' gap-1 rounded-lg bg-gray-100 p-1 dark:bg-white/5">' +
+          options.map(function (o) {
+            return '<label class="relative flex min-h-8 cursor-pointer items-center justify-center rounded-md px-1.5 py-1 text-center text-xs leading-4 font-medium text-gray-600 hover:bg-white/60 hover:text-gray-900 has-checked:bg-white has-checked:text-gray-900 has-checked:shadow-xs has-checked:ring-1 has-checked:ring-gray-900/5 has-focus-visible:outline-2 has-focus-visible:outline-offset-1 has-focus-visible:outline-blue-600 has-disabled:cursor-not-allowed has-disabled:opacity-50 has-disabled:hover:bg-transparent dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white dark:has-checked:bg-white/15 dark:has-checked:text-white dark:has-checked:ring-white/10 dark:has-focus-visible:outline-blue-400">' +
+              '<input type="radio" name="' + name + '" value="' + o[0] + '"' + (String(value(name)) === o[0] ? ' checked' : '') + ' class="sr-only">' + o[1] +
+            '</label>';
+          }).join('') +
+        '</div>' +
+      '</fieldset>';
+    }
+    var secondary = 'inline-flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 active:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:active:bg-white/25 dark:focus-visible:outline-blue-400';
+    var ICON_SLIDERS = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M17 2.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5ZM17 15.75a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5ZM3.75 15a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5a.75.75 0 0 1 .75-.75ZM4.5 2.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5ZM10 11a.75.75 0 0 1 .75.75v5.5a.75.75 0 0 1-1.5 0v-5.5A.75.75 0 0 1 10 11ZM10.75 2.75a.75.75 0 0 0-1.5 0v1.5a.75.75 0 0 0 1.5 0v-1.5ZM10 6a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM3.75 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM16.25 10a2 2 0 1 0 0 4 2 2 0 0 0 0-4Z" /></svg>';
+    var ICON_X = '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg>';
+    var ICON_RESET = '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-3.5"><path fill-rule="evenodd" d="M13.836 2.477a.75.75 0 0 1 .75.75v3.182a.75.75 0 0 1-.75.75h-3.182a.75.75 0 0 1 0-1.5h1.37l-.84-.841a4.5 4.5 0 0 0-7.08.932.75.75 0 0 1-1.3-.75 6 6 0 0 1 9.44-1.242l.842.84V3.227a.75.75 0 0 1 .75-.75Zm-.911 7.5A.75.75 0 0 1 13.199 11a6 6 0 0 1-9.44 1.241l-.84-.84v1.371a.75.75 0 0 1-1.5 0V9.591a.75.75 0 0 1 .75-.75H5.35a.75.75 0 0 1 0 1.5H3.98l.841.841a4.5 4.5 0 0 0 7.08-.932.75.75 0 0 1 1.025-.273Z" clip-rule="evenodd" /></svg>';
+
     var wrap = document.createElement('div');
     wrap.setAttribute('data-mp-demo', '');
     wrap.setAttribute('data-ob-no-skeleton', '');
     wrap.className = 'fixed right-4 bottom-4 z-40 flex flex-col items-end gap-2 font-[\'Inter\']';
     wrap.innerHTML =
-      '<div data-mp-demo-panel hidden class="flex max-h-[calc(100vh-5rem)] w-64 flex-col gap-4 overflow-y-auto rounded-lg border border-gray-200 dark:border-white/10 bg-white dark:bg-gray-900 p-4 shadow-xl">' +
-        // Payment Status: what can still happen after the user has submitted.
-        (onStatus
-          ? group('Other parties', option('othersProgress', 'none', 'Still choosing') + option('othersProgress', 'some', 'Some submitted') + option('othersProgress', 'all', 'All submitted'))
-          : '') +
-        group('Payment', option('payment', 'active', 'Active') + option('payment', 'expired', 'Expired') + option('payment', 'revoked', 'Revoked') + option('payment', 'disputed', 'Disputed by primary party')) +
-        group('Fallback check to primary party', option('fallback', 'true', 'Yes') + option('fallback', 'false', 'No')) +
-        (onStatus ? '' :
-          group('You are', option('role', 'primary', 'Primary party') + option('role', 'party', 'Other party')) +
-          group('Parties', option('parties', '2', '2 parties') + option('parties', '3', '3 parties') + option('parties', '5', '5 parties')) +
-          group('Allocation', option('scenario', 'first', 'Nobody accepted yet') + option('scenario', 'some', 'Others accepted') + option('scenario', 'zero', 'Your share is $0'))) +
-        group('Expires in', option('expiry', 'days', 'Days') + option('expiry', 'hours', 'Hours') + option('expiry', 'minutes', 'Minutes')) +
-        '<button type="button" data-mp-demo-changed class="' + button + '">Someone changes the allocation</button>' +
-        '<button type="button" data-mp-demo-reset class="' + button + '">Reset scenario</button>' +
+      '<div data-mp-demo-panel role="dialog" aria-labelledby="mp-demo-title" hidden class="flex max-h-[calc(100dvh-5rem)] w-80 max-w-[calc(100vw-2rem)] flex-col overflow-hidden rounded-xl bg-white shadow-xl ring-1 ring-gray-900/10 dark:bg-gray-800 dark:ring-white/10">' +
+        '<div class="flex shrink-0 items-start gap-3 border-b border-gray-200 px-4 py-3 dark:border-white/10">' +
+          '<div class="min-w-0 flex-1">' +
+            '<h2 id="mp-demo-title" class="text-sm font-semibold text-gray-900 dark:text-white">Demo scenario</h2>' +
+            '<p class="mt-0.5 text-xs text-gray-500 dark:text-gray-400">Prototype only. Changes reload the page.</p>' +
+          '</div>' +
+          '<button type="button" data-mp-demo-reset class="inline-flex shrink-0 cursor-pointer items-center gap-1 rounded-md px-2 py-1 text-xs font-semibold text-gray-600 hover:bg-gray-100 hover:text-gray-900 active:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-300 dark:hover:bg-white/10 dark:hover:text-white dark:active:bg-white/15 dark:focus-visible:outline-blue-400">' + ICON_RESET + 'Reset</button>' +
+          '<button type="button" data-mp-demo-close aria-label="Close" class="-mr-1 inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-600 active:bg-gray-200 focus-visible:outline-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-200 dark:active:bg-white/15 dark:focus-visible:outline-blue-400">' + ICON_X + '</button>' +
+        '</div>' +
+        '<div class="flex min-h-0 flex-col gap-4 overflow-y-auto px-4 py-4">' +
+          segmented('payment', 'Payment', [['active', 'Active'], ['expired', 'Expired'], ['revoked', 'Revoked'], ['declined', 'Declined']]) +
+          // Payment Status: what can still happen after the user has submitted.
+          (statusSet ? segmented('othersProgress', 'Other parties', [['none', 'Still choosing'], ['some', 'Some submitted'], ['all', 'All submitted']]) : '') +
+          segmented('fallback', 'Fallback check to primary party', [['true', 'Yes'], ['false', 'No']]) +
+          (statusSet ? '' :
+            segmented('role', 'You are', [['primary', 'Primary party'], ['party', 'Other party']]) +
+            segmented('parties', 'Parties', [['2', '2'], ['3', '3'], ['5', '5']]) +
+            segmented('scenario', 'Allocation', [['first', 'Nobody accepted'], ['some', 'Others accepted'], ['zero', 'Your share is $0']])) +
+          segmented('expiry', 'Expires in', [['days', 'Days'], ['hours', 'Hours'], ['minutes', 'Minutes']]) +
+        '</div>' +
+        '<div class="shrink-0 border-t border-gray-200 bg-gray-50 px-4 py-3 dark:border-white/10 dark:bg-white/5">' +
+          '<button type="button" data-mp-demo-changed class="' + secondary + '">Someone changes the allocation</button>' +
+        '</div>' +
       '</div>' +
-      '<button type="button" data-mp-demo-toggle aria-expanded="false" class="cursor-pointer rounded-full bg-gray-900 dark:bg-gray-700 px-4 py-2 text-sm font-medium text-white shadow-lg hover:bg-gray-800 dark:hover:bg-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Scenario</button>';
+      '<button type="button" data-mp-demo-toggle aria-expanded="false" class="inline-flex cursor-pointer items-center gap-2 rounded-full bg-gray-900 py-2 pr-4 pl-3 text-sm font-medium text-white shadow-lg ring-1 ring-white/10 hover:bg-gray-800 active:bg-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-expanded:bg-gray-800 dark:bg-gray-700 dark:hover:bg-gray-600 dark:active:bg-gray-500 dark:aria-expanded:bg-gray-600 dark:focus-visible:outline-blue-400">' + ICON_SLIDERS + 'Scenario</button>';
     document.body.appendChild(wrap);
 
     var panel = wrap.querySelector('[data-mp-demo-panel]');
@@ -365,34 +415,62 @@ window.OBFlow = (function () {
     // Fallback only applies to an expired or revoked payment.
     if (mp.payment !== 'expired' && mp.payment !== 'revoked') {
       panel.querySelectorAll('input[name=fallback]').forEach(function (input) { input.disabled = true; });
-      panel.querySelector('input[name=fallback]').closest('fieldset').classList.add('opacity-50');
     }
-    toggle.addEventListener('click', function () {
-      panel.hidden = !panel.hidden;
-      toggle.setAttribute('aria-expanded', String(!panel.hidden));
+    function setOpen(open) {
+      panel.hidden = !open;
+      toggle.setAttribute('aria-expanded', String(open));
+      if (!open) toggle.focus();
+    }
+    toggle.addEventListener('click', function () { setOpen(panel.hidden); });
+    wrap.querySelector('[data-mp-demo-close]').addEventListener('click', function () { setOpen(false); });
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Escape' && !panel.hidden) setOpen(false);
     });
-    // The pages pick the right screen for the new state on load. Payment
-    // Status stays put (keeping its ?final= link) unless the payment ended.
-    function reopen() { window.location.href = 'allocation.html'; }
+    // Where Reset / "Active" bring the user back: the scenario page they came from.
+    // Payment Status keeps its ?final= link, also after a detour to a closed screen.
+    var returnTo = onStatus ? here + '.html' + window.location.search
+      : here === 'allocation' ? 'allocation.html'
+      : (mp.returnTo || 'allocation.html');
+    if (here === 'allocation' && mp.returnTo) { delete mp.returnTo; saveMp(mp); }
+    function reopen() { window.location.href = returnTo; }
+    function clearDecline() {
+      if (window.SDOnboardingContext) window.SDOnboardingContext.saveState({ declined: null });
+    }
     panel.addEventListener('change', function (event) {
       var input = event.target;
       var patch = {};
       patch[input.name] = input.value === 'true' ? true : input.value === 'false' ? false : input.value;
       setDemo(patch);
-      if (onStatus && getMp().payment === 'active') window.location.reload();
-      else if (onStatus) window.location.href = 'payment-closed.html';
+      var payment = getMp().payment;
+      if (payment !== 'active' && returnTo !== 'allocation.html') {
+        var keep = getMp(); keep.returnTo = returnTo; saveMp(keep);
+      }
+      if (input.name === 'payment') {
+        if (payment === 'declined') {
+          // Same as confirming the Decline Payment dialog.
+          if (window.SDOnboardingContext) window.SDOnboardingContext.saveState({ declined: Object.assign({ declinedAt: new Date().toISOString() }, DEMO_DECLINE) });
+          window.location.href = 'declined.html';
+          return;
+        }
+        clearDecline();
+      }
+      if (onStatus && payment === 'active') window.location.reload();
+      else if (onStatus) window.location.href = closedUrl();
       else reopen();
     });
     wrap.querySelector('[data-mp-demo-changed]').addEventListener('click', function () {
       var mp = getMp();
       mp.payment = 'active';
       saveMp(mp);
+      clearDecline();
       someoneChanges();
-      reopen();
+      // A new split has to be accepted again: always Current Allocation.
+      window.location.href = 'allocation.html';
     });
     wrap.querySelector('[data-mp-demo-reset]').addEventListener('click', function () {
       resetMp();
-      reopen();
+      clearDecline();
+      reopen();   // back to the page the scenario started from (Payment Status stays Payment Status)
     });
   }
 
@@ -412,6 +490,8 @@ window.OBFlow = (function () {
     others: others,
     othersDone: othersDone,
     dispute: dispute,
+    decline: decline,
+    closedUrl: closedUrl,
     myShare: myShare,
     authorName: authorName,
     expiresAt: expiresAt,

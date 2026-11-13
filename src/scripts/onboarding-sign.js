@@ -25,8 +25,8 @@ window.OBSign = (function () {
   function header() {
     return '<div class="flex shrink-0 items-center gap-2 border-b border-gray-200 dark:border-white/10 py-2 pr-3 pl-6">' +
         '<h2 id="ob-sign-title" class="flex-1 text-base leading-6 font-medium text-gray-900 dark:text-white">Sign to authorize payment</h2>' +
-        '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
-          '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-lined-gray.svg" alt="" width="24" height="24" class="size-6"></button>' +
+        '<button type="button" data-ob-modal-close class="m-1 inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+          '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5"></button>' +
       '</div>';
   }
 
@@ -68,7 +68,7 @@ window.OBSign = (function () {
             '<p id="ob-sign-name-error" data-sign-name-error class="hidden ' + F.ERROR_TEXT + '"></p>' +
           '</div>' +
           '<div class="' + PAD + ' border-gray-200 dark:border-white/10 px-6">' +
-            '<p data-sign-preview aria-hidden="true" class="line-clamp-3 w-full text-center font-[\'Meow_Script\',cursive] text-[56px] leading-[64px] wrap-anywhere text-black"></p>' +
+            '<p data-sign-preview aria-hidden="true" class="-mb-3 line-clamp-3 w-full pb-3 text-center font-[\'Meow_Script\',cursive] text-[56px] leading-[64px] wrap-anywhere text-black dark:text-white"></p>' +
           '</div>' +
         '</div>' +
       '</div>';
@@ -76,7 +76,8 @@ window.OBSign = (function () {
 
   function processingMarkup() {
     return '<div role="status" class="flex flex-col items-center gap-6 px-6 py-12">' +
-      '<img src="' + ASSETS + 'loader.svg" alt="" width="44" height="44" class="size-11 animate-spin motion-reduce:animate-none">' +
+      '<img src="' + ASSETS + 'loader.svg" alt="" width="44" height="44" class="size-11 animate-spin motion-reduce:animate-none dark:hidden">' +
+      '<img src="' + ASSETS + 'loader-dark.svg" alt="" width="44" height="44" class="hidden size-11 animate-spin motion-reduce:animate-none dark:block">' +
       '<div class="flex flex-col items-center gap-2 text-center">' +
         '<p id="ob-sign-processing" class="text-lg leading-6 font-semibold text-gray-900 dark:text-white">We’re processing your request</p>' +
         '<p class="text-sm leading-5 text-gray-500 dark:text-gray-400">Please wait</p>' +
@@ -113,6 +114,11 @@ window.OBSign = (function () {
     var hint = $('[data-sign-hint]');
     var clearBtn = $('[data-sign-clear]');
     var ctx = canvas.getContext('2d');
+    function ink() {
+      var title = document.getElementById('ob-sign-title');
+      var dark = title && getComputedStyle(title).color === 'rgb(255, 255, 255)';
+      return dark ? '#ffffff' : '#111827';
+    }
     var drawing = false;
     var hasInk = false;
     var last = null;
@@ -127,7 +133,8 @@ window.OBSign = (function () {
       ctx.lineWidth = 2.2;
       ctx.lineCap = 'round';
       ctx.lineJoin = 'round';
-      ctx.strokeStyle = '#111827';
+      // Ink follows the theme (the title's colour): #111827 light, white dark.
+      ctx.strokeStyle = ink();
       hasInk = false;
       hint.classList.remove('hidden');
       clearBtn.classList.add('hidden');
@@ -151,7 +158,7 @@ window.OBSign = (function () {
       canvas.setPointerCapture(e.pointerId);
       ctx.beginPath();
       ctx.arc(last.x, last.y, 1.1, 0, Math.PI * 2);
-      ctx.fillStyle = '#111827';
+      ctx.fillStyle = ink();
       ctx.fill();
       if (!hasInk) {
         hasInk = true;

@@ -33,6 +33,18 @@
     ],
     "consumer-my-profile.html": [{ label: "My Profile", href: null }],
     "my-company-profile.html": [{ label: "My Company Profile", href: null }],
+    "user-management.html": [
+      { label: "Settings", href: "user-management.html" },
+      { label: "User Management", href: null },
+    ],
+    "user-profile.html": [
+      { label: "Settings", href: "user-management.html" },
+      { label: "User Management", href: null },
+    ],
+    "business-details.html": [
+      { label: "Settings", href: "user-management.html" },
+      { label: "Business Details", href: null },
+    ],
   };
 
   function normalizePageFile(file) {
@@ -60,6 +72,9 @@
       "consumer-payment-preferences.html": "Payment Preferences",
       "consumer-my-profile.html": "My Profile",
       "my-company-profile.html": "My Company Profile",
+      "user-management.html": "User Management",
+      "user-profile.html": "User Management",
+      "business-details.html": "Business Details",
     };
     return map[file] || "Dashboard";
   }
@@ -382,6 +397,81 @@
         };
   }
 
+  /**
+   * User Management (SMART Hub settings) is in this view: the avatar menu's
+   * "Profile" opens the user's own profile and the bar shows the UM user.
+   * Not in views without the module (Consumer Portal) nor in the STP demo
+   * case instance (?case=), which keep the company-profile behaviour.
+   */
+  function hasUserManagement() {
+    if (window.SXDemoCase && window.SXDemoCase.isPortalInstance()) return false;
+    if (!window.AppPlans || !window.AppPlans.visibleModules) return false;
+    return window.AppPlans.visibleModules().some(function (module) {
+      return (
+        module.state === "enabled" &&
+        ((module.nav && module.nav.children) || []).some(function (child) {
+          return child.id === "user-management";
+        })
+      );
+    });
+  }
+
+  function profileMenuHref() {
+    return hasUserManagement()
+      ? "user-profile.html"
+      : currentAccountLinks().profile.href;
+  }
+
+  /**
+   * The signed-in user from User Management's saved state (localStorage
+   * sx_um_v1, written by um-store.js), read directly so no page has to load the
+   * store. Null when there is none or it can't be read.
+   */
+  var UM_STORAGE_KEY = "sx_um_v1";
+  function umCurrentUser() {
+    if (!hasUserManagement()) return null;
+    try {
+      var state = JSON.parse(window.localStorage.getItem(UM_STORAGE_KEY) || "null");
+      if (!state || !state.users) return null;
+      var me = state.users.filter(function (user) {
+        return user.id === state.currentUserId;
+      })[0];
+      if (!me) return null;
+      return {
+        id: me.id,
+        name: [me.firstName, me.lastName].filter(Boolean).join(" ").trim(),
+        email: String(me.email || "").trim(),
+        photo: me.photo || "",
+      };
+    } catch (error) {
+      return null;
+    }
+  }
+
+  /** A UM photo is a data URL or a path under src/ (e.g. assets/topbar/avatar.png). */
+  function umPhotoSrc(photo) {
+    if (/^data:image\//.test(photo)) return photo;
+    var path = window.location.pathname || "";
+    var index = path.indexOf("/src/pages/");
+    return (index >= 0 ? path.slice(0, index) : "") + "/src/" + photo;
+  }
+
+  // Initials avatar colours, as in the User Management list (um-ui.js).
+  var UM_AVATAR_TONES = [
+    "bg-purple-500",
+    "bg-cyan-500",
+    "bg-indigo-500",
+    "bg-pink-500",
+    "bg-emerald-500",
+    "bg-orange-500",
+  ];
+  function umAvatarTone(id) {
+    var hash = 5381;
+    for (var i = 0; i < String(id).length; i += 1)
+      hash = ((hash * 33) ^ String(id).charCodeAt(i)) >>> 0;
+    return UM_AVATAR_TONES[hash % UM_AVATAR_TONES.length];
+  }
+
   /** A profile/preferences link that follows the active product. */
   function accountLink(kind, iconHtml) {
     var link = currentAccountLinks()[kind];
@@ -403,6 +493,9 @@
         var labels = anchor.querySelectorAll("span");
         if (labels.length) labels[labels.length - 1].textContent = link.label;
       });
+    host.querySelectorAll("[data-topbar-profile-link]").forEach(function (anchor) {
+      anchor.setAttribute("href", profileMenuHref());
+    });
   }
 
   /** Supplier user menu: same content as the Consumer Portal (name, role, Profile, Sign out). */
@@ -483,39 +576,235 @@
   }
 
   /**
-   * "Dark mode" row in the user menu: the blue toggle switch (components
-   * skill). Same storage key, .dark class and app-theme-change event as
-   * shared.js initThemeToggle(); the change listener is delegated below.
+   * "Appearance" row in the user menu (Andrian, 2026-11-11): label + current
+   * value + chevron; hover / click opens a submenu to the left with
+   * System default (we'll match your system preferences) / Dark mode / Light mode.
+   * State lives in theme-init.js (window.SXTheme): localStorage.theme =
+   * "system" | "light" | "dark". The submenu is its own manual popover so it
+   * sits in the top layer beside the el-menu popover (which clips overflow).
    */
+  var APPEARANCE_OPTIONS = [
+    { mode: "system", label: "System default", hint: "We’ll match your system preferences" },
+    { mode: "dark", label: "Dark mode" },
+    { mode: "light", label: "Light mode" },
+  ];
+
+  function currentThemeMode() {
+    return window.SXTheme && window.SXTheme.get
+      ? window.SXTheme.get()
+      : document.documentElement.classList.contains("dark")
+        ? "dark"
+        : "light";
+  }
+
+  function appearanceLabel(mode) {
+    for (var i = 0; i < APPEARANCE_OPTIONS.length; i++)
+      if (APPEARANCE_OPTIONS[i].mode === mode) return APPEARANCE_OPTIONS[i].label;
+    return "";
+  }
+
+  var CHECK_ICON =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 text-blue-600 dark:text-blue-400"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd"/></svg>';
+
   function themeToggleRowHtml() {
-    var isDark = document.documentElement.classList.contains("dark");
     return (
-      '<label class="flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-3 text-sm font-medium leading-5 text-gray-900 transition-colors hover:bg-gray-50 dark:text-white dark:hover:bg-white/5">' +
-      "<span>Dark mode</span>" +
-      '<span class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 dark:bg-white/10 dark:inset-ring-white/10 dark:has-checked:bg-blue-500">' +
-      '<span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>' +
-      '<input type="checkbox" data-topbar-theme-toggle' +
-      (isDark ? " checked" : "") +
-      ' aria-label="Dark mode" class="absolute inset-0 size-full cursor-pointer appearance-none focus:outline-hidden" />' +
-      "</span>" +
-      "</label>"
+      '<button type="button" data-topbar-appearance aria-haspopup="menu" aria-expanded="false" class="group flex w-full cursor-pointer items-center justify-between gap-3 px-4 py-2.5 text-left transition-colors hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden aria-expanded:bg-gray-50 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:aria-expanded:bg-white/5">' +
+      '<span class="flex min-w-0 flex-col">' +
+      '<span class="text-sm font-medium leading-5 text-gray-900 dark:text-white">Appearance</span>' +
+      '<span data-topbar-appearance-value class="truncate text-xs leading-4 text-gray-500 dark:text-gray-400">' +
+      appearanceLabel(currentThemeMode()) +
+      "</span></span>" +
+      // Heroicons mini chevron-right
+      '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-gray-400 group-hover:text-gray-500 dark:text-gray-500 dark:group-hover:text-gray-400"><path fill-rule="evenodd" d="M8.22 5.22a.75.75 0 0 1 1.06 0l4.25 4.25a.75.75 0 0 1 0 1.06l-4.25 4.25a.75.75 0 0 1-1.06-1.06L11.94 10 8.22 6.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd"/></svg>' +
+      "</button>"
     );
   }
 
-  document.addEventListener("change", function (event) {
-    var input = event.target.closest && event.target.closest("[data-topbar-theme-toggle]");
-    if (!input) return;
-    var isDark = input.checked;
-    document.documentElement.classList.toggle("dark", isDark);
-    try {
-      localStorage.setItem("theme", isDark ? "dark" : "light");
-    } catch (e) {}
-    document.querySelectorAll("[data-topbar-theme-toggle]").forEach(function (el) {
-      el.checked = isDark;
+  var appearanceMenu = null;
+  var appearanceTrigger = null;
+  var appearanceCloseTimer = null;
+
+  function ensureAppearanceMenu() {
+    if (appearanceMenu) return appearanceMenu;
+    appearanceMenu = document.createElement("div");
+    appearanceMenu.id = "topbar-appearance-menu";
+    appearanceMenu.setAttribute("popover", "manual");
+    appearanceMenu.setAttribute("role", "menu");
+    appearanceMenu.setAttribute("aria-label", "Appearance");
+    appearanceMenu.className =
+      "m-0 w-max min-w-64 rounded-lg bg-white p-1 font-['Inter'] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.10),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] dark:bg-gray-800 dark:shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.40),0px_4px_6px_-2px_rgba(0,0,0,0.30),0px_0px_0px_1px_rgba(255,255,255,0.10)]";
+    appearanceMenu.style.inset = "auto";
+    appearanceMenu.addEventListener("mouseenter", cancelAppearanceClose);
+    appearanceMenu.addEventListener("mouseleave", scheduleAppearanceClose);
+    appearanceMenu.addEventListener("click", function (event) {
+      var opt = event.target.closest("[data-topbar-theme]");
+      if (!opt) return;
+      if (window.SXTheme && window.SXTheme.set) window.SXTheme.set(opt.getAttribute("data-topbar-theme"));
+      renderAppearanceOptions();
+      syncAppearanceValue();
+      // The user menu is gone by now (focus / click left it): close and give
+      // focus back to the avatar button.
+      var userMenu = appearanceTrigger && appearanceTrigger.closest("el-menu");
+      if (!userMenu || !userMenu.matches(":popover-open")) {
+        var avatarBtn = userMenu && userMenu.parentElement && userMenu.parentElement.querySelector('button[aria-label="Open user menu"]');
+        closeAppearanceMenu(false);
+        if (avatarBtn && event.detail === 0) avatarBtn.focus();
+      }
     });
-    window.dispatchEvent(
-      new CustomEvent("app-theme-change", { detail: { isDark: isDark } }),
-    );
+    appearanceMenu.addEventListener("keydown", function (event) {
+      var items = Array.prototype.slice.call(appearanceMenu.querySelectorAll("[data-topbar-theme]"));
+      var idx = items.indexOf(document.activeElement);
+      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+        event.preventDefault();
+        var next = (idx + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+        items[next].focus();
+      } else if (event.key === "Escape" || event.key === "ArrowRight") {
+        event.preventDefault();
+        event.stopPropagation();
+        closeAppearanceMenu(true);
+      }
+    });
+    document.body.appendChild(appearanceMenu);
+    return appearanceMenu;
+  }
+
+  function renderAppearanceOptions() {
+    var menu = ensureAppearanceMenu();
+    var mode = currentThemeMode();
+    menu.innerHTML = APPEARANCE_OPTIONS.map(function (opt) {
+      var on = opt.mode === mode;
+      return (
+        '<button type="button" role="menuitemradio" data-topbar-theme="' +
+        opt.mode +
+        '" aria-checked="' +
+        on +
+        '" class="flex w-full cursor-pointer items-start gap-2 rounded-md px-2 py-2 text-left transition-colors hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden dark:hover:bg-white/5 dark:focus:bg-white/5">' +
+        '<span class="flex size-5 shrink-0 items-center justify-center">' +
+        (on ? CHECK_ICON : "") +
+        "</span>" +
+        '<span class="flex flex-col gap-0.5">' +
+        '<span class="text-sm font-medium leading-5 text-gray-900 dark:text-white">' +
+        opt.label +
+        "</span>" +
+        (opt.hint
+          ? '<span class="text-xs leading-4 text-gray-500 dark:text-gray-400">' + opt.hint + "</span>"
+          : "") +
+        "</span></button>"
+      );
+    }).join("");
+  }
+
+  function syncAppearanceValue() {
+    var label = appearanceLabel(currentThemeMode());
+    document.querySelectorAll("[data-topbar-appearance-value]").forEach(function (el) {
+      el.textContent = label;
+    });
+  }
+
+  function positionAppearanceMenu(trigger) {
+    var menu = ensureAppearanceMenu();
+    var host = trigger.closest("el-menu") || trigger;
+    var hostRect = host.getBoundingClientRect();
+    var rowRect = trigger.getBoundingClientRect();
+    var w = menu.offsetWidth;
+    var h = menu.offsetHeight;
+    var gap = 8;
+    // Left of the user menu (it sits at the right edge); right of it if no room.
+    var left = hostRect.left - gap - w;
+    if (left < 8) left = Math.min(hostRect.right + gap, window.innerWidth - w - 8);
+    var top = Math.max(8, Math.min(rowRect.top - 4, window.innerHeight - h - 8));
+    menu.style.left = left + "px";
+    menu.style.top = top + "px";
+  }
+
+  function openAppearanceMenu(trigger, focusFirst) {
+    cancelAppearanceClose();
+    var menu = ensureAppearanceMenu();
+    renderAppearanceOptions();
+    appearanceTrigger = trigger;
+    trigger.setAttribute("aria-expanded", "true");
+    if (!menu.matches(":popover-open")) menu.showPopover();
+    positionAppearanceMenu(trigger);
+    if (focusFirst) {
+      var first = menu.querySelector('[aria-checked="true"]') || menu.querySelector("[data-topbar-theme]");
+      if (first) first.focus();
+    }
+  }
+
+  function closeAppearanceMenu(returnFocus) {
+    cancelAppearanceClose();
+    if (appearanceMenu && appearanceMenu.matches(":popover-open")) appearanceMenu.hidePopover();
+    if (appearanceTrigger) {
+      appearanceTrigger.setAttribute("aria-expanded", "false");
+      if (returnFocus) appearanceTrigger.focus();
+    }
+    appearanceTrigger = null;
+  }
+
+  function cancelAppearanceClose() {
+    if (appearanceCloseTimer) clearTimeout(appearanceCloseTimer);
+    appearanceCloseTimer = null;
+  }
+
+  function scheduleAppearanceClose() {
+    cancelAppearanceClose();
+    appearanceCloseTimer = setTimeout(function () {
+      closeAppearanceMenu(false);
+    }, 200);
+  }
+
+  // Row: hover opens, leaving closes after 200 ms (unless the pointer reaches the submenu).
+  document.addEventListener("mouseover", function (event) {
+    var row = event.target.closest && event.target.closest("[data-topbar-appearance]");
+    if (row) openAppearanceMenu(row, false);
+  });
+  document.addEventListener("mouseout", function (event) {
+    var row = event.target.closest && event.target.closest("[data-topbar-appearance]");
+    if (!row || (event.relatedTarget && row.contains(event.relatedTarget))) return;
+    scheduleAppearanceClose();
+  });
+  // Click / Enter / ArrowLeft open it; capture so el-menu does not close the user menu.
+  document.addEventListener(
+    "click",
+    function (event) {
+      var row = event.target.closest && event.target.closest("[data-topbar-appearance]");
+      if (!row) return;
+      event.preventDefault();
+      event.stopPropagation();
+      openAppearanceMenu(row, event.detail === 0);
+    },
+    true,
+  );
+  document.addEventListener(
+    "keydown",
+    function (event) {
+      var row = event.target.closest && event.target.closest("[data-topbar-appearance]");
+      if (!row || event.key !== "ArrowLeft") return;
+      event.preventDefault();
+      event.stopPropagation();
+      openAppearanceMenu(row, true);
+    },
+    true,
+  );
+  // The user menu closing (light dismiss, Escape, item) closes the submenu too,
+  // unless the click was inside the submenu itself.
+  document.addEventListener(
+    "toggle",
+    function (event) {
+      if (event.newState !== "closed" || !event.target.matches || !event.target.matches("el-menu")) return;
+      if (!appearanceTrigger || !event.target.contains(appearanceTrigger)) return;
+      // Keyboard: focus moved into the submenu (which closes el-menu) — keep it.
+      if (appearanceMenu && appearanceMenu.contains(document.activeElement)) return;
+      closeAppearanceMenu(false);
+    },
+    true,
+  );
+  window.addEventListener("app-theme-change", function () {
+    syncAppearanceValue();
+    if (appearanceMenu && appearanceMenu.matches(":popover-open")) renderAppearanceOptions();
+  });
+  window.addEventListener("resize", function () {
+    closeAppearanceMenu(false);
   });
 
   /** Consumer portal user menu (Figma "User Dropdown Menu"): name + role, Profile, Sign out. */
@@ -530,8 +819,8 @@
       '  <p data-topbar-profile-name class="truncate text-base font-semibold leading-6 text-gray-900 dark:text-white">Johnny Anderson</p>' +
       '  <p class="truncate text-sm leading-5 text-gray-500 dark:text-gray-400">Role</p>' +
       "</div>" +
-      '<a href="' +
-      currentAccountLinks().profile.href +
+      '<a data-topbar-profile-link href="' +
+      profileMenuHref() +
       '" class="' +
       itemCls +
       '"><span>Profile</span></a>' +
@@ -562,7 +851,7 @@
     var active = plans.getActiveBusiness();
     var badge = function (text) {
       return (
-        '<span class="inline-flex w-fit items-center rounded-sm border border-gray-200 bg-gray-100 px-2 pt-px text-xs leading-4 text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-200">' +
+        '<span class="inline-flex w-fit items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300">' +
         text +
         "</span>"
       );
@@ -615,7 +904,7 @@
     var active = plans.getActiveBusiness();
     var idBadge = function (business) {
       return (
-        '<span class="inline-flex w-fit items-center rounded-sm border border-gray-200 bg-gray-100 px-2 pt-px text-xs leading-4 text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-200">ID : ' +
+        '<span class="inline-flex w-fit items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300">ID : ' +
         (business.accountId || "593596832") +
         "</span>"
       );
@@ -638,9 +927,7 @@
       idBadge(active) +
       "      </span>" +
       "    </div>" +
-      '    <a href="' +
-      currentAccountLinks().profile.href +
-      '" class="' +
+      '    <a href="business-details.html" class="' +
       secondaryBtn +
       '">Business Details</a>' +
       "  </div>" +
@@ -832,12 +1119,22 @@
                   : consumerBusinessMenuHtml();
             });
           syncAccountLinks(bar);
+          // The new view may or may not have User Management: re-pick the user.
+          if (bar._lastProfile && typeof bar.applyProfileData === "function")
+            bar.applyProfileData(bar._lastProfile);
         });
       }
       // Changing view swaps the whole instance, so it gets a real loading
       // state rather than items rearranging under the cursor.
       if (window.AppSwitch) {
-        window.AppSwitch.run(applySwitch);
+        var target = window.AppPlans.getBusinesses().filter(function (b) {
+          return b.id === nextId;
+        })[0];
+        var targetName = target ? target.name : button.textContent.trim();
+        window.AppSwitch.run(applySwitch, null, {
+          name: targetName,
+          initials: businessInitials(targetName),
+        });
       } else {
         applySwitch();
         document.querySelectorAll("app-nav").forEach(function (nav) {
@@ -872,6 +1169,7 @@
       }
       this.bindStp();
       this.bindProfileData();
+      this.bindUmUpdates();
     }
 
     // The STP banner sits inside the top bar, between the greeting row and the
@@ -1071,6 +1369,12 @@
         );
         this._profileReadyHandler = null;
       }
+      if (this._umUpdateHandler) {
+        window.removeEventListener("storage", this._umUpdateHandler);
+        document.removeEventListener("sx-um-change", this._umUpdateHandler);
+        this._umUpdateHandler = null;
+        this._umUpdatesBound = false;
+      }
     }
 
     bindProfileData() {
@@ -1123,6 +1427,12 @@
         profile.contact && profile.contact.email
           ? String(profile.contact.email || "").trim()
           : String(profile.businessEmail || "").trim() || "j.anderson@mail.com";
+      // User Management's signed-in user (sx_um_v1) wins over the company profile.
+      var me = umCurrentUser();
+      if (me) {
+        personName = me.name || personName;
+        personEmail = me.email || personEmail;
+      }
       // STP walkthrough instance: the demo case's supplier and contact.
       var demoCase =
         window.SXDemoCase && window.SXDemoCase.isPortalInstance()
@@ -1142,6 +1452,8 @@
         personEmail = demoCase.supplier.email || personEmail;
       }
       var initials = buildInitials(personName);
+      this._lastProfile = profile;
+      this.applyAvatar(demoCase ? null : me, initials);
 
       // The switcher label names the active business/view; the company
       // profile only supplies it when no plan model is present.
@@ -1160,6 +1472,10 @@
         "[data-topbar-profile-name], [data-topbar-greeting-name]",
       ).forEach(function (node) {
         node.textContent = personName;
+      });
+      // The greeting truncates on phones: keep the full text as its tooltip.
+      this.querySelectorAll("[data-topbar-greeting]").forEach(function (node) {
+        node.title = "Hello, " + personName;
       });
       this.querySelectorAll("[data-topbar-profile-email]").forEach(
         function (node) {
@@ -1184,6 +1500,47 @@
           secondaryWrap.classList.add("hidden");
         }
       }
+    }
+
+    /** The avatar button: the UM user's photo, their initials, or the default picture. */
+    applyAvatar(me, initials) {
+      var img = this.querySelector("[data-topbar-avatar-img]");
+      if (!img) return;
+      if (!img.hasAttribute("data-default-src"))
+        img.setAttribute("data-default-src", img.getAttribute("src"));
+      var button = img.parentElement;
+      var fallback = button.querySelector("[data-topbar-avatar-fallback]");
+      if (me && !me.photo) {
+        img.hidden = true;
+        if (!fallback) {
+          fallback = document.createElement("span");
+          fallback.setAttribute("data-topbar-avatar-fallback", "");
+          fallback.setAttribute("aria-hidden", "true");
+          button.appendChild(fallback);
+        }
+        fallback.className =
+          "flex size-10 items-center justify-center rounded-full border-2 border-white text-base text-white dark:border-gray-800 " +
+          umAvatarTone(me.id);
+        fallback.textContent = initials;
+        return;
+      }
+      if (fallback) fallback.remove();
+      img.hidden = false;
+      var src = me && me.photo ? umPhotoSrc(me.photo) : img.getAttribute("data-default-src");
+      if (img.getAttribute("src") !== src) img.setAttribute("src", src);
+    }
+
+    /** Re-apply when User Management changes (this tab: sx-um-change; other tabs: storage). */
+    bindUmUpdates() {
+      if (this._umUpdatesBound) return;
+      this._umUpdatesBound = true;
+      var self = this;
+      this._umUpdateHandler = function (event) {
+        if (event.type === "storage" && event.key !== UM_STORAGE_KEY && event.key !== null) return;
+        if (self._lastProfile) self.applyProfileData(self._lastProfile);
+      };
+      window.addEventListener("storage", this._umUpdateHandler);
+      document.addEventListener("sx-um-change", this._umUpdateHandler);
     }
 
     bindStp() {
@@ -1338,7 +1695,7 @@
         '        <span class="sr-only">Open sidebar</span>' +
         '        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M2 5.75A.75.75 0 0 1 2.75 5h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 5.75Zm0 4.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 10Zm0 4.25a.75.75 0 0 1 .75-.75h14.5a.75.75 0 0 1 0 1.5H2.75A.75.75 0 0 1 2 14.25Z" /></svg>' +
         "      </button>" +
-        "      <p class=\"min-w-0 truncate font-['Inter'] text-2xl font-bold leading-8 text-gray-900 dark:text-white\">Hello, <span data-topbar-greeting-name>Johnny Anderson</span></p>" +
+        "      <p data-topbar-greeting title=\"Hello, Johnny Anderson\" class=\"min-w-0 truncate font-['Inter'] text-2xl font-bold leading-8 text-gray-900 dark:text-white\">Hello, <span data-topbar-greeting-name>Johnny Anderson</span></p>" +
         "    </div>" +
         '    <div class="flex shrink-0 items-center gap-6">' +
         '      <button type="button" data-topbar-notification-trigger data-consumer-notification-trigger aria-haspopup="dialog" aria-label="Notifications, 6 unread" class="group relative flex size-9 shrink-0 items-center justify-center rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-600 active:bg-gray-200 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:active:bg-white/10 cursor-pointer">' +
@@ -1365,7 +1722,7 @@
         '        <button type="button" aria-label="Open user menu" class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full shadow-[0px_1px_2px_rgba(0,0,0,0.05)] transition-shadow hover:ring-2 hover:ring-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 aria-expanded:shadow-[0px_1px_2px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] aria-expanded:hover:ring-0 dark:hover:ring-white/20 dark:aria-expanded:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#3b82f6]">' +
         '          <img src="' +
         topbarAsset("avatar.png") +
-        '" width="40" height="40" alt="" class="size-10 rounded-full border-2 border-white object-cover dark:border-gray-800">' +
+        '" data-topbar-avatar-img width="40" height="40" alt="" class="size-10 rounded-full border-2 border-white object-cover dark:border-gray-800">' +
         "        </button>" +
         '        <el-menu anchor="bottom end" popover class="' +
         consumerUserMenuClass() +

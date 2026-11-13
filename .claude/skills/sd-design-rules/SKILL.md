@@ -5,7 +5,7 @@ description: Shared design and workflow rules for the SMART Disburse (SD) onboar
 
 # SMART Disburse: shared rules
 
-These rules are shared by the `sd-figma`, `sd-sandbox`, `sd-qa` and `sd-flow-mapper` agents. **On SMART Disburse they override** the suite skills `components` and `design-system` and `CLAUDE.md` where those disagree; elsewhere in the suite they don't apply. If you learn a new rule or the
+These rules are shared by the `sd-figma`, `sd-sandbox`, `sd-qa` and `sd-flow-mapper` agents, and by the suite agents (`proto-engineer`, `figma-designer`, `ui-qa-code`, `ui-qa-figma`) whenever they work on SD. **On SMART Disburse they override** the suite skills `components` and `design-system` and `CLAUDE.md` where those disagree; elsewhere in the suite they don't apply. If you learn a new rule or the
 user changes one, update **this file** (not the agent files) and say so in your report.
 
 Repo-wide rules still apply: `PROJECT_RULES.md` (code) and `wiki/AGENTS.md` (wiki, confidentiality,
@@ -53,13 +53,15 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
     scroll inside the Modal (previous version, replaced) and do not top-align the backdrop.
     **Exception (user-built on 6.6 desktop `1170:9894`, 2026-11-03): Review and agree (6.6/6.7, 7.12/7.13, 8.14/8.15,
     9.5/9.6) and the Document viewer (3.3/3.7/3.8/3.9) scroll ONLY inside the card**: `Modal & Background` (CENTER,
-    padding 24/16, #000 @75% + blur 5, no clip, no scroll) > `Modal` (FIXED width, height **FILL + maxHeight 752**,
-    clip, no scroll) with the inner "Agreement (scroll)" / "Viewer" FILL + vertical scroll. No Modal Wrapper.
+    padding **16 all round**, #000 @75% + blur 5, no clip, no scroll) > `Modal` (FIXED width, height **FILL, no maxHeight**:
+    full height, 16 from every frame edge, since 2026-11-09), clip, no scroll, with the inner "Agreement (scroll)" /
+    "Viewer" FILL + vertical scroll. No Modal Wrapper.
   - **Code:** `OBModal.open(body, labelledBy, { header, footer, bare, panelClass })`. The backdrop `[data-ob-modal]` is
     `fixed inset-0 overflow-y-auto`; `[data-ob-modal-frame]` is `flex min-h-full items-center justify-center px-4 py-6`;
     the panel keeps its natural height. Dialogs whose design has an inner scroller (Review and agree, document viewer)
-    cap the panel with `max-h-[min(752px,calc(100dvh-3rem))]` / `h-[min(752px,calc(100dvh-3rem))]` and a `min-h-0`
-    body root. Open with `dialog.focus({ preventScroll: true })`, or the backdrop jumps and the 24 top gap is lost.
+    are full height: `panelClass` `relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden`,
+    the frame's `px-4 py-6` swapped for `p-4` (16 on every side), and a `min-h-0 flex-1` body root
+    (`onboarding-consents.js` openReview, `review-documents.js` openViewer; commit 0343e34). Open with `dialog.focus({ preventScroll: true })`, or the backdrop jumps and the 24 top gap is lost.
     Popups inside a dialog (Decline reason list) are `fixed`: the backdrop's blur makes it their containing block and it
     scrolls, so add `backdrop.scrollTop` to the top. A footer submit button needs `form="<id>"`. On a failed submit use
     `OBModal.revealField(field, errorEl)` so the error message scrolls into view too (sd-qa, 2026-11-03).
@@ -73,6 +75,8 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
 - "See allocations log" on Change Allocation shows **only after a change exists** (code: `mp.log.length > 1`). Figma states before any change hide it.
 - Choose Payment Method chips (Message / Expiration / Full details): **phone hugs** (103/110/114, centred); **tablet and desktop are FILL, equal** (197 / 180 each). Code: `md:flex-1`. (Corrected 2026-10-26 after the Figma (t) frame was re-checked.)
 - The Dispute Message textarea is **88** tall.
+- **Dispute Total Amount path removed (user, 2026-11-05).** Current Allocation has ONE CTA, "Accept and Continue", for every party. Figma: the Dispute button, the 4.7 confirmation modal and the whole "Dispute" subsection of section 4 (4.2.0 form, 4.2.1 thank you, 4.2.2 errors) were deleted; one-button layout = "4.2 Other party view" (phone/tablet frames 80 shorter than the old two-button ones, desktop CTA bottom-anchored). Don't re-add a Dispute button.
+- **Decline Payment in multi-party → revoked, not disputed (user, 2026-11-09).** Decline Payment leads to `declined.html` ("access has been revoked") in every flow. Nothing in the UI leads to the "Disputed" closed screen any more (Figma `875:15636`, `875:15681`, t `1374:95688`; code `dispute.html`, `disputePage`, `OBFlow.dispute`): known orphan, don't report it in QA and don't wire Decline to it. The demo Scenario's Payment option is **Declined** (was "Disputed by primary party"): it stores an example decline and opens `declined.html`; confirming the real Decline dialog in multi-party sets the same state (`OBFlow.decline()`, `OBFlow.closedUrl()`). The 4.1.2 (m) missing Comment row vs sandbox is accepted (the comment design lives in "4.1 – Others accepted (with comment)").
 - **Titles are Regular + Semi Bold** (e.g. "Let's make sure **it's you!**"), consistent across steps.
 - The Payment Amount card has **no shadow**.
 - Disabled secondary button: keep the gray rule above (#ebebeb at 40%). Figma frames showing white are wrong.
@@ -93,6 +97,27 @@ Demo data on every screen: Rachel Morris, $5,000.00, Horizon Inc., BP-01003. It 
 - Change Allocation (m) frames: the gap above the CTA is exactly 56, matching code (user, 2026-10-26).
 - **Disabled secondary buttons have no shadow**, and the Review and agree md Cancel has no shadow, as in Figma/library (user, 2026-10-26). Enabled 56px secondaries keep the 0 1 2 shadow. Code: `disabled:shadow-none`; `SECONDARY_BUTTON_MD` has no shadow.
 - Don't change library components (SMART System) for SD-only fixes. Override locally in the SD file.
+
+## Dark mode (SD, 2026-11-09)
+
+Dark mode came from main (Vasile, `theme-init.js`, `?theme=dark|light`, class-based `dark:` variant). Every SD change ships light + dark (CLAUDE.md). Light must stay pixel-identical when fixing dark: keep the light classes/hex and **add** a `dark:` twin; check light with `sd-regression --local --visual`.
+
+- **Dark twins used in SD:** `text-[#111827]`→`dark:text-white`, `#374151`→`dark:text-gray-300`, `#6b7280`→`dark:text-gray-400`, `#2563eb`→`dark:text-blue-400`, `bg-[#f9fafb]`/`bg-white` (inner boxes)→`dark:bg-white/5`, borders `#e5e7eb`/`#d1d5db`→`dark:border-white/10`. Dialog panels `bg-white`→`dark:bg-gray-900` + `dark:ring-white/10`. Every hover/focus gets its dark twin (`dark:hover:bg-white/10`, `dark:focus-visible:outline-blue-400`).
+- **SVG assets made for a white page break in dark:** a check cut out of a blue circle shows the page (looks black); a pale `#BFDBFE` halo glows; near-white grey lines glare; a white band shows. Fix = keep the `<img>` with `dark:hidden` and add a CSS element `hidden dark:block` (dots/bullets: blue-500, current `ring-4 ring-blue-500/30`, pending `bg-white/20`; separators: `border-white/15`), or a `-dark.svg` asset (receipt edge: page-colour bites, white/10 outline, no fill over an already white/5 body).
+- **Translucent dark inputs (`bg-white/5`) show anything tucked under them** (e.g. the routing note with `-mt-2`): give the input wrapper the page colour underneath (`dark:bg-gray-900`).
+- The routing note is a shade darker than the input in dark (`gray-950/25`), mirroring light (gray-50 tray under a white input) (user, 2026-11-09).
+- Canvas ink can't use classes: read the theme from a rendered element (signature: title colour white → `#ffffff`, else `#111827`).
+- Review and agree on SD summaries: `documentScroll: true` + `scrollToEnd: true` (one click to the end; SX keeps a page per click). Figma (light only) matches since 2026-11-09: the whole Body scrolls (`Agreement (scroll)` = transparent p-24 scroller), the grey box `Agreement` hugs the full document, and the not-at-end frames carry `Fade` (h128, white 0→100 %) + `Scroll down` (48 round, gray-100, 2px white inside stroke, shadow/md, heroicons-mini/arrow-down 24 gray-700, ON_CLICK → the at-end frame). No dark frames yet.
+  Since 2026-11-09 (user) the Review and agree card is **full height, 16 from every frame edge** (sandbox `h-[calc(100dvh-2rem)]`): `Modal & Background` padding 16 all round, `Modal` FILL with no maxHeight (375×812 → 343×780, 768×1024 → 736×992, desktop 1048×992). The document viewer keeps 24 + maxHeight 752. The Terms text in Figma = `src/data/sd-virtual-card.json` agreements[0] (24 items; `## ` headings sit in a "Heading (pt-2)" frame with paddingTop 8, matching `agreementHtml`).
+- QA in dark: `qa:hover --dark` flags the sidebar / Contact Us / labels as `dark-low-contrast` (1.2) because it reads the container's colour, not the text's. Known false positives (same count before and after a change), not a reason to edit. Compare before/after with a worktree on another port (`SX_BASE=http://127.0.0.1:8898`).
+- `revoked.html` is a redirect stub to `payment-closed.html`; it needs no theme.
+
+## Dialog spacing (sd-sandbox, 2026-11-09)
+
+- Message dialogs (4.5 How it works…): "Learn more" sits 8 below the body text (no extra `mt-2`), Actions 24 below, Content padding 0/36/36/36.
+- Faster dialog (8.17/8.18, 9.8/9.9): 512 wide at every breakpoint, title 16 below the X row, options 60 tall (`border-2` + `py-[18px] px-[14px]`), card 428.
+- VC "How this works" (6.4 / 6.2.2): header 65 (`px-4 py-3` around the 32 close button), body copy is Figma 13 px auto line height → `text-[13px] leading-4`, 16 px labels `leading-5`, text gap 10. Bullets in Figma are inline "•  " text with no hanging indent → `list-inside list-disc` (no `pl-*`), or the phone list wraps one line more.
+- Fixed-height Figma phone frames (e.g. 1.0 (m) Verification, 830) bottom-anchor the CTA block: compare at the frame height (`--h 830`), not 812, before calling a Δ≈18 a bug.
 
 ## Usage budget (all agents and the coordinator)
 

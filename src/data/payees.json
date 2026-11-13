@@ -31,9 +31,9 @@
             "label": "Red Maple Construction \u2022\u2022\u2022\u2022 4128",
             "accountName": "Red Maple Construction",
             "bankName": "Wells Fargo",
-            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20224128",
-            "accountNumber": "0000000004128",
-            "maskedRouting": "\u2022\u2022\u2022\u2022\u20222847",
+            "maskedAccount": "\u2022\u2022\u2022\u20224128",
+            "accountNumber": "8707104128",
+            "maskedRouting": "\u2022\u2022\u2022\u20222847",
             "routingNumber": "121002847",
             "address": "1845 Willow Creek Rd\nAustin, TX 78701\nUnited States"
           }
@@ -44,9 +44,9 @@
             "label": "Red Maple Construction Wire \u2022\u2022\u2022\u2022 9901",
             "accountName": "Red Maple Construction",
             "bankName": "JPMorgan Chase",
-            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20229901",
-            "accountNumber": "9000000009901",
-            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220210",
+            "maskedAccount": "\u2022\u2022\u2022\u20229901",
+            "accountNumber": "9410569901",
+            "maskedRouting": "\u2022\u2022\u2022\u20220210",
             "routingNumber": "021000021",
             "address": "1845 Willow Creek Rd\nAustin, TX 78701\nUnited States"
           }
@@ -150,9 +150,9 @@
             "label": "Beacon Property Care \u2022\u2022\u2022\u2022 3842",
             "accountName": "Beacon Property Care",
             "bankName": "Bank of America",
-            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20223842",
-            "accountNumber": "0000000003842",
-            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220026",
+            "maskedAccount": "\u2022\u2022\u2022\u20223842",
+            "accountNumber": "7772103842",
+            "maskedRouting": "\u2022\u2022\u2022\u20220026",
             "routingNumber": "026009593",
             "address": "902 Market Street\nDallas, TX 75201\nUnited States"
           }
@@ -163,9 +163,9 @@
             "label": "Beacon Property Wire \u2022\u2022\u2022\u2022 7720",
             "accountName": "Beacon Property Care",
             "bankName": "Citi",
-            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20227720",
-            "accountNumber": "9000000007720",
-            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220089",
+            "maskedAccount": "\u2022\u2022\u2022\u20227720",
+            "accountNumber": "9652907720",
+            "maskedRouting": "\u2022\u2022\u2022\u20220089",
             "routingNumber": "021000089",
             "address": "902 Market Street\nDallas, TX 75201\nUnited States"
           }
@@ -250,9 +250,9 @@
             "label": "Mosaic Printing Co \u2022\u2022\u2022\u2022 2060",
             "accountName": "Mosaic Printing Co",
             "bankName": "U.S. Bank",
-            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20222060",
-            "accountNumber": "0000000002060",
-            "maskedRouting": "\u2022\u2022\u2022\u2022\u20221230",
+            "maskedAccount": "\u2022\u2022\u2022\u20222060",
+            "accountNumber": "4459122060",
+            "maskedRouting": "\u2022\u2022\u2022\u20221230",
             "routingNumber": "091000022",
             "address": "411 Harbor Ave\nNashville, TN 37203\nUnited States"
           }
@@ -263,9 +263,9 @@
             "label": "Mosaic Printing Wire \u2022\u2022\u2022\u2022 6005",
             "accountName": "Mosaic Printing Co",
             "bankName": "Wells Fargo",
-            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20226005",
-            "accountNumber": "9000000006005",
-            "maskedRouting": "\u2022\u2022\u2022\u2022\u20222847",
+            "maskedAccount": "\u2022\u2022\u2022\u20226005",
+            "accountNumber": "7609526005",
+            "maskedRouting": "\u2022\u2022\u2022\u20222847",
             "routingNumber": "121002847",
             "address": "411 Harbor Ave\nNashville, TN 37203\nUnited States"
           }
@@ -369,9 +369,9 @@
             "label": "Sierra Office Supply \u2022\u2022\u2022\u2022 3207",
             "accountName": "Sierra Office Supply",
             "bankName": "PNC Bank",
-            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20223207",
-            "accountNumber": "0000000003207",
-            "maskedRouting": "\u2022\u2022\u2022\u2022\u20222670",
+            "maskedAccount": "\u2022\u2022\u2022\u20223207",
+            "accountNumber": "7964383207",
+            "maskedRouting": "\u2022\u2022\u2022\u20222670",
             "routingNumber": "031000503",
             "address": "1201 Midtown Blvd\nDenver, CO 80202\nUnited States"
           }
@@ -382,9 +382,9 @@
             "label": "Sierra Office Wire \u2022\u2022\u2022\u2022 8884",
             "accountName": "Sierra Office Supply",
             "bankName": "JPMorgan Chase",
-            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20228884",
-            "accountNumber": "9000000008884",
-            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220210",
+            "maskedAccount": "\u2022\u2022\u2022\u20228884",
+            "accountNumber": "2834228884",
+            "maskedRouting": "\u2022\u2022\u2022\u20220210",
             "routingNumber": "021000021",
             "address": "1201 Midtown Blvd\nDenver, CO 80202\nUnited States"
           }
@@ -459,9 +459,9 @@
             "label": "TechNova Solutions \u2022\u2022\u2022\u2022 1086",
             "accountName": "TechNova Solutions LLC",
             "bankName": "Wells Fargo",
-            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20221086",
-            "accountNumber": "0000000001086",
-            "maskedRouting": "\u2022\u2022\u2022\u2022\u20222847",
+            "maskedAccount": "\u2022\u2022\u2022\u20221086",
+            "accountNumber": "5416821086",
+            "maskedRouting": "\u2022\u2022\u2022\u20222847",
             "routingNumber": "121002847",
             "address": "892 Innovation Blvd\nAustin, TX 78701\nUnited States"
           }
@@ -472,9 +472,9 @@
             "label": "TechNova Wire \u2022\u2022\u2022\u2022 5017",
             "accountName": "TechNova Solutions LLC",
             "bankName": "Citi",
-            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20225017",
-            "accountNumber": "9000000005017",
-            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220089",
+            "maskedAccount": "\u2022\u2022\u2022\u20225017",
+            "accountNumber": "2682235017",
+            "maskedRouting": "\u2022\u2022\u2022\u20220089",
             "routingNumber": "021000089",
             "address": "892 Innovation Blvd\nAustin, TX 78701\nUnited States"
           }
@@ -578,9 +578,9 @@
             "label": "Urban Pulse Marketing \u2022\u2022\u2022\u2022 7341",
             "accountName": "Urban Pulse Marketing",
             "bankName": "Bank of America",
-            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20227341",
-            "accountNumber": "0000000007341",
-            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220026",
+            "maskedAccount": "\u2022\u2022\u2022\u20227341",
+            "accountNumber": "3957387341",
+            "maskedRouting": "\u2022\u2022\u2022\u20220026",
             "routingNumber": "026009593",
             "address": "55 Madison Ave\nNew York, NY 10010\nUnited States"
           }
@@ -591,9 +591,9 @@
             "label": "Urban Pulse Wire \u2022\u2022\u2022\u2022 6688",
             "accountName": "Urban Pulse Marketing",
             "bankName": "JPMorgan Chase",
-            "maskedAccount": "\u2022\u2022\u2022\u2022\u2022\u20226688",
-            "accountNumber": "9000000006688",
-            "maskedRouting": "\u2022\u2022\u2022\u2022\u20220210",
+            "maskedAccount": "\u2022\u2022\u2022\u20226688",
+            "accountNumber": "3966626688",
+            "maskedRouting": "\u2022\u2022\u2022\u20220210",
             "routingNumber": "021000021",
             "address": "55 Madison Ave\nNew York, NY 10010\nUnited States"
           }

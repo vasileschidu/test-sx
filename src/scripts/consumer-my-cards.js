@@ -269,10 +269,10 @@
 
   // Same badge palette and icons as the Payments Received table.
   var TX_STATUS = {
-    Settled: 'border-green-300 bg-green-100 text-green-800 dark:border-green-500/30 dark:bg-green-500/10 dark:text-green-400',
-    Pending: 'border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300',
-    Declined: 'border-red-200 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400',
-    Refunded: 'border-gray-200 bg-gray-100 text-gray-800 dark:border-gray-400/20 dark:bg-gray-400/10 dark:text-gray-300'
+    Settled: 'border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400',
+    Pending: 'border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400',
+    Declined: 'border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400',
+    Refunded: 'border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300'
   };
   var TX_STATUS_ICON = {
     Settled: '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0 text-green-500"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd"/></svg>',
@@ -537,10 +537,10 @@
           '<h2 class="text-lg font-semibold text-gray-900 dark:text-white">Card Transaction History</h2>' +
           '<div class="flex gap-3 sm:ml-auto">' +
             '<div class="relative w-full sm:w-80"><div class="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 text-gray-400"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg></div>' +
-              '<input id="mc-tx-search" type="search" autocomplete="off" placeholder="Search transactions" aria-label="Search transactions" value="' + escapeHtml(detail.search) + '" class="block h-8 w-full rounded-md border-0 bg-white py-0 pr-3 pl-9 text-sm font-medium text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10" /></div>' +
+              '<input id="mc-tx-search" type="search" autocomplete="off" placeholder="Search transactions" aria-label="Search transactions" value="' + escapeHtml(detail.search) + '" class="block h-8 w-full rounded-md border-0 bg-white py-0 pr-3 pl-9 text-sm font-medium text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10 hover:not-focus:ring-gray-400 dark:hover:not-focus:ring-white/20" /></div>' +
             '<div class="relative"><button type="button" data-mc-tx-filter aria-expanded="' + detail.filterOpen + '" class="inline-flex cursor-pointer items-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/10">' +
               '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M10 4.75a.75.75 0 0 1 .75.75v3.75h3.75a.75.75 0 0 1 0 1.5h-3.75v3.75a.75.75 0 0 1-1.5 0v-3.75H5.5a.75.75 0 0 1 0-1.5h3.75V5.5a.75.75 0 0 1 .75-.75Z" /></svg>Filter' +
-              (detail.statuses.size ? '<span class="inline-flex items-center rounded-full bg-gray-50 px-1.5 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400">' + detail.statuses.size + '</span>' : '') +
+              (detail.statuses.size ? '<span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300">' + detail.statuses.size + '</span>' : '') +
             '</button><div id="mc-tx-filter-panel" class="absolute right-0 z-30 mt-2 w-56 overflow-hidden rounded-md bg-white shadow-lg outline-1 outline-black/5 dark:bg-gray-800 dark:outline-white/10' + (detail.filterOpen ? '' : ' hidden') + '">' + (detail.filterOpen ? txFilterPanel() : '') + '</div></div>' +
           '</div>' +
         '</div>' +

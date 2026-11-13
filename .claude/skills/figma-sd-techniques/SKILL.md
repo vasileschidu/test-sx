@@ -78,6 +78,11 @@ inside sections wrongly, so trust the audit.
   2. Lane shift = the shift of the unit that contains the lane, or the nearest unit to its left that overlaps in y. For an L-shape, include the target y in that y-range.
   3. Move, then rebuild with the shifted W, then audit.
 - Check for section overlaps after every move, using all four edges of each pair.
+- **Moving top-level sections re-routes PAGE-level connectors** (cross-section arrows), even when both ends move by the same amount; shifting `c.x` too doesn't help. What works (2026-11-05, sections 5+ moved −4471, 11 arrows, SVG byte-identical): create a temp SECTION at x/y 0 (so relative = absolute), `appendChild` the moved sections AND the page-level connectors whose both ends move, `tmp.x += D`, then append each section back to the page and reset `s.x` to its absolute x, append the connectors back plainly (they keep the absolute position), `tmp.remove()`, and restore the z-order with `page.insertChild(origIndex, node)`. Verify with the exported SVG (identical) and bbox (x shifted by D). Arrows with only one end moving: rebuild with cloneArrow (lane shifted with the unit that holds it).
+- **Connector ids change when someone rebuilds an arrow.** 2026-11-09: "Expiration" 1367:73000 no longer existed; the
+  section-4 one was already rebuilt as `1621:93324` with its lane back at x≈22707 (gap 22643–22771). Find arrows by
+  name + parent section, never trust an id from an older brief, and don't rebuild what is already right.
+- **An arrow can be re-routed by the editor after a plugin edit to its endpoint frame** (2026-11-05: "Expiration" 1367:73000; after the Dispute button was removed from 4.0 desktop, its lane slid from the tablet–desktop gap to x 22626, inside the tablet column). The plugin audit right after the edit was clean, so re-run `auditArrows()` at the start of the next run and rebuild any such arrow with its lane back in the gap.
 
 ## 4b. Modal structure recipe (FINAL 2026-11-03; built by the user on `1545:94795`, since deleted; live reference: 4.12 desktop `959:25701`)
 
@@ -93,7 +98,7 @@ Target: `Modal & Background` (the scroll layer) > `Modal Wrapper` (24 top/bottom
    tablet, 343 phone, or the modal's own width, e.g. 1048 Review/viewer), height **HUG**, `maxHeight=null`,
    `clipsContent=true`, `overflowDirection='NONE'`. Children Header / "Content" / Footer: HUG, no own scroll, original
    look. Exception: Review and agree and the Document viewer use `Modal & Background` (padding 24, no scroll) > `Modal`
-   (height FILL + maxHeight 752) with the inner scroller FILL — no wrapper (user's 6.6 desktop, 2026-11-03). Instance children: don't set `overflowDirection` (throws "cannot be overridden").
+   (height FILL, no maxHeight; backdrop padding 16 all round since 2026-11-09) with the inner scroller FILL — no wrapper (user's 6.6 desktop, 2026-11-03). Instance children: don't set `overflowDirection` (throws "cannot be overridden").
 5. Verify: the card box at normal size is unchanged (x, y, w, h); a tall card shows y < 0 in the editor — expected.
 Node ids of the card and its children survive the reparent.
 **Screen frame: `numberOfFixedChildren = 0`.** Phone/tablet screens had 2–3 "Fixed" children; with the backdrop among
@@ -137,6 +142,18 @@ Rollout notes (0.2 Decline, 2026-11-03):
   SVG byte-identical for 31 (one differed with the same bbox and a clean audit). Endpoints on the card / inside it keep
   their ids through the reparent. Audit 82 connectors, 0 issues before and after.
 
+**Review and agree, document-scroll version (2026-11-09, 24 frames 6.6/6.7, 7.12/7.13, 8.14/8.15, 9.5/9.6):** keep the
+node `Agreement (scroll)` (id, name, FILL, VERTICAL scroll: the prototype audit and the "Scroll to the end" arrows
+attach to it) but make it the transparent scroller (no fill/stroke/radius, padding 24, gap 0); move its texts into a new
+HUG auto-layout `Agreement` (padding 16, gap 16, gray/50 fill, gray/200 stroke, the old radius); Body padding 0 + clip;
+`Fade` and `Scroll down` are ABSOLUTE children of Body (siblings of the scroller, constraints STRETCH/MAX and
+CENTER/MAX) so they don't scroll. Put the full document in both states: clone the missing paragraphs from the partner
+frame (not-at-end gets the tail appended, at-end gets the head prepended; at-end keeps primaryAxisAlign MAX so it shows
+the end). Watch for near-duplicate paragraphs: desktop 6.7/7.13/8.15/9.6 have a longer Eligibility text than 6.6
+(dedupe by `characters` misses it; remove the clone). Move the `Scroll end trigger` to the content end
+(`box.y + box.height + 24 − 48`). Gradient stops can't bind variables (fade is raw white). No round icon button exists
+in SMART System; build it as a local frame with variables + `/shadow/md` + the heroicons-mini instance.
+
 ## 4c. Prototype audit (READ-ONLY; run after any modal / prototype work, before telling the user it's done)
 
 `references/prototype-audit.js` → `prototypeAudit(page, { limit })`. Paste the function, then:
@@ -163,7 +180,7 @@ How to read it: 0 in `modal.framesWithIssues`, `reactions.broken`, `connectors.d
 nothing from the audit on your own**: fixes go through the user first.
 What it cannot see: real prototype behaviour (whether a scroll actually works when played), hotspot geometry of the
 scroll-end triggers, whether an arrow/reaction points at the *right* screen, card widths, flow starting points.
-Known state 2026-11-04: 180 standard + 35 exception modals all clean; 24 exception (m)/(t) frames (3.3/3.7/3.8/3.9,
+Known state 2026-11-09: 177 standard + 35 exception, all clean with the full-height rule (exception = MB padding 16, Modal FILL, no maxHeight; Document viewer has no 3.9 desktop frame; phone "Tap to open full screen" badge pinned 36 above the Preview bottom, CENTER/MAX; tablet badges hidden, as code `md:hidden`). Earlier:  180 standard + 35 exception modals all clean; 24 exception (m)/(t) frames (3.3/3.7/3.8/3.9,
 6.6/6.7, 7.12/7.13, 8.14/8.15, 9.5/9.6) have the backdrop fixed (fixed=2: Top Bar + Modal & Background), untested
 whether that blocks the inner scroller; 1 empty ON_CLICK on 0.0 (m) Welcome "Ellipse 38" `1084:35152`. The original
 reference frame `1545:94795` (and wrapper `1537:101776`) no longer exists; 4.12 `959:25701` has the identical structure.
@@ -181,6 +198,38 @@ reference frame `1545:94795` (and wrapper `1537:101776`) no longer exists; 4.12 
 - **cloneArrow W offset with a `position` trigger:** the "Request Code" source has a BOTTOM-magnet trigger. With a `position` trigger the result once landed off by (−156, +144) from the requested W. Check the new route with `connectorSegments`; if it is off, rebuild once with W + (requested − actual). Keep the old connector until the new route checks out.
 - The W offset also happens with a BOTTOM-magnet trigger (2026-10-26, 8.19 → 8.20 straight-down arrow: off by (−9178, +70)). The one-shot correction W + (requested − actual) fixed it. Always check `connectorSegments` after every cloneArrow.
 - Modal buttons are often **renamed instances** ("OK", "Close"), not "General/Button". To scan labels, search TEXT nodes whose ancestor chain contains `Button/Primary`.
+- **To move an arrow's trigger, reassign the endpoint on a copy of the existing connector, not on a clone of
+  Request Code** (2026-11-09: it worked on all 3 "Scroll to the end" arrows 7.12/8.14/9.5 where cloneArrow had failed).
+  Do `const c = old.clone(); old.parent.appendChild(c); c.connectorEnd = { endpointNodeId: btn.id, position }`. The
+  copy keeps the editor's own route shape: the lane stays just outside the frame and the target entry is unchanged.
+  Check `connectorSegments` + the screen-hit test. If it is clean, `old.remove()` and insert the copy at the old
+  z-index; otherwise remove the copy, so the original is never touched. New ids: `1667:93343/93347/93351`.
+- `connectorTextPosition` throws "not a supported API" even on read (`'connectorTextPosition' in c` is true), and a
+  failed call is rolled back. Arrow labels can only be moved by hand in the editor.
+- **cloneArrow from a small ABSOLUTE trigger inside a modal (the 48px "Scroll down" button) is unreliable** (2026-11-09).
+  Exit `position {x:48, y:24}`, lane right of the desktop frame: 6.6 (`1636:93331`) landed 14px off in y after one
+  correction; 7.12 / 8.14 / 9.5 never converged (3 linear corrections each: the lane collapsed onto the target x or
+  overshot by 600–700px). The old arrows were kept. Next time: ask the user to drag the arrow start onto the button in
+  the editor (the editor re-routes it), and don't spend more than one correction.
 - Do not re-clone a clone through a temp frame with `tmp.x = W − srcW` when both share a parent: the route came out wildly wrong. Always clone from the Request Code source.
 - **General/Button is a wrapper** (no Size property, no fill) around a nested `Button/Primary` / `Button/Secondary` instance (Size xs–xl). For another size: `wrapper.children[0].setProperties({Size:'md'})`, then set wrapper AND inner `layoutSizingHorizontal='HUG'` and wrapper `layoutSizingVertical='HUG'` (the Default Primary wrapper is FIXED 56 and keeps the md inner at 56). The Primary wrapper turns on a right arrow icon: set every `Right Icon#…`/`Left Icon#…` boolean to false. The visible radius and the glow live on the **inner** instance; the wrapper's radius (10) is invisible.
+- **Removing a node that is a connector endpoint deletes the connector too** (2026-11-05: removing button 868:11113 silently removed arrow 1377:94234). Collect every connector id/endpoint you need BEFORE removing anything, and never touch a connector object after removing its endpoint (throws "node does not exist", the whole call rolls back). Before deleting buttons/frames, check that no arrow you must keep ends on them.
+- Removing a button from a 2-button CTA in a fixed-height (m)/(t) frame: shrink the frame by 56 + gap (80 on Current Allocation), clamped to 812 / 1024; leave 812/1024 viewport (modal) frames as they are. Desktop needs nothing (CTA bottom-anchored).
+- **Section 4 summary frames (2026-11-09):** the Dispute removal left `Content > Footer` (alMAX, grow) with
+  `minHeight 302` (two-button size), so the single CTA sat 80 lower and the Powered-by row was clipped. Fix:
+  `Footer.minHeight = 222` (one CTA + gap 24 + the 142 page footer, as 4.2 (m)/(t)) and frame h = max(812|1024,
+  Leading Content + 404 (m) / + 500 (t)). Only touch frames whose Footer holds a CTA: 4.9.1 Payment Status has its own
+  footer (min 142, no CTA). Skip the modal frames (4.5/4.6/4.12, 812/1024). The 4.2 (m) reference itself overflows 2px.
+- **Batch arrow planner (2026-11-09, 20 arrows in 3 calls, all first or second candidate).** Collect every
+  existing connector's segments once, then for each job try candidate W values in order:
+  - Lane = source frame right + 48 / 80 / 112 …; approach = target top − 64 / 96 / 128 …; entry = target FRAME
+    `position {x: w × 0.7 / 0.62 …, y: 0}`; trigger exit = right edge middle.
+  - Each candidate gets cloneArrow plus one correction.
+  - Accept the first candidate that lands within 16px of W, hits no screen except its own two, and runs along no
+    existing segment (same axis, < 6px apart, > 10px shared). Then add its segments to the list, so later jobs avoid it.
+  - Script template: the planner used in this run (JOBS + `plan()`); rebuild it from §1–2 helpers.
+  - Two arrows from one button: exit at different y (`position {x:w, y:16}` / `{y:40}`) and give them different lanes
+    and approach rows.
+- **cloneArrow first-try offset is about (−156, +145…151)** for a `position` trigger (5 arrows, 2026-11-09). One
+  correction W + (requested − actual) landed all 5 within 6px. Use one correction, then stop.
 - Gap above a bottom CTA in (m)/(t)/desktop form frames is `16 + Spacer + 16`. For a 56 minimum give the Spacer `minHeight 24`; don't switch a non-growing Spacer to grow (it moves the CTA to the frame bottom).

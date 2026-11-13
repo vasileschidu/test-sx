@@ -1,0 +1,336 @@
+<!--
+  @file dashboard/user-management.html
+  @description SMART Hub › Settings › User Management (Figma [REVIEW] User Management,
+    page "Implementation - OLD?", section 1. Users, states 6.0–6.4).
+    Tabs Users | Roles (?tab=roles). Data: um-store.js (localStorage sx_um_v1).
+-->
+<!doctype html>
+<html class="h-full bg-gray-100 dark:bg-gray-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Settings - User Management</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="../../../src/scripts/theme-init.js?v=20261112ic"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="../../scripts/tailwind-theme.js"></script>
+    <script src="../../../src/scripts/design-tokens.js"></script>
+    <link rel="stylesheet" href="../../../src/styles/cursor.css" />
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1"
+      type="module"
+    ></script>
+
+    <script src="../../../src/scripts/sidebar-boot.js?v=20261112cmp"></script>
+    <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
+    <script src="../../../src/scripts/app-plans.js?v=20261110-um3"></script>
+    <script src="../../../src/scripts/nav-component.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/app-switch.js?v=20261111sk3"></script>
+    <script src="../../../src/scripts/topbar-component.js?v=20261112bdg"></script>
+    <script src="../../scripts/checkbox-component.js"></script>
+    <script src="../../../src/scripts/sidebar.js?v=20261112cmp" defer></script>
+    <script src="../../../src/scripts/data-source.js"></script>
+    <script src="../../../src/scripts/shared.js?v=20261111mx" defer></script>
+    <script src="../../../src/scripts/shell-navigation.js?v=20261106c" defer></script>
+    <script src="../../../src/scripts/table-skeleton.js" defer></script>
+    <!-- OBField (inputs + errors) and OBModal.copyButton for the invite flow -->
+    <script src="../../scripts/onboarding-field.js?v=20261106a" defer></script>
+    <script src="../../scripts/onboarding-modal.js?v=20261110c" defer></script>
+    <script src="../../../src/scripts/um-store.js?v=20261111sh" defer></script>
+    <script src="../../../src/scripts/um-ui.js?v=20261113sq" defer></script>
+    <script src="../../../src/scripts/um-email.js?v=20261113fg" defer></script>
+    <script src="../../../src/scripts/um-invite.js?v=20261113sq" defer></script>
+    <script src="../../../src/scripts/user-management.js?v=20261113sq" defer></script>
+    <script src="../../../src/scripts/um-roles.js?v=20261111dh2" defer></script>
+    <link rel="stylesheet" href="../../styles/checkbox.css" />
+  </head>
+
+  <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
+    <div id="app-shell" class="min-h-screen">
+      <app-nav></app-nav>
+
+      <div
+        id="main-content-wrapper"
+        class="min-w-0 min-h-screen flex flex-col lg:pl-[360px]"
+      >
+        <app-topbar></app-topbar>
+
+        <main class="w-full p-2 lg:p-6">
+          <div class="flex flex-col gap-2 lg:gap-6">
+            <!-- Tabs Users | Roles: icon pill tabs in their own card (Figma 6.0) -->
+            <div class="rounded-lg bg-white p-4 shadow-sm dark:bg-gray-900">
+              <h1 class="sr-only">User Management</h1>
+              <div role="tablist" aria-label="User Management" class="flex gap-2">
+                <button type="button" role="tab" id="um-tab-users" data-um-tab="users" aria-controls="um-panel-users" aria-selected="true" class="group cursor-pointer inline-flex items-center gap-2 rounded-md px-3 py-2 type-label-large text-gray-600 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:bg-gray-100 aria-selected:bg-gray-100 aria-selected:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white dark:active:bg-white/10 dark:aria-selected:bg-white/10 dark:aria-selected:text-white">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6 shrink-0 text-gray-400 group-aria-selected:text-blue-600 dark:text-gray-500 dark:group-aria-selected:text-blue-400"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-.952 4.125 4.125 0 0 0-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 0 1 8.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0 1 11.964-3.07M12 6.375a3.375 3.375 0 1 1-6.75 0 3.375 3.375 0 0 1 6.75 0Zm8.25 2.25a2.625 2.625 0 1 1-5.25 0 2.625 2.625 0 0 1 5.25 0Z" /></svg>
+                  Users
+                </button>
+                <button type="button" role="tab" id="um-tab-roles" data-um-tab="roles" aria-controls="um-panel-roles" aria-selected="false" tabindex="-1" class="group cursor-pointer inline-flex items-center gap-2 rounded-md px-3 py-2 type-label-large text-gray-600 hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:bg-gray-100 aria-selected:bg-gray-100 aria-selected:text-gray-900 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-white dark:active:bg-white/10 dark:aria-selected:bg-white/10 dark:aria-selected:text-white">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6 shrink-0 text-gray-400 group-aria-selected:text-blue-600 dark:text-gray-500 dark:group-aria-selected:text-blue-400"><path stroke-linecap="round" stroke-linejoin="round" d="M10.5 6h9.75M10.5 6a1.5 1.5 0 1 1-3 0m3 0a1.5 1.5 0 1 0-3 0M3.75 6H7.5m3 12h9.75m-9.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-3.75 0H7.5m9-6h3.75m-3.75 0a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m-9.75 0h9.75" /></svg>
+                  Roles
+                </button>
+              </div>
+            </div>
+
+            <!-- ===== Tab: Users (Figma 6.0) ===== -->
+            <section
+              id="um-panel-users"
+              role="tabpanel"
+              aria-labelledby="um-tab-users"
+              class="rounded-lg bg-white shadow-sm dark:bg-gray-900"
+            >
+              <div class="border-b border-gray-200 px-4 py-4 sm:px-6 dark:border-white/10">
+                <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                  <div class="flex flex-col gap-1">
+                    <h2 class="text-lg/7 font-medium text-default">Users</h2>
+                    <p id="um-users-count" class="type-caption text-tertiary">&nbsp;</p>
+                  </div>
+                  <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                    <div class="grid w-full grid-cols-1 sm:w-72">
+                      <input
+                        id="um-search"
+                        type="text"
+                        role="searchbox"
+                        autocomplete="off"
+                        placeholder="Search"
+                        aria-label="Search users"
+                        class="col-start-1 row-start-1 block h-10 w-full rounded-md bg-white py-2 pr-3 pl-10 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:not-focus:outline-gray-400 dark:hover:not-focus:outline-white/20"
+                      />
+                      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 dark:text-gray-500">
+                        <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" />
+                      </svg>
+                    </div>
+                    <button
+                      id="um-add-user"
+                      type="button"
+                      class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60"
+                    >
+                      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="-ml-0.5 size-5 shrink-0"><path d="M10 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 18a9.953 9.953 0 0 1-5.385-1.572ZM16.25 5.75a.75.75 0 0 0-1.5 0v2h-2a.75.75 0 0 0 0 1.5h2v2a.75.75 0 0 0 1.5 0v-2h2a.75.75 0 0 0 0-1.5h-2v-2Z" /></svg>
+                      Add New User
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- ≥ md: table; < md: one card per user (same data, same actions).
+                   When the table is wider than the card it scrolls sideways and the actions column stays
+                   pinned on the right (same principle as Bills/Payables). -->
+              <div data-table-scroll class="mx-4 hidden overflow-x-auto sm:mx-6 md:block">
+                <table id="um-users-table" class="w-full min-w-4xl table-fixed border-separate border-spacing-0 xl:min-w-0 [&_tbody_tr:last-child>td]:border-b-0"></table>
+              </div>
+              <ul id="um-users-cards" role="list" class="divide-y divide-gray-200 px-4 sm:px-6 md:hidden dark:divide-white/10"></ul>
+
+              <div
+                data-um-pagination
+                class="border-t border-gray-200 px-4 py-4 sm:pr-6 dark:border-white/10"
+              ></div>
+            </section>
+
+            <!-- ===== Tab: Roles (Figma 4. Roles, 7.01–7.13); logic in um-roles.js ===== -->
+            <section
+              id="um-panel-roles"
+              role="tabpanel"
+              aria-labelledby="um-tab-roles"
+              hidden
+            >
+              <!-- Roles list (7.01 / 7.06) -->
+              <div id="um-roles-view" class="rounded-lg bg-white shadow-sm dark:bg-gray-900">
+                <div class="border-b border-gray-200 px-4 py-4 sm:px-6 dark:border-white/10">
+                  <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                    <div class="flex flex-col gap-1">
+                      <h2 class="text-lg/7 font-medium text-default">Roles</h2>
+                      <p id="um-roles-count" class="type-caption text-tertiary">&nbsp;</p>
+                    </div>
+                    <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+                      <div class="grid w-full grid-cols-1 sm:w-72">
+                        <input
+                        id="um-roles-search"
+                        type="text"
+                        role="searchbox"
+                        autocomplete="off"
+                        placeholder="Search"
+                        aria-label="Search roles"
+                        class="col-start-1 row-start-1 block h-10 w-full rounded-md bg-white py-2 pr-3 pl-10 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:not-focus:outline-gray-400 dark:hover:not-focus:outline-white/20"
+                      />
+                        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none col-start-1 row-start-1 ml-3 size-5 self-center text-gray-400 dark:text-gray-500">
+                        <path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" />
+                      </svg>
+                      </div>
+                      <button
+                      id="um-create-role"
+                      type="button"
+                      class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60"
+                    >
+                      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="-ml-0.5 size-5 shrink-0"><path d="M10 5a3 3 0 1 1-6 0 3 3 0 0 1 6 0ZM1.615 16.428a1.224 1.224 0 0 1-.569-1.175 6.002 6.002 0 0 1 11.908 0c.058.467-.172.92-.57 1.174A9.953 9.953 0 0 1 7 18a9.953 9.953 0 0 1-5.385-1.572ZM16.25 5.75a.75.75 0 0 0-1.5 0v2h-2a.75.75 0 0 0 0 1.5h2v2a.75.75 0 0 0 1.5 0v-2h2a.75.75 0 0 0 0-1.5h-2v-2Z" /></svg>
+                      Create Role
+                    </button>
+                    </div>
+                  </div>
+                </div>
+                <div data-table-scroll class="mx-4 hidden overflow-x-auto sm:mx-6 md:block">
+                  <table id="um-roles-table" class="w-full min-w-4xl table-fixed border-separate border-spacing-0 xl:min-w-0 [&_tbody_tr:last-child>td]:border-b-0"></table>
+                </div>
+                <ul id="um-roles-cards" role="list" class="divide-y divide-gray-200 px-4 sm:px-6 md:hidden dark:divide-white/10"></ul>
+                <div data-um-roles-pagination class="border-t border-gray-200 px-4 py-4 sm:pr-6 dark:border-white/10"></div>
+              </div>
+
+              <!-- Create / edit role (7.02–7.04, 7.07–7.09, 7.12–7.13) -->
+              <form id="um-role-form" novalidate hidden class="rounded-lg bg-white shadow-sm dark:bg-gray-900">
+                <div class="flex items-center justify-between gap-4 border-b border-gray-200 px-4 py-4 sm:px-6 dark:border-white/10">
+                  <div class="flex min-w-0 items-center gap-2">
+                    <button id="umr-back" type="button" class="-ml-1.5 inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-blue-600 active:bg-gray-200 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:focus-visible:outline-blue-400 dark:active:bg-white/15"><span class="sr-only">Back</span><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" clip-rule="evenodd" /></svg></button>
+                    <h2 id="umr-title" class="truncate text-lg/7 font-medium text-default">Create Role</h2>
+                  </div>
+                  <el-dropdown class="relative">
+                    <button id="umr-preset" type="button" class="inline-flex cursor-pointer items-center gap-1 rounded-md px-3 py-2 type-body text-gray-500 hover:bg-gray-50 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-blue-600 aria-expanded:outline-2 aria-expanded:outline-blue-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200 dark:aria-expanded:outline-blue-400">
+                      <span id="umr-preset-label">Select Preset</span>
+                      <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z" clip-rule="evenodd" /></svg>
+                    </button>
+                    <el-menu id="umr-preset-menu" anchor="bottom end" popover class="w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg outline-1 outline-black/5 transition [--anchor-gap:--spacing(1)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:divide-white/10 dark:bg-gray-800 dark:-outline-offset-1 dark:outline-white/10"></el-menu>
+                  </el-dropdown>
+                </div>
+                <div class="flex flex-col gap-12 px-4 py-6 sm:px-6">
+                  <section aria-labelledby="umr-info-title" class="flex flex-col gap-6">
+                    <div class="flex flex-col gap-1 border-b border-gray-200 pb-5 dark:border-white/10">
+                      <h3 id="umr-info-title" class="text-lg/7 font-medium text-default">Role Information</h3>
+                      <p class="type-description text-tertiary">Create a role based on available permissions and save it to assign to your business users.</p>
+                    </div>
+                    <div class="flex max-w-xl flex-col gap-6">
+                      <div class="flex flex-col gap-2">
+                        <label for="umr-name" class="type-label text-default">Role Name</label>
+                        <div class="relative" data-umr-name-wrap></div>
+                        <p id="umr-name-error" class="hidden"></p>
+                      </div>
+                      <div class="flex flex-col gap-2">
+                        <label for="umr-description" class="type-label text-default">Description</label>
+                        <textarea id="umr-description" rows="6" placeholder="What can people with this role do?"></textarea>
+                      </div>
+                    </div>
+                  </section>
+                  <section aria-labelledby="umr-perm-title" aria-describedby="umr-perm-error" class="flex flex-col gap-0">
+                    <div class="flex flex-col gap-1 border-b border-gray-200 pb-5 dark:border-white/10">
+                      <h3 id="umr-perm-title" class="text-lg/7 font-medium text-default">Permissions</h3>
+                      <p class="type-description text-tertiary">Select a set of permissions for this role.</p>
+                      <p id="umr-perm-error" class="hidden"></p>
+                    </div>
+                    <div id="umr-groups" class="flex flex-col"></div>
+                  </section>
+                </div>
+                <div class="flex justify-end gap-4 border-t border-gray-200 px-4 py-4 sm:gap-6 sm:px-6 dark:border-white/10">
+                  <button id="umr-cancel" type="button" class="inline-flex cursor-pointer items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:bg-gray-100 dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">Cancel</button>
+                  <button id="umr-submit" type="submit" class="inline-flex cursor-pointer items-center justify-center gap-2 rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:bg-blue-700 disabled:cursor-not-allowed disabled:bg-blue-300 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">Create</button>
+                </div>
+              </form>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <!-- ===== Figma 6.2 Remove User from Business (copy of vendors.html vn-confirm-dialog) ===== -->
+    <el-dialog>
+      <dialog id="um-remove-dialog" aria-labelledby="um-remove-title" aria-describedby="um-remove-text" class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+        <el-dialog-backdrop
+          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+        ></el-dialog-backdrop>
+        <div tabindex="0" class="flex min-h-full items-end justify-center p-4 focus:outline-none sm:items-center">
+          <el-dialog-panel class="relative w-full transform overflow-hidden rounded-lg bg-white text-left shadow-lg ring-1 ring-black/5 transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-white/10 sm:max-w-[512px]">
+            <div class="flex h-14 items-end justify-end px-4 pt-4"><button type="button" command="close" commandfor="um-remove-dialog" class="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:focus-visible:outline-blue-400"><span class="sr-only">Close</span><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg></button></div>
+            <div class="flex flex-col items-center gap-6 px-6 pb-6">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-11 text-red-600 dark:text-red-500"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" /></svg>
+              <div class="flex w-full flex-col gap-2 text-center">
+                <h2 id="um-remove-title" class="text-lg/6 font-semibold text-gray-900 dark:text-white">Remove User from Business</h2>
+                <p id="um-remove-text" class="text-sm/5 text-gray-500 dark:text-gray-400"></p>
+              </div>
+            </div>
+            <div class="flex flex-col gap-4 px-6 pb-6">
+              <button id="um-remove-confirm" type="button" class="w-full cursor-pointer rounded-md bg-red-600 px-6 py-3 text-base/6 font-medium text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 active:bg-red-700 dark:bg-red-500 dark:shadow-none dark:hover:bg-red-400">Remove</button>
+              <button type="button" command="close" commandfor="um-remove-dialog" class="w-full cursor-pointer rounded-md border border-gray-300 bg-white px-6 py-[11px] text-base/6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10">Cancel</button>
+            </div>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
+
+    <!-- ===== Delete role (same destructive confirm as Remove user; no Figma frame) ===== -->
+    <el-dialog>
+      <dialog id="um-role-delete-dialog" aria-labelledby="umrd-title" aria-describedby="umrd-text" class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+        <el-dialog-backdrop
+          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+        ></el-dialog-backdrop>
+        <div tabindex="0" class="flex min-h-full items-end justify-center p-4 focus:outline-none sm:items-center">
+          <el-dialog-panel class="relative w-full transform overflow-hidden rounded-lg bg-white text-left shadow-lg ring-1 ring-black/5 transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-white/10 sm:max-w-[512px]">
+            <div class="flex h-14 items-end justify-end px-4 pt-4"><button type="button" command="close" commandfor="um-role-delete-dialog" class="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:focus-visible:outline-blue-400"><span class="sr-only">Close</span><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg></button></div>
+            <div class="flex flex-col items-center gap-6 px-6 pb-6">
+              <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" class="size-11 text-red-600 dark:text-red-500"><path fill-rule="evenodd" d="M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003ZM12 8.25a.75.75 0 0 1 .75.75v3.75a.75.75 0 0 1-1.5 0V9a.75.75 0 0 1 .75-.75Zm0 8.25a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Z" clip-rule="evenodd" /></svg>
+              <div class="flex w-full flex-col gap-2 text-center">
+                <h2 id="umrd-title" class="text-lg/6 font-semibold text-gray-900 dark:text-white">Delete Role</h2>
+                <p id="umrd-text" class="text-sm/5 text-gray-500 dark:text-gray-400"></p>
+              </div>
+            </div>
+            <div class="flex flex-col gap-4 px-6 pb-6">
+              <button id="umrd-confirm" type="button" class="w-full cursor-pointer rounded-md bg-red-600 px-6 py-3 text-base/6 font-medium text-white shadow-xs hover:bg-red-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-600 active:bg-red-700 dark:bg-red-500 dark:shadow-none dark:hover:bg-red-400">Remove</button>
+              <button type="button" command="close" commandfor="um-role-delete-dialog" class="w-full cursor-pointer rounded-md border border-gray-300 bg-white px-6 py-[11px] text-base/6 font-medium text-gray-700 shadow-xs hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-white dark:hover:bg-white/10">Cancel</button>
+            </div>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
+
+    <!-- ===== Figma 7.05 Role Created (Vendors result dialog + green check) ===== -->
+    <el-dialog>
+      <dialog id="um-role-created-dialog" aria-labelledby="umrc-title" aria-describedby="umrc-text" class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+        <el-dialog-backdrop
+          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+        ></el-dialog-backdrop>
+        <div tabindex="0" class="flex min-h-full items-end justify-center p-4 focus:outline-none sm:items-center">
+          <el-dialog-panel class="relative w-full transform overflow-hidden rounded-lg bg-white text-left shadow-lg ring-1 ring-black/5 transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-white/10 sm:max-w-[512px]">
+            <div class="flex h-14 items-end justify-end px-4 pt-4"><button type="button" command="close" commandfor="um-role-created-dialog" class="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:focus-visible:outline-blue-400"><span class="sr-only">Close</span><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg></button></div>
+            <div class="flex flex-col items-center gap-6 px-6 pb-6">
+              <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-11 text-emerald-500 dark:text-emerald-400"><path fill-rule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16Zm3.857-9.809a.75.75 0 0 0-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 1 0-1.06 1.061l2.5 2.5a.75.75 0 0 0 1.137-.089l4-5.5Z" clip-rule="evenodd" /></svg>
+              <div class="flex w-full flex-col gap-2 text-center">
+                <h2 id="umrc-title" class="text-lg/6 font-semibold text-gray-900 dark:text-white">Role Created</h2>
+                <p id="umrc-text" class="text-sm/5 text-gray-500 dark:text-gray-400"></p>
+              </div>
+            </div>
+            <div class="flex flex-col gap-4 px-6 pb-6">
+              <button id="umrc-done" type="button" command="close" commandfor="um-role-created-dialog" class="w-full cursor-pointer rounded-md bg-blue-600 px-6 py-3 text-base/6 font-medium text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 active:bg-blue-700 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400">Done</button>
+            </div>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
+
+    <!-- ===== Figma 6.4 Multiple roles (full-height sheet on phones) ===== -->
+    <el-dialog>
+      <dialog id="um-roles-dialog" aria-labelledby="um-roles-title" class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">
+        <el-dialog-backdrop
+          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+        ></el-dialog-backdrop>
+        <div tabindex="0" class="flex min-h-full items-stretch justify-center focus:outline-none sm:items-center sm:p-4">
+          <el-dialog-panel class="relative flex w-full transform flex-col overflow-hidden bg-white text-left shadow-lg ring-1 ring-black/5 transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in max-sm:min-h-dvh sm:max-h-[calc(100dvh-2rem)] sm:max-w-xl sm:rounded-lg data-closed:sm:translate-y-0 data-closed:sm:scale-95 dark:bg-gray-900 dark:ring-white/10">
+            <div class="flex shrink-0 items-center gap-4 border-b border-gray-200 py-3 pr-3 pl-6 dark:border-white/10">
+              <h2 id="um-roles-title" class="min-w-0 flex-1 truncate type-body-large text-default"></h2>
+              <button type="button" command="close" commandfor="um-roles-dialog" class="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-1.5 text-gray-400 hover:bg-gray-100 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:focus-visible:outline-blue-400">
+                <span class="sr-only">Close</span>
+                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg>
+              </button>
+            </div>
+            <ul id="um-roles-list" role="list" class="min-h-0 flex-1 overflow-y-auto px-6 py-5"></ul>
+          </el-dialog-panel>
+        </div>
+      </dialog>
+    </el-dialog>
+  </body>
+</html>

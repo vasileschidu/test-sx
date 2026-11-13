@@ -84,14 +84,17 @@
 
   // ---- Receipt details -------------------------------------------------------
 
-  var LINE = '<img src="' + ASSETS + 'cc-line-dashed.svg" alt="" width="268" height="1" class="block h-px w-full">';
-  var LINE_SOLID = '<img src="' + ASSETS + 'cc-line-solid.svg" alt="" width="268" height="1" class="block h-px w-full">';
+  // Separators: SVGs in light, CSS borders in dark (the SVG greys are near-white on a dark receipt).
+  var LINE = '<img src="' + ASSETS + 'cc-line-dashed.svg" alt="" width="268" height="1" class="block h-px w-full dark:hidden">' +
+    '<span aria-hidden="true" class="hidden w-full border-t border-dashed border-white/15 dark:block"></span>';
+  var LINE_SOLID = '<img src="' + ASSETS + 'cc-line-solid.svg" alt="" width="268" height="1" class="block h-px w-full dark:hidden">' +
+    '<span aria-hidden="true" class="hidden w-full border-t border-white/15 dark:block"></span>';
 
   function item(label, lines) {
     return '<div class="flex flex-col">' +
-      '<dt class="text-xs leading-4 font-medium text-[#6b7280]">' + esc(label) + '</dt>' +
+      '<dt class="text-xs leading-4 font-medium text-[#6b7280] dark:text-gray-400">' + esc(label) + '</dt>' +
       lines.filter(Boolean).map(function (l) {
-        return '<dd class="text-base leading-6 break-words text-[#111827]"><span data-ob-skeleton>' + esc(l) + '</span></dd>';
+        return '<dd class="text-base leading-6 break-words text-[#111827] dark:text-white"><span data-ob-skeleton>' + esc(l) + '</span></dd>';
       }).join('') +
     '</div>';
   }
@@ -245,8 +248,8 @@
         '<div class="flex w-full flex-col items-center gap-4">' +
           M.illustration('icon-mail-notification.svg', 'bg-[#2b61df]/10') +
           '<div class="flex w-full flex-col items-center gap-2 text-center">' +
-            '<h2 id="cc-receipt-title" class="text-lg leading-6 font-medium text-[#111827]">' + esc(r.title) + '</h2>' +
-            '<p class="text-sm leading-5 text-[#6b7280]">' + esc(r.text) + '</p>' +
+            '<h2 id="cc-receipt-title" class="text-lg leading-6 font-medium text-[#111827] dark:text-white">' + esc(r.title) + '</h2>' +
+            '<p class="text-sm leading-5 text-[#6b7280] dark:text-gray-400">' + esc(r.text) + '</p>' +
           '</div>' +
         '</div>' +
         '<div class="flex w-full flex-col gap-1">' +
@@ -258,14 +261,14 @@
           '<p id="cc-receipt-email-error" data-cc-email-error class="hidden ' + F.ERROR_TEXT + '"></p>' +
         '</div>' +
         '<app-checkbox class="w-full" input-id="cc-receipt-consent" data-cc-consent>' + esc(r.consent) + ' ' +
-          '<button type="button" data-cc-terms class="cursor-pointer rounded text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-blue-600">' + esc(r.consentLink) + '</button>.' +
+          '<button type="button" data-cc-terms class="cursor-pointer rounded text-[#2563eb] dark:text-blue-400 hover:underline focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' + esc(r.consentLink) + '</button>.' +
         '</app-checkbox>' +
       '</div>',
       'cc-receipt-title',
       {
         footer: '<div class="flex flex-col gap-4 px-6 pb-6">' +
           '<button type="button" data-cc-send class="' + M.PRIMARY_BUTTON + '">Send and Continue</button>' +
-          '<button type="button" data-cc-skip class="' + M.BUTTON + ' border border-[#d1d5db] bg-white text-[#374151] hover:bg-gray-50 focus-visible:outline-blue-600">Skip</button>' +
+          '<button type="button" data-cc-skip class="' + M.BUTTON + ' border border-[#d1d5db] dark:border-white/10 bg-white dark:bg-white/5 text-[#374151] dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-white/10 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Skip</button>' +
         '</div>'
       }
     );
@@ -307,17 +310,33 @@
     backdrop.querySelector('[data-cc-terms]').addEventListener('click', function () {
       var terms = vcData.agreements[0];
       var keep = { email: input.value, consent: consent.checked, checked: draft.checked };
-      // min-h-0: on a short screen the text box shrinks and scrolls; the title stays.
+      // Same layout as the consents' "Review and agree" (onboarding-consents.js openReview):
+      // the title bar stays put and the text box below it scrolls. Read-only, so no buttons.
       var termsBackdrop = M.open(
-        '<div class="flex min-h-0 flex-col gap-4 px-6 pb-4">' +
-          '<h2 id="cc-terms-title" class="text-lg leading-6 font-medium text-[#111827]">' + esc(terms.title) + '</h2>' +
-          '<div class="max-h-[50vh] min-h-0 space-y-3 overflow-y-auto text-sm leading-5 text-[#374151]">' +
-            M.agreementHtml(terms.body) +
+        '<div class="flex min-h-0 flex-1 flex-col p-6">' +
+          '<div data-cc-terms-scroll tabindex="0" aria-label="' + esc(terms.title) + '" class="min-h-0 flex-1 overflow-y-auto rounded border border-[#e5e7eb] dark:border-white/10 bg-[#f9fafb] dark:bg-white/5 p-4 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] dark:[scrollbar-color:rgba(255,255,255,0.3)_transparent] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+            '<div class="flex flex-col gap-4 text-sm leading-5 text-[#374151] dark:text-gray-300">' +
+              '<p class="text-base leading-6 font-semibold text-[#111827] dark:text-white">' + esc(terms.title) + '</p>' +
+              M.agreementHtml(terms.body) +
+            '</div>' +
           '</div>' +
         '</div>',
         'cc-terms-title',
-        { footer: '<div class="flex flex-col px-6 pb-6"><button type="button" data-cc-terms-back class="' + M.PRIMARY_BUTTON + '">OK</button></div>' }
+        {
+          bare: true,
+          header: '<div class="flex shrink-0 items-center justify-between gap-2 border-b border-[#e5e7eb] dark:border-white/10 px-6 py-4">' +
+            '<h2 id="cc-terms-title" class="text-base leading-6 text-[#111827] dark:text-white">' + esc(terms.name) + '</h2>' +
+            '<button type="button" data-cc-terms-back class="inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+              '<span class="sr-only">Close</span><img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5"></button>' +
+          '</div>',
+          // Full height with a 16px gap on every side, like the SX document viewer (sx-enroll.js).
+          panelClass: 'relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black/5 dark:ring-white/10'
+        }
       );
+      var frame = termsBackdrop.querySelector('[data-ob-modal-frame]');
+      frame.classList.remove('px-4', 'py-6');
+      frame.classList.add('p-4');
+      // Read-only: X goes back to the receipt as it was.
       termsBackdrop.querySelector('[data-cc-terms-back]').addEventListener('click', function () {
         openReceipt(data, vcData, keep, after);
       });
@@ -332,9 +351,9 @@
       '<div class="flex flex-col items-center gap-6 px-6 pb-6">' +
         '<div class="flex w-full flex-col items-center gap-4">' +
           M.illustration('icon-mail-notification.svg', 'bg-[#2b61df]/10') +
-          '<h2 id="cc-check-how-title" class="text-center text-lg leading-6 font-medium text-[#111827]">' + esc(how.title) + '</h2>' +
+          '<h2 id="cc-check-how-title" class="text-center text-lg leading-6 font-medium text-[#111827] dark:text-white">' + esc(how.title) + '</h2>' +
         '</div>' +
-        '<ul class="w-full list-disc space-y-2 rounded-md bg-[#f9fafb] py-4 pr-4 pl-9 text-sm leading-5 text-[#374151]">' +
+        '<ul class="w-full list-disc space-y-2 rounded-md bg-[#f9fafb] dark:bg-white/5 py-4 pr-4 pl-9 text-sm leading-5 text-[#374151] dark:text-gray-300">' +
           how.items.map(function (item) { return '<li>' + esc(item) + '</li>'; }).join('') +
         '</ul>' +
       '</div>',
@@ -404,9 +423,9 @@
         '<div><dt class="sr-only">Debit card</dt>' +
           '<dd class="flex flex-col items-start gap-3">' + window.OBDebit.badge(card.brand, true) +
             '<span class="flex flex-col gap-0.5">' +
-              '<span class="text-base leading-6 text-[#111827]"><span data-ob-skeleton>' + esc(cardLines[0]) + '</span></span>' +
-              '<span class="text-xs leading-4 font-medium text-[#6b7280]">' + esc(cardLines[1]) + '</span>' +
-              '<span class="text-xs leading-4 font-medium text-[#6b7280]">' + esc(cardLines[2]) + '</span>' +
+              '<span class="text-base leading-6 text-[#111827] dark:text-white"><span data-ob-skeleton>' + esc(cardLines[0]) + '</span></span>' +
+              '<span class="text-xs leading-4 font-medium text-[#6b7280] dark:text-gray-400">' + esc(cardLines[1]) + '</span>' +
+              '<span class="text-xs leading-4 font-medium text-[#6b7280] dark:text-gray-400">' + esc(cardLines[2]) + '</span>' +
             '</span>' +
           '</dd></div>' +
         LINE +
@@ -467,7 +486,7 @@
       LINE +
       item('Transaction ID', [created.transactionId]) +
       LINE_SOLID +
-      '<div><dt class="sr-only">Paid by</dt><dd class="text-base leading-6 font-semibold text-[#111827]"><span data-ob-skeleton>' + esc(window.OBModal.clientName()) + '</span></dd></div>';
+      '<div><dt class="sr-only">Paid by</dt><dd class="text-base leading-6 font-semibold text-[#111827] dark:text-white"><span data-ob-skeleton>' + esc(window.OBModal.clientName()) + '</span></dd></div>';
 
     // Amount: the payment amount from the start of the flow.
     var ctx = window.SDOnboardingContext;

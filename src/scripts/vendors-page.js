@@ -416,12 +416,12 @@
 
   function buildEarlyPayment(vendor) {
     if (vendor.earlyPaymentAvailable) {
-      return '<span tabindex="0" data-early-tip="available" class="inline-flex cursor-default items-center rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs/4 font-medium whitespace-nowrap text-emerald-800 outline-none focus-visible:outline-2 focus-visible:outline-blue-600 dark:bg-emerald-500/15 dark:text-emerald-300">Available</span>';
+      return '<span tabindex="0" data-early-tip="available" class="inline-flex cursor-default items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border whitespace-nowrap border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400 outline-none focus-visible:outline-2 focus-visible:outline-blue-600">Available</span>';
     }
     return (
       '<span tabindex="0" data-early-tip="unavailable" data-vendor-id="' +
       escapeHtml(vendor.id) +
-      '" class="inline-flex cursor-default items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs/4 font-medium whitespace-nowrap text-gray-800 outline-none focus-visible:outline-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300">Not available</span>'
+      '" class="inline-flex cursor-default items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border whitespace-nowrap border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 outline-none focus-visible:outline-2 focus-visible:outline-blue-600">Not available</span>'
     );
   }
 
@@ -881,7 +881,7 @@
   }
 
   var INPUT_CLASS =
-    "block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500";
+    "block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:not-focus:outline-gray-400 dark:hover:not-focus:outline-white/20";
   var LABEL_CLASS = "text-sm/5 font-medium text-gray-700 dark:text-gray-300";
 
   function linkButton(attr, icon, label) {

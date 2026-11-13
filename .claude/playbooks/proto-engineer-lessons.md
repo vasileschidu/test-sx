@@ -45,3 +45,29 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-06 [dark-mode] A hex/class→dark: bulk script must skip tokens whose variant chain already contains `dark:` (else `dark:dark:text-…`), and `classList.toggle/add("a dark:b")` with a space throws InvalidCharacterError — split into two calls. Grep both after every bulk run.
 - 2026-11-06 [dark-mode] `inset-ring-gray-300` (secondary buttons) needs `dark:inset-ring-white/10`; green status badges/banners `bg-green-50`→`dark:bg-green-500/10` + `text-green-700`→`dark:text-green-400`.
 - 2026-11-06 [dark-mode] Scratchpad is shared by parallel agents: don't reuse/rely on a helper (conv.py) between runs — copy it to a private name first. First-run pixel "before" of a page can differ from a later baseline of the same code (flake): re-capture a baseline before blaming the change.
+- 2026-11-10 [shell][user-management] A new dashboard page needs 4 shell edits: nav.json + app-plans (href, `moduleForPage`),
+  nav-component (`APP_NAV_PAGE_MAP` + fallback NAV), topbar (breadcrumb + title maps). Pages outside shell-navigation's
+  PAGE_CONFIGS just do a full load — no SPA config needed.
+- 2026-11-10 [modal][a11y] el-dialog restores focus to its trigger on close; if the action removed that row, focus the
+  next target in the dialog's `close` event (setTimeout 0), not right after `dialog.close()`.
+- 2026-11-10 [qa] `clipped-text-no-tooltip` on `p.min-w-0.truncate` @390 on every dashboard page = topbar greeting; fixed with a title.
+- 2026-11-10 [figma][user-management] Built without Figma once and had to redo tabs, badges, actions and a whole page: if no
+  Figma screenshot is reachable, ask the coordinator for PNGs before building, don't infer layout from a text brief.
+- 2026-11-10 [user-management][store] A store that re-syncs a field from another source on every load (UMStore.syncCurrentUser
+  ← company profile) silently undoes local edits: mark locally edited records (`nameEdited`) and skip the sync for them.
+- 2026-11-10 [shell][topbar] Page-level top-bar updates: name hooks are `data-topbar-greeting-name|profile-name|avatar-initials`;
+  the avatar `<img>` has no hook (`button[aria-label="Open user menu"] img`); the topbar's own fill runs first on the same promise.
+- 2026-11-10 [modal][tailwind-plus] A `<el-dialog>` inserted by JS upgrades a tick later and closes its `<dialog>`: `showModal()`
+  right after insertion silently does nothing. Open on the next frame (rAF + setTimeout 0) the first time.
+- 2026-11-10 [user-management][test] E2E tests that look for a new row must widen the page size first (the row may land on page 2).
+- 2026-11-11 [modal][tailwind-plus] `el-dialog.close()` animates out and the page stays inert until the `close` event: open the
+  next screen (or focus a field) in that event, else typing and focus silently go nowhere.
+- 2026-11-11 [checkbox] `<app-checkbox>` moves `data-*` onto its inner input: query `input[data-x]`, not `[data-x] input`.
+- 2026-11-11 [refactor][qa] Prove a shared-helper extraction with request interception: `page.route(/file\.js(\?|$)/)` serving
+  `git show HEAD:` copies, then compare the rendered HTML. Globs like `**/x.js*` also catch `x.json`.
+- 2026-11-11 [shell][topbar] Cross-module data in the shared top bar: read the other module's localStorage directly (try/catch,
+  fallback to today), gate it by plan (`AppPlans.visibleModules()` nav children), and re-render on a custom event + `storage`.
+- 2026-11-11 [qa] Is a major pre-existing? Copy `git show HEAD:<page>` to a temp page next to it, audit, delete it.
+- 2026-11-11 [cards] Rounding phone cards also needs the `main` gutter: `p-0 sm:p-2` pages put the rounded corners on the screen edge.
+- 2026-11-13 [badges] Badge = Figma `13387:1709`: `gap-1 rounded(-full) px-2 py-0.5 text-xs/4|text-sm/5 font-medium border` + `{c}-100/200/800` (dark `{c}-400/10|20|400`); green->emerald, yellow->amber. Bulk-convert with a run-regex over `[^"'`<>]+` (not quoted strings: JS concat breaks quote pairing) and review the dry-run diff; clock/icon-left badges keep `gap-0.5 py-0.5 pl-1 pr-2`.
+- 2026-11-13 [qa] `qa:code --pages` needs full paths (`src/pages/dashboard/x.html`), not page names; a stuck Chrome launch/page.goto timeout is transient: re-run in background.

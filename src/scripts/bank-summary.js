@@ -39,17 +39,17 @@
 
   function item(label, lines) {
     return '<div class="flex flex-col">' +
-      '<p class="text-xs leading-4 font-medium text-[#6b7280]">' + esc(label) + '</p>' +
-      lines.filter(Boolean).map(function (l) { return '<p class="text-base leading-6 break-words text-[#111827]"><span data-ob-skeleton>' + esc(l) + '</span></p>'; }).join('') +
+      '<p class="text-xs leading-4 font-medium text-[#6b7280] dark:text-gray-400">' + esc(label) + '</p>' +
+      lines.filter(Boolean).map(function (l) { return '<p class="text-base leading-6 break-words text-[#111827] dark:text-white"><span data-ob-skeleton>' + esc(l) + '</span></p>'; }).join('') +
     '</div>';
   }
 
   function edit(href, what) {
-    return '<a href="' + href + '" class="shrink-0 rounded text-sm leading-5 font-medium text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">Edit<span class="sr-only"> ' + what + '</span></a>';
+    return '<a href="' + href + '" class="shrink-0 rounded text-sm leading-5 font-medium text-[#2563eb] dark:text-blue-400 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">Edit<span class="sr-only"> ' + what + '</span></a>';
   }
 
   function group(items, href, what, extra) {
-    return '<div class="flex flex-col gap-4 rounded-lg bg-[#f9fafb] p-6">' +
+    return '<div class="flex flex-col gap-4 rounded-lg bg-[#f9fafb] dark:bg-white/5 p-6">' +
       '<div class="flex items-center gap-4">' +
         '<div class="flex min-w-0 flex-1 flex-col gap-4">' + items + '</div>' +
         edit(href, what) +
@@ -104,6 +104,8 @@
 
     window.OBConsents.mount(document.querySelector('[data-bks-consents]'), data.agreements, {
       stateKey: 'bankConsents',
+      documentScroll: true,
+      scrollToEnd: true,
       onChange: function (all) { submitBtn.disabled = !all; }
     });
 
