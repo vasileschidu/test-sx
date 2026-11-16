@@ -1,7 +1,7 @@
 (function () {
   var root = document.documentElement;
   var collapsedSidebarWidth = 88;
-  var expandedSidebarWidth = 312;
+  var expandedSidebarWidth = 360;
   var collapsed = false;
 
   try {
@@ -10,6 +10,11 @@
   } catch (error) {
     collapsed = false;
   }
+  // 1024–1279px: rail collapsed by default (sidebar.js, COMPACT_DESKTOP_QUERY).
+  try {
+    if (window.matchMedia("(min-width: 1024px) and (max-width: 1279px)").matches)
+      collapsed = true;
+  } catch (error) {}
 
   root.setAttribute("data-sidebar-collapsed", collapsed ? "true" : "false");
   root.classList.add("sidebar-booting");

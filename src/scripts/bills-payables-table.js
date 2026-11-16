@@ -59,18 +59,18 @@
   }
 
   var BADGE_COLORS = {
-    gray: "border-gray-200 bg-gray-100 text-gray-900 dark:border-white/15 dark:bg-white/10 dark:text-gray-200",
-    red: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-500/15 dark:text-red-200",
+    gray: "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300",
+    red: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
     yellow:
-      "border-yellow-200 bg-yellow-100 text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-500/15 dark:text-yellow-200",
+      "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
     green:
-      "border-green-200 bg-green-100 text-green-800 dark:border-green-400/30 dark:bg-green-500/15 dark:text-green-200",
-    blue: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/30 dark:bg-blue-500/15 dark:text-blue-200",
+      "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
+    blue: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400",
     indigo:
-      "border-indigo-200 bg-indigo-100 text-indigo-800 dark:border-indigo-400/30 dark:bg-indigo-500/15 dark:text-indigo-200",
+      "border-indigo-200 bg-indigo-100 text-indigo-800 dark:border-indigo-400/20 dark:bg-indigo-400/10 dark:text-indigo-400",
     purple:
       "border-violet-200 bg-violet-100 text-violet-800 dark:border-violet-400/30 dark:bg-violet-500/15 dark:text-violet-200",
-    pink: "border-pink-200 bg-pink-100 text-pink-800 dark:border-pink-400/30 dark:bg-pink-500/15 dark:text-pink-200",
+    pink: "border-pink-200 bg-pink-100 text-pink-800 dark:border-pink-400/20 dark:bg-pink-400/10 dark:text-pink-400",
   };
 
   var STATUS_BADGE_COLORS = {
@@ -89,25 +89,27 @@
   ];
   var INACTIVE_TAB_LINK_CLASSES = [
     "text-gray-500",
+    "hover:bg-gray-50",
     "hover:text-gray-700",
     "dark:text-gray-400",
+    "dark:hover:bg-white/5",
     "dark:hover:text-gray-200",
   ];
   var ACTIVE_BADGE_CLASSES = [
+    "border-blue-200",
     "bg-blue-100",
     "text-blue-800",
-    "border-blue-200",
-    "dark:bg-blue-400/15",
-    "dark:text-blue-200",
-    "dark:border-blue-400/30",
+    "dark:border-blue-400/20",
+    "dark:bg-blue-400/10",
+    "dark:text-blue-400",
   ];
   var INACTIVE_BADGE_CLASSES = [
+    "border-gray-200",
     "bg-gray-100",
     "text-gray-800",
-    "border-gray-200",
-    "dark:bg-white/10",
-    "dark:text-gray-200",
     "dark:border-white/15",
+    "dark:bg-white/10",
+    "dark:text-gray-300",
   ];
   var EXCEPTION_TAB_LINK_CLASSES = [
     "bg-red-50",
@@ -116,12 +118,12 @@
     "dark:text-red-300",
   ];
   var EXCEPTION_BADGE_CLASSES = [
+    "border-red-200",
     "bg-red-100",
     "text-red-800",
-    "border-red-200",
-    "dark:bg-red-400/15",
-    "dark:text-red-200",
-    "dark:border-red-400/30",
+    "dark:border-red-400/20",
+    "dark:bg-red-400/10",
+    "dark:text-red-400",
   ];
 
   var state = {
@@ -201,12 +203,6 @@
   var pendingScheduleCancelId = "";
   var pendingRerunId = "";
   var draggingColumnKey = "";
-  var ICON_SORT =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-70" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-70" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var ICON_SORT_ASC =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path transform="translate(10 5.6) scale(1.2) translate(-10 -5.6)" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path class="opacity-40" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
-  var ICON_SORT_DESC =
-    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path class="opacity-40" fill-rule="evenodd" d="M10.53 3.47a.75.75 0 0 0-1.06 0L6.22 6.72a.75.75 0 1 0 1.06 1.06L10 5.06l2.72 2.72a.75.75 0 1 0 1.06-1.06l-3.25-3.25Z" clip-rule="evenodd" /><path transform="translate(10 14.4) scale(1.2) translate(-10 -14.4)" fill-rule="evenodd" d="M6.22 13.28a.75.75 0 0 1 1.06 0L10 15.94l2.72-2.66a.75.75 0 1 1 1.06 1.06l-3.25 3.19a.75.75 0 0 1-1.06 0l-3.25-3.19a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
   var ICON_CHEVRON_DOWN =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path fill-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" clip-rule="evenodd" /></svg>';
 
@@ -236,7 +232,8 @@
     if (!col) return " px-4";
     if (col.type === "expand") return " w-[52px] min-w-[52px] px-0";
     if (col.type === "select") return " w-8 min-w-8 px-2";
-    if (col.type === "action") return " w-[100px] min-w-[100px] px-0";
+    // Shrinks to the button (as the Users table): no empty space left of "Pay".
+    if (col.type === "action") return " w-px whitespace-nowrap px-4";
     if (col.key === "amount") return " w-[162px] min-w-[162px] px-4";
     if (col.key === "billNumber") return " w-[140px] min-w-[140px] px-4";
     if (col.key === "source") return " w-[208px] min-w-[208px] px-4";
@@ -258,6 +255,9 @@
     var refresh = document.getElementById("bp-refresh-btn");
     panel.style.display = count > 0 ? "flex" : "none";
     if (refresh) refresh.style.display = count > 0 ? "none" : "";
+    // The header compacts its toolbar while a selection shows (see bills-and-payables.html).
+    var head = panel.closest(".group\\/head");
+    if (head) head.setAttribute("data-selecting", count > 0 ? "true" : "false");
     var label = panel.querySelector("[data-selected-count]");
     if (label) label.textContent = count + " selected";
   }
@@ -265,10 +265,11 @@
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5 shrink-0" aria-hidden="true"><path fill-rule="evenodd" d="M4 1.75a.75.75 0 0 1 1.5 0V3h5V1.75a.75.75 0 0 1 1.5 0V3a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2V1.75ZM4.5 6a1 1 0 0 0-1 1v4.5a1 1 0 0 0 1 1h7a1 1 0 0 0 1-1V7a1 1 0 0 0-1-1h-7Z" clip-rule="evenodd" /></svg>';
   var ICON_ACH =
     '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5 text-gray-500 dark:text-gray-400 shrink-0"><path fill-rule="evenodd" d="M9.674 2.075a.75.75 0 0 1 .652 0l7.25 3.5A.75.75 0 0 1 17 6.957V16.5h.25a.75.75 0 0 1 0 1.5H2.75a.75.75 0 0 1 0-1.5H3V6.957a.75.75 0 0 1-.576-1.382l7.25-3.5ZM11 6a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM7.5 9.75a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Zm3.25 0a.75.75 0 0 0-1.5 0v5.5a.75.75 0 0 0 1.5 0v-5.5Z" clip-rule="evenodd" /></svg>';
+  // SMART Disburse cube / SMART Exchange logomark (same assets as Vendors and the Pay page).
   var ICON_SMART_DISBURSE =
-    '<svg width="20" height="20" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M0 15C0 8.42504 0 5.13755 1.81592 2.92485C2.14835 2.51978 2.51978 2.14835 2.92485 1.81592C5.13755 0 8.42504 0 15 0C21.575 0 24.8624 0 27.0751 1.81592C27.4802 2.14835 27.8516 2.51978 28.1841 2.92485C30 5.13755 30 8.42504 30 15C30 21.575 30 24.8624 28.1841 27.0751C27.8516 27.4802 27.4802 27.8516 27.0751 28.1841C24.8624 30 21.575 30 15 30C8.42504 30 5.13755 30 2.92485 28.1841C2.51978 27.8516 2.14835 27.4802 1.81592 27.0751C0 24.8624 0 21.575 0 15Z" fill="#406AFF"/><g clip-path="url(#clip0_1_52615)"><path fill-rule="evenodd" clip-rule="evenodd" d="M17.1957 12.1938C17.3572 11.7655 17.7672 11.4819 18.225 11.4819L25.0389 11.4819L25.0389 14.0119L19.2141 14.0119L15.3171 24.3468L8.87305 24.3468V21.8168L13.5672 21.8168L17.1957 12.1938Z" fill="white"/><path d="M24.7528 10.5068L30.6071 10.5068L27.4891 18.7759H21.6348L24.7528 10.5068Z" fill="#406AFF"/><path d="M11.2713 18.3096L14.9017 18.3096L11.8374 26.4361H8.20703L8.58516 21.7889L10.0421 21.7445L11.2713 18.3096Z" fill="#406AFF"/><path fill-rule="evenodd" clip-rule="evenodd" d="M12.7711 17.8057C12.6096 18.234 12.1996 18.5176 11.7418 18.5176L4.92787 18.5176L4.92787 15.9876L10.7527 15.9876L14.6497 5.65271L21.0938 5.65271L21.0938 8.18271L16.3996 8.18271L12.7711 17.8057Z" fill="white"/><path d="M5.21403 19.4927L-0.640302 19.4927L2.47769 11.2236L8.33203 11.2236L5.21403 19.4927Z" fill="#406AFF"/><path d="M18.7942 10.832L15.0651 11.6899L18.1293 3.5634L21.7598 3.5634L21.4343 8.25497L19.9247 8.25497L18.7942 10.832Z" fill="#406AFF"/></g><defs><clipPath id="clip0_1_52615"><rect width="22" height="22" fill="white" transform="translate(4 4)"/></clipPath></defs></svg>';
+    '<img src="../../../src/assets/vendors/method-smart-disburse.svg" alt="" width="20" height="20" class="size-5 shrink-0 object-contain" />';
   var ICON_SMART_EXCHANGE =
-    '<svg width="20" height="20" viewBox="0 0 14.9612 17.3457" fill="none" xmlns="http://www.w3.org/2000/svg" class="size-5 shrink-0"><path d="M7.48059 3.54123L11.9484 6.12074V11.2798L7.48059 13.8593L3.01274 11.2798V6.12074L7.48059 3.54123Z" fill="url(#sdhex0)"/><path d="M7.48059 8.70029L11.9484 6.12178V11.2788L7.48059 13.8646V8.70029Z" fill="url(#sdhex1)"/><path d="M7.4806 11.5378L9.93792 10.119L9.93791 7.28156L7.4806 5.86282L5.02328 7.28156L5.02328 10.119L7.4806 11.5378Z" fill="url(#sdhex2)"/><path d="M14.8807 4.42803V12.9729L7.48125 17.2454L0.0808594 12.9729V4.42803L7.48125 0.155566L14.8807 4.42803ZM1.23125 5.09209V12.3089L7.48125 15.9173L13.7303 12.3089V5.09209L7.48125 1.48369L1.23125 5.09209Z" fill="#C4ECF5"/><g fill="#3290FF"><circle cx="7.48059" cy="0.773855" r="0.773855"/><circle cx="7.48059" cy="16.5718" r="0.773855"/><circle cx="0.773855" cy="4.77128" r="0.773855"/><circle cx="14.1873" cy="4.77128" r="0.773855"/><circle cx="0.773855" cy="12.5743" r="0.773855"/><circle cx="14.1873" cy="12.5743" r="0.773855"/></g><defs><linearGradient id="sdhex0" x1="7.4714" y1="3.51642" x2="8.21703" y2="13.9493" gradientUnits="userSpaceOnUse"><stop stop-color="#3099FF"/><stop offset="1" stop-color="#3D5CFF"/></linearGradient><linearGradient id="sdhex1" x1="7.97474" y1="9.99996" x2="9.7145" y2="13.8646" gradientUnits="userSpaceOnUse"><stop stop-color="#003FD0"/><stop offset="1" stop-color="#2A60DD" stop-opacity="0"/></linearGradient><linearGradient id="sdhex2" x1="6.56035" y1="6.62498" x2="6.56035" y2="11.5378" gradientUnits="userSpaceOnUse"><stop stop-color="#2CB2FF" stop-opacity="0"/><stop offset="1" stop-color="#1FAEFF"/></linearGradient></defs></svg>';
+    '<img src="../../../src/assets/vendors/method-smart-exchange.svg" alt="" width="20" height="20" class="size-5 shrink-0 object-contain" />';
 
   function getTodayIsoDate() {
     var now = new Date();
@@ -997,17 +998,17 @@
   function buildManageColumnsRowHTML(col, checked, disabled) {
     var scopeBadge =
       col && col.key === "failureReason"
-        ? '<span class="inline-flex h-5 shrink-0 items-center rounded border border-gray-200 bg-gray-100 px-2 text-xs leading-4 font-medium text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-300">Exceptions</span>'
+        ? '<span class="inline-flex shrink-0 items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300">Exceptions</span>'
         : "";
     return (
       "" +
       '<div data-column-order-row="' +
       escapeHtml(col.key) +
-      '" class="group relative flex items-center gap-2.5 p-2' +
+      '" class="group relative flex items-center gap-2.5 rounded-lg p-2 hover:bg-gray-50 dark:hover:bg-white/5' +
       (disabled ? " opacity-60" : "") +
       '">' +
-      '  <span data-drop-line="before" class="pointer-events-none absolute top-0 right-2 left-7 z-10 h-0.5 -translate-y-1/2 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out"></span>' +
-      '  <span data-drop-line="after" class="pointer-events-none absolute right-2 bottom-0 left-7 z-10 h-0.5 translate-y-1/2 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out"></span>' +
+      '  <span data-drop-line="before" class="pointer-events-none absolute top-0 right-0 left-0 z-10 h-0.5 -translate-y-1/2 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out"></span>' +
+      '  <span data-drop-line="after" class="pointer-events-none absolute right-0 bottom-0 left-0 z-10 h-0.5 translate-y-1/2 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out"></span>' +
       '  <button type="button" draggable="true" data-column-drag-handle="' +
       escapeHtml(col.key) +
       '" class="inline-flex shrink-0 cursor-grab items-center justify-center rounded p-0.5 text-gray-500 active:cursor-grabbing dark:text-gray-400">' +
@@ -1016,7 +1017,7 @@
       '      <path d="M2.40039 10.8001C2.40039 10.1374 2.93765 9.6001 3.60039 9.6001C4.26313 9.6001 4.80039 10.1374 4.80039 10.8001C4.80039 11.4628 4.26313 12.0001 3.60039 12.0001C2.93765 12.0001 2.40039 11.4628 2.40039 10.8001Z" /><path d="M6.80039 10.8001C6.80039 10.1374 7.33765 9.6001 8.00039 9.6001C8.66313 9.6001 9.20039 10.1374 9.20039 10.8001C9.20039 11.4628 8.66313 12.0001 8.00039 12.0001C7.33765 12.0001 6.80039 11.4628 6.80039 10.8001Z" /><path d="M12.4004 9.6001C11.7376 9.6001 11.2004 10.1374 11.2004 10.8001C11.2004 11.4628 11.7376 12.0001 12.4004 12.0001C13.0631 12.0001 13.6004 11.4628 13.6004 10.8001C13.6004 10.1374 13.0631 9.6001 12.4004 9.6001Z" /><path d="M2.40039 6.00005C2.40039 5.33731 2.93765 4.80005 3.60039 4.80005C4.26313 4.80005 4.80039 5.33731 4.80039 6.00005C4.80039 6.66279 4.26313 7.20005 3.60039 7.20005C2.93765 7.20005 2.40039 6.66279 2.40039 6.00005Z" /><path d="M6.80039 6.00005C6.80039 5.33731 7.33765 4.80005 8.00039 4.80005C8.66313 4.80005 9.20039 5.33731 9.20039 6.00005C9.20039 6.66279 8.66313 7.20005 8.00039 7.20005C7.33765 7.20005 6.80039 6.66279 6.80039 6.00005Z" /><path d="M12.4004 4.80005C11.7376 4.80005 11.2004 5.33731 11.2004 6.00005C11.2004 6.66279 11.7376 7.20005 12.4004 7.20005C13.0631 7.20005 13.6004 6.66279 13.6004 6.00005C13.6004 5.33731 13.0631 4.80005 12.4004 4.80005Z" />' +
       "    </svg>" +
       "  </button>" +
-      '  <app-checkbox class="min-w-0 flex-1" data-column-visibility-toggle="' +
+      '  <app-checkbox class="min-w-0" data-column-visibility-toggle="' +
       escapeHtml(col.key) +
       '"' +
       (checked ? " checked" : "") +
@@ -1075,8 +1076,8 @@
     var size = opts.size === "small" ? "small" : "large";
     var shape = opts.type === "rounded" ? "rounded" : "square";
     var icon = opts.icon || "none";
-    var radius = shape === "rounded" ? "rounded-[512px]" : "rounded";
-    var typeSize = size === "small" ? "text-xs leading-4" : "text-sm leading-5";
+    var radius = shape === "rounded" ? "rounded-full" : "rounded";
+    var typeSize = size === "small" ? "text-xs/4" : "text-sm/5";
     var pad = "px-2 py-0.5";
     if (icon === "left") pad = "gap-0.5 py-0.5 pl-1 pr-2";
     else if (icon === "right") pad = "gap-0.5 py-0.5 pl-2 pr-1";
@@ -1625,17 +1626,24 @@
     });
   }
 
+  // Two-tone sort arrows, same as the Users table (um-ui.js sortHeader): the
+  // active half blue, the other dimmed; click the upper / lower arrow to pick asc / desc.
+  var SORT_ARROW_UP = "M10 3C10.2652 3 10.5196 3.10536 10.7071 3.29289L13.7071 6.29289C14.0976 6.68342 14.0976 7.31658 13.7071 7.70711C13.3166 8.09763 12.6834 8.09763 12.2929 7.70711L10 5.41421L7.70711 7.70711C7.31658 8.09763 6.68342 8.09763 6.29289 7.70711C5.90237 7.31658 5.90237 6.68342 6.29289 6.29289L9.29289 3.29289C9.48043 3.10536 9.73478 3 10 3Z";
+  var SORT_ARROW_DOWN = "M6.29289 12.2929C6.68342 11.9024 7.31658 11.9024 7.70711 12.2929L10 14.5858L12.2929 12.2929C12.6834 11.9024 13.3166 11.9024 13.7071 12.2929C14.0976 12.6834 14.0976 13.3166 13.7071 13.7071L10.7071 16.7071C10.3166 17.0976 9.68342 17.0976 9.29289 16.7071L6.29289 13.7071C5.90237 13.3166 5.90237 12.6834 6.29289 12.2929Z";
+  var SORT_TONE_IDLE =
+    "text-gray-400 group-hover:text-gray-600 dark:text-gray-500 dark:group-hover:text-gray-300";
+  var SORT_TONE_ON = "text-blue-600 dark:text-blue-400";
+  var SORT_TONE_DIM = "text-gray-300 dark:text-gray-600";
+
   function buildSortBadge(direction) {
-    var cls = direction
-      ? "inline-flex size-5 shrink-0 items-center justify-center text-blue-600 dark:text-blue-400"
-      : "inline-flex size-5 shrink-0 items-center justify-center text-gray-400 group-hover:text-gray-600 dark:text-gray-500";
-    var icon =
-      direction === "asc"
-        ? ICON_SORT_ASC
-        : direction === "desc"
-          ? ICON_SORT_DESC
-          : ICON_SORT;
-    return '<span class="' + cls + '">' + icon + "</span>";
+    var upTone = !direction ? SORT_TONE_IDLE : direction === "asc" ? SORT_TONE_ON : SORT_TONE_DIM;
+    var downTone = !direction ? SORT_TONE_IDLE : direction === "desc" ? SORT_TONE_ON : SORT_TONE_DIM;
+    return (
+      '<svg viewBox="0 0 20 20" aria-hidden="true" data-sort-arrows class="size-5 shrink-0">' +
+      '<path fill="currentColor" class="' + upTone + '" d="' + SORT_ARROW_UP + '"/>' +
+      '<path fill="currentColor" class="' + downTone + '" d="' + SORT_ARROW_DOWN + '"/>' +
+      "</svg>"
+    );
   }
 
   function sortRows(rows) {
@@ -2898,6 +2906,7 @@
     }
     state.activeTab = nextTab;
     state.currentPage = 1;
+    state.expandedRows.clear();
     state.isTabLoading = true;
     try {
       var nextUrl = new URL(window.location.href);
@@ -3564,11 +3573,11 @@
     )
       return;
     var LIFT_CLASSES = [
-      "bg-white",
+      "!bg-white",
       "shadow-lg",
       "ring-1",
       "ring-gray-900/10",
-      "dark:bg-gray-800",
+      "dark:!bg-gray-800",
       "dark:ring-white/15",
     ];
     function liftRow(row, on) {
@@ -3719,6 +3728,11 @@
           );
         }
       } catch (error) {}
+      // Figma: the row stays in place, faded, while its lifted copy follows the cursor.
+      setTimeout(function () {
+        liftRow(row, false);
+        row.classList.add("opacity-40");
+      }, 0);
     });
 
     refs.manageColumnsList.addEventListener("dragover", function (event) {
@@ -3753,6 +3767,12 @@
 
     refs.manageColumnsList.addEventListener("dragend", function () {
       clearAllLifts(refs.manageColumnsList);
+      Array.prototype.forEach.call(
+        document.querySelectorAll("[data-column-order-row].opacity-40"),
+        function (r) {
+          r.classList.remove("opacity-40");
+        },
+      );
       draggingColumnKey = "";
       dragTargetKey = "";
       dragTargetPosition = "before";
@@ -3914,7 +3934,7 @@
           : " border-b border-gray-200 dark:border-white/10";
         var expanded = state.expandedRows.has(row.id);
         var actionBgClass = expanded
-          ? " bg-gray-100 dark:bg-white/5"
+          ? " bg-gray-100 dark:bg-gray-900 dark:bg-linear-to-r dark:from-white/5 dark:to-white/5"
           : " bg-white dark:bg-gray-900";
         var rowCells = renderColumns
           .map(function (col) {
@@ -3979,7 +3999,9 @@
                 columnWidthClass(col) +
                 cb +
                 actionBgClass +
-                ' group-hover:bg-gray-50 dark:group-hover:bg-white/5">' +
+                // Opaque sticky cell: same white/5 layer as the row, over gray-900 (as exchanges-table.js),
+                // so the pinned Pay column does not show a lighter block on dark hover.
+                ' group-hover:bg-gray-50 dark:group-hover:bg-gray-900 dark:group-hover:bg-linear-to-r dark:group-hover:from-white/5 dark:group-hover:to-white/5">' +
                 actionButton +
                 "</td>"
               );
@@ -4158,22 +4180,28 @@
     refreshStickyAction();
   }
 
-  function applyActionDivider(cell, isActive, isDark) {
-    if (isActive) {
-      cell.style.borderLeftWidth = "1px";
-      cell.style.borderLeftStyle = "solid";
-      cell.style.borderLeftColor = isDark
-        ? "rgba(255,255,255,0.10)"
-        : "rgba(0,0,0,0.15)";
-      cell.style.boxShadow = isDark
-        ? "-10px 0 15px -3px rgba(0,0,0,0.3), -4px 0 6px -4px rgba(0,0,0,0.3)"
-        : "-10px 0 15px -3px rgba(0,0,0,0.1), -4px 0 6px -4px rgba(0,0,0,0.1)";
-    } else {
-      cell.style.borderLeftWidth = "0px";
-      cell.style.borderLeftStyle = "solid";
-      cell.style.borderLeftColor = "transparent";
-      cell.style.boxShadow = "none";
-    }
+  // Pinned Pay column, same approach as the Users table (um-ui.js STUCK_CLASSES):
+  // no divider line, just a soft gradient on its left edge while the table overflows.
+  var STUCK_EDGE_CLASSES = [
+    "before:pointer-events-none",
+    "before:absolute",
+    "before:inset-y-0",
+    "before:right-full",
+    "before:w-6",
+    "before:bg-linear-to-l",
+    "before:from-black/5",
+    "before:to-transparent",
+    "dark:before:from-black/20",
+  ];
+
+  function applyActionDivider(cell, isActive) {
+    STUCK_EDGE_CLASSES.forEach(function (cls) {
+      cell.classList.toggle(cls, isActive);
+    });
+    cell.style.borderLeftWidth = "";
+    cell.style.borderLeftStyle = "";
+    cell.style.borderLeftColor = "";
+    cell.style.boxShadow = "";
   }
 
   function initStickyAction(table) {
@@ -4184,7 +4212,6 @@
     function sync() {
       var maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
       var isOverflowing = maxScrollLeft > 0.5;
-      var isDark = document.documentElement.classList.contains("dark");
       var actionColumns = table.querySelectorAll("[data-action-column]");
       actionColumns.forEach(function (cell) {
         if (isOverflowing) {
@@ -4192,7 +4219,7 @@
         } else {
           cell.classList.remove("sticky", "right-0", "z-10");
         }
-        applyActionDivider(cell, isOverflowing, isDark);
+        applyActionDivider(cell, isOverflowing);
       });
     }
 
@@ -4266,7 +4293,8 @@
     var rangeLabel = total ? start + " - " + end : "0 - 0";
     refs.pagination.innerHTML =
       '<div class="flex w-full flex-wrap items-center justify-end gap-4">' +
-      '<div class="flex h-10 items-center gap-4">' +
+      // Phones: let "Rows per Page / Showing / buttons" wrap instead of running off the card.
+      '<div class="flex flex-wrap items-center justify-end gap-x-4 gap-y-3 sm:h-10 sm:flex-nowrap">' +
       '<span class="text-sm font-normal text-gray-700 dark:text-gray-300">Rows per Page:</span>' +
       '<el-dropdown class="inline-block">' +
       '<button type="button" class="inline-flex h-10 w-[75px] items-center justify-between rounded-md border border-gray-300 bg-white px-3 text-base leading-6 font-medium text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:shadow-none dark:hover:bg-white/10">' +
@@ -4318,7 +4346,8 @@
       "</div>";
   }
 
-  function exportCurrentRows() {
+  /** Export data for TableExport: every filtered row of the active tab, 8 columns. */
+  function getExportData() {
     var rows = getFilteredRows();
     var columns = [
       "amount",
@@ -4340,33 +4369,24 @@
       "Date Initiated",
       "Status",
     ];
-    var csv = [headers.join(",")];
-
-    rows.forEach(function (row) {
-      var values = columns.map(function (key) {
-        var value =
-          key === "amount"
+    var activeTab = document.querySelector('nav[aria-label="Tabs"] [data-tab][aria-current="page"] span');
+    var label = activeTab ? activeTab.textContent.trim() : "";
+    return {
+      columns: headers,
+      label: label,
+      title: "Bills and Payables" + (label ? " — " + label : ""),
+      rows: rows.map(function (row) {
+        return columns.map(function (key) {
+          return key === "amount"
             ? formatMoney(row.amount, row.currency)
             : key === "dueDate" || key === "adDate"
               ? formatDate(row[key])
               : key === "statusLabel"
                 ? getDisplayStatusLabel(row)
                 : row[key];
-        var safe = String(value == null ? "" : value).replace(/"/g, '""');
-        return '"' + safe + '"';
-      });
-      csv.push(values.join(","));
-    });
-
-    var blob = new Blob([csv.join("\n")], { type: "text/csv;charset=utf-8;" });
-    var url = URL.createObjectURL(blob);
-    var a = document.createElement("a");
-    a.href = url;
-    a.download = "bills-payables-export.csv";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+        });
+      }),
+    };
   }
 
   function bindEvents() {
@@ -4407,10 +4427,9 @@
       });
     }
 
-    if (refs.exportBtn) {
-      refs.exportBtn.addEventListener("click", function () {
-        exportCurrentRows();
-      });
+    // Export = format menu (CSV / JSON / Excel / PDF), table-export.js.
+    if (refs.exportBtn && window.TableExport) {
+      window.TableExport.attach(refs.exportBtn, { name: "bills-payables", getData: getExportData });
     }
 
     if (refs.tabNav && refs.tabNav.dataset.tabBound !== "1") {
@@ -4644,7 +4663,20 @@
         var sortBtn = e.target.closest("[data-sort-key]");
         if (sortBtn) {
           var sortKey = sortBtn.getAttribute("data-sort-key");
-          if (state.sortKey !== sortKey) {
+          // Mouse click on the arrows: upper half = asc, lower half = desc
+          // (clicking the active arrow again turns sorting off).
+          var arrows = e.target.closest && e.target.closest("[data-sort-arrows]");
+          if (arrows && e.detail > 0) {
+            var box = arrows.getBoundingClientRect();
+            var picked = e.clientY < box.top + box.height / 2 ? "asc" : "desc";
+            if (state.sortKey === sortKey && state.sortDirection === picked) {
+              state.sortKey = "";
+              state.sortDirection = "";
+            } else {
+              state.sortKey = sortKey;
+              state.sortDirection = picked;
+            }
+          } else if (state.sortKey !== sortKey) {
             state.sortKey = sortKey;
             state.sortDirection = "asc";
           } else if (state.sortDirection === "asc") {

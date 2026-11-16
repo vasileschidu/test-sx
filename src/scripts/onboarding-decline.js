@@ -27,8 +27,10 @@ window.OBDecline = (function () {
 
   var FIELD = 'w-full rounded-md bg-white dark:bg-white/5 text-base leading-6 shadow-xs outline-1 -outline-offset-1';
   // Colours from the SMART System "Text Field [New]" (see onboarding-field.js).
-  var FIELD_OK = 'outline-gray-300 dark:outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:focus:outline-blue-400';
-  var FIELD_ERROR = 'outline-red-300 focus:outline-2 focus:-outline-offset-2 focus:outline-red-500';
+  // Hover darkens the stroke one step (not while focused / open), as OBField does.
+  var FIELD_OK = 'outline-gray-300 dark:outline-white/10 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:focus:outline-blue-400 ' +
+    'hover:not-focus:not-aria-expanded:outline-gray-400 dark:hover:not-focus:not-aria-expanded:outline-white/20';
+  var FIELD_ERROR = 'outline-red-300 focus:outline-2 focus:-outline-offset-2 focus:outline-red-500 hover:not-focus:not-aria-expanded:outline-red-400';
 
   function markup(data) {
     var options = data.reasons.map(function (reason, i) {
@@ -257,6 +259,8 @@ window.OBDecline = (function () {
           declined: { reason: selected, note: note.value.trim(), declinedAt: new Date().toISOString() }
         });
       }
+      // Multi-party: the payment is now declined for the demo too (Scenario shows "Declined").
+      if (window.OBFlow && window.OBFlow.isMultiParty()) window.OBFlow.decline();
       window.OBGo('declined.html');
     });
 

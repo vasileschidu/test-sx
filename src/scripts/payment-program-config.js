@@ -561,16 +561,16 @@
     "inline-flex cursor-pointer items-center gap-1.5 text-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300";
   var BADGE = {
     active:
-      "border-green-200 bg-green-100 text-green-800 dark:border-green-400/20 dark:bg-green-500/10 dark:text-green-300",
+      "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
     draft:
-      "border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/20 dark:bg-yellow-400/10 dark:text-yellow-300",
+      "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
     neutral:
-      "border-gray-200 bg-gray-50 text-gray-700 dark:border-white/10 dark:bg-white/5 dark:text-gray-300",
+      "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300",
   };
 
   function badge(kind, label) {
     return (
-      '<span class="inline-flex shrink-0 items-center rounded-sm border px-2 py-0.5 text-xs font-medium ' +
+      '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border shrink-0 ' +
       BADGE[kind] +
       '">' +
       escapeHtml(label) +
@@ -1956,7 +1956,7 @@
     var where;
     if (!s.programId) {
       where =
-        '<span class="inline-flex shrink-0 items-center rounded-sm border border-gray-200 bg-gray-50 px-2 py-0.5 text-xs font-medium text-gray-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-300">Unassigned</span>';
+        '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 shrink-0">Unassigned</span>';
     } else {
       var owner = findProgram(s.programId);
       var cohorts = owner && owner.published ? owner.published.cohorts : [];
@@ -1966,10 +1966,10 @@
         ? "Already in this program"
         : "In " + programName(s.programId) + (n ? " · Cohort " + n : "");
       where =
-        '<span class="inline-flex max-w-[14rem] shrink-0 items-center truncate rounded-sm border px-2 py-0.5 text-xs font-medium ' +
+        '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border max-w-[14rem] shrink-0 truncate ' +
         (here
-          ? "border-gray-200 bg-gray-50 text-gray-500 dark:border-white/10 dark:bg-white/5 dark:text-gray-400"
-          : "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-300") +
+          ? "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300"
+          : "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400") +
         '" title="' +
         escapeHtml(label) +
         '">' +

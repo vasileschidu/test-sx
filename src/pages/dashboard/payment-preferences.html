@@ -25,7 +25,7 @@
       href="https://cdn.jsdelivr.net/npm/flag-icons@7.3.2/css/flag-icons.min.css"
     />
 
-    <script src="../../../src/scripts/theme-init.js?v=20261109a"></script>
+    <script src="../../../src/scripts/theme-init.js?v=20261112ic"></script>
 
     <!-- Tailwind -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -125,23 +125,23 @@
       src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1"
       type="module"
     ></script>
-    <script src="../../../src/scripts/sidebar-boot.js"></script>
+    <script src="../../../src/scripts/sidebar-boot.js?v=20261112cmp"></script>
     <!-- STP walkthrough: ?case=<id> shows only the demo case's data. -->
     <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
-    <script src="../../../src/scripts/app-plans.js?v=20261105-b4"></script>
-    <script src="../../../src/scripts/nav-component.js?v=20261109c"></script>
-    <script src="../../../src/scripts/stp-state.js?v=20261106a"></script>
-    <script src="../../../src/scripts/app-switch.js"></script>
-    <script src="../../../src/scripts/topbar-component.js?v=20261109a"></script>
+    <script src="../../../src/scripts/app-plans.js?v=20261110-um3"></script>
+    <script src="../../../src/scripts/nav-component.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/app-switch.js?v=20261111sk3"></script>
+    <script src="../../../src/scripts/topbar-component.js?v=20261112bdg"></script>
     <script src="../../scripts/checkbox-component.js"></script>
-    <script src="../../../src/scripts/sidebar.js" defer></script>
+    <script src="../../../src/scripts/sidebar.js?v=20261112cmp" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
-    <script src="../../../src/scripts/shared.js?v=20261109a" defer></script>
+    <script src="../../../src/scripts/shared.js?v=20261111mx" defer></script>
     <script src="../../../src/scripts/shell-navigation.js?v=20261106c" defer></script>
     <script>
       if (window.SXDemoCase) window.SXDemoCase.applyPageConfig();
     </script>
-    <script src="../../../src/scripts/payment-preferences-components.js?v=bank-tooltips-20261021j"></script>
+    <script src="../../../src/scripts/payment-preferences-components.js?v=20261112bdg"></script>
     <script
       src="../../../src/scripts/payment-preferences-tabs.js"
       defer
@@ -156,17 +156,17 @@
       <!-- ===== MAIN CONTENT ===== -->
       <div
         id="main-content-wrapper"
-        class="min-w-0 min-h-screen flex flex-col lg:pl-[312px]"
+        class="min-w-0 min-h-screen flex flex-col lg:pl-[360px]"
       >
         <!-- ===== TOP HEADER BAR ===== -->
         <app-topbar></app-topbar>
 
         <!-- ===== MAIN CONTENT AREA ===== -->
-        <main class="w-full flex justify-center p-0 sm:p-2 lg:p-4">
+        <main class="w-full flex justify-center p-2 lg:p-4">
           <div class="flex w-full max-w-[1280px] flex-col gap-5">
             <!-- ===== PAYMENT PREFERENCES CARD ===== -->
             <div
-              class="rounded-none sm:rounded-lg bg-white shadow-sm dark:bg-gray-900"
+              class="rounded-lg bg-white shadow-sm dark:bg-gray-900"
             >
               <!-- Head: Title + Tabs (separate top section) -->
               <div class="pt-5 sm:pt-6">
@@ -314,7 +314,7 @@
                                     <span
                                       id="pp-stp-status-badge"
                                       hidden
-                                      class="inline-flex items-center rounded-full border border-yellow-200 bg-yellow-100 px-2 py-0.5 text-xs leading-4 font-medium text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-300"
+                                      class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400"
                                       >Pending</span
                                     >
                                   </div>
@@ -511,7 +511,7 @@
                                 id="pp-cards-search-input"
                                 type="text"
                                 placeholder="Search customer"
-                                class="block h-8 w-full rounded-md border-0 bg-white pr-3 pl-10 text-sm leading-5 font-normal text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10 dark:placeholder:text-gray-500 dark:focus:ring-blue-500"
+                                class="block h-8 w-full rounded-md border-0 bg-white pr-3 pl-10 text-sm leading-5 font-normal text-gray-900 shadow-xs ring-1 ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-blue-600 focus:outline-none dark:bg-white/5 dark:text-white dark:ring-white/10 dark:placeholder:text-gray-500 dark:focus:ring-blue-500 hover:not-focus:ring-gray-400 dark:hover:not-focus:ring-white/20"
                               />
                             </div>
                             <div class="ml-auto flex items-center gap-4">
@@ -632,7 +632,7 @@
                                             id="pp-cards-filter-apply-btn"
                                             type="button"
                                             disabled
-                                            class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer"
+                                            class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 cursor-pointer"
                                           >
                                             Apply
                                           </button>
@@ -673,7 +673,7 @@
                                             id="pp-cards-filter-apply-status-btn"
                                             type="button"
                                             disabled
-                                            class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 cursor-pointer"
+                                            class="rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 cursor-pointer"
                                           >
                                             Apply
                                           </button>
@@ -4987,7 +4987,7 @@
                       id="pp-enable-stp-confirm-btn"
                       type="button"
                       disabled
-                      class="w-full rounded-md bg-blue-600 px-6 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300 md:w-auto"
+                      class="w-full rounded-md bg-blue-600 px-6 py-2.5 text-base font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 disabled:hover:bg-blue-300 md:w-auto"
                     >
                       Confirm
                     </button>
@@ -5347,7 +5347,7 @@
                 id="pp-verify-deposit-btn"
                 type="button"
                 disabled
-                class="inline-flex items-center justify-center whitespace-nowrap rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:hover:bg-blue-300"
+                class="inline-flex items-center justify-center whitespace-nowrap rounded-md bg-blue-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 disabled:hover:bg-blue-300"
               >
                 Verify
               </button>
@@ -5458,7 +5458,7 @@
 
     <script src="../../../src/scripts/table-ui.js?v=20261006f" defer></script>
     <script
-      src="../../../src/scripts/pages/payment-preferences-page.js?v=20261109-validation28"
+      src="../../../src/scripts/pages/payment-preferences-page.js?v=20261112bdg"
       defer
     ></script>
   </body>

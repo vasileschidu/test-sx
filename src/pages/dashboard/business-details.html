@@ -1,0 +1,118 @@
+<!--
+  @file dashboard/business-details.html
+  @description Business Details (Figma [REVIEW] User Management, 6.3): opened from the
+    business switcher in the top bar. Business info, associated applications and
+    business settings (ACH Debit). Data: um-store.js (localStorage sx_um_v1).
+-->
+<!doctype html>
+<html class="h-full bg-gray-100 dark:bg-gray-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Business Details</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="../../../src/scripts/theme-init.js?v=20261112ic"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="../../scripts/tailwind-theme.js"></script>
+    <script src="../../../src/scripts/design-tokens.js"></script>
+    <link rel="stylesheet" href="../../../src/styles/cursor.css" />
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1"
+      type="module"
+    ></script>
+
+    <script src="../../../src/scripts/sidebar-boot.js?v=20261112cmp"></script>
+    <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
+    <script src="../../../src/scripts/app-plans.js?v=20261110-um3"></script>
+    <script src="../../../src/scripts/nav-component.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/app-switch.js?v=20261111sk3"></script>
+    <script src="../../../src/scripts/topbar-component.js?v=20261112bdg"></script>
+    <script src="../../scripts/checkbox-component.js"></script>
+    <script src="../../../src/scripts/sidebar.js?v=20261112cmp" defer></script>
+    <script src="../../../src/scripts/data-source.js"></script>
+    <script src="../../../src/scripts/shared.js?v=20261111mx" defer></script>
+    <script src="../../../src/scripts/shell-navigation.js?v=20261106c" defer></script>
+    <!-- OBModal.copyButton (shared copy button: tooltip Copy/Copied, green check) -->
+    <script src="../../scripts/onboarding-modal.js?v=20261110c" defer></script>
+    <script src="../../../src/scripts/um-store.js?v=20261111sh" defer></script>
+    <script src="../../../src/scripts/business-details.js?v=20261112bdg" defer></script>
+    <link rel="stylesheet" href="../../styles/checkbox.css" />
+  </head>
+
+  <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
+    <div id="app-shell" class="min-h-screen">
+      <app-nav></app-nav>
+
+      <div
+        id="main-content-wrapper"
+        class="min-w-0 min-h-screen flex flex-col lg:pl-[360px]"
+      >
+        <app-topbar></app-topbar>
+
+        <main class="w-full p-2 lg:p-6">
+          <div id="bd-body" aria-busy="true" class="flex flex-col gap-10 rounded-lg bg-white p-4 shadow-sm sm:p-6 dark:bg-gray-900">
+            <!-- Header card: name + Status / Created On / Business ID (Figma 6.3) -->
+            <div class="flex flex-col gap-6 rounded-lg border border-gray-200 p-4 sm:p-6 lg:flex-row lg:items-center lg:justify-between dark:border-white/10">
+              <h1 id="bd-name" class="min-w-0 truncate text-2xl/8 font-semibold text-default"></h1>
+              <dl class="grid grid-cols-1 gap-4 sm:flex sm:gap-0 sm:divide-x sm:divide-gray-200 dark:sm:divide-white/10">
+                <div class="flex flex-col gap-1 sm:pr-10 sm:text-center">
+                  <dt class="type-overline text-tertiary">Status</dt>
+                  <dd id="bd-status"></dd>
+                </div>
+                <div class="flex flex-col gap-1 sm:px-10">
+                  <dt class="type-overline text-tertiary">Created On</dt>
+                  <dd id="bd-created" class="type-body-large text-default"></dd>
+                </div>
+                <div class="flex flex-col gap-1 sm:pl-10">
+                  <dt class="type-overline text-tertiary">Business ID</dt>
+                  <dd class="flex items-center gap-2"><span id="bd-id" class="type-body-large text-default tabular-nums"></span><span id="bd-id-copy" class="inline-flex"></span></dd>
+                </div>
+              </dl>
+            </div>
+
+            <!-- Associated Applications -->
+            <section aria-labelledby="bd-apps-title" class="flex flex-col gap-4">
+              <div class="flex flex-col gap-1 border-b border-gray-200 pb-4 dark:border-white/10">
+                <h2 id="bd-apps-title" class="text-lg/7 font-medium text-default">Associated Applications</h2>
+                <p class="type-description text-tertiary">This information will be displayed publicly so be careful what you share.</p>
+              </div>
+              <ul id="bd-apps" role="list" class="grid grid-cols-1 gap-6 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4"></ul>
+            </section>
+
+            <!-- Business Settings -->
+            <section aria-labelledby="bd-settings-title" class="flex flex-col gap-6">
+              <div class="flex flex-col gap-1 border-b border-gray-200 pb-4 dark:border-white/10">
+                <h2 id="bd-settings-title" class="text-lg/7 font-medium text-default">Business Settings</h2>
+                <p class="type-description text-tertiary">Your preferences will only apply to <span id="bd-settings-name" class="font-medium text-secondary"></span>.</p>
+              </div>
+              <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:gap-16">
+                <div class="flex max-w-md flex-col gap-1">
+                  <span id="bd-ach-label" class="type-body-large font-medium text-default">ACH Debit</span>
+                  <p id="bd-ach-help" class="type-description text-tertiary">If you enable ACH Debit for all customers, you are responsible for consent via NACHA rules. You can find the template of the NACHA consent to send to your customers by following this <a href="#" class="rounded-sm text-blue-600 underline hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300">link</a>.</p>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2 has-disabled:cursor-not-allowed has-disabled:opacity-50 dark:bg-white/5 dark:inset-ring-white/10 dark:outline-blue-500 dark:has-checked:bg-blue-500">
+                    <span class="size-5 rounded-full bg-white shadow-xs ring-1 ring-gray-900/5 transition-transform duration-200 ease-in-out group-has-checked:translate-x-5"></span>
+                    <input id="bd-ach" type="checkbox" name="ach-debit" disabled aria-labelledby="bd-ach-label" aria-describedby="bd-ach-help" class="absolute inset-0 size-full appearance-none cursor-pointer focus:outline-hidden disabled:cursor-not-allowed" />
+                  </div>
+                  <span id="bd-ach-state" aria-hidden="true" class="type-body text-tertiary">Off</span>
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

@@ -77,7 +77,7 @@
       "billNumber": "BP-01003",
       "payeeName": "Red Maple Construction",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-21",
+      "dueDate": "2026-11-02",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -103,14 +103,57 @@
         "attachments": [
           {
             "name": "invoice_BP-01003.pdf",
-            "size": "2.1mb"
+            "size": "64kb",
+            "src": "src/assets/documents/invoice-BP-01003.pdf"
           },
           {
             "name": "supporting_docs_BP-01003.pdf",
-            "size": "4.3mb"
+            "size": "73kb",
+            "src": "src/assets/documents/supporting-docs-BP-01003.pdf"
+          },
+          {
+            "name": "purchase_order_PO-4471.pdf",
+            "size": "68kb",
+            "src": "src/assets/documents/purchase-order-PO-4471.pdf"
+          },
+          {
+            "name": "delivery_receipt_0312.pdf",
+            "size": "61kb",
+            "src": "src/assets/documents/delivery-receipt-0312.pdf"
+          },
+          {
+            "name": "lien_waiver_BP-01003.pdf",
+            "size": "65kb",
+            "src": "src/assets/documents/lien-waiver-BP-01003.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Framing repair \u2014 partition wall",
+            "description": "Labor, licensed carpenter",
+            "quantity": 3,
+            "unit": "hrs",
+            "unitPrice": 65.0,
+            "amount": 195.0
+          },
+          {
+            "name": "Materials",
+            "description": "Lumber, drywall sheet, fasteners",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 212.41,
+            "amount": 212.41
+          },
+          {
+            "name": "Debris removal & disposal",
+            "description": "Haul-away, landfill fee",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 45.5,
+            "amount": 45.5
+          }
+        ]
       },
       "payeeId": "red-maple-construction",
       "statusType": "",
@@ -126,7 +169,7 @@
       "billNumber": "GL-01006",
       "payeeName": "Beacon Property Care",
       "source": "Batch Upload",
-      "dueDate": "2026-03-22",
+      "dueDate": "2026-11-05",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -152,14 +195,50 @@
         "attachments": [
           {
             "name": "invoice_GL-01006.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-GL-01006.pdf"
           },
           {
             "name": "supporting_docs_GL-01006.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01006.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Maintenance technician",
+            "description": "On-site service",
+            "quantity": 4,
+            "unit": "hrs",
+            "unitPrice": 58.0,
+            "amount": 232.0
+          },
+          {
+            "name": "Landscaping & grounds",
+            "description": "Mowing, edging, debris",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 120.63,
+            "amount": 120.63
+          },
+          {
+            "name": "HVAC filter replacement",
+            "description": "MERV-13 filters, all units",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 172.32,
+            "amount": 172.32
+          },
+          {
+            "name": "Supplies",
+            "description": "Paper goods, cleaning chemicals",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 172.32,
+            "amount": 172.32
+          }
+        ]
       },
       "payeeId": "beacon-property-care",
       "statusType": "",
@@ -175,7 +254,7 @@
       "billNumber": "VR-01009",
       "payeeName": "Red Maple Construction",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-23",
+      "dueDate": "2026-11-07",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -201,14 +280,50 @@
         "attachments": [
           {
             "name": "invoice_VR-01009.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-VR-01009.pdf"
           },
           {
             "name": "supporting_docs_VR-01009.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01009.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Carpentry labor",
+            "description": "Licensed carpenter",
+            "quantity": 5,
+            "unit": "hrs",
+            "unitPrice": 65.0,
+            "amount": 325.0
+          },
+          {
+            "name": "Building materials",
+            "description": "Lumber, drywall, fasteners",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 80.43,
+            "amount": 80.43
+          },
+          {
+            "name": "Debris removal & disposal",
+            "description": "Haul-away, landfill fee",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 214.48,
+            "amount": 214.48
+          },
+          {
+            "name": "Equipment rental",
+            "description": "Lift / scaffolding, daily",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 321.72,
+            "amount": 321.72
+          }
+        ]
       },
       "payeeId": "red-maple-construction",
       "statusType": "",
@@ -224,7 +339,7 @@
       "billNumber": "PO-01012",
       "payeeName": "Beacon Property Care",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-24",
+      "dueDate": "2026-11-10",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -250,14 +365,50 @@
         "attachments": [
           {
             "name": "invoice_PO-01012.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-PO-01012.pdf"
           },
           {
             "name": "supporting_docs_PO-01012.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01012.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Maintenance technician",
+            "description": "On-site service",
+            "quantity": 8,
+            "unit": "hrs",
+            "unitPrice": 58.0,
+            "amount": 464.0
+          },
+          {
+            "name": "HVAC filter replacement",
+            "description": "MERV-13 filters, all units",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 265.99,
+            "amount": 265.99
+          },
+          {
+            "name": "Supplies",
+            "description": "Paper goods, cleaning chemicals",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 190.0,
+            "amount": 190.0
+          },
+          {
+            "name": "Janitorial service",
+            "description": "Nightly cleaning, monthly contract",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 265.99,
+            "amount": 265.99
+          }
+        ]
       },
       "payeeId": "beacon-property-care",
       "statusType": "",
@@ -273,7 +424,7 @@
       "billNumber": "AP-01015",
       "payeeName": "Red Maple Construction",
       "source": "Manual Entry",
-      "dueDate": "2026-03-25",
+      "dueDate": "2026-11-16",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -299,14 +450,50 @@
         "attachments": [
           {
             "name": "invoice_AP-01015.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-AP-01015.pdf"
           },
           {
             "name": "supporting_docs_AP-01015.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01015.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Carpentry labor",
+            "description": "Licensed carpenter",
+            "quantity": 8,
+            "unit": "hrs",
+            "unitPrice": 65.0,
+            "amount": 520.0
+          },
+          {
+            "name": "Equipment rental",
+            "description": "Lift / scaffolding, daily",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 160.65,
+            "amount": 160.65
+          },
+          {
+            "name": "Building materials",
+            "description": "Lumber, drywall, fasteners",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 321.3,
+            "amount": 321.3
+          },
+          {
+            "name": "Debris removal & disposal",
+            "description": "Haul-away, landfill fee",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 428.39,
+            "amount": 428.39
+          }
+        ]
       },
       "payeeId": "red-maple-construction",
       "statusType": "",
@@ -322,7 +509,7 @@
       "billNumber": "BP-01018",
       "payeeName": "Beacon Property Care",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-26",
+      "dueDate": "2026-11-21",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -348,14 +535,50 @@
         "attachments": [
           {
             "name": "invoice_BP-01018.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-BP-01018.pdf"
           },
           {
             "name": "supporting_docs_BP-01018.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01018.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Maintenance technician",
+            "description": "On-site service",
+            "quantity": 7,
+            "unit": "hrs",
+            "unitPrice": 58.0,
+            "amount": 406.0
+          },
+          {
+            "name": "Janitorial service",
+            "description": "Nightly cleaning, monthly contract",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 265.98,
+            "amount": 265.98
+          },
+          {
+            "name": "Landscaping & grounds",
+            "description": "Mowing, edging, debris",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 265.99,
+            "amount": 265.99
+          },
+          {
+            "name": "HVAC filter replacement",
+            "description": "MERV-13 filters, all units",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 151.99,
+            "amount": 151.99
+          }
+        ]
       },
       "payeeId": "beacon-property-care",
       "statusType": "",
@@ -371,7 +594,7 @@
       "billNumber": "GL-01021",
       "payeeName": "Red Maple Construction",
       "source": "Batch Upload",
-      "dueDate": "2026-03-27",
+      "dueDate": "2026-11-26",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -397,14 +620,50 @@
         "attachments": [
           {
             "name": "invoice_GL-01021.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-GL-01021.pdf"
           },
           {
             "name": "supporting_docs_GL-01021.pdf",
-            "size": "4.3mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01021.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Carpentry labor",
+            "description": "Licensed carpenter",
+            "quantity": 8,
+            "unit": "hrs",
+            "unitPrice": 65.0,
+            "amount": 520.0
+          },
+          {
+            "name": "Equipment rental",
+            "description": "Lift / scaffolding, daily",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 177.03,
+            "amount": 177.03
+          },
+          {
+            "name": "Building materials",
+            "description": "Lumber, drywall, fasteners",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 389.46,
+            "amount": 389.46
+          },
+          {
+            "name": "Debris removal & disposal",
+            "description": "Haul-away, landfill fee",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 247.83,
+            "amount": 247.83
+          }
+        ]
       },
       "payeeId": "red-maple-construction",
       "statusType": "",
@@ -420,7 +679,7 @@
       "billNumber": "VR-01024",
       "payeeName": "Beacon Property Care",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-03-28",
+      "dueDate": "2026-12-01",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -446,14 +705,50 @@
         "attachments": [
           {
             "name": "invoice_VR-01024.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-VR-01024.pdf"
           },
           {
             "name": "supporting_docs_VR-01024.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01024.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Maintenance technician",
+            "description": "On-site service",
+            "quantity": 10,
+            "unit": "hrs",
+            "unitPrice": 58.0,
+            "amount": 580.0
+          },
+          {
+            "name": "Janitorial service",
+            "description": "Nightly cleaning, monthly contract",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 359.52,
+            "amount": 359.52
+          },
+          {
+            "name": "Landscaping & grounds",
+            "description": "Mowing, edging, debris",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 359.53,
+            "amount": 359.53
+          },
+          {
+            "name": "HVAC filter replacement",
+            "description": "MERV-13 filters, all units",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 279.63,
+            "amount": 279.63
+          }
+        ]
       },
       "payeeId": "beacon-property-care",
       "statusType": "",
@@ -469,7 +764,7 @@
       "billNumber": "PO-01027",
       "payeeName": "Red Maple Construction",
       "source": "NetSuite Import",
-      "dueDate": "2026-03-29",
+      "dueDate": "2026-12-06",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -495,14 +790,50 @@
         "attachments": [
           {
             "name": "invoice_PO-01027.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-PO-01027.pdf"
           },
           {
             "name": "supporting_docs_PO-01027.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01027.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Carpentry labor",
+            "description": "Licensed carpenter",
+            "quantity": 11,
+            "unit": "hrs",
+            "unitPrice": 65.0,
+            "amount": 715.0
+          },
+          {
+            "name": "Building materials",
+            "description": "Lumber, drywall, fasteners",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 517.08,
+            "amount": 517.08
+          },
+          {
+            "name": "Debris removal & disposal",
+            "description": "Haul-away, landfill fee",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 295.48,
+            "amount": 295.48
+          },
+          {
+            "name": "Equipment rental",
+            "description": "Lift / scaffolding, daily",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 295.47,
+            "amount": 295.47
+          }
+        ]
       },
       "payeeId": "red-maple-construction",
       "statusType": "",
@@ -518,7 +849,7 @@
       "billNumber": "AP-01030",
       "payeeName": "Beacon Property Care",
       "source": "Manual Entry",
-      "dueDate": "2026-03-30",
+      "dueDate": "2026-12-11",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -544,14 +875,50 @@
         "attachments": [
           {
             "name": "invoice_AP-01030.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-AP-01030.pdf"
           },
           {
             "name": "supporting_docs_AP-01030.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01030.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Maintenance technician",
+            "description": "On-site service",
+            "quantity": 14,
+            "unit": "hrs",
+            "unitPrice": 58.0,
+            "amount": 812.0
+          },
+          {
+            "name": "HVAC filter replacement",
+            "description": "MERV-13 filters, all units",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 523.08,
+            "amount": 523.08
+          },
+          {
+            "name": "Supplies",
+            "description": "Paper goods, cleaning chemicals",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 313.85,
+            "amount": 313.85
+          },
+          {
+            "name": "Janitorial service",
+            "description": "Nightly cleaning, monthly contract",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 418.46,
+            "amount": 418.46
+          }
+        ]
       },
       "payeeId": "beacon-property-care",
       "statusType": "",
@@ -567,7 +934,7 @@
       "billNumber": "BP-01033",
       "payeeName": "Red Maple Construction",
       "source": "Sage (ERP)",
-      "dueDate": "2026-03-31",
+      "dueDate": "2026-12-16",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -593,14 +960,50 @@
         "attachments": [
           {
             "name": "invoice_BP-01033.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-BP-01033.pdf"
           },
           {
             "name": "supporting_docs_BP-01033.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01033.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Carpentry labor",
+            "description": "Licensed carpenter",
+            "quantity": 10,
+            "unit": "hrs",
+            "unitPrice": 65.0,
+            "amount": 650.0
+          },
+          {
+            "name": "Building materials",
+            "description": "Lumber, drywall, fasteners",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 239.34,
+            "amount": 239.34
+          },
+          {
+            "name": "Debris removal & disposal",
+            "description": "Haul-away, landfill fee",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 239.33,
+            "amount": 239.33
+          },
+          {
+            "name": "Equipment rental",
+            "description": "Lift / scaffolding, daily",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 598.34,
+            "amount": 598.34
+          }
+        ]
       },
       "payeeId": "red-maple-construction",
       "statusType": "",
@@ -616,7 +1019,7 @@
       "billNumber": "GL-01036",
       "payeeName": "Beacon Property Care",
       "source": "Batch Upload",
-      "dueDate": "2026-04-01",
+      "dueDate": "2026-12-21",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -642,14 +1045,50 @@
         "attachments": [
           {
             "name": "invoice_GL-01036.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-GL-01036.pdf"
           },
           {
             "name": "supporting_docs_GL-01036.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01036.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Maintenance technician",
+            "description": "On-site service",
+            "quantity": 13,
+            "unit": "hrs",
+            "unitPrice": 58.0,
+            "amount": 754.0
+          },
+          {
+            "name": "Supplies",
+            "description": "Paper goods, cleaning chemicals",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 320.36,
+            "amount": 320.36
+          },
+          {
+            "name": "Janitorial service",
+            "description": "Nightly cleaning, monthly contract",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 320.36,
+            "amount": 320.36
+          },
+          {
+            "name": "Landscaping & grounds",
+            "description": "Mowing, edging, debris",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 576.65,
+            "amount": 576.65
+          }
+        ]
       },
       "payeeId": "beacon-property-care",
       "statusType": "",
@@ -665,7 +1104,7 @@
       "billNumber": "VR-01039",
       "payeeName": "Red Maple Construction",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-04-02",
+      "dueDate": "2026-12-26",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -691,14 +1130,50 @@
         "attachments": [
           {
             "name": "invoice_VR-01039.pdf",
-            "size": "2.1mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/invoice-VR-01039.pdf"
           },
           {
             "name": "supporting_docs_VR-01039.pdf",
-            "size": "4.3mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01039.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Carpentry labor",
+            "description": "Licensed carpenter",
+            "quantity": 13,
+            "unit": "hrs",
+            "unitPrice": 65.0,
+            "amount": 845.0
+          },
+          {
+            "name": "Equipment rental",
+            "description": "Lift / scaffolding, daily",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 164.49,
+            "amount": 164.49
+          },
+          {
+            "name": "Building materials",
+            "description": "Lumber, drywall, fasteners",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 603.12,
+            "amount": 603.12
+          },
+          {
+            "name": "Debris removal & disposal",
+            "description": "Haul-away, landfill fee",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 603.11,
+            "amount": 603.11
+          }
+        ]
       },
       "payeeId": "red-maple-construction",
       "statusType": "",
@@ -714,7 +1189,7 @@
       "billNumber": "PO-01042",
       "payeeName": "Beacon Property Care",
       "source": "NetSuite Import",
-      "dueDate": "2026-04-03",
+      "dueDate": "2026-12-31",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -740,14 +1215,50 @@
         "attachments": [
           {
             "name": "invoice_PO-01042.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-PO-01042.pdf"
           },
           {
             "name": "supporting_docs_PO-01042.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01042.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Maintenance technician",
+            "description": "On-site service",
+            "quantity": 16,
+            "unit": "hrs",
+            "unitPrice": 58.0,
+            "amount": 928.0
+          },
+          {
+            "name": "HVAC filter replacement",
+            "description": "MERV-13 filters, all units",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 204.28,
+            "amount": 204.28
+          },
+          {
+            "name": "Supplies",
+            "description": "Paper goods, cleaning chemicals",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 817.11,
+            "amount": 817.11
+          },
+          {
+            "name": "Janitorial service",
+            "description": "Nightly cleaning, monthly contract",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 510.69,
+            "amount": 510.69
+          }
+        ]
       },
       "payeeId": "beacon-property-care",
       "statusType": "",
@@ -763,7 +1274,7 @@
       "billNumber": "AP-01045",
       "payeeName": "Red Maple Construction",
       "source": "Manual Entry",
-      "dueDate": "2026-04-04",
+      "dueDate": "2027-01-05",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -789,14 +1300,50 @@
         "attachments": [
           {
             "name": "invoice_AP-01045.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-AP-01045.pdf"
           },
           {
             "name": "supporting_docs_AP-01045.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01045.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Carpentry labor",
+            "description": "Licensed carpenter",
+            "quantity": 16,
+            "unit": "hrs",
+            "unitPrice": 65.0,
+            "amount": 1040.0
+          },
+          {
+            "name": "Debris removal & disposal",
+            "description": "Haul-away, landfill fee",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 640.17,
+            "amount": 640.17
+          },
+          {
+            "name": "Equipment rental",
+            "description": "Lift / scaffolding, daily",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 256.07,
+            "amount": 256.07
+          },
+          {
+            "name": "Building materials",
+            "description": "Lumber, drywall, fasteners",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 768.2,
+            "amount": 768.2
+          }
+        ]
       },
       "payeeId": "red-maple-construction",
       "statusType": "",
@@ -812,7 +1359,7 @@
       "billNumber": "BP-01048",
       "payeeName": "Beacon Property Care",
       "source": "Sage (ERP)",
-      "dueDate": "2026-04-05",
+      "dueDate": "2027-01-10",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -838,14 +1385,50 @@
         "attachments": [
           {
             "name": "invoice_BP-01048.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-BP-01048.pdf"
           },
           {
             "name": "supporting_docs_BP-01048.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01048.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Maintenance technician",
+            "description": "On-site service",
+            "quantity": 16,
+            "unit": "hrs",
+            "unitPrice": 58.0,
+            "amount": 928.0
+          },
+          {
+            "name": "Janitorial service",
+            "description": "Nightly cleaning, monthly contract",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 253.42,
+            "amount": 253.42
+          },
+          {
+            "name": "Landscaping & grounds",
+            "description": "Mowing, edging, debris",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 253.42,
+            "amount": 253.42
+          },
+          {
+            "name": "HVAC filter replacement",
+            "description": "MERV-13 filters, all units",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 929.22,
+            "amount": 929.22
+          }
+        ]
       },
       "payeeId": "beacon-property-care",
       "statusType": "",
@@ -861,7 +1444,7 @@
       "billNumber": "GL-01051",
       "payeeName": "Red Maple Construction",
       "source": "Batch Upload",
-      "dueDate": "2026-04-06",
+      "dueDate": "2027-01-15",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -887,14 +1470,50 @@
         "attachments": [
           {
             "name": "invoice_GL-01051.pdf",
-            "size": "2.1mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/invoice-GL-01051.pdf"
           },
           {
             "name": "supporting_docs_GL-01051.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01051.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Carpentry labor",
+            "description": "Licensed carpenter",
+            "quantity": 16,
+            "unit": "hrs",
+            "unitPrice": 65.0,
+            "amount": 1040.0
+          },
+          {
+            "name": "Debris removal & disposal",
+            "description": "Haul-away, landfill fee",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 580.9,
+            "amount": 580.9
+          },
+          {
+            "name": "Equipment rental",
+            "description": "Lift / scaffolding, daily",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 464.72,
+            "amount": 464.72
+          },
+          {
+            "name": "Building materials",
+            "description": "Lumber, drywall, fasteners",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 522.8,
+            "amount": 522.8
+          }
+        ]
       },
       "payeeId": "red-maple-construction",
       "statusType": "",
@@ -910,7 +1529,7 @@
       "billNumber": "VR-01054",
       "payeeName": "Beacon Property Care",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-04-07",
+      "dueDate": "2027-01-20",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -936,14 +1555,50 @@
         "attachments": [
           {
             "name": "invoice_VR-01054.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-VR-01054.pdf"
           },
           {
             "name": "supporting_docs_VR-01054.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01054.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Maintenance technician",
+            "description": "On-site service",
+            "quantity": 19,
+            "unit": "hrs",
+            "unitPrice": 58.0,
+            "amount": 1102.0
+          },
+          {
+            "name": "Supplies",
+            "description": "Paper goods, cleaning chemicals",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 250.11,
+            "amount": 250.11
+          },
+          {
+            "name": "Janitorial service",
+            "description": "Nightly cleaning, monthly contract",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 500.22,
+            "amount": 500.22
+          },
+          {
+            "name": "Landscaping & grounds",
+            "description": "Mowing, edging, debris",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1000.45,
+            "amount": 1000.45
+          }
+        ]
       },
       "payeeId": "beacon-property-care",
       "statusType": "",
@@ -959,7 +1614,7 @@
       "billNumber": "PO-01057",
       "payeeName": "Red Maple Construction",
       "source": "NetSuite Import",
-      "dueDate": "2026-04-08",
+      "dueDate": "2027-01-25",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -985,14 +1640,50 @@
         "attachments": [
           {
             "name": "invoice_PO-01057.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-PO-01057.pdf"
           },
           {
             "name": "supporting_docs_PO-01057.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01057.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Carpentry labor",
+            "description": "Licensed carpenter",
+            "quantity": 19,
+            "unit": "hrs",
+            "unitPrice": 65.0,
+            "amount": 1235.0
+          },
+          {
+            "name": "Building materials",
+            "description": "Lumber, drywall, fasteners",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 709.38,
+            "amount": 709.38
+          },
+          {
+            "name": "Debris removal & disposal",
+            "description": "Haul-away, landfill fee",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 266.02,
+            "amount": 266.02
+          },
+          {
+            "name": "Equipment rental",
+            "description": "Lift / scaffolding, daily",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 886.73,
+            "amount": 886.73
+          }
+        ]
       },
       "payeeId": "red-maple-construction",
       "statusType": "",
@@ -1008,7 +1699,7 @@
       "billNumber": "AP-01060",
       "payeeName": "Beacon Property Care",
       "source": "Manual Entry",
-      "dueDate": "2026-04-09",
+      "dueDate": "2027-01-30",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -1034,14 +1725,50 @@
         "attachments": [
           {
             "name": "invoice_AP-01060.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-AP-01060.pdf"
           },
           {
             "name": "supporting_docs_AP-01060.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01060.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Maintenance technician",
+            "description": "On-site service",
+            "quantity": 23,
+            "unit": "hrs",
+            "unitPrice": 58.0,
+            "amount": 1334.0
+          },
+          {
+            "name": "Supplies",
+            "description": "Paper goods, cleaning chemicals",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 382.38,
+            "amount": 382.38
+          },
+          {
+            "name": "Janitorial service",
+            "description": "Nightly cleaning, monthly contract",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 573.57,
+            "amount": 573.57
+          },
+          {
+            "name": "Landscaping & grounds",
+            "description": "Mowing, edging, debris",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1051.54,
+            "amount": 1051.54
+          }
+        ]
       },
       "payeeId": "beacon-property-care",
       "statusType": "",
@@ -1057,7 +1784,7 @@
       "billNumber": "BP-01063",
       "payeeName": "Red Maple Construction",
       "source": "Sage (ERP)",
-      "dueDate": "2026-04-10",
+      "dueDate": "2027-02-04",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -1083,14 +1810,50 @@
         "attachments": [
           {
             "name": "invoice_BP-01063.pdf",
-            "size": "2.1mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/invoice-BP-01063.pdf"
           },
           {
             "name": "supporting_docs_BP-01063.pdf",
-            "size": "4.3mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01063.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Carpentry labor",
+            "description": "Licensed carpenter",
+            "quantity": 18,
+            "unit": "hrs",
+            "unitPrice": 65.0,
+            "amount": 1170.0
+          },
+          {
+            "name": "Debris removal & disposal",
+            "description": "Haul-away, landfill fee",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 366.22,
+            "amount": 366.22
+          },
+          {
+            "name": "Equipment rental",
+            "description": "Lift / scaffolding, daily",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 549.33,
+            "amount": 549.33
+          },
+          {
+            "name": "Building materials",
+            "description": "Lumber, drywall, fasteners",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 915.56,
+            "amount": 915.56
+          }
+        ]
       },
       "payeeId": "red-maple-construction",
       "statusType": "",
@@ -1106,7 +1869,7 @@
       "billNumber": "GL-01066",
       "payeeName": "Beacon Property Care",
       "source": "Batch Upload",
-      "dueDate": "2026-04-11",
+      "dueDate": "2027-02-09",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -1132,14 +1895,50 @@
         "attachments": [
           {
             "name": "invoice_GL-01066.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-GL-01066.pdf"
           },
           {
             "name": "supporting_docs_GL-01066.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01066.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Maintenance technician",
+            "description": "On-site service",
+            "quantity": 22,
+            "unit": "hrs",
+            "unitPrice": 58.0,
+            "amount": 1276.0
+          },
+          {
+            "name": "Supplies",
+            "description": "Paper goods, cleaning chemicals",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 562.71,
+            "amount": 562.71
+          },
+          {
+            "name": "Janitorial service",
+            "description": "Nightly cleaning, monthly contract",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 633.04,
+            "amount": 633.04
+          },
+          {
+            "name": "Landscaping & grounds",
+            "description": "Mowing, edging, debris",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 773.72,
+            "amount": 773.72
+          }
+        ]
       },
       "payeeId": "beacon-property-care",
       "statusType": "",
@@ -1155,7 +1954,7 @@
       "billNumber": "VR-01069",
       "payeeName": "Red Maple Construction",
       "source": "QuickBooks Sync",
-      "dueDate": "2026-04-12",
+      "dueDate": "2027-02-14",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -1181,14 +1980,50 @@
         "attachments": [
           {
             "name": "invoice_VR-01069.pdf",
-            "size": "2.1mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/invoice-VR-01069.pdf"
           },
           {
             "name": "supporting_docs_VR-01069.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01069.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Carpentry labor",
+            "description": "Licensed carpenter",
+            "quantity": 21,
+            "unit": "hrs",
+            "unitPrice": 65.0,
+            "amount": 1365.0
+          },
+          {
+            "name": "Building materials",
+            "description": "Lumber, drywall, fasteners",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 303.55,
+            "amount": 303.55
+          },
+          {
+            "name": "Debris removal & disposal",
+            "description": "Haul-away, landfill fee",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1011.82,
+            "amount": 1011.82
+          },
+          {
+            "name": "Equipment rental",
+            "description": "Lift / scaffolding, daily",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 809.46,
+            "amount": 809.46
+          }
+        ]
       },
       "payeeId": "red-maple-construction",
       "statusType": "",
@@ -1204,7 +2039,7 @@
       "billNumber": "PO-01072",
       "payeeName": "Beacon Property Care",
       "source": "NetSuite Import",
-      "dueDate": "2026-04-13",
+      "dueDate": "2027-02-19",
       "adDate": "",
       "status": "ready_to_pay",
       "statusLabel": "Ready to Pay",
@@ -1230,14 +2065,50 @@
         "attachments": [
           {
             "name": "invoice_PO-01072.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-PO-01072.pdf"
           },
           {
             "name": "supporting_docs_PO-01072.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01072.pdf"
           }
         ],
-        "activityLog": []
+        "activityLog": [],
+        "items": [
+          {
+            "name": "Maintenance technician",
+            "description": "On-site service",
+            "quantity": 25,
+            "unit": "hrs",
+            "unitPrice": 58.0,
+            "amount": 1450.0
+          },
+          {
+            "name": "Supplies",
+            "description": "Paper goods, cleaning chemicals",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 253.8,
+            "amount": 253.8
+          },
+          {
+            "name": "Janitorial service",
+            "description": "Nightly cleaning, monthly contract",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1142.09,
+            "amount": 1142.09
+          },
+          {
+            "name": "Landscaping & grounds",
+            "description": "Mowing, edging, debris",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 888.29,
+            "amount": 888.29
+          }
+        ]
       },
       "payeeId": "beacon-property-care",
       "statusType": "",
@@ -1279,11 +2150,13 @@
         "attachments": [
           {
             "name": "invoice_AP-01075.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-AP-01075.pdf"
           },
           {
             "name": "supporting_docs_AP-01075.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01075.pdf"
           }
         ],
         "activityLog": [
@@ -1311,6 +2184,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$3,775.00 payment initiated to Mosaic Printing Co"
+          }
+        ],
+        "items": [
+          {
+            "name": "Design & prepress",
+            "description": "Layout, proofs",
+            "quantity": 19,
+            "unit": "hrs",
+            "unitPrice": 72.0,
+            "amount": 1368.0
+          },
+          {
+            "name": "Brochures, tri-fold",
+            "description": "100lb gloss, full color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 612.21,
+            "amount": 612.21
+          },
+          {
+            "name": "Business cards",
+            "description": "16pt matte, 500 per box",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 408.14,
+            "amount": 408.14
+          },
+          {
+            "name": "Event signage",
+            "description": "Foam board, 24\u00d736",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1122.4,
+            "amount": 1122.4
           }
         ]
       },
@@ -1358,11 +2265,13 @@
         "attachments": [
           {
             "name": "invoice_BP-01078.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-BP-01078.pdf"
           },
           {
             "name": "supporting_docs_BP-01078.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01078.pdf"
           }
         ],
         "activityLog": [
@@ -1390,6 +2299,32 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$4,037.75 payment initiated to Sierra Office Supply"
+          }
+        ],
+        "items": [
+          {
+            "name": "Copy paper, letter (case)",
+            "description": "10 reams per case",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1706.87,
+            "amount": 1706.87
+          },
+          {
+            "name": "Toner cartridges",
+            "description": "Black, high yield",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 512.06,
+            "amount": 512.06
+          },
+          {
+            "name": "Desk accessories",
+            "description": "Organizers, staplers, tape",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1536.18,
+            "amount": 1536.18
           }
         ]
       },
@@ -1437,11 +2372,13 @@
         "attachments": [
           {
             "name": "invoice_GL-01081.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-GL-01081.pdf"
           },
           {
             "name": "supporting_docs_GL-01081.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01081.pdf"
           }
         ],
         "activityLog": [
@@ -1469,6 +2406,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$4,300.50 payment initiated to Mosaic Printing Co"
+          }
+        ],
+        "items": [
+          {
+            "name": "Design & prepress",
+            "description": "Layout, proofs",
+            "quantity": 22,
+            "unit": "hrs",
+            "unitPrice": 72.0,
+            "amount": 1584.0
+          },
+          {
+            "name": "Brochures, tri-fold",
+            "description": "100lb gloss, full color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 268.39,
+            "amount": 268.39
+          },
+          {
+            "name": "Business cards",
+            "description": "16pt matte, 500 per box",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1341.92,
+            "amount": 1341.92
+          },
+          {
+            "name": "Event signage",
+            "description": "Foam board, 24\u00d736",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 805.16,
+            "amount": 805.16
           }
         ]
       },
@@ -1516,11 +2487,13 @@
         "attachments": [
           {
             "name": "invoice_VR-01084.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-VR-01084.pdf"
           },
           {
             "name": "supporting_docs_VR-01084.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01084.pdf"
           }
         ],
         "activityLog": [
@@ -1548,6 +2521,32 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$4,563.25 payment initiated to Sierra Office Supply"
+          }
+        ],
+        "items": [
+          {
+            "name": "Copy paper, letter (case)",
+            "description": "10 reams per case",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1212.52,
+            "amount": 1212.52
+          },
+          {
+            "name": "Toner cartridges",
+            "description": "Black, high yield",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2222.95,
+            "amount": 2222.95
+          },
+          {
+            "name": "Desk accessories",
+            "description": "Organizers, staplers, tape",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 808.35,
+            "amount": 808.35
           }
         ]
       },
@@ -1594,11 +2593,13 @@
         "attachments": [
           {
             "name": "invoice_PO-01087.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-PO-01087.pdf"
           },
           {
             "name": "supporting_docs_PO-01087.pdf",
-            "size": "4.3mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01087.pdf"
           }
         ],
         "activityLog": [
@@ -1626,6 +2627,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$4,826.00 payment initiated to Mosaic Printing Co"
+          }
+        ],
+        "items": [
+          {
+            "name": "Design & prepress",
+            "description": "Layout, proofs",
+            "quantity": 24,
+            "unit": "hrs",
+            "unitPrice": 72.0,
+            "amount": 1728.0
+          },
+          {
+            "name": "Event signage",
+            "description": "Foam board, 24\u00d736",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 627.31,
+            "amount": 627.31
+          },
+          {
+            "name": "Envelopes, printed #10",
+            "description": "Two color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 752.78,
+            "amount": 752.78
+          },
+          {
+            "name": "Brochures, tri-fold",
+            "description": "100lb gloss, full color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1380.09,
+            "amount": 1380.09
           }
         ]
       },
@@ -1672,11 +2707,13 @@
         "attachments": [
           {
             "name": "invoice_AP-01090.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-AP-01090.pdf"
           },
           {
             "name": "supporting_docs_AP-01090.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01090.pdf"
           }
         ],
         "activityLog": [
@@ -1704,6 +2741,32 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$4,460.00 payment initiated to Sierra Office Supply"
+          }
+        ],
+        "items": [
+          {
+            "name": "Breakroom supplies",
+            "description": "Coffee, cups, napkins",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1327.3,
+            "amount": 1327.3
+          },
+          {
+            "name": "Copy paper, letter (case)",
+            "description": "10 reams per case",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1659.12,
+            "amount": 1659.12
+          },
+          {
+            "name": "Toner cartridges",
+            "description": "Black, high yield",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1161.38,
+            "amount": 1161.38
           }
         ]
       },
@@ -1751,11 +2814,13 @@
         "attachments": [
           {
             "name": "invoice_BP-01093.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-BP-01093.pdf"
           },
           {
             "name": "supporting_docs_BP-01093.pdf",
-            "size": "4.3mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01093.pdf"
           }
         ],
         "activityLog": [
@@ -1783,6 +2848,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$4,722.75 payment initiated to Mosaic Printing Co"
+          }
+        ],
+        "items": [
+          {
+            "name": "Design & prepress",
+            "description": "Layout, proofs",
+            "quantity": 24,
+            "unit": "hrs",
+            "unitPrice": 72.0,
+            "amount": 1728.0
+          },
+          {
+            "name": "Event signage",
+            "description": "Foam board, 24\u00d736",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1065.66,
+            "amount": 1065.66
+          },
+          {
+            "name": "Envelopes, printed #10",
+            "description": "Two color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1172.23,
+            "amount": 1172.23
+          },
+          {
+            "name": "Brochures, tri-fold",
+            "description": "100lb gloss, full color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 426.27,
+            "amount": 426.27
           }
         ]
       },
@@ -1830,11 +2929,13 @@
         "attachments": [
           {
             "name": "invoice_GL-01096.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-GL-01096.pdf"
           },
           {
             "name": "supporting_docs_GL-01096.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01096.pdf"
           }
         ],
         "activityLog": [
@@ -1862,6 +2963,32 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$4,985.50 payment initiated to Sierra Office Supply"
+          }
+        ],
+        "items": [
+          {
+            "name": "Breakroom supplies",
+            "description": "Coffee, cups, napkins",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1209.53,
+            "amount": 1209.53
+          },
+          {
+            "name": "Copy paper, letter (case)",
+            "description": "10 reams per case",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1612.7,
+            "amount": 1612.7
+          },
+          {
+            "name": "Toner cartridges",
+            "description": "Black, high yield",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1814.29,
+            "amount": 1814.29
           }
         ]
       },
@@ -1908,11 +3035,13 @@
         "attachments": [
           {
             "name": "invoice_VR-01099.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-VR-01099.pdf"
           },
           {
             "name": "supporting_docs_VR-01099.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01099.pdf"
           }
         ],
         "activityLog": [
@@ -1940,6 +3069,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$5,248.25 payment initiated to Mosaic Printing Co"
+          }
+        ],
+        "items": [
+          {
+            "name": "Design & prepress",
+            "description": "Layout, proofs",
+            "quantity": 27,
+            "unit": "hrs",
+            "unitPrice": 72.0,
+            "amount": 1944.0
+          },
+          {
+            "name": "Brochures, tri-fold",
+            "description": "100lb gloss, full color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 934.46,
+            "amount": 934.46
+          },
+          {
+            "name": "Business cards",
+            "description": "16pt matte, 500 per box",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 400.48,
+            "amount": 400.48
+          },
+          {
+            "name": "Event signage",
+            "description": "Foam board, 24\u00d736",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1601.93,
+            "amount": 1601.93
           }
         ]
       },
@@ -1987,11 +3150,13 @@
         "attachments": [
           {
             "name": "invoice_PO-01102.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-PO-01102.pdf"
           },
           {
             "name": "supporting_docs_PO-01102.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01102.pdf"
           }
         ],
         "activityLog": [
@@ -2019,6 +3184,32 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$5,511.00 payment initiated to Sierra Office Supply"
+          }
+        ],
+        "items": [
+          {
+            "name": "Desk accessories",
+            "description": "Organizers, staplers, tape",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 732.18,
+            "amount": 732.18
+          },
+          {
+            "name": "Breakroom supplies",
+            "description": "Coffee, cups, napkins",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2928.7,
+            "amount": 2928.7
+          },
+          {
+            "name": "Copy paper, letter (case)",
+            "description": "10 reams per case",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1464.35,
+            "amount": 1464.35
           }
         ]
       },
@@ -2066,11 +3257,13 @@
         "attachments": [
           {
             "name": "invoice_AP-01105.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-AP-01105.pdf"
           },
           {
             "name": "supporting_docs_AP-01105.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01105.pdf"
           }
         ],
         "activityLog": [
@@ -2098,6 +3291,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$5,145.00 payment initiated to Mosaic Printing Co"
+          }
+        ],
+        "items": [
+          {
+            "name": "Design & prepress",
+            "description": "Layout, proofs",
+            "quantity": 26,
+            "unit": "hrs",
+            "unitPrice": 72.0,
+            "amount": 1872.0
+          },
+          {
+            "name": "Business cards",
+            "description": "16pt matte, 500 per box",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 582.57,
+            "amount": 582.57
+          },
+          {
+            "name": "Event signage",
+            "description": "Foam board, 24\u00d736",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1019.5,
+            "amount": 1019.5
+          },
+          {
+            "name": "Envelopes, printed #10",
+            "description": "Two color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1310.78,
+            "amount": 1310.78
           }
         ]
       },
@@ -2144,11 +3371,13 @@
         "attachments": [
           {
             "name": "invoice_BP-01108.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-BP-01108.pdf"
           },
           {
             "name": "supporting_docs_BP-01108.pdf",
-            "size": "4.3mb"
+            "size": "60kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01108.pdf"
           }
         ],
         "activityLog": [
@@ -2176,6 +3405,32 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$5,407.75 payment initiated to Sierra Office Supply"
+          }
+        ],
+        "items": [
+          {
+            "name": "Toner cartridges",
+            "description": "Black, high yield",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 628.65,
+            "amount": 628.65
+          },
+          {
+            "name": "Desk accessories",
+            "description": "Organizers, staplers, tape",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1571.63,
+            "amount": 1571.63
+          },
+          {
+            "name": "Breakroom supplies",
+            "description": "Coffee, cups, napkins",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2828.93,
+            "amount": 2828.93
           }
         ]
       },
@@ -2222,11 +3477,13 @@
         "attachments": [
           {
             "name": "invoice_GL-01111.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-GL-01111.pdf"
           },
           {
             "name": "supporting_docs_GL-01111.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01111.pdf"
           }
         ],
         "activityLog": [
@@ -2254,6 +3511,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$5,670.50 payment initiated to Mosaic Printing Co"
+          }
+        ],
+        "items": [
+          {
+            "name": "Design & prepress",
+            "description": "Layout, proofs",
+            "quantity": 29,
+            "unit": "hrs",
+            "unitPrice": 72.0,
+            "amount": 2088.0
+          },
+          {
+            "name": "Business cards",
+            "description": "16pt matte, 500 per box",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 838.31,
+            "amount": 838.31
+          },
+          {
+            "name": "Event signage",
+            "description": "Foam board, 24\u00d736",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1508.95,
+            "amount": 1508.95
+          },
+          {
+            "name": "Envelopes, printed #10",
+            "description": "Two color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 838.31,
+            "amount": 838.31
           }
         ]
       },
@@ -2301,11 +3592,13 @@
         "attachments": [
           {
             "name": "invoice_VR-01114.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-VR-01114.pdf"
           },
           {
             "name": "supporting_docs_VR-01114.pdf",
-            "size": "4.3mb"
+            "size": "60kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01114.pdf"
           }
         ],
         "activityLog": [
@@ -2333,6 +3626,32 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$5,933.25 payment initiated to Sierra Office Supply"
+          }
+        ],
+        "items": [
+          {
+            "name": "Toner cartridges",
+            "description": "Black, high yield",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1532.76,
+            "amount": 1532.76
+          },
+          {
+            "name": "Desk accessories",
+            "description": "Organizers, staplers, tape",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1226.2,
+            "amount": 1226.2
+          },
+          {
+            "name": "Breakroom supplies",
+            "description": "Coffee, cups, napkins",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2758.96,
+            "amount": 2758.96
           }
         ]
       },
@@ -2380,11 +3699,13 @@
         "attachments": [
           {
             "name": "invoice_PO-01117.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-PO-01117.pdf"
           },
           {
             "name": "supporting_docs_PO-01117.pdf",
-            "size": "4.3mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01117.pdf"
           }
         ],
         "activityLog": [
@@ -2412,6 +3733,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$6,196.00 payment initiated to Mosaic Printing Co"
+          }
+        ],
+        "items": [
+          {
+            "name": "Design & prepress",
+            "description": "Layout, proofs",
+            "quantity": 32,
+            "unit": "hrs",
+            "unitPrice": 72.0,
+            "amount": 2304.0
+          },
+          {
+            "name": "Event signage",
+            "description": "Foam board, 24\u00d736",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1106.65,
+            "amount": 1106.65
+          },
+          {
+            "name": "Envelopes, printed #10",
+            "description": "Two color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1106.65,
+            "amount": 1106.65
+          },
+          {
+            "name": "Brochures, tri-fold",
+            "description": "100lb gloss, full color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1244.98,
+            "amount": 1244.98
           }
         ]
       },
@@ -2459,11 +3814,13 @@
         "attachments": [
           {
             "name": "invoice_AP-01120.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-AP-01120.pdf"
           },
           {
             "name": "supporting_docs_AP-01120.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01120.pdf"
           }
         ],
         "activityLog": [
@@ -2491,6 +3848,32 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$5,830.00 payment initiated to Sierra Office Supply"
+          }
+        ],
+        "items": [
+          {
+            "name": "Desk accessories",
+            "description": "Organizers, staplers, tape",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 856.09,
+            "amount": 856.09
+          },
+          {
+            "name": "Breakroom supplies",
+            "description": "Coffee, cups, napkins",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2568.27,
+            "amount": 2568.27
+          },
+          {
+            "name": "Copy paper, letter (case)",
+            "description": "10 reams per case",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1997.54,
+            "amount": 1997.54
           }
         ]
       },
@@ -2537,11 +3920,13 @@
         "attachments": [
           {
             "name": "invoice_BP-01123.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-BP-01123.pdf"
           },
           {
             "name": "supporting_docs_BP-01123.pdf",
-            "size": "4.3mb"
+            "size": "65kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01123.pdf"
           }
         ],
         "activityLog": [
@@ -2569,6 +3954,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$6,092.75 payment initiated to Mosaic Printing Co"
+          }
+        ],
+        "items": [
+          {
+            "name": "Design & prepress",
+            "description": "Layout, proofs",
+            "quantity": 31,
+            "unit": "hrs",
+            "unitPrice": 72.0,
+            "amount": 2232.0
+          },
+          {
+            "name": "Event signage",
+            "description": "Foam board, 24\u00d736",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1092.72,
+            "amount": 1092.72
+          },
+          {
+            "name": "Envelopes, printed #10",
+            "description": "Two color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 624.41,
+            "amount": 624.41
+          },
+          {
+            "name": "Brochures, tri-fold",
+            "description": "100lb gloss, full color",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1717.13,
+            "amount": 1717.13
           }
         ]
       },
@@ -2615,11 +4034,13 @@
         "attachments": [
           {
             "name": "invoice_GL-01126.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-GL-01126.pdf"
           },
           {
             "name": "supporting_docs_GL-01126.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01126.pdf"
           }
         ],
         "activityLog": [
@@ -2647,6 +4068,32 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$6,355.50 payment initiated to Sierra Office Supply"
+          }
+        ],
+        "items": [
+          {
+            "name": "Desk accessories",
+            "description": "Organizers, staplers, tape",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1773.19,
+            "amount": 1773.19
+          },
+          {
+            "name": "Breakroom supplies",
+            "description": "Coffee, cups, napkins",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2955.31,
+            "amount": 2955.31
+          },
+          {
+            "name": "Copy paper, letter (case)",
+            "description": "10 reams per case",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1182.12,
+            "amount": 1182.12
           }
         ]
       },
@@ -2694,11 +4141,13 @@
         "attachments": [
           {
             "name": "invoice_VR-01129.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-VR-01129.pdf"
           },
           {
             "name": "supporting_docs_VR-01129.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01129.pdf"
           }
         ],
         "activityLog": [
@@ -2726,6 +4175,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$6,241.00 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 21,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 2310.0
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 582.36,
+            "amount": 582.36
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1552.94,
+            "amount": 1552.94
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1358.83,
+            "amount": 1358.83
           }
         ]
       },
@@ -2773,11 +4256,13 @@
         "attachments": [
           {
             "name": "invoice_PO-01132.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-PO-01132.pdf"
           },
           {
             "name": "supporting_docs_PO-01132.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01132.pdf"
           }
         ],
         "activityLog": [
@@ -2805,6 +4290,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$6,503.75 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 25,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 2375.0
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1653.07,
+            "amount": 1653.07
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1285.72,
+            "amount": 1285.72
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 734.7,
+            "amount": 734.7
           }
         ]
       },
@@ -2852,11 +4371,13 @@
         "attachments": [
           {
             "name": "invoice_AP-01135.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-AP-01135.pdf"
           },
           {
             "name": "supporting_docs_AP-01135.pdf",
-            "size": "4.3mb"
+            "size": "60kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01135.pdf"
           }
         ],
         "activityLog": [
@@ -2884,6 +4405,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$6,766.50 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 22,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 2420.0
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1549.14,
+            "amount": 1549.14
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1549.14,
+            "amount": 1549.14
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 774.57,
+            "amount": 774.57
           }
         ]
       },
@@ -2930,11 +4485,13 @@
         "attachments": [
           {
             "name": "invoice_BP-01138.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-BP-01138.pdf"
           },
           {
             "name": "supporting_docs_BP-01138.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01138.pdf"
           }
         ],
         "activityLog": [
@@ -2962,6 +4519,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$7,029.25 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 27,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 2565.0
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1134.91,
+            "amount": 1134.91
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1702.37,
+            "amount": 1702.37
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1134.92,
+            "amount": 1134.92
           }
         ]
       },
@@ -3008,11 +4599,13 @@
         "attachments": [
           {
             "name": "invoice_GL-01141.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-GL-01141.pdf"
           },
           {
             "name": "supporting_docs_GL-01141.pdf",
-            "size": "4.3mb"
+            "size": "60kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01141.pdf"
           }
         ],
         "activityLog": [
@@ -3040,6 +4633,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$7,292.00 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 24,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 2640.0
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 460.17,
+            "amount": 460.17
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2530.96,
+            "amount": 2530.96
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1150.43,
+            "amount": 1150.43
           }
         ]
       },
@@ -3087,11 +4714,13 @@
         "attachments": [
           {
             "name": "invoice_VR-01144.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-VR-01144.pdf"
           },
           {
             "name": "supporting_docs_VR-01144.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01144.pdf"
           }
         ],
         "activityLog": [
@@ -3119,6 +4748,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$6,926.00 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 27,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 2565.0
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1368.06,
+            "amount": 1368.06
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 912.04,
+            "amount": 912.04
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1596.08,
+            "amount": 1596.08
           }
         ]
       },
@@ -3167,11 +4830,13 @@
         "attachments": [
           {
             "name": "invoice_PO-01147.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-PO-01147.pdf"
           },
           {
             "name": "supporting_docs_PO-01147.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01147.pdf"
           }
         ],
         "activityLog": [
@@ -3199,6 +4864,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$7,188.75 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 24,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 2640.0
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1155.87,
+            "amount": 1155.87
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 577.93,
+            "amount": 577.93
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2311.74,
+            "amount": 2311.74
           }
         ]
       },
@@ -3246,11 +4945,13 @@
         "attachments": [
           {
             "name": "invoice_AP-01150.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-AP-01150.pdf"
           },
           {
             "name": "supporting_docs_AP-01150.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01150.pdf"
           }
         ],
         "activityLog": [
@@ -3278,6 +4979,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$7,451.50 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 29,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 2755.0
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1168.97,
+            "amount": 1168.97
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1335.97,
+            "amount": 1335.97
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1669.96,
+            "amount": 1669.96
           }
         ]
       },
@@ -3326,11 +5061,13 @@
         "attachments": [
           {
             "name": "invoice_BP-01153.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-BP-01153.pdf"
           },
           {
             "name": "supporting_docs_BP-01153.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01153.pdf"
           }
         ],
         "activityLog": [
@@ -3358,6 +5095,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$7,714.25 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 26,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 2860.0
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 575.23,
+            "amount": 575.23
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 862.85,
+            "amount": 862.85
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2876.17,
+            "amount": 2876.17
           }
         ]
       },
@@ -3404,11 +5175,13 @@
         "attachments": [
           {
             "name": "invoice_GL-01156.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-GL-01156.pdf"
           },
           {
             "name": "supporting_docs_GL-01156.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01156.pdf"
           }
         ],
         "activityLog": [
@@ -3436,6 +5209,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$7,977.00 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 31,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 2945.0
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 497.07,
+            "amount": 497.07
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2485.34,
+            "amount": 2485.34
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1491.2,
+            "amount": 1491.2
           }
         ]
       },
@@ -3484,11 +5291,13 @@
         "attachments": [
           {
             "name": "invoice_VR-01159.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-VR-01159.pdf"
           },
           {
             "name": "supporting_docs_VR-01159.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01159.pdf"
           }
         ],
         "activityLog": [
@@ -3516,6 +5325,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$7,611.00 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 25,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 2750.0
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2061.06,
+            "amount": 2061.06
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 824.43,
+            "amount": 824.43
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1442.74,
+            "amount": 1442.74
           }
         ]
       },
@@ -3563,11 +5406,13 @@
         "attachments": [
           {
             "name": "invoice_PO-01162.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-PO-01162.pdf"
           },
           {
             "name": "supporting_docs_PO-01162.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01162.pdf"
           }
         ],
         "activityLog": [
@@ -3595,6 +5440,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$7,873.75 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 30,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 2850.0
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1341.78,
+            "amount": 1341.78
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1341.78,
+            "amount": 1341.78
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1789.03,
+            "amount": 1789.03
           }
         ]
       },
@@ -3642,11 +5521,13 @@
         "attachments": [
           {
             "name": "invoice_AP-01165.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-AP-01165.pdf"
           },
           {
             "name": "supporting_docs_AP-01165.pdf",
-            "size": "4.3mb"
+            "size": "60kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01165.pdf"
           }
         ],
         "activityLog": [
@@ -3674,6 +5555,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$8,136.50 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 27,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 2970.0
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 540.82,
+            "amount": 540.82
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2974.5,
+            "amount": 2974.5
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1081.63,
+            "amount": 1081.63
           }
         ]
       },
@@ -3721,11 +5636,13 @@
         "attachments": [
           {
             "name": "invoice_BP-01168.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-BP-01168.pdf"
           },
           {
             "name": "supporting_docs_BP-01168.pdf",
-            "size": "4.3mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01168.pdf"
           }
         ],
         "activityLog": [
@@ -3753,6 +5670,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$8,399.25 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 32,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 3040.0
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1192.82,
+            "amount": 1192.82
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1789.24,
+            "amount": 1789.24
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1789.24,
+            "amount": 1789.24
           }
         ]
       },
@@ -3799,11 +5750,13 @@
         "attachments": [
           {
             "name": "invoice_GL-01171.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-GL-01171.pdf"
           },
           {
             "name": "supporting_docs_GL-01171.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01171.pdf"
           }
         ],
         "activityLog": [
@@ -3831,6 +5784,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$8,662.00 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 29,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 3190.0
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2048.7,
+            "amount": 2048.7
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1280.44,
+            "amount": 1280.44
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1536.52,
+            "amount": 1536.52
           }
         ]
       },
@@ -3877,11 +5864,13 @@
         "attachments": [
           {
             "name": "invoice_VR-01174.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-VR-01174.pdf"
           },
           {
             "name": "supporting_docs_VR-01174.pdf",
-            "size": "4.3mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01174.pdf"
           }
         ],
         "activityLog": [
@@ -3909,6 +5898,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$8,296.00 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 32,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 3040.0
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1669.74,
+            "amount": 1669.74
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1502.77,
+            "amount": 1502.77
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1502.77,
+            "amount": 1502.77
           }
         ]
       },
@@ -3957,11 +5980,13 @@
         "attachments": [
           {
             "name": "invoice_PO-01177.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-PO-01177.pdf"
           },
           {
             "name": "supporting_docs_PO-01177.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01177.pdf"
           }
         ],
         "activityLog": [
@@ -3989,6 +6014,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$8,558.75 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 28,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 3080.0
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1524.89,
+            "amount": 1524.89
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 914.93,
+            "amount": 914.93
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2439.82,
+            "amount": 2439.82
           }
         ]
       },
@@ -4036,11 +6095,13 @@
         "attachments": [
           {
             "name": "invoice_AP-01180.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-AP-01180.pdf"
           },
           {
             "name": "supporting_docs_AP-01180.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01180.pdf"
           }
         ],
         "activityLog": [
@@ -4068,6 +6129,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$8,821.50 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 34,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 3230.0
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1170.35,
+            "amount": 1170.35
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2340.71,
+            "amount": 2340.71
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1462.94,
+            "amount": 1462.94
           }
         ]
       },
@@ -4116,11 +6211,13 @@
         "attachments": [
           {
             "name": "invoice_BP-01183.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-BP-01183.pdf"
           },
           {
             "name": "supporting_docs_BP-01183.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01183.pdf"
           }
         ],
         "activityLog": [
@@ -4148,6 +6245,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$9,084.25 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 30,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 3300.0
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1225.8,
+            "amount": 1225.8
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1225.8,
+            "amount": 1225.8
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2696.75,
+            "amount": 2696.75
           }
         ]
       },
@@ -4195,11 +6326,13 @@
         "attachments": [
           {
             "name": "invoice_GL-01186.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-GL-01186.pdf"
           },
           {
             "name": "supporting_docs_GL-01186.pdf",
-            "size": "4.3mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01186.pdf"
           }
         ],
         "activityLog": [
@@ -4227,6 +6360,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$9,347.00 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 36,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 3420.0
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2791.43,
+            "amount": 2791.43
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 930.48,
+            "amount": 930.48
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1550.8,
+            "amount": 1550.8
           }
         ]
       },
@@ -4275,11 +6442,13 @@
         "attachments": [
           {
             "name": "invoice_VR-01189.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-VR-01189.pdf"
           },
           {
             "name": "supporting_docs_VR-01189.pdf",
-            "size": "4.3mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01189.pdf"
           }
         ],
         "activityLog": [
@@ -4307,6 +6476,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$8,981.00 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 30,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 3300.0
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1757.33,
+            "amount": 1757.33
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2196.67,
+            "amount": 2196.67
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1098.33,
+            "amount": 1098.33
           }
         ]
       },
@@ -4354,11 +6557,13 @@
         "attachments": [
           {
             "name": "invoice_PO-01192.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-PO-01192.pdf"
           },
           {
             "name": "supporting_docs_PO-01192.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01192.pdf"
           }
         ],
         "activityLog": [
@@ -4386,6 +6591,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$9,243.75 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 36,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 3420.0
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1294.17,
+            "amount": 1294.17
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1294.17,
+            "amount": 1294.17
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2588.35,
+            "amount": 2588.35
           }
         ]
       },
@@ -4434,11 +6673,13 @@
         "attachments": [
           {
             "name": "invoice_AP-01195.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-AP-01195.pdf"
           },
           {
             "name": "supporting_docs_AP-01195.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01195.pdf"
           }
         ],
         "activityLog": [
@@ -4466,6 +6707,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$9,506.50 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 32,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 3520.0
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1693.06,
+            "amount": 1693.06
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 967.46,
+            "amount": 967.46
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2660.53,
+            "amount": 2660.53
           }
         ]
       },
@@ -4513,11 +6788,13 @@
         "attachments": [
           {
             "name": "invoice_BP-01198.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-BP-01198.pdf"
           },
           {
             "name": "supporting_docs_BP-01198.pdf",
-            "size": "4.3mb"
+            "size": "64kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01198.pdf"
           }
         ],
         "activityLog": [
@@ -4545,6 +6822,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$9,769.25 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 38,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 3610.0
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2142.55,
+            "amount": 2142.55
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 952.24,
+            "amount": 952.24
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2380.61,
+            "amount": 2380.61
           }
         ]
       },
@@ -4593,11 +6904,13 @@
         "attachments": [
           {
             "name": "invoice_GL-01201.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-GL-01201.pdf"
           },
           {
             "name": "supporting_docs_GL-01201.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01201.pdf"
           }
         ],
         "activityLog": [
@@ -4625,6 +6938,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$10,032.00 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 33,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 3630.0
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 712.47,
+            "amount": 712.47
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2374.9,
+            "amount": 2374.9
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2612.39,
+            "amount": 2612.39
           }
         ]
       },
@@ -4672,11 +7019,13 @@
         "attachments": [
           {
             "name": "invoice_VR-01204.pdf",
-            "size": "2.1mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/invoice-VR-01204.pdf"
           },
           {
             "name": "supporting_docs_VR-01204.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-VR-01204.pdf"
           }
         ],
         "activityLog": [
@@ -4704,6 +7053,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$9,666.00 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 37,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 3515.0
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 576.25,
+            "amount": 576.25
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1440.63,
+            "amount": 1440.63
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 3457.5,
+            "amount": 3457.5
           }
         ]
       },
@@ -4752,11 +7135,13 @@
         "attachments": [
           {
             "name": "invoice_PO-01207.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-PO-01207.pdf"
           },
           {
             "name": "supporting_docs_PO-01207.pdf",
-            "size": "4.3mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/supporting-docs-PO-01207.pdf"
           }
         ],
         "activityLog": [
@@ -4784,6 +7169,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$9,928.75 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 33,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 3630.0
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2334.89,
+            "amount": 2334.89
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 933.96,
+            "amount": 933.96
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2334.89,
+            "amount": 2334.89
           }
         ]
       },
@@ -4831,11 +7250,13 @@
         "attachments": [
           {
             "name": "invoice_AP-01210.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-AP-01210.pdf"
           },
           {
             "name": "supporting_docs_AP-01210.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-AP-01210.pdf"
           }
         ],
         "activityLog": [
@@ -4863,6 +7284,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$10,191.50 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 39,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 3705.0
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2309.24,
+            "amount": 2309.24
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 692.77,
+            "amount": 692.77
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2771.09,
+            "amount": 2771.09
           }
         ]
       },
@@ -4911,11 +7366,13 @@
         "attachments": [
           {
             "name": "invoice_BP-01213.pdf",
-            "size": "2.1mb"
+            "size": "61kb",
+            "src": "src/assets/documents/bills/invoice-BP-01213.pdf"
           },
           {
             "name": "supporting_docs_BP-01213.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-BP-01213.pdf"
           }
         ],
         "activityLog": [
@@ -4943,6 +7400,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$10,454.25 payment initiated to TechNova Solutions LLC"
+          }
+        ],
+        "items": [
+          {
+            "name": "IT support hours",
+            "description": "Remote + on-site",
+            "quantity": 35,
+            "unit": "hrs",
+            "unitPrice": 110.0,
+            "amount": 3850.0
+          },
+          {
+            "name": "Managed services",
+            "description": "Per-device monthly plan",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2055.36,
+            "amount": 2055.36
+          },
+          {
+            "name": "Software licenses",
+            "description": "Annual seats, prorated",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1468.11,
+            "amount": 1468.11
+          },
+          {
+            "name": "Network hardware",
+            "description": "Access point, cabling",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2348.98,
+            "amount": 2348.98
           }
         ]
       },
@@ -4990,11 +7481,13 @@
         "attachments": [
           {
             "name": "invoice_GL-01216.pdf",
-            "size": "2.1mb"
+            "size": "62kb",
+            "src": "src/assets/documents/bills/invoice-GL-01216.pdf"
           },
           {
             "name": "supporting_docs_GL-01216.pdf",
-            "size": "4.3mb"
+            "size": "63kb",
+            "src": "src/assets/documents/bills/supporting-docs-GL-01216.pdf"
           }
         ],
         "activityLog": [
@@ -5022,6 +7515,40 @@
             "timestamp": "2026-03-20T10:15:00",
             "title": "Payment created",
             "description": "$10,717.00 payment initiated to Urban Pulse Marketing"
+          }
+        ],
+        "items": [
+          {
+            "name": "Strategy & account management",
+            "description": "Senior strategist",
+            "quantity": 40,
+            "unit": "hrs",
+            "unitPrice": 95.0,
+            "amount": 3800.0
+          },
+          {
+            "name": "Analytics report",
+            "description": "Monthly performance review",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1541.7,
+            "amount": 1541.7
+          },
+          {
+            "name": "Paid social ad spend",
+            "description": "Pass-through, billed at cost",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 1927.13,
+            "amount": 1927.13
+          },
+          {
+            "name": "Creative production",
+            "description": "Ad sets, copy, resizing",
+            "quantity": 1,
+            "unit": "",
+            "unitPrice": 2697.98,
+            "amount": 2697.98
           }
         ]
       },

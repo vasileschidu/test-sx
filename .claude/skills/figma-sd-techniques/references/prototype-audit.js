@@ -78,11 +78,14 @@ async function prototypeAudit(page, opts = {}) {
         for (const s of extraScrollers(card, null).slice(0, 3)) devs.push('Modal has own scroll: ' + s.name + ' ' + s.id + ' (' + val(s, 'overflowDirection') + ')');
       }
     } else {
-      if (!checkBackdrop(devs, mb, frame, Object.assign({}, common, { paddingTop: 24, paddingBottom: 24, clipsContent: false, overflowDirection: 'NONE' }))) return { kind, devs };
+      // Review and agree and the Document viewer are full height since 2026-11-09: MB padding 16 all round, Modal FILL
+      // with no maxHeight (sandbox h-[calc(100dvh-2rem)], commit 0343e34).
+      const full = true;
+      if (!checkBackdrop(devs, mb, frame, Object.assign({}, common, { paddingTop: full ? 16 : 24, paddingBottom: full ? 16 : 24, clipsContent: false, overflowDirection: 'NONE' }, full ? { paddingLeft: 16, paddingRight: 16 } : {}))) return { kind, devs };
       if (mb.children.some(c => c.name === WR)) devs.push('Wrapper present (exception expects MB > Modal directly)');
       const card = mb.children.find(c => c.name === 'Modal');
       if (!card) devs.push('Modal not a direct child of MB (' + mb.children.map(c => c.name).join(', ') + ')');
-      else expect(devs, card, 'Modal', { layoutPositioning: 'AUTO', layoutSizingHorizontal: 'FIXED', layoutSizingVertical: 'FILL', maxHeight: 752, clipsContent: true, overflowDirection: 'NONE' });
+      else expect(devs, card, 'Modal', { layoutPositioning: 'AUTO', layoutSizingHorizontal: 'FIXED', layoutSizingVertical: 'FILL', maxHeight: full ? null : 752, clipsContent: true, overflowDirection: 'NONE' });
       expect(devs, scroller, 'Scroller', { layoutSizingVertical: 'FILL', overflowDirection: 'VERTICAL' });
       // every layer between the card and the scroller must FILL height, or the scroller cannot fill the card
       for (let p = scroller.parent; p && p !== mb && p.name !== 'Modal'; p = p.parent)

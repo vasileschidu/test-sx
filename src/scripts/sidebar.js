@@ -83,9 +83,9 @@ function normalizeMainContentWrapperLayout(collapsed) {
         "true";
   mainContentWrapper.classList.remove(
     "lg:pl-[304px]",
-    "lg:pl-[312px]",
+    "lg:pl-[360px]",
     "lg:pl-[288px]",
-    "lg:pl-[312px]",
+    "lg:pl-[360px]",
     "lg:pl-[68px]",
     "lg:pl-[80px]",
     "lg:pl-[81px]",
@@ -98,7 +98,7 @@ function normalizeMainContentWrapperLayout(collapsed) {
     "flex-col",
   );
   mainContentWrapper.classList.add(
-    isCollapsed ? "lg:pl-[88px]" : "lg:pl-[312px]",
+    isCollapsed ? "lg:pl-[88px]" : "lg:pl-[360px]",
   );
 }
 
@@ -109,7 +109,8 @@ function ensureNavTooltip() {
   var tooltip = document.createElement("div");
   tooltip.id = "dashboard-nav-tooltip";
   tooltip.className =
-    "pointer-events-none fixed z-[80] rounded-lg bg-gray-900 px-2.5 py-1 text-sm font-normal leading-5 text-gray-100 shadow-[0_10px_7.5px_rgba(0,0,0,0.1),0_4px_3px_rgba(0,0,0,0.05)]";
+    // Dark: gray-800 + 1px white/10 ring, like the sidebar flyouts (and #shell-tooltip in shared.js).
+    "pointer-events-none fixed z-[80] rounded-lg bg-gray-900 px-2.5 py-1 text-sm font-normal leading-5 text-gray-100 shadow-[0_10px_7.5px_rgba(0,0,0,0.1),0_4px_3px_rgba(0,0,0,0.05)] dark:bg-gray-800 dark:ring-1 dark:ring-white/10";
   tooltip.style.opacity = "0";
   tooltip.style.transform = "translateX(-4px)";
   tooltip.style.transition = "opacity 150ms ease-out, transform 150ms ease-out";
@@ -184,6 +185,29 @@ function isDesktopSidebarCollapsed() {
   );
 }
 
+// 1024–1279px: the rail starts collapsed (not enough room for 360px + content).
+// Opening it there works but isn't saved; from 1280px the saved choice applies again.
+var COMPACT_DESKTOP_QUERY = "(min-width: 1024px) and (max-width: 1279px)";
+function isCompactDesktopViewport() {
+  return !!(window.matchMedia && window.matchMedia(COMPACT_DESKTOP_QUERY).matches);
+}
+
+function getInitialDesktopSidebarCollapsed() {
+  return isCompactDesktopViewport() || loadDesktopSidebarCollapsedPreference();
+}
+
+function bindCompactDesktopSidebar() {
+  if (window.__compactDesktopSidebarBound || !window.matchMedia) return;
+  window.__compactDesktopSidebarBound = true;
+  var mq = window.matchMedia(COMPACT_DESKTOP_QUERY);
+  var onChange = function () {
+    if (!getSidebarRefs().desktopSidebarShell) return;
+    setDesktopSidebarCollapsed(getInitialDesktopSidebarCollapsed());
+  };
+  if (mq.addEventListener) mq.addEventListener("change", onChange);
+  else if (mq.addListener) mq.addListener(onChange);
+}
+
 function loadDesktopSidebarCollapsedPreference() {
   try {
     return (
@@ -209,7 +233,7 @@ var navTooltipCleanup = null;
 /**
  * Hides the floating nav tooltip with a fade-out transition.
  */
-function hideNavTooltip() {
+function hideNavTooltip(instant) {
   navTooltipToken += 1;
   if (navTooltipCleanup) {
     navTooltipCleanup();
@@ -217,8 +241,16 @@ function hideNavTooltip() {
   }
   var navTooltip = document.getElementById("dashboard-nav-tooltip");
   if (!navTooltip) return;
+  // instant: a flyout opens where the tooltip was, so skip the 150ms fade
+  // (it left a ghost of the tooltip over the card).
+  var transition = navTooltip.style.transition;
+  if (instant) navTooltip.style.transition = "none";
   navTooltip.style.opacity = "0";
   navTooltip.style.transform = "translateX(-4px)";
+  if (instant) {
+    void navTooltip.offsetWidth;
+    navTooltip.style.transition = transition;
+  }
 }
 
 function revealNavTooltip(token) {
@@ -272,6 +304,7 @@ function positionHoverTooltip(reference) {
 
 function showHoverTooltip(reference, label) {
   if (!reference || !label) return;
+  if (document.documentElement.hasAttribute("data-sidebar-animating")) return;
   ensureNavTooltip().textContent = label;
   navTooltipToken += 1;
   positionHoverTooltip(reference);
@@ -314,6 +347,56 @@ function bindDashboardSidebarRuntime() {
     desktopSidebarPanel.dataset.btnTooltipBound = "true";
   }
 
+  var desktopFooter = refs.desktopSidebarFooter;
+  if (desktopFooter && !desktopFooter.dataset.footerFlyoutBound) {
+    desktopFooter.addEventListener("mouseover", function (e) {
+      var t = e.target.closest("[data-footer-flyout-trigger]");
+      if (t && isDesktopSidebarCollapsed()) openHoverFlyout(t);
+    });
+    desktopFooter.addEventListener("mouseout", function (e) {
+      var t = e.target.closest("[data-footer-flyout-trigger]");
+      if (!t || (e.relatedTarget && t.contains(e.relatedTarget))) return;
+      scheduleHoverFlyoutClose();
+    });
+    desktopFooter.addEventListener("click", function (e) {
+      var t = e.target.closest("[data-footer-flyout-trigger]");
+      if (!t) return;
+      var spec = collapsedFlyoutFor(t);
+      toggleCollapsedFlyout(t, spec.title, spec.entries, spec.bodyNodes);
+    });
+    desktopFooter.dataset.footerFlyoutBound = "true";
+  }
+
+  // Never scroll sideways: while the rail animates, the expanded content is
+  // wider than the panel and a trackpad swipe / focus could leave it shifted.
+  if (desktopSidebarPanel && !desktopSidebarPanel.dataset.noHScrollBound) {
+    desktopSidebarPanel.addEventListener(
+      "scroll",
+      function () {
+        if (desktopSidebarPanel.scrollLeft !== 0) desktopSidebarPanel.scrollLeft = 0;
+      },
+      { passive: true },
+    );
+    desktopSidebarPanel.dataset.noHScrollBound = "true";
+  }
+
+  // Sticky logo row: shadow once the panel is scrolled (data-scrolled).
+  if (desktopSidebarPanel && !desktopSidebarPanel.dataset.headShadowBound) {
+    var syncHeadShadow = function () {
+      var head = desktopSidebarPanel.querySelector("[data-sidebar-head]");
+      if (head)
+        head.setAttribute(
+          "data-scrolled",
+          desktopSidebarPanel.scrollTop > 0 ? "true" : "false",
+        );
+    };
+    desktopSidebarPanel.addEventListener("scroll", syncHeadShadow, {
+      passive: true,
+    });
+    syncHeadShadow();
+    desktopSidebarPanel.dataset.headShadowBound = "true";
+  }
+
   if (desktopNav && !desktopNav.dataset.sidebarBound) {
     desktopNav.addEventListener("click", function (e) {
       const smartExchangeLink = e.target.closest(
@@ -336,6 +419,7 @@ function bindDashboardSidebarRuntime() {
       if (!navItem) return;
       if (e.relatedTarget && navItem.contains(e.relatedTarget)) return;
       hideNavTooltip();
+      scheduleHoverFlyoutClose();
     });
 
     desktopNav.dataset.sidebarBound = "true";
@@ -420,7 +504,7 @@ function closeAllDesktopSubmenus() {
   var desktopNav = getSidebarRefs().desktopNav;
   if (!desktopNav) return;
   desktopNav.querySelectorAll(".nav-submenu").forEach(function (submenu) {
-    submenu.classList.remove("max-h-96", "opacity-100", "pointer-events-auto");
+    submenu.classList.remove("max-h-160", "opacity-100", "pointer-events-auto");
     submenu.classList.add("max-h-0", "opacity-0", "pointer-events-none");
   });
   desktopNav
@@ -451,6 +535,30 @@ function setDesktopSidebarCollapsed(collapsed) {
     return;
 
   var wasCollapsed = desktopSidebarShell.classList.contains("is-collapsed");
+  // A tooltip left over from the toggle button would fade over the logo mid-animation,
+  // and items sliding under a still cursor would re-trigger it: no tooltips while animating.
+  hideNavTooltip(true);
+  if (wasCollapsed !== collapsed) {
+    document.documentElement.setAttribute("data-sidebar-animating", "true");
+    clearTimeout(setDesktopSidebarCollapsed._animTimer);
+    setDesktopSidebarCollapsed._animTimer = setTimeout(function () {
+      document.documentElement.removeAttribute("data-sidebar-animating");
+    }, 350);
+  }
+
+  // Smooth collapse / expand: animate the rail width and the page's left
+  // padding together. Added only on a real toggle so page load never animates.
+  if (wasCollapsed !== collapsed) {
+    var SMOOTH = ["lg:transition-[width]", "lg:duration-300", "lg:ease-in-out", "motion-reduce:transition-none"];
+    desktopSidebarShell.classList.add.apply(desktopSidebarShell.classList, SMOOTH);
+    mainContentWrapper.classList.add(
+      "lg:transition-[padding-left]",
+      "lg:duration-300",
+      "lg:ease-in-out",
+      "motion-reduce:transition-none",
+    );
+    desktopSidebarPanel.classList.add("overflow-x-hidden");
+  }
 
   document.documentElement.setAttribute(
     "data-sidebar-collapsed",
@@ -466,10 +574,10 @@ function setDesktopSidebarCollapsed(collapsed) {
     "lg:w-[81px]",
     "lg:w-[304px]",
     "lg:w-[80px]",
-    "lg:w-[312px]",
+    "lg:w-[360px]",
     "lg:w-[88px]",
   );
-  desktopSidebarShell.classList.toggle("lg:w-[312px]", !collapsed);
+  desktopSidebarShell.classList.toggle("lg:w-[360px]", !collapsed);
   desktopSidebarShell.classList.toggle("lg:w-[88px]", collapsed);
   desktopSidebarPanel.classList.remove(
     "p-5",
@@ -484,8 +592,10 @@ function setDesktopSidebarCollapsed(collapsed) {
     "pl-5",
     "pr-[19px]",
   );
-  desktopSidebarPanel.classList.add("px-6", "pt-6", "pb-6");
-  desktopSidebarPanel.classList.remove("px-4");
+  desktopSidebarPanel.classList.remove("px-4", "px-6", "pl-6", "pr-5.75");
+  // Collapsed: border-r inside the right padding → 40px content (see nav-component).
+  if (collapsed) desktopSidebarPanel.classList.add("pl-6", "pr-5.75", "pt-6", "pb-6");
+  else desktopSidebarPanel.classList.add("px-6", "pt-6", "pb-6");
   if (desktopLogoRow) {
     desktopLogoRow.classList.toggle("w-10", collapsed);
     desktopLogoRow.classList.toggle("w-full", !collapsed);
@@ -571,12 +681,36 @@ function setDesktopSidebarCollapsed(collapsed) {
     syncActiveNavItemStyles();
   }
 
+  // Sticky head bleed follows the panel padding (pl-6 pr-5.75 collapsed).
+  var head = desktopSidebarPanel.querySelector("[data-sidebar-head]");
+  if (head) {
+    head.classList.remove("-mx-6", "px-6", "-ml-6", "-mr-5.75", "pl-6", "pr-5.75");
+    if (collapsed) head.classList.add("-ml-6", "-mr-5.75", "pl-6", "pr-5.75");
+    else head.classList.add("-mx-6", "px-6");
+  }
+
+  // Expanding: labels fade in while the rail widens instead of popping in
+  // (the logo stays solid; overflow-x-hidden reveals "SMART Hub" as it widens).
+  if (!collapsed && wasCollapsed && desktopSidebarPanel.animate &&
+      !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    desktopSidebarPanel
+      .querySelectorAll(".nav-label, .nav-submenu, #desktop-sidebar-collapse-btn, [data-sidebar-expanded-help], [data-sidebar-expanded-footer], [data-account-variant='expanded'], [data-help-variant='expanded'], .chevron-icon, [data-nav-count]")
+      .forEach(function (el) {
+        el.animate([{ opacity: 0 }, { opacity: 1 }], {
+          duration: 200,
+          delay: 120,
+          easing: "ease-out",
+          fill: "backwards",
+        });
+      });
+  }
+
   if (collapsed && wasCollapsed !== collapsed) closeAllDesktopSubmenus();
   hideNavTooltip();
   closeSettingsFlyout();
   closeAccountInfoFlyout();
   closeSupportFlyout();
-  saveDesktopSidebarCollapsedPreference(collapsed);
+  if (!isCompactDesktopViewport()) saveDesktopSidebarCollapsedPreference(collapsed);
   requestAnimationFrame(function () {
     syncDesktopNavCurrentIndicator();
   });
@@ -593,10 +727,10 @@ function toggleSubmenuAnimation(submenu, chevron) {
   const isCollapsed = submenu.classList.contains("max-h-0");
   if (isCollapsed) {
     submenu.classList.remove("max-h-0", "opacity-0", "pointer-events-none");
-    submenu.classList.add("max-h-96", "opacity-100", "pointer-events-auto");
+    submenu.classList.add("max-h-160", "opacity-100", "pointer-events-auto");
     if (chevron) chevron.classList.add("rotate-180");
   } else {
-    submenu.classList.remove("max-h-96", "opacity-100", "pointer-events-auto");
+    submenu.classList.remove("max-h-160", "opacity-100", "pointer-events-auto");
     submenu.classList.add("max-h-0", "opacity-0", "pointer-events-none");
     if (chevron) chevron.classList.remove("rotate-180");
   }
@@ -679,9 +813,9 @@ function expandSmartExchangeFromCollapsedLink(link) {
   )
     return false;
 
-  var entries = submenuFlyoutEntries(trigger);
-  if (!entries.length) return false;
-  toggleCollapsedFlyout(trigger, supplierPortalFlyoutTitle(trigger), entries);
+  var spec = collapsedFlyoutFor(trigger);
+  if (!spec) return false;
+  toggleCollapsedFlyout(trigger, spec.title, spec.entries);
   return true;
 }
 
@@ -715,22 +849,9 @@ function loadFloatingUi() {
 }
 
 function settingsFlyoutEntries() {
-  var links =
-    window.AppPlans && typeof window.AppPlans.accountLinks === "function"
-      ? window.AppPlans.accountLinks()
-      : null;
-  var profile =
-    links && links.profile
-      ? links.profile
-      : { href: "my-company-profile.html", label: "My Company Profile" };
-  var preferences =
-    links && links.preferences
-      ? links.preferences
-      : { href: "payment-preferences.html", label: "Payment Preferences" };
-  var items = [
-    { label: profile.label, href: profile.href || "#" },
-    { label: preferences.label, href: preferences.href || "#" },
-  ];
+  // Same items as the expanded Settings submenu, so collapsed = expanded
+  // (My Company Profile already has its own nav item).
+  var items = [];
   var trigger = document.querySelector(
     '[data-nav="desktop"] [data-expandable-trigger][data-item-id="settings"]',
   );
@@ -740,10 +861,12 @@ function settingsFlyoutEntries() {
       items.push({
         label: (anchor.textContent || "").replace(/\s+/g, " ").trim(),
         href: anchor.getAttribute("href") || "#",
+        current: anchor.getAttribute("aria-current") === "page",
       });
     });
   } else {
-    items.push({ label: "User Management", href: "#" });
+    items.push({ label: "Business Details", href: "business-details.html" });
+    items.push({ label: "User Management", href: "user-management.html" });
   }
   return items;
 }
@@ -757,17 +880,33 @@ function ensureSettingsFlyout() {
   flyout.setAttribute("role", "menu");
   flyout.setAttribute("aria-label", "Settings");
   flyout.className =
-    "fixed z-[80] hidden w-max flex-col gap-2 rounded-lg bg-white px-4 py-3 font-['Inter'] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.10),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] dark:bg-gray-800 dark:shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.40),0px_4px_6px_-2px_rgba(0,0,0,0.30),0px_0px_0px_1px_rgba(255,255,255,0.10)]";
+    "fixed z-[80] hidden w-max flex-col rounded-lg bg-white font-['Inter'] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.10),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] dark:bg-gray-800 dark:shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.40),0px_4px_6px_-2px_rgba(0,0,0,0.30),0px_0px_0px_1px_rgba(255,255,255,0.10)]";
   document.body.appendChild(flyout);
   return flyout;
 }
 
-function renderSettingsFlyout(title, entries) {
+// Menu mode (submenu list) vs card mode (collapsed footer, Figma R3 SX 46653:55707).
+var FLYOUT_MENU_CLS = ["min-w-56", "px-1", "py-2"];
+var FLYOUT_CARD_CLS = ["gap-2", "px-4", "py-3"];
+
+function renderSettingsFlyout(title, entries, bodyNodes) {
   var flyout = ensureSettingsFlyout();
   flyout.setAttribute("aria-label", title);
+  flyout.classList.remove.apply(flyout.classList, FLYOUT_MENU_CLS.concat(FLYOUT_CARD_CLS));
+  if (bodyNodes) {
+    flyout.classList.add.apply(flyout.classList, FLYOUT_CARD_CLS);
+    flyout.replaceChildren.apply(flyout, bodyNodes);
+    flyout.querySelectorAll('a[href="#"]').forEach(function (a) {
+      a.addEventListener("click", function (event) {
+        event.preventDefault();
+      });
+    });
+    return flyout;
+  }
+  flyout.classList.add.apply(flyout.classList, FLYOUT_MENU_CLS);
   var heading = document.createElement("p");
   heading.className =
-    "text-xs font-normal leading-4 text-gray-500 dark:text-gray-400";
+    "mb-1 px-2 text-xs font-normal leading-4 text-gray-500 dark:text-gray-400";
   heading.textContent = title;
   flyout.replaceChildren(heading);
 
@@ -775,8 +914,14 @@ function renderSettingsFlyout(title, entries) {
     var link = document.createElement("a");
     link.href = entry.href || "#";
     link.setAttribute("role", "menuitem");
+    // Figma R3 SX 46653:55707: hover = gray-50 pill; the page you are on keeps
+    // the expanded submenu's gray-100 pill.
     link.className =
-      "flex h-6 w-full items-center rounded-md text-sm font-medium leading-5 text-gray-700 transition-colors hover:text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-200 dark:hover:text-white";
+      "flex h-10 items-center rounded-md px-2 text-sm font-medium leading-5 whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 " +
+      (entry.current
+        ? "bg-gray-100 text-gray-900 dark:bg-white/10 dark:text-white"
+        : "text-gray-700 hover:bg-gray-50 hover:text-gray-900 dark:text-gray-200 dark:hover:bg-white/5 dark:hover:text-white");
+    if (entry.current) link.setAttribute("aria-current", "page");
     link.textContent = entry.label;
     if (!entry.href || entry.href === "#") {
       link.addEventListener("click", function (event) {
@@ -807,7 +952,7 @@ function positionSettingsFlyout(reference) {
               placement: "right-start",
               strategy: "fixed",
               middleware: [
-                floating.offset(12),
+                floating.offset(4),
                 floating.flip({ fallbackPlacements: ["right-end"] }),
                 floating.shift({
                   mainAxis: false,
@@ -825,18 +970,19 @@ function positionSettingsFlyout(reference) {
     })
     .catch(function () {
       var rect = reference.getBoundingClientRect();
-      flyout.style.left = rect.right + 12 + "px";
+      flyout.style.left = rect.right + 4 + "px";
       flyout.style.top = rect.top + "px";
     });
 }
 
-function openCollapsedFlyout(trigger, title, entries) {
+function openCollapsedFlyout(trigger, title, entries, bodyNodes) {
   closeAccountInfoFlyout();
   closeSupportFlyout();
-  var flyout = renderSettingsFlyout(title, entries);
+  var flyout = renderSettingsFlyout(title, entries, bodyNodes);
   settingsFlyoutOpen = true;
+  settingsFlyoutViaHover = false;
   settingsFlyoutReference = trigger;
-  hideNavTooltip();
+  hideNavTooltip(true);
   trigger.setAttribute("aria-expanded", "true");
   flyout.classList.remove("hidden");
   flyout.classList.add("flex");
@@ -851,6 +997,7 @@ function closeSettingsFlyout() {
     return;
   }
   settingsFlyoutOpen = false;
+  settingsFlyoutViaHover = false;
   if (settingsFlyoutReference) {
     settingsFlyoutReference.setAttribute("aria-expanded", "false");
   }
@@ -873,12 +1020,22 @@ function closeSettingsFlyout() {
     });
 }
 
-function toggleCollapsedFlyout(trigger, title, entries) {
+function toggleCollapsedFlyout(trigger, title, entries, bodyNodes) {
+  // Opened by hover, then clicked: keep it open (pinned) instead of closing.
+  if (
+    settingsFlyoutOpen &&
+    settingsFlyoutReference === trigger &&
+    settingsFlyoutViaHover
+  ) {
+    settingsFlyoutViaHover = false;
+    cancelHoverFlyoutClose();
+    return;
+  }
   if (settingsFlyoutOpen && settingsFlyoutReference === trigger) {
     closeSettingsFlyout();
     return;
   }
-  openCollapsedFlyout(trigger, title, entries);
+  openCollapsedFlyout(trigger, title, entries, bodyNodes);
 }
 
 function toggleCollapsedSettingsFlyout(trigger) {
@@ -895,6 +1052,7 @@ function submenuFlyoutEntries(trigger) {
     items.push({
       label: label,
       href: anchor.getAttribute("href") || "#",
+      current: anchor.getAttribute("aria-current") === "page",
     });
   });
   return items;
@@ -1049,7 +1207,7 @@ function openAccountInfoFlyout(trigger) {
   var flyout = renderAccountInfoFlyout();
   accountInfoFlyoutOpen = true;
   accountInfoFlyoutReference = trigger;
-  hideNavTooltip();
+  hideNavTooltip(true);
   trigger.setAttribute("aria-expanded", "true");
   flyout.classList.remove("hidden");
   flyout.classList.add("flex");
@@ -1137,24 +1295,42 @@ function renderSupportFlyout() {
   flyout.setAttribute("role", "dialog");
   flyout.setAttribute("aria-labelledby", "support-flyout-title");
   flyout.className =
-    "fixed z-[80] hidden w-[257px] flex-col rounded-lg bg-white font-['Inter'] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.10),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] dark:bg-gray-800 dark:shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.40),0px_4px_6px_-2px_rgba(0,0,0,0.30),0px_0px_0px_1px_rgba(255,255,255,0.10)]";
+    "fixed z-[80] hidden w-97 max-w-[calc(100vw-1rem)] flex-col overflow-hidden rounded-lg bg-white font-['Inter'] shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.10),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] data-[side=top]:shadow-[0px_-10px_15px_-3px_rgba(0,0,0,0.10),0px_-4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] dark:bg-gray-800 dark:shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.40),0px_4px_6px_-2px_rgba(0,0,0,0.30),0px_0px_0px_1px_rgba(255,255,255,0.10)] dark:data-[side=top]:shadow-[0px_-10px_15px_-3px_rgba(0,0,0,0.40),0px_-4px_6px_-2px_rgba(0,0,0,0.30),0px_0px_0px_1px_rgba(255,255,255,0.10)]";
+  // Figma R3 SX "Main Menu/Transcard Support Team/Dropdown" (46660:60489):
+  // Support Team header, Email | Call buttons, plus our FAQ & User Guides row.
+  var root = (function () {
+    var path = window.location.pathname || "";
+    var index = path.indexOf("/src/pages/");
+    return index >= 0 ? path.slice(0, index) : "";
+  })();
+  var rowBtn =
+    "inline-flex flex-1 items-center justify-center gap-2 px-3.5 py-3.5 text-base font-semibold leading-6 text-gray-700 transition-colors hover:bg-gray-50 hover:text-gray-900 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-200 dark:hover:bg-white/5 dark:hover:text-white";
+  var rowIcon = "size-5 shrink-0 text-gray-500 dark:text-gray-400";
   flyout.innerHTML =
-    '<div class="flex flex-col gap-2 px-4 py-[18px]">' +
-    '<h2 id="support-flyout-title" class="text-sm font-semibold leading-5 text-gray-900 dark:text-white">Contact Support</h2>' +
-    '<div class="flex flex-col gap-1.5">' +
-    '<a href="mailto:support@transcard.com" class="text-sm font-normal leading-5 text-gray-500 transition-colors hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-200">support@transcard.com</a>' +
-    '<a href="tel:8008903128" class="text-sm font-normal leading-5 text-gray-500 transition-colors hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-200">800-890-3128</a>' +
-    "</div></div>" +
+    '<div class="flex items-start gap-4 p-6">' +
+    '<img src="' + root + '/src/assets/illustrations/smart-hub-avatar.svg?v=20261111b" width="48" height="48" alt="" class="size-12 shrink-0 rounded-full" />' +
+    '<div class="flex min-w-0 flex-1 flex-col gap-1.5">' +
+    '<h2 id="support-flyout-title" class="text-sm font-medium leading-5 text-gray-900 dark:text-white">SMART Hub Support Team</h2>' +
+    // Email and phone stacked (Andrian, 2026-11-11), not inline with a divider.
+    '<div class="flex flex-col items-start text-sm font-normal leading-5 text-gray-500 dark:text-gray-400">' +
+    '<a href="mailto:support@smart-hub.com" class="rounded-sm transition-colors hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:text-gray-200">support@smart-hub.com</a>' +
+    '<a href="tel:8008903128" class="rounded-sm transition-colors hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:text-gray-200">800-890-3128</a>' +
+    // Kept from before (not in Figma): the knowledge base, as a small link in the header.
+    '<a href="https://www.transcard.com/en/smart-knowledge-base" target="_blank" rel="noopener noreferrer" data-support-faq class="mt-3 inline-flex items-center gap-1 rounded-sm font-semibold text-blue-600 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300">FAQ &amp; User Guides' +
+    // Heroicons micro arrow-top-right-on-square (external link)
+    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 shrink-0"><path d="M6.22 8.72a.75.75 0 0 0 1.06 1.06l5.22-5.22v1.69a.75.75 0 0 0 1.5 0v-3.5a.75.75 0 0 0-.75-.75h-3.5a.75.75 0 0 0 0 1.5h1.69L6.22 8.72Z" /><path d="M3.5 6.75c0-.69.56-1.25 1.25-1.25H7A.75.75 0 0 0 7 4H4.75A2.75 2.75 0 0 0 2 6.75v4.5A2.75 2.75 0 0 0 4.75 14h4.5A2.75 2.75 0 0 0 12 11.25V9a.75.75 0 0 0-1.5 0v2.25c0 .69-.56 1.25-1.25 1.25h-4.5c-.69 0-1.25-.56-1.25-1.25v-4.5Z" /></svg>' +
+    '<span class="sr-only">(opens in a new tab)</span></a>' +
+    "</div></div></div>" +
     '<div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>' +
-    '<div class="px-4 py-1.5">' +
-    '<a href="#" data-support-faq class="inline-flex items-center rounded-md px-2.5 py-1.5 text-sm font-semibold leading-5 text-blue-600 transition-colors hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:bg-white/10">FAQ &amp; User Guides →</a>' +
-    "</div>";
-  var faq = flyout.querySelector("[data-support-faq]");
-  if (faq) {
-    faq.addEventListener("click", function (event) {
-      event.preventDefault();
-    });
-  }
+    '<div class="flex w-full">' +
+    '<a href="mailto:support@smart-hub.com" class="' + rowBtn + '">' +
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' + rowIcon + '"><path d="M2.003 5.884L10 9.882L17.997 5.884C17.9674 5.37444 17.7441 4.89549 17.3728 4.54523C17.0016 4.19497 16.5104 3.99991 16 4H4C3.48958 3.99991 2.99845 4.19497 2.62718 4.54523C2.25591 4.89549 2.0326 5.37444 2.003 5.884Z"/><path d="M18 8.118L10 12.118L2 8.118V14C2 14.5304 2.21071 15.0391 2.58579 15.4142C2.96086 15.7893 3.46957 16 4 16H16C16.5304 16 17.0391 15.7893 17.4142 15.4142C17.7893 15.0391 18 14.5304 18 14V8.118Z"/></svg>' +
+    "Email</a>" +
+    '<div class="w-px shrink-0 bg-gray-200 dark:bg-white/10"></div>' +
+    '<a href="tel:8008903128" class="' + rowBtn + '">' +
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="' + rowIcon + '"><path d="M2 3C2 2.44772 2.44772 2 3 2H5.15287C5.64171 2 6.0589 2.35341 6.13927 2.8356L6.87858 7.27147C6.95075 7.70451 6.73206 8.13397 6.3394 8.3303L4.79126 9.10437C5.90756 11.8783 8.12168 14.0924 10.8956 15.2087L11.6697 13.6606C11.866 13.2679 12.2955 13.0492 12.7285 13.1214L17.1644 13.8607C17.6466 13.9411 18 14.3583 18 14.8471V17C18 17.5523 17.5523 18 17 18H15C7.8203 18 2 12.1797 2 5V3Z"/></svg>' +
+    "Call</a></div>";
+
   document.body.appendChild(flyout);
   return flyout;
 }
@@ -1178,7 +1354,9 @@ function ensureSupportTriggerRing() {
   ring.id = "dashboard-support-trigger-ring";
   ring.setAttribute("aria-hidden", "true");
   ring.className =
-    "pointer-events-none fixed z-[90] hidden rounded-md shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05),0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] dark:shadow-[0px_1px_2px_0px_rgba(0,0,0,0.05),0px_0px_0px_2px_#111827,0px_0px_0px_4px_#2563eb]";
+    // No shadow-xs layer here: painted on top of the 2px white gap it showed
+    // as a grey stroke around the button.
+    "pointer-events-none fixed z-[90] hidden rounded-md shadow-[0px_0px_0px_2px_#fff,0px_0px_0px_4px_#2563eb] dark:shadow-[0px_0px_0px_2px_#111827,0px_0px_0px_4px_#2563eb]";
   document.body.appendChild(ring);
   return ring;
 }
@@ -1227,7 +1405,14 @@ function positionSupportFlyout(reference) {
               placement: below ? "bottom-start" : "right-start",
               strategy: "fixed",
               middleware: below
-                ? [floating.offset(4)]
+                ? [
+                    // 8 = the 4px focus ring + 4px clear gap to the card.
+                    floating.offset(8),
+                    // Taller Support Team card: open upwards when it would
+                    // run off the bottom of the screen.
+                    floating.flip({ fallbackPlacements: ["top-start"] }),
+                    floating.shift({ padding: 8 }),
+                  ]
                 : [
                     floating.offset(12),
                     floating.flip({ fallbackPlacements: ["right-end"] }),
@@ -1241,6 +1426,9 @@ function positionSupportFlyout(reference) {
             .then(function (position) {
               flyout.style.left = position.x + "px";
               flyout.style.top = position.y + "px";
+              // Opened above the trigger: cast the shadow upwards so it does
+              // not fall on the Help button (data-[side=top] classes).
+              flyout.setAttribute("data-side", position.placement.split("-")[0]);
               placeSupportTriggerRing(reference);
             });
         },
@@ -1249,7 +1437,7 @@ function positionSupportFlyout(reference) {
     .catch(function () {
       var rect = reference.getBoundingClientRect();
       flyout.style.left = (below ? rect.left : rect.right + 12) + "px";
-      flyout.style.top = (below ? rect.bottom + 4 : rect.top) + "px";
+      flyout.style.top = (below ? rect.bottom + 8 : rect.top) + "px";
       placeSupportTriggerRing(reference);
     });
 }
@@ -1260,7 +1448,7 @@ function openSupportFlyout(trigger) {
   var flyout = renderSupportFlyout();
   supportFlyoutOpen = true;
   supportFlyoutReference = trigger;
-  hideNavTooltip();
+  hideNavTooltip(true);
   trigger.setAttribute("aria-expanded", "true");
   setSupportTriggerOpen(trigger, true);
   placeSupportTriggerRing(trigger);
@@ -1384,9 +1572,110 @@ function showNavTooltip(navItem) {
     return;
   }
 
+  // Items with a submenu show the submenu itself on hover, not just their name.
+  if (openHoverFlyout(navItem)) return;
+
   const label = getTooltipLabel(navItem);
   if (!label) return;
   showHoverTooltip(navItem, label);
+}
+
+/* ===== Collapsed submenu on hover ===== */
+
+var settingsFlyoutViaHover = false;
+var hoverFlyoutCloseTimer = null;
+
+/** The flyout content for a collapsed nav item with a submenu, or null. */
+function collapsedFlyoutFor(navItem) {
+  // Collapsed footer shield: a card with the expanded footer's two rows,
+  // "Powered by Transcard" (no shield) and "Terms of Use • Privacy Policy".
+  var footerTrigger = navItem.closest("[data-footer-flyout-trigger]");
+  if (footerTrigger) {
+    var expanded = document.querySelector(
+      "#desktop-sidebar-footer [data-sidebar-expanded-footer]",
+    );
+    var rows = expanded
+      ? Array.prototype.map.call(expanded.children, function (row) {
+          return row.cloneNode(true);
+        })
+      : [];
+    if (rows[0]) {
+      var shield = rows[0].querySelector("img");
+      if (shield && /shield/.test(shield.getAttribute("src") || "")) shield.remove();
+    }
+    if (rows[1]) {
+      rows[1].querySelectorAll("span").forEach(function (dot) {
+        if (dot.textContent.trim() === "•")
+          dot.className = "text-gray-700 dark:text-gray-400";
+      });
+    }
+    return {
+      trigger: footerTrigger,
+      title: "Powered by Transcard",
+      entries: [],
+      bodyNodes: rows,
+    };
+  }
+  var sx = navItem.closest("[data-smart-exchange-trigger]");
+  if (sx) {
+    // SMART Exchange is itself a page: list it first, then its submenu.
+    var sxEntries = submenuFlyoutEntries(sx);
+    var sxLink = sx.querySelector("a");
+    if (sxLink) {
+      sxEntries.unshift({
+        label: supplierPortalFlyoutTitle(sx),
+        href: sxLink.getAttribute("href") || "#",
+        current: sxLink.getAttribute("aria-current") === "page",
+      });
+    }
+    return sxEntries.length
+      ? { trigger: sx, title: supplierPortalFlyoutTitle(sx), entries: sxEntries }
+      : null;
+  }
+  var trigger = navItem.closest("[data-expandable-trigger]");
+  if (!trigger) return null;
+  if (trigger.getAttribute("data-item-id") === "settings") {
+    return { trigger: trigger, title: "Settings", entries: settingsFlyoutEntries() };
+  }
+  var entries = submenuFlyoutEntries(trigger);
+  return entries.length
+    ? { trigger: trigger, title: supplierPortalFlyoutTitle(trigger), entries: entries }
+    : null;
+}
+
+function cancelHoverFlyoutClose() {
+  if (hoverFlyoutCloseTimer) clearTimeout(hoverFlyoutCloseTimer);
+  hoverFlyoutCloseTimer = null;
+}
+
+function scheduleHoverFlyoutClose() {
+  cancelHoverFlyoutClose();
+  if (!settingsFlyoutOpen || !settingsFlyoutViaHover) return;
+  hoverFlyoutCloseTimer = setTimeout(function () {
+    hoverFlyoutCloseTimer = null;
+    if (settingsFlyoutOpen && settingsFlyoutViaHover) closeSettingsFlyout();
+  }, 200);
+}
+
+function openHoverFlyout(navItem) {
+  var refs = getSidebarRefs();
+  var inNav = refs.desktopNav && refs.desktopNav.contains(navItem);
+  var inFooter =
+    refs.desktopSidebarFooter && refs.desktopSidebarFooter.contains(navItem);
+  if (!inNav && !inFooter) return false;
+  var spec = collapsedFlyoutFor(navItem);
+  if (!spec) return false;
+  cancelHoverFlyoutClose();
+  if (settingsFlyoutOpen && settingsFlyoutReference === spec.trigger) return true;
+  openCollapsedFlyout(spec.trigger, spec.title, spec.entries, spec.bodyNodes);
+  settingsFlyoutViaHover = true;
+  var flyout = document.getElementById("dashboard-settings-flyout");
+  if (flyout && !flyout.dataset.hoverBound) {
+    flyout.addEventListener("mouseenter", cancelHoverFlyoutClose);
+    flyout.addEventListener("mouseleave", scheduleHoverFlyoutClose);
+    flyout.dataset.hoverBound = "true";
+  }
+  return true;
 }
 
 /* ===== Event Listeners ===== */
@@ -1464,7 +1753,8 @@ function initDashboardSidebar() {
   bindDashboardSidebarRuntime();
   normalizeMainContentWrapperLayout();
   prepareDesktopNavLabels();
-  setDesktopSidebarCollapsed(loadDesktopSidebarCollapsedPreference());
+  setDesktopSidebarCollapsed(getInitialDesktopSidebarCollapsed());
+  bindCompactDesktopSidebar();
   syncActiveNavItemStyles();
   requestAnimationFrame(function () {
     clearSidebarBootState();

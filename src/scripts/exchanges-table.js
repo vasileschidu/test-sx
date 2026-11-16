@@ -72,7 +72,7 @@
     ? ["bg-blue-50", "text-blue-600", "dark:bg-blue-500/15", "dark:text-blue-300"]
     : ["bg-blue-100", "text-blue-700", "dark:bg-blue-500/20", "dark:text-blue-300"];
   var INACTIVE_TAB_LINK_CLASSES = IS_SUPPLIER_PORTAL
-    ? ["text-gray-500", "hover:text-gray-700", "dark:text-gray-400", "dark:hover:text-gray-200"]
+    ? ["text-gray-500", "hover:bg-gray-50", "hover:text-gray-700", "dark:text-gray-400", "dark:hover:bg-white/5", "dark:hover:text-gray-200"]
     : ["text-gray-500", "dark:text-gray-400"];
   var EXCEPTION_TAB_LINK_CLASSES = [
     "bg-red-50",
@@ -80,12 +80,8 @@
     "dark:bg-red-500/15",
     "dark:text-red-300",
   ];
-  var ACTIVE_BADGE_CLASSES = IS_SUPPLIER_PORTAL
-    ? ["bg-blue-100", "text-blue-800", "border-blue-200", "dark:bg-blue-400/15", "dark:text-blue-200", "dark:border-blue-400/30"]
-    : ["bg-blue-50", "text-blue-700", "inset-ring-blue-700/10", "dark:bg-blue-400/10", "dark:text-blue-400", "dark:inset-ring-blue-400/30"];
-  var INACTIVE_BADGE_CLASSES = IS_SUPPLIER_PORTAL
-    ? ["bg-gray-100", "text-gray-800", "border-gray-200", "dark:bg-white/10", "dark:text-gray-200", "dark:border-white/15"]
-    : ["bg-gray-50", "text-gray-600", "inset-ring-gray-500/10", "dark:bg-gray-400/10", "dark:text-gray-400", "dark:inset-ring-gray-400/20"];
+  var ACTIVE_BADGE_CLASSES = ["border-blue-200", "bg-blue-100", "text-blue-800", "dark:border-blue-400/20", "dark:bg-blue-400/10", "dark:text-blue-400"];
+  var INACTIVE_BADGE_CLASSES = ["border-gray-200", "bg-gray-100", "text-gray-800", "dark:border-white/15", "dark:bg-white/10", "dark:text-gray-300"];
 
   var DEFAULT_PAGE_SIZE = IS_SUPPLIER_PORTAL ? 10 : 16;
   var PAGE_SIZE_OPTIONS = IS_SUPPLIER_PORTAL
@@ -210,14 +206,14 @@
 
   var STATUS_STYLES = {
     pending:
-      "bg-yellow-50 text-yellow-800 inset-ring-yellow-600/20 dark:bg-yellow-400/10 dark:text-yellow-500 dark:inset-ring-yellow-400/20",
+      "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
     processing:
-      "bg-blue-50 text-blue-700 inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/20",
-    paid: "bg-green-50 text-green-700 inset-ring-green-600/20 dark:bg-green-500/10 dark:text-green-400 dark:inset-ring-green-500/20",
+      "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400",
+    paid: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
     exception:
-      "bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20",
+      "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
     declined:
-      "bg-red-50 text-red-700 inset-ring-red-600/10 dark:bg-red-400/10 dark:text-red-400 dark:inset-ring-red-400/20",
+      "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
   };
 
   var STATUS_LABELS = {
@@ -1076,7 +1072,7 @@
   function buildManageColumnsRowHTML(col, checked, disabled) {
     var scopeBadge =
       col && col.key === "failureReason"
-        ? '<span class="shrink-0 rounded-sm bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-white/10 dark:text-gray-400 dark:inset-ring-white/10">Exceptions</span>'
+        ? '<span class="items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 shrink-0">Exceptions</span>'
         : "";
     return (
       "" +
@@ -1085,8 +1081,8 @@
       '" class="group relative flex items-center gap-2 rounded-lg px-2 py-2 hover:bg-gray-50 dark:hover:bg-white/5' +
       (disabled ? " opacity-60" : "") +
       '">' +
-      '  <span data-drop-line="before" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="top:0;transform:translateY(-50%);"></span>' +
-      '  <span data-drop-line="after" class="pointer-events-none absolute left-7 right-2 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="bottom:0;transform:translateY(50%);"></span>' +
+      '  <span data-drop-line="before" class="pointer-events-none absolute left-0 right-0 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="top:0;transform:translateY(-50%);"></span>' +
+      '  <span data-drop-line="after" class="pointer-events-none absolute left-0 right-0 z-10 h-0.5 rounded-full bg-blue-600 opacity-0 transition-opacity duration-100 ease-out" style="bottom:0;transform:translateY(50%);"></span>' +
       '  <button type="button" draggable="true" data-column-drag-handle="' +
       escapeHtml(col.key) +
       '" class="inline-flex size-5 shrink-0 cursor-grab items-center justify-center rounded text-gray-400 hover:bg-gray-100 hover:text-gray-500 active:cursor-grabbing dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300">' +
@@ -1095,7 +1091,7 @@
       '      <path d="M2.40039 10.8001C2.40039 10.1374 2.93765 9.6001 3.60039 9.6001C4.26313 9.6001 4.80039 10.1374 4.80039 10.8001C4.80039 11.4628 4.26313 12.0001 3.60039 12.0001C2.93765 12.0001 2.40039 11.4628 2.40039 10.8001Z" /><path d="M6.80039 10.8001C6.80039 10.1374 7.33765 9.6001 8.00039 9.6001C8.66313 9.6001 9.20039 10.1374 9.20039 10.8001C9.20039 11.4628 8.66313 12.0001 8.00039 12.0001C7.33765 12.0001 6.80039 11.4628 6.80039 10.8001Z" /><path d="M12.4004 9.6001C11.7376 9.6001 11.2004 10.1374 11.2004 10.8001C11.2004 11.4628 11.7376 12.0001 12.4004 12.0001C13.0631 12.0001 13.6004 11.4628 13.6004 10.8001C13.6004 10.1374 13.0631 9.6001 12.4004 9.6001Z" /><path d="M2.40039 6.00005C2.40039 5.33731 2.93765 4.80005 3.60039 4.80005C4.26313 4.80005 4.80039 5.33731 4.80039 6.00005C4.80039 6.66279 4.26313 7.20005 3.60039 7.20005C2.93765 7.20005 2.40039 6.66279 2.40039 6.00005Z" /><path d="M6.80039 6.00005C6.80039 5.33731 7.33765 4.80005 8.00039 4.80005C8.66313 4.80005 9.20039 5.33731 9.20039 6.00005C9.20039 6.66279 8.66313 7.20005 8.00039 7.20005C7.33765 7.20005 6.80039 6.66279 6.80039 6.00005Z" /><path d="M12.4004 4.80005C11.7376 4.80005 11.2004 5.33731 11.2004 6.00005C11.2004 6.66279 11.7376 7.20005 12.4004 7.20005C13.0631 7.20005 13.6004 6.66279 13.6004 6.00005C13.6004 5.33731 13.0631 4.80005 12.4004 4.80005Z" />' +
       "    </svg>" +
       "  </button>" +
-      '  <app-checkbox class="min-w-0 flex-1" data-column-visibility-toggle="' +
+      '  <app-checkbox class="min-w-0" data-column-visibility-toggle="' +
       escapeHtml(col.key) +
       '"' +
       (checked ? " checked" : "") +
@@ -1947,17 +1943,17 @@
   function renderStatus(status) {
     if (IS_SUPPLIER_PORTAL) {
       var supplierBadge = {
-        pending: "border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/20 dark:bg-yellow-400/10 dark:text-yellow-500",
-        "action-required": "border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/20 dark:bg-yellow-400/10 dark:text-yellow-500",
-        processing: "border-blue-200 bg-blue-50 text-blue-700 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-400",
-        paid: "border-green-200 bg-green-100 text-green-800 dark:border-green-500/20 dark:bg-green-400/10 dark:text-green-400",
+        pending: "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
+        "action-required": "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
+        processing: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400",
+        paid: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
         exception: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
         declined: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
       };
       var withClock = status === "pending" || status === "action-required";
       return (
-        '<span class="inline-flex items-center justify-center whitespace-nowrap rounded border text-sm leading-5 font-medium ' +
-        (withClock ? "gap-0.5 py-0.5 pr-2 pl-1 " : "px-2 py-0.5 ") +
+        '<span class="inline-flex items-center justify-center whitespace-nowrap rounded border text-sm/5 font-medium ' +
+        (withClock ? "gap-0.5 py-0.5 pr-2 pl-1 " : "gap-1 px-2 py-0.5 ") +
         (supplierBadge[status] || supplierBadge.pending) +
         '">' +
         (withClock ? tableIcon("clock-14.svg", 14, 14) : "") +
@@ -1968,7 +1964,7 @@
     var badgeClasses = STATUS_STYLES[status] || STATUS_STYLES.pending;
     if (status === "processing") {
       return (
-        '<span data-processing-tooltip="true" class="inline-flex cursor-default items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
+        '<span data-processing-tooltip="true" class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border cursor-default ' +
         badgeClasses +
         '">' +
         escapeHtml(getStatusLabel(status)) +
@@ -1976,7 +1972,7 @@
       );
     }
     return (
-      '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
+      '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border ' +
       badgeClasses +
       '">' +
       escapeHtml(getStatusLabel(status)) +
@@ -2232,7 +2228,7 @@
       '<div class="flex-1 flex flex-col items-start gap-2 p-4">' +
       (IS_SUPPLIER_PORTAL
         ? renderStatus(displayStatus)
-        : '<span class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium inset-ring ' +
+        : '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border ' +
           statusClass +
           '">' +
           escapeHtml(getStatusLabel(displayStatus)) +
@@ -3334,22 +3330,29 @@
 
   // ── Sticky action column ──
 
-  function applyActionDivider(cell, isActive, isDark) {
-    if (isActive) {
-      cell.style.borderLeftWidth = "1px";
-      cell.style.borderLeftStyle = "solid";
-      cell.style.borderLeftColor = isDark
-        ? "rgba(255,255,255,0.10)"
-        : "rgba(0,0,0,0.15)";
-      cell.style.boxShadow = isDark
-        ? "-10px 0 15px -3px rgba(0,0,0,0.3), -4px 0 6px -4px rgba(0,0,0,0.3)"
-        : "-10px 0 15px -3px rgba(0,0,0,0.1), -4px 0 6px -4px rgba(0,0,0,0.1)";
-    } else {
-      cell.style.borderLeftWidth = "0px";
-      cell.style.borderLeftStyle = "solid";
-      cell.style.borderLeftColor = "transparent";
-      cell.style.boxShadow = "none";
-    }
+  // Same approach as the Users and Bills tables (um-ui.js STUCK_CLASSES): no
+  // divider line, a soft gradient on the pinned column's left edge while the
+  // table overflows.
+  var STUCK_EDGE_CLASSES = [
+    "before:pointer-events-none",
+    "before:absolute",
+    "before:inset-y-0",
+    "before:right-full",
+    "before:w-6",
+    "before:bg-linear-to-l",
+    "before:from-black/5",
+    "before:to-transparent",
+    "dark:before:from-black/20",
+  ];
+
+  function applyActionDivider(cell, isActive) {
+    STUCK_EDGE_CLASSES.forEach(function (cls) {
+      cell.classList.toggle(cls, isActive);
+    });
+    cell.style.borderLeftWidth = "";
+    cell.style.borderLeftStyle = "";
+    cell.style.borderLeftColor = "";
+    cell.style.boxShadow = "";
   }
 
   function initStickyAction(table) {
@@ -3360,7 +3363,6 @@
     function sync() {
       var maxScrollLeft = scroller.scrollWidth - scroller.clientWidth;
       var isOverflowing = maxScrollLeft > 0.5;
-      var isDark = document.documentElement.classList.contains("dark");
       var actionColumns = table.querySelectorAll(ACTION_COLUMN_SELECTOR);
 
       actionColumns.forEach(function (cell) {
@@ -3369,7 +3371,7 @@
         } else {
           cell.classList.remove("sticky", "right-0", "z-10");
         }
-        applyActionDivider(cell, isOverflowing, isDark);
+        applyActionDivider(cell, isOverflowing);
       });
     }
 
@@ -5853,11 +5855,11 @@
       "sx-manage-columns-reset-btn",
     );
     var LIFT_CLASSES = [
-      "bg-white",
+      "!bg-white",
       "shadow-lg",
       "ring-1",
       "ring-gray-900/10",
-      "dark:bg-gray-800",
+      "dark:!bg-gray-800",
       "dark:ring-white/15",
     ];
     function liftRow(row, on) {
@@ -5969,12 +5971,23 @@
           );
         }
       }
+      // Figma: the row stays in place, faded, while its lifted copy follows the cursor.
+      setTimeout(function () {
+        liftRow(row, false);
+        row.classList.add("opacity-40");
+      }, 0);
     });
 
     manageColumnsList.addEventListener("dragend", function (event) {
       var row = event.target.closest("[data-column-order-row]");
       if (row) liftRow(row, false);
       clearAllLifts(manageColumnsList);
+      Array.prototype.forEach.call(
+        document.querySelectorAll("[data-column-order-row].opacity-40"),
+        function (r) {
+          r.classList.remove("opacity-40");
+        },
+      );
       draggingColumnKey = "";
       dragTargetKey = "";
       dragTargetPosition = "before";
@@ -8197,14 +8210,14 @@
   }
 
   var GET_PAID_BADGE_BASE_CLASS =
-    "inline-flex items-center gap-0.5 rounded border py-0.5 pr-2 text-sm leading-5 font-medium";
+    "inline-flex items-center gap-1 rounded px-2 py-0.5 text-sm/5 font-medium border";
   var GET_PAID_BADGE_TONES = {
     yellow:
-      "border-yellow-300 bg-yellow-100 text-yellow-800 dark:border-yellow-400/30 dark:bg-yellow-400/10 dark:text-yellow-400",
+      "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
     green:
-      "border-green-300 bg-green-100 text-green-800 dark:border-green-400/30 dark:bg-green-400/10 dark:text-green-400",
-    red: "border-red-300 bg-red-100 text-red-800 dark:border-red-400/30 dark:bg-red-400/10 dark:text-red-400",
-    blue: "border-blue-300 bg-blue-100 text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/10 dark:text-blue-400",
+      "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
+    red: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
+    blue: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400",
   };
 
   function setGetPaidHeaderBadge(badge, text, tone, showClock) {
@@ -8524,11 +8537,11 @@
       if (showStatusBadge && status === "enabled") {
         stpStatusBadge.textContent = "Opted in";
         stpStatusBadge.className =
-          "inline-flex items-center rounded-md bg-green-50 px-2 py-1 text-xs font-medium text-green-700 ring-1 ring-inset ring-green-600/20 dark:bg-green-500/10 dark:text-green-300 dark:ring-green-400/30";
+          "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400";
       } else if (showStatusBadge) {
         stpStatusBadge.textContent = "Enabling pending";
         stpStatusBadge.className =
-          "inline-flex items-center rounded-md bg-gray-50 px-2 py-1 text-xs font-medium text-gray-600 ring-1 ring-inset ring-gray-500/10 dark:bg-white/5 dark:text-gray-300 dark:ring-white/15";
+          "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300";
       }
     }
 
@@ -10383,6 +10396,42 @@
         console.error("Failed to load exchanges data:", error);
         updateTabBadges([]);
       });
+  }
+
+
+  // ── Export (format menu, table-export.js) ──
+  // Every filtered + sorted row of the active tab, the visible data columns,
+  // cell text as rendered (badges / icons reduced to their text).
+  function exportCellText(html) {
+    var box = document.createElement("div");
+    box.innerHTML = html == null ? "" : String(html);
+    box.querySelectorAll(".sr-only, svg, img").forEach(function (n) {
+      n.remove();
+    });
+    return box.textContent.replace(/\s+/g, " ").trim();
+  }
+  function getExportData() {
+    var cols = (paginationState.columns || []).filter(function (c) {
+      return c && c.type !== "expand" && c.type !== "action" && c.type !== "select" && (c.label || c.key);
+    });
+    var tab = document.querySelector('nav[aria-label="Tabs"] [aria-current="page"] span');
+    var label = tab ? tab.textContent.trim() : "";
+    return {
+      columns: cols.map(function (c) {
+        return c.label || c.key;
+      }),
+      label: label,
+      title: "SMART Exchange payments" + (label ? " — " + label : ""),
+      rows: (paginationState.allEntries || []).map(function (entry) {
+        return cols.map(function (c) {
+          return exportCellText(renderCellValue(c, entry));
+        });
+      }),
+    };
+  }
+  var exportButton = document.getElementById("sx-export-btn");
+  if (exportButton && window.TableExport) {
+    window.TableExport.attach(exportButton, { name: "smart-exchange", getData: getExportData });
   }
 
   window.initSmartExchangePage = init;

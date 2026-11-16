@@ -1,0 +1,9 @@
+{
+  "enabled": false,
+  "provider": "emailjs",
+  "serviceId": "",
+  "templateId": "",
+  "publicKey": "",
+  "allowedDomains": ["agilepartners.eu"],
+  "maxPerMinute": 5
+}
