@@ -678,7 +678,7 @@
     var el = openFloating(
       "tip",
       icon,
-      '<div role="tooltip" class="rounded-lg bg-gray-900 px-2.5 py-2 text-sm/5 whitespace-nowrap text-gray-50 shadow-lg dark:bg-gray-950 dark:ring-1 dark:ring-white/10">' +
+      '<div role="tooltip" class="rounded-lg bg-gray-900 p-3 text-sm/5 font-normal whitespace-nowrap text-gray-100 shadow-xs dark:bg-gray-950 dark:ring-1 dark:ring-white/10">' +
         escapeHtml(icon.getAttribute("data-method-tip")) +
         "</div>",
     );
@@ -698,7 +698,7 @@
     var available = badge.getAttribute("data-early-tip") === "available";
     var vendor = findVendor(badge.getAttribute("data-vendor-id"));
     var html =
-      '<div role="tooltip" class="w-[360px] max-w-[calc(100vw-1rem)] rounded-lg bg-gray-900 p-3 text-left text-sm/5 text-white shadow-lg">' +
+      '<div role="tooltip" class="w-[343px] max-w-[calc(100vw-2rem)] rounded-lg bg-gray-900 p-3 text-left text-sm/5 font-normal text-gray-100 shadow-xs dark:bg-gray-950 dark:ring-1 dark:ring-white/10">' +
       escapeHtml(available ? EARLY_AVAILABLE_TIP : EARLY_UNAVAILABLE_TIP) +
       (!available && vendor && vendor.email
         ? ' <a href="mailto:' +
@@ -881,7 +881,7 @@
   }
 
   var INPUT_CLASS =
-    "block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:not-focus:outline-gray-400 dark:hover:not-focus:outline-white/20";
+    "block h-10 w-full rounded-md bg-white px-3 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:focus:outline-blue-500 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:not-focus:outline-gray-400 dark:hover:not-focus:outline-white/20 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-600 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-500";
   var LABEL_CLASS = "text-sm/5 font-medium text-gray-700 dark:text-gray-300";
 
   function linkButton(attr, icon, label) {
@@ -1198,7 +1198,7 @@
       '" alt="" width="20" height="20" class="pointer-events-none col-start-1 row-start-1 ml-3 self-center" /></div></div>' +
       "</div>" +
       '<div class="flex flex-col gap-1"><div class="flex justify-between gap-1 text-sm/5 font-medium"><label for="vn-invite-description" class="text-gray-700 dark:text-gray-300">Description</label><span class="text-gray-500 dark:text-gray-400">Optional</span></div>' +
-      '<textarea id="vn-invite-description" data-invite-description rows="4" class="block h-[126px] w-full resize-y rounded-md bg-white px-3 py-2 text-base/6 text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10">' +
+      '<textarea id="vn-invite-description" data-invite-description rows="4" class="block h-[126px] w-full resize-y rounded-md bg-white px-3 py-2 text-base/6 text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 hover:outline-gray-400 dark:hover:outline-white/20 dark:focus:outline-blue-500 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-600 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-500">' +
       escapeHtml(invite.description) +
       "</textarea></div>" +
       "</div>"

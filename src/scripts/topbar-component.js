@@ -968,7 +968,7 @@
   }
 
   function consumerBusinessMenuClass() {
-    return "w-[361px] origin-top-right overflow-hidden rounded-lg bg-white shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline outline-transparent transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800";
+    return "w-[361px] origin-top-right overflow-hidden rounded-lg bg-white shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline outline-transparent transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in dark:bg-gray-800";
   }
 
   /** Consumer portal notifications (Figma "Notification Modal"): right-hand panel opened from the bell. */
@@ -1063,13 +1063,13 @@
   }
 
   function consumerUserMenuClass() {
-    return "w-[206px] origin-top-right overflow-hidden rounded-md bg-white pt-1 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline outline-transparent transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800";
+    return "w-[206px] origin-top-right overflow-hidden rounded-md bg-white pt-1 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline outline-transparent transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in dark:bg-gray-800";
   }
 
   function headerMenuClass(widthClass) {
     return (
       (widthClass || "w-64") +
-      " origin-top-right rounded-xl bg-white/85 p-1 shadow-lg ring-1 ring-zinc-950/10 outline outline-transparent backdrop-blur-xl transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-200 data-enter:ease-out data-leave:duration-150 data-leave:ease-in dark:bg-gray-800/85 dark:ring-white/10"
+      " origin-top-right rounded-xl bg-white/85 p-1 shadow-lg ring-1 ring-zinc-950/10 outline outline-transparent backdrop-blur-xl transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in dark:bg-gray-800/85 dark:ring-white/10"
     );
   }
 
@@ -1712,9 +1712,7 @@
         "</span>" +
         topbarIcon("selector.svg", 20, 20) +
         "        </button>" +
-        '        <el-menu data-topbar-business-menu="supplier" anchor="bottom end" popover class="' +
-        consumerBusinessMenuClass() +
-        '">' +
+        '        <el-menu data-topbar-business-menu="supplier" anchor="bottom end" popover class="' + consumerBusinessMenuClass() + '">' +
         supplierBusinessMenuHtml() +
         "        </el-menu>" +
         "      </el-dropdown>" +
@@ -1724,9 +1722,7 @@
         topbarAsset("avatar.png") +
         '" data-topbar-avatar-img width="40" height="40" alt="" class="size-10 rounded-full border-2 border-white object-cover dark:border-gray-800">' +
         "        </button>" +
-        '        <el-menu anchor="bottom end" popover class="' +
-        consumerUserMenuClass() +
-        '">' +
+        '        <el-menu anchor="bottom end" popover class="' + consumerUserMenuClass() + '">' +
         accountMenuHtml() +
         "        </el-menu>" +
         "      </el-dropdown>" +
@@ -1775,9 +1771,7 @@
         assetBase +
         'selector.svg" alt="" /></span>' +
         "        </button>" +
-        '        <el-menu data-topbar-business-menu anchor="bottom end" popover class="' +
-        consumerBusinessMenuClass() +
-        '">' +
+        '        <el-menu data-topbar-business-menu anchor="bottom end" popover class="' + consumerBusinessMenuClass() + '">' +
         consumerBusinessMenuHtml() +
         "</el-menu>" +
         "      </el-dropdown>" +
@@ -1787,9 +1781,7 @@
         assetBase +
         'avatar-cody-fisher.jpg" alt="" class="size-10 rounded-full border-2 border-white object-cover dark:border-gray-800" />' +
         "        </button>" +
-        '        <el-menu anchor="bottom end" popover class="' +
-        consumerUserMenuClass() +
-        '">' +
+        '        <el-menu anchor="bottom end" popover class="' + consumerUserMenuClass() + '">' +
         consumerAccountMenuHtml() +
         "</el-menu>" +
         "      </el-dropdown>" +

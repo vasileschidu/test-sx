@@ -32,7 +32,7 @@ window.TableExport = (function () {
 
   // Same panel as the other dropdown menus (user menu): white, shadow-lg ring.
   var MENU_CLASS =
-    "w-max min-w-40 origin-top-right rounded-md bg-white py-1 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline outline-transparent transition transition-discrete [--anchor-gap:--spacing(1)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.40),0px_4px_6px_-2px_rgba(0,0,0,0.30),0px_0px_0px_1px_rgba(255,255,255,0.10)]";
+    "w-max min-w-40 origin-top-right rounded-md bg-white py-1 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline outline-transparent transition transition-discrete [--anchor-gap:--spacing(1)] data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in dark:bg-gray-800 dark:shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.40),0px_4px_6px_-2px_rgba(0,0,0,0.30),0px_0px_0px_1px_rgba(255,255,255,0.10)]";
   var ITEM_CLASS =
     "block w-full cursor-pointer px-4 py-3 text-left text-sm/5 font-medium text-gray-900 hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden disabled:cursor-wait disabled:opacity-50 dark:text-white dark:hover:bg-white/5 dark:focus:bg-white/5";
   // Open state = the focus ring from Figma (2px white gap + 4px blue).
@@ -194,6 +194,9 @@ window.TableExport = (function () {
     if (!button || button.dataset.tableExport) return;
     button.dataset.tableExport = "true";
     button.setAttribute("aria-haspopup", "menu");
+    // The label collapses to the icon on narrow tables: the shell tooltip names it.
+    if (!button.hasAttribute("data-tooltip")) button.setAttribute("data-tooltip", "Export");
+    button.removeAttribute("title");
     button.className += OPEN_RING;
 
     var dropdown = document.createElement("el-dropdown");

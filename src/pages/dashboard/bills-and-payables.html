@@ -28,14 +28,14 @@
     <script src="../../../src/scripts/sidebar-boot.js?v=20261112cmp"></script>
     <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
     <script src="../../../src/scripts/app-plans.js"></script>
-    <script src="../../../src/scripts/nav-component.js?v=20261116flag"></script>
-    <script src="../../../src/scripts/stp-state.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/nav-component.js?v=20261116gate"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261116inp"></script>
     <script src="../../../src/scripts/app-switch.js?v=20261111sk3"></script>
-    <script src="../../../src/scripts/topbar-component.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/topbar-component.js?v=20261113mg"></script>
     <script src="../../scripts/checkbox-component.js"></script>
-    <script src="../../../src/scripts/sidebar.js?v=20261116flag2" defer></script>
+    <script src="../../../src/scripts/sidebar.js?v=20261116m2" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
-    <script src="../../../src/scripts/shared.js?v=20261111mx" defer></script>
+    <script src="../../../src/scripts/shared.js?v=20261116ae" defer></script>
     <script src="../../../src/scripts/shell-navigation.js?v=20261106c" defer></script>
     <script src="../../../src/scripts/table-skeleton.js" defer></script>
       <link rel="stylesheet" href="../../styles/checkbox.css" />
@@ -86,7 +86,7 @@
                       <button
                         id="bp-refresh-btn"
                         type="button"
-                        title="Refresh"
+                        data-tooltip="Refresh"
                         class="inline-flex cursor-pointer items-center gap-1 rounded bg-gray-100 px-2 py-1 text-sm font-semibold text-gray-600 transition-colors hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:focus-visible:outline-blue-500"
                       >
                         <svg viewBox="0 0 18 18" width="18" height="18" fill="none" aria-hidden="true" class="shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.6 1.8C4.09706 1.8 4.5 2.20294 4.5 2.7V4.59113C5.64308 3.4244 7.23647 2.7 9 2.7C11.7445 2.7 14.0769 4.45439 14.9413 6.90008C15.1069 7.36872 14.8613 7.88291 14.3927 8.04856C13.924 8.2142 13.4098 7.96857 13.2442 7.49992C12.626 5.75092 10.9579 4.5 9 4.5C7.52856 4.5 6.22083 5.20652 5.39942 6.3H8.1C8.59706 6.3 9 6.70294 9 7.2C9 7.69706 8.59706 8.1 8.1 8.1H3.6C3.10294 8.1 2.7 7.69706 2.7 7.2V2.7C2.7 2.20294 3.10294 1.8 3.6 1.8ZM3.60735 9.95144C4.07599 9.7858 4.59018 10.0314 4.75583 10.5001C5.37401 12.2491 7.04208 13.5 9 13.5C10.4714 13.5 11.7792 12.7935 12.6006 11.7L9.9 11.7C9.40294 11.7 9 11.2971 9 10.8C9 10.3029 9.40294 9.9 9.9 9.9H14.4C14.6387 9.9 14.8676 9.99482 15.0364 10.1636C15.2052 10.3324 15.3 10.5613 15.3 10.8V15.3C15.3 15.7971 14.8971 16.2 14.4 16.2C13.9029 16.2 13.5 15.7971 13.5 15.3V13.4089C12.3569 14.5756 10.7635 15.3 9 15.3C6.25553 15.3 3.92314 13.5456 3.05871 11.0999C2.89307 10.6313 3.1387 10.1171 3.60735 9.95144Z" fill="currentColor"/></svg>
@@ -129,18 +129,12 @@
                       <div
                         class="relative w-full min-w-0 sm:min-w-[160px] sm:flex-1 @min-[38rem]:min-w-35 @min-[38rem]:max-w-[256px] @min-[38rem]:group-data-[selecting=true]/head:min-w-28"
                       >
-                        <img
-                          src="../../../src/assets/table/search.svg"
-                          width="20"
-                          height="20"
-                          alt=""
-                          class="pointer-events-none absolute top-1/2 left-3 shrink-0 -translate-y-1/2"
-                        />
+                        <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 shrink-0 -translate-y-1/2 size-5 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>
                         <input
                           id="bp-search-input"
                           type="text"
                           placeholder="Search"
-                          class="block h-10 w-full rounded-md border border-gray-300 bg-white py-0 pr-3 pl-10 text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:focus:outline-blue-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25"
+                          class="block h-10 w-full rounded-md border border-gray-300 bg-white py-0 pr-3 pl-10 text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:focus:outline-blue-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25 aria-invalid:border-red-300 aria-invalid:focus:border-red-600 dark:aria-invalid:border-red-400/50 dark:aria-invalid:focus:border-red-500"
                         />
                       </div>
 
@@ -157,7 +151,7 @@
                             Filter
                             <span
                               data-filter-count
-                              class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-sm/5 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 min-w-6 justify-center tabular-nums"
+                              class="-my-0.5 hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 min-w-5 justify-center tabular-nums"
                             ></span>
                             <svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true" data-filter-chevron class="shrink-0 transition-transform duration-200 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.29288 7.29289C5.68341 6.90237 6.31657 6.90237 6.7071 7.29289L9.99998 10.5858L13.2929 7.29289C13.6834 6.90237 14.3166 6.90237 14.7071 7.29289C15.0976 7.68342 15.0976 8.31658 14.7071 8.70711L10.7071 12.7071C10.3166 13.0976 9.6834 13.0976 9.29288 12.7071L5.29288 8.70711C4.90236 8.31658 4.90236 7.68342 5.29288 7.29289Z" fill="currentColor"/></svg>
                           </button>
@@ -186,7 +180,7 @@
                                       <span class="min-w-0 flex-1">Amount</span>
                                       <span
                                         data-filter-count-badge="amount"
-                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
+                                        class="-my-0.5 hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -200,7 +194,7 @@
                                       <span class="min-w-0 flex-1">Payee</span>
                                       <span
                                         data-filter-count-badge="payee"
-                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
+                                        class="-my-0.5 hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -216,7 +210,7 @@
                                       >
                                       <span
                                         data-filter-count-badge="method"
-                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
+                                        class="-my-0.5 hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -230,7 +224,7 @@
                                       <span class="min-w-0 flex-1">Status</span>
                                       <span
                                         data-filter-count-badge="status"
-                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
+                                        class="-my-0.5 hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -246,7 +240,7 @@
                                       >
                                       <span
                                         data-filter-count-badge="failure_reason"
-                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
+                                        class="-my-0.5 hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -262,7 +256,7 @@
                                       >
                                       <span
                                         data-filter-count-badge="due_date"
-                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
+                                        class="-my-0.5 hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -278,7 +272,7 @@
                                       >
                                       <span
                                         data-filter-count-badge="initiated_date"
-                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
+                                        class="-my-0.5 hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -294,7 +288,7 @@
                                       >
                                       <span
                                         data-filter-count-badge="payment_date"
-                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
+                                        class="-my-0.5 hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -308,7 +302,7 @@
                                       <span class="min-w-0 flex-1">Source</span>
                                       <span
                                         data-filter-count-badge="source"
-                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
+                                        class="-my-0.5 hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
                                       <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
@@ -324,18 +318,12 @@
                                     class="hidden h-full min-h-0 flex-col p-4 sm:absolute sm:inset-0"
                                   >
                                     <div class="relative">
-                                      <img
-                                        src="../../../src/assets/table/search.svg"
-                                        width="20"
-                                        height="20"
-                                        alt=""
-                                        class="pointer-events-none absolute top-1/2 left-2 -translate-y-1/2"
-                                      />
+                                      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-2 -translate-y-1/2 size-5 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>
                                       <input
                                         type="search"
                                         data-filter-search="bp-table-filter-payees"
                                         placeholder="Search payee"
-                                        class="h-[33px] w-full rounded-md border border-gray-300 bg-white pr-2 pl-10 text-sm leading-5 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25"
+                                        class="h-[33px] w-full rounded-md border border-gray-300 bg-white pr-2 pl-10 text-sm leading-5 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25 dark:focus:outline-blue-500 aria-invalid:border-red-300 aria-invalid:focus:border-red-600 dark:aria-invalid:border-red-400/50 dark:aria-invalid:focus:border-red-500"
                                       />
                                     </div>
                                     <div
@@ -403,15 +391,15 @@
                                       <div>
                                         <label for="bp-table-filter-amount-min-input" class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200">From</label>
                                         <div class="relative mt-2">
-                                          <span aria-hidden="true" class="pointer-events-none absolute inset-y-0 left-3 z-20 flex items-center text-lg text-gray-500 dark:text-gray-400">$</span>
-                                          <input id="bp-table-filter-amount-min-input" type="text" inputmode="decimal" placeholder="0.00" class="relative z-10 block h-10 w-full rounded-md bg-white pr-3 pl-9 text-base text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                          <span aria-hidden="true" class="pointer-events-none absolute inset-y-0 left-3 z-20 flex items-center text-gray-400 dark:text-gray-500"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9999 2C10.9999 1.44772 10.5522 1 9.99988 1C9.44759 1 8.99988 1.44772 8.99988 2V3.07498C6.65825 3.43371 4.99988 5.03858 4.99988 7C4.99988 8.96142 6.65825 10.5663 8.99988 10.925V14.9249C8.28519 14.8122 7.77152 14.5905 7.42483 14.3873C7.17579 14.2413 6.79177 13.8893 6.79177 13.8893C6.45923 13.4578 5.8407 13.3714 5.40227 13.6982C4.95945 14.0283 4.86879 14.6558 5.19884 15.0986C5.19884 15.0986 5.43609 15.3705 5.53528 15.4636C5.73371 15.6498 6.02272 15.8837 6.41344 16.1127C7.02974 16.474 7.88157 16.8126 8.99988 16.9433V18C8.99988 18.5523 9.44759 19 9.99988 19C10.5522 19 10.9999 18.5523 10.9999 18V16.9411C12.1388 16.8009 13.0588 16.4132 13.7409 15.8135C14.6201 15.0405 14.9999 14.0047 14.9999 13C14.9999 12.0588 14.7218 11.007 13.8511 10.2029C13.1686 9.57251 12.2186 9.18454 10.9999 9.05167V5.10673C11.5005 5.22046 11.8712 5.40776 12.1327 5.58205C12.3429 5.72223 12.5402 5.88371 12.6684 6.05562C13 6.5 13.5992 6.63563 14.0546 6.33205C14.5141 6.0257 14.6383 5.40483 14.3319 4.9453C14.2809 4.86873 14.1203 4.67298 14.0316 4.579C13.8543 4.39127 13.5943 4.15277 13.2421 3.91795C12.7031 3.55861 11.9621 3.21778 10.9999 3.07298V2ZM8.99988 5.10182C7.58473 5.41216 6.99988 6.36373 6.99988 7C6.99988 7.63627 7.58473 8.58784 8.99988 8.89818V5.10182ZM10.9999 11.0673V14.9203C11.6836 14.8011 12.1339 14.5634 12.4203 14.3115C12.8207 13.9595 12.9999 13.4953 12.9999 13C12.9999 12.4412 12.8416 11.993 12.4942 11.6721C12.2319 11.4299 11.7783 11.1828 10.9999 11.0673Z" /></svg></span>
+                                          <input id="bp-table-filter-amount-min-input" type="text" inputmode="decimal" placeholder="0.00" class="relative z-10 block h-10 w-full rounded-md bg-white pr-3 pl-10 text-base text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:outline-gray-400 dark:hover:outline-white/20 dark:focus:outline-blue-500 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-600 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-500" />
                                         </div>
                                       </div>
                                       <div>
                                         <label for="bp-table-filter-amount-max-input" class="block text-sm/6 font-medium text-gray-700 dark:text-gray-200">To</label>
                                         <div class="relative mt-2">
-                                          <span aria-hidden="true" class="pointer-events-none absolute inset-y-0 left-3 z-20 flex items-center text-lg text-gray-500 dark:text-gray-400">$</span>
-                                          <input id="bp-table-filter-amount-max-input" type="text" inputmode="decimal" placeholder="0.00" class="relative z-10 block h-10 w-full rounded-md bg-white pr-3 pl-9 text-base text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500" />
+                                          <span aria-hidden="true" class="pointer-events-none absolute inset-y-0 left-3 z-20 flex items-center text-gray-400 dark:text-gray-500"><svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" clip-rule="evenodd" d="M10.9999 2C10.9999 1.44772 10.5522 1 9.99988 1C9.44759 1 8.99988 1.44772 8.99988 2V3.07498C6.65825 3.43371 4.99988 5.03858 4.99988 7C4.99988 8.96142 6.65825 10.5663 8.99988 10.925V14.9249C8.28519 14.8122 7.77152 14.5905 7.42483 14.3873C7.17579 14.2413 6.79177 13.8893 6.79177 13.8893C6.45923 13.4578 5.8407 13.3714 5.40227 13.6982C4.95945 14.0283 4.86879 14.6558 5.19884 15.0986C5.19884 15.0986 5.43609 15.3705 5.53528 15.4636C5.73371 15.6498 6.02272 15.8837 6.41344 16.1127C7.02974 16.474 7.88157 16.8126 8.99988 16.9433V18C8.99988 18.5523 9.44759 19 9.99988 19C10.5522 19 10.9999 18.5523 10.9999 18V16.9411C12.1388 16.8009 13.0588 16.4132 13.7409 15.8135C14.6201 15.0405 14.9999 14.0047 14.9999 13C14.9999 12.0588 14.7218 11.007 13.8511 10.2029C13.1686 9.57251 12.2186 9.18454 10.9999 9.05167V5.10673C11.5005 5.22046 11.8712 5.40776 12.1327 5.58205C12.3429 5.72223 12.5402 5.88371 12.6684 6.05562C13 6.5 13.5992 6.63563 14.0546 6.33205C14.5141 6.0257 14.6383 5.40483 14.3319 4.9453C14.2809 4.86873 14.1203 4.67298 14.0316 4.579C13.8543 4.39127 13.5943 4.15277 13.2421 3.91795C12.7031 3.55861 11.9621 3.21778 10.9999 3.07298V2ZM8.99988 5.10182C7.58473 5.41216 6.99988 6.36373 6.99988 7C6.99988 7.63627 7.58473 8.58784 8.99988 8.89818V5.10182ZM10.9999 11.0673V14.9203C11.6836 14.8011 12.1339 14.5634 12.4203 14.3115C12.8207 13.9595 12.9999 13.4953 12.9999 13C12.9999 12.4412 12.8416 11.993 12.4942 11.6721C12.2319 11.4299 11.7783 11.1828 10.9999 11.0673Z" /></svg></span>
+                                          <input id="bp-table-filter-amount-max-input" type="text" inputmode="decimal" placeholder="0.00" class="relative z-10 block h-10 w-full rounded-md bg-white pr-3 pl-10 text-base text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:outline-gray-400 dark:hover:outline-white/20 dark:focus:outline-blue-500 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-600 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-500" />
                                         </div>
                                       </div>
                                     </div>
@@ -432,7 +420,7 @@
                                             type="text"
                                             inputmode="numeric"
                                             placeholder="MM / DD / YYYY"
-                                            class="relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                            class="relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:outline-gray-400 dark:hover:outline-white/20 dark:focus:outline-blue-500 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-600 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-500"
                                           />
                                         </div>
                                       </div>
@@ -447,7 +435,7 @@
                                             type="text"
                                             inputmode="numeric"
                                             placeholder="MM / DD / YYYY"
-                                            class="relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                            class="relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:outline-gray-400 dark:hover:outline-white/20 dark:focus:outline-blue-500 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-600 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-500"
                                           />
                                         </div>
                                       </div>
@@ -469,7 +457,7 @@
                                             type="text"
                                             inputmode="numeric"
                                             placeholder="MM / DD / YYYY"
-                                            class="relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                            class="relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:outline-gray-400 dark:hover:outline-white/20 dark:focus:outline-blue-500 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-600 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-500"
                                           />
                                         </div>
                                       </div>
@@ -484,7 +472,7 @@
                                             type="text"
                                             inputmode="numeric"
                                             placeholder="MM / DD / YYYY"
-                                            class="relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                            class="relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:outline-gray-400 dark:hover:outline-white/20 dark:focus:outline-blue-500 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-600 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-500"
                                           />
                                         </div>
                                       </div>
@@ -506,7 +494,7 @@
                                             type="text"
                                             inputmode="numeric"
                                             placeholder="MM / DD / YYYY"
-                                            class="relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                            class="relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:outline-gray-400 dark:hover:outline-white/20 dark:focus:outline-blue-500 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-600 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-500"
                                           />
                                         </div>
                                       </div>
@@ -521,7 +509,7 @@
                                             type="text"
                                             inputmode="numeric"
                                             placeholder="MM / DD / YYYY"
-                                            class="relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500"
+                                            class="relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 hover:outline-gray-400 dark:hover:outline-white/20 dark:focus:outline-blue-500 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-600 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-500"
                                           />
                                         </div>
                                       </div>
@@ -560,7 +548,7 @@
                         <button
                           id="bp-export-btn"
                           type="button"
-                          title="Export"
+                          data-tooltip="Export"
                           class="@min-[38rem]:@max-[47rem]:w-10 @min-[38rem]:@max-[47rem]:px-0 @min-[38rem]:@max-[56rem]:group-data-[selecting=true]/head:w-10 @min-[38rem]:@max-[56rem]:group-data-[selecting=true]/head:px-0 inline-flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 text-base leading-6 font-semibold whitespace-nowrap text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:w-auto dark:border-white/15 dark:bg-white/5 dark:text-gray-200 dark:shadow-none dark:hover:bg-white/10"
                         >
                           <span class="@min-[38rem]:@max-[47rem]:sr-only @min-[38rem]:@max-[56rem]:group-data-[selecting=true]/head:sr-only">Export</span>
@@ -574,7 +562,7 @@
                           commandfor="bp-manage-columns-dialog"
                           class="inline-flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-md border border-gray-300 bg-white p-2.5 shadow-sm hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:shadow-none dark:hover:bg-white/10"
                           aria-label="Manage columns"
-                          title="Manage columns"
+                          data-tooltip="Manage columns"
                         >
                           <svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true" class="shrink-0 text-gray-500 dark:text-gray-400"><path d="M10 3.75C10 2.64543 9.10457 1.75 8 1.75C6.89543 1.75 6 2.64543 6 3.75C6 4.85457 6.89543 5.75 8 5.75C9.10457 5.75 10 4.85457 10 3.75Z" fill="currentColor"/><path d="M17.25 4.5C17.6642 4.5 18 4.16421 18 3.75C18 3.33579 17.6642 3 17.25 3L11.75 3C11.3358 3 11 3.33579 11 3.75C11 4.16421 11.3358 4.5 11.75 4.5L17.25 4.5Z" fill="currentColor"/><path d="M5 3.75C5 4.16421 4.66421 4.5 4.25 4.5H2.75C2.33579 4.5 2 4.16421 2 3.75C2 3.33579 2.33579 3 2.75 3L4.25 3C4.66421 3 5 3.33579 5 3.75Z" fill="currentColor"/><path d="M4.25 17C4.66421 17 5 16.6642 5 16.25C5 15.8358 4.66421 15.5 4.25 15.5H2.75C2.33579 15.5 2 15.8358 2 16.25C2 16.6642 2.33579 17 2.75 17H4.25Z" fill="currentColor"/><path d="M17.25 17C17.6642 17 18 16.6642 18 16.25C18 15.8358 17.6642 15.5 17.25 15.5H11.75C11.3358 15.5 11 15.8358 11 16.25C11 16.6642 11.3358 17 11.75 17H17.25Z" fill="currentColor"/><path d="M9 10C9 10.4142 8.66421 10.75 8.25 10.75H2.75C2.33579 10.75 2 10.4142 2 10C2 9.58579 2.33579 9.25 2.75 9.25L8.25 9.25C8.66421 9.25 9 9.58579 9 10Z" fill="currentColor"/><path d="M17.25 10.75C17.6642 10.75 18 10.4142 18 10C18 9.58579 17.6642 9.25 17.25 9.25H15.75C15.3358 9.25 15 9.58579 15 10C15 10.4142 15.3358 10.75 15.75 10.75H17.25Z" fill="currentColor"/><path d="M14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12C13.1046 12 14 11.1046 14 10Z" fill="currentColor"/><path d="M10 16.25C10 15.1454 9.10457 14.25 8 14.25C6.89543 14.25 6 15.1454 6 16.25C6 17.3546 6.89543 18.25 8 18.25C9.10457 18.25 10 17.3546 10 16.25Z" fill="currentColor"/></svg>
                         </button>
@@ -1123,8 +1111,9 @@
       </dialog>
     </el-dialog>
 
-    <script src="../../../src/scripts/table-ui.js?v=20261006f"></script>
-    <script src="../../../src/scripts/table-export.js?v=20261112ex"></script>
-    <script src="../../../src/scripts/bills-payables-table.js?v=20261113tc"></script>
+    <script src="../../../src/scripts/table-ui.js?v=20261113es3"></script>
+    <script src="../../../src/scripts/table-export.js?v=20261113tt2"></script>
+    <script src="../../../src/scripts/date-range-calendar.js?v=20261116m2"></script>
+    <script src="../../../src/scripts/bills-payables-table.js?v=20261113es2"></script>
   </body>
 </html>

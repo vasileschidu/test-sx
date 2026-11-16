@@ -323,6 +323,7 @@
     "Country": "País",
     "United States": "Estados Unidos",
     "Canada": "Canadá",
+    "Spain": "España",
     "Mexico": "México",
     "United Kingdom": "Reino Unido",
     "Australia": "Australia",
@@ -395,6 +396,15 @@
     "Role": "Rol",
     "Profile": "Perfil",
     "Dark mode": "Modo oscuro",
+    "Appearance": "Apariencia",
+    "Reason is required.": "El motivo es obligatorio.",
+    "Additional Note is required.": "La nota adicional es obligatoria.",
+    "Please provide more details": "Proporcione más detalles",
+    "System default": "Predeterminado del sistema",
+    "Light mode": "Modo claro",
+    "We'll match your system preferences": "Según las preferencias de su sistema",
+    "(opens in a new tab)": "(se abre en una pestaña nueva)",
+    "Powered by Transcard": "Con tecnología de Transcard",
     "Sign out": "Cerrar sesión",
     "Consumer view": "Vista de consumidor",
     "Transcard view": "Vista de Transcard",
@@ -613,6 +623,8 @@
       }
       var tr = function (t) { return api.lookup(t) || t; };
       return [
+        [/^Exported (\d+) rows? as (.+)\.$/, function (m, n, f) { return n + (+n > 1 ? " filas exportadas" : " fila exportada") + " como " + f + "."; }],
+        [/^Couldn['’]t export as (.+)\. Check your connection and try again\.$/, "No se pudo exportar como $1. Compruebe su conexión e inténtelo de nuevo."],
         [/^(\d+) Payments$/, function (m, n) { return n + (+n > 1 ? " pagos" : " pago"); }],
         [/^(\d+) of (\d+)$/, "$1 de $2"],
         [/^Item \((\d+)\)$/, "Artículo ($1)"],

@@ -1029,7 +1029,7 @@
   var SETUP_SECONDARY_CLASS =
     "inline-flex w-fit shrink-0 cursor-pointer items-center justify-center self-start rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20";
   var SETUP_INPUT_CLASS =
-    "mt-1 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20";
+    "mt-1 block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-500 aria-invalid:focus:outline-red-600 sm:text-sm/6 dark:focus:outline-blue-500 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20";
 
   // "04/06/2026, 11:53:17 AM" (Figma set-up steps).
   function formatStepDate(iso) {
@@ -1154,7 +1154,7 @@
       '        <label for="sx-inline-deposit-amount" class="block text-sm/6 font-medium text-gray-900 dark:text-white">Amount received</label>' +
       '        <div class="flex items-center rounded-md bg-white pl-3 outline-1 -outline-offset-1 outline-gray-300 has-[input:focus]:outline-2 has-[input:focus]:-outline-offset-2 has-[input:focus]:outline-blue-600 has-[input[aria-invalid=true]]:outline-red-500 dark:bg-white/5 dark:outline-white/10">' +
       '          <span aria-hidden="true" class="shrink-0 text-sm text-gray-500 select-none dark:text-gray-400">$</span>' +
-      '          <input id="sx-inline-deposit-amount" type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*" placeholder="0.00" aria-invalid="false" aria-describedby="sx-inline-deposit-amount-help sx-inline-deposit-amount-error" class="block min-w-0 grow bg-transparent py-2 pr-3 pl-1 text-sm font-normal text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-white dark:placeholder:text-gray-500" />' +
+      '          <input id="sx-inline-deposit-amount" type="text" inputmode="decimal" pattern="[0-9]*[.]?[0-9]*" placeholder="0.00" aria-invalid="false" aria-describedby="sx-inline-deposit-amount-help sx-inline-deposit-amount-error" class="block min-w-0 grow bg-transparent py-2 pr-3 pl-1 text-sm font-normal text-gray-900 placeholder:text-gray-400 focus:outline-none dark:text-white dark:placeholder:text-gray-500 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-600 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-500" />' +
       '          <svg id="sx-inline-deposit-amount-error-icon" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="pointer-events-none mr-3 hidden size-5 shrink-0 text-red-500 sm:size-4"><path d="M8 15A7 7 0 1 0 8 1a7 7 0 0 0 0 14ZM8 4a.75.75 0 0 1 .75.75v3a.75.75 0 0 1-1.5 0v-3A.75.75 0 0 1 8 4Zm0 8a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" clip-rule="evenodd" fill-rule="evenodd"/></svg>' +
       "        </div>" +
       '        <p id="sx-inline-deposit-amount-help" class="text-sm text-gray-500 dark:text-gray-400">Enter the exact amount you received.</p>' +

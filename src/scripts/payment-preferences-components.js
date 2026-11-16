@@ -29,7 +29,7 @@
       '    <span class="sr-only">Open options</span>' +
       '    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4"><path d="M10 3a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM10 8.5a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM11.5 15.5a1.5 1.5 0 1 0-3 0 1.5 1.5 0 0 0 3 0Z"/></svg>' +
       "  </button>" +
-      '  <el-menu anchor="bottom end" popover class="min-w-32 origin-top-right rounded-md bg-white shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10">' +
+      '  <el-menu anchor="bottom end" popover class="min-w-32 rounded-md bg-white shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(2)] dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10 transition transition-discrete data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in motion-reduce:transition-none">' +
       '    <div class="py-1">' +
       '      <button type="button" ' +
       editAttr +
@@ -66,8 +66,8 @@
   function createRevealIcons() {
     return (
       "" +
-      '<svg data-icon="reveal" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5"><path d="M8 9.5a1.5 1.5 0 1 0 0-3 1.5 1.5 0 0 0 0 3Z" /><path fill-rule="evenodd" d="M1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C2.32719 4.97038 4.93238 3 7.99777 3C11.0653 3 13.672 4.97316 14.6179 7.71951C14.6811 7.90313 14.681 8.10274 14.6176 8.2863C13.6701 11.0296 11.0649 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049ZM11 8a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" clip-rule="evenodd" /></svg>' +
-      '<svg data-icon="hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" class="size-3.5 hidden"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.28033 2.21967C2.98744 1.92678 2.51256 1.92678 2.21967 2.21967C1.92678 2.51256 1.92678 2.98744 2.21967 3.28033L12.7197 13.7803C13.0126 14.0732 13.4874 14.0732 13.7803 13.7803C14.0732 13.4874 14.0732 13.0126 13.7803 12.7197L12.4577 11.397C13.438 10.5863 14.1937 9.51366 14.6176 8.2863C14.681 8.10274 14.6811 7.90313 14.6179 7.71951C13.672 4.97316 11.0653 3 7.99777 3C6.85414 3 5.77457 3.27425 4.82123 3.76057L3.28033 2.21967Z" /><path d="M6.47602 5.41536L7.61147 6.55081C7.73539 6.51767 7.86563 6.5 8 6.5C8.82843 6.5 9.5 7.17157 9.5 8C9.5 8.13437 9.48233 8.26461 9.44919 8.38853L10.5846 9.52398C10.8486 9.07734 11 8.55636 11 8C11 6.34315 9.65685 5 8 5C7.44364 5 6.92266 5.15145 6.47602 5.41536Z" /><path d="M7.81206 10.9942L9.62754 12.8097C9.10513 12.9341 8.56002 13 7.99952 13C4.93197 13 2.32527 11.0268 1.3794 8.28049C1.31616 8.09687 1.31625 7.89727 1.37965 7.71371C1.63675 6.96935 2.01588 6.28191 2.49314 5.67529L5.00579 8.18794C5.09895 9.69509 6.30491 10.901 7.81206 10.9942Z" /></svg>'
+      '<svg data-icon="reveal" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 text-blue-500 dark:text-blue-400"><path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M0.882274 7.63113C1.87378 4.65047 4.68527 2.5 8.00035 2.5C11.3139 2.5 14.1243 4.64848 15.117 7.62697C15.1973 7.86768 15.1973 8.12812 15.1172 8.36887C14.1257 11.3495 11.3142 13.5 7.99918 13.5C4.68565 13.5 1.87522 11.3515 0.882492 8.37303C0.802265 8.13233 0.802188 7.87188 0.882274 7.63113ZM11.5 8C11.5 9.933 9.933 11.5 8 11.5C6.067 11.5 4.5 9.933 4.5 8C4.5 6.067 6.067 4.5 8 4.5C9.933 4.5 11.5 6.067 11.5 8Z"/></svg>' +
+      '<svg data-icon="hide" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 hidden text-blue-500 dark:text-blue-400"><path d="M2.35355 1.64645C2.15829 1.45118 1.84171 1.45118 1.64645 1.64645C1.45118 1.84171 1.45118 2.15829 1.64645 2.35355L13.6464 14.3536C13.8417 14.5488 14.1583 14.5488 14.3536 14.3536C14.5488 14.1583 14.5488 13.8417 14.3536 13.6464L2.35355 1.64645Z"/><path d="M15.1172 8.36887C14.7546 9.45913 14.1484 10.4383 13.3631 11.2418L11.2975 9.17615C11.4286 8.80857 11.5 8.41262 11.5 8C11.5 6.067 9.933 4.5 8 4.5C7.58738 4.5 7.19143 4.5714 6.82385 4.70253L5.17265 3.05133C6.04522 2.69587 6.99985 2.5 8.00035 2.5C11.3139 2.5 14.1243 4.64848 15.117 7.62697C15.1973 7.86768 15.1973 8.12812 15.1172 8.36887Z"/><path d="M10.5 8C10.5 8.12011 10.4915 8.23824 10.4752 8.35383L7.64617 5.52485C7.76176 5.50847 7.87989 5.5 8 5.5C9.38071 5.5 10.5 6.61929 10.5 8Z"/><path d="M8.35383 10.4752L5.52485 7.64617C5.50847 7.76176 5.5 7.87989 5.5 8C5.5 9.38071 6.61929 10.5 8 10.5C8.12011 10.5 8.23824 10.4915 8.35383 10.4752Z"/><path d="M4.5 8C4.5 7.58738 4.5714 7.19143 4.70253 6.82385L2.63662 4.75794C1.85124 5.56148 1.24498 6.54076 0.882274 7.63113C0.802188 7.87188 0.802265 8.13233 0.882492 8.37303C1.87522 11.3515 4.68565 13.5 7.99918 13.5C8.9998 13.5 9.95455 13.3041 10.8272 12.9485L9.17615 11.2975C8.80857 11.4286 8.41262 11.5 8 11.5C6.067 11.5 4.5 9.933 4.5 8Z"/></svg>'
     );
   }
 
@@ -454,10 +454,10 @@
       '"><path fill-rule="evenodd" clip-rule="evenodd" d="' +
       state.path +
       '" /></svg>' +
-      '<span role="tooltip" class="pointer-events-none invisible absolute left-1/2 z-30 w-max max-w-[343px] -translate-x-1/2 rounded-lg bg-gray-900 p-3 text-left text-sm/5 font-normal whitespace-normal text-gray-100 opacity-0 drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] transition-opacity group-hover/vtip:visible group-hover/vtip:opacity-100 group-focus-visible/vtip:visible group-focus-visible/vtip:opacity-100 ' +
+      '<span role="tooltip" data-vtip class="pointer-events-none absolute left-1/2 z-30 hidden w-max max-w-[min(343px,calc(100vw-2rem))] -translate-x-1/2 rounded-lg bg-gray-900 p-3 text-left text-sm/5 font-normal whitespace-normal text-gray-100 drop-shadow-[0_1px_1px_rgba(0,0,0,0.05)] group-hover/vtip:block group-focus-visible/vtip:block dark:bg-gray-950 dark:ring-1 dark:ring-white/10 ' +
       (below ? "top-full mt-2.5" : "bottom-full mb-2.5") +
       '">' +
-      '<span aria-hidden="true" class="absolute left-1/2 size-2.5 -translate-x-1/2 rotate-45 bg-gray-900 ' +
+      '<span aria-hidden="true" data-vtip-arrow class="absolute left-1/2 size-2.5 -translate-x-1/2 rotate-45 bg-gray-900 dark:bg-gray-950 ' +
       (below ? "-top-1" : "-bottom-1") +
       '"></span>' +
       '<span class="relative flex items-start gap-2">' +
@@ -676,6 +676,35 @@
     attachAccordionBehavior(row);
     attachCopyBehavior(row);
     return row;
+  }
+
+  // A validation tooltip near the screen edge (phones) is shifted back in;
+  // its arrow stays over the icon.
+  function fitValidationTip(event) {
+    var host = event.target && event.target.closest && event.target.closest("[data-bank-validation]");
+    if (!host) return;
+    var tip = host.querySelector("[data-vtip]");
+    var arrow = host.querySelector("[data-vtip-arrow]");
+    if (!tip) return;
+    tip.style.marginLeft = "";
+    if (arrow) arrow.style.marginLeft = "";
+    requestAnimationFrame(function () {
+      var r = tip.getBoundingClientRect();
+      if (!r.width) return;
+      var edge = 16;
+      var shift = 0;
+      if (r.right > window.innerWidth - edge) shift = window.innerWidth - edge - r.right;
+      if (r.left + shift < edge) shift = edge - r.left;
+      if (shift) {
+        tip.style.marginLeft = shift + "px";
+        if (arrow) arrow.style.marginLeft = -shift + "px";
+      }
+    });
+  }
+  if (!window.__ppVtipFit) {
+    window.__ppVtipFit = true;
+    document.addEventListener("mouseover", fitValidationTip);
+    document.addEventListener("focusin", fitValidationTip);
   }
 
   window.PPComponents = Object.assign({}, window.PPComponents || {}, {

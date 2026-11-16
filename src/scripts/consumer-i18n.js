@@ -333,6 +333,7 @@
       "Address": "Adresse",
       "Country": "Pays",
       "United States": "États-Unis",
+      "Spain": "Espagne",
       "Mexico": "Mexique",
       "United Kingdom": "Royaume-Uni",
       "Australia": "Australie",
@@ -404,6 +405,15 @@
       "Role": "Rôle",
       "Profile": "Profil",
       "Dark mode": "Mode sombre",
+      "Appearance": "Apparence",
+      "Reason is required.": "Le motif est obligatoire.",
+      "Additional Note is required.": "La note supplémentaire est obligatoire.",
+      "Please provide more details": "Veuillez fournir plus de détails",
+      "System default": "Paramètre du système",
+      "Light mode": "Mode clair",
+      "We'll match your system preferences": "Selon les préférences de votre système",
+      "(opens in a new tab)": "(s'ouvre dans un nouvel onglet)",
+      "Powered by Transcard": "Propulsé par Transcard",
       "Sign out": "Se déconnecter",
       "Consumer view": "Vue consommateur",
       "Transcard view": "Vue Transcard",
@@ -608,6 +618,8 @@
   /* Pattern rules for strings that mix fixed words and data. Each: [regex, replacement]. */
   var RULES = {
     "fr-CA": [
+      [/^Exported (\d+) rows? as (.+)\.$/, function (m, n, f) { return n + (+n > 1 ? " lignes exportées" : " ligne exportée") + " en " + f + "."; }],
+      [/^Couldn['’]t export as (.+)\. Check your connection and try again\.$/, "Impossible d'exporter en $1. Vérifiez votre connexion et réessayez."],
       [/^(\d+) Payments$/, function (m, n) { return n + (+n > 1 ? " paiements" : " paiement"); }],
       [/^(\d+) of (\d+)$/, "$1 de $2"],
       [/^Item \((\d+)\)$/, "Article ($1)"],
