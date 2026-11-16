@@ -1716,10 +1716,8 @@
     panel.classList.toggle("pointer-events-none", !_schedulePickerState.open);
     panel.classList.toggle("invisible", !_schedulePickerState.open);
     panel.classList.toggle("opacity-0", !_schedulePickerState.open);
-    panel.classList.toggle("scale-95", !_schedulePickerState.open);
     panel.classList.toggle("pointer-events-auto", _schedulePickerState.open);
     panel.classList.toggle("opacity-100", _schedulePickerState.open);
-    panel.classList.toggle("scale-100", _schedulePickerState.open);
   }
 
   function applyConfirmedScheduleDate(iso) {
@@ -1777,17 +1775,26 @@
     var monday = new Date(tomorrow.getFullYear(), tomorrow.getMonth(), tomorrow.getDate() + 1);
     while (monday.getDay() !== 1) monday.setDate(monday.getDate() + 1);
     var due = getScheduleDueDate();
+    // Due today: the row stays selectable and reads "Today, 09:00 AM (ET)" (Andrian, 2026-11-16).
+    var dueIsToday = !!due && isSameDay(due, t);
+    var dueDate = isSchedulableDate(due) ? due : null;
+    // One row per day: when Tomorrow or Monday is the due date, only "Due date" stays
+    // (it says more), so the list can have two rows instead of three.
     return [
       { key: "tomorrow", label: "Tomorrow morning", date: tomorrow },
       { key: "monday", label: "Monday morning", date: monday },
       {
         key: "due",
         label: "Due date",
-        date: isSchedulableDate(due) ? due : null,
+        date: dueDate,
         note: !due ? "No due date" : "Overdue",
+        display: dueIsToday ? "Today, 09:00 AM (ET)" : "",
       },
-    ];
+    ].filter(function (r) {
+      return r.key === "due" || !dueDate || !isSameDay(r.date, dueDate);
+    });
   }
+
 
   function formatScheduleRecTime(d) {
     return (
@@ -1823,7 +1830,9 @@
       return recs
         .map(function (r) {
           var on = !!(compareTo && r.date && isSameDay(compareTo, r.date));
-          var right = r.date
+          var right = r.display
+            ? r.display
+            : r.date
             ? formatScheduleRecTime(r.date)
             : r.note === "Overdue"
               ? '<span class="text-red-600 dark:text-red-400">Overdue</span>'
@@ -1837,9 +1846,10 @@
             (r.date ? "" : " disabled") +
             ' aria-pressed="' +
             (on ? "true" : "false") +
-            '" class="flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm/5 focus-visible:outline-none ' +
-            // In the dialog the list is inset (px-2), so its rows get rounded corners.
-            (attr === "data-schedule-pick" ? "rounded-md " : "") +
+            '" class="flex w-full items-center gap-2 py-2.5 text-left text-sm/5 focus-visible:outline-none ' +
+            // In the dialog the list is inset (px-3) like the Schedule Timing box: rows px-3 put the
+            // text on the dialog's 24px line, and they get the box's rounded-lg corners.
+            (attr === "data-schedule-pick" ? "rounded-lg px-3 " : "px-4 ") +
             (r.date
               ? "cursor-pointer hover:bg-gray-100 focus-visible:bg-gray-100 dark:hover:bg-white/10 dark:focus-visible:bg-white/10 "
               : "cursor-not-allowed opacity-50 ") +
@@ -2052,7 +2062,7 @@
       var left = due ? Math.round((due - todayStart) / 86400000) : 0;
       badge.innerHTML = !due
         ? ""
-        : " · " +
+        : '<span aria-hidden="true" class="mx-1.5">·</span>' +
           (overdue
             ? '<span class="font-medium text-red-600 dark:text-red-400">Overdue</span>'
             : left === 0
@@ -2073,7 +2083,7 @@
         if (due) {
           var diff = Math.round((sel - due) / 86400000);
           rel =
-            " · " +
+            '<span aria-hidden="true" class="mx-1.5">·</span>' +
             (diff === 0
               ? '<span class="font-medium text-emerald-700 dark:text-emerald-400">On the due date</span>'
               : diff < 0
@@ -7984,9 +7994,9 @@
   }
 
   /* ===== Due date state (Figma SH Sandbox 4157:108844 / 4157:108789) =====
-   * Overdue: red date + (!) "N days overdue" + red "Past Due" badge.
-   * Today:   amber date + (!) "Due today" + amber "Due Today" badge.
-   * Soon (≤ 3 days): amber date + "in N days".  Later: "in N days" in gray.
+   * Overdue: orange date (amber-600, like the Bills table) + amber (!) "N days overdue"; no badge.
+   * Today:   amber date + (!) "Due today"; no badge.
+   * Not due yet (soon or later): plain gray date, like the Bills table. No "in N days" text.
    * Paid / in progress payables keep a plain date. */
   var DUE_SOON_DAYS = 3;
   var DUE_ICON_SVG =
@@ -8015,14 +8025,15 @@
     var n = info ? Math.abs(info.days) : 0;
     var plural = n === 1 ? " day" : " days";
 
-    var DATE_TONES = ["text-gray-700", "dark:text-gray-200", "text-red-600", "dark:text-red-400", "text-amber-700", "dark:text-amber-400"];
+    // Overdue = the Bills/Payables table's orange (amber-600 + amber-500 icon), not red.
+    var DATE_TONES = ["text-gray-700", "dark:text-gray-200", "text-amber-600", "text-amber-700", "dark:text-amber-400"];
     if (field) {
       DATE_TONES.forEach(function (c) { field.classList.remove(c); });
       field.classList.add.apply(
         field.classList,
         state === "overdue"
-          ? ["text-red-600", "dark:text-red-400"]
-          : state === "today" || state === "soon"
+          ? ["text-amber-600", "dark:text-amber-400"]
+          : state === "today"
             ? ["text-amber-700", "dark:text-amber-400"]
             : ["text-gray-700", "dark:text-gray-200"],
       );
@@ -8032,10 +8043,8 @@
       var tipText = state === "overdue" ? n + plural + " overdue" : "Due today";
       icon.classList.toggle("hidden", !showIcon);
       icon.classList.toggle("inline-flex", showIcon);
-      icon.classList.toggle("text-red-500", state === "overdue");
-      icon.classList.toggle("dark:text-red-400", state === "overdue");
-      icon.classList.toggle("text-amber-500", state === "today");
-      icon.classList.toggle("dark:text-amber-400", state === "today");
+      icon.classList.toggle("text-amber-500", showIcon);
+      icon.classList.toggle("dark:text-amber-400", showIcon);
       if (showIcon) {
         icon.setAttribute("data-tooltip", tipText);
         icon.setAttribute("aria-label", tipText);
@@ -8044,22 +8053,16 @@
         icon.removeAttribute("aria-label");
       }
     }
+    // No "in N days" next to the date (removed on request); the date colour carries the state.
     if (rel) {
-      var showRel = state === "soon" || state === "later";
-      rel.classList.toggle("hidden", !showRel);
-      rel.textContent = showRel ? "in " + n + plural : "";
+      rel.classList.add("hidden");
+      rel.textContent = "";
     }
     if (badge) {
-      var showBadge = state === "overdue" || state === "today";
-      badge.className = showBadge
-        ? "inline-flex items-center gap-1 rounded border py-0.5 pr-2 pl-1 text-sm/5 font-medium " +
-          (state === "overdue"
-            ? "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400"
-            : "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400")
-        : "hidden";
-      badge.innerHTML = showBadge
-        ? DUE_ICON_SVG + "<span>" + (state === "overdue" ? "Past Due" : "Due Today") + "</span>"
-        : "";
+      // No due badge at all (Andrian, 2026-11-16): the coloured date + (!) with its tooltip
+      // ("N days overdue" / "Due today") already say it.
+      badge.className = "hidden";
+      badge.innerHTML = "";
     }
     renderMethodEtaWarning();
   }
@@ -8276,7 +8279,7 @@
         .join("") +
       '<el-dropdown data-attachment-more class="relative hidden shrink-0">' +
       '<button type="button" aria-haspopup="menu" class="' + PILL_CLASS + ' px-2 aria-expanded:bg-gray-200 dark:aria-expanded:bg-white/10"><span data-attachment-more-label></span></button>' +
-      '<el-menu anchor="bottom start" popover class="w-max max-w-80 origin-top-left rounded-md bg-white py-1 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline outline-transparent transition transition-discrete [--anchor-gap:--spacing(1)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.40),0px_4px_6px_-2px_rgba(0,0,0,0.30),0px_0px_0px_1px_rgba(255,255,255,0.10)]">' +
+      '<el-menu anchor="bottom start" popover class="w-max max-w-80 rounded-md bg-white py-1 shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.1),0px_4px_6px_-2px_rgba(0,0,0,0.05),0px_0px_0px_1px_rgba(0,0,0,0.05)] outline outline-transparent [--anchor-gap:--spacing(1)] dark:bg-gray-800 dark:shadow-[0px_10px_15px_-3px_rgba(0,0,0,0.40),0px_4px_6px_-2px_rgba(0,0,0,0.30),0px_0px_0px_1px_rgba(255,255,255,0.10)] transition transition-discrete data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in motion-reduce:transition-none">' +
       names
         .map(function (name, idx) {
           return (
@@ -8343,10 +8346,67 @@
       var content = document.getElementById(contentId);
       if (!toggle || !content) return;
       toggle.addEventListener("click", function () {
-        content.classList.toggle("hidden");
+        var opening = content.classList.contains("hidden");
         var icon = toggle.querySelector("[data-collapse-icon]");
-        if (icon) icon.classList.toggle("rotate-180");
+        if (icon) icon.classList.toggle("rotate-180", opening);
+        toggle.setAttribute("aria-expanded", opening ? "true" : "false");
+        slideSection(content, opening);
       });
+    }
+
+    /** Height + fade slide (250ms ease-out) for Payable Summary / Activity Log; instant with reduced motion. */
+    function slideSection(content, opening) {
+      var MS = 250;
+      clearTimeout(content._slideTimer);
+      var reduce =
+        window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      function clean() {
+        content.style.height = "";
+        content.style.overflow = "";
+        content.style.opacity = "";
+        content.style.transition = "";
+        content.style.marginTop = "";
+        content.style.paddingTop = "";
+        content.style.paddingBottom = "";
+      }
+      if (reduce) {
+        clean();
+        content.classList.toggle("hidden", !opening);
+        return;
+      }
+      var from = opening ? 0 : content.getBoundingClientRect().height;
+      // Height can't shrink below the padding (border-box), so the padding slides too —
+      // otherwise the panel stalls at its padding height and then snaps shut.
+      // In a flex column (Activity Log) the gap above would jump at the end: slide it too.
+      var pcs = window.getComputedStyle(content.parentElement);
+      var gap = /flex/.test(pcs.display) ? parseFloat(pcs.rowGap) || 0 : 0;
+      content.classList.remove("hidden");
+      var to = opening ? content.scrollHeight : 0;
+      var cs = window.getComputedStyle(content);
+      var padT = cs.paddingTop;
+      var padB = cs.paddingBottom;
+      content.style.overflow = "hidden";
+      content.style.transition = "none";
+      content.style.height = from + "px";
+      content.style.opacity = opening ? "0" : "1";
+      content.style.marginTop = (opening ? -gap : 0) + "px";
+      content.style.paddingTop = opening ? "0px" : padT;
+      content.style.paddingBottom = opening ? "0px" : padB;
+      void content.offsetHeight;
+      content.style.transition =
+        ["height", "margin-top", "padding-top", "padding-bottom"]
+          .map(function (p) { return p + " " + MS + "ms cubic-bezier(0.4, 0, 0.2, 1)"; })
+          .join(", ") + ", opacity " + MS + "ms ease-out";
+      content.style.height = to + "px";
+      content.style.marginTop = (opening ? 0 : -gap) + "px";
+      content.style.paddingTop = opening ? padT : "0px";
+      content.style.paddingBottom = opening ? padB : "0px";
+      content.style.opacity = opening ? "1" : "0";
+      content._slideTimer = setTimeout(function () {
+        clean();
+        if (!opening) content.classList.add("hidden");
+      }, MS + 20);
     }
 
     bindToggle("gp-receivable-toggle", "gp-receivable-content");
@@ -8894,6 +8954,8 @@
         );
         var payeeProfile = findPayeeProfile(payeesList, row);
         populatePage(row, payeeProfile);
+        // Origination accounts come from SMART Enroll (wiki I-07). Enroll isn't built, so this JSON
+        // stands in for it; it is NOT a link to Payment Preferences.
         var seedBankAccounts =
           (prefs && Array.isArray(prefs.bankAccounts)
             ? prefs.bankAccounts
