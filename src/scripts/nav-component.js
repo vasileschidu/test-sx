@@ -848,7 +848,7 @@ function buildConsumerLanguage() {
 }
 
 function buildConsumerFooter(id, isDesktopCollapsed) {
-  return `<div class="flex w-full flex-col gap-1">${buildConsumerLanguage()}${buildConsumerFooterCore(id, isDesktopCollapsed)}</div>`;
+  return `<div class="flex w-full flex-col gap-1">${activeBrand() === "consumer-portal" ? buildConsumerLanguage() : ""}${buildConsumerFooterCore(id, isDesktopCollapsed)}</div>`;
 }
 
 function buildConsumerFooterCore(id, isDesktopCollapsed) {
