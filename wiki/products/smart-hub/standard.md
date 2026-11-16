@@ -142,6 +142,18 @@ empty sections, payment info layout, status badge). See [D-11–D-16](../../desi
 and payment method, then pay or schedule. With SMART Disburse, funds move to the Balance Account first;
 after the recipient claims the link they choose how to receive; if unclaimed, funds can be returned.
 
+**Scheduling** (decided 2026-11-13): the Pay page uses the calendar model from the SH Sandbox Figma (calendar button next to Pay,
+recommended times Tomorrow / Monday / Due date at 9 AM ET, "Choose another date" dialog, scheduled-date chip). The
+[R2] Pay now / Schedule / Pay on Due Date dropdown is not used.
+
+**Origination accounts come from SMART Enroll** (confirmed by product, 2026-11-13; [I-07](../../suite/integrations.md)):
+the payer's bank accounts are entered during enrollment, and the Origination Account dropdown lists them.
+They do **not** come from Payment Preferences (that page is the supplier/consumer side, how they *receive*).
+- Prototype: SMART Enroll isn't built, so `payables-pay.js` seeds the list from `src/data/payment-preferences-data.json`
+  (`bankAccounts`, fallback `bank-accounts.json`), drops `balance_account`, adds accounts created with
+  "Add New Bank Account" (`localStorage` `bp-origination-accounts-v1`) and one demo inactive account
+  (Regions ••••1911, Figma SH Sandbox `4300:153413`). The shared JSON is a stand-in for Enroll data, not a link to Payment Preferences.
+
 TODO: document the steps and rules in detail.
 
 ## Known limitations
