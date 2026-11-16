@@ -275,7 +275,7 @@
     for (var i = 0; i < CODE_LEN; i += 1) {
       boxes +=
         '<input data-ua-digit="' + i + '" type="text" inputmode="numeric" autocomplete="' + (i === 0 ? "one-time-code" : "off") + '" maxlength="1" aria-label="Digit ' + (i + 1) + ' of ' + CODE_LEN + '" ' +
-        'class="h-10 min-w-0 flex-1 rounded-md border-0 bg-white text-center text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-300 dark:bg-white/5 dark:text-white dark:outline-white/15 dark:focus:outline-blue-500 dark:aria-invalid:outline-red-500/50" />';
+        'class="h-10 min-w-0 flex-1 rounded-md border-0 bg-white text-center text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-300 dark:bg-white/5 dark:text-white dark:outline-white/15 dark:focus:outline-blue-500 dark:aria-invalid:outline-red-500/50 hover:outline-gray-400 dark:hover:outline-white/20" />';
     }
     // Figma 271:113281: top (back + text, gap 8) → 24 → code (label, 16, boxes gap 10) → 32 → buttons (gap 16).
     screen(
