@@ -620,6 +620,13 @@ function setDesktopSidebarCollapsed(collapsed) {
   if (collapsedHelp) collapsedHelp.classList.toggle("hidden", !collapsed);
   if (expandedFooter) expandedFooter.classList.toggle("hidden", collapsed);
   if (collapsedFooter) collapsedFooter.classList.toggle("hidden", !collapsed);
+  // Language selector sits above the footer: keep only the flag when collapsed.
+  document.querySelectorAll("#desktop-sidebar-footer [data-lang-trigger]").forEach(function (t) {
+    var l = t.querySelector("[data-lang-label]");
+    var c = t.querySelector("[data-lang-chevron]");
+    if (l) l.classList.toggle("hidden", collapsed);
+    if (c) c.classList.toggle("hidden", collapsed);
+  });
 
   normalizeMainContentWrapperLayout(collapsed);
 
