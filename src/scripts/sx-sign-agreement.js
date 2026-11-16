@@ -27,7 +27,7 @@
   var esc = X.esc;
 
   var BADGE_DONE =
-    "inline-flex w-fit items-center rounded-md bg-green-50 dark:bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-700 dark:text-green-400 inset-ring inset-ring-green-600/20 dark:inset-ring-green-500/20";
+    "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400 w-fit";
 
   var LOADER =
     '<div role="status" class="absolute inset-0 flex items-center justify-center bg-white/70 dark:bg-gray-900/70">' +

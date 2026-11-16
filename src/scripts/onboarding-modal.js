@@ -103,25 +103,32 @@ window.OBModal = (function () {
    *   after ~2s      back to the copy icon
    * The tooltip is visual only; the result is announced through a live region.
    */
+  /** Just the copy button of copyRow (icon, hover chip, tooltip, check), for rows laid out elsewhere. */
+  function copyButton(label, copyValue) {
+    return '<button type="button" data-ob-copy="' + escapeHtml(copyValue) + '" ' +
+      'class="group relative flex size-[18px] shrink-0 cursor-pointer items-center justify-center rounded-[4px] ' +
+      '[&:hover:not([data-copied])]:bg-[#f3f4f6] [&:hover:not([data-copied])]:shadow-[0_0_0_4px_#f3f4f6] dark:[&:hover:not([data-copied])]:bg-white/10 dark:[&:hover:not([data-copied])]:shadow-[0_0_0_4px_rgba(255,255,255,0.1)] ' +
+      'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+      '<span class="sr-only">Copy ' + label + '</span>' +
+      '<img src="' + ASSETS + 'icon-duplicate.svg" alt="" width="18" height="18" class="size-[18px] group-hover:hidden group-data-copied:hidden">' +
+      '<img src="' + ASSETS + 'icon-duplicate-dark.svg" alt="" width="18" height="18" class="hidden size-[18px] group-hover:block group-data-copied:hidden dark:group-hover:hidden">' +
+      // Dark: the hover icon gets lighter (gray-200), not darker.
+      '<img src="' + ASSETS + 'icon-duplicate-light.svg" alt="" width="18" height="18" class="hidden size-[18px] dark:group-[:hover:not([data-copied])]:block">' +
+      '<img src="' + ASSETS + 'icon-copy-check-green.svg" alt="" width="18" height="18" class="hidden size-[18px] group-data-copied:block">' +
+      '<span aria-hidden="true" class="pointer-events-none invisible absolute bottom-full left-1/2 z-10 mb-2 max-w-[200px] -translate-x-1/2 translate-y-1 rounded-lg bg-gray-900 dark:bg-gray-700 px-2.5 py-1 text-sm leading-5 whitespace-nowrap text-gray-100 opacity-0 drop-shadow-[0_10px_7.5px_rgba(0,0,0,0.1)] transition duration-150 ease-out ' +
+        'group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:visible group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transition-none">' +
+        '<span class="group-data-copied:hidden">Copy</span><span class="hidden group-data-copied:inline">Copied</span>' +
+      '</span>' +
+      '<span data-ob-copied role="status" class="sr-only"></span>' +
+    '</button>';
+  }
+
   function copyRow(label, valueHtml, copyValue) {
     return '<div class="flex flex-col gap-0.5">' +
       '<dt class="text-sm leading-5 text-gray-600 dark:text-gray-400">' + label + '</dt>' +
       '<dd class="flex items-center gap-3.5">' +
         '<span class="min-w-0 flex-1 truncate text-sm leading-5">' + valueHtml + '</span>' +
-        '<button type="button" data-ob-copy="' + escapeHtml(copyValue) + '" ' +
-          'class="group relative flex size-[18px] shrink-0 cursor-pointer items-center justify-center rounded-[4px] ' +
-          '[&:hover:not([data-copied])]:bg-[#f3f4f6] [&:hover:not([data-copied])]:shadow-[0_0_0_4px_#f3f4f6] dark:[&:hover:not([data-copied])]:bg-white/10 dark:[&:hover:not([data-copied])]:shadow-[0_0_0_4px_rgba(255,255,255,0.1)] ' +
-          'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
-          '<span class="sr-only">Copy ' + label + '</span>' +
-          '<img src="' + ASSETS + 'icon-duplicate.svg" alt="" width="18" height="18" class="size-[18px] group-hover:hidden group-data-copied:hidden">' +
-          '<img src="' + ASSETS + 'icon-duplicate-dark.svg" alt="" width="18" height="18" class="hidden size-[18px] group-hover:block group-data-copied:hidden">' +
-          '<img src="' + ASSETS + 'icon-copy-check-green.svg" alt="" width="18" height="18" class="hidden size-[18px] group-data-copied:block">' +
-          '<span aria-hidden="true" class="pointer-events-none invisible absolute bottom-full left-1/2 z-10 mb-2 max-w-[200px] -translate-x-1/2 translate-y-1 rounded-lg bg-gray-900 dark:bg-gray-700 px-2.5 py-1 text-sm leading-5 whitespace-nowrap text-gray-100 opacity-0 drop-shadow-[0_10px_7.5px_rgba(0,0,0,0.1)] transition duration-150 ease-out ' +
-            'group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:visible group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transition-none">' +
-            '<span class="group-data-copied:hidden">Copy</span><span class="hidden group-data-copied:inline">Copied</span>' +
-          '</span>' +
-          '<span data-ob-copied role="status" class="sr-only"></span>' +
-        '</button>' +
+        copyButton(label, copyValue) +
       '</dd>' +
     '</div>';
   }
@@ -198,9 +205,9 @@ window.OBModal = (function () {
           'class="' + panelClass + ' focus:outline-none">' +
           (opts.bare ? '' :
           '<div class="flex h-14 shrink-0 items-end px-4 pt-4">' +
-            '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+            '<button type="button" data-ob-modal-close class="m-1 inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
               '<span class="sr-only">Close</span>' +
-              '<img src="' + ASSETS + 'icon-x-lined.svg" alt="" width="24" height="24" class="size-6">' +
+              '<img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5">' +
             '</button>' +
           '</div>') +
           (opts.header || '') +
@@ -284,6 +291,7 @@ window.OBModal = (function () {
     loadContact: loadContact,
     illustration: illustration,
     contactCard: contactCard,
+    copyButton: copyButton,
     open: open,
     close: close,
     revealField: revealField

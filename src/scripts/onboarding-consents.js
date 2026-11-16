@@ -6,11 +6,12 @@
  * scrolled to the end, ticks that consent and moves on to the next one.
  * Unticking a consent withdraws it.
  *
- *   OBConsents.mount(listEl, agreements, { stateKey, onChange(allAccepted), documentScroll })
+ *   OBConsents.mount(listEl, agreements, { stateKey, onChange(allAccepted), documentScroll, scrollToEnd })
  *
  * documentScroll (SMART Exchange): the grey box hugs the whole text and the
  * dialog body scrolls it like a page, with a white fade and a centred round
- * "scroll down" button until the end is reached. Off by default (SMART Disburse keeps the inner scroller).
+ * "scroll down" button until the end is reached. Off by default.
+ * scrollToEnd (SMART Disburse): the button goes straight to the end instead of a page at a time.
  *
  * Acceptance is kept in the onboarding session under `stateKey`.
  */
@@ -50,10 +51,15 @@ window.OBConsents = (function () {
 
   // ---- "Review and agree" dialog -------------------------------------
 
+  // Dark: CSS dots instead of the SVGs (their pale #BFDBFE halo glows on a dark panel).
+  var DARK_DOT = '<span class="hidden size-2.5 shrink-0 rounded-full dark:block ';
   function dots(index) {
     return agreements.map(function (a, i) {
-      if (i === index) return '<span class="relative block size-2.5 shrink-0"><img src="' + ASSETS + 'step-current.svg" alt="" class="absolute -inset-[40%] block size-[180%] max-w-none"></span>';
-      return '<img src="' + ASSETS + (accepted[a.id] ? 'step-complete.svg' : 'step-incomplete.svg') + '" alt="" width="10" height="10" class="block size-2.5 shrink-0">';
+      if (i === index) return '<span class="relative block size-2.5 shrink-0 dark:hidden"><img src="' + ASSETS + 'step-current.svg" alt="" class="absolute -inset-[40%] block size-[180%] max-w-none"></span>' +
+        DARK_DOT + 'bg-blue-500 ring-4 ring-blue-500/30"></span>';
+      var done = accepted[a.id];
+      return '<img src="' + ASSETS + (done ? 'step-complete.svg' : 'step-incomplete.svg') + '" alt="" width="10" height="10" class="block size-2.5 shrink-0 dark:hidden">' +
+        DARK_DOT + (done ? 'bg-blue-500' : 'bg-white/20') + '"></span>';
     }).join('');
   }
 
@@ -74,7 +80,7 @@ window.OBConsents = (function () {
           '</div>' +
           // White fade over the last lines: there is more below. Goes with the button at the end.
           '<div data-vcs-fade aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-white/0 to-white dark:from-gray-900/0 dark:to-gray-900"></div>' +
-          '<button type="button" data-vcs-more aria-label="Scroll down" class="absolute bottom-6 left-1/2 flex size-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 dark:bg-white/10 text-gray-700 dark:text-gray-300 shadow-md inset-ring-2 inset-ring-white dark:inset-ring-gray-900 transition hover:bg-gray-200 dark:hover:bg-white/15 hover:text-gray-900 dark:hover:text-white active:bg-gray-300 dark:active:bg-white/20 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+          '<button type="button" data-vcs-more aria-label="Scroll down" class="absolute bottom-6 left-1/2 flex size-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-md dark:shadow-black/50 inset-ring-2 inset-ring-white dark:inset-ring-1 dark:inset-ring-white/15 transition hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white active:bg-gray-300 dark:active:bg-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
             '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-6"><path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z" clip-rule="evenodd" /></svg>' +
           '</button>' +
         '</div>'
@@ -98,10 +104,13 @@ window.OBConsents = (function () {
           '<button type="button" data-ob-modal-close class="' + window.OBModal.SECONDARY_BUTTON_MD + '">Cancel</button>' +
           '<button type="button" data-vcs-accept disabled class="' + window.OBModal.PRIMARY_BUTTON_MD + '">Accept</button>' +
         '</div>',
-        // 752 at most (Figma); min() keeps it inside the shell's viewport cap.
-        panelClass: 'relative flex max-h-[min(752px,calc(100dvh-3rem))] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black/5 dark:ring-white/10'
+        // Full height with a 16px gap on every side (same as the document viewer).
+        panelClass: 'relative flex h-[calc(100dvh-2rem)] w-full max-w-[1048px] flex-col overflow-hidden rounded-lg bg-white dark:bg-gray-900 shadow-lg ring-1 ring-black/5 dark:ring-white/10'
       }
     );
+    var frame = backdrop.querySelector('[data-ob-modal-frame]');
+    frame.classList.remove('px-4', 'py-6');
+    frame.classList.add('p-4');
 
     var scroller = backdrop.querySelector('[data-vcs-scroll]');
     var accept = backdrop.querySelector('[data-vcs-accept]');
@@ -117,7 +126,8 @@ window.OBConsents = (function () {
     }
     if (more) more.addEventListener('click', function () {
       // A page at a time, like the scroll cue on Google's terms.
-      scroller.scrollBy({ top: scroller.clientHeight * 0.8, behavior: 'smooth' });
+      if (opts.scrollToEnd) scroller.scrollTo({ top: scroller.scrollHeight, behavior: 'smooth' });
+      else scroller.scrollBy({ top: scroller.clientHeight * 0.8, behavior: 'smooth' });
     });
     scroller.addEventListener('scroll', checkEnd);
     // The dialog shrinks to a short text (it has a max height, not a fixed one).
