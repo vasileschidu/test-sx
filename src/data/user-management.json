@@ -1,0 +1,589 @@
+{
+  "version": 10,
+  "currentUserId": "u-johnny-anderson",
+  "business": {
+    "id": "big-kahuna-burger",
+    "name": "Big Kahuna Burger Ltd",
+    "status": "Active",
+    "createdOn": "2023-06-09",
+    "businessId": "663271",
+    "applications": [
+      {
+        "id": "smart-enroll",
+        "name": "SMART Enroll",
+        "status": "under-review",
+        "note": "Edits are only possible in SMART Enroll",
+        "portalHref": "../sx-enroll/index.html"
+      },
+      {
+        "id": "smart-hub",
+        "name": "SMART Hub",
+        "status": "in-progress",
+        "note": "Edits are only possible in SMART Enroll",
+        "portalHref": "bills-and-payables.html"
+      }
+    ],
+    "settings": {
+      "achDebit": false
+    }
+  },
+  "roles": [
+    {
+      "id": "full-access",
+      "name": "Full Access",
+      "description": "This role has full view and action capabilities for both Account Payables and Account Receivables. Additionally, the Business Owner can manage users and create Business-specific roles",
+      "apps": "SMART Hub & DevPortal",
+      "permissionIds": [
+        "ap-view-bill-details",
+        "ap-view-bills-list",
+        "ap-pay-bill",
+        "ap-view-vendor-s-details",
+        "ap-cancel-scheduled-payment",
+        "ap-change-bill-method-of-payment",
+        "ap-change-vendor-s-email-on-vendor-s-details-page",
+        "ap-view-vendors-list-page",
+        "ap-change-vendor-s-default-method-of-payment",
+        "ap-edit-vendor-s-email-on-the-bill-level",
+        "ap-send-network-invitation-to-vendor",
+        "ap-re-send-network-invitation-to-vendor",
+        "ar-view-invoices-list",
+        "ar-view-invoice-details",
+        "ar-initiate-collection-on-invoice",
+        "ar-cancel-scheduled-invoice",
+        "ar-re-run-invoice",
+        "ar-view-customers-list",
+        "ar-view-customer-profile",
+        "ar-invite-customer-to-the-network",
+        "ar-send-a-nudge-link-request-to-the-customer",
+        "ar-re-send-a-nudge-link-request-to-the-customer",
+        "ar-accept-link-request-from-customer",
+        "ar-reject-link-request-from-customer",
+        "ar-delete-link-with-customer",
+        "um-view-generic-users-list",
+        "um-view-hidden-users-list",
+        "um-view-generic-user-details",
+        "um-view-hidden-user-details",
+        "um-assign-a-role-to-the-user-from-generic-or-business-list",
+        "um-assign-a-role-to-a-user-from-hidden-tc-user-role-list",
+        "um-view-generic-and-business-list-of-the-roles",
+        "um-view-hidden-list-of-the-roles",
+        "um-edit-generic-user",
+        "um-delete-generic-user",
+        "um-delete-hidden-user",
+        "um-create-new-role-for-a-business",
+        "um-create-new-generic-role",
+        "um-delete-a-role-for-a-business",
+        "um-delete-generic-role",
+        "um-create-user",
+        "um-modify-a-role-for-a-business",
+        "um-send-invitation-re-send-invitation",
+        "um-modify-generic-role"
+      ]
+    },
+    {
+      "id": "view-only",
+      "name": "View Only",
+      "description": "This role can view every list and detail page in Account Payables and Account Receivables, but cannot take any action.",
+      "apps": "SMART Hub & DevPortal",
+      "permissionIds": [
+        "ap-view-bill-details",
+        "ap-view-bills-list",
+        "ap-view-vendor-s-details",
+        "ap-view-vendors-list-page",
+        "ar-view-invoices-list",
+        "ar-view-invoice-details",
+        "ar-view-customers-list",
+        "ar-view-customer-profile",
+        "um-view-generic-users-list",
+        "um-view-hidden-users-list",
+        "um-view-generic-user-details",
+        "um-view-hidden-user-details",
+        "um-view-generic-and-business-list-of-the-roles",
+        "um-view-hidden-list-of-the-roles"
+      ]
+    }
+  ],
+  "users": [
+    {
+      "id": "u-johnny-anderson",
+      "firstName": "Johnny",
+      "lastName": "Anderson",
+      "email": "j.anderson@mail.com",
+      "roleIds": [
+        "full-access"
+      ],
+      "status": "active",
+      "owner": true,
+      "phone": "+1 (555) 987-6543",
+      "photo": "assets/topbar/avatar.png"
+    },
+    {
+      "id": "u-cody-fisher",
+      "firstName": "Cody",
+      "lastName": "Fisher",
+      "email": "cody.fisher@bigkahunaburger.com",
+      "roleIds": [
+        "full-access"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-esther-howard",
+      "firstName": "Esther",
+      "lastName": "Howard",
+      "email": "esther.howard@bigkahunaburger.com",
+      "roleIds": [
+        "view-only"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-jenny-wilson",
+      "firstName": "Jenny",
+      "lastName": "Wilson",
+      "email": "jenny.wilson@bigkahunaburger.com",
+      "roleIds": [
+        "full-access",
+        "view-only"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-kristin-watson",
+      "firstName": "Kristin",
+      "lastName": "Watson",
+      "email": "kristin.watson@bigkahunaburger.com",
+      "roleIds": [
+        "view-only"
+      ],
+      "status": "inactive"
+    },
+    {
+      "id": "u-cameron-williamson",
+      "firstName": "Cameron",
+      "lastName": "Williamson",
+      "email": "cameron.williamson@bigkahunaburger.com",
+      "roleIds": [
+        "full-access"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-leslie-alexander",
+      "firstName": "Leslie",
+      "lastName": "Alexander",
+      "email": "leslie.alexander@bigkahunaburger.com",
+      "roleIds": [
+        "view-only"
+      ],
+      "status": "invited",
+      "invitationId": "inv-leslie"
+    },
+    {
+      "id": "u-guy-hawkins",
+      "firstName": "Guy",
+      "lastName": "Hawkins",
+      "email": "guy.hawkins@bigkahunaburger.com",
+      "roleIds": [
+        "full-access",
+        "view-only"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-robert-fox",
+      "firstName": "Robert",
+      "lastName": "Fox",
+      "email": "robert.fox@bigkahunaburger.com",
+      "roleIds": [
+        "full-access"
+      ],
+      "status": "inactive"
+    },
+    {
+      "id": "u-jacob-jones",
+      "firstName": "Jacob",
+      "lastName": "Jones",
+      "email": "jacob.jones@bigkahunaburger.com",
+      "roleIds": [
+        "view-only"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-darlene-robertson",
+      "firstName": "Darlene",
+      "lastName": "Robertson",
+      "email": "darlene.robertson@bigkahunaburger.com",
+      "roleIds": [
+        "full-access",
+        "view-only"
+      ],
+      "status": "invited",
+      "invitationId": "inv-darlene"
+    },
+    {
+      "id": "u-wade-warren",
+      "firstName": "Wade",
+      "lastName": "Warren",
+      "email": "wade.warren@bigkahunaburger.com",
+      "roleIds": [
+        "full-access"
+      ],
+      "status": "active"
+    },
+    {
+      "id": "u-ra-savannah",
+      "firstName": "",
+      "lastName": "",
+      "email": "savannah.nguyen@bigkahunaburger.com",
+      "roleIds": [],
+      "status": "requires-action",
+      "source": "import"
+    },
+    {
+      "id": "u-ra-emil",
+      "firstName": "",
+      "lastName": "",
+      "email": "emil.schaefer@bigkahunaburger.com",
+      "roleIds": [],
+      "status": "requires-action",
+      "source": "import"
+    },
+    {
+      "id": "u-courtney-henry",
+      "firstName": "Courtney",
+      "lastName": "Henry",
+      "email": "courtney.henry@bigkahunaburger.com",
+      "roleIds": [
+        "full-access"
+      ],
+      "status": "invited",
+      "invitationId": "inv-courtney",
+      "phone": "+1 (555) 214-0387"
+    },
+    {
+      "id": "u-brooklyn-simmons",
+      "firstName": "Brooklyn",
+      "lastName": "Simmons",
+      "email": "brooklyn.simmons@bigkahunaburger.com",
+      "roleIds": [
+        "view-only"
+      ],
+      "status": "invited",
+      "invitationId": "inv-brooklyn"
+    }
+  ],
+  "permissionCategories": [
+    {
+      "id": "accounts-payable",
+      "name": "Accounts Payable",
+      "app": "SMART Hub",
+      "permissions": [
+        {
+          "id": "ap-view-bill-details",
+          "name": "View Bill details",
+          "description": "Allows the user to view Bill details"
+        },
+        {
+          "id": "ap-view-bills-list",
+          "name": "View Bills list",
+          "description": "Allows the user to view Bills list"
+        },
+        {
+          "id": "ap-pay-bill",
+          "name": "Pay Bill",
+          "description": "Allows the user to pay Bill"
+        },
+        {
+          "id": "ap-view-vendor-s-details",
+          "name": "View Vendor's Details",
+          "description": "Allows the user to view Vendor's Details"
+        },
+        {
+          "id": "ap-cancel-scheduled-payment",
+          "name": "Cancel scheduled payment",
+          "description": "Allows the user to cancel scheduled payment"
+        },
+        {
+          "id": "ap-change-bill-method-of-payment",
+          "name": "Change Bill Method of Payment",
+          "description": "Allows the user to change Bill Method of Payment"
+        },
+        {
+          "id": "ap-change-vendor-s-email-on-vendor-s-details-page",
+          "name": "Change Vendor's email on Vendor's details page",
+          "description": "Allows the user to change Vendor's email on Vendor's details page"
+        },
+        {
+          "id": "ap-view-vendors-list-page",
+          "name": "View Vendors list page",
+          "description": "Allows the user to view Vendors list page"
+        },
+        {
+          "id": "ap-change-vendor-s-default-method-of-payment",
+          "name": "Change Vendor's default Method Of Payment",
+          "description": "Allows the user to change Vendor's default Method Of Payment"
+        },
+        {
+          "id": "ap-edit-vendor-s-email-on-the-bill-level",
+          "name": "Edit Vendor's email on the bill level",
+          "description": "Allows the user to edit Vendor's email on the bill level"
+        },
+        {
+          "id": "ap-send-network-invitation-to-vendor",
+          "name": "Send Network Invitation to Vendor",
+          "description": "Allows the user to send Network Invitation to Vendor"
+        },
+        {
+          "id": "ap-re-send-network-invitation-to-vendor",
+          "name": "Re-send Network Invitation to Vendor",
+          "description": "Allows the user to re-send Network Invitation to Vendor"
+        }
+      ]
+    },
+    {
+      "id": "accounts-receivable",
+      "name": "Accounts Receivable",
+      "app": "SMART Hub",
+      "permissions": [
+        {
+          "id": "ar-view-invoices-list",
+          "name": "View Invoices List",
+          "description": "Allows the user to view Invoices List"
+        },
+        {
+          "id": "ar-view-invoice-details",
+          "name": "View Invoice Details",
+          "description": "Allows the user to view Invoice Details"
+        },
+        {
+          "id": "ar-initiate-collection-on-invoice",
+          "name": "Initiate Collection on Invoice",
+          "description": "Allows the user to initiate Collection on Invoice"
+        },
+        {
+          "id": "ar-cancel-scheduled-invoice",
+          "name": "Cancel Scheduled Invoice",
+          "description": "Allows the user to cancel a previously scheduled invoice"
+        },
+        {
+          "id": "ar-re-run-invoice",
+          "name": "Re-Run Invoice",
+          "description": "Allows the user to re-Run Invoice"
+        },
+        {
+          "id": "ar-view-customers-list",
+          "name": "View Customers List",
+          "description": "Allows the user to view Customers List"
+        },
+        {
+          "id": "ar-view-customer-profile",
+          "name": "View Customer Profile",
+          "description": "Allows the user to view Customer Profile"
+        },
+        {
+          "id": "ar-invite-customer-to-the-network",
+          "name": "Invite Customer to the Network",
+          "description": "Allows the user to invite Customer to the Network"
+        },
+        {
+          "id": "ar-send-a-nudge-link-request-to-the-customer",
+          "name": "Send a Nudge Link request to the Customer",
+          "description": "Allows the user to send a Nudge Link request to the Customer"
+        },
+        {
+          "id": "ar-re-send-a-nudge-link-request-to-the-customer",
+          "name": "Re-Send a Nudge Link request to the Customer",
+          "description": "Allows the user to re-Send a Nudge Link request to the Customer"
+        },
+        {
+          "id": "ar-accept-link-request-from-customer",
+          "name": "Accept Link Request from Customer",
+          "description": "Allows the user to accept Link Request from Customer"
+        },
+        {
+          "id": "ar-reject-link-request-from-customer",
+          "name": "Reject Link Request from Customer",
+          "description": "Allows the user to reject Link Request from Customer"
+        },
+        {
+          "id": "ar-delete-link-with-customer",
+          "name": "Delete Link with Customer",
+          "description": "Allows the user to delete Link with Customer"
+        }
+      ]
+    },
+    {
+      "id": "user-management",
+      "name": "User Management",
+      "app": "SMART Hub & DevPortal",
+      "permissions": [
+        {
+          "id": "um-view-generic-users-list",
+          "name": "View Generic Users list",
+          "description": "Allows the user to view Generic Users list"
+        },
+        {
+          "id": "um-view-hidden-users-list",
+          "name": "View Hidden Users list",
+          "description": "Allows the user to view Hidden Users list"
+        },
+        {
+          "id": "um-view-generic-user-details",
+          "name": "View Generic User Details",
+          "description": "Allows the user to view Generic User Details"
+        },
+        {
+          "id": "um-view-hidden-user-details",
+          "name": "View Hidden User Details",
+          "description": "Allows the user to view Hidden User Details"
+        },
+        {
+          "id": "um-assign-a-role-to-the-user-from-generic-or-business-list",
+          "name": "Assign a role to the user from generic or Business list",
+          "description": "Allows the user to assign a role to the user from generic or Business list"
+        },
+        {
+          "id": "um-assign-a-role-to-a-user-from-hidden-tc-user-role-list",
+          "name": "Assign a role to a user from hidden TC User Role List",
+          "description": "Allows the user to assign a role to a user from hidden TC User Role List"
+        },
+        {
+          "id": "um-view-generic-and-business-list-of-the-roles",
+          "name": "View generic and Business list of the roles",
+          "description": "Allows the user to view generic and Business list of the roles"
+        },
+        {
+          "id": "um-view-hidden-list-of-the-roles",
+          "name": "View hidden list of the roles",
+          "description": "Allows the user to view hidden list of the roles"
+        },
+        {
+          "id": "um-edit-generic-user",
+          "name": "Edit Generic User",
+          "description": "Allows the user to edit Generic User"
+        },
+        {
+          "id": "um-delete-generic-user",
+          "name": "Delete Generic User",
+          "description": "Allows the user to delete Generic User"
+        },
+        {
+          "id": "um-delete-hidden-user",
+          "name": "Delete Hidden User",
+          "description": "Allows the user to delete Hidden User"
+        },
+        {
+          "id": "um-create-new-role-for-a-business",
+          "name": "Create new Role for a Business",
+          "description": "Allows the user to create new Role for a Business"
+        },
+        {
+          "id": "um-create-new-generic-role",
+          "name": "Create new Generic Role",
+          "description": "Allows the user to create new Generic Role"
+        },
+        {
+          "id": "um-delete-a-role-for-a-business",
+          "name": "Delete a role for a Business",
+          "description": "Allows the user to delete a role for a Business"
+        },
+        {
+          "id": "um-delete-generic-role",
+          "name": "Delete Generic Role",
+          "description": "Allows the user to delete Generic Role"
+        },
+        {
+          "id": "um-create-user",
+          "name": "Create User",
+          "description": "Allows the user to create User"
+        },
+        {
+          "id": "um-modify-a-role-for-a-business",
+          "name": "Modify a role for a Business",
+          "description": "Allows the user to modify a role for a Business"
+        },
+        {
+          "id": "um-send-invitation-re-send-invitation",
+          "name": "Send Invitation (Re-send Invitation)",
+          "description": "Allows the user to send Invitation (Re-send Invitation)"
+        },
+        {
+          "id": "um-modify-generic-role",
+          "name": "Modify Generic Role",
+          "description": "Allows the user to modify Generic Role"
+        }
+      ]
+    }
+  ],
+  "invitations": [
+    {
+      "id": "inv-leslie",
+      "userId": "u-leslie-alexander",
+      "email": "leslie.alexander@bigkahunaburger.com",
+      "firstName": "Leslie",
+      "lastName": "Alexander",
+      "phone": "",
+      "roleIds": [
+        "view-only"
+      ],
+      "message": "Hi, please help me with setting up the company profile for SMART Hub.",
+      "status": "pending",
+      "sentDaysAgo": 2,
+      "invitedBy": "u-johnny-anderson"
+    },
+    {
+      "id": "inv-darlene",
+      "userId": "u-darlene-robertson",
+      "email": "darlene.robertson@bigkahunaburger.com",
+      "firstName": "Darlene",
+      "lastName": "Robertson",
+      "phone": "",
+      "roleIds": [
+        "full-access",
+        "view-only"
+      ],
+      "message": "Hi, please help me with setting up the company profile for SMART Hub.",
+      "status": "pending",
+      "sentDaysAgo": 9,
+      "invitedBy": "u-johnny-anderson"
+    },
+    {
+      "id": "inv-courtney",
+      "userId": "u-courtney-henry",
+      "email": "courtney.henry@bigkahunaburger.com",
+      "firstName": "Courtney",
+      "lastName": "Henry",
+      "phone": "+1 (555) 214-0387",
+      "roleIds": [
+        "full-access"
+      ],
+      "message": "",
+      "status": "pending",
+      "sentDaysAgo": 0,
+      "invitedBy": "u-johnny-anderson"
+    },
+    {
+      "id": "inv-brooklyn",
+      "userId": "u-brooklyn-simmons",
+      "email": "brooklyn.simmons@bigkahunaburger.com",
+      "firstName": "Brooklyn",
+      "lastName": "Simmons",
+      "phone": "",
+      "roleIds": [
+        "view-only"
+      ],
+      "message": "",
+      "status": "pending",
+      "sentDaysAgo": 1,
+      "invitedBy": "u-johnny-anderson"
+    }
+  ],
+  "retiredIds": [
+    "inv-ralph",
+    "inv-theresa",
+    "u-ralph-edwards",
+    "u-theresa-webb"
+  ]
+}

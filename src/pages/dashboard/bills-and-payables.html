@@ -12,7 +12,7 @@
       rel="stylesheet"
     />
 
-    <script src="../../../src/scripts/theme-init.js?v=20261109a"></script>
+    <script src="../../../src/scripts/theme-init.js?v=20261112ic"></script>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="../../scripts/tailwind-theme.js"></script>
     <script src="../../../src/scripts/design-tokens.js"></script>
@@ -25,17 +25,17 @@
       type="module"
     ></script>
 
-    <script src="../../../src/scripts/sidebar-boot.js"></script>
+    <script src="../../../src/scripts/sidebar-boot.js?v=20261112cmp"></script>
     <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
     <script src="../../../src/scripts/app-plans.js"></script>
-    <script src="../../../src/scripts/nav-component.js"></script>
-    <script src="../../../src/scripts/stp-state.js?v=20261106a"></script>
-    <script src="../../../src/scripts/app-switch.js"></script>
-    <script src="../../../src/scripts/topbar-component.js?v=20261109a"></script>
+    <script src="../../../src/scripts/nav-component.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261112bdg"></script>
+    <script src="../../../src/scripts/app-switch.js?v=20261111sk3"></script>
+    <script src="../../../src/scripts/topbar-component.js?v=20261112bdg"></script>
     <script src="../../scripts/checkbox-component.js"></script>
-    <script src="../../../src/scripts/sidebar.js" defer></script>
+    <script src="../../../src/scripts/sidebar.js?v=20261112cmp" defer></script>
     <script src="../../../src/scripts/data-source.js"></script>
-    <script src="../../../src/scripts/shared.js" defer></script>
+    <script src="../../../src/scripts/shared.js?v=20261111mx" defer></script>
     <script src="../../../src/scripts/shell-navigation.js?v=20261106c" defer></script>
     <script src="../../../src/scripts/table-skeleton.js" defer></script>
       <link rel="stylesheet" href="../../styles/checkbox.css" />
@@ -47,21 +47,28 @@
 
       <div
         id="main-content-wrapper"
-        class="min-w-0 min-h-screen flex flex-col lg:pl-[312px]"
+        class="min-w-0 min-h-screen flex flex-col lg:pl-[360px]"
       >
         <app-topbar></app-topbar>
 
-        <main class="flex w-full justify-center p-0 sm:p-2 lg:p-6">
+        <main class="flex w-full justify-center p-2 lg:p-6">
           <div class="flex w-full min-w-0 flex-col gap-5">
             <div
-              class="flex flex-col overflow-hidden rounded-none bg-white shadow-sm sm:rounded-lg dark:bg-gray-900"
+              class="flex flex-col overflow-hidden rounded-lg bg-white shadow-sm dark:bg-gray-900"
             >
               <div>
-                <div class="px-4 py-4 sm:px-6">
+                <!-- @container: one row whenever the card (not the screen) is wide enough
+                     (the sidebar width changes the room): from 608px with Refresh + Export
+                     icon-only, Refresh text from 688px, Export text from 752px.
+                     While rows are selected ("N selected · Deselect · Pay" replaces Refresh,
+                     data-selecting set by bills-payables-table.js): Search min 112px, gap 16px,
+                     Export icon-only up to 896px. The left group never shrinks and the toolbar
+                     never spills left over it (min-w-min); if there is still no room it wraps. -->
+                <div class="group/head @container px-4 py-4 sm:px-6">
                   <div
-                    class="flex flex-col gap-4 sm:flex-row sm:flex-wrap sm:items-center sm:gap-9"
+                    class="flex flex-col gap-4 @min-[38rem]:flex-row @min-[38rem]:flex-wrap @min-[38rem]:items-center @min-[38rem]:gap-6 @min-[38rem]:group-data-[selecting=true]/head:gap-x-4"
                   >
-                    <div class="flex items-center gap-12">
+                    <div class="flex shrink-0 flex-wrap items-center gap-x-4 gap-y-2 @min-[38rem]:flex-nowrap">
                       <div class="flex flex-col gap-1">
                         <h1
                           class="text-lg leading-6 font-medium whitespace-nowrap text-gray-900 dark:text-white"
@@ -79,16 +86,11 @@
                       <button
                         id="bp-refresh-btn"
                         type="button"
+                        title="Refresh"
                         class="inline-flex cursor-pointer items-center gap-1 rounded bg-gray-100 px-2 py-1 text-sm font-semibold text-gray-600 transition-colors hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:focus-visible:outline-blue-500"
                       >
-                        <img
-                          src="../../../src/assets/table/refresh.svg"
-                          width="18"
-                          height="18"
-                          alt=""
-                          class="shrink-0"
-                        />
-                        Refresh
+                        <svg viewBox="0 0 18 18" width="18" height="18" fill="none" aria-hidden="true" class="shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M3.6 1.8C4.09706 1.8 4.5 2.20294 4.5 2.7V4.59113C5.64308 3.4244 7.23647 2.7 9 2.7C11.7445 2.7 14.0769 4.45439 14.9413 6.90008C15.1069 7.36872 14.8613 7.88291 14.3927 8.04856C13.924 8.2142 13.4098 7.96857 13.2442 7.49992C12.626 5.75092 10.9579 4.5 9 4.5C7.52856 4.5 6.22083 5.20652 5.39942 6.3H8.1C8.59706 6.3 9 6.70294 9 7.2C9 7.69706 8.59706 8.1 8.1 8.1H3.6C3.10294 8.1 2.7 7.69706 2.7 7.2V2.7C2.7 2.20294 3.10294 1.8 3.6 1.8ZM3.60735 9.95144C4.07599 9.7858 4.59018 10.0314 4.75583 10.5001C5.37401 12.2491 7.04208 13.5 9 13.5C10.4714 13.5 11.7792 12.7935 12.6006 11.7L9.9 11.7C9.40294 11.7 9 11.2971 9 10.8C9 10.3029 9.40294 9.9 9.9 9.9H14.4C14.6387 9.9 14.8676 9.99482 15.0364 10.1636C15.2052 10.3324 15.3 10.5613 15.3 10.8V15.3C15.3 15.7971 14.8971 16.2 14.4 16.2C13.9029 16.2 13.5 15.7971 13.5 15.3V13.4089C12.3569 14.5756 10.7635 15.3 9 15.3C6.25553 15.3 3.92314 13.5456 3.05871 11.0999C2.89307 10.6313 3.1387 10.1171 3.60735 9.95144Z" fill="currentColor"/></svg>
+                        <span class="@min-[38rem]:@max-[43rem]:sr-only">Refresh</span>
                       </button>
 
                       <div
@@ -122,10 +124,10 @@
                     </div>
 
                     <div
-                      class="flex w-full flex-col gap-4 sm:min-w-0 sm:flex-1 sm:flex-row sm:items-center sm:justify-end"
+                      class="flex w-full flex-col gap-4 sm:flex-row sm:items-center sm:justify-end @min-[38rem]:min-w-min @min-[38rem]:flex-1"
                     >
                       <div
-                        class="relative w-full min-w-0 sm:min-w-[160px] sm:max-w-[256px] sm:flex-1"
+                        class="relative w-full min-w-0 sm:min-w-[160px] sm:flex-1 @min-[38rem]:min-w-35 @min-[38rem]:max-w-[256px] @min-[38rem]:group-data-[selecting=true]/head:min-w-28"
                       >
                         <img
                           src="../../../src/assets/table/search.svg"
@@ -138,7 +140,7 @@
                           id="bp-search-input"
                           type="text"
                           placeholder="Search"
-                          class="block h-10 w-full rounded-md border border-gray-300 bg-white py-0 pr-3 pl-10 text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:focus:outline-blue-500"
+                          class="block h-10 w-full rounded-md border border-gray-300 bg-white py-0 pr-3 pl-10 text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:focus:outline-blue-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25"
                         />
                       </div>
 
@@ -155,16 +157,9 @@
                             Filter
                             <span
                               data-filter-count
-                              class="hidden min-w-6 items-center justify-center rounded-full border border-gray-200 bg-gray-100 px-2 py-0.5 text-sm leading-5 font-medium text-gray-800 tabular-nums dark:border-white/15 dark:bg-white/10 dark:text-gray-200"
+                              class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-sm/5 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300 min-w-6 justify-center tabular-nums"
                             ></span>
-                            <img
-                              src="../../../src/assets/table/chevron-down-20.svg"
-                              width="20"
-                              height="20"
-                              alt=""
-                              data-filter-chevron
-                              class="shrink-0 transition-transform duration-200"
-                            />
+                            <svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true" data-filter-chevron class="shrink-0 transition-transform duration-200 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.29288 7.29289C5.68341 6.90237 6.31657 6.90237 6.7071 7.29289L9.99998 10.5858L13.2929 7.29289C13.6834 6.90237 14.3166 6.90237 14.7071 7.29289C15.0976 7.68342 15.0976 8.31658 14.7071 8.70711L10.7071 12.7071C10.3166 13.0976 9.6834 13.0976 9.29288 12.7071L5.29288 8.70711C4.90236 8.31658 4.90236 7.68342 5.29288 7.29289Z" fill="currentColor"/></svg>
                           </button>
                           <div
                             id="bp-table-filter-menu"
@@ -191,17 +186,10 @@
                                       <span class="min-w-0 flex-1">Amount</span>
                                       <span
                                         data-filter-count-badge="amount"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
-                                      <img
-                                        src="../../../src/assets/table/chevron-right.svg"
-                                        width="20"
-                                        height="20"
-                                        alt=""
-                                        data-nav-chevron
-                                        class="hidden shrink-0"
-                                      />
+                                      <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
                                     </button>
                                     <button
                                       type="button"
@@ -212,17 +200,10 @@
                                       <span class="min-w-0 flex-1">Payee</span>
                                       <span
                                         data-filter-count-badge="payee"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
-                                      <img
-                                        src="../../../src/assets/table/chevron-right.svg"
-                                        width="20"
-                                        height="20"
-                                        alt=""
-                                        data-nav-chevron
-                                        class="hidden shrink-0"
-                                      />
+                                      <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
                                     </button>
                                     <button
                                       type="button"
@@ -235,17 +216,10 @@
                                       >
                                       <span
                                         data-filter-count-badge="method"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
-                                      <img
-                                        src="../../../src/assets/table/chevron-right.svg"
-                                        width="20"
-                                        height="20"
-                                        alt=""
-                                        data-nav-chevron
-                                        class="hidden shrink-0"
-                                      />
+                                      <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
                                     </button>
                                     <button
                                       type="button"
@@ -256,17 +230,10 @@
                                       <span class="min-w-0 flex-1">Status</span>
                                       <span
                                         data-filter-count-badge="status"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
-                                      <img
-                                        src="../../../src/assets/table/chevron-right.svg"
-                                        width="20"
-                                        height="20"
-                                        alt=""
-                                        data-nav-chevron
-                                        class="hidden shrink-0"
-                                      />
+                                      <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
                                     </button>
                                     <button
                                       type="button"
@@ -279,17 +246,10 @@
                                       >
                                       <span
                                         data-filter-count-badge="failure_reason"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
-                                      <img
-                                        src="../../../src/assets/table/chevron-right.svg"
-                                        width="20"
-                                        height="20"
-                                        alt=""
-                                        data-nav-chevron
-                                        class="hidden shrink-0"
-                                      />
+                                      <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
                                     </button>
                                     <button
                                       type="button"
@@ -302,17 +262,10 @@
                                       >
                                       <span
                                         data-filter-count-badge="due_date"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
-                                      <img
-                                        src="../../../src/assets/table/chevron-right.svg"
-                                        width="20"
-                                        height="20"
-                                        alt=""
-                                        data-nav-chevron
-                                        class="hidden shrink-0"
-                                      />
+                                      <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
                                     </button>
                                     <button
                                       type="button"
@@ -325,17 +278,10 @@
                                       >
                                       <span
                                         data-filter-count-badge="initiated_date"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
-                                      <img
-                                        src="../../../src/assets/table/chevron-right.svg"
-                                        width="20"
-                                        height="20"
-                                        alt=""
-                                        data-nav-chevron
-                                        class="hidden shrink-0"
-                                      />
+                                      <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
                                     </button>
                                     <button
                                       type="button"
@@ -348,17 +294,10 @@
                                       >
                                       <span
                                         data-filter-count-badge="payment_date"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
-                                      <img
-                                        src="../../../src/assets/table/chevron-right.svg"
-                                        width="20"
-                                        height="20"
-                                        alt=""
-                                        data-nav-chevron
-                                        class="hidden shrink-0"
-                                      />
+                                      <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
                                     </button>
                                     <button
                                       type="button"
@@ -369,17 +308,10 @@
                                       <span class="min-w-0 flex-1">Source</span>
                                       <span
                                         data-filter-count-badge="source"
-                                        class="hidden items-center rounded-full bg-blue-50 px-2 py-0.5 text-xs font-medium text-blue-700 inset-ring inset-ring-blue-700/10 dark:bg-blue-400/10 dark:text-blue-300 dark:inset-ring-blue-400/30"
+                                        class="hidden items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                                         >0</span
                                       >
-                                      <img
-                                        src="../../../src/assets/table/chevron-right.svg"
-                                        width="20"
-                                        height="20"
-                                        alt=""
-                                        data-nav-chevron
-                                        class="hidden shrink-0"
-                                      />
+                                      <svg viewBox="0 0 20.0001 20" width="20" height="20" fill="none" aria-hidden="true" data-nav-chevron class="hidden shrink-0 text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M7.29289 14.7071C6.90237 14.3166 6.90237 13.6834 7.29289 13.2929L10.5858 10L7.29289 6.70711C6.90237 6.31658 6.90237 5.68342 7.29289 5.29289C7.68342 4.90237 8.31658 4.90237 8.70711 5.29289L12.7071 9.29289C13.0976 9.68342 13.0976 10.3166 12.7071 10.7071L8.70711 14.7071C8.31658 15.0976 7.68342 15.0976 7.29289 14.7071Z" fill="currentColor"/></svg>
                                     </button>
                                   </div>
                                 </div>
@@ -403,7 +335,7 @@
                                         type="search"
                                         data-filter-search="bp-table-filter-payees"
                                         placeholder="Search payee"
-                                        class="h-[33px] w-full rounded-md border border-gray-300 bg-white pr-2 pl-10 text-sm leading-5 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500"
+                                        class="h-[33px] w-full rounded-md border border-gray-300 bg-white pr-2 pl-10 text-sm leading-5 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25"
                                       />
                                     </div>
                                     <div
@@ -628,16 +560,11 @@
                         <button
                           id="bp-export-btn"
                           type="button"
-                          class="inline-flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 text-base leading-6 font-semibold whitespace-nowrap text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:w-auto dark:border-white/15 dark:bg-white/5 dark:text-gray-200 dark:shadow-none dark:hover:bg-white/10"
+                          title="Export"
+                          class="@min-[38rem]:@max-[47rem]:w-10 @min-[38rem]:@max-[47rem]:px-0 @min-[38rem]:@max-[56rem]:group-data-[selecting=true]/head:w-10 @min-[38rem]:@max-[56rem]:group-data-[selecting=true]/head:px-0 inline-flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 text-base leading-6 font-semibold whitespace-nowrap text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:w-auto dark:border-white/15 dark:bg-white/5 dark:text-gray-200 dark:shadow-none dark:hover:bg-white/10"
                         >
-                          Export
-                          <img
-                            src="../../../src/assets/table/export.svg"
-                            width="20"
-                            height="20"
-                            alt=""
-                            class="shrink-0"
-                          />
+                          <span class="@min-[38rem]:@max-[47rem]:sr-only @min-[38rem]:@max-[56rem]:group-data-[selecting=true]/head:sr-only">Export</span>
+                          <svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true" class="shrink-0 text-gray-500 dark:text-gray-400"><path d="M9.25 13.25C9.25 13.6642 9.58578 14 10 14C10.4142 14 10.75 13.6642 10.75 13.25L10.75 4.63642L13.7047 7.76497C13.9891 8.06611 14.4638 8.07967 14.765 7.79526C15.0661 7.51085 15.0797 7.03617 14.7953 6.73503L10.5453 2.23503C10.4036 2.08501 10.2063 2 10 2C9.79365 2 9.59642 2.08501 9.45474 2.23503L5.20474 6.73503C4.92033 7.03617 4.93389 7.51085 5.23503 7.79526C5.53617 8.07967 6.01085 8.0661 6.29526 7.76497L9.25 4.63642L9.25 13.25Z" fill="currentColor"/><path d="M3.5 12.75C3.5 12.3358 3.16421 12 2.75 12C2.33579 12 2 12.3358 2 12.75V15.25C2 16.7688 3.23122 18 4.75 18H15.25C16.7688 18 18 16.7688 18 15.25V12.75C18 12.3358 17.6642 12 17.25 12C16.8358 12 16.5 12.3358 16.5 12.75V15.25C16.5 15.9404 15.9404 16.5 15.25 16.5H4.75C4.05964 16.5 3.5 15.9404 3.5 15.25V12.75Z" fill="currentColor"/></svg>
                         </button>
 
                         <button
@@ -649,13 +576,7 @@
                           aria-label="Manage columns"
                           title="Manage columns"
                         >
-                          <img
-                            src="../../../src/assets/table/columns.svg"
-                            width="20"
-                            height="20"
-                            alt=""
-                            class="shrink-0"
-                          />
+                          <svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true" class="shrink-0 text-gray-500 dark:text-gray-400"><path d="M10 3.75C10 2.64543 9.10457 1.75 8 1.75C6.89543 1.75 6 2.64543 6 3.75C6 4.85457 6.89543 5.75 8 5.75C9.10457 5.75 10 4.85457 10 3.75Z" fill="currentColor"/><path d="M17.25 4.5C17.6642 4.5 18 4.16421 18 3.75C18 3.33579 17.6642 3 17.25 3L11.75 3C11.3358 3 11 3.33579 11 3.75C11 4.16421 11.3358 4.5 11.75 4.5L17.25 4.5Z" fill="currentColor"/><path d="M5 3.75C5 4.16421 4.66421 4.5 4.25 4.5H2.75C2.33579 4.5 2 4.16421 2 3.75C2 3.33579 2.33579 3 2.75 3L4.25 3C4.66421 3 5 3.33579 5 3.75Z" fill="currentColor"/><path d="M4.25 17C4.66421 17 5 16.6642 5 16.25C5 15.8358 4.66421 15.5 4.25 15.5H2.75C2.33579 15.5 2 15.8358 2 16.25C2 16.6642 2.33579 17 2.75 17H4.25Z" fill="currentColor"/><path d="M17.25 17C17.6642 17 18 16.6642 18 16.25C18 15.8358 17.6642 15.5 17.25 15.5H11.75C11.3358 15.5 11 15.8358 11 16.25C11 16.6642 11.3358 17 11.75 17H17.25Z" fill="currentColor"/><path d="M9 10C9 10.4142 8.66421 10.75 8.25 10.75H2.75C2.33579 10.75 2 10.4142 2 10C2 9.58579 2.33579 9.25 2.75 9.25L8.25 9.25C8.66421 9.25 9 9.58579 9 10Z" fill="currentColor"/><path d="M17.25 10.75C17.6642 10.75 18 10.4142 18 10C18 9.58579 17.6642 9.25 17.25 9.25H15.75C15.3358 9.25 15 9.58579 15 10C15 10.4142 15.3358 10.75 15.75 10.75H17.25Z" fill="currentColor"/><path d="M14 10C14 8.89543 13.1046 8 12 8C10.8954 8 10 8.89543 10 10C10 11.1046 10.8954 12 12 12C13.1046 12 14 11.1046 14 10Z" fill="currentColor"/><path d="M10 16.25C10 15.1454 9.10457 14.25 8 14.25C6.89543 14.25 6 15.1454 6 16.25C6 17.3546 6.89543 18.25 8 18.25C9.10457 18.25 10 17.3546 10 16.25Z" fill="currentColor"/></svg>
                         </button>
                       </div>
                     </div>
@@ -711,43 +632,43 @@
                       <span>Ready to Pay</span>
                       <span
                         data-tab-count="ready_to_pay"
-                        class="inline-flex items-center rounded-[512px] border border-blue-200 bg-blue-100 px-2 py-0.5 text-xs leading-4 font-medium text-blue-800 dark:border-blue-400/30 dark:bg-blue-400/15 dark:text-blue-200"
+                        class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400"
                         >0</span
                       >
                     </a>
                     <a
                       href="#"
                       data-tab="in_progress"
-                      class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-200"
+                      class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200"
                     >
                       <span>In Progress</span>
                       <span
                         data-tab-count="in_progress"
-                        class="inline-flex items-center rounded-[512px] border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs leading-4 font-medium text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-200"
+                        class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300"
                         >0</span
                       >
                     </a>
                     <a
                       href="#"
                       data-tab="paid"
-                      class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-200"
+                      class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200"
                     >
                       <span>Paid</span>
                       <span
                         data-tab-count="paid"
-                        class="inline-flex items-center rounded-[512px] border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs leading-4 font-medium text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-200"
+                        class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300"
                         >0</span
                       >
                     </a>
                     <a
                       href="#"
                       data-tab="exception"
-                      class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:text-gray-200"
+                      class="inline-flex items-center gap-2 rounded-md px-3 py-2 text-sm font-medium text-gray-500 transition-colors hover:bg-gray-50 hover:text-gray-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400 dark:hover:bg-white/5 dark:hover:text-gray-200"
                     >
                       <span>Exceptions</span>
                       <span
                         data-tab-count="exception"
-                        class="inline-flex items-center rounded-[512px] border border-red-200 bg-red-100 px-2 py-0.5 text-xs leading-4 font-medium text-red-800 dark:border-red-400/30 dark:bg-red-400/15 dark:text-red-200"
+                        class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs/4 font-medium border border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400"
                         >0</span
                       >
                     </a>
@@ -1138,7 +1059,7 @@
         class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent"
       >
         <el-dialog-backdrop
-          class="fixed inset-0 bg-gray-900/30 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
+          class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"
         ></el-dialog-backdrop>
         <div
           tabindex="0"
@@ -1170,13 +1091,7 @@
                 class="inline-flex shrink-0 cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10"
                 aria-label="Close manage columns"
               >
-                <img
-                  src="../../../src/assets/table/x-mark-20.svg"
-                  width="20"
-                  height="20"
-                  alt=""
-                  class="shrink-0"
-                />
+                <svg viewBox="0 0 20 20" width="20" height="20" fill="none" aria-hidden="true" class="shrink-0 text-gray-500 dark:text-gray-400"><path d="M6.28033 5.21967C5.98744 4.92678 5.51256 4.92678 5.21967 5.21967C4.92678 5.51256 4.92678 5.98744 5.21967 6.28033L8.93934 10L5.21967 13.7197C4.92678 14.0126 4.92678 14.4874 5.21967 14.7803C5.51256 15.0732 5.98744 15.0732 6.28033 14.7803L10 11.0607L13.7197 14.7803C14.0126 15.0732 14.4874 15.0732 14.7803 14.7803C15.0732 14.4874 15.0732 14.0126 14.7803 13.7197L11.0607 10L14.7803 6.28033C15.0732 5.98744 15.0732 5.51256 14.7803 5.21967C14.4874 4.92678 14.0126 4.92678 13.7197 5.21967L10 8.93934L6.28033 5.21967Z" fill="currentColor"/></svg>
               </button>
             </div>
             <div class="px-5 py-4">
@@ -1198,7 +1113,7 @@
               <button
                 id="bp-manage-columns-apply-btn"
                 type="button"
-                class="inline-flex h-8 cursor-pointer items-center justify-center rounded-md bg-blue-600 px-2.5 text-sm leading-5 font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 disabled:shadow-none"
+                class="inline-flex h-8 cursor-pointer items-center justify-center rounded-md bg-blue-600 px-2.5 text-sm leading-5 font-semibold text-white shadow-sm hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60 disabled:shadow-none"
               >
                 Apply changes
               </button>
@@ -1209,6 +1124,7 @@
     </el-dialog>
 
     <script src="../../../src/scripts/table-ui.js?v=20261006f"></script>
-    <script src="../../../src/scripts/bills-payables-table.js?v=20261104-pager"></script>
+    <script src="../../../src/scripts/table-export.js?v=20261112ex"></script>
+    <script src="../../../src/scripts/bills-payables-table.js?v=20261113tc"></script>
   </body>
 </html>

@@ -40,7 +40,7 @@
         '<input type="radio" name="accountType" value="' + value + '" data-bank-type aria-invalid="false" aria-describedby="bank-type-error" class="' + RADIO + '">' +
         '<img src="' + ASSETS + 'radio-checked.svg" alt="" width="16" height="16" class="pointer-events-none absolute inset-0 hidden size-4 peer-checked:block">' +
       '</span>' +
-      '<span class="text-sm leading-5 font-medium text-[#374151]">' + label + '</span>' +
+      '<span class="text-sm leading-5 font-medium text-[#374151] dark:text-gray-300">' + label + '</span>' +
     '</label>';
   }
 
@@ -52,9 +52,10 @@
       '<div class="relative z-[1] flex w-full flex-col gap-1">' +
         '<div class="flex items-start gap-1">' +
           '<label for="bank-' + id + '" class="' + F.LABEL + '">' + label + '</label>' +
-          (opts.help ? '<button type="button" data-bank-help hidden class="ml-auto cursor-pointer rounded text-sm leading-5 font-medium text-[#2563eb] hover:underline focus-visible:outline-2 focus-visible:outline-blue-600">' + opts.help + '</button>' : '') +
+          (opts.help ? '<button type="button" data-bank-help hidden class="ml-auto cursor-pointer rounded text-sm leading-5 font-medium text-[#2563eb] dark:text-blue-400 hover:underline focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' + opts.help + '</button>' : '') +
         '</div>' +
-        '<div class="relative">' +
+        // Linked note tucks under the input: in dark the input is translucent, so give it the page colour underneath.
+        '<div class="relative' + (opts.linked ? ' rounded-md dark:bg-gray-900' : '') + '">' +
           '<input id="bank-' + id + '" data-bank-field="' + id + '" data-ob-skeleton type="text"' +
             (opts.numeric ? ' inputmode="numeric"' : '') +
             ' autocomplete="' + (opts.autocomplete || 'off') + '" aria-invalid="false" aria-describedby="bank-' + id + '-hint bank-' + id + '-error" class="' + F.INPUT + '">' +
@@ -63,7 +64,7 @@
         (opts.hint ? '<p id="bank-' + id + '-hint" data-bank-hint hidden class="' + F.HELPER + '">' + esc(opts.hint) + '</p>' : '') +
         '<p id="bank-' + id + '-error" data-bank-error class="hidden ' + F.ERROR_TEXT + '"></p>' +
       '</div>' +
-      (opts.linked ? '<p data-bank-linked hidden class="-mt-2 rounded-md bg-[#f9fafb] px-3 pt-5 pb-3 text-sm leading-5 text-[#374151]"></p>' : '') +
+      (opts.linked ? '<p data-bank-linked hidden class="-mt-2 rounded-md bg-[#f9fafb] dark:bg-gray-950/25 px-3 pt-5 pb-3 text-sm leading-5 text-[#374151] dark:text-gray-300"></p>' : '') +
     '</div>';
   }
 

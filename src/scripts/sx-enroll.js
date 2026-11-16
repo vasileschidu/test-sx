@@ -544,7 +544,7 @@
         "</span>" +
         '<button type="button" data-sx-tin-toggle aria-pressed="' +
         revealed +
-        '" class="inline-flex size-6 cursor-pointer items-center justify-center rounded-md text-gray-400 dark:text-gray-500 hover:bg-gray-200 dark:hover:bg-white/15 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+        '" class="inline-flex size-6 cursor-pointer items-center justify-center rounded-md text-gray-400 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-white/15 hover:text-gray-600 dark:hover:text-white active:bg-gray-300 dark:active:bg-white/20 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
         '<span class="sr-only">' +
         (revealed ? "Hide" : "Show") +
         " TIN</span>" +
@@ -946,12 +946,17 @@
    * SX look for the shared SD sidebar (onboarding-sidebar.js renders it on
    * DOMContentLoaded, after this script's listener, hence the timeout): the
    * SMART Exchange logo from Figma (36525:48449) and a 48px side padding so
-   * "Automatic Card Processing" stays on one line.
+   * "Automatic Card Processing" stays on one line; the footer block is centred.
    */
   function applySidebarLook() {
     var slots = document.querySelectorAll("[data-ob-sidebar]");
     for (var i = 0; i < slots.length; i += 1) {
       slots[i].classList.replace("px-14", "px-12");
+      // The 212px footer block (Contact / Decline, language, terms, Powered by) is
+      // right-aligned like the logo; with 48px padding that leaves 65 left / 48 right.
+      // Centre it in the sidebar.
+      var footer = slots[i].querySelector(".w-\\[212px\\]");
+      if (footer) footer.classList.add("self-center");
       var logo = slots[i].querySelector('img[src$="menu-logo.svg"]');
       if (!logo) continue;
       var mark = logo.parentNode;

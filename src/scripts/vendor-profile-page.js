@@ -27,11 +27,11 @@
     linked: { label: "Linked", tone: "green" },
   };
   var TONES = {
-    gray: "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/10 dark:bg-white/10 dark:text-gray-200",
-    blue: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-500/15 dark:text-blue-300",
-    green: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-500/15 dark:text-emerald-300",
-    amber: "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-500/15 dark:text-amber-300",
-    red: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-500/15 dark:text-red-300",
+    gray: "border-gray-200 bg-gray-100 text-gray-800 dark:border-white/15 dark:bg-white/10 dark:text-gray-300",
+    blue: "border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400",
+    green: "border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400",
+    amber: "border-amber-200 bg-amber-100 text-amber-800 dark:border-amber-400/20 dark:bg-amber-400/10 dark:text-amber-400",
+    red: "border-red-200 bg-red-100 text-red-800 dark:border-red-400/20 dark:bg-red-400/10 dark:text-red-400",
   };
 
   var TABS = [
@@ -455,7 +455,7 @@
       '<div class="flex items-start gap-3 p-6">' +
         '<div class="flex min-w-0 flex-1 flex-wrap items-center gap-[11px]">' +
         '<h2 class="text-lg/6 font-semibold text-gray-900 dark:text-white">Activity &amp; History</h2>' +
-        '<span class="rounded border px-1 py-0.5 text-xs/4 font-medium ' +
+        '<span class="inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border ' +
         TONES[badge.tone] +
         '">' +
         escapeHtml(badge.label) +

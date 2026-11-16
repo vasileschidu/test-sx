@@ -33,3 +33,10 @@ report — you do not design and you do not fix.
 ## Output
 Write `tools/ui-qa/out/code/qa-final.json` (`[{ severity, rule, where, observation, evidence, fix }]`) and reply
 ≤ 15 lines: counts by severity, each major finding on one line with its fix, false positives dropped.
+
+## On SMART Disburse pages (`src/pages/onboarding/…`)
+1. Read `.claude/skills/sd-design-rules/SKILL.md`. On SD it overrides the components / design-system skills.
+2. Run with `--viewports 375,768,1280` and without `--dark` (SD is light-only).
+3. Findings for values that `sd-design-rules` sanctions are false positives: say which rule. Examples: 56px buttons
+   (`h-14`, `py-[15px]`), the gradient primary, `max-h-[min(752px,…)]` on dialogs, arbitrary values matched to Figma.
+4. Figma parity and flow parity are the job of `sd-qa`, and regressions are the job of `sd-regression`. Mention them if they were not run.

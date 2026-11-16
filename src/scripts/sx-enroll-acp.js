@@ -28,13 +28,13 @@
   var UI_KEY = "acp";
 
   var BADGE = {
-    done: "inline-flex w-fit items-center rounded-md bg-green-50 dark:bg-green-500/10 px-2 py-0.5 text-xs font-medium text-green-700 dark:text-green-400 inset-ring inset-ring-green-600/20 dark:inset-ring-green-500/20",
-    progress: "inline-flex w-fit items-center rounded-md bg-blue-50 dark:bg-blue-500/10 px-2 py-0.5 text-xs font-medium text-blue-700 dark:text-blue-300 inset-ring inset-ring-blue-700/10 dark:inset-ring-blue-400/20",
+    done: "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-emerald-200 bg-emerald-100 text-emerald-800 dark:border-emerald-400/20 dark:bg-emerald-400/10 dark:text-emerald-400 w-fit",
+    progress: "inline-flex items-center gap-1 rounded px-2 py-0.5 text-xs/4 font-medium border border-blue-200 bg-blue-100 text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400 w-fit",
   };
 
   // Native radio (same as the case launcher), with a disabled look.
   var RADIO =
-    "relative size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-gray-300 dark:border-white/10 bg-white dark:bg-gray-900 before:absolute before:inset-1 before:rounded-full before:bg-white dark:before:bg-gray-900 not-checked:before:hidden checked:border-blue-600 dark:checked:border-blue-400 checked:bg-blue-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:border-gray-300 dark:disabled:border-white/10 disabled:bg-gray-100 dark:disabled:bg-white/10 disabled:before:bg-gray-400";
+    "relative size-4 shrink-0 cursor-pointer appearance-none rounded-full border border-gray-300 dark:border-white/10 bg-white dark:bg-white/5 before:absolute before:inset-1 before:rounded-full before:bg-white not-checked:before:hidden checked:border-blue-600 dark:checked:border-blue-500 checked:bg-blue-600 dark:checked:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:border-gray-300 dark:disabled:border-white/10 disabled:bg-gray-100 dark:disabled:bg-white/10 disabled:before:bg-gray-400 dark:disabled:before:bg-white/30";
 
   var LINK =
     "inline-flex shrink-0 cursor-pointer items-center gap-1.5 rounded-sm text-sm font-semibold text-blue-600 dark:text-blue-400 underline underline-offset-2 transition-colors hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400 disabled:cursor-not-allowed disabled:opacity-50";

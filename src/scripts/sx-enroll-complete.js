@@ -5,7 +5,7 @@
  *
  *   - Amount, mini card, Transaction ID, payment date, username from the case.
  *   - Info banner "Continue processing payments manually…" only with STP on.
- *   - Reveal Card Details → el-dialog with the card, copy buttons and a demo
+ *   - Reveal Card Details → el-dialog with the card, copy buttons (OBModal.copyButton) and a demo
  *     control "I've processed this card in my terminal" →
  *     SXDemoCase.markCardProcessed() (row Paid, MID/TID, STP step).
  *     Used or not, it decides whether the card was processed during enrolment
@@ -106,22 +106,11 @@
       howBtn.querySelector("[data-collapse-icon]").classList.toggle("rotate-180", open);
     });
 
-    // Copy buttons: icon turns into a check for 2s.
-    document.addEventListener("click", function (event) {
-      var btn = event.target.closest("[data-sx-copy]");
-      if (!btn || !navigator.clipboard) return;
-      var value = vc(btn.getAttribute("data-sx-copy")).textContent.trim();
-      navigator.clipboard.writeText(value).then(
-        function () {
-          btn.setAttribute("aria-label", "Copied");
-          btn.classList.add("bg-green-50", "dark:bg-green-500/10");
-          window.setTimeout(function () {
-            btn.removeAttribute("aria-label");
-            btn.classList.remove("bg-green-50", "dark:bg-green-500/10");
-          }, 2000);
-        },
-        function () {},
-      );
+    // Copy buttons: the shared OBModal one (as on Contact Us): icon, hover chip,
+    // "Copy" / "Copied" tooltip and green check; OBModal handles the click.
+    document.querySelectorAll("[data-sx-copy-slot]").forEach(function (slot) {
+      var key = slot.getAttribute("data-sx-copy-slot");
+      slot.outerHTML = window.OBModal.copyButton(esc(slot.getAttribute("data-label")), vc(key).textContent.trim());
     });
 
     // Processed state
