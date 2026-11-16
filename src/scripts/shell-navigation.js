@@ -2,9 +2,9 @@
   var PAGE_CONFIGS = {
     "supplier-portal.html": {
       scripts: [
-        "/src/scripts/table-ui.js?v=20261006f",
+        "/src/scripts/table-ui.js?v=20261113es3",
         "/src/scripts/table-skeleton.js",
-        "/src/scripts/exchanges-table.js?v=20261109a",
+        "/src/scripts/exchanges-table.js?v=20261116cal",
       ],
       init: "initSmartExchangePage",
     },
@@ -13,7 +13,7 @@
       init: "initBillsPayablesTable",
     },
     "payment-preferences.html": {
-      scripts: ["/src/scripts/payment-preferences-components.js?v=bank-tooltips-20261021j"],
+      scripts: ["/src/scripts/payment-preferences-components.js?v=20261113mf"],
       reloadScripts: [
         "/src/scripts/payment-preferences-tabs.js",
         "/src/scripts/pages/payment-preferences-page.js",
@@ -45,19 +45,19 @@
     "consumer-payments-received.html": {
       scripts: [
         "/src/scripts/table-skeleton.js",
-        "/src/scripts/consumer-exchanges-table.js?v=bank-tooltips-20261021b",
+        "/src/scripts/consumer-exchanges-table.js?v=20261116cal",
       ],
       init: "initConsumerExchangesPage",
     },
     "consumer-my-cards.html": {
       scripts: [
-        "/src/scripts/payment-preferences-components.js?v=bank-tooltips-20261021j",
+        "/src/scripts/payment-preferences-components.js?v=20261113mf",
         "/src/scripts/consumer-my-cards.js",
       ],
       init: "initConsumerMyCards",
     },
     "consumer-payment-preferences.html": {
-      scripts: ["/src/scripts/payment-preferences-components.js?v=bank-tooltips-20261021j"],
+      scripts: ["/src/scripts/payment-preferences-components.js?v=20261113mf"],
       reloadScripts: [
         "/src/scripts/payment-preferences-tabs.js",
         "/src/scripts/pages/payment-preferences-page.js",

@@ -109,8 +109,8 @@ function ensureNavTooltip() {
   var tooltip = document.createElement("div");
   tooltip.id = "dashboard-nav-tooltip";
   tooltip.className =
-    // Dark: gray-800 + 1px white/10 ring, like the sidebar flyouts (and #shell-tooltip in shared.js).
-    "pointer-events-none fixed z-[80] rounded-lg bg-gray-900 px-2.5 py-1 text-sm font-normal leading-5 text-gray-100 shadow-[0_10px_7.5px_rgba(0,0,0,0.1),0_4px_3px_rgba(0,0,0,0.05)] dark:bg-gray-800 dark:ring-1 dark:ring-white/10";
+    // SMART System Tooltip/Textfield, same as #shell-tooltip in shared.js. Dark: gray-950 + 1px white/10 ring.
+    "pointer-events-none fixed z-[80] rounded-lg bg-gray-900 p-3 text-sm/5 font-normal text-gray-100 shadow-xs dark:bg-gray-950 dark:ring-1 dark:ring-white/10";
   tooltip.style.opacity = "0";
   tooltip.style.transform = "translateX(-4px)";
   tooltip.style.transition = "opacity 150ms ease-out, transform 150ms ease-out";

@@ -91,8 +91,8 @@
   var WARM_MS = 500; // how long after one hides the next shows at once
   var FADE_MS = 150;
   var CLICK_HOLD = 600; // no tooltip this soon after a click
-  var GAP = 8;
-  var EDGE = 8;
+  var GAP = 12; // room for the 12px pointer, like the info tooltip's mt-3
+  var EDGE = 16;
 
   var tip = null;
   var label = null;
@@ -114,11 +114,12 @@
     var style = document.createElement("style");
     style.textContent = [
       "#shell-tooltip { position: fixed; inset: auto; margin: 0; border: 0; overflow: visible; pointer-events: none; z-index: 300;",
-      "  box-sizing: border-box; width: max-content; max-width: 220px; padding: 6px 10px; border-radius: 6px;",
-      "  background: #111827; color: #fff; font-size: 12px; line-height: 16px; font-weight: 500; text-align: center; text-wrap: balance;",
-      "  box-shadow: 0 10px 15px -3px rgb(0 0 0 / .1), 0 4px 6px -4px rgb(0 0 0 / .1); opacity: 0; }",
-      "#shell-tooltip > i { position: absolute; width: 8px; height: 8px; border-radius: 1px; background: inherit; transform: rotate(45deg); }",
-      ".dark #shell-tooltip { background: #1f2937; box-shadow: 0 0 0 1px rgb(255 255 255 / .1); }", // gray-800, like the sidebar flyouts
+      // SMART System Tooltip/Textfield (9352:21324): gray-900, p-3, text-sm/5 regular gray-100, rounded-lg, shadow-xs, max 343.
+      "  box-sizing: border-box; width: max-content; max-width: min(343px, calc(100vw - 32px)); padding: 12px; border-radius: 8px;",
+      "  background: #111827; color: #f3f4f6; font-size: 14px; line-height: 20px; font-weight: 400; text-align: left;",
+      "  box-shadow: 0 1px 2px 0 rgb(0 0 0 / .05); opacity: 0; }",
+      "#shell-tooltip > i { position: absolute; width: 12px; height: 12px; border-radius: 1px; background: inherit; transform: rotate(45deg); }",
+      ".dark #shell-tooltip { background: #030712; box-shadow: 0 0 0 1px rgb(255 255 255 / .1); }", // gray-950 + white/10 ring, like the info tooltip
       "@media (prefers-reduced-motion: reduce) { #shell-tooltip { transition: none !important; } }",
     ].join("\n");
     document.head.appendChild(style);
@@ -171,16 +172,38 @@
     tip.style.top = Math.round(Math.max(EDGE, top)) + "px";
     // Pointer sits under the control's centre, kept clear of the rounded corners.
     arrow.style.left =
-      Math.round(Math.max(6, Math.min(centre - left - 4, box.width - 14))) +
+      Math.round(Math.max(10, Math.min(centre - left - 6, box.width - 22))) +
       "px";
-    arrow.style.top = above ? "" : "-3px";
-    arrow.style.bottom = above ? "-3px" : "";
+    arrow.style.top = above ? "" : "-5px";
+    arrow.style.bottom = above ? "-5px" : "";
     return above;
+  }
+
+  /** True when the control already shows its tooltip text as a visible label (not sr-only). */
+  function labelVisible(el, text) {
+    var want = text.trim().toLowerCase();
+    var nodes = [el].concat(Array.prototype.slice.call(el.querySelectorAll("*")));
+    return nodes.some(function (node) {
+      if (node.children.length && node !== el) return false;
+      var own = Array.prototype.filter
+        .call(node.childNodes, function (n) { return n.nodeType === 3; })
+        .map(function (n) { return n.textContent; })
+        .join("")
+        .trim()
+        .toLowerCase();
+      if (own !== want) return false;
+      var r = node.getBoundingClientRect();
+      return r.width > 2 && r.height > 2; // sr-only is 1x1
+    });
   }
 
   function show(el) {
     var text = el.getAttribute("data-tooltip");
     if (!text || !el.isConnected) return;
+    // A tooltip that repeats a visible label is noise: only icon-only states get one.
+    if (labelVisible(el, text)) return;
+    // Its menu / popover is open: the tooltip would sit on top of it.
+    if (el.getAttribute("aria-expanded") === "true") return;
     clearTimeout(hideTimer);
     ensureTip();
     label.textContent = text;
@@ -1044,13 +1067,16 @@ function showCopiedTooltip(anchorEl) {
     "left:" + (rect.left + rect.width / 2) + "px",
     "top:" + (rect.top - topOffset) + "px",
     "transform:translate(-50%, calc(-100% + 6px))",
-    "background:#111827",
-    "color:#fff",
-    "font-size:12px",
+    // Same look as #shell-tooltip (SMART System Tooltip/Textfield).
+    "background:" + (document.documentElement.classList.contains("dark") ? "#030712" : "#111827"),
+    "box-shadow:" + (document.documentElement.classList.contains("dark") ? "0 0 0 1px rgb(255 255 255 / .1)" : "0 1px 2px 0 rgb(0 0 0 / .05)"),
+    "color:#f3f4f6",
+    "font-size:14px",
     "font-family:Inter,sans-serif",
-    "line-height:1.5",
-    "padding:3px 8px",
-    "border-radius:6px",
+    "line-height:20px",
+    "font-weight:400",
+    "padding:12px",
+    "border-radius:8px",
     "pointer-events:none",
     "z-index:9999",
     "opacity:0",

@@ -115,7 +115,7 @@ window.OBModal = (function () {
       // Dark: the hover icon gets lighter (gray-200), not darker.
       '<img src="' + ASSETS + 'icon-duplicate-light.svg" alt="" width="18" height="18" class="hidden size-[18px] dark:group-[:hover:not([data-copied])]:block">' +
       '<img src="' + ASSETS + 'icon-copy-check-green.svg" alt="" width="18" height="18" class="hidden size-[18px] group-data-copied:block">' +
-      '<span aria-hidden="true" class="pointer-events-none invisible absolute bottom-full left-1/2 z-10 mb-2 max-w-[200px] -translate-x-1/2 translate-y-1 rounded-lg bg-gray-900 dark:bg-gray-700 px-2.5 py-1 text-sm leading-5 whitespace-nowrap text-gray-100 opacity-0 drop-shadow-[0_10px_7.5px_rgba(0,0,0,0.1)] transition duration-150 ease-out ' +
+      '<span aria-hidden="true" class="pointer-events-none invisible absolute bottom-full left-1/2 z-10 mb-2 max-w-[200px] -translate-x-1/2 translate-y-1 rounded-lg bg-gray-900 p-3 text-sm/5 font-normal whitespace-nowrap text-gray-100 opacity-0 shadow-xs dark:bg-gray-950 dark:ring-1 dark:ring-white/10 transition duration-150 ease-out ' +
         'group-hover:visible group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:visible group-focus-visible:translate-y-0 group-focus-visible:opacity-100 motion-reduce:transition-none">' +
         '<span class="group-data-copied:hidden">Copy</span><span class="hidden group-data-copied:inline">Copied</span>' +
       '</span>' +

@@ -737,7 +737,7 @@
       ' cursor-pointer items-center justify-center border border-gray-300 bg-white text-gray-500 shadow-xs hover:bg-gray-50 aria-expanded:border-blue-600 aria-expanded:ring-1 aria-expanded:ring-blue-600 dark:border-white/10 dark:bg-white/5 dark:text-gray-400 dark:hover:bg-white/10">' +
       DOTS +
       "</button>" +
-      '<el-menu anchor="bottom end" popover class="min-w-44 origin-top-right rounded-md bg-white py-1 shadow-lg outline-1 outline-black/5 transition transition-discrete [--anchor-gap:--spacing(2)] data-closed:scale-95 data-closed:transform data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-75 data-leave:ease-in dark:bg-gray-800 dark:outline-white/10">' +
+      '<el-menu anchor="bottom end" popover class="min-w-44 rounded-md bg-white py-1 shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(2)] dark:bg-gray-800 dark:outline-white/10 transition transition-discrete data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in motion-reduce:transition-none">' +
       item(
         'data-edit-program="' + id + '"',
         PENCIL,
