@@ -26,7 +26,7 @@ business sees depends on its plan (`bills-payables` or `full`).
 | AP/AR Payments | `ap-ar` | `ap-ar-payments.html` (upgrade page when locked) | TODO |
 | **Bills/Payables** | `payables` | `bills-and-payables.html` → `payables-pay.html` | **Yes, below** |
 | Vendors | `payables` | `vendors.html`, `vendor-profile.html` | TODO |
-| Card Manager | `payables` | — (placeholder) | — |
+| Card Manager | `payables` | — (placeholder) | [Module page](modules/card-manager.md) (R1 draft, from Figma) |
 | Invoices/Receivables (AR) | `receivables` | — (placeholder) | — |
 | Customers (AR) | `receivables` | — (placeholder) | — |
 | My Company Profile, Settings | `core` | `my-company-profile.html` | TODO |

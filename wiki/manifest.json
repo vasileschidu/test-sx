@@ -9,7 +9,8 @@
         { "path": "README.md", "label": "Home" },
         { "path": "AGENTS.md", "label": "Instructions for agents" },
         { "path": "CONVENTIONS.md", "label": "Conventions" },
-        { "path": "ai-setup.md", "label": "AI setup (Claude Code)" }
+        { "path": "ai-setup.md", "label": "AI setup (Claude Code)" },
+        { "path": "module-master-prompt.md", "label": "Master prompt: module → wiki → Jira" }
       ]
     },
     {
@@ -30,6 +31,8 @@
             { "path": "products/smart-hub/overview.md", "label": "Overview" },
             { "path": "products/smart-hub/standard.md", "label": "Current standard" },
             { "path": "products/smart-hub/changelog.md", "label": "Changelog" },
+            { "path": "products/smart-hub/modules/card-manager.md", "label": "Module: Card Manager" },
+            { "path": "products/smart-hub/modules/card-manager-backlog.md", "label": "Card Manager backlog (R1)" },
             { "path": "products/smart-hub/variants/README.md", "label": "Client variants" }
           ]
         },
