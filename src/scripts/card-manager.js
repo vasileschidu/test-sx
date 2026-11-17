@@ -25,13 +25,15 @@
   var TABS = ["smart", "linked"];
   var DEFAULT_TAB = "smart";
 
+  // Figma "SE/Main Tab": equal-width tabs, the active one has a 2px blue underline.
   var ACTIVE_TAB_LINK_CLASSES = [
-    "bg-blue-50",
+    "border-blue-500",
     "text-blue-600",
-    "dark:bg-blue-500/15",
+    "dark:border-blue-400",
     "dark:text-blue-300",
   ];
   var INACTIVE_TAB_LINK_CLASSES = [
+    "border-transparent",
     "text-gray-500",
     "hover:bg-gray-50",
     "hover:text-gray-700",
