@@ -69,6 +69,8 @@
     "icons/payables.svg",
     "icons/receivables.svg",
     "figma/top-nav/selector.svg",
+    "cards-manager/icon-credit-card-duotone.svg",
+    "cards-manager/icon-wallet-duotone.svg",
     "get-paid/building-library-20.svg",
     "get-paid/credit-card-sparkle-20.svg",
     "get-paid/dot-2.svg",

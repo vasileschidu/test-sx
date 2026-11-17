@@ -150,6 +150,13 @@ Not tooltips: guided-tour cards (Tooltip/NextStep), the white search-tip popover
 - Gray (Figma "Button/Gray", e.g. Reveal Card Details on `sx-enroll/complete.html`): `inline-flex items-center gap-1 rounded-md bg-gray-100 px-2.5 py-1.5 text-sm font-semibold text-gray-600 hover:bg-gray-200 hover:text-gray-700 active:bg-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:bg-white/10 dark:text-gray-300 dark:hover:bg-white/20 dark:hover:text-white`
   + trailing `size-4.5 text-gray-500 dark:text-gray-400` icon.
 
+### Empty state card — `card-manager.js` `emptyStateHtml()` (Cards Manager, Figma `8007:126803` SMART Cards, `10001:257248` Linked Credit Cards)
+A tab with no records shows a white content card: header, then a centred block. NOT the in-table `TableUi.emptyState` (inbox art, compact).
+- Header `border-b border-gray-200 px-6 py-5` (dark `border-white/10`): `h2` `text-2xl/8 font-semibold text-gray-900 dark:text-white` (the section title, no description, no buttons).
+- Body `flex flex-col items-center px-6 py-30`; inner `flex w-full max-w-120 flex-col items-center gap-6`: 36px duotone icon (`size-9`, `src/assets/cards-manager/icon-*-duotone.svg`, gray-500 baked, listed in `theme-init.js` `GRAY500_ICONS` for dark), `h3` `text-lg/6 font-semibold`, `p` `text-sm/5 text-gray-500 dark:text-gray-400` (centred, `gap-1`), then the Primary button (md) with the white `icon-plus.svg` (`size-4.5`) + label.
+- SMART Cards: icon credit card, "Create your First SMART Card" / "Instantly generate and fund cards with cashback for customer payments." / **Create** (emits `create-card`). Linked Credit Cards: icon wallet, "Linked Credit Cards" / "Add your external cards for quick access and better financial management." / **Add Card** (emits `add-linked-card`).
+- Shown by `card-manager.js` while a tab has no cards (`?empty=1` forces it); removed once there are cards.
+
 ### Toggle switch (checkbox-based)
 ```html
 <div class="group relative inline-flex w-11 shrink-0 cursor-pointer rounded-full bg-gray-200 p-0.5 inset-ring inset-ring-gray-900/5 outline-offset-2 outline-blue-600 transition-colors duration-200 ease-in-out has-checked:bg-blue-600 has-focus-visible:outline-2">
