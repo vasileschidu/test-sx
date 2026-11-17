@@ -22,7 +22,9 @@
  * Empty state (Figma 8007:126803 SMART Cards, 10001:257248 Linked Credit Cards):
  * a tab with nothing rendered into its mount shows the Figma card: section title,
  * icon, heading, text and a primary button. A story that draws the tab (list, linked
- * list) replaces it by setting the mount's innerHTML. The button emits `create-card`
+ * list) replaces it by setting the mount's innerHTML and emitting `data-change`. The tab
+ * count is 0 while the empty state shows and the number of cards once the list is
+ * drawn. The button emits `create-card`
  * (SMART Cards) or `add-linked-card` (Linked Credit Cards); the Create / Add modals
  * come from their own stories. `?empty=1` in the URL also empties the data, so the
  * tab counts read 0 as in Figma.
@@ -231,11 +233,18 @@
     });
   }
 
+  /**
+   * The number on a tab is what the tab holds: 0 while it shows the empty state
+   * (nothing in the list), the number of cards once the list is drawn.
+   */
+  function tabCount(tab) {
+    var mount = refs.mounts && refs.mounts[tab];
+    if (mount && mount.querySelector("[data-cm-empty]")) return 0;
+    return data[EMPTY[tab].key].length;
+  }
+
   function counts() {
-    return {
-      smart: data.smartCards.length,
-      linked: data.linkedCards.length,
-    };
+    return { smart: tabCount("smart"), linked: tabCount("linked") };
   }
 
   function renderTabs() {
@@ -299,10 +308,10 @@
   }
 
   function render() {
-    renderTabs();
     renderMounts();
-    renderCrumb();
     renderEmptyStates();
+    renderTabs();
+    renderCrumb();
     document.title =
       "Manage Cards - " + (route.tab === "linked" ? "Linked Credit Cards" : "SMART Cards");
   }
@@ -335,8 +344,8 @@
       });
     });
     on("data-change", function () {
-      renderTabs();
       renderEmptyStates(true);
+      renderTabs();
     });
   }
 
