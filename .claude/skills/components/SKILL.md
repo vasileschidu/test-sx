@@ -121,6 +121,25 @@ Options: name `font-normal group-aria-selected/option:font-semibold`. Two-line o
 one-line selected value: two-line block `in-[el-selectedcontent]:hidden` + a
 `hidden in-[el-selectedcontent]:block truncate` span.
 
+### Account picker (grouped select) — `card-manager-account-picker.js` (Cards Manager C1, Figma `8014:104764`, `8016:152677`)
+One `el-select` listing accounts under two headers, **Card** and **Bank Account**, each row with its balance. Used by Add Funds ("Transfer from"), Transfer Funds ("Send to"), Close / Remove ("Choose destination account"). Needs Elements and `payment-preferences-components.js` (network logo via `PPComponents.getCardBrandLogoMarkup`).
+```js
+var picker = CardManagerAccountPicker.mount(el, {
+  sources: CardManagerAccountPicker.fromData(CardManager.data), // or [{ id, type: 'card'|'bank', name, last4, network|bank, expires:'YYYY-MM', balance }]
+  exclude: [cardId],            // hide an account (the current card)
+  placeholder: 'Select account', // default
+  value: 'ba_1010',             // optional preselect
+  label: 'Transfer from',       // aria-label of the trigger
+  onChange: function (source) {} // source object, null when cleared
+});
+picker.getValue() / getSource() / setValue(id) / setSources(list) / setExclude(ids) / setError(msg|null) / setDisabled(bool) / destroy()
+```
+- Trigger = the Select field button above plus `aria-expanded:` (open) and `disabled:` styles; error = `aria-invalid` (red outline) + `<p data-picker-error>` `mt-2 text-sm/5 text-red-600 dark:text-red-400` under it. Light and dark for every state.
+- Options popover: `anchor="bottom start"`, `w-(--button-width)`, `max-h-[21rem]`, fade 100 ms like Select field. Group header `sticky px-4 py-2 text-xs/5 font-semibold text-gray-500` on `bg-gray-50` (dark `bg-gray-900`).
+- Row (`p-4`, `border-b`, hover/selected `bg-gray-50`, dark `white/5`): logo (24x16 flag, Visa flattened to a solid fill) or bank icon, then name `•••• last4` + "Expires MM/YYYY" (card) or `Bank ••••last4` (bank), right-aligned "Balance" + `$12,480.50 USD`.
+- Selected value is one line: `name •••• last4` (+ "Expires MM/YYYY" for a card). Same option markup, via `in-[el-selectedcontent]:hidden` / `hidden in-[el-selectedcontent]:flex`.
+- Native `el-select` keyboard: open, arrows, Enter, Esc.
+
 ### Information circle + Tooltip (SMART System `PdvEp0MAIlof6O8MYaXCcy` 9352:21601, Size=Big, Bottom Text)
 For a longer explanation next to a label (role descriptions in `um-invite.js`, Origination Account on `payables-pay.html`).
 
