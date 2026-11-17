@@ -207,3 +207,11 @@ Screenshots of key frames (local only): `/private/tmp/claude-502/-Users-user-Des
 | Q-10 | "No mistake: the removed card is not visible anymore, it's a different card in the list" | Answered: Remove takes the card off the list. Linked cards *can* be Inactive (F-3: when?) |
 | Q-11/12 | "LoC is out of scope for R1" | LoC out. Reconciliation out (from Q-1). F-4: is Purchase Card / Spend Controls in or out of R1? |
 | Q-13 | "Cards" | F-5: is the nav label "Cards", and does the page title stay "Manage Cards"? |
+
+## Decisions, round 2 (2026-11-17, Vasile)
+- Q-2: no manual/auto card type.
+- Q-5/F-2: Add Funds = money ONTO the card; Transfer Funds = money FROM the card to another card/account ("Send to"). The Figma Transfer frames' confirm copy has been fixed to match.
+- F-1 (team decides): list = `10001:272320`, without Reconciliation.
+- F-4: Purchase Card / Spend Controls are out of R1.
+- F-5: sidebar label "Cards Manager"; page title stays "Manage Cards".
+- Still open: F-3 (when a linked card becomes Inactive).

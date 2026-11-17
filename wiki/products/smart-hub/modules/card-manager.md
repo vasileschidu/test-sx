@@ -39,9 +39,9 @@ Figma links below use the base `FIG = https://www.figma.com/design/9we1YVhB41SNA
 
 | From | To |
 |---|---|
-| Sidebar item `card-manager` (`src/data/nav.json`). Label **"Cards"** per the designer. TODO(confirm) [F-5](#10-open-questions): the code currently says "Card Manager". | SMART Cards tab |
+| Sidebar item `card-manager` (`src/data/nav.json`), label **"Cards Manager"** (decided 2026-11-17; the code still says "Card Manager", fixed in the scaffold story) | SMART Cards tab |
 | Card row click | Card details |
-| Pay flow (manual card) | TODO(confirm) [Q-2](#10-open-questions): "fund this card at the transaction level when you are about to pay an invoice" |
+| Pay flow | A card without a balance can be funded when paying an invoice (copy in Create). TODO(confirm): Pay-flow screens are not in this Figma section |
 
 **Page shell:**
 - Title **Manage Cards**, breadcrumb Home › Manage Cards › *tab name*.
@@ -57,18 +57,18 @@ Shell: `<app-nav>` + `<app-topbar>`. Content sits in the page card.
 
 Figma:
 - Empty state [`8007:126803`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8007-126803)
-- List: the designer chose the **older** layout, [`8016:156603`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8016-156603), without the Reconciliation columns.
+- List: [`10001:272320`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=10001-272320). The older layout [`8016:156603`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8016-156603) only differs by its Reconciliation columns, which are out of R1. The designer left the final choice to us (decided 2026-11-17).
 
 Header: title **SMART Cards**, description "Instantly generate and fund cards with cashback for customer payments.", primary button **+ Create New**.
 
 | Column | Content | Sort |
 |---|---|---|
-| Card Number | network logo + `••••` last 4 | — |
-| Card Name | name + status badge next to it (except Active?). TODO(confirm) [F-1](#10-open-questions) | yes |
-| Expires | `MM/YYYY` | yes |
+| Card Number | network logo + `••••` last 4 | yes |
+| Card Name | name | yes |
 | Available Balance | `$2,950.00 USD` (right-aligned) | — |
-
-TODO(confirm) [F-1](#10-open-questions): the newer layout [`10001:272320`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=10001-272320) also has **Created** and **Status** (with filter) columns.
+| Expires | `MM/YYYY` | yes |
+| Created | `MM/YYYY` | yes |
+| Status | badge | yes + filter (shared table filter) |
 
 **Statuses (SMART card):**
 
@@ -109,7 +109,7 @@ Figma:
 | Cancel / Create | secondary / primary, full width | |
 
 - **No vendor assignment** (designer, Q-3).
-- TODO(confirm) [Q-2](#10-open-questions): Figma calls the two variants "manual" and "auto". Is that only "with / without initial balance"?
+- There is **no manual / auto card type** (designer, Q-2). The Figma "manual" and "auto" frames are the same modal with the balance section open or closed.
 
 **Success, "Card created!"** [`8007:156840`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8007-156840):
 - Card visual: balance, masked number, VALID THRU, name.
@@ -171,12 +171,14 @@ Figma: section [`8014:99273`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJU
 
 Figma: section [`8014:121934`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8014-121934)
 
-Same pattern as Add Funds:
-- Select, Enter Amount with "Use max amount", the confirm checkbox, then Cancel / **Transfer**.
-- Success: "Transfer Transaction Submitted".
-- The same three errors.
+**Add Funds puts money ON this card. Transfer Funds sends money FROM this card** to another card or bank account (decided 2026-11-17).
 
-TODO(confirm) [F-2](#10-open-questions): which way does the money move? Figma labels the select "Send to", but the confirm text says "from <other> to <this card>". The designer thinks it may be "From", which would duplicate Add Funds.
+- **Send to**: same grouped select as Add Funds (cards + bank accounts), excluding this card.
+- **Enter Amount** with "Use max amount" (= this card's available balance). Helper "Available balance: $X USD" shows **this card's** balance.
+- Confirm checkbox: "Send $X from <this card> to <destination>".
+- Cancel / **Transfer**.
+- Success: "Transfer Transaction Submitted": "You've successfully sent $X from <this card> to <destination>" / **Done**.
+- The same three errors as Add Funds. Insufficient funds is checked against this card's balance.
 
 ### 4.6 Export Monthly Statements (modal)
 
@@ -294,9 +296,9 @@ Buttons: Back / submit. TODO(confirm): the submit label, and the validation mess
    1. Cards tab → **Create New** (or **Create** in the empty state) → modal.
    2. Enter Card Name, and optionally open the balance section (Origination Account + Amount).
    3. **Create** → "Card created!" → **Done** → list with the new card, Active.
-2. **Add Funds:** details → **Add Funds** → pick the source → enter the amount → tick the confirm box → **Add to balance** → "Funding Transaction Submitted" → balances refresh.
+2. **Add Funds** (money onto this card): details → **Add Funds** → pick the source → enter the amount → tick the confirm box → **Add to balance** → "Funding Transaction Submitted" → balances refresh.
    - Errors: amount ≤ 0, insufficient funds, box not ticked.
-3. **Transfer Funds:** same as Add Funds. Direction TODO(confirm) [F-2](#10-open-questions).
+3. **Transfer Funds** (money off this card): ⋯ → Transfer Funds → pick the destination → amount → tick → **Transfer** → "Transfer Transaction Submitted".
 4. **Export statement:** ⋯ → Export Monthly Statements → month + format → **Download**.
 5. **Lock:** ⋯ → Lock → confirm → status Blocked. **Unlock:** ⋯ → Unlock Card → Active.
 6. **Close:**
@@ -311,8 +313,8 @@ Buttons: Back / submit. TODO(confirm): the submit label, and the validation mess
 
 - **BR-1:** The card holder (Name on Card, Address) comes from the business profile and can't be edited in Create.
 - **BR-2:** A card is created without a vendor. There is no vendor assignment.
-- **BR-3:** Amount (Create, Add Funds, Transfer) must be > 0: "Amount must be greater than 0."
-- **BR-4:** Amount can't exceed the source's available balance: "Available balance: $X USD (Insufficient Funds)".
+- **BR-3:** Amount (Create, Add Funds, Transfer Funds) must be > 0: "Amount must be greater than 0."
+- **BR-4:** Amount can't exceed the available balance of the account the money leaves (Add Funds: the source; Transfer Funds: this card): "Available balance: $X USD (Insufficient Funds)".
 - **BR-5:** Money moves only after the user ticks the confirm checkbox: "First, confirm this transfer by ticking the box".
 - **BR-6:** A card with a balance > 0 can't be closed or removed without first moving the whole balance to another account, chosen by the user.
 - **BR-7:** Close keeps the card (status Closed, history still available) and can't be undone. Remove deletes sensitive data, takes the card off the list, and can't be undone.
@@ -358,7 +360,7 @@ Proposed `src/data/card-manager.json`. Fake data only:
 ## 8. Integrations
 
 - **Bills & Payables:** a SMART card can pay a bill. The bills it paid appear in Bill History.
-  - TODO(confirm) [Q-2](#10-open-questions): "fund at the transaction level" in the Pay flow.
+  - A card with no balance can be funded at payment time. TODO(confirm): Pay-flow design.
 - **Payment Preferences / bank accounts:** the funding sources (bank accounts, linked cards) are the same accounts.
 - Cross-product: none for R1. Line of Credit and Purchase Card are out of R1.
 
@@ -366,35 +368,30 @@ Proposed `src/data/card-manager.json`. Fake data only:
 
 - **Line of Credit Accounts** tab and anything LoC (designer, 2026-11-17).
 - **Card Reconciliation** tab and the Reconciliation columns. Reconciliation is not part of the product yet.
-- **Create Purchase Card / Spend Controls** (limits, country, merchant categories, presets, multiple vendors). TODO(confirm) [F-4](#10-open-questions).
+- **Create Purchase Card / Spend Controls** (limits, country, merchant categories, presets, multiple vendors). Out of R1 (decided 2026-11-17).
 - Vendor assignment on cards.
 - Phone and tablet designs: Figma is desktop-only. Build responsive using the shared patterns.
 
 ## 10. Open questions
 
-All asked in Figma comments to the designer on 2026-11-17.
-
 | # | Question |
 |---|---|
-| Q-2 | "Manual" vs "auto" card: what is it for the user? Chosen on Create, or set by plan/config? Only reconciliation-related? |
-| F-1 | Card list = older layout without Reconciliation: no Created column and no Status column (status as a badge next to the name)? |
-| F-2 | Transfer Funds direction. If it's "From" another account, how does it differ from Add Funds? |
-| F-3 | When does a linked card become Inactive? |
-| F-4 | Purchase Card + Spend Controls: R1 or later? |
-| F-5 | Sidebar label "Cards", page title "Manage Cards"? |
-| — | Smaller items, marked inline: Card Name max length + tooltip, Closed card actions, Unlock confirmation, transaction statuses, "Externally Added", linked-card submit label and validation messages, permissions per role. |
+| F-3 | When does a linked card become Inactive? (asked in Figma) |
+| — | Smaller items, marked inline: Card Name max length + tooltip, Closed card actions, Unlock confirmation, transaction statuses, "Externally Added", linked-card submit label and validation messages, permissions per role, Pay-flow funding design. |
 
-**Answered on 2026-11-17** (kept for the record):
-- Q-1: old list, no Reconciliation.
+**Decided on 2026-11-17** (designer in Figma comments, then the team):
+- Q-1/F-1: list [`10001:272320`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=10001-272320), no Reconciliation columns.
+- Q-2: there is no manual/auto card type.
 - Q-3: no vendor.
-- Q-4: Blocked is right, no Inactive for SMART cards.
+- Q-4: Blocked is right; no Inactive for SMART cards.
+- Q-5/F-2: Add Funds = money onto the card; Transfer Funds = money from the card to another account.
 - Q-6: PDF + CSV, no Amount field.
 - Q-7: "Remove this card?" for SMART cards.
 - Q-8: "Bill History".
 - Q-9: required fields (see BR-9).
 - Q-10: a removed card leaves the list.
-- Q-11/12: LoC and Reconciliation are out of R1.
-- Q-13: label "Cards".
+- Q-11/12, F-4: LoC, Reconciliation and Purchase Card / Spend Controls are out of R1.
+- Q-13/F-5: sidebar label "Cards Manager", page title "Manage Cards".
 
 ## 11. File ownership
 
