@@ -7,11 +7,13 @@ product: smart-hub
 module: card-manager
 version: "R1"
 figma: https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/-REVIEW--VC-%7C-ICCP---Line-of-Credit-Cards?node-id=10671-65397
-jira_epic: TODO
+jira_epic: TCDM-5217
 source: drafted from Figma 9we1YVhB41SNAHXULwJJUZ node 10671:65397 on 2026-11-17, with designer answers in Figma comments (2026-11-17); needs human review
 ---
 
 # Card Manager (SMART Hub, R1)
+
+**Jira:** Epic [TCDM-5217](https://agilepartners.atlassian.net/browse/TCDM-5217), stories in the [backlog](card-manager-backlog.md).
 
 The module for a business's payment cards in SMART Hub. It has two tabs in R1:
 - **SMART Cards**: virtual cards the business creates and funds.

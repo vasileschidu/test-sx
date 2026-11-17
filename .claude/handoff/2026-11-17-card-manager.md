@@ -215,3 +215,8 @@ Screenshots of key frames (local only): `/private/tmp/claude-502/-Users-user-Des
 - F-4: Purchase Card / Spend Controls are out of R1.
 - F-5: sidebar label "Cards Manager"; page title stays "Manage Cards".
 - Still open: F-3 (when a linked card becomes Inactive).
+
+## Batch 4 done (2026-11-17)
+- Jira TCDM: Epic TCDM-5217 + 16 stories TCDM-5218..5233 (S0=5218, C1=5219, S1..S14=5220..5233), all parented to the Epic, label `card-manager`, 18 "Blocks" links per the backlog; Epic relates to TCDM-4340.
+- Keys written back into card-manager.md (jira_epic) and card-manager-backlog.md.
+- Next: assign S0 first; build through the AI briefs. Open: F-3 + small TODO(confirm)s in ACs.

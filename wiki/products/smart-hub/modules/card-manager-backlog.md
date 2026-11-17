@@ -5,13 +5,13 @@ status: draft
 last_reviewed: 2026-11-17
 product: smart-hub
 module: card-manager
-jira_epic: TODO
+jira_epic: TCDM-5217
 source: Batch 3 of wiki/module-master-prompt.md, from modules/card-manager.md on main @ c7243cb; not yet in Jira
 ---
 
 # Card Manager — backlog (R1)
 
-The Jira plan for [Card Manager](card-manager.md). **Nothing has been created in Jira yet.** Once this file is approved, Batch 4 creates the tickets and writes their keys back here.
+The Jira plan for [Card Manager](card-manager.md). Created in Jira on 2026-11-17: Epic [TCDM-5217](https://agilepartners.atlassian.net/browse/TCDM-5217), 16 stories with "is blocked by" links. The Epic relates to the earlier design task TCDM-4340.
 
 - **Order:** S0 first. Then C1. Then the rest, in parallel, following the "Depends on" column.
 - **Conflicts:** each story owns its own files (the "Owns" column). Only S0 touches shared files. Two stories never own the same file.
@@ -19,7 +19,7 @@ The Jira plan for [Card Manager](card-manager.md). **Nothing has been created in
 
 ## Epic
 
-**Title:** Cards Manager | SMART Hub (R1)
+**Title:** Cards Manager | SMART Hub (R1) — [TCDM-5217](https://agilepartners.atlassian.net/browse/TCDM-5217)
 
 **Description:**
 - Build the Cards Manager module in the SMART Hub prototype:
@@ -31,24 +31,24 @@ The Jira plan for [Card Manager](card-manager.md). **Nothing has been created in
 
 ## Overview
 
-| # | Story | Owns | Depends on | Size |
+| # / Jira | Story | Owns | Depends on | Size |
 |---|---|---|---|---|
-| S0 | Module scaffold | `card-manager.html`, `card-manager.js`, `card-manager.json` + **shared** `nav.json` | — | S |
-| C1 | Account picker (grouped select) — new component | `card-manager-account-picker.js` + components skill | S0 | S |
-| S1 | SMART Cards list | `card-manager-list.js` | S0 | M |
-| S2 | Create a Card | `card-manager-create.js` | S1 | M |
-| S3 | Card details page | `card-manager-details.js` | S1 | M |
-| S4 | Add Funds | `card-manager-funds.js` | S3, C1 | M |
-| S5 | Transfer Funds | `card-manager-funds.js` (after S4 merged) | S4 | S |
-| S6 | Export Monthly Statements | `card-manager-statements.js` | S3 | S |
-| S7 | Lock / Unlock | `card-manager-status.js` | S3 | S |
-| S8 | Close card | `card-manager-close.js` | S3, C1 | M |
-| S9 | Remove card | `card-manager-close.js` (after S8 merged) | S8 | S |
-| S10 | Bill History tab | `card-manager-bills.js` | S3 | M |
-| S11 | Transaction History tab | `card-manager-transactions.js` | S3 | M |
-| S12 | Linked Credit Cards list | `card-manager-linked.js` | S0 | S |
-| S13 | Add linked card | `card-manager-linked-add.js` | S12 | M |
-| S14 | Linked card details + Remove | `card-manager-linked-details.js` | S12, S10 | S |
+| [S0](https://agilepartners.atlassian.net/browse/TCDM-5218) TCDM-5218 | Module scaffold | `card-manager.html`, `card-manager.js`, `card-manager.json` + **shared** `nav.json` | — | S |
+| [C1](https://agilepartners.atlassian.net/browse/TCDM-5219) TCDM-5219 | Account picker (grouped select) — new component | `card-manager-account-picker.js` + components skill | S0 | S |
+| [S1](https://agilepartners.atlassian.net/browse/TCDM-5220) TCDM-5220 | SMART Cards list | `card-manager-list.js` | S0 | M |
+| [S2](https://agilepartners.atlassian.net/browse/TCDM-5221) TCDM-5221 | Create a Card | `card-manager-create.js` | S1 | M |
+| [S3](https://agilepartners.atlassian.net/browse/TCDM-5222) TCDM-5222 | Card details page | `card-manager-details.js` | S1 | M |
+| [S4](https://agilepartners.atlassian.net/browse/TCDM-5223) TCDM-5223 | Add Funds | `card-manager-funds.js` | S3, C1 | M |
+| [S5](https://agilepartners.atlassian.net/browse/TCDM-5224) TCDM-5224 | Transfer Funds | `card-manager-funds.js` (after S4 merged) | S4 | S |
+| [S6](https://agilepartners.atlassian.net/browse/TCDM-5225) TCDM-5225 | Export Monthly Statements | `card-manager-statements.js` | S3 | S |
+| [S7](https://agilepartners.atlassian.net/browse/TCDM-5226) TCDM-5226 | Lock / Unlock | `card-manager-status.js` | S3 | S |
+| [S8](https://agilepartners.atlassian.net/browse/TCDM-5227) TCDM-5227 | Close card | `card-manager-close.js` | S3, C1 | M |
+| [S9](https://agilepartners.atlassian.net/browse/TCDM-5228) TCDM-5228 | Remove card | `card-manager-close.js` (after S8 merged) | S8 | S |
+| [S10](https://agilepartners.atlassian.net/browse/TCDM-5229) TCDM-5229 | Bill History tab | `card-manager-bills.js` | S3 | M |
+| [S11](https://agilepartners.atlassian.net/browse/TCDM-5230) TCDM-5230 | Transaction History tab | `card-manager-transactions.js` | S3 | M |
+| [S12](https://agilepartners.atlassian.net/browse/TCDM-5231) TCDM-5231 | Linked Credit Cards list | `card-manager-linked.js` | S0 | S |
+| [S13](https://agilepartners.atlassian.net/browse/TCDM-5232) TCDM-5232 | Add linked card | `card-manager-linked-add.js` | S12 | M |
+| [S14](https://agilepartners.atlassian.net/browse/TCDM-5233) TCDM-5233 | Linked card details + Remove | `card-manager-linked-details.js` | S12, S10 | S |
 
 **Paths:**
 - Pages: `src/pages/dashboard/`.
@@ -68,7 +68,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
 
 ---
 
-## S0 — [card-manager] Module scaffold
+## S0 ([TCDM-5218](https://agilepartners.atlassian.net/browse/TCDM-5218)) — [card-manager] Module scaffold
 
 - **Type:** Story · **Label:** card-manager · **Epic:** Cards Manager
 - **User story:** As a Hub user, I want a Cards Manager item in the sidebar that opens the module, so that I can reach my cards.
@@ -94,7 +94,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   > Create `card-manager.json` with the data shape in §7, and `card-manager.js` with the `window.CardManager` hooks.
   > Light + dark. Run qa:code and qa:hover --dark.
 
-## C1 — [card-manager] Account picker (grouped select) — new component
+## C1 ([TCDM-5219](https://agilepartners.atlassian.net/browse/TCDM-5219)) — [card-manager] Account picker (grouped select) — new component
 
 - **Type:** Story · **Label:** card-manager, component
 - **User story:** As a user moving money, I want to pick an account from a list grouped into Cards and Bank Accounts, with each balance shown, so that I choose the right one.
@@ -120,7 +120,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   > Every state, light + dark.
   > Add it to `.claude/skills/components/SKILL.md`.
 
-## S1 — [card-manager] SMART Cards list
+## S1 ([TCDM-5220](https://agilepartners.atlassian.net/browse/TCDM-5220)) — [card-manager] SMART Cards list
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to see all my SMART cards with their balance, expiry and status, so that I know what I have.
@@ -144,7 +144,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   > Columns and badges as in wiki §4.1.
   > The Status filter uses the shared filter spec.
 
-## S2 — [card-manager] Create a Card
+## S2 ([TCDM-5221](https://agilepartners.atlassian.net/browse/TCDM-5221)) — [card-manager] Create a Card
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to create a SMART card, with an optional starting balance, so that I can pay suppliers with it.
@@ -168,7 +168,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   > On submit, add the card to `CardManager.data` (in memory) and refresh the list via `CardManager.on`.
   > Copy the text exactly from wiki §4.2.
 
-## S3 — [card-manager] Card details page
+## S3 ([TCDM-5222](https://agilepartners.atlassian.net/browse/TCDM-5222)) — [card-manager] Card details page
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to open a card and see its details and the actions I can take, so that I can manage it.
@@ -193,7 +193,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   > The menu items only emit `CardManager` events. Don't build the modals here.
   > Reuse the details card, the Gray button and el-menu from the components skill.
 
-## S4 — [card-manager] Add Funds
+## S4 ([TCDM-5223](https://agilepartners.atlassian.net/browse/TCDM-5223)) — [card-manager] Add Funds
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to put money onto a card from another card or a bank account, so that the card can pay.
@@ -215,7 +215,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   > Copy the text exactly from wiki §4.4.
   > Keep the modal generic (`mode: 'add' | 'transfer'`) so S5 only adds the transfer mode.
 
-## S5 — [card-manager] Transfer Funds
+## S5 ([TCDM-5224](https://agilepartners.atlassian.net/browse/TCDM-5224)) — [card-manager] Transfer Funds
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to send money from a card to another card or bank account, so that I can move unused funds.
@@ -232,7 +232,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   > Add `transfer` mode to the S4 modal, as in wiki §4.5.
   > The money leaves this card.
 
-## S6 — [card-manager] Export Monthly Statements
+## S6 ([TCDM-5225](https://agilepartners.atlassian.net/browse/TCDM-5225)) — [card-manager] Export Monthly Statements
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to download a card's statement for a month, as PDF or CSV, so that I can reconcile in accounting.
@@ -250,7 +250,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   > Build the statements modal.
   > Generate the file from the card's transactions for the chosen month, reusing the CSV / PDF builders in `table-export.js` read-only.
 
-## S7 — [card-manager] Lock / Unlock
+## S7 ([TCDM-5226](https://agilepartners.atlassian.net/browse/TCDM-5226)) — [card-manager] Lock / Unlock
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to lock a card for a while and unlock it later, so that I can stop its use without closing it.
@@ -264,7 +264,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   - AC-4: Light and dark, keyboard.
 - **Depends on:** S3
 
-## S8 — [card-manager] Close card
+## S8 ([TCDM-5227](https://agilepartners.atlassian.net/browse/TCDM-5227)) — [card-manager] Close card
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to close a card I no longer need, moving any balance off it first, so that it can't be used but its history stays.
@@ -285,7 +285,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   - AC-5: Light and dark, keyboard.
 - **Depends on:** S3, C1
 
-## S9 — [card-manager] Remove card
+## S9 ([TCDM-5228](https://agilepartners.atlassian.net/browse/TCDM-5228)) — [card-manager] Remove card
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to remove a card permanently, so that it and its sensitive data are gone.
@@ -298,7 +298,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   - AC-4: Light and dark, keyboard.
 - **Depends on:** S8
 
-## S10 — [card-manager] Bill History tab
+## S10 ([TCDM-5229](https://agilepartners.atlassian.net/browse/TCDM-5229)) — [card-manager] Bill History tab
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to see the bills a card paid, so that I can track what it was used for.
@@ -312,7 +312,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   - AC-5: Light and dark, responsive.
 - **Depends on:** S3
 
-## S11 — [card-manager] Transaction History tab
+## S11 ([TCDM-5230](https://agilepartners.atlassian.net/browse/TCDM-5230)) — [card-manager] Transaction History tab
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to see every transaction on a card, with its details, so that I can check or dispute a charge.
@@ -327,7 +327,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   - AC-5: Export via `TableExport`. Light and dark, responsive.
 - **Depends on:** S3
 
-## S12 — [card-manager] Linked Credit Cards list
+## S12 ([TCDM-5231](https://agilepartners.atlassian.net/browse/TCDM-5231)) — [card-manager] Linked Credit Cards list
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to see the external cards I linked, so that I know which funding sources I have.
@@ -342,7 +342,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   - AC-6: Light and dark, responsive.
 - **Depends on:** S0
 
-## S13 — [card-manager] Add linked card
+## S13 ([TCDM-5232](https://agilepartners.atlassian.net/browse/TCDM-5232)) — [card-manager] Add linked card
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to add an external credit card, so that I can use it as a funding source.
@@ -361,7 +361,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
   - AC-5: Back, ×, Esc close it without saving. Light and dark, keyboard.
 - **Depends on:** S12
 
-## S14 — [card-manager] Linked card details + Remove
+## S14 ([TCDM-5233](https://agilepartners.atlassian.net/browse/TCDM-5233)) — [card-manager] Linked card details + Remove
 
 - **Type:** Story · **Label:** card-manager
 - **User story:** As a Hub user, I want to see a linked card's details and remove it from view, so that I keep only the cards I use.
