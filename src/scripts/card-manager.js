@@ -20,10 +20,12 @@
  * add their own, e.g. `add-funds`, `lock`, `remove` (payload { cardId }).
  *
  * Empty state (Figma 8007:126803 SMART Cards, 10001:257248 Linked Credit Cards):
- * a tab with no cards shows the Figma card: section title, icon, heading, text and a
- * primary button. The button emits `create-card` (SMART Cards) or `add-linked-card`
- * (Linked Credit Cards); the Create / Add modals come from their own stories.
- * `?empty=1` in the URL shows both tabs with no cards, to look at it.
+ * a tab with nothing rendered into its mount shows the Figma card: section title,
+ * icon, heading, text and a primary button. A story that draws the tab (list, linked
+ * list) replaces it by setting the mount's innerHTML. The button emits `create-card`
+ * (SMART Cards) or `add-linked-card` (Linked Credit Cards); the Create / Add modals
+ * come from their own stories. `?empty=1` in the URL also empties the data, so the
+ * tab counts read 0 as in Figma.
  */
 (function () {
   "use strict";
@@ -128,16 +130,22 @@
     );
   }
 
-  /** Show the empty state in a tab with no cards; take it away once there are cards. */
-  function renderEmptyStates() {
+  /**
+   * Fill a tab whose mount is still empty with the Figma empty state. With
+   * afterChange (the data changed): take it away once the tab has cards, so the
+   * story that draws the list can take over.
+   */
+  function renderEmptyStates(afterChange) {
     Object.keys(EMPTY).forEach(function (tab) {
       var mount = refs.mounts && refs.mounts[tab];
       if (!mount) return;
-      var shown = !!mount.querySelector("[data-cm-empty]");
-      var none = data[EMPTY[tab].key].length === 0;
-      if (none && !mount.firstElementChild) {
+      if (!mount.firstElementChild) {
         mount.innerHTML = emptyStateHtml(tab);
-      } else if (!none && shown) {
+      } else if (
+        afterChange &&
+        mount.querySelector("[data-cm-empty]") &&
+        data[EMPTY[tab].key].length > 0
+      ) {
         mount.innerHTML = "";
       }
     });
@@ -328,7 +336,7 @@
     });
     on("data-change", function () {
       renderTabs();
-      renderEmptyStates();
+      renderEmptyStates(true);
     });
   }
 

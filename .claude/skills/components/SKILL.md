@@ -155,7 +155,7 @@ A tab with no records shows a white content card: header, then a centred block. 
 - Header `border-b border-gray-200 px-6 py-5` (dark `border-white/10`): `h2` `text-2xl/8 font-semibold text-gray-900 dark:text-white` (the section title, no description, no buttons).
 - Body `flex flex-col items-center px-6 py-30`; inner `flex w-full max-w-120 flex-col items-center gap-6`: 36px duotone icon (`size-9`, `src/assets/cards-manager/icon-*-duotone.svg`, gray-500 baked, listed in `theme-init.js` `GRAY500_ICONS` for dark), `h3` `text-lg/6 font-semibold`, `p` `text-sm/5 text-gray-500 dark:text-gray-400` (centred, `gap-1`), then the Primary button (md) with the white `icon-plus.svg` (`size-4.5`) + label.
 - SMART Cards: icon credit card, "Create your First SMART Card" / "Instantly generate and fund cards with cashback for customer payments." / **Create** (emits `create-card`). Linked Credit Cards: icon wallet, "Linked Credit Cards" / "Add your external cards for quick access and better financial management." / **Add Card** (emits `add-linked-card`).
-- Shown by `card-manager.js` while a tab has no cards (`?empty=1` forces it); removed once there are cards.
+- Shown by `card-manager.js` in a tab whose mount has nothing rendered yet (a story that draws the list replaces it); `?empty=1` also empties the data so the counts read 0.
 
 ### Toggle switch (checkbox-based)
 ```html
