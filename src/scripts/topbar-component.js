@@ -9,6 +9,7 @@
     "supplier-portal.html": [{ label: "SMART Exchange", href: null }],
     "bills-and-payables.html": [{ label: "Bills and Payables", href: null }],
     "vendors.html": [{ label: "Vendors", href: null }],
+    "card-manager.html": [{ label: "Manage Cards", href: "card-manager.html" }],
     "vendor-profile.html": [
       { label: "Vendors", href: "vendors.html" },
       { label: "Vendor Profile", href: null },
@@ -64,6 +65,7 @@
       "bills-and-payables.html": "Bills and Payables",
       "payables-pay.html": "Pay Page",
       "vendors.html": "Vendors",
+      "card-manager.html": "Manage Cards",
       "vendor-profile.html": "Vendor Profile",
       "payment-preferences.html": "Payment Preferences",
       "payment-program-configuration.html": "Transcard Only",
@@ -144,6 +146,11 @@
 
   function buildBreadcrumbHtml(pagePath) {
     var items = TOPBAR_BREADCRUMB_CONFIGS[pagePath] || [];
+    // A page can add a last crumb (e.g. the active tab) with
+    // <app-topbar data-crumb-tail="SMART Cards"> and then call topbar.refresh().
+    var host = document.querySelector("app-topbar");
+    var tail = host && host.getAttribute("data-crumb-tail");
+    if (items.length && tail) items = items.concat([{ label: tail, href: null }]);
     if (!items.length) {
       return '<span class="text-sm font-medium text-gray-500 dark:text-gray-400">Dashboard</span>';
     }

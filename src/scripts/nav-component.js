@@ -45,8 +45,8 @@ const APP_NAV_DATA = [
   {
     type: "link",
     id: "card-manager",
-    label: "Card Manager",
-    href: "#",
+    label: "Cards Manager",
+    href: "card-manager.html",
     icon: "card-manager",
   },
   { type: "divider" },
@@ -145,6 +145,7 @@ const APP_NAV_PAGE_MAP = {
   "payables-pay.html": "bills",
   "vendors.html": "vendors",
   "vendor-profile.html": "vendors",
+  "card-manager.html": "card-manager",
   "payment-preferences.html": "payment-preferences",
   "payment-program-configuration.html": "payment-program-config",
   "consumer-payments-received.html": "payments-received",
