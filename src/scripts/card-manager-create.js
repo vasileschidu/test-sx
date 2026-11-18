@@ -15,9 +15,12 @@
  *                                            expires, balance (or availableBalance), network,
  *                                            number, revealed }
  *
- * Needs on the page: onboarding-modal.js (OBModal dialog shell), card-manager.js,
- * Tailwind Plus Elements (el-select). payment-preferences-components.js is optional
- * (Visa logo on the card).
+ * Reuses: OBModal (dialog shell), OBField (the SMART System "Text Field [New]": inputs,
+ * labels, error text and icon), CardManagerAccountPicker (Origination Account), the
+ * info tooltip, the details card and the skill's Buttons / Link button classes.
+ * Needs on the page: onboarding-modal.js, onboarding-field.js, card-manager.js,
+ * card-manager-account-picker.js, Tailwind Plus Elements, payment-preferences-components.js
+ * (card logos).
  *
  * Rules (wiki card-manager.md §4.2): holder details come from the business profile and
  * are read-only (BR-1); no vendor and no manual / auto choice (BR-2); with the balance
@@ -38,8 +41,6 @@
   // Same wording as the Origination Account tooltip on the Pay page.
   var TIP_ORIGIN =
     "Please note that the balance shown is as provided by your bank. On occasion, it might not always account for pending transactions.";
-  var TIP_BALANCE =
-    "You can fund this card at the transaction level when you are about to pay an invoice.";
 
   var seq = 0;
 
@@ -91,9 +92,6 @@
   var ICON_CHEVRON_DOWN =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 transition-transform group-aria-expanded/toggle:rotate-180"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" /></svg>';
 
-  var ICON_UPDOWN =
-    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 sm:size-4 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"/></svg>';
-
   var ICON_EYE =
     '<svg data-icon="reveal" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 text-blue-500 dark:text-blue-400"><path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M0.882274 7.63113C1.87378 4.65047 4.68527 2.5 8.00035 2.5C11.3139 2.5 14.1243 4.64848 15.117 7.62697C15.1973 7.86768 15.1973 8.12812 15.1172 8.36887C14.1257 11.3495 11.3142 13.5 7.99918 13.5C4.68565 13.5 1.87522 11.3515 0.882492 8.37303C0.802265 8.13233 0.802188 7.87188 0.882274 7.63113ZM11.5 8C11.5 9.933 9.933 11.5 8 11.5C6.067 11.5 4.5 9.933 4.5 8C4.5 6.067 6.067 4.5 8 4.5C9.933 4.5 11.5 6.067 11.5 8Z"/></svg>';
 
@@ -105,43 +103,22 @@
   var PANEL_SUCCESS =
     "relative flex w-full max-w-130.5 flex-col rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:ring-1 dark:ring-white/10";
 
-  var INPUT_CLS =
-    "block h-10 w-full rounded-md bg-white px-3 text-base/6 font-medium text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] " +
-    "outline-1 -outline-offset-1 outline-gray-300 placeholder:font-normal placeholder:text-gray-400 hover:outline-gray-400 " +
-    "focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 aria-invalid:outline-red-300 aria-invalid:focus:outline-red-600 " +
-    "dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:hover:outline-white/20 " +
-    "dark:focus:outline-blue-500 dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus:outline-red-500";
-
-  var TRIGGER_CLS =
-    "grid h-10 w-full cursor-default grid-cols-1 items-center rounded-md bg-white py-0 pr-2 pl-3 text-left text-gray-900 " +
-    "shadow-[0px_1px_1px_rgba(0,0,0,0.05)] outline-1 -outline-offset-1 outline-gray-300 hover:outline-gray-400 " +
-    "focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 " +
-    "aria-expanded:outline-2 aria-expanded:-outline-offset-2 aria-expanded:outline-blue-600 " +
-    "aria-invalid:outline-red-300 aria-invalid:focus-visible:outline-red-600 aria-invalid:aria-expanded:outline-red-600 " +
-    "sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:hover:outline-white/20 " +
-    "dark:focus-visible:outline-blue-500 dark:aria-expanded:outline-blue-500 " +
-    "dark:aria-invalid:outline-red-400/50 dark:aria-invalid:focus-visible:outline-red-500 dark:aria-invalid:aria-expanded:outline-red-500";
-
-  var OPTIONS_CLS =
-    "max-h-72 w-(--button-width) overflow-auto rounded-md bg-white shadow-lg outline-1 outline-black/5 " +
-    "[--anchor-gap:--spacing(1)] transition transition-discrete data-closed:opacity-0 " +
-    "data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in " +
-    "motion-reduce:transition-none dark:bg-gray-800 dark:outline-white/10";
-
-  var OPTION_CLS =
-    "group/option block cursor-pointer border-b border-gray-200 p-4 select-none last:border-b-0 " +
-    "hover:bg-gray-50 focus:bg-gray-50 focus:outline-hidden aria-selected:bg-gray-50 " +
-    "dark:border-white/10 dark:hover:bg-white/5 dark:focus:bg-white/5 dark:aria-selected:bg-white/5";
-
+  // Buttons from the components skill (Secondary / Primary, size xl `px-3.5 py-2.5`);
+  // the modal footer runs them at text-base as in Figma (variant noted in the skill).
   var BTN_SECONDARY =
-    "inline-flex flex-1 cursor-pointer items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-base/6 font-semibold text-gray-700 " +
+    "inline-flex flex-1 cursor-pointer items-center justify-center rounded-md bg-white px-3.5 py-2.5 text-base font-semibold text-gray-900 " +
     "shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 " +
     "dark:bg-white/10 dark:text-white dark:inset-ring-white/10 dark:hover:bg-white/20";
 
   var BTN_PRIMARY =
-    "inline-flex flex-1 cursor-pointer items-center justify-center rounded-md bg-blue-600 px-3.5 py-2.5 text-base/6 font-semibold text-white " +
-    "shadow-xs hover:bg-blue-500 active:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 " +
+    "inline-flex flex-1 cursor-pointer items-center justify-center rounded-md bg-blue-600 px-3.5 py-2.5 text-base font-semibold text-white " +
+    "shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 " +
     "disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60";
+
+  // Link button from the skill (Add card / Filter / Download style).
+  var LINK_BTN =
+    "inline-flex cursor-pointer items-center gap-1.5 rounded-md font-semibold text-blue-600 hover:text-blue-700 " +
+    "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300";
 
   var CLOSE_BTN =
     '<button type="button" data-ob-modal-close class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 ' +
@@ -169,16 +146,20 @@
     );
   }
 
-  function fieldLabel(forId, text, tipHtml) {
+  /** A text field: OBField label + input + error line (same structure as sx-enroll textField). */
+  function textField(id, label, tipHtml, inputExtra, leadingIcon) {
+    var F = window.OBField;
     return (
+      '<div class="flex w-full flex-col gap-1">' +
       '<div class="flex items-start gap-1">' +
-      '<label for="' + forId + '" class="text-sm/5 font-medium text-gray-700 dark:text-gray-300">' + esc(text) + "</label>" +
-      (tipHtml || "") + "</div>"
+      '<label for="' + id + '" class="' + F.LABEL + '">' + esc(label) + "</label>" + (tipHtml || "") + "</div>" +
+      '<div class="relative">' +
+      (leadingIcon || "") +
+      '<input id="' + id + '" aria-invalid="false" aria-describedby="' + id + '-error" class="' + F.INPUT + (leadingIcon ? " pl-10" : "") + '" ' + inputExtra + " />" +
+      F.errorIcon() +
+      "</div>" +
+      '<p id="' + id + '-error" role="alert" class="hidden ' + F.ERROR_TEXT + '"></p></div>'
     );
-  }
-
-  function errorP(id) {
-    return '<p id="' + id + '" role="alert" class="mt-1 hidden text-sm/5 text-red-600 dark:text-red-400"></p>';
   }
 
   /** The 320x200 card (Figma Card_VC 8007:156947). */
@@ -214,55 +195,6 @@
     );
   }
 
-  /** Origination accounts: bank accounts (fundingSources) and active linked credit cards. */
-  function originationSources(data) {
-    var banks = ((data && data.fundingSources) || [])
-      .filter(function (s) { return s.type === "bank"; })
-      .map(function (s) {
-        return { id: s.id, kind: "bank", name: s.name, bank: s.bank, last4: s.last4, balance: s.balance };
-      });
-    var linked = ((data && data.linkedCards) || [])
-      .filter(function (c) { return c.status === "active"; })
-      .map(function (c) {
-        return { id: c.id, kind: "card", name: c.name, network: c.network, last4: c.last4, expires: c.expires };
-      });
-    return banks.concat(linked);
-  }
-
-  function originIcon(source) {
-    if (source.kind === "bank") {
-      return '<img src="' + assetUrl("icon-building-library.svg") + '" alt="" width="20" height="20" class="size-5 shrink-0" />';
-    }
-    var pp = window.PPComponents;
-    var logo = pp && pp.getCardBrandLogoMarkup ? pp.getCardBrandLogoMarkup(source.network) : "";
-    return logo
-      ? '<span class="flex h-4 w-6 shrink-0 items-center justify-center">' + logo.replace(/fill="url\([^)]*\)"/g, 'fill="#243B8F"').replace(/<defs>[\s\S]*?<\/defs>/g, "") + "</span>"
-      : "";
-  }
-
-  function originOption(source) {
-    var line = source.kind === "bank"
-      ? source.name + " ••••" + source.last4
-      : source.name + " •••• " + source.last4;
-    var secondary = source.kind === "bank"
-      ? [source.bank, "••••" + source.last4].filter(Boolean).join(" ")
-      : "Linked card " + (mmyyyy(source.expires) ? "· Expires " + mmyyyy(source.expires) : "");
-    var list =
-      '<div class="flex items-start gap-3 in-[el-selectedcontent]:hidden">' +
-      '<div class="flex h-5 shrink-0 items-center">' + originIcon(source) + "</div>" +
-      '<div class="flex min-w-0 flex-1 flex-col gap-1">' +
-      '<span class="truncate text-sm/5 font-medium text-gray-900 group-aria-selected/option:font-semibold dark:text-white">' + esc(source.kind === "bank" ? source.name : line) + "</span>" +
-      '<span class="truncate text-sm/5 font-normal text-gray-500 dark:text-gray-400">' + esc(secondary) + "</span></div>" +
-      (source.kind === "bank"
-        ? '<div class="flex shrink-0 flex-col items-end gap-1 text-right text-sm/5 whitespace-nowrap"><span class="font-normal text-gray-500 dark:text-gray-400">Balance</span><span class="font-medium text-gray-900 dark:text-white">' + esc(money(source.balance)) + " USD</span></div>"
-        : "") +
-      "</div>";
-    var one =
-      '<span class="hidden min-w-0 items-center gap-2 in-[el-selectedcontent]:flex">' + originIcon(source) +
-      '<span class="truncate text-base/6 font-medium text-gray-900 dark:text-white">' + esc(line) + "</span></span>";
-    return '<el-option value="' + esc(source.id) + '" class="' + OPTION_CLS + '">' + list + one + "</el-option>";
-  }
-
   function holderOf(data) {
     var first = data && data.smartCards && data.smartCards[0];
     return (first && first.holder) || DEFAULT_HOLDER;
@@ -270,7 +202,8 @@
 
   /* ---------- create modal ---------- */
 
-  function createBody(ids, holder, sources) {
+  function createBody(ids, holder) {
+    var F = window.OBField;
     return (
       '<form id="' + ids.form + '" novalidate class="flex flex-col gap-6 p-6">' +
       // Card Holder Details: read-only (BR-1), details card from the components skill.
@@ -280,36 +213,24 @@
       '<div class="flex flex-col items-start gap-2 self-stretch rounded-b-md border-r border-b border-l border-gray-200 bg-gray-50 p-4 dark:border-white/10 dark:bg-white/5">' +
       row("Name on Card", esc(holder.name)) + row("Address", esc(holder.address)) + "</div></div>" +
       // Card Name
-      "<div>" +
-      fieldLabel(ids.name, "Card Name", tip(ids.nameTip, TIP_NAME, "About Card Name")) +
-      '<input id="' + ids.name + '" name="cardName" type="text" autocomplete="off" aria-describedby="' + ids.nameErr + '" class="mt-1 ' + INPUT_CLS + '" />' +
-      errorP(ids.nameErr) + "</div>" +
-      // Optional balance (collapsed by default)
+      textField(ids.name, "Card Name", tip(ids.nameTip, TIP_NAME, "About Card Name"), 'name="cardName" type="text" autocomplete="off"') +
+      // Optional balance, collapsed by default. No info icon: Figma hides it.
       '<div class="flex flex-col gap-6 rounded-md bg-gray-50 p-4 dark:bg-white/5">' +
       '<div class="flex items-center justify-between gap-4">' +
-      '<div class="flex min-w-0 items-center gap-1">' +
-      '<button type="button" id="' + ids.toggle + '" aria-expanded="false" aria-controls="' + ids.panel + '" class="group/toggle inline-flex cursor-pointer items-center gap-1.5 rounded-md text-left text-base/6 font-semibold text-blue-600 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300">' +
+      '<button type="button" id="' + ids.toggle + '" aria-expanded="false" aria-controls="' + ids.panel + '" class="group/toggle ' + LINK_BTN + ' text-left text-base/6">' +
       ICON_CHEVRON_DOWN + "<span>Would you like to assign a balance to the card?</span></button>" +
-      tip(ids.balanceTip, TIP_BALANCE, "About assigning a balance") + "</div>" +
       '<span class="shrink-0 text-sm/5 font-medium text-gray-400 dark:text-gray-500">Optional</span></div>' +
       '<div id="' + ids.panel + '" hidden class="flex flex-col gap-4">' +
-      // Origination account
-      "<div>" +
-      fieldLabel(ids.originBtn, "Origination Account", tip(ids.originTip, TIP_ORIGIN, "About Origination Account")) +
-      '<el-select name="origination" class="mt-1 block">' +
-      '<button type="button" id="' + ids.originBtn + '" aria-describedby="' + ids.originErr + '" class="' + TRIGGER_CLS + '">' +
-      '<el-selectedcontent class="col-start-1 row-start-1 flex min-w-0 items-center gap-2 pr-6"><span class="truncate text-base/6 font-normal text-gray-400 dark:text-gray-500">Select account</span></el-selectedcontent>' +
-      ICON_UPDOWN + "</button>" +
-      '<el-options anchor="bottom start" popover class="' + OPTIONS_CLS + '">' + sources.map(originOption).join("") + "</el-options>" +
-      "</el-select>" + errorP(ids.originErr) + "</div>" +
+      // Origination account: the C1 account picker (Card / Bank Account groups, balances)
+      '<div class="flex w-full flex-col gap-1">' +
+      '<div class="flex items-start gap-1"><span class="' + F.LABEL + '">Origination Account</span>' +
+      tip(ids.originTip, TIP_ORIGIN, "About Origination Account") + "</div>" +
+      '<div id="' + ids.originHost + '"></div></div>' +
       // Amount (half width, as in Figma)
-      '<div class="grid grid-cols-2 gap-6"><div>' +
-      fieldLabel(ids.amount, "Amount") +
-      '<div class="relative mt-1">' +
-      '<img src="' + assetUrl("icon-currency-dollar.svg") + '" alt="" width="20" height="20" class="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2" />' +
-      '<input id="' + ids.amount + '" name="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" aria-describedby="' + ids.amountErr + '" class="pl-10 ' + INPUT_CLS + '" />' +
-      "</div>" + errorP(ids.amountErr) + "</div></div>" +
-      "</div></div>" +
+      '<div class="grid grid-cols-2 gap-6">' +
+      textField(ids.amount, "Amount", "", 'name="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00"',
+        '<img src="' + assetUrl("icon-currency-dollar.svg") + '" alt="" width="20" height="20" class="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2" />') +
+      "</div></div></div>" +
       "</form>"
     );
   }
@@ -328,18 +249,6 @@
       '<button type="button" data-ob-modal-close class="' + BTN_SECONDARY + '">Cancel</button>' +
       '<button type="submit" form="' + formId + '" class="' + BTN_PRIMARY + '">Create</button></div>'
     );
-  }
-
-  function setError(input, errEl, message) {
-    if (message) {
-      input.setAttribute("aria-invalid", "true");
-      errEl.textContent = message;
-      errEl.classList.remove("hidden");
-    } else {
-      input.removeAttribute("aria-invalid");
-      errEl.textContent = "";
-      errEl.classList.add("hidden");
-    }
   }
 
   /** Builds the new card object and adds it to CardManager.data (the prototype has no backend). */
@@ -375,21 +284,20 @@
   function openCreate() {
     var cm = window.CardManager;
     var ob = window.OBModal;
-    if (!cm || !ob) {
-      console.error("Create a Card needs card-manager.js and onboarding-modal.js on the page.");
+    var F = window.OBField;
+    var picker = window.CardManagerAccountPicker;
+    if (!cm || !ob || !F || !picker) {
+      console.error("Create a Card needs card-manager.js, onboarding-modal.js, onboarding-field.js and card-manager-account-picker.js on the page.");
       return;
     }
     var uid = ++seq;
     var ids = {
       form: "cm-create-form-" + uid, title: "cm-create-title-" + uid, name: "cm-create-name-" + uid,
-      nameErr: "cm-create-name-err-" + uid, nameTip: "cm-create-name-tip-" + uid,
-      toggle: "cm-create-toggle-" + uid, panel: "cm-create-balance-" + uid, balanceTip: "cm-create-balance-tip-" + uid,
-      originBtn: "cm-create-origin-" + uid, originTip: "cm-create-origin-tip-" + uid, originErr: "cm-create-origin-err-" + uid,
-      amount: "cm-create-amount-" + uid, amountErr: "cm-create-amount-err-" + uid,
+      nameTip: "cm-create-name-tip-" + uid, toggle: "cm-create-toggle-" + uid, panel: "cm-create-balance-" + uid,
+      originHost: "cm-create-origin-" + uid, originTip: "cm-create-origin-tip-" + uid, amount: "cm-create-amount-" + uid,
     };
     var holder = holderOf(cm.data);
-    var sources = originationSources(cm.data);
-    var backdrop = ob.open(createBody(ids, holder, sources), ids.title, {
+    var backdrop = ob.open(createBody(ids, holder), ids.title, {
       bare: true,
       header: createHeader(ids.title),
       footer: createFooter(ids.form),
@@ -398,14 +306,18 @@
 
     var form = backdrop.querySelector("#" + ids.form);
     var nameInput = backdrop.querySelector("#" + ids.name);
-    var nameErr = backdrop.querySelector("#" + ids.nameErr);
+    var nameErr = backdrop.querySelector("#" + ids.name + "-error");
     var toggle = backdrop.querySelector("#" + ids.toggle);
     var panel = backdrop.querySelector("#" + ids.panel);
-    var originSelect = backdrop.querySelector("el-select");
-    var originBtn = backdrop.querySelector("#" + ids.originBtn);
-    var originErr = backdrop.querySelector("#" + ids.originErr);
     var amountInput = backdrop.querySelector("#" + ids.amount);
-    var amountErr = backdrop.querySelector("#" + ids.amountErr);
+    var amountErr = backdrop.querySelector("#" + ids.amount + "-error");
+    // Origination Account = the C1 account picker: active SMART cards (Card group) and bank accounts.
+    var origin = picker.mount(backdrop.querySelector("#" + ids.originHost), {
+      sources: picker.fromData(cm.data),
+      placeholder: "Select account",
+      label: "Origination Account",
+      name: "origination",
+    });
 
     function balanceOpen() {
       return toggle.getAttribute("aria-expanded") === "true";
@@ -417,26 +329,16 @@
       panel.hidden = !open;
       if (!open) {
         // Closing the section drops its errors; the values stay if it is opened again.
-        setError(originBtn, originErr, null);
-        setError(amountInput, amountErr, null);
+        origin.setError(null);
+        F.setError(amountInput, false, amountErr, "");
       }
     });
 
-    nameInput.addEventListener("input", function () { setError(nameInput, nameErr, null); });
+    nameInput.addEventListener("input", function () { F.setError(nameInput, false, nameErr, ""); });
     amountInput.addEventListener("input", function () {
       amountInput.value = amountInput.value.replace(/[^\d.,]/g, "");
-      setError(amountInput, amountErr, null);
+      F.setError(amountInput, false, amountErr, "");
     });
-    originSelect.addEventListener("change", function () { setError(originBtn, originErr, null); });
-    backdrop.querySelector("el-options").addEventListener("click", function () {
-      setTimeout(function () { setError(originBtn, originErr, null); }, 0);
-    });
-
-    function selectedOrigin() {
-      var picked = backdrop.querySelector('el-option[aria-selected="true"]');
-      return picked ? String(picked.getAttribute("value") || "") : String(originSelect.value || "");
-    }
-
     form.addEventListener("submit", function (event) {
       event.preventDefault();
       var name = nameInput.value.trim();
@@ -445,21 +347,21 @@
 
       // TODO(confirm): message text and max length.
       if (!name) {
-        setError(nameInput, nameErr, "Enter a card name.");
+        F.setError(nameInput, true, nameErr, "Enter a card name.");
         firstBad = nameInput; firstBadErr = nameErr;
       } else {
-        setError(nameInput, nameErr, null);
+        F.setError(nameInput, false, nameErr, "");
       }
 
       var amount = 0;
       if (balanceOpen()) {
-        if (!selectedOrigin()) {
-          setError(originBtn, originErr, "Select an origination account.");
-          if (!firstBad) { firstBad = originBtn; firstBadErr = originErr; }
+        if (!origin.getValue()) {
+          origin.setError("Select an origination account.");
+          if (!firstBad) { firstBad = origin.el.querySelector("button"); firstBadErr = origin.el.querySelector("[data-picker-error]"); }
         }
         amount = parseFloat(String(amountInput.value).replace(/,/g, ""));
         if (!(amount > 0)) {
-          setError(amountInput, amountErr, "Amount must be greater than 0."); // BR-3
+          F.setError(amountInput, true, amountErr, "Amount must be greater than 0."); // BR-3
           if (!firstBad) { firstBad = amountInput; firstBadErr = amountErr; }
         }
       }
@@ -502,7 +404,7 @@
       row("Expires", esc(mmyyyy(card.expires))) +
       row("Address", esc(card.holder.address)) +
       '<div class="grid grid-cols-2 gap-6 self-stretch pt-2"><span></span>' +
-      '<button type="button" data-cm-reveal aria-pressed="false" class="inline-flex w-fit cursor-pointer items-center gap-1 rounded-sm py-0.5 text-xs/4 font-semibold text-blue-600 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300">' +
+      '<button type="button" data-cm-reveal aria-pressed="false" class="w-fit text-sm/5 ' + LINK_BTN + '">' +
       ICON_EYE + ICON_EYE_SLASH + '<span data-cm-reveal-label>Reveal Details</span></button></div>' +
       "</div></div>";
     var footer =

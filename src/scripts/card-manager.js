@@ -122,7 +122,7 @@
       '<h3 class="text-lg/6 font-semibold text-gray-900 dark:text-white">' + cfg.heading + "</h3>" +
       '<p class="text-sm/5 font-normal text-gray-500 dark:text-gray-400">' + cfg.text + "</p>" +
       "</div>" +
-      '<button type="button" data-cm-empty-action="' + cfg.event + '" class="inline-flex cursor-pointer items-center justify-center gap-1 rounded-md bg-blue-600 px-2.5 py-1.5 text-sm/5 font-semibold text-white shadow-xs hover:bg-blue-500 active:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
+      '<button type="button" data-cm-empty-action="' + cfg.event + '" class="inline-flex cursor-pointer items-center justify-center gap-1.5 rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">' +
       '<img src="' + assetUrl("icon-plus.svg") + '" alt="" width="18" height="18" class="size-4.5" />' +
       cfg.button +
       "</button>" +
