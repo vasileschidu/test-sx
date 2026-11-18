@@ -145,7 +145,20 @@ Out of scope:  …
 Dependencies:  Story 0, <component story>, Q-n must be answered
 Definition of done: CLAUDE.md "Definition of done (UI)" — qa:code + qa:hover --dark with 0 major findings,
                     `?v=` bumped, wiki updated if behaviour changed, PR linked to the ticket.
-AI brief:     a 5–8 line prompt someone can paste into Claude Code to build exactly this story.
+Branch:       feature/<JIRA-KEY>-<short-slug>      Blocked by: <keys>
+Claude Code prompt (a code block the developer pastes as-is), always with these steps:
+  1. git fetch origin && git checkout main && git pull; check the blocking tickets are merged
+     (git log --oneline origin/main | grep -E "<KEY>|<KEY>") — if not, STOP and tell me.
+  2. git checkout -b feature/<JIRA-KEY>-<slug> (never work on main).
+  3. Read CLAUDE.md, the module wiki section, the components + design-system skills, the ticket ACs.
+  4. Build: <what to build, which existing components to reuse>.
+  5. Only edit <owned files>; anything else → STOP and ask (needs its own ticket).
+  6. Verify: tools/serve.py, qa:code + qa:hover --dark (0 major), every AC, light + dark,
+     375 / 768 / 1280, keyboard, no console errors, bump ?v=.
+  7. Before the PR: git fetch origin && git rebase origin/main; conflicts in files you don't own →
+     STOP and ask; re-run step 6.
+  8. Commit "<KEY>: …", push, PR titled "<KEY> <story>" with AC checklist + screenshots; do NOT merge.
+  9. Wiki changed? Update your section in the same PR; list remaining TODO(confirm).
 ```
 
 **Stop.**
