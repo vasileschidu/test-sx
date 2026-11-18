@@ -74,3 +74,6 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-13 Reveal/Hide Details icons: one canonical pair (payables-pay.html #pp-orig-bank-reveal-btn, Figma 11832:1410). In JS wrappers (<span data-icon>) strip data-icon/hidden from the inner svg, else the hide svg stays hidden; 'aria-hidden' makes a naive 'hidden' replace match.
 
 - 2026-11-16 Bulk class edits on JS string builders: a regex on `class="..."` also matches `class="' + OBField.INPUT + '"` (empty class, mismatched quotes) and injects classes into the concatenation. Require equal open/close quotes and skip empty class; constants (INPUT_CLASS) need their own edit. Exclude `.history/` (tracked) from file globs.
+
+- 2026-11-18 [cards-manager list] No Node: drive headless Chrome over CDP (`--remote-debugging-port`, raw websocket from python stdlib: Page.navigate, Runtime.evaluate, Input.dispatchKeyEvent, Page.captureScreenshot). Key events go to the focused element: focus it first or Esc looks broken.
+- 2026-11-18 [tables] Don't set fixed column widths in a new table inside a ~870px card: `min-w-max` + `w-44/52/32` pushed the last column off-screen at 1280; let the table size to content. A `fixed` popover escapes the mount's `overflow-hidden`.
