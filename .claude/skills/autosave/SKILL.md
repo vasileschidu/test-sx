@@ -1,6 +1,6 @@
 ---
 name: autosave
-description: Start the periodic context save for this session — runs the `handoff` skill every 30 minutes (same as `/loop 30m /handoff`) without creating a duplicate job. Use at the start of a session, or when Andrian says "autosave", "pornește salvarea", "/loop 30m /handoff".
+description: Start the periodic context save (the `handoff` skill every 30 minutes) and the origin/main watcher for this session (same as `/loop 30m /handoff`) without creating a duplicate job. Use at the start of a session, or when Andrian says "autosave", "pornește salvarea", "/loop 30m /handoff".
 ---
 # Autosave (hand-off every 30 min)
 
@@ -8,8 +8,13 @@ description: Start the periodic context save for this session — runs the `hand
    - Found → don't create another; reply "Autosave already on (job <id>, next <time>)."
 2. Not found → `CronCreate` with `cron: "7,37 * * * *"`, `prompt: "/handoff"`, `recurring: true`
    (off the :00/:30 marks on purpose).
-3. Run the `handoff` skill once now so the note is current.
-4. One line back: "Autosave on: /handoff every 30 min (job <id>, next <time>); session-only, expires after 7 days."
+3. Same for the **main watcher**: if no job's prompt mentions `main-check.sh`, `CronCreate` with
+   `cron: "21,51 * * * *"`, `recurring: true`, prompt: "Run `.claude/hooks/main-check.sh --new-only`. If it prints
+   commits, tell Andrian in Romanian, briefly: who changed what on main, and offer to merge main into
+   andrian-sandbox + run sd-regression. If it prints nothing, reply with one short line that main has nothing new."
+   (Andrian asked 2026-11-16 to be told whenever main changes.)
+4. Run the `handoff` skill once now so the note is current.
+5. One line back: "Autosave on: /handoff every 30 min (job <id>, next <time>); session-only, expires after 7 days."
 
 Notes
 - Cron jobs live only in this session; the PreCompact / SessionStart hooks in `.claude/settings.local.json` persist.
