@@ -14,3 +14,9 @@ Tags: [tokens] [library] [audit] [api] [naming] [geap-style].
   Found two real token bugs that way (`text/base/default-on-color` black in dark, `text/disabled/secondary` invisible in dark).
 - 2026-10-26 [tokens] Code pins the v3 hex palette (`tailwind-theme.js`, Vlad) while SMART System primitives hold v4
   values (unpublished). Pending decision — don't publish SMART System colour changes until it's settled.
+- 2026-11-18 [library] Library-owned menu (SMART System `Menu-SMART-Exchange`) can't be edited from a product file: build a local component set
+  (detach one instance, edit, `createComponentFromNode` + `combineAsVariants`) and `swapComponent` all instances; then `resetOverrides()` on every
+  swapped instance (overrides map by position and leave stale labels). Hidden nested layers drop out of `.children` — index after hiding shifts.
+- 2026-11-18 [api] STP topbar `Notifications & Profile` is a horizontally flipped frame (children flipped back): append new children LAST for
+  "leftmost", then set `relativeTransform=[[-1,0,x+w],[0,1,y]]` or text renders mirrored. `getRangeFontName` can return a symbol: load Inter styles by name.
+- 2026-11-18 [audit] `get_metadata` on a whole screen is huge (tables): use read-only `use_figma` with `findAll` + counts. `sips --crop` is centre-based.
