@@ -233,7 +233,7 @@ The bills paid with this card. It reuses the **Bills & Payables** table and its 
 - Columns: Amount, Bill Reference, Payee, Payment Type, Source, Due Date, Status.
 - Expanded row: Notes, Attachments, Actions (Cancel Payment), Payment method details, Activity log.
 - Empty state: "No Bill History" / "You don't have any bills".
-- Export: Figma shows a confirm "You're about to export N row(s) from Bill History. (in CSV format)". In code, use the shared `TableExport` menu.
+- Export: header **Export** button (Bill and Transaction History tabs only, disabled when the tab is empty) opens the confirm "You're about to export N row(s) from Bill History. (in CSV format)" with Cancel / Export; Export downloads a CSV of the filtered rows. Built exactly as Figma draws it (not the shared `TableExport` format menu).
 
 ### 4.11 Transaction History tab
 
@@ -254,7 +254,7 @@ Figma:
 
 - Expanded row, "Transaction Details": Transaction Code, Response Code, Response Description, Merchant Category Code, Transaction Type, Merchant Location, Fee. Some rows show an "Externally Added" badge.
 - Empty state: "No Transaction History" / "You don't have any transactions".
-- Export: same as Bill History.
+- Export: same as Bill History (confirm names "Transaction History").
 - TODO(confirm): the full list of transaction statuses, and what "Externally Added" means.
 
 ### 4.12 Linked Credit Cards

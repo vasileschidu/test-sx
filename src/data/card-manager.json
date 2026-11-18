@@ -32,8 +32,23 @@
           "statusLabel": "Paid",
           "details": {
             "notes": "Paid with the Corporate Card LTD SMART card.",
-            "attachments": [],
-            "activityLog": []
+            "attachments": [
+              {
+                "name": "invoice_BP-01011.pdf"
+              }
+            ],
+            "activityLog": [
+              {
+                "timestamp": "2026-10-28T09:12:00",
+                "title": "Paid",
+                "description": "Payment for payable id #BP01011 has been paid"
+              },
+              {
+                "timestamp": "2026-10-27T16:40:00",
+                "title": "Initiated",
+                "description": "Payment for payable id #BP01011 has been initiated"
+              }
+            ]
           }
         },
         {
@@ -66,8 +81,48 @@
           "statusLabel": "In Progress",
           "details": {
             "notes": "Payment submitted. Waiting for the supplier to confirm.",
-            "attachments": [],
-            "activityLog": []
+            "attachments": [
+              {
+                "name": "file01.xml"
+              }
+            ],
+            "activityLog": [
+              {
+                "timestamp": "2026-11-18T10:40:00",
+                "title": "Processing",
+                "description": "Payment for payable id #2345REQ3 is processing"
+              },
+              {
+                "timestamp": "2026-11-18T10:12:00",
+                "title": "Initiated",
+                "description": "Payment for payable id #2345REQ3 has been initiated"
+              }
+            ],
+            "paymentMethodDetails": {
+              "method": "ACH",
+              "fields": [
+                {
+                  "label": "Bank Name",
+                  "value": "Bank AG"
+                },
+                {
+                  "label": "Account Holder Name",
+                  "value": "Bluebird Office Supply LLC"
+                },
+                {
+                  "label": "Routing Number",
+                  "value": "••••8282"
+                },
+                {
+                  "label": "Account Number",
+                  "value": "••••1102"
+                },
+                {
+                  "label": "Address",
+                  "value": "3476 Orphan Road Hayward\nWisconsin 54843, US"
+                }
+              ]
+            }
           }
         }
       ],
