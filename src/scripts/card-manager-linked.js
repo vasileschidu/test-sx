@@ -346,10 +346,10 @@
     return (
       '<tr data-cm-linked-id="' + esc(card.id) + '" tabindex="0" aria-label="Open linked card ending ' + esc(last4) +
       ", " + esc(name) + '" class="group cursor-pointer hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5">' +
-      cell(COLUMNS[0], '<span class="type-body text-gray-900 dark:text-white">••••' + esc(last4) + "</span>") +
+      cell(COLUMNS[0], '<span class="type-body font-medium text-gray-900 dark:text-white">•••• ' + esc(last4) + "</span>") +
       cell(
         COLUMNS[1],
-        '<span title="' + esc(name) + '" class="type-body block max-w-80 truncate text-gray-900 dark:text-white">' + esc(name) + "</span>",
+        '<span title="' + esc(name) + '" class="type-body block max-w-80 truncate font-medium text-gray-900 dark:text-white">' + esc(name) + "</span>",
       ) +
       cell(COLUMNS[2], '<span class="type-body text-gray-500 dark:text-gray-400">' + esc(mmyyyy(card.expires)) + "</span>") +
       cell(
@@ -442,19 +442,23 @@
   var SEARCH_ICON =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-2 size-5 -translate-y-1/2 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>';
   var INFO_ICON =
-    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 text-blue-400"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" /></svg>';
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" /></svg>';
 
+  var FUNNEL_ICON =
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z" clip-rule="evenodd" /></svg>';
+
+  // Secondary button, size sm (components skill) + Heroicons mini funnel; count badge from the Bills Filter.
   var FILTER_BUTTON =
-    '<button type="button" data-cm-linked-filter-btn aria-haspopup="dialog" aria-expanded="false" class="inline-flex h-10 w-full cursor-pointer items-center justify-center gap-1.5 rounded-md border border-gray-300 bg-white px-3 text-base/6 font-semibold whitespace-nowrap text-gray-700 shadow-sm hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:w-auto dark:border-white/15 dark:bg-white/5 dark:text-gray-200 dark:shadow-none dark:hover:bg-white/10">' +
+    '<button type="button" data-cm-linked-filter-btn aria-haspopup="dialog" aria-expanded="false" class="inline-flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-sm bg-white px-2 py-1 text-sm font-semibold whitespace-nowrap text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:w-auto dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">' +
+    FUNNEL_ICON +
     "Filter" +
     '<span data-filter-count class="-my-0.5 hidden min-w-5 items-center justify-center gap-1 rounded-full border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs/4 font-medium text-gray-800 tabular-nums dark:border-white/15 dark:bg-white/10 dark:text-gray-300"></span>' +
-    CHEVRON_DOWN +
     "</button>";
 
-  // Primary button (components skill) at the toolbar height of the Filter button next to it.
+  // Primary button, size sm (components skill), same height as Filter.
   var ADD_BUTTON =
-    '<button type="button" data-cm-linked-add class="inline-flex h-10 w-full shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md bg-blue-600 px-3 text-base/6 font-semibold whitespace-nowrap text-white shadow-xs hover:bg-blue-500 active:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 sm:w-auto dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:active:bg-blue-600 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">' +
-    '<img src="' + assetUrl("icon-plus.svg") + '" alt="" width="18" height="18" class="size-4.5" />Add New</button>';
+    '<button type="button" data-cm-linked-add class="inline-flex w-full shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-sm bg-blue-600 px-2 py-1 text-sm font-semibold whitespace-nowrap text-white shadow-xs hover:bg-blue-500 active:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 sm:w-auto dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:active:bg-blue-600 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">' +
+    '<img src="' + assetUrl("icon-plus.svg") + '" alt="" width="18" height="18" class="size-4" />Add New</button>';
 
   var LINK_BTN =
     "cursor-pointer rounded px-1.5 py-0.5 text-xs/4 font-semibold text-blue-600 transition-colors hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:bg-white/10";
@@ -552,10 +556,10 @@
       "</div></div>" +
       '<div data-cm-linked-chips class="mt-3 hidden flex-wrap items-center justify-end gap-2"></div>' +
       "</div>" +
-      // BR-10 banner: Tailwind Plus info alert (same as the invite page note).
-      '<div class="px-6 pt-5">' +
-      '<div class="flex gap-3 rounded-md bg-blue-50 p-4 dark:bg-blue-500/10">' + INFO_ICON +
-      '<p class="text-sm/5 font-medium text-blue-700 dark:text-blue-300">Linked cards act only as origination accounts and cannot be used as payment methods.</p>' +
+      // BR-10 banner: Figma neutral info box (gray-50, like the components skill info box), 16px side inset.
+      '<div class="px-4 pt-4">' +
+      '<div class="flex items-start gap-2 rounded-md bg-gray-50 p-3 dark:bg-white/5">' + INFO_ICON +
+      '<p class="text-xs/4 font-normal text-gray-500 dark:text-gray-400">Linked cards act only as origination accounts and cannot be used as payment methods.</p>' +
       "</div></div>" +
       '<div data-table-scroll class="w-full max-w-full overflow-x-auto px-3 pt-2">' +
       '<table data-cm-linked-table class="w-full min-w-max table-auto border-separate border-spacing-0"></table></div>' +
