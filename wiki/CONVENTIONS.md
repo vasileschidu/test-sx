@@ -112,7 +112,7 @@ Every page starts with YAML frontmatter. Common fields:
 
 ```yaml
 title: <human title>
-type: guide | suite | product-overview | standard | changelog | variant | client | decision
+type: guide | suite | product-overview | standard | changelog | variant | client | decision | module | backlog | flow
 status: draft | reviewed
 last_reviewed: YYYY-MM-DD
 ```
