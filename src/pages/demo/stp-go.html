@@ -1,0 +1,28 @@
+<!doctype html><meta charset="utf-8"><title>STP demo links</title>
+<script>
+// Demo deep links: seeds the SX-QA demo case, then opens one STP screen (?to=agreement|complete|portal|preferences).
+var c = {
+        id: "SX-QA",
+        createdAt: "2026-11-05T09:00:00.000Z",
+        supplier: { name: "Pinnacle Group", address: "2972 Westheimer Rd\nSuite 1010\nChicago, Illinois 85486\nUnited States", tin: "12-3450001", contactFirst: "Johnny", contactLast: "Anderson", email: "johnny@hotmail.com", phone: "+1 (555) 987-6543" },
+        payer: { name: "Horizon Inc", address: "3476 Orphan Road\nSuite 1010\nHayward, Wisconsin 54843\nUnited States" },
+        payment: { amount: 3526, currency: "USD", invoice: "PG-3526", dateInitiated: "2026-11-05", cardBrand: "Visa", cardNumber: "5444123400005612", expires: "12/2026", cvc: "999" },
+        signer: { firstName: "Michelle", lastName: "Jackson", email: "demo.signer@example.com" },
+        scenario: "A",
+        enrol: { stp: "on", signer: "self", agreementSigned: true, agreement: { signedBy: "Johnny Anderson", confirmedAt: "2026-11-05T09:10:00.000Z" }, cardProcessed: null, account: { username: "johnny@hotmail.com" }, completedAt: null },
+        stp: { mid: null, tid: null },
+      };
+var to = new URLSearchParams(location.search).get("to") || "portal";
+if (to === "agreement") c.enrol = { stp: null, signer: null, agreementSigned: false, agreement: null, cardProcessed: null, account: null, completedAt: null };
+localStorage.setItem("sx_demo_case_v1", JSON.stringify(c));
+Object.keys(sessionStorage).forEach(function (k) { if (k.indexOf("sx-enroll") === 0) sessionStorage.removeItem(k); });
+sessionStorage.setItem("sx-enroll-state:SX-QA", JSON.stringify({ signature: { method: "type", name: "Johnny Anderson", signedAt: "2026-11-05T09:05:00.000Z" } }));
+var R = "../";
+var map = {
+  portal: R + "dashboard/supplier-portal.html?case=SX-QA",
+  preferences: R + "dashboard/payment-preferences.html?case=SX-QA",
+  complete: R + "sx-enroll/complete.html?case=SX-QA",
+  agreement: R + "sx-enroll/card-processing.html?case=SX-QA&openAgreement=1",
+};
+location.replace(map[to] || map.portal);
+</script>

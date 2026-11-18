@@ -712,10 +712,19 @@ function composeNavItems() {
   return items;
 }
 
-/** Plans for a single tenant (the STP case instance) drop Help + Account Information. */
+/** Plans that drop the Help + Account Information blocks. */
 function hideShellExtras() {
   try {
     return !!(window.AppPlans && window.AppPlans.getPlan().hideShellExtras);
+  } catch (error) {
+    return false;
+  }
+}
+
+/** Plans that drop only Account Information (the STP case instance keeps Help, as in prod). */
+function hideAccountInfo() {
+  try {
+    return hideShellExtras() || !!(window.AppPlans && window.AppPlans.getPlan().hideAccountInfo);
   } catch (error) {
     return false;
   }
@@ -1185,12 +1194,12 @@ class AppNav extends HTMLElement {
       ? buildConsumerMarkHtml("size-6", "size-8")
       : buildSmartHubMarkHtml();
     const accountInfoDesktop =
-      consumerPortal || hideShellExtras()
+      consumerPortal || hideAccountInfo()
       ? ""
       : buildAccountInfoButton(!!collapsed, "desktop-account-info-panel") +
         accountInfoCollapsedButton(!!collapsed);
     const accountInfoMobile =
-      consumerPortal || hideShellExtras()
+      consumerPortal || hideAccountInfo()
       ? ""
       : buildAccountInfoButton(false, "mobile-account-info-panel");
 

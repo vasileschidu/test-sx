@@ -90,11 +90,19 @@
 
   function openAgreement() {
     var M = window.OBModal;
-    M.open(
-      '<div class="flex min-h-0 flex-1 flex-col p-6">' +
-        '<div tabindex="0" aria-label="Agreement text" class="min-h-0 flex-1 overflow-y-auto rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-4 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+    // Same document scroll as "Review and agree" (onboarding-consents.js, documentScroll):
+    // white fade + centred round "scroll down" button until the end of the text.
+    var backdrop = M.open(
+      '<div class="relative flex min-h-0 flex-1 flex-col">' +
+        '<div data-sx-agr-scroll tabindex="0" aria-label="Agreement text" class="min-h-0 flex-1 overflow-y-auto p-6 [scrollbar-color:rgba(17,24,39,0.5)_#f3f4f6] [scrollbar-width:thin] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+        '<div class="rounded border border-gray-200 dark:border-white/10 bg-gray-50 dark:bg-white/5 p-4">' +
         agreementArticle() +
         "</div>" +
+        "</div>" +
+        '<div data-sx-agr-fade aria-hidden="true" class="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-linear-to-b from-white/0 to-white dark:from-gray-900/0 dark:to-gray-900"></div>' +
+        '<button type="button" data-sx-agr-more aria-label="Scroll down" class="absolute bottom-6 left-1/2 flex size-12 -translate-x-1/2 cursor-pointer items-center justify-center rounded-full bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow-md dark:shadow-black/50 inset-ring-2 inset-ring-white dark:inset-ring-1 dark:inset-ring-white/15 transition hover:bg-gray-200 dark:hover:bg-gray-700 hover:text-gray-900 dark:hover:text-white active:bg-gray-300 dark:active:bg-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+        '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-6"><path fill-rule="evenodd" d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z" clip-rule="evenodd" /></svg>' +
+        "</button>" +
         "</div>",
       "sx-agreement-title",
       {
@@ -114,6 +122,21 @@
         // Full height with a 16px gap: sx-enroll.js (fullHeightViewer).
       },
     );
+    var scroller = backdrop && backdrop.querySelector("[data-sx-agr-scroll]");
+    if (!scroller) return;
+    var more = backdrop.querySelector("[data-sx-agr-more]");
+    var fade = backdrop.querySelector("[data-sx-agr-fade]");
+    function checkEnd() {
+      if (scroller.scrollTop + scroller.clientHeight >= scroller.scrollHeight - 8) {
+        more.hidden = true;
+        fade.hidden = true;
+      }
+    }
+    more.addEventListener("click", function () {
+      scroller.scrollBy({ top: scroller.clientHeight * 0.8, behavior: "smooth" });
+    });
+    scroller.addEventListener("scroll", checkEnd);
+    requestAnimationFrame(checkEnd);
   }
 
   // ---- Opt-out confirm (Figma 33456:53422) ---------------------------------
@@ -587,5 +610,11 @@
     });
 
     render();
+
+    // Demo deep link: ?openAgreement=1 opens the agreement viewer straight away.
+    if (new URLSearchParams(window.location.search).get("openAgreement") === "1") {
+      var review = panel.querySelector("[data-acp-review]");
+      if (review) review.click();
+    }
   });
 })();
