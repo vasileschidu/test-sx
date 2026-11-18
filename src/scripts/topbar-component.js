@@ -1468,14 +1468,28 @@
           node.textContent = organizationName;
         },
       );
-      this.querySelectorAll(
-        "[data-topbar-profile-name], [data-topbar-greeting-name]",
-      ).forEach(function (node) {
-        node.textContent = personName;
-      });
+      // Prod SMART Exchange greets by first name only (STP instance).
+      var greetingName =
+        demoCase && demoCase.supplier
+          ? demoCase.supplier.contactFirst || personName.split(" ")[0]
+          : personName;
+      this.querySelectorAll("[data-topbar-profile-name]").forEach(
+        function (node) {
+          node.textContent = personName;
+        },
+      );
+      this.querySelectorAll("[data-topbar-greeting-name]").forEach(
+        function (node) {
+          node.textContent = greetingName;
+        },
+      );
       // The greeting truncates on phones: keep the full text as its tooltip.
       this.querySelectorAll("[data-topbar-greeting]").forEach(function (node) {
-        node.title = "Hello, " + personName;
+        node.title = "Hello, " + greetingName;
+      });
+      // Time zone chip: shown on the STP instance, as in prod SMART Exchange.
+      this.querySelectorAll("[data-topbar-timezone]").forEach(function (node) {
+        node.classList.toggle("sm:inline-flex", !!demoCase);
       });
       this.querySelectorAll("[data-topbar-profile-email]").forEach(
         function (node) {
@@ -1698,6 +1712,10 @@
         "      <p data-topbar-greeting title=\"Hello, Johnny Anderson\" class=\"min-w-0 truncate font-['Inter'] text-2xl font-bold leading-8 text-gray-900 dark:text-white\">Hello, <span data-topbar-greeting-name>Johnny Anderson</span></p>" +
         "    </div>" +
         '    <div class="flex shrink-0 items-center gap-6">' +
+        '      <span data-topbar-timezone class="hidden items-center gap-1.5 rounded-md bg-gray-50 px-2 py-1 text-xs font-medium whitespace-nowrap text-gray-600 inset-ring inset-ring-gray-500/10 dark:bg-gray-400/10 dark:text-gray-400 dark:inset-ring-gray-400/20">' +
+        '        <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M1 8a7 7 0 1 1 14 0A7 7 0 0 1 1 8Zm7.75-4.25a.75.75 0 0 0-1.5 0V8c0 .414.336.75.75.75h3.25a.75.75 0 0 0 0-1.5h-2.5v-3.5Z" clip-rule="evenodd" /></svg>' +
+        '        Eastern Time (EST)' +
+        "      </span>" +
         '      <button type="button" data-topbar-notification-trigger data-consumer-notification-trigger aria-haspopup="dialog" aria-label="Notifications, 6 unread" class="group relative flex size-9 shrink-0 items-center justify-center rounded-full p-1.5 text-gray-500 transition-colors hover:bg-gray-200 hover:text-gray-600 active:bg-gray-200 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:active:bg-white/10 cursor-pointer">' +
         '        <span aria-hidden="true" class="absolute top-[-2px] left-[18px] z-[2] flex h-4 min-w-4 items-center justify-center rounded-full border border-red-200 bg-red-500 px-1 text-center text-xs font-medium leading-4 text-white">6</span>' +
         '        <img src="' +

@@ -217,15 +217,23 @@ info box `rounded-md bg-gray-50 p-3` with `type-title-small` + `list-disc type-d
 ### STP walkthrough case instance (`?case=<id>`) — shell + data hooks
 `SXDemoCase.applyPageConfig()` (inline on supplier-portal / payment-preferences, and from `shell-navigation.js` after a swap):
 table `transformData` + `onMarkedPaid` (→ `markCardProcessed`), PP `transformSharedData` / `storagePrefix`.
-Plan `sx-instance` (app-plans.js): Insights, AP/AR (Upgrade), SMART Exchange, Settings (open) › My Company Profile, Payment
-Preferences, User Management; `hideShellExtras` drops Help + Account Information; the case business is the only switcher entry.
+Plan `sx-instance` (app-plans.js) = the prod SMART Exchange menu (product feedback 2026-11-18): Insights, SMART Exchange,
+Payment Preferences, My Company Profile, Settings (open) › User Management, then Help from Transcard; `hideAccountInfo` drops only
+Account Information (`hideShellExtras` would drop Help too); no AP/AR Upgrade; the case business is the only switcher entry.
+Top bar on the instance: greeting by first name ("Hello, Johnny") and a time-zone chip `[data-topbar-timezone]` (gray badge,
+clock mini icon, "Eastern Time (EST)", static, `sm:` and up) before the bell.
 Links to dashboard pages keep `?case=` (click capture in sx-demo-case.js). `SXDemoCase.syncStp()` derives STP from the case.
 Isolation: only a URL with this case's `?case=` is the instance (no sticky key); the plain portal is the general one.
 The demo's STP state / agreement request (`stp-state.js` SCOPE) and table overrides (`EXCHANGES_TABLE_CONFIG.storageKey`)
 live under `<key>:<case id>`, PP under `sxdemo_<id>_pp_`; Start enrolment clears only the previous case's keys.
 Demo bar `#sx-demo-bar` (sx-demo-case.js, every page where `isPortalInstance()`): fixed bottom-right pill "Demo case <id>" +
-xs secondary "New demo" (launcher: case information card + Start enrolment / Open Supplier Portal). Table defaults show Vendor Entry (= the case
+xs secondary "New demo" (launcher: case information card + Start enrolment / Open SMART Exchange Portal). Table defaults show Vendor Entry (= the case
 business) and Date Initiated, as in the Figma STP table.
+
+### Mini card + Reveal Card Details (SX final screen, Get paid success, Payables Pay, Consumer Portal)
+`div.flex.h-[46px].w-[71px].flex-col-reverse.items-end.gap-0.5.rounded-md.bg-gray-950.p-2` with the brand logo `svg.h-4.w-8` first and
+`<div>•••• 5612</div>` second in the DOM: `flex-col-reverse` shows the card number on top and the logo **below it on the right**
+(Figma STP big card 33456:53003; product feedback 2026-11-18). Next to it a gray "Reveal Card Details" button opens the card dialog.
 
 ### SX enrolment Decline (`sx-enroll/*.html` before Submit)
 Reuses SD's `OBDecline` (`onboarding-decline.js`, reasons `sd-decline.json`): sidebar card + `OB_MOBILE_MENU` item (not on
