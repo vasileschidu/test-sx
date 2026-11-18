@@ -126,7 +126,8 @@ window.AppPlans = (function () {
       },
       byPlan: {
         "supplier-portal": { parent: null, nav: { type: "link" } },
-        "sx-instance": { parent: "settings", order: 63 },
+        // Prod SX menu: Payment Preferences is a top-level link after SMART Exchange.
+        "sx-instance": { parent: null, nav: { type: "link" } },
       },
     },
 
@@ -141,7 +142,9 @@ window.AppPlans = (function () {
         href: "my-company-profile.html",
         icon: "my-company-profile",
       },
-      byPlan: { "sx-instance": { parent: "settings", order: 62 } },
+      byPlan: {
+        "sx-instance": { order: 52, dividerBefore: false, nav: { type: "link" } },
+      },
     },
 
     {
@@ -165,10 +168,22 @@ window.AppPlans = (function () {
           },
         ],
       },
-      // The SX instance (Figma 34510:42009): Settings is open and holds My
-      // Company Profile + Payment Preferences ahead of User Management.
+      // The SX instance (prod SMART Exchange menu, 2026-11-18): Settings is
+      // open and holds only User Management.
       byPlan: {
-        "sx-instance": { dividerBefore: false, nav: { expanded: true } },
+        "sx-instance": {
+          dividerBefore: false,
+          nav: {
+            expanded: true,
+            children: [
+              {
+                id: "user-management",
+                label: "User Management",
+                href: "user-management.html",
+              },
+            ],
+          },
+        },
       },
     },
 
@@ -274,16 +289,17 @@ window.AppPlans = (function () {
       upgradeGrants: ["ap-ar", "payables", "receivables"],
     },
     // STP walkthrough case instance (supplier-portal.html?case=<id>): the SX
-    // supplier menu of Figma 34510:42009 — Insights, AP/AR (Upgrade), SMART
-    // Exchange, Settings › My Company Profile / Payment Preferences / User
-    // Management — and no Help / Account Information blocks.
+    // supplier menu as it is in prod (product feedback 2026-11-18) — Insights,
+    // SMART Exchange, Payment Preferences, My Company Profile, Settings › User
+    // Management, then Help from Transcard. No AP/AR upgrade, no Account
+    // Information block.
     "sx-instance": {
       label: "SMART Exchange",
       home: "supplier-portal.html",
       capabilities: ["core", "insights", "supplier-portal"],
-      locked: ["ap-ar"],
-      upgradeGrants: ["ap-ar", "payables", "receivables"],
-      hideShellExtras: true,
+      locked: [],
+      upgradeGrants: [],
+      hideAccountInfo: true,
     },
     "bills-payables": {
       label: "Bills & Payables",
