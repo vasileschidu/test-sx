@@ -122,10 +122,9 @@
     "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300";
 
   var CLOSE_BTN =
-    '<button type="button" data-ob-modal-close class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 ' +
-    'focus-visible:outline-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:focus-visible:outline-blue-400">' +
+    '<button type="button" data-ob-modal-close class="shrink-0 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
     '<span class="sr-only">Close</span>' +
-    '<img src="' + assetUrl("icon-x.svg") + '" alt="" width="24" height="24" class="size-6" /></button>';
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>';
 
   /** Information circle + Tooltip (components skill). */
   function tip(id, text, label) {
@@ -391,7 +390,7 @@
     var revealed = false;
 
     var header =
-      '<div class="flex h-14 shrink-0 items-end justify-end px-4 pt-4">' + CLOSE_BTN + "</div>";
+      '<div class="flex h-14 shrink-0 items-start justify-end px-4 pt-4">' + CLOSE_BTN + "</div>";
     var body =
       '<div class="flex flex-col items-center gap-4 p-4">' +
       '<img src="' + assetUrl("icon-check-circle-green.svg") + '" alt="" width="44" height="44" class="size-11" />' +

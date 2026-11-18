@@ -1202,9 +1202,9 @@ class AppNav extends HTMLElement {
 <div tabindex="0" class="fixed inset-0 flex focus:outline-none">
 <el-dialog-panel class="group/dialog-panel relative mr-16 flex w-full max-w-[360px] flex-1 transform transition duration-300 ease-in-out data-closed:-translate-x-full">
 <div class="absolute top-0 left-full flex w-16 justify-center pt-5 duration-300 ease-in-out group-data-closed/dialog-panel:opacity-0">
-<button type="button" command="close" commandfor="sidebar" class="-m-2.5 cursor-pointer rounded-md p-2.5 transition-colors hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-white">
+<button type="button" command="close" commandfor="sidebar" class="cursor-pointer rounded-md p-1 text-gray-400 hover:bg-white/10 hover:text-gray-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400">
 <span class="sr-only">Close sidebar</span>
-<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true" class="size-6 text-white"><path d="M6 18 18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
 </button></div>
 <div class="flex grow flex-col justify-between gap-6 overflow-y-auto bg-white ${panelPadding} dark:bg-gray-900">
 <div class="flex flex-col ${contentGap}">

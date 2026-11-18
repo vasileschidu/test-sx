@@ -24,6 +24,18 @@ Where a shipped screen and these docs disagree, the screen is ground truth: fix 
    text roles from the design-system skill.
 5. Shared shell: `<app-nav>`, `<app-topbar>` and `shared.js` — never copy the sidebar/topbar markup.
 6. **Modals and dialogs are always `rounded-lg` (8px)**, in every state (form, confirm, success), even if Figma shows 10 or 12px.
+7. **Modals open smoothly and use the flat backdrop**, like the Supplier Portal "Decline Payment" and "Opt in" dialogs:
+   `bg-gray-900/75` with **no blur**; the backdrop fades in (300 ms ease-out) while the panel fades in and slides up
+   (mobile) / scales from 95 % (sm+), and leaves in 200 ms ease-in. Use the Tailwind Plus `el-dialog` pattern
+   (`el-dialog-backdrop` + `el-dialog-panel` with `data-closed:` / `data-enter:` / `data-leave:` classes) or `OBModal`
+   (which does this for you). Never ship a modal that appears instantly or with `backdrop-blur`.
+   Only exception: the SMART Disburse onboarding flow (`src/pages/onboarding/`), whose Figma specifies black 75 % + blur 5 px.
+8. **Every modal's close (X) button is the one from the Supplier Portal "Decline Payment" dialog**, hover included:
+   a `p-1` `rounded-md` button, 20 px X icon (`size-5`, 24 viewBox, `stroke-width="1.5"`), `text-gray-400`,
+   hover `bg-gray-100` + `text-gray-500` (dark: `hover:bg-white/10` + `hover:text-gray-300`), `cursor-pointer`, with a
+   `sr-only` "Close" label and the shared `focus-visible` outline. No 40 px circles, `p-1.5`, `rounded-full` or other icons,
+   even where Figma draws them. Keep the position the layout needs (top-right strip, or corner of the content).
+   Same exception: SMART Disburse onboarding keeps its own.
 
 ## Working from Figma
 0. **Figma is the source of truth for content, not just layout.** Titles, labels, copy, field and

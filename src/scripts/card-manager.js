@@ -145,6 +145,9 @@
         mount.innerHTML = emptyStateHtml(tab);
       } else if (
         afterChange &&
+        // Linked Credit Cards has no list story yet: keep its empty state (count 0)
+        // even though the seed data holds cards, until a story draws the list.
+        tab !== "linked" &&
         mount.querySelector("[data-cm-empty]") &&
         data[EMPTY[tab].key].length > 0
       ) {
@@ -264,6 +267,8 @@
 
         var badge = link.querySelector("[data-tab-count]");
         if (badge) {
+          // Linked Credit Cards: no count until a card has been added there.
+          badge.hidden = key === "linked" && total[key] === 0;
           badge.textContent = String(total[key]);
           ACTIVE_BADGE_CLASSES.forEach(function (c) {
             badge.classList.toggle(c, active);
@@ -282,7 +287,10 @@
           base = option.textContent;
           option.setAttribute("data-label", base);
         }
-        option.textContent = base + " (" + total[option.value] + ")";
+        option.textContent =
+          option.value === "linked" && total.linked === 0
+            ? base
+            : base + " (" + total[option.value] + ")";
       });
     }
   }
