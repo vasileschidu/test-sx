@@ -26,6 +26,12 @@ Where a shipped screen and these docs disagree, the screen is ground truth: fix 
 6. **Modals and dialogs are always `rounded-lg` (8px)**, in every state (form, confirm, success), even if Figma shows 10 or 12px.
 
 ## Working from Figma
+0. **Figma is the source of truth for content, not just layout.** Titles, labels, copy, field and
+   button order, which buttons show in which state, section structure, icons: take them exactly from
+   the frame. Never invent a title, group, button position or text. If Figma doesn't show a state or
+   text, leave it minimal, mark it `TODO(confirm)` and say so. If a ticket or the wiki disagrees with
+   Figma, follow Figma and flag the difference. Agents without Figma access must be given the frame
+   (screenshot / spec) in their brief, or must stop and ask.
 1. `get_design_context` (or a screenshot) for layout.
 2. Match every element against the component inventory BEFORE writing code; for anything already
    there, ignore the generated code and reuse the local markup.
