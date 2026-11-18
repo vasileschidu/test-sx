@@ -59,6 +59,7 @@ rewrite; use semantic classes in new or touched UI.
 
 - Rhythm 8 / 16 / 24: `gap-2`, `gap-4`, `gap-6`; card padding `p-4` (dense) or `p-6`; page gutter `px-4 lg:px-10`.
 - Inputs and buttons `rounded-md`; cards `rounded-lg`; pills `rounded-full`.
+- **Modals and dialogs are always `rounded-lg` (8px)**, every state (create, confirm, success, errors). Even where Figma draws a modal at 10 or 12px, use 8px (rule from Alina, 2026-11-18).
 - Shadows: `shadow-xs` on buttons/inputs, `shadow-sm` cards, `shadow-lg` menus/modals.
 - Field heights: copy the inventory snippets (select trigger `py-1.5 sm:text-sm/6`, table search `h-10`); SD consumer steps use 56px primary buttons.
 

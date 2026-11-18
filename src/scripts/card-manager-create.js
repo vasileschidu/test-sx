@@ -100,6 +100,7 @@
 
   var PANEL_CREATE =
     "relative flex w-full max-w-150 flex-col rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:ring-1 dark:ring-white/10";
+  // Modal rule: every dialog is rounded-lg (8px), even where Figma draws the success modal at 10px.
   var PANEL_SUCCESS =
     "relative flex w-full max-w-130.5 flex-col rounded-lg bg-white shadow-xl dark:bg-gray-900 dark:ring-1 dark:ring-white/10";
 

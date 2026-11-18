@@ -23,6 +23,7 @@ Where a shipped screen and these docs disagree, the screen is ground truth: fix 
 4. No raw hex or px. Use Tailwind classes; for new UI prefer the semantic classes and `type-*`
    text roles from the design-system skill.
 5. Shared shell: `<app-nav>`, `<app-topbar>` and `shared.js` — never copy the sidebar/topbar markup.
+6. **Modals and dialogs are always `rounded-lg` (8px)**, in every state (form, confirm, success), even if Figma shows 10 or 12px.
 
 ## Working from Figma
 1. `get_design_context` (or a screenshot) for layout.
