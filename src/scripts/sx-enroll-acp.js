@@ -610,5 +610,11 @@
     });
 
     render();
+
+    // Demo deep link: ?openAgreement=1 opens the agreement viewer straight away.
+    if (new URLSearchParams(window.location.search).get("openAgreement") === "1") {
+      var review = panel.querySelector("[data-acp-review]");
+      if (review) review.click();
+    }
   });
 })();
