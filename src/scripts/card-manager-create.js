@@ -246,7 +246,7 @@
 
   function createFooter(formId) {
     return (
-      '<div class="flex items-start gap-6 border-t border-gray-200 px-6 py-5 dark:border-white/10">' +
+      '<div class="flex items-start gap-6 rounded-b-lg border-t border-gray-200 px-6 py-5 dark:border-white/10">' +
       '<button type="button" data-ob-modal-close class="' + BTN_SECONDARY + '">Cancel</button>' +
       '<button type="submit" form="' + formId + '" class="' + BTN_PRIMARY + '">Create</button></div>'
     );
@@ -409,7 +409,7 @@
       ICON_EYE + ICON_EYE_SLASH + '<span data-cm-reveal-label>Reveal Details</span></button></div>' +
       "</div></div>";
     var footer =
-      '<div class="flex border-t border-gray-200 bg-white px-6 py-5 dark:border-white/10 dark:bg-gray-900">' +
+      '<div class="flex rounded-b-lg border-t border-gray-200 bg-white px-6 py-5 dark:border-white/10 dark:bg-gray-900">' +
       '<button type="button" data-ob-modal-close class="' + BTN_PRIMARY + '">Done</button></div>';
 
     var backdrop = ob.open(body, titleId, { bare: true, header: header, footer: footer, panelClass: PANEL_SUCCESS });
