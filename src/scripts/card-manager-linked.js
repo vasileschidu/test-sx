@@ -19,9 +19,8 @@
  * the Bills & Payables toolbar Filter (two-pane panel, Select all, search, From / To with
  * DateRangeCalendar, Reset / Apply, chips; wiki/design-system/table-filter.md), TableUi,
  * TableSkeleton and PPComponents.getCardBrandLogoMarkup (network logos).
- * card-manager.html loads only this script for the story; the helpers it needs and the page
- * does not load yet (table-ui.js, date-range-calendar.js, payment-preferences-components.js)
- * are loaded once below, with the same cache tags as the other pages.
+ * card-manager.html loads the helpers with page tags before this script (table-ui.js,
+ * date-range-calendar.js, payment-preferences-components.js).
  */
 (function () {
   "use strict";
@@ -31,12 +30,6 @@
 
   var PAGE_SIZE_OPTIONS = [10, 25, 50, 100];
   var INITIAL_SKELETON_MS = 500;
-
-  var DEPENDENCIES = [
-    { global: "TableUi", file: "table-ui.js?v=20261113es3" },
-    { global: "DateRangeCalendar", file: "date-range-calendar.js?v=20261116m2" },
-    { global: "PPComponents", file: "payment-preferences-components.js?v=20261113mf" },
-  ];
 
   // Status -> label + Badge colour (components skill: Active emerald, Inactive gray), square small as in S1.
   var STATUS = {
@@ -115,42 +108,11 @@
       .replace(/"/g, "&quot;");
   }
 
-  function scriptsRoot() {
-    var path = window.location.pathname || "";
-    var at = path.indexOf("/src/pages/");
-    return (at >= 0 ? path.slice(0, at) : "") + "/src/scripts/";
-  }
-
   function assetUrl(file) {
     var path = window.location.pathname || "";
     var at = path.indexOf("/src/pages/");
     var root = at >= 0 ? path.slice(0, at) : "";
     return root + "/src/assets/cards-manager/" + file;
-  }
-
-  /** Load the shared helpers the page does not carry yet (each once; never blocks the list). */
-  function loadDependencies() {
-    return Promise.all(
-      DEPENDENCIES.map(function (dep) {
-        if (window[dep.global]) return Promise.resolve();
-        var base = dep.file.split("?")[0];
-        var existing = document.querySelector('script[src*="/' + base + '"]');
-        return new Promise(function (resolve) {
-          var el = existing || document.createElement("script");
-          el.addEventListener("load", resolve);
-          el.addEventListener("error", function () {
-            console.error("Linked Credit Cards: could not load " + base);
-            resolve();
-          });
-          if (!existing) {
-            el.src = scriptsRoot() + dep.file;
-            document.head.appendChild(el);
-          } else if (window[dep.global]) {
-            resolve();
-          }
-        });
-      }),
-    );
   }
 
   function tableIcon(file, w, h, extra) {
@@ -1131,7 +1093,7 @@
     bind();
     // Loading: the skeleton takes the place of the empty state until the data is in.
     renderSkeleton();
-    Promise.all([cm.ready, loadDependencies()]).then(function () {
+    cm.ready.then(function () {
       var wait = Math.max(0, INITIAL_SKELETON_MS - (Date.now() - startedAt));
       setTimeout(function () {
         state.loading = false;
