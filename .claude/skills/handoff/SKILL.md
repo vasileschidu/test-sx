@@ -35,5 +35,10 @@ replace the "Current state" section, don't append a new copy every hour. Leave `
 - No real client names (client codes only).
 - One short line back to the user: "Hand-off updated: <path>". Don't print the note.
 
+## Retention (Andrian, 2026-11-19)
+- Keep notes from the last 7 days in `.claude/handoff/`. When writing, move any note whose name starts with
+  or contains a date older than 7 days (daily `YYYY-MM-DD.md` and named ones like `sd-YYYY-MM-DD.md`) to
+  `.claude/handoff/archive/` (`git mv` if tracked). Never delete. `README.md` and undated notes stay.
+
 ## After compaction / new session
 Read today's note (and yesterday's if today's is missing) before answering; continue from "Open / next".

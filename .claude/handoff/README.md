@@ -20,3 +20,6 @@ Template:
 ## Next step
 - …
 ```
+
+## Retention
+Notes from the last 7 days stay here; older dated notes move to `archive/` (never deleted). See the `handoff` skill.
