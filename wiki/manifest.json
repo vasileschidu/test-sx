@@ -101,6 +101,10 @@
         { "path": "design-system/figma-files.md", "label": "Figma files" },
         { "path": "design-system/table-filter.md", "label": "Table filter" },
         { "path": "design-system/portal-consistency.md", "label": "Portal consistency audit" },
+        { "path": "design-system/consistency-report.md", "label": "Consistency report (code)" },
+        { "path": "design-system/figma-consistency-report.md", "label": "Consistency report (Figma)" },
+        { "path": "design-system/discrepancies.md", "label": "Discrepancies log" },
+        { "path": "design-system/consistency-meeting-2026-11.md", "label": "Consistency meeting (decisions)" },
         { "path": "design-system/tokens.md", "label": "Design tokens" }
       ]
     },
