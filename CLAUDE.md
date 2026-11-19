@@ -45,6 +45,9 @@ Where a shipped screen and these docs disagree, the screen is ground truth: fix 
 4. Figma: `ui-qa-figma` → PASS. Code first, then Figma.
 5. New pattern → components skill; new token or role → Figma first, then `design-tokens.js` + `wiki/design-system/tokens.md`.
 6. Bump the `?v=` tag on a changed script that pages load with one. Report what you checked.
+7. Consistency: `npm run qa:consistency` must not show more non-exact buttons / heading variants than before
+   (`wiki/design-system/consistency-report.md`). Inconsistencies people report go in
+   `wiki/design-system/discrepancies.md` (skill `log-discrepancy`).
 
 ## Usage budget
 Read `.claude/skills/usage-budget/SKILL.md` before launching agents or long Figma work:
