@@ -409,17 +409,17 @@
   var FUNNEL_ICON =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M2.628 1.601C5.028 1.206 7.49 1 10 1s4.973.206 7.372.601a.75.75 0 0 1 .628.74v2.288a2.25 2.25 0 0 1-.659 1.59l-4.682 4.683a2.25 2.25 0 0 0-.659 1.59v3.037c0 .684-.31 1.33-.844 1.757l-1.937 1.55A.75.75 0 0 1 8 18.25v-5.757a2.25 2.25 0 0 0-.659-1.591L2.659 6.22A2.25 2.25 0 0 1 2 4.629V2.34a.75.75 0 0 1 .628-.74Z" clip-rule="evenodd" /></svg>';
 
-  // Secondary button, size sm (components skill) + Heroicons mini funnel; count badge from the Bills Filter.
+  // Secondary button, size md (components skill) + Heroicons mini funnel; count badge from the Bills Filter.
   var FILTER_BUTTON =
-    '<button type="button" data-cm-linked-filter-btn aria-haspopup="dialog" aria-expanded="false" class="inline-flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-sm bg-white px-2 py-1 text-sm font-semibold whitespace-nowrap text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:w-auto dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">' +
+    '<button type="button" data-cm-linked-filter-btn aria-haspopup="dialog" aria-expanded="false" class="inline-flex w-full cursor-pointer items-center justify-center gap-1.5 rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 sm:w-auto dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20">' +
     FUNNEL_ICON +
     "Filter" +
     '<span data-filter-count class="-my-0.5 hidden min-w-5 items-center justify-center gap-1 rounded-full border border-gray-200 bg-gray-100 px-2 py-0.5 text-xs/4 font-medium text-gray-800 tabular-nums dark:border-white/15 dark:bg-white/10 dark:text-gray-300"></span>' +
     "</button>";
 
-  // Primary button, size sm (components skill), same height as Filter.
+  // Primary button, size md (components skill), same height as Filter.
   var ADD_BUTTON =
-    '<button type="button" data-cm-linked-add class="inline-flex w-full shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-sm bg-blue-600 px-2 py-1 text-sm font-semibold whitespace-nowrap text-white shadow-xs hover:bg-blue-500 active:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 sm:w-auto dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:active:bg-blue-600 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">' +
+    '<button type="button" data-cm-linked-add class="inline-flex w-full shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold whitespace-nowrap text-white shadow-xs hover:bg-blue-500 active:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 sm:w-auto dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:active:bg-blue-600 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">' +
     '<img src="' + assetUrl("icon-plus.svg") + '" alt="" width="18" height="18" class="size-4" />Add New</button>';
 
   var LINK_BTN =
