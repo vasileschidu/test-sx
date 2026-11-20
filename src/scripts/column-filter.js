@@ -153,6 +153,7 @@
     if (!open) return;
     var state = open;
     open = null;
+    if (state.ro) state.ro.disconnect();
     state.el.remove();
     if (state.backdrop) state.backdrop.remove();
     var anchor = anchorOf(state);
@@ -291,6 +292,17 @@
     render(open);
     anchor.setAttribute("aria-expanded", "true");
     place();
+    // The first measure can be stale (Tailwind's browser build styles new classes a moment later, fonts,
+    // header re-render): re-place whenever the panel's size changes and on the next frames.
+    var state = open;
+    if (window.ResizeObserver) {
+      state.ro = new ResizeObserver(function () { if (open === state) place(); });
+      state.ro.observe(card);
+    }
+    requestAnimationFrame(function () {
+      if (open === state) place();
+      requestAnimationFrame(function () { if (open === state) place(); });
+    });
     card.focus({ preventScroll: true });
   }
 
