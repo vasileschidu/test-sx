@@ -81,3 +81,5 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   on hover/click: doc-level click handlers must ignore `!event.target.isConnected`, Playwright must use locators, not element handles.
 - 2026-11-20 [filter] Andrian on table dropdowns: no title/eyebrow, footer = the global filter's Reset + Apply (draft until Apply),
   inputs copied from existing fields (toolbar search, global From/To) — never a restyled "compact" variant.
+- 2026-11-20 [filter] "Columns that had a filter icon" = what the header *rendered* on main (Bills: Payee, Source), not every case
+  the click handler accepted (it also listed status/method/…). Ask before widening a UI to "every" column.

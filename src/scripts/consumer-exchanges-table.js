@@ -506,27 +506,16 @@
   }
 
   // ── Column header filters (column-filter.js, TCDM-5238) ──
-  // Every global-filter category gets a header icon with its own dropdown; both filters share the applied values.
-  var COLUMN_FILTER_PANELS = {}; // column key → filter category
-  Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
-    COLUMN_FILTER_PANELS[FILTER_CATEGORY_COLUMNS[panel]] = panel;
-  });
+  // Header icons on Payment Method and Status, like SMART Exchange Payments; both filters share the applied values.
+  var COLUMN_FILTER_PANELS = { paymentMethod: 'method', status: 'status' }; // column key → filter category
   var COLUMN_FILTER_LISTS = {
-    customer: { set: 'appliedSelectedCustomers', wrap: 'sx-table-filter-customers', search: 'Search payer' },
     status: { set: 'appliedSelectedStatuses', wrap: 'sx-table-filter-statuses' },
-    method: { set: 'appliedSelectedMethods', wrap: 'sx-table-filter-methods' },
-    failure_reason: { set: 'appliedSelectedFailureReasons', wrap: 'sx-table-filter-failure-reasons' }
+    method: { set: 'appliedSelectedMethods', wrap: 'sx-table-filter-methods' }
   };
 
   function isColumnFilterActive(panel) {
     var list = COLUMN_FILTER_LISTS[panel];
-    if (list) return !!(tableFilterState[list.set] && tableFilterState[list.set].size);
-    if (isDateCategory(panel)) {
-      var range = getDateFields(panel);
-      return !!(range.appliedInitiatedDateFrom || range.appliedInitiatedDateTo);
-    }
-    if (panel === 'amount') return tableFilterState.appliedAmountMin !== '' || tableFilterState.appliedAmountMax !== '';
-    return false;
+    return !!(list && tableFilterState[list.set] && tableFilterState[list.set].size);
   }
 
   function columnFilterLabel(panel) {
@@ -4399,28 +4388,11 @@
         describe: function (panel) {
           copyAppliedFiltersToDraft();
           syncTableFilterUi();
-          var title = columnFilterLabel(panel);
           var list = COLUMN_FILTER_LISTS[panel];
-          if (list) {
-            return { title: title, type: 'list', search: list.search, options: window.ColumnFilter.optionsFrom(document.getElementById(list.wrap)) };
-          }
-          if (isDateCategory(panel)) {
-            var range = getDateFields(panel);
-            return { title: title, type: 'date', from: range.appliedInitiatedDateFrom, to: range.appliedInitiatedDateTo };
-          }
-          return { title: title, type: 'amount', min: tableFilterState.appliedAmountMin, max: tableFilterState.appliedAmountMax };
+          return { title: columnFilterLabel(panel), options: window.ColumnFilter.optionsFrom(document.getElementById(list.wrap)) };
         },
-        apply: function (panel, value) {
-          var list = COLUMN_FILTER_LISTS[panel];
-          if (list) tableFilterState[list.set] = new Set(value);
-          else if (isDateCategory(panel)) {
-            var range = getDateFields(panel);
-            range.appliedInitiatedDateFrom = value.from || '';
-            range.appliedInitiatedDateTo = value.to || '';
-          } else if (panel === 'amount') {
-            tableFilterState.appliedAmountMin = value.min || '';
-            tableFilterState.appliedAmountMax = value.max || '';
-          }
+        apply: function (panel, values) {
+          tableFilterState[COLUMN_FILTER_LISTS[panel].set] = new Set(values);
           copyAppliedFiltersToDraft();
           refreshTableForActiveTab();
         }

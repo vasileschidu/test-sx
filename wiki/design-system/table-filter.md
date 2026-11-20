@@ -51,17 +51,17 @@ current implementations. TODO(confirm): check against the Figma table filter in 
 
 ## Column filter (header icon)
 
-Every column that is a category of the table's filter has a funnel icon in its header (TCDM-5238). The icon opens a
-small dropdown **under that header**, not the global panel. Decided by Andrian on 2026-11-20:
+Some list columns have a funnel icon in their header (TCDM-5238). The icon opens a small dropdown **under that header**,
+not the global panel. Decided by Andrian on 2026-11-20:
 
 1. **One filter set.** The column filter and the global filter edit the same applied filters. Ticking Status = Paid in
    the column shows it ticked in the global panel, as a chip and in the Filter count, and the other way round.
-   Clearing it in one place (Clear, Reset + Apply, or the chip ×) clears it everywhere.
-2. **Which columns:** every column that is a category in that table's global filter (Hub: Amount, Payee, Payment Method,
-   Source, Due Date, Date Initiated, Payment Date, Status, Failure Reason; Exchange: Amount, Vendor Entry, Customer,
-   Date Initiated, Date Processed, Payment Method, Status, Failure Reason; Consumer: Amount, Payer, Date Initiated,
-   Date Processed, Payment Method, Status, Failure Reason). Hidden columns show no icon; the global filter still lists them.
-3. **Apply-based** (Andrian's review, 2026-11-20, replaces "applies immediately"): ticking a box or typing a date / amount
+   Clearing it in one place (Reset + Apply in either, or the chip ×) clears it everywhere.
+2. **Which columns** (Andrian's second review, 2026-11-20): only the columns that already had a header icon before the
+   ticket, on every tab where that column shows. **Hub Bills & Payables: Payee, Source. SMART Exchange Payments: Payment
+   Method, Status. Consumer Payments Received: Payment Method, Status** (same as SMART Exchange). No icon on Amount or
+   date columns. The global filter keeps all its categories.
+3. **Apply-based** (Andrian's review, 2026-11-20, replaces "applies immediately"): ticking a box
    only changes the dropdown's draft. The table, chips, count and shared state change on **Apply**, which also closes it.
    **Reset** clears this column's draft and, like the global panel's Reset, takes effect only with Apply.
    Esc or an outside click closes the dropdown and discards the draft.
@@ -70,11 +70,10 @@ small dropdown **under that header**, not the global panel. Decided by Andrian o
 |---|---|
 | Icon | Gray funnel; **blue on a blue-100 tile while that column has an applied filter**; gray tile while its dropdown is open |
 | Dropdown | `w-60` card under the icon, right edges aligned. **No title** (the Figma "Column Filters" `12596:14256` title and X are not used). On phones (< 640px) a bottom sheet with a backdrop, like the global filter |
-| List columns | Checkboxes with the same values and order as the global panel; the toolbar search field on the long lists (Payee, Vendor Entry, Customer, Payer) |
-| Date columns | The global panel's From / To fields with the shared calendar (`DateRangeCalendar`). Apply waits until both fields are empty or complete dates |
-| Amount | The global panel's From / To fields with the "$" prefix; either can stay empty. US money format in both filters (`ColumnFilter.attachAmount`): "121,321,321" while typing, "1,234.50" on blur, digits and one "." only, max 2 decimals, paste cleaned; the filter uses the plain number |
+| List columns | Checkboxes with the same values and order as the global panel; the toolbar search field on Payee (the long list) |
+| Amount (global panel only) | From / To with the "$" prefix; US money format (`ColumnFilter.attachAmount`): "121,321,321" while typing, "1,234.50" on blur, digits and one "." only, max 2 decimals, paste cleaned; the filter uses the plain number |
 | Footer | The global panel's footer: full-width divider, **Reset** (secondary) + **Apply** (primary). Reset is disabled when the draft is empty; Apply is disabled while the draft equals the applied filter |
-| Closing | Apply (focus back to the icon), Esc (first closes an open calendar; focus back to the icon), outside click, the icon again, or tabbing out. Everything except Apply discards the draft |
+| Closing | Apply (focus back to the icon), Esc (focus back to the icon), outside click, the icon again, or tabbing out. Everything except Apply discards the draft |
 
 Code: `src/scripts/column-filter.js` (`ColumnFilter`), wired in each table script with `describe` / `apply` / `isActive`
 over that table's applied filter state.

@@ -1521,33 +1521,17 @@
   }
 
   // ── Column header filters (column-filter.js) ──
-  // Same filter set as the global filter: the dropdown reads and writes the applied values,
-  // then copies them into the global panel's draft so both always show the same selection.
-  var COLUMN_FILTER_PANELS = {}; // column key → filter category
-  Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
-    COLUMN_FILTER_PANELS[FILTER_CATEGORY_COLUMNS[panel]] = panel;
-  });
+  // Only the columns that had a header filter icon before TCDM-5238 (Payee, Source). Same filter set as the
+  // global filter: Apply writes the applied values, then copies them into the global panel's draft.
+  var COLUMN_FILTER_PANELS = { payeeName: "payee", source: "source" }; // column key → filter category
   var COLUMN_FILTER_LISTS = {
     payee: { set: "appliedSelectedPayees", wrap: "filterPayeesWrap", search: "Search payee" },
     source: { set: "appliedSelectedSources", wrap: "filterSourcesWrap" },
-    status: { set: "appliedSelectedStatuses", wrap: "filterStatusesWrap" },
-    method: { set: "appliedSelectedMethods", wrap: "filterMethodsWrap" },
-    failure_reason: { set: "appliedSelectedFailureReasons", wrap: "filterFailureReasonsWrap" },
-  };
-  var COLUMN_FILTER_DATES = {
-    due_date: ["appliedDueDateFrom", "appliedDueDateTo"],
-    initiated_date: ["appliedInitiatedDateFrom", "appliedInitiatedDateTo"],
-    payment_date: ["appliedPaymentDateFrom", "appliedPaymentDateTo"],
   };
 
   function isColumnFilterActive(panel) {
     var list = COLUMN_FILTER_LISTS[panel];
-    if (list) return !!(state[list.set] && state[list.set].size);
-    var date = COLUMN_FILTER_DATES[panel];
-    if (date) return !!(state[date[0]] || state[date[1]]);
-    if (panel === "amount")
-      return state.appliedAmountMin !== "" || state.appliedAmountMax !== "";
-    return false;
+    return !!(list && state[list.set] && state[list.set].size);
   }
 
   function bindColumnFilters() {
@@ -1557,31 +1541,15 @@
       describe: function (panel) {
         copyAppliedFiltersToDraft();
         syncFilterUi();
-        var title = getFilterCategoryLabel(panel);
         var list = COLUMN_FILTER_LISTS[panel];
-        if (list)
-          return {
-            title: title,
-            type: "list",
-            search: list.search,
-            options: window.ColumnFilter.optionsFrom(refs[list.wrap]),
-          };
-        var date = COLUMN_FILTER_DATES[panel];
-        if (date)
-          return { title: title, type: "date", from: state[date[0]], to: state[date[1]] };
-        return { title: title, type: "amount", min: state.appliedAmountMin, max: state.appliedAmountMax };
+        return {
+          title: getFilterCategoryLabel(panel),
+          search: list.search,
+          options: window.ColumnFilter.optionsFrom(refs[list.wrap]),
+        };
       },
-      apply: function (panel, value) {
-        var list = COLUMN_FILTER_LISTS[panel];
-        var date = COLUMN_FILTER_DATES[panel];
-        if (list) state[list.set] = new Set(value);
-        else if (date) {
-          state[date[0]] = value.from || "";
-          state[date[1]] = value.to || "";
-        } else if (panel === "amount") {
-          state.appliedAmountMin = value.min || "";
-          state.appliedAmountMax = value.max || "";
-        }
+      apply: function (panel, values) {
+        state[COLUMN_FILTER_LISTS[panel].set] = new Set(values);
         copyAppliedFiltersToDraft();
         state.currentPage = 1;
         renderAll();
@@ -3944,7 +3912,7 @@
           var headerTextClass =
             "text-xs font-medium uppercase tracking-[0.6px] text-gray-500 dark:text-gray-400";
           var alignEnd = col.key === "amount";
-          // Every column that is a global-filter category gets its own dropdown (TCDM-5238).
+          // Header filter icons: only Payee and Source (TCDM-5238).
           var filterPanel = COLUMN_FILTER_PANELS[col.key] || "";
           var sortButton = col.sortable
             ? '<button type="button" data-sort-key="' +
