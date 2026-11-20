@@ -59,7 +59,7 @@
     { key: "expires", label: "Expires", sortable: true },
     { key: "network", label: "Payment Network", sortable: true },
     { key: "createdAt", label: "Created", sortable: true },
-    { key: "status", label: "Status", sortable: true, align: "right" },
+    { key: "status", label: "Status", sortable: true },
   ];
 
   // Filter categories = filterable column headers (table-filter.md rule 2/3). Card Number is a
@@ -84,6 +84,8 @@
 
   var state = {
     query: "",
+    colOpen: false,
+    colDraft: new Set(),
     sortKey: "",
     sortDirection: "",
     page: 1,
@@ -278,6 +280,16 @@
     return " px-3" + (col.align === "right" ? " text-right" : " text-left");
   }
 
+  function colFilterTrigger() {
+    return (
+      '<button type="button" data-cm-col-filter aria-label="Filter Status" aria-haspopup="true" aria-expanded="' +
+      (state.colOpen ? "true" : "false") +
+      '" class="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
+      tableIcon("filter-funnel.svg", 14, 14) +
+      "</button>"
+    );
+  }
+
   function headerHtml() {
     var cells = COLUMNS.map(function (col) {
       var right = col.align === "right";
@@ -293,6 +305,7 @@
         '" class="group inline-flex cursor-pointer items-center gap-1 rounded-sm ' + text +
         ' focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600">' +
         "<span>" + esc(col.label) + "</span>" + sortBadge(current) + "</button>" +
+        (col.key === "status" ? colFilterTrigger() : "") +
         "</div></th>"
       );
     }).join("");
@@ -525,6 +538,19 @@
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg></button>' +
     "</div>";
 
+  // Status column filter panel: copied from the SMART Cards list (one category, no left list).
+  var COL_PANEL =
+    '<div data-cm-col-menu role="dialog" aria-label="Filter by Status" class="pointer-events-none invisible fixed z-60 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white opacity-0 shadow-lg ring-1 ring-black/5 transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:ring-white/10">' +
+    '<div class="p-4">' +
+    '<div class="flex items-center justify-between">' +
+    '<p class="text-sm/5 font-medium text-gray-700 dark:text-gray-200">Status</p>' +
+    '<button type="button" data-cm-col-select-all class="' + LINK_BTN + '">Select all</button></div>' +
+    '<div class="mt-2 mb-3 h-px bg-gray-200 dark:bg-white/10"></div>' +
+    '<div data-cm-col-list class="flex flex-col gap-2"></div></div>' +
+    '<div class="flex items-center justify-end gap-4 border-t border-gray-200 bg-white p-3 dark:border-white/10 dark:bg-gray-800">' +
+    '<button type="button" data-cm-col-reset class="' + FOOTER_RESET + '">Reset</button>' +
+    '<button type="button" data-cm-col-apply class="' + FOOTER_APPLY + '">Apply</button></div></div>';
+
   function shellHtml() {
     return (
       '<div data-cm-linked-list>' +
@@ -547,7 +573,7 @@
       '<div data-table-scroll class="w-full max-w-full overflow-x-auto px-3 pt-2">' +
       '<table data-cm-linked-table class="w-full min-w-max table-auto border-separate border-spacing-0"></table></div>' +
       '<div data-pagination class="border-t border-gray-200 bg-white px-6 py-4 dark:border-white/10 dark:bg-gray-900"></div>' +
-      filterMenuHtml() +
+      filterMenuHtml() + COL_PANEL +
       "</div>"
     );
   }
@@ -836,6 +862,7 @@
       if (chevron) chevron.classList.toggle("rotate-180", !!open);
     }
     if (open) {
+      if (state.colOpen) setColOpen(false);
       state.draft = cloneFilters(state.applied);
       renderFilterLists();
       writeDateInputs();
@@ -857,6 +884,101 @@
       });
       if (opts && opts.restoreFocus && refs.filterBtn) refs.filterBtn.focus();
     }
+  }
+
+  /* ---------- Status column filter (shares state.applied.status with the global Filter) ---------- */
+
+  function colRefs() {
+    return {
+      menu: mount.querySelector("[data-cm-col-menu]"),
+      list: mount.querySelector("[data-cm-col-list]"),
+      apply: mount.querySelector("[data-cm-col-apply]"),
+      reset: mount.querySelector("[data-cm-col-reset]"),
+      trigger: refs.table && refs.table.querySelector("[data-cm-col-filter]"),
+    };
+  }
+
+  function syncColButtons() {
+    var c = colRefs();
+    if (c.reset) c.reset.disabled = state.colDraft.size === 0;
+    if (c.apply) c.apply.disabled = sameSet(state.colDraft, state.applied.status);
+  }
+
+  function renderColList() {
+    var c = colRefs();
+    if (!c.list || !window.TableUi) return;
+    var counts = {};
+    allCards().forEach(function (card) {
+      counts[card.status] = (counts[card.status] || 0) + 1;
+    });
+    c.list.innerHTML = ["active", "inactive"].map(function (key) {
+      return window.TableUi.filterCheckbox({
+        id: "cm-linked-col-status-" + key,
+        label: STATUS[key].label,
+        countText: String(counts[key] || 0),
+        value: key,
+        checked: state.colDraft.has(key),
+      });
+    }).join("");
+    syncColButtons();
+  }
+
+  function setColOpen(open, opts) {
+    var c = colRefs();
+    if (!c.menu) return;
+    state.colOpen = !!open;
+    if (c.trigger) c.trigger.setAttribute("aria-expanded", open ? "true" : "false");
+    var hide = ["invisible", "opacity-0", "pointer-events-none"];
+    if (open) {
+      if (state.filterOpen) setFilterOpen(false);
+      state.colDraft = new Set(Array.from(state.applied.status));
+      renderColList();
+      if (c.trigger) {
+        var rect = c.trigger.getBoundingClientRect();
+        var width = c.menu.offsetWidth || 288;
+        var left = Math.min(Math.max(rect.right - width, 16), window.innerWidth - width - 16);
+        c.menu.style.left = Math.round(left) + "px";
+        c.menu.style.top = Math.round(rect.bottom + 8) + "px";
+      }
+      hide.forEach(function (k) { c.menu.classList.remove(k); });
+      var first = c.menu.querySelector("input[type='checkbox']");
+      if (first) first.focus();
+    } else {
+      hide.forEach(function (k) { c.menu.classList.add(k); });
+      if (opts && opts.restoreFocus && c.trigger) c.trigger.focus();
+    }
+  }
+
+  function applyColFilter() {
+    state.applied.status = new Set(Array.from(state.colDraft));
+    state.page = 1;
+    setColOpen(false);
+    renderTable();
+    var t = colRefs().trigger;
+    if (t) t.focus();
+  }
+
+  function onColClick(target) {
+    if (target.closest("[data-cm-col-filter]")) {
+      setColOpen(!state.colOpen);
+      return true;
+    }
+    if (target.closest("[data-cm-col-select-all]")) {
+      ["active", "inactive"].forEach(function (k) { state.colDraft.add(k); });
+      renderColList();
+      return true;
+    }
+    if (target.closest("[data-cm-col-reset]")) {
+      state.colDraft.clear();
+      renderColList();
+      return true;
+    }
+    if (target.closest("[data-cm-col-apply]")) {
+      var c = colRefs();
+      if (c.apply && !c.apply.disabled) applyColFilter();
+      return true;
+    }
+    return false;
   }
 
   function applyFilter() {
@@ -918,6 +1040,7 @@
   function onClick(event) {
     var target = event.target;
     if (!refs.root || !refs.root.contains(target)) return;
+    if (onColClick(target)) return;
     if (target.closest("[data-cm-linked-search-clear]")) {
       clearSearch();
       return;
@@ -1043,6 +1166,11 @@
       }
       return;
     }
+    if (event.key === "Escape" && state.colOpen) {
+      event.stopPropagation();
+      setColOpen(false, { restoreFocus: true });
+      return;
+    }
     if (event.key === "Escape" && state.filterOpen) {
       // A calendar open inside the panel closes first (its own popover handles Escape).
       var openCalendar = refs.menu.querySelector("[popover]:popover-open");
@@ -1059,6 +1187,14 @@
   }
 
   function onChange(event) {
+    var colInput = event.target.closest && event.target.closest("[data-cm-col-menu] input[type='checkbox'][data-filter-value]");
+    if (colInput) {
+      var v = colInput.getAttribute("data-filter-value");
+      if (colInput.checked) state.colDraft.add(v);
+      else state.colDraft.delete(v);
+      syncColButtons();
+      return;
+    }
     var input = event.target.closest && event.target.closest("input[type='checkbox'][data-filter-value]");
     if (!input || !refs.menu || !refs.menu.contains(input)) return;
     var list = input.closest("[data-filter-list]");
@@ -1104,6 +1240,10 @@
   }
 
   function onDocumentClick(event) {
+    if (state.colOpen) {
+      var cm0 = mount.querySelector("[data-cm-col-menu]");
+      if (!(cm0 && cm0.contains(event.target)) && !(event.target.closest && event.target.closest("[data-cm-col-filter]"))) setColOpen(false);
+    }
     if (!state.filterOpen || !refs.menu) return;
     var target = event.target;
     if (refs.menu.contains(target)) return;
@@ -1119,6 +1259,7 @@
     document.addEventListener("click", onDocumentClick);
     window.addEventListener("resize", function () {
       if (state.filterOpen) positionMenu();
+      if (state.colOpen) setColOpen(false);
     });
     window.addEventListener(
       "scroll",
@@ -1128,6 +1269,7 @@
       true,
     );
     cm.on("route", function () {
+      if (state.colOpen) setColOpen(false);
       if (state.filterOpen) setFilterOpen(false);
     });
     cm.on("data-change", function () {
