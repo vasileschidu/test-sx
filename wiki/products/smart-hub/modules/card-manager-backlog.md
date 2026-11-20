@@ -98,7 +98,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
 
 - **Type:** Story · **Label:** card-manager, component
 - **User story:** As a user moving money, I want to pick an account from a list grouped into Cards and Bank Accounts, with each balance shown, so that I choose the right one.
-- **Context:** Used by Add Funds ("Transfer from"), Transfer Funds ("Send to") and Close / Remove ("Choose destination account"). Figma [`8014:104764`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8014-104764), [`8016:152677`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8016-152677). Wiki §4.4.
+- **Context:** Used by Add Funds ("Transfer from"), Transfer Funds ("From") and Close / Remove ("Choose destination account"). Figma [`8014:104764`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8014-104764), [`8016:152677`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8016-152677). Wiki §4.4.
 - **Scope:**
   - Owns: `src/scripts/card-manager-account-picker.js`.
   - Touches shared: `.claude/skills/components/SKILL.md` (adds the component entry).
@@ -128,8 +128,8 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
 - **Scope:** Owns `src/scripts/card-manager-list.js`. Touches shared: none.
 - **Reuse:** Bills table patterns (sort, pagination), `TableSkeleton`, `TableUi.emptyState`, shared table filter (`wiki/design-system/table-filter.md`), Badge.
 - **Acceptance criteria:**
-  - AC-1: The header shows **SMART Cards**, "Instantly generate and fund cards with cashback for customer payments." and **+ Create New**.
-  - AC-2: The columns are Card Number (logo + ••••last4), Card Name, Available Balance (`$2,950.00 USD`, right-aligned), Expires, Created, Status. Every column except Available Balance is sortable.
+  - AC-1: The header shows **SMART Cards**, "Instantly generate and fund virtual cards with cashback for customer payments.", a Search field and **+ Create New** (both 40 px tall).
+  - AC-2: The columns are Card Number (`•••• last4`), Card Name, Expires, Payment Network (flag + name), Created, Status. All are sortable. With no sort chosen, Active cards come first.
   - AC-3: Status badges: Active = emerald, Blocked = amber, Expired = red, Closed = gray. Expired and Closed rows are greyed.
   - AC-4: The Status filter uses the shared filter. Its category is labelled exactly "Status".
   - AC-5: Pagination shows "Rows per Page" and "Showing x - y of n results".
@@ -223,7 +223,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
 - **Scope:** Owns `src/scripts/card-manager-funds.js` (start after S4 is merged).
 - **Reuse:** the S4 modal in `transfer` mode.
 - **Acceptance criteria:**
-  - AC-1: ⋯ › Transfer Funds opens the modal: **Send to** (C1, excluding this card); **Enter Amount** with "Use max amount" (= this card's available balance); the helper shows **this card's** available balance; the checkbox "Send $X from <this card> to <destination>"; Cancel / **Transfer**.
+  - AC-1: ⋯ › Transfer Funds opens the modal: **From** (C1, excluding this card); **Enter Amount** with "Max amount" (= this card's available balance); the helper shows **this card's** available balance; the checkbox "Send $X from <this card> to <destination>"; Cancel / **Transfer**.
   - AC-2: The same three errors as S4. Insufficient funds is checked against this card.
   - AC-3: On success: "Transfer Transaction Submitted" / "You've successfully sent $X from <this card> to <destination>" / **Done**. Balances update.
   - AC-4: Light and dark, keyboard.
@@ -305,7 +305,7 @@ The data file `card-manager.json` is created in S0 with **all** fake data. Later
 - **Context:** Wiki §4.10. Figma [`8019:120161`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8019-120161), empty [`8019:119866`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8019-119866).
 - **Scope:** Owns `src/scripts/card-manager-bills.js`. It reuses `bills-payables-table.js` **read-only**. If it needs a hook there, open a separate ticket.
 - **Acceptance criteria:**
-  - AC-1: The columns are Amount, Bill Reference, Payee, Payment Type, Source, Due Date, Status, with the same badges and formats as Bills & Payables.
+  - AC-1: The columns are Amount, Bill Reference, Payee, Payment Type, Source, Due Date, Status, with the same badges, formats and font weights as Bills & Payables. Filters: funnel on Payment Type and Source only, each a single-column panel.
   - AC-2: The expanded row shows Notes, Attachments, Actions (Cancel Payment), Payment method details and Activity log, exactly as in Bills & Payables.
   - AC-3: The empty state shows "No Bill History" / "You don't have any bills" (`TableUi.emptyState`).
   - AC-4: **Export** in the header uses `TableExport` for this tab's rows.

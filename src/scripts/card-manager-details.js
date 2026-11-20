@@ -24,7 +24,7 @@
  * [data-cm-details-panel="bills"] / [data-cm-details-panel="transactions"].
  *
  * TODO(confirm), not in Figma: Closed card (badge only, no buttons); the revealed state
- * (label "Hide Details", real number and CVC); "Card not found"; Copy Admin Number feedback.
+ * (label "Hide Details", real number and CVC); "Card not found". Copy Admin Number is the Consumer My Cards button (gray icon, shared copyTextWithFeedback "Copied" tooltip).
  */
 (function () {
   "use strict";
@@ -98,12 +98,11 @@
   var ICON_DOTS =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path d="M3 10a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM8.5 10a1.5 1.5 0 1 1 3 0 1.5 1.5 0 0 1-3 0ZM15.5 8.5a1.5 1.5 0 1 0 0 3 1.5 1.5 0 0 0 0-3Z" /></svg>';
   var ICON_EYE =
-    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4"><path d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" /><path fill-rule="evenodd" clip-rule="evenodd" d="M.882 7.631A7.5 7.5 0 0 1 8 2.5c3.314 0 6.124 2.148 7.117 5.127.08.241.08.501 0 .742A7.5 7.5 0 0 1 8 13.5c-3.314 0-6.125-2.148-7.118-5.127a1.19 1.19 0 0 1 0-.742ZM11.5 8a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" /></svg>';
+    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 text-blue-500 dark:text-blue-400"><path d="M8 10a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" /><path fill-rule="evenodd" clip-rule="evenodd" d="M.882 7.631A7.5 7.5 0 0 1 8 2.5c3.314 0 6.124 2.148 7.117 5.127.08.241.08.501 0 .742A7.5 7.5 0 0 1 8 13.5c-3.314 0-6.125-2.148-7.118-5.127a1.19 1.19 0 0 1 0-.742ZM11.5 8a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" /></svg>';
   var ICON_EYE_SLASH =
-    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4"><path d="M2.354 1.646a.5.5 0 1 0-.708.708l12 12a.5.5 0 0 0 .708-.708l-12-12Z" /><path d="M15.117 8.369a7.46 7.46 0 0 1-1.754 2.873L11.298 9.176A3.5 3.5 0 0 0 8 4.5c-.413 0-.809.071-1.176.203L5.173 3.051A7.4 7.4 0 0 1 8 2.5c3.314 0 6.124 2.148 7.117 5.127.08.241.08.501 0 .742Z" /><path d="M4.5 8c0-.413.071-.809.203-1.176L2.637 4.758a7.46 7.46 0 0 0-1.755 2.873 1.19 1.19 0 0 0 0 .742C1.875 11.352 4.686 13.5 8 13.5c1 0 1.955-.196 2.827-.551L9.176 11.298A3.5 3.5 0 0 1 4.5 8Z" /></svg>';
+    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 text-blue-500 dark:text-blue-400"><path d="M2.354 1.646a.5.5 0 1 0-.708.708l12 12a.5.5 0 0 0 .708-.708l-12-12Z" /><path d="M15.117 8.369a7.46 7.46 0 0 1-1.754 2.873L11.298 9.176A3.5 3.5 0 0 0 8 4.5c-.413 0-.809.071-1.176.203L5.173 3.051A7.4 7.4 0 0 1 8 2.5c3.314 0 6.124 2.148 7.117 5.127.08.241.08.501 0 .742Z" /><path d="M4.5 8c0-.413.071-.809.203-1.176L2.637 4.758a7.46 7.46 0 0 0-1.755 2.873 1.19 1.19 0 0 0 0 .742C1.875 11.352 4.686 13.5 8 13.5c1 0 1.955-.196 2.827-.551L9.176 11.298A3.5 3.5 0 0 1 4.5 8Z" /></svg>';
   var ICON_COPY =
-    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>';
-
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M7 3.5A1.5 1.5 0 0 1 8.5 2h3.879a1.5 1.5 0 0 1 1.06.44l3.122 3.12A1.5 1.5 0 0 1 17 6.622V12.5a1.5 1.5 0 0 1-1.5 1.5h-1v-3.379a3 3 0 0 0-.879-2.121L10.5 5.379A3 3 0 0 0 8.379 4.5H7v-1Z" /><path d="M4.5 6A1.5 1.5 0 0 0 3 7.5v9A1.5 1.5 0 0 0 4.5 18h7a1.5 1.5 0 0 0 1.5-1.5v-5.879a1.5 1.5 0 0 0-.44-1.06L9.44 6.439A1.5 1.5 0 0 0 8.378 6H4.5Z" /></svg>';
   var mount = null;
   var current = null; // { id, view, revealed }
   var lastSignature = "";
@@ -139,6 +138,12 @@
     var m = /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/.exec(String(value || ""));
     if (!m) return "";
     return Number(m[3]) + " " + MONTHS[Number(m[2]) - 1] + " " + m[1] + ", " + m[4] + ":" + m[5];
+  }
+
+  function iconUrl(file) {
+    var path = window.location.pathname || "";
+    var at = path.indexOf("/src/pages/");
+    return (at >= 0 ? path.slice(0, at) : "") + "/assets/icons/" + file;
   }
 
   function assetUrl(file) {
@@ -249,63 +254,66 @@
 
   /** The 320x200 card (Figma): navy, square bottom corners, the info panel tucks under it. */
   function cardVisual(card, revealed) {
+    // Same "Card_VC" as the Consumer Portal My Cards page: flat #142435, 20px padding,
+    // Roboto Mono details, square bottom so the details panel tucks under it.
     var exp = mmyyyy(card.expires);
     var short = exp ? exp.slice(0, 3) + exp.slice(5) : "";
     var number = revealed && card.number ? esc(card.number) : "•••• •••• •••• " + esc(card.last4);
+    var network = String(card.network || "").toLowerCase();
     var mark;
-    if (String(card.network || "").toLowerCase() === "visa" && window.PPComponents) {
-      mark = window.PPComponents.getCardBrandLogoMarkup("visa");
+    if (network === "visa" && window.PPComponents && window.PPComponents.getCardBrandLogoMarkup) {
+      mark = '<span class="[&>img]:h-[22px] [&>img]:w-auto">' + window.PPComponents.getCardBrandLogoMarkup("visa", "large") + "</span>";
     } else {
-      mark = '<img src="' + assetUrl("card-mastercard-mark.svg") + '" alt="" width="35" height="22" class="h-5.5 w-auto" />';
+      mark = '<img src="' + iconUrl("mastercard-card-logo.svg") + '" alt="Mastercard" class="h-[22px] w-auto shrink-0" />';
     }
     return (
-      '<div data-cm-card-visual class="relative z-10 flex h-50 w-full max-w-80 flex-col overflow-hidden rounded-t-xl bg-[#142435] p-5 text-white">' +
-      '<div class="mt-auto flex flex-col">' +
-      '<p class="text-[28px]/8 font-bold">' + esc(amount(card.availableBalance)) + "</p>" +
-      '<div class="mt-2 flex flex-col gap-2">' +
-      '<p data-cm-card-number class="font-mono text-lg/6">' + number + "</p>" +
+      '<div data-cm-card-visual class="relative z-10 flex h-[200px] w-full max-w-80 flex-col justify-end overflow-hidden rounded-t-xl border-[0.94px] border-white/30 bg-[#142435] p-5 text-white shadow-lg font-[\'Roboto_Mono\',ui-monospace,monospace]">' +
+      '<div class="flex h-[108px] flex-col justify-end">' +
+      '<p class="font-[Inter] text-[28px] leading-8 font-bold tabular-nums">' + esc(amount(card.availableBalance)) + "</p>" +
+      '<div class="flex flex-col gap-2">' +
+      '<p data-cm-card-number class="text-lg/6 whitespace-nowrap">' + number + "</p>" +
       '<div class="flex items-center gap-1 pl-14">' +
-      '<span class="font-mono text-[8px]/[1] font-bold">VALID<br />THRU</span>' +
-      '<span class="font-mono text-sm/6">' + esc(short) + "</span></div></div>" +
-      '<div class="mt-4 flex h-9 items-end gap-4">' +
-      '<p class="min-w-0 flex-1 truncate font-mono text-sm/5 font-medium uppercase">' + esc(card.holder && card.holder.name) + "</p>" +
-      '<span class="flex shrink-0 items-end">' + mark + "</span></div></div></div>"
+      '<span class="text-[8px] leading-[normal] font-bold uppercase">Valid<br />Thru</span>' +
+      '<span class="text-sm/6">' + esc(short) + "</span></div></div></div>" +
+      '<div class="flex h-9 items-end gap-4">' +
+      '<span class="min-w-0 flex-1 truncate text-sm/5 font-medium uppercase">' + esc(card.holder && card.holder.name) + "</span>" +
+      mark + "</div></div>"
     );
   }
 
-  function infoRow(label, valueHtml, attr) {
+  function infoRow(label, valueHtml, attr, revealed) {
     return (
-      '<div class="flex items-center justify-between gap-2 text-sm/5">' +
-      '<span class="font-normal text-gray-500 dark:text-gray-400">' + esc(label) + "</span>" +
-      '<span class="flex items-center gap-1 text-gray-900 dark:text-gray-100"' + (attr ? " " + attr : "") + ">" + valueHtml + "</span></div>"
+      '<div class="flex items-center gap-4"><dt class="' + (revealed ? "" : "w-[120px] ") + 'shrink-0 text-sm/5 font-medium whitespace-nowrap text-gray-500 dark:text-gray-400">' + esc(label) + "</dt>" +
+      '<dd class="flex min-w-0 flex-1 items-center justify-end gap-1 text-sm/5 whitespace-nowrap text-gray-900 tabular-nums dark:text-white"' + (attr ? " " + attr : "") + ">" + valueHtml + "</dd></div>"
     );
   }
 
   function infoPanel(card, revealed) {
+    var pill = '<span class="inline-block h-[13px] w-8 rounded-full bg-gray-200 dark:bg-white/15"></span>';
     var number = revealed && card.number
       ? esc(card.number)
-      : BAR + BAR + BAR + '<span class="ml-0">' + esc(card.last4) + "</span>";
-    var cvc = revealed && card.cvc ? esc(card.cvc) : BAR;
+      : pill + pill + pill + '<span class="ml-1">' + esc(card.last4) + "</span>";
+    var cvc = revealed && card.cvc ? esc(card.cvc) : pill;
     return (
-      '<div class="-mt-4 flex w-full max-w-80 flex-col gap-3 rounded-lg border border-gray-200 bg-white px-3 pt-7 pb-3 dark:border-white/10 dark:bg-white/5">' +
-      '<div class="flex flex-col gap-2">' +
-      infoRow("Card Number", number, "data-cm-details-number") +
-      infoRow("Expires", esc(mmyyyy(card.expires))) +
-      infoRow("CVC", cvc, "data-cm-details-cvc") +
-      "</div>" +
-      '<div class="h-px bg-gray-200 dark:bg-white/10"></div>' +
-      '<div><button type="button" data-cm-details-reveal aria-pressed="' + revealed + '" class="' + LINK_BTN + '">' +
+      '<div class="-mt-4 flex w-full max-w-80 flex-col gap-3 rounded-lg border border-gray-200 px-3 pt-7 pb-3 dark:border-white/10">' +
+      '<dl class="flex flex-col gap-2">' +
+      infoRow("Card Number", number, "data-cm-details-number", revealed) +
+      infoRow("Expires", esc(mmyyyy(card.expires)), "", revealed) +
+      infoRow("CVC", cvc, "data-cm-details-cvc", revealed) +
+      "</dl>" +
+      '<div class="flex flex-col gap-3"><div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>' +
+      '<button type="button" data-cm-details-reveal aria-pressed="' + revealed + '" class="' + LINK_BTN + '">' +
       (revealed ? ICON_EYE_SLASH : ICON_EYE) + (revealed ? "Hide Details" : "Reveal Details") + "</button></div>" +
       "</div>"
     );
   }
 
-  function balanceCell(label, value, currency, first) {
+  function balanceCell(label, value, currency, first, muted) {
     return (
       '<div class="flex flex-1 flex-col gap-1 p-6' +
       (first ? "" : " border-t border-gray-200 sm:border-t-0 sm:border-l dark:border-white/10") + '">' +
       '<span class="text-sm/5 font-medium text-gray-500 dark:text-gray-400">' + esc(label) + "</span>" +
-      '<span class="flex items-baseline gap-1"><span class="text-2xl/8 font-semibold text-gray-900 dark:text-white">' + esc(amount(value)) + "</span>" +
+      '<span class="flex items-baseline gap-1"><span class="text-2xl/8 font-semibold tabular-nums ' + (muted ? "text-gray-500 dark:text-gray-400" : "text-gray-950 dark:text-white") + '">' + esc(amount(value)) + "</span>" +
       '<span class="text-base/6 font-normal text-gray-500 dark:text-gray-400">' + esc(currency || "USD") + "</span></span></div>"
     );
   }
@@ -318,11 +326,20 @@
     );
   }
 
+  // "Logo/Brand Flag" from the Consumer Portal My Cards page (navy 30x20, rounded 4px).
+  var MASTERCARD_FLAG = '<span role="img" aria-label="Mastercard" class="inline-flex h-5 w-[30px] items-center justify-center rounded bg-[#01326F]">' +
+    '<svg viewBox="0 0 20.3165 12.5581" fill="none" aria-hidden="true" class="h-[12.5px] w-[20.3px]">' +
+      '<path d="M12.9046 1.34278H7.41101V11.2155H12.9046V1.34278Z" fill="#FF5F00"/>' +
+      '<path d="M7.75981 6.28018C7.75879 5.32924 7.97417 4.39053 8.38963 3.53513C8.80509 2.67974 9.40973 1.9301 10.1578 1.34297C9.23157 0.615066 8.11926 0.162427 6.94797 0.0367839C5.77669 -0.0888595 4.59368 0.117561 3.53416 0.632454C2.47463 1.14735 1.58134 1.94994 0.956382 2.9485C0.33142 3.94706 0 5.1013 0 6.27931C0 7.45732 0.33142 8.61156 0.956382 9.61012C1.58134 10.6087 2.47463 11.4113 3.53416 11.9262C4.59368 12.4411 5.77669 12.6475 6.94797 12.5218C8.11926 12.3962 9.23157 11.9436 10.1578 11.2157C9.40997 10.6287 8.80546 9.87934 8.39001 9.02427C7.97456 8.16921 7.75906 7.23084 7.75981 6.28018Z" fill="#EB001B"/>' +
+      '<path d="M20.3165 6.27994C20.3165 7.45804 19.985 8.61235 19.3599 9.61095C18.7348 10.6095 17.8414 11.4121 16.7817 11.9269C15.7221 12.4418 14.539 12.648 13.3676 12.5222C12.1962 12.3964 11.0839 11.9435 10.1578 11.2154C10.9053 10.6279 11.5096 9.87837 11.9252 9.02326C12.3408 8.16814 12.5567 7.22981 12.5567 6.27907C12.5567 5.32833 12.3408 4.39 11.9252 3.53488C11.5096 2.67977 10.9053 1.9302 10.1578 1.34272C11.0839 0.614596 12.1962 0.161738 13.3676 0.0359141C14.539 -0.0899097 15.7221 0.116378 16.7817 0.631197C17.8414 1.14602 18.7348 1.94859 19.3599 2.94719C19.985 3.94578 20.3165 5.1001 20.3165 6.2782V6.27994Z" fill="#F79E1B"/>' +
+    '</svg></span>';
+
   function networkHtml(card) {
+    if (String(card.network || "").toLowerCase() === "mastercard") return MASTERCARD_FLAG;
     var pp = window.PPComponents;
     if (pp && pp.getCardBrandLogoMarkup) {
       // Figma flag is 29.8x20; the shared flag is 24x16 (1.25x).
-      return '<span class="inline-flex h-5 w-7.5 items-center"><span class="origin-left scale-125">' + pp.getCardBrandLogoMarkup(String(card.network || "mastercard").toLowerCase()) + "</span></span>";
+      return '<span class="inline-flex h-5 w-7.5 items-center overflow-hidden rounded"><span class="origin-left scale-125">' + pp.getCardBrandLogoMarkup(String(card.network || "mastercard").toLowerCase()) + "</span></span>";
     }
     return esc(card.network);
   }
@@ -332,18 +349,19 @@
     var holder = card.holder || {};
     return (
       '<div data-cm-details-panel="details" class="flex flex-col gap-6 lg:flex-row lg:items-start">' +
-      '<div class="flex w-full flex-col gap-4 lg:w-80 lg:shrink-0">' + cardVisual(card, revealed) + infoPanel(card, revealed) + "</div>" +
+      '<div class="flex w-full flex-col lg:w-80 lg:shrink-0">' + cardVisual(card, revealed) + infoPanel(card, revealed) + "</div>" +
       '<div class="hidden w-px self-stretch bg-gray-200 lg:block dark:bg-white/10"></div>' +
       '<div class="flex min-w-0 flex-1 flex-col gap-6 pb-6">' +
       '<div class="flex flex-col rounded-xl border border-gray-200 sm:flex-row dark:border-white/10">' +
       balanceCell("Available Balance", card.availableBalance, card.currency, true) +
-      balanceCell("Current Balance", card.currentBalance, card.currency, false) + "</div>" +
+      balanceCell("Current Balance", card.currentBalance, card.currency, false, true) + "</div>" +
       '<div class="flex flex-col gap-4">' +
       '<h3 class="border-b border-gray-200 pb-4 text-base/6 font-semibold text-gray-900 dark:border-white/10 dark:text-white">Card Details</h3>' +
       '<div class="flex flex-col gap-2">' +
       row("Admin Number",
-        '<span class="inline-flex items-center gap-1.5">' + esc(card.adminNumber) +
-        '<button type="button" data-cm-details-copy="' + esc(card.adminNumber) + '" class="inline-flex size-4.5 cursor-pointer items-center justify-center rounded-sm text-gray-400 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:text-gray-300 dark:focus-visible:outline-blue-400"><span class="sr-only">Copy Admin Number</span>' + ICON_COPY + "</button></span>") +
+        '<span class="inline-flex items-center gap-2 tabular-nums">' + esc(card.adminNumber) +
+        '<button type="button" data-cm-details-copy="' + esc(card.adminNumber) + '" aria-label="Copy admin number" class="cursor-pointer rounded-md p-0.5 text-gray-400 hover:bg-gray-100 hover:text-gray-600 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:hover:text-gray-300">' + ICON_COPY + "</button>" +
+        "</span>") +
       row("Name on Card", esc(holder.name)) +
       row("Card Name", esc(card.name)) +
       row("Created", esc(created(card.createdAt))) +
@@ -463,12 +481,11 @@
       if (again) again.focus();
       return;
     }
-    var copy = event.target.closest("[data-cm-details-copy]");
-    if (copy) {
-      var text = copy.getAttribute("data-cm-details-copy");
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).catch(function () {});
-      }
+    var copyBtn = event.target.closest("[data-cm-details-copy]");
+    if (copyBtn) {
+      var text = copyBtn.getAttribute("data-cm-details-copy");
+      if (window.copyTextWithFeedback) window.copyTextWithFeedback(text, copyBtn);
+      else if (navigator.clipboard) navigator.clipboard.writeText(text);
       return;
     }
     var action = event.target.closest("[data-cm-details-action]");

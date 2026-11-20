@@ -13,7 +13,7 @@
  *     Due Date, Status). bills-payables-table.js is a 5k-line page script and cannot be loaded
  *     as a module, so its patterns (sort arrows, badges, expand row, pagination, filter panel)
  *     are rebuilt here from the same classes / TableUi / TableSkeleton.
- *   - Filter funnels on Payee, Payment Type, Source, Status (labelled exactly like the headers).
+ *   - Filter funnels on Payment Type and Source only; each opens a single-column panel (same as the SMART Cards list Status filter).
  *   - Expanded row: Notes, Status, Attachments, Actions (Cancel Payment), Payment Method Details,
  *     Activity Log; each section only when the bill has data for it.
  *   - Header Export (card-manager-details.js, event `export-history` { cardId, view }) opens
@@ -24,8 +24,7 @@
  *
  * TODO(confirm), not in Figma: "Cancel Payment" flow (emits CardManager `cancel-bill`); the lock
  * icon Figma shows before cross-border amounts (Bills & Payables has none); Payee search in the
- * filter; text for "filters returned nothing"; "(EST)" after activity dates; where the
- * "#2345REQ3" link goes; the 4th tab "Card Reconciliation" (out of R1, not built).
+ * filter; text for "filters returned nothing"; the 4th tab "Card Reconciliation" (out of R1, not built).
  */
 (function () {
   "use strict";
@@ -480,11 +479,11 @@
     { key: "expand", type: "expand" },
     { key: "amount", label: "Amount", sortable: true, align: "right" },
     { key: "billNumber", label: "Bill Reference", sortable: true, twoLine: true },
-    { key: "payeeName", label: "Payee", sortable: true, filter: "payeeName" },
+    { key: "payeeName", label: "Payee", sortable: true },
     { key: "paymentType", label: "Payment Type", filter: "paymentType" },
     { key: "source", label: "Source", filter: "source" },
     { key: "dueDate", label: "Due Date", sortable: true },
-    { key: "status", label: "Status", filter: "status" },
+    { key: "status", label: "Status" },
   ];
   // Filter categories = the columns that have a funnel, labelled exactly like the header.
   var CATEGORIES = COLUMNS.filter(function (c) {
@@ -525,16 +524,11 @@
   var LINK =
     "rounded-sm text-blue-600 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300";
   var FOOTER_RESET =
-    "h-7 cursor-pointer rounded border border-gray-300 bg-white px-2 text-sm/5 font-semibold text-gray-500 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10";
+    "h-7 cursor-pointer rounded border border-gray-300 bg-white px-2 text-sm/5 font-semibold text-gray-700 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-white dark:hover:bg-white/10";
   var FOOTER_APPLY =
     "h-7 cursor-pointer rounded bg-blue-600 px-2 text-sm/5 font-semibold text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600";
   var LINK_BTN =
     "cursor-pointer rounded px-1.5 py-0.5 text-xs/4 font-semibold text-blue-600 transition-colors hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:bg-white/10";
-  var NAV_ITEM =
-    "flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm/5 font-medium text-gray-800 transition-colors hover:bg-gray-100 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-200 dark:hover:bg-white/10";
-  var NAV_ITEM_ON = " bg-gray-100 dark:bg-white/10";
-  var NAV_BADGE =
-    "-my-0.5 inline-flex items-center rounded-full border border-blue-200 bg-blue-100 px-2 py-0.5 text-xs/4 font-medium text-blue-800 dark:border-blue-400/20 dark:bg-blue-400/10 dark:text-blue-400";
 
   var state = null; // per open card: see newState()
   var rendering = false;
@@ -683,42 +677,56 @@
     );
   }
 
-  var DOT_CLASS = {
-    blue: "border-blue-500 text-blue-500 dark:border-blue-400 dark:text-blue-400",
-    green: "border-emerald-500 text-emerald-500 dark:border-emerald-400 dark:text-emerald-400",
-    red: "border-red-500 text-red-500 dark:border-red-400 dark:text-red-400",
-    gray: "border-gray-400 text-gray-400 dark:border-gray-500 dark:text-gray-500",
+  // Activity Log = the SMART Exchange one (exchanges-table.js buildActivityLogItem, icon timeline, Figma Activity Log
+  // 38663:249542): 14px status icon (clock = scheduled, ring = initiated / processing, check = paid, alert =
+  // exception), title text-base/6 font-medium, description text-sm/5 gray-700 with " · date" inline.
+  // Icons are copied from exchanges-table.js (their fills are Figma's).
+  var ACTIVITY_ICON = {
+    yellow: '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 12.6C10.0928 12.6 12.6 10.0928 12.6 7C12.6 3.90721 10.0928 1.4 7 1.4C3.90721 1.4 1.4 3.90721 1.4 7C1.4 10.0928 3.90721 12.6 7 12.6ZM7.7 4.2C7.7 3.8134 7.3866 3.5 7 3.5C6.6134 3.5 6.3 3.8134 6.3 4.2V7C6.3 7.18565 6.37375 7.3637 6.50503 7.49497L8.48492 9.47487C8.75829 9.74824 9.20151 9.74824 9.47487 9.47487C9.74824 9.20151 9.74824 8.75829 9.47487 8.48492L7.7 6.71005V4.2Z" fill="#F59E0B"/></svg>',
+    gray: '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><g fill="#6B7280"><path d="M7.35005 12.5892C7.15712 12.6011 6.99999 12.4433 6.99999 12.25V11.55C6.99999 11.3567 7.15724 11.2015 7.34988 11.1856C9.50577 11.0078 11.2 9.20176 11.2 6.99999C11.2 4.79823 9.50577 2.99216 7.34988 2.81436C7.15724 2.79847 6.99999 2.64329 6.99999 2.44999V1.74999C6.99999 1.55669 7.15712 1.39886 7.35005 1.41076C10.2798 1.59146 12.6 4.02477 12.6 6.99999C12.6 9.97522 10.2798 12.4085 7.35005 12.5892Z"/><path d="M5.5433 10.9405C5.74655 11.0157 5.85735 11.245 5.76843 11.4426L5.48432 12.0739C5.41196 12.2348 5.23079 12.3177 5.06531 12.2568C4.81773 12.1657 4.57837 12.0575 4.34864 11.9338C4.19345 11.8503 4.13551 11.6597 4.20784 11.499L4.49194 10.8677C4.58088 10.67 4.82604 10.6009 5.01701 10.7033C5.18586 10.7939 5.36162 10.8733 5.5433 10.9405Z"/><path d="M4.34865 2.06619C4.19346 2.14976 4.13552 2.3403 4.20785 2.50103L4.49195 3.13236C4.58089 3.33 4.82604 3.39914 5.01702 3.29666C5.18587 3.20606 5.36163 3.12667 5.54331 3.05949C5.74655 2.98433 5.85736 2.75501 5.76843 2.5574L5.48433 1.92607C5.41197 1.76526 5.2308 1.68227 5.06532 1.74319C4.81774 1.83433 4.57838 1.94247 4.34865 2.06619Z"/><path d="M1.41352 6.6076C1.40479 6.7337 1.40024 6.86095 1.4 6.98921V7.0108C1.40024 7.13907 1.40479 7.26632 1.41352 7.39243C1.42572 7.56856 1.57583 7.70002 1.75238 7.70002H2.44445C2.66088 7.70002 2.82449 7.50533 2.8098 7.2894C2.80329 7.19378 2.79999 7.09728 2.79999 7.00001C2.79999 6.90274 2.80329 6.80625 2.8098 6.71063C2.82449 6.4947 2.66088 6.30002 2.44445 6.30002H1.75238C1.57583 6.30002 1.42571 6.43147 1.41352 6.6076Z"/><path d="M2.5302 10.3741C2.63653 10.5147 2.83376 10.5429 2.98159 10.4468L3.56193 10.0696C3.74358 9.95155 3.77448 9.69884 3.64407 9.52585C3.5283 9.37227 3.42282 9.21049 3.32867 9.04153C3.22327 8.85239 2.97989 8.77818 2.79835 8.89619L2.21796 9.27344C2.06998 9.36962 2.01573 9.56156 2.10144 9.71583C2.22914 9.94566 2.37254 10.1656 2.5302 10.3741Z"/><path d="M2.79835 5.10381C2.9799 5.22181 3.22328 5.1476 3.32868 4.95846C3.42283 4.78951 3.52831 4.62773 3.64408 4.47415C3.77449 4.30116 3.74359 4.04845 3.56195 3.93038L2.98161 3.55316C2.83377 3.45706 2.63655 3.48524 2.53022 3.62589C2.37256 3.83442 2.22915 4.05433 2.10145 4.28416C2.01574 4.43843 2.06999 4.63037 2.21797 4.72655L2.79835 5.10381Z"/></g></svg>',
+    green: '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 12.6C10.0928 12.6 12.6 10.0928 12.6 7C12.6 3.90721 10.0928 1.4 7 1.4C3.90721 1.4 1.4 3.90721 1.4 7C1.4 10.0928 3.90721 12.6 7 12.6ZM9.3 5.8C9.5 5.5 9.4 5.2 9.1 5C8.8 4.8 8.5 4.9 8.3 5.2L6.3 8.1L5.2 7C4.9 6.8 4.6 6.8 4.4 7C4.2 7.3 4.2 7.6 4.4 7.8L6 9.4C6.1 9.5 6.3 9.6 6.5 9.5C6.6 9.5 6.8 9.4 6.9 9.3L9.3 5.8Z" fill="#16A34A"/></svg>',
+    red: '<svg viewBox="0 0 14 14" fill="none" aria-hidden="true" class="size-3.5 shrink-0"><path fill-rule="evenodd" clip-rule="evenodd" d="M7 12.6C10.0928 12.6 12.6 10.0928 12.6 7C12.6 3.90721 10.0928 1.4 7 1.4C3.90721 1.4 1.4 3.90721 1.4 7C1.4 10.0928 3.90721 12.6 7 12.6ZM7.7 4.2C7.7 3.8 7.4 3.5 7 3.5C6.6 3.5 6.3 3.8 6.3 4.2V7C6.3 7.4 6.6 7.7 7 7.7C7.4 7.7 7.7 7.4 7.7 7ZM7 10.5C7.4 10.5 7.7 10.2 7.7 9.8C7.7 9.4 7.4 9.1 7 9.1C6.6 9.1 6.3 9.4 6.3 9.8C6.3 10.2 6.6 10.5 7 10.5Z" fill="#DC2626"/></svg>'
   };
 
-  /** "Payment for payable id #2345REQ3 is processing" -> the #ref becomes a link (target TODO(confirm)). */
-  function linkRefs(text) {
-    return H.esc(text).replace(
-      /(#[0-9A-Za-z]{4,})/g,
-      '<a href="#" data-cm-bill-ref class="font-normal ' + LINK + '">$1</a>',
-    );
+  var ACTIVITY_KIND = {
+    paid: "green",
+    completed: "green",
+    initiated: "gray",
+    processing: "gray",
+    "in progress": "gray",
+    scheduled: "yellow",
+    exception: "red",
+    failed: "red",
+    "past due": "red",
+  };
+
+  function activityDate(value) {
+    if (typeof window.formatActivityLogDate === "function") return window.formatActivityLogDate(value);
+    return H.dateTimeLong(value);
   }
 
   function activitySection(bill) {
     var log = bill.details && bill.details.activityLog;
     if (!log || !log.length) return "";
     var items = log.map(function (item, i) {
-      var color = COLOR_BY_LABEL[String(item.title || "").toLowerCase()] || "gray";
+      var kind = ACTIVITY_KIND[String(item.title || "").toLowerCase()] || "gray";
+      var date = activityDate(item.timestamp);
       var last = i === log.length - 1;
-      var date = H.dateTimeLong(item.timestamp);
       return (
-        '<li class="flex gap-3"><div class="flex w-6 shrink-0 flex-col items-center">' +
-        '<span aria-hidden="true" class="mt-1 inline-flex size-4 shrink-0 rounded-full border-2 ' +
-        (color === "blue" ? "border-dashed " : "") + DOT_CLASS[color] + '"></span>' +
-        (last ? "" : '<span aria-hidden="true" class="mt-1 w-px flex-1 bg-gray-200 dark:bg-white/10"></span>') +
+        '<div class="flex gap-4"><div class="flex w-3.5 flex-none self-stretch flex-col items-center gap-1.5 pt-1.5">' +
+        ACTIVITY_ICON[kind] +
+        (last ? "" : '<div class="flex-1 w-0.5 bg-gray-200 dark:bg-white/10"></div>') +
         "</div>" +
-        '<div class="flex min-w-0 flex-col gap-1 ' + (last ? "" : "pb-4") + '">' +
+        '<div class="flex min-w-0 flex-col gap-1 ' + (last ? "" : "pb-6") + '">' +
         '<p class="text-base/6 font-medium text-gray-900 dark:text-white">' + H.esc(item.title) + "</p>" +
-        '<p class="text-sm/5 text-gray-700 dark:text-gray-300">' + linkRefs(item.description) + "</p>" +
-        (date ? '<p class="text-xs/4 text-gray-500 dark:text-gray-400">' + H.esc(date) + " (EST)</p>" : "") +
-        "</div></li>"
+        '<p class="text-sm/5 text-gray-700 dark:text-gray-300">' + H.esc(item.description) +
+        (date
+          ? '<span class="text-gray-700 dark:text-gray-300"><span class="mx-1.5 text-base leading-none align-middle">&middot;</span>' + H.esc(date) + "</span>"
+          : "") +
+        "</p></div></div>"
       );
     }).join("");
-    return section("Activity Log", '<ol class="flex flex-col">' + items + "</ol>");
+    return section("Activity Log", items);
   }
 
   function detailsHtml(bill) {
@@ -752,13 +760,13 @@
       '<tr data-cm-bill-row="' + H.esc(bill.id) + '" class="group cursor-pointer hover:bg-gray-50 dark:hover:bg-white/5' +
       (expanded ? " bg-gray-100 dark:bg-white/5" : "") + '">' +
       H.expandCell(bill.id, expanded, detailId, (expanded ? "Collapse " : "Expand ") + "bill " + (bill.billNumber || ""), border) +
-      '<td class="' + base + ' text-right"><span class="type-body inline-flex items-center justify-end gap-1 text-gray-900 dark:text-white">' +
+      '<td class="' + base + ' text-right"><span class="type-body inline-flex items-center justify-end gap-1 font-medium text-gray-900 dark:text-white">' +
       H.esc(H.money(bill.amount, bill.currency)) +
       ' <span class="text-gray-500 dark:text-gray-400">' + H.esc(bill.currency || "USD") + "</span></span></td>" +
       '<td class="' + base + '"><span class="type-body text-gray-500 dark:text-gray-400">' + H.esc(bill.billNumber) + "</span></td>" +
-      '<td class="' + base + '"><span title="' + payee + '" class="type-body block max-w-80 truncate text-gray-900 dark:text-white">' + payee + "</span></td>" +
-      '<td class="' + base + '"><span class="type-body text-gray-900 dark:text-white">' + H.esc(bill.paymentType) + "</span></td>" +
-      '<td class="' + base + '"><span class="type-body text-gray-900 dark:text-white">' + H.esc(bill.source) + "</span></td>" +
+      '<td class="' + base + '"><span title="' + payee + '" class="type-body block max-w-80 truncate font-medium text-gray-900 dark:text-white">' + payee + "</span></td>" +
+      '<td class="' + base + '"><span class="type-body font-medium text-gray-900 dark:text-white">' + H.esc(bill.paymentType) + "</span></td>" +
+      '<td class="' + base + '"><span class="type-body font-medium text-gray-900 dark:text-white">' + H.esc(bill.source) + "</span></td>" +
       '<td class="' + base + ' type-body">' + due + "</td>" +
       '<td class="' + base + '">' + statusBadge(bill) + "</td></tr>";
     var detail = expanded
@@ -780,15 +788,13 @@
   }
 
   var FILTER_PANEL =
-    '<div data-bh-filter-menu role="dialog" aria-label="Filter Bill History" class="pointer-events-none invisible fixed z-60 w-157 max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white opacity-0 shadow-lg ring-1 ring-black/5 transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:ring-white/10">' +
-    '<div class="flex flex-col sm:flex-row">' +
-    '<div data-bh-filter-nav class="shrink-0 border-b border-gray-200 bg-gray-50 p-3 sm:w-56 sm:border-r sm:border-b-0 dark:border-white/10 dark:bg-gray-900/40"></div>' +
-    '<div class="min-w-0 flex-1 p-4">' +
+    '<div data-bh-filter-menu role="dialog" aria-label="Filter" class="pointer-events-none invisible fixed z-60 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white opacity-0 shadow-lg ring-1 ring-black/5 transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:ring-white/10">' +
+    '<div class="p-4">' +
     '<div class="flex items-center justify-between">' +
     '<p data-bh-filter-title class="text-sm/5 font-medium text-gray-700 dark:text-gray-200"></p>' +
     '<button type="button" data-bh-select-all class="' + LINK_BTN + '">Select all</button></div>' +
     '<div class="mt-2 mb-3 h-px bg-gray-200 dark:bg-white/10"></div>' +
-    '<div data-bh-filter-list class="flex max-h-60 min-h-40 flex-col gap-2 overflow-auto"></div></div></div>' +
+    '<div data-bh-filter-list class="flex max-h-60 flex-col gap-2 overflow-auto"></div></div>' +
     '<div class="flex items-center justify-end gap-4 border-t border-gray-200 bg-white p-3 dark:border-white/10 dark:bg-gray-800">' +
     '<button type="button" data-bh-filter-reset class="' + FOOTER_RESET + '">Reset</button>' +
     '<button type="button" data-bh-filter-apply class="' + FOOTER_APPLY + '">Apply</button></div></div>';
@@ -811,7 +817,6 @@
     refs.pagination = root.querySelector("[data-pagination]");
     refs.chips = root.querySelector("[data-bh-chips]");
     refs.menu = root.querySelector("[data-bh-filter-menu]");
-    refs.nav = root.querySelector("[data-bh-filter-nav]");
     refs.title = root.querySelector("[data-bh-filter-title]");
     refs.list = root.querySelector("[data-bh-filter-list]");
     refs.apply = root.querySelector("[data-bh-filter-apply]");
@@ -964,23 +969,12 @@
     });
   }
 
-  function renderNav() {
-    refs.nav.innerHTML = '<div class="flex flex-col">' + CATEGORIES.map(function (c) {
-      var n = state.draft[c.key].size;
-      return (
-        '<button type="button" data-bh-filter-cat="' + c.key + '" aria-pressed="' + (c.key === state.category) +
-        '" class="' + NAV_ITEM + (c.key === state.category ? NAV_ITEM_ON : "") + '"><span class="min-w-0 flex-1">' + H.esc(c.label) + "</span>" +
-        (n ? '<span class="' + NAV_BADGE + '">' + n + "</span>" : "") + "</button>"
-      );
-    }).join("") + "</div>";
-  }
-
   function renderFilter() {
     var cat = CATEGORIES.filter(function (c) {
       return c.key === state.category;
     })[0];
-    renderNav();
     refs.title.textContent = cat.label;
+    refs.menu.setAttribute("aria-label", "Filter by " + cat.label);
     refs.list.innerHTML = categoryValues(cat.key).map(function (opt, i) {
       return window.TableUi.filterCheckbox({
         id: "cm-bills-filter-" + cat.key + "-" + i,
@@ -994,16 +988,13 @@
   }
 
   function syncFilterButtons() {
-    var any = CATEGORIES.some(function (c) {
-      return state.draft[c.key].size;
-    });
-    refs.reset.disabled = !any;
+    refs.reset.disabled = !state.draft[state.category].size;
     refs.apply.disabled = sameDraft();
   }
 
   function positionMenu(trigger) {
     var rect = trigger.getBoundingClientRect();
-    var width = refs.menu.offsetWidth || 628;
+    var width = refs.menu.offsetWidth || 288;
     var margin = 16;
     var left = Math.min(Math.max(rect.right - width, margin), window.innerWidth - width - margin);
     refs.menu.style.left = Math.round(left) + "px";
@@ -1076,10 +1067,6 @@
     if (!root || !state) return;
     if (root !== refs.root) cacheRefs(root);
 
-    if (target.closest("[data-cm-bill-ref]")) {
-      event.preventDefault(); // TODO(confirm): where the request link goes
-      return;
-    }
     var cancel = target.closest("[data-cm-cancel-bill]");
     if (cancel) {
       cm.emit("cancel-bill", { cardId: state.cardId, billId: cancel.getAttribute("data-cm-cancel-bill") });
@@ -1092,14 +1079,6 @@
       setFilterOpen(!(state.filterOpen && state.category === key), key);
       return;
     }
-    var cat = target.closest("[data-bh-filter-cat]");
-    if (cat) {
-      state.category = cat.getAttribute("data-bh-filter-cat");
-      renderFilter();
-      var again = refs.nav.querySelector('[data-bh-filter-cat="' + state.category + '"]');
-      if (again) again.focus();
-      return;
-    }
     if (target.closest("[data-bh-select-all]")) {
       Array.prototype.forEach.call(refs.list.querySelectorAll("input[type='checkbox']"), function (input) {
         input.checked = true;
@@ -1109,9 +1088,7 @@
       return;
     }
     if (target.closest("[data-bh-filter-reset]")) {
-      CATEGORIES.forEach(function (c) {
-        state.draft[c.key].clear();
-      });
+      state.draft[state.category].clear();
       renderFilter();
       return;
     }
@@ -1164,8 +1141,6 @@
     var value = input.getAttribute("data-filter-value");
     if (input.checked) state.draft[state.category].add(value);
     else state.draft[state.category].delete(value);
-    // Only the nav counts and Reset / Apply change: leave the list (and the focus) alone.
-    renderNav();
     syncFilterButtons();
   }
 

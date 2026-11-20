@@ -11,8 +11,8 @@
  *              card excluded), helper = the source's balance, "Max amount" = the source's balance,
  *              checkbox "Transfer $X from <source> to <card>", Cancel / "Add to balance",
  *              success "Funding Transaction Submitted".
- *   "transfer" event `transfer` { cardId }: money leaves THIS card. "Send to" (C1 picker, this card
- *              excluded), helper = this card's balance, "Use max amount" = this card's balance,
+ *   "transfer" event `transfer` { cardId }: money leaves THIS card. "From" (C1 picker, this card
+ *              excluded), helper = this card's balance, "Max amount" = this card's balance,
  *              checkbox "Send $X from <card> to <destination>", Cancel / "Transfer",
  *              success "Transfer Transaction Submitted".
  *
@@ -47,8 +47,8 @@
     },
     transfer: {
       title: "Transfer Funds",
-      pickLabel: "Send to",
-      maxLabel: "Use max amount",
+      pickLabel: "From",
+      maxLabel: "Max amount",
       submit: "Transfer",
       doneTitle: "Transfer Transaction Submitted",
       verb: "Send",
@@ -232,7 +232,7 @@
     var amountField =
       '<div class="flex w-full flex-col gap-1">' +
       '<div class="flex items-start justify-between gap-4">' +
-      '<label for="' + ids.amount + '" class="' + F.LABEL + '">Enter Amount</label>' + (isAdd ? maxLink : "") + "</div>" +
+      '<label for="' + ids.amount + '" class="' + F.LABEL + '">Enter Amount</label>' + maxLink + "</div>" +
       '<div class="relative">' +
       '<img src="' + assetUrl("icon-currency-dollar.svg") + '" alt="" width="20" height="20" class="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2" />' +
       '<input id="' + ids.amount + '" name="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" aria-invalid="false" aria-describedby="' +
@@ -240,7 +240,7 @@
       '<p id="' + ids.amount + '-error" role="alert" class="hidden ' + F.ERROR_TEXT + '"></p>' +
       (isAdd
         ? ""
-        : '<div class="flex items-start justify-between gap-4" data-cm-funds-own>' + helperHtml(card.availableBalance, false) + maxLink + "</div>") +
+        : '<div data-cm-funds-own>' + helperHtml(card.availableBalance, false) + "</div>") +
       "</div>";
 
     var body =
