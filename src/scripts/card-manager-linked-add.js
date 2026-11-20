@@ -199,11 +199,11 @@
     return (
       '<form id="' + ids.form + '" novalidate autocomplete="off" class="flex flex-col gap-4 p-6">' +
       textField(ids.number, "Card number",
-        'name="lcf1" inputmode="numeric" autocomplete="off" maxlength="23" placeholder="0000 0000 0000 0000"',
+        'name="lcf1" inputmode="numeric" autocomplete="one-time-code" maxlength="23" placeholder="0000 0000 0000 0000"',
         { icon: ICON_CARD }) +
       '<div class="grid grid-cols-2 gap-6">' +
-      textField(ids.expiry, "Expiry", 'name="lcf2" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="MM / YY"') +
-      textField(ids.cvc, "CVC", 'name="lcf3" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="CVC"') +
+      textField(ids.expiry, "Expiry", 'name="lcf2" inputmode="numeric" autocomplete="one-time-code" maxlength="7" placeholder="MM / YY"') +
+      textField(ids.cvc, "CVC", 'name="lcf3" inputmode="numeric" autocomplete="one-time-code" maxlength="4" placeholder="CVC"') +
       "</div>" +
       // Optional block ("More info" disclosure), collapsed by default. TODO(confirm)
       '<div class="mt-2 flex flex-col gap-6 rounded-md bg-gray-50 p-4 dark:bg-white/5">' +
