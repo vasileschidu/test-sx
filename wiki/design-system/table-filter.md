@@ -71,7 +71,7 @@ not the global panel. Decided by Andrian on 2026-11-20:
 
 | Part | Behavior |
 |---|---|
-| Icon | Main's header icon, unchanged: Bills `filter.svg` (Payee) / `filter-funnel.svg` (Source), SX and Consumer `filter-funnel.svg`, 14px, gray-400, same button classes as main. While the column has an **applied** filter the same funnel turns gray-500 (dark: gray-300), Figma `Table/Header/Cell/Actions/Filter`. No background pill |
+| Icon | One header filter icon in every table (also Vendor List): Figma `Icon20/Solid/Filter` (Table/Header/Cell/Actions/Filter), 14×14, gray-400 (dark gray-500); gray-500 (dark gray-300) while the column has an applied filter. No background pill |
 | Dropdown | `w-60` card under the icon, right edges aligned. **No title** (the Figma "Column Filters" `12596:14256` title and X are not used). On phones (< 640px) a bottom sheet with a backdrop, like the global filter |
 | List columns | Checkboxes with the same values and order as the global panel; the toolbar search field on Payee (the long list) |
 | Amount (global panel only) | From / To with the "$" prefix; US money format (`ColumnFilter.attachAmount`): "121,321,321" while typing, "1,234.50" on blur, digits and one "." only, max 2 decimals, paste cleaned; the filter uses the plain number |

@@ -1641,7 +1641,7 @@
       panel,
       getFilterCategoryLabel(panel) || col.label,
       isColumnFilterActive(panel),
-      { style: "exchange", asset: "filter-funnel.svg" },
+      { style: "exchange" },
     );
   }
 

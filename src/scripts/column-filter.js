@@ -10,7 +10,8 @@
  * global filter and writes the result back, so both filters always show the same selection
  * (wiki/design-system/table-filter.md, "Column filter").
  *
- *   ColumnFilter.button(key, label, active, { style, asset })  → header icon button HTML, main's markup
+ *   ColumnFilter.button(key, label, active, { style })  → header filter button (Figma Icon20/Solid/Filter)
+ *   ColumnFilter.icon(active)                  → the icon alone (skeletons)
  *   ColumnFilter.bind(tableEl, {
  *     describe(key) → { title (aria-label), options: [{ value, label, checked }], search: "Search payee" },
  *     apply(key, values)  ← the ticked values
@@ -25,31 +26,23 @@
 (function () {
   "use strict";
 
-  var FUNNEL_PATH =
-    "M1.83962 1.12071C3.51903 0.843917 5.2429 0.7 7 0.7C8.7571 0.7 10.481 0.843917 12.1604 1.12071C12.414 1.1625 12.6 1.38172 12.6 1.63872V3.24008C12.6 3.65779 12.4341 4.0584 12.1387 4.35377L8.86131 7.63116C8.56594 7.92653 8.4 8.32713 8.4 8.74485V10.8703C8.4 11.3488 8.18251 11.8013 7.80889 12.1002L6.45296 13.185C6.29538 13.311 6.07947 13.3356 5.89758 13.2482C5.71568 13.1608 5.6 12.9768 5.6 12.775V8.74485C5.6 8.32713 5.43406 7.92653 5.13869 7.63116L1.86131 4.35377C1.56594 4.0584 1.4 3.65779 1.4 3.24008V1.63872C1.4 1.38172 1.58605 1.1625 1.83962 1.12071Z";
   var SEARCH =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 shrink-0 -translate-y-1/2 size-4 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>';
 
   // Header icon = the markup each table had on origin/main (Andrian, 2026-11-20): same <img> asset, size and
-  // button classes, no background pill. Main had no active visual: applied filter = Figma Table/Header/Cell/Actions/Filter
-  // darker state (gray-500, dark gray-300), same funnel, no tile.
+  // button classes, no background pill; the icon itself is the one Figma icon below.
   var BTN_STYLES = {
     // Bills & Payables header button on main
     bills: "inline-flex size-5 items-center justify-center rounded-sm hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:focus-visible:outline-blue-500",
     // SMART Exchange header button on main (Consumer Payments uses the same)
     exchange: "inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-500",
   };
-  // Paths of src/assets/table/filter.svg and filter-funnel.svg, for the blue active icon.
-  var ICON_PATHS = {
-    "filter.svg": "M2.1 2.1C2.1 1.7134 2.4134 1.4 2.8 1.4H11.2C11.5866 1.4 11.9 1.7134 11.9 2.1V4.2C11.9 4.38565 11.8262 4.5637 11.695 4.69497L8.4 7.98995V10.5C8.4 10.6857 8.32625 10.8637 8.19497 10.995L6.79497 12.395C6.59478 12.5952 6.29369 12.6551 6.03212 12.5467C5.77055 12.4384 5.6 12.1831 5.6 11.9V7.98995L2.30503 4.69497C2.17375 4.5637 2.1 4.38565 2.1 4.2V2.1Z",
-    "filter-funnel.svg": FUNNEL_PATH,
-  };
-
-  function asset(file) {
-    var path = window.location.pathname || "";
-    var i = path.indexOf("/src/pages/");
-    return (i >= 0 ? path.slice(0, i) : "") + "/src/assets/table/" + encodeURIComponent(file);
-  }
+  // One header filter icon in every table = Figma SMART System Icon20/Solid/Filter (Table/Header/Cell/Actions/Filter):
+  // 14×14 box, funnel 9.8×11.2 (same path as src/assets/table/filter.svg), currentColor.
+  var FILTER_PATH =
+    "M2.1 2.1C2.1 1.7134 2.4134 1.4 2.8 1.4H11.2C11.5866 1.4 11.9 1.7134 11.9 2.1V4.2C11.9 4.38565 11.8262 4.5637 11.695 4.69497L8.4 7.98995V10.5C8.4 10.6857 8.32625 10.8637 8.19497 10.995L6.79497 12.395C6.59478 12.5952 6.29369 12.6551 6.03212 12.5467C5.77055 12.4384 5.6 12.1831 5.6 11.9V7.98995L2.30503 4.69497C2.17375 4.5637 2.1 4.38565 2.1 4.2V2.1Z";
+  var ICON_IDLE = "text-gray-400 dark:text-gray-500"; // Figma State=Default
+  var ICON_ON = "text-gray-500 dark:text-gray-300"; // applied filter (Figma darker state)
 
   // Search field and footer copied from the toolbar search and the global filter panel (bills-and-payables.html) and the toolbar search.
   var SEARCH_INPUT =
@@ -68,24 +61,29 @@
       .replace(/"/g, "&quot;");
   }
 
-  /** opts: { style: "bills" | "exchange", asset: "filter.svg" | "filter-funnel.svg" } — what that header had on main. */
+  /** opts: { style: "bills" | "exchange" } — the button classes that header had on main. */
   function button(key, label, active, opts) {
     opts = opts || {};
-    var file = ICON_PATHS[opts.asset] ? opts.asset : "filter-funnel.svg";
     return (
       '<button type="button" data-column-filter="' + esc(key) + '" aria-haspopup="dialog" aria-expanded="false"' +
       ' aria-label="Filter ' + esc(label) + '" class="' + (BTN_STYLES[opts.style] || BTN_STYLES.exchange) + '">' +
-      '<img src="' + asset(file) + '" width="14" height="14" alt="" data-cf-icon="idle" class="shrink-0' + (active ? " hidden" : "") + '">' +
-      '<svg viewBox="0 0 14 14" width="14" height="14" fill="currentColor" aria-hidden="true" data-cf-icon="active" class="size-3.5 shrink-0 text-gray-500 dark:text-gray-300' + (active ? "" : " hidden") + '">' +
-      '<path fill-rule="evenodd" clip-rule="evenodd" d="' + ICON_PATHS[file] + '"/></svg></button>'
+      icon(active) + "</button>"
+    );
+  }
+
+  /** The header filter icon alone (also for table skeletons). */
+  function icon(active) {
+    return (
+      '<svg viewBox="0 0 14 14" width="14" height="14" fill="currentColor" aria-hidden="true" data-cf-icon class="size-3.5 shrink-0 ' +
+      (active ? ICON_ON : ICON_IDLE) + '"><path fill-rule="evenodd" clip-rule="evenodd" d="' + FILTER_PATH + '"/></svg>'
     );
   }
 
   function setActive(btn, active) {
-    var idle = btn.querySelector('[data-cf-icon="idle"]');
-    var on = btn.querySelector('[data-cf-icon="active"]');
-    if (idle) idle.classList.toggle("hidden", !!active);
-    if (on) on.classList.toggle("hidden", !active);
+    var svg = btn.querySelector("[data-cf-icon]");
+    if (!svg) return;
+    ICON_IDLE.split(" ").forEach(function (c) { svg.classList.toggle(c, !active); });
+    ICON_ON.split(" ").forEach(function (c) { svg.classList.toggle(c, !!active); });
   }
 
   // ── Money fields (global filter Amount min / max): "121,321,321", "1,234.50" on blur ──
@@ -486,6 +484,7 @@
     optionsFrom: optionsFrom,
     pinPanel: pinPanel,
     button: button,
+    icon: icon,
     bind: bind,
     sync: sync,
     close: function () { close(false); },
