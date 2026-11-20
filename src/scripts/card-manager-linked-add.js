@@ -98,7 +98,7 @@
 
   // Same chevron as the Create a Card balance toggle: down when collapsed, up when open.
   var ICON_CHEVRON_DOWN =
-    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 transition-transform group-aria-expanded/toggle:rotate-180"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" /></svg>';
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 transition-transform duration-200 motion-reduce:transition-none group-aria-expanded/toggle:rotate-180"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" /></svg>';
 
   var ICON_CHEVRON_UP_DOWN =
     '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="col-start-1 row-start-1 size-5 self-center justify-self-end text-gray-500 dark:text-gray-400"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.22 10.22a.75.75 0 0 1 1.06 0L8 11.94l1.72-1.72a.75.75 0 1 1 1.06 1.06l-2.25 2.25a.75.75 0 0 1-1.06 0l-2.25-2.25a.75.75 0 0 1 0-1.06ZM10.78 5.78a.75.75 0 0 1-1.06 0L8 4.06 6.28 5.78a.75.75 0 0 1-1.06-1.06l2.25-2.25a.75.75 0 0 1 1.06 0l2.25 2.25a.75.75 0 0 1 0 1.06Z"/></svg>';
@@ -206,11 +206,13 @@
       textField(ids.cvc, "CVC", 'name="lcf3" inputmode="numeric" autocomplete="one-time-code" maxlength="4" placeholder="CVC"') +
       "</div>" +
       // Optional block ("More info" disclosure), collapsed by default. TODO(confirm)
-      '<div class="mt-2 flex flex-col gap-6 rounded-md bg-gray-50 p-4 dark:bg-white/5">' +
+      '<div class="mt-2 flex flex-col rounded-md bg-gray-50 p-4 dark:bg-white/5">' +
       '<div class="flex items-center justify-between gap-4">' +
       '<button type="button" id="' + ids.toggle + '" aria-expanded="false" aria-controls="' + ids.panel + '" class="group/toggle ' + LINK_BTN + ' text-left text-base/6">' +
       ICON_CHEVRON_DOWN + "<span>More info</span></button>" + OPTIONAL + "</div>" +
-      '<div id="' + ids.panel + '" hidden class="flex flex-col gap-4">' +
+      '<div id="' + ids.panel + '" class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none">' +
+      '<div inert class="min-h-0 overflow-hidden opacity-0 transition-opacity duration-200 ease-out motion-reduce:transition-none">' +
+      '<div class="flex flex-col gap-4 pt-6">' +
       textField(ids.name, "Name on Card", 'name="lcf4" autocomplete="off" placeholder="Full Name"') +
       countryField(ids.country) +
       textField(ids.line1, "Address Line 1", 'name="addressLine1" autocomplete="address-line1" placeholder="Address Line 1"') +
@@ -219,7 +221,7 @@
       '<div class="grid grid-cols-2 gap-6">' +
       textField(ids.zip, "ZIP Code", 'name="zip" autocomplete="postal-code" placeholder="ZIP Code"') +
       textField(ids.state, "State", 'name="state" autocomplete="address-level1" placeholder="State"') +
-      "</div></div></div>" +
+      "</div></div></div></div></div>" +
       "</form>"
     );
   }
@@ -396,7 +398,11 @@
 
     function setOpen(flag) {
       toggle.setAttribute("aria-expanded", flag ? "true" : "false");
-      panel.hidden = !flag;
+      panel.classList.toggle("grid-rows-[0fr]", !flag);
+      panel.classList.toggle("grid-rows-[1fr]", flag);
+      var inner = panel.firstElementChild;
+      inner.inert = !flag;
+      inner.classList.toggle("opacity-0", !flag);
     }
 
     toggle.addEventListener("click", function () {
