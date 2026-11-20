@@ -187,7 +187,7 @@
         ? "text-red-600 hover:bg-red-50 focus:bg-red-50 data-focus:bg-red-50 focus:text-red-700 dark:text-red-400 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:data-focus:bg-red-500/10 dark:focus:text-red-300"
         : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 data-focus:bg-gray-100 data-focus:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white dark:data-focus:bg-white/5 dark:data-focus:text-white";
       return (
-        '<button type="button" data-cm-details-action="' + it.event + '" class="block w-full cursor-pointer px-4 py-2 text-left text-sm/5 whitespace-nowrap data-focus:outline-hidden focus:outline-hidden ' +
+        '<button type="button" data-cm-details-action="' + it.event + '" class="block w-full cursor-pointer px-4 py-2 text-left text-sm/5 font-medium whitespace-nowrap data-focus:outline-hidden focus:outline-hidden ' +
         cls + '">' + esc(it.label) + "</button>"
       );
     }
