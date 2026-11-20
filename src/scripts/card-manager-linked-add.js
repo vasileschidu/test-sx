@@ -197,13 +197,13 @@
 
   function body(ids) {
     return (
-      '<form id="' + ids.form + '" novalidate autocomplete="on" class="flex flex-col gap-4 p-6">' +
+      '<form id="' + ids.form + '" novalidate autocomplete="off" class="flex flex-col gap-4 p-6">' +
       textField(ids.number, "Card number",
-        'name="cardNumber" inputmode="numeric" autocomplete="cc-number" maxlength="23" placeholder="0000 0000 0000 0000"',
+        'name="lcf1" inputmode="numeric" autocomplete="off" maxlength="23" placeholder="0000 0000 0000 0000"',
         { icon: ICON_CARD }) +
       '<div class="grid grid-cols-2 gap-6">' +
-      textField(ids.expiry, "Expiry", 'name="expiry" inputmode="numeric" autocomplete="cc-exp" maxlength="7" placeholder="MM / YY"') +
-      textField(ids.cvc, "CVC", 'name="cvc" inputmode="numeric" autocomplete="cc-csc" maxlength="4" placeholder="CVC"') +
+      textField(ids.expiry, "Expiry", 'name="lcf2" inputmode="numeric" autocomplete="off" maxlength="7" placeholder="MM / YY"') +
+      textField(ids.cvc, "CVC", 'name="lcf3" inputmode="numeric" autocomplete="off" maxlength="4" placeholder="CVC"') +
       "</div>" +
       // Optional block ("More info" disclosure), collapsed by default. TODO(confirm)
       '<div class="mt-2 flex flex-col gap-6 rounded-md bg-gray-50 p-4 dark:bg-white/5">' +
@@ -211,7 +211,7 @@
       '<button type="button" id="' + ids.toggle + '" aria-expanded="false" aria-controls="' + ids.panel + '" class="group/toggle ' + LINK_BTN + ' text-left text-base/6">' +
       ICON_CHEVRON_DOWN + "<span>More info</span></button>" + OPTIONAL + "</div>" +
       '<div id="' + ids.panel + '" hidden class="flex flex-col gap-4">' +
-      textField(ids.name, "Name on Card", 'name="nameOnCard" autocomplete="cc-name" placeholder="Full Name"') +
+      textField(ids.name, "Name on Card", 'name="lcf4" autocomplete="off" placeholder="Full Name"') +
       countryField(ids.country) +
       textField(ids.line1, "Address Line 1", 'name="addressLine1" autocomplete="address-line1" placeholder="Address Line 1"') +
       textField(ids.line2, "Address Line 2", 'name="addressLine2" autocomplete="address-line2" placeholder="Address Line 2"', { optional: true }) +
@@ -288,8 +288,8 @@
     var uid = ++seq;
     var p = "cm-la-" + uid + "-";
     var ids = {
-      form: p + "form", title: p + "title", number: p + "number", expiry: p + "expiry", cvc: p + "cvc",
-      toggle: p + "toggle", panel: p + "more", name: p + "name", country: p + "country", line1: p + "line1",
+      form: p + "form", title: p + "title", number: p + "f1", expiry: p + "f2", cvc: p + "f3",
+      toggle: p + "toggle", panel: p + "more", name: p + "f4", country: p + "country", line1: p + "line1",
       line2: p + "line2", city: p + "city", zip: p + "zip", state: p + "state",
     };
     var backdrop = ob.open(body(ids), ids.title, {
