@@ -90,7 +90,7 @@
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4.5"><path fill-rule="evenodd" clip-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" /></svg>';
 
   var ICON_CHEVRON_DOWN =
-    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 transition-transform group-aria-expanded/toggle:rotate-180"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" /></svg>';
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5 shrink-0 transition-transform duration-200 motion-reduce:transition-none group-aria-expanded/toggle:rotate-180"><path fill-rule="evenodd" clip-rule="evenodd" d="M5.22 8.22a.75.75 0 0 1 1.06 0L10 11.94l3.72-3.72a.75.75 0 1 1 1.06 1.06l-4.25 4.25a.75.75 0 0 1-1.06 0L5.22 9.28a.75.75 0 0 1 0-1.06Z" /></svg>';
 
   var ICON_EYE =
     '<svg data-icon="reveal" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4 text-blue-500 dark:text-blue-400"><path d="M8 10C9.10457 10 10 9.10457 10 8C10 6.89543 9.10457 6 8 6C6.89543 6 6 6.89543 6 8C6 9.10457 6.89543 10 8 10Z"/><path fill-rule="evenodd" clip-rule="evenodd" d="M0.882274 7.63113C1.87378 4.65047 4.68527 2.5 8.00035 2.5C11.3139 2.5 14.1243 4.64848 15.117 7.62697C15.1973 7.86768 15.1973 8.12812 15.1172 8.36887C14.1257 11.3495 11.3142 13.5 7.99918 13.5C4.68565 13.5 1.87522 11.3515 0.882492 8.37303C0.802265 8.13233 0.802188 7.87188 0.882274 7.63113ZM11.5 8C11.5 9.933 9.933 11.5 8 11.5C6.067 11.5 4.5 9.933 4.5 8C4.5 6.067 6.067 4.5 8 4.5C9.933 4.5 11.5 6.067 11.5 8Z"/></svg>';
@@ -215,12 +215,14 @@
       // Card Name
       textField(ids.name, "Card Name", tip(ids.nameTip, TIP_NAME, "About Card Name"), 'name="cardName" type="text" autocomplete="off"') +
       // Optional balance, collapsed by default. No info icon: Figma hides it.
-      '<div class="flex flex-col gap-6 rounded-md bg-gray-50 p-4 dark:bg-white/5">' +
+      '<div class="flex flex-col rounded-md bg-gray-50 p-4 dark:bg-white/5">' +
       '<div class="flex items-center justify-between gap-4">' +
       '<button type="button" id="' + ids.toggle + '" aria-expanded="false" aria-controls="' + ids.panel + '" class="group/toggle ' + LINK_BTN + ' text-left text-base/6">' +
       ICON_CHEVRON_DOWN + "<span>Would you like to assign a balance to the card?</span></button>" +
       '<span class="shrink-0 text-sm/5 font-medium text-gray-400 dark:text-gray-500">Optional</span></div>' +
-      '<div id="' + ids.panel + '" hidden class="flex flex-col gap-4">' +
+      '<div id="' + ids.panel + '" class="grid grid-rows-[0fr] transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none">' +
+      '<div inert class="min-h-0 overflow-hidden opacity-0 transition-opacity duration-200 ease-out motion-reduce:transition-none">' +
+      '<div class="flex flex-col gap-4 pt-6">' +
       // Origination account: the C1 account picker (Card / Bank Account groups, balances)
       '<div class="flex w-full flex-col gap-1">' +
       '<div class="flex items-start gap-1"><span class="' + F.LABEL + '">Origination Account</span>' +
@@ -230,7 +232,7 @@
       '<div class="grid grid-cols-2 gap-6">' +
       textField(ids.amount, "Amount", "", 'name="amount" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00"',
         '<img src="' + assetUrl("icon-currency-dollar.svg") + '" alt="" width="20" height="20" class="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2" />') +
-      "</div></div></div>" +
+      "</div></div></div></div></div>" +
       "</form>"
     );
   }
@@ -326,7 +328,10 @@
     toggle.addEventListener("click", function () {
       var open = !balanceOpen();
       toggle.setAttribute("aria-expanded", open ? "true" : "false");
-      panel.hidden = !open;
+      panel.classList.toggle("grid-rows-[0fr]", !open);
+      panel.classList.toggle("grid-rows-[1fr]", open);
+      panel.firstElementChild.inert = !open;
+      panel.firstElementChild.classList.toggle("opacity-0", !open);
       if (!open) {
         // Closing the section drops its errors; the values stay if it is opened again.
         origin.setError(null);
