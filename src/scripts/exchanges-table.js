@@ -660,9 +660,8 @@
 
   // ── Column header filters (column-filter.js) ──
   // Same filter set as the global filter: they read and write its applied values.
-  var COLUMN_FILTER_PANELS = { paymentMethod: "method", status: "status" }; // column key → filter category
+  var COLUMN_FILTER_PANELS = { paymentMethod: "method" }; // column key → filter category; not Status: one status per tab (Andrian, 2026-11-20)
   var COLUMN_FILTER_LISTS = {
-    status: { set: "appliedSelectedStatuses", wrap: "sx-table-filter-statuses" },
     method: { set: "appliedSelectedMethods", wrap: "sx-table-filter-methods" },
   };
 
@@ -1634,7 +1633,7 @@
     return html;
   }
 
-  // Header filter icons on Payment Method and Status, as before TCDM-5238 (column-filter.js).
+  // Header filter icon on Payment Method (not Status: one status per tab) (column-filter.js).
   function supplierHeaderFilter(col) {
     var panel = COLUMN_FILTER_PANELS[col && col.key];
     if (!IS_SUPPLIER_PORTAL || !panel || !window.ColumnFilter) return "";

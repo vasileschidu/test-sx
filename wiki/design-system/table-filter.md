@@ -59,7 +59,8 @@ not the global panel. Decided by Andrian on 2026-11-20:
    Clearing it in one place (Reset + Apply in either, or the chip ×) clears it everywhere.
 2. **Which columns** (Andrian's second review, 2026-11-20): only the columns that already had a header icon before the
    ticket, on every tab where that column shows. **Hub Bills & Payables: Payee, Source. SMART Exchange Payments: Payment
-   Method, Status. Consumer Payments Received: Payment Method, Status** (same as SMART Exchange). No icon on Amount or
+   Method. Consumer Payments Received: Payment Method** (same as SMART Exchange). Not on Status (Andrian, 2026-11-20):
+   each tab holds a single status, so a Status column filter filters nothing; Status stays in the global filter. No icon on Amount or
    date columns. The global filter keeps all its categories.
 3. **Apply-based** (Andrian's review, 2026-11-20, replaces "applies immediately"): ticking a box
    only changes the dropdown's draft. The table, chips, count and shared state change on **Apply**, which also closes it.

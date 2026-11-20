@@ -506,10 +506,9 @@
   }
 
   // ── Column header filters (column-filter.js, TCDM-5238) ──
-  // Header icons on Payment Method and Status, like SMART Exchange Payments; both filters share the applied values.
-  var COLUMN_FILTER_PANELS = { paymentMethod: 'method', status: 'status' }; // column key → filter category
+  // Header icon on Payment Method, like SMART Exchange Payments; both filters share the applied values.
+  var COLUMN_FILTER_PANELS = { paymentMethod: 'method' }; // column key → filter category; not Status: one status per tab (Andrian, 2026-11-20)
   var COLUMN_FILTER_LISTS = {
-    status: { set: 'appliedSelectedStatuses', wrap: 'sx-table-filter-statuses' },
     method: { set: 'appliedSelectedMethods', wrap: 'sx-table-filter-methods' }
   };
 
