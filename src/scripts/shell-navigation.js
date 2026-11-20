@@ -5,7 +5,7 @@
         "/src/scripts/table-ui.js?v=20261113es3",
         "/src/scripts/table-skeleton.js",
         "/src/scripts/date-range-calendar.js?v=20261116m2",
-        "/src/scripts/column-filter.js?v=20261120cf9",
+        "/src/scripts/column-filter.js?v=20261120cf7",
         "/src/scripts/exchanges-table.js?v=20261120cf8",
       ],
       init: "initSmartExchangePage",
@@ -13,7 +13,7 @@
     "bills-and-payables.html": {
       scripts: [
         "/src/scripts/date-range-calendar.js?v=20261116m2",
-        "/src/scripts/column-filter.js?v=20261120cf9",
+        "/src/scripts/column-filter.js?v=20261120cf7",
         "/src/scripts/bills-payables-table.js?v=20261120cf6",
       ],
       init: "initBillsPayablesTable",
@@ -52,7 +52,7 @@
       scripts: [
         "/src/scripts/table-skeleton.js",
         "/src/scripts/date-range-calendar.js?v=20261116m2",
-        "/src/scripts/column-filter.js?v=20261120cf9",
+        "/src/scripts/column-filter.js?v=20261120cf7",
         "/src/scripts/consumer-exchanges-table.js?v=20261120cf8",
       ],
       init: "initConsumerExchangesPage",

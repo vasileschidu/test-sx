@@ -2,7 +2,7 @@
  * ColumnFilter — the small filter dropdown under a table column header (TCDM-5238).
  *
  * Look and behaviour copied from the Vendor List "Payment network" filter (vendors-page.js):
- * w-88 card (Figma Column Filters, 352px) under the header icon, checkboxes (list columns only, TCDM-5238), icon highlighted while filtered.
+ * w-60 card under the header icon, checkboxes (list columns only, TCDM-5238), icon highlighted while filtered.
  * No title (Andrian, 2026-11-20). Footer = the global filter's Reset + Apply: ticks are a draft until
  * Apply; Reset clears this column's filter at once and closes; Esc / outside click discard the draft. On phones (< 640px) a bottom sheet with a backdrop.
  *
@@ -51,13 +51,13 @@
     return (i >= 0 ? path.slice(0, i) : "") + "/src/assets/table/" + encodeURIComponent(file);
   }
 
-  // Search field = the toolbar search. Footer = Figma "Column Filters" (12596:14256) Modal/Footer: two equal md buttons.
+  // Search field and footer copied from the toolbar search and the global filter panel (bills-and-payables.html) and the toolbar search.
   var SEARCH_INPUT =
     "block h-10 w-full rounded-md border border-gray-300 bg-white py-0 pr-3 pl-9 text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:focus:outline-blue-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25";
   var RESET_BTN =
-    "flex-1 cursor-pointer rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-xs inset-ring inset-ring-gray-300 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-white dark:bg-white/10 dark:text-white dark:shadow-none dark:inset-ring-white/5 dark:hover:bg-white/20 dark:focus-visible:outline-blue-500 dark:disabled:hover:bg-white/10";
+    "h-7 cursor-pointer rounded border border-gray-300 bg-white px-2 text-sm leading-5 font-semibold text-gray-500 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10";
   var APPLY_BTN =
-    "flex-1 cursor-pointer rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:focus-visible:outline-blue-500 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60";
+    "h-7 cursor-pointer rounded bg-blue-600 px-2 text-sm leading-5 font-semibold text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600";
 
   function esc(value) {
     return String(value == null ? "" : value)
@@ -212,7 +212,7 @@
 
   function listHtml(cfg) {
     var search = cfg.search
-      ? '<div class="relative mx-2 mb-2">' + SEARCH +
+      ? '<div class="relative mb-2">' + SEARCH +
         '<input type="search" data-cf-search aria-label="' + esc(cfg.search) + '" placeholder="' + esc(cfg.search) +
         '" class="' + SEARCH_INPUT + '" /></div>'
       : "";
@@ -225,8 +225,7 @@
       })
       .join("");
     return (
-      // Figma: 24px sides — px-4 + the rows' / search's own 8px.
-      '<div class="px-4 pt-4 pb-3">' +
+      '<div class="p-2">' +
       search +
       '<div data-cf-options class="flex max-h-64 flex-col overflow-y-auto">' +
       (options || '<p class="px-2 py-1.5 type-body text-gray-500 dark:text-gray-400">No values</p>') +
@@ -242,7 +241,7 @@
     state.card.setAttribute("aria-label", "Filter " + (cfg.title || ""));
     state.card.innerHTML =
       "<div>" + listHtml(cfg) + "</div>" +
-      '<div class="flex gap-4 border-t border-gray-200 bg-white px-6 py-5 dark:border-white/10 dark:bg-gray-800">' +
+      '<div class="flex items-center justify-end gap-4 border-t border-gray-200 bg-white p-3 dark:border-white/10 dark:bg-gray-800">' +
       '<button type="button" data-cf-reset class="' + RESET_BTN + '">Reset</button>' +
       '<button type="button" data-cf-apply class="' + APPLY_BTN + '">Apply</button>' +
       "</div>";
@@ -278,7 +277,7 @@
     card.setAttribute("role", "dialog");
     card.tabIndex = -1;
     card.className =
-      (phone ? "max-h-[calc(100dvh-2rem)] w-full overflow-y-auto" : "w-88 overflow-hidden") +
+      (phone ? "max-h-[calc(100dvh-2rem)] w-full overflow-y-auto" : "w-60 overflow-hidden") +
       " rounded-md bg-white text-left shadow-lg ring-1 ring-black/5 focus:outline-none dark:bg-gray-800 dark:ring-white/10";
     el.appendChild(card);
     var backdrop = null;
