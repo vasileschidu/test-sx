@@ -29,7 +29,7 @@
   var FUNNEL =
     '<svg viewBox="0 0 14 14" fill="currentColor" aria-hidden="true" class="size-3.5"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.83962 1.12071C3.51903 0.843917 5.2429 0.7 7 0.7C8.7571 0.7 10.481 0.843917 12.1604 1.12071C12.414 1.1625 12.6 1.38172 12.6 1.63872V3.24008C12.6 3.65779 12.4341 4.0584 12.1387 4.35377L8.86131 7.63116C8.56594 7.92653 8.4 8.32713 8.4 8.74485V10.8703C8.4 11.3488 8.18251 11.8013 7.80889 12.1002L6.45296 13.185C6.29538 13.311 6.07947 13.3356 5.89758 13.2482C5.71568 13.1608 5.6 12.9768 5.6 12.775V8.74485C5.6 8.32713 5.43406 7.92653 5.13869 7.63116L1.86131 4.35377C1.56594 4.0584 1.4 3.65779 1.4 3.24008V1.63872C1.4 1.38172 1.58605 1.1625 1.83962 1.12071Z"/></svg>';
   var SEARCH =
-    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 shrink-0 -translate-y-1/2 size-5 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>';
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 shrink-0 -translate-y-1/2 size-4 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>';
 
   // Header icon: Vendor List button (rounded-md p-0.5 around a size-5 slot), funnel on currentColor.
   var BTN_BASE =
@@ -40,7 +40,7 @@
     "bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/30";
   // Search field and footer copied from the toolbar search and the global filter panel (bills-and-payables.html) and the toolbar search.
   var SEARCH_INPUT =
-    "block h-10 w-full rounded-md border border-gray-300 bg-white py-0 pr-3 pl-10 text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:focus:outline-blue-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25";
+    "block h-10 w-full rounded-md border border-gray-300 bg-white py-0 pr-3 pl-9 text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:focus:outline-blue-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25";
   var RESET_BTN =
     "h-7 cursor-pointer rounded border border-gray-300 bg-white px-2 text-sm leading-5 font-semibold text-gray-500 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10";
   var APPLY_BTN =
