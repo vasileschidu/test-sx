@@ -61,17 +61,20 @@ small dropdown **under that header**, not the global panel. Decided by Andrian o
    Source, Due Date, Date Initiated, Payment Date, Status, Failure Reason; Exchange: Amount, Vendor Entry, Customer,
    Date Initiated, Date Processed, Payment Method, Status, Failure Reason; Consumer: Amount, Payer, Date Initiated,
    Date Processed, Payment Method, Status, Failure Reason). Hidden columns show no icon; the global filter still lists them.
-3. **Applies immediately**, like the Vendor List "Payment network" filter: no Apply button. The global panel keeps Reset + Apply.
+3. **Apply-based** (Andrian's review, 2026-11-20, replaces "applies immediately"): ticking a box or typing a date / amount
+   only changes the dropdown's draft. The table, chips, count and shared state change on **Apply**, which also closes it.
+   **Reset** clears this column's draft and, like the global panel's Reset, takes effect only with Apply.
+   Esc or an outside click closes the dropdown and discards the draft.
 
 | Part | Behavior |
 |---|---|
-| Icon | Gray funnel; **blue on a blue-100 tile while that column has an active filter**; gray tile while its dropdown is open |
-| Dropdown | `w-60` card under the icon, right edges aligned, title = column header (overline). On phones (< 640px) a bottom sheet with a backdrop, like the global filter |
-| List columns | Checkboxes with the same values and order as the global panel; search field on the long lists (Payee, Vendor Entry, Customer, Payer) |
-| Date columns | From / To fields with the shared calendar (`DateRangeCalendar`); applies when both fields are empty or complete dates |
-| Amount | From / To with the "$" prefix; either can stay empty |
-| Clear | Link at the bottom; clears only that column; disabled when the column has no filter |
-| Closing | Esc (first closes an open calendar), outside click, the icon again, or tabbing out. Esc returns focus to the icon |
+| Icon | Gray funnel; **blue on a blue-100 tile while that column has an applied filter**; gray tile while its dropdown is open |
+| Dropdown | `w-60` card under the icon, right edges aligned. **No title** (the Figma "Column Filters" `12596:14256` title and X are not used). On phones (< 640px) a bottom sheet with a backdrop, like the global filter |
+| List columns | Checkboxes with the same values and order as the global panel; the toolbar search field on the long lists (Payee, Vendor Entry, Customer, Payer) |
+| Date columns | The global panel's From / To fields with the shared calendar (`DateRangeCalendar`). Apply waits until both fields are empty or complete dates |
+| Amount | The global panel's From / To fields with the "$" prefix; either can stay empty |
+| Footer | The global panel's footer: full-width divider, **Reset** (secondary) + **Apply** (primary). Reset is disabled when the draft is empty; Apply is disabled while the draft equals the applied filter |
+| Closing | Apply (focus back to the icon), Esc (first closes an open calendar; focus back to the icon), outside click, the icon again, or tabbing out. Everything except Apply discards the draft |
 
 Code: `src/scripts/column-filter.js` (`ColumnFilter`), wired in each table script with `describe` / `apply` / `isActive`
 over that table's applied filter state.

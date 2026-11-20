@@ -79,3 +79,5 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
   shell-navigation `PAGE_CONFIGS.scripts` (SPA swaps only load listed scripts) — bump shell-navigation's ?v= on every page.
 - 2026-11-20 [qa] Tools default to :8899; in a worktree on another port run them with `SX_BASE=http://localhost:<port>`. Calendar days re-render
   on hover/click: doc-level click handlers must ignore `!event.target.isConnected`, Playwright must use locators, not element handles.
+- 2026-11-20 [filter] Andrian on table dropdowns: no title/eyebrow, footer = the global filter's Reset + Apply (draft until Apply),
+  inputs copied from existing fields (toolbar search, global From/To) — never a restyled "compact" variant.
