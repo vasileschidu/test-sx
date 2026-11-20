@@ -154,10 +154,8 @@
   var PLACEHOLDER_SELECT = '<span class="truncate text-gray-400 dark:text-gray-500">Select a country</span>';
 
   var CLOSE_BTN =
-    '<button type="button" data-ob-modal-close class="flex size-10 shrink-0 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 ' +
-    'focus-visible:outline-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:focus-visible:outline-blue-500">' +
-    '<span class="sr-only">Close</span>' +
-    '<img src="' + assetUrl("icon-x.svg") + '" alt="" width="24" height="24" class="size-6" /></button>';
+    '<button type="button" data-ob-modal-close class="shrink-0 rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400"><span class="sr-only">Close</span>' +
+    '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>';
 
   /** OBField label + input + error line (same structure as Create a Card's textField). */
   function textField(id, label, attrs, opts) {

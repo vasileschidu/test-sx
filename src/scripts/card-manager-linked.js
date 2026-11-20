@@ -938,7 +938,13 @@
         var width = c.menu.offsetWidth || 288;
         var left = Math.min(Math.max(rect.right - width, 16), window.innerWidth - width - 16);
         c.menu.style.left = Math.round(left) + "px";
-        c.menu.style.top = Math.round(rect.bottom + 8) + "px";
+        // Flip above the funnel when there is no room below; otherwise clamp to the viewport (Reset / Apply stay visible).
+        var height = c.menu.offsetHeight;
+        var below = window.innerHeight - rect.bottom - 8 - 16;
+        var above = rect.top - 8 - 16;
+        var top = rect.bottom + 8;
+        if (height > below && above > below) top = Math.max(16, rect.top - 8 - Math.min(height, above));
+        c.menu.style.top = Math.round(top) + "px";
       }
       hide.forEach(function (k) { c.menu.classList.remove(k); });
       var first = c.menu.querySelector("input[type='checkbox']");
