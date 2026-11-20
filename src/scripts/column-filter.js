@@ -3,16 +3,14 @@
  *
  * Look and behaviour copied from the Vendor List "Payment network" filter (vendors-page.js):
  * w-60 card under the header icon, checkboxes (list columns only, TCDM-5238), icon highlighted while filtered.
- * No title (Andrian, 2026-11-20). Footer = the global filter's Reset + Apply: choices are a draft
- * until Apply; Reset clears the draft (like the global panel, it applies only with Apply);
- * Esc / outside click discard it. On phones (< 640px) a bottom sheet with a backdrop.
+ * No title (Andrian, 2026-11-20). Footer = the global filter's Reset + Apply: ticks are a draft until
+ * Apply; Reset clears this column's filter at once and closes; Esc / outside click discard the draft. On phones (< 640px) a bottom sheet with a backdrop.
  *
  * The column filter does not keep its own state: the table hands it the current values of its
  * global filter and writes the result back, so both filters always show the same selection
  * (wiki/design-system/table-filter.md, "Column filter").
  *
- *   ColumnFilter.button(key, label, active)  → header icon button HTML ([data-column-filter=key])
- *   ColumnFilter.icon()                       → the idle icon (table skeletons)
+ *   ColumnFilter.button(key, label, active, { style, asset })  → header icon button HTML, main's markup
  *   ColumnFilter.bind(tableEl, {
  *     describe(key) → { title (aria-label), options: [{ value, label, checked }], search: "Search payee" },
  *     apply(key, values)  ← the ticked values
@@ -20,24 +18,39 @@
  *   })
  *   ColumnFilter.optionsFrom(wrapEl)          → options of a global-filter list (TableUi.filterCheckbox)
  *   ColumnFilter.attachAmount(input) / formatAmount(v, pad) / cleanAmount(v)  → US money fields (global panel too)
+ *   ColumnFilter.pinPanel(menu, button)       → global filter panel fixed under its button on desktop (never clipped)
  *   ColumnFilter.sync(tableEl)   re-highlight the header icons (after the table re-renders)
  *   ColumnFilter.close()
  */
 (function () {
   "use strict";
 
-  var FUNNEL =
-    '<svg viewBox="0 0 14 14" fill="currentColor" aria-hidden="true" class="size-3.5"><path fill-rule="evenodd" clip-rule="evenodd" d="M1.83962 1.12071C3.51903 0.843917 5.2429 0.7 7 0.7C8.7571 0.7 10.481 0.843917 12.1604 1.12071C12.414 1.1625 12.6 1.38172 12.6 1.63872V3.24008C12.6 3.65779 12.4341 4.0584 12.1387 4.35377L8.86131 7.63116C8.56594 7.92653 8.4 8.32713 8.4 8.74485V10.8703C8.4 11.3488 8.18251 11.8013 7.80889 12.1002L6.45296 13.185C6.29538 13.311 6.07947 13.3356 5.89758 13.2482C5.71568 13.1608 5.6 12.9768 5.6 12.775V8.74485C5.6 8.32713 5.43406 7.92653 5.13869 7.63116L1.86131 4.35377C1.56594 4.0584 1.4 3.65779 1.4 3.24008V1.63872C1.4 1.38172 1.58605 1.1625 1.83962 1.12071Z"/></svg>';
+  var FUNNEL_PATH =
+    "M1.83962 1.12071C3.51903 0.843917 5.2429 0.7 7 0.7C8.7571 0.7 10.481 0.843917 12.1604 1.12071C12.414 1.1625 12.6 1.38172 12.6 1.63872V3.24008C12.6 3.65779 12.4341 4.0584 12.1387 4.35377L8.86131 7.63116C8.56594 7.92653 8.4 8.32713 8.4 8.74485V10.8703C8.4 11.3488 8.18251 11.8013 7.80889 12.1002L6.45296 13.185C6.29538 13.311 6.07947 13.3356 5.89758 13.2482C5.71568 13.1608 5.6 12.9768 5.6 12.775V8.74485C5.6 8.32713 5.43406 7.92653 5.13869 7.63116L1.86131 4.35377C1.56594 4.0584 1.4 3.65779 1.4 3.24008V1.63872C1.4 1.38172 1.58605 1.1625 1.83962 1.12071Z";
   var SEARCH =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 shrink-0 -translate-y-1/2 size-4 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" clip-rule="evenodd" /></svg>';
 
-  // Header icon: Vendor List button (rounded-md p-0.5 around a size-5 slot), funnel on currentColor.
-  var BTN_BASE =
-    "inline-flex shrink-0 cursor-pointer rounded-md p-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-500";
-  var BTN_IDLE =
-    "text-gray-400 hover:bg-gray-100 hover:text-gray-600 aria-expanded:bg-gray-100 aria-expanded:text-gray-600 dark:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 dark:aria-expanded:bg-white/10 dark:aria-expanded:text-gray-300";
-  var BTN_ON =
-    "bg-blue-100 text-blue-600 hover:bg-blue-200 dark:bg-blue-500/20 dark:text-blue-400 dark:hover:bg-blue-500/30";
+  // Header icon = the markup each table had on origin/main (Andrian, 2026-11-20): same <img> asset, size and
+  // button classes, no background pill. Main had no active visual: applied filter = Figma Table/Header/Cell/Actions/Filter
+  // darker state (gray-500, dark gray-300), same funnel, no tile.
+  var BTN_STYLES = {
+    // Bills & Payables header button on main
+    bills: "inline-flex size-5 items-center justify-center rounded-sm hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10 dark:focus-visible:outline-blue-500",
+    // SMART Exchange header button on main (Consumer Payments uses the same)
+    exchange: "inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-500",
+  };
+  // Paths of src/assets/table/filter.svg and filter-funnel.svg, for the blue active icon.
+  var ICON_PATHS = {
+    "filter.svg": "M2.1 2.1C2.1 1.7134 2.4134 1.4 2.8 1.4H11.2C11.5866 1.4 11.9 1.7134 11.9 2.1V4.2C11.9 4.38565 11.8262 4.5637 11.695 4.69497L8.4 7.98995V10.5C8.4 10.6857 8.32625 10.8637 8.19497 10.995L6.79497 12.395C6.59478 12.5952 6.29369 12.6551 6.03212 12.5467C5.77055 12.4384 5.6 12.1831 5.6 11.9V7.98995L2.30503 4.69497C2.17375 4.5637 2.1 4.38565 2.1 4.2V2.1Z",
+    "filter-funnel.svg": FUNNEL_PATH,
+  };
+
+  function asset(file) {
+    var path = window.location.pathname || "";
+    var i = path.indexOf("/src/pages/");
+    return (i >= 0 ? path.slice(0, i) : "") + "/src/assets/table/" + encodeURIComponent(file);
+  }
+
   // Search field and footer copied from the toolbar search and the global filter panel (bills-and-payables.html) and the toolbar search.
   var SEARCH_INPUT =
     "block h-10 w-full rounded-md border border-gray-300 bg-white py-0 pr-3 pl-9 text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:focus:outline-blue-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25";
@@ -54,21 +67,24 @@
       .replace(/"/g, "&quot;");
   }
 
-  function button(key, label, active) {
+  /** opts: { style: "bills" | "exchange", asset: "filter.svg" | "filter-funnel.svg" } — what that header had on main. */
+  function button(key, label, active, opts) {
+    opts = opts || {};
+    var file = ICON_PATHS[opts.asset] ? opts.asset : "filter-funnel.svg";
     return (
       '<button type="button" data-column-filter="' + esc(key) + '" aria-haspopup="dialog" aria-expanded="false"' +
-      ' aria-label="Filter ' + esc(label) + '" class="' + BTN_BASE + " " + (active ? BTN_ON : BTN_IDLE) + '">' +
-      '<span class="inline-flex size-5 items-center justify-center">' + FUNNEL + "</span></button>"
+      ' aria-label="Filter ' + esc(label) + '" class="' + (BTN_STYLES[opts.style] || BTN_STYLES.exchange) + '">' +
+      '<img src="' + asset(file) + '" width="14" height="14" alt="" data-cf-icon="idle" class="shrink-0' + (active ? " hidden" : "") + '">' +
+      '<svg viewBox="0 0 14 14" width="14" height="14" fill="currentColor" aria-hidden="true" data-cf-icon="active" class="size-3.5 shrink-0 text-gray-500 dark:text-gray-300' + (active ? "" : " hidden") + '">' +
+      '<path fill-rule="evenodd" clip-rule="evenodd" d="' + ICON_PATHS[file] + '"/></svg></button>'
     );
   }
 
-  function icon() {
-    return '<span class="inline-flex shrink-0 p-0.5 text-gray-400 dark:text-gray-500"><span class="inline-flex size-5 items-center justify-center">' + FUNNEL + "</span></span>";
-  }
-
   function setActive(btn, active) {
-    BTN_IDLE.split(" ").forEach(function (c) { btn.classList.toggle(c, !active); });
-    BTN_ON.split(" ").forEach(function (c) { btn.classList.toggle(c, !!active); });
+    var idle = btn.querySelector('[data-cf-icon="idle"]');
+    var on = btn.querySelector('[data-cf-icon="active"]');
+    if (idle) idle.classList.toggle("hidden", !!active);
+    if (on) on.classList.toggle("hidden", !active);
   }
 
   // ── Money fields (global filter Amount min / max): "121,321,321", "1,234.50" on blur ──
@@ -183,13 +199,13 @@
     return a.length === b.length && a.every(function (v) { return b.indexOf(v) !== -1; });
   }
 
-  /** Same rules as the global panel: Reset needs something to clear, Apply needs a change. */
+  /** Reset needs an applied filter or a ticked draft; Apply needs a change. */
   function syncFooter() {
     if (!open) return;
     var draft = readDraft();
     var reset = open.card.querySelector("[data-cf-reset]");
     var apply = open.card.querySelector("[data-cf-apply]");
-    if (reset) reset.disabled = !draft.length;
+    if (reset) reset.disabled = !draft.length && !open.binding.isActive(open.key);
     if (apply) apply.disabled = sameValue(draft, appliedValue(open.cfg));
   }
 
@@ -231,9 +247,11 @@
     syncFooter();
   }
 
-  function resetDraft() {
-    Array.prototype.forEach.call(open.card.querySelectorAll("app-checkbox"), function (box) { box.checked = false; });
-    syncFooter();
+  /** Reset applies at once (Andrian, 2026-11-20): removes this column's filter everywhere and closes. */
+  function resetColumn() {
+    open.binding.apply(open.key, []);
+    syncAll();
+    close(true);
   }
 
   function applyDraft() {
@@ -283,8 +301,8 @@
     if (open && open.el.contains(target)) {
       var reset = target.closest("[data-cf-reset]");
       if (reset && !reset.disabled) {
-        resetDraft();
-        open.card.focus({ preventScroll: true });
+        resetColumn();
+        return;
       }
       var apply = target.closest("[data-cf-apply]");
       if (apply && !apply.disabled) applyDraft();
@@ -398,6 +416,42 @@
     sync(table);
   }
 
+  // ── Global filter panel on desktop: fixed under its Filter button, so a short table card (overflow-hidden)
+  // never clips it (TCDM-5238). Follows the button on scroll / resize while it is shown.
+  var pinned = [];
+  function placePinned(item) {
+    var menu = item.menu, anchor = item.anchor;
+    if (!anchor.isConnected || menu.style.position !== "fixed" || window.matchMedia("(max-width: 639px)").matches) return;
+    var r = anchor.getBoundingClientRect();
+    menu.style.left = "auto";
+    menu.style.bottom = "auto";
+    menu.style.right = Math.max(8, window.innerWidth - r.right) + "px";
+    var h = menu.offsetHeight;
+    var top = r.bottom + 8;
+    if (top + h > window.innerHeight - 8) top = Math.max(8, window.innerHeight - h - 8);
+    menu.style.top = Math.round(top) + "px";
+  }
+  function pinPanel(menu, anchor) {
+    if (!menu || !anchor) return;
+    menu.style.position = "fixed";
+    menu.style.margin = "0";
+    var item = null;
+    for (var i = 0; i < pinned.length; i++) if (pinned[i].menu === menu) item = pinned[i];
+    if (!item) {
+      item = { menu: menu, anchor: anchor };
+      pinned.push(item);
+      if (pinned.length === 1) {
+        var follow = function () {
+          pinned.forEach(function (it) { if (!it.menu.classList.contains("invisible")) placePinned(it); });
+        };
+        window.addEventListener("scroll", follow, true);
+        window.addEventListener("resize", follow);
+      }
+    }
+    item.anchor = anchor;
+    placePinned(item);
+  }
+
   /** The options of a global-filter category, read from its rendered TableUi.filterCheckbox list. */
   function optionsFrom(wrap) {
     if (!wrap) return [];
@@ -417,8 +471,8 @@
     formatAmount: formatAmount,
     cleanAmount: cleanAmount,
     optionsFrom: optionsFrom,
+    pinPanel: pinPanel,
     button: button,
-    icon: icon,
     bind: bind,
     sync: sync,
     close: function () { close(false); },

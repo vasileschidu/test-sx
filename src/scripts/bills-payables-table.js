@@ -2913,9 +2913,10 @@
         includeHeader: true,
         columnClass: columnWidthClass,
         headerAddon: function (col) {
-          return COLUMN_FILTER_PANELS[col.key] && window.ColumnFilter
-            ? window.ColumnFilter.icon()
-            : "";
+          if (col.key === "payeeName") return tableIcon("filter.svg", 14, 14);
+          if (col.key === "source")
+            return tableIcon("filter-funnel.svg", 14, 14);
+          return "";
         },
       });
     } else {
@@ -3182,6 +3183,7 @@
       refs.filterMenu.style.maxWidth = "";
       refs.filterMenu.style.width = "";
       refs.filterMenu.style.maxHeight = "";
+      if (window.ColumnFilter) window.ColumnFilter.pinPanel(refs.filterMenu, refs.filterBtn);
     }
   }
 
@@ -3867,7 +3869,10 @@
 
     function buildHeaderFilterButton(panel, label) {
       return window.ColumnFilter
-        ? window.ColumnFilter.button(panel, label, isColumnFilterActive(panel))
+        ? window.ColumnFilter.button(panel, label, isColumnFilterActive(panel), {
+            style: "bills",
+            asset: panel === "source" ? "filter-funnel.svg" : "filter.svg",
+          })
         : "";
     }
 

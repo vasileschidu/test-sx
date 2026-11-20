@@ -1642,6 +1642,7 @@
       panel,
       getFilterCategoryLabel(panel) || col.label,
       isColumnFilterActive(panel),
+      { style: "exchange", asset: "filter-funnel.svg" },
     );
   }
 
@@ -5271,6 +5272,7 @@
         filterMenu.style.maxWidth = "";
         filterMenu.style.width = "";
         filterMenu.style.maxHeight = "";
+        if (window.ColumnFilter) window.ColumnFilter.pinPanel(filterMenu, filterBtn);
       }
     }
 

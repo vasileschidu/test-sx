@@ -530,7 +530,7 @@
   function columnHeaderFilter(col) {
     var panel = COLUMN_FILTER_PANELS[col && col.key];
     if (!IS_CONSUMER_TABLE || !panel || !window.ColumnFilter) return '';
-    return window.ColumnFilter.button(panel, col.label || columnFilterLabel(panel), isColumnFilterActive(panel));
+    return window.ColumnFilter.button(panel, col.label || columnFilterLabel(panel), isColumnFilterActive(panel), { style: 'exchange', asset: 'filter-funnel.svg' });
   }
 
   function emptyDateFields() {
@@ -4032,6 +4032,7 @@
         filterMenu.style.maxWidth = '';
         filterMenu.style.width = '';
         filterMenu.style.maxHeight = '';
+        if (window.ColumnFilter) window.ColumnFilter.pinPanel(filterMenu, filterBtn);
       }
     }
 
