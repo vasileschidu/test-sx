@@ -271,7 +271,7 @@ Figma:
 - List [`10001:269861`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=10001-269861)
 
 **List:**
-- Header: title **Linked Credit Cards**, "Add your external cards for quick access and better financial management.", buttons **Filter** and **+ Add New**.
+- Header: title **Linked Credit Cards**, "Add your external cards for quick access and better financial management.", a **Search** field (card number, name, network) and **+ Add New**. Filtering is only the Status column funnel (no global Filter).
 - Info banner: "Linked cards act only as origination accounts and cannot be used as payment methods."
 - Columns: Card Number, Card Name, Expires, Payment Network, Created, Status (all sortable).
 - Statuses: Active, Inactive. TODO(confirm) [F-3](#10-open-questions): when does a linked card become Inactive?
