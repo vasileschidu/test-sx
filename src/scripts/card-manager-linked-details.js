@@ -245,10 +245,10 @@
     var revealed = !!current.revealed;
     var holder = card.holder || {};
     return (
-      '<div class="flex flex-col gap-6 lg:flex-row lg:items-start">' +
+      '<div class="flex flex-col gap-6 pb-6 lg:flex-row lg:items-start">' +
       '<div class="flex w-full flex-col gap-4 lg:w-80 lg:shrink-0">' + cardVisual(card, revealed) + infoPanel(card, revealed) + "</div>" +
       '<div class="hidden w-px self-stretch bg-gray-200 lg:block dark:bg-white/10"></div>' +
-      '<div class="flex min-w-0 flex-1 flex-col gap-4 pb-6">' +
+      '<div class="flex min-w-0 flex-1 flex-col gap-4">' +
       '<h3 class="border-b border-gray-200 pb-4 text-base/6 font-semibold text-gray-900 dark:border-white/10 dark:text-white">Card Details</h3>' +
       '<div class="flex flex-col gap-2">' +
       row("Card Name", esc(card.name)) +
