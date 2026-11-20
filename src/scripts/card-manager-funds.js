@@ -333,6 +333,7 @@
       },
     });
 
+    if (window.ColumnFilter) window.ColumnFilter.attachAmount(amountInput); // US money input (TCDM-5238), bound first
     amountInput.addEventListener("input", function () {
       amountInput.value = amountInput.value.replace(/[^\d.,]/g, "");
       F.setError(amountInput, false, amountErr, "");
