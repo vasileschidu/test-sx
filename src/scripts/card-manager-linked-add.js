@@ -512,7 +512,7 @@
         holder: { name: holderName || "—", address: address },
         status: "active",
         expires: exp.year + "-" + pad2(exp.month),
-        createdAt: now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate()),
+        createdAt: now.getFullYear() + "-" + pad2(now.getMonth() + 1) + "-" + pad2(now.getDate()) + "T" + pad2(now.getHours()) + ":" + pad2(now.getMinutes()) + ":00",
         number: formatNumber(digits),
         cvc: digitsOf(cvc.input.value),
         bills: [],

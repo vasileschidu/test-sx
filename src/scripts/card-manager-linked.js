@@ -531,7 +531,7 @@
 
   // Search field: same markup as the SMART Cards list header.
   var SEARCH_FIELD =
-    '<div class="relative w-full sm:w-80">' +
+    '<div class="relative w-full sm:w-80 lg:w-64">' +
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" /></svg>' +
     '<input type="search" data-cm-linked-search aria-label="Search Linked Credit Cards" placeholder="Search" autocomplete="off" class="block h-10 w-full rounded-md bg-white pr-9 pl-9 text-base/6 text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500 [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none" />' +
     '<button type="button" data-cm-linked-search-clear aria-label="Clear search" class="hidden absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer rounded-sm text-gray-400 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:text-gray-300 dark:focus-visible:outline-blue-400">' +

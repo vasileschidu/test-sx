@@ -290,7 +290,7 @@ Buttons: Back / submit. TODO(confirm): the submit label, and the validation mess
 
 **Details:**
 - Header: holder name, status badge, action **Remove from view**.
-- Sub-tabs: Card Details · **Bill History** (Figma says "Bills History"; the designer chose "Bill History").
+- Sub-tabs: Card Details · **Bills History** (Figma 10001:268787).
 
 **Remove dialog:**
 - "Are you sure you want to remove this card?": "By removing this card, it will be removed from the list, though your card data will remain intact. However, sensitive information will be deleted, and consequently, you won't have access to bills or transaction history associated with the card." Buttons Cancel / **Yes, remove the card**.

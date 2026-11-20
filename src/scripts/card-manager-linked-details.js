@@ -6,7 +6,7 @@
  * Draws into CardManager.mount('details') while route.tab === 'linked' && route.card, read-only:
  *   - Header: back arrow (-> the Linked Credit Cards list), card name, status Badge (list colours,
  *     shown for Active too, as in Figma), red text button **Remove from view**.
- *   - Underline sub-tabs Card Details · Bill History (wiki: "Bill History", Figma says "Bills").
+ *   - Underline sub-tabs Card Details · Bills History (Figma 10001:268787).
  *     State in `?view=bills` (pushState; absent = Card Details), as on the SMART card page.
  *   - Card Details: card visual (no balance) + info panel (Card Number / Expires / CVC masked,
  *     Reveal Details), divider, "Card Details" rows: Card Name, Created, Payment Network, Address.
@@ -32,7 +32,7 @@
 
   var VIEWS = [
     { key: "details", label: "Card Details" },
-    { key: "bills", label: "Bill History" },
+    { key: "bills", label: "Bills History" },
   ];
 
   // Same Badge colours as the Linked Credit Cards list.
