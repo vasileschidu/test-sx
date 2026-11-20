@@ -4,7 +4,7 @@
  *
  * One select that lists accounts in two groups, "Card" and "Bank Account", with
  * each balance shown. Used by Add Funds ("Transfer from"), Transfer Funds
- * ("Send to") and Close / Remove ("Choose destination account").
+ * ("From") and Close / Remove ("Choose destination account").
  *
  *   var picker = CardManagerAccountPicker.mount(el, {
  *     sources: [...],            // see "Source" below, or CardManagerAccountPicker.fromData(CardManager.data)

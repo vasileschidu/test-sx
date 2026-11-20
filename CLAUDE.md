@@ -36,6 +36,12 @@ Where a shipped screen and these docs disagree, the screen is ground truth: fix 
    `sr-only` "Close" label and the shared `focus-visible` outline. No 40 px circles, `p-1.5`, `rounded-full` or other icons,
    even where Figma draws them. Keep the position the layout needs (top-right strip, or corner of the content).
    Same exception: SMART Disburse onboarding keeps its own.
+9. **A copy icon always copies.** Wherever Figma or the markup shows a copy / duplicate icon (card number, admin number,
+   account number, email, reference, link…), wire it up in the same change: use `OBModal.copyButton(label, value)` (needs
+   `onboarding-modal.js` on the page; its global `[data-ob-copy]` handler writes to the clipboard and swaps the icon to the green
+   check with the "Copy" / "Copied" tooltip). No decorative copy icons, no home-made icon or handler, no click that does
+   nothing. Copy the real value (the unmasked one when the field is masked). Check every new screen for copy icons before
+   you call it done, and say in the report which ones you wired.
 
 ## Working from Figma
 0. **Figma is the source of truth for content, not just layout.** Titles, labels, copy, field and

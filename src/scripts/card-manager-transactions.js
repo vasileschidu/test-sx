@@ -154,9 +154,9 @@
       '<td class="' + base + '"><span class="type-body text-gray-500 dark:text-gray-400">' + H.esc(tx.id) + "</span></td>" +
       '<td class="' + base + '"><span class="type-body text-gray-500 dark:text-gray-400">' + H.esc(H.dateMDY(tx.dateTime)) + "</span></td>" +
       '<td class="' + base + '"><span class="inline-flex items-center gap-2"><span title="' + merchant +
-      '" class="type-body block max-w-80 truncate text-gray-900 dark:text-white">' + merchant + "</span>" +
+      '" class="type-body block max-w-80 truncate font-medium text-gray-900 dark:text-white">' + merchant + "</span>" +
       (tx.externallyAdded ? BADGE_EXTERNAL : "") + "</span></td>" +
-      '<td class="' + base + ' text-right"><span class="type-body inline-flex items-center justify-end gap-1 text-gray-900 dark:text-white">' +
+      '<td class="' + base + ' text-right"><span class="type-body inline-flex items-center justify-end gap-1 font-medium text-gray-900 dark:text-white">' +
       H.esc(H.money(tx.amount, tx.currency)) + ' <span class="text-gray-500 dark:text-gray-400">' + H.esc(tx.currency || "USD") + "</span></span></td>" +
       '<td class="' + base + '">' + statusBadge(tx) + "</td>" +
       '<td class="' + base + '"><span title="' + description + '" class="type-body block max-w-80 truncate text-gray-500 dark:text-gray-400">' + description + "</span></td></tr>";

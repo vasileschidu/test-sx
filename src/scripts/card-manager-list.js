@@ -58,15 +58,16 @@
   var COLUMNS = [
     { key: "last4", label: "Card Number", sortable: true },
     { key: "name", label: "Card Name", sortable: true },
-    { key: "availableBalance", label: "Available Balance", sortable: false, align: "right" },
     { key: "expires", label: "Expires", sortable: true },
+    { key: "network", label: "Payment Network", sortable: true },
     { key: "createdAt", label: "Created", sortable: true },
-    { key: "status", label: "Status", sortable: true, align: "right", type: "status" },
+    { key: "status", label: "Status", sortable: true, type: "status" },
   ];
 
   var state = {
     sortKey: "",
     sortDirection: "",
+    query: "",
     page: 1,
     pageSize: PAGE_SIZE_OPTIONS[0],
     applied: new Set(), // status keys the table is filtered to
@@ -124,11 +125,17 @@
     return STATUS[card.status] || STATUS.closed;
   }
 
+  function networkLabel(card) {
+    var n = String(card.network || "mastercard");
+    return n.charAt(0).toUpperCase() + n.slice(1);
+  }
+
   function brandLogo(card) {
     var pp = window.PPComponents;
     var network = String(card.network || "mastercard").toLowerCase();
     if (pp && typeof pp.getCardBrandLogoMarkup === "function") {
-      return pp.getCardBrandLogoMarkup(network);
+      // Shared 24x16 flag, clipped to the 4px radius of the card page's Payment Network badge (Mastercard and Visa alike).
+      return '<span class="inline-flex shrink-0 overflow-hidden rounded">' + pp.getCardBrandLogoMarkup(network) + "</span>";
     }
     return (
       '<img src="' + assetUrl("card-mastercard-mark.svg") + '" alt="" width="24" height="16" class="h-4 w-auto" />'
@@ -139,20 +146,35 @@
 
   function filteredRows() {
     var rows = allCards();
+    var q = state.query.trim().toLowerCase();
+    if (q) {
+      rows = rows.filter(function (card) {
+        return [card.last4, card.name, networkLabel(card), statusOf(card).label].some(function (v) {
+          return String(v == null ? "" : v).toLowerCase().indexOf(q) !== -1;
+        });
+      });
+    }
     if (state.applied.size) {
       rows = rows.filter(function (card) {
         return state.applied.has(card.status);
       });
     }
-    if (state.sortKey && state.sortDirection) {
-      var dir = state.sortDirection === "asc" ? 1 : -1;
-      var key = state.sortKey;
-      rows = rows.slice().sort(function (a, b) {
-        var av = key === "status" ? statusOf(a).label : String(a[key] == null ? "" : a[key]);
-        var bv = key === "status" ? statusOf(b).label : String(b[key] == null ? "" : b[key]);
-        return av.localeCompare(bv, "en", { numeric: true, sensitivity: "base" }) * dir;
-      });
+    // Default order: Active cards first. Once a column is sorted, every card follows that sort (Active included).
+    var key = state.sortKey && state.sortDirection ? state.sortKey : "";
+    var dir = state.sortDirection === "desc" ? -1 : 1;
+    function val(card) {
+      if (key === "status") return statusOf(card).label;
+      if (key === "network") return networkLabel(card);
+      return String(card[key] == null ? "" : card[key]);
     }
+    function rank(card) {
+      return key || card.status === "active" ? 0 : 1;
+    }
+    rows = rows.slice().sort(function (a, b) {
+      if (rank(a) !== rank(b)) return rank(a) - rank(b);
+      if (!key) return 0;
+      return val(a).localeCompare(val(b), "en", { numeric: true, sensitivity: "base" }) * dir;
+    });
     return rows;
   }
 
@@ -245,19 +267,18 @@
       ', ' + esc(name) + '" class="group cursor-pointer hover:bg-gray-50 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/5">' +
       cell(
         COLUMNS[0],
-        '<span class="inline-flex items-center gap-2">' + brandLogo(card) +
-          '<span class="type-body text-gray-900 dark:text-white">••••' + esc(last4) + "</span></span>",
+        '<span class="type-body font-medium text-gray-900 dark:text-white">•••• ' + esc(last4) + "</span>",
       ) +
       cell(
         COLUMNS[1],
-        '<span title="' + esc(name) + '" class="type-body block max-w-80 truncate text-gray-900 dark:text-white">' + esc(name) + "</span>",
+        '<span title="' + esc(name) + '" class="type-body block max-w-80 truncate font-medium text-gray-900 dark:text-white">' + esc(name) + "</span>",
       ) +
+      cell(COLUMNS[2], '<span class="type-body text-gray-500 dark:text-gray-400">' + esc(mmyyyy(card.expires)) + "</span>") +
       cell(
-        COLUMNS[2],
-        '<span class="type-body text-gray-900 dark:text-white">' + esc(money(card.availableBalance)) +
-          ' <span class="text-gray-500 dark:text-gray-400">' + esc(card.currency || "USD") + "</span></span>",
+        COLUMNS[3],
+        '<span class="inline-flex items-center gap-2">' + brandLogo(card) +
+          '<span class="type-body text-gray-900 dark:text-white">' + esc(networkLabel(card)) + "</span></span>",
       ) +
-      cell(COLUMNS[3], '<span class="type-body text-gray-500 dark:text-gray-400">' + esc(mmyyyy(card.expires)) + "</span>") +
       cell(COLUMNS[4], '<span class="type-body text-gray-500 dark:text-gray-400">' + esc(mmyyyy(card.createdAt)) + "</span>") +
       cell(COLUMNS[5], badgeHtml(card)) +
       "</tr>"
@@ -337,14 +358,21 @@
   /* ---------- shell (header, chips, table, pagination, filter panel) ---------- */
 
   var CREATE_BUTTON =
-    '<button type="button" data-cm-create class="inline-flex shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md bg-blue-600 px-2.5 py-1.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">' +
+    '<button type="button" data-cm-create class="inline-flex h-10 shrink-0 cursor-pointer items-center justify-center gap-1.5 rounded-md bg-blue-600 px-3.5 text-sm font-semibold text-white shadow-xs hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">' +
     '<img src="' + assetUrl("icon-plus.svg") + '" alt="" width="18" height="18" class="size-4.5" />Create New</button>';
+
+  // Header: search field + Create New.
+  var SEARCH_FIELD =
+    '<div class="relative w-full sm:w-80">' +
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" /></svg>' +
+    '<input type="search" data-cm-search aria-label="Search SMART Cards" placeholder="Search" autocomplete="off" class="block h-10 w-full rounded-md bg-white pr-3 pl-10 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-400 dark:focus:outline-blue-500" />' +
+    "</div>";
 
   var LINK_BTN =
     "cursor-pointer rounded px-1.5 py-0.5 text-xs/4 font-semibold text-blue-600 transition-colors hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:bg-white/10";
 
   var FOOTER_RESET =
-    "h-7 cursor-pointer rounded border border-gray-300 bg-white px-2 text-sm/5 font-semibold text-gray-500 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10";
+    "h-7 cursor-pointer rounded border border-gray-300 bg-white px-2 text-sm/5 font-semibold text-gray-700 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-white dark:hover:bg-white/10";
   var FOOTER_APPLY =
     "h-7 cursor-pointer rounded bg-blue-600 px-2 text-sm/5 font-semibold text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600";
 
@@ -364,11 +392,11 @@
   function shellHtml() {
     return (
       '<div data-cm-list>' +
-      '<div class="flex flex-col gap-4 border-b border-gray-200 px-6 py-5 sm:flex-row sm:items-start sm:justify-between dark:border-white/10">' +
+      '<div class="flex flex-col gap-4 border-b border-gray-200 px-6 py-5 lg:flex-row lg:items-start lg:justify-between dark:border-white/10">' +
       '<div class="min-w-0"><h2 class="text-2xl/8 font-semibold text-gray-900 dark:text-white">SMART Cards</h2>' +
-      '<p class="mt-1 text-sm/5 font-normal text-gray-500 dark:text-gray-400">Instantly generate and fund cards with cashback for customer payments.</p></div>' +
-      CREATE_BUTTON + "</div>" +
-      '<div data-cm-chips class="hidden flex-wrap items-center gap-2 px-6 pt-4"></div>' +
+      '<p class="mt-1 text-sm/5 font-normal text-gray-500 dark:text-gray-400">Instantly generate and fund virtual cards with cashback for customer payments.</p></div>' +
+      '<div class="flex flex-wrap items-center gap-3 sm:flex-nowrap">' + SEARCH_FIELD + CREATE_BUTTON + "</div></div>" +
+      '<div data-cm-chips class="hidden flex-wrap items-center justify-end gap-2 px-6 pt-4"></div>' +
       '<div data-table-scroll class="w-full max-w-full overflow-x-auto px-3">' +
       '<table data-cm-table class="w-full min-w-max table-auto border-separate border-spacing-0"></table></div>' +
       '<div data-pagination class="border-t border-gray-200 bg-white px-6 py-4 dark:border-white/10 dark:bg-gray-900"></div>' +
@@ -667,6 +695,14 @@
     }
   }
 
+  function onInput(event) {
+    var input = event.target.closest && event.target.closest("[data-cm-search]");
+    if (!input) return;
+    state.query = input.value;
+    state.page = 1;
+    renderTable();
+  }
+
   function onChange(event) {
     var input = event.target.closest && event.target.closest("input[type='checkbox'][data-filter-value]");
     if (!input || !refs.menu || !refs.menu.contains(input)) return;
@@ -686,6 +722,7 @@
     mount.addEventListener("click", onClick);
     mount.addEventListener("keydown", onKeydown);
     mount.addEventListener("change", onChange);
+    mount.addEventListener("input", onInput);
     document.addEventListener("click", onDocumentClick);
     window.addEventListener("resize", function () {
       if (state.filterOpen) setFilterOpen(false);
