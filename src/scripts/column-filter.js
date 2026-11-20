@@ -54,8 +54,9 @@
   // Search field and footer copied from the toolbar search and the global filter panel (bills-and-payables.html) and the toolbar search.
   var SEARCH_INPUT =
     "block h-10 w-full rounded-md border border-gray-300 bg-white py-0 pr-3 pl-9 text-base leading-6 font-normal text-gray-900 shadow-[0px_1px_1px_rgba(0,0,0,0.05)] placeholder:font-normal placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:focus:outline-blue-500 hover:not-focus:border-gray-400 dark:hover:not-focus:border-white/25";
+  // Reset text = Figma Button/Secondary (gray-700, dark white); disabled keeps the global panel's gray-500 / gray-300.
   var RESET_BTN =
-    "h-7 cursor-pointer rounded border border-gray-300 bg-white px-2 text-sm leading-5 font-semibold text-gray-500 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10";
+    "h-7 cursor-pointer rounded border border-gray-300 bg-white px-2 text-sm leading-5 font-semibold text-gray-700 disabled:text-gray-500 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-white dark:disabled:text-gray-300 dark:hover:bg-white/10";
   var APPLY_BTN =
     "h-7 cursor-pointer rounded bg-blue-600 px-2 text-sm leading-5 font-semibold text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600";
 
