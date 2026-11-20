@@ -1487,9 +1487,10 @@
       this.querySelectorAll("[data-topbar-greeting]").forEach(function (node) {
         node.title = "Hello, " + greetingName;
       });
-      // Time zone chip: shown on the STP instance, as in prod SMART Exchange.
+      // Time zone chip: hidden for now (STP feedback, 2026-11-20). To bring it
+      // back on the STP instance, toggle "sm:inline-flex" with !!demoCase.
       this.querySelectorAll("[data-topbar-timezone]").forEach(function (node) {
-        node.classList.toggle("sm:inline-flex", !!demoCase);
+        node.classList.remove("sm:inline-flex");
       });
       this.querySelectorAll("[data-topbar-profile-email]").forEach(
         function (node) {
