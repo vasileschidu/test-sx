@@ -196,7 +196,7 @@
       '<span class="text-[8px] leading-[normal] font-bold uppercase">Valid<br />Thru</span>' +
       '<span class="text-sm/6">' + esc(short) + "</span></div></div></div>" +
       '<div class="flex h-9 items-end gap-4">' +
-      '<span class="min-w-0 flex-1 truncate text-sm/5 font-medium uppercase">' + esc(card.holder && card.holder.name) + "</span>" +
+      '<span class="min-w-0 flex-1 truncate text-sm/5 font-medium uppercase">' + esc(card.name || (card.holder && card.holder.name)) + "</span>" +
       mark + "</div></div>"
     );
   }
