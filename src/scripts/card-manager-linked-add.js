@@ -174,12 +174,30 @@
     );
   }
 
+  // Flag pattern of the Consumer language selector (nav-component.js LANG_FLAG_US): 16x12, 1.5px radius, shadow, gloss, ring.
+  var FLAG_FILES = { "United States": "us-20.svg", Canada: "ca-20.svg", Mexico: "mx-20.svg", "United Kingdom": "gb-20.svg" };
+
+  function flagUrl(file) {
+    var path = window.location.pathname || "";
+    var at = path.indexOf("/src/pages/");
+    return (at >= 0 ? path.slice(0, at) : "") + "/assets/icons/consumer-portal/flags/" + file;
+  }
+
+  function flagHtml(country) {
+    return (
+      '<span class="relative inline-block h-3 w-4 shrink-0 overflow-hidden rounded-[1.5px] shadow-[0_1px_1.5px_rgba(0,0,0,0.1),0_1px_1px_rgba(0,0,0,0.06)]">' +
+      '<img src="' + flagUrl(FLAG_FILES[country]) + '" alt="" class="absolute inset-0 size-full max-w-none" />' +
+      '<span aria-hidden="true" class="absolute inset-0 rounded-[1.5px] bg-gradient-to-b from-white/70 to-black/30 mix-blend-overlay ring-1 ring-black/10 ring-inset dark:ring-white/10"></span></span>'
+    );
+  }
+
   function countryField(id) {
     var F = window.OBField;
     var options = COUNTRIES.map(function (country) {
       return (
         '<el-option value="' + esc(country) + '" class="' + SELECT_OPTION + '">' +
-        '<span class="block truncate font-normal group-aria-selected/option:font-semibold">' + esc(country) + "</span></el-option>"
+        '<span class="flex items-center gap-2">' + flagHtml(country) +
+        '<span class="block truncate font-normal group-aria-selected/option:font-semibold">' + esc(country) + "</span></span></el-option>"
       );
     }).join("");
     return (
