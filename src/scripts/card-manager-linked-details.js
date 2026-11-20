@@ -68,7 +68,6 @@
     "border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200";
   var LINK_BTN =
     "inline-flex cursor-pointer items-center gap-1.5 rounded-sm text-xs font-semibold text-blue-600 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300 dark:focus-visible:outline-blue-400";
-  var BAR = '<span class="h-3.25 w-8 rounded-full bg-gray-200 dark:bg-white/15"></span>';
 
   var ICON_BACK =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-5"><path fill-rule="evenodd" clip-rule="evenodd" d="M17 10a.75.75 0 0 1-.75.75H5.612l4.158 3.96a.75.75 0 1 1-1.04 1.08l-5.5-5.25a.75.75 0 0 1 0-1.08l5.5-5.25a.75.75 0 1 1 1.04 1.08L5.612 9.25H16.25A.75.75 0 0 1 17 10Z" /></svg>';
@@ -104,11 +103,10 @@
     return m[4] ? day + ", " + m[4] + ":" + m[5] : day;
   }
 
-  function assetUrl(file) {
+  function iconUrl(file) {
     var path = window.location.pathname || "";
     var at = path.indexOf("/src/pages/");
-    var root = at >= 0 ? path.slice(0, at) : "";
-    return root + "/src/assets/cards-manager/" + file;
+    return (at >= 0 ? path.slice(0, at) : "") + "/assets/icons/" + file;
   }
 
   function findCard(id) {
@@ -153,7 +151,7 @@
       '<div class="flex min-w-60 flex-1 items-center gap-4">' +
       '<button type="button" data-cm-ld-back aria-label="Back to Linked Credit Cards" class="' + BTN_BACK + '">' + ICON_BACK + "</button>" +
       '<h2 class="min-w-0 truncate text-2xl/8 font-semibold text-gray-900 dark:text-white" title="' + esc(card.name) + '">' + esc(card.name) + "</h2>" +
-      '<span data-cm-ld-status class="inline-flex shrink-0 items-center rounded-md border px-2 py-0.5 text-xs/4 font-medium ' + st.badge + '">' + esc(st.label) + "</span>" +
+      '<span data-cm-ld-status class="inline-flex shrink-0 items-center rounded border px-2 py-0.5 text-xs/4 font-medium ' + st.badge + '">' + esc(st.label) + "</span>" +
       "</div>" +
       '<div class="flex shrink-0 items-center gap-2">' +
       '<button type="button" data-cm-ld-remove class="' + BTN_REMOVE + '">Remove from view</button>' +
@@ -175,51 +173,56 @@
     );
   }
 
-  /** S3 card visual without the balance line (Figma 10001:268754). */
+  /** Same card visual as SMART card details, without the balance line (Figma 10001:268754). */
   function cardVisual(card, revealed) {
+    // Same "Card_VC" as the Consumer Portal My Cards page: flat #142435, 20px padding,
+    // Roboto Mono details, square bottom so the details panel tucks under it.
     var exp = mmyyyy(card.expires);
     var short = exp ? exp.slice(0, 3) + exp.slice(5) : "";
     var number = revealed && card.number ? esc(card.number) : "•••• •••• •••• " + esc(card.last4);
+    var network = String(card.network || "").toLowerCase();
     var mark;
-    if (String(card.network || "").toLowerCase() === "visa" && window.PPComponents) {
-      mark = window.PPComponents.getCardBrandLogoMarkup("visa");
+    if (network === "visa" && window.PPComponents && window.PPComponents.getCardBrandLogoMarkup) {
+      mark = '<span class="[&>img]:h-[22px] [&>img]:w-auto">' + window.PPComponents.getCardBrandLogoMarkup("visa", "large") + "</span>";
     } else {
-      mark = '<img src="' + assetUrl("card-mastercard-mark.svg") + '" alt="" width="35" height="22" class="h-5.5 w-auto" />';
+      mark = '<img src="' + iconUrl("mastercard-card-logo.svg") + '" alt="Mastercard" class="h-[22px] w-auto shrink-0" />';
     }
     return (
-      '<div data-cm-card-visual class="relative z-10 flex h-50 w-full max-w-80 flex-col overflow-hidden rounded-t-xl bg-[#142435] p-5 text-white">' +
-      '<div class="mt-auto flex flex-col">' +
+      '<div data-cm-card-visual class="relative z-10 flex h-[200px] w-full max-w-80 flex-col justify-end overflow-hidden rounded-t-xl border-[0.94px] border-white/30 bg-[#142435] p-5 text-white shadow-lg font-[\'Roboto_Mono\',ui-monospace,monospace]">' +
+      '<div class="flex h-[108px] flex-col justify-end">' +
       '<div class="flex flex-col gap-2">' +
-      '<p data-cm-ld-visual-number class="font-mono text-lg/6">' + number + "</p>" +
+      '<p data-cm-ld-visual-number class="text-lg/6 whitespace-nowrap">' + number + "</p>" +
       '<div class="flex items-center gap-1 pl-14">' +
-      '<span class="font-mono text-[8px]/[1] font-bold">VALID<br />THRU</span>' +
-      '<span class="font-mono text-sm/6">' + esc(short) + "</span></div></div>" +
-      '<div class="mt-4 flex h-9 items-end gap-4">' +
-      '<p class="min-w-0 flex-1 truncate font-mono text-sm/5 font-medium uppercase">' + esc(card.name) + "</p>" +
-      '<span class="flex shrink-0 items-end">' + mark + "</span></div></div></div>"
+      '<span class="text-[8px] leading-[normal] font-bold uppercase">Valid<br />Thru</span>' +
+      '<span class="text-sm/6">' + esc(short) + "</span></div></div></div>" +
+      '<div class="flex h-9 items-end gap-4">' +
+      '<span class="min-w-0 flex-1 truncate text-sm/5 font-medium uppercase">' + esc(card.holder && card.holder.name) + "</span>" +
+      mark + "</div></div>"
     );
   }
 
-  function infoRow(label, valueHtml, attr) {
+  function infoRow(label, valueHtml, attr, revealed) {
     return (
-      '<div class="flex items-center justify-between gap-2 text-sm/5">' +
-      '<span class="font-normal text-gray-500 dark:text-gray-400">' + esc(label) + "</span>" +
-      '<span class="flex items-center gap-1 text-gray-900 dark:text-gray-100"' + (attr ? " " + attr : "") + ">" + valueHtml + "</span></div>"
+      '<div class="flex items-center gap-4"><dt class="' + (revealed ? "" : "w-[120px] ") + 'shrink-0 text-sm/5 font-medium whitespace-nowrap text-gray-500 dark:text-gray-400">' + esc(label) + "</dt>" +
+      '<dd class="flex min-w-0 flex-1 items-center justify-end gap-1 text-sm/5 whitespace-nowrap text-gray-900 tabular-nums dark:text-white"' + (attr ? " " + attr : "") + ">" + valueHtml + "</dd></div>"
     );
   }
 
   function infoPanel(card, revealed) {
-    var number = revealed && card.number ? esc(card.number) : BAR + BAR + BAR + "<span>" + esc(card.last4) + "</span>";
-    var cvc = revealed && card.cvc ? esc(card.cvc) : BAR;
+    var pill = '<span class="inline-block h-[13px] w-8 rounded-full bg-gray-200 dark:bg-white/15"></span>';
+    var number = revealed && card.number
+      ? esc(card.number)
+      : pill + pill + pill + '<span class="ml-1">' + esc(card.last4) + "</span>";
+    var cvc = revealed && card.cvc ? esc(card.cvc) : pill;
     return (
-      '<div class="-mt-4 flex w-full max-w-80 flex-col gap-3 rounded-lg border border-gray-200 bg-white px-3 pt-7 pb-3 dark:border-white/10 dark:bg-white/5">' +
-      '<div class="flex flex-col gap-2">' +
-      infoRow("Card Number", number, "data-cm-ld-number") +
-      infoRow("Expires", esc(mmyyyy(card.expires))) +
-      infoRow("CVC", cvc, "data-cm-ld-cvc") +
-      "</div>" +
-      '<div class="h-px bg-gray-200 dark:bg-white/10"></div>' +
-      '<div><button type="button" data-cm-ld-reveal aria-pressed="' + revealed + '" class="' + LINK_BTN + '">' +
+      '<div class="-mt-4 flex w-full max-w-80 flex-col gap-3 rounded-lg border border-gray-200 px-3 pt-7 pb-3 dark:border-white/10">' +
+      '<dl class="flex flex-col gap-2">' +
+      infoRow("Card Number", number, "data-cm-ld-number", revealed) +
+      infoRow("Expires", esc(mmyyyy(card.expires)), "", revealed) +
+      infoRow("CVC", cvc, "data-cm-ld-cvc", revealed) +
+      "</dl>" +
+      '<div class="flex flex-col gap-3"><div class="h-px w-full bg-gray-200 dark:bg-white/10"></div>' +
+      '<button type="button" data-cm-ld-reveal aria-pressed="' + revealed + '" class="' + LINK_BTN + '">' +
       (revealed ? ICON_EYE_SLASH : ICON_EYE) + (revealed ? "Hide Details" : "Reveal Details") + "</button></div>" +
       "</div>"
     );
@@ -233,10 +236,20 @@
     );
   }
 
+  // "Logo/Brand Flag" from the Consumer Portal My Cards page (navy 30x20, rounded 4px).
+  var MASTERCARD_FLAG = '<span role="img" aria-label="Mastercard" class="inline-flex h-5 w-[30px] items-center justify-center rounded bg-[#01326F]">' +
+    '<svg viewBox="0 0 20.3165 12.5581" fill="none" aria-hidden="true" class="h-[12.5px] w-[20.3px]">' +
+      '<path d="M12.9046 1.34278H7.41101V11.2155H12.9046V1.34278Z" fill="#FF5F00"/>' +
+      '<path d="M7.75981 6.28018C7.75879 5.32924 7.97417 4.39053 8.38963 3.53513C8.80509 2.67974 9.40973 1.9301 10.1578 1.34297C9.23157 0.615066 8.11926 0.162427 6.94797 0.0367839C5.77669 -0.0888595 4.59368 0.117561 3.53416 0.632454C2.47463 1.14735 1.58134 1.94994 0.956382 2.9485C0.33142 3.94706 0 5.1013 0 6.27931C0 7.45732 0.33142 8.61156 0.956382 9.61012C1.58134 10.6087 2.47463 11.4113 3.53416 11.9262C4.59368 12.4411 5.77669 12.6475 6.94797 12.5218C8.11926 12.3962 9.23157 11.9436 10.1578 11.2157C9.40997 10.6287 8.80546 9.87934 8.39001 9.02427C7.97456 8.16921 7.75906 7.23084 7.75981 6.28018Z" fill="#EB001B"/>' +
+      '<path d="M20.3165 6.27994C20.3165 7.45804 19.985 8.61235 19.3599 9.61095C18.7348 10.6095 17.8414 11.4121 16.7817 11.9269C15.7221 12.4418 14.539 12.648 13.3676 12.5222C12.1962 12.3964 11.0839 11.9435 10.1578 11.2154C10.9053 10.6279 11.5096 9.87837 11.9252 9.02326C12.3408 8.16814 12.5567 7.22981 12.5567 6.27907C12.5567 5.32833 12.3408 4.39 11.9252 3.53488C11.5096 2.67977 10.9053 1.9302 10.1578 1.34272C11.0839 0.614596 12.1962 0.161738 13.3676 0.0359141C14.539 -0.0899097 15.7221 0.116378 16.7817 0.631197C17.8414 1.14602 18.7348 1.94859 19.3599 2.94719C19.985 3.94578 20.3165 5.1001 20.3165 6.2782V6.27994Z" fill="#F79E1B"/>' +
+    '</svg></span>';
+
   function networkHtml(card) {
+    if (String(card.network || "").toLowerCase() === "mastercard") return MASTERCARD_FLAG;
     var pp = window.PPComponents;
     if (pp && pp.getCardBrandLogoMarkup) {
-      return '<span class="inline-flex h-5 w-7.5 items-center"><span class="origin-left scale-125">' + pp.getCardBrandLogoMarkup(String(card.network || "mastercard").toLowerCase()) + "</span></span>";
+      // Figma flag is 29.8x20; the shared flag is 24x16 (1.25x).
+      return '<span class="inline-flex h-5 w-7.5 items-center overflow-hidden rounded"><span class="origin-left scale-125">' + pp.getCardBrandLogoMarkup(String(card.network || "mastercard").toLowerCase()) + "</span></span>";
     }
     return esc(card.network);
   }
@@ -246,7 +259,7 @@
     var holder = card.holder || {};
     return (
       '<div class="flex flex-col gap-6 pb-6 lg:flex-row lg:items-start">' +
-      '<div class="flex w-full flex-col gap-4 lg:w-80 lg:shrink-0">' + cardVisual(card, revealed) + infoPanel(card, revealed) + "</div>" +
+      '<div class="flex w-full flex-col lg:w-80 lg:shrink-0">' + cardVisual(card, revealed) + infoPanel(card, revealed) + "</div>" +
       '<div class="hidden w-px self-stretch bg-gray-200 lg:block dark:bg-white/10"></div>' +
       '<div class="flex min-w-0 flex-1 flex-col gap-4">' +
       '<h3 class="border-b border-gray-200 pb-4 text-base/6 font-semibold text-gray-900 dark:border-white/10 dark:text-white">Card Details</h3>' +
