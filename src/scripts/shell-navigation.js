@@ -4,7 +4,7 @@
       scripts: [
         "/src/scripts/table-ui.js?v=20261113es3",
         "/src/scripts/table-skeleton.js",
-        "/src/scripts/exchanges-table.js?v=20261116cal",
+        "/src/scripts/exchanges-table.js?v=20261120np",
       ],
       init: "initSmartExchangePage",
     },

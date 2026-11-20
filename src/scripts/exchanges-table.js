@@ -3297,10 +3297,10 @@
 
     var heading = isClearedWorklist
       ? "You are all caught up"
-      : "No exchange records found";
+      : "No payments found";
     var body = isClearedWorklist
       ? "No payments are waiting on your confirmation right now."
-      : "Try a different search or adjust the active filters to see matching invoices.";
+      : "Try a different search or adjust the active filters to see matching payments.";
 
     var empty = window.TableUi
       ? window.TableUi.emptyState({ title: heading, text: body })
