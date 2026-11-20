@@ -71,8 +71,6 @@
     page: 1,
     pageSize: PAGE_SIZE_OPTIONS[0],
     applied: new Set(), // status keys the table is filtered to
-    draft: new Set(), // selection inside the open filter panel
-    filterOpen: false,
     loading: true,
   };
   var refs = {};
@@ -208,9 +206,7 @@
 
   function filterTrigger() {
     return (
-      '<button type="button" data-cm-column-filter aria-label="Filter Status" aria-haspopup="true" aria-expanded="' +
-      (state.filterOpen ? "true" : "false") +
-      '" class="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
+      '<button type="button" data-column-filter="status" aria-label="Filter Status" aria-haspopup="dialog" aria-expanded="false" class="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm hover:bg-gray-100 aria-expanded:bg-gray-100 dark:aria-expanded:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
       tableIcon("filter-funnel.svg", 14, 14) +
       "</button>"
     );
@@ -368,27 +364,6 @@
     '<input type="search" data-cm-search aria-label="Search SMART Cards" placeholder="Search" autocomplete="off" class="block h-10 w-full rounded-md bg-white pr-3 pl-10 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-400 dark:focus:outline-blue-500" />' +
     "</div>";
 
-  var LINK_BTN =
-    "cursor-pointer rounded px-1.5 py-0.5 text-xs/4 font-semibold text-blue-600 transition-colors hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:bg-white/10";
-
-  var FOOTER_RESET =
-    "h-7 cursor-pointer rounded border border-gray-300 bg-white px-2 text-sm/5 font-semibold text-gray-700 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-white dark:hover:bg-white/10";
-  var FOOTER_APPLY =
-    "h-7 cursor-pointer rounded bg-blue-600 px-2 text-sm/5 font-semibold text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600";
-
-  // Status filter panel: the Bills filter menu (one category, so no category list on the left).
-  var FILTER_PANEL =
-    '<div data-cm-filter-menu role="dialog" aria-label="Filter by Status" class="pointer-events-none invisible fixed z-60 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white opacity-0 shadow-lg ring-1 ring-black/5 transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:ring-white/10">' +
-    '<div class="p-4">' +
-    '<div class="flex items-center justify-between">' +
-    '<p class="text-sm/5 font-medium text-gray-700 dark:text-gray-200">Status</p>' +
-    '<button type="button" data-cm-select-all class="' + LINK_BTN + '">Select all</button></div>' +
-    '<div class="mt-2 mb-3 h-px bg-gray-200 dark:bg-white/10"></div>' +
-    '<div data-cm-filter-list class="flex flex-col gap-2"></div></div>' +
-    '<div class="flex items-center justify-end gap-4 border-t border-gray-200 bg-white p-3 dark:border-white/10 dark:bg-gray-800">' +
-    '<button type="button" data-cm-filter-reset class="' + FOOTER_RESET + '">Reset</button>' +
-    '<button type="button" data-cm-filter-apply class="' + FOOTER_APPLY + '">Apply</button></div></div>';
-
   function shellHtml() {
     return (
       '<div data-cm-list>' +
@@ -400,7 +375,6 @@
       '<div data-table-scroll class="w-full max-w-full overflow-x-auto px-3">' +
       '<table data-cm-table class="w-full min-w-max table-auto border-separate border-spacing-0"></table></div>' +
       '<div data-pagination class="border-t border-gray-200 bg-white px-6 py-4 dark:border-white/10 dark:bg-gray-900"></div>' +
-      FILTER_PANEL +
       "</div>"
     );
   }
@@ -410,19 +384,40 @@
     refs.table = mount.querySelector("[data-cm-table]");
     refs.pagination = mount.querySelector("[data-pagination]");
     refs.chips = mount.querySelector("[data-cm-chips]");
-    refs.menu = mount.querySelector("[data-cm-filter-menu]");
-    refs.list = mount.querySelector("[data-cm-filter-list]");
-    refs.apply = mount.querySelector("[data-cm-filter-apply]");
-    refs.reset = mount.querySelector("[data-cm-filter-reset]");
   }
 
   function ensureShell() {
     if (mount.querySelector("[data-cm-list]")) {
       cacheRefs();
+      bindColumnFilter();
       return;
     }
     mount.innerHTML = shellHtml();
     cacheRefs();
+    bindColumnFilter();
+  }
+
+  // Status column filter: the shared ColumnFilter (TCDM-5238) draws the panel; the selection is state.applied.
+  function bindColumnFilter() {
+    if (!window.ColumnFilter || !refs.table) return;
+    window.ColumnFilter.bind(refs.table, {
+      describe: function () {
+        return {
+          title: "Filter Status",
+          options: STATUS_ORDER.map(function (key) {
+            return { value: key, label: STATUS[key].label, checked: state.applied.has(key) };
+          }),
+        };
+      },
+      apply: function (key, values) {
+        state.applied = new Set(values);
+        state.page = 1;
+        renderTable();
+      },
+      isActive: function () {
+        return state.applied.size > 0;
+      },
+    });
   }
 
   /* ---------- render ---------- */
@@ -484,6 +479,7 @@
       '<tbody class="bg-white dark:bg-gray-900">' + (body || emptyRowHtml()) + "</tbody>";
     refs.pagination.innerHTML = paginationHtml(total);
     renderChips();
+    if (window.ColumnFilter) window.ColumnFilter.sync(refs.table);
     if (window.TableUi) window.TableUi.fitEmptyStates();
   }
 
@@ -496,7 +492,7 @@
       if (!allCards().length) {
         // card-manager.js draws its empty state into an empty mount on "data-change".
         mount.innerHTML = "";
-        state.filterOpen = false;
+        if (window.ColumnFilter) window.ColumnFilter.close();
       } else {
         ensureShell();
         renderTable();
@@ -508,73 +504,6 @@
   }
 
   /* ---------- filter panel ---------- */
-
-  function sameSet(a, b) {
-    if (a.size !== b.size) return false;
-    var same = true;
-    a.forEach(function (v) {
-      if (!b.has(v)) same = false;
-    });
-    return same;
-  }
-
-  function renderFilterList() {
-    var counts = {};
-    allCards().forEach(function (card) {
-      counts[card.status] = (counts[card.status] || 0) + 1;
-    });
-    refs.list.innerHTML = STATUS_ORDER.map(function (key) {
-      return window.TableUi.filterCheckbox({
-        id: "cm-list-filter-status-" + key,
-        label: STATUS[key].label,
-        countText: String(counts[key] || 0),
-        value: key,
-        checked: state.draft.has(key),
-      });
-    }).join("");
-    syncFilterButtons();
-  }
-
-  function syncFilterButtons() {
-    if (refs.reset) refs.reset.disabled = state.draft.size === 0;
-    if (refs.apply) refs.apply.disabled = sameSet(state.draft, state.applied);
-  }
-
-  function positionMenu(trigger) {
-    var rect = trigger.getBoundingClientRect();
-    var width = refs.menu.offsetWidth || 288;
-    var margin = 16;
-    var left = Math.min(Math.max(rect.right - width, margin), window.innerWidth - width - margin);
-    refs.menu.style.left = Math.round(left) + "px";
-    refs.menu.style.top = Math.round(rect.bottom + 8) + "px";
-  }
-
-  function setFilterOpen(open, opts) {
-    if (!refs.menu) return;
-    var trigger = refs.table && refs.table.querySelector("[data-cm-column-filter]");
-    state.filterOpen = !!open;
-    if (trigger) trigger.setAttribute("aria-expanded", open ? "true" : "false");
-    if (open) {
-      state.draft = new Set(Array.from(state.applied));
-      renderFilterList();
-      if (trigger) positionMenu(trigger);
-      refs.menu.classList.remove("invisible", "opacity-0", "pointer-events-none");
-      var first = refs.menu.querySelector("input[type='checkbox']");
-      if (first) first.focus();
-    } else {
-      refs.menu.classList.add("invisible", "opacity-0", "pointer-events-none");
-      if (opts && opts.restoreFocus && trigger) trigger.focus();
-    }
-  }
-
-  function applyFilter() {
-    state.applied = new Set(Array.from(state.draft));
-    state.page = 1;
-    setFilterOpen(false);
-    renderTable();
-    var trigger = refs.table.querySelector("[data-cm-column-filter]");
-    if (trigger) trigger.focus();
-  }
 
   /* ---------- events ---------- */
 
@@ -596,27 +525,6 @@
       return;
     }
 
-    if (target.closest("[data-cm-column-filter]")) {
-      setFilterOpen(!state.filterOpen);
-      return;
-    }
-    if (target.closest("[data-cm-select-all]")) {
-      Array.prototype.forEach.call(refs.list.querySelectorAll("input[type='checkbox']"), function (input) {
-        input.checked = true;
-        state.draft.add(input.getAttribute("data-filter-value"));
-      });
-      syncFilterButtons();
-      return;
-    }
-    if (target.closest("[data-cm-filter-reset]")) {
-      state.draft.clear();
-      renderFilterList();
-      return;
-    }
-    if (target.closest("[data-cm-filter-apply]")) {
-      if (!refs.apply.disabled) applyFilter();
-      return;
-    }
     if (target.closest("[data-filter-tag-remove]")) {
       state.applied.clear();
       state.page = 1;
@@ -624,7 +532,9 @@
       return;
     }
     if (target.closest("[data-filter-tag-open]")) {
-      setFilterOpen(true);
+      var funnel = refs.table.querySelector("[data-column-filter]");
+      event.stopPropagation(); // ColumnFilter would read this click as an outside click
+      if (funnel) funnel.click();
       return;
     }
 
@@ -683,11 +593,6 @@
 
   function onKeydown(event) {
     if (!refs.root || !refs.root.contains(event.target)) return;
-    if (event.key === "Escape" && state.filterOpen) {
-      event.stopPropagation();
-      setFilterOpen(false, { restoreFocus: true });
-      return;
-    }
     var row = event.target.closest && event.target.closest("tr[data-cm-card-id]");
     if (row && event.target === row && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
@@ -703,37 +608,10 @@
     renderTable();
   }
 
-  function onChange(event) {
-    var input = event.target.closest && event.target.closest("input[type='checkbox'][data-filter-value]");
-    if (!input || !refs.menu || !refs.menu.contains(input)) return;
-    var value = input.getAttribute("data-filter-value");
-    if (input.checked) state.draft.add(value);
-    else state.draft.delete(value);
-    syncFilterButtons();
-  }
-
-  function onDocumentClick(event) {
-    if (!state.filterOpen || !refs.menu) return;
-    if (refs.menu.contains(event.target) || event.target.closest("[data-cm-column-filter], [data-filter-tag-open]")) return;
-    setFilterOpen(false);
-  }
-
   function bind() {
     mount.addEventListener("click", onClick);
     mount.addEventListener("keydown", onKeydown);
-    mount.addEventListener("change", onChange);
     mount.addEventListener("input", onInput);
-    document.addEventListener("click", onDocumentClick);
-    window.addEventListener("resize", function () {
-      if (state.filterOpen) setFilterOpen(false);
-    });
-    window.addEventListener(
-      "scroll",
-      function (event) {
-        if (state.filterOpen && !(refs.menu && refs.menu.contains(event.target))) setFilterOpen(false);
-      },
-      true,
-    );
     cm.on("data-change", function () {
       // Another story changed the data (card created, locked, removed): redraw, keep sort / filter / page.
       if (rendering || state.loading) return;
