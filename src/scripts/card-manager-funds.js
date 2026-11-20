@@ -334,6 +334,29 @@
     });
 
     if (window.ColumnFilter) window.ColumnFilter.attachAmount(amountInput); // US money input (TCDM-5238), bound first
+    // Cap at 999,999,999.99 (9 integer digits): extra digits are ignored while typing / pasting, caret kept.
+    if (window.ColumnFilter) {
+      amountInput.addEventListener("input", function () {
+        var CF = window.ColumnFilter;
+        var v = amountInput.value;
+        var clean = CF.cleanAmount(v);
+        var dot = clean.indexOf(".");
+        var int = dot === -1 ? clean : clean.slice(0, dot);
+        if (int.replace(/^0+(?=\d)/, "").length <= 9) return;
+        var caret = amountInput.selectionStart == null ? v.length : amountInput.selectionStart;
+        var before = (v.slice(0, caret).match(/[0-9.]/g) || []).length;
+        var kept = int.replace(/^0+(?=\d)/, "").slice(0, 9) + (dot === -1 ? "" : clean.slice(dot));
+        var next = CF.formatAmount(kept, false);
+        amountInput.value = next;
+        var pos = 0, seen = 0;
+        before = Math.min(before, kept.length);
+        while (pos < next.length && seen < before) {
+          if (/[0-9.]/.test(next[pos])) seen += 1;
+          pos += 1;
+        }
+        try { amountInput.setSelectionRange(pos, pos); } catch (e) {}
+      });
+    }
     amountInput.addEventListener("input", function () {
       amountInput.value = amountInput.value.replace(/[^\d.,]/g, "");
       F.setError(amountInput, false, amountErr, "");
