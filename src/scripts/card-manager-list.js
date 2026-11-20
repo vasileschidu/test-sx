@@ -207,7 +207,7 @@
   function filterTrigger() {
     return (
       '<button type="button" data-column-filter="status" aria-label="Filter Status" aria-haspopup="dialog" aria-expanded="false" class="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm hover:bg-gray-100 aria-expanded:bg-gray-100 dark:aria-expanded:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
-      tableIcon("filter-funnel.svg", 14, 14) +
+      tableIcon("filter.svg", 14, 14) +
       "</button>"
     );
   }
@@ -452,7 +452,7 @@
         includeHeader: true,
         columnClass: columnClass,
         headerAddon: function (col) {
-          return col.key === "status" ? tableIcon("filter-funnel.svg", 14, 14) : "";
+          return col.key === "status" ? tableIcon("filter.svg", 14, 14) : "";
         },
       });
     } else {

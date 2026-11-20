@@ -152,7 +152,6 @@
 
   /**
    * Header cell. col = { key, label, sortable, align, filter (category key), twoLine }.
-   * opts.filterOpen = key of the open filter category ("" none), opts.filterApplied(key) -> bool.
    */
   function headerCell(col, state, opts) {
     opts = opts || {};
@@ -167,10 +166,9 @@
         "<span>" + labelHtml + "</span>" + sortBadge(current) + "</button>"
       : '<span class="' + text + '">' + labelHtml + "</span>";
     var filter = col.filter
-      ? '<button type="button" data-bh-column-filter="' + col.filter + '" aria-label="Filter ' + esc(col.label) +
-        '" aria-haspopup="true" aria-expanded="' + (opts.filterOpen === col.filter ? "true" : "false") +
-        '" class="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
-        tableIcon("filter-funnel.svg", 14, 14) + "</button>"
+      ? '<button type="button" data-column-filter="' + col.filter + '" aria-label="Filter ' + esc(col.label) +
+        '" aria-haspopup="dialog" aria-expanded="false" class="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm hover:bg-gray-100 aria-expanded:bg-gray-100 dark:aria-expanded:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
+        tableIcon("filter.svg", 14, 14) + "</button>"
       : "";
     return (
       '<th scope="col"' +
@@ -523,12 +521,6 @@
     "inline-flex cursor-pointer items-center justify-center rounded-md bg-gray-100 px-3.5 py-2 text-sm/5 font-semibold text-gray-700 hover:bg-gray-200 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-gray-500 dark:bg-white/10 dark:text-gray-200 dark:hover:bg-white/20 dark:focus-visible:outline-white/40";
   var LINK =
     "rounded-sm text-blue-600 hover:text-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:text-blue-300";
-  var FOOTER_RESET =
-    "h-7 cursor-pointer rounded border border-gray-300 bg-white px-2 text-sm/5 font-semibold text-gray-700 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-white dark:hover:bg-white/10";
-  var FOOTER_APPLY =
-    "h-7 cursor-pointer rounded bg-blue-600 px-2 text-sm/5 font-semibold text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600";
-  var LINK_BTN =
-    "cursor-pointer rounded px-1.5 py-0.5 text-xs/4 font-semibold text-blue-600 transition-colors hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:bg-white/10";
 
   var state = null; // per open card: see newState()
   var rendering = false;
@@ -542,9 +534,6 @@
       page: 1,
       pageSize: PAGE_SIZE_OPTIONS[0],
       applied: {}, // category -> Set of values
-      draft: {},
-      category: CATEGORIES[0].key,
-      filterOpen: false,
       expanded: new Set(),
       loading: true,
       loaded: false,
@@ -612,7 +601,7 @@
       if (col.type === "expand") {
         return '<th scope="col" class="h-13 w-13 min-w-13 border-b border-dashed border-gray-200 px-0 dark:border-white/10"><span class="sr-only">Expand</span></th>';
       }
-      return H.headerCell(col, state, { filterOpen: state.filterOpen ? state.category : "" });
+      return H.headerCell(col, state);
     }).join("");
     return '<thead class="bg-white dark:bg-gray-900"><tr>' + cells + "</tr></thead>";
   }
@@ -787,18 +776,6 @@
     return '<tr><td colspan="' + COLUMNS.length + '" class="p-0">' + box + "</td></tr>";
   }
 
-  var FILTER_PANEL =
-    '<div data-bh-filter-menu role="dialog" aria-label="Filter" class="pointer-events-none invisible fixed z-60 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white opacity-0 shadow-lg ring-1 ring-black/5 transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:ring-white/10">' +
-    '<div class="p-4">' +
-    '<div class="flex items-center justify-between">' +
-    '<p data-bh-filter-title class="text-sm/5 font-medium text-gray-700 dark:text-gray-200"></p>' +
-    '<button type="button" data-bh-select-all class="' + LINK_BTN + '">Select all</button></div>' +
-    '<div class="mt-2 mb-3 h-px bg-gray-200 dark:bg-white/10"></div>' +
-    '<div data-bh-filter-list class="flex max-h-60 flex-col gap-2 overflow-auto"></div></div>' +
-    '<div class="flex items-center justify-end gap-4 border-t border-gray-200 bg-white p-3 dark:border-white/10 dark:bg-gray-800">' +
-    '<button type="button" data-bh-filter-reset class="' + FOOTER_RESET + '">Reset</button>' +
-    '<button type="button" data-bh-filter-apply class="' + FOOTER_APPLY + '">Apply</button></div></div>';
-
   function shellHtml() {
     return (
       '<div data-bh-root="' + VIEW + '" class="-mt-2">' +
@@ -806,7 +783,6 @@
       '<div data-table-scroll class="w-full max-w-full overflow-x-auto">' +
       '<table data-bh-table class="w-full min-w-max table-auto border-separate border-spacing-0"></table></div>' +
       '<div data-pagination class="-mx-6 border-t border-gray-200 bg-white px-6 py-4 dark:border-white/10 dark:bg-gray-900"></div>' +
-      FILTER_PANEL +
       "</div>"
     );
   }
@@ -816,11 +792,35 @@
     refs.table = root.querySelector("[data-bh-table]");
     refs.pagination = root.querySelector("[data-pagination]");
     refs.chips = root.querySelector("[data-bh-chips]");
-    refs.menu = root.querySelector("[data-bh-filter-menu]");
-    refs.title = root.querySelector("[data-bh-filter-title]");
-    refs.list = root.querySelector("[data-bh-filter-list]");
-    refs.apply = root.querySelector("[data-bh-filter-apply]");
-    refs.reset = root.querySelector("[data-bh-filter-reset]");
+    bindColumnFilter();
+  }
+
+  // Column filters (Payment Type, Source): the shared ColumnFilter (TCDM-5238) draws the panel; state.applied[key] is the selection.
+  function bindColumnFilter() {
+    if (!window.ColumnFilter || !refs.table) return;
+    window.ColumnFilter.bind(refs.table, {
+      describe: function (key) {
+        var cat = CATEGORIES.filter(function (c) {
+          return c.key === key;
+        })[0];
+        var picked = state.applied[key] || new Set();
+        return {
+          title: "Filter " + (cat ? cat.label : key),
+          options: categoryValues(key).map(function (opt) {
+            return { value: opt.value, label: opt.value, checked: picked.has(opt.value) };
+          }),
+        };
+      },
+      apply: function (key, values) {
+        if (values.length) state.applied[key] = new Set(values);
+        else delete state.applied[key];
+        state.page = 1;
+        renderTable();
+      },
+      isActive: function (key) {
+        return !!(state.applied[key] && state.applied[key].size);
+      },
+    });
   }
 
   /* ---------- render ---------- */
@@ -854,7 +854,7 @@
         rowCount: 5,
         columnClass: columnClass,
         headerAddon: function (col) {
-          return col.filter ? H.tableIcon("filter-funnel.svg", 14, 14) : "";
+          return col.filter ? H.tableIcon("filter.svg", 14, 14) : "";
         },
       });
     }
@@ -874,6 +874,7 @@
     refs.table.innerHTML = headerHtml() + '<tbody class="bg-white dark:bg-gray-900">' + (body || emptyRowHtml()) + "</tbody>";
     refs.pagination.innerHTML = H.paginationHtml(state, total);
     renderChips();
+    if (window.ColumnFilter) window.ColumnFilter.sync(refs.table);
     H.syncExport(total > 0);
     if (window.TableUi) window.TableUi.fitEmptyStates();
     H.fitDetails();
@@ -929,27 +930,6 @@
 
   /* ---------- filter panel ---------- */
 
-  function cloneApplied() {
-    var out = {};
-    CATEGORIES.forEach(function (c) {
-      out[c.key] = new Set(Array.from(state.applied[c.key] || []));
-    });
-    return out;
-  }
-
-  function sameDraft() {
-    return CATEGORIES.every(function (c) {
-      var a = state.draft[c.key];
-      var b = state.applied[c.key] || new Set();
-      if (a.size !== b.size) return false;
-      var same = true;
-      a.forEach(function (v) {
-        if (!b.has(v)) same = false;
-      });
-      return same;
-    });
-  }
-
   function categoryValues(key) {
     var counts = {};
     var order = [];
@@ -967,84 +947,6 @@
     }).map(function (v) {
       return { value: v, count: counts[v] };
     });
-  }
-
-  function renderFilter() {
-    var cat = CATEGORIES.filter(function (c) {
-      return c.key === state.category;
-    })[0];
-    refs.title.textContent = cat.label;
-    refs.menu.setAttribute("aria-label", "Filter by " + cat.label);
-    refs.list.innerHTML = categoryValues(cat.key).map(function (opt, i) {
-      return window.TableUi.filterCheckbox({
-        id: "cm-bills-filter-" + cat.key + "-" + i,
-        label: opt.value,
-        countText: String(opt.count),
-        value: opt.value,
-        checked: state.draft[cat.key].has(opt.value),
-      });
-    }).join("");
-    syncFilterButtons();
-  }
-
-  function syncFilterButtons() {
-    refs.reset.disabled = !state.draft[state.category].size;
-    refs.apply.disabled = sameDraft();
-  }
-
-  function positionMenu(trigger) {
-    var rect = trigger.getBoundingClientRect();
-    var width = refs.menu.offsetWidth || 288;
-    var margin = 16;
-    var left = Math.min(Math.max(rect.right - width, margin), window.innerWidth - width - margin);
-    refs.menu.style.left = Math.round(left) + "px";
-    refs.menu.style.top = Math.round(rect.bottom + 8) + "px";
-  }
-
-  function triggerFor(key) {
-    return refs.table && refs.table.querySelector('[data-bh-column-filter="' + key + '"]');
-  }
-
-  function setFilterOpen(open, key, opts) {
-    if (!refs.menu) return;
-    var wasOpen = !refs.menu.classList.contains("invisible");
-    var prev = triggerFor(state.category);
-    if (key) state.category = key;
-    state.filterOpen = !!open;
-    if (prev) prev.setAttribute("aria-expanded", "false");
-    var trigger = triggerFor(state.category);
-    if (open) {
-      if (!wasOpen) state.draft = cloneApplied();
-      renderFilter();
-      if (trigger) {
-        trigger.setAttribute("aria-expanded", "true");
-        positionMenu(trigger);
-      }
-      refs.menu.classList.remove("invisible", "opacity-0", "pointer-events-none");
-      var first = refs.menu.querySelector("input[type='checkbox']");
-      if (first && !(opts && opts.keepFocus)) first.focus();
-    } else {
-      refs.menu.classList.add("invisible", "opacity-0", "pointer-events-none");
-      if (opts && opts.restoreFocus && trigger) trigger.focus();
-    }
-  }
-
-  function applyFilter() {
-    state.applied = cloneDraft();
-    state.page = 1;
-    var key = state.category;
-    setFilterOpen(false);
-    renderTable();
-    var trigger = triggerFor(key);
-    if (trigger) trigger.focus();
-  }
-
-  function cloneDraft() {
-    var out = {};
-    CATEGORIES.forEach(function (c) {
-      out[c.key] = new Set(Array.from(state.draft[c.key]));
-    });
-    return out;
   }
 
   /* ---------- events ---------- */
@@ -1073,29 +975,6 @@
       return;
     }
 
-    var filterBtn = target.closest("[data-bh-column-filter]");
-    if (filterBtn) {
-      var key = filterBtn.getAttribute("data-bh-column-filter");
-      setFilterOpen(!(state.filterOpen && state.category === key), key);
-      return;
-    }
-    if (target.closest("[data-bh-select-all]")) {
-      Array.prototype.forEach.call(refs.list.querySelectorAll("input[type='checkbox']"), function (input) {
-        input.checked = true;
-        state.draft[state.category].add(input.getAttribute("data-filter-value"));
-      });
-      renderFilter();
-      return;
-    }
-    if (target.closest("[data-bh-filter-reset]")) {
-      state.draft[state.category].clear();
-      renderFilter();
-      return;
-    }
-    if (target.closest("[data-bh-filter-apply]")) {
-      if (!refs.apply.disabled) applyFilter();
-      return;
-    }
     var remove = target.closest("[data-filter-tag-remove]");
     if (remove) {
       delete state.applied[remove.getAttribute("data-filter-tag-remove")];
@@ -1105,7 +984,9 @@
     }
     var open = target.closest("[data-filter-tag-open]");
     if (open) {
-      setFilterOpen(true, open.getAttribute("data-filter-tag-open"));
+      event.stopPropagation(); // ColumnFilter would read this click as an outside click
+      var funnel = refs.table.querySelector('[data-column-filter="' + open.getAttribute("data-filter-tag-open") + '"]');
+      if (funnel) funnel.click();
       return;
     }
 
@@ -1125,29 +1006,6 @@
 
     var row = target.closest("tr[data-cm-bill-row]");
     if (row) toggleRow(row.getAttribute("data-cm-bill-row"));
-  }
-
-  function onKeydown(event) {
-    if (!state || !refs.root || !refs.root.contains(event.target)) return;
-    if (event.key === "Escape" && state.filterOpen) {
-      event.stopPropagation();
-      setFilterOpen(false, null, { restoreFocus: true });
-    }
-  }
-
-  function onChange(event) {
-    var input = event.target.closest && event.target.closest("input[type='checkbox'][data-filter-value]");
-    if (!input || !state || !refs.menu || !refs.menu.contains(input)) return;
-    var value = input.getAttribute("data-filter-value");
-    if (input.checked) state.draft[state.category].add(value);
-    else state.draft[state.category].delete(value);
-    syncFilterButtons();
-  }
-
-  function onDocumentClick(event) {
-    if (!state || !state.filterOpen || !refs.menu) return;
-    if (refs.menu.contains(event.target) || event.target.closest("[data-bh-column-filter], [data-filter-tag-open]")) return;
-    setFilterOpen(false);
   }
 
   function exportRows() {
@@ -1185,19 +1043,6 @@
     var mount = cm.mount("details");
     if (!mount) return;
     mount.addEventListener("click", onClick);
-    mount.addEventListener("keydown", onKeydown);
-    mount.addEventListener("change", onChange);
-    document.addEventListener("click", onDocumentClick);
-    window.addEventListener("resize", function () {
-      if (state && state.filterOpen) setFilterOpen(false);
-    });
-    window.addEventListener(
-      "scroll",
-      function (event) {
-        if (state && state.filterOpen && !(refs.menu && refs.menu.contains(event.target))) setFilterOpen(false);
-      },
-      true,
-    );
     cm.on("details-tab", ensure);
     cm.on("route", ensure);
     cm.on("data-change", ensure);
