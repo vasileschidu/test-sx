@@ -658,6 +658,18 @@
     return DATE_CATEGORIES.indexOf(panel) !== -1;
   }
 
+  // ── Column header filters (column-filter.js) ──
+  // Same filter set as the global filter: they read and write its applied values.
+  var COLUMN_FILTER_PANELS = { paymentMethod: "method" }; // column key → filter category; not Status: one status per tab (Andrian, 2026-11-20)
+  var COLUMN_FILTER_LISTS = {
+    method: { set: "appliedSelectedMethods", wrap: "sx-table-filter-methods" },
+  };
+
+  function isColumnFilterActive(panel) {
+    var list = COLUMN_FILTER_LISTS[panel];
+    return !!(list && tableFilterState[list.set] && tableFilterState[list.set].size);
+  }
+
   function emptyDateFields() {
     return {
       initiatedDateFrom: "",
@@ -1621,13 +1633,15 @@
     return html;
   }
 
-  function supplierHeaderFilter(panel) {
-    return (
-      '<button type="button" data-header-filter="' +
-      panel +
-      '" class="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" aria-label="Filter column">' +
-      tableIcon("filter-funnel.svg", 14, 14) +
-      "</button>"
+  // Header filter icon on Payment Method (not Status: one status per tab) (column-filter.js).
+  function supplierHeaderFilter(col) {
+    var panel = COLUMN_FILTER_PANELS[col && col.key];
+    if (!IS_SUPPLIER_PORTAL || !panel || !window.ColumnFilter) return "";
+    return window.ColumnFilter.button(
+      panel,
+      getFilterCategoryLabel(panel) || col.label,
+      isColumnFilterActive(panel),
+      { style: "exchange" },
     );
   }
 
@@ -1678,7 +1692,8 @@
         alignClass;
       html += '<th scope="col" class="' + thClass + '">';
 
-      if (col.sortable || col.filterable || (IS_SUPPLIER_PORTAL && (col.type === "paymentMethod" || col.type === "status"))) {
+      var headerFilter = supplierHeaderFilter(col);
+      if (col.sortable || col.filterable || headerFilter) {
         var headerBtnAttrs = "";
         if (col.sortable) {
           headerBtnAttrs +=
@@ -1703,12 +1718,7 @@
 
         html += "</button>";
         if (IS_SUPPLIER_PORTAL) html += supplierHeaderExtras(col);
-        if (IS_SUPPLIER_PORTAL && col.type === "paymentMethod") {
-          html += supplierHeaderFilter("method");
-        }
-        if (IS_SUPPLIER_PORTAL && col.type === "status") {
-          html += supplierHeaderFilter("status");
-        }
+        html += headerFilter;
         html += "</div>";
       } else {
         html += escapeHtml(col.label);
@@ -4216,9 +4226,12 @@
     var filterAmountMaxInput = document.getElementById("sx-table-filter-amount-max-input");
     [[filterAmountMinInput, "amountMin"], [filterAmountMaxInput, "amountMax"]].forEach(function (pair) {
       if (!pair[0]) return;
+      // US money display ("1,234.50"); the state keeps the plain number string.
+      var CF = window.ColumnFilter;
+      if (CF) CF.attachAmount(pair[0]);
       pair[0].addEventListener("input", function () {
-        pair[0].value = cleanAmountInput(pair[0].value);
-        tableFilterState[pair[1]] = pair[0].value;
+        if (!CF) pair[0].value = cleanAmountInput(pair[0].value);
+        tableFilterState[pair[1]] = CF ? CF.cleanAmount(pair[0].value) : pair[0].value;
         renderFilterNavBadges();
         syncApplyButtonState();
       });
@@ -5258,6 +5271,7 @@
         filterMenu.style.maxWidth = "";
         filterMenu.style.width = "";
         filterMenu.style.maxHeight = "";
+        if (window.ColumnFilter) window.ColumnFilter.pinPanel(filterMenu, filterBtn);
       }
     }
 
@@ -5292,17 +5306,6 @@
         c.classList.toggle("rotate-180", !!open);
       });
     }
-    if (filterBtn && filterBtn.dataset.headerFilterBound !== "1") {
-      filterBtn.dataset.headerFilterBound = "1";
-      document.addEventListener("click", function (event) {
-        var hit = event.target.closest("[data-header-filter]");
-        if (!hit) return;
-        event.preventDefault();
-        event.stopPropagation();
-        setFilterMenuOpen(true, hit.getAttribute("data-header-filter") || "status");
-      });
-    }
-
     function setFilterMenuOpen(nextOpen, openPanel) {
       tableFilterState.menuOpen = !!nextOpen;
       setFilterChevron(tableFilterState.menuOpen);
@@ -5597,7 +5600,6 @@
     document.addEventListener("click", function (event) {
       if (!filterDropdown || !tableFilterState.menuOpen) return;
       if (filterDropdown.contains(event.target)) return;
-      if (event.target.closest("[data-header-filter]")) return;
       setFilterMenuOpen(false);
     });
 
@@ -5685,8 +5687,8 @@
     });
 
     syncTableFilterUi = function () {
-      if (filterAmountMinInput) filterAmountMinInput.value = tableFilterState.amountMin;
-      if (filterAmountMaxInput) filterAmountMaxInput.value = tableFilterState.amountMax;
+      if (filterAmountMinInput) filterAmountMinInput.value = window.ColumnFilter ? window.ColumnFilter.formatAmount(tableFilterState.amountMin, true) : tableFilterState.amountMin;
+      if (filterAmountMaxInput) filterAmountMaxInput.value = window.ColumnFilter ? window.ColumnFilter.formatAmount(tableFilterState.amountMax, true) : tableFilterState.amountMax;
       syncSelectedFiltersToAvailable();
       renderVendorEntryFilters();
       renderCustomerFilters();
@@ -5703,7 +5705,25 @@
         applyFilterMenuLayout();
         setFilterPanel(tableFilterState.activePanel || "amount");
       }
+      if (window.ColumnFilter) window.ColumnFilter.sync();
     };
+
+    if (window.ColumnFilter) {
+      window.ColumnFilter.bind(document.getElementById(TABLE_ID), {
+        isActive: isColumnFilterActive,
+        describe: function (panel) {
+          copyAppliedFiltersToDraft();
+          syncTableFilterUi();
+          var list = COLUMN_FILTER_LISTS[panel];
+          return { title: getFilterCategoryLabel(panel), options: window.ColumnFilter.optionsFrom(document.getElementById(list.wrap)) };
+        },
+        apply: function (panel, values) {
+          tableFilterState[COLUMN_FILTER_LISTS[panel].set] = new Set(values);
+          copyAppliedFiltersToDraft();
+          refreshTableForActiveTab();
+        },
+      });
+    }
 
     syncTableFilterUi();
   }

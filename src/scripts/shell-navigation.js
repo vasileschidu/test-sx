@@ -4,12 +4,18 @@
       scripts: [
         "/src/scripts/table-ui.js?v=20261113es3",
         "/src/scripts/table-skeleton.js",
-        "/src/scripts/exchanges-table.js?v=20261120np",
+        "/src/scripts/date-range-calendar.js?v=20261116m2",
+        "/src/scripts/column-filter.js?v=20261120cf11",
+        "/src/scripts/exchanges-table.js?v=20261120cf11",
       ],
       init: "initSmartExchangePage",
     },
     "bills-and-payables.html": {
-      scripts: ["/src/scripts/bills-payables-table.js"],
+      scripts: [
+        "/src/scripts/date-range-calendar.js?v=20261116m2",
+        "/src/scripts/column-filter.js?v=20261120cf11",
+        "/src/scripts/bills-payables-table.js?v=20261120cf11",
+      ],
       init: "initBillsPayablesTable",
     },
     "payment-preferences.html": {
@@ -21,7 +27,7 @@
       init: null,
     },
     "vendors.html": {
-      scripts: ["/src/scripts/vendors-data.js", "/src/scripts/vendors-page.js"],
+      scripts: ["/src/scripts/vendors-data.js", "/src/scripts/vendors-page.js?v=20261120cf12"],
       init: "initVendorsPage",
     },
     "vendor-profile.html": {
@@ -45,7 +51,9 @@
     "consumer-payments-received.html": {
       scripts: [
         "/src/scripts/table-skeleton.js",
-        "/src/scripts/consumer-exchanges-table.js?v=20261116cal",
+        "/src/scripts/date-range-calendar.js?v=20261116m2",
+        "/src/scripts/column-filter.js?v=20261120cf11",
+        "/src/scripts/consumer-exchanges-table.js?v=20261120cf11",
       ],
       init: "initConsumerExchangesPage",
     },
