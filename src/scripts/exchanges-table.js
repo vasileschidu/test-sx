@@ -658,6 +658,32 @@
     return DATE_CATEGORIES.indexOf(panel) !== -1;
   }
 
+  // ── Column header filters (column-filter.js) ──
+  // Same filter set as the global filter: they read and write its applied values.
+  var COLUMN_FILTER_PANELS = {}; // column key → filter category
+  Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
+    COLUMN_FILTER_PANELS[FILTER_CATEGORY_COLUMNS[panel]] = panel;
+  });
+  var COLUMN_FILTER_LISTS = {
+    vendor_entry: { set: "appliedSelectedVendorEntries", wrap: "sx-table-filter-vendor-entries", search: "Search vendor" },
+    customer: { set: "appliedSelectedCustomers", wrap: "sx-table-filter-customers", search: "Search customer" },
+    status: { set: "appliedSelectedStatuses", wrap: "sx-table-filter-statuses" },
+    method: { set: "appliedSelectedMethods", wrap: "sx-table-filter-methods" },
+    failure_reason: { set: "appliedSelectedFailureReasons", wrap: "sx-table-filter-failure-reasons" },
+  };
+
+  function isColumnFilterActive(panel) {
+    var list = COLUMN_FILTER_LISTS[panel];
+    if (list) return !!(tableFilterState[list.set] && tableFilterState[list.set].size);
+    if (isDateCategory(panel)) {
+      var range = getDateFields(panel);
+      return !!(range.appliedInitiatedDateFrom || range.appliedInitiatedDateTo);
+    }
+    if (panel === "amount")
+      return tableFilterState.appliedAmountMin !== "" || tableFilterState.appliedAmountMax !== "";
+    return false;
+  }
+
   function emptyDateFields() {
     return {
       initiatedDateFrom: "",
@@ -1621,13 +1647,14 @@
     return html;
   }
 
-  function supplierHeaderFilter(panel) {
-    return (
-      '<button type="button" data-header-filter="' +
-      panel +
-      '" class="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600" aria-label="Filter column">' +
-      tableIcon("filter-funnel.svg", 14, 14) +
-      "</button>"
+  // Every column that is a global-filter category gets its own dropdown (column-filter.js, TCDM-5238).
+  function supplierHeaderFilter(col) {
+    var panel = COLUMN_FILTER_PANELS[col && col.key];
+    if (!IS_SUPPLIER_PORTAL || !panel || !window.ColumnFilter) return "";
+    return window.ColumnFilter.button(
+      panel,
+      getFilterCategoryLabel(panel) || col.label,
+      isColumnFilterActive(panel),
     );
   }
 
@@ -1678,7 +1705,8 @@
         alignClass;
       html += '<th scope="col" class="' + thClass + '">';
 
-      if (col.sortable || col.filterable || (IS_SUPPLIER_PORTAL && (col.type === "paymentMethod" || col.type === "status"))) {
+      var headerFilter = supplierHeaderFilter(col);
+      if (col.sortable || col.filterable || headerFilter) {
         var headerBtnAttrs = "";
         if (col.sortable) {
           headerBtnAttrs +=
@@ -1703,12 +1731,7 @@
 
         html += "</button>";
         if (IS_SUPPLIER_PORTAL) html += supplierHeaderExtras(col);
-        if (IS_SUPPLIER_PORTAL && col.type === "paymentMethod") {
-          html += supplierHeaderFilter("method");
-        }
-        if (IS_SUPPLIER_PORTAL && col.type === "status") {
-          html += supplierHeaderFilter("status");
-        }
+        html += headerFilter;
         html += "</div>";
       } else {
         html += escapeHtml(col.label);
@@ -5292,17 +5315,6 @@
         c.classList.toggle("rotate-180", !!open);
       });
     }
-    if (filterBtn && filterBtn.dataset.headerFilterBound !== "1") {
-      filterBtn.dataset.headerFilterBound = "1";
-      document.addEventListener("click", function (event) {
-        var hit = event.target.closest("[data-header-filter]");
-        if (!hit) return;
-        event.preventDefault();
-        event.stopPropagation();
-        setFilterMenuOpen(true, hit.getAttribute("data-header-filter") || "status");
-      });
-    }
-
     function setFilterMenuOpen(nextOpen, openPanel) {
       tableFilterState.menuOpen = !!nextOpen;
       setFilterChevron(tableFilterState.menuOpen);
@@ -5597,7 +5609,6 @@
     document.addEventListener("click", function (event) {
       if (!filterDropdown || !tableFilterState.menuOpen) return;
       if (filterDropdown.contains(event.target)) return;
-      if (event.target.closest("[data-header-filter]")) return;
       setFilterMenuOpen(false);
     });
 
@@ -5703,7 +5714,46 @@
         applyFilterMenuLayout();
         setFilterPanel(tableFilterState.activePanel || "amount");
       }
+      if (window.ColumnFilter) window.ColumnFilter.sync();
     };
+
+    if (window.ColumnFilter) {
+      window.ColumnFilter.bind(document.getElementById(TABLE_ID), {
+        isActive: isColumnFilterActive,
+        describe: function (panel) {
+          copyAppliedFiltersToDraft();
+          syncTableFilterUi();
+          var title = getFilterCategoryLabel(panel);
+          var list = COLUMN_FILTER_LISTS[panel];
+          if (list)
+            return {
+              title: title,
+              type: "list",
+              search: list.search,
+              options: window.ColumnFilter.optionsFrom(document.getElementById(list.wrap)),
+            };
+          if (isDateCategory(panel)) {
+            var range = getDateFields(panel);
+            return { title: title, type: "date", from: range.appliedInitiatedDateFrom, to: range.appliedInitiatedDateTo };
+          }
+          return { title: title, type: "amount", min: tableFilterState.appliedAmountMin, max: tableFilterState.appliedAmountMax };
+        },
+        apply: function (panel, value) {
+          var list = COLUMN_FILTER_LISTS[panel];
+          if (list) tableFilterState[list.set] = new Set(value);
+          else if (isDateCategory(panel)) {
+            var range = getDateFields(panel);
+            range.appliedInitiatedDateFrom = value.from || "";
+            range.appliedInitiatedDateTo = value.to || "";
+          } else if (panel === "amount") {
+            tableFilterState.appliedAmountMin = value.min || "";
+            tableFilterState.appliedAmountMax = value.max || "";
+          }
+          copyAppliedFiltersToDraft();
+          refreshTableForActiveTab();
+        },
+      });
+    }
 
     syncTableFilterUi();
   }

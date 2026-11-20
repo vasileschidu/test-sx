@@ -505,6 +505,45 @@
     return DATE_CATEGORIES.indexOf(panel) !== -1;
   }
 
+  // ── Column header filters (column-filter.js, TCDM-5238) ──
+  // Every global-filter category gets a header icon with its own dropdown; both filters share the applied values.
+  var COLUMN_FILTER_PANELS = {}; // column key → filter category
+  Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
+    COLUMN_FILTER_PANELS[FILTER_CATEGORY_COLUMNS[panel]] = panel;
+  });
+  var COLUMN_FILTER_LISTS = {
+    customer: { set: 'appliedSelectedCustomers', wrap: 'sx-table-filter-customers', search: 'Search payer' },
+    status: { set: 'appliedSelectedStatuses', wrap: 'sx-table-filter-statuses' },
+    method: { set: 'appliedSelectedMethods', wrap: 'sx-table-filter-methods' },
+    failure_reason: { set: 'appliedSelectedFailureReasons', wrap: 'sx-table-filter-failure-reasons' }
+  };
+
+  function isColumnFilterActive(panel) {
+    var list = COLUMN_FILTER_LISTS[panel];
+    if (list) return !!(tableFilterState[list.set] && tableFilterState[list.set].size);
+    if (isDateCategory(panel)) {
+      var range = getDateFields(panel);
+      return !!(range.appliedInitiatedDateFrom || range.appliedInitiatedDateTo);
+    }
+    if (panel === 'amount') return tableFilterState.appliedAmountMin !== '' || tableFilterState.appliedAmountMax !== '';
+    return false;
+  }
+
+  function columnFilterLabel(panel) {
+    var key = FILTER_CATEGORY_COLUMNS[panel];
+    var cols = (paginationState.allColumns && paginationState.allColumns.length) ? paginationState.allColumns : paginationState.columns;
+    for (var i = 0; cols && i < cols.length; i++) {
+      if (cols[i] && cols[i].key === key && cols[i].label) return cols[i].label;
+    }
+    return FILTER_CATEGORY_LABELS[panel] || '';
+  }
+
+  function columnHeaderFilter(col) {
+    var panel = COLUMN_FILTER_PANELS[col && col.key];
+    if (!IS_CONSUMER_TABLE || !panel || !window.ColumnFilter) return '';
+    return window.ColumnFilter.button(panel, col.label || columnFilterLabel(panel), isColumnFilterActive(panel));
+  }
+
   function emptyDateFields() {
     return {
       initiatedDateFrom: '', initiatedDateTo: '', initiatedDateFromDraft: '', initiatedDateToDraft: '',
@@ -1296,13 +1335,15 @@
         : base + ' px-2 py-3.5 text-left text-sm font-semibold whitespace-nowrap text-gray-900 dark:text-white';
       html += '<th scope="col" class="' + thClass + '">';
 
+      var headerFilter = columnHeaderFilter(col);
+      if (headerFilter) html += '<div class="flex items-center gap-1' + (alignRight ? ' justify-end' : '') + '">';
       if (col.sortable || col.filterable) {
         var headerBtnAttrs = '';
         if (col.sortable) {
           headerBtnAttrs += ' data-sort-key="' + escapeHtml(col.key || '') + '"';
         }
         var headerBtnClass = IS_CONSUMER_TABLE
-          ? 'group flex w-full cursor-pointer items-center gap-x-1 rounded-md ' + (alignRight ? 'justify-end text-right' : 'text-left') + ' text-xs font-medium uppercase tracking-[0.6px] text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400'
+          ? 'group ' + (headerFilter ? 'inline-flex' : 'flex w-full') + ' cursor-pointer items-center gap-x-1 rounded-md ' + (alignRight ? 'justify-end text-right' : 'text-left') + ' text-xs font-medium uppercase tracking-[0.6px] text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-400'
           : 'group flex w-full cursor-pointer items-center gap-x-1.5 rounded-md text-left text-sm font-semibold text-gray-900 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-white';
         html += '<button type="button"' + headerBtnAttrs + ' class="' + headerBtnClass + '">';
         html += '<span>' + escapeHtml(col.label) + '</span>';
@@ -1314,8 +1355,9 @@
 
         html += '</button>';
       } else {
-        html += escapeHtml(col.label);
+        html += headerFilter ? '<span>' + escapeHtml(col.label) + '</span>' : escapeHtml(col.label);
       }
+      if (headerFilter) html += headerFilter + '</div>';
 
       html += '</th>';
     });
@@ -4345,7 +4387,42 @@
         applyFilterMenuLayout();
         setFilterPanel(tableFilterState.activePanel || 'amount');
       }
+      if (window.ColumnFilter) window.ColumnFilter.sync();
     };
+
+    if (window.ColumnFilter && IS_CONSUMER_TABLE) {
+      window.ColumnFilter.bind(document.getElementById(TABLE_ID), {
+        isActive: isColumnFilterActive,
+        describe: function (panel) {
+          copyAppliedFiltersToDraft();
+          syncTableFilterUi();
+          var title = columnFilterLabel(panel);
+          var list = COLUMN_FILTER_LISTS[panel];
+          if (list) {
+            return { title: title, type: 'list', search: list.search, options: window.ColumnFilter.optionsFrom(document.getElementById(list.wrap)) };
+          }
+          if (isDateCategory(panel)) {
+            var range = getDateFields(panel);
+            return { title: title, type: 'date', from: range.appliedInitiatedDateFrom, to: range.appliedInitiatedDateTo };
+          }
+          return { title: title, type: 'amount', min: tableFilterState.appliedAmountMin, max: tableFilterState.appliedAmountMax };
+        },
+        apply: function (panel, value) {
+          var list = COLUMN_FILTER_LISTS[panel];
+          if (list) tableFilterState[list.set] = new Set(value);
+          else if (isDateCategory(panel)) {
+            var range = getDateFields(panel);
+            range.appliedInitiatedDateFrom = value.from || '';
+            range.appliedInitiatedDateTo = value.to || '';
+          } else if (panel === 'amount') {
+            tableFilterState.appliedAmountMin = value.min || '';
+            tableFilterState.appliedAmountMax = value.max || '';
+          }
+          copyAppliedFiltersToDraft();
+          refreshTableForActiveTab();
+        }
+      });
+    }
 
     syncTableFilterUi();
   }

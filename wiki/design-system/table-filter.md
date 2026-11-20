@@ -2,8 +2,8 @@
 title: Table filter
 type: guide
 status: draft
-last_reviewed: 2026-10-21
-source: decision 0002 (2026-10-21); follow-up decisions 2026-10-21 (Reset wording, Vendors out of scope, Vendor Entry filterable); filter alignment on branch filter-alignment (2026-10-21)
+last_reviewed: 2026-11-20
+source: decision 0002 (2026-10-21); TCDM-5238 column filters (Andrian, 2026-11-20); follow-up decisions 2026-10-21 (Reset wording, Vendors out of scope, Vendor Entry filterable); filter alignment on branch filter-alignment (2026-10-21)
 ---
 
 # Table filter
@@ -48,6 +48,33 @@ current implementations. TODO(confirm): check against the Figma table filter in 
 | Active filters | Shown as removable chips under the toolbar; removing a chip applies immediately |
 | Tabs | Same categories on every tab. Applied filters persist across tabs and always apply |
 | Empty result | Table empty state. TODO: one shared "no results" message |
+
+## Column filter (header icon)
+
+Every column that is a category of the table's filter has a funnel icon in its header (TCDM-5238). The icon opens a
+small dropdown **under that header**, not the global panel. Decided by Andrian on 2026-11-20:
+
+1. **One filter set.** The column filter and the global filter edit the same applied filters. Ticking Status = Paid in
+   the column shows it ticked in the global panel, as a chip and in the Filter count, and the other way round.
+   Clearing it in one place (Clear, Reset + Apply, or the chip ×) clears it everywhere.
+2. **Which columns:** every column that is a category in that table's global filter (Hub: Amount, Payee, Payment Method,
+   Source, Due Date, Date Initiated, Payment Date, Status, Failure Reason; Exchange: Amount, Vendor Entry, Customer,
+   Date Initiated, Date Processed, Payment Method, Status, Failure Reason; Consumer: Amount, Payer, Date Initiated,
+   Date Processed, Payment Method, Status, Failure Reason). Hidden columns show no icon; the global filter still lists them.
+3. **Applies immediately**, like the Vendor List "Payment network" filter: no Apply button. The global panel keeps Reset + Apply.
+
+| Part | Behavior |
+|---|---|
+| Icon | Gray funnel; **blue on a blue-100 tile while that column has an active filter**; gray tile while its dropdown is open |
+| Dropdown | `w-60` card under the icon, right edges aligned, title = column header (overline). On phones (< 640px) a bottom sheet with a backdrop, like the global filter |
+| List columns | Checkboxes with the same values and order as the global panel; search field on the long lists (Payee, Vendor Entry, Customer, Payer) |
+| Date columns | From / To fields with the shared calendar (`DateRangeCalendar`); applies when both fields are empty or complete dates |
+| Amount | From / To with the "$" prefix; either can stay empty |
+| Clear | Link at the bottom; clears only that column; disabled when the column has no filter |
+| Closing | Esc (first closes an open calendar), outside click, the icon again, or tabbing out. Esc returns focus to the icon |
+
+Code: `src/scripts/column-filter.js` (`ColumnFilter`), wired in each table script with `describe` / `apply` / `isActive`
+over that table's applied filter state.
 
 ## Date columns per portal
 

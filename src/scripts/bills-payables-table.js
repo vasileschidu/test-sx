@@ -1520,6 +1520,75 @@
     return panel === "source" ? "Source" : "";
   }
 
+  // ── Column header filters (column-filter.js) ──
+  // Same filter set as the global filter: the dropdown reads and writes the applied values,
+  // then copies them into the global panel's draft so both always show the same selection.
+  var COLUMN_FILTER_PANELS = {}; // column key → filter category
+  Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
+    COLUMN_FILTER_PANELS[FILTER_CATEGORY_COLUMNS[panel]] = panel;
+  });
+  var COLUMN_FILTER_LISTS = {
+    payee: { set: "appliedSelectedPayees", wrap: "filterPayeesWrap", search: "Search payee" },
+    source: { set: "appliedSelectedSources", wrap: "filterSourcesWrap" },
+    status: { set: "appliedSelectedStatuses", wrap: "filterStatusesWrap" },
+    method: { set: "appliedSelectedMethods", wrap: "filterMethodsWrap" },
+    failure_reason: { set: "appliedSelectedFailureReasons", wrap: "filterFailureReasonsWrap" },
+  };
+  var COLUMN_FILTER_DATES = {
+    due_date: ["appliedDueDateFrom", "appliedDueDateTo"],
+    initiated_date: ["appliedInitiatedDateFrom", "appliedInitiatedDateTo"],
+    payment_date: ["appliedPaymentDateFrom", "appliedPaymentDateTo"],
+  };
+
+  function isColumnFilterActive(panel) {
+    var list = COLUMN_FILTER_LISTS[panel];
+    if (list) return !!(state[list.set] && state[list.set].size);
+    var date = COLUMN_FILTER_DATES[panel];
+    if (date) return !!(state[date[0]] || state[date[1]]);
+    if (panel === "amount")
+      return state.appliedAmountMin !== "" || state.appliedAmountMax !== "";
+    return false;
+  }
+
+  function bindColumnFilters() {
+    if (!window.ColumnFilter || !refs.table) return;
+    window.ColumnFilter.bind(refs.table, {
+      isActive: isColumnFilterActive,
+      describe: function (panel) {
+        copyAppliedFiltersToDraft();
+        syncFilterUi();
+        var title = getFilterCategoryLabel(panel);
+        var list = COLUMN_FILTER_LISTS[panel];
+        if (list)
+          return {
+            title: title,
+            type: "list",
+            search: list.search,
+            options: window.ColumnFilter.optionsFrom(refs[list.wrap]),
+          };
+        var date = COLUMN_FILTER_DATES[panel];
+        if (date)
+          return { title: title, type: "date", from: state[date[0]], to: state[date[1]] };
+        return { title: title, type: "amount", min: state.appliedAmountMin, max: state.appliedAmountMax };
+      },
+      apply: function (panel, value) {
+        var list = COLUMN_FILTER_LISTS[panel];
+        var date = COLUMN_FILTER_DATES[panel];
+        if (list) state[list.set] = new Set(value);
+        else if (date) {
+          state[date[0]] = value.from || "";
+          state[date[1]] = value.to || "";
+        } else if (panel === "amount") {
+          state.appliedAmountMin = value.min || "";
+          state.appliedAmountMax = value.max || "";
+        }
+        copyAppliedFiltersToDraft();
+        state.currentPage = 1;
+        renderAll();
+      },
+    });
+  }
+
   function getVisibleFilterCategories() {
     var visible = {};
     Object.keys(FILTER_CATEGORY_COLUMNS).forEach(function (panel) {
@@ -2876,10 +2945,9 @@
         includeHeader: true,
         columnClass: columnWidthClass,
         headerAddon: function (col) {
-          if (col.key === "payeeName") return tableIcon("filter.svg", 14, 14);
-          if (col.key === "source")
-            return tableIcon("filter-funnel.svg", 14, 14);
-          return "";
+          return COLUMN_FILTER_PANELS[col.key] && window.ColumnFilter
+            ? window.ColumnFilter.icon()
+            : "";
         },
       });
     } else {
@@ -3827,16 +3895,9 @@
     }
 
     function buildHeaderFilterButton(panel, label) {
-      var iconFile = panel === "source" ? "filter-funnel.svg" : "filter.svg";
-      return (
-        '<button type="button" data-column-filter="' +
-        panel +
-        '" aria-label="Filter ' +
-        escapeHtml(label) +
-        '" class="inline-flex size-5 items-center justify-center rounded-sm hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
-        tableIcon(iconFile, 14, 14) +
-        "</button>"
-      );
+      return window.ColumnFilter
+        ? window.ColumnFilter.button(panel, label, isColumnFilterActive(panel))
+        : "";
     }
 
     var headerHtml =
@@ -3880,12 +3941,8 @@
           var headerTextClass =
             "text-xs font-medium uppercase tracking-[0.6px] text-gray-500 dark:text-gray-400";
           var alignEnd = col.key === "amount";
-          var filterPanel =
-            col.key === "payeeName"
-              ? "payee"
-              : col.key === "source"
-                ? "source"
-                : "";
+          // Every column that is a global-filter category gets its own dropdown (TCDM-5238).
+          var filterPanel = COLUMN_FILTER_PANELS[col.key] || "";
           var sortButton = col.sortable
             ? '<button type="button" data-sort-key="' +
               col.key +
@@ -4671,23 +4728,8 @@
           return;
         }
 
-        var columnFilter = e.target.closest("[data-column-filter]");
-        if (columnFilter) {
-          e.stopPropagation();
-          var filterPanel = columnFilter.getAttribute("data-column-filter");
-          if (
-            filterPanel === "payee" ||
-            filterPanel === "source" ||
-            filterPanel === "status" ||
-            filterPanel === "method" ||
-            filterPanel === "failure_reason" ||
-            filterPanel === "initiated_date"
-          ) {
-            if (!state.filterMenuOpen) setFilterMenuOpen(true);
-            setFilterPanel(filterPanel);
-          } else if (!state.filterMenuOpen) setFilterMenuOpen(true);
-          return;
-        }
+        // Header filter icons open their own dropdown (column-filter.js, bound in bindColumnFilters).
+        if (e.target.closest("[data-column-filter]")) return;
 
         var sortBtn = e.target.closest("[data-sort-key]");
         if (sortBtn) {
@@ -4895,6 +4937,7 @@
         initRerunConfirmDialog();
         initScheduledCancelDialog();
         initTableFilterDropdown();
+        bindColumnFilters();
         initManageColumnsModal();
         refreshStickyAction = initStickyAction(refs.table);
         if (initialLoadingTimer) {
