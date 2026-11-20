@@ -4239,9 +4239,12 @@
     var filterAmountMaxInput = document.getElementById("sx-table-filter-amount-max-input");
     [[filterAmountMinInput, "amountMin"], [filterAmountMaxInput, "amountMax"]].forEach(function (pair) {
       if (!pair[0]) return;
+      // US money display ("1,234.50"); the state keeps the plain number string.
+      var CF = window.ColumnFilter;
+      if (CF) CF.attachAmount(pair[0]);
       pair[0].addEventListener("input", function () {
-        pair[0].value = cleanAmountInput(pair[0].value);
-        tableFilterState[pair[1]] = pair[0].value;
+        if (!CF) pair[0].value = cleanAmountInput(pair[0].value);
+        tableFilterState[pair[1]] = CF ? CF.cleanAmount(pair[0].value) : pair[0].value;
         renderFilterNavBadges();
         syncApplyButtonState();
       });
@@ -5696,8 +5699,8 @@
     });
 
     syncTableFilterUi = function () {
-      if (filterAmountMinInput) filterAmountMinInput.value = tableFilterState.amountMin;
-      if (filterAmountMaxInput) filterAmountMaxInput.value = tableFilterState.amountMax;
+      if (filterAmountMinInput) filterAmountMinInput.value = window.ColumnFilter ? window.ColumnFilter.formatAmount(tableFilterState.amountMin, true) : tableFilterState.amountMin;
+      if (filterAmountMaxInput) filterAmountMaxInput.value = window.ColumnFilter ? window.ColumnFilter.formatAmount(tableFilterState.amountMax, true) : tableFilterState.amountMax;
       syncSelectedFiltersToAvailable();
       renderVendorEntryFilters();
       renderCustomerFilters();

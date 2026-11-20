@@ -72,7 +72,7 @@ small dropdown **under that header**, not the global panel. Decided by Andrian o
 | Dropdown | `w-60` card under the icon, right edges aligned. **No title** (the Figma "Column Filters" `12596:14256` title and X are not used). On phones (< 640px) a bottom sheet with a backdrop, like the global filter |
 | List columns | Checkboxes with the same values and order as the global panel; the toolbar search field on the long lists (Payee, Vendor Entry, Customer, Payer) |
 | Date columns | The global panel's From / To fields with the shared calendar (`DateRangeCalendar`). Apply waits until both fields are empty or complete dates |
-| Amount | The global panel's From / To fields with the "$" prefix; either can stay empty |
+| Amount | The global panel's From / To fields with the "$" prefix; either can stay empty. US money format in both filters (`ColumnFilter.attachAmount`): "121,321,321" while typing, "1,234.50" on blur, digits and one "." only, max 2 decimals, paste cleaned; the filter uses the plain number |
 | Footer | The global panel's footer: full-width divider, **Reset** (secondary) + **Apply** (primary). Reset is disabled when the draft is empty; Apply is disabled while the draft equals the applied filter |
 | Closing | Apply (focus back to the icon), Esc (first closes an open calendar; focus back to the icon), outside click, the icon again, or tabbing out. Everything except Apply discards the draft |
 

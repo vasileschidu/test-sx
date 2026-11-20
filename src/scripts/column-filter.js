@@ -22,6 +22,7 @@
  *     isActive(key) → bool   (icon highlight)
  *   })
  *   ColumnFilter.optionsFrom(wrapEl)          → options of a global-filter list (TableUi.filterCheckbox)
+ *   ColumnFilter.attachAmount(input) / formatAmount(v, pad) / cleanAmount(v)  → US money fields (global panel too)
  *   ColumnFilter.sync(tableEl)   re-highlight the header icons (after the table re-renders)
  *   ColumnFilter.close()
  */
@@ -99,10 +100,54 @@
     var s = String(iso || "");
     return /^\d{4}-\d{2}-\d{2}$/.test(s) ? s.slice(5, 7) + " / " + s.slice(8, 10) + " / " + s.slice(0, 4) : "";
   }
+  // ── Money fields (column + global filter Amount): "121,321,321", "1,234.50" on blur ──
+  /** Numeric string of a typed / pasted amount: digits and one ".", max 2 decimals ("1,234.567" → "1234.56"). */
   function cleanAmount(value) {
-    var c = String(value || "").replace(/[^0-9.]/g, "");
+    var c = String(value == null ? "" : value).replace(/[^0-9.]/g, "");
     var dot = c.indexOf(".");
-    return dot === -1 ? c : c.slice(0, dot + 1) + c.slice(dot + 1).replace(/\./g, "");
+    if (dot === -1) return c;
+    return c.slice(0, dot + 1) + c.slice(dot + 1).replace(/\./g, "").slice(0, 2);
+  }
+  /** US display of an amount; `pad` (blur) fixes 2 decimals. */
+  function formatAmount(value, pad) {
+    var c = cleanAmount(value);
+    if (!c) return "";
+    var dot = c.indexOf(".");
+    var int = (dot === -1 ? c : c.slice(0, dot)).replace(/^0+(?=\d)/, "");
+    var dec = dot === -1 ? null : c.slice(dot + 1);
+    if (pad) {
+      if (!int) int = "0";
+      dec = ((dec || "") + "00").slice(0, 2);
+    }
+    return int.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (dec === null ? "" : "." + dec);
+  }
+  /**
+   * Live formatting on an amount <input>: commas while typing (caret kept on the same digit), paste
+   * cleaned, 2 decimals on blur. Read the value with cleanAmount(input.value). Bind before other input handlers.
+   */
+  function attachAmount(input) {
+    if (!input || input._cfMoney) return;
+    input._cfMoney = true;
+    input.addEventListener("input", function () {
+      var v = input.value;
+      var caret = input.selectionStart == null ? v.length : input.selectionStart;
+      var before = cleanAmount(v.slice(0, caret)).length;
+      var next = formatAmount(v, false);
+      if (next === v) return;
+      input.value = next;
+      var pos = 0, seen = 0;
+      while (pos < next.length && seen < before) {
+        if (/[0-9.]/.test(next[pos])) seen += 1;
+        pos += 1;
+      }
+      try { input.setSelectionRange(pos, pos); } catch (e) {}
+    });
+    input.addEventListener("blur", function () {
+      var padded = formatAmount(input.value, true);
+      if (padded === input.value) return;
+      input.value = padded;
+      input.dispatchEvent(new Event("input", { bubbles: true }));
+    });
   }
 
   // ── One open dropdown at a time ──
@@ -201,8 +246,8 @@
     }
     if (cfg.type === "amount")
       return {
-        min: open.card.querySelector('[data-cf-amount="min"]').value,
-        max: open.card.querySelector('[data-cf-amount="max"]').value,
+        min: cleanAmount(open.card.querySelector('[data-cf-amount="min"]').value),
+        max: cleanAmount(open.card.querySelector('[data-cf-amount="max"]').value),
       };
     var values = [];
     Array.prototype.forEach.call(open.card.querySelectorAll("input[type=checkbox][data-cf-value]"), function (cb) {
@@ -221,7 +266,10 @@
   function sameValue(type, a, b) {
     if (!a || !b) return false;
     if (type === "date") return a.from === b.from && a.to === b.to;
-    if (type === "amount") return a.min === b.min && a.max === b.max;
+    if (type === "amount") {
+      var num = function (v) { return v === "" || v == null ? "" : Number(v); };
+      return num(a.min) === num(b.min) && num(a.max) === num(b.max);
+    }
     return a.length === b.length && a.every(function (v) { return b.indexOf(v) !== -1; });
   }
 
@@ -267,7 +315,7 @@
       '<label for="' + id + '" class="' + LABEL + '">' + label + "</label>" +
       '<div class="relative mt-2">' +
       '<span aria-hidden="true" class="pointer-events-none absolute inset-y-0 left-3 z-20 flex items-center text-gray-400 dark:text-gray-500">' + DOLLAR + "</span>" +
-      '<input id="' + id + '" data-cf-amount="' + edge + '" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" value="' + esc(value) +
+      '<input id="' + id + '" data-cf-amount="' + edge + '" type="text" inputmode="decimal" autocomplete="off" placeholder="0.00" value="' + esc(formatAmount(value, true)) +
       '" class="' + AMOUNT_INPUT + '" />' +
       "</div></div>"
     );
@@ -297,6 +345,7 @@
       state.card.querySelector("[data-cf-body]").appendChild(block.el);
       if (window.DateRangeCalendar) window.DateRangeCalendar.refreshAll();
     }
+    Array.prototype.forEach.call(state.card.querySelectorAll("[data-cf-amount]"), attachAmount);
     syncFooter();
   }
 
@@ -407,8 +456,6 @@
       return;
     }
     if (t.hasAttribute("data-cf-amount")) {
-      var cleaned = cleanAmount(t.value);
-      if (cleaned !== t.value) t.value = cleaned;
       syncFooter();
       return;
     }
@@ -509,6 +556,9 @@
   }
 
   window.ColumnFilter = {
+    attachAmount: attachAmount,
+    formatAmount: formatAmount,
+    cleanAmount: cleanAmount,
     optionsFrom: optionsFrom,
     button: button,
     icon: icon,

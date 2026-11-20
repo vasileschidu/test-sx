@@ -3383,8 +3383,8 @@
       if (refs.filterPaymentToInput)
         refs.filterPaymentToInput.value =
           state.paymentDateToDraft || formatIsoAsUsInput(state.paymentDateTo);
-      if (refs.filterAmountMinInput) refs.filterAmountMinInput.value = state.amountMin;
-      if (refs.filterAmountMaxInput) refs.filterAmountMaxInput.value = state.amountMax;
+      if (refs.filterAmountMinInput) refs.filterAmountMinInput.value = window.ColumnFilter ? window.ColumnFilter.formatAmount(state.amountMin, true) : state.amountMin;
+      if (refs.filterAmountMaxInput) refs.filterAmountMaxInput.value = window.ColumnFilter ? window.ColumnFilter.formatAmount(state.amountMax, true) : state.amountMax;
       syncFilterCategoryVisibility();
       renderFilterNavBadges();
       applyOpenFilterSearches();
@@ -3523,9 +3523,12 @@
 
     function bindAmountInput(inputEl, field) {
       if (!inputEl) return;
+      // US money display ("1,234.50"); the state keeps the plain number string.
+      var CF = window.ColumnFilter;
+      if (CF) CF.attachAmount(inputEl);
       inputEl.addEventListener("input", function () {
-        inputEl.value = cleanAmountInput(inputEl.value);
-        state[field] = inputEl.value;
+        if (!CF) inputEl.value = cleanAmountInput(inputEl.value);
+        state[field] = CF ? CF.cleanAmount(inputEl.value) : inputEl.value;
         syncFilterApplyButtonState();
       });
     }
