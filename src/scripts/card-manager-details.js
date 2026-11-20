@@ -184,10 +184,10 @@
     function item(key) {
       var it = ITEM[key];
       var cls = it.danger
-        ? "text-red-600 hover:bg-red-50 focus:bg-red-50 focus:text-red-700 dark:text-red-400 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:focus:text-red-300"
-        : "text-gray-900 hover:bg-gray-100 focus:bg-gray-100 dark:text-gray-200 dark:hover:bg-white/5 dark:hover:text-white dark:focus:bg-white/5 dark:focus:text-white";
+        ? "text-red-600 hover:bg-red-50 focus:bg-red-50 data-focus:bg-red-50 focus:text-red-700 dark:text-red-400 dark:hover:bg-red-500/10 dark:focus:bg-red-500/10 dark:data-focus:bg-red-500/10 dark:focus:text-red-300"
+        : "text-gray-700 hover:bg-gray-100 hover:text-gray-900 data-focus:bg-gray-100 data-focus:text-gray-900 dark:text-gray-300 dark:hover:bg-white/5 dark:hover:text-white dark:data-focus:bg-white/5 dark:data-focus:text-white";
       return (
-        '<button type="button" data-cm-details-action="' + it.event + '" class="block w-full cursor-pointer px-3.5 py-2 text-left text-sm/5 whitespace-nowrap focus:outline-hidden ' +
+        '<button type="button" data-cm-details-action="' + it.event + '" class="block w-full cursor-pointer px-4 py-2 text-left text-sm/5 whitespace-nowrap data-focus:outline-hidden focus:outline-hidden ' +
         cls + '">' + esc(it.label) + "</button>"
       );
     }
@@ -198,7 +198,7 @@
       '<el-dropdown class="inline-block">' +
       '<button type="button" data-cm-details-menu class="' + BTN_ICON + '">' +
       '<span class="sr-only">Open options</span>' + ICON_DOTS + "</button>" +
-      '<el-menu anchor="bottom end" popover class="w-50 rounded-md bg-white shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(2)] dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10 transition transition-discrete data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in motion-reduce:transition-none">' +
+      '<el-menu anchor="bottom end" popover class="w-56 rounded-md bg-white shadow-lg outline-1 outline-black/5 [--anchor-gap:--spacing(2)] dark:bg-gray-800 dark:shadow-none dark:-outline-offset-1 dark:outline-white/10 transition transition-discrete data-closed:opacity-0 data-enter:duration-100 data-enter:ease-out data-leave:duration-100 data-leave:ease-in motion-reduce:transition-none">' +
       '<div class="py-1">' + normal + "</div>" +
       (danger ? '<div class="border-t border-gray-100 py-1 dark:border-white/10">' + danger + "</div>" : "") +
       "</el-menu></el-dropdown>"
