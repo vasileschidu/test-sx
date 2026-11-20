@@ -83,6 +83,7 @@
   }
 
   var state = {
+    query: "",
     sortKey: "",
     sortDirection: "",
     page: 1,
@@ -227,8 +228,18 @@
   }
 
   function filteredRows() {
+    var q = state.query.trim().toLowerCase();
+    var digits = q.replace(/\s+/g, "");
     var rows = allCards().filter(function (card) {
-      return matches(card, state.applied);
+      if (!matches(card, state.applied)) return false;
+      if (!q) return true;
+      var number = String(card.number || "").replace(/\s+/g, "");
+      return (
+        String(card.last4 || "").indexOf(digits) !== -1 ||
+        (digits && number.indexOf(digits) !== -1) ||
+        String(card.name || "").toLowerCase().indexOf(q) !== -1 ||
+        networkName(card).toLowerCase().indexOf(q) !== -1
+      );
     });
     if (state.sortKey && state.sortDirection) {
       var dir = state.sortDirection === "asc" ? 1 : -1;
@@ -329,7 +340,7 @@
     var box = window.TableUi
       ? window.TableUi.emptyState({
           title: "No cards found",
-          text: "Try adjusting the active filters to find matching cards.",
+          text: "Try adjusting the active filters or search to find matching cards.",
         })
       : "No cards found";
     return '<tr><td colspan="' + COLUMNS.length + '" class="p-0">' + box + "</td></tr>";
@@ -505,17 +516,25 @@
     );
   }
 
+  // Search field: same markup as the SMART Cards list header.
+  var SEARCH_FIELD =
+    '<div class="relative w-full sm:w-80">' +
+    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" /></svg>' +
+    '<input type="search" data-cm-linked-search aria-label="Search Linked Credit Cards" placeholder="Search" autocomplete="off" class="block h-10 w-full rounded-md bg-white pr-3 pl-10 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-400 dark:focus:outline-blue-500" />' +
+    "</div>";
+
   function shellHtml() {
     return (
       '<div data-cm-linked-list>' +
       '<div class="border-b border-gray-200 px-6 py-5 dark:border-white/10">' +
-      '<div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">' +
+      '<div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">' +
       '<div class="min-w-0"><h2 class="text-2xl/8 font-semibold text-gray-900 dark:text-white">Linked Credit Cards</h2>' +
       '<p class="mt-1 text-sm/5 font-normal text-gray-500 dark:text-gray-400">Add your external cards for quick access and better financial management.</p></div>' +
+      '<div class="flex flex-wrap items-center gap-3 sm:flex-nowrap">' + SEARCH_FIELD +
       '<div class="flex w-full shrink-0 items-center gap-4 sm:w-auto">' +
       '<div class="flex-1 sm:flex-none">' + FILTER_BUTTON + "</div>" +
       '<div class="flex-1 sm:flex-none">' + ADD_BUTTON + "</div>" +
-      "</div></div>" +
+      "</div></div></div>" +
       '<div data-cm-linked-chips class="mt-3 hidden flex-wrap items-center justify-end gap-2"></div>' +
       "</div>" +
       // BR-10 banner: Figma neutral info box (gray-50, like the components skill info box), 16px side inset.
@@ -1039,6 +1058,13 @@
   }
 
   function onInput(event) {
+    var own = event.target.closest && event.target.closest("[data-cm-linked-search]");
+    if (own) {
+      state.query = own.value;
+      state.page = 1;
+      renderTable();
+      return;
+    }
     var search = event.target.closest && event.target.closest("[data-filter-search]");
     if (!search) return;
     var list = document.getElementById(search.getAttribute("data-filter-search"));
