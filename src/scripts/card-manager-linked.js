@@ -446,7 +446,7 @@
   var DATE_INPUT =
     "relative z-10 block h-10 w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 hover:outline-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:hover:outline-white/20 dark:focus:outline-blue-500";
   var SEARCH_INPUT =
-    "h-8 w-full rounded-md border border-gray-300 bg-white pr-2 pl-10 text-sm/5 font-normal text-gray-900 shadow-xs placeholder:font-normal placeholder:text-gray-400 hover:not-focus:border-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:hover:not-focus:border-white/25 dark:focus:outline-blue-500";
+    "h-8 w-full rounded-md border border-gray-300 bg-white pr-2 pl-10 text-sm/5 font-normal text-gray-900 shadow-xs [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none placeholder:font-normal placeholder:text-gray-400 hover:not-focus:border-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:border-white/15 dark:bg-white/5 dark:text-white dark:placeholder:text-gray-500 dark:hover:not-focus:border-white/25 dark:focus:outline-blue-500";
 
   function navButtonHtml(cat) {
     return (
@@ -519,8 +519,10 @@
   // Search field: same markup as the SMART Cards list header.
   var SEARCH_FIELD =
     '<div class="relative w-full sm:w-80">' +
-    '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 size-5 -translate-y-1/2 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M9 3.5a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11ZM2 9a7 7 0 1 1 12.452 4.391l3.328 3.329a.75.75 0 1 1-1.06 1.06l-3.329-3.328A7 7 0 0 1 2 9Z" /></svg>' +
-    '<input type="search" data-cm-linked-search aria-label="Search Linked Credit Cards" placeholder="Search" autocomplete="off" class="block h-10 w-full rounded-md bg-white pr-3 pl-10 text-base text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 sm:text-sm/6 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-400 dark:focus:outline-blue-500" />' +
+    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" clip-rule="evenodd" d="M9.965 11.026a5 5 0 1 1 1.06-1.06l2.755 2.754a.75.75 0 1 1-1.06 1.06l-2.755-2.754ZM10.5 7a3.5 3.5 0 1 1-7 0 3.5 3.5 0 0 1 7 0Z" /></svg>' +
+    '<input type="search" data-cm-linked-search aria-label="Search Linked Credit Cards" placeholder="Search" autocomplete="off" class="block h-10 w-full rounded-md bg-white pr-9 pl-9 text-base/6 text-gray-900 shadow-xs outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-blue-600 dark:bg-white/5 dark:text-white dark:outline-white/10 dark:placeholder:text-gray-500 dark:focus:outline-blue-500 [&::-webkit-search-cancel-button]:appearance-none [&::-webkit-search-decoration]:appearance-none" />' +
+    '<button type="button" data-cm-linked-search-clear aria-label="Clear search" class="hidden absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer rounded-sm text-gray-400 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:text-gray-300 dark:focus-visible:outline-blue-400">' +
+    '<svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true" class="size-4"><path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" /></svg></button>' +
     "</div>";
 
   function shellHtml() {
@@ -916,6 +918,10 @@
   function onClick(event) {
     var target = event.target;
     if (!refs.root || !refs.root.contains(target)) return;
+    if (target.closest("[data-cm-linked-search-clear]")) {
+      clearSearch();
+      return;
+    }
 
     if (target.closest("[data-cm-linked-add]")) {
       cm.emit("add-linked-card", { tab: "linked" });
@@ -1030,6 +1036,13 @@
 
   function onKeydown(event) {
     if (!refs.root || !refs.root.contains(event.target)) return;
+    if (event.key === "Escape" && event.target.closest && event.target.closest("[data-cm-linked-search]")) {
+      if (event.target.value) {
+        event.preventDefault();
+        clearSearch();
+      }
+      return;
+    }
     if (event.key === "Escape" && state.filterOpen) {
       // A calendar open inside the panel closes first (its own popover handles Escape).
       var openCalendar = refs.menu.querySelector("[popover]:popover-open");
@@ -1057,12 +1070,26 @@
     syncFilterButtons();
   }
 
+  function setQuery(value) {
+    state.query = value;
+    state.page = 1;
+    var clear = refs.root && refs.root.querySelector("[data-cm-linked-search-clear]");
+    if (clear) clear.classList.toggle("hidden", !value);
+    renderTable();
+  }
+
+  function clearSearch() {
+    var input = refs.root && refs.root.querySelector("[data-cm-linked-search]");
+    if (!input) return;
+    input.value = "";
+    setQuery("");
+    input.focus();
+  }
+
   function onInput(event) {
     var own = event.target.closest && event.target.closest("[data-cm-linked-search]");
     if (own) {
-      state.query = own.value;
-      state.page = 1;
-      renderTable();
+      setQuery(own.value);
       return;
     }
     var search = event.target.closest && event.target.closest("[data-filter-search]");
