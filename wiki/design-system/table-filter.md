@@ -44,7 +44,7 @@ current implementations. TODO(confirm): check against the Figma table filter in 
 | Search in category | For long lists (payee, customer, payer) |
 | Date range | From / To fields (MM / DD / YYYY) **with a calendar picker** |
 | Amount range | Min / Max fields; either can be left empty. Chip reads "Amount $min - $max" |
-| Footer | The global panel's footer: full-width divider, **Reset** (secondary) + **Apply** (primary). Reset is disabled when the column has no applied filter and nothing is ticked; Apply is disabled while the ticks equal the applied filter |
+| Footer | Figma Modal/Footer: full-width divider, `px-6 py-5`, two equal md buttons side by side — **Reset** (secondary) + **Apply** (primary). The global panel keeps main's small right-aligned buttons. Reset is disabled when the column has no applied filter and nothing is ticked; Apply is disabled while the ticks equal the applied filter |
 | Active filters | Shown as removable chips under the toolbar; removing a chip applies immediately |
 | Tabs | Same categories on every tab. Applied filters persist across tabs and always apply |
 | Empty result | Table empty state. TODO: one shared "no results" message |
@@ -72,10 +72,10 @@ not the global panel. Decided by Andrian on 2026-11-20:
 | Part | Behavior |
 |---|---|
 | Icon | Main's header icon, unchanged: Bills `filter.svg` (Payee) / `filter-funnel.svg` (Source), SX and Consumer `filter-funnel.svg`, 14px, gray-400, same button classes as main. While the column has an **applied** filter the same funnel turns gray-500 (dark: gray-300), Figma `Table/Header/Cell/Actions/Filter`. No background pill |
-| Dropdown | `w-60` card under the icon, right edges aligned. **No title** (the Figma "Column Filters" `12596:14256` title and X are not used). On phones (< 640px) a bottom sheet with a backdrop, like the global filter |
+| Dropdown | `w-88` (352px, Figma Column Filters `12596:14256`) card under the icon, 24px side padding, right edges aligned. **No title** (the Figma "Column Filters" `12596:14256` title and X are not used). On phones (< 640px) a bottom sheet with a backdrop, like the global filter |
 | List columns | Checkboxes with the same values and order as the global panel; the toolbar search field on Payee (the long list) |
 | Amount (global panel only) | From / To with the "$" prefix; US money format (`ColumnFilter.attachAmount`): "121,321,321" while typing, "1,234.50" on blur, digits and one "." only, max 2 decimals, paste cleaned; the filter uses the plain number |
-| Footer | The global panel's footer: full-width divider, **Reset** (secondary) + **Apply** (primary). Reset is disabled when the draft is empty; Apply is disabled while the draft equals the applied filter |
+| Footer | Figma Modal/Footer: full-width divider, `px-6 py-5`, two equal md buttons side by side — **Reset** (secondary) + **Apply** (primary). The global panel keeps main's small right-aligned buttons. Reset is disabled when the draft is empty; Apply is disabled while the draft equals the applied filter |
 | Closing | Apply or Reset (both apply and return focus to the icon), Esc (focus back to the icon), outside click, the icon again, or tabbing out. Esc / outside click / tab-out discard unapplied ticks |
 | Global panel position | On desktop the global Filter panel is `fixed` under its Filter button (`ColumnFilter.pinPanel`) and follows it on scroll, so a short table card (`overflow-hidden`, e.g. 2 rows or an empty result) never cuts off its Reset / Apply footer. Phones keep the bottom sheet |
 
