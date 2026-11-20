@@ -61,8 +61,6 @@
     { key: "status", label: "Status", sortable: true },
   ];
 
-
-
   var state = {
     query: "",
     sortKey: "",
@@ -70,8 +68,6 @@
     page: 1,
     pageSize: PAGE_SIZE_OPTIONS[0],
     applied: new Set(),
-    draft: new Set(),
-    filterOpen: false,
     loading: true,
   };
   var refs = {};
@@ -136,13 +132,6 @@
 
   /* ---------- dates (Bills filter format "MM / DD / YYYY") ---------- */
 
-
-
-
-
-
-
-
   /* ---------- rows: filter, sort, page ---------- */
 
   function sortValue(card, key) {
@@ -204,9 +193,7 @@
 
   function colFilterTrigger() {
     return (
-      '<button type="button" data-cm-col-filter aria-label="Filter Status" aria-haspopup="true" aria-expanded="' +
-      (state.filterOpen ? "true" : "false") +
-      '" class="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm hover:bg-gray-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
+      '<button type="button" data-column-filter="status" aria-label="Filter Status" aria-haspopup="dialog" aria-expanded="false" class="inline-flex size-5 shrink-0 cursor-pointer items-center justify-center rounded-sm hover:bg-gray-100 aria-expanded:bg-gray-100 dark:aria-expanded:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:hover:bg-white/10">' +
       tableIcon("filter-funnel.svg", 14, 14) +
       "</button>"
     );
@@ -346,23 +333,10 @@
   var INFO_ICON =
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4 shrink-0 text-gray-400 dark:text-gray-500"><path fill-rule="evenodd" d="M18 10a8 8 0 1 1-16 0 8 8 0 0 1 16 0Zm-7-4a1 1 0 1 1-2 0 1 1 0 0 1 2 0ZM9 9a.75.75 0 0 0 0 1.5h.253a.25.25 0 0 1 .244.304l-.459 2.066A1.75 1.75 0 0 0 10.747 15H11a.75.75 0 0 0 0-1.5h-.253a.25.25 0 0 1-.244-.304l.459-2.066A1.75 1.75 0 0 0 9.253 9H9Z" clip-rule="evenodd" /></svg>';
 
-
-
   // Primary button, size md (components skill), same height as Filter.
   var ADD_BUTTON =
     '<button type="button" data-cm-linked-add class="inline-flex w-full shrink-0 cursor-pointer items-center justify-center gap-1.5 h-10 rounded-md bg-blue-600 px-3.5 text-sm font-semibold whitespace-nowrap text-white shadow-xs hover:bg-blue-500 active:bg-blue-700 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:bg-blue-300 sm:w-auto dark:bg-blue-500 dark:shadow-none dark:hover:bg-blue-400 dark:active:bg-blue-600 dark:disabled:bg-blue-500/40 dark:disabled:text-white/60">' +
     '<img src="' + assetUrl("icon-plus.svg") + '" alt="" width="18" height="18" class="size-4.5" />Add New</button>';
-
-  var LINK_BTN =
-    "cursor-pointer rounded px-1.5 py-0.5 text-xs/4 font-semibold text-blue-600 transition-colors hover:bg-blue-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-blue-400 dark:hover:bg-white/10";
-  var FOOTER_RESET =
-    "h-7 cursor-pointer rounded border border-gray-300 bg-white px-2 text-sm/5 font-semibold text-gray-500 hover:bg-gray-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 dark:border-white/15 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-white/10";
-  var FOOTER_APPLY =
-    "h-7 cursor-pointer rounded bg-blue-600 px-2 text-sm/5 font-semibold text-white hover:bg-blue-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-blue-600 dark:bg-blue-500 dark:hover:bg-blue-400 dark:disabled:hover:bg-blue-500";
-
-
-
-
 
   // Search field: same markup as the SMART Cards list header.
   var SEARCH_FIELD =
@@ -372,19 +346,6 @@
     '<button type="button" data-cm-linked-search-clear aria-label="Clear search" class="hidden absolute top-1/2 right-3 -translate-y-1/2 cursor-pointer rounded-sm text-gray-400 hover:text-gray-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:text-gray-500 dark:hover:text-gray-300 dark:focus-visible:outline-blue-400">' +
     '<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true" class="size-4"><path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z" /></svg></button>' +
     "</div>";
-
-  // Status column filter panel: copied from the SMART Cards list (one category, no left list).
-  var COL_PANEL =
-    '<div data-cm-col-menu role="dialog" aria-label="Filter by Status" class="pointer-events-none invisible fixed z-60 w-72 max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white opacity-0 shadow-lg ring-1 ring-black/5 transition-opacity duration-200 ease-out dark:bg-gray-800 dark:shadow-none dark:ring-white/10">' +
-    '<div class="p-4">' +
-    '<div class="flex items-center justify-between">' +
-    '<p class="text-sm/5 font-medium text-gray-700 dark:text-gray-200">Status</p>' +
-    '<button type="button" data-cm-col-select-all class="' + LINK_BTN + '">Select all</button></div>' +
-    '<div class="mt-2 mb-3 h-px bg-gray-200 dark:bg-white/10"></div>' +
-    '<div data-cm-col-list class="flex flex-col gap-2"></div></div>' +
-    '<div class="flex items-center justify-end gap-4 border-t border-gray-200 bg-white p-3 dark:border-white/10 dark:bg-gray-800">' +
-    '<button type="button" data-cm-col-reset class="' + FOOTER_RESET + '">Reset</button>' +
-    '<button type="button" data-cm-col-apply class="' + FOOTER_APPLY + '">Apply</button></div></div>';
 
   function shellHtml() {
     return (
@@ -405,7 +366,6 @@
       '<div data-table-scroll class="w-full max-w-full overflow-x-auto px-3 pt-2">' +
       '<table data-cm-linked-table class="w-full min-w-max table-auto border-separate border-spacing-0"></table></div>' +
       '<div data-pagination class="border-t border-gray-200 bg-white px-6 py-4 dark:border-white/10 dark:bg-gray-900"></div>' +
-      COL_PANEL +
       "</div>"
     );
   }
@@ -419,28 +379,18 @@
 
   function ensureShell() {
     if (mount.querySelector("[data-cm-linked-list]")) {
-      if (!refs.root || !mount.contains(refs.root)) cacheRefs();
+      if (!refs.root || !mount.contains(refs.root)) {
+        cacheRefs();
+        bindColumnFilter();
+      }
       return;
     }
     mount.innerHTML = shellHtml();
     cacheRefs();
+    bindColumnFilter();
   }
 
   /* ---------- filter state ---------- */
-
-
-
-  function sameSet(a, b) {
-    if (a.size !== b.size) return false;
-    var same = true;
-    a.forEach(function (v) {
-      if (!b.has(v)) same = false;
-    });
-    return same;
-  }
-
-
-
 
   /* ---------- render ---------- */
 
@@ -497,6 +447,7 @@
       headerHtml() + '<tbody class="bg-white dark:bg-gray-900">' + (body || emptyRowHtml()) + "</tbody>";
     refs.pagination.innerHTML = paginationHtml(total);
     renderChips();
+    if (window.ColumnFilter) window.ColumnFilter.sync(refs.table);
     if (window.TableUi) window.TableUi.fitEmptyStates();
   }
 
@@ -507,7 +458,7 @@
     try {
       if (!allCards().length) {
         // card-manager.js draws its empty state (Add Card) into an empty mount on "data-change".
-        if (state.filterOpen) setFilterOpen(false);
+        if (window.ColumnFilter) window.ColumnFilter.close();
         if (mount.querySelector("[data-cm-linked-list]")) mount.innerHTML = "";
         refs = {};
       } else {
@@ -522,116 +473,29 @@
 
   /* ---------- filter panel ---------- */
 
+  /* ---------- Status column filter (ColumnFilter, as TCDM-5238) ---------- */
 
-
-
-
-
-
-
-  /* ---------- Status column filter (shares state.applied with the global Filter) ---------- */
-
-  function filterRefs() {
-    return {
-      menu: mount.querySelector("[data-cm-col-menu]"),
-      list: mount.querySelector("[data-cm-col-list]"),
-      apply: mount.querySelector("[data-cm-col-apply]"),
-      reset: mount.querySelector("[data-cm-col-reset]"),
-      trigger: refs.table && refs.table.querySelector("[data-cm-col-filter]"),
-    };
-  }
-
-  function syncFilterButtons() {
-    var c = filterRefs();
-    if (c.reset) c.reset.disabled = state.draft.size === 0;
-    if (c.apply) c.apply.disabled = sameSet(state.draft, state.applied);
-  }
-
-  function renderFilterList() {
-    var c = filterRefs();
-    if (!c.list || !window.TableUi) return;
-    var counts = {};
-    allCards().forEach(function (card) {
-      counts[card.status] = (counts[card.status] || 0) + 1;
+  function bindColumnFilter() {
+    if (!window.ColumnFilter || !refs.table) return;
+    window.ColumnFilter.bind(refs.table, {
+      describe: function () {
+        return {
+          title: "Filter Status",
+          options: STATUS_ORDER.map(function (key) {
+            return { value: key, label: STATUS[key].label, checked: state.applied.has(key) };
+          }),
+        };
+      },
+      apply: function (key, values) {
+        state.applied = new Set(values);
+        state.page = 1;
+        renderTable();
+      },
+      isActive: function () {
+        return state.applied.size > 0;
+      },
     });
-    c.list.innerHTML = ["active", "inactive"].map(function (key) {
-      return window.TableUi.filterCheckbox({
-        id: "cm-linked-col-status-" + key,
-        label: STATUS[key].label,
-        countText: String(counts[key] || 0),
-        value: key,
-        checked: state.draft.has(key),
-      });
-    }).join("");
-    syncFilterButtons();
   }
-
-  function setFilterOpen(open, opts) {
-    var c = filterRefs();
-    if (!c.menu) return;
-    state.filterOpen = !!open;
-    if (c.trigger) c.trigger.setAttribute("aria-expanded", open ? "true" : "false");
-    var hide = ["invisible", "opacity-0", "pointer-events-none"];
-    if (open) {
-      state.draft = new Set(Array.from(state.applied));
-      renderFilterList();
-      if (c.trigger) {
-        var rect = c.trigger.getBoundingClientRect();
-        var width = c.menu.offsetWidth || 288;
-        var left = Math.min(Math.max(rect.right - width, 16), window.innerWidth - width - 16);
-        c.menu.style.left = Math.round(left) + "px";
-        // Flip above the funnel when there is no room below; otherwise clamp to the viewport (Reset / Apply stay visible).
-        var height = c.menu.offsetHeight;
-        var below = window.innerHeight - rect.bottom - 8 - 16;
-        var above = rect.top - 8 - 16;
-        var top = rect.bottom + 8;
-        if (height > below && above > below) top = Math.max(16, rect.top - 8 - Math.min(height, above));
-        c.menu.style.top = Math.round(top) + "px";
-      }
-      hide.forEach(function (k) { c.menu.classList.remove(k); });
-      var first = c.menu.querySelector("input[type='checkbox']");
-      if (first) first.focus();
-    } else {
-      hide.forEach(function (k) { c.menu.classList.add(k); });
-      if (opts && opts.restoreFocus && c.trigger) c.trigger.focus();
-    }
-  }
-
-  function applyFilter() {
-    state.applied = new Set(Array.from(state.draft));
-    state.page = 1;
-    setFilterOpen(false);
-    renderTable();
-    var t = filterRefs().trigger;
-    if (t) t.focus();
-  }
-
-  function onFilterClick(target) {
-    if (target.closest("[data-cm-col-filter]")) {
-      setFilterOpen(!state.filterOpen);
-      return true;
-    }
-    if (target.closest("[data-cm-col-select-all]")) {
-      ["active", "inactive"].forEach(function (k) { state.draft.add(k); });
-      renderFilterList();
-      return true;
-    }
-    if (target.closest("[data-cm-col-reset]")) {
-      state.draft.clear();
-      renderFilterList();
-      return true;
-    }
-    if (target.closest("[data-cm-col-apply]")) {
-      var c = filterRefs();
-      if (c.apply && !c.apply.disabled) applyFilter();
-      return true;
-    }
-    return false;
-  }
-
-
-
-
 
   /* ---------- events ---------- */
 
@@ -642,7 +506,6 @@
   function onClick(event) {
     var target = event.target;
     if (!refs.root || !refs.root.contains(target)) return;
-    if (onFilterClick(target)) return;
     if (target.closest("[data-cm-linked-search-clear]")) {
       clearSearch();
       return;
@@ -656,7 +519,7 @@
       state.applied.clear();
       state.page = 1;
       renderTable();
-      var t = refs.table.querySelector("[data-cm-col-filter]");
+      var t = refs.table.querySelector("[data-column-filter]");
       if (t) t.focus();
       return;
     }
@@ -724,26 +587,10 @@
       }
       return;
     }
-    if (event.key === "Escape" && state.filterOpen) {
-      event.stopPropagation();
-      setFilterOpen(false, { restoreFocus: true });
-      return;
-    }
     var row = event.target.closest && event.target.closest("tr[data-cm-linked-id]");
     if (row && event.target === row && (event.key === "Enter" || event.key === " ")) {
       event.preventDefault();
       openCard(row.getAttribute("data-cm-linked-id"));
-    }
-  }
-
-  function onChange(event) {
-    var colInput = event.target.closest && event.target.closest("[data-cm-col-menu] input[type='checkbox'][data-filter-value]");
-    if (colInput) {
-      var v = colInput.getAttribute("data-filter-value");
-      if (colInput.checked) state.draft.add(v);
-      else state.draft.delete(v);
-      syncFilterButtons();
-      return;
     }
   }
 
@@ -771,24 +618,12 @@
     }
   }
 
-  function onDocumentClick(event) {
-    if (state.filterOpen) {
-      var cm0 = mount.querySelector("[data-cm-col-menu]");
-      if (!(cm0 && cm0.contains(event.target)) && !(event.target.closest && event.target.closest("[data-cm-col-filter]"))) setFilterOpen(false);
-    }
-  }
-
   function bind() {
     mount.addEventListener("click", onClick);
     mount.addEventListener("keydown", onKeydown);
-    mount.addEventListener("change", onChange);
     mount.addEventListener("input", onInput);
-    document.addEventListener("click", onDocumentClick);
-    window.addEventListener("resize", function () {
-      if (state.filterOpen) setFilterOpen(false);
-    });
     cm.on("route", function () {
-      if (state.filterOpen) setFilterOpen(false);
+      if (window.ColumnFilter) window.ColumnFilter.close();
     });
     cm.on("data-change", function () {
       // Another story changed the data (card added / removed): redraw, keep sort / filter / page.
