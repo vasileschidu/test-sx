@@ -1,0 +1,68 @@
+<!--
+  @file dashboard/insights.html
+  @description Insights: placeholder until the module exists. The sidebar's Insights link
+    opens this empty state instead of leaving the user on SMART Exchange (STP feedback).
+-->
+<!doctype html>
+<html class="h-full bg-gray-100 dark:bg-gray-950">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Insights</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="../../../src/scripts/theme-init.js?v=20261112ic"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="../../scripts/tailwind-theme.js"></script>
+    <script src="../../../src/scripts/design-tokens.js"></script>
+    <link rel="stylesheet" href="../../../src/styles/cursor.css" />
+    <style type="text/tailwindcss">
+      @custom-variant dark (&:where(.dark, .dark *));
+    </style>
+    <script
+      src="https://cdn.jsdelivr.net/npm/@tailwindplus/elements@1"
+      type="module"
+    ></script>
+
+    <script src="../../../src/scripts/sidebar-boot.js?v=20261112cmp"></script>
+    <script src="../../../src/scripts/sx-demo-case.js?v=20261106e"></script>
+    <script src="../../../src/scripts/app-plans.js?v=20261120ins"></script>
+    <script src="../../../src/scripts/nav-component.js?v=20261120ins"></script>
+    <script src="../../../src/scripts/stp-state.js?v=20261116inp"></script>
+    <script src="../../../src/scripts/app-switch.js?v=20261111sk3"></script>
+    <script src="../../../src/scripts/topbar-component.js?v=20261120ins"></script>
+    <script src="../../scripts/checkbox-component.js"></script>
+    <script src="../../../src/scripts/sidebar.js?v=20261116m2" defer></script>
+    <script src="../../../src/scripts/data-source.js"></script>
+    <script src="../../../src/scripts/shared.js?v=20261116ae" defer></script>
+    <script src="../../../src/scripts/shell-navigation.js?v=20261120np" defer></script>
+  </head>
+
+  <body class="h-full font-['Inter'] antialiased dark:text-gray-100">
+    <div id="app-shell" class="min-h-screen">
+      <app-nav></app-nav>
+
+      <div
+        id="main-content-wrapper"
+        class="min-w-0 min-h-screen flex flex-col lg:pl-[360px]"
+      >
+        <app-topbar></app-topbar>
+
+        <main class="w-full p-2 lg:p-6">
+          <!-- Empty state: same art and text roles as TableUi.emptyState (table-ui.js), page-sized -->
+          <section aria-labelledby="insights-empty-title" class="flex flex-col items-center rounded-lg bg-white px-6 py-16 text-center shadow-sm dark:bg-gray-900">
+            <img src="../../../src/assets/vendors/no-results.svg" alt="" width="85" height="80" class="h-20 w-auto dark:opacity-60" />
+            <h1 id="insights-empty-title" class="mt-3 text-base/6 font-semibold text-gray-900 dark:text-white">No insights yet</h1>
+            <p class="mt-1 max-w-md text-sm/5 text-gray-500 dark:text-gray-400">Insights about your payments will show here as activity grows.</p>
+          </section>
+        </main>
+      </div>
+    </div>
+  </body>
+</html>
