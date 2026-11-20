@@ -41,6 +41,16 @@
           "pages": [
             { "path": "products/smart-enroll/overview.md", "label": "Overview" },
             { "path": "products/smart-enroll/standard.md", "label": "Current standard" },
+            { "path": "products/smart-enroll/flows/sign-in.md", "label": "Sign in" },
+            { "path": "products/smart-enroll/flows/speedy-sign-up.md", "label": "Speedy Sign up" },
+            { "path": "products/smart-enroll/flows/application-shell.md", "label": "Application shell" },
+            { "path": "products/smart-enroll/flows/business-information.md", "label": "Business Information" },
+            { "path": "products/smart-enroll/flows/ownership.md", "label": "Ownership" },
+            { "path": "products/smart-enroll/flows/connectors.md", "label": "Connectors" },
+            { "path": "products/smart-enroll/flows/configuration.md", "label": "Configuration" },
+            { "path": "products/smart-enroll/flows/merchant-services.md", "label": "Merchant Services (add-on)" },
+            { "path": "products/smart-enroll/flows/cross-border.md", "label": "Cross-Border Payments (add-on)" },
+            { "path": "products/smart-enroll/flows/submission.md", "label": "Submission" },
             { "path": "products/smart-enroll/changelog.md", "label": "Changelog" },
             { "path": "products/smart-enroll/variants/README.md", "label": "Client variants" }
           ]

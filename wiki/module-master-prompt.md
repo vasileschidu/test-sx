@@ -24,6 +24,32 @@ FIGMA_URL      = https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/-REVIEW--VC
 JIRA_PROJECT   = TCDM                              # earlier Card Manager work: TCDM-4324, TCDM-4340, TCDM-4486
 ```
 
+### Product mode (a whole product, e.g. SMART Enroll)
+
+Use this when the Figma file is a **separate product** rather than one module inside Hub. Everything below still
+applies; only these parts change:
+
+```
+MODULE_NAME    = SMART Enroll                      # the product name
+MODULE_ID      = smart-enroll                      # = PRODUCT_ID
+PRODUCT_ID     = smart-enroll
+FIGMA_URL      = https://www.figma.com/design/jLooCmHwqJcYV5p5d8BHnO/-R1--SMART-Enroll?node-id=28400-43229
+JIRA_PROJECT   = TCDM
+MODE           = product
+```
+
+- **Batch 1:** inventory **every flow page** of the file (pages starting with `↳`), not one node. Use one `use_figma`
+  call per page (in parallel) that returns each frame's visible text, deduplicated, instead of screenshots of every
+  frame; screenshot only one frame per distinct layout. Read the file's unresolved comments too: they often hold
+  decisions that are not drawn yet.
+- **Batch 2:** one wiki file **per area** (sign-in, application shell, each tab, submission, statuses…) under
+  `wiki/products/<PRODUCT_ID>/flows/<area>.md`, plus `standard.md` as the index (capabilities, screens, statuses,
+  links to the area pages). Two people never edit the same area page.
+- **Batch 3:** Story 0 creates the product's own folder (`src/pages/<PRODUCT_ID>/`, `src/scripts/<PRODUCT_ID>-*.js`,
+  `src/data/<PRODUCT_ID>*.json`) and the shared shell for that product (layout, nav); it is the only story that touches
+  shared files. Each area's stories own that area's page and script.
+- **Batch 4:** one Epic per product release (`<Product> (R1)`), optionally one Epic per add-on.
+
 ## Goal
 
 Turn the **MODULE_NAME** design into:
