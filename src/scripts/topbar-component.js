@@ -7,6 +7,7 @@
 (function () {
   var TOPBAR_BREADCRUMB_CONFIGS = {
     "supplier-portal.html": [{ label: "SMART Exchange", href: null }],
+    "insights.html": [{ label: "Insights", href: null }],
     "bills-and-payables.html": [{ label: "Bills and Payables", href: null }],
     "vendors.html": [{ label: "Vendors", href: null }],
     "vendor-profile.html": [
@@ -61,6 +62,7 @@
     );
     var map = {
       "supplier-portal.html": "SMART Exchange",
+      "insights.html": "Insights",
       "bills-and-payables.html": "Bills and Payables",
       "payables-pay.html": "Pay Page",
       "vendors.html": "Vendors",

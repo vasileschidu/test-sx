@@ -24,7 +24,7 @@ const APP_NAV_DATA = [
     type: "link",
     id: "insights",
     label: "Insights",
-    href: "#",
+    href: "insights.html",
     icon: "insights",
   },
   { type: "divider" },
@@ -139,6 +139,7 @@ const APP_NAV_DATA = [
 
 /** Maps page filenames to active nav-item IDs. */
 const APP_NAV_PAGE_MAP = {
+  "insights.html": "insights",
   "supplier-portal.html": "supplier-portal",
   "ap-ar-payments.html": "ap-ar",
   "bills-and-payables.html": "bills",

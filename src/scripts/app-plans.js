@@ -25,7 +25,7 @@ window.AppPlans = (function () {
       id: "insights",
       capability: "insights",
       order: 10,
-      nav: { type: "link", label: "Insights", href: "#", icon: "insights" },
+      nav: { type: "link", label: "Insights", href: "insights.html", icon: "insights" },
     },
 
     {
