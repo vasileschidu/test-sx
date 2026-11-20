@@ -125,7 +125,8 @@
   function networkLogo(card) {
     var pp = window.PPComponents;
     if (pp && typeof pp.getCardBrandLogoMarkup === "function") {
-      return pp.getCardBrandLogoMarkup(networkKey(card));
+      // Same as the SMART Cards list: shared 24x16 flag clipped to a 4px radius.
+      return '<span class="inline-flex shrink-0 overflow-hidden rounded">' + pp.getCardBrandLogoMarkup(networkKey(card)) + "</span>";
     }
     return "";
   }
