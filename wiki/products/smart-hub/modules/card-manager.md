@@ -61,16 +61,18 @@ Figma:
 - Empty state [`8007:126803`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8007-126803)
 - List: [`10001:272320`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=10001-272320). The older layout [`8016:156603`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8016-156603) only differs by its Reconciliation columns, which are out of R1. The designer left the final choice to us (decided 2026-11-17).
 
-Header: title **SMART Cards**, description "Instantly generate and fund cards with cashback for customer payments.", primary button **+ Create New**.
+Header: title **SMART Cards**, description "Instantly generate and fund virtual cards with cashback for customer payments.". On the right: a **Search** field (filters live by card number, name, network and status) and the primary button **+ Create New**, both 40 px tall. There is no general Filter button; the only filter is the funnel on the Status column.
 
 | Column | Content | Sort |
 |---|---|---|
-| Card Number | network logo + `••••` last 4 | yes |
-| Card Name | name | yes |
-| Available Balance | `$2,950.00 USD` (right-aligned) | — |
+| Card Number | `•••• 7780`, medium weight, no logo | yes |
+| Card Name | name, medium weight | yes |
 | Expires | `MM/YYYY` | yes |
+| Payment Network | brand flag (24×16, 4 px radius, same as the card page) + "Mastercard" | yes |
 | Created | `MM/YYYY` | yes |
-| Status | badge | yes + filter (shared table filter) |
+| Status | badge, left-aligned | yes + funnel filter (shared table filter) |
+
+The Available Balance column of the older layout is gone (it is on the card page). **Order:** with no sort chosen, Active cards are listed first. Once a column is sorted, every card follows that sort. The list does not open with a sort selected. An applied Status filter shows as a chip row above the table, aligned right.
 
 **Statuses (SMART card):**
 
@@ -139,10 +141,10 @@ Figma: [`8014:104715`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node
 **Sub-tabs:** Card Details · **Bill History** · Transaction History. "Card Reconciliation" is **out of R1**: reconciliation is not part of the product yet (designer).
 
 **Card Details tab:**
-- Card visual.
-- Card Number / Expires / CVC, masked, with **Reveal Details**.
-- Available Balance and Current Balance.
-- Admin Number, Name on Card, Card Name, Created (`12 Apr 2023, 12:28`), Payment Network, Address.
+- Card visual: the same as My Cards in the Consumer Portal (flat `#142435`, white 30 % border, Roboto Mono). The details panel tucks 16 px under the card.
+- Card Number / Expires / CVC, masked, with **Reveal Details** (same panel as Consumer My Cards). No copy icon here.
+- Available Balance and Current Balance (Current is muted gray, as in Consumer).
+- Admin Number (with a **copy icon**: gray, copies the number, "Copied" tooltip; same as Consumer My Cards), Name on Card, Card Name, Created (`12 Apr 2023, 12:28`), Payment Network (flag with 4 px radius, Mastercard and Visa alike), Address.
 
 | Element | Component |
 |---|---|
@@ -175,8 +177,8 @@ Figma: section [`8014:121934`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJ
 
 **Add Funds puts money ON this card. Transfer Funds sends money FROM this card** to another card or bank account (decided 2026-11-17).
 
-- **Send to**: same grouped select as Add Funds (cards + bank accounts), excluding this card.
-- **Enter Amount** with "Use max amount" (= this card's available balance). Helper "Available balance: $X USD" shows **this card's** balance.
+- **From**: same grouped select as Add Funds (cards + bank accounts), excluding this card.
+- **Enter Amount** with "Max amount" on the label row, right-aligned, as in Add Funds (= this card's available balance; the wording was "Use max amount" before, Figma shows "Max amount"). Helper "Available balance: $X USD" shows **this card's** balance.
 - Confirm checkbox: "Send $X from <this card> to <destination>".
 - Cancel / **Transfer**.
 - Success: "Transfer Transaction Submitted": "You've successfully sent $X from <this card> to <destination>" / **Done**.
@@ -230,10 +232,11 @@ Figma:
 - Export [`8019:121111`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=8019-121111)
 
 The bills paid with this card. It reuses the **Bills & Payables** table and its expandable row:
-- Columns: Amount, Bill Reference, Payee, Payment Type, Source, Due Date, Status.
+- Columns: Amount, Bill Reference, Payee, Payment Type, Source, Due Date, Status. Amount, Payee, Payment Type and Source use the medium weight of Bills & Payables.
+- Filters: a funnel on **Payment Type** and on **Source** only. Each opens a single-column panel (same as the Status filter on the SMART Cards list: Select all, checkbox list with counts, Reset / Apply). Reset clears only the open column. Applied filters show as chips above the table.
 - Expanded row: Notes, Attachments, Actions (Cancel Payment), Payment method details, Activity log.
 - Empty state: "No Bill History" / "You don't have any bills".
-- Export: Figma shows a confirm "You're about to export N row(s) from Bill History. (in CSV format)". In code, use the shared `TableExport` menu.
+- Export: header **Export** button (Bill and Transaction History tabs only, disabled when the tab is empty) opens the confirm "You're about to export N row(s) from Bill History. (in CSV format)" with Cancel / Export; Export downloads a CSV of the filtered rows. Built exactly as Figma draws it (not the shared `TableExport` format menu).
 
 ### 4.11 Transaction History tab
 
@@ -252,9 +255,10 @@ Figma:
 | Status (Settled, …) | — |
 | Description | — |
 
+- Merchant Name and Amount use the medium weight of Bills & Payables.
 - Expanded row, "Transaction Details": Transaction Code, Response Code, Response Description, Merchant Category Code, Transaction Type, Merchant Location, Fee. Some rows show an "Externally Added" badge.
 - Empty state: "No Transaction History" / "You don't have any transactions".
-- Export: same as Bill History.
+- Export: same as Bill History (confirm names "Transaction History").
 - TODO(confirm): the full list of transaction statuses, and what "Externally Added" means.
 
 ### 4.12 Linked Credit Cards
@@ -267,7 +271,7 @@ Figma:
 - List [`10001:269861`](https://www.figma.com/design/9we1YVhB41SNAHXULwJJUZ/?node-id=10001-269861)
 
 **List:**
-- Header: title **Linked Credit Cards**, "Add your external cards for quick access and better financial management.", buttons **Filter** and **+ Add New**.
+- Header: title **Linked Credit Cards**, "Add your external cards for quick access and better financial management.", a **Search** field (card number, name, network) and **+ Add New**. Filtering is only the Status column funnel (no global Filter).
 - Info banner: "Linked cards act only as origination accounts and cannot be used as payment methods."
 - Columns: Card Number, Card Name, Expires, Payment Network, Created, Status (all sortable).
 - Statuses: Active, Inactive. TODO(confirm) [F-3](#10-open-questions): when does a linked card become Inactive?
@@ -286,7 +290,7 @@ Buttons: Back / submit. TODO(confirm): the submit label, and the validation mess
 
 **Details:**
 - Header: holder name, status badge, action **Remove from view**.
-- Sub-tabs: Card Details · **Bill History** (Figma says "Bills History"; the designer chose "Bill History").
+- Sub-tabs: Card Details · **Bills History** (Figma 10001:268787).
 
 **Remove dialog:**
 - "Are you sure you want to remove this card?": "By removing this card, it will be removed from the list, though your card data will remain intact. However, sensitive information will be deleted, and consequently, you won't have access to bills or transaction history associated with the card." Buttons Cancel / **Yes, remove the card**.

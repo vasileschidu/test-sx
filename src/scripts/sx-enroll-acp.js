@@ -110,8 +110,8 @@
         header:
           '<div class="flex shrink-0 items-center gap-2 border-b border-gray-200 dark:border-white/10 py-3 pr-3 pl-6">' +
           '<h2 id="sx-agreement-title" class="flex-1 text-base leading-6 font-medium text-gray-900 dark:text-white">Visa AR Manager Participation Agreement</h2>' +
-          '<button type="button" data-ob-modal-close class="flex size-10 cursor-pointer items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
-          '<span class="sr-only">Close</span><img src="../../assets/onboarding/icon-x-lined-gray.svg" alt="" width="24" height="24" class="size-6"></button>' +
+          '<button type="button" data-ob-modal-close class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+          '<span class="sr-only">Close</span><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>' +
           "</div>",
         footer:
           '<div class="flex justify-end border-t border-gray-200 dark:border-white/10 px-6 py-4">' +

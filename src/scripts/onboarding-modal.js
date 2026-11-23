@@ -3,12 +3,24 @@
  * Shared dialog shell for the SMART Disburse onboarding flow, plus the
  * "Contact Us" dialog (Figma "Contact", node 19652:53918).
  *
- * OBModal  – opens one dialog at a time over the blurred page: close (X) button,
+ * OBModal  – opens one dialog at a time over a dimmed page: close (X) button,
  *            Escape, backdrop click, focus trap, focus restored on close. Also
  *            renders the client's contact card (name, phone, email, reference
  *            with copy buttons), used by Contact Us and declined.html.
  * OBContact – the Contact Us dialog; opened from the sidebar button and the
  *            mobile menu (see onboarding-sidebar.js).
+ *
+ * Backdrop + motion (opts.backdrop = 'flat' | 'blur'):
+ *   flat  (default everywhere except the Disburse flow) – the Tailwind Plus
+ *         el-dialog look: flat bg-gray-900/75, no blur; the backdrop fades in
+ *         300ms ease-out while the panel fades in and slides up 1rem (mobile) /
+ *         scales from 95% (sm+); leaving takes 200ms ease-in. close() restores
+ *         focus + scroll at once and clears `current` at once; the node only
+ *         lingers (pointer-events-none) for the 200ms leave. open() during a
+ *         leave removes the old node instantly and only animates the panel.
+ *         prefers-reduced-motion: no transition, instant removal.
+ *   blur  (default on /pages/onboarding/, the SMART Disburse flow, per its Figma)
+ *         – bg-black/75 + 5px blur, no motion, removed instantly.
  *
  * Client contact details live in src/data/sd-client-contact.json.
  */
@@ -19,6 +31,12 @@ window.OBModal = (function () {
   var CONTACT_PATH = '../../data/sd-client-contact.json';
   var cache = {};
   var current = null;
+  var leaving = null; // backdrop node of a flat dialog that is playing its 200ms leave
+
+  // Flat backdrop + panel motion = Tailwind Plus el-dialog (Decline Payment, Opt in). The data-closed /
+  // data-enter / data-leave attributes are toggled by open() / close() below.
+  var SCRIM_CLASS = 'fixed inset-0 bg-gray-900/75 transition-opacity motion-reduce:transition-none data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in';
+  var PANEL_MOTION = ' transform transition-all motion-reduce:transition-none data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:data-closed:translate-y-0 sm:data-closed:scale-95';
 
   // Primary (filled) buttons have no shadow at all; only bordered secondaries keep shadow-xs.
   var BUTTON_BASE = 'flex h-14 w-full cursor-pointer items-center justify-center rounded-md px-[25px] py-4 text-base leading-6 font-medium focus-visible:outline-2 focus-visible:outline-offset-2';
@@ -174,6 +192,27 @@ window.OBModal = (function () {
 
   // ---- Dialog shell -----------------------------------------------------------
 
+  // Dialog close (X) button = the Supplier Portal "Decline Payment" X (20px, stroke 1.5, p-1, rounded-md, gray-400,
+  // hover gray-100 / gray-500, dark white/10 / gray-300). The Disburse onboarding flow keeps its Figma X.
+  var CLOSE_FLAT = 'rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400';
+  var CLOSE_ICON_FLAT = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+
+  function isDisburse() {
+    return location.pathname.indexOf('/pages/onboarding/') !== -1;
+  }
+
+  /** The dialog X: `attrs` e.g. 'data-ob-modal-close', `extra` positioning classes (e.g. '-m-1.5'). */
+  function closeButton(attrs, extra, legacy) {
+    if (legacy === undefined) legacy = isDisburse();
+    if (legacy) {
+      return '<button type="button" ' + attrs + ' class="' + (extra ? extra + ' ' : 'm-1 ') + 'inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
+        '<span class="sr-only">Close</span>' +
+        '<img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5">' +
+      '</button>';
+    }
+    return '<button type="button" ' + attrs + ' class="' + (extra ? extra + ' ' : '') + CLOSE_FLAT + '"><span class="sr-only">Close</span>' + CLOSE_ICON_FLAT + '</button>';
+  }
+
   /**
    * Opens a dialog. `body` is the HTML below the close button; `labelledBy`
    * names the heading id. Returns the backdrop element.
@@ -187,6 +226,7 @@ window.OBModal = (function () {
    *                opts.bare.
    * opts.footer    HTML below `body`: the dialog's buttons.
    * opts.bare      no built-in close (X) row.
+   * opts.backdrop 'flat' | 'blur' (see the header); default by page path.
    * opts.panelClass replaces the default 512px panel classes. A panel with its
    *                own inner scroller (Review and agree, the document viewer)
    *                caps itself with max-h-[min(752px,calc(100dvh-3rem))] and a
@@ -194,21 +234,23 @@ window.OBModal = (function () {
    */
   function open(body, labelledBy, opts) {
     opts = opts || {};
+    var blur = opts.backdrop ? opts.backdrop === 'blur' : location.pathname.indexOf('/pages/onboarding/') !== -1;
+    // A dialog replacing one that is still open or leaving: no second backdrop fade.
+    var replacing = !!(current || leaving);
     if (current) close();
+    if (leaving) removeLeaving();
     var lastFocus = document.activeElement;
     var panelClass = opts.panelClass || 'relative flex w-full max-w-[512px] flex-col rounded-lg bg-white dark:bg-gray-900 shadow-xl';
     var wrap = document.createElement('div');
     wrap.innerHTML =
-      '<div data-ob-modal class="fixed inset-0 z-50 overflow-y-auto bg-black/75 backdrop-blur-[5px]">' +
-        '<div data-ob-modal-frame class="flex min-h-full items-center justify-center px-4 py-6">' +
+      '<div data-ob-modal class="fixed inset-0 z-50 overflow-y-auto' + (blur ? ' bg-black/75 backdrop-blur-[5px]' : '') + '">' +
+        (blur ? '' : '<div data-ob-modal-scrim class="' + SCRIM_CLASS + '"></div>') +
+        '<div data-ob-modal-frame class="' + (blur ? '' : 'relative ') + 'flex min-h-full items-center justify-center px-4 py-6">' +
         '<div role="dialog" aria-modal="true" tabindex="-1" data-ob-modal-dialog aria-labelledby="' + labelledBy + '" ' +
-          'class="' + panelClass + ' focus:outline-none">' +
+          'class="' + panelClass + (blur ? '' : PANEL_MOTION) + ' focus:outline-none">' +
           (opts.bare ? '' :
-          '<div class="flex h-14 shrink-0 items-end px-4 pt-4">' +
-            '<button type="button" data-ob-modal-close class="m-1 inline-flex cursor-pointer items-center justify-center rounded-md p-1.5 hover:bg-gray-100 dark:hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' +
-              '<span class="sr-only">Close</span>' +
-              '<img src="' + ASSETS + 'icon-x-mark-mini.svg" alt="" width="20" height="20" class="size-5">' +
-            '</button>' +
+          '<div class="flex h-14 shrink-0 ' + (blur ? 'items-end' : 'items-start justify-end') + ' px-4 pt-4">' +
+            closeButton('data-ob-modal-close', '', blur) +
           '</div>') +
           (opts.header || '') +
           '<div data-ob-modal-body class="flex min-h-0 flex-auto flex-col">' + body + '</div>' +
@@ -218,6 +260,7 @@ window.OBModal = (function () {
       '</div>';
     var backdrop = wrap.firstElementChild;
     var dialog = backdrop.querySelector('[data-ob-modal-dialog]');
+    var scrim = backdrop.querySelector('[data-ob-modal-scrim]');
 
     function onKeydown(event) {
       // A dialog marked busy (e.g. "processing") can't be dismissed.
@@ -237,12 +280,27 @@ window.OBModal = (function () {
 
     backdrop.addEventListener('click', function (event) {
       if (backdrop.hasAttribute('data-busy')) return;
-      if (event.target === backdrop || event.target.hasAttribute('data-ob-modal-frame') ||
+      if (event.target === backdrop || event.target === scrim || event.target.hasAttribute('data-ob-modal-frame') ||
         event.target.closest('[data-ob-modal-close]')) close();
     });
 
-    current = { backdrop: backdrop, onKeydown: onKeydown, lastFocus: lastFocus };
+    current = { backdrop: backdrop, scrim: scrim, dialog: dialog, onKeydown: onKeydown, lastFocus: lastFocus, flat: !blur };
+    if (!blur) {
+      // Start closed; open on the next frames so the transition runs.
+      dialog.setAttribute('data-closed', '');
+      dialog.setAttribute('data-enter', '');
+      if (!replacing) { scrim.setAttribute('data-closed', ''); scrim.setAttribute('data-enter', ''); }
+    }
     document.body.appendChild(backdrop);
+    if (!blur) {
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          dialog.removeAttribute('data-closed');
+          scrim.removeAttribute('data-closed');
+        });
+      });
+      setTimeout(function () { dialog.removeAttribute('data-enter'); scrim.removeAttribute('data-enter'); }, 300);
+    }
     document.documentElement.style.overflow = 'hidden';
     document.addEventListener('keydown', onKeydown);
     // Focus the dialog itself so no field looks active until the user picks one.
@@ -250,11 +308,33 @@ window.OBModal = (function () {
     return backdrop;
   }
 
+  function reducedMotion() {
+    return window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }
+
+  function removeLeaving() {
+    if (leaving) { leaving.remove(); leaving = null; }
+  }
+
   function close() {
     if (!current) return;
     var closing = current;
     current = null;
-    closing.backdrop.remove();
+    if (closing.flat && !reducedMotion()) {
+      // Leave: 200ms ease-in; the node can't catch pointer or keyboard events meanwhile.
+      leaving = closing.backdrop;
+      leaving.classList.add('pointer-events-none');
+      leaving.setAttribute('aria-hidden', 'true');
+      [closing.scrim, closing.dialog].forEach(function (el) {
+        el.removeAttribute('data-enter');
+        el.setAttribute('data-leave', '');
+        el.setAttribute('data-closed', '');
+      });
+      var node = leaving;
+      setTimeout(function () { node.remove(); if (leaving === node) leaving = null; }, 200);
+    } else {
+      closing.backdrop.remove();
+    }
     document.documentElement.style.overflow = '';
     document.removeEventListener('keydown', closing.onKeydown);
     if (closing.lastFocus && closing.lastFocus.focus) closing.lastFocus.focus();
@@ -292,6 +372,7 @@ window.OBModal = (function () {
     illustration: illustration,
     contactCard: contactCard,
     copyButton: copyButton,
+    closeButton: closeButton,
     open: open,
     close: close,
     revealField: revealField

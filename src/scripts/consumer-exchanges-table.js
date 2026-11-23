@@ -280,8 +280,9 @@
       '.sx-top-action-toast[data-state="visible"]{transform:translate(-50%,0);opacity:1;}' +
       '.sx-top-action-toast[data-state="leaving"]{transform:translate(-50%,8px);opacity:0;}' +
       '.sx-top-action-toast__msg{font-size:14px;line-height:20px;font-weight:500;}' +
-      '.sx-top-action-toast__close{display:inline-flex;align-items:center;justify-content:center;width:24px;height:24px;border:0;border-radius:6px;background:transparent;color:#D1D5DB;cursor:pointer;}' +
-      '.sx-top-action-toast__close:hover{background:rgba(255,255,255,.12);color:#fff;}';
+      '.sx-top-action-toast__close{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;padding:4px;border:0;border-radius:6px;background:transparent;color:#9CA3AF;cursor:pointer;}' +
+      '.sx-top-action-toast__close:hover{background:rgba(255,255,255,.1);color:#D1D5DB;}' +
+    '.sx-top-action-toast__close:focus-visible{outline:2px solid #3B82F6;outline-offset:2px;}';
     document.head.appendChild(style);
   }
 
@@ -330,9 +331,7 @@
       '</span>' +
       '<span class="sx-top-action-toast__msg">' + escapeHtml(text) + '</span>' +
       '<button type="button" aria-label="Dismiss notification" class="sx-top-action-toast__close">' +
-        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-4">' +
-          '<path d="M6.28 5.22a.75.75 0 0 0-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 1 0 1.06 1.06L10 11.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L11.06 10l3.72-3.72a.75.75 0 0 0-1.06-1.06L10 8.94 6.28 5.22Z"/>' +
-        '</svg>' +
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>' +
       '</button>';
     document.body.appendChild(toast);
     topActionToast.el = toast;
@@ -7282,7 +7281,7 @@
   var _bankValidationAttempts = 0;
   var _bankValidationDialog = null;
 
-  var VALIDATION_X_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-6" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
+  var VALIDATION_X_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="size-5" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>';
   var VALIDATION_WARNING_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-11 text-amber-500" aria-hidden="true"><path fill-rule="evenodd" clip-rule="evenodd" d="M8.485 2.495c.673-1.167 2.357-1.167 3.03 0l6.28 10.875c.673 1.167-.17 2.625-1.516 2.625H3.72c-1.347 0-2.189-1.458-1.515-2.625L8.485 2.495ZM10 5a.75.75 0 0 1 .75.75v3.5a.75.75 0 0 1-1.5 0v-3.5A.75.75 0 0 1 10 5Zm0 9a1 1 0 1 0 0-2 1 1 0 0 0 0 2Z" /></svg>';
   var VALIDATION_ENVELOPE_ICON = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-11 text-blue-500" aria-hidden="true"><path d="M3 4a2 2 0 0 0-2 2v1.161l8.441 4.221a1.25 1.25 0 0 0 1.118 0L19 7.162V6a2 2 0 0 0-2-2H3Z" /><path d="m19 8.839-7.77 3.885a2.75 2.75 0 0 1-2.46 0L1 8.839V14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V8.839Z" /></svg>';
   var VALIDATION_SPINNER = '<svg class="size-[34px] animate-spin" viewBox="0 0 34 34" fill="none" aria-hidden="true"><circle cx="17" cy="17" r="15" stroke="#E5E7EB" stroke-width="3" /><path d="M17 2a15 15 0 0 1 15 15" stroke="#2563EB" stroke-width="3" stroke-linecap="round" /></svg>';
@@ -7297,16 +7296,30 @@
 
   function getBankValidationDialog() {
     if (_bankValidationDialog) return _bankValidationDialog;
-    var d = document.createElement('dialog');
-    d.id = 'gp-bank-validation-dialog';
-    d.className = 'm-auto w-[450px] max-w-[calc(100vw-2rem)] overflow-hidden rounded-lg bg-white p-0 text-left shadow-xl backdrop:bg-gray-900/75 dark:bg-gray-900';
+    // el-dialog shell = the Decline Payment motion (backdrop 300ms ease-out in, 200ms ease-in out; panel slides/scales).
+    var wrap = document.createElement('el-dialog');
+    wrap.innerHTML =
+      '<dialog id="gp-bank-validation-dialog" class="fixed inset-0 size-auto max-h-none max-w-none overflow-y-auto bg-transparent backdrop:bg-transparent">' +
+      '<el-dialog-backdrop class="fixed inset-0 bg-gray-900/75 transition-opacity data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in"></el-dialog-backdrop>' +
+      '<div tabindex="0" class="flex min-h-full items-center justify-center p-4 text-center focus:outline-none sm:p-6">' +
+      '<el-dialog-panel data-validation-panel class="relative w-[450px] max-w-full transform overflow-hidden rounded-lg bg-white text-left shadow-xl transition-all data-closed:translate-y-4 data-closed:opacity-0 data-enter:duration-300 data-enter:ease-out data-leave:duration-200 data-leave:ease-in sm:data-closed:translate-y-0 sm:data-closed:scale-95 dark:bg-gray-900 dark:ring-1 dark:ring-white/10"></el-dialog-panel>' +
+      '</div></dialog>';
+    var d = wrap.firstElementChild;
+    d._panel = d.querySelector('[data-validation-panel]');
     d.addEventListener('cancel', function (event) {
       if (d.getAttribute('data-state') === 'loading') event.preventDefault();
     });
-    document.body.appendChild(d);
+    document.body.appendChild(wrap);
     _bankValidationDialog = d;
     return d;
   }
+
+  // Create the el-dialog up front: a dialog appended and opened in the same tick is closed again while el-dialog upgrades it.
+  (function () {
+    function warm() { setTimeout(getBankValidationDialog, 0); }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', warm);
+    else warm();
+  })();
 
   function renderBankValidationState(state, config) {
     var d = getBankValidationDialog();
@@ -7320,7 +7333,7 @@
         '<p class="text-sm/5 font-normal text-gray-500 dark:text-gray-400">The account is being verified. This may take a few moments.</p></div></div>';
     } else {
       html =
-        '<div class="flex h-14 items-end justify-end px-4 pt-4"><button type="button" data-validation-close aria-label="Close" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10">' + VALIDATION_X_ICON + '</button></div>' +
+        '<div class="flex h-14 items-end justify-end px-4 pt-4"><button type="button" data-validation-close aria-label="Close" class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' + VALIDATION_X_ICON + '</button></div>' +
         '<div class="flex flex-col items-center gap-6 px-6 pt-3 pb-6 text-center">' + config.icon +
         '<div class="flex w-full flex-col gap-2"><p class="text-lg/6 font-semibold text-gray-900 dark:text-white">' + config.title +
         '</p><p class="text-base/6 font-normal text-gray-700 dark:text-gray-300">' + config.body + '</p></div></div>' +
@@ -7329,7 +7342,7 @@
         (config.primary ? 'bg-blue-600 text-white hover:bg-blue-500' : 'bg-white text-gray-700 ring-1 ring-gray-300 ring-inset hover:bg-gray-50 dark:bg-white/5 dark:text-white dark:ring-white/10') +
         '">' + config.action + '</button></div>';
     }
-    d.innerHTML = html;
+    d._panel.innerHTML = html;
     if (!d.open) d.showModal();
     var closeBtn = d.querySelector('[data-validation-close]');
     var actionBtn = d.querySelector('[data-validation-action]');
@@ -7393,8 +7406,8 @@
     var d = getBankValidationDialog();
     d.setAttribute('data-state', 'unverified');
     var btnBase = 'w-full cursor-pointer rounded-md px-3.5 py-2.5 text-base font-semibold shadow-xs focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 ';
-    d.innerHTML =
-      '<div class="flex h-14 items-end justify-end px-4 pt-4"><button type="button" data-validation-close aria-label="Close" class="flex size-10 cursor-pointer items-center justify-center rounded-full text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10">' + VALIDATION_X_ICON + '</button></div>' +
+    d._panel.innerHTML =
+      '<div class="flex h-14 items-end justify-end px-4 pt-4"><button type="button" data-validation-close aria-label="Close" class="rounded-md p-1 text-gray-400 hover:bg-gray-100 hover:text-gray-500 dark:hover:bg-white/10 dark:hover:text-gray-300 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600 dark:focus-visible:outline-blue-400">' + VALIDATION_X_ICON + '</button></div>' +
       '<div class="flex flex-col items-center gap-6 px-6 pt-3 pb-6 text-center">' + VALIDATION_WARNING_ICON +
       '<div class="flex w-full flex-col gap-2"><p class="text-lg/6 font-semibold text-gray-900 dark:text-white">Unable to Verify Account Details</p>' +
       '<p class="text-base/6 font-normal text-gray-700 dark:text-gray-300">Please select a different verified Bank Account, or add a new one.</p></div>' +
