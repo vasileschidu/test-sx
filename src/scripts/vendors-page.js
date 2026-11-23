@@ -338,10 +338,12 @@
       ' text-right"><div class="flex items-center justify-end gap-1"><span class="whitespace-nowrap">Payment network</span>' +
       infoIcon("") +
       '<button type="button" data-network-filter aria-label="Filter by payment network" aria-haspopup="true" class="inline-flex cursor-pointer rounded-md p-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-600' +
-      (filterActive ? " bg-blue-100 dark:bg-blue-500/20" : "") +
-      '"><span class="inline-flex size-5 items-center justify-center"><img src="' +
-      asset("header-filter.svg") +
-      '" alt="" width="14" height="14" /></span></button></div></th>' +
+      // Header filter icon = Figma Icon20/Solid/Filter, same as every table (TCDM-5238): gray-400, applied gray-500, no tile.
+      ' dark:focus-visible:outline-blue-500"><span class="inline-flex size-5 items-center justify-center">' +
+      '<svg viewBox="0 0 14 14" width="14" height="14" fill="currentColor" aria-hidden="true" class="size-3.5 shrink-0 ' +
+      (filterActive ? "text-gray-500 dark:text-gray-300" : "text-gray-400 dark:text-gray-500") +
+      '"><path fill-rule="evenodd" clip-rule="evenodd" d="M2.1 2.1C2.1 1.7134 2.4134 1.4 2.8 1.4H11.2C11.5866 1.4 11.9 1.7134 11.9 2.1V4.2C11.9 4.38565 11.8262 4.5637 11.695 4.69497L8.4 7.98995V10.5C8.4 10.6857 8.32625 10.8637 8.19497 10.995L6.79497 12.395C6.59478 12.5952 6.29369 12.6551 6.03212 12.5467C5.77055 12.4384 5.6 12.1831 5.6 11.9V7.98995L2.30503 4.69497C2.17375 4.5637 2.1 4.38565 2.1 4.2V2.1Z"/></svg>' +
+      "</span></button></div></th>" +
       '<th scope="col" class="' +
       HEADER_CELL +
       ' pl-0 text-right"><div class="flex items-center justify-end gap-1"><span>Early Payment Option</span>' +

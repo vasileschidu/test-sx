@@ -74,3 +74,12 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-13 Reveal/Hide Details icons: one canonical pair (payables-pay.html #pp-orig-bank-reveal-btn, Figma 11832:1410). In JS wrappers (<span data-icon>) strip data-icon/hidden from the inner svg, else the hide svg stays hidden; 'aria-hidden' makes a naive 'hidden' replace match.
 
 - 2026-11-16 Bulk class edits on JS string builders: a regex on `class="..."` also matches `class="' + OBField.INPUT + '"` (empty class, mismatched quotes) and injects classes into the concatenation. Require equal open/close quotes and skip empty class; constants (INPUT_CLASS) need their own edit. Exclude `.history/` (tracked) from file globs.
+- 2026-11-20 [tables][filter] Column header filters: `ColumnFilter` (column-filter.js) writes the table's *applied* filter state, then
+  `copyAppliedFiltersToDraft()` + the table's re-render path, so global panel/chips/count follow. A new table script must also go into
+  shell-navigation `PAGE_CONFIGS.scripts` (SPA swaps only load listed scripts) — bump shell-navigation's ?v= on every page.
+- 2026-11-20 [qa] Tools default to :8899; in a worktree on another port run them with `SX_BASE=http://localhost:<port>`. Calendar days re-render
+  on hover/click: doc-level click handlers must ignore `!event.target.isConnected`, Playwright must use locators, not element handles.
+- 2026-11-20 [filter] Andrian on table dropdowns: no title/eyebrow, footer = the global filter's Reset + Apply (draft until Apply),
+  inputs copied from existing fields (toolbar search, global From/To) — never a restyled "compact" variant.
+- 2026-11-20 [filter] "Columns that had a filter icon" = what the header *rendered* on main (Bills: Payee, Source), not every case
+  the click handler accepted (it also listed status/method/…). Ask before widening a UI to "every" column.
