@@ -412,6 +412,35 @@ Store: `createRole / updateRole / deleteRole / getRoleUsage / isRoleNameTaken / 
 - **Delete**: destructive confirm; a role in use turns it into "Role in Use" (amber triangle, blue **Show Users** → Users tab
   searched by role name).
 
+### File Upload — `smart-enroll/file-upload.js` (SMART System `PdvEp0MAIlof6O8MYaXCcy` frame `9431:16522`, set "Upload File Parts" `9432:4806`; never "(old) File Upload", DS-003)
+```js
+var up = FileUpload.mount(el, { id: 'license', name: 'license', label: 'Business License', accept: '.pdf,.png,.jpg',
+  acceptLabel: 'PDF, PNG, JPG up to 8MB', maxSizeMb: 8, multiple: false, disabled: false, files: [{ name, size, type }],
+  onChange: function (files) {} });
+up.getFiles() / setFiles(list) / setError(msg|null) / setDisabled(bool) / clear() / destroy()
+```
+- One file by default (R1); `multiple: true` only for the Business or Service License (R2 for the rest). Single mode hides the zone while a file is there; the pencil re-opens the picker (replace).
+- Zone = `label` around an `sr-only` file input: `rounded-md border border-dashed border-gray-300 bg-white px-4 py-2`, two `type-caption` lines ("**Upload a file** or drag and drop" blue-600 semibold + hint gray-500). Hover `border-gray-400 bg-gray-50`; focus-visible `has-focus-visible:outline-2 outline-offset-2 outline-blue-600`; drag-over `data-dragover` solid `border-blue-600 bg-blue-50`; error `data-invalid` `border-red-300` + `<p>` `type-description text-red-600` (input `aria-invalid` + `aria-describedby`); disabled `border-gray-200 bg-gray-50`, gray text. Dark: `white/5` fill, `white/15` → `white/25` border, blue-400, red-400/50.
+- Uploading row (simulated ~1 s; instant with reduced motion): `rounded-md bg-gray-50 px-3 py-2` + link icon, name `type-label-small` + `%`, "Preparing your file…", `h-1` bar (`w-N/100` class, no inline style), `role=progressbar`.
+- Done row: same box, name (`truncate` + `title`) + "PDF · 146.5 KB" `type-caption text-tertiary`, then the UM row-action group (32px pencil Replace + trash Remove, `data-tooltip`). Remove → focus back to the input. Errors: wrong extension / over `maxSizeMb`. `aria-live` announces upload / remove.
+
+### SMART Enroll shell — `smart-enroll/shell.js` + `src/pages/smart-enroll/application.html` (Figma Enroll `28471:37074`, `28107:8955`)
+Own shell (no `<app-nav>` / `<app-topbar>`). Data `src/data/smart-enroll.json` (businesses, applicant, people, statuses + copy, products, tabs with `required`/`filled` defaults, help, invite). Demo: `?status=<id>` (+ sessionStorage `se_status_v1`), `?tab=<id>`, add-ons in `se_addons_v1`, fixed "Demo status" `el-select` bottom-right.
+```js
+SmartEnroll.ready.then(function (data) {});
+SmartEnroll.registerTab('ownership', function (el, ctx) { /* ctx: tabId, readOnly, status, data, addons */ });
+SmartEnroll.setProgress('ownership', { required: 6, filled: 2 });   // → % (floor, visible tabs) + tab icon
+SmartEnroll.getProgress() / getStatus() / setStatus(id) / isReadOnly() / getAddons() / hasAddon(id) / addAddon(id)
+SmartEnroll.removeAddon(id, { confirm: false }) / getTabs() / getActiveTab() / goToTab(id) / next() / prev() / rerender(id)
+SmartEnroll.storageKey(tabId) // 'se_tab_<id>': keep tab values there; dropped when its add-on is discarded
+SmartEnroll.on('tab-change' | 'progress' | 'status-change' | 'readonly-change' | 'addon-change' | 'addon-discard' |
+  'business-change' | 'invite' | 'submit', function (detail, event) {}); // document CustomEvents 'smart-enroll:<name>'
+```
+- Tab bodies sit in a `<fieldset>` that is `disabled` while read-only (every status except Not submitted / Pending enrollment data). `submit` and `invite` are cancelable: call `event.preventDefault()` when you handle them (else an info toast says "in a later release").
+- Top bar: logo, Invite people (Link Primary + Information circle), avatars (`size-8 ring-2`, `-space-x-2`, `data-tooltip`), business switcher (Secondary **lg** + `el-menu` "Choose a Business"; name only with < 2 businesses), **Next Step** Primary **lg** (`rounded-md px-3 py-2 text-base`). Below 1024 the left panel is a drawer (`#se-panel[data-open]`, backdrop `bg-gray-900/75`, Esc, focus trap, focus back to the menu button); tabs scroll horizontally.
+- Left panel: progress Badge (blue, emerald at 100) + `h-2` bar `role=progressbar`; status box `rounded-md p-3` amber / blue / green / red-50 tint + 20px icon (dashed ring, check, exclamation, x) + `type-label` / `type-body` (dark `{c}-400/10` + `{c}-300`); product rows `rounded-md border p-2.5`, add = dashed ⊕ + blue `type-label`, added = tile + trash (remove → OBModal "Information will be discarded", danger + secondary **xl** stacked), Supply Chain = disabled + gray "Coming soon" Badge; Help from Transcard = disclosure (`aria-expanded`, chevron rotates). Information circle tooltips at the panel's right edge use the end-aligned variant (`right-0 -mr-1`, arrow `before:right-1.5`).
+- Main card: underline tabs (Card details `TAB_BASE`) + status icon (green check-circle / blue dashed ring / none, sr-only text), `h1 type-title-section` + `type-description`, footer ‹ prev / next › text buttons (`type-button px-2 py-1`, hover gray-100).
+
 ## Adding a component
 1. Build every state (default, hover, focus-visible, active, disabled, error, loading; dark on dashboard).
 2. Add a row/snippet here, and a note to `wiki/design-system/` when it is a product pattern.

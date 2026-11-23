@@ -108,3 +108,7 @@ Tags in brackets help grep: [sd] [tables] [shell] [tokens] [merge] [cache] [figm
 - 2026-11-18 [modal][el-select] OBModal closes on any Esc at `document`: an `el-select` inside needs a capture listener on the backdrop that notes `el-options:popover-open` and stops the bubbling Esc, else Esc in the list closes the dialog.
 - 2026-11-18 (Cards Manager S14, shared `details` mount): two stories drawing into one mount without editing the first: register later (tag after) and redraw on the same events (`route`/`data-change`/`ready`/`load`), prefix hooks so the other click handlers ignore yours; a shared helper looked up as `H.fn()` at call time (CardManagerHistory.findCard) can be wrapped to feed it your data.
 - 2026-11-18 (qa, card visual): `bg-[#142435]` (Figma Card_VC navy, S2/S3/consumer) is a code-audit MAJOR with no token to swap to: needs a Figma token first; report it, do not dodge the regex.
+- 2026-11-23 [qa][smart-enroll] hover-audit compares bg/colour/border/shadow/outline-*style*, not outline colour: a select trigger with only
+  `hover:outline-gray-400` reads as no-hover (give the chevron a `group-hover` tone). Text colour set only on an inner span → dark-low-contrast 1.2: colour the button.
+- 2026-11-23 [tokens][smart-enroll] Progress bars stay class-only with Tailwind v4 fractions (`w-37/100`, browser build generates them); no inline width.
+  A `sr-only` skip link at the start of `<body>` is flagged controls-overlap at 390 against a top-left menu button.

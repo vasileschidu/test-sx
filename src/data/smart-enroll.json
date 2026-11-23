@@ -1,0 +1,207 @@
+{
+  "version": 1,
+  "_comment": "SMART Enroll fake data (TCDM-5241). Every name, number and address is invented. Shell: src/scripts/smart-enroll/shell.js. Spec: wiki/products/smart-enroll/flows/application-shell.md.",
+  "support": {
+    "phone": "800-890-3128",
+    "email": "support@smart-hub.com",
+    "_comment": "One placeholder until the real number is confirmed (standard.md, Known limitations)."
+  },
+  "businesses": [
+    {
+      "id": "biz_brightline",
+      "name": "Brightline Supply Co.",
+      "legalName": "Brightline Supply Company LLC",
+      "structure": "Limited Liability Company (LLC)",
+      "country": "United States",
+      "legalAddress": "120 Harbor View Drive, Suite 400, Portland, OR 97209",
+      "phone": "+1 (503) 555-0147",
+      "email": "office@brightline-supply.example",
+      "website": "www.brightline-supply.example",
+      "orgIdType": "Business Number",
+      "orgIdNumber": "4723250093"
+    },
+    {
+      "id": "biz_northwind",
+      "name": "Northwind Garden Market Inc.",
+      "legalName": "Northwind Garden Market Incorporated",
+      "structure": "Corporation",
+      "country": "United States",
+      "legalAddress": "88 Maple Avenue, Columbus, OH 43215",
+      "phone": "+1 (614) 555-0192",
+      "email": "hello@northwind-garden.example",
+      "website": "www.northwind-garden.example",
+      "orgIdType": "Business Number",
+      "orgIdNumber": "5183920041"
+    }
+  ],
+  "applicant": {
+    "id": "p_jordan",
+    "firstName": "Jordan",
+    "lastName": "Ellis",
+    "role": "CFO",
+    "email": "jordan.ellis@brightline-supply.example",
+    "phone": "+1 (503) 555-0118"
+  },
+  "people": [
+    {
+      "id": "p_jordan",
+      "name": "Jordan Ellis",
+      "role": "Applicant",
+      "photo": "assets/topbar/avatar.png"
+    },
+    {
+      "id": "p_maya",
+      "name": "Maya Chen",
+      "role": "Contributor",
+      "initials": "MC",
+      "color": "bg-purple-500"
+    }
+  ],
+  "statuses": [
+    {
+      "id": "not-submitted",
+      "label": "Not submitted",
+      "tone": null,
+      "editable": true,
+      "text": null
+    },
+    {
+      "id": "pending-enrollment-data",
+      "label": "Pending enrollment data",
+      "tone": "amber",
+      "icon": "dashed",
+      "editable": true,
+      "text": "Your application is under review and additional information is needed. You should have received an email from our customer service team indicating that information. If you have not received an email, please contact our Customer Service team at {phone}."
+    },
+    {
+      "id": "pending-approval",
+      "label": "Pending Approval",
+      "tone": "blue",
+      "icon": "dashed",
+      "editable": false,
+      "text": "We are completing our final checks and setups for you to use SMART Hub. You'll receive an email soon when the process is complete. If you have any questions, please contact our Customer Service team at {phone}."
+    },
+    {
+      "id": "approved",
+      "label": "Approved",
+      "tone": "green",
+      "icon": "check",
+      "editable": false,
+      "text": "Your application to use SMART Hub has been approved. You should have received an email with your SMART Hub URL. If you did not receive an email, please contact our Customer Service team at {phone}."
+    },
+    {
+      "id": "declined",
+      "label": "Declined",
+      "tone": "red",
+      "icon": "exclamation",
+      "editable": false,
+      "text": "Unfortunately, your application has been declined based on the information that we received as part of the enrollment process. If you believe that our decision was made in error, please contact a member of our Customer Service team at {phone}."
+    },
+    {
+      "id": "suspended",
+      "label": "Suspended",
+      "tone": "red",
+      "icon": "x",
+      "editable": false,
+      "text": "Your SMART Hub account has been suspended following an internal review. If you believe this to be an error, please contact a member of our Customer Service team at {phone}."
+    }
+  ],
+  "products": [
+    {
+      "id": "ap-ar",
+      "name": "AP/AR Payments",
+      "kind": "base",
+      "info": "Pay your suppliers and get paid by your customers from one place. Always included."
+    },
+    {
+      "id": "supply-chain",
+      "name": "Supply Chain Financing",
+      "kind": "soon",
+      "info": "Early payment and financing for your supply chain. Coming soon."
+    },
+    {
+      "id": "merchant",
+      "name": "Merchant Services",
+      "kind": "addon",
+      "info": "Accept card payments from your customers. Adds the Financial and Business Plan tabs.",
+      "tabs": ["financial", "business-plan"]
+    },
+    {
+      "id": "cross-border",
+      "name": "Cross-Border Payments",
+      "kind": "addon",
+      "info": "Pay and get paid in other currencies. Adds the Transactional tab.",
+      "tabs": ["transactional"]
+    }
+  ],
+  "tabs": [
+    {
+      "id": "business-information",
+      "title": "Business Information",
+      "description": "Please provide your information below.",
+      "required": 14,
+      "filled": 3
+    },
+    {
+      "id": "ownership",
+      "title": "Ownership",
+      "description": "Tell us who owns the business, down to 100%.",
+      "required": 6,
+      "filled": 0
+    },
+    {
+      "id": "financial",
+      "title": "Financial",
+      "description": "Financial details for Merchant Services.",
+      "addon": "merchant",
+      "required": 8,
+      "filled": 0
+    },
+    {
+      "id": "transactional",
+      "title": "Transactional",
+      "description": "How you expect to send and receive cross-border payments.",
+      "addon": "cross-border",
+      "required": 6,
+      "filled": 0
+    },
+    {
+      "id": "business-plan",
+      "title": "Business Plan",
+      "description": "How you plan to use Merchant Services.",
+      "addon": "merchant",
+      "required": 5,
+      "filled": 0
+    },
+    {
+      "id": "connectors",
+      "title": "Connectors",
+      "description": "Connect your AP/AR data source and your bank accounts.",
+      "required": 0,
+      "filled": 0
+    },
+    {
+      "id": "configuration",
+      "title": "Configuration",
+      "description": "Set up your SMART Exchange payment preferences.",
+      "required": 4,
+      "filled": 0
+    }
+  ],
+  "invite": {
+    "info": "Invite someone to help you fill in this application. They can fill and edit tabs, but can't submit or sign."
+  },
+  "help": {
+    "title": "Help from Transcard",
+    "linkLabel": "SMART Suite Knowledge Base",
+    "href": "https://www.transcard.com/support",
+    "info": "To view all SMART Suite FAQs and Transcard User Guides that will provide step by step instructions on how to use Transcard SMART Products."
+  },
+  "uploadDemo": {
+    "label": "Business or Service License",
+    "description": "A current license for your business or the service you provide. You can add more than one file.",
+    "accept": ".pdf,.png,.jpg,.jpeg",
+    "acceptLabel": "PDF, PNG, JPG up to 8MB",
+    "maxSizeMb": 8
+  }
+}
